@@ -1,6 +1,6 @@
-# <p align="center">Full Customizable UI Components</p>
+# <p align="center">Fully Customizable UI Components</p>
 
-Customizable & fully Typed UI Components using TailwindCSS + Typescript.
+Fully Customizable & fully Typed UI Components using TailwindCSS + Typescript.
 
 ![Alt text](image.png)
 
