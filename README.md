@@ -2,6 +2,8 @@
 
 Customizable & fully Typed UI Components using TailwindCSS + Typescript.
 
+![Alt text](image.png)
+
 ## 🧐 UI Components
 
 - [Button](https://github.com/starc007/ui-components/tree/main/src/components/UI/Button) : Different variants and sizes
