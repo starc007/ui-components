@@ -3,7 +3,8 @@ import { forwardRef } from "react";
 import { ButtonProps, ButtonSize, ButtonVariant, Ref } from "./button.types";
 
 const colorMap = {
-  outline: "text-gray-900 border-gray-900 hover:bg-gray-900",
+  outline:
+    "text-gray-900 border border-gray-900 hover:bg-gray-900 hover:text-white",
   solid: "text-white bg-gray-900 hover:bg-gray-700",
   ghost: "text-gray-900 hover:bg-gray-100",
 } as Record<ButtonVariant, string>;
@@ -24,7 +25,7 @@ const Button = forwardRef<Ref, ButtonProps>((props, ref) => {
   } = props;
 
   const merged = clsx(
-    "inline-flex items-center justify-center font-medium transition-all duration-200 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 disabled:opacity-70 disabled:cursor-not-allowed",
+    "inline-flex items-center justify-center gap-1.5 font-medium transition-all duration-200 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 disabled:opacity-70 disabled:cursor-not-allowed",
     colorMap[variant],
     sizeMap[size],
     className
@@ -32,7 +33,34 @@ const Button = forwardRef<Ref, ButtonProps>((props, ref) => {
 
   return (
     <button ref={ref} className={merged} {...rest}>
-      {children}
+      {props?.showloading ? (
+        <svg
+          className="animate-spin h-5 w-5"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+      ) : (
+        <>
+          {props?.lefticon && props?.lefticon}
+          {children}
+          {props?.righticon && props?.righticon}
+        </>
+      )}
     </button>
   );
 });

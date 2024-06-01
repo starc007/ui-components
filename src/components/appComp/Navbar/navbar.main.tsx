@@ -8,10 +8,10 @@ const Navbar = () => {
           Cool UI
         </Link>
         <div className="flex items-center gap-5 text-sm font-medium">
-          <Link to="/buttons" className="text-gray-800">
+          <Link to="/components" className="text-gray-800">
             Explore
           </Link>
-          <Link to="/buttons" className="text-gray-800">
+          <Link to="/pricing" className="text-gray-800">
             Pricing
           </Link>
           <button className="bg-gray-800 text-white px-5 py-2 rounded-full">
