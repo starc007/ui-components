@@ -1,42 +1,25 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link } from "react-router-dom";
-
-// const MenuItems = [
-//   {
-//     id: 1,
-//     name: "Explore",
-//     link: "/explore",
-//   },
-//   {
-//     id: 2,
-//     name: "Login",
-//     link: "/login",
-//   },
-// ];
 
 const Navbar = () => {
   return (
-    <header className="bg-white">
-      <div className="">
-        <div className="flex items-center justify-between h-16 lg:h-[72px]">
-          <Link to="/" title="" className="text-2xl font-bold">
-            UI Components
+    <nav className="container mx-auto sticky top-0 glass__bg h-16 py-3 px-4">
+      <div className="flex justify-between items-center">
+        <Link to="/" className="font-semibold text-xl">
+          Cool UI
+        </Link>
+        <div className="flex items-center gap-5 text-sm font-medium">
+          <Link to="/buttons" className="text-gray-800">
+            Explore
           </Link>
-
-          {/* <div className="hidden lg:flex lg:justify-start lg:ml-16 lg:space-x-8 xl:space-x-14">
-            {MenuItems.map((item) => (
-              <Link
-                to={item.link}
-                key={item.id}
-                className="text-base font-semibold text-gray-900 transition-all duration-200 hover:text-gray-700"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div> */}
+          <Link to="/buttons" className="text-gray-800">
+            Pricing
+          </Link>
+          <button className="bg-gray-800 text-white px-5 py-2 rounded-full">
+            Contact
+          </button>
         </div>
       </div>
-    </header>
+    </nav>
   );
 };
 

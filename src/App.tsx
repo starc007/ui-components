@@ -1,18 +1,19 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Navbar } from "@/components/appComp/Navbar";
-import { Home } from "@/Pages";
-import { Layout } from "@/components/appComp/Layout";
+import { ButtonPage, Home } from "@/Pages";
+import { Layout, Navbar } from "@/components/appComp";
 
 const App = () => {
   return (
-    <Layout>
-      <BrowserRouter>
-        <Navbar />
+    <BrowserRouter>
+      <Navbar />
+      <Layout>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home />}>
+            <Route path="buttons" element={<ButtonPage />} />
+          </Route>
         </Routes>
-      </BrowserRouter>
-    </Layout>
+      </Layout>
+    </BrowserRouter>
   );
 };
 
