@@ -3,7 +3,7 @@ import logo from "@/assets/logo.svg";
 
 const Navbar = () => {
   return (
-    <nav className="container mx-auto sticky top-0 glass__bg h-16 py-3 px-4">
+    <nav className="container mx-auto sticky top-0 glass__bg h-16 py-3 px-4 z-20">
       <div className="flex justify-between items-center">
         <Link to="/" className="font-semibold text-xl flex items-center">
           <img src={logo} alt="beUi" className="w-6 inline-block mr-1" />
