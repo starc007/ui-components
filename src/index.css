@@ -36,3 +36,9 @@
     transform: translateY(-10%);
   }
 }
+
+.glass__bg {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+}

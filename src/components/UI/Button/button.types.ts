@@ -16,6 +16,25 @@ export interface ButtonOptions {
    * @type ButtonSize
    */
   size?: ButtonSize;
+
+  /**
+   * Show loading spinner
+   * @default false
+   * @type boolean
+   */
+  showloading?: boolean;
+
+  /**
+   * Button icon
+   * @type React.ReactNode
+   */
+  lefticon?: React.ReactNode;
+
+  /**
+   * Button icon
+   * @type React.ReactNode
+   */
+  righticon?: React.ReactNode;
 }
 
 export type Ref = HTMLButtonElement;

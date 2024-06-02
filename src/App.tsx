@@ -1,18 +1,25 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Navbar } from "@/components/appComp/Navbar";
-import { Home } from "@/Pages";
-import { Layout } from "@/components/appComp/Layout";
+import { ButtonPage, Home, NavbarsPage, UIComponents } from "@/Pages";
+import { Layout, Navbar } from "@/components/appComp";
+import ComingSoon from "./components/appComp/ComingSoon";
 
 const App = () => {
   return (
-    <Layout>
-      <BrowserRouter>
-        <Navbar />
+    <BrowserRouter>
+      <Navbar />
+      <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="components" element={<UIComponents />}>
+            <Route path="buttons" element={<ButtonPage />} />
+            <Route path="navbars" element={<NavbarsPage />} />
+
+            {/* Not found */}
+            <Route path="*" element={<ComingSoon />} />
+          </Route>
         </Routes>
-      </BrowserRouter>
-    </Layout>
+      </Layout>
+    </BrowserRouter>
   );
 };
 

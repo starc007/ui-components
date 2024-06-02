@@ -1,6 +1,53 @@
-import clsx from "clsx";
+export const AllButtons: Record<number, string> = {
+  1: `export type ButtonVariant = "outline" | "solid" | "ghost";
+
+export type ButtonSize = "small" | "medium" | "large";
+
+export interface ButtonOptions {
+  /**
+   * Button display variants
+   * @default "solid"
+   * @type ButtonVariant
+   */
+  variant?: ButtonVariant;
+
+  /**
+   * Button size
+   * @default "medium"
+   * @type ButtonSize
+   */
+  size?: ButtonSize;
+
+  /**
+   * Show loading spinner
+   * @default false
+   * @type boolean
+   */
+  showloading?: boolean;
+
+  /**
+   * Button icon
+   * @type React.ReactNode
+   */
+  lefticon?: React.ReactNode;
+
+  /**
+   * Button icon
+   * @type React.ReactNode
+   */
+  righticon?: React.ReactNode;
+}
+
+export type Ref = HTMLButtonElement;
+
+export type ButtonProps = React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+> &
+  ButtonOptions;
+
+    import clsx from "clsx";
 import { forwardRef } from "react";
-import { ButtonProps, ButtonSize, ButtonVariant, Ref } from "./button.types";
 
 const colorMap = {
   outline:
@@ -67,3 +114,6 @@ const Button = forwardRef<Ref, ButtonProps>((props, ref) => {
 
 Button.displayName = "Button";
 export default Button;
+
+  `,
+};
