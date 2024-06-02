@@ -62,7 +62,7 @@ const Buttons = () => {
     <div className="flex flex-col">
       <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
         <div className={cmnDivClass}>
-          <button className="relative before:shadow-lg flex h-10 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-full before:bg-gray-800 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max">
+          <button className="relative before:shadow-lg flex h-10 items-center justify-center px-6 before:absolute before:inset-0 before:rounded-full before:bg-gray-800 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 w-max">
             <span className="relative text-base font-semibold text-white">
               hover me
             </span>
@@ -75,7 +75,7 @@ const Buttons = () => {
           </button>
         </div>
         <div className={cmnDivClass}>
-          <button className="group flex items-center justify-center gap-1 h-10 w-full px-6 hover:bg-gray-200 transition duration-300 rounded-full sm:w-max">
+          <button className="group flex items-center justify-center gap-1 h-10 px-6 hover:bg-gray-200 transition duration-300 rounded-full w-max">
             Hover me
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -96,7 +96,7 @@ const Buttons = () => {
           </button>
         </div>
         <div className={cmnDivClass}>
-          <button className="group flex items-center justify-center gap-1 h-10 w-full px-6 bg-gradient-to-t from-gray-800 to-gray-500 text-white font-medium rounded-lg sm:w-max ring-2 ring-gray-400">
+          <button className="group flex items-center justify-center gap-1 h-10 w-max px-6 bg-gradient-to-t from-gray-800 to-gray-500 text-white font-medium rounded-lg ring-2 ring-gray-400">
             Button
           </button>
           <button
