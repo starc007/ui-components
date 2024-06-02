@@ -1,4 +1,7 @@
 import { Button } from "@/components";
+import { RenderCode, SlideOver } from "@/components/appComp";
+import { useState } from "react";
+import { AllButtons } from "./AllButtons";
 
 const imgIcon = (
   <svg className="w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -20,9 +23,19 @@ const cmnDivClass =
   "flex justify-center items-center gap-4 h-40 rounded-xl bg-gray-100 mt-1";
 
 const Buttons = () => {
+  const [showSlideOver, setShowSlideOver] = useState(false);
+
   return (
     <div className="flex flex-col">
-      <h2 className="font-semibold">Buttons</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="font-semibold">Buttons with different variants</h2>
+        <button
+          onClick={() => setShowSlideOver(true)}
+          className="font-medium text-sm border px-4 py-1.5 rounded-lg"
+        >
+          View Code
+        </button>
+      </div>
       <div className="mt-3">
         <p className="text-gray-500 font-medium text-sm">
           Normal Button Preview
@@ -84,6 +97,14 @@ const Buttons = () => {
           </Button>
         </div>
       </div>
+
+      <SlideOver
+        isSlideOpen={showSlideOver}
+        setIsSlideOpen={setShowSlideOver}
+        title="Code"
+      >
+        <RenderCode code={AllButtons[1]} />
+      </SlideOver>
     </div>
   );
 };
