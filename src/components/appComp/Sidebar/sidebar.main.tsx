@@ -2,11 +2,11 @@ import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
   {
-    name: "Buttons",
+    name: "Buttons (4)",
     slug: "buttons",
   },
   {
-    name: "Navbar",
+    name: "Navbar (3)",
     slug: "navbars",
   },
   {
