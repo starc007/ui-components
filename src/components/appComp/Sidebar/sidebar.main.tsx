@@ -6,6 +6,10 @@ const menuItems = [
     slug: "buttons",
   },
   {
+    name: "Navbar",
+    slug: "navbars",
+  },
+  {
     name: "Inputs",
     slug: "inputs",
   },
@@ -13,10 +17,7 @@ const menuItems = [
     name: "Tabs",
     slug: "tabs",
   },
-  {
-    name: "Navbar",
-    slug: "navbars",
-  },
+
   {
     name: "Hero",
     slug: "hero",
