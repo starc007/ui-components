@@ -1,10 +1,16 @@
 import { Footer } from "@/components/appComp";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Home = () => {
   return (
     <section className="relative md:pt-24 pt-20">
-      <div className="flex flex-col items-center text-center mx-auto max-w-5xl">
+      <motion.div
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col items-center text-center mx-auto max-w-5xl"
+      >
         <p className="text-gray-500 font-semibold border rounded-full w-40 py-1 text-sm mx-auto cursor-pointer hover:text-gray-700/90 hover:border-gray-700/80 transition-colors duration-300">
           Copy. Paste. Use.
         </p>
@@ -90,7 +96,7 @@ const Home = () => {
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <Footer />
     </section>
