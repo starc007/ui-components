@@ -7,7 +7,7 @@ const UIComponents = () => {
       <div className="md:w-36 md:block hidden  border-r-gray-100  pt-5">
         <Sidebar />
       </div>
-      <div className="border border-gray-100 w-full rounded-2xl px-6 py-4 mb-10 mt-2 overflow-auto">
+      <div className="border border-gray-100 w-full rounded-2xl md:px-6 px-3 py-4 md:mb-10 mb-5 mt-2 overflow-auto">
         <Outlet />
       </div>
     </div>

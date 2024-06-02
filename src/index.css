@@ -42,19 +42,3 @@
   backdrop-filter: blur(10px);
   border-radius: 10px;
 }
-
-.linesvg {
-  background-image: url("./assets//line.svg");
-  /* background-position: 50% 200%; */
-  background-repeat: no-repeat;
-  background-size: 20.9375rem;
-  /* background-attachment: scroll; */
-  /* margin-bottom: -2.5rem; */
-  margin-left: -5rem;
-  /* margin-right: -5rem; */
-  /* padding-bottom: 2.5rem; */
-  padding-left: 5rem;
-  /* padding-right: 5rem; */
-  display: inline-block;
-  overflow: visible;
-}
