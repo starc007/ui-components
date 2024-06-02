@@ -2,7 +2,7 @@
 
 ### Introduction
 
-- UI Components is built with React.js, Typescript and TailwindCSS
+- UI Components is built with React.js, Typescript, framer motion & TailwindCSS
 - Check out the existing issues for ways to contribute
 
 ### Have a new feature request or see a bug?

@@ -1,20 +1,24 @@
 # <p align="center">Fully Customizable UI Components</p>
 
-Fully Customizable & fully Typed UI Components using TailwindCSS + Typescript.
+Free UI components and templates for your next project
 
-![Alt text](image.png)
+![alt text](image.png))
 
 ## 🧐 UI Components
 
 - [Button](https://github.com/starc007/ui-components/tree/main/src/components/UI/Button) : Different variants and sizes
-- [Input](https://github.com/starc007/ui-components/tree/main/src/components/UI/Input)
-- [Select](https://github.com/starc007/ui-components/tree/main/src/components/UI/Select) (Single select + multiple select)
+- [Navbar](https://github.com/starc007/ui-components/tree/main/src/components/UI/Input) : Responsive navbar with dropdown
+- Tabs (Coming soon)
+- Inputs (Coming soon)
+- Hero Section (Coming soon)
+- Footer (coming soon)
 
 ## 🛠️ Tech Stack
 
 - [React](https://reactjs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
+- [Framer Motion](https://www.framer.com/motion/introduction/)
 
 ## 🍰 Contributing
 
@@ -22,7 +26,7 @@ Contributions are what make the open source community such an amazing place to b
 
 Before contributing, please read the [contributing guidelines](CONTRIBUTING.md).
 
-## 🙇 Author
+## 🙇 Reach out to me
 
 #### Saurabh Chauhan
 
