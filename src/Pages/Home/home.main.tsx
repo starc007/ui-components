@@ -11,8 +11,8 @@ const Home = () => {
         transition={{ duration: 0.5 }}
         className="flex flex-col items-center text-center mx-auto max-w-5xl"
       >
-        <p className="text-gray-500 font-semibold border rounded-full w-40 py-1 text-sm mx-auto cursor-pointer hover:text-gray-700/90 hover:border-gray-700/80 transition-colors duration-300">
-          Copy. Paste. Use.
+        <p className="text-gray-500 font-semibold border rounded-full w-max px-3 py-1 text-sm mx-auto cursor-pointer hover:text-gray-700/90 hover:border-gray-700/80 transition-colors duration-300">
+          build better. build faster.
         </p>
         <h1 className="text-gray-800 font-bold text-4xl md:text-7xl mt-5">
           Build your website 10x faster with free UI components
