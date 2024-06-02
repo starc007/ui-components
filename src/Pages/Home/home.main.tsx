@@ -28,7 +28,7 @@ const Home = () => {
           </Link>
         </div>
 
-        <div className="flex items-center gap-5 mt-10">
+        <div className="flex justify-center flex-wrap items-center gap-5 mt-10">
           <div className="flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -72,6 +72,21 @@ const Home = () => {
             </svg>
             <p className="text-gray-700 font-medium md:text-base text-sm">
               Tailwind CSS
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="md:w-7 w-6 text-gray-500"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M4 0h16v8h-8zm0 8h8l8 8H4zm0 8h8v8z"
+              />
+            </svg>
+            <p className="text-gray-700 font-medium md:text-base text-sm">
+              Framer Motion
             </p>
           </div>
         </div>
