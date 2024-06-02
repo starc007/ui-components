@@ -5,15 +5,9 @@ const Navbar = () => {
     <nav className="container mx-auto sticky top-0 glass__bg h-16 py-3 px-4">
       <div className="flex justify-between items-center">
         <Link to="/" className="font-semibold text-xl">
-          Cool UI
+          beUi
         </Link>
         <div className="flex items-center gap-5 text-sm font-medium">
-          {/* <Link to="/components" className="text-gray-800">
-            Explore
-          </Link>
-          <Link to="/pricing" className="text-gray-800">
-            Pricing
-          </Link> */}
           <a
             href="https://x.com/saurra3h"
             target="_blank"
