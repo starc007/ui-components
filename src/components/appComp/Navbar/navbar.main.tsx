@@ -54,11 +54,13 @@ const Navbar = () => {
           </a>
 
           <a
-            href="mailto:saurabh10102@gmail.com"
+            href="https://calendly.com/saurra3h/intro"
+            target="_blank"
+            rel="noreferrer nofollow"
             className="relative before:shadow-lg flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-gray-800 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
           >
             <span className="relative text-sm font-medium text-white">
-              Contact
+              Hire me!
             </span>
           </a>
         </div>
