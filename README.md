@@ -6,8 +6,8 @@ Free UI components and templates for your next project
 
 ## 🧐 UI Components
 
-- [Button](https://github.com/starc007/ui-components/tree/main/src/components/UI/Button) : Different variants and sizes
-- [Navbar](https://ui-comp69.vercel.app/components/navbars) : Responsive navbar with dropdown
+- [Button](https://beui.xyz/components/buttons) : Different variants and sizes
+- [Navbar](https://beui.xyz/components/navbars) : Responsive navbar with dropdown
 - Tabs (Coming soon)
 - Inputs (Coming soon)
 - Hero Section (Coming soon)
