@@ -1,10 +1,16 @@
 import { Footer } from "@/components/appComp";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import gradBg from "@/assets/gradBg.jpg";
 
 const Home = () => {
   return (
     <section className="relative md:pt-24 pt-20">
+      <img
+        src={gradBg}
+        alt="bg"
+        className="absolute top-0 -z-10 opacity-30 left-0 w-full h-full object-cover" // bg image
+      />
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -14,8 +20,11 @@ const Home = () => {
         <p className="text-gray-500 font-semibold border rounded-full w-max px-3 py-1 text-sm mx-auto cursor-pointer hover:text-gray-700/90 hover:border-gray-700/80 transition-colors duration-300">
           build better. build faster.
         </p>
-        <h1 className="text-gray-800 font-bold text-4xl md:text-7xl mt-5">
-          Build your website 10x faster with free UI components
+        <h1 className="text-gray-600 font-bold text-3xl sm:text-5xl lg:text-7xl mt-5">
+          Build your website 10x faster with
+          <span className="inline-block mt-4 -rotate-1 bg-gray-800/10 text-gray-800 px-4 py-2 rounded ml-2">
+            <span className="block rotate-1"> free UI components</span>
+          </span>{" "}
         </h1>
 
         <h5 className="mt-4 max-w-2xl mx-auto font-medium text-gray-500">
