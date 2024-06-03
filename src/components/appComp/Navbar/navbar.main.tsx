@@ -57,7 +57,7 @@ const Navbar = () => {
             href="https://calendly.com/saurra3h/intro"
             target="_blank"
             rel="noreferrer nofollow"
-            className="relative before:shadow-lg flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-gray-800 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
+            className="relative before:shadow-lg flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-black before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
           >
             <span className="relative text-sm font-medium text-white">
               Hire me!
