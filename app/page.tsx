@@ -12,7 +12,7 @@ const Home = () => {
       <Image
         src={gradBg}
         alt="bg"
-        className="absolute top-0 -z-10 opacity-30 left-0 w-full h-full object-cover" // bg image
+        className="absolute top-0 -z-10 opacity-30 left-0 w-full h-full object-contain" // bg image
       />
       <motion.div
         initial={{ opacity: 0, y: -30 }}
