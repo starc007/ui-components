@@ -1,5 +1,5 @@
 "use client";
-import { ShowButtons, ShowNavbars } from "@/components";
+import { ShowButtons, ShowNavbars, TextAnimations } from "@/components";
 import ComingSoon from "@/components/appComp/ComingSoon";
 import { SIDE_NAV_ROUTES } from "@/utils/constants";
 import React, { useMemo } from "react";
@@ -13,6 +13,8 @@ const Index = ({ params }: { params: { slug: string } }) => {
         return <ShowButtons />;
       case SIDE_NAV_ROUTES.NAVBARS:
         return <ShowNavbars />;
+      case SIDE_NAV_ROUTES.TEXT_ANIMATIONS:
+        return <TextAnimations />;
       case SIDE_NAV_ROUTES.INPUTS:
         return <ComingSoon />;
       case SIDE_NAV_ROUTES.TABS:

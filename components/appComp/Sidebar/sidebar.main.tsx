@@ -12,6 +12,11 @@ const menuItems = [
     slug: "navbars",
   },
   {
+    name: "Text Animations",
+    slug: "text-animations",
+    isNew: true,
+  },
+  {
     name: "Inputs",
     slug: "inputs",
   },
@@ -45,7 +50,12 @@ const Sidebar = () => {
               pathname?.includes(item?.slug) ? "text-gray-900" : "text-gray-400"
             }`}
           >
-            {item.name}
+            {item.name}{" "}
+            {item.isNew && (
+              <span className="text-xs text-primary bg-primary/10 px-2 py-1 rounded-lg">
+                New
+              </span>
+            )}
           </Link>
         );
       })}
