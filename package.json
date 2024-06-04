@@ -1,7 +1,26 @@
 {
-  "name": "ui-comp",
+  "name": "ui-components",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Saurabh",
+    "email": "saurabh10102@gmail.com",
+    "url": "https://saura3h.xyz"
+  },
+  "license": "MIT",
+  "description": "UI Components for React",
+  "keywords": [
+    "react",
+    "reactjs",
+    "ui",
+    "components",
+    "tailwindcss",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/starc007/ui-components"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -1,6 +1,6 @@
-# <p align="center">Fully Customizable UI Components</p>
+# <p>beUi: Build better, Build faster</p>
 
-Free UI components and templates for your next project
+Build your project 10x faster with free beautiful ui components
 
 ![alt text](image.png)
 
@@ -37,4 +37,3 @@ Before contributing, please read the [contributing guidelines](CONTRIBUTING.md).
 ## ➤ License
 
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
-.com/saurra3h)

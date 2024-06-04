@@ -12,7 +12,7 @@ const Home = () => {
       <Image
         src={gradBg}
         alt="bg"
-        className="absolute top-0 -z-10 opacity-30 left-0 w-full h-full object-cover" // bg image
+        className="absolute top-0 -z-10 opacity-30 left-0 w-full h-full object-contain" // bg image
       />
       <motion.div
         initial={{ opacity: 0, y: -30 }}
@@ -35,14 +35,32 @@ const Home = () => {
           Copy and paste the code snippets to use them in your project.
         </h5>
 
-        <div className="mt-7 flex justify-center">
+        <div className="mt-7 flex flex-wrap justify-center items-center gap-4">
           <Link
             href="/components/buttons"
-            className="relative before:shadow-lg flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-full before:bg-gray-800 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
+            className="relative before:shadow-lg flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-xl before:bg-gray-800 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
           >
             <span className="relative text-base font-semibold text-white">
               Explore Components
             </span>
+          </Link>
+          <Link
+            href="https://github.com/starc007/ui-components"
+            target="_blank"
+            rel="noreferrer nofollow noopener"
+            className="flex justify-center items-center gap-2 font-medium text-gray-700 bg-gray-100 rounded-xl px-6 h-12 sm:w-max w-full"
+          >
+            Star on GitHub
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5"
+              viewBox="0 0 432 416"
+            >
+              <path
+                fill="currentColor"
+                d="M213.5 0q88.5 0 151 62.5T427 213q0 70-41 125.5T281 416q-14 2-14-11v-58q0-27-15-40q44-5 70.5-27t26.5-77q0-34-22-58q11-26-2-57q-18-5-58 22q-26-7-54-7t-53 7q-18-12-32.5-17.5T107 88h-6q-12 31-2 57q-22 24-22 58q0 55 27 77t70 27q-11 10-13 29q-42 18-62-18q-12-20-33-22q-2 0-4.5.5t-5 3.5t8.5 9q14 7 23 31q1 2 2 4.5t6.5 9.5t13 10.5T130 371t30-2v36q0 13-14 11q-64-22-105-77.5T0 213q0-88 62.5-150.5T213.5 0z"
+              />
+            </svg>
           </Link>
         </div>
 
