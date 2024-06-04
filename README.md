@@ -37,4 +37,3 @@ Before contributing, please read the [contributing guidelines](CONTRIBUTING.md).
 ## ➤ License
 
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
-.com/saurra3h)
