@@ -1,6 +1,6 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 
 interface FlipTextAnimationProps {
   words: string[];
@@ -10,18 +10,16 @@ interface FlipTextAnimationProps {
 
 const FlipTextAnimation: FC<FlipTextAnimationProps> = ({ words }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      next();
+    intervalRef.current = setInterval(() => {
+      setCurrentStep((prevStep) => (prevStep + 1) % words.length);
     }, 3000);
-    return () => clearInterval(interval);
+    return () => clearInterval(intervalRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentStep]);
+  }, []);
 
-  const next = () => {
-    setCurrentStep((prevStep) => (prevStep + 1) % words.length);
-  };
   return (
     <span className="relative text-primary font-bold">
       <span className="invisible">words[0]</span>

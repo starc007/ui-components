@@ -29,8 +29,8 @@ const TextAnimations = () => {
           View code
         </button>
       </div>
-      <div className="mt-3 flex items-center justify-center h-40 bg-gray-100 rounded-xl">
-        <h1 className="text-5xl font-semibold text-gray-500">
+      <div className="mt-3 flex items-center justify-center py-8 bg-gray-50 rounded-xl">
+        <h1 className="sm:text-5xl text-2xl font-semibold text-gray-400">
           Build your website <FlipTextAnimation words={words} />
         </h1>
       </div>
