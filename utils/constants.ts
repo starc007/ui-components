@@ -14,4 +14,5 @@ export enum SIDE_NAV_ROUTES {
   TABS = "tabs",
   HERO = "hero",
   FOOTER = "footer",
+  TEXT_ANIMATIONS = "text-animations",
 }
