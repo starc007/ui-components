@@ -4,14 +4,10 @@ Build your project 10x faster with free beautiful ui components
 
 ![alt text](image.png)
 
-## 🧐 UI Components
+## Speed up your development 🚀
 
-- [Button](https://beui.xyz/components/buttons) : Different variants and sizes
-- [Navbar](https://beui.xyz/components/navbars) : Responsive navbar with dropdown
-- Tabs (Coming soon)
-- Inputs (Coming soon)
-- Hero Section (Coming soon)
-- Footer (coming soon)
+1. Pre built customizable ui components ✨
+2. Browse, choose, copy and paste it in your project, that's it! 😉
 
 ## 🛠️ Tech Stack
 
