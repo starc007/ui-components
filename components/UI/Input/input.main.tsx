@@ -1,12 +1,15 @@
 "use client";
 
 import { useRef } from "react";
+import clsx from "clsx";
 import { InputOptions } from "./input.types";
 
 const Input = (props: InputOptions) => {
   const {
     id,
     wrapperClassName = "",
+    inputClassName = "",
+    labelClassName = "",
     placeholder = "",
     label = "",
     type = "text",
@@ -20,7 +23,10 @@ const Input = (props: InputOptions) => {
 
   return (
     <div className={wrapperClassName}>
-      <label htmlFor={id} className="text-gray-800 text-sm">
+      <label
+        htmlFor={id}
+        className={clsx("text-gray-600 text-sm", labelClassName)}
+      >
         {label} {isInputRequired && <span className="text-red-600">*</span>}
       </label>
       <div
@@ -34,7 +40,10 @@ const Input = (props: InputOptions) => {
         <input
           ref={inputRef}
           type={type}
-          className="w-full px-2 h-11 text-gray-900 text-base rounded-xl focus:outline-none"
+          className={clsx(
+            "w-full px-2 h-11 text-gray-900 text-base rounded-xl focus:outline-none",
+            inputClassName
+          )}
           id={id}
           placeholder={placeholder}
           required={isInputRequired}
