@@ -11,6 +11,20 @@ export interface InputOptions
   wrapperClassName?: string;
 
   /**
+   * Input class name
+   * @default ""
+   * @type string
+   */
+  inputClassName?: string;
+
+  /**
+   * label class name
+   * @default ""
+   * @type string
+   */
+  labelClassName?: string;
+
+  /**
    * Input placeholder
    * @default ""
    * @type string

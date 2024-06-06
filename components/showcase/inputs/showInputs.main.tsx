@@ -19,16 +19,23 @@ const ShowInputs = () => {
 
   return (
     <div className="flex flex-col">
-      <p className="text-lg font-semibold">
-        Fully typed Custom Input Component
-      </p>
-      <div className="mt-4 bg-gray-50 p-4 rounded-xl ">
+      <p className="text-lg font-semibold">Custom Input Component</p>
+      <div className="mt-4 rounded-xl ">
         <Input
+          id="input1"
+          label="Custom input with label"
+          placeholder="Enter your text"
+          isInputRequired
+          inputClassName="text-sm"
+        />
+        <Input
+          wrapperClassName="mt-4"
           id="input1"
           label="Custom input with error message and label"
           placeholder="Enter your text"
           errorText="hehe i am error message"
-          isInputRequired
+          error
+          inputClassName="text-sm"
         />
       </div>
 
