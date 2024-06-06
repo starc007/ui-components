@@ -50,5 +50,5 @@ export interface InputOptions
    * @default false
    * @type boolean
    */
-  required?: boolean;
+  isInputRequired?: boolean;
 }

@@ -12,7 +12,7 @@ const Input = (props: InputOptions) => {
     type = "text",
     error = false,
     errorText = "",
-    required = false,
+    isInputRequired = false,
     ...rest
   } = props;
 
@@ -21,7 +21,7 @@ const Input = (props: InputOptions) => {
   return (
     <div className={wrapperClassName}>
       <label htmlFor={id} className="text-gray-800 text-sm">
-        {label} {required && <span className="text-red">*</span>}
+        {label} {isInputRequired && <span className="text-red-600">*</span>}
       </label>
       <div
         className={`border transition duration-300 ease-in-out rounded-xl mt-1 ${
@@ -37,6 +37,7 @@ const Input = (props: InputOptions) => {
           className="w-full px-2 h-11 text-gray-900 text-base rounded-xl focus:outline-none"
           id={id}
           placeholder={placeholder}
+          required={isInputRequired}
           {...rest}
         />
       </div>

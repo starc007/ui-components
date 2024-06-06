@@ -28,6 +28,7 @@ const ShowInputs = () => {
           label="Custom input with error message and label"
           placeholder="Enter your text"
           errorText="hehe i am error message"
+          isInputRequired
         />
       </div>
 
