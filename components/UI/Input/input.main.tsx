@@ -24,7 +24,7 @@ const Input = (props: InputOptions) => {
         {label} {required && <span className="text-red">*</span>}
       </label>
       <div
-        className={`border transition duration-300 ease-in-out rounded-lg mt-1 ${
+        className={`border transition duration-300 ease-in-out rounded-xl mt-1 ${
           error
             ? "focus-within:border-red-600 border-red-600"
             : "focus-within:border-gray-700"
@@ -34,7 +34,7 @@ const Input = (props: InputOptions) => {
         <input
           ref={inputRef}
           type={type}
-          className="w-full px-2 h-11 text-gray-900 text-base rounded-lg focus:outline-none"
+          className="w-full px-2 h-11 text-gray-900 text-base rounded-xl focus:outline-none"
           id={id}
           placeholder={placeholder}
           {...rest}
