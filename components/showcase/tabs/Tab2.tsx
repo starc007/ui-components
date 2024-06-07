@@ -26,8 +26,8 @@ interface TabItemProps {
 const TabItem = ({ title, isActive, setActiveTab }: TabItemProps) => {
   return (
     <button
-      className={`px-4 py-2 text-sm font-medium transition-all relative ${
-        isActive ? "text-white" : "text-zinc-500 hover:text-gray-800"
+      className={`py-2 text-sm font-medium transition-all relative ${
+        isActive ? "text-primary" : "text-zinc-500 hover:text-gray-800"
       }`}
       style={{
         WebkitTapHighlightColor: "transparent",
@@ -36,9 +36,14 @@ const TabItem = ({ title, isActive, setActiveTab }: TabItemProps) => {
     >
       {isActive && (
         <motion.span
-          layoutId="bubble-tab"
-          className="absolute inset-0 z-0 bg-primary rounded-lg"
-          transition={{ type: "spring", bounce: 0.4, duration: 0.5 }}
+          layoutId="line-tab"
+          className="absolute left-0 right-0 bottom-0 z-0 border-b-2 border-primary w-full justify-center"
+          transition={{
+            type: "spring",
+            bounce: 0.3,
+            duration: 0.4,
+            delay: 0.1,
+          }}
         />
       )}
       <span className="relative z-10">{title}</span>
@@ -46,11 +51,11 @@ const TabItem = ({ title, isActive, setActiveTab }: TabItemProps) => {
   );
 };
 
-const Tab1 = () => {
+const Tab2 = () => {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-8">
       {tabList.map((tab, index) => (
         <TabItem
           key={index}
@@ -68,4 +73,4 @@ const Tab1 = () => {
   );
 };
 
-export default Tab1;
+export default Tab2;
