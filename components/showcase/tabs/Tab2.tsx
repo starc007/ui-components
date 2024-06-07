@@ -37,7 +37,7 @@ const TabItem = ({ title, isActive, setActiveTab }: TabItemProps) => {
       {isActive && (
         <motion.span
           layoutId="line-tab"
-          className="absolute left-0 right-0 bottom-0 z-0 border-b-2 border-primary w-full justify-center"
+          className="absolute left-0 right-0 bottom-0 z-0 border-b-2 border-primary"
           transition={{
             type: "spring",
             bounce: 0.3,
