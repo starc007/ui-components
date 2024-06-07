@@ -37,7 +37,7 @@ const TabItem = ({ title, isActive, setActiveTab }: TabItemProps) => {
       {isActive && (
         <motion.span
           layoutId="bubble-tab"
-          className="absolute inset-0 z-0 bg-primary rounded-lg"
+          className="absolute inset-0 z-0 bg-blue-500 rounded-lg"
           transition={{ type: "spring", bounce: 0.4, duration: 0.5 }}
         />
       )}

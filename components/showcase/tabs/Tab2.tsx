@@ -27,7 +27,7 @@ const TabItem = ({ title, isActive, setActiveTab }: TabItemProps) => {
   return (
     <button
       className={`py-2 text-sm font-medium transition-all relative ${
-        isActive ? "text-primary" : "text-zinc-500 hover:text-gray-800"
+        isActive ? "text-blue-500" : "text-zinc-500 hover:text-gray-800"
       }`}
       style={{
         WebkitTapHighlightColor: "transparent",
@@ -37,7 +37,7 @@ const TabItem = ({ title, isActive, setActiveTab }: TabItemProps) => {
       {isActive && (
         <motion.span
           layoutId="line-tab"
-          className="absolute left-0 right-0 bottom-0 z-0 border-b-2 border-primary"
+          className="absolute left-0 right-0 bottom-0 z-0 border-b-2 border-blue-500"
           transition={{
             type: "spring",
             bounce: 0.3,
