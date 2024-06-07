@@ -3,6 +3,7 @@ import {
   ShowButtons,
   ShowInputs,
   ShowNavbars,
+  ShowTabs,
   TextAnimations,
 } from "@/components";
 import ComingSoon from "@/components/appComp/ComingSoon";
@@ -23,7 +24,7 @@ const Index = ({ params }: { params: { slug: string } }) => {
       case SIDE_NAV_ROUTES.INPUTS:
         return <ShowInputs />;
       case SIDE_NAV_ROUTES.TABS:
-        return <ComingSoon />;
+        return <ShowTabs />;
       case SIDE_NAV_ROUTES.HERO:
         return <ComingSoon />;
       case SIDE_NAV_ROUTES.FOOTER:

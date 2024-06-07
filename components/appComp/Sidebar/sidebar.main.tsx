@@ -23,6 +23,7 @@ const menuItems = [
   {
     name: "Tabs",
     slug: "tabs",
+    isNew: true,
   },
 
   {
