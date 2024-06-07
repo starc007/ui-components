@@ -50,15 +50,17 @@ const Tab1 = () => {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div className="flex gap-3">
-      {tabList.map((tab, index) => (
-        <TabItem
-          key={index}
-          title={tab.title}
-          isActive={activeTab === index}
-          setActiveTab={() => setActiveTab(index)}
-        />
-      ))}
+    <div className="flex flex-col">
+      <div className="flex gap-3">
+        {tabList.map((tab, index) => (
+          <TabItem
+            key={index}
+            title={tab.title}
+            isActive={activeTab === index}
+            setActiveTab={() => setActiveTab(index)}
+          />
+        ))}
+      </div>
 
       {/* Tab content */}
       {/* <div className="p-4 bg-gray-100 rounded-lg mt-4">
