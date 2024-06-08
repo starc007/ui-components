@@ -20,7 +20,10 @@ const ShowTabs = () => {
       <p className="font-medium">Animated Tabs</p>
 
       {/* Tab3 */}
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center mt-5">
+        <p className="text-sm text-primary">
+          Tabs with content switch animation
+        </p>
         <button
           onClick={() => {
             getCode(3);
@@ -36,7 +39,8 @@ const ShowTabs = () => {
       </div>
 
       {/* Tab1 */}
-      <div className="flex justify-end mt-14">
+      <div className="flex justify-between items-center mt-14">
+        <p className="text-sm text-primary">Button shape tab</p>
         <button
           onClick={() => {
             getCode(1);
@@ -52,7 +56,8 @@ const ShowTabs = () => {
       </div>
 
       {/* Tab2 */}
-      <div className="flex justify-end mt-14">
+      <div className="flex justify-between items-center mt-14">
+        <p className="text-sm text-primary">Line tab</p>
         <button
           onClick={() => {
             getCode(2);

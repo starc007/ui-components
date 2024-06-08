@@ -186,7 +186,7 @@ const Tab3 = () => {
   };
 
   return (
-    <div className="flex flex-col items-center relative">
+    <div className="flex flex-col items-center relative w-full p-3">
       {/* Tab content */}
       <div className="mb-4 relative sm:w-96 w-full h-60">
         {tabs.map((tab, index) => (
