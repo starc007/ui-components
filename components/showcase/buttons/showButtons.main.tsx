@@ -7,6 +7,7 @@ import Button1 from "./Button1";
 import Button2 from "./Button2";
 import Button3 from "./Button3";
 import ButtonVariants from "./ButtonVariants";
+import Button4 from "./Button4";
 
 const buttonList = [
   {
@@ -21,10 +22,14 @@ const buttonList = [
     id: 3,
     comp: <Button3 />,
   },
+  {
+    id: 4,
+    comp: <Button4 />,
+  },
 ];
 
 const cmnDivClass =
-  "flex justify-center items-center gap-4 h-40 rounded-xl bg-gray-50 mt-1 relative";
+  "flex justify-center items-center gap-4 h-40 rounded-xl border border-gray-200 mt-1 relative";
 
 const ShowButtons = () => {
   const [showSlideOver, setShowSlideOver] = useState(false);

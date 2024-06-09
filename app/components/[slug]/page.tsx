@@ -1,6 +1,7 @@
 "use client";
 import {
   ShowButtons,
+  ShowHeros,
   ShowInputs,
   ShowNavbars,
   ShowTabs,
@@ -26,7 +27,7 @@ const Index = ({ params }: { params: { slug: string } }) => {
       case SIDE_NAV_ROUTES.TABS:
         return <ShowTabs />;
       case SIDE_NAV_ROUTES.HERO:
-        return <ComingSoon />;
+        return <ShowHeros />;
       case SIDE_NAV_ROUTES.FOOTER:
         return <ComingSoon />;
       default:

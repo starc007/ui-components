@@ -23,10 +23,13 @@ const Home = () => {
         <p className="text-gray-500 font-semibold border rounded-full w-max px-3 py-1 text-sm mx-auto cursor-pointer hover:text-gray-700/90 hover:border-gray-700/80 transition-colors duration-300">
           build better. build faster.
         </p>
-        <h1 className="text-gray-600 font-bold text-3xl sm:text-5xl lg:text-7xl mt-5">
-          Build your website 10x faster with
-          <span className="inline-block mt-4 -rotate-1 bg-gray-800/10 text-gray-800 px-4 py-2 rounded ml-2">
-            <span className="block rotate-1"> free UI components</span>
+        <h1 className="text-gray-600 font-semibold text-3xl sm:text-5xl lg:text-6xl mt-5">
+          Build your website 10x faster{" "}
+          <span className="sm:block">
+            with
+            <span className="inline-block mt-4 -rotate-1 bg-gray-800/10 text-gray-800 px-4 py-2 rounded ml-2">
+              <span className="block rotate-1"> free UI components</span>
+            </span>
           </span>{" "}
         </h1>
 
@@ -38,7 +41,7 @@ const Home = () => {
         <div className="mt-7 flex flex-wrap justify-center items-center gap-4">
           <Link
             href="/components/buttons"
-            className="relative before:shadow-lg flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-xl before:bg-gray-800 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
+            className="relative before:shadow-lg flex h-12 w-full items-center justify-center px-6 before:absolute before:inset-0 before:rounded-xl before:bg-gray-800 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max hover:before:ring-1 before:ring-gray-800 before:ring-offset-1"
           >
             <span className="relative text-base font-semibold text-white">
               Explore Components
@@ -48,7 +51,7 @@ const Home = () => {
             href="https://github.com/starc007/ui-components"
             target="_blank"
             rel="noreferrer nofollow noopener"
-            className="flex justify-center items-center gap-2 font-medium text-gray-700 bg-gray-100 rounded-xl px-6 h-12 sm:w-max w-full"
+            className="flex justify-center items-center gap-2 font-medium text-gray-700 bg-gray-100 rounded-xl px-6 h-12 sm:w-max w-full hover:ring-1 ring-gray-300 ring-offset-1 duration-300"
           >
             Star on GitHub
             <svg

@@ -6,6 +6,7 @@ const menuItems = [
   {
     name: "Buttons",
     slug: "buttons",
+    isNew: true,
   },
   {
     name: "Navbar",
@@ -14,7 +15,6 @@ const menuItems = [
   {
     name: "Text Animations",
     slug: "text-animations",
-    isNew: true,
   },
   {
     name: "Inputs",
@@ -29,6 +29,7 @@ const menuItems = [
   {
     name: "Hero",
     slug: "hero",
+    isNew: true,
   },
   {
     name: "Footer",
