@@ -23,10 +23,13 @@ const Home = () => {
         <p className="text-gray-500 font-semibold border rounded-full w-max px-3 py-1 text-sm mx-auto cursor-pointer hover:text-gray-700/90 hover:border-gray-700/80 transition-colors duration-300">
           build better. build faster.
         </p>
-        <h1 className="text-gray-600 font-bold text-3xl sm:text-5xl lg:text-7xl mt-5">
-          Build your website 10x faster with
-          <span className="inline-block mt-4 -rotate-1 bg-gray-800/10 text-gray-800 px-4 py-2 rounded ml-2">
-            <span className="block rotate-1"> free UI components</span>
+        <h1 className="text-gray-600 font-semibold text-3xl sm:text-5xl lg:text-6xl mt-5">
+          Build your website 10x faster{" "}
+          <span className="sm:block">
+            with
+            <span className="inline-block mt-4 -rotate-1 bg-gray-800/10 text-gray-800 px-4 py-2 rounded ml-2">
+              <span className="block rotate-1"> free UI components</span>
+            </span>
           </span>{" "}
         </h1>
 
