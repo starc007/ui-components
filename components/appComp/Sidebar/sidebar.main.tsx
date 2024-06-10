@@ -15,6 +15,7 @@ const menuItems = [
   {
     name: "Text Animations",
     slug: "text-animations",
+    isNew: true,
   },
   {
     name: "Inputs",
@@ -23,7 +24,7 @@ const menuItems = [
   {
     name: "Tabs",
     slug: "tabs",
-    isNew: true,
+    // isNew: true,
   },
 
   {
@@ -31,10 +32,10 @@ const menuItems = [
     slug: "hero",
     isNew: true,
   },
-  {
-    name: "Footer",
-    slug: "footer",
-  },
+  // {
+  //   name: "Footer",
+  //   slug: "footer",
+  // },
 ];
 
 const Sidebar = () => {
