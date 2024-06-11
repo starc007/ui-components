@@ -6,16 +6,20 @@ const menuItems = [
   {
     name: "Buttons",
     slug: "buttons",
-    isNew: true,
+    // isNew: true,
   },
   {
     name: "Navbar",
     slug: "navbars",
   },
   {
+    name: "Dropdown",
+    slug: "dropdowns",
+    isNew: true,
+  },
+  {
     name: "Text Animations",
     slug: "text-animations",
-    isNew: true,
   },
   {
     name: "Inputs",

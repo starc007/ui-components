@@ -1,6 +1,7 @@
 "use client";
 import {
   ShowButtons,
+  ShowDropdown,
   ShowHeros,
   ShowInputs,
   ShowNavbars,
@@ -28,6 +29,8 @@ const Index = ({ params }: { params: { slug: string } }) => {
         return <ShowTabs />;
       case SIDE_NAV_ROUTES.HERO:
         return <ShowHeros />;
+      case SIDE_NAV_ROUTES.DROPDOWNS:
+        return <ShowDropdown />;
       case SIDE_NAV_ROUTES.FOOTER:
         return <ComingSoon />;
       default:

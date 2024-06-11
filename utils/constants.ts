@@ -1,12 +1,3 @@
-export const ALLOWED_ROUTES = [
-  "navbars",
-  "buttons",
-  "inputs",
-  "tabs",
-  "hero",
-  "footer",
-];
-
 export enum SIDE_NAV_ROUTES {
   NAVBARS = "navbars",
   BUTTONS = "buttons",
@@ -15,4 +6,5 @@ export enum SIDE_NAV_ROUTES {
   HERO = "hero",
   FOOTER = "footer",
   TEXT_ANIMATIONS = "text-animations",
+  DROPDOWNS = "dropdowns",
 }
