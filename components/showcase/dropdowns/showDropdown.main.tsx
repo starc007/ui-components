@@ -1,4 +1,5 @@
 import React from "react";
+import Dropdown1 from "./Dropdown1";
 
 const ShowDropdown = () => {
   return (
@@ -16,9 +17,7 @@ const ShowDropdown = () => {
         </button>
       </div>
       <div className="mt-3 flex items-center justify-center py-8 border border-gray-200 rounded-xl">
-        <h1 className="sm:text-4xl text-2xl font-semibold text-gray-400">
-          Dropdown1
-        </h1>
+        <Dropdown1 />
       </div>
     </div>
   );
