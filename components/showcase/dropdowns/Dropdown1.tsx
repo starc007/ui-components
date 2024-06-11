@@ -17,20 +17,11 @@ const menuOptions = [
   },
 ];
 
-enum DIRECTION {
-  LEFT = "left",
-  RIGHT = "right",
-}
-
 interface DropDownContentProps {
-  direction: DIRECTION;
   selectedTab: number;
 }
 
-const DropDownContent: FC<DropDownContentProps> = ({
-  direction,
-  selectedTab,
-}) => {
+const DropDownContent: FC<DropDownContentProps> = ({ selectedTab }) => {
   const [left, setLeft] = useState(0);
 
   useEffect(() => {
@@ -121,16 +112,6 @@ const DropdownTab: FC<{
 
 const Dropdown1 = () => {
   const [selectedTab, setSelectedTab] = useState<number | null>(null);
-  const [direction, setDirection] = useState<DIRECTION | null>(null);
-
-  const handleMouseEnter = (idx: number) => {
-    if (selectedTab && idx) {
-      setDirection(selectedTab > idx ? DIRECTION.RIGHT : DIRECTION.LEFT);
-    } else {
-      setDirection(null);
-    }
-    setSelectedTab(idx);
-  };
 
   return (
     <div>
@@ -145,13 +126,13 @@ const Dropdown1 = () => {
               selectedTab={selectedTab!}
               idx={index}
               name={item.name}
-              handleMouseEnter={handleMouseEnter}
+              handleMouseEnter={() => setSelectedTab(index)}
             />
           );
         })}
         <AnimatePresence>
           {selectedTab !== null && (
-            <DropDownContent direction={direction!} selectedTab={selectedTab} />
+            <DropDownContent selectedTab={selectedTab} />
           )}
         </AnimatePresence>
       </div>
