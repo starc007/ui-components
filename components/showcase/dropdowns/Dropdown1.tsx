@@ -6,14 +6,36 @@ const menuOptions = [
   {
     name: "Products",
     slug: "products",
+    comp: (
+      <div className="flex flex-col items-center gap-4">
+        <button className="text-sm font-medium hover hover:bg-gray-50 px-3 py-2 rounded-lg duration-300">
+          Product 1
+        </button>
+        <button className="text-sm font-medium hover hover:bg-gray-50 px-3 py-2 rounded-lg duration-300">
+          Product 2
+        </button>
+        <button className="text-sm font-medium hover hover:bg-gray-50 px-3 py-2 rounded-lg duration-300">
+          Product 3
+        </button>
+      </div>
+    ),
   },
   {
     name: "Services",
     slug: "services",
-  },
-  {
-    name: "Company",
-    slug: "company",
+    comp: (
+      <div className="flex flex-col items-center gap-4">
+        <button className="text-sm font-medium hover hover:bg-gray-50 px-3 py-2 rounded-lg duration-300">
+          Service 1
+        </button>
+        <button className="text-sm font-medium hover hover:bg-gray-50 px-3 py-2 rounded-lg duration-300">
+          Service 2
+        </button>
+        <button className="text-sm font-medium hover hover:bg-gray-50 px-3 py-2 rounded-lg duration-300">
+          Service 3
+        </button>
+      </div>
+    ),
   },
 ];
 
@@ -61,9 +83,9 @@ const DropDownContent: FC<DropDownContentProps> = ({ selectedTab }) => {
         opacity: 0,
         y: 8,
       }}
-      className="absolute top-[calc(100%_+_20px)] w-96 rounded-lg border bg-gray-50 p-4"
+      className="absolute top-[calc(100%_+_20px)] w-64 rounded-lg border shadow-md bg-white p-4"
     >
-      <div className="absolute -top-[20px] left-0 right-0 h-[20px]" />
+      <div className="absolute -top-[24px] left-0 right-0 h-[24px]" />
 
       <motion.span
         style={{
@@ -71,8 +93,18 @@ const DropDownContent: FC<DropDownContentProps> = ({ selectedTab }) => {
         }}
         animate={{ left }}
         transition={{ duration: 0.25, ease: "easeInOut" }}
-        className="absolute left-1/2 top-0 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-tl border bg-gray-50"
+        className="absolute left-1/2 top-0 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-tl border bg-white"
       />
+
+      <motion.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.25, ease: "easeInOut" }}
+      >
+        {menuOptions[selectedTab].comp}
+      </motion.div>
     </motion.div>
   );
 };

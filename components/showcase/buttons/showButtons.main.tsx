@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components";
 import { RenderCode, SlideOver } from "@/components/appComp";
 import { useState } from "react";
 import Button1 from "./Button1";
