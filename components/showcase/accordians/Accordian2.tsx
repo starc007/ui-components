@@ -15,29 +15,27 @@ const AccordianItem: FC<{
   const [isOpen, setIsOpen] = React.useState(false);
   const ref = useRef<HTMLDivElement>(null);
   return (
-    <div className={`border-gray-200 ${isLastElement ? "" : "border-b"} py-2`}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full"
-      >
+    <div
+      onClick={() => setIsOpen(!isOpen)}
+      className={`border-gray-200 ${
+        isLastElement ? "" : "border-b"
+      } py-2 cursor-pointer`}
+    >
+      <div className="flex items-center justify-between w-full">
         <h1 className="font-medium text-gray-700">{question}</h1>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className={`w-5 transition-all duration-500 ${
-            isOpen ? "rotate-180" : ""
+          className={`w-5 transition-all duration-500 text-gray-500 ${
+            isOpen ? "rotate-45" : ""
           }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+          viewBox="0 0 56 56"
         >
           <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
+            fill="currentColor"
+            d="M27.988 47.734c1.149 0 2.11-.914 2.11-2.039V30.11h15.14c1.125 0 2.11-.96 2.11-2.109c0-1.148-.985-2.086-2.11-2.086h-15.14v-15.61c0-1.124-.961-2.038-2.11-2.038c-1.148 0-2.086.914-2.086 2.039v15.61h-15.14c-1.125 0-2.11.937-2.11 2.085s.985 2.11 2.11 2.11h15.14v15.585c0 1.125.938 2.04 2.086 2.04"
           />
         </svg>
-      </button>
+      </div>
       <div
         style={{
           height: isOpen ? ref.current?.offsetHeight || 0 : 0,
@@ -50,7 +48,7 @@ const AccordianItem: FC<{
   );
 };
 
-const Accordian1: FC<AccordianProps> = ({ accordianData }) => {
+const Accordian2: FC<AccordianProps> = ({ accordianData }) => {
   return (
     <div className="flex flex-col space-y-4">
       {accordianData.map((item, index) => (
@@ -65,4 +63,4 @@ const Accordian1: FC<AccordianProps> = ({ accordianData }) => {
   );
 };
 
-export default Accordian1;
+export default Accordian2;
