@@ -46,6 +46,9 @@ const ShowAccordian = () => {
           </button>
         </div>
         <div className="border rounded-xl p-4">
+          <h3 className="text-center font-semibold text-2xl mb-5 mt-4">
+            Frequently asked questions
+          </h3>
           <Accordian1 accordianData={accordianData} />
         </div>
       </div>
@@ -64,6 +67,7 @@ const ShowAccordian = () => {
           </button>
         </div>
         <div className="border rounded-xl p-4">
+          <h3 className="font-semibold text-2xl mb-5 mt-4">FAQ&apos;s</h3>
           <Accordian2 accordianData={accordianData} />
         </div>
       </div>
