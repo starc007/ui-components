@@ -2,6 +2,7 @@
 import {
   ShowAccordian,
   ShowButtons,
+  ShowCarousel,
   ShowDropdown,
   ShowHeros,
   ShowInputs,
@@ -9,7 +10,6 @@ import {
   ShowTabs,
   TextAnimations,
 } from "@/components";
-import ComingSoon from "@/components/appComp/ComingSoon";
 import { SIDE_NAV_ROUTES } from "@/utils/constants";
 import React, { useMemo } from "react";
 
@@ -34,6 +34,8 @@ const Index = ({ params }: { params: { slug: string } }) => {
         return <ShowDropdown />;
       case SIDE_NAV_ROUTES.ACCORDIAN:
         return <ShowAccordian />;
+      case SIDE_NAV_ROUTES.CAROUSEL:
+        return <ShowCarousel />;
       default:
         return <div>Not Found</div>;
     }

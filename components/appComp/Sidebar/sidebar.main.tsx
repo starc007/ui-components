@@ -41,6 +41,11 @@ const menuItems = [
     slug: "accordion",
     isNew: true,
   },
+  {
+    name: "Carousel",
+    slug: "carousel",
+    isNew: true,
+  },
 ];
 
 const Sidebar = () => {

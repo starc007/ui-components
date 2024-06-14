@@ -6,3 +6,4 @@ export * from "./tabs";
 export * from "./heros";
 export * from "./dropdowns";
 export * from "./accordians";
+export * from "./carousel";
