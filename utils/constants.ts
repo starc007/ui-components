@@ -7,4 +7,5 @@ export enum SIDE_NAV_ROUTES {
   FOOTER = "footer",
   TEXT_ANIMATIONS = "text-animations",
   DROPDOWNS = "dropdowns",
+  ACCORDIAN = "accordion",
 }

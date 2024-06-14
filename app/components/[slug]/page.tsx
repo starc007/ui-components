@@ -1,5 +1,6 @@
 "use client";
 import {
+  ShowAccordian,
   ShowButtons,
   ShowDropdown,
   ShowHeros,
@@ -31,8 +32,8 @@ const Index = ({ params }: { params: { slug: string } }) => {
         return <ShowHeros />;
       case SIDE_NAV_ROUTES.DROPDOWNS:
         return <ShowDropdown />;
-      case SIDE_NAV_ROUTES.FOOTER:
-        return <ComingSoon />;
+      case SIDE_NAV_ROUTES.ACCORDIAN:
+        return <ShowAccordian />;
       default:
         return <div>Not Found</div>;
     }
