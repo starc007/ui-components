@@ -15,15 +15,17 @@ const AccordianItem: FC<{
   const [isOpen, setIsOpen] = React.useState(false);
   const ref = useRef<HTMLDivElement>(null);
   return (
-    <div className={`border-gray-200 ${isLastElement ? "" : "border-b"} py-2`}>
+    <div className={`border-gray-100 ${isLastElement ? "" : "border-b"} py-2`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between w-full"
       >
-        <h1 className="font-medium text-gray-700">{question}</h1>
+        <h1 className="font-medium text-gray-700 sm:text-base text-sm">
+          {question}
+        </h1>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className={`w-5 transition-all duration-500 ${
+          className={`sm:w-5 w-4 transition-all duration-500 ${
             isOpen ? "rotate-180" : ""
           }`}
           fill="none"
@@ -42,7 +44,7 @@ const AccordianItem: FC<{
         style={{
           height: isOpen ? ref.current?.offsetHeight || 0 : 0,
         }}
-        className={`text-gray-500 text-sm pt-1 duration-300 overflow-hidden transition-all ease-in `}
+        className={`text-gray-500 sm:text-sm text-xs pt-1 duration-300 overflow-hidden transition-all ease-in `}
       >
         <p className="pb-2" ref={ref}>
           {answer}
