@@ -44,7 +44,9 @@ const AccordianItem: FC<{
         }}
         className={`text-gray-500 text-sm pt-1 duration-300 overflow-hidden transition-all ease-in `}
       >
-        <p ref={ref}>{answer}</p>
+        <p className="pb-2" ref={ref}>
+          {answer}
+        </p>
       </div>
     </div>
   );
