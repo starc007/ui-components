@@ -45,7 +45,7 @@ const ShowAccordian = () => {
             View code
           </button>
         </div>
-        <div className="border rounded-xl p-4">
+        <div className="border rounded-xl sm:p-8 p-3">
           <h3 className="text-center font-semibold sm:text-2xl text-xl mb-5 mt-4">
             Frequently asked questions
           </h3>
