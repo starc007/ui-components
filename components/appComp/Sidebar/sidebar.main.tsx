@@ -34,12 +34,13 @@ const menuItems = [
   {
     name: "Hero",
     slug: "hero",
+    // isNew: true,
+  },
+  {
+    name: "Accordion",
+    slug: "accordion",
     isNew: true,
   },
-  // {
-  //   name: "Footer",
-  //   slug: "footer",
-  // },
 ];
 
 const Sidebar = () => {
