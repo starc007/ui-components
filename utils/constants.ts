@@ -8,4 +8,6 @@ export enum SIDE_NAV_ROUTES {
   TEXT_ANIMATIONS = "text-animations",
   DROPDOWNS = "dropdowns",
   ACCORDIAN = "accordion",
+  CAROUSEL = "carousel",
+  TESTIMONIAL = "testimonial",
 }
