@@ -34,7 +34,7 @@ const Index = ({ params }: { params: { slug: string } }) => {
         return <ShowDropdown />;
       case SIDE_NAV_ROUTES.ACCORDIAN:
         return <ShowAccordian />;
-      case SIDE_NAV_ROUTES.CAROUSEL:
+      case SIDE_NAV_ROUTES.TESTIMONIAL:
         return <ShowCarousel />;
       default:
         return <div>Not Found</div>;

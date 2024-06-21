@@ -15,7 +15,7 @@ const menuItems = [
   {
     name: "Dropdown",
     slug: "dropdowns",
-    isNew: true,
+    // isNew: true,
   },
   {
     name: "Text Animations",
@@ -42,8 +42,8 @@ const menuItems = [
     isNew: true,
   },
   {
-    name: "Carousel",
-    slug: "carousel",
+    name: "Testimonial",
+    slug: "testimonial",
     isNew: true,
   },
 ];

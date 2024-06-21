@@ -9,4 +9,5 @@ export enum SIDE_NAV_ROUTES {
   DROPDOWNS = "dropdowns",
   ACCORDIAN = "accordion",
   CAROUSEL = "carousel",
+  TESTIMONIAL = "testimonial",
 }

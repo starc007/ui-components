@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Carousel1 from "./Carousel1";
+import Testimonial1 from "./Testimonial1";
 import { RenderCode, SlideOver } from "@/components/appComp";
 
 const testimonials = [
@@ -56,7 +56,7 @@ const ShowCarousel = () => {
   const [codeString, setCodeString] = useState("");
 
   const getCode = (id: number) => {
-    const codeString = require(`!!raw-loader!./Carousel${id}.tsx`).default;
+    const codeString = require(`!!raw-loader!./Testimonial${id}.tsx`).default;
     setCodeString(codeString);
   };
   return (
@@ -78,7 +78,7 @@ const ShowCarousel = () => {
         </div>
 
         <div className="py-10 border border-gray-100 rounded-xl overflow-auto w-full">
-          <Carousel1 testimonialData={testimonials} />
+          <Testimonial1 testimonialData={testimonials} />
         </div>
       </div>
 

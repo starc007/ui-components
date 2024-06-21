@@ -1,7 +1,7 @@
-import React, { FC, useEffect, useRef, useState } from "react";
-import { motion, useAnimation } from "framer-motion";
+import React, { FC, useRef } from "react";
+import { motion } from "framer-motion";
 
-interface CarouselProps {
+interface TestimonialProps {
   testimonialData: {
     id: number;
     title: string;
@@ -9,31 +9,31 @@ interface CarouselProps {
     content: string;
     image: string;
   }[];
+  direction?: "left" | "right";
 }
 
-const Carousel1: FC<CarouselProps> = ({ testimonialData }) => {
-  const controls = useAnimation();
+const Testimonial1: FC<TestimonialProps> = ({
+  testimonialData,
+  direction = "left",
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const containerWidth = containerRef?.current?.scrollWidth! / 2;
-
-    const animate = () => {
-      controls.start({
-        x: [0, -containerWidth - 10],
-        transition: {
-          x: {
-            repeat: Infinity,
-            repeatType: "loop",
-            duration: 15,
-            ease: "linear",
-          },
+  const variants = {
+    animate: {
+      x:
+        direction === "left"
+          ? [0, `calc(-50% - 1rem)`]
+          : [`calc(-50% - 1rem)`, 0],
+      transition: {
+        x: {
+          repeat: Infinity,
+          repeatType: "loop",
+          duration: 15,
+          ease: "linear",
         },
-      });
-    };
-
-    animate();
-  }, [controls]);
+      },
+    },
+  };
 
   return (
     <div
@@ -45,7 +45,8 @@ const Carousel1: FC<CarouselProps> = ({ testimonialData }) => {
     >
       <motion.div
         ref={containerRef}
-        animate={controls}
+        variants={variants}
+        animate="animate"
         style={{ width: "fit-content" }}
         className="flex justify-center gap-5"
       >
@@ -73,4 +74,4 @@ const Carousel1: FC<CarouselProps> = ({ testimonialData }) => {
   );
 };
 
-export default Carousel1;
+export default Testimonial1;
