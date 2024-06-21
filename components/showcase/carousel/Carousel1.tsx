@@ -41,10 +41,6 @@ const Carousel1: FC<CarouselProps> = ({ testimonialData }) => {
       style={{
         maskImage:
           "linear-gradient(to left, transparent 0%, black 10%, black 90%, transparent 99%)",
-
-        //hide the scrollbar
-        scrollbarWidth: "none",
-        msOverflowStyle: "none",
       }}
     >
       <motion.div

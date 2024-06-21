@@ -1,27 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Carousel1 from "./Carousel1";
-
-// const carouselData = [
-//   {
-//     title: "Title 1",
-//     description: "Description 1",
-//     image:
-//       "https://images.pexels.com/photos/3509971/pexels-photo-3509971.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//   },
-//   {
-//     title: "Title 2",
-//     description: "Description 2",
-//     image:
-//       "https://images.pexels.com/photos/5409751/pexels-photo-5409751.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//   },
-//   {
-//     title: "Title 3",
-//     description: "Description 3",
-//     image:
-//       "https://images.pexels.com/photos/2258536/pexels-photo-2258536.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//   },
-// ];
+import { RenderCode, SlideOver } from "@/components/appComp";
 
 const testimonials = [
   {
@@ -100,8 +80,15 @@ const ShowCarousel = () => {
         <div className="py-10 border border-gray-100 rounded-xl overflow-auto w-full">
           <Carousel1 testimonialData={testimonials} />
         </div>
-        {/* <div className="h-40 w-96 bg-gray-200" /> */}
       </div>
+
+      <SlideOver
+        isSlideOpen={showSlideOver}
+        setIsSlideOpen={setShowSlideOver}
+        title="Code"
+      >
+        <RenderCode code={codeString} />
+      </SlideOver>
     </div>
   );
 };
