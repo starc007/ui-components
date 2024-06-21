@@ -8,13 +8,17 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
       colors: {
         primary: "#508EF7",
+      },
+      animation: {
+        testimonial: "testimonial 20s linear infinite",
+      },
+      keyframes: {
+        testimonial: {
+          from: { transform: "translateX(0%)" },
+          to: { transform: "translateX(calc(-100% - 4rem))" },
+        },
       },
     },
   },

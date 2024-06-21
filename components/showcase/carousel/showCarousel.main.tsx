@@ -1,22 +1,71 @@
 "use client";
 import React, { useState } from "react";
+import Carousel1 from "./Carousel1";
 
-const carouselData = [
+// const carouselData = [
+//   {
+//     title: "Title 1",
+//     description: "Description 1",
+//     image:
+//       "https://images.pexels.com/photos/3509971/pexels-photo-3509971.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//   },
+//   {
+//     title: "Title 2",
+//     description: "Description 2",
+//     image:
+//       "https://images.pexels.com/photos/5409751/pexels-photo-5409751.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//   },
+//   {
+//     title: "Title 3",
+//     description: "Description 3",
+//     image:
+//       "https://images.pexels.com/photos/2258536/pexels-photo-2258536.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+//   },
+// ];
+
+const testimonials = [
   {
-    title: "Title 1",
-    description: "Description 1",
+    id: 1,
+    name: "Jane Doe",
+    content:
+      "Build your product 10x faster and better with beUi's components. Just copy and paste!",
+    title: "CEO, Company A",
     image:
       "https://images.pexels.com/photos/3509971/pexels-photo-3509971.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
   },
   {
-    title: "Title 2",
-    description: "Description 2",
+    id: 2,
+    name: "John Smith",
+    content:
+      "Build your product 10x faster and better with beUi's components. Just copy and paste!",
+    title: "CTO, Company B",
     image:
       "https://images.pexels.com/photos/5409751/pexels-photo-5409751.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
   },
   {
-    title: "Title 3",
-    description: "Description 3",
+    id: 3,
+    name: "Mary Johnson",
+    content:
+      "Build your product 10x faster and better with beUi's components. Just copy and paste!",
+    title: "CFO, Company C",
+    image:
+      "https://images.pexels.com/photos/2258536/pexels-photo-2258536.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  },
+  {
+    id: 4,
+    name: "Test Smith",
+    content:
+      "Build your product 10x faster and better with beUi's components. Just copy and paste!",
+    title: "CTO, Company B",
+    image:
+      "https://images.pexels.com/photos/5409751/pexels-photo-5409751.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  },
+  {
+    id: 5,
+    name: "Mary hey",
+    content:
+      "Build your product 10x faster and better with beUi's components. Just copy and paste!",
+    title: "CFO, Company C",
     image:
       "https://images.pexels.com/photos/2258536/pexels-photo-2258536.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
   },
@@ -27,7 +76,7 @@ const ShowCarousel = () => {
   const [codeString, setCodeString] = useState("");
 
   const getCode = (id: number) => {
-    const codeString = require(`!!raw-loader!./Accordian${id}.tsx`).default;
+    const codeString = require(`!!raw-loader!./Carousel${id}.tsx`).default;
     setCodeString(codeString);
   };
   return (
@@ -35,7 +84,7 @@ const ShowCarousel = () => {
       <div>
         <div className="flex justify-between items-center mb-4">
           <h1 className="font-medium text-gray-500">
-            Horizontal Carousel on Scroll
+            Testimonial Infinite Carousel
           </h1>
           <button
             onClick={() => {
@@ -47,6 +96,11 @@ const ShowCarousel = () => {
             View code
           </button>
         </div>
+
+        <div className="py-10 border border-gray-100 rounded-xl overflow-auto w-full">
+          <Carousel1 testimonialData={testimonials} />
+        </div>
+        {/* <div className="h-40 w-96 bg-gray-200" /> */}
       </div>
     </div>
   );
