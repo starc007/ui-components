@@ -65,7 +65,7 @@ export function Tooltip({ content, children, side = "top", delay = 200, classNam
             exit={{ opacity: 0, ...offset[side] }}
             transition={{ duration: 0.15 }}
             className={cn(
-              "pointer-events-none absolute z-50 whitespace-nowrap rounded-md border border-(--color-border) bg-(--color-bg-elev) px-2 py-1 text-xs text-(--color-fg) shadow-lg shadow-black/20",
+              "pointer-events-none absolute z-50 whitespace-nowrap rounded-md px-2 py-1 text-xs text-(--color-fg) glass",
               sideClasses[side],
               className,
             )}

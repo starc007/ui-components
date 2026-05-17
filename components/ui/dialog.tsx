@@ -28,7 +28,7 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-md"
+            className="fixed inset-0 bg-black/50 backdrop-blur-md"
           />
           <div className="fixed inset-0 flex items-center justify-center p-4">
             <MotionPanel
@@ -37,7 +37,7 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
               exit={{ opacity: 0, scale: 0.96, y: 8 }}
               transition={{ type: "spring", stiffness: 350, damping: 32 }}
               className={cn(
-                "relative w-full max-w-md rounded-2xl border border-(--color-border) bg-(--color-bg-elev) p-6 shadow-2xl shadow-black/30",
+                "relative w-full max-w-md rounded-2xl p-6 glass-strong",
                 className,
               )}
             >

@@ -52,7 +52,7 @@ export function Drawer({ open, onOpenChange, side = "right", title, description,
             exit={initial[side]}
             transition={{ type: "spring", stiffness: 320, damping: 36 }}
             className={cn(
-              "fixed border-(--color-border) bg-(--color-bg-elev) shadow-2xl",
+              "fixed glass-strong",
               sideStyles[side],
               className,
             )}

@@ -90,7 +90,7 @@ export function CommandK({ items, placeholder = "Search…", shortcut = "k" }: C
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -16, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 360, damping: 32 }}
-              className="w-full max-w-xl overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-elev) shadow-2xl shadow-black/30"
+              className="w-full max-w-xl overflow-hidden rounded-2xl glass-strong"
               onKeyDown={handleKey}
             >
               <div className="flex items-center gap-3 border-b border-(--color-border) px-4">
