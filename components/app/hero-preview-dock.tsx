@@ -26,7 +26,7 @@ export function HeroPreviewDock() {
           </div>
           <div className="mx-auto flex items-center gap-2 rounded-md border border-(--color-border) bg-(--color-bg)/60 px-3 py-1 text-xs text-(--color-fg-muted)">
             <span className="h-1.5 w-1.5 rounded-full bg-(--color-fg)" />
-            beui.xyz / dashboard
+            beui.saura3h.xyz / dashboard
           </div>
           <div className="flex items-center gap-1 text-(--color-fg-muted)">
             <kbd className="hidden items-center gap-1 rounded border border-(--color-border) bg-(--color-bg) px-1.5 py-0.5 text-[10px] sm:inline-flex">

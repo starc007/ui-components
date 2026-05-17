@@ -1,35 +1,48 @@
-# <p>beUi: Build better, Build faster</p>
+# beUI v2
 
-Build your project 10x faster with free beautiful ui components
+Bespoke motion components for React. No Radix, no shadcn. Just motion.
 
-![alt text](image.png)
+Copy. Paste. Done.
 
-## Speed up your development 🚀
+[beui.saura3h.xyz](https://beui.saura3h.xyz)
 
-1. Pre built customizable ui components ✨
-2. Browse, choose, copy and paste it in your project, that's it! 😉
+## What it is
 
-## 🛠️ Tech Stack
+A curated set of hand-built motion components for product UIs. Every component is a single file you own, with spring physics tuned by hand and zero third-party primitives.
 
-- [React](https://reactjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Framer Motion](https://www.framer.com/motion/introduction/)
+- Word-by-word text reveal with blur
+- macOS-style magnifying dock
+- Family-app morphing modal
+- Vaul-style bottom sheet with drag-to-dismiss
+- Command palette (⌘K) with fuzzy filter
+- Tabs (pill, segment, underline) with shared layoutId
+- Magnetic CTAs, tilt cards, marquee, tooltip, switch, dock, shared layout bg, animated number, number ticker, text shimmer
 
-## 🍰 Contributing
+## Stack
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+- Next 15 (App Router)
+- React 19
+- Tailwind CSS v4
+- [motion](https://motion.dev) (formerly framer-motion)
+- TypeScript
 
-Before contributing, please read the [contributing guidelines](CONTRIBUTING.md).
+## Run locally
 
-## 🙇 Reach out to me
+```bash
+bun install
+bun run dev
+```
 
-#### Saurabh Chauhan
+Open [http://localhost:3000](http://localhost:3000).
 
-- Twitter: [@saurra3h](https://twitter.com/saurra3h)
-- Instagram: [@saurra3h](https://instagram.com/saurra3h)
-- Github: [@starc007](https://github.com/starc007)
+## Using a component
 
-## ➤ License
+Browse the site, open any component page, copy the source file into your project. Each component is self-contained and depends only on `motion`, `lucide-react`, and a `cn` helper.
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+## Contributing
+
+PRs welcome. Keep components in `components/motion/`, add a preview in `components/previews/motion/`, register in `lib/registry.ts`.
+
+## Author
+
+Saurabh Chauhan · [@saurra3h](https://x.com/saurra3h)
