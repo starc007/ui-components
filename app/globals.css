@@ -1,14 +1,167 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: oklch(99% 0 0);
+  --bg-elev: oklch(97% 0 0);
+  --fg: oklch(15% 0 0);
+  --fg-muted: oklch(50% 0 0);
+  --border: oklch(15% 0 0 / 0.06);
+  --border-strong: oklch(15% 0 0 / 0.12);
+  --accent: oklch(72% 0.18 195);
+  --accent-fg: oklch(15% 0 0);
+  --neon: oklch(80% 0.22 145);
+  --violet: oklch(68% 0.22 295);
+  --danger: oklch(62% 0.22 25);
+  --success: oklch(70% 0.18 155);
+  --warning: oklch(78% 0.18 75);
+  --glass-bg: oklch(99% 0 0 / 0.55);
+  --glass-border: oklch(15% 0 0 / 0.08);
+}
+
+.dark {
+  --bg: #151515;
+  --bg-elev: #1c1c1c;
+  --fg: oklch(96% 0 0);
+  --fg-muted: oklch(62% 0 0);
+  --border: rgb(255 255 255 / 0.05);
+  --border-strong: rgb(255 255 255 / 0.1);
+  --accent: oklch(80% 0.18 195);
+  --accent-fg: #151515;
+  --glass-bg: rgb(28 28 28 / 0.55);
+  --glass-border: rgb(255 255 255 / 0.08);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elev: var(--bg-elev);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-neon: var(--neon);
+  --color-violet: var(--violet);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+}
+
+@theme {
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-marquee-vertical: marquee-vertical 30s linear infinite;
+  --animate-shimmer: shimmer 2.5s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap, 1rem)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap, 1rem)));
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--accent) 30%, transparent);
+    color: var(--fg);
+  }
+}
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-}
+  .text-pretty {
+    text-wrap: pretty;
+  }
 
-.glass__bg {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  .grid-noise {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklch, var(--fg) 6%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--fg) 6%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 32px 32px;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
+
+  .mask-radial-fade {
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
+  }
+  .mask-b-fade {
+    mask-image: linear-gradient(to bottom, black 60%, transparent);
+  }
+
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      0 1px 0 0 rgb(255 255 255 / 0.06) inset,
+      0 24px 60px -24px rgb(0 0 0 / 0.45);
+  }
+  .glass-strong {
+    background: color-mix(in oklch, var(--bg-elev) 40%, transparent);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+  }
+  .glass-thin {
+    background: color-mix(in oklch, var(--bg) 40%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+  }
+
+  .press {
+    transition: transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .press:active {
+    transform: scale(0.97);
+  }
 }
