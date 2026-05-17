@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 export interface BottomSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Heights (0-1 = fraction of viewport, or "auto" for content height). First entry is the default. */
+  /** Heights (0-1 = fraction of viewport, or "auto"). First entry is default. */
   snapPoints?: (number | "auto")[];
   defaultSnap?: number;
   title?: string;
@@ -37,7 +37,7 @@ export function BottomSheet({
   dismissThreshold = 120,
 }: BottomSheetProps) {
   const [snap, setSnap] = useState(defaultSnap);
-  const y = useMotionValue(0);
+  const dragY = useMotionValue(0);
   const dragControls = useDragControls();
   const sheetRef = useRef<HTMLDivElement>(null);
   const heightRef = useRef(0);
@@ -56,8 +56,8 @@ export function BottomSheet({
     };
   }, [open]);
 
-  // Overlay opacity scales with drag progress.
-  const overlayOpacity = useTransform(y, (v) => {
+  // Overlay opacity scales with how far the sheet has been dragged down.
+  const overlayOpacity = useTransform(dragY, (v) => {
     const h = heightRef.current || 600;
     return Math.max(0, 1 - v / h);
   });
@@ -68,47 +68,45 @@ export function BottomSheet({
 
     // Strong downward fling or large drag → dismiss.
     if (velocity > 600 || offset > dismissThreshold) {
-      // Try snapping to a smaller snap first; if already smallest, dismiss.
-      const smallerSnaps = snapPoints
-        .map((_, i) => i)
-        .filter((i) => i < snap);
-      if (smallerSnaps.length && velocity < 800 && offset < dismissThreshold * 1.6) {
-        setSnap(smallerSnaps[smallerSnaps.length - 1]);
+      const smaller = snapPoints.map((_, i) => i).filter((i) => i < snap);
+      if (smaller.length && velocity < 800 && offset < dismissThreshold * 1.6) {
+        setSnap(smaller[smaller.length - 1]);
       } else {
         onOpenChange(false);
       }
+      dragY.set(0);
       return;
     }
 
     // Strong upward fling → next snap.
     if (velocity < -500) {
-      const next = Math.min(snapPoints.length - 1, snap + 1);
-      setSnap(next);
+      setSnap(Math.min(snapPoints.length - 1, snap + 1));
+      dragY.set(0);
       return;
     }
 
     // Otherwise snap to nearest by current offset.
     if (offset > 80 && snap > 0) setSnap(snap - 1);
     else if (offset < -80 && snap < snapPoints.length - 1) setSnap(snap + 1);
+    dragY.set(0);
   };
 
   const snapValue = snapPoints[snap];
   const heightStyle =
-    snapValue === "auto"
-      ? { maxHeight: "92vh" }
-      : { height: `${snapValue * 100}vh` };
+    snapValue === "auto" ? { maxHeight: "92vh" } : { height: `${snapValue * 100}vh` };
 
   return (
     <AnimatePresence>
       {open ? (
-        <div className="fixed inset-0 z-50">
+        <div className="pointer-events-none fixed inset-0 z-50">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ opacity: overlayOpacity }}
+            transition={{ duration: 0.2 }}
             onClick={() => onOpenChange(false)}
-            className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            className="pointer-events-auto absolute inset-0 bg-black/55 [backdrop-filter:blur(16px)_saturate(140%)] [-webkit-backdrop-filter:blur(16px)_saturate(140%)]"
+            style={{ opacity: overlayOpacity }}
           />
           <motion.div
             ref={sheetRef}
@@ -118,21 +116,19 @@ export function BottomSheet({
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0.02, bottom: 0.4 }}
             dragMomentum={false}
+            onDrag={(_, info) => dragY.set(Math.max(0, info.offset.y))}
             onDragEnd={onDragEnd}
-            style={{ y, ...heightStyle }}
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 380, damping: 38, mass: 0.6 }}
-            onLayoutAnimationStart={() => {
-              if (sheetRef.current) heightRef.current = sheetRef.current.offsetHeight;
-            }}
+            transition={{ type: "spring", stiffness: 420, damping: 40, mass: 0.5 }}
             onAnimationComplete={() => {
               if (sheetRef.current) heightRef.current = sheetRef.current.offsetHeight;
             }}
+            style={heightStyle}
             className={cn(
-              "absolute bottom-0 left-0 right-0 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-2xl will-change-transform",
-              "glass-strong",
+              "pointer-events-auto absolute bottom-0 left-0 right-0 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-3xl will-change-transform",
+              "border border-(--color-border-strong) bg-(--color-bg-elev) shadow-[0_-24px_60px_-12px_rgb(0_0_0/0.45)]",
               className,
             )}
             role="dialog"
@@ -143,11 +139,11 @@ export function BottomSheet({
               onPointerDown={(e) => dragControls.start(e)}
               className="flex cursor-grab touch-none flex-col items-center px-4 pb-2 pt-3 active:cursor-grabbing"
             >
-              <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" />
+              <div className="h-1.5 w-10 rounded-full bg-(--color-fg-muted)/40" />
               {title || description ? (
                 <div className="mt-3 w-full">
-                  {title ? <h2 className="text-base font-semibold text-foreground">{title}</h2> : null}
-                  {description ? <p className="mt-0.5 text-sm text-muted-foreground">{description}</p> : null}
+                  {title ? <h2 className="text-base font-semibold text-(--color-fg)">{title}</h2> : null}
+                  {description ? <p className="mt-0.5 text-sm text-(--color-fg-muted)">{description}</p> : null}
                 </div>
               ) : null}
             </div>

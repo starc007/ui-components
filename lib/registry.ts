@@ -16,14 +16,8 @@ export const registry: CategoryEntry[] = [
   {
     slug: "motion",
     name: "Motion",
-    description: "A curated set of motion components built on top of shadcn primitives.",
+    description: "A curated set of bespoke motion components — no Radix, no shadcn, just motion.",
     components: [
-      {
-        slug: "spotlight-card",
-        name: "Spotlight Card",
-        description: "Cursor-follow radial glow plus an animated gradient border.",
-        file: "components/motion/spotlight-card.tsx",
-      },
       {
         slug: "tilt-card",
         name: "Tilt Card",
@@ -41,6 +35,30 @@ export const registry: CategoryEntry[] = [
         name: "Marquee",
         description: "Infinite horizontal or vertical scroll with pause-on-hover.",
         file: "components/motion/marquee.tsx",
+      },
+      {
+        slug: "tabs",
+        name: "Tabs",
+        description: "Pill, segment or underline tabs with a spring layoutId indicator.",
+        file: "components/motion/tabs.tsx",
+      },
+      {
+        slug: "switch",
+        name: "Switch",
+        description: "Toggle with a spring-driven thumb and press feedback.",
+        file: "components/motion/switch.tsx",
+      },
+      {
+        slug: "bottom-sheet",
+        name: "Bottom Sheet",
+        description: "Vaul-inspired draggable bottom sheet with snap points, inertia and glass surface.",
+        file: "components/motion/bottom-sheet.tsx",
+      },
+      {
+        slug: "command-palette",
+        name: "Command Palette",
+        description: "⌘K palette with fuzzy filter, spring-animated active row and glass surface.",
+        file: "components/motion/command-palette.tsx",
       },
       {
         slug: "text-reveal",
@@ -65,12 +83,6 @@ export const registry: CategoryEntry[] = [
         name: "Number Ticker",
         description: "Slot-machine rolling digits with staggered entry.",
         file: "components/motion/number-ticker.tsx",
-      },
-      {
-        slug: "bottom-sheet",
-        name: "Bottom Sheet",
-        description: "Vaul-inspired draggable bottom sheet with snap points and inertia.",
-        file: "components/motion/bottom-sheet.tsx",
       },
     ],
   },
