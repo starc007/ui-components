@@ -1,0 +1,32 @@
+import { promises as fs } from "node:fs";
+import path from "node:path";
+import { allComponents, findComponent } from "@/lib/registry";
+import { findCategoryBySlug } from "@/lib/registry-server";
+
+export const dynamic = "force-static";
+
+export function generateStaticParams() {
+  return allComponents().map((c) => ({ slug: c.slug }));
+}
+
+export async function GET(
+  _req: Request,
+  ctx: { params: Promise<{ slug: string }> },
+) {
+  const { slug } = await ctx.params;
+  const cat = findCategoryBySlug(slug);
+  if (!cat) return new Response("not_found", { status: 404 });
+  const comp = findComponent(cat.slug, slug);
+  if (!comp) return new Response("not_found", { status: 404 });
+  try {
+    const src = await fs.readFile(path.join(process.cwd(), comp.file), "utf8");
+    return new Response(src, {
+      headers: {
+        "content-type": "text/plain; charset=utf-8",
+        "cache-control": "public, max-age=300, s-maxage=3600",
+      },
+    });
+  } catch {
+    return new Response("source_unavailable", { status: 500 });
+  }
+}

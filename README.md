@@ -39,6 +39,15 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Browse the site, open any component page, copy the source file into your project. Each component is self-contained and depends only on `motion`, `lucide-react`, and a `cn` helper.
 
+## For AI agents
+
+- `https://beui.saura3h.xyz/llms.txt` — markdown index ([llmstxt.org](https://llmstxt.org) format)
+- `https://beui.saura3h.xyz/r` — JSON index of all components
+- `https://beui.saura3h.xyz/r/{slug}` — JSON detail with files, deps, source
+- `https://beui.saura3h.xyz/r/{slug}/raw` — raw `.tsx` source (text/plain)
+
+Each component entry lists external `dependencies` to install plus internal helpers shipped inline. Drop files at the listed paths and you are done.
+
 ## Contributing
 
 PRs welcome. Keep components in `components/motion/`, add a preview in `components/previews/motion/`, register in `lib/registry.ts`.
