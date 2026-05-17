@@ -16,7 +16,7 @@ export const registry: CategoryEntry[] = [
   {
     slug: "motion",
     name: "Motion",
-    description: "A curated set of bespoke motion components — no Radix, no shadcn, just motion.",
+    description: "A curated set of bespoke motion components. No Radix, no shadcn. Just motion.",
     components: [
       {
         slug: "tilt-card",
@@ -81,7 +81,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "morphing-modal",
         name: "Morphing Modal",
-        description: "Family-app-style modal — a single panel that morphs its height as you navigate between inner views, blur cross-fade on content.",
+        description: "Family-app-style modal. A single panel that morphs its height as you navigate between inner views, with blur cross-fade on content.",
         file: "components/motion/morphing-modal.tsx",
       },
       {

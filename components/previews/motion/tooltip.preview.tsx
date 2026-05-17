@@ -28,7 +28,7 @@ export function TooltipPreview() {
           </button>
         </Tooltip>
       </div>
-      <p className="text-xs text-(--color-fg-muted)">Hover or focus each button — content fades + un-blurs in.</p>
+      <p className="text-xs text-(--color-fg-muted)">Hover or focus each button. Content fades and un-blurs in.</p>
     </div>
   );
 }

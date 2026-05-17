@@ -18,7 +18,7 @@ export function MorphingModalPreview() {
       >
         Open wallet options
       </button>
-      <p className="text-xs text-(--color-fg-muted)">Click a row — the modal morphs height to match new content.</p>
+      <p className="text-xs text-(--color-fg-muted)">Click a row. The modal morphs height to match new content.</p>
 
       <MorphingModal viewId={view} onClose={() => setView(null)}>
         {view === "options" ? (

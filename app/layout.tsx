@@ -12,8 +12,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-  title: "beUI v2 — bespoke motion components for React",
-  description: "A curated motion library built with React, Tailwind v4 and motion. No Radix, no shadcn — just craft.",
+  title: "beUI v2 · bespoke motion components for React",
+  description: "A curated motion library built with React, Tailwind v4 and motion. No Radix, no shadcn. Just craft.",
   openGraph: {
     title: "beUI v2",
     description: "Bespoke motion components for React.",

@@ -6,7 +6,7 @@ import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 const items = [
   { title: "Inbox", body: "12 unread threads, 3 mentions today." },
   { title: "Drafts", body: "4 posts waiting for a final pass." },
-  { title: "Releases", body: "Last shipped 2 days ago — v0.4.1." },
+  { title: "Releases", body: "Last shipped 2 days ago, v0.4.1." },
   { title: "Billing", body: "Plan renews on the 1st of next month." },
 ];
 

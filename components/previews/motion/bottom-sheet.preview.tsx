@@ -27,7 +27,7 @@ export function BottomSheetPreview() {
           ))}
         </ul>
         <div className="py-12 text-center text-xs text-(--color-fg-muted)">
-          Fling up to expand — fling down to dismiss.
+          Fling up to expand, fling down to dismiss.
         </div>
       </BottomSheet>
     </>

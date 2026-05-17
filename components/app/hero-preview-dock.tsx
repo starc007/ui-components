@@ -102,7 +102,7 @@ function SidePanel() {
           Bespoke motion components
         </div>
         <p className="mt-1 text-[11px] text-(--color-fg-muted)">
-          Tabs, switches, sheets, palettes — all motion-driven.
+          Tabs, switches, sheets, palettes. All motion-driven.
         </p>
       </div>
     </div>
