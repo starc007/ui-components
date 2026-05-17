@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, Github, Sparkles, Layers } from "lucide-react";
+import { ArrowRight, Sparkles, Layers } from "lucide-react";
+import { GithubIcon } from "@/components/app/icons";
 import { registry, allComponents } from "@/lib/registry";
 import { SpotlightCard } from "@/components/motion/spotlight-card";
 import { Magnetic } from "@/components/motion/magnetic";
@@ -52,7 +53,7 @@ export default function Home() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Magnetic strength={0.25}>
               <Link
-                href="/components/primitives"
+                href="/components/motion"
                 className="group relative inline-flex h-12 items-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-semibold text-(--color-accent-fg) press
                 bg-(--color-accent)
                 shadow-[0_1px_0_0_rgb(255_255_255/0.25)_inset,0_0_0_1px_color-mix(in_oklch,var(--color-accent)_40%,transparent),0_24px_60px_-18px_var(--color-accent)]"
@@ -71,7 +72,7 @@ export default function Home() {
               rel="noreferrer noopener"
               className="inline-flex h-12 items-center gap-2 rounded-xl px-5 text-sm font-medium text-(--color-fg) glass-thin press hover:border-(--color-border-strong)"
             >
-              <Github className="h-4 w-4" />
+              <GithubIcon className="h-4 w-4" />
               Star on GitHub
             </Link>
           </div>
@@ -102,7 +103,7 @@ export default function Home() {
             </h2>
           </div>
           <Link
-            href="/components/primitives"
+            href="/components/motion"
             className="hidden text-sm text-(--color-fg-muted) hover:text-(--color-fg) md:inline-flex"
           >
             Browse all →

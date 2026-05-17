@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/utils";
 import type { ElementType, ReactNode } from "react";
 
 export interface TextShimmerProps {

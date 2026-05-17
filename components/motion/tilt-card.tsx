@@ -2,7 +2,7 @@
 
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "motion/react";
 import { useRef, type ReactNode } from "react";
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/utils";
 
 export interface TiltCardProps {
   children: ReactNode;

@@ -1,8 +1,16 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { findCategory, findComponent, registry } from "@/lib/registry";
-import { Breadcrumb } from "@/components/data-nav/breadcrumb";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { CodeBlock } from "@/components/app/code-block";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getPreview } from "@/components/previews";
@@ -39,15 +47,27 @@ export default async function ComponentPage({
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          { label: "Components", href: "/components" },
-          { label: cat.name, href: `/components/${cat.slug}` },
-          { label: comp.name },
-        ]}
-      />
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-(--color-fg)">{comp.name}</h1>
-      <p className="mt-2 max-w-2xl text-(--color-fg-muted)">{comp.description}</p>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/components">Components</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href={`/components/${cat.slug}`}>{cat.name}</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{comp.name}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight">{comp.name}</h1>
+      <p className="mt-2 max-w-2xl text-muted-foreground">{comp.description}</p>
 
       <Tabs defaultValue="preview" className="mt-8">
         <TabsList>
@@ -55,17 +75,17 @@ export default async function ComponentPage({
           <TabsTrigger value="usage">Usage</TabsTrigger>
           <TabsTrigger value="source">Source</TabsTrigger>
         </TabsList>
-        <TabsContent value="preview">
-          <div className="overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-elev)">
+        <TabsContent value="preview" className="mt-4">
+          <div className="overflow-hidden rounded-2xl border border-border bg-card">
             <div className="flex min-h-[320px] items-center justify-center p-10">
               {Preview ? <Preview /> : null}
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="usage">
+        <TabsContent value="usage" className="mt-4">
           <CodeBlock code={usage} filename={previewFile} />
         </TabsContent>
-        <TabsContent value="source">
+        <TabsContent value="source" className="mt-4">
           <CodeBlock code={source} filename={comp.file} />
         </TabsContent>
       </Tabs>

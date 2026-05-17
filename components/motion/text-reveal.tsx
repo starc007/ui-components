@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/utils";
 
 export interface TextRevealProps {
   text: string;

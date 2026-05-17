@@ -9,9 +9,9 @@ import {
   type PanInfo,
 } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/utils";
 
-export interface SheetProps {
+export interface BottomSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** Heights (0-1 = fraction of viewport, or "auto" for content height). First entry is the default. */
@@ -25,7 +25,7 @@ export interface SheetProps {
   dismissThreshold?: number;
 }
 
-export function Sheet({
+export function BottomSheet({
   open,
   onOpenChange,
   snapPoints = [0.5, 0.92],
@@ -35,7 +35,7 @@ export function Sheet({
   children,
   className,
   dismissThreshold = 120,
-}: SheetProps) {
+}: BottomSheetProps) {
   const [snap, setSnap] = useState(defaultSnap);
   const y = useMotionValue(0);
   const dragControls = useDragControls();
@@ -143,11 +143,11 @@ export function Sheet({
               onPointerDown={(e) => dragControls.start(e)}
               className="flex cursor-grab touch-none flex-col items-center px-4 pb-2 pt-3 active:cursor-grabbing"
             >
-              <div className="h-1.5 w-10 rounded-full bg-(--color-fg-muted)/40" />
+              <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" />
               {title || description ? (
                 <div className="mt-3 w-full">
-                  {title ? <h2 className="text-base font-semibold text-(--color-fg)">{title}</h2> : null}
-                  {description ? <p className="mt-0.5 text-sm text-(--color-fg-muted)">{description}</p> : null}
+                  {title ? <h2 className="text-base font-semibold text-foreground">{title}</h2> : null}
+                  {description ? <p className="mt-0.5 text-sm text-muted-foreground">{description}</p> : null}
                 </div>
               ) : null}
             </div>

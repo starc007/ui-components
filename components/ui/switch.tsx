@@ -1,43 +1,33 @@
-"use client";
+"use client"
 
-import { Switch as HSwitch } from "@headlessui/react";
-import { motion } from "motion/react";
-import { cn } from "@/lib/cn";
+import * as React from "react"
+import { Switch as SwitchPrimitive } from "radix-ui"
 
-export interface SwitchProps {
-  checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
-  disabled?: boolean;
-  label?: string;
-  className?: string;
-}
+import { cn } from "@/lib/utils"
 
-export function Switch({ checked, onCheckedChange, disabled, label, className }: SwitchProps) {
+function Switch({
+  className,
+  size = "default",
+  ...props
+}: React.ComponentProps<typeof SwitchPrimitive.Root> & {
+  size?: "sm" | "default"
+}) {
   return (
-    <HSwitch.Group>
-      <div className={cn("flex items-center gap-3", className)}>
-        <HSwitch
-          checked={checked}
-          onChange={onCheckedChange}
-          disabled={disabled}
-          className={cn(
-            "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg) disabled:opacity-50 disabled:cursor-not-allowed",
-            checked ? "bg-(--color-accent)" : "bg-(--color-border-strong)",
-          )}
-        >
-          <motion.span
-            layout
-            transition={{ type: "spring", stiffness: 700, damping: 30 }}
-            className={cn(
-              "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0",
-              checked ? "translate-x-5" : "translate-x-0",
-            )}
-          />
-        </HSwitch>
-        {label ? (
-          <HSwitch.Label className="text-sm text-(--color-fg) cursor-pointer">{label}</HSwitch.Label>
-        ) : null}
-      </div>
-    </HSwitch.Group>
-  );
+    <SwitchPrimitive.Root
+      data-slot="switch"
+      data-size={size}
+      className={cn(
+        "peer group/switch relative inline-flex shrink-0 items-center rounded-full border border-transparent transition-all outline-none after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-[size=default]:h-[18.4px] data-[size=default]:w-[32px] data-[size=sm]:h-[14px] data-[size=sm]:w-[24px] dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 data-checked:bg-primary data-unchecked:bg-input dark:data-unchecked:bg-input/80 data-disabled:cursor-not-allowed data-disabled:opacity-50",
+        className
+      )}
+      {...props}
+    >
+      <SwitchPrimitive.Thumb
+        data-slot="switch-thumb"
+        className="pointer-events-none block rounded-full bg-background ring-0 transition-transform group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 group-data-[size=default]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=sm]/switch:data-checked:translate-x-[calc(100%-2px)] dark:data-checked:bg-primary-foreground group-data-[size=default]/switch:data-unchecked:translate-x-0 group-data-[size=sm]/switch:data-unchecked:translate-x-0 dark:data-unchecked:bg-foreground"
+      />
+    </SwitchPrimitive.Root>
+  )
 }
+
+export { Switch }
