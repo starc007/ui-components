@@ -2,9 +2,9 @@ import { SiteSidebar } from "@/components/app/site-sidebar";
 
 export default function ComponentsLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mx-auto flex max-w-7xl gap-8 px-4">
+    <div className="mx-auto max-w-7xl px-4">
       <SiteSidebar />
-      <div className="min-w-0 flex-1 py-8">{children}</div>
+      <div className="min-w-0 py-8 md:pl-64">{children}</div>
     </div>
   );
 }

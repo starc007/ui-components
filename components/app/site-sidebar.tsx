@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 export function SiteSidebar() {
   const pathname = usePathname();
   return (
-    <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-60 shrink-0 overflow-x-visible overflow-y-auto py-6 pr-4 md:block">
+    <aside className="fixed top-14 hidden h-[calc(100vh-3.5rem)] w-60 overflow-x-visible overflow-y-auto py-6 pr-4 md:block">
       <nav className="flex flex-col gap-8">
         {registry.map((cat) => (
           <div key={cat.slug}>
@@ -19,7 +19,10 @@ export function SiteSidebar() {
             >
               {cat.name}
             </Link>
-            <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-(--color-fg)/[0.05]">
+            <SharedLayoutBg
+              inset={0}
+              pillClassName="rounded-lg bg-(--color-fg)/[0.05]"
+            >
               {cat.components.map((comp) => {
                 const href = `/components/${cat.slug}/${comp.slug}`;
                 const active = pathname === href;
