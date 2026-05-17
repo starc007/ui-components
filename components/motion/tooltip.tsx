@@ -21,6 +21,8 @@ export interface TooltipProps {
   /** Delay before showing (ms). Default 120. */
   delay?: number;
   className?: string;
+  /** Classes for the outer wrapper span. Use to fix baseline / fill parent. */
+  wrapperClassName?: string;
 }
 
 const wrapperClasses: Record<Side, string> = {
@@ -82,7 +84,7 @@ function buildVariants(side: Side): Variants {
   };
 }
 
-export function Tooltip({ content, children, side = "top", delay = 120, className }: TooltipProps) {
+export function Tooltip({ content, children, side = "top", delay = 120, className, wrapperClassName }: TooltipProps) {
   const [open, setOpen] = useState(false);
   const id = useId();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -112,7 +114,7 @@ export function Tooltip({ content, children, side = "top", delay = 120, classNam
   const variants = buildVariants(side);
 
   return (
-    <span className="relative inline-flex">
+    <span className={cn("relative inline-flex align-middle", wrapperClassName)}>
       {trigger}
       <AnimatePresence mode="wait">
         {open ? (

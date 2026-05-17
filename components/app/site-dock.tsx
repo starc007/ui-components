@@ -24,7 +24,11 @@ export function SiteDock() {
       <div className="pointer-events-auto">
         <Dock className="border border-fg/5">
           <DockItem aria-label="Home" active={isHome}>
-            <Tooltip content="Home" side="top">
+            <Tooltip
+              content="Home"
+              side="top"
+              wrapperClassName="h-full w-full items-center justify-center"
+            >
               <Link
                 href="/"
                 aria-label="Home"
@@ -35,7 +39,11 @@ export function SiteDock() {
             </Tooltip>
           </DockItem>
           <DockItem aria-label="Components" active={isComponents}>
-            <Tooltip content="Components" side="top">
+            <Tooltip
+              content="Components"
+              side="top"
+              wrapperClassName="h-full w-full items-center justify-center"
+            >
               <Link
                 href="/components/motion"
                 aria-label="Components"
@@ -47,7 +55,11 @@ export function SiteDock() {
           </DockItem>
           <DockSeparator />
           <DockItem aria-label="GitHub">
-            <Tooltip content="GitHub" side="top">
+            <Tooltip
+              content="GitHub"
+              side="top"
+              wrapperClassName="h-full w-full items-center justify-center"
+            >
               <Link
                 href="https://github.com/starc007/ui-components"
                 target="_blank"
@@ -60,7 +72,11 @@ export function SiteDock() {
             </Tooltip>
           </DockItem>
           <DockItem aria-label="Toggle theme">
-            <Tooltip content={mounted && isDark ? "Light mode" : "Dark mode"} side="top">
+            <Tooltip
+              content={mounted && isDark ? "Light mode" : "Dark mode"}
+              side="top"
+              wrapperClassName="h-full w-full items-center justify-center"
+            >
               <button
                 type="button"
                 onClick={() => setTheme(isDark ? "light" : "dark")}

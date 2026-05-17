@@ -135,7 +135,7 @@ export function DockItem({
       aria-label={rest["aria-label"]}
       style={{ width, height: width }}
       className={cn(
-        "relative flex shrink-0 items-center justify-center rounded-full",
+        "relative flex shrink-0 items-center justify-center rounded-full text-(--color-fg)",
         className,
       )}
     >
@@ -146,7 +146,7 @@ export function DockItem({
           className="absolute inset-0.5 -z-10 rounded-xl bg-(--color-fg)/5"
         />
       ) : null}
-      <span className="relative text-(--color-fg)">{children}</span>
+      {children}
     </motion.div>
   );
 }
