@@ -79,6 +79,12 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/tooltip.tsx",
       },
       {
+        slug: "morphing-modal",
+        name: "Morphing Modal",
+        description: "Family-app-style modal — a single panel that morphs its height as you navigate between inner views, blur cross-fade on content.",
+        file: "components/motion/morphing-modal.tsx",
+      },
+      {
         slug: "text-reveal",
         name: "Text Reveal",
         description: "Word-by-word mask reveal driven by scroll progress.",

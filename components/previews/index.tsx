@@ -13,6 +13,7 @@ import { CommandPalettePreview } from "./motion/command-palette.preview";
 import { SharedLayoutBgPreview } from "./motion/shared-layout-bg.preview";
 import { DockPreview } from "./motion/dock.preview";
 import { TooltipPreview } from "./motion/tooltip.preview";
+import { MorphingModalPreview } from "./motion/morphing-modal.preview";
 
 export const previews: Record<string, () => ReactNode> = {
   "motion/tilt-card": TiltCardPreview,
@@ -29,6 +30,7 @@ export const previews: Record<string, () => ReactNode> = {
   "motion/shared-layout-bg": SharedLayoutBgPreview,
   "motion/dock": DockPreview,
   "motion/tooltip": TooltipPreview,
+  "motion/morphing-modal": MorphingModalPreview,
 };
 
 export function getPreview(category: string, slug: string) {

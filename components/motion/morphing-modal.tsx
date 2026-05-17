@@ -1,0 +1,123 @@
+"use client";
+
+import {
+  AnimatePresence,
+  motion,
+  type Transition,
+} from "motion/react";
+import {
+  type ReactNode,
+  useEffect,
+} from "react";
+import { cn } from "@/lib/utils";
+
+export interface MorphingModalProps {
+  /** Which view is currently shown. `null` closes the modal. */
+  viewId: string | null;
+  onClose: () => void;
+  children: ReactNode;
+  /** "bottom" anchors to the viewport bottom (mobile-like). "center" centers vertically. */
+  placement?: "bottom" | "center";
+  className?: string;
+}
+
+const SPRING: Transition = { type: "spring", stiffness: 400, damping: 38, mass: 0.7 };
+
+export function MorphingModal({
+  viewId,
+  onClose,
+  children,
+  placement = "bottom",
+  className,
+}: MorphingModalProps) {
+  const open = viewId !== null;
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  return (
+    <div
+      aria-hidden={!open}
+      className={cn(
+        "fixed inset-0 z-[80]",
+        open ? "pointer-events-auto" : "pointer-events-none",
+      )}
+    >
+      <motion.div
+        initial={false}
+        animate={{ opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        onClick={onClose}
+        className={cn(
+          "absolute inset-0 bg-black/50 [backdrop-filter:blur(14px)_saturate(140%)] [-webkit-backdrop-filter:blur(14px)_saturate(140%)]",
+          open ? "pointer-events-auto" : "pointer-events-none",
+        )}
+      />
+
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-0 flex justify-center px-4",
+          placement === "bottom" ? "items-end pb-8" : "items-center",
+        )}
+      >
+        <AnimatePresence initial={false}>
+          {open ? (
+            <motion.div
+              key="panel"
+              layout
+              initial={{
+                opacity: 0,
+                y: placement === "bottom" ? 40 : 20,
+                scale: 0.97,
+              }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{
+                opacity: 0,
+                y: placement === "bottom" ? 40 : 20,
+                scale: 0.98,
+                transition: { duration: 0.18, ease: [0.16, 1, 0.3, 1] },
+              }}
+              transition={SPRING}
+              className={cn(
+                "pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-3xl border border-(--color-border-strong) bg-(--color-bg-elev) shadow-[0_30px_60px_-20px_rgb(0_0_0/0.5),0_0_0_1px_rgb(255_255_255/0.04)_inset] will-change-transform",
+                className,
+              )}
+            >
+              <motion.div layout="position" className="p-5">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.div
+                    key={viewId}
+                    initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      filter: "blur(0px)",
+                      transition: {
+                        duration: 0.24,
+                        ease: [0.16, 1, 0.3, 1],
+                      },
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: -8,
+                      filter: "blur(4px)",
+                      transition: { duration: 0.16, ease: [0.16, 1, 0.3, 1] },
+                    }}
+                  >
+                    {children}
+                  </motion.div>
+                </AnimatePresence>
+              </motion.div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
