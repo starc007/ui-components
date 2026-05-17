@@ -72,7 +72,7 @@ export function Dock({
       onMouseMove={(e) => mouseX.set(e.clientX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "inline-flex h-auto items-end gap-1.5 rounded-2xl px-2 py-1.5 glass-strong",
+        "inline-flex h-auto items-end gap-1.5 rounded-2xl px-2 py-1 glass-strong",
         className,
       )}
     >
@@ -143,7 +143,7 @@ export function DockItem({
         <motion.span
           layoutId={pillLayoutId}
           transition={PILL_SPRING}
-          className="absolute inset-0.5 -z-10 rounded-xl bg-(--color-fg)/8"
+          className="absolute inset-0.5 -z-10 rounded-xl bg-(--color-fg)/5"
         />
       ) : null}
       <span className="relative text-(--color-fg)">{children}</span>

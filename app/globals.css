@@ -58,21 +58,35 @@
   --animate-shimmer: shimmer 2.5s linear infinite;
 
   @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(calc(-100% - var(--gap, 1rem))); }
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap, 1rem)));
+    }
   }
   @keyframes marquee-vertical {
-    from { transform: translateY(0); }
-    to { transform: translateY(calc(-100% - var(--gap, 1rem))); }
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap, 1rem)));
+    }
   }
   @keyframes shimmer {
-    from { background-position: 200% 0; }
-    to { background-position: -200% 0; }
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
   }
 }
 
 @layer base {
-  html { color-scheme: light dark; }
+  html {
+    color-scheme: light dark;
+  }
   body {
     background: var(--bg);
     color: var(--fg);
@@ -87,18 +101,34 @@
 }
 
 @layer utilities {
-  .text-balance { text-wrap: balance; }
-  .text-pretty { text-wrap: pretty; }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
 
   .grid-noise {
     background-image:
-      linear-gradient(to right, color-mix(in oklch, var(--fg) 6%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklch, var(--fg) 6%, transparent) 1px, transparent 1px);
+      linear-gradient(
+        to right,
+        color-mix(in oklch, var(--fg) 6%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--fg) 6%, transparent) 1px,
+        transparent 1px
+      );
     background-size: 32px 32px;
   }
 
-  .scrollbar-hide::-webkit-scrollbar { display: none; }
-  .scrollbar-hide { scrollbar-width: none; }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
 
   .mask-radial-fade {
     mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
@@ -117,13 +147,9 @@
       0 24px 60px -24px rgb(0 0 0 / 0.45);
   }
   .glass-strong {
-    background: color-mix(in oklch, var(--bg-elev) 78%, transparent);
-    backdrop-filter: blur(28px) saturate(180%);
+    background: color-mix(in oklch, var(--bg-elev) 40%, transparent);
+    backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(28px) saturate(180%);
-    border: 1px solid var(--glass-border);
-    box-shadow:
-      0 1px 0 0 rgb(255 255 255 / 0.06) inset,
-      0 24px 60px -24px rgb(0 0 0 / 0.45);
   }
   .glass-thin {
     background: color-mix(in oklch, var(--bg) 40%, transparent);

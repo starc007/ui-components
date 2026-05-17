@@ -73,6 +73,12 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/dock.tsx",
       },
       {
+        slug: "tooltip",
+        name: "Tooltip",
+        description: "Hover or focus tooltip with blur enter/exit and spring spawn.",
+        file: "components/motion/tooltip.tsx",
+      },
+      {
         slug: "text-reveal",
         name: "Text Reveal",
         description: "Word-by-word mask reveal driven by scroll progress.",

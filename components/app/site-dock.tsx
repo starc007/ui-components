@@ -21,9 +21,13 @@ export function SiteDock() {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-6 z-40 flex justify-center px-4">
       <div className="pointer-events-auto">
-        <Dock>
+        <Dock className="border border-fg/5">
           <DockItem aria-label="Home" active={isHome}>
-            <Link href="/" aria-label="Home" className="flex h-full w-full items-center justify-center">
+            <Link
+              href="/"
+              aria-label="Home"
+              className="flex h-full w-full items-center justify-center"
+            >
               <Home className="h-5 w-5" />
             </Link>
           </DockItem>
@@ -56,7 +60,11 @@ export function SiteDock() {
               className="flex h-full w-full items-center justify-center"
             >
               {mounted ? (
-                isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />
+                isDark ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )
               ) : (
                 <span className="h-5 w-5" />
               )}
