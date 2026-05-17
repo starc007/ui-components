@@ -6,6 +6,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/app/theme-provider";
 import { SiteHeader } from "@/components/app/site-header";
 import { SiteDock } from "@/components/app/site-dock";
+import { SiteFrame } from "@/components/app/site-frame";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -41,7 +42,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen antialiased">
         <ThemeProvider>
           <SiteHeader />
-          <main className="pt-14 pb-32">{children}</main>
+          <main className="pt-14 pb-32">
+            <SiteFrame>{children}</SiteFrame>
+          </main>
           <SiteDock />
           <Analytics />
           <SpeedInsights />

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LayoutGrid, Moon, Sun } from "lucide-react";
+import { Home, LayoutGrid, Mail, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Dock, DockItem, DockSeparator } from "@/components/motion/dock";
@@ -69,6 +69,21 @@ export function SiteDock() {
               >
                 <GithubIcon className="h-5 w-5" />
               </Link>
+            </Tooltip>
+          </DockItem>
+          <DockItem aria-label="Email">
+            <Tooltip
+              content="saurabh10102@gmail.com"
+              side="top"
+              wrapperClassName="h-full w-full items-center justify-center"
+            >
+              <a
+                href="mailto:saurabh10102@gmail.com"
+                aria-label="Email"
+                className="flex h-full w-full items-center justify-center"
+              >
+                <Mail className="h-5 w-5" />
+              </a>
             </Tooltip>
           </DockItem>
           <DockItem aria-label="Toggle theme">
