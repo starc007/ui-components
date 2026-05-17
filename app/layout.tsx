@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen antialiased">
         <ThemeProvider>
           <SiteHeader />
-          <main className="pb-32">{children}</main>
+          <main className="pt-14 pb-32">{children}</main>
           <SiteDock />
           <Analytics />
           <SpeedInsights />
