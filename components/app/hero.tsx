@@ -5,57 +5,16 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { motion } from "motion/react";
 import { GithubIcon } from "@/components/app/icons";
 import { Magnetic } from "@/components/motion/magnetic";
-
-const SPRING = {
-  type: "spring" as const,
-  stiffness: 140,
-  damping: 26,
-  mass: 1.2,
-};
-const STAGGER = 0.09;
-
-function splitWords(text: string) {
-  return text.split(" ");
-}
-
-function Line({ text, startDelay }: { text: string; startDelay: number }) {
-  const words = splitWords(text);
-  return (
-    <span>
-      {words.map((word, i) => (
-        <motion.span
-          key={`${word}-${i}`}
-          initial={{ y: "40%", opacity: 0, filter: "blur(12px)" }}
-          animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-          transition={{
-            y: { ...SPRING, delay: startDelay + i * STAGGER },
-            opacity: {
-              duration: 0.7,
-              ease: [0.16, 1, 0.3, 1],
-              delay: startDelay + i * STAGGER,
-            },
-            filter: {
-              duration: 0.9,
-              ease: [0.16, 1, 0.3, 1],
-              delay: startDelay + i * STAGGER,
-            },
-          }}
-          className="inline-block will-change-transform"
-        >
-          {word}
-          {i < words.length - 1 ? (
-            <span className="inline-block">&nbsp;</span>
-          ) : null}
-        </motion.span>
-      ))}
-    </span>
-  );
-}
+import { TextReveal } from "@/components/motion/text-reveal";
 
 const HEADLINE = ["Motion components", "that don't suck."];
+const HEADLINE_WORDS = HEADLINE.reduce((n, l) => n + l.split(" ").length, 0);
+const STAGGER = 0.09;
+const START = 0.12;
 
 export function Hero() {
-  const subDelay = 0.12 + HEADLINE.length * 0.25 + 0.2;
+  const headlineEnd = START + HEADLINE_WORDS * STAGGER;
+  const subDelay = headlineEnd + 0.05;
   const ctaDelay = subDelay + 0.25;
 
   return (
@@ -77,39 +36,29 @@ export function Hero() {
         </Link>
       </motion.div>
 
-      <h1 className="text-balance text-[2.75rem] font-semibold leading-[0.95] tracking-[-0.045em] text-(--color-fg) sm:text-6xl md:text-6xl lg:text-[4.5rem]">
-        {HEADLINE.map((line, i) => (
-          <span key={line} className="block py-[0.02em]">
-            <Line text={line} startDelay={0.12 + i * 0.2} />
-          </span>
-        ))}
-      </h1>
+      <TextReveal
+        as="h1"
+        text={HEADLINE}
+        delay={START}
+        stagger={STAGGER}
+        className="text-balance text-[2.75rem] font-semibold leading-[0.95] tracking-[-0.045em] text-(--color-fg) sm:text-6xl md:text-6xl lg:text-[4.5rem]"
+      />
 
       <motion.p
         initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        transition={{
-          duration: 0.55,
-          ease: [0.16, 1, 0.3, 1],
-          delay: subDelay,
-        }}
+        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: subDelay }}
         className="mx-auto mt-7 max-w-2xl text-pretty text-base text-(--color-fg-muted) md:text-lg"
       >
         Interactions worth shipping.{" "}
-        <span className="text-(--color-fg)">
-          No Radix, no shadcn. Just motion.
-        </span>{" "}
+        <span className="text-(--color-fg)">No Radix, no shadcn. Just motion.</span>{" "}
         Copy, paste, done.
       </motion.p>
 
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.55,
-          ease: [0.16, 1, 0.3, 1],
-          delay: ctaDelay,
-        }}
+        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: ctaDelay }}
         className="mt-10 flex flex-wrap items-center justify-center gap-3"
       >
         <Magnetic strength={0.2}>
