@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, MotionConfig, type Transition } from "motion/react";
 import { createContext, useContext, useId, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +20,14 @@ function useTabs() {
   if (!ctx) throw new Error("Tabs.* must be used inside <Tabs>");
   return ctx;
 }
+
+// Weighty spring — borrowed from dimi.me/lab/animated-tabs.
+const transition: Transition = {
+  type: "spring",
+  stiffness: 170,
+  damping: 24,
+  mass: 1.2,
+};
 
 export function Tabs({
   defaultValue,
@@ -45,9 +53,11 @@ export function Tabs({
     onValueChange?.(v);
   };
   return (
-    <TabsCtx.Provider value={{ value: current, setValue, layoutId, variant }}>
-      <div className={className}>{children}</div>
-    </TabsCtx.Provider>
+    <MotionConfig transition={transition}>
+      <TabsCtx.Provider value={{ value: current, setValue, layoutId, variant }}>
+        <div className={className}>{children}</div>
+      </TabsCtx.Provider>
+    </MotionConfig>
   );
 }
 
@@ -78,7 +88,7 @@ export function TabsTrigger({ value, children, className }: { value: string; chi
         aria-selected={active}
         onClick={() => setValue(value)}
         className={cn(
-          "relative -mb-px px-3 pb-2.5 pt-1 text-sm font-medium transition-colors",
+          "relative isolate px-3 pb-2.5 pt-1 -mb-px text-sm font-medium transition-colors",
           active ? "text-(--color-fg)" : "text-(--color-fg-muted) hover:text-(--color-fg)",
           className,
         )}
@@ -88,40 +98,43 @@ export function TabsTrigger({ value, children, className }: { value: string; chi
           <motion.span
             layoutId={layoutId}
             className="absolute -bottom-px left-0 right-0 h-px bg-(--color-fg)"
-            transition={{ type: "spring", stiffness: 480, damping: 36 }}
           />
         ) : null}
       </button>
     );
   }
 
+  // Pill + Segment use the same trick: a max-contrast pill slides via layoutId,
+  // text uses `mix-blend-exclusion` so it inverts dynamically against the moving bg.
   const radius = variant === "pill" ? "rounded-full" : "rounded-md";
 
   return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={active}
-      onClick={() => setValue(value)}
-      className={cn(
-        "relative isolate px-3.5 py-1.5 text-sm font-medium transition-colors",
-        radius,
-        active ? "text-(--color-fg)" : "text-(--color-fg-muted) hover:text-(--color-fg)",
-        className,
-      )}
-    >
+    <div className="relative">
       {active ? (
         <motion.span
           layoutId={layoutId}
+          style={{ borderRadius: variant === "pill" ? 9999 : 8 }}
           className={cn(
-            "absolute inset-0 z-0 bg-(--color-bg) shadow-[0_1px_2px_0_rgb(0_0_0/0.06),inset_0_1px_0_0_rgb(255_255_255/0.05)]",
+            "absolute inset-0 bg-(--color-fg) shadow-[0_1px_6px_rgb(0_0_0/0.06)]",
             radius,
           )}
-          transition={{ type: "spring", stiffness: 460, damping: 36 }}
         />
       ) : null}
-      <span className="relative z-10">{children}</span>
-    </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={active}
+        onClick={() => setValue(value)}
+        className={cn(
+          "relative z-10 inline-flex items-center justify-center whitespace-nowrap bg-transparent px-3.5 py-1.5 text-sm font-medium text-white mix-blend-exclusion transition-opacity outline-none",
+          active ? "" : "opacity-70 hover:opacity-100",
+          radius,
+          className,
+        )}
+      >
+        {children}
+      </button>
+    </div>
   );
 }
 

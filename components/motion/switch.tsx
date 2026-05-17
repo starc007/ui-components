@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
-import { useId } from "react";
+import { animate, motion, MotionConfig } from "motion/react";
+import { useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export interface SwitchProps {
@@ -14,36 +14,70 @@ export interface SwitchProps {
 
 export function Switch({ checked, onCheckedChange, disabled, label, className }: SwitchProps) {
   const id = useId();
+  const thumbRef = useRef<HTMLDivElement>(null);
+  const [isPressed, setIsPressed] = useState(false);
+  const [isPointer, setIsPointer] = useState(false);
+
+  // Disabled shake feedback when pressed.
+  useEffect(() => {
+    if (!thumbRef.current) return;
+    if (disabled && isPressed) {
+      animate(
+        thumbRef.current,
+        { x: [0, -2, 2, -1, 0] },
+        { delay: 0.2, duration: 0.6 },
+      );
+    }
+  }, [disabled, isPressed]);
+
+  const squish = !disabled && isPointer && isPressed;
+
   return (
-    <span className={cn("inline-flex items-center gap-3", className)}>
-      <button
-        id={id}
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        disabled={disabled}
-        onClick={() => onCheckedChange(!checked)}
-        className={cn(
-          "relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full p-0.5 outline-none transition-colors press",
-          "focus-visible:ring-2 focus-visible:ring-(--color-accent)/40 focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)",
-          "disabled:cursor-not-allowed disabled:opacity-50",
-          checked ? "bg-(--color-accent)" : "bg-(--color-border-strong)",
-        )}
-      >
-        <motion.span
-          layout
-          transition={{ type: "spring", stiffness: 700, damping: 32 }}
+    <MotionConfig transition={{ type: "spring", stiffness: 800, damping: 80, mass: 4 }}>
+      <span className={cn("inline-flex items-center gap-3", className)}>
+        <motion.button
+          id={id}
+          type="button"
+          role="switch"
+          aria-checked={checked}
+          disabled={disabled}
+          onClick={() => !disabled && onCheckedChange(!checked)}
+          onPointerDown={(e) => {
+            setIsPressed(true);
+            setIsPointer(e.type.startsWith("pointer"));
+          }}
+          onPointerUp={() => setIsPressed(false)}
+          onPointerLeave={() => setIsPressed(false)}
+          initial={false}
+          data-state={checked ? "checked" : "unchecked"}
           className={cn(
-            "block h-5 w-5 rounded-full bg-white shadow-[0_2px_6px_-1px_rgb(0_0_0/0.3)]",
-            checked ? "translate-x-5" : "translate-x-0",
+            "group peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center px-1 rounded-full outline-none transition-colors duration-200",
+            "focus-visible:ring-2 focus-visible:ring-(--color-border-strong) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)",
+            "disabled:cursor-not-allowed disabled:opacity-60",
+            checked ? "justify-end bg-(--color-fg)" : "justify-start bg-(--color-fg-muted)/60",
           )}
-        />
-      </button>
-      {label ? (
-        <label htmlFor={id} className="cursor-pointer text-sm text-(--color-fg)">
-          {label}
-        </label>
-      ) : null}
-    </span>
+        >
+          <motion.div
+            ref={thumbRef}
+            layout
+            animate={{ scale: squish ? 0.9 : 1 }}
+            className="pointer-events-none block h-5 w-5 rounded-full bg-(--color-bg) shadow-[0_2px_6px_-1px_rgb(0_0_0/0.3)]"
+          >
+            {/* Stretch toward the destination on press. */}
+            <div
+              className={cn(
+                "size-5",
+                squish && (checked ? "ml-1" : "mr-1"),
+              )}
+            />
+          </motion.div>
+        </motion.button>
+        {label ? (
+          <label htmlFor={id} className="cursor-pointer text-sm text-(--color-fg)">
+            {label}
+          </label>
+        ) : null}
+      </span>
+    </MotionConfig>
   );
 }

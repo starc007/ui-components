@@ -61,6 +61,18 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/command-palette.tsx",
       },
       {
+        slug: "shared-layout-bg",
+        name: "Shared Layout Background",
+        description: "A pill that glides between hovered items via motion's shared layout, with blur enter/exit.",
+        file: "components/motion/shared-layout-bg.tsx",
+      },
+      {
+        slug: "dock",
+        name: "Dock",
+        description: "macOS-style dock with cursor-proximity magnification on each item.",
+        file: "components/motion/dock.tsx",
+      },
+      {
         slug: "text-reveal",
         name: "Text Reveal",
         description: "Word-by-word mask reveal driven by scroll progress.",

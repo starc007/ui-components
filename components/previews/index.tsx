@@ -10,6 +10,8 @@ import { BottomSheetPreview } from "./motion/bottom-sheet.preview";
 import { TabsPreview } from "./motion/tabs.preview";
 import { SwitchPreview } from "./motion/switch.preview";
 import { CommandPalettePreview } from "./motion/command-palette.preview";
+import { SharedLayoutBgPreview } from "./motion/shared-layout-bg.preview";
+import { DockPreview } from "./motion/dock.preview";
 
 export const previews: Record<string, () => ReactNode> = {
   "motion/tilt-card": TiltCardPreview,
@@ -23,6 +25,8 @@ export const previews: Record<string, () => ReactNode> = {
   "motion/tabs": TabsPreview,
   "motion/switch": SwitchPreview,
   "motion/command-palette": CommandPalettePreview,
+  "motion/shared-layout-bg": SharedLayoutBgPreview,
+  "motion/dock": DockPreview,
 };
 
 export function getPreview(category: string, slug: string) {

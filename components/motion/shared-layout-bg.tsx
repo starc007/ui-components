@@ -1,0 +1,91 @@
+"use client";
+
+import {
+  AnimatePresence,
+  motion,
+  type Variants,
+} from "motion/react";
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  useId,
+  useState,
+  type ReactElement,
+  type ReactNode,
+} from "react";
+import { cn } from "@/lib/utils";
+
+export interface SharedLayoutBgProps {
+  children: ReactNode;
+  className?: string;
+  /** Tailwind class applied to the moving pill. Defaults to a subtle foreground tint. */
+  pillClassName?: string;
+  /** Horizontal inset of the pill relative to each row (px). Default 20. */
+  inset?: number;
+}
+
+const variants: Variants = {
+  initial: { opacity: 0, filter: "blur(6px)" },
+  animate: { opacity: 1, filter: "blur(0px)" },
+  exit: (isActive: boolean) =>
+    !isActive ? { opacity: 0, filter: "blur(6px)" } : {},
+};
+
+export function SharedLayoutBg({
+  children,
+  className,
+  pillClassName,
+  inset = 20,
+}: SharedLayoutBgProps) {
+  const [activeId, setActiveId] = useState<number | null>(null);
+  const uid = useId();
+
+  return (
+    <div
+      onMouseLeave={() => setActiveId(null)}
+      className={cn("flex w-full flex-col", className)}
+    >
+      {Children.toArray(children)
+        .filter(isValidElement)
+        .map((child, index) => {
+          const el = child as ReactElement<{ className?: string; onMouseEnter?: () => void; children?: ReactNode }>;
+          return cloneElement(
+            el,
+            {
+              key: index,
+              className: cn("relative", el.props.className),
+              onMouseEnter: () => setActiveId(index),
+            },
+            <>
+              <AnimatePresence custom={activeId !== null}>
+                {activeId !== null ? (
+                  <motion.div
+                    variants={variants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    custom={activeId !== null}
+                    className="pointer-events-none absolute inset-y-0"
+                    style={{ left: -inset, right: -inset }}
+                  >
+                    {activeId === index ? (
+                      <motion.div
+                        layoutId={`shared-bg-${uid}`}
+                        transition={{ type: "spring", stiffness: 205, damping: 22 }}
+                        className={cn(
+                          "pointer-events-none h-full w-full rounded-2xl bg-(--color-fg)/[0.06]",
+                          pillClassName,
+                        )}
+                      />
+                    ) : null}
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+              <div className="relative z-10">{el.props.children}</div>
+            </>
+          );
+        })}
+    </div>
+  );
+}

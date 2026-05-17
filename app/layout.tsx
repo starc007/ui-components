@@ -5,6 +5,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/app/theme-provider";
 import { SiteHeader } from "@/components/app/site-header";
+import { SiteDock } from "@/components/app/site-dock";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -34,7 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen antialiased">
         <ThemeProvider>
           <SiteHeader />
-          <main>{children}</main>
+          <main className="pb-32">{children}</main>
+          <SiteDock />
           <Analytics />
           <SpeedInsights />
         </ThemeProvider>
