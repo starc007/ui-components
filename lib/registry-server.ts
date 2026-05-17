@@ -92,11 +92,23 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
   const files: RegistryFile[] = [
     { path: comp.file, type: "component", content: componentSource },
   ];
+
+  const allDepsInternal = new Set(compDeps.internal);
+  if (comp.extraFiles) {
+    for (const rel of comp.extraFiles) {
+      const content = await readFileSafe(rel);
+      if (content != null) {
+        files.push({ path: rel, type: "component", content });
+        for (const spec of parseDeps(content).internal) allDepsInternal.add(spec);
+      }
+    }
+  }
+
   if (previewSource) {
     files.push({ path: previewPath, type: "preview", content: previewSource });
   }
 
-  for (const spec of compDeps.internal) {
+  for (const spec of allDepsInternal) {
     const resolved = await resolveInternal(spec);
     if (resolved) {
       files.push({ path: resolved.path, type: "util", content: resolved.content });

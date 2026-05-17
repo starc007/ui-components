@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { TiltCardPreview } from "./motion/tilt-card.preview";
-import { MagneticPreview } from "./motion/magnetic.preview";
 import { MarqueePreview } from "./motion/marquee.preview";
 import { TextShimmerPreview } from "./motion/text-shimmer.preview";
 import { AnimatedNumberPreview } from "./motion/animated-number.preview";
@@ -14,10 +13,12 @@ import { DockPreview } from "./motion/dock.preview";
 import { TooltipPreview } from "./motion/tooltip.preview";
 import { MorphingModalPreview } from "./motion/morphing-modal.preview";
 import { TextRevealPreview } from "./motion/text-reveal.preview";
+import { ButtonBasePreview } from "./motion/button-base.preview";
+import { ButtonStatefulPreview } from "./motion/button-stateful.preview";
+import { ButtonMagneticPreview } from "./motion/button-magnetic.preview";
 
 export const previews: Record<string, () => ReactNode> = {
   "motion/tilt-card": TiltCardPreview,
-  "motion/magnetic": MagneticPreview,
   "motion/marquee": MarqueePreview,
   "motion/text-shimmer": TextShimmerPreview,
   "motion/animated-number": AnimatedNumberPreview,
@@ -31,6 +32,10 @@ export const previews: Record<string, () => ReactNode> = {
   "motion/tooltip": TooltipPreview,
   "motion/morphing-modal": MorphingModalPreview,
   "motion/text-reveal": TextRevealPreview,
+  "motion/button": ButtonBasePreview,
+  "motion/button-base": ButtonBasePreview,
+  "motion/button-stateful": ButtonStatefulPreview,
+  "motion/button-magnetic": ButtonMagneticPreview,
 };
 
 export function getPreview(category: string, slug: string) {

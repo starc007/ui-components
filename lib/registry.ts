@@ -1,8 +1,24 @@
+export type ComponentExample = {
+  slug: string;
+  name: string;
+  description?: string;
+  /** Source file shown under Source tab. */
+  file: string;
+  /** Key into the previews registry (e.g. "motion/button-base"). */
+  previewKey: string;
+  /** Path to the preview file used for the Usage tab. */
+  previewFile: string;
+};
+
 export type ComponentEntry = {
   slug: string;
   name: string;
   description: string;
   file: string;
+  /** Extra source files bundled under this slug (e.g. multi-file components). */
+  extraFiles?: string[];
+  /** Per-variant breakdown rendered as separate Preview / Usage / Source on the page. */
+  examples?: ComponentExample[];
 };
 
 export type CategoryEntry = {
@@ -25,10 +41,41 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/tilt-card.tsx",
       },
       {
-        slug: "magnetic",
-        name: "Magnetic",
-        description: "Cursor-attracted element with spring physics.",
-        file: "components/motion/magnetic.tsx",
+        slug: "button",
+        name: "Button",
+        description: "Spring-pressed Button plus StatefulButton (idle → loading → success / error) and MagneticButton.",
+        file: "components/motion/button/index.tsx",
+        extraFiles: [
+          "components/motion/button/base.tsx",
+          "components/motion/button/stateful.tsx",
+          "components/motion/button/magnetic.tsx",
+        ],
+        examples: [
+          {
+            slug: "base",
+            name: "Button",
+            description: "Press scale, hover lift, variants and sizes.",
+            file: "components/motion/button/base.tsx",
+            previewKey: "motion/button-base",
+            previewFile: "components/previews/motion/button-base.preview.tsx",
+          },
+          {
+            slug: "stateful",
+            name: "Stateful Button",
+            description: "Idle → loading → success / error with blur-swap slots and morphing width.",
+            file: "components/motion/button/stateful.tsx",
+            previewKey: "motion/button-stateful",
+            previewFile: "components/previews/motion/button-stateful.preview.tsx",
+          },
+          {
+            slug: "magnetic",
+            name: "Magnetic Button",
+            description: "Button composed with the Magnetic wrapper for cursor-attracted pull.",
+            file: "components/motion/button/magnetic.tsx",
+            previewKey: "motion/button-magnetic",
+            previewFile: "components/previews/motion/button-magnetic.preview.tsx",
+          },
+        ],
       },
       {
         slug: "marquee",
