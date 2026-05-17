@@ -85,12 +85,6 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/morphing-modal.tsx",
       },
       {
-        slug: "text-reveal",
-        name: "Text Reveal",
-        description: "Word-by-word mask reveal driven by scroll progress.",
-        file: "components/motion/text-reveal.tsx",
-      },
-      {
         slug: "text-shimmer",
         name: "Text Shimmer",
         description: "Gradient sweep across text for loading or emphasis.",

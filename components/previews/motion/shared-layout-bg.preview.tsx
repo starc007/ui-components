@@ -4,10 +4,10 @@ import { ArrowUpRight } from "lucide-react";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 
 const items = [
-  { title: "Neon Dreams", body: "Where pixels dance and gradients collide in perfect harmony." },
-  { title: "Quantum Interface", body: "Bridging the gap between imagination and digital reality." },
-  { title: "Ethereal Canvas", body: "A blank slate whispering possibilities into existence." },
-  { title: "Vector Whispers", body: "Lines and curves carrying the weight of every interaction." },
+  { title: "Inbox", body: "12 unread threads, 3 mentions today." },
+  { title: "Drafts", body: "4 posts waiting for a final pass." },
+  { title: "Releases", body: "Last shipped 2 days ago — v0.4.1." },
+  { title: "Billing", body: "Plan renews on the 1st of next month." },
 ];
 
 export function SharedLayoutBgPreview() {

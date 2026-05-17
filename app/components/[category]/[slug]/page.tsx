@@ -41,10 +41,6 @@ export default async function ComponentPage({
   return (
     <div>
       <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
-        <Link href="/components" className="text-(--color-fg-muted) transition-colors hover:text-(--color-fg)">
-          Components
-        </Link>
-        <ChevronRight className="h-3.5 w-3.5 text-(--color-fg-muted)" />
         <Link href={`/components/${cat.slug}`} className="text-(--color-fg-muted) transition-colors hover:text-(--color-fg)">
           {cat.name}
         </Link>
@@ -66,10 +62,10 @@ export default async function ComponentPage({
           </div>
         </TabsContent>
         <TabsContent value="usage" className="mt-4">
-          <CodeBlock code={usage} filename={previewFile} bare />
+          <CodeBlock code={usage} filename={previewFile} />
         </TabsContent>
         <TabsContent value="source" className="mt-4">
-          <CodeBlock code={source} filename={comp.file} bare />
+          <CodeBlock code={source} filename={comp.file} />
         </TabsContent>
       </Tabs>
     </div>

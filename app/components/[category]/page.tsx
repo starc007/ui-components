@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { findCategory, registry } from "@/lib/registry";
 import { getPreview } from "@/components/previews";
 
@@ -16,10 +15,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   return (
     <div>
       <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
-        <Link href="/components" className="text-(--color-fg-muted) transition-colors hover:text-(--color-fg)">
-          Components
-        </Link>
-        <ChevronRight className="h-3.5 w-3.5 text-(--color-fg-muted)" />
         <span className="font-medium text-(--color-fg)">{cat.name}</span>
       </nav>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-(--color-fg)">{cat.name}</h1>

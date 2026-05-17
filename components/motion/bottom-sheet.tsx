@@ -5,7 +5,6 @@ import {
   motion,
   useDragControls,
   useMotionValue,
-  useTransform,
   type PanInfo,
 } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -56,12 +55,6 @@ export function BottomSheet({
     };
   }, [open]);
 
-  // Overlay opacity scales with how far the sheet has been dragged down.
-  const overlayOpacity = useTransform(dragY, (v) => {
-    const h = heightRef.current || 600;
-    return Math.max(0, 1 - v / h);
-  });
-
   const onDragEnd = (_: unknown, info: PanInfo) => {
     const velocity = info.velocity.y;
     const offset = info.offset.y;
@@ -103,10 +96,9 @@ export function BottomSheet({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             onClick={() => onOpenChange(false)}
-            className="pointer-events-auto absolute inset-0 bg-black/55 [backdrop-filter:blur(16px)_saturate(140%)] [-webkit-backdrop-filter:blur(16px)_saturate(140%)]"
-            style={{ opacity: overlayOpacity }}
+            className="pointer-events-auto absolute inset-0 bg-black/50 backdrop-blur-xl backdrop-saturate-150"
           />
           <motion.div
             ref={sheetRef}
