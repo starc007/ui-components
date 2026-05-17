@@ -100,7 +100,7 @@ async function ExampleBlock({ example }: { example: ComponentExample }) {
         <TabsList>
           <TabsTrigger value="preview">Preview</TabsTrigger>
           <TabsTrigger value="usage">Usage</TabsTrigger>
-          <TabsTrigger value="source">Source</TabsTrigger>
+          <TabsTrigger value="source">Code</TabsTrigger>
         </TabsList>
         <TabsContent value="preview" className="mt-4">
           <div className="flex min-h-[260px] items-center justify-center rounded-2xl border border-(--color-border) bg-(--color-bg-elev) py-10">
@@ -129,7 +129,7 @@ async function DefaultTabs({ category, slug, file }: { category: string; slug: s
       <TabsList>
         <TabsTrigger value="preview">Preview</TabsTrigger>
         <TabsTrigger value="usage">Usage</TabsTrigger>
-        <TabsTrigger value="source">Source</TabsTrigger>
+        <TabsTrigger value="source">Code</TabsTrigger>
       </TabsList>
       <TabsContent value="preview" className="mt-4">
         <div className="flex min-h-[320px] items-center justify-center py-10">
