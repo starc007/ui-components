@@ -18,7 +18,9 @@ export interface NumberTickerProps {
   suffix?: string;
   className?: string;
   digitClassName?: string;
-  /** Format the integer value (e.g. group separators). Returns string of digits + separators; non-digits passed through. */
+  /** Insert locale group separators (commas). Server-component safe. */
+  locale?: boolean;
+  /** Custom formatter. Client-only — server components must use `locale` instead. */
   format?: (value: number) => string;
 }
 
@@ -34,6 +36,7 @@ export function NumberTicker({
   suffix,
   className,
   digitClassName,
+  locale,
   format,
 }: NumberTickerProps) {
   const containerRef = useRef<HTMLSpanElement>(null);
@@ -45,9 +48,14 @@ export function NumberTicker({
   }, [startOnView, inView]);
 
   const text = useMemo(() => {
-    const formatted = format ? format(Math.round(value)) : Math.round(value).toString();
+    const rounded = Math.round(value);
+    const formatted = format
+      ? format(rounded)
+      : locale
+        ? rounded.toLocaleString()
+        : rounded.toString();
     return pad ? formatted.padStart(pad, "0") : formatted;
-  }, [value, pad, format]);
+  }, [value, pad, format, locale]);
 
   return (
     <span
