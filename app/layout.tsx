@@ -19,7 +19,11 @@ export const metadata: Metadata = {
     description: "Bespoke motion components for React.",
     type: "website",
     url: "https://beui.saura3h.xyz",
-    images: ["/og.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "beUI v2",
+    description: "Bespoke motion components for React.",
   },
   keywords: ["React", "Tailwind", "Motion", "UI", "Components", "Open source"],
 };
