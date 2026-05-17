@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
@@ -12,6 +13,27 @@ export function generateStaticParams() {
   return registry.flatMap((c) =>
     c.components.map((comp) => ({ category: c.slug, slug: comp.slug })),
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ category: string; slug: string }>;
+}): Promise<Metadata> {
+  const { category, slug } = await params;
+  const comp = findComponent(category, slug);
+  if (!comp) return {};
+  return {
+    title: `${comp.name} · beUI v2`,
+    description: comp.description,
+    alternates: {
+      canonical: `/components/${category}/${slug}`,
+      types: {
+        "application/json": `/r/${slug}`,
+        "text/plain": `/r/${slug}/raw`,
+      },
+    },
+  };
 }
 
 async function loadSource(file: string) {

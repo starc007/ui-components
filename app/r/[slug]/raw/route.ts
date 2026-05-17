@@ -24,6 +24,9 @@ export async function GET(
       headers: {
         "content-type": "text/plain; charset=utf-8",
         "cache-control": "public, max-age=300, s-maxage=3600",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "link": `</r/${slug}>; rel="alternate"; type="application/json"`,
       },
     });
   } catch {
