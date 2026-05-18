@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, type Variants } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
 import {
   cloneElement,
   isValidElement,
@@ -84,10 +84,17 @@ function buildVariants(side: Side): Variants {
   };
 }
 
+const REDUCED_VARIANTS: Variants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.14, ease: [0.16, 1, 0.3, 1] } },
+  exit: { opacity: 0, transition: { duration: 0.1, ease: [0.16, 1, 0.3, 1] } },
+};
+
 export function Tooltip({ content, children, side = "top", delay = 120, className, wrapperClassName }: TooltipProps) {
   const [open, setOpen] = useState(false);
   const id = useId();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reduce = useReducedMotion();
 
   const show = () => {
     if (timer.current) clearTimeout(timer.current);
@@ -111,7 +118,7 @@ export function Tooltip({ content, children, side = "top", delay = 120, classNam
     "aria-describedby": id,
   });
 
-  const variants = buildVariants(side);
+  const variants = reduce ? REDUCED_VARIANTS : buildVariants(side);
 
   return (
     <span className={cn("relative inline-flex align-middle", wrapperClassName)}>

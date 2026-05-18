@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "motion/react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import { useRef, type ElementType, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +39,7 @@ export function TextReveal({
 }: TextRevealProps) {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once, amount: 0.4 });
+  const reduce = useReducedMotion();
   const shouldAnimate = whileInView ? inView : true;
 
   const lines = Array.isArray(text) ? text : [text];
@@ -55,20 +56,27 @@ export function TextReveal({
             {units.map((unit, i) => {
               const d = delay + unitIndex * stagger;
               unitIndex += 1;
+              const initial = reduce
+                ? { opacity: 0 }
+                : { y: yOffset, opacity: 0, filter: `blur(${blur}px)` };
+              const animate = shouldAnimate
+                ? reduce
+                  ? { opacity: 1 }
+                  : { y: 0, opacity: 1, filter: "blur(0px)" }
+                : initial;
+              const transition = reduce
+                ? { opacity: { duration: 0.25, ease: [0.16, 1, 0.3, 1], delay: d * 0.3 } }
+                : {
+                    y: { type: "spring" as const, ...s, delay: d },
+                    opacity: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: d },
+                    filter: { duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: d },
+                  };
               return (
                 <motion.span
                   key={`${unit}-${i}`}
-                  initial={{ y: yOffset, opacity: 0, filter: `blur(${blur}px)` }}
-                  animate={
-                    shouldAnimate
-                      ? { y: 0, opacity: 1, filter: "blur(0px)" }
-                      : { y: yOffset, opacity: 0, filter: `blur(${blur}px)` }
-                  }
-                  transition={{
-                    y: { type: "spring", ...s, delay: d },
-                    opacity: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: d },
-                    filter: { duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: d },
-                  }}
+                  initial={initial}
+                  animate={animate}
+                  transition={transition}
                   className="inline-block will-change-transform"
                 >
                   {unit}

@@ -5,6 +5,7 @@ import {
   motion,
   useDragControls,
   useMotionValue,
+  useReducedMotion,
   type PanInfo,
 } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -39,6 +40,7 @@ export function BottomSheet({
   const dragY = useMotionValue(0);
   const dragControls = useDragControls();
   const sheetRef = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
   const heightRef = useRef(0);
 
   useEffect(() => {
@@ -110,10 +112,14 @@ export function BottomSheet({
             dragMomentum={false}
             onDrag={(_, info) => dragY.set(Math.max(0, info.offset.y))}
             onDragEnd={onDragEnd}
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 420, damping: 40, mass: 0.5 }}
+            initial={reduce ? { y: 0, opacity: 0 } : { y: "100%" }}
+            animate={reduce ? { y: 0, opacity: 1 } : { y: 0 }}
+            exit={reduce ? { y: 0, opacity: 0 } : { y: "100%" }}
+            transition={
+              reduce
+                ? { duration: 0.18, ease: [0.16, 1, 0.3, 1] }
+                : { type: "spring", stiffness: 420, damping: 40, mass: 0.5 }
+            }
             onAnimationComplete={() => {
               if (sheetRef.current) heightRef.current = sheetRef.current.offsetHeight;
             }}

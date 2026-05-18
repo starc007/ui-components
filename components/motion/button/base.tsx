@@ -1,8 +1,9 @@
 "use client";
 
-import { motion, type HTMLMotionProps } from "motion/react";
+import { motion, useReducedMotion, type HTMLMotionProps } from "motion/react";
 import { forwardRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
@@ -35,12 +36,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   { variant = "primary", size = "md", pressScale = 0.93, className, children, ...rest },
   ref,
 ) {
+  const reduce = useReducedMotion();
+  const canHover = useHoverCapable();
   return (
     <motion.button
       ref={ref}
       type="button"
-      whileTap={{ scale: pressScale }}
-      whileHover={{ scale: 1.02 }}
+      whileTap={reduce ? undefined : { scale: pressScale }}
+      whileHover={reduce || !canHover ? undefined : { scale: 1.02 }}
       transition={PRESS_SPRING}
       className={cn(
         "inline-flex items-center justify-center font-medium select-none",

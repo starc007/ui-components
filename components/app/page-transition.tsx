@@ -1,27 +1,28 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { usePathname } from "next/navigation";
 import { useRef, type ReactNode } from "react";
+import { EASE_OUT } from "@/lib/ease";
 
 export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
 
   return (
     <motion.div
       ref={ref}
       key={pathname}
-      initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
+      animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+      transition={{ duration: reduce ? 0.2 : 0.6, ease: EASE_OUT }}
       onAnimationComplete={() => {
-        // Strip transform + filter so this wrapper stops creating a containing
-        // block for descendant `position: fixed` elements (modals, sheets).
+        // Strip transform so this wrapper stops creating a containing block
+        // for descendant fixed-position elements (modals, sheets).
         const el = ref.current;
         if (!el) return;
         el.style.transform = "none";
-        el.style.filter = "none";
         el.style.willChange = "auto";
       }}
     >
