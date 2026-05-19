@@ -14,6 +14,7 @@ import { TooltipPreview } from "./motion/tooltip.preview";
 import { MorphingModalPreview } from "./motion/morphing-modal.preview";
 import { TextRevealPreview } from "./motion/text-reveal.preview";
 import { ButtonBasePreview } from "./motion/button-base.preview";
+import { SwapPreview } from "./motion/swap.preview";
 import { ButtonStatefulPreview } from "./motion/button-stateful.preview";
 import { ButtonMagneticPreview } from "./motion/button-magnetic.preview";
 
@@ -36,6 +37,7 @@ export const previews: Record<string, () => ReactNode> = {
   "motion/button-base": ButtonBasePreview,
   "motion/button-stateful": ButtonStatefulPreview,
   "motion/button-magnetic": ButtonMagneticPreview,
+  "motion/swap": SwapPreview,
 };
 
 export function getPreview(category: string, slug: string) {

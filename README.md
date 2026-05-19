@@ -11,12 +11,17 @@ Copy. Paste. Done.
 A curated set of hand-built motion components for product UIs. Every component is a single file you own, with spring physics tuned by hand and zero third-party primitives.
 
 - Word-by-word text reveal with blur
+- Word-by-word text reveal with blur
 - macOS-style magnifying dock
 - Family-app morphing modal
 - Vaul-style bottom sheet with drag-to-dismiss
 - Command palette (⌘K) with fuzzy filter
 - Tabs (pill, segment, underline) with shared layoutId
-- Magnetic CTAs, tilt cards, marquee, tooltip, switch, dock, shared layout bg, animated number, number ticker, text shimmer
+- Button family: base + multi-state (idle → loading → success / error) + magnetic
+- Multi-chain swap widget with token picker bottom sheet
+- Tilt cards, marquee, tooltip, switch, dock, shared layout bg, animated number, number ticker, text shimmer
+
+Full live list at [/llms.txt](https://beui.saura3h.xyz/llms.txt) and JSON at [/r](https://beui.saura3h.xyz/r).
 
 ## Stack
 

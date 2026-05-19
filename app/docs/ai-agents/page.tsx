@@ -29,18 +29,18 @@ for (const file of entry.files) {
 await runShell(['bun', 'add', ...entry.dependencies]);`;
 
 const ENTRY_SHAPE = `{
-  "slug": "magnetic",
-  "name": "Magnetic",
-  "description": "Cursor-attracted element with spring physics.",
+  "slug": "swap",
+  "name": "Multi-chain Swap",
+  "description": "Cross-chain swap widget with chain + token selectors, animated flip and quote.",
   "category": "motion",
-  "page_url": "https://beui.saura3h.xyz/components/motion/magnetic",
-  "detail_url": "https://beui.saura3h.xyz/r/magnetic",
-  "raw_url": "https://beui.saura3h.xyz/r/magnetic/raw",
-  "dependencies": ["motion", "react"],
+  "page_url": "https://beui.saura3h.xyz/components/motion/swap",
+  "detail_url": "https://beui.saura3h.xyz/r/swap",
+  "raw_url": "https://beui.saura3h.xyz/r/swap/raw",
+  "dependencies": ["motion", "lucide-react", "react"],
   "internal": ["@/lib/utils"],
   "files": [
-    { "path": "components/motion/magnetic.tsx", "type": "component", "content": "..." },
-    { "path": "components/previews/motion/magnetic.preview.tsx", "type": "preview", "content": "..." },
+    { "path": "components/motion/swap.tsx", "type": "component", "content": "..." },
+    { "path": "components/previews/motion/swap.preview.tsx", "type": "preview", "content": "..." },
     { "path": "lib/utils.ts", "type": "util", "content": "..." }
   ]
 }`;
@@ -91,7 +91,7 @@ export default function AIAgentsPage() {
         Internal helpers (e.g. <code className="rounded bg-(--color-fg)/5 px-1.5 py-0.5 font-mono text-xs">@/lib/utils</code>) ship inline as <code className="rounded bg-(--color-fg)/5 px-1.5 py-0.5 font-mono text-xs">type: util</code> so the agent does not have to chase imports.
       </p>
       <div className="mt-4">
-        <CodeBlock code={ENTRY_SHAPE} filename="r/magnetic.json" />
+        <CodeBlock code={ENTRY_SHAPE} filename="r/swap.json" />
       </div>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">Caching</h2>

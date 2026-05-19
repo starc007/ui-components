@@ -96,6 +96,12 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/switch.tsx",
       },
       {
+        slug: "swap",
+        name: "Multi-chain Swap",
+        description: "Cross-chain swap widget with chain + token selectors, morphing views, animated flip and quote.",
+        file: "components/motion/swap.tsx",
+      },
+      {
         slug: "bottom-sheet",
         name: "Bottom Sheet",
         description: "Vaul-inspired draggable bottom sheet with snap points, inertia and glass surface.",
