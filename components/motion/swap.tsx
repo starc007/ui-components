@@ -3,9 +3,11 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   ArrowDownUp,
+  Check,
   ChevronDown,
   Loader2,
   Search,
+  Send,
   Settings,
   Wallet,
   X,
@@ -244,6 +246,8 @@ export function MultiChainSwap({
   const [flipRot, setFlipRot] = useState(0);
   const [quoting, setQuoting] = useState(false);
   const [picking, setPicking] = useState<"from" | "to" | null>(null);
+  const [showDest, setShowDest] = useState(false);
+  const [destAddress, setDestAddress] = useState("");
 
   const from = tokens.find((t) => t.id === fromId)!;
   const to = tokens.find((t) => t.id === toId)!;
@@ -288,13 +292,12 @@ export function MultiChainSwap({
     <div
       className={cn(
         "relative isolate w-full max-w-[420px] overflow-hidden rounded-3xl",
-        "border border-(--color-border-strong) bg-(--color-bg-elev)",
-        "shadow-[0_30px_60px_-30px_rgb(0_0_0/0.4)]",
+        "border border-(--color-border-strong)/20 bg-(--color-bg-elev)",
         className,
       )}
     >
       {/* Header */}
-      <div className="flex h-12 items-center justify-between border-b border-(--color-border) px-3">
+      <div className="flex h-12 items-center justify-between border-b border-(--color-border)/50 px-3">
         <span className="px-2 text-sm font-semibold tracking-tight text-(--color-fg)">
           Swap
         </span>
@@ -342,7 +345,23 @@ export function MultiChainSwap({
           quoting={quoting}
         />
 
-        <ActionButton from={from} to={to} amount={numericAmount} />
+        <DestinationRow
+          show={showDest}
+          onToggle={() => {
+            if (showDest) setDestAddress("");
+            setShowDest((v) => !v);
+          }}
+          address={destAddress}
+          onAddress={setDestAddress}
+          reduce={!!reduce}
+        />
+
+        <ActionButton
+          from={from}
+          to={to}
+          amount={numericAmount}
+          destAddress={destAddress}
+        />
       </div>
 
       {/* Token picker — bottom sheet anchored to this card */}
@@ -386,7 +405,7 @@ function Field({
   const id = useId();
   const usdValue = (Number(amount) || 0) * (token.usd ?? 0);
   return (
-    <div className="relative rounded-2xl border border-(--color-border) bg-(--color-bg)/40 p-3.5">
+    <div className="relative rounded-2xl border border-(--color-border)/50 bg-(--color-bg)/40 p-3.5">
       <label
         htmlFor={id}
         className="mb-2 block text-[11px] font-medium uppercase tracking-wider text-(--color-fg-muted)"
@@ -483,7 +502,7 @@ function FlipButton({
   onClick: () => void;
 }) {
   return (
-    <div className="relative -my-2 flex justify-center" style={{ zIndex: 1 }}>
+    <div className="relative -my-4 flex justify-center" style={{ zIndex: 1 }}>
       <motion.button
         type="button"
         onClick={onClick}
@@ -521,7 +540,7 @@ function QuoteRow({
   quoting: boolean;
 }) {
   return (
-    <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 rounded-xl border border-(--color-border) bg-(--color-bg)/40 px-3.5 py-2.5 text-[11px]">
+    <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 rounded-xl border border-(--color-border)/50 bg-(--color-bg)/40 px-3.5 py-2.5 text-[11px]">
       <span className="text-(--color-fg-muted)">Rate</span>
       <span className="text-right tabular-nums text-(--color-fg)">
         {quoting ? (
@@ -554,18 +573,23 @@ function ActionButton({
   from,
   to,
   amount,
+  destAddress,
 }: {
   from: Token;
   to: Token;
   amount: number;
+  destAddress: string;
 }) {
   const noAmount = amount <= 0;
   const overBalance = from.balance !== undefined && amount > from.balance;
+  const validDest = destAddress && isValidAddress(destAddress);
   const label = noAmount
     ? "Enter an amount"
     : overBalance
       ? `Insufficient ${from.symbol}`
-      : `Swap ${from.symbol} → ${to.symbol}`;
+      : validDest
+        ? `Swap + Send to ${truncateAddress(destAddress)}`
+        : `Swap ${from.symbol} → ${to.symbol}`;
   const disabled = noAmount || overBalance;
 
   return (
@@ -593,6 +617,123 @@ function ActionButton({
         </motion.span>
       </AnimatePresence>
     </motion.button>
+  );
+}
+
+/* ============================================================
+ * Destination address row
+ * ============================================================ */
+
+function DestinationRow({
+  show,
+  onToggle,
+  address,
+  onAddress,
+  reduce,
+}: {
+  show: boolean;
+  onToggle: () => void;
+  address: string;
+  onAddress: (v: string) => void;
+  reduce: boolean;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const hasAddress = address.length > 0;
+  const valid = isValidAddress(address);
+
+  useEffect(() => {
+    if (!show) return;
+    requestAnimationFrame(() =>
+      inputRef.current?.focus({ preventScroll: true }),
+    );
+  }, [show]);
+
+  return (
+    <div className="mt-1 overflow-hidden rounded-xl border border-(--color-border)/50 bg-(--color-bg)/40">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-[12px] text-(--color-fg-muted) hover:text-(--color-fg)"
+      >
+        <span className="flex items-center gap-2">
+          <Send className="h-3.5 w-3.5 shrink-0" />
+          <span>
+            {show && hasAddress && valid
+              ? `To: ${truncateAddress(address)}`
+              : "Send to different address"}
+          </span>
+        </span>
+        <motion.span
+          animate={reduce ? {} : { rotate: show ? 180 : 0 }}
+          transition={{ duration: 0.2, ease: EASE }}
+          style={{ display: "inline-flex" }}
+        >
+          <ChevronDown className="h-3.5 w-3.5" />
+        </motion.span>
+      </button>
+
+      <AnimatePresence>
+        {show ? (
+          <motion.div
+            key="dest-input"
+            initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+            animate={reduce ? { opacity: 1 } : { height: "auto", opacity: 1 }}
+            exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: EASE }}
+            style={{ overflow: "hidden" }}
+          >
+            <div className="border-t border-(--color-border)/50 px-3.5 pb-3 pt-2.5">
+              <div
+                className={cn(
+                  "flex items-center gap-2 rounded-lg border px-2.5 py-2 transition-colors",
+                  hasAddress && !valid
+                    ? "border-red-500/40"
+                    : "border-(--color-border)",
+                )}
+              >
+                <input
+                  ref={inputRef}
+                  value={address}
+                  onChange={(e) => onAddress(e.target.value.trim())}
+                  placeholder="0x... or name.eth"
+                  spellCheck={false}
+                  className="min-w-0 flex-1 bg-transparent font-mono text-[12px] text-(--color-fg) outline-none placeholder:text-(--color-fg-muted)/60"
+                />
+                <AnimatePresence mode="wait">
+                  {hasAddress ? (
+                    valid ? (
+                      <motion.span
+                        key="check"
+                        initial={{ opacity: 0, scale: 0.7 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.7 }}
+                        transition={{ duration: 0.14, ease: EASE }}
+                      >
+                        <Check className="h-3.5 w-3.5 shrink-0 text-green-500" />
+                      </motion.span>
+                    ) : (
+                      <motion.button
+                        key="clear"
+                        type="button"
+                        onClick={() => onAddress("")}
+                        aria-label="Clear address"
+                        initial={{ opacity: 0, scale: 0.7 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.7 }}
+                        transition={{ duration: 0.14, ease: EASE }}
+                        className="shrink-0 text-(--color-fg-muted) hover:text-(--color-fg)"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </motion.button>
+                    )
+                  ) : null}
+                </AnimatePresence>
+              </div>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -835,8 +976,8 @@ function ChainChip({
         "inline-flex h-9 shrink-0 items-center justify-center rounded-xl border transition-colors press",
         chain ? "w-9" : "px-3",
         active
-          ? "border-(--color-fg)/30 bg-(--color-fg)/5 text-(--color-fg)"
-          : "border-(--color-border) bg-(--color-bg)/40 text-(--color-fg) hover:border-(--color-border-strong)",
+          ? "border-(--color-fg)/20 bg-(--color-fg)/5 text-(--color-fg)"
+          : "border-(--color-border)/60 bg-(--color-bg)/40 text-(--color-fg) hover:border-(--color-border-strong)",
       )}
       title={chain?.name ?? label}
     >
@@ -893,6 +1034,18 @@ function TokenDot({
       </span>
     </span>
   );
+}
+
+function isValidAddress(v: string) {
+  if (/^0x[0-9a-fA-F]{40}$/.test(v)) return true;
+  if (/\.(eth|sol|bnb)$/.test(v) && v.length > 5) return true;
+  return false;
+}
+
+function truncateAddress(v: string) {
+  if (v.startsWith("0x") && v.length === 42)
+    return v.slice(0, 6) + "…" + v.slice(-4);
+  return v;
 }
 
 function sanitizeAmount(v: string) {
