@@ -162,6 +162,12 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/animated-badge.tsx",
       },
       {
+        slug: "animated-toast-stack",
+        name: "Animated Toast Stack",
+        description: "Stacked toasts with status morphs, swipe dismissal, actions and layout-aware motion.",
+        file: "components/motion/animated-toast-stack.tsx",
+      },
+      {
         slug: "number-ticker",
         name: "Number Ticker",
         description: "Slot-machine rolling digits with staggered entry.",
