@@ -10,6 +10,10 @@ const INTRO = [
   { slug: "ai-agents", name: "AI Agents", href: "/docs/ai-agents" },
 ];
 
+function moveFirstItemsToBottom<T>(items: T[], count: number) {
+  return [...items.slice(count), ...items.slice(0, count)];
+}
+
 export function SiteSidebar() {
   const pathname = usePathname();
   return (
@@ -54,7 +58,7 @@ export function SiteSidebar() {
               inset={0}
               pillClassName="rounded-lg bg-(--color-fg)/[0.05]"
             >
-              {cat.components.map((comp) => {
+              {moveFirstItemsToBottom(cat.components, 3).map((comp) => {
                 const href = `/components/${cat.slug}/${comp.slug}`;
                 const active = pathname === href;
                 return (
