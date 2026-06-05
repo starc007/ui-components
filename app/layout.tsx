@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/app/theme-provider";
 import { SiteHeader } from "@/components/app/site-header";
 import { SiteDock } from "@/components/app/site-dock";
 import { SiteFrame } from "@/components/app/site-frame";
+import { getGithubStarCount } from "@/lib/github";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -29,7 +30,9 @@ export const metadata: Metadata = {
   keywords: ["React", "Tailwind", "Motion", "UI", "Components", "Open source"],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const githubStarCount = await getGithubStarCount();
+
   return (
     <html lang="en" suppressHydrationWarning className={cn(inter.variable, mono.variable)}>
       <head>
@@ -41,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen antialiased">
         <ThemeProvider>
-          <SiteHeader />
+          <SiteHeader githubStarCount={githubStarCount} />
           <main className="pt-14 pb-32">
             <SiteFrame>{children}</SiteFrame>
           </main>
