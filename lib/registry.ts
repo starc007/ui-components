@@ -168,6 +168,12 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/animated-toast-stack.tsx",
       },
       {
+        slug: "expandable-action-bar",
+        name: "Expandable Action Bar",
+        description: "Compact icon actions that expand into labeled controls on hover or focus with shared layout motion.",
+        file: "components/motion/expandable-action-bar.tsx",
+      },
+      {
         slug: "number-ticker",
         name: "Number Ticker",
         description: "Slot-machine rolling digits with staggered entry.",
