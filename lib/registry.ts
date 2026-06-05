@@ -174,6 +174,12 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/expandable-action-bar.tsx",
       },
       {
+        slug: "inline-status-row",
+        name: "Inline Status Row",
+        description: "Task row with animated status icon, progress, metadata and expandable details for agent or build UIs.",
+        file: "components/motion/inline-status-row.tsx",
+      },
+      {
         slug: "number-ticker",
         name: "Number Ticker",
         description: "Slot-machine rolling digits with staggered entry.",
