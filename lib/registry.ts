@@ -156,6 +156,12 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/animated-number.tsx",
       },
       {
+        slug: "animated-badge",
+        name: "Animated Badge",
+        description: "Status badge with animated state icons, pulse feedback and compact size variants.",
+        file: "components/motion/animated-badge.tsx",
+      },
+      {
         slug: "number-ticker",
         name: "Number Ticker",
         description: "Slot-machine rolling digits with staggered entry.",

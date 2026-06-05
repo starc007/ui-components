@@ -17,6 +17,7 @@ import { ButtonBasePreview } from "./motion/button-base.preview";
 import { SwapPreview } from "./motion/swap.preview";
 import { ButtonStatefulPreview } from "./motion/button-stateful.preview";
 import { ButtonMagneticPreview } from "./motion/button-magnetic.preview";
+import { AnimatedBadgePreview } from "./motion/animated-badge.preview";
 
 export const previews: Record<string, () => ReactNode> = {
   "motion/tilt-card": TiltCardPreview,
@@ -24,6 +25,7 @@ export const previews: Record<string, () => ReactNode> = {
   "motion/text-shimmer": TextShimmerPreview,
   "motion/animated-number": AnimatedNumberPreview,
   "motion/number-ticker": NumberTickerPreview,
+  "motion/animated-badge": AnimatedBadgePreview,
   "motion/bottom-sheet": BottomSheetPreview,
   "motion/tabs": TabsPreview,
   "motion/switch": SwitchPreview,
