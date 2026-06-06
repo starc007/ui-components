@@ -17,7 +17,7 @@ function moveFirstItemsToBottom<T>(items: T[], count: number) {
 export function SiteSidebar() {
   const pathname = usePathname();
   return (
-    <aside className="fixed top-14 hidden h-[calc(100vh-3.5rem)] w-60 overflow-x-visible overflow-y-auto py-6 pr-4 md:block">
+    <aside className="fixed top-14 hidden h-[calc(100vh-3.5rem)] w-60 overflow-x-visible overflow-y-auto scrollbar-hide py-6 pr-4 md:block">
       <nav className="flex flex-col gap-8">
         <div>
           <p className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-(--color-fg-muted)">

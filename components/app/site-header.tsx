@@ -14,11 +14,17 @@ function formatStarCount(count: number) {
   }).format(count);
 }
 
-export function SiteHeader({ githubStarCount }: { githubStarCount: number | null }) {
+export function SiteHeader({
+  githubStarCount,
+}: {
+  githubStarCount: number | null;
+}) {
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const formattedStarCount =
-    typeof githubStarCount === "number" ? formatStarCount(githubStarCount) : null;
+    typeof githubStarCount === "number"
+      ? formatStarCount(githubStarCount)
+      : null;
 
   useMotionValueEvent(scrollY, "change", (v) => {
     setScrolled(v > 8);
@@ -43,13 +49,21 @@ export function SiteHeader({ githubStarCount }: { githubStarCount: number | null
               aria-hidden
               className="absolute inset-1 rounded-md bg-(--color-bg)"
               animate={{ opacity: [0.95, 0.7, 0.95] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+              transition={{
+                duration: 2.4,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
             />
             <motion.span
               aria-hidden
               className="absolute inset-2 rounded-sm bg-(--color-fg)"
               animate={{ scale: [0.85, 1, 0.85] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+              transition={{
+                duration: 2.4,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
             />
           </span>
           <span>beUI</span>
@@ -61,7 +75,7 @@ export function SiteHeader({ githubStarCount }: { githubStarCount: number | null
         <nav className="flex items-center gap-2">
           <Link
             href="/docs/ai-agents"
-            className="group hidden items-center gap-1.5 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-3 py-1 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong) sm:inline-flex"
+            className="group hidden items-center gap-1.5  border border-(--color-border) bg-(--color-bg-elev) px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong) sm:inline-flex"
           >
             <Sparkles className="h-3 w-3 text-(--color-fg-muted) transition-colors group-hover:text-(--color-fg)" />
             For AI agents
@@ -72,7 +86,7 @@ export function SiteHeader({ githubStarCount }: { githubStarCount: number | null
             href="/llms.txt"
             target="_blank"
             rel="noreferrer noopener"
-            className="hidden items-center gap-1 rounded-full px-2.5 py-1 text-xs font-mono text-(--color-fg-muted) hover:text-(--color-fg) md:inline-flex"
+            className="hidden items-center gap-1 px-2.5 py-2 text-xs font-mono text-(--color-fg-muted) hover:text-(--color-fg) md:inline-flex"
           >
             llms.txt
           </Link>
@@ -81,7 +95,7 @@ export function SiteHeader({ githubStarCount }: { githubStarCount: number | null
             href="https://github.com/starc007/ui-components"
             target="_blank"
             rel="noreferrer noopener"
-            className="group inline-flex items-center gap-1.5 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-3 py-1 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
+            className="group inline-flex items-center gap-1.5  border border-(--color-border) bg-(--color-bg-elev) px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
             aria-label={
               formattedStarCount
                 ? `Star on GitHub, ${formattedStarCount} stars`

@@ -22,7 +22,7 @@ export function SiteDock() {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-6 z-40 flex justify-center px-4">
       <div className="pointer-events-auto">
-        <Dock className="border border-fg/5">
+        <Dock className="border border-fg/5 gap-0">
           <DockItem aria-label="Home" active={isHome}>
             <Tooltip
               content="Home"
