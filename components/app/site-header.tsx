@@ -75,7 +75,7 @@ export function SiteHeader({
         <nav className="flex items-center gap-2">
           <Link
             href="/docs/ai-agents"
-            className="group hidden items-center gap-1.5  border border-(--color-border) bg-(--color-bg-elev) px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong) sm:inline-flex"
+            className="group hidden items-center gap-1.5 rounded-2xl border border-(--color-border) bg-(--color-bg-elev) px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong) sm:inline-flex"
           >
             <Sparkles className="h-3 w-3 text-(--color-fg-muted) transition-colors group-hover:text-(--color-fg)" />
             For AI agents
@@ -86,7 +86,7 @@ export function SiteHeader({
             href="/llms.txt"
             target="_blank"
             rel="noreferrer noopener"
-            className="hidden items-center gap-1 px-2.5 py-2 text-xs font-mono text-(--color-fg-muted) hover:text-(--color-fg) md:inline-flex"
+            className="hidden items-center gap-1 px-2.5 py-2 rounded-2xl text-xs font-mono text-(--color-fg-muted) hover:text-(--color-fg) md:inline-flex"
           >
             llms.txt
           </Link>
@@ -95,7 +95,7 @@ export function SiteHeader({
             href="https://github.com/starc007/ui-components"
             target="_blank"
             rel="noreferrer noopener"
-            className="group inline-flex items-center gap-1.5  border border-(--color-border) bg-(--color-bg-elev) px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
+            className="group inline-flex items-center gap-1.5 rounded-2xl border border-(--color-border) bg-(--color-bg-elev) px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
             aria-label={
               formattedStarCount
                 ? `Star on GitHub, ${formattedStarCount} stars`

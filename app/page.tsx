@@ -36,7 +36,7 @@ export default function Home() {
               <Link
                 key={comp.slug}
                 href={`/components/motion/${comp.slug}`}
-                className="group relative flex flex-col overflow-hidden border border-(--color-border) bg-(--color-bg-elev) transition-colors hover:border-(--color-border-strong)"
+                className="group relative rounded-2xl flex flex-col overflow-hidden border border-(--color-border) bg-(--color-bg-elev) transition-colors hover:border-(--color-border-strong)"
               >
                 <div className="relative flex h-44 items-center justify-center overflow-hidden bg-(--color-bg) px-5 py-6 mask-b-fade">
                   <div className="pointer-events-none scale-75 origin-center [&_*]:!cursor-default">
