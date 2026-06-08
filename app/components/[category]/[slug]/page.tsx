@@ -99,6 +99,9 @@ export default async function ComponentPage({
   const cat = findCategory(category);
   const comp = findComponent(category, slug);
   if (!cat || !comp) notFound();
+  const installCommand = `npx shadcn@latest add https://beui.saura3h.xyz/r/${comp.slug}.json`;
+  const namespaceCommand = `npx shadcn@latest registry add @beui=https://beui.saura3h.xyz/r/{name}.json
+npx shadcn@latest add @beui/${comp.slug}`;
 
   return (
     <div>
@@ -111,6 +114,27 @@ export default async function ComponentPage({
       </nav>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-(--color-fg)">{comp.name}</h1>
       <p className="mt-2 max-w-2xl text-(--color-fg-muted)">{comp.description}</p>
+
+      <section className="mt-8 grid gap-4 lg:grid-cols-2">
+        <div>
+          <h2 className="text-sm font-semibold text-(--color-fg)">Install</h2>
+          <p className="mt-1 text-sm text-(--color-fg-muted)">
+            Add this component with the shadcn CLI.
+          </p>
+          <div className="mt-3">
+            <CodeBlock code={installCommand} lang="bash" filename="terminal" />
+          </div>
+        </div>
+        <div>
+          <h2 className="text-sm font-semibold text-(--color-fg)">Namespace</h2>
+          <p className="mt-1 text-sm text-(--color-fg-muted)">
+            Configure once, then install by component name.
+          </p>
+          <div className="mt-3">
+            <CodeBlock code={namespaceCommand} lang="bash" filename="terminal" />
+          </div>
+        </div>
+      </section>
 
       {comp.examples?.length ? (
         <div className="mt-10 flex flex-col gap-12">

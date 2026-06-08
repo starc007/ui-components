@@ -11,6 +11,8 @@ const ENDPOINTS: { label: string; url: string; desc: string }[] = [
   { label: "llms.txt", url: "/llms.txt", desc: "Markdown index in llmstxt.org format." },
   { label: "Registry index", url: "/r", desc: "JSON catalogue of every component." },
   { label: "Component detail", url: "/r/{slug}", desc: "JSON with files, deps, source." },
+  { label: "shadcn catalog", url: "/registry.json", desc: "Directory-compatible registry catalog." },
+  { label: "shadcn item", url: "/r/{slug}.json", desc: "Install item with inline file content and CSS token bridge." },
   { label: "Raw source", url: "/r/{slug}/raw", desc: "Plain text .tsx ready to drop in." },
 ];
 
@@ -27,6 +29,13 @@ for (const file of entry.files) {
 
 // 4. Install external deps
 await runShell(['bun', 'add', ...entry.dependencies]);`;
+
+const SHADCN_SNIPPET = `# Direct install
+npx shadcn@latest add https://beui.saura3h.xyz/r/animated-toast-stack.json
+
+# Namespace install
+npx shadcn@latest registry add @beui=https://beui.saura3h.xyz/r/{name}.json
+npx shadcn@latest add @beui/animated-toast-stack`;
 
 const ENTRY_SHAPE = `{
   "slug": "swap",
@@ -84,6 +93,14 @@ export default function AIAgentsPage() {
       <p className="mt-2 text-(--color-fg-muted)">Four calls, then install. Components are self-contained and own their files.</p>
       <div className="mt-4">
         <CodeBlock code={FETCH_SNIPPET} filename="agent.ts" />
+      </div>
+
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">shadcn flow</h2>
+      <p className="mt-2 text-(--color-fg-muted)">
+        The shadcn item installs source files, package dependencies, and a CSS token bridge that maps beUI&apos;s internal variables onto the target app&apos;s shadcn theme.
+      </p>
+      <div className="mt-4">
+        <CodeBlock code={SHADCN_SNIPPET} lang="bash" filename="terminal" />
       </div>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">Entry shape</h2>

@@ -23,6 +23,23 @@ A curated set of hand-built motion components for product UIs. Every component i
 
 Full live list at [/llms.txt](https://beui.saura3h.xyz/llms.txt), JSON at [/r](https://beui.saura3h.xyz/r), and shadcn registry catalog at [/registry.json](https://beui.saura3h.xyz/registry.json).
 
+## Install with shadcn
+
+Install any component directly from the content-bearing registry item:
+
+```bash
+npx shadcn@latest add https://beui.saura3h.xyz/r/animated-toast-stack.json
+```
+
+Or configure the namespace once:
+
+```bash
+npx shadcn@latest registry add @beui=https://beui.saura3h.xyz/r/{name}.json
+npx shadcn@latest add @beui/animated-toast-stack
+```
+
+The registry item installs a small CSS token bridge into your configured shadcn CSS file. beUI internals use variables such as `--color-fg`, `--color-bg-elev`, and `--color-success`; the bridge maps them to shadcn tokens like `--foreground`, `--card`, `--border`, `--primary`, and `--destructive`, then adds the few status colors shadcn does not define.
+
 ## Stack
 
 - Next 15 (App Router)
@@ -42,7 +59,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Using a component
 
-Browse the site, open any component page, copy the source file into your project. Each component is self-contained and depends only on `motion`, `lucide-react`, and a `cn` helper.
+Browse the site, open any component page, and install through shadcn or copy the source file into your project. Each component is self-contained and depends only on the dependencies listed in its registry item plus a `cn` helper.
 
 ## For AI agents
 

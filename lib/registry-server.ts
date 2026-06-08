@@ -33,6 +33,8 @@ export type ShadcnRegistryFile = {
   content?: string;
 };
 
+export type ShadcnRegistryCss = Record<string, Record<string, string>>;
+
 export type ShadcnRegistryItem = {
   $schema: "https://ui.shadcn.com/schema/registry-item.json";
   name: string;
@@ -42,6 +44,8 @@ export type ShadcnRegistryItem = {
   author: string;
   dependencies: string[];
   registryDependencies: string[];
+  css: ShadcnRegistryCss;
+  docs: string;
   files: ShadcnRegistryFile[];
 };
 
@@ -54,6 +58,42 @@ export type ShadcnRegistry = {
 
 const PKG_RE = /from\s+["']([^"']+)["']/g;
 const SHADCN_DEP_SKIP = new Set(["next", "react", "react-dom"]);
+
+const BEUI_CSS: ShadcnRegistryCss = {
+  ":root": {
+    "--color-bg": "var(--background)",
+    "--color-bg-elev": "var(--card)",
+    "--color-fg": "var(--foreground)",
+    "--color-fg-muted": "var(--muted-foreground)",
+    "--color-border": "var(--border)",
+    "--color-border-strong": "color-mix(in oklch, var(--border) 72%, var(--foreground) 28%)",
+    "--color-accent": "var(--primary)",
+    "--color-accent-fg": "var(--primary-foreground)",
+    "--color-neon": "oklch(0.8 0.22 145)",
+    "--color-violet": "oklch(0.68 0.22 295)",
+    "--color-danger": "var(--destructive)",
+    "--color-success": "oklch(0.7 0.18 155)",
+    "--color-warning": "oklch(0.78 0.18 75)",
+  },
+  ".dark": {
+    "--color-bg": "var(--background)",
+    "--color-bg-elev": "var(--card)",
+    "--color-fg": "var(--foreground)",
+    "--color-fg-muted": "var(--muted-foreground)",
+    "--color-border": "var(--border)",
+    "--color-border-strong": "color-mix(in oklch, var(--border) 68%, var(--foreground) 32%)",
+    "--color-accent": "var(--primary)",
+    "--color-accent-fg": "var(--primary-foreground)",
+    "--color-neon": "oklch(0.8 0.22 145)",
+    "--color-violet": "oklch(0.68 0.22 295)",
+    "--color-danger": "var(--destructive)",
+    "--color-success": "oklch(0.72 0.18 155)",
+    "--color-warning": "oklch(0.8 0.18 75)",
+  },
+};
+
+const BEUI_REGISTRY_DOCS =
+  "beUI components use a small token bridge that maps beUI variables like --color-fg and --color-bg-elev to your shadcn theme tokens. The shadcn CLI installs these variables into your configured CSS file, so the component follows your app theme while preserving the original motion styling.";
 
 function parseDeps(source: string) {
   const external = new Set<string>();
@@ -248,6 +288,8 @@ export async function buildShadcnItem(
     author: "Saurabh <saurabh10102@gmail.com>",
     dependencies: Array.from(dependencies).sort(),
     registryDependencies: [],
+    css: BEUI_CSS,
+    docs: BEUI_REGISTRY_DOCS,
     files: uniqueByPath(files),
   };
 }
