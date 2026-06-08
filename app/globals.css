@@ -115,6 +115,12 @@
   --animate-marquee: marquee 30s linear infinite;
   --animate-marquee-vertical: marquee-vertical 30s linear infinite;
   --animate-shimmer: shimmer 2.5s linear infinite;
+  --animate-action-send: action-send 520ms var(--ease-out) both;
+  --animate-action-copy: action-copy 520ms var(--ease-out) both;
+  --animate-action-download: action-download 540ms var(--ease-out) both;
+  --animate-action-archive: action-archive 520ms var(--ease-out) both;
+  --animate-action-bell: action-bell 680ms var(--ease-out) both;
+  --animate-action-settings: action-settings 720ms var(--ease-out) both;
 
   @keyframes marquee {
     from {
@@ -138,6 +144,71 @@
     }
     to {
       background-position: -200% 0;
+    }
+  }
+  @keyframes action-send {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    45% {
+      transform: translate(2px, -2px);
+    }
+  }
+  @keyframes action-copy {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    40% {
+      transform: translate(1.5px, -1.5px);
+    }
+    70% {
+      transform: translate(-1px, 1px);
+    }
+  }
+  @keyframes action-download {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    42% {
+      transform: translateY(2.5px);
+    }
+  }
+  @keyframes action-archive {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    45% {
+      transform: scale(0.9);
+    }
+  }
+  @keyframes action-bell {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    18% {
+      transform: rotate(14deg);
+    }
+    36% {
+      transform: rotate(-12deg);
+    }
+    54% {
+      transform: rotate(8deg);
+    }
+    72% {
+      transform: rotate(-5deg);
+    }
+  }
+  @keyframes action-settings {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(90deg);
     }
   }
 }

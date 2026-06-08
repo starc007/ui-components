@@ -3,12 +3,14 @@
 import {
   Archive,
   Bell,
-  Check,
   Copy,
   Download,
+  Maximize2,
+  Minimize2,
   Send,
   Settings,
 } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useMemo, useState } from "react";
 import {
   ExpandableActionBar,
@@ -19,42 +21,43 @@ const ACTIONS: ExpandableActionBarItem[] = [
   {
     id: "send",
     label: "Send",
-    icon: <Send className="h-4 w-4" />,
+    icon: <Send className="h-4 w-4 motion-safe:group-hover:animate-action-send" />,
     shortcut: "S",
   },
   {
     id: "copy",
     label: "Copy",
-    icon: <Copy className="h-4 w-4" />,
+    icon: <Copy className="h-4 w-4 motion-safe:group-hover:animate-action-copy" />,
     shortcut: "C",
   },
   {
     id: "download",
     label: "Export",
-    icon: <Download className="h-4 w-4" />,
+    icon: <Download className="h-4 w-4 motion-safe:group-hover:animate-action-download" />,
     shortcut: "E",
   },
   {
     id: "archive",
     label: "Archive",
-    icon: <Archive className="h-4 w-4" />,
+    icon: <Archive className="h-4 w-4 motion-safe:group-hover:animate-action-archive" />,
   },
   {
     id: "alerts",
     label: "Alerts",
-    icon: <Bell className="h-4 w-4" />,
+    icon: <Bell className="h-4 w-4 origin-top motion-safe:group-hover:animate-action-bell" />,
     badge: "3",
   },
   {
     id: "settings",
     label: "Settings",
-    icon: <Settings className="h-4 w-4" />,
+    icon: <Settings className="h-4 w-4 motion-safe:group-hover:animate-action-settings" />,
   },
 ];
 
 export function ExpandableActionBarPreview() {
   const [expanded, setExpanded] = useState(false);
   const [activeId, setActiveId] = useState("send");
+  const reduceMotion = useReducedMotion();
 
   const items = useMemo(
     () =>
@@ -74,18 +77,43 @@ export function ExpandableActionBarPreview() {
           onExpandedChange={setExpanded}
           activeId={activeId}
           onAction={(item) => setActiveId(item.id)}
+          classNames={{
+            item: "group",
+          }}
         />
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-2">
-        <button
+        <motion.button
           type="button"
           onClick={() => setExpanded((current) => !current)}
-          className="inline-flex h-9 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-4 text-xs font-medium text-(--color-fg) transition-colors press hover:border-(--color-border-strong)"
+          className="relative flex h-9 w-28 items-center justify-center overflow-hidden rounded-full border border-(--color-border) bg-(--color-bg-elev) px-4 text-xs font-medium text-(--color-fg) transition-colors hover:border-(--color-border-strong)"
+          whileHover={reduceMotion ? undefined : { scale: 1.02 }}
+          whileTap={reduceMotion ? undefined : { scale: 0.96 }}
         >
-          {expanded ? <Check className="h-3.5 w-3.5" /> : null}
-          {expanded ? "Expanded" : "Expand"}
-        </button>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={expanded ? "expanded" : "collapsed"}
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
+              animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
+              transition={{ duration: reduceMotion ? 0.1 : 0.16, ease: [0.16, 1, 0.3, 1] }}
+              className="flex items-center gap-1.5"
+            >
+              {expanded ? (
+                <>
+                  <Minimize2 className="h-3.5 w-3.5" />
+                  <span>Collapse</span>
+                </>
+              ) : (
+                <>
+                  <Maximize2 className="h-3.5 w-3.5" />
+                  <span>Expand</span>
+                </>
+              )}
+            </motion.span>
+          </AnimatePresence>
+        </motion.button>
       </div>
     </div>
   );
