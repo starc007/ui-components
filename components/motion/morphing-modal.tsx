@@ -6,10 +6,7 @@ import {
   useReducedMotion,
   type Transition,
 } from "motion/react";
-import {
-  type ReactNode,
-  useEffect,
-} from "react";
+import { type ReactNode, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 export interface MorphingModalProps {
@@ -22,7 +19,12 @@ export interface MorphingModalProps {
   className?: string;
 }
 
-const SPRING: Transition = { type: "spring", stiffness: 400, damping: 38, mass: 0.7 };
+const SPRING: Transition = {
+  type: "spring",
+  stiffness: 400,
+  damping: 38,
+  mass: 0.7,
+};
 
 export function MorphingModal({
   viewId,
@@ -59,7 +61,7 @@ export function MorphingModal({
         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         onClick={onClose}
         className={cn(
-          "absolute inset-0 bg-foreground/45 [backdrop-filter:blur(14px)_saturate(140%)] [-webkit-backdrop-filter:blur(14px)_saturate(140%)]",
+          "absolute inset-0 bg-background/5 [backdrop-filter:blur(14px)_saturate(140%)] [-webkit-backdrop-filter:blur(14px)_saturate(140%)]",
           open ? "pointer-events-auto" : "pointer-events-none",
         )}
       />
@@ -93,25 +95,47 @@ export function MorphingModal({
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.div
                     key={viewId}
-                    initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8, filter: "blur(4px)" }}
+                    initial={
+                      reduce
+                        ? { opacity: 0 }
+                        : { opacity: 0, y: 8, filter: "blur(4px)" }
+                    }
                     animate={
                       reduce
-                        ? { opacity: 1, transition: { duration: 0.18, ease: [0.16, 1, 0.3, 1] } }
+                        ? {
+                            opacity: 1,
+                            transition: {
+                              duration: 0.18,
+                              ease: [0.16, 1, 0.3, 1],
+                            },
+                          }
                         : {
                             opacity: 1,
                             y: 0,
                             filter: "blur(0px)",
-                            transition: { duration: 0.24, ease: [0.16, 1, 0.3, 1] },
+                            transition: {
+                              duration: 0.24,
+                              ease: [0.16, 1, 0.3, 1],
+                            },
                           }
                     }
                     exit={
                       reduce
-                        ? { opacity: 0, transition: { duration: 0.14, ease: [0.16, 1, 0.3, 1] } }
+                        ? {
+                            opacity: 0,
+                            transition: {
+                              duration: 0.14,
+                              ease: [0.16, 1, 0.3, 1],
+                            },
+                          }
                         : {
                             opacity: 0,
                             y: -8,
                             filter: "blur(4px)",
-                            transition: { duration: 0.16, ease: [0.16, 1, 0.3, 1] },
+                            transition: {
+                              duration: 0.16,
+                              ease: [0.16, 1, 0.3, 1],
+                            },
                           }
                     }
                   >

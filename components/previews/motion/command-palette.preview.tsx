@@ -1,11 +1,21 @@
 "use client";
 
 import { FileText, Home, Plus, Settings, User } from "lucide-react";
+import { useState } from "react";
 import { CommandPalette } from "@/components/motion/command-palette";
 
 export function CommandPalettePreview() {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="flex flex-col items-start gap-3">
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="inline-flex h-10 items-center rounded-full border border-(--color-border) bg-(--color-bg-elev) px-5 text-sm font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
+      >
+        Open command palette
+      </button>
       <p className="text-sm text-(--color-fg-muted)">
         Press{" "}
         <kbd className="rounded border border-(--color-border) bg-(--color-bg-elev) px-1.5 py-0.5 text-xs text-(--color-fg)">
@@ -14,6 +24,8 @@ export function CommandPalettePreview() {
         (or <kbd className="rounded border border-(--color-border) bg-(--color-bg-elev) px-1.5 py-0.5 text-xs text-(--color-fg)">Ctrl K</kbd>) to open.
       </p>
       <CommandPalette
+        open={open}
+        onOpenChange={setOpen}
         items={[
           { id: "home", label: "Go to Home", group: "Navigation", icon: Home, hint: "G H", onSelect: () => {} },
           { id: "profile", label: "Open profile", group: "Navigation", icon: User, hint: "G P", onSelect: () => {} },

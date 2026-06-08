@@ -62,7 +62,10 @@ export function CommandPalette({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === shortcut.toLowerCase()) {
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.key.toLowerCase() === shortcut.toLowerCase()
+      ) {
         e.preventDefault();
         setOpen(!open);
         return;
@@ -132,7 +135,9 @@ export function CommandPalette({
 
   useEffect(() => {
     if (!open) return;
-    const el = listRef.current?.querySelector<HTMLButtonElement>(`[data-index="${active}"]`);
+    const el = listRef.current?.querySelector<HTMLButtonElement>(
+      `[data-index="${active}"]`,
+    );
     el?.scrollIntoView({ block: "nearest" });
   }, [active, open]);
 
@@ -153,7 +158,7 @@ export function CommandPalette({
         transition={{ duration: open ? 0.18 : 0.12, ease: EASE }}
         onClick={() => setOpen(false)}
         className={cn(
-          "absolute inset-0 bg-foreground/45 [backdrop-filter:blur(12px)_saturate(140%)] [-webkit-backdrop-filter:blur(12px)_saturate(140%)]",
+          "absolute inset-0 bg-background/5 [backdrop-filter:blur(12px)_saturate(140%)] [-webkit-backdrop-filter:blur(12px)_saturate(140%)]",
           open ? "pointer-events-auto" : "pointer-events-none",
         )}
       />
@@ -195,7 +200,9 @@ export function CommandPalette({
           </div>
           <div ref={listRef} className="max-h-[60vh] overflow-y-auto p-2">
             {filtered.length === 0 ? (
-              <div className="p-8 text-center text-sm text-muted-foreground">{emptyMessage}</div>
+              <div className="p-8 text-center text-sm text-muted-foreground">
+                {emptyMessage}
+              </div>
             ) : (
               grouped.map(([group, list]) => (
                 <div key={group} className="mb-1 last:mb-0">
@@ -219,18 +226,30 @@ export function CommandPalette({
                         tabIndex={open ? 0 : -1}
                         className={cn(
                           "relative isolate flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sm transition-colors",
-                          isActive ? "text-foreground" : "text-muted-foreground",
+                          isActive
+                            ? "text-foreground"
+                            : "text-muted-foreground",
                         )}
                       >
                         {isActive ? (
                           <motion.span
                             layoutId="command-active"
                             className="absolute inset-0 z-0 rounded-md bg-primary/[0.05]"
-                            transition={{ type: "spring", stiffness: 480, damping: 38 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 480,
+                              damping: 38,
+                            }}
                           />
                         ) : null}
-                        {Icon ? <Icon className="relative z-10 h-4 w-4" /> : <span className="relative z-10 h-4 w-4" />}
-                        <span className="relative z-10 flex-1 truncate">{it.label}</span>
+                        {Icon ? (
+                          <Icon className="relative z-10 h-4 w-4" />
+                        ) : (
+                          <span className="relative z-10 h-4 w-4" />
+                        )}
+                        <span className="relative z-10 flex-1 truncate">
+                          {it.label}
+                        </span>
                         {it.hint ? (
                           <kbd className="relative z-10 rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground">
                             {it.hint}

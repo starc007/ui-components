@@ -88,7 +88,9 @@ export function BottomSheet({
 
   const snapValue = snapPoints[snap];
   const heightStyle =
-    snapValue === "auto" ? { maxHeight: "92vh" } : { height: `${snapValue * 100}vh` };
+    snapValue === "auto"
+      ? { maxHeight: "92vh" }
+      : { height: `${snapValue * 100}vh` };
 
   return (
     <AnimatePresence>
@@ -100,7 +102,7 @@ export function BottomSheet({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             onClick={() => onOpenChange(false)}
-            className="pointer-events-auto absolute inset-0 bg-foreground/45 backdrop-blur-xl backdrop-saturate-150"
+            className="pointer-events-auto absolute inset-0 bg-background/5 backdrop-blur-md backdrop-saturate-150"
           />
           <motion.div
             ref={sheetRef}
@@ -121,12 +123,13 @@ export function BottomSheet({
                 : { type: "spring", stiffness: 420, damping: 40, mass: 0.5 }
             }
             onAnimationComplete={() => {
-              if (sheetRef.current) heightRef.current = sheetRef.current.offsetHeight;
+              if (sheetRef.current)
+                heightRef.current = sheetRef.current.offsetHeight;
             }}
             style={heightStyle}
             className={cn(
               "pointer-events-auto absolute bottom-0 left-0 right-0 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-3xl will-change-transform",
-              "border border-border bg-card shadow-2xl",
+              "border border-border bg-card shadow-xl",
               className,
             )}
             role="dialog"
@@ -140,8 +143,16 @@ export function BottomSheet({
               <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" />
               {title || description ? (
                 <div className="mt-3 w-full">
-                  {title ? <h2 className="text-base font-semibold text-foreground">{title}</h2> : null}
-                  {description ? <p className="mt-0.5 text-sm text-muted-foreground">{description}</p> : null}
+                  {title ? (
+                    <h2 className="text-base font-semibold text-foreground">
+                      {title}
+                    </h2>
+                  ) : null}
+                  {description ? (
+                    <p className="mt-0.5 text-sm text-muted-foreground">
+                      {description}
+                    </p>
+                  ) : null}
                 </div>
               ) : null}
             </div>
