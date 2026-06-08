@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "beUI v2 — Bespoke motion components for React";
+export const alt = "beUI v2 UI components";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -15,46 +15,85 @@ export default async function OpengraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          padding: "80px",
-          background: "#151515",
+          padding: "72px",
+          background: "#111111",
           backgroundImage:
-            "radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.06), transparent 60%), linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px)",
-          backgroundSize: "auto, 48px 48px, 48px 48px",
+            "linear-gradient(135deg, rgba(255,255,255,0.07), transparent 34%), linear-gradient(180deg, #171717 0%, #111111 62%)",
           color: "#fafafa",
           fontFamily: "system-ui, -apple-system, sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 22, color: "#a0a0a0" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div
             style={{
-              width: 10,
-              height: 10,
-              borderRadius: 999,
-              background: "#fafafa",
-            }}
-          />
-          <span style={{ fontWeight: 600, color: "#fafafa" }}>beUI</span>
-          <span>·</span>
-          <span>v2</span>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          <div
-            style={{
-              fontSize: 104,
-              fontWeight: 600,
-              letterSpacing: "-0.05em",
-              lineHeight: 0.95,
-              color: "#fafafa",
               display: "flex",
-              flexDirection: "column",
+              alignItems: "center",
+              gap: 14,
+              border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 999,
+              padding: "12px 18px",
+              background: "rgba(255,255,255,0.04)",
+              fontSize: 23,
+              color: "#a3a3a3",
             }}
           >
-            <span>Motion components</span>
-            <span>that don&apos;t suck.</span>
+            <div
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: 6,
+                background: "#fafafa",
+                display: "flex",
+              }}
+            />
+            <span style={{ fontWeight: 700, color: "#fafafa" }}>beUI</span>
+            <span>v2</span>
           </div>
-          <div style={{ fontSize: 30, color: "#a0a0a0", lineHeight: 1.3, display: "flex" }}>
-            Bespoke for React. shadcn-compatible. Just motion.
+          <div style={{ display: "flex", fontSize: 22, color: "#a3a3a3" }}>
+            beui.saura3h.xyz
+          </div>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 26,
+              width: 900,
+              textAlign: "center",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 104,
+                fontWeight: 760,
+                letterSpacing: "-0.045em",
+                lineHeight: 0.94,
+                color: "#fafafa",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <span>UI</span>
+              <span>components</span>
+              <span>with motion.</span>
+            </div>
+            <div
+              style={{
+                fontSize: 31,
+                color: "#a3a3a3",
+                lineHeight: 1.25,
+                display: "flex",
+                justifyContent: "center",
+                textAlign: "center",
+              }}
+            >
+              Simple components for your app.
+            </div>
           </div>
         </div>
 
@@ -67,8 +106,8 @@ export default async function OpengraphImage() {
             color: "#a0a0a0",
           }}
         >
-          <span>beui.saura3h.xyz</span>
-          <span>Next 15 · React 19 · Tailwind 4</span>
+          <span>Browse the library</span>
+          <span>Simple motion for common UI.</span>
         </div>
       </div>
     ),

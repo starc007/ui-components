@@ -18,8 +18,8 @@ export async function GET(request: Request) {
   const description =
     component?.description ??
     category?.description ??
-    "Bespoke motion components for React, Tailwind v4 and motion.";
-  const label = component ? `${component.category.name} component` : "shadcn-compatible registry";
+    "Simple components for your app.";
+  const label = component ? `${component.category.name} component` : "UI components";
 
   return new ImageResponse(
     (
@@ -30,53 +30,83 @@ export async function GET(request: Request) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          padding: "76px",
-          background: "#151515",
+          padding: "72px",
+          background: "#111111",
           backgroundImage:
-            "radial-gradient(ellipse at 28% 0%, rgba(255,255,255,0.08), transparent 56%), linear-gradient(to right, rgba(255,255,255,0.045) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.045) 1px, transparent 1px)",
-          backgroundSize: "auto, 48px 48px, 48px 48px",
+            "linear-gradient(135deg, rgba(255,255,255,0.07), transparent 34%), linear-gradient(180deg, #171717 0%, #111111 62%)",
           color: "#fafafa",
           fontFamily: "system-ui, -apple-system, sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 24, color: "#a0a0a0" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div
             style={{
-              width: 10,
-              height: 10,
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+              border: "1px solid rgba(255,255,255,0.12)",
               borderRadius: 999,
-              background: "#fafafa",
+              padding: "12px 18px",
+              background: "rgba(255,255,255,0.04)",
+              fontSize: 23,
+              color: "#a3a3a3",
             }}
-          />
-          <span style={{ fontWeight: 650, color: "#fafafa" }}>beUI</span>
-          <span>v2</span>
-          <span style={{ color: "#737373" }}>/</span>
-          <span>{label}</span>
+          >
+            <div
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: 6,
+                background: "#fafafa",
+                display: "flex",
+              }}
+            />
+            <span style={{ fontWeight: 700, color: "#fafafa" }}>beUI</span>
+            <span>v2</span>
+          </div>
+          <div style={{ display: "flex", fontSize: 22, color: "#a3a3a3" }}>
+            {label}
+          </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 26, maxWidth: 980 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div
             style={{
-              fontSize: title.length > 22 ? 88 : 104,
-              fontWeight: 650,
-              letterSpacing: "-0.045em",
-              lineHeight: 0.94,
-              color: "#fafafa",
               display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 24,
+              width: 900,
+              textAlign: "center",
             }}
           >
-            {title}
-          </div>
-          <div
-            style={{
-              fontSize: 30,
-              color: "#b5b5b5",
-              lineHeight: 1.25,
-              display: "flex",
-              maxWidth: 920,
-            }}
-          >
-            {description}
+            <div
+              style={{
+                fontSize: title.length > 22 ? 82 : 104,
+                fontWeight: 760,
+                letterSpacing: "-0.04em",
+                lineHeight: 0.94,
+                color: "#fafafa",
+                display: "flex",
+                justifyContent: "center",
+                textAlign: "center",
+              }}
+            >
+              {title}
+            </div>
+            <div
+              style={{
+                fontSize: 30,
+                color: "#a3a3a3",
+                lineHeight: 1.25,
+                display: "flex",
+                justifyContent: "center",
+                maxWidth: 760,
+                textAlign: "center",
+              }}
+            >
+              {description}
+            </div>
           </div>
         </div>
 
@@ -90,7 +120,7 @@ export async function GET(request: Request) {
           }}
         >
           <span>beui.saura3h.xyz</span>
-          <span>React 19 · Tailwind 4 · Motion</span>
+          <span>Browse the library</span>
         </div>
       </div>
     ),

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
-import { ArrowUpRight, Sparkles, Star } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 import { useState } from "react";
 import { GithubIcon } from "@/components/app/icons";
 import { cn } from "@/lib/utils";
@@ -73,24 +73,6 @@ export function SiteHeader({
         </Link>
 
         <nav className="flex items-center gap-2">
-          <Link
-            href="/docs/ai-agents"
-            className="group hidden items-center gap-1.5 rounded-2xl border border-(--color-border) bg-(--color-bg-elev)/20 px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong) sm:inline-flex"
-          >
-            <Sparkles className="h-3 w-3 text-(--color-fg-muted) transition-colors group-hover:text-(--color-fg)" />
-            For AI agents
-            <ArrowUpRight className="h-3 w-3 text-(--color-fg-muted) transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </Link>
-
-          <Link
-            href="/llms.txt"
-            target="_blank"
-            rel="noreferrer noopener"
-            className="hidden items-center gap-1 px-2.5 py-2 rounded-2xl text-xs font-mono text-(--color-fg-muted) hover:text-(--color-fg) md:inline-flex"
-          >
-            llms.txt
-          </Link>
-
           <a
             href="https://github.com/starc007/ui-components"
             target="_blank"
@@ -109,6 +91,14 @@ export function SiteHeader({
               {formattedStarCount ? <span>{formattedStarCount}</span> : null}
             </span>
           </a>
+
+          <Link
+            href="/components/motion"
+            className="group inline-flex items-center gap-1.5 rounded-2xl bg-(--color-fg) px-3 py-2 text-xs font-medium text-(--color-bg) press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
+          >
+            Browse
+            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          </Link>
         </nav>
       </div>
     </header>

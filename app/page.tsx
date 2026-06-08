@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Terminal } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { registry } from "@/lib/registry";
 import { getPreview } from "@/components/previews";
 import { Hero } from "@/components/app/hero";
@@ -12,20 +12,6 @@ export default function Home() {
     <div className="relative">
       <section className="relative isolate overflow-hidden px-4 pb-16 pt-20 md:pt-28">
         <Hero />
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 pb-16">
-        <div className="max-w-3xl rounded-lg border border-(--color-border) bg-(--color-bg-elev) p-3">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-2 font-pixel text-sm font-medium text-(--color-fg)">
-              <Terminal className="h-4 w-4 text-(--color-fg-muted)" />
-              Add a component
-            </div>
-            <code className="overflow-x-auto rounded-md bg-(--color-bg) px-3 py-2 font-mono text-xs text-(--color-fg-muted)">
-              npx shadcn@latest add https://beui.saura3h.xyz/r/button
-            </code>
-          </div>
-        </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-28">
