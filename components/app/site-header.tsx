@@ -75,7 +75,7 @@ export function SiteHeader({
         <nav className="flex items-center gap-2">
           <Link
             href="/docs/ai-agents"
-            className="group hidden items-center gap-1.5 rounded-2xl border border-(--color-border) bg-(--color-bg-elev) px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong) sm:inline-flex"
+            className="group hidden items-center gap-1.5 rounded-2xl border border-(--color-border) bg-(--color-bg-elev)/20 px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong) sm:inline-flex"
           >
             <Sparkles className="h-3 w-3 text-(--color-fg-muted) transition-colors group-hover:text-(--color-fg)" />
             For AI agents
@@ -95,7 +95,7 @@ export function SiteHeader({
             href="https://github.com/starc007/ui-components"
             target="_blank"
             rel="noreferrer noopener"
-            className="group inline-flex items-center gap-1.5 rounded-2xl border border-(--color-border) bg-(--color-bg-elev) px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
+            className="group inline-flex items-center gap-1.5 rounded-2xl border border-(--color-border) bg-(--color-bg-elev)/20 px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
             aria-label={
               formattedStarCount
                 ? `Star on GitHub, ${formattedStarCount} stars`
