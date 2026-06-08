@@ -51,7 +51,7 @@ export function Hero() {
         className="mx-auto mt-7 max-w-2xl text-pretty text-base text-(--color-fg-muted) md:text-lg"
       >
         Interactions worth shipping.{" "}
-        <span className="text-(--color-fg)">No Radix, no shadcn. Just motion.</span>{" "}
+        <span className="text-(--color-fg)">shadcn-compatible. Just motion.</span>{" "}
         Copy, paste, done.
       </motion.p>
 

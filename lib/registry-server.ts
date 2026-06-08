@@ -24,7 +24,36 @@ export type RegistryEntry = {
   files: RegistryFile[];
 };
 
+type ShadcnFileType = "registry:component" | "registry:hook" | "registry:lib";
+
+export type ShadcnRegistryFile = {
+  path: string;
+  type: ShadcnFileType;
+  target: string;
+  content?: string;
+};
+
+export type ShadcnRegistryItem = {
+  $schema: "https://ui.shadcn.com/schema/registry-item.json";
+  name: string;
+  type: "registry:component";
+  title: string;
+  description: string;
+  author: string;
+  dependencies: string[];
+  registryDependencies: string[];
+  files: ShadcnRegistryFile[];
+};
+
+export type ShadcnRegistry = {
+  $schema: "https://ui.shadcn.com/schema/registry.json";
+  name: string;
+  homepage: string;
+  items: Array<Omit<ShadcnRegistryItem, "$schema">>;
+};
+
 const PKG_RE = /from\s+["']([^"']+)["']/g;
+const SHADCN_DEP_SKIP = new Set(["next", "react", "react-dom"]);
 
 function parseDeps(source: string) {
   const external = new Set<string>();
@@ -72,6 +101,42 @@ async function resolveInternal(spec: string): Promise<{ path: string; content: s
     if (content != null) return { path: c, content };
   }
   return null;
+}
+
+function fileTypeForPath(rel: string): ShadcnFileType {
+  if (rel.startsWith("lib/hooks/")) return "registry:hook";
+  if (rel.startsWith("lib/")) return "registry:lib";
+  return "registry:component";
+}
+
+function targetForPath(rel: string) {
+  if (rel.startsWith("components/")) {
+    return `@components/${rel.replace(/^components\//, "")}`;
+  }
+
+  if (rel.startsWith("lib/")) {
+    return `@lib/${rel.replace(/^lib\//, "")}`;
+  }
+
+  return `~/${rel}`;
+}
+
+function shadcnFile(rel: string, content?: string): ShadcnRegistryFile {
+  return {
+    path: rel,
+    type: fileTypeForPath(rel),
+    target: targetForPath(rel),
+    ...(content !== undefined ? { content } : {}),
+  };
+}
+
+function uniqueByPath(files: ShadcnRegistryFile[]) {
+  const seen = new Set<string>();
+  return files.filter((file) => {
+    if (seen.has(file.path)) return false;
+    seen.add(file.path);
+    return true;
+  });
 }
 
 export async function buildEntry(categorySlug: string, slug: string): Promise<RegistryEntry | null> {
@@ -130,14 +195,87 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
   };
 }
 
+export async function buildShadcnItem(categorySlug: string, slug: string): Promise<ShadcnRegistryItem | null> {
+  const comp = findComponent(categorySlug, slug);
+  if (!comp) return null;
+
+  const files: ShadcnRegistryFile[] = [];
+  const dependencies = new Set<string>();
+  const internalQueue: string[] = [];
+  const internalSeen = new Set<string>();
+
+  async function addSource(rel: string) {
+    const content = await readFileSafe(rel);
+    if (content == null) return;
+
+    files.push(shadcnFile(rel, content));
+    const deps = parseDeps(content);
+    for (const dep of deps.external) {
+      if (!SHADCN_DEP_SKIP.has(dep)) dependencies.add(dep);
+    }
+    for (const spec of deps.internal) internalQueue.push(spec);
+  }
+
+  await addSource(comp.file);
+
+  if (comp.extraFiles) {
+    for (const rel of comp.extraFiles) {
+      await addSource(rel);
+    }
+  }
+
+  while (internalQueue.length > 0) {
+    const spec = internalQueue.shift();
+    if (!spec || internalSeen.has(spec)) continue;
+    internalSeen.add(spec);
+
+    const resolved = await resolveInternal(spec);
+    if (!resolved) continue;
+
+    await addSource(resolved.path);
+  }
+
+  return {
+    $schema: "https://ui.shadcn.com/schema/registry-item.json",
+    name: comp.slug,
+    type: "registry:component",
+    title: comp.name,
+    description: comp.description,
+    author: "Saurabh <saurabh10102@gmail.com>",
+    dependencies: Array.from(dependencies).sort(),
+    registryDependencies: [],
+    files: uniqueByPath(files),
+  };
+}
+
+export async function buildShadcnRegistry(): Promise<ShadcnRegistry> {
+  const items = await Promise.all(
+    allComponents().map(async (component) => {
+      const item = await buildShadcnItem(component.category.slug, component.slug);
+      if (!item) return null;
+      const { $schema: _schema, ...entry } = item;
+      return entry;
+    }),
+  );
+
+  return {
+    $schema: "https://ui.shadcn.com/schema/registry.json",
+    name: "beui",
+    homepage: SITE_URL,
+    items: items.filter((item): item is Omit<ShadcnRegistryItem, "$schema"> => item !== null),
+  };
+}
+
 export async function buildIndex() {
   return {
     name: "beUI v2",
-    description: "Bespoke motion components for React. No Radix, no shadcn. Just motion.",
+    description: "Bespoke motion components for React.",
     site: SITE_URL,
     endpoints: {
       llms: `${SITE_URL}/llms.txt`,
       index: `${SITE_URL}/r`,
+      shadcn_registry: `${SITE_URL}/r/registry.json`,
+      shadcn_item: `${SITE_URL}/r/{slug}.json`,
       detail: `${SITE_URL}/r/{slug}`,
       raw: `${SITE_URL}/r/{slug}/raw`,
     },

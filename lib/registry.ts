@@ -32,7 +32,7 @@ export const registry: CategoryEntry[] = [
   {
     slug: "motion",
     name: "Motion",
-    description: "A curated set of bespoke motion components. No Radix, no shadcn. Just motion.",
+    description: "A curated set of bespoke motion components with shadcn-compatible registry endpoints.",
     components: [
       {
         slug: "tilt-card",

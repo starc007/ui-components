@@ -54,7 +54,7 @@ export default async function OpengraphImage() {
             <span>that don&apos;t suck.</span>
           </div>
           <div style={{ fontSize: 30, color: "#a0a0a0", lineHeight: 1.3, display: "flex" }}>
-            Bespoke for React. No Radix, no shadcn. Just motion.
+            Bespoke for React. shadcn-compatible. Just motion.
           </div>
         </div>
 

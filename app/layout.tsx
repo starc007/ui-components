@@ -15,7 +15,7 @@ const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
   title: "beUI v2 · bespoke motion components for React",
-  description: "A curated motion library built with React, Tailwind v4 and motion. No Radix, no shadcn. Just craft.",
+  description: "A curated motion library built with React, Tailwind v4 and motion, with shadcn-compatible registry endpoints.",
   openGraph: {
     title: "beUI v2",
     description: "Bespoke motion components for React.",
@@ -41,6 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt" />
         <link rel="alternate" type="application/json" title="Component registry" href="/r" />
+        <link rel="alternate" type="application/json" title="shadcn registry" href="/r/registry.json" />
       </head>
       <body className="min-h-screen antialiased">
         <ThemeProvider>
