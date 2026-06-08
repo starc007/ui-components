@@ -14,20 +14,39 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://beui.saura3h.xyz"),
+  applicationName: "beUI v2",
   title: "beUI v2 · bespoke motion components for React",
   description: "A curated motion library built with React, Tailwind v4 and motion, with shadcn-compatible registry endpoints.",
+  alternates: {
+    canonical: "/",
+    types: {
+      "application/json": "/registry.json",
+      "text/plain": "/llms.txt",
+    },
+  },
   openGraph: {
     title: "beUI v2",
     description: "Bespoke motion components for React.",
     type: "website",
-    url: "https://beui.saura3h.xyz",
+    url: "/",
+    siteName: "beUI v2",
+    images: [
+      {
+        url: "/api/og",
+        width: 1200,
+        height: 630,
+        alt: "beUI v2 bespoke motion components for React",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "beUI v2",
     description: "Bespoke motion components for React.",
+    images: ["/api/og"],
   },
-  keywords: ["React", "Tailwind", "Motion", "UI", "Components", "Open source"],
+  keywords: ["React", "Tailwind", "Motion", "UI", "Components", "Open source", "shadcn registry"],
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -36,12 +55,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" suppressHydrationWarning className={cn(inter.variable, mono.variable)}>
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt" />
         <link rel="alternate" type="application/json" title="Component registry" href="/r" />
-        <link rel="alternate" type="application/json" title="shadcn registry" href="/r/registry.json" />
+        <link rel="alternate" type="application/json" title="shadcn registry" href="/registry.json" />
       </head>
       <body className="min-h-screen antialiased">
         <ThemeProvider>

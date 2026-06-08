@@ -21,7 +21,7 @@ A curated set of hand-built motion components for product UIs. Every component i
 - Multi-chain swap widget with token picker bottom sheet
 - Tilt cards, marquee, tooltip, switch, dock, shared layout bg, animated number, number ticker, text shimmer
 
-Full live list at [/llms.txt](https://beui.saura3h.xyz/llms.txt), JSON at [/r](https://beui.saura3h.xyz/r), and shadcn registry catalog at [/r/registry.json](https://beui.saura3h.xyz/r/registry.json).
+Full live list at [/llms.txt](https://beui.saura3h.xyz/llms.txt), JSON at [/r](https://beui.saura3h.xyz/r), and shadcn registry catalog at [/registry.json](https://beui.saura3h.xyz/registry.json).
 
 ## Stack
 
@@ -49,8 +49,10 @@ Browse the site, open any component page, copy the source file into your project
 - `https://beui.saura3h.xyz/llms.txt` — markdown index ([llmstxt.org](https://llmstxt.org) format)
 - `https://beui.saura3h.xyz/r` — JSON index of all components
 - `https://beui.saura3h.xyz/r/{slug}` — JSON detail with files, deps, source
-- `https://beui.saura3h.xyz/r/registry.json` — shadcn-compatible registry catalog
-- `https://beui.saura3h.xyz/r/{slug}.json` — shadcn-compatible install item
+- `https://beui.saura3h.xyz/registry.json` — shadcn registry directory-compatible catalog
+- `https://beui.saura3h.xyz/{slug}.json` — shadcn registry directory-compatible item
+- `https://beui.saura3h.xyz/r/registry.json` — shadcn-compatible install catalog
+- `https://beui.saura3h.xyz/r/{slug}.json` — shadcn-compatible install item with inline file content
 - `https://beui.saura3h.xyz/r/{slug}/raw` — raw `.tsx` source (text/plain)
 
 Each component entry lists external `dependencies` to install plus internal helpers shipped inline. Drop files at the listed paths and you are done.

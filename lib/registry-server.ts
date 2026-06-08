@@ -195,7 +195,11 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
   };
 }
 
-export async function buildShadcnItem(categorySlug: string, slug: string): Promise<ShadcnRegistryItem | null> {
+export async function buildShadcnItem(
+  categorySlug: string,
+  slug: string,
+  { includeContent = true }: { includeContent?: boolean } = {},
+): Promise<ShadcnRegistryItem | null> {
   const comp = findComponent(categorySlug, slug);
   if (!comp) return null;
 
@@ -208,7 +212,7 @@ export async function buildShadcnItem(categorySlug: string, slug: string): Promi
     const content = await readFileSafe(rel);
     if (content == null) return;
 
-    files.push(shadcnFile(rel, content));
+    files.push(shadcnFile(rel, includeContent ? content : undefined));
     const deps = parseDeps(content);
     for (const dep of deps.external) {
       if (!SHADCN_DEP_SKIP.has(dep)) dependencies.add(dep);
@@ -251,7 +255,7 @@ export async function buildShadcnItem(categorySlug: string, slug: string): Promi
 export async function buildShadcnRegistry(): Promise<ShadcnRegistry> {
   const items = await Promise.all(
     allComponents().map(async (component) => {
-      const item = await buildShadcnItem(component.category.slug, component.slug);
+      const item = await buildShadcnItem(component.category.slug, component.slug, { includeContent: false });
       if (!item) return null;
       const { $schema: _schema, ...entry } = item;
       return entry;
@@ -276,6 +280,8 @@ export async function buildIndex() {
       index: `${SITE_URL}/r`,
       shadcn_registry: `${SITE_URL}/r/registry.json`,
       shadcn_item: `${SITE_URL}/r/{slug}.json`,
+      directory_registry: `${SITE_URL}/registry.json`,
+      directory_item: `${SITE_URL}/{slug}.json`,
       detail: `${SITE_URL}/r/{slug}`,
       raw: `${SITE_URL}/r/{slug}/raw`,
     },

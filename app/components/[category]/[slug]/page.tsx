@@ -21,17 +21,62 @@ export async function generateMetadata({
   params: Promise<{ category: string; slug: string }>;
 }): Promise<Metadata> {
   const { category, slug } = await params;
+  const cat = findCategory(category);
   const comp = findComponent(category, slug);
-  if (!comp) return {};
+  if (!cat || !comp) return {};
+
+  const title = `${comp.name} · ${cat.name} component · beUI v2`;
+  const pageUrl = `/components/${cat.slug}/${comp.slug}`;
+  const imageUrl = `/api/og?component=${comp.slug}`;
+  const keywords = [
+    comp.name,
+    `${comp.name} component`,
+    `${comp.name} React component`,
+    `${comp.name} shadcn component`,
+    cat.name,
+    "React motion component",
+    "Tailwind CSS component",
+    "shadcn registry",
+    "beUI v2",
+  ];
+
   return {
-    title: `${comp.name} · beUI v2`,
+    title,
     description: comp.description,
+    keywords,
+    openGraph: {
+      title,
+      description: comp.description,
+      url: pageUrl,
+      type: "article",
+      siteName: "beUI v2",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${comp.name} component preview`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: comp.description,
+      images: [imageUrl],
+    },
     alternates: {
-      canonical: `/components/${category}/${slug}`,
+      canonical: pageUrl,
       types: {
-        "application/json": `/r/${slug}`,
-        "text/plain": `/r/${slug}/raw`,
+        "application/json": `/r/${comp.slug}.json`,
+        "text/plain": `/r/${comp.slug}/raw`,
       },
+    },
+    other: {
+      "beui:category": cat.slug,
+      "beui:component": comp.slug,
+      "beui:registry-item": `/r/${comp.slug}.json`,
+      "beui:directory-item": `/${comp.slug}.json`,
     },
   };
 }
