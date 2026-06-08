@@ -125,7 +125,7 @@ npx shadcn@latest add @beui/${comp.slug}`;
         <DefaultTabs category={category} slug={slug} file={comp.file} />
       )}
 
-      <section className="mt-12 grid gap-4 border-t border-(--color-border) pt-8 lg:grid-cols-2">
+      <section className="mt-12 grid gap-6 border-t border-(--color-border) pt-8">
         <div>
           <h2 className="text-sm font-semibold text-(--color-fg)">Install</h2>
           <p className="mt-1 text-sm text-(--color-fg-muted)">
