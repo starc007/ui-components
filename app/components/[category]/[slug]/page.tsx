@@ -115,7 +115,17 @@ npx shadcn@latest add @beui/${comp.slug}`;
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-(--color-fg)">{comp.name}</h1>
       <p className="mt-2 max-w-2xl text-(--color-fg-muted)">{comp.description}</p>
 
-      <section className="mt-8 grid gap-4 lg:grid-cols-2">
+      {comp.examples?.length ? (
+        <div className="mt-10 flex flex-col gap-12">
+          {comp.examples.map((ex) => (
+            <ExampleBlock key={ex.slug} example={ex} />
+          ))}
+        </div>
+      ) : (
+        <DefaultTabs category={category} slug={slug} file={comp.file} />
+      )}
+
+      <section className="mt-12 grid gap-6 border-t border-(--color-border) pt-8">
         <div>
           <h2 className="text-sm font-semibold text-(--color-fg)">Install</h2>
           <p className="mt-1 text-sm text-(--color-fg-muted)">
@@ -135,16 +145,6 @@ npx shadcn@latest add @beui/${comp.slug}`;
           </div>
         </div>
       </section>
-
-      {comp.examples?.length ? (
-        <div className="mt-10 flex flex-col gap-12">
-          {comp.examples.map((ex) => (
-            <ExampleBlock key={ex.slug} example={ex} />
-          ))}
-        </div>
-      ) : (
-        <DefaultTabs category={category} slug={slug} file={comp.file} />
-      )}
     </div>
   );
 }

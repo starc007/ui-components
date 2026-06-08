@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { GeistPixelSquare } from "geist/font/pixel";
 import "./globals.css";
 import { ThemeProvider } from "@/components/app/theme-provider";
 import { SiteHeader } from "@/components/app/site-header";
@@ -12,12 +13,13 @@ import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const pixel = GeistPixelSquare;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://beui.saura3h.xyz"),
   applicationName: "beUI v2",
-  title: "beUI v2 · bespoke motion components for React",
-  description: "A curated motion library built with React, Tailwind v4 and motion, with shadcn-compatible registry endpoints.",
+  title: "beUI v2 · motion components",
+  description: "Simple UI components with motion.",
   alternates: {
     canonical: "/",
     types: {
@@ -27,7 +29,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "beUI v2",
-    description: "Bespoke motion components for React.",
+    description: "Simple UI components with motion.",
     type: "website",
     url: "/",
     siteName: "beUI v2",
@@ -36,24 +38,24 @@ export const metadata: Metadata = {
         url: "/api/og",
         width: 1200,
         height: 630,
-        alt: "beUI v2 bespoke motion components for React",
+        alt: "beUI v2 UI components",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "beUI v2",
-    description: "Bespoke motion components for React.",
+    description: "Simple UI components with motion.",
     images: ["/api/og"],
   },
-  keywords: ["React", "Tailwind", "Motion", "UI", "Components", "Open source", "shadcn registry"],
+  keywords: ["Motion components", "UI components", "Component library", "Open source"],
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const githubStarCount = await getGithubStarCount();
 
   return (
-    <html lang="en" suppressHydrationWarning className={cn(inter.variable, mono.variable)}>
+    <html lang="en" suppressHydrationWarning className={cn(inter.variable, mono.variable, pixel.variable)}>
       <head>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt" />
