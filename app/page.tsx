@@ -17,7 +17,7 @@ export default function Home() {
       <section className="mx-auto max-w-7xl px-4 pb-16">
         <div className="max-w-3xl rounded-lg border border-(--color-border) bg-(--color-bg-elev) p-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-2 text-sm font-medium text-(--color-fg)">
+            <div className="flex items-center gap-2 font-pixel text-sm font-medium text-(--color-fg)">
               <Terminal className="h-4 w-4 text-(--color-fg-muted)" />
               Add a component
             </div>
@@ -29,18 +29,18 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-28">
-        <div className="mb-8 flex flex-col gap-4 border-t border-(--color-border) pt-12 md:flex-row md:items-end md:justify-between">
+        <div className="mb-8 flex flex-col gap-4 border-t border-(--color-border) pt-12 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+            <p className="font-pixel text-xs font-medium uppercase text-(--color-fg-muted)">
               Components
             </p>
-            <h2 className="mt-2 max-w-2xl text-3xl font-semibold leading-tight text-(--color-fg) md:text-4xl">
+            <h2 className="mt-2 max-w-2xl font-pixel text-3xl font-medium leading-tight text-(--color-fg) md:text-4xl">
               {componentCount} components.
             </h2>
           </div>
           <Link
             href="/components/motion"
-            className="inline-flex items-center self-start text-sm font-medium text-(--color-fg-muted) hover:text-(--color-fg)"
+            className="inline-flex items-center self-start text-sm font-medium text-(--color-fg-muted) hover:text-(--color-fg) md:self-center"
           >
             Browse all <ArrowRight className="ml-1 h-3.5 w-3.5" />
           </Link>
@@ -65,7 +65,9 @@ export default function Home() {
                 </div>
                 <div className="flex flex-1 items-start justify-between gap-3 border-t border-(--color-border) p-4">
                   <div className="min-w-0">
-                    <h3 className="text-base font-semibold text-(--color-fg)">{comp.name}</h3>
+                    <h3 className="font-pixel text-base font-medium text-(--color-fg)">
+                      {comp.name}
+                    </h3>
                     <p className="mt-1 line-clamp-2 text-xs text-(--color-fg-muted)">
                       {comp.description}
                     </p>
