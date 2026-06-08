@@ -4,10 +4,9 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { motion } from "motion/react";
 import { GithubIcon } from "@/components/app/icons";
-import { Magnetic } from "@/components/motion/magnetic";
 import { TextReveal } from "@/components/motion/text-reveal";
 
-const HEADLINE = ["Motion components", "that don't suck."];
+const HEADLINE = ["Motion", "components", "for React."];
 const HEADLINE_WORDS = HEADLINE.reduce((n, l) => n + l.split(" ").length, 0);
 const STAGGER = 0.09;
 const START = 0.12;
@@ -18,7 +17,7 @@ export function Hero() {
   const ctaDelay = subDelay + 0.25;
 
   return (
-    <div className="mx-auto max-w-5xl text-center">
+    <div className="mx-auto max-w-7xl">
       <motion.div
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
@@ -28,10 +27,10 @@ export function Hero() {
           href="https://github.com/starc007/ui-components"
           target="_blank"
           rel="noreferrer noopener"
-          className="group mb-7 inline-flex items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-3 py-1 text-xs font-medium text-(--color-fg) press"
+          className="group mb-7 inline-flex min-h-10 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-3 text-xs font-medium text-(--color-fg) press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-(--color-fg)" />
-          v2 is live. Built on Tailwind 4, React 19
+          <span className="h-1.5 w-1.5 rounded-full bg-(--color-accent)" />
+          Tailwind 4 + React 19
           <ArrowUpRight className="h-3 w-3 text-(--color-fg-muted) transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </Link>
       </motion.div>
@@ -41,43 +40,39 @@ export function Hero() {
         text={HEADLINE}
         delay={START}
         stagger={STAGGER}
-        className="text-balance text-[2.75rem] font-semibold leading-[0.95] tracking-[-0.045em] text-(--color-fg) sm:text-6xl md:text-6xl lg:text-[4.5rem]"
+        className="max-w-5xl font-pixel text-[3.2rem] font-medium leading-[0.86] text-(--color-fg) sm:text-7xl md:text-8xl lg:text-[8.5rem]"
       />
 
       <motion.p
         initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: subDelay }}
-        className="mx-auto mt-7 max-w-2xl text-pretty text-base text-(--color-fg-muted) md:text-lg"
+        className="mt-7 max-w-md text-pretty text-base leading-7 text-(--color-fg-muted)"
       >
-        Interactions worth shipping.{" "}
-        <span className="text-(--color-fg)">shadcn-compatible. Just motion.</span>{" "}
-        Copy, paste, done.
+        Copy-ready components with clean motion.
       </motion.p>
 
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: ctaDelay }}
-        className="mt-10 flex flex-wrap items-center justify-center gap-3"
+        className="mt-8 flex flex-wrap items-center gap-3"
       >
-        <Magnetic strength={0.2}>
-          <Link
-            href="/components/motion"
-            className="group inline-flex h-11 items-center gap-2 rounded-full bg-(--color-fg) px-6 text-sm font-medium text-(--color-bg) press"
-          >
-            Browse components
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-        </Magnetic>
+        <Link
+          href="/components/motion"
+          className="group inline-flex h-11 items-center gap-2 rounded-full bg-(--color-fg) px-6 text-sm font-medium text-(--color-bg) press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
+        >
+          Browse components
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
         <Link
           href="https://github.com/starc007/ui-components"
           target="_blank"
           rel="noreferrer noopener"
-          className="inline-flex h-11 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-6 text-sm font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
+          className="inline-flex h-11 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-6 text-sm font-medium text-(--color-fg) press hover:border-(--color-border-strong) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
         >
           <GithubIcon className="h-4 w-4" />
-          Star on GitHub
+          GitHub
         </Link>
       </motion.div>
     </div>

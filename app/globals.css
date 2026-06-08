@@ -59,6 +59,8 @@
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono), ui-monospace, monospace;
+  --font-pixel: var(--font-geist-pixel-square), var(--font-mono), ui-monospace,
+    monospace;
 }
 
 @theme {
@@ -95,11 +97,13 @@
 @layer base {
   html {
     color-scheme: light dark;
+    overflow-x: clip;
   }
   body {
     background: var(--bg);
     color: var(--fg);
     font-family: var(--font-sans);
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }

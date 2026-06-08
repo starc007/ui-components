@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { GeistPixelSquare } from "geist/font/pixel";
 import "./globals.css";
 import { ThemeProvider } from "@/components/app/theme-provider";
 import { SiteHeader } from "@/components/app/site-header";
@@ -12,6 +13,7 @@ import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const pixel = GeistPixelSquare;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://beui.saura3h.xyz"),
@@ -53,7 +55,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const githubStarCount = await getGithubStarCount();
 
   return (
-    <html lang="en" suppressHydrationWarning className={cn(inter.variable, mono.variable)}>
+    <html lang="en" suppressHydrationWarning className={cn(inter.variable, mono.variable, pixel.variable)}>
       <head>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt" />

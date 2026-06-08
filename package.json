@@ -31,6 +31,7 @@
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.1.0",
     "clsx": "^2.1.1",
+    "geist": "^1.7.2",
     "lucide-react": "^1.16.0",
     "motion": "^11.15.0",
     "next": "^15.1.4",
