@@ -39,7 +39,7 @@ export function TiltCard({ children, max = 12, glare = true, className }: TiltCa
   };
 
   const transform = useMotionTemplate`perspective(1000px) rotateX(${srx}deg) rotateY(${sry}deg)`;
-  const glareBg = useMotionTemplate`radial-gradient(circle at ${gx}% ${gy}%, color-mix(in oklch, var(--foreground) 15%, transparent), transparent 50%)`;
+  const glareBg = useMotionTemplate`radial-gradient(circle at ${gx}% ${gy}%, var(--foreground), transparent 50%)`;
 
   return (
     <motion.div
@@ -54,7 +54,7 @@ export function TiltCard({ children, max = 12, glare = true, className }: TiltCa
         <motion.div
           aria-hidden
           style={{ background: glareBg }}
-          className="pointer-events-none absolute inset-0"
+          className="pointer-events-none absolute inset-0 opacity-15"
         />
       ) : null}
     </motion.div>

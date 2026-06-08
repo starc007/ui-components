@@ -100,7 +100,7 @@ export function BottomSheet({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             onClick={() => onOpenChange(false)}
-            className="pointer-events-auto absolute inset-0 bg-black/50 backdrop-blur-xl backdrop-saturate-150"
+            className="pointer-events-auto absolute inset-0 bg-foreground/45 backdrop-blur-xl backdrop-saturate-150"
           />
           <motion.div
             ref={sheetRef}
@@ -126,7 +126,7 @@ export function BottomSheet({
             style={heightStyle}
             className={cn(
               "pointer-events-auto absolute bottom-0 left-0 right-0 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-3xl will-change-transform",
-              "border border-border bg-card shadow-[0_-24px_60px_-12px_rgb(0_0_0/0.45)]",
+              "border border-border bg-card shadow-2xl",
               className,
             )}
             role="dialog"

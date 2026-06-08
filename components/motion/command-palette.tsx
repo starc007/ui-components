@@ -153,7 +153,7 @@ export function CommandPalette({
         transition={{ duration: open ? 0.18 : 0.12, ease: EASE }}
         onClick={() => setOpen(false)}
         className={cn(
-          "absolute inset-0 bg-black/55 [backdrop-filter:blur(12px)_saturate(140%)] [-webkit-backdrop-filter:blur(12px)_saturate(140%)]",
+          "absolute inset-0 bg-foreground/45 [backdrop-filter:blur(12px)_saturate(140%)] [-webkit-backdrop-filter:blur(12px)_saturate(140%)]",
           open ? "pointer-events-auto" : "pointer-events-none",
         )}
       />
@@ -175,7 +175,7 @@ export function CommandPalette({
           }
           onKeyDown={onKeyDown}
           className={cn(
-            "w-full max-w-xl overflow-hidden rounded-2xl border border-border bg-card shadow-[0_24px_60px_-12px_rgb(0_0_0/0.5),0_0_0_1px_rgb(255_255_255/0.04)_inset] will-change-transform",
+            "w-full max-w-xl overflow-hidden rounded-2xl border border-border bg-card shadow-2xl will-change-transform",
             open ? "pointer-events-auto" : "pointer-events-none",
           )}
         >

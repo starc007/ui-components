@@ -59,7 +59,7 @@ export function MorphingModal({
         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         onClick={onClose}
         className={cn(
-          "absolute inset-0 bg-black/50 [backdrop-filter:blur(14px)_saturate(140%)] [-webkit-backdrop-filter:blur(14px)_saturate(140%)]",
+          "absolute inset-0 bg-foreground/45 [backdrop-filter:blur(14px)_saturate(140%)] [-webkit-backdrop-filter:blur(14px)_saturate(140%)]",
           open ? "pointer-events-auto" : "pointer-events-none",
         )}
       />
@@ -85,7 +85,7 @@ export function MorphingModal({
               }}
               transition={SPRING}
               className={cn(
-                "pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-card shadow-[0_30px_60px_-20px_rgb(0_0_0/0.5),0_0_0_1px_rgb(255_255_255/0.04)_inset] will-change-transform",
+                "pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-card shadow-2xl will-change-transform",
                 className,
               )}
             >

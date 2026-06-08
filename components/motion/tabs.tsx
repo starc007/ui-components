@@ -115,7 +115,7 @@ export function TabsTrigger({ value, children, className }: { value: string; chi
           layoutId={layoutId}
           style={{ borderRadius: variant === "pill" ? 9999 : 8 }}
           className={cn(
-            "absolute inset-0 bg-primary shadow-[0_1px_6px_rgb(0_0_0/0.06)]",
+            "absolute inset-0 bg-primary shadow-sm",
             radius,
           )}
         />
@@ -126,8 +126,8 @@ export function TabsTrigger({ value, children, className }: { value: string; chi
         aria-selected={active}
         onClick={() => setValue(value)}
         className={cn(
-          "relative z-10 inline-flex items-center justify-center whitespace-nowrap bg-transparent px-3.5 py-1.5 text-sm font-medium text-white mix-blend-exclusion transition-opacity outline-none",
-          active ? "" : "opacity-70 hover:opacity-100",
+          "relative z-10 inline-flex items-center justify-center whitespace-nowrap bg-transparent px-3.5 py-1.5 text-sm font-medium transition-colors outline-none",
+          active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground",
           radius,
           className,
         )}

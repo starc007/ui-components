@@ -189,7 +189,7 @@ export function ExpandableActionBar({
         <motion.div
           layout="size"
           className={cn(
-            "relative inline-flex items-center overflow-hidden rounded-full border border-border bg-card/90 shadow-[0_18px_50px_-30px_rgb(0_0_0/0.55)] backdrop-blur-xl",
+            "relative inline-flex items-center overflow-hidden rounded-full border border-border bg-card/90 shadow-2xl backdrop-blur-xl",
             SIZE_CLASS[size],
             classNames?.track,
           )}
@@ -295,7 +295,7 @@ export function ExpandableActionBar({
                     {item.badge ? (
                       <span
                         className={cn(
-                          "ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-none text-white",
+                          "ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-none text-primary-foreground",
                           !isExpanded && "absolute right-0.5 top-0.5",
                           classNames?.badge,
                         )}

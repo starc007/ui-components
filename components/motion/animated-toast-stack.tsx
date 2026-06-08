@@ -376,7 +376,7 @@ const ToastItem = memo(function ToastItem({
     >
       <div
         className={cn(
-          "relative overflow-hidden rounded-2xl border border-border bg-card/95 p-3 shadow-[0_18px_50px_-28px_rgb(0_0_0/0.65),0_1px_0_0_rgb(255_255_255/0.05)_inset] backdrop-blur-xl",
+          "relative overflow-hidden rounded-2xl border border-border bg-card/95 p-3 shadow-2xl backdrop-blur-xl",
           classNames?.surface,
         )}
       >

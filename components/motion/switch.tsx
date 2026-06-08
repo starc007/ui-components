@@ -61,7 +61,7 @@ export function Switch({ checked, onCheckedChange, disabled, label, className }:
             ref={thumbRef}
             layout
             animate={{ scale: squish ? 0.9 : 1 }}
-            className="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-[0_2px_6px_-1px_rgb(0_0_0/0.3)]"
+            className="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-md"
           >
             {/* Stretch toward the destination while active. */}
             <div

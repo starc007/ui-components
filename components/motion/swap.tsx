@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
  * Types + mock data
  * ============================================================ */
 
-export type Chain = { id: string; name: string; color: string; symbol: string };
+export type Chain = { id: string; name: string; tone: string; symbol: string };
 export type Token = {
   id: string;
   symbol: string;
@@ -33,14 +33,14 @@ export type Token = {
 };
 
 const CHAINS: Chain[] = [
-  { id: "eth", name: "Ethereum", color: "#627EEA", symbol: "Ξ" },
-  { id: "sol", name: "Solana", color: "#9945FF", symbol: "◎" },
-  { id: "base", name: "Base", color: "#0052FF", symbol: "B" },
-  { id: "arb", name: "Arbitrum", color: "#28A0F0", symbol: "A" },
-  { id: "op", name: "Optimism", color: "#FF0420", symbol: "O" },
-  { id: "poly", name: "Polygon", color: "#8247E5", symbol: "P" },
-  { id: "bnb", name: "BNB", color: "#F0B90B", symbol: "B" },
-  { id: "avax", name: "Avalanche", color: "#E84142", symbol: "A" },
+  { id: "eth", name: "Ethereum", tone: "bg-primary text-primary-foreground", symbol: "Ξ" },
+  { id: "sol", name: "Solana", tone: "bg-secondary text-secondary-foreground", symbol: "◎" },
+  { id: "base", name: "Base", tone: "bg-accent text-accent-foreground", symbol: "B" },
+  { id: "arb", name: "Arbitrum", tone: "bg-muted text-muted-foreground", symbol: "A" },
+  { id: "op", name: "Optimism", tone: "bg-destructive text-primary-foreground", symbol: "O" },
+  { id: "poly", name: "Polygon", tone: "bg-primary/80 text-primary-foreground", symbol: "P" },
+  { id: "bnb", name: "BNB", tone: "bg-secondary text-secondary-foreground", symbol: "B" },
+  { id: "avax", name: "Avalanche", tone: "bg-destructive/80 text-primary-foreground", symbol: "A" },
 ];
 
 const TOKENS: Token[] = [
@@ -687,7 +687,7 @@ function DestinationRow({
                 className={cn(
                   "flex items-center gap-2 rounded-lg border px-2.5 py-2 transition-colors",
                   hasAddress && !valid
-                    ? "border-red-500/40"
+                    ? "border-destructive/40"
                     : "border-border",
                 )}
               >
@@ -709,7 +709,7 @@ function DestinationRow({
                         exit={{ opacity: 0, scale: 0.7 }}
                         transition={{ duration: 0.14, ease: EASE }}
                       >
-                        <Check className="h-3.5 w-3.5 shrink-0 text-green-500" />
+                        <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
                       </motion.span>
                     ) : (
                       <motion.button
@@ -829,7 +829,7 @@ function TokenPicker({
                 ? { duration: 0.18, ease: EASE }
                 : { type: "spring", stiffness: 420, damping: 40, mass: 0.5 }
             }
-            className="absolute inset-x-0 bottom-0 z-20 flex max-h-[92%] flex-col rounded-t-3xl border-t border-border bg-card shadow-[0_-20px_40px_-20px_rgb(0_0_0/0.4)]"
+            className="absolute inset-x-0 bottom-0 z-20 flex max-h-[92%] flex-col rounded-t-3xl border-t border-border bg-card shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-label={`Select ${side === "from" ? "from" : "to"} token`}
@@ -997,8 +997,11 @@ function ChainChip({
 function ChainDot({ chain, size = 16 }: { chain: Chain; size?: number }) {
   return (
     <span
-      style={{ width: size, height: size, background: chain.color }}
-      className="inline-flex shrink-0 items-center justify-center rounded-full text-[9px] font-bold text-white"
+      style={{ width: size, height: size }}
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center rounded-full text-[9px] font-bold",
+        chain.tone,
+      )}
     >
       {chain.symbol}
     </span>
@@ -1024,11 +1027,13 @@ function TokenDot({
       </span>
       <span
         style={{
-          background: chain.color,
           width: size * 0.42,
           height: size * 0.42,
         }}
-        className="absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full border-2 border-card text-[7px] font-bold text-white"
+        className={cn(
+          "absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full border-2 border-card text-[7px] font-bold",
+          chain.tone,
+        )}
       >
         {chain.symbol}
       </span>
