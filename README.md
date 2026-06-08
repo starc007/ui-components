@@ -1,52 +1,26 @@
 # beUI v2
 
-Bespoke motion components for React, now available through shadcn-compatible registry endpoints.
-
-Copy. Paste. Done.
+Simple UI components with motion.
 
 [beui.saura3h.xyz](https://beui.saura3h.xyz)
 
+Browse a component, install it, and own the source.
+
 ## What it is
 
-A curated set of hand-built motion components for product UIs. Every component is a single file you own, with spring physics tuned by hand and zero third-party primitives.
+beUI is a small component library for product interfaces. Components are designed to be copied into your app, not hidden behind a package.
 
-- Word-by-word text reveal with blur
-- Word-by-word text reveal with blur
-- macOS-style magnifying dock
-- Family-app morphing modal
-- Vaul-style bottom sheet with drag-to-dismiss
-- Command palette (⌘K) with fuzzy filter
-- Tabs (pill, segment, underline) with shared layoutId
-- Button family: base + multi-state (idle → loading → success / error) + magnetic
-- Multi-chain swap widget with token picker bottom sheet
-- Tilt cards, marquee, tooltip, switch, dock, shared layout bg, animated number, number ticker, text shimmer
-
-Full live list at [/llms.txt](https://beui.saura3h.xyz/llms.txt), JSON at [/r](https://beui.saura3h.xyz/r), and shadcn registry catalog at [/registry.json](https://beui.saura3h.xyz/registry.json).
+Each component includes a live preview, usage example, source code, and install command.
 
 ## Install with shadcn
 
-Install any component directly from the content-bearing registry item:
+Install any component from its page:
 
 ```bash
 npx shadcn@latest add https://beui.saura3h.xyz/r/animated-toast-stack.json
 ```
 
-Or configure the namespace once:
-
-```bash
-npx shadcn@latest registry add @beui=https://beui.saura3h.xyz/r/{name}.json
-npx shadcn@latest add @beui/animated-toast-stack
-```
-
-Components use shadcn semantic color utilities such as `bg-background`, `bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-primary`, and `text-destructive`. They inherit the target app theme without installing beUI-specific color variables.
-
-## Stack
-
-- Next 15 (App Router)
-- React 19
-- Tailwind CSS v4
-- [motion](https://motion.dev) (formerly framer-motion)
-- TypeScript
+You can also copy the source file directly from the component page.
 
 ## Run locally
 
@@ -59,24 +33,21 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Using a component
 
-Browse the site, open any component page, and install through shadcn or copy the source file into your project. Each component is self-contained and depends only on the dependencies listed in its registry item plus a `cn` helper.
+Open a component page to see the preview, usage, code, and install command.
 
 ## For AI agents
 
-- `https://beui.saura3h.xyz/llms.txt` — markdown index ([llmstxt.org](https://llmstxt.org) format)
-- `https://beui.saura3h.xyz/r` — JSON index of all components
-- `https://beui.saura3h.xyz/r/{slug}` — JSON detail with files, deps, source
-- `https://beui.saura3h.xyz/registry.json` — shadcn registry directory-compatible catalog
-- `https://beui.saura3h.xyz/{slug}.json` — shadcn registry directory-compatible item
-- `https://beui.saura3h.xyz/r/registry.json` — shadcn-compatible install catalog
-- `https://beui.saura3h.xyz/r/{slug}.json` — shadcn-compatible install item with inline file content
-- `https://beui.saura3h.xyz/r/{slug}/raw` — raw `.tsx` source (text/plain)
-
-Each component entry lists external `dependencies` to install plus internal helpers shipped inline. Drop files at the listed paths and you are done.
+- `https://beui.saura3h.xyz/llms.txt`
+- `https://beui.saura3h.xyz/r`
+- `https://beui.saura3h.xyz/r/{slug}`
+- `https://beui.saura3h.xyz/r/{slug}.json`
+- `https://beui.saura3h.xyz/r/{slug}/raw`
 
 ## Contributing
 
-PRs welcome. Keep components in `components/motion/`, add a preview in `components/previews/motion/`, register in `lib/registry.ts`.
+PRs welcome.
+
+Add components in `components/motion/`, previews in `components/previews/motion/`, and registry entries in `lib/registry.ts`.
 
 ## Author
 
