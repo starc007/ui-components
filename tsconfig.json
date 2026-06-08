@@ -36,6 +36,7 @@
     "build/types/**/*.ts"
   ],
   "exclude": [
+    "examples/shadcn-vite-install",
     "node_modules"
   ]
 }

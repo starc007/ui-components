@@ -100,8 +100,6 @@ export default async function ComponentPage({
   const comp = findComponent(category, slug);
   if (!cat || !comp) notFound();
   const installCommand = `npx shadcn@latest add https://beui.saura3h.xyz/r/${comp.slug}.json`;
-  const namespaceCommand = `npx shadcn@latest registry add @beui=https://beui.saura3h.xyz/r/{name}.json
-npx shadcn@latest add @beui/${comp.slug}`;
 
   return (
     <div>
@@ -133,15 +131,6 @@ npx shadcn@latest add @beui/${comp.slug}`;
           </p>
           <div className="mt-3">
             <CodeBlock code={installCommand} lang="bash" filename="terminal" />
-          </div>
-        </div>
-        <div>
-          <h2 className="text-sm font-semibold text-(--color-fg)">Namespace</h2>
-          <p className="mt-1 text-sm text-(--color-fg-muted)">
-            Configure once, then install by component name.
-          </p>
-          <div className="mt-3">
-            <CodeBlock code={namespaceCommand} lang="bash" filename="terminal" />
           </div>
         </div>
       </section>

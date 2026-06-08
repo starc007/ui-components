@@ -8,6 +8,7 @@
 
 # testing
 /coverage
+/examples/shadcn-vite-install/
 
 # next.js
 /.next/
