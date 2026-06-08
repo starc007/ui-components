@@ -74,7 +74,7 @@ export function SharedLayoutBg({
                         layoutId={`shared-bg-${uid}`}
                         transition={{ type: "spring", stiffness: 205, damping: 22 }}
                         className={cn(
-                          "pointer-events-none h-full w-full rounded-2xl bg-(--color-fg)/[0.06]",
+                          "pointer-events-none h-full w-full rounded-2xl bg-primary/[0.06]",
                           pillClassName,
                         )}
                       />

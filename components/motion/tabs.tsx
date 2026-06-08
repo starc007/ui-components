@@ -62,9 +62,9 @@ export function Tabs({
 }
 
 const listClasses: Record<Variant, string> = {
-  pill: "inline-flex items-center gap-1 rounded-full bg-(--color-bg-elev) p-1",
-  underline: "inline-flex items-center gap-1 border-b border-(--color-border)",
-  segment: "inline-flex items-center gap-0 rounded-lg bg-(--color-bg-elev) p-0.5",
+  pill: "inline-flex items-center gap-1 rounded-full bg-card p-1",
+  underline: "inline-flex items-center gap-1 border-b border-border",
+  segment: "inline-flex items-center gap-0 rounded-lg bg-card p-0.5",
 };
 
 export function TabsList({ children, className }: { children: ReactNode; className?: string }) {
@@ -89,7 +89,7 @@ export function TabsTrigger({ value, children, className }: { value: string; chi
         onClick={() => setValue(value)}
         className={cn(
           "relative isolate px-3 pb-2.5 pt-1 -mb-px text-sm font-medium transition-colors",
-          active ? "text-(--color-fg)" : "text-(--color-fg-muted) hover:text-(--color-fg)",
+          active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
           className,
         )}
       >
@@ -97,7 +97,7 @@ export function TabsTrigger({ value, children, className }: { value: string; chi
         {active ? (
           <motion.span
             layoutId={layoutId}
-            className="absolute -bottom-px left-0 right-0 h-px bg-(--color-fg)"
+            className="absolute -bottom-px left-0 right-0 h-px bg-primary"
           />
         ) : null}
       </button>
@@ -115,7 +115,7 @@ export function TabsTrigger({ value, children, className }: { value: string; chi
           layoutId={layoutId}
           style={{ borderRadius: variant === "pill" ? 9999 : 8 }}
           className={cn(
-            "absolute inset-0 bg-(--color-fg) shadow-[0_1px_6px_rgb(0_0_0/0.06)]",
+            "absolute inset-0 bg-primary shadow-[0_1px_6px_rgb(0_0_0/0.06)]",
             radius,
           )}
         />

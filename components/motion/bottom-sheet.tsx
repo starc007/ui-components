@@ -126,7 +126,7 @@ export function BottomSheet({
             style={heightStyle}
             className={cn(
               "pointer-events-auto absolute bottom-0 left-0 right-0 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-3xl will-change-transform",
-              "border border-(--color-border-strong) bg-(--color-bg-elev) shadow-[0_-24px_60px_-12px_rgb(0_0_0/0.45)]",
+              "border border-border bg-card shadow-[0_-24px_60px_-12px_rgb(0_0_0/0.45)]",
               className,
             )}
             role="dialog"
@@ -137,11 +137,11 @@ export function BottomSheet({
               onPointerDown={(e) => dragControls.start(e)}
               className="flex cursor-grab touch-none flex-col items-center px-4 pb-2 pt-3 active:cursor-grabbing"
             >
-              <div className="h-1.5 w-10 rounded-full bg-(--color-fg-muted)/40" />
+              <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" />
               {title || description ? (
                 <div className="mt-3 w-full">
-                  {title ? <h2 className="text-base font-semibold text-(--color-fg)">{title}</h2> : null}
-                  {description ? <p className="mt-0.5 text-sm text-(--color-fg-muted)">{description}</p> : null}
+                  {title ? <h2 className="text-base font-semibold text-foreground">{title}</h2> : null}
+                  {description ? <p className="mt-0.5 text-sm text-muted-foreground">{description}</p> : null}
                 </div>
               ) : null}
             </div>

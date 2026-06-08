@@ -17,11 +17,11 @@ interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
 }
 
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
-  primary: "bg-(--color-fg) text-(--color-bg) hover:bg-(--color-fg)/90",
+  primary: "bg-primary text-primary-foreground hover:bg-primary/90",
   secondary:
-    "border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg) hover:border-(--color-border-strong)",
-  ghost: "text-(--color-fg-muted) hover:text-(--color-fg) hover:bg-(--color-fg)/5",
-  outline: "border border-(--color-border) bg-transparent text-(--color-fg) hover:bg-(--color-fg)/5",
+    "border border-border bg-card text-foreground hover:border-border",
+  ghost: "text-muted-foreground hover:text-foreground hover:bg-primary/5",
+  outline: "border border-border bg-transparent text-foreground hover:bg-primary/5",
 };
 
 const SIZE_CLASS: Record<ButtonSize, string> = {

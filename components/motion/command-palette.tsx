@@ -175,31 +175,31 @@ export function CommandPalette({
           }
           onKeyDown={onKeyDown}
           className={cn(
-            "w-full max-w-xl overflow-hidden rounded-2xl border border-(--color-border-strong) bg-(--color-bg-elev) shadow-[0_24px_60px_-12px_rgb(0_0_0/0.5),0_0_0_1px_rgb(255_255_255/0.04)_inset] will-change-transform",
+            "w-full max-w-xl overflow-hidden rounded-2xl border border-border bg-card shadow-[0_24px_60px_-12px_rgb(0_0_0/0.5),0_0_0_1px_rgb(255_255_255/0.04)_inset] will-change-transform",
             open ? "pointer-events-auto" : "pointer-events-none",
           )}
         >
-          <div className="flex items-center gap-3 border-b border-(--color-border) px-4">
-            <Search className="h-4 w-4 text-(--color-fg-muted)" />
+          <div className="flex items-center gap-3 border-b border-border px-4">
+            <Search className="h-4 w-4 text-muted-foreground" />
             <input
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={placeholder}
               tabIndex={open ? 0 : -1}
-              className="h-12 flex-1 bg-transparent text-sm text-(--color-fg) placeholder:text-(--color-fg-muted) outline-none"
+              className="h-12 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
             />
-            <kbd className="hidden rounded border border-(--color-border) bg-(--color-bg) px-1.5 py-0.5 text-[10px] text-(--color-fg-muted) sm:inline-block">
+            <kbd className="hidden rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground sm:inline-block">
               ESC
             </kbd>
           </div>
           <div ref={listRef} className="max-h-[60vh] overflow-y-auto p-2">
             {filtered.length === 0 ? (
-              <div className="p-8 text-center text-sm text-(--color-fg-muted)">{emptyMessage}</div>
+              <div className="p-8 text-center text-sm text-muted-foreground">{emptyMessage}</div>
             ) : (
               grouped.map(([group, list]) => (
                 <div key={group} className="mb-1 last:mb-0">
-                  <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+                  <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     {group}
                   </div>
                   {list.map((it) => {
@@ -219,20 +219,20 @@ export function CommandPalette({
                         tabIndex={open ? 0 : -1}
                         className={cn(
                           "relative isolate flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sm transition-colors",
-                          isActive ? "text-(--color-fg)" : "text-(--color-fg-muted)",
+                          isActive ? "text-foreground" : "text-muted-foreground",
                         )}
                       >
                         {isActive ? (
                           <motion.span
                             layoutId="command-active"
-                            className="absolute inset-0 z-0 rounded-md bg-(--color-fg)/[0.05]"
+                            className="absolute inset-0 z-0 rounded-md bg-primary/[0.05]"
                             transition={{ type: "spring", stiffness: 480, damping: 38 }}
                           />
                         ) : null}
                         {Icon ? <Icon className="relative z-10 h-4 w-4" /> : <span className="relative z-10 h-4 w-4" />}
                         <span className="relative z-10 flex-1 truncate">{it.label}</span>
                         {it.hint ? (
-                          <kbd className="relative z-10 rounded border border-(--color-border) bg-(--color-bg) px-1.5 py-0.5 text-[10px] text-(--color-fg-muted)">
+                          <kbd className="relative z-10 rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground">
                             {it.hint}
                           </kbd>
                         ) : null}

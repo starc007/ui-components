@@ -10,16 +10,20 @@ export interface TextShimmerProps {
 
 export function TextShimmer({ children, as: Comp = "span", duration = 2.5, className }: TextShimmerProps) {
   return (
-    <Comp
-      style={{ animationDuration: `${duration}s` }}
-      className={cn(
-        "inline-block bg-clip-text text-transparent animate-shimmer",
-        "bg-[linear-gradient(110deg,var(--color-fg-muted)_30%,var(--color-fg)_50%,var(--color-fg-muted)_70%)]",
-        "bg-[length:200%_100%]",
-        className,
-      )}
-    >
-      {children}
-    </Comp>
+    <>
+      <style>
+        {`@keyframes beui-text-shimmer{from{background-position:200% 0}to{background-position:-200% 0}}`}
+      </style>
+      <Comp
+        style={{ animation: `beui-text-shimmer ${duration}s linear infinite` }}
+        className={cn(
+          "inline-block bg-[length:200%_100%] bg-clip-text text-transparent",
+          "bg-[linear-gradient(110deg,var(--muted-foreground)_30%,var(--foreground)_50%,var(--muted-foreground)_70%)]",
+          className,
+        )}
+      >
+        {children}
+      </Comp>
+    </>
   );
 }

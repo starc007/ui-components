@@ -292,19 +292,19 @@ export function MultiChainSwap({
     <div
       className={cn(
         "relative isolate w-full max-w-[420px] overflow-hidden rounded-3xl",
-        "border border-(--color-border-strong)/20 bg-(--color-bg-elev)",
+        "border border-border/20 bg-card",
         className,
       )}
     >
       {/* Header */}
-      <div className="flex h-12 items-center justify-between border-b border-(--color-border)/50 px-3">
-        <span className="px-2 text-sm font-semibold tracking-tight text-(--color-fg)">
+      <div className="flex h-12 items-center justify-between border-b border-border/50 px-3">
+        <span className="px-2 text-sm font-semibold tracking-tight text-foreground">
           Swap
         </span>
         <button
           type="button"
           aria-label="Settings"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-(--color-fg-muted) hover:bg-(--color-fg)/5 hover:text-(--color-fg) press"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-primary/5 hover:text-foreground active:scale-[0.97] transition-transform"
         >
           <Settings className="h-4 w-4" />
         </button>
@@ -405,10 +405,10 @@ function Field({
   const id = useId();
   const usdValue = (Number(amount) || 0) * (token.usd ?? 0);
   return (
-    <div className="relative rounded-2xl border border-(--color-border)/50 bg-(--color-bg)/40 p-3.5">
+    <div className="relative rounded-2xl border border-border/50 bg-background/40 p-3.5">
       <label
         htmlFor={id}
-        className="mb-2 block text-[11px] font-medium uppercase tracking-wider text-(--color-fg-muted)"
+        className="mb-2 block text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
       >
         {side === "from" ? "You pay" : "You get"}
       </label>
@@ -422,7 +422,7 @@ function Field({
               value={amount}
               onChange={(e) => onAmount?.(sanitizeAmount(e.target.value))}
               placeholder="0"
-              className="w-full bg-transparent text-2xl font-semibold tracking-tight text-(--color-fg) tabular-nums outline-none placeholder:text-(--color-fg-muted)/60"
+              className="w-full bg-transparent text-2xl font-semibold tracking-tight text-foreground tabular-nums outline-none placeholder:text-muted-foreground/60"
             />
           ) : (
             <div className="flex h-9 items-center gap-2 text-2xl font-semibold tracking-tight tabular-nums">
@@ -432,7 +432,7 @@ function Field({
                   filter: quoting ? "blur(2px)" : "blur(0px)",
                 }}
                 transition={{ duration: 0.18, ease: EASE }}
-                className="text-(--color-fg)"
+                className="text-foreground"
               >
                 {amount || "0"}
               </motion.span>
@@ -444,13 +444,13 @@ function Field({
                     exit={{ opacity: 0, scale: 0.85 }}
                     transition={{ duration: 0.14, ease: EASE }}
                   >
-                    <Loader2 className="h-4 w-4 animate-spin text-(--color-fg-muted)" />
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                   </motion.span>
                 ) : null}
               </AnimatePresence>
             </div>
           )}
-          <p className="mt-1 text-[11px] text-(--color-fg-muted) tabular-nums">
+          <p className="mt-1 text-[11px] text-muted-foreground tabular-nums">
             ≈ ${formatAmount(usdValue, 2)}
           </p>
         </div>
@@ -458,15 +458,15 @@ function Field({
         <button
           type="button"
           onClick={onOpenPicker}
-          className="group inline-flex h-10 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) pl-1 pr-2.5 text-sm font-semibold text-(--color-fg) press hover:border-(--color-border-strong)"
+          className="group inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card pl-1 pr-2.5 text-sm font-semibold text-foreground active:scale-[0.97] transition-transform hover:border-border"
         >
           <TokenDot token={token} chain={chain} />
           <span>{token.symbol}</span>
-          <ChevronDown className="h-3.5 w-3.5 text-(--color-fg-muted)" />
+          <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
         </button>
       </div>
 
-      <div className="mt-2 flex items-center justify-between text-[11px] text-(--color-fg-muted)">
+      <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Wallet className="h-3 w-3" />
           <span className="tabular-nums">
@@ -478,7 +478,7 @@ function Field({
           <button
             type="button"
             onClick={() => onAmount?.(String(token.balance))}
-            className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-(--color-fg-muted) hover:bg-(--color-fg)/5 hover:text-(--color-fg)"
+            className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground hover:bg-primary/5 hover:text-foreground"
           >
             Max
           </button>
@@ -510,7 +510,7 @@ function FlipButton({
         whileTap={reduce ? undefined : { scale: 0.9 }}
         animate={reduce ? undefined : { rotate: rotation }}
         transition={{ type: "spring", stiffness: 380, damping: 26, mass: 0.6 }}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[3px] border-(--color-bg-elev) bg-(--color-fg)/10 text-(--color-fg) backdrop-blur"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[3px] border-card bg-primary/10 text-foreground backdrop-blur"
       >
         <ArrowDownUp className="h-3.5 w-3.5" />
       </motion.button>
@@ -540,27 +540,27 @@ function QuoteRow({
   quoting: boolean;
 }) {
   return (
-    <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 rounded-xl border border-(--color-border)/50 bg-(--color-bg)/40 px-3.5 py-2.5 text-[11px]">
-      <span className="text-(--color-fg-muted)">Rate</span>
-      <span className="text-right tabular-nums text-(--color-fg)">
+    <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 rounded-xl border border-border/50 bg-background/40 px-3.5 py-2.5 text-[11px]">
+      <span className="text-muted-foreground">Rate</span>
+      <span className="text-right tabular-nums text-foreground">
         {quoting ? (
-          <Loader2 className="ml-auto inline h-3 w-3 animate-spin text-(--color-fg-muted)" />
+          <Loader2 className="ml-auto inline h-3 w-3 animate-spin text-muted-foreground" />
         ) : (
           <>
             1 {from.symbol} ≈ {formatAmount(rate)} {to.symbol}
           </>
         )}
       </span>
-      <span className="text-(--color-fg-muted)">Network fee</span>
-      <span className="text-right tabular-nums text-(--color-fg)">
+      <span className="text-muted-foreground">Network fee</span>
+      <span className="text-right tabular-nums text-foreground">
         ${fee.toFixed(2)}
       </span>
-      <span className="text-(--color-fg-muted)">Slippage</span>
-      <span className="text-right tabular-nums text-(--color-fg)">
+      <span className="text-muted-foreground">Slippage</span>
+      <span className="text-right tabular-nums text-foreground">
         {slippage.toFixed(2)}%
       </span>
-      <span className="text-(--color-fg-muted)">ETA</span>
-      <span className="text-right text-(--color-fg)">{eta}</span>
+      <span className="text-muted-foreground">ETA</span>
+      <span className="text-right text-foreground">{eta}</span>
     </div>
   );
 }
@@ -601,8 +601,8 @@ function ActionButton({
       className={cn(
         "mt-3 inline-flex h-12 w-full items-center justify-center rounded-2xl text-sm font-semibold transition-colors",
         disabled
-          ? "cursor-not-allowed bg-(--color-fg)/10 text-(--color-fg-muted)"
-          : "bg-(--color-fg) text-(--color-bg) hover:bg-(--color-fg)/90",
+          ? "cursor-not-allowed bg-primary/10 text-muted-foreground"
+          : "bg-primary text-primary-foreground hover:bg-primary/90",
       )}
     >
       <AnimatePresence mode="wait" initial={false}>
@@ -649,11 +649,11 @@ function DestinationRow({
   }, [show]);
 
   return (
-    <div className="mt-1 overflow-hidden rounded-xl border border-(--color-border)/50 bg-(--color-bg)/40">
+    <div className="mt-1 overflow-hidden rounded-xl border border-border/50 bg-background/40">
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-[12px] text-(--color-fg-muted) hover:text-(--color-fg)"
+        className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-[12px] text-muted-foreground hover:text-foreground"
       >
         <span className="flex items-center gap-2">
           <Send className="h-3.5 w-3.5 shrink-0" />
@@ -682,13 +682,13 @@ function DestinationRow({
             transition={{ duration: 0.22, ease: EASE }}
             style={{ overflow: "hidden" }}
           >
-            <div className="border-t border-(--color-border)/50 px-3.5 pb-3 pt-2.5">
+            <div className="border-t border-border/50 px-3.5 pb-3 pt-2.5">
               <div
                 className={cn(
                   "flex items-center gap-2 rounded-lg border px-2.5 py-2 transition-colors",
                   hasAddress && !valid
                     ? "border-red-500/40"
-                    : "border-(--color-border)",
+                    : "border-border",
                 )}
               >
                 <input
@@ -697,7 +697,7 @@ function DestinationRow({
                   onChange={(e) => onAddress(e.target.value.trim())}
                   placeholder="0x... or name.eth"
                   spellCheck={false}
-                  className="min-w-0 flex-1 bg-transparent font-mono text-[12px] text-(--color-fg) outline-none placeholder:text-(--color-fg-muted)/60"
+                  className="min-w-0 flex-1 bg-transparent font-mono text-[12px] text-foreground outline-none placeholder:text-muted-foreground/60"
                 />
                 <AnimatePresence mode="wait">
                   {hasAddress ? (
@@ -721,7 +721,7 @@ function DestinationRow({
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.7 }}
                         transition={{ duration: 0.14, ease: EASE }}
-                        className="shrink-0 text-(--color-fg-muted) hover:text-(--color-fg)"
+                        className="shrink-0 text-muted-foreground hover:text-foreground"
                       >
                         <X className="h-3.5 w-3.5" />
                       </motion.button>
@@ -815,7 +815,7 @@ function TokenPicker({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: EASE }}
-            className="absolute inset-0 z-10 cursor-default bg-(--color-bg)/40 backdrop-blur-sm"
+            className="absolute inset-0 z-10 cursor-default bg-background/40 backdrop-blur-sm"
           />
 
           {/* Sheet panel */}
@@ -829,38 +829,38 @@ function TokenPicker({
                 ? { duration: 0.18, ease: EASE }
                 : { type: "spring", stiffness: 420, damping: 40, mass: 0.5 }
             }
-            className="absolute inset-x-0 bottom-0 z-20 flex max-h-[92%] flex-col rounded-t-3xl border-t border-(--color-border-strong) bg-(--color-bg-elev) shadow-[0_-20px_40px_-20px_rgb(0_0_0/0.4)]"
+            className="absolute inset-x-0 bottom-0 z-20 flex max-h-[92%] flex-col rounded-t-3xl border-t border-border bg-card shadow-[0_-20px_40px_-20px_rgb(0_0_0/0.4)]"
             role="dialog"
             aria-modal="true"
             aria-label={`Select ${side === "from" ? "from" : "to"} token`}
           >
             {/* Drag handle (visual only) */}
             <div className="flex justify-center pt-2.5 pb-1">
-              <span className="h-1 w-9 rounded-full bg-(--color-fg)/15" />
+              <span className="h-1 w-9 rounded-full bg-primary/15" />
             </div>
 
             {/* Search */}
-            <div className="flex items-center gap-2 border-b border-(--color-border) px-4 pb-3">
-              <Search className="h-4 w-4 shrink-0 text-(--color-fg-muted)" />
+            <div className="flex items-center gap-2 border-b border-border px-4 pb-3">
+              <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
               <input
                 ref={inputRef}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search name or paste address"
-                className="w-full bg-transparent text-sm text-(--color-fg) outline-none placeholder:text-(--color-fg-muted)/70"
+                className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/70"
               />
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="inline-flex h-7 w-7 items-center justify-center rounded-full text-(--color-fg-muted) hover:bg-(--color-fg)/5 hover:text-(--color-fg)"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-primary/5 hover:text-foreground"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
             </div>
 
             {/* Chain chips */}
-            <div className="scrollbar-hide flex items-center gap-1.5 overflow-x-auto border-b border-(--color-border) px-3 py-5">
+            <div className="[scrollbar-width:none] [&::-webkit-scrollbar]:hidden flex items-center gap-1.5 overflow-x-auto border-b border-border px-3 py-5">
               <ChainChip
                 active={chainFilter === "all"}
                 onClick={() => setChainFilter("all")}
@@ -881,10 +881,10 @@ function TokenPicker({
               {/* Popular */}
               {!q && chainFilter === "all" ? (
                 <>
-                  <p className="px-1 pb-2 text-[11px] font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+                  <p className="px-1 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Most popular
                   </p>
-                  <div className="scrollbar-hide flex items-center gap-1.5 overflow-x-auto pb-3">
+                  <div className="[scrollbar-width:none] [&::-webkit-scrollbar]:hidden flex items-center gap-1.5 overflow-x-auto pb-3">
                     {popular.map((t) => {
                       const chain = chains.find((c) => c.id === t.chainId)!;
                       return (
@@ -892,7 +892,7 @@ function TokenPicker({
                           key={t.id}
                           type="button"
                           onClick={() => onPick(t.id)}
-                          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg)/50 py-1 pl-1 pr-3 text-sm font-semibold text-(--color-fg) press hover:border-(--color-border-strong)"
+                          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-background/50 py-1 pl-1 pr-3 text-sm font-semibold text-foreground active:scale-[0.97] transition-transform hover:border-border"
                         >
                           <TokenDot token={t} chain={chain} size={22} />
                           {t.symbol}
@@ -904,12 +904,12 @@ function TokenPicker({
               ) : null}
 
               {/* Trending / All */}
-              <p className="px-1 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+              <p className="px-1 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {q ? "Results" : chainFilter === "all" ? "Trending" : "Tokens"}
               </p>
               <ul className="flex flex-col gap-0.5">
                 {filtered.length === 0 ? (
-                  <li className="py-8 text-center text-xs text-(--color-fg-muted)">
+                  <li className="py-8 text-center text-xs text-muted-foreground">
                     No tokens found
                   </li>
                 ) : null}
@@ -922,24 +922,24 @@ function TokenPicker({
                         type="button"
                         onClick={() => onPick(t.id)}
                         className={cn(
-                          "flex w-full items-center justify-between rounded-xl px-2 py-2 text-left transition-colors press",
+                          "flex w-full items-center justify-between rounded-xl px-2 py-2 text-left transition-colors active:scale-[0.97] transition-transform",
                           active
-                            ? "bg-(--color-fg)/5"
-                            : "hover:bg-(--color-fg)/[0.04]",
+                            ? "bg-primary/5"
+                            : "hover:bg-primary/[0.04]",
                         )}
                       >
                         <span className="flex min-w-0 items-center gap-2.5">
                           <TokenDot token={t} chain={chain} size={32} />
                           <span className="flex min-w-0 flex-col">
-                            <span className="truncate text-sm font-semibold text-(--color-fg)">
+                            <span className="truncate text-sm font-semibold text-foreground">
                               {t.name}
                             </span>
-                            <span className="truncate text-[11px] text-(--color-fg-muted)">
+                            <span className="truncate text-[11px] text-muted-foreground">
                               {t.symbol}
                             </span>
                           </span>
                         </span>
-                        <span className="shrink-0 text-right text-[11px] tabular-nums text-(--color-fg-muted)">
+                        <span className="shrink-0 text-right text-[11px] tabular-nums text-muted-foreground">
                           {t.address ??
                             (t.balance ? formatAmount(t.balance) : "")}
                         </span>
@@ -973,11 +973,11 @@ function ChainChip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "inline-flex h-9 shrink-0 items-center justify-center rounded-xl border transition-colors press",
+        "inline-flex h-9 shrink-0 items-center justify-center rounded-xl border transition-colors active:scale-[0.97] transition-transform",
         chain ? "w-9" : "px-3",
         active
-          ? "border-(--color-fg)/20 bg-(--color-fg)/5 text-(--color-fg)"
-          : "border-(--color-border)/60 bg-(--color-bg)/40 text-(--color-fg) hover:border-(--color-border-strong)",
+          ? "border-primary/20 bg-primary/5 text-foreground"
+          : "border-border/60 bg-background/40 text-foreground hover:border-border",
       )}
       title={chain?.name ?? label}
     >
@@ -1019,7 +1019,7 @@ function TokenDot({
       className="relative inline-flex shrink-0"
       style={{ width: size, height: size }}
     >
-      <span className="absolute inset-0 inline-flex items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg) text-[11px] font-bold text-(--color-fg)">
+      <span className="absolute inset-0 inline-flex items-center justify-center rounded-full border border-border bg-background text-[11px] font-bold text-foreground">
         {token.symbol.slice(0, 2)}
       </span>
       <span
@@ -1028,7 +1028,7 @@ function TokenDot({
           width: size * 0.42,
           height: size * 0.42,
         }}
-        className="absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full border-2 border-(--color-bg-elev) text-[7px] font-bold text-white"
+        className="absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full border-2 border-card text-[7px] font-bold text-white"
       >
         {chain.symbol}
       </span>

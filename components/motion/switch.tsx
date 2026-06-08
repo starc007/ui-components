@@ -52,18 +52,18 @@ export function Switch({ checked, onCheckedChange, disabled, label, className }:
           data-state={checked ? "checked" : "unchecked"}
           className={cn(
             "group peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center px-1 rounded-full outline-none transition-colors duration-200",
-            "focus-visible:ring-2 focus-visible:ring-(--color-border-strong) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)",
+            "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             "disabled:cursor-not-allowed disabled:opacity-60",
-            checked ? "justify-end bg-(--color-fg)" : "justify-start bg-(--color-fg-muted)/60",
+            checked ? "justify-end bg-primary" : "justify-start bg-muted-foreground/60",
           )}
         >
           <motion.div
             ref={thumbRef}
             layout
             animate={{ scale: squish ? 0.9 : 1 }}
-            className="pointer-events-none block h-5 w-5 rounded-full bg-(--color-bg) shadow-[0_2px_6px_-1px_rgb(0_0_0/0.3)]"
+            className="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-[0_2px_6px_-1px_rgb(0_0_0/0.3)]"
           >
-            {/* Stretch toward the destination on press. */}
+            {/* Stretch toward the destination while active. */}
             <div
               className={cn(
                 "size-5",
@@ -73,7 +73,7 @@ export function Switch({ checked, onCheckedChange, disabled, label, className }:
           </motion.div>
         </motion.button>
         {label ? (
-          <label htmlFor={id} className="cursor-pointer text-sm text-(--color-fg)">
+          <label htmlFor={id} className="cursor-pointer text-sm text-foreground">
             {label}
           </label>
         ) : null}

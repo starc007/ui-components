@@ -43,17 +43,12 @@ export interface AnimatedBadgeProps extends Omit<
 }
 
 const STATUS_CLASS: Record<AnimatedBadgeStatus, string> = {
-  neutral:
-    "border-(--color-border) bg-(--color-bg-elev) text-(--color-fg-muted)",
-  info: "border-(--color-accent)/30 bg-(--color-accent)/10 text-(--color-accent)",
-  success:
-    "border-(--color-success)/30 bg-(--color-success)/10 text-(--color-success)",
-  warning:
-    "border-(--color-warning)/35 bg-(--color-warning)/10 text-(--color-warning)",
-  danger:
-    "border-(--color-danger)/30 bg-(--color-danger)/10 text-(--color-danger)",
-  loading:
-    "border-(--color-violet)/30 bg-(--color-violet)/10 text-(--color-violet)",
+  neutral: "border-border bg-card text-muted-foreground",
+  info: "border-primary/30 bg-primary/10 text-primary",
+  success: "border-primary/30 bg-primary/10 text-primary",
+  warning: "border-accent bg-accent text-accent-foreground",
+  danger: "border-destructive/30 bg-destructive/10 text-destructive",
+  loading: "border-primary/30 bg-primary/10 text-primary",
 };
 
 const SIZE_CLASS: Record<AnimatedBadgeSize, string> = {

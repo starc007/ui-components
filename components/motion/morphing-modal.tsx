@@ -85,7 +85,7 @@ export function MorphingModal({
               }}
               transition={SPRING}
               className={cn(
-                "pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-3xl border border-(--color-border-strong) bg-(--color-bg-elev) shadow-[0_30px_60px_-20px_rgb(0_0_0/0.5),0_0_0_1px_rgb(255_255_255/0.04)_inset] will-change-transform",
+                "pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-card shadow-[0_30px_60px_-20px_rgb(0_0_0/0.5),0_0_0_1px_rgb(255_255_255/0.04)_inset] will-change-transform",
                 className,
               )}
             >

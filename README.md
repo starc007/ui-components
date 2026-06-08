@@ -38,7 +38,7 @@ npx shadcn@latest registry add @beui=https://beui.saura3h.xyz/r/{name}.json
 npx shadcn@latest add @beui/animated-toast-stack
 ```
 
-The registry item installs a small CSS token bridge into your configured shadcn CSS file. beUI internals use variables such as `--color-fg`, `--color-bg-elev`, and `--color-success`; the bridge maps them to shadcn tokens like `--foreground`, `--card`, `--border`, `--primary`, and `--destructive`, then adds the few status colors shadcn does not define.
+Components use shadcn semantic color utilities such as `bg-background`, `bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-primary`, and `text-destructive`. They inherit the target app theme without installing beUI-specific color variables.
 
 ## Stack
 

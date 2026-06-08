@@ -112,11 +112,11 @@ const STATUS_ICON: Record<ToastStatus, LucideIcon> = {
 };
 
 const STATUS_CLASS: Record<ToastStatus, string> = {
-  neutral: "text-(--color-fg-muted) bg-(--color-fg)/[0.05]",
-  info: "text-(--color-accent) bg-(--color-accent)/10",
-  loading: "text-(--color-violet) bg-(--color-violet)/10",
-  success: "text-(--color-success) bg-(--color-success)/10",
-  error: "text-(--color-danger) bg-(--color-danger)/10",
+  neutral: "text-muted-foreground bg-primary/[0.05]",
+  info: "text-primary bg-primary/10",
+  loading: "text-primary bg-primary/10",
+  success: "text-primary bg-primary/10",
+  error: "text-destructive bg-destructive/10",
 };
 
 const POSITION_CLASS: Record<ToastPosition, string> = {
@@ -376,7 +376,7 @@ const ToastItem = memo(function ToastItem({
     >
       <div
         className={cn(
-          "relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-elev)/95 p-3 shadow-[0_18px_50px_-28px_rgb(0_0_0/0.65),0_1px_0_0_rgb(255_255_255/0.05)_inset] backdrop-blur-xl",
+          "relative overflow-hidden rounded-2xl border border-border bg-card/95 p-3 shadow-[0_18px_50px_-28px_rgb(0_0_0/0.65),0_1px_0_0_rgb(255_255_255/0.05)_inset] backdrop-blur-xl",
           classNames?.surface,
         )}
       >
@@ -445,7 +445,7 @@ const ToastItem = memo(function ToastItem({
                 >
                   <p
                     className={cn(
-                      "truncate text-sm font-medium leading-5 text-(--color-fg)",
+                      "truncate text-sm font-medium leading-5 text-foreground",
                       classNames?.title,
                     )}
                   >
@@ -454,7 +454,7 @@ const ToastItem = memo(function ToastItem({
                   {toast.description ? (
                     <p
                       className={cn(
-                        "mt-0.5 line-clamp-2 text-xs leading-4 text-(--color-fg-muted)",
+                        "mt-0.5 line-clamp-2 text-xs leading-4 text-muted-foreground",
                         classNames?.description,
                       )}
                     >
@@ -469,7 +469,7 @@ const ToastItem = memo(function ToastItem({
                   type="button"
                   onClick={() => toast.action?.onClick(toast)}
                   className={cn(
-                    "mt-2 inline-flex h-7 items-center rounded-full bg-(--color-fg)/[0.06] px-3 text-xs font-medium text-(--color-fg) transition-colors hover:bg-(--color-fg)/[0.1]",
+                    "mt-2 inline-flex h-7 items-center rounded-full bg-primary/[0.06] px-3 text-xs font-medium text-foreground transition-colors hover:bg-primary/[0.1]",
                     classNames?.action,
                   )}
                 >
@@ -484,7 +484,7 @@ const ToastItem = memo(function ToastItem({
                 onClick={() => onDismiss?.(toast.id)}
                 aria-label="Dismiss toast"
                 className={cn(
-                  "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-(--color-fg-muted) transition-colors hover:bg-(--color-fg)/[0.06] hover:text-(--color-fg)",
+                  "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-primary/[0.06] hover:text-foreground",
                   classNames?.close,
                 )}
               >

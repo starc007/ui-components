@@ -12,7 +12,7 @@ const ENDPOINTS: { label: string; url: string; desc: string }[] = [
   { label: "Registry index", url: "/r", desc: "JSON catalogue of every component." },
   { label: "Component detail", url: "/r/{slug}", desc: "JSON with files, deps, source." },
   { label: "shadcn catalog", url: "/registry.json", desc: "Directory-compatible registry catalog." },
-  { label: "shadcn item", url: "/r/{slug}.json", desc: "Install item with inline file content and CSS token bridge." },
+  { label: "shadcn item", url: "/r/{slug}.json", desc: "Install item with inline file content and shadcn semantic color classes." },
   { label: "Raw source", url: "/r/{slug}/raw", desc: "Plain text .tsx ready to drop in." },
 ];
 
@@ -97,7 +97,7 @@ export default function AIAgentsPage() {
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">shadcn flow</h2>
       <p className="mt-2 text-(--color-fg-muted)">
-        The shadcn item installs source files, package dependencies, and a CSS token bridge that maps beUI&apos;s internal variables onto the target app&apos;s shadcn theme.
+        The shadcn item installs source files and package dependencies. Components use shadcn semantic color utilities directly, so they inherit the target app&apos;s theme without beUI-specific color variables.
       </p>
       <div className="mt-4">
         <CodeBlock code={SHADCN_SNIPPET} lang="bash" filename="terminal" />

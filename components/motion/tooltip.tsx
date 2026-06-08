@@ -138,7 +138,7 @@ export function Tooltip({ content, children, side = "top", delay = 120, classNam
                 willChange: "transform, opacity, filter",
               }}
               className={cn(
-                "block whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-medium text-(--color-fg) glass",
+                "block whitespace-nowrap rounded-lg border border-border bg-popover/85 px-2.5 py-1 text-xs font-medium text-popover-foreground shadow-[0_18px_45px_-24px_rgb(0_0_0/0.55)] backdrop-blur-xl",
                 className,
               )}
             >

@@ -189,7 +189,7 @@ export function ExpandableActionBar({
         <motion.div
           layout="size"
           className={cn(
-            "relative inline-flex items-center overflow-hidden rounded-full border border-(--color-border) bg-(--color-bg-elev)/90 shadow-[0_18px_50px_-30px_rgb(0_0_0/0.55)] backdrop-blur-xl",
+            "relative inline-flex items-center overflow-hidden rounded-full border border-border bg-card/90 shadow-[0_18px_50px_-30px_rgb(0_0_0/0.55)] backdrop-blur-xl",
             SIZE_CLASS[size],
             classNames?.track,
           )}
@@ -218,9 +218,9 @@ export function ExpandableActionBar({
                 whileTap={reduce || item.disabled ? undefined : { scale: 0.96 }}
                 transition={ITEM_TRANSITION}
                 className={cn(
-                  "relative isolate inline-flex items-center justify-center overflow-hidden rounded-full font-medium text-(--color-fg-muted) outline-none transition-[color,background-color] duration-150 ease-out",
-                  "focus-visible:text-(--color-fg) disabled:pointer-events-none disabled:opacity-40",
-                  isHighlighted && "text-(--color-fg)",
+                  "relative isolate inline-flex items-center justify-center overflow-hidden rounded-full font-medium text-muted-foreground outline-none transition-[color,background-color] duration-150 ease-out",
+                  "focus-visible:text-foreground disabled:pointer-events-none disabled:opacity-40",
+                  isHighlighted && "text-foreground",
                   ITEM_SIZE_CLASS[size],
                   classNames?.item,
                   isActive && classNames?.activeItem,
@@ -229,7 +229,7 @@ export function ExpandableActionBar({
                 {isHighlighted ? (
                   <motion.span
                     layoutId="action-bar-highlight"
-                    className="absolute inset-0 -z-10 rounded-full bg-(--color-fg)/[0.07]"
+                    className="absolute inset-0 -z-10 rounded-full bg-primary/[0.07]"
                     transition={ITEM_TRANSITION}
                   />
                 ) : null}
@@ -284,7 +284,7 @@ export function ExpandableActionBar({
                         }}
                         transition={LABEL_TRANSITION}
                         className={cn(
-                          "hidden overflow-hidden whitespace-nowrap text-[10px] text-(--color-fg-muted) sm:inline-block",
+                          "hidden overflow-hidden whitespace-nowrap text-[10px] text-muted-foreground sm:inline-block",
                           classNames?.shortcut,
                         )}
                       >
@@ -295,7 +295,7 @@ export function ExpandableActionBar({
                     {item.badge ? (
                       <span
                         className={cn(
-                          "ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-(--color-danger) px-1 text-[10px] leading-none text-white",
+                          "ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-none text-white",
                           !isExpanded && "absolute right-0.5 top-0.5",
                           classNames?.badge,
                         )}

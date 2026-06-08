@@ -20,6 +20,22 @@
   --glass-border: oklch(15% 0 0 / 0.08);
   --glass-strong-bg: rgb(255 255 255 / 0.7);
   --glass-thin-bg: rgb(255 255 255 / 0.45);
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--bg-elev);
+  --card-foreground: var(--fg);
+  --popover: var(--bg-elev);
+  --popover-foreground: var(--fg);
+  --primary: var(--fg);
+  --primary-foreground: var(--bg);
+  --secondary: var(--bg-elev);
+  --secondary-foreground: var(--fg);
+  --muted: var(--bg-elev);
+  --muted-foreground: var(--fg-muted);
+  --accent-foreground: var(--accent-fg);
+  --destructive: var(--danger);
+  --input: var(--border);
+  --ring: var(--border-strong);
 }
 
 .dark {
@@ -35,6 +51,22 @@
   --glass-border: rgb(255 255 255 / 0.08);
   --glass-strong-bg: rgb(28 28 28 / 0.6);
   --glass-thin-bg: rgb(21 21 21 / 0.45);
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--bg-elev);
+  --card-foreground: var(--fg);
+  --popover: var(--bg-elev);
+  --popover-foreground: var(--fg);
+  --primary: var(--fg);
+  --primary-foreground: var(--bg);
+  --secondary: var(--bg-elev);
+  --secondary-foreground: var(--fg);
+  --muted: var(--bg-elev);
+  --muted-foreground: var(--fg-muted);
+  --accent-foreground: var(--accent-fg);
+  --destructive: var(--danger);
+  --input: var(--border);
+  --ring: var(--border-strong);
 }
 
 @theme inline {
@@ -56,6 +88,22 @@
   --color-danger: var(--danger);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono), ui-monospace, monospace;

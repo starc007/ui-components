@@ -72,7 +72,7 @@ export function Dock({
       onMouseMove={(e) => mouseX.set(e.clientX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "inline-flex h-auto items-end gap-1.5 rounded-2xl px-2 py-1 glass-strong",
+        "inline-flex h-auto items-end gap-1.5 rounded-2xl border border-border bg-card/80 px-2 py-1 shadow-[0_18px_50px_-30px_rgb(0_0_0/0.55)] backdrop-blur-xl",
         className,
       )}
     >
@@ -135,7 +135,7 @@ export function DockItem({
       aria-label={rest["aria-label"]}
       style={{ width, height: width }}
       className={cn(
-        "relative flex shrink-0 items-center justify-center rounded-full text-(--color-fg)",
+        "relative flex shrink-0 items-center justify-center rounded-full text-foreground",
         className,
       )}
     >
@@ -143,7 +143,7 @@ export function DockItem({
         <motion.span
           layoutId={pillLayoutId}
           transition={PILL_SPRING}
-          className="absolute inset-0.5 -z-10 rounded-xl bg-(--color-fg)/5"
+          className="absolute inset-0.5 -z-10 rounded-xl bg-primary/5"
         />
       ) : null}
       {children}
@@ -154,7 +154,7 @@ export function DockItem({
 export function DockSeparator({ className }: { className?: string }) {
   return (
     <span
-      className={cn("mx-1 h-6 w-px self-center bg-(--color-border)", className)}
+      className={cn("mx-1 h-6 w-px self-center bg-border", className)}
     />
   );
 }
