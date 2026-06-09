@@ -1,26 +1,50 @@
-# beUI v2
+<p align="center">
+  <a href="https://beui.saura3h.xyz">
+    <img src="./public/beui-mark.png" alt="beUI logo" width="88" height="88" />
+  </a>
+</p>
 
-Simple UI components with motion.
+<h1 align="center">beUI v2</h1>
 
-[beui.saura3h.xyz](https://beui.saura3h.xyz)
+<p align="center">
+  Motion components for React. Copy the source, own the code.
+</p>
 
-Browse a component, install it, and own the source.
+<p align="center">
+  <a href="https://beui.saura3h.xyz">Website</a>
+  ·
+  <a href="https://beui.saura3h.xyz/components/motion">Components</a>
+  ·
+  <a href="https://beui.saura3h.xyz/llms.txt">llms.txt</a>
+</p>
 
-## What it is
+## What is beUI?
 
-beUI is a small component library for product interfaces. Components are designed to be copied into your app, not hidden behind a package.
+beUI is a small component library for product interfaces.
 
-Each component includes a live preview, usage example, source code, and install command.
+Each component includes a live preview, usage example, source code, and a shadcn install command. The components are meant to live in your app, not behind a package.
 
-## Install with shadcn
+## Install a component
 
-Install any component from its page:
+Open any component page and copy the install command.
 
 ```bash
 npx shadcn@latest add https://beui.saura3h.xyz/r/animated-toast-stack.json
 ```
 
-You can also copy the source file directly from the component page.
+You can also copy the source directly from the component page.
+
+## For AI agents
+
+beUI exposes static endpoints that coding agents can read without scraping the UI.
+
+```txt
+https://beui.saura3h.xyz/llms.txt
+https://beui.saura3h.xyz/r
+https://beui.saura3h.xyz/r/{slug}
+https://beui.saura3h.xyz/r/{slug}.json
+https://beui.saura3h.xyz/r/{slug}/raw
+```
 
 ## Run locally
 
@@ -31,23 +55,19 @@ bun run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Using a component
+## Checks
 
-Open a component page to see the preview, usage, code, and install command.
+```bash
+bun run check
+```
 
-## For AI agents
-
-- `https://beui.saura3h.xyz/llms.txt`
-- `https://beui.saura3h.xyz/r`
-- `https://beui.saura3h.xyz/r/{slug}`
-- `https://beui.saura3h.xyz/r/{slug}.json`
-- `https://beui.saura3h.xyz/r/{slug}/raw`
+This runs TypeScript, Biome lint, and registry source validation.
 
 ## Contributing
 
-PRs welcome.
-
 Add components in `components/motion/`, previews in `components/previews/motion/`, and registry entries in `lib/registry.ts`.
+
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a PR.
 
 ## Author
 
