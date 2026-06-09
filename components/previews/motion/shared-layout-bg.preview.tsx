@@ -15,17 +15,17 @@ export function SharedLayoutBgPreview() {
     <div className="w-full max-w-lg px-2">
       <SharedLayoutBg>
         {items.map((it) => (
-          <a
+          <button
+            type="button"
             key={it.title}
-            href="#"
-            className="group flex flex-col gap-1 px-2 py-3"
+            className="group flex flex-col gap-1 px-2 py-3 text-left"
           >
             <div className="flex items-center justify-between gap-3">
               <span className="text-sm font-medium text-(--color-fg)">{it.title}</span>
               <ArrowUpRight className="h-3.5 w-3.5 text-(--color-fg-muted) transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </div>
             <p className="text-sm text-(--color-fg-muted)">{it.body}</p>
-          </a>
+          </button>
         ))}
       </SharedLayoutBg>
     </div>

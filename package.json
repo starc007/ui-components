@@ -25,7 +25,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit",
+    "check:registry": "bun scripts/check-registry.ts",
+    "check": "bun run typecheck && bun run lint && bun run check:registry"
   },
   "dependencies": {
     "@shikijs/transformers": "^4.2.0",
@@ -43,12 +46,11 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.16",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
-    "eslint": "^9.18.0",
-    "eslint-config-next": "^15.1.4",
     "postcss": "^8.5.1",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.3"

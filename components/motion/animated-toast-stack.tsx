@@ -233,7 +233,9 @@ export function useAnimatedToastStack({
     const timers = toastTimers.current;
 
     return () => {
-      timers.forEach((entry) => window.clearTimeout(entry.timer));
+      timers.forEach((entry) => {
+        window.clearTimeout(entry.timer);
+      });
       timers.clear();
     };
   }, []);

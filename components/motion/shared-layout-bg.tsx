@@ -38,10 +38,11 @@ export function SharedLayoutBg({
   pillClassName,
   inset = 20,
 }: SharedLayoutBgProps) {
-  const [activeId, setActiveId] = useState<number | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const uid = useId();
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: The wrapper only clears hover state for child rows.
     <div
       onMouseLeave={() => setActiveId(null)}
       className={cn("flex w-full flex-col", className)}
@@ -50,12 +51,13 @@ export function SharedLayoutBg({
         .filter(isValidElement)
         .map((child, index) => {
           const el = child as ReactElement<{ className?: string; onMouseEnter?: () => void; children?: ReactNode }>;
+          const childKey = el.key ? String(el.key) : `item-${index}`;
           return cloneElement(
             el,
             {
-              key: index,
+              key: childKey,
               className: cn("relative", el.props.className),
-              onMouseEnter: () => setActiveId(index),
+              onMouseEnter: () => setActiveId(childKey),
             },
             <>
               <AnimatePresence custom={activeId !== null}>
@@ -69,7 +71,7 @@ export function SharedLayoutBg({
                     className="pointer-events-none absolute inset-y-0"
                     style={{ left: -inset, right: -inset }}
                   >
-                    {activeId === index ? (
+                    {activeId === childKey ? (
                       <motion.div
                         layoutId={`shared-bg-${uid}`}
                         transition={{ type: "spring", stiffness: 205, damping: 22 }}

@@ -1,6 +1,5 @@
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import { allComponents, findCategory, findComponent, registry } from "@/lib/registry";
+import { readOptionalSourceFile, readSourceFile, resolveSourceImport, type SourceFile } from "@/lib/source-files";
 
 const SITE_URL = "https://beui.saura3h.xyz";
 
@@ -52,18 +51,28 @@ export type ShadcnRegistry = {
   items: Array<Omit<ShadcnRegistryItem, "$schema">>;
 };
 
-const PKG_RE = /from\s+["']([^"']+)["']/g;
+const STATIC_IMPORT_RE = /\b(?:import|export)\s+(?:type\s+)?(?:[^'";]*?\s+from\s*)?["']([^"']+)["']/g;
+const DYNAMIC_IMPORT_RE = /\bimport\s*\(\s*["']([^"']+)["']\s*\)/g;
 const SHADCN_DEP_SKIP = new Set(["next", "react", "react-dom"]);
 
 function parseDeps(source: string) {
   const external = new Set<string>();
   const internal = new Set<string>();
-  let m: RegExpExecArray | null;
-  while ((m = PKG_RE.exec(source))) {
-    const spec = m[1];
+  const specs = new Set<string>();
+
+  for (const re of [STATIC_IMPORT_RE, DYNAMIC_IMPORT_RE]) {
+    re.lastIndex = 0;
+    while (true) {
+      const match = re.exec(source);
+      if (!match) break;
+      const spec = match[1];
+      if (spec) specs.add(spec);
+    }
+  }
+
+  for (const spec of specs) {
     if (!spec) continue;
-    if (spec.startsWith(".")) continue;
-    if (spec.startsWith("@/")) {
+    if (spec.startsWith("@/") || spec.startsWith(".")) {
       internal.add(spec);
       continue;
     }
@@ -76,31 +85,6 @@ function parseDeps(source: string) {
     external: Array.from(external).sort(),
     internal: Array.from(internal).sort(),
   };
-}
-
-async function readFileSafe(rel: string): Promise<string | null> {
-  try {
-    return await fs.readFile(path.join(process.cwd(), rel), "utf8");
-  } catch {
-    return null;
-  }
-}
-
-async function resolveInternal(spec: string): Promise<{ path: string; content: string } | null> {
-  if (!spec.startsWith("@/")) return null;
-  const rel = spec.replace(/^@\//, "");
-  const candidates = [
-    `${rel}.ts`,
-    `${rel}.tsx`,
-    `${rel}/index.ts`,
-    `${rel}/index.tsx`,
-    rel,
-  ];
-  for (const c of candidates) {
-    const content = await readFileSafe(c);
-    if (content != null) return { path: c, content };
-  }
-  return null;
 }
 
 function fileTypeForPath(rel: string): ShadcnFileType {
@@ -139,46 +123,59 @@ function uniqueByPath(files: ShadcnRegistryFile[]) {
   });
 }
 
+type CollectedSourceGraph = {
+  files: SourceFile[];
+  external: string[];
+  internal: string[];
+};
+
+async function collectSourceGraph(initialFiles: string[]): Promise<CollectedSourceGraph> {
+  const files: SourceFile[] = [];
+  const queued = [...initialFiles];
+  const seen = new Set<string>();
+  const external = new Set<string>();
+  const internal = new Set<string>();
+
+  while (queued.length > 0) {
+    const rel = queued.shift();
+    if (!rel || seen.has(rel)) continue;
+    seen.add(rel);
+
+    const content = await readSourceFile(rel);
+    files.push({ path: rel, content });
+
+    const deps = parseDeps(content);
+    for (const dep of deps.external) external.add(dep);
+
+    for (const spec of deps.internal) {
+      internal.add(spec);
+      const resolved = await resolveSourceImport(spec, rel);
+      if (!resolved) {
+        throw new Error(`Cannot resolve internal import "${spec}" from ${rel}`);
+      }
+      if (!seen.has(resolved.path)) queued.push(resolved.path);
+    }
+  }
+
+  return {
+    files,
+    external: Array.from(external).sort(),
+    internal: Array.from(internal).sort(),
+  };
+}
+
 export async function buildEntry(categorySlug: string, slug: string): Promise<RegistryEntry | null> {
   const cat = findCategory(categorySlug);
   const comp = findComponent(categorySlug, slug);
   if (!cat || !comp) return null;
 
-  const componentSource = (await readFileSafe(comp.file)) ?? "";
+  const requiredFiles = [comp.file, ...(comp.extraFiles ?? [])];
+  const componentGraph = await collectSourceGraph(requiredFiles);
   const previewPath = `components/previews/${categorySlug}/${slug}.preview.tsx`;
-  const previewSource = await readFileSafe(previewPath);
-
-  const compDeps = parseDeps(componentSource);
-  const previewDeps = previewSource ? parseDeps(previewSource) : { external: [], internal: [] };
-
-  const externalAll = Array.from(new Set([...compDeps.external, ...previewDeps.external])).sort();
-  const internalAll = Array.from(new Set([...compDeps.internal, ...previewDeps.internal])).sort();
-
-  const files: RegistryFile[] = [
-    { path: comp.file, type: "component", content: componentSource },
-  ];
-
-  const allDepsInternal = new Set(compDeps.internal);
-  if (comp.extraFiles) {
-    for (const rel of comp.extraFiles) {
-      const content = await readFileSafe(rel);
-      if (content != null) {
-        files.push({ path: rel, type: "component", content });
-        for (const spec of parseDeps(content).internal) allDepsInternal.add(spec);
-      }
-    }
-  }
-
-  if (previewSource) {
-    files.push({ path: previewPath, type: "preview", content: previewSource });
-  }
-
-  for (const spec of allDepsInternal) {
-    const resolved = await resolveInternal(spec);
-    if (resolved) {
-      files.push({ path: resolved.path, type: "util", content: resolved.content });
-    }
-  }
+  const previewSource = await readOptionalSourceFile(previewPath);
+  const previewGraph = previewSource ? await collectSourceGraph([previewPath]) : null;
+  const componentFileSet = new Set(requiredFiles);
+  const files = mergeRegistryFiles(componentGraph.files, previewGraph?.files ?? [], componentFileSet, previewPath);
 
   return {
     slug: comp.slug,
@@ -189,10 +186,32 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
     detail_url: `${SITE_URL}/r/${slug}`,
     raw_url: `${SITE_URL}/r/${slug}/raw`,
     page_url: `${SITE_URL}/components/${categorySlug}/${slug}`,
-    dependencies: externalAll,
-    internal: internalAll,
+    dependencies: Array.from(new Set([...componentGraph.external, ...(previewGraph?.external ?? [])])).sort(),
+    internal: Array.from(new Set([...componentGraph.internal, ...(previewGraph?.internal ?? [])])).sort(),
     files,
   };
+}
+
+function mergeRegistryFiles(
+  componentFiles: SourceFile[],
+  previewFiles: SourceFile[],
+  componentFileSet: Set<string>,
+  previewPath: string,
+) {
+  const seen = new Set<string>();
+  const files: RegistryFile[] = [];
+
+  for (const file of [...componentFiles, ...previewFiles]) {
+    if (seen.has(file.path)) continue;
+    seen.add(file.path);
+    files.push({
+      path: file.path,
+      type: file.path === previewPath ? "preview" : componentFileSet.has(file.path) ? "component" : "util",
+      content: file.content,
+    });
+  }
+
+  return files;
 }
 
 export async function buildShadcnItem(
@@ -203,41 +222,8 @@ export async function buildShadcnItem(
   const comp = findComponent(categorySlug, slug);
   if (!comp) return null;
 
-  const files: ShadcnRegistryFile[] = [];
-  const dependencies = new Set<string>();
-  const internalQueue: string[] = [];
-  const internalSeen = new Set<string>();
-
-  async function addSource(rel: string) {
-    const content = await readFileSafe(rel);
-    if (content == null) return;
-
-    files.push(shadcnFile(rel, includeContent ? content : undefined));
-    const deps = parseDeps(content);
-    for (const dep of deps.external) {
-      if (!SHADCN_DEP_SKIP.has(dep)) dependencies.add(dep);
-    }
-    for (const spec of deps.internal) internalQueue.push(spec);
-  }
-
-  await addSource(comp.file);
-
-  if (comp.extraFiles) {
-    for (const rel of comp.extraFiles) {
-      await addSource(rel);
-    }
-  }
-
-  while (internalQueue.length > 0) {
-    const spec = internalQueue.shift();
-    if (!spec || internalSeen.has(spec)) continue;
-    internalSeen.add(spec);
-
-    const resolved = await resolveInternal(spec);
-    if (!resolved) continue;
-
-    await addSource(resolved.path);
-  }
+  const graph = await collectSourceGraph([comp.file, ...(comp.extraFiles ?? [])]);
+  const dependencies = graph.external.filter((dep) => !SHADCN_DEP_SKIP.has(dep));
 
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
@@ -246,9 +232,11 @@ export async function buildShadcnItem(
     title: comp.name,
     description: comp.description,
     author: "Saurabh <saurabh10102@gmail.com>",
-    dependencies: Array.from(dependencies).sort(),
+    dependencies,
     registryDependencies: [],
-    files: uniqueByPath(files),
+    files: uniqueByPath(
+      graph.files.map((file) => shadcnFile(file.path, includeContent ? file.content : undefined)),
+    ),
   };
 }
 

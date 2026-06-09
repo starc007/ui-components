@@ -47,16 +47,25 @@ export function TextReveal({
   const s = { ...DEFAULT_SPRING, ...spring };
 
   let unitIndex = 0;
+  const lineCounts = new Map<string, number>();
 
   return (
     <Comp ref={ref} className={cn("block", className)}>
-      {lines.map((line, li) => {
+      {lines.map((line) => {
         const units = split === "word" ? line.split(" ") : Array.from(line);
+        const lineCount = lineCounts.get(line) ?? 0;
+        lineCounts.set(line, lineCount + 1);
+        const lineKey = `${line}-${lineCount}`;
+        const unitCounts = new Map<string, number>();
+
         return (
-          <span key={`${line}-${li}`} className="block">
+          <span key={lineKey} className="block">
             {units.map((unit, i) => {
               const d = delay + unitIndex * stagger;
               unitIndex += 1;
+              const unitCount = unitCounts.get(unit) ?? 0;
+              unitCounts.set(unit, unitCount + 1);
+              const unitKey = `${unit}-${unitCount}`;
               const initial = reduce
                 ? { opacity: 0 }
                 : { y: yOffset, opacity: 0, filter: `blur(${blur}px)` };
@@ -74,7 +83,7 @@ export function TextReveal({
                   };
               return (
                 <motion.span
-                  key={`${unit}-${i}`}
+                  key={unitKey}
                   initial={initial}
                   animate={animate}
                   transition={transition}

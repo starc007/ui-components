@@ -16,7 +16,7 @@ import {
   type HTMLMotionProps,
   type Variants,
 } from "motion/react";
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export type AnimatedBadgeStatus =

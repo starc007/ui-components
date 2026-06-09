@@ -8,22 +8,22 @@ export function TooltipPreview() {
     <div className="flex flex-col items-center gap-12">
       <div className="flex flex-wrap items-center justify-center gap-4">
         <Tooltip content="Like this post" side="top">
-          <button className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg) press">
+          <button type="button" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg) press">
             <Heart className="h-4 w-4" />
           </button>
         </Tooltip>
         <Tooltip content="Share" side="bottom">
-          <button className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg) press">
+          <button type="button" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg) press">
             <Share className="h-4 w-4" />
           </button>
         </Tooltip>
         <Tooltip content="Open settings" side="left">
-          <button className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg) press">
+          <button type="button" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg) press">
             <Settings className="h-4 w-4" />
           </button>
         </Tooltip>
         <Tooltip content="Move to trash" side="right">
-          <button className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg) press">
+          <button type="button" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg) press">
             <Trash2 className="h-4 w-4" />
           </button>
         </Tooltip>

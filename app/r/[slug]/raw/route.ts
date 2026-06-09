@@ -1,7 +1,6 @@
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import { allComponents, findComponent } from "@/lib/registry";
 import { findCategoryBySlug } from "@/lib/registry-server";
+import { readSourceFile } from "@/lib/source-files";
 
 export const dynamic = "force-static";
 
@@ -19,7 +18,7 @@ export async function GET(
   const comp = findComponent(cat.slug, slug);
   if (!comp) return new Response("not_found", { status: 404 });
   try {
-    const src = await fs.readFile(path.join(process.cwd(), comp.file), "utf8");
+    const src = await readSourceFile(comp.file);
     return new Response(src, {
       headers: {
         "content-type": "text/plain; charset=utf-8",

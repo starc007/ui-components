@@ -5,12 +5,10 @@ import {
   Bell,
   Copy,
   Download,
-  Maximize2,
-  Minimize2,
   Send,
   Settings,
 } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
 import {
   ExpandableActionBar,
@@ -57,7 +55,6 @@ const ACTIONS: ExpandableActionBarItem[] = [
 export function ExpandableActionBarPreview() {
   const [expanded, setExpanded] = useState(false);
   const [activeId, setActiveId] = useState("send");
-  const reduceMotion = useReducedMotion();
 
   const items = useMemo(
     () =>

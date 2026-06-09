@@ -1,17 +1,21 @@
-# Contributing to this repository
+# Contributing
 
-### Introduction
+beUI is a React, TypeScript, Motion and Tailwind CSS component library.
 
-- UI Components is built with React.js, Typescript, framer motion & TailwindCSS
-- Check out the existing issues for ways to contribute
+## Before You Open a PR
 
-### Have a new feature request or see a bug?
+Run the project checks:
 
-Create a new issue! On the issue we can discuss the problem and assign the work.
+```bash
+bun install
+bun run check
+```
 
-### Ready to contribute?
+`bun run check` typechecks the app and verifies every registry component can publish its source files.
 
-1. Comment on the issue to claim it
-2. Create a fork of the repo
-3. Work on your fork, then open a pull request to develop branch. Tag the issue in your pull request
-4. Your PR will be reviewed, and if it is approved it will be merged into `main`
+## Pull Requests
+
+1. Open or comment on an issue before starting larger work.
+2. Create a fork or feature branch.
+3. Keep changes focused and include the component source, preview and registry entry together.
+4. Open a pull request against `main`.
