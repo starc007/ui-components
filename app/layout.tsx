@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { GeistPixelSquare } from "geist/font/pixel";
 import "./globals.css";
+import { GoogleAnalytics } from "@/components/app/google-analytics";
 import { ThemeProvider } from "@/components/app/theme-provider";
 import { SiteHeader } from "@/components/app/site-header";
 import { SiteDock } from "@/components/app/site-dock";
@@ -53,6 +54,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const githubStarCount = await getGithubStarCount();
+  const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
   return (
     <html lang="en" suppressHydrationWarning className={cn(inter.variable, mono.variable, pixel.variable)}>
@@ -71,6 +73,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <SiteDock />
           <Analytics />
           <SpeedInsights />
+          <GoogleAnalytics measurementId={googleAnalyticsId} />
         </ThemeProvider>
       </body>
     </html>
