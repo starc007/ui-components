@@ -5,6 +5,8 @@ import {
   Bell,
   Copy,
   Download,
+  Maximize2,
+  Minimize2,
   Send,
   Settings,
 } from "lucide-react";
