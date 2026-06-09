@@ -51,6 +51,7 @@ export function Marquee({
           )}
         >
           {items.map((child, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: Marquee duplicates static child slots; item order is not mutated.
             <div key={i} className="shrink-0">
               {child}
             </div>

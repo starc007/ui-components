@@ -131,10 +131,10 @@ function MainPanel() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg-muted) press hover:text-(--color-fg)">
+          <button type="button" className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg-muted) press hover:text-(--color-fg)">
             <Bell className="h-3.5 w-3.5" />
           </button>
-          <button className="inline-flex h-8 items-center gap-1.5 rounded-md border border-(--color-border) bg-(--color-bg-elev) px-2.5 text-xs text-(--color-fg) press">
+          <button type="button" className="inline-flex h-8 items-center gap-1.5 rounded-md border border-(--color-border) bg-(--color-bg-elev) px-2.5 text-xs text-(--color-fg) press">
             <Search className="h-3.5 w-3.5 text-(--color-fg-muted)" />
             Search
           </button>
@@ -237,7 +237,7 @@ function Spark() {
         <p className="text-xs text-(--color-fg-muted)">Last 14 days</p>
         <p className="text-xs font-medium text-(--color-fg)">+24%</p>
       </div>
-      <svg viewBox={`0 0 ${w} ${h}`} className="mt-3 h-16 w-full" preserveAspectRatio="none">
+      <svg viewBox={`0 0 ${w} ${h}`} className="mt-3 h-16 w-full" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <linearGradient id="spark" x1="0" x2="0" y1="0" y2="1">
             <stop offset="0%" stopColor="var(--fg)" stopOpacity="0.25" />

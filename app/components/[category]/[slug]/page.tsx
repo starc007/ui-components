@@ -84,11 +84,7 @@ export async function generateMetadata({
 }
 
 async function loadSource(file: string) {
-  try {
-    return await readSourceFile(file);
-  } catch {
-    return "// source unavailable";
-  }
+  return readSourceFile(file);
 }
 
 export default async function ComponentPage({

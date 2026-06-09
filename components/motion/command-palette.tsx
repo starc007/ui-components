@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { Search, type LucideIcon } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export type CommandItem = {
@@ -50,13 +50,17 @@ export function CommandPalette({
   const [internalOpen, setInternalOpen] = useState(false);
   const controlled = controlledOpen !== undefined;
   const open = controlled ? controlledOpen : internalOpen;
-  const setOpen = (v: boolean) => {
+  const setOpen = useCallback((v: boolean) => {
     if (!controlled) setInternalOpen(v);
     onOpenChange?.(v);
-  };
+  }, [controlled, onOpenChange]);
 
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
+  const updateQuery = useCallback((value: string) => {
+    setQuery(value);
+    setActive(0);
+  }, []);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -77,15 +81,15 @@ export function CommandPalette({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, shortcut]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [open, shortcut, setOpen]);
 
   useEffect(() => {
     if (open) {
-      setQuery("");
+      updateQuery("");
       setActive(0);
       requestAnimationFrame(() => inputRef.current?.focus());
     }
-  }, [open]);
+  }, [open, updateQuery]);
 
   useEffect(() => {
     if (!open) return;
@@ -104,14 +108,13 @@ export function CommandPalette({
     });
   }, [items, query]);
 
-  useEffect(() => setActive(0), [query]);
-
   const grouped = useMemo(() => {
     const map = new Map<string, CommandItem[]>();
     filtered.forEach((it) => {
       const g = it.group ?? "Results";
-      if (!map.has(g)) map.set(g, []);
-      map.get(g)!.push(it);
+      const groupItems = map.get(g) ?? [];
+      groupItems.push(it);
+      map.set(g, groupItems);
     });
     return Array.from(map.entries());
   }, [filtered]);
@@ -189,7 +192,7 @@ export function CommandPalette({
             <input
               ref={inputRef}
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => updateQuery(e.target.value)}
               placeholder={placeholder}
               tabIndex={open ? 0 : -1}
               className="h-12 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"

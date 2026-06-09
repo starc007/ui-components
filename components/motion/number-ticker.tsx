@@ -25,6 +25,7 @@ export interface NumberTickerProps {
 }
 
 const DIGIT_HEIGHT_EM = 1.1;
+const DIGITS = Array.from({ length: 10 }, (_, n) => n);
 
 export function NumberTicker({
   value,
@@ -56,35 +57,47 @@ export function NumberTicker({
         : rounded.toString();
     return pad ? formatted.padStart(pad, "0") : formatted;
   }, [value, pad, format, locale]);
+  const glyphs = useMemo(() => {
+    const seen = new Map<string, number>();
+
+    return text.split("").map((char) => {
+      const count = seen.get(char) ?? 0;
+      seen.set(char, count + 1);
+      return { char, id: `${char}-${count}` };
+    });
+  }, [text]);
+  const readableText = `${prefix ?? ""}${text}${suffix ?? ""}`;
 
   return (
     <span
       ref={containerRef}
       className={cn("inline-flex items-center tabular-nums", className)}
-      aria-label={`${prefix ?? ""}${text}${suffix ?? ""}`}
     >
-      {prefix ? <span>{prefix}</span> : null}
-      {text.split("").map((char, i) => {
-        const isDigit = /\d/.test(char);
-        if (!isDigit) {
+      <span className="sr-only">{readableText}</span>
+      <span aria-hidden="true" className="inline-flex items-center">
+        {prefix ? <span>{prefix}</span> : null}
+        {glyphs.map(({ char, id }, i) => {
+          const isDigit = /\d/.test(char);
+          if (!isDigit) {
+            return (
+              <span key={id} className="inline-block">
+                {char}
+              </span>
+            );
+          }
+          const digit = Number(char);
           return (
-            <span key={`s-${i}`} className="inline-block">
-              {char}
-            </span>
+            <Digit
+              key={id}
+              digit={armed ? digit : 0}
+              delay={i * stagger}
+              duration={duration}
+              className={digitClassName}
+            />
           );
-        }
-        const digit = Number(char);
-        return (
-          <Digit
-            key={`d-${i}`}
-            digit={armed ? digit : 0}
-            delay={i * stagger}
-            duration={duration}
-            className={digitClassName}
-          />
-        );
-      })}
-      {suffix ? <span>{suffix}</span> : null}
+        })}
+        {suffix ? <span>{suffix}</span> : null}
+      </span>
     </span>
   );
 }
@@ -111,7 +124,7 @@ function Digit({
         transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
         className="absolute inset-x-0 top-0 flex flex-col items-center"
       >
-        {Array.from({ length: 10 }, (_, n) => (
+        {DIGITS.map((n) => (
           <span key={n} className="flex h-[1.1em] items-center justify-center leading-none">
             {n}
           </span>

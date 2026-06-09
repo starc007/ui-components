@@ -61,10 +61,11 @@ function parseDeps(source: string) {
   const specs = new Set<string>();
 
   for (const re of [STATIC_IMPORT_RE, DYNAMIC_IMPORT_RE]) {
-    let m: RegExpExecArray | null;
     re.lastIndex = 0;
-    while ((m = re.exec(source))) {
-      const spec = m[1];
+    while (true) {
+      const match = re.exec(source);
+      if (!match) break;
+      const spec = match[1];
       if (spec) specs.add(spec);
     }
   }
