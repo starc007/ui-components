@@ -122,7 +122,7 @@ export async function CodeBlock({
             "[&_code]:font-mono [&_code]:text-[13px]",
             // Shiki dual-theme classes
             "[&_.shiki]:bg-transparent",
-            // Per-line padding  
+            // Per-line padding
             "[&_.line]:px-5",
             // Highlighted lines (from transformerNotationHighlight)
             "[&_.highlighted]:bg-(--color-fg)/[0.07] [&_.highlighted]:border-l-2 [&_.highlighted]:border-blue-500 [&_.highlighted]:!pl-[18px]",
