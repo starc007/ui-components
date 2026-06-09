@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import { findCategory, findComponent, registry, type ComponentExample } from "@/lib/registry";
 import { CodeBlock } from "@/components/app/code-block";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { getPreview, previews } from "@/components/previews";
+import { readSourceFile } from "@/lib/source-files";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
@@ -86,8 +85,7 @@ export async function generateMetadata({
 
 async function loadSource(file: string) {
   try {
-    const p = path.join(process.cwd(), file);
-    return await fs.readFile(p, "utf8");
+    return await readSourceFile(file);
   } catch {
     return "// source unavailable";
   }

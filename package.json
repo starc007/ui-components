@@ -25,7 +25,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "check:registry": "bun scripts/check-registry.ts",
+    "check": "bun run typecheck && bun run check:registry"
   },
   "dependencies": {
     "@shikijs/transformers": "^4.2.0",
