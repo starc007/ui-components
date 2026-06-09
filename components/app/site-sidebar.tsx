@@ -7,7 +7,12 @@ import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import { cn } from "@/lib/utils";
 
 const INTRO = [
+  { slug: "home", name: "Home", href: "/components/motion" },
   { slug: "ai-agents", name: "AI Agents", href: "/docs/ai-agents" },
+];
+
+const PATTERNS = [
+  { slug: "motion-patterns", name: "Motion Patterns", href: "/docs/motion-patterns" },
 ];
 
 function moveFirstItemsToBottom<T>(items: T[], count: number) {
@@ -28,6 +33,33 @@ export function SiteSidebar() {
             pillClassName="rounded-lg bg-(--color-fg)/[0.05]"
           >
             {INTRO.map((item) => {
+              const active = pathname === item.href;
+              return (
+                <Link
+                  key={item.slug}
+                  href={item.href}
+                  className={cn(
+                    "relative block rounded-lg px-3 py-1.5 text-sm transition-colors",
+                    active
+                      ? "text-(--color-fg) font-medium bg-(--color-fg)/[0.06]"
+                      : "text-(--color-fg-muted) hover:text-(--color-fg)",
+                  )}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
+          </SharedLayoutBg>
+        </div>
+        <div>
+          <p className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+            Patterns
+          </p>
+          <SharedLayoutBg
+            inset={0}
+            pillClassName="rounded-lg bg-(--color-fg)/[0.05]"
+          >
+            {PATTERNS.map((item) => {
               const active = pathname === item.href;
               return (
                 <Link
