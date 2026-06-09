@@ -9,6 +9,9 @@ import { CodeBlock } from "@/components/app/code-block";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { getPreview, previews } from "@/components/previews";
 
+export const dynamic = "force-static";
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return registry.flatMap((c) =>
     c.components.map((comp) => ({ category: c.slug, slug: comp.slug })),
