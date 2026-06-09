@@ -12,7 +12,7 @@ const INTRO = [
 ];
 
 const PATTERNS = [
-  { slug: "motion-patterns", name: "Motion Patterns", href: "/docs/motion-patterns" },
+  { slug: "motion-patterns", name: "Motion Guides", href: "/docs/motion-patterns" },
 ];
 
 function moveFirstItemsToBottom<T>(items: T[], count: number) {
@@ -53,7 +53,7 @@ export function SiteSidebar() {
         </div>
         <div>
           <p className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-(--color-fg-muted)">
-            Patterns
+            Guides
           </p>
           <SharedLayoutBg
             inset={0}
