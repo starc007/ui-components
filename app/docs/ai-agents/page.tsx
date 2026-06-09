@@ -92,7 +92,7 @@ export default function AIAgentsPage() {
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">Agent flow</h2>
       <p className="mt-2 text-(--color-fg-muted)">Four calls, then install. Components are self-contained and own their files.</p>
       <div className="mt-4">
-        <CodeBlock code={FETCH_SNIPPET} filename="agent.ts" />
+        <CodeBlock code={FETCH_SNIPPET} lang="ts" filename="agent.ts" />
       </div>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">shadcn flow</h2>
@@ -108,7 +108,7 @@ export default function AIAgentsPage() {
         Internal helpers (e.g. <code className="rounded bg-(--color-fg)/5 px-1.5 py-0.5 font-mono text-xs">@/lib/utils</code>) ship inline as <code className="rounded bg-(--color-fg)/5 px-1.5 py-0.5 font-mono text-xs">type: util</code> so the agent does not have to chase imports.
       </p>
       <div className="mt-4">
-        <CodeBlock code={ENTRY_SHAPE} filename="r/swap.json" />
+        <CodeBlock code={ENTRY_SHAPE} lang="json" filename="r/swap.json" />
       </div>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">Caching</h2>

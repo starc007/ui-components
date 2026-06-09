@@ -309,3 +309,15 @@
     scroll-behavior: auto !important;
   }
 }
+
+@layer base {
+  .shiki,
+  .shiki span {
+    color: var(--shiki-light);
+  }
+
+  .dark .shiki,
+  .dark .shiki span {
+    color: var(--shiki-dark);
+  }
+}

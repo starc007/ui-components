@@ -1,0 +1,58 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { cn } from "@/lib/utils";
+
+export function ExpandableCode({ children }: { children: React.ReactNode }) {
+  const [expanded, setExpanded] = useState(false);
+  const [canExpand, setCanExpand] = useState<boolean | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const checkHeight = () => {
+      if (el.scrollHeight > 320) {
+        setCanExpand(true);
+      } else {
+        setCanExpand(false);
+      }
+    };
+
+    const observer = new ResizeObserver(checkHeight);
+    observer.observe(el);
+    checkHeight(); // Initial check
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="relative">
+      <div
+        ref={contentRef}
+        className={cn(
+          "transition-all duration-300",
+          expanded
+            ? "max-h-[640px] overflow-auto"
+            : canExpand === false
+              ? "max-h-none"
+              : "max-h-[320px] overflow-hidden",
+        )}
+      >
+        {children}
+      </div>
+      {!expanded && canExpand && (
+        <div className="absolute bottom-0 left-0 right-0 flex h-32 items-end justify-center bg-gradient-to-t from-(--color-bg-elev) to-transparent pb-4">
+          <button
+            type="button"
+            onClick={() => setExpanded(true)}
+            className="rounded-full bg-(--color-bg)/80 px-4 py-1.5 text-xs font-medium text-(--color-fg) shadow-sm backdrop-blur-sm transition-colors hover:bg-(--color-bg) border border-(--color-border)"
+          >
+            Expand Code
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
