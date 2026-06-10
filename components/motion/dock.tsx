@@ -10,19 +10,18 @@ import {
   type SpringOptions,
 } from "motion/react";
 import {
-  Children,
-  cloneElement,
-  isValidElement,
+  createContext,
+  useContext,
   useId,
+  useMemo,
   useRef,
-  type ReactElement,
   type ReactNode,
 } from "react";
 import { SPRING_LAYOUT } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
 
-type DockContext = {
+type DockContextValue = {
   mouseX: MotionValue<number>;
   size: number;
   magnification: number;
@@ -32,6 +31,8 @@ type DockContext = {
   /** False on touch devices or reduced motion — items stay at base size. */
   enabled: boolean;
 };
+
+const DockContext = createContext<DockContextValue | null>(null);
 
 // Purpose-tuned for cursor-proximity magnification — light mass so neighbours
 // settle quickly as the cursor sweeps across the dock.
@@ -70,48 +71,44 @@ export function Dock({
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
   const enabled = !reduce && canHover;
-  const ctx: DockContext = {
-    mouseX,
-    size,
-    magnification,
-    distance,
-    spring,
-    pillLayoutId,
-    enabled,
-  };
+  const ctx = useMemo<DockContextValue>(
+    () => ({
+      mouseX,
+      size,
+      magnification,
+      distance,
+      spring,
+      pillLayoutId,
+      enabled,
+    }),
+    [mouseX, size, magnification, distance, spring, pillLayoutId, enabled],
+  );
 
   return (
-    <motion.div
-      role="group"
-      aria-label={ariaLabel}
-      onMouseMove={(e) => enabled && mouseX.set(e.clientX)}
-      onMouseLeave={() => mouseX.set(Infinity)}
-      className={cn(
-        "inline-flex h-auto items-end gap-1.5 rounded-2xl border border-border bg-card/80 px-2 py-1 shadow-2xl backdrop-blur-xl",
-        className,
-      )}
-    >
-      {Children.map(children, (child) => {
-        if (!isValidElement(child)) return child;
-        const props = (child.props ?? {}) as { __dock?: DockContext };
-        if ("__dock" in props) {
-          return cloneElement(child as ReactElement<{ __dock?: DockContext }>, {
-            __dock: ctx,
-          });
-        }
-        return child;
-      })}
-    </motion.div>
+    <DockContext.Provider value={ctx}>
+      <motion.div
+        role="group"
+        aria-label={ariaLabel}
+        onMouseMove={(e) => enabled && mouseX.set(e.clientX)}
+        onMouseLeave={() => mouseX.set(Infinity)}
+        className={cn(
+          "inline-flex h-auto items-end gap-1.5 rounded-2xl border border-border bg-card/80 px-2 py-1 shadow-2xl backdrop-blur-xl",
+          className,
+        )}
+      >
+        {children}
+      </motion.div>
+    </DockContext.Provider>
   );
 }
 
 export interface DockItemProps {
   children: ReactNode;
   className?: string;
+  /** When set, the item renders as a <button>. Omit when children carry their own link or button. */
   onClick?: () => void;
   active?: boolean;
   "aria-label"?: string;
-  __dock?: DockContext;
 }
 
 export function DockItem({
@@ -119,18 +116,18 @@ export function DockItem({
   className,
   onClick,
   active,
-  __dock,
   ...rest
 }: DockItemProps) {
-  const ref = useRef<HTMLButtonElement>(null);
+  const ref = useRef<HTMLElement | null>(null);
   const fallback = useMotionValue(Infinity);
-  const mouseX = __dock?.mouseX ?? fallback;
-  const size = __dock?.size ?? 44;
-  const magnification = __dock?.magnification ?? 44;
-  const distance = __dock?.distance ?? 120;
-  const spring = __dock?.spring ?? MAGNIFY_SPRING;
-  const pillLayoutId = __dock?.pillLayoutId ?? "dock-pill";
-  const enabled = __dock?.enabled ?? true;
+  const dock = useContext(DockContext);
+  const mouseX = dock?.mouseX ?? fallback;
+  const size = dock?.size ?? 44;
+  const magnification = dock?.magnification ?? 44;
+  const distance = dock?.distance ?? 120;
+  const spring = dock?.spring ?? MAGNIFY_SPRING;
+  const pillLayoutId = dock?.pillLayoutId ?? "dock-pill";
+  const enabled = dock?.enabled ?? true;
 
   const distanceCalc = useTransform(mouseX, (val) => {
     const rect = ref.current?.getBoundingClientRect() ?? { x: 0, width: size };
@@ -144,7 +141,8 @@ export function DockItem({
   );
   const width = useSpring(widthRaw, spring);
 
-  // Keyboard parity: magnify the focused item the same way a hovered one grows.
+  // Keyboard parity: magnify the focused item the same way a hovered one
+  // grows. Focus bubbles, so this also fires for links/buttons inside.
   const onFocus = () => {
     if (!enabled) return;
     const rect = ref.current?.getBoundingClientRect();
@@ -152,31 +150,57 @@ export function DockItem({
   };
   const onBlur = () => mouseX.set(Infinity);
 
+  const pill = active ? (
+    <motion.span
+      layoutId={pillLayoutId}
+      transition={SPRING_LAYOUT}
+      className="absolute inset-0.5 -z-10 rounded-xl bg-primary/5"
+    />
+  ) : null;
+  const setRef = (el: HTMLElement | null) => {
+    ref.current = el;
+  };
+  const sharedStyle = { width, height: width };
+  const sharedClass = cn(
+    "relative flex shrink-0 items-center justify-center rounded-full text-foreground",
+    className,
+  );
+
+  if (onClick) {
+    return (
+      <motion.button
+        ref={setRef}
+        type="button"
+        onClick={onClick}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        aria-label={rest["aria-label"]}
+        aria-pressed={active}
+        style={sharedStyle}
+        className={cn(
+          sharedClass,
+          "cursor-pointer border-0 bg-transparent p-0 outline-none",
+          "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        )}
+      >
+        {pill}
+        {children}
+      </motion.button>
+    );
+  }
+
   return (
-    <motion.button
-      ref={ref}
-      type="button"
-      onClick={onClick}
+    <motion.div
+      ref={setRef}
       onFocus={onFocus}
       onBlur={onBlur}
       aria-label={rest["aria-label"]}
-      aria-current={active ? "true" : undefined}
-      style={{ width, height: width }}
-      className={cn(
-        "relative flex shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground outline-none",
-        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-        className,
-      )}
+      style={sharedStyle}
+      className={sharedClass}
     >
-      {active ? (
-        <motion.span
-          layoutId={pillLayoutId}
-          transition={SPRING_LAYOUT}
-          className="absolute inset-0.5 -z-10 rounded-xl bg-primary/5"
-        />
-      ) : null}
+      {pill}
       {children}
-    </motion.button>
+    </motion.div>
   );
 }
 
