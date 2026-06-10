@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, MotionConfig, type Transition } from "motion/react";
+import { motion, MotionConfig, useReducedMotion, type Transition } from "motion/react";
 import { createContext, useContext, useId, useState, type ReactNode } from "react";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 type Variant = "pill" | "underline" | "segment";
@@ -46,6 +47,7 @@ export function Tabs({
 }) {
   const [internal, setInternal] = useState(defaultValue ?? "");
   const layoutId = useId();
+  const reduce = useReducedMotion();
   const controlled = value !== undefined;
   const current = controlled ? value : internal;
   const setValue = (v: string) => {
@@ -53,7 +55,7 @@ export function Tabs({
     onValueChange?.(v);
   };
   return (
-    <MotionConfig transition={transition}>
+    <MotionConfig transition={reduce ? { duration: 0 } : transition}>
       <TabsCtx.Provider value={{ value: current, setValue, layoutId, variant }}>
         <div className={className}>{children}</div>
       </TabsCtx.Provider>
@@ -140,13 +142,14 @@ export function TabsTrigger({ value, children, className }: { value: string; chi
 
 export function TabsContent({ value, children, className }: { value: string; children: ReactNode; className?: string }) {
   const { value: current } = useTabs();
+  const reduce = useReducedMotion();
   if (current !== value) return null;
   return (
     <motion.div
       key={value}
-      initial={{ opacity: 0, y: 4 }}
+      initial={{ opacity: 0, y: reduce ? 0 : 4 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.18, ease: EASE_OUT }}
       className={cn("mt-4", className)}
     >
       {children}

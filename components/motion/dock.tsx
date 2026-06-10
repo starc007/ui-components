@@ -3,6 +3,7 @@
 import {
   motion,
   useMotionValue,
+  useReducedMotion,
   useSpring,
   useTransform,
   type MotionValue,
@@ -17,6 +18,8 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
+import { SPRING_LAYOUT } from "@/lib/ease";
+import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
 
 type DockContext = {
@@ -26,18 +29,23 @@ type DockContext = {
   distance: number;
   spring: SpringOptions;
   pillLayoutId: string;
+  /** False on touch devices or reduced motion — items stay at base size. */
+  enabled: boolean;
 };
 
-const DEFAULT_SPRING: SpringOptions = {
+// Purpose-tuned for cursor-proximity magnification — light mass so neighbours
+// settle quickly as the cursor sweeps across the dock.
+const MAGNIFY_SPRING: SpringOptions = {
   stiffness: 320,
   damping: 22,
   mass: 0.4,
 };
-const PILL_SPRING: SpringOptions = { stiffness: 360, damping: 32, mass: 0.6 };
 
 export interface DockProps {
   children: ReactNode;
   className?: string;
+  /** Accessible name for the dock group. */
+  "aria-label"?: string;
   /** Base size of each item in px. */
   size?: number;
   /** Max size an item grows to when cursor is directly over it. */
@@ -53,11 +61,15 @@ export function Dock({
   size = 36,
   magnification = 56,
   distance = 110,
-  spring = DEFAULT_SPRING,
+  spring = MAGNIFY_SPRING,
   className,
+  "aria-label": ariaLabel,
 }: DockProps) {
   const mouseX = useMotionValue(Infinity);
   const pillLayoutId = useId();
+  const reduce = useReducedMotion();
+  const canHover = useHoverCapable();
+  const enabled = !reduce && canHover;
   const ctx: DockContext = {
     mouseX,
     size,
@@ -65,11 +77,14 @@ export function Dock({
     distance,
     spring,
     pillLayoutId,
+    enabled,
   };
 
   return (
     <motion.div
-      onMouseMove={(e) => mouseX.set(e.clientX)}
+      role="group"
+      aria-label={ariaLabel}
+      onMouseMove={(e) => enabled && mouseX.set(e.clientX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
         "inline-flex h-auto items-end gap-1.5 rounded-2xl border border-border bg-card/80 px-2 py-1 shadow-2xl backdrop-blur-xl",
@@ -107,14 +122,15 @@ export function DockItem({
   __dock,
   ...rest
 }: DockItemProps) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLButtonElement>(null);
   const fallback = useMotionValue(Infinity);
   const mouseX = __dock?.mouseX ?? fallback;
   const size = __dock?.size ?? 44;
   const magnification = __dock?.magnification ?? 44;
   const distance = __dock?.distance ?? 120;
-  const spring = __dock?.spring ?? DEFAULT_SPRING;
+  const spring = __dock?.spring ?? MAGNIFY_SPRING;
   const pillLayoutId = __dock?.pillLayoutId ?? "dock-pill";
+  const enabled = __dock?.enabled ?? true;
 
   const distanceCalc = useTransform(mouseX, (val) => {
     const rect = ref.current?.getBoundingClientRect() ?? { x: 0, width: size };
@@ -128,32 +144,46 @@ export function DockItem({
   );
   const width = useSpring(widthRaw, spring);
 
+  // Keyboard parity: magnify the focused item the same way a hovered one grows.
+  const onFocus = () => {
+    if (!enabled) return;
+    const rect = ref.current?.getBoundingClientRect();
+    if (rect) mouseX.set(rect.x + rect.width / 2);
+  };
+  const onBlur = () => mouseX.set(Infinity);
+
   return (
-    <motion.div
+    <motion.button
       ref={ref}
+      type="button"
       onClick={onClick}
+      onFocus={onFocus}
+      onBlur={onBlur}
       aria-label={rest["aria-label"]}
+      aria-current={active ? "true" : undefined}
       style={{ width, height: width }}
       className={cn(
-        "relative flex shrink-0 items-center justify-center rounded-full text-foreground",
+        "relative flex shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground outline-none",
+        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         className,
       )}
     >
       {active ? (
         <motion.span
           layoutId={pillLayoutId}
-          transition={PILL_SPRING}
+          transition={SPRING_LAYOUT}
           className="absolute inset-0.5 -z-10 rounded-xl bg-primary/5"
         />
       ) : null}
       {children}
-    </motion.div>
+    </motion.button>
   );
 }
 
 export function DockSeparator({ className }: { className?: string }) {
   return (
     <span
+      aria-hidden
       className={cn("mx-1 h-6 w-px self-center bg-border", className)}
     />
   );

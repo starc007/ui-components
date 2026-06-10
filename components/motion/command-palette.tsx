@@ -1,8 +1,9 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { Search, type LucideIcon } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type CommandItem = {
@@ -37,7 +38,9 @@ function fuzzyMatch(needle: string, hay: string) {
   return false;
 }
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+// Opened via a keyboard shortcut many times a day — entrance must read as
+// instant. Tight spring, even faster exit.
+const PANEL_SPRING = { type: "spring", stiffness: 560, damping: 40, mass: 0.5 } as const;
 
 export function CommandPalette({
   items,
@@ -57,6 +60,8 @@ export function CommandPalette({
 
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
+  const uid = useId();
+  const reduce = useReducedMotion();
   const updateQuery = useCallback((value: string) => {
     setQuery(value);
     setActive(0);
@@ -158,7 +163,7 @@ export function CommandPalette({
       <motion.div
         initial={false}
         animate={{ opacity: open ? 1 : 0 }}
-        transition={{ duration: open ? 0.18 : 0.12, ease: EASE }}
+        transition={{ duration: open ? 0.18 : 0.12, ease: EASE_OUT }}
         onClick={() => setOpen(false)}
         className={cn(
           "absolute inset-0 bg-background/5 [backdrop-filter:blur(12px)_saturate(140%)] [-webkit-backdrop-filter:blur(12px)_saturate(140%)]",
@@ -173,13 +178,15 @@ export function CommandPalette({
           initial={false}
           animate={{
             opacity: open ? 1 : 0,
-            y: open ? 0 : -8,
-            scale: open ? 1 : 0.97,
+            y: open || reduce ? 0 : -8,
+            scale: open || reduce ? 1 : 0.97,
           }}
           transition={
-            open
-              ? { type: "spring", stiffness: 460, damping: 36, mass: 0.6 }
-              : { duration: 0.12, ease: EASE }
+            reduce
+              ? { duration: 0.1 }
+              : open
+                ? PANEL_SPRING
+                : { duration: 0.12, ease: EASE_OUT }
           }
           onKeyDown={onKeyDown}
           className={cn(
@@ -195,13 +202,24 @@ export function CommandPalette({
               onChange={(e) => updateQuery(e.target.value)}
               placeholder={placeholder}
               tabIndex={open ? 0 : -1}
+              role="combobox"
+              aria-expanded={open}
+              aria-controls={`${uid}-list`}
+              aria-activedescendant={filtered.length > 0 ? `${uid}-opt-${active}` : undefined}
+              aria-autocomplete="list"
               className="h-12 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
             />
             <kbd className="hidden rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground sm:inline-block">
               ESC
             </kbd>
           </div>
-          <div ref={listRef} className="max-h-[60vh] overflow-y-auto p-2">
+          <div
+            ref={listRef}
+            id={`${uid}-list`}
+            role="listbox"
+            aria-label="Commands"
+            className="max-h-[60vh] overflow-y-auto p-2"
+          >
             {filtered.length === 0 ? (
               <div className="p-8 text-center text-sm text-muted-foreground">
                 {emptyMessage}
@@ -209,7 +227,7 @@ export function CommandPalette({
             ) : (
               grouped.map(([group, list]) => (
                 <div key={group} className="mb-1 last:mb-0">
-                  <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <div aria-hidden className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     {group}
                   </div>
                   {list.map((it) => {
@@ -220,6 +238,9 @@ export function CommandPalette({
                       <button
                         key={it.id}
                         type="button"
+                        id={`${uid}-opt-${idx}`}
+                        role="option"
+                        aria-selected={isActive}
                         data-index={idx}
                         onMouseEnter={() => setActive(idx)}
                         onClick={() => {
@@ -236,13 +257,15 @@ export function CommandPalette({
                       >
                         {isActive ? (
                           <motion.span
-                            layoutId="command-active"
+                            layoutId={`${uid}-active`}
                             className="absolute inset-0 z-0 rounded-md bg-primary/[0.05]"
-                            transition={{
-                              type: "spring",
-                              stiffness: 480,
-                              damping: 38,
-                            }}
+                            transition={
+                              reduce
+                                ? { duration: 0 }
+                                : // Tracks rapid arrow-key navigation — keep it tighter
+                                  // than SPRING_LAYOUT so it never lags the active row.
+                                  { type: "spring", stiffness: 480, damping: 38 }
+                            }
                           />
                         ) : null}
                         {Icon ? (
