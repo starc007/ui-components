@@ -23,25 +23,32 @@ const IslandContext = createContext<IslandContextValue | null>(null);
 // width/height (not transforms), so slots are never scale-distorted.
 const EXPAND_SPRING = {
   type: "spring",
-  stiffness: 400,
-  damping: 22,
-  mass: 0.55,
+  stiffness: 550,
+  damping: 25,
+  mass: 0.5,
 } as const;
 
 const COLLAPSE_SPRING = {
   type: "spring",
-  stiffness: 480,
-  damping: 30,
-  mass: 0.6,
+  stiffness: 620,
+  damping: 32,
+  mass: 0.5,
 } as const;
 
 // Content pops from the pill core just after the shell starts moving.
 const CONTENT_SPRING = {
   type: "spring",
-  stiffness: 500,
-  damping: 26,
+  stiffness: 560,
+  damping: 28,
   mass: 0.5,
 } as const;
+
+// Real radii, tweened separately from the size spring. Springing between a
+// fake huge radius and a small one makes corners glitch mid-resize; these two
+// values are close (18.5 is exactly half the 37px pill) so the corner shape
+// stays stable throughout.
+const RADIUS_COMPACT = 18.5;
+const RADIUS_EXPANDED = 24;
 
 /** Tracks the natural size of the content so the shell can spring to it. */
 function useContentSize() {
@@ -99,7 +106,7 @@ function Slot({
               opacity: 0,
               scale: 0.85,
               y: -6,
-              transition: { duration: 0.1, ease: EASE_OUT },
+              transition: { duration: 0.08, ease: EASE_OUT },
             }
       }
       transition={
@@ -108,8 +115,8 @@ function Slot({
           : {
               ...CONTENT_SPRING,
               delay,
-              opacity: { duration: 0.2, ease: EASE_OUT, delay },
-              filter: { duration: 0.25, ease: EASE_OUT, delay },
+              opacity: { duration: 0.18, ease: EASE_OUT, delay },
+              filter: { duration: 0.22, ease: EASE_OUT, delay },
             }
       }
       // Anchored to the pill line: content unfurls downward out of it and is
@@ -153,12 +160,17 @@ export function DynamicIsland({
             ? {
                 width: size.width,
                 height: size.height,
-                borderRadius: expanded ? 24 : 999,
+                borderRadius: expanded ? RADIUS_EXPANDED : RADIUS_COMPACT,
               }
-            : { borderRadius: expanded ? 24 : 999 }
+            : { borderRadius: expanded ? RADIUS_EXPANDED : RADIUS_COMPACT }
         }
         transition={
-          reduce ? { duration: 0 } : expanded ? EXPAND_SPRING : COLLAPSE_SPRING
+          reduce
+            ? { duration: 0 }
+            : {
+                ...(expanded ? EXPAND_SPRING : COLLAPSE_SPRING),
+                borderRadius: { duration: 0.2, ease: EASE_OUT },
+              }
         }
         // items-start pins content to the top edge while the shell springs, so
         // expansion reads as unfurling downward out of the pill. Top-align the
