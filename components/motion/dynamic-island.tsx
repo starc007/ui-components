@@ -5,7 +5,6 @@ import {
   createContext,
   useContext,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
   type ReactNode,
@@ -25,22 +24,22 @@ const IslandContext = createContext<IslandContextValue | null>(null);
 const EXPAND_SPRING = {
   type: "spring",
   stiffness: 550,
-  damping: 23,
+  damping: 25,
   mass: 0.5,
 } as const;
 
 const COLLAPSE_SPRING = {
   type: "spring",
   stiffness: 620,
-  damping: 29,
+  damping: 32,
   mass: 0.5,
 } as const;
 
-// Content moves with the shell — no delay, same family of physics.
+// Content pops from the pill core just after the shell starts moving.
 const CONTENT_SPRING = {
   type: "spring",
   stiffness: 560,
-  damping: 26,
+  damping: 28,
   mass: 0.5,
 } as const;
 
@@ -52,20 +51,10 @@ const RADIUS_COMPACT = 18.5;
 const RADIUS_EXPANDED = 24;
 
 /** Tracks the natural size of the content so the shell can spring to it. */
-function useContentSize(contentKey: string | null) {
+function useContentSize() {
   const ref = useRef<HTMLDivElement | null>(null);
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
 
-  // Measure synchronously on every content swap, before paint — waiting for
-  // ResizeObserver costs frames and the press feels sticky.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: contentKey drives remeasure on view swaps.
-  useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    setSize({ width: el.offsetWidth, height: el.offsetHeight });
-  }, [contentKey]);
-
-  // ResizeObserver covers async drift: fonts, live content like tickers.
   useEffect(() => {
     const el = ref.current;
     if (!el || typeof ResizeObserver === "undefined") return;
@@ -84,7 +73,7 @@ function Slot({
   children,
   className,
   scaleFrom = 0.8,
-  delay = 0,
+  delay = 0.04,
 }: {
   keyId: string;
   children: ReactNode;
@@ -126,8 +115,8 @@ function Slot({
           : {
               ...CONTENT_SPRING,
               delay,
-              opacity: { duration: 0.15, ease: EASE_OUT, delay },
-              filter: { duration: 0.18, ease: EASE_OUT, delay },
+              opacity: { duration: 0.18, ease: EASE_OUT, delay },
+              filter: { duration: 0.22, ease: EASE_OUT, delay },
             }
       }
       // Anchored to the pill line: content unfurls downward out of it and is
@@ -158,7 +147,7 @@ export function DynamicIsland({
 }: DynamicIslandProps) {
   const reduce = useReducedMotion();
   const expanded = view !== null;
-  const [sizerRef, size] = useContentSize(view);
+  const [sizerRef, size] = useContentSize();
 
   return (
     <IslandContext.Provider value={{ view }}>
@@ -200,7 +189,7 @@ export function DynamicIsland({
               <Slot
                 keyId="compact"
                 scaleFrom={0.85}
-                delay={0.02}
+                delay={0.06}
                 // iPhone pill proportions: ~126 x 37.
                 className="min-h-[37px] min-w-[126px] gap-2 px-4 py-1.5 text-xs font-medium"
               >
