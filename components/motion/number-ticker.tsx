@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useInView } from "motion/react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export interface NumberTickerProps {
@@ -113,6 +114,7 @@ function Digit({
   duration: number;
   className?: string;
 }) {
+  const reduce = useReducedMotion();
   return (
     <span
       className={cn("relative inline-block overflow-hidden", className)}
@@ -121,7 +123,7 @@ function Digit({
       <motion.span
         initial={{ y: 0 }}
         animate={{ y: `-${digit * DIGIT_HEIGHT_EM}em` }}
-        transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
+        transition={reduce ? { duration: 0 } : { duration, delay, ease: EASE_OUT }}
         className="absolute inset-x-0 top-0 flex flex-col items-center"
       >
         {DIGITS.map((n) => (

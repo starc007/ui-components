@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { EASE_OUT } from "@/lib/ease";
 import { useState } from "react";
 import { ArrowUpRight, Bell, Check, Command, Search, Sparkles } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
@@ -13,7 +14,7 @@ export function HeroPreviewDock() {
     <motion.div
       initial={{ opacity: 0, y: 32, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+      transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.15 }}
       className="relative"
     >
 

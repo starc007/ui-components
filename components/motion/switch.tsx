@@ -1,8 +1,11 @@
 "use client";
 
-import { animate, motion, MotionConfig } from "motion/react";
+import { animate, motion, MotionConfig, useReducedMotion } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+
+// Heavy, deliberate thumb — high mass keeps the travel weighty without wobble.
+const THUMB_SPRING = { type: "spring", stiffness: 800, damping: 80, mass: 4 } as const;
 
 export interface SwitchProps {
   checked: boolean;
@@ -15,12 +18,13 @@ export interface SwitchProps {
 export function Switch({ checked, onCheckedChange, disabled, label, className }: SwitchProps) {
   const id = useId();
   const thumbRef = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
   const [isPressed, setIsPressed] = useState(false);
   const [isPointer, setIsPointer] = useState(false);
 
   // Disabled shake feedback when pressed.
   useEffect(() => {
-    if (!thumbRef.current) return;
+    if (!thumbRef.current || reduce) return;
     if (disabled && isPressed) {
       animate(
         thumbRef.current,
@@ -28,12 +32,12 @@ export function Switch({ checked, onCheckedChange, disabled, label, className }:
         { delay: 0.2, duration: 0.6 },
       );
     }
-  }, [disabled, isPressed]);
+  }, [disabled, isPressed, reduce]);
 
-  const squish = !disabled && isPointer && isPressed;
+  const squish = !disabled && isPointer && isPressed && !reduce;
 
   return (
-    <MotionConfig transition={{ type: "spring", stiffness: 800, damping: 80, mass: 4 }}>
+    <MotionConfig transition={reduce ? { duration: 0 } : THUMB_SPRING}>
       <span className={cn("inline-flex items-center gap-3", className)}>
         <motion.button
           id={id}

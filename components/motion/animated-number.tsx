@@ -1,7 +1,8 @@
 "use client";
 
-import { animate, useInView } from "motion/react";
+import { animate, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export interface AnimatedNumberProps {
@@ -21,19 +22,25 @@ export function AnimatedNumber({
 }: AnimatedNumberProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.6 });
+  const reduce = useReducedMotion();
   const [display, setDisplay] = useState(0);
   const fromRef = useRef(0);
 
   useEffect(() => {
     if (startOnView && !inView) return;
+    if (reduce) {
+      fromRef.current = value;
+      setDisplay(value);
+      return;
+    }
     const controls = animate(fromRef.current, value, {
       duration,
-      ease: [0.16, 1, 0.3, 1],
+      ease: EASE_OUT,
       onUpdate: (v) => setDisplay(v),
     });
     fromRef.current = value;
     return () => controls.stop();
-  }, [value, duration, inView, startOnView]);
+  }, [value, duration, inView, startOnView, reduce]);
 
   return (
     <span ref={ref} className={cn("tabular-nums", className)}>

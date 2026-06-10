@@ -2,6 +2,7 @@
 
 import { Check, Copy, Send, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { EASE_OUT } from "@/lib/ease";
 import { useEffect, useState } from "react";
 import { ActionSwapButton, type ActionSwapItem } from "@/components/motion/action-swap";
 
@@ -55,7 +56,7 @@ export function ActionSwapPreview() {
           initial={{ opacity: 0, filter: "blur(6px)", transform: "translateY(4px)" }}
           animate={{ opacity: 1, filter: "blur(0px)", transform: "translateY(0px)" }}
           exit={{ opacity: 0, filter: "blur(6px)", transform: "translateY(-4px)" }}
-          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.22, ease: EASE_OUT }}
         >
           {variant === "blur" ? (
             <ActionSwapButton

@@ -1,10 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { EASE_OUT } from "@/lib/ease";
 import { useEffect, useState } from "react";
 import { GithubIcon } from "@/components/app/icons";
+import { PressLink } from "@/components/app/press-link";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { StatefulButton } from "@/components/motion/button";
 import { Switch } from "@/components/motion/switch";
@@ -81,18 +82,18 @@ export function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.5, ease: EASE_OUT }}
         >
-          <Link
+          <PressLink
             href="https://github.com/starc007/ui-components"
             target="_blank"
             rel="noreferrer noopener"
-            className="group mb-7 inline-flex min-h-10 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-3 text-xs font-medium text-(--color-fg) press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
+            className="group mb-7 inline-flex min-h-10 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-3 text-xs font-medium text-(--color-fg) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-(--color-accent)" />
             Tailwind 4 + React 19
             <ArrowUpRight className="h-3 w-3 text-(--color-fg-muted) transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </Link>
+          </PressLink>
         </motion.div>
 
         <TextReveal
@@ -106,7 +107,7 @@ export function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: subDelay }}
+          transition={{ duration: 0.55, ease: EASE_OUT, delay: subDelay }}
           className="mt-7 max-w-md text-pretty text-base leading-7 text-(--color-fg-muted)"
         >
           Copy-ready components with clean motion.
@@ -115,32 +116,32 @@ export function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: ctaDelay }}
+          transition={{ duration: 0.55, ease: EASE_OUT, delay: ctaDelay }}
           className="mt-8 flex flex-wrap items-center gap-3"
         >
-          <Link
+          <PressLink
             href="/components/motion"
-            className="group inline-flex h-11 items-center gap-2 rounded-full bg-(--color-fg) px-6 text-sm font-medium text-(--color-bg) press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
+            className="group inline-flex h-11 items-center gap-2 rounded-full bg-(--color-fg) px-6 text-sm font-medium text-(--color-bg) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
           >
             Browse components
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-          <Link
+          </PressLink>
+          <PressLink
             href="https://github.com/starc007/ui-components"
             target="_blank"
             rel="noreferrer noopener"
-            className="inline-flex h-11 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-6 text-sm font-medium text-(--color-fg) press hover:border-(--color-border-strong) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
+            className="inline-flex h-11 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-6 text-sm font-medium text-(--color-fg) hover:border-(--color-border-strong) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
           >
             <GithubIcon className="h-4 w-4" />
             GitHub
-          </Link>
+          </PressLink>
         </motion.div>
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: ctaDelay + 0.1 }}
+        transition={{ duration: 0.55, ease: EASE_OUT, delay: ctaDelay + 0.1 }}
         className="hidden h-[400px] overflow-hidden rounded-lg border border-(--color-border) bg-(--color-bg-elev) lg:block"
       >
         <div className="flex h-12 items-center justify-between border-b border-(--color-border) bg-(--color-bg) px-4">
@@ -159,7 +160,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
-              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.24, ease: EASE_OUT }}
             >
               <p className="mb-2 font-mono text-[11px] text-(--color-fg-muted)">
                 {activeSample.file}
@@ -178,7 +179,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -10, filter: "blur(6px)" }}
-              transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.26, ease: EASE_OUT }}
               className="flex h-[136px] items-center justify-between rounded-md border border-(--color-border) bg-(--color-bg) p-4"
             >
               <div>

@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion, type HTMLMotionProps, type Variants } from "motion/react";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { EASE_OUT, EASE_OUT_CSS, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type ActionSwapItem = {
@@ -45,7 +46,7 @@ export interface ActionSwapIconProps {
 }
 
 const BLUR_TRANSITION = { duration: 0.2, ease: "easeInOut" } as const;
-const ROLL_TRANSITION = { duration: 0.24, ease: [0.22, 1, 0.36, 1] } as const;
+const ROLL_TRANSITION = { duration: 0.24, ease: EASE_OUT } as const;
 const SWAP_BLUR = "blur(8px)";
 const ROLL_BLUR = "blur(6px)";
 
@@ -150,7 +151,7 @@ export function ActionSwapText({
       className={cn("relative inline-block overflow-hidden whitespace-nowrap align-bottom", className)}
       style={{
         width,
-        transition: reduce ? undefined : "width 220ms cubic-bezier(0.22, 1, 0.36, 1)",
+        transition: reduce ? undefined : `width 220ms ${EASE_OUT_CSS}`,
       }}
     >
       <span
@@ -235,12 +236,7 @@ export function ActionSwapButton({
       type="button"
       disabled={disabled}
       whileTap={reduce || disabled ? undefined : { scale: 0.97 }}
-      transition={{
-        type: "spring",
-        stiffness: 520,
-        damping: 32,
-        mass: 0.65,
-      }}
+      transition={SPRING_PRESS}
       className={cn(
         "inline-flex items-center justify-center overflow-hidden font-medium transition-colors",
         "disabled:pointer-events-none disabled:opacity-50",

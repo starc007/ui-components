@@ -9,6 +9,7 @@ import {
   type PanInfo,
 } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export interface BottomSheetProps {
@@ -100,7 +101,7 @@ export function BottomSheet({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.2, ease: EASE_OUT }}
             onClick={() => onOpenChange(false)}
             className="pointer-events-auto absolute inset-0 bg-background/5 backdrop-blur-md backdrop-saturate-150"
           />
@@ -118,9 +119,7 @@ export function BottomSheet({
             animate={reduce ? { y: 0, opacity: 1 } : { y: 0 }}
             exit={reduce ? { y: 0, opacity: 0 } : { y: "100%" }}
             transition={
-              reduce
-                ? { duration: 0.18, ease: [0.16, 1, 0.3, 1] }
-                : { type: "spring", stiffness: 420, damping: 40, mass: 0.5 }
+              reduce ? { duration: 0.18, ease: EASE_OUT } : SPRING_PANEL
             }
             onAnimationComplete={() => {
               if (sheetRef.current)

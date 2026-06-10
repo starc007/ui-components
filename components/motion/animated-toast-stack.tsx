@@ -25,6 +25,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type ToastStatus = "neutral" | "info" | "loading" | "success" | "error";
@@ -100,7 +101,7 @@ const STACK_SPRING: Transition = {
 
 const CONTENT_TRANSITION = {
   duration: 0.28,
-  ease: [0.16, 1, 0.3, 1],
+  ease: EASE_OUT,
 } as const;
 
 const STATUS_ICON: Record<ToastStatus, LucideIcon> = {
@@ -360,7 +361,7 @@ const ToastItem = memo(function ToastItem({
               x: 32,
               scale: 0.96,
               filter: "blur(8px)",
-              transition: { duration: 0.18, ease: [0.16, 1, 0.3, 1] },
+              transition: { duration: 0.18, ease: EASE_OUT },
             }
       }
       transition={STACK_SPRING}

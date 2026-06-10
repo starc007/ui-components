@@ -1,102 +1,52 @@
 "use client";
 
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  type MotionValue,
-  type SpringOptions,
-} from "motion/react";
-import {
-  Children,
-  cloneElement,
-  isValidElement,
-  useId,
-  useRef,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { createContext, useContext, useId, useMemo, type ReactNode } from "react";
+import { SPRING_LAYOUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
-type DockContext = {
-  mouseX: MotionValue<number>;
+type DockContextValue = {
   size: number;
-  magnification: number;
-  distance: number;
-  spring: SpringOptions;
   pillLayoutId: string;
 };
 
-const DEFAULT_SPRING: SpringOptions = {
-  stiffness: 320,
-  damping: 22,
-  mass: 0.4,
-};
-const PILL_SPRING: SpringOptions = { stiffness: 360, damping: 32, mass: 0.6 };
+const DockContext = createContext<DockContextValue | null>(null);
 
 export interface DockProps {
   children: ReactNode;
   className?: string;
-  /** Base size of each item in px. */
+  /** Size of each item in px. */
   size?: number;
-  /** Max size an item grows to when cursor is directly over it. */
-  magnification?: number;
-  /** Distance (px) over which magnification interpolates. */
-  distance?: number;
-  /** Spring options for the magnification transition. */
-  spring?: SpringOptions;
 }
 
-export function Dock({
-  children,
-  size = 36,
-  magnification = 56,
-  distance = 110,
-  spring = DEFAULT_SPRING,
-  className,
-}: DockProps) {
-  const mouseX = useMotionValue(Infinity);
+export function Dock({ children, size = 44, className }: DockProps) {
   const pillLayoutId = useId();
-  const ctx: DockContext = {
-    mouseX,
-    size,
-    magnification,
-    distance,
-    spring,
-    pillLayoutId,
-  };
+  const ctx = useMemo<DockContextValue>(
+    () => ({ size, pillLayoutId }),
+    [size, pillLayoutId],
+  );
 
   return (
-    <motion.div
-      onMouseMove={(e) => mouseX.set(e.clientX)}
-      onMouseLeave={() => mouseX.set(Infinity)}
-      className={cn(
-        "inline-flex h-auto items-end gap-1.5 rounded-2xl border border-border bg-card/80 px-2 py-1 shadow-2xl backdrop-blur-xl",
-        className,
-      )}
-    >
-      {Children.map(children, (child) => {
-        if (!isValidElement(child)) return child;
-        const props = (child.props ?? {}) as { __dock?: DockContext };
-        if ("__dock" in props) {
-          return cloneElement(child as ReactElement<{ __dock?: DockContext }>, {
-            __dock: ctx,
-          });
-        }
-        return child;
-      })}
-    </motion.div>
+    <DockContext.Provider value={ctx}>
+      <div
+        className={cn(
+          "inline-flex h-auto items-end gap-1.5 rounded-2xl border border-border bg-card/80 px-2 py-1 shadow-2xl backdrop-blur-xl",
+          className,
+        )}
+      >
+        {children}
+      </div>
+    </DockContext.Provider>
   );
 }
 
 export interface DockItemProps {
   children: ReactNode;
   className?: string;
+  /** When set, the item renders as a <button>. Omit when children carry their own link or button. */
   onClick?: () => void;
   active?: boolean;
   "aria-label"?: string;
-  __dock?: DockContext;
 }
 
 export function DockItem({
@@ -104,56 +54,59 @@ export function DockItem({
   className,
   onClick,
   active,
-  __dock,
   ...rest
 }: DockItemProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const fallback = useMotionValue(Infinity);
-  const mouseX = __dock?.mouseX ?? fallback;
-  const size = __dock?.size ?? 44;
-  const magnification = __dock?.magnification ?? 44;
-  const distance = __dock?.distance ?? 120;
-  const spring = __dock?.spring ?? DEFAULT_SPRING;
-  const pillLayoutId = __dock?.pillLayoutId ?? "dock-pill";
+  const dock = useContext(DockContext);
+  const reduce = useReducedMotion();
+  const size = dock?.size ?? 44;
+  const pillLayoutId = dock?.pillLayoutId ?? "dock-pill";
 
-  const distanceCalc = useTransform(mouseX, (val) => {
-    const rect = ref.current?.getBoundingClientRect() ?? { x: 0, width: size };
-    return val - rect.x - rect.width / 2;
-  });
-
-  const widthRaw = useTransform(
-    distanceCalc,
-    [-distance, 0, distance],
-    [size, magnification, size],
+  const pill = active ? (
+    <motion.span
+      layoutId={pillLayoutId}
+      transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
+      className="absolute inset-0.5 -z-10 rounded-xl bg-primary/5"
+    />
+  ) : null;
+  const sharedStyle = { width: size, height: size };
+  const sharedClass = cn(
+    "relative flex shrink-0 items-center justify-center rounded-full text-foreground",
+    className,
   );
-  const width = useSpring(widthRaw, spring);
 
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={rest["aria-label"]}
+        aria-pressed={active}
+        style={sharedStyle}
+        className={cn(
+          sharedClass,
+          "cursor-pointer border-0 bg-transparent p-0 outline-none",
+          "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        )}
+      >
+        {pill}
+        {children}
+      </button>
+    );
+  }
+
+  // Children carry their own link or button (and its accessible name).
   return (
-    <motion.div
-      ref={ref}
-      onClick={onClick}
-      aria-label={rest["aria-label"]}
-      style={{ width, height: width }}
-      className={cn(
-        "relative flex shrink-0 items-center justify-center rounded-full text-foreground",
-        className,
-      )}
-    >
-      {active ? (
-        <motion.span
-          layoutId={pillLayoutId}
-          transition={PILL_SPRING}
-          className="absolute inset-0.5 -z-10 rounded-xl bg-primary/5"
-        />
-      ) : null}
+    <div style={sharedStyle} className={sharedClass}>
+      {pill}
       {children}
-    </motion.div>
+    </div>
   );
 }
 
 export function DockSeparator({ className }: { className?: string }) {
   return (
     <span
+      aria-hidden
       className={cn("mx-1 h-6 w-px self-center bg-border", className)}
     />
   );

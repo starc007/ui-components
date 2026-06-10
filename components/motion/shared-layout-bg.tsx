@@ -3,6 +3,7 @@
 import {
   AnimatePresence,
   motion,
+  useReducedMotion,
   type Variants,
 } from "motion/react";
 import {
@@ -14,6 +15,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
+import { SPRING_LAYOUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export interface SharedLayoutBgProps {
@@ -32,6 +34,12 @@ const variants: Variants = {
     !isActive ? { opacity: 0, filter: "blur(6px)" } : {},
 };
 
+const reducedVariants: Variants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: (isActive: boolean) => (!isActive ? { opacity: 0 } : {}),
+};
+
 export function SharedLayoutBg({
   children,
   className,
@@ -40,6 +48,7 @@ export function SharedLayoutBg({
 }: SharedLayoutBgProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const uid = useId();
+  const reduce = useReducedMotion();
 
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: The wrapper only clears hover state for child rows.
@@ -63,7 +72,7 @@ export function SharedLayoutBg({
               <AnimatePresence custom={activeId !== null}>
                 {activeId !== null ? (
                   <motion.div
-                    variants={variants}
+                    variants={reduce ? reducedVariants : variants}
                     initial="initial"
                     animate="animate"
                     exit="exit"
@@ -74,7 +83,7 @@ export function SharedLayoutBg({
                     {activeId === childKey ? (
                       <motion.div
                         layoutId={`shared-bg-${uid}`}
-                        transition={{ type: "spring", stiffness: 205, damping: 22 }}
+                        transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
                         className={cn(
                           "pointer-events-none h-full w-full rounded-2xl bg-primary/[0.06]",
                           pillClassName,

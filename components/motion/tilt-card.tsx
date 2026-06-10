@@ -1,7 +1,9 @@
 "use client";
 
-import { motion, useMotionTemplate, useMotionValue, useSpring } from "motion/react";
+import { motion, useMotionTemplate, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import { useRef, type ReactNode } from "react";
+import { SPRING_MOUSE } from "@/lib/ease";
+import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
 
 export interface TiltCardProps {
@@ -13,17 +15,21 @@ export interface TiltCardProps {
 
 export function TiltCard({ children, max = 12, glare = true, className }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const canHover = useHoverCapable();
+  // Decorative cursor-follow: skip on touch (phantom hover) and reduced motion.
+  const enabled = !reduce && canHover;
   const rx = useMotionValue(0);
   const ry = useMotionValue(0);
   const gx = useMotionValue(50);
   const gy = useMotionValue(50);
 
-  const srx = useSpring(rx, { stiffness: 200, damping: 20 });
-  const sry = useSpring(ry, { stiffness: 200, damping: 20 });
+  const srx = useSpring(rx, SPRING_MOUSE);
+  const sry = useSpring(ry, SPRING_MOUSE);
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !enabled) return;
     const rect = el.getBoundingClientRect();
     const px = (e.clientX - rect.left) / rect.width;
     const py = (e.clientY - rect.top) / rect.height;
@@ -50,7 +56,7 @@ export function TiltCard({ children, max = 12, glare = true, className }: TiltCa
       className={cn("relative overflow-hidden rounded-2xl will-change-transform", className)}
     >
       {children}
-      {glare ? (
+      {glare && enabled ? (
         <motion.div
           aria-hidden
           style={{ background: glareBg }}

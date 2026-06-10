@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
+import { EASE_OUT } from "@/lib/ease";
 import { useEffect, useState } from "react";
 import { TextReveal } from "@/components/motion/text-reveal";
 import { TextShimmer } from "@/components/motion/text-shimmer";
@@ -23,7 +24,7 @@ export function TextAnimationPreview() {
           initial={{ opacity: 0, filter: "blur(6px)", transform: "translateY(4px)" }}
           animate={{ opacity: 1, filter: "blur(0px)", transform: "translateY(0px)" }}
           exit={{ opacity: 0, filter: "blur(6px)", transform: "translateY(-4px)" }}
-          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.22, ease: EASE_OUT }}
         >
           {variant === "reveal" ? (
             <TextReveal

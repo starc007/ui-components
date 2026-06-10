@@ -1,65 +1,10 @@
 "use client";
 
-import { AnimatePresence, motion, type HTMLMotionProps } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Check, Loader2, X } from "lucide-react";
 import { forwardRef, type ReactNode } from "react";
-import { cn } from "@/lib/utils";
-
-/* ---------- Base Button (kept in-file so this snippet is self-contained) ---------- */
-
-type ButtonVariant = "primary" | "secondary" | "ghost" | "outline";
-type ButtonSize = "sm" | "md" | "lg" | "icon";
-
-interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  pressScale?: number;
-  children?: ReactNode;
-}
-
-const VARIANT_CLASS: Record<ButtonVariant, string> = {
-  primary: "bg-primary text-primary-foreground hover:bg-primary/90",
-  secondary:
-    "border border-border bg-card text-foreground hover:border-border",
-  ghost: "text-muted-foreground hover:text-foreground hover:bg-primary/5",
-  outline: "border border-border bg-transparent text-foreground hover:bg-primary/5",
-};
-
-const SIZE_CLASS: Record<ButtonSize, string> = {
-  sm: "h-8 px-3 text-xs gap-1.5 rounded-full",
-  md: "h-10 px-5 text-sm gap-2 rounded-full",
-  lg: "h-12 px-6 text-base gap-2 rounded-full",
-  icon: "h-8 w-8 rounded-lg",
-};
-
-const PRESS_SPRING = { type: "spring" as const, stiffness: 500, damping: 30, mass: 0.6 };
-
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = "primary", size = "md", pressScale = 0.93, className, children, ...rest },
-  ref,
-) {
-  return (
-    <motion.button
-      ref={ref}
-      type="button"
-      whileTap={{ scale: pressScale }}
-      whileHover={{ scale: 1.02 }}
-      transition={PRESS_SPRING}
-      className={cn(
-        "inline-flex items-center justify-center font-medium select-none transition-colors",
-        "disabled:pointer-events-none disabled:opacity-50",
-        VARIANT_CLASS[variant],
-        SIZE_CLASS[size],
-        className,
-      )}
-      {...rest}
-    >
-      {children}
-    </motion.button>
-  );
-});
-
-/* ---------- StatefulButton ---------- */
+import { SPRING_SWAP } from "@/lib/ease";
+import { Button, type ButtonProps } from "./base";
 
 export type ButtonState = "idle" | "loading" | "success" | "error";
 
@@ -72,16 +17,15 @@ export interface StatefulButtonProps extends Omit<ButtonProps, "children"> {
   icon?: ReactNode;
 }
 
-const SWAP_SPRING = { type: "spring" as const, stiffness: 460, damping: 30, mass: 0.55 };
-
 function Slot({ keyId, children }: { keyId: string; children: ReactNode }) {
+  const reduce = useReducedMotion();
   return (
     <motion.span
       key={keyId}
-      initial={{ y: 14, opacity: 0, filter: "blur(6px)" }}
-      animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-      exit={{ y: -14, opacity: 0, filter: "blur(6px)" }}
-      transition={SWAP_SPRING}
+      initial={reduce ? { opacity: 0 } : { y: 14, opacity: 0, filter: "blur(6px)" }}
+      animate={reduce ? { opacity: 1 } : { y: 0, opacity: 1, filter: "blur(0px)" }}
+      exit={reduce ? { opacity: 0 } : { y: -14, opacity: 0, filter: "blur(6px)" }}
+      transition={reduce ? { duration: 0.15 } : SPRING_SWAP}
       className="inline-flex items-center gap-2 whitespace-nowrap"
     >
       {children}
@@ -102,12 +46,14 @@ export const StatefulButton = forwardRef<HTMLButtonElement, StatefulButtonProps>
   },
   ref,
 ) {
+  const reduce = useReducedMotion();
   const isBusy = state === "loading";
   return (
     <Button ref={ref} disabled={disabled || isBusy} aria-busy={isBusy} {...rest}>
       <motion.span
-        layout
-        transition={SWAP_SPRING}
+        layout={!reduce}
+        transition={SPRING_SWAP}
+        aria-live="polite"
         className="relative inline-flex items-center justify-center overflow-hidden"
       >
         <AnimatePresence mode="popLayout" initial={false}>

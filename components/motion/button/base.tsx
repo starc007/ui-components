@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion, type HTMLMotionProps } from "motion/react";
 import { forwardRef, type ReactNode } from "react";
+import { SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 
@@ -30,8 +31,6 @@ const SIZE_CLASS: Record<ButtonSize, string> = {
   icon: "h-8 w-8 rounded-lg",
 };
 
-export const PRESS_SPRING = { type: "spring" as const, stiffness: 500, damping: 30, mass: 0.6 };
-
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   { variant = "primary", size = "md", pressScale = 0.93, className, children, ...rest },
   ref,
@@ -44,7 +43,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       type="button"
       whileTap={reduce ? undefined : { scale: pressScale }}
       whileHover={reduce || !canHover ? undefined : { scale: 1.02 }}
-      transition={PRESS_SPRING}
+      transition={SPRING_PRESS}
       className={cn(
         "inline-flex items-center justify-center font-medium select-none",
         "transition-colors",

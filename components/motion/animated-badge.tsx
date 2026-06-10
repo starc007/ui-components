@@ -17,6 +17,7 @@ import {
   type Variants,
 } from "motion/react";
 import type { ReactNode } from "react";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type AnimatedBadgeStatus =
@@ -70,8 +71,6 @@ const ICONS: Record<AnimatedBadgeStatus, LucideIcon> = {
   loading: LoaderCircle,
 };
 
-const MORPH_EASE = [0.16, 1, 0.3, 1] as const;
-
 const ICON_ROLL_VARIANTS: Variants = {
   initial: {
     opacity: 0.72,
@@ -89,9 +88,9 @@ const ICON_ROLL_VARIANTS: Variants = {
     transition: {
       y: { type: "spring", stiffness: 210, damping: 24, mass: 0.85 },
       scale: { type: "spring", stiffness: 250, damping: 24, mass: 0.75 },
-      rotate: { duration: 0.28, ease: MORPH_EASE },
-      opacity: { duration: 0.28, ease: MORPH_EASE },
-      filter: { duration: 0.42, ease: MORPH_EASE },
+      rotate: { duration: 0.28, ease: EASE_OUT },
+      opacity: { duration: 0.28, ease: EASE_OUT },
+      filter: { duration: 0.42, ease: EASE_OUT },
     },
   },
   exit: {
@@ -100,7 +99,7 @@ const ICON_ROLL_VARIANTS: Variants = {
     scale: 0.96,
     rotate: 8,
     filter: "blur(6px)",
-    transition: { duration: 0.22, ease: MORPH_EASE },
+    transition: { duration: 0.22, ease: EASE_OUT },
   },
 };
 
@@ -112,15 +111,15 @@ const TEXT_ROLL_VARIANTS: Variants = {
     filter: "blur(0px)",
     transition: {
       y: { type: "spring", stiffness: 210, damping: 24, mass: 0.85 },
-      opacity: { duration: 0.3, ease: MORPH_EASE },
-      filter: { duration: 0.42, ease: MORPH_EASE },
+      opacity: { duration: 0.3, ease: EASE_OUT },
+      filter: { duration: 0.42, ease: EASE_OUT },
     },
   },
   exit: {
     opacity: 0.5,
     y: "-85%",
     filter: "blur(6px)",
-    transition: { duration: 0.2, ease: MORPH_EASE },
+    transition: { duration: 0.2, ease: EASE_OUT },
   },
 };
 
