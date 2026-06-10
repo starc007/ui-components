@@ -65,13 +65,13 @@ function Slot({
   keyId,
   children,
   className,
-  scaleFrom = 0.6,
-  delay = 0.05,
+  scaleFrom = 0.8,
+  delay = 0.04,
 }: {
   keyId: string;
   children: ReactNode;
   className?: string;
-  /** Scale the content emerges from — everything originates in the pill core. */
+  /** Scale the content emerges from — everything originates at the pill. */
   scaleFrom?: number;
   /** Lets the shell lead the bloom before content appears. */
   delay?: number;
@@ -83,17 +83,22 @@ function Slot({
       initial={
         reduce
           ? { opacity: 0 }
-          : { opacity: 0, scale: scaleFrom, filter: "blur(8px)" }
+          : { opacity: 0, scale: scaleFrom, y: -8, filter: "blur(8px)" }
       }
-      animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, filter: "blur(0px)" }}
-      // Exit gets sucked back into the pill core — fast, blur-free, before the
+      animate={
+        reduce
+          ? { opacity: 1 }
+          : { opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }
+      }
+      // Exit gets sucked up into the pill — fast, blur-free, before the
       // shrinking shell can clip it.
       exit={
         reduce
           ? { opacity: 0, transition: { duration: 0.1 } }
           : {
               opacity: 0,
-              scale: 0.7,
+              scale: 0.85,
+              y: -6,
               transition: { duration: 0.1, ease: EASE_OUT },
             }
       }
@@ -107,7 +112,9 @@ function Slot({
               filter: { duration: 0.25, ease: EASE_OUT, delay },
             }
       }
-      style={{ transformOrigin: "center" }}
+      // Anchored to the pill line: content unfurls downward out of it and is
+      // sucked back up into it.
+      style={{ transformOrigin: "top center" }}
       className={cn("flex items-center justify-center", className)}
     >
       {children}
@@ -153,8 +160,11 @@ export function DynamicIsland({
         transition={
           reduce ? { duration: 0 } : expanded ? EXPAND_SPRING : COLLAPSE_SPRING
         }
+        // items-start pins content to the top edge while the shell springs, so
+        // expansion reads as unfurling downward out of the pill. Top-align the
+        // island in its parent (like under a notch) to complete the effect.
         className={cn(
-          "relative inline-flex items-center justify-center overflow-hidden",
+          "relative inline-flex items-start justify-center overflow-hidden",
           "bg-foreground text-background shadow-2xl",
           className,
         )}
@@ -166,8 +176,8 @@ export function DynamicIsland({
             {!expanded && compact ? (
               <Slot
                 keyId="compact"
-                scaleFrom={0.8}
-                delay={0.08}
+                scaleFrom={0.85}
+                delay={0.06}
                 // iPhone pill proportions: ~126 x 37.
                 className="min-h-[37px] min-w-[126px] gap-2 px-4 py-1.5 text-xs font-medium"
               >

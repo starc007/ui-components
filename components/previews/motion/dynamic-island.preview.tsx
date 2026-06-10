@@ -47,8 +47,11 @@ export function DynamicIslandPreview() {
   }, [view]);
 
   return (
-    <div className="flex w-full flex-col items-center gap-8">
-      <DynamicIsland
+    <div className="flex w-full flex-col items-center gap-4">
+      {/* Fixed-height, top-aligned zone: the island stays pinned at the top
+          like under a notch and unfurls downward into reserved space. */}
+      <div className="flex h-32 w-full items-start justify-center pt-2">
+        <DynamicIsland
         view={view}
         compact={
           <>
@@ -106,7 +109,8 @@ export function DynamicIslandPreview() {
           </div>
           <EqBars />
         </DynamicIslandView>
-      </DynamicIsland>
+        </DynamicIsland>
+      </div>
 
       <div className="flex flex-wrap items-center justify-center gap-2">
         <Button size="sm" variant="secondary" onClick={() => setView("call")}>
