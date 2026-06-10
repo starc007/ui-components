@@ -124,7 +124,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "dock",
         name: "Dock",
-        description: "macOS-style dock with cursor-proximity magnification on each item.",
+        description: "macOS-style dock with grouped actions and a gliding active pill.",
         file: "components/motion/dock.tsx",
       },
       {
