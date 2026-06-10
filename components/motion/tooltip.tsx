@@ -10,6 +10,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "right" | "bottom" | "left";
@@ -69,8 +70,8 @@ function buildVariants(side: Side): Variants {
         stiffness: 380,
         damping: 30,
         mass: 0.7,
-        opacity: { duration: 0.22, ease: [0.16, 1, 0.3, 1] },
-        filter: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+        opacity: { duration: 0.22, ease: EASE_OUT },
+        filter: { duration: 0.3, ease: EASE_OUT },
       },
     },
     exit: {
@@ -79,16 +80,21 @@ function buildVariants(side: Side): Variants {
       filter: "blur(6px)",
       x: (o.x ?? 0) * 0.6,
       y: (o.y ?? 0) * 0.6,
-      transition: { duration: 0.14, ease: [0.16, 1, 0.3, 1] },
+      transition: { duration: 0.14, ease: EASE_OUT },
     },
   };
 }
 
 const REDUCED_VARIANTS: Variants = {
   initial: { opacity: 0 },
-  animate: { opacity: 1, transition: { duration: 0.14, ease: [0.16, 1, 0.3, 1] } },
-  exit: { opacity: 0, transition: { duration: 0.1, ease: [0.16, 1, 0.3, 1] } },
+  animate: { opacity: 1, transition: { duration: 0.14, ease: EASE_OUT } },
+  exit: { opacity: 0, transition: { duration: 0.1, ease: EASE_OUT } },
 };
+
+// Once any tooltip has just closed, neighbouring tooltips open without the
+// initial delay — moving along a toolbar feels instant after the first one.
+const WARM_WINDOW_MS = 300;
+let lastHiddenAt = 0;
 
 export function Tooltip({ content, children, side = "top", delay = 120, className, wrapperClassName }: TooltipProps) {
   const [open, setOpen] = useState(false);
@@ -98,13 +104,15 @@ export function Tooltip({ content, children, side = "top", delay = 120, classNam
 
   const show = () => {
     if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setOpen(true), delay);
+    const warm = Date.now() - lastHiddenAt < WARM_WINDOW_MS;
+    timer.current = setTimeout(() => setOpen(true), warm ? 0 : delay);
   };
   const hide = () => {
     if (timer.current) {
       clearTimeout(timer.current);
       timer.current = null;
     }
+    if (open) lastHiddenAt = Date.now();
     setOpen(false);
   };
 

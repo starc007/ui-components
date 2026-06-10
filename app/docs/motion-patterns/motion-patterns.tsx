@@ -10,6 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { EASE_OUT } from "@/lib/ease";
 import { useState, type ReactNode } from "react";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { cn } from "@/lib/utils";
@@ -54,7 +55,7 @@ hover: {
     avoid: "Do not stagger every tiny child. Reveal the main surface first.",
     code: `initial: { opacity: 0, y: 12, filter: "blur(6px)" }
 animate: { opacity: 1, y: 0, filter: "blur(0px)" }
-transition: { duration: 0.52, ease: [0.23, 1, 0.32, 1] }`,
+transition: { duration: 0.52, ease: [0.16, 1, 0.3, 1] }`,
   },
   {
     title: "Press",
@@ -240,7 +241,7 @@ function LiveExample({ pattern }: { pattern: Pattern }) {
           key={replay}
           initial={{ opacity: 0, y: 12, filter: "blur(6px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.52, ease: [0.23, 1, 0.32, 1] }}
+          transition={{ duration: 0.52, ease: EASE_OUT }}
           className="w-56 rounded-2xl bg-(--color-bg-elev) p-4"
         >
           <p className="font-pixel text-sm uppercase text-(--color-fg)">New card</p>
@@ -334,7 +335,7 @@ function LiveExample({ pattern }: { pattern: Pattern }) {
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
+            transition={{ duration: 0.18, ease: EASE_OUT }}
             className="mt-3 rounded-xl bg-(--color-bg) p-4 text-sm text-(--color-fg)"
           >
             {tab === "Preview" ? "Live component view" : "Code sample view"}

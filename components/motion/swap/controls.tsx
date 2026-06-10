@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowDownUp, Check, ChevronDown, Send, X } from "lucide-react";
+import { SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import type { Token } from "./types";
 import { EASE } from "./constants";
@@ -45,6 +46,7 @@ export function ActionButton({
   amount: number;
   destAddress: string;
 }) {
+  const reduce = useReducedMotion();
   const noAmount = amount <= 0;
   const overBalance = from.balance !== undefined && amount > from.balance;
   const validDest = destAddress && isValidAddress(destAddress);
@@ -60,8 +62,8 @@ export function ActionButton({
   return (
     <motion.button
       type="button"
-      whileTap={disabled ? undefined : { scale: 0.97 }}
-      transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.6 }}
+      whileTap={disabled || reduce ? undefined : { scale: 0.97 }}
+      transition={SPRING_PRESS}
       disabled={disabled}
       className={cn(
         "mt-3 inline-flex h-12 w-full items-center justify-center rounded-2xl text-sm font-semibold transition-colors",

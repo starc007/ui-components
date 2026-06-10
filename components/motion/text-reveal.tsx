@@ -2,6 +2,7 @@
 
 import { motion, type Transition, useInView, useReducedMotion } from "motion/react";
 import { useRef, type ElementType, type ReactNode } from "react";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 type SplitMode = "word" | "char";
@@ -22,7 +23,6 @@ export interface TextRevealProps {
 }
 
 const DEFAULT_SPRING = { stiffness: 140, damping: 26, mass: 1.2 };
-const REVEAL_EASE = [0.16, 1, 0.3, 1] as const;
 
 export function TextReveal({
   text,
@@ -75,11 +75,11 @@ export function TextReveal({
                   : { y: 0, opacity: 1, filter: "blur(0px)" }
                 : initial;
               const transition: Transition = reduce
-                ? { opacity: { duration: 0.25, ease: REVEAL_EASE, delay: d * 0.3 } }
+                ? { opacity: { duration: 0.25, ease: EASE_OUT, delay: d * 0.3 } }
                 : {
                     y: { type: "spring" as const, ...s, delay: d },
-                    opacity: { duration: 0.7, ease: REVEAL_EASE, delay: d },
-                    filter: { duration: 0.9, ease: REVEAL_EASE, delay: d },
+                    opacity: { duration: 0.7, ease: EASE_OUT, delay: d },
+                    filter: { duration: 0.9, ease: EASE_OUT, delay: d },
                   };
               return (
                 <motion.span

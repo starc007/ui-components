@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Search, X } from "lucide-react";
+import { SPRING_PANEL } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { EASE } from "./constants";
 import { ChainChip, TokenDot } from "./token-badges";
@@ -92,9 +93,7 @@ export function TokenPicker({
             animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: "100%" }}
             transition={
-              reduce
-                ? { duration: 0.18, ease: EASE }
-                : { type: "spring", stiffness: 420, damping: 40, mass: 0.5 }
+              reduce ? { duration: 0.18, ease: EASE } : SPRING_PANEL
             }
             className="absolute inset-x-0 bottom-0 z-20 flex max-h-[92%] flex-col rounded-t-3xl border-t border-border bg-card shadow-2xl"
             role="dialog"
