@@ -137,6 +137,12 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/tooltip.tsx",
       },
       {
+        slug: "dynamic-island",
+        name: "Dynamic Island",
+        description: "iOS-style island pill that morphs between live activity views with bouncy shell resize and blur crossfades.",
+        file: "components/motion/dynamic-island.tsx",
+      },
+      {
         slug: "morphing-modal",
         name: "Morphing Modal",
         description: "Family-app-style modal. A single panel that morphs its height as you navigate between inner views, with blur cross-fade on content.",
