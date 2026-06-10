@@ -1,7 +1,14 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { createContext, useContext, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -11,14 +18,33 @@ type IslandContextValue = {
 
 const IslandContext = createContext<IslandContextValue | null>(null);
 
-// Apple-style life on the shell morph — a hint of overshoot without wobbling
-// the clip while the pill squeezes back down.
+// Shell resize physics — a hint of overshoot without wobbling the clip.
+// The shell animates real width/height (not transforms), so slots are never
+// scale-distorted while it resizes. Classic measured-container pattern.
 const ISLAND_SPRING = {
   type: "spring",
   stiffness: 420,
   damping: 30,
   mass: 0.65,
 } as const;
+
+/** Tracks the natural size of the content so the shell can spring to it. */
+function useContentSize() {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [size, setSize] = useState<{ width: number; height: number } | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => {
+      setSize({ width: el.offsetWidth, height: el.offsetHeight });
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return [ref, size] as const;
+}
 
 function Slot({
   keyId,
@@ -33,14 +59,10 @@ function Slot({
   return (
     <motion.div
       key={keyId}
-      // layout="position" keeps this slot from being stretched per-frame
-      // while the shell resizes around it.
-      layout={reduce ? false : "position"}
       initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.9, filter: "blur(6px)" }}
       animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, filter: "blur(0px)" }}
       // Exit fast and blur-free: the leaving slot is popped out of layout at
-      // its old size, so anything slow or paint-heavy flickers while the
-      // shell shrinks over it.
+      // its old size while the shell shrinks over it.
       exit={
         reduce
           ? { opacity: 0, transition: { duration: 0.1 } }
@@ -76,30 +98,42 @@ export function DynamicIsland({
 }: DynamicIslandProps) {
   const reduce = useReducedMotion();
   const expanded = view !== null;
+  const [sizerRef, size] = useContentSize();
 
   return (
     <IslandContext.Provider value={{ view }}>
       <motion.div
-        layout={!reduce}
         role="status"
         aria-live="polite"
-        transition={ISLAND_SPRING}
-        style={{ borderRadius: expanded ? 28 : 999 }}
+        initial={false}
+        animate={
+          size
+            ? {
+                width: size.width,
+                height: size.height,
+                borderRadius: expanded ? 28 : 999,
+              }
+            : { borderRadius: expanded ? 28 : 999 }
+        }
+        transition={reduce ? { duration: 0 } : ISLAND_SPRING}
         className={cn(
-          "relative inline-flex min-h-9 items-center justify-center overflow-hidden",
-          "bg-foreground text-background shadow-2xl will-change-transform",
-          expanded ? "px-5 py-3" : "px-4 py-1.5",
+          "relative inline-flex items-center justify-center overflow-hidden",
+          "bg-foreground text-background shadow-2xl",
           className,
         )}
       >
-        <AnimatePresence mode="popLayout" initial={false}>
-          {!expanded && compact ? (
-            <Slot keyId="compact" className="gap-2 text-xs font-medium">
-              {compact}
-            </Slot>
-          ) : null}
-        </AnimatePresence>
-        {children}
+        {/* w-max keeps this at the natural size of the active content; the
+            shell springs toward it. */}
+        <div ref={sizerRef} className="w-max">
+          <AnimatePresence mode="popLayout" initial={false}>
+            {!expanded && compact ? (
+              <Slot keyId="compact" className="min-h-9 gap-2 px-4 py-1.5 text-xs font-medium">
+                {compact}
+              </Slot>
+            ) : null}
+          </AnimatePresence>
+          {children}
+        </div>
       </motion.div>
     </IslandContext.Provider>
   );
@@ -120,7 +154,7 @@ export function DynamicIslandView({ id, children, className }: DynamicIslandView
   return (
     <AnimatePresence mode="popLayout" initial={false}>
       {active ? (
-        <Slot keyId={id} className={className}>
+        <Slot keyId={id} className={cn("px-5 py-3", className)}>
           {children}
         </Slot>
       ) : null}
