@@ -59,15 +59,25 @@ export function NumberTicker({
     return pad ? formatted.padStart(pad, "0") : formatted;
   }, [value, pad, format, locale]);
   const glyphs = useMemo(() => {
-    const seen = new Map<string, number>();
-
-    return text.split("").map((char) => {
-      const count = seen.get(char) ?? 0;
-      seen.set(char, count + 1);
-      return { char, id: `${char}-${count}` };
-    });
+    const chars = text.split("");
+    // Key by place value (position from the right): a changing digit keeps its
+    // identity and rolls to the new value instead of remounting and replaying
+    // from 0. Growing numbers add glyphs on the left without re-keying the
+    // ones, tens, hundreds already on screen.
+    return chars.map((char, i) => ({ char, id: `g-${chars.length - 1 - i}` }));
   }, [text]);
   const readableText = `${prefix ?? ""}${text}${suffix ?? ""}`;
+
+  // Stagger is an entrance flourish. Once the reveal has played, value
+  // changes roll every digit immediately — a per-digit delay on live updates
+  // reads as lag.
+  const [entered, setEntered] = useState(false);
+  useEffect(() => {
+    if (!armed || entered) return;
+    const total = (duration + glyphs.length * stagger) * 1000;
+    const t = window.setTimeout(() => setEntered(true), total);
+    return () => window.clearTimeout(t);
+  }, [armed, entered, duration, stagger, glyphs.length]);
 
   return (
     <span
@@ -91,7 +101,7 @@ export function NumberTicker({
             <Digit
               key={id}
               digit={armed ? digit : 0}
-              delay={i * stagger}
+              delay={entered ? 0 : i * stagger}
               duration={duration}
               className={digitClassName}
             />
