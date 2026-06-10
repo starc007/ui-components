@@ -25,8 +25,10 @@ import { ExpandableActionBarPreview } from "./motion/expandable-action-bar.previ
 import { ActionSwapPreview } from "./motion/action-swap.preview";
 import { ActionSwapBlurPreview } from "./motion/action-swap-blur.preview";
 import { ActionSwapRollPreview } from "./motion/action-swap-roll.preview";
+import { DynamicIslandPreview } from "./motion/dynamic-island.preview";
 
 export const previews: Record<string, () => ReactNode> = {
+  "motion/dynamic-island": DynamicIslandPreview,
   "motion/tilt-card": TiltCardPreview,
   "motion/marquee": MarqueePreview,
   "motion/text-animation": TextAnimationPreview,
