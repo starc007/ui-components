@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 type IslandContextValue = {
@@ -18,14 +18,29 @@ type IslandContextValue = {
 
 const IslandContext = createContext<IslandContextValue | null>(null);
 
-// Shell resize physics — a hint of overshoot without wobbling the clip.
-// The shell animates real width/height (not transforms), so slots are never
-// scale-distorted while it resizes. Classic measured-container pattern.
-const ISLAND_SPRING = {
+// Shell physics, Apple style: expansion blooms out of the pill with a visible
+// overshoot; collapse snaps back tighter. The shell animates real
+// width/height (not transforms), so slots are never scale-distorted.
+const EXPAND_SPRING = {
   type: "spring",
-  stiffness: 420,
+  stiffness: 400,
+  damping: 22,
+  mass: 0.55,
+} as const;
+
+const COLLAPSE_SPRING = {
+  type: "spring",
+  stiffness: 480,
   damping: 30,
-  mass: 0.65,
+  mass: 0.6,
+} as const;
+
+// Content pops from the pill core just after the shell starts moving.
+const CONTENT_SPRING = {
+  type: "spring",
+  stiffness: 500,
+  damping: 26,
+  mass: 0.5,
 } as const;
 
 /** Tracks the natural size of the content so the shell can spring to it. */
@@ -50,29 +65,49 @@ function Slot({
   keyId,
   children,
   className,
+  scaleFrom = 0.6,
+  delay = 0.05,
 }: {
   keyId: string;
   children: ReactNode;
   className?: string;
+  /** Scale the content emerges from — everything originates in the pill core. */
+  scaleFrom?: number;
+  /** Lets the shell lead the bloom before content appears. */
+  delay?: number;
 }) {
   const reduce = useReducedMotion();
   return (
     <motion.div
       key={keyId}
-      initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.9, filter: "blur(6px)" }}
+      initial={
+        reduce
+          ? { opacity: 0 }
+          : { opacity: 0, scale: scaleFrom, filter: "blur(8px)" }
+      }
       animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, filter: "blur(0px)" }}
-      // Exit fast and blur-free: the leaving slot is popped out of layout at
-      // its old size while the shell shrinks over it.
+      // Exit gets sucked back into the pill core — fast, blur-free, before the
+      // shrinking shell can clip it.
       exit={
         reduce
           ? { opacity: 0, transition: { duration: 0.1 } }
           : {
               opacity: 0,
-              scale: 0.95,
-              transition: { duration: 0.12, ease: EASE_OUT },
+              scale: 0.7,
+              transition: { duration: 0.1, ease: EASE_OUT },
             }
       }
-      transition={reduce ? { duration: 0.15 } : SPRING_SWAP}
+      transition={
+        reduce
+          ? { duration: 0.15 }
+          : {
+              ...CONTENT_SPRING,
+              delay,
+              opacity: { duration: 0.2, ease: EASE_OUT, delay },
+              filter: { duration: 0.25, ease: EASE_OUT, delay },
+            }
+      }
+      style={{ transformOrigin: "center" }}
       className={cn("flex items-center justify-center", className)}
     >
       {children}
@@ -111,11 +146,13 @@ export function DynamicIsland({
             ? {
                 width: size.width,
                 height: size.height,
-                borderRadius: expanded ? 28 : 999,
+                borderRadius: expanded ? 24 : 999,
               }
-            : { borderRadius: expanded ? 28 : 999 }
+            : { borderRadius: expanded ? 24 : 999 }
         }
-        transition={reduce ? { duration: 0 } : ISLAND_SPRING}
+        transition={
+          reduce ? { duration: 0 } : expanded ? EXPAND_SPRING : COLLAPSE_SPRING
+        }
         className={cn(
           "relative inline-flex items-center justify-center overflow-hidden",
           "bg-foreground text-background shadow-2xl",
@@ -127,7 +164,13 @@ export function DynamicIsland({
         <div ref={sizerRef} className="w-max">
           <AnimatePresence mode="popLayout" initial={false}>
             {!expanded && compact ? (
-              <Slot keyId="compact" className="min-h-9 gap-2 px-4 py-1.5 text-xs font-medium">
+              <Slot
+                keyId="compact"
+                scaleFrom={0.8}
+                delay={0.08}
+                // iPhone pill proportions: ~126 x 37.
+                className="min-h-[37px] min-w-[126px] gap-2 px-4 py-1.5 text-xs font-medium"
+              >
                 {compact}
               </Slot>
             ) : null}
@@ -154,7 +197,7 @@ export function DynamicIslandView({ id, children, className }: DynamicIslandView
   return (
     <AnimatePresence mode="popLayout" initial={false}>
       {active ? (
-        <Slot keyId={id} className={cn("px-5 py-3", className)}>
+        <Slot keyId={id} className={cn("px-6 py-4", className)}>
           {children}
         </Slot>
       ) : null}
