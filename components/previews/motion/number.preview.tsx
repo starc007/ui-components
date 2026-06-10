@@ -1,11 +1,13 @@
 "use client";
 
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { AnimatedNumber } from "@/components/motion/animated-number";
 import { NumberTicker } from "@/components/motion/number-ticker";
 
 export function NumberPreview() {
   const [value, setValue] = useState(48273);
+  const [variant, setVariant] = useState<"ticker" | "animated">("ticker");
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -14,25 +16,45 @@ export function NumberPreview() {
     return () => window.clearInterval(id);
   }, []);
 
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setVariant((currentVariant) => currentVariant === "ticker" ? "animated" : "ticker");
+    }, 3000);
+    return () => window.clearInterval(id);
+  }, []);
+
   return (
-    <div className="flex flex-col items-center gap-5 text-center">
-      <div>
-        <p className="text-xs text-(--color-fg-muted)">Active users</p>
-        <NumberTicker
-          value={value}
-          className="text-3xl font-semibold tracking-tight text-(--color-fg) tabular-nums"
-          format={(number) => number.toLocaleString()}
-        />
-      </div>
-      <div>
-        <p className="text-xs text-(--color-fg-muted)">Revenue</p>
-        <div className="text-3xl font-semibold tracking-tight text-(--color-fg) tabular-nums">
-          <AnimatedNumber
-            value={129480}
-            format={(number) => `$${Math.round(number).toLocaleString()}`}
-          />
-        </div>
-      </div>
+    <div className="relative flex min-h-20 min-w-40 items-center justify-center text-center">
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={variant}
+          initial={{ opacity: 0, filter: "blur(6px)", transform: "translateY(4px)" }}
+          animate={{ opacity: 1, filter: "blur(0px)", transform: "translateY(0px)" }}
+          exit={{ opacity: 0, filter: "blur(6px)", transform: "translateY(-4px)" }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {variant === "ticker" ? (
+            <div>
+              <p className="text-xs text-(--color-fg-muted)">Active users</p>
+              <NumberTicker
+                value={value}
+                className="text-3xl font-semibold tracking-tight text-(--color-fg) tabular-nums"
+                format={(number) => number.toLocaleString()}
+              />
+            </div>
+          ) : (
+            <div>
+              <p className="text-xs text-(--color-fg-muted)">Revenue</p>
+              <div className="text-3xl font-semibold tracking-tight text-(--color-fg) tabular-nums">
+                <AnimatedNumber
+                  value={129480}
+                  format={(number) => `$${Math.round(number).toLocaleString()}`}
+                />
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
