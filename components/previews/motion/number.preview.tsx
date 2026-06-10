@@ -17,6 +17,14 @@ export function NumberPreview() {
   return (
     <div className="flex flex-col items-center gap-5 text-center">
       <div>
+        <p className="text-xs text-(--color-fg-muted)">Active users</p>
+        <NumberTicker
+          value={value}
+          className="text-3xl font-semibold tracking-tight text-(--color-fg) tabular-nums"
+          format={(number) => number.toLocaleString()}
+        />
+      </div>
+      <div>
         <p className="text-xs text-(--color-fg-muted)">Revenue</p>
         <div className="text-3xl font-semibold tracking-tight text-(--color-fg) tabular-nums">
           <AnimatedNumber
@@ -24,14 +32,6 @@ export function NumberPreview() {
             format={(number) => `$${Math.round(number).toLocaleString()}`}
           />
         </div>
-      </div>
-      <div>
-        <p className="text-xs text-(--color-fg-muted)">Active users</p>
-        <NumberTicker
-          value={value}
-          className="text-3xl font-semibold tracking-tight text-(--color-fg) tabular-nums"
-          format={(number) => number.toLocaleString()}
-        />
       </div>
     </div>
   );

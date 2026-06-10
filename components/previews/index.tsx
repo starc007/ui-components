@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { TiltCardPreview } from "./motion/tilt-card.preview";
 import { MarqueePreview } from "./motion/marquee.preview";
+import { TextAnimationPreview } from "./motion/text-animation.preview";
 import { TextShimmerPreview } from "./motion/text-shimmer.preview";
 import { NumberPreview } from "./motion/number.preview";
 import { AnimatedNumberPreview } from "./motion/animated-number.preview";
@@ -28,6 +29,7 @@ import { ActionSwapRollPreview } from "./motion/action-swap-roll.preview";
 export const previews: Record<string, () => ReactNode> = {
   "motion/tilt-card": TiltCardPreview,
   "motion/marquee": MarqueePreview,
+  "motion/text-animation": TextAnimationPreview,
   "motion/text-shimmer": TextShimmerPreview,
   "motion/number": NumberPreview,
   "motion/animated-number": AnimatedNumberPreview,
