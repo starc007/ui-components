@@ -6,6 +6,7 @@ import { useMotionValueEvent, useScroll } from "motion/react";
 import { ArrowRight, Star } from "lucide-react";
 import { useState } from "react";
 import { GithubIcon } from "@/components/app/icons";
+import { PressLink } from "@/components/app/press-link";
 import { cn } from "@/lib/utils";
 
 function formatStarCount(count: number) {
@@ -60,11 +61,11 @@ export function SiteHeader({
         </Link>
 
         <nav className="flex items-center gap-2">
-          <a
+          <PressLink
             href="https://github.com/starc007/ui-components"
             target="_blank"
             rel="noreferrer noopener"
-            className="group inline-flex items-center gap-1.5 rounded-2xl border border-(--color-border) bg-(--color-bg-elev)/20 px-3 py-2 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
+            className="group inline-flex items-center gap-1.5 rounded-2xl border border-(--color-border) bg-(--color-bg-elev)/20 px-3 py-2 text-xs font-medium text-(--color-fg) hover:border-(--color-border-strong)"
             aria-label={
               formattedStarCount
                 ? `Star on GitHub, ${formattedStarCount} stars`
@@ -77,15 +78,15 @@ export function SiteHeader({
               <Star className="h-3 w-3" />
               {formattedStarCount ? <span>{formattedStarCount}</span> : null}
             </span>
-          </a>
+          </PressLink>
 
-          <Link
+          <PressLink
             href="/components/motion"
-            className="group inline-flex items-center gap-1.5 rounded-2xl bg-(--color-fg) px-3 py-2 text-xs font-medium text-(--color-bg) press focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
+            className="group inline-flex items-center gap-1.5 rounded-2xl bg-(--color-fg) px-3 py-2 text-xs font-medium text-(--color-bg) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
           >
             Browse
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-          </Link>
+          </PressLink>
         </nav>
       </div>
     </header>
