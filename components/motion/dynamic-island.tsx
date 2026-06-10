@@ -11,13 +11,13 @@ type IslandContextValue = {
 
 const IslandContext = createContext<IslandContextValue | null>(null);
 
-// Apple-style bounce on the shell morph — slightly underdamped on purpose so
-// the island lands with a hint of overshoot.
+// Apple-style life on the shell morph — a hint of overshoot without wobbling
+// the clip while the pill squeezes back down.
 const ISLAND_SPRING = {
   type: "spring",
   stiffness: 420,
-  damping: 28,
-  mass: 0.7,
+  damping: 30,
+  mass: 0.65,
 } as const;
 
 function Slot({
@@ -33,16 +33,21 @@ function Slot({
   return (
     <motion.div
       key={keyId}
+      // layout="position" keeps this slot from being stretched per-frame
+      // while the shell resizes around it.
+      layout={reduce ? false : "position"}
       initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.9, filter: "blur(6px)" }}
       animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, filter: "blur(0px)" }}
+      // Exit fast and blur-free: the leaving slot is popped out of layout at
+      // its old size, so anything slow or paint-heavy flickers while the
+      // shell shrinks over it.
       exit={
         reduce
           ? { opacity: 0, transition: { duration: 0.1 } }
           : {
               opacity: 0,
-              scale: 0.9,
-              filter: "blur(6px)",
-              transition: { duration: 0.18, ease: EASE_OUT },
+              scale: 0.95,
+              transition: { duration: 0.12, ease: EASE_OUT },
             }
       }
       transition={reduce ? { duration: 0.15 } : SPRING_SWAP}
