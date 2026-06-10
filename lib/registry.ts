@@ -2,6 +2,8 @@ export type ComponentExample = {
   slug: string;
   name: string;
   description?: string;
+  /** Optional install slug for variants that have their own registry command. */
+  installSlug?: string;
   /** Source file shown under Source tab. */
   file: string;
   /** Key into the previews registry (e.g. "motion/button-base"). */
@@ -160,6 +162,32 @@ export const registry: CategoryEntry[] = [
         name: "Animated Badge",
         description: "Status badge with animated state icons, pulse feedback and compact size variants.",
         file: "components/motion/animated-badge.tsx",
+      },
+      {
+        slug: "action-swap",
+        name: "Action Swap",
+        description: "CTA button and slot primitives for swapping text and icons with blur motion.",
+        file: "components/motion/action-swap.tsx",
+        examples: [
+          {
+            slug: "blur",
+            name: "Blur",
+            description: "Copy-button style swap with blur, opacity and scale.",
+            installSlug: "action-swap-blur",
+            file: "components/motion/action-swap-blur.tsx",
+            previewKey: "motion/action-swap-blur",
+            previewFile: "components/previews/motion/action-swap-blur.preview.tsx",
+          },
+          {
+            slug: "roll",
+            name: "Roll",
+            description: "The next text or icon rolls in from below with blur.",
+            installSlug: "action-swap-roll",
+            file: "components/motion/action-swap-roll.tsx",
+            previewKey: "motion/action-swap-roll",
+            previewFile: "components/previews/motion/action-swap-roll.preview.tsx",
+          },
+        ],
       },
       {
         slug: "animated-toast-stack",

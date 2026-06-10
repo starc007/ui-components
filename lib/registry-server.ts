@@ -1,4 +1,4 @@
-import { allComponents, findCategory, findComponent, registry } from "@/lib/registry";
+import { allComponents, findCategory, registry } from "@/lib/registry";
 import { readOptionalSourceFile, readSourceFile, resolveSourceImport, type SourceFile } from "@/lib/source-files";
 
 const SITE_URL = "https://beui.saura3h.xyz";
@@ -49,6 +49,17 @@ export type ShadcnRegistry = {
   name: string;
   homepage: string;
   items: Array<Omit<ShadcnRegistryItem, "$schema">>;
+};
+
+export type RegistryTarget = {
+  slug: string;
+  name: string;
+  description: string;
+  file: string;
+  extraFiles?: string[];
+  categorySlug: string;
+  pageSlug: string;
+  previewFile?: string;
 };
 
 const STATIC_IMPORT_RE = /\b(?:import|export)\s+(?:type\s+)?(?:[^'";]*?\s+from\s*)?["']([^"']+)["']/g;
@@ -123,6 +134,70 @@ function uniqueByPath(files: ShadcnRegistryFile[]) {
   });
 }
 
+export function allRegistryTargets(): RegistryTarget[] {
+  return allComponents().flatMap((component) => {
+    const visibleTarget: RegistryTarget = {
+      slug: component.slug,
+      name: component.name,
+      description: component.description,
+      file: component.file,
+      extraFiles: component.extraFiles,
+      categorySlug: component.category.slug,
+      pageSlug: component.slug,
+    };
+
+    const variantTargets: RegistryTarget[] = (component.examples ?? [])
+      .filter((example) => example.installSlug)
+      .map((example) => ({
+        slug: example.installSlug as string,
+        name: `${component.name} ${example.name}`,
+        description: example.description ?? component.description,
+        file: example.file,
+        categorySlug: component.category.slug,
+        pageSlug: component.slug,
+        previewFile: example.previewFile,
+      }));
+
+    return [visibleTarget, ...variantTargets];
+  });
+}
+
+export function allShadcnTargets(): RegistryTarget[] {
+  return allComponents().flatMap((component) => {
+    const variantTargets: RegistryTarget[] = (component.examples ?? [])
+      .filter((example) => example.installSlug)
+      .map((example) => ({
+        slug: example.installSlug as string,
+        name: `${component.name} ${example.name}`,
+        description: example.description ?? component.description,
+        file: example.file,
+        categorySlug: component.category.slug,
+        pageSlug: component.slug,
+        previewFile: example.previewFile,
+      }));
+
+    if (variantTargets.length > 0) return variantTargets;
+
+    return [{
+      slug: component.slug,
+      name: component.name,
+      description: component.description,
+      file: component.file,
+      extraFiles: component.extraFiles,
+      categorySlug: component.category.slug,
+      pageSlug: component.slug,
+    }];
+  });
+}
+
+export function findRegistryTarget(slug: string) {
+  return allRegistryTargets().find((target) => target.slug === slug);
+}
+
+function findShadcnTarget(slug: string) {
+  return allShadcnTargets().find((target) => target.slug === slug);
+}
+
 type CollectedSourceGraph = {
   files: SourceFile[];
   external: string[];
@@ -166,12 +241,12 @@ async function collectSourceGraph(initialFiles: string[]): Promise<CollectedSour
 
 export async function buildEntry(categorySlug: string, slug: string): Promise<RegistryEntry | null> {
   const cat = findCategory(categorySlug);
-  const comp = findComponent(categorySlug, slug);
-  if (!cat || !comp) return null;
+  const comp = findRegistryTarget(slug);
+  if (!cat || !comp || comp.categorySlug !== categorySlug) return null;
 
   const requiredFiles = [comp.file, ...(comp.extraFiles ?? [])];
   const componentGraph = await collectSourceGraph(requiredFiles);
-  const previewPath = `components/previews/${categorySlug}/${slug}.preview.tsx`;
+  const previewPath = comp.previewFile ?? `components/previews/${categorySlug}/${slug}.preview.tsx`;
   const previewSource = await readOptionalSourceFile(previewPath);
   const previewGraph = previewSource ? await collectSourceGraph([previewPath]) : null;
   const componentFileSet = new Set(requiredFiles);
@@ -185,7 +260,7 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
     source_url: `${SITE_URL}/r/${slug}/raw`,
     detail_url: `${SITE_URL}/r/${slug}`,
     raw_url: `${SITE_URL}/r/${slug}/raw`,
-    page_url: `${SITE_URL}/components/${categorySlug}/${slug}`,
+    page_url: `${SITE_URL}/components/${categorySlug}/${comp.pageSlug}`,
     dependencies: Array.from(new Set([...componentGraph.external, ...(previewGraph?.external ?? [])])).sort(),
     internal: Array.from(new Set([...componentGraph.internal, ...(previewGraph?.internal ?? [])])).sort(),
     files,
@@ -219,8 +294,8 @@ export async function buildShadcnItem(
   slug: string,
   { includeContent = true }: { includeContent?: boolean } = {},
 ): Promise<ShadcnRegistryItem | null> {
-  const comp = findComponent(categorySlug, slug);
-  if (!comp) return null;
+  const comp = findShadcnTarget(slug);
+  if (!comp || comp.categorySlug !== categorySlug) return null;
 
   const graph = await collectSourceGraph([comp.file, ...(comp.extraFiles ?? [])]);
   const dependencies = graph.external.filter((dep) => !SHADCN_DEP_SKIP.has(dep));
@@ -242,8 +317,8 @@ export async function buildShadcnItem(
 
 export async function buildShadcnRegistry(): Promise<ShadcnRegistry> {
   const items = await Promise.all(
-    allComponents().map(async (component) => {
-      const item = await buildShadcnItem(component.category.slug, component.slug, { includeContent: false });
+    allShadcnTargets().map(async (component) => {
+      const item = await buildShadcnItem(component.categorySlug, component.slug, { includeContent: false });
       if (!item) return null;
       const { $schema: _schema, ...entry } = item;
       return entry;
@@ -291,5 +366,6 @@ export async function buildIndex() {
 }
 
 export function findCategoryBySlug(slug: string) {
-  return registry.find((c) => c.components.some((cc) => cc.slug === slug));
+  const target = findRegistryTarget(slug);
+  return target ? registry.find((c) => c.slug === target.categorySlug) : undefined;
 }

@@ -26,6 +26,9 @@ export async function generateMetadata({
   const cat = findCategory(category);
   const comp = findComponent(category, slug);
   if (!cat || !comp) return {};
+  const installSlugs = comp.examples?.flatMap((example) => example.installSlug ? [example.installSlug] : []) ?? [];
+  const registryItem = installSlugs[0] ? `/r/${installSlugs[0]}.json` : `/r/${comp.slug}.json`;
+  const directoryItem = installSlugs[0] ? `/${installSlugs[0]}.json` : `/${comp.slug}.json`;
 
   const title = `${comp.name} · ${cat.name} component · beUI v2`;
   const pageUrl = `/components/${cat.slug}/${comp.slug}`;
@@ -70,15 +73,18 @@ export async function generateMetadata({
     alternates: {
       canonical: pageUrl,
       types: {
-        "application/json": `/r/${comp.slug}.json`,
+        "application/json": installSlugs.length > 0 ? `/r/${comp.slug}` : `/r/${comp.slug}.json`,
         "text/plain": `/r/${comp.slug}/raw`,
       },
     },
     other: {
       "beui:category": cat.slug,
       "beui:component": comp.slug,
-      "beui:registry-item": `/r/${comp.slug}.json`,
-      "beui:directory-item": `/${comp.slug}.json`,
+      "beui:registry-item": registryItem,
+      "beui:directory-item": directoryItem,
+      ...(installSlugs.length > 0
+        ? { "beui:variant-registry-items": installSlugs.map((installSlug) => `/r/${installSlug}.json`) }
+        : {}),
     },
   };
 }
@@ -97,6 +103,7 @@ export default async function ComponentPage({
   const comp = findComponent(category, slug);
   if (!cat || !comp) notFound();
   const installCommand = `npx shadcn@latest add https://beui.saura3h.xyz/r/${comp.slug}.json`;
+  const hasVariantInstallCommands = comp.examples?.some((example) => example.installSlug) ?? false;
 
   return (
     <div>
@@ -120,17 +127,19 @@ export default async function ComponentPage({
         <DefaultTabs category={category} slug={slug} file={comp.file} />
       )}
 
-      <section className="mt-12 grid gap-6 border-t border-(--color-border) pt-8">
-        <div>
-          <h2 className="text-sm font-semibold text-(--color-fg)">Install</h2>
-          <p className="mt-1 text-sm text-(--color-fg-muted)">
-            Add this component with the shadcn CLI.
-          </p>
-          <div className="mt-3">
-            <CodeBlock code={installCommand} lang="bash" filename="terminal" />
+      {!hasVariantInstallCommands ? (
+        <section className="mt-12 grid gap-6 border-t border-(--color-border) pt-8">
+          <div>
+            <h2 className="text-sm font-semibold text-(--color-fg)">Install</h2>
+            <p className="mt-1 text-sm text-(--color-fg-muted)">
+              Add this component with the shadcn CLI.
+            </p>
+            <div className="mt-3">
+              <CodeBlock code={installCommand} lang="bash" filename="terminal" />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
     </div>
   );
 }
@@ -139,6 +148,9 @@ async function ExampleBlock({ example }: { example: ComponentExample }) {
   const Preview = previews[example.previewKey];
   const source = await loadSource(example.file);
   const usage = await loadSource(example.previewFile);
+  const installCommand = example.installSlug
+    ? `npx shadcn@latest add https://beui.saura3h.xyz/r/${example.installSlug}.json`
+    : null;
 
   return (
     <section>
@@ -169,6 +181,14 @@ async function ExampleBlock({ example }: { example: ComponentExample }) {
           <CodeBlock code={source} filename={example.file} />
         </TabsContent>
       </Tabs>
+      {installCommand ? (
+        <div className="mt-5 border-t border-(--color-border) pt-5">
+          <h3 className="text-sm font-semibold text-(--color-fg)">Install</h3>
+          <div className="mt-3">
+            <CodeBlock code={installCommand} lang="bash" filename="terminal" />
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

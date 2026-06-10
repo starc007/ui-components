@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import { allComponents } from "@/lib/registry";
-import { buildShadcnItem, findCategoryBySlug } from "@/lib/registry-server";
+import { allShadcnTargets, buildShadcnItem, findCategoryBySlug } from "@/lib/registry-server";
 
 export const dynamic = "force-static";
 
 export function generateStaticParams() {
-  return allComponents().map((component) => ({ slug: `${component.slug}.json` }));
+  return allShadcnTargets().map((component) => ({ slug: `${component.slug}.json` }));
 }
 
 export async function GET(

@@ -1,11 +1,10 @@
-import { allComponents, findComponent } from "@/lib/registry";
-import { findCategoryBySlug } from "@/lib/registry-server";
+import { allRegistryTargets, findCategoryBySlug, findRegistryTarget } from "@/lib/registry-server";
 import { readSourceFile } from "@/lib/source-files";
 
 export const dynamic = "force-static";
 
 export function generateStaticParams() {
-  return allComponents().map((c) => ({ slug: c.slug }));
+  return allRegistryTargets().map((c) => ({ slug: c.slug }));
 }
 
 export async function GET(
@@ -15,7 +14,7 @@ export async function GET(
   const { slug } = await ctx.params;
   const cat = findCategoryBySlug(slug);
   if (!cat) return new Response("not_found", { status: 404 });
-  const comp = findComponent(cat.slug, slug);
+  const comp = findRegistryTarget(slug);
   if (!comp) return new Response("not_found", { status: 404 });
   try {
     const src = await readSourceFile(comp.file);
