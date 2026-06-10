@@ -6,6 +6,7 @@ import { Home, LayoutGrid, Mail, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Dock, DockItem, DockSeparator } from "@/components/motion/dock";
+import { ActionSwapIcon } from "@/components/motion/action-swap";
 import { Tooltip } from "@/components/motion/tooltip";
 import { GithubIcon } from "@/components/app/icons";
 
@@ -13,8 +14,13 @@ export function SiteDock() {
   const pathname = usePathname();
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [themeIcon, setThemeIcon] = useState<"light" | "dark">("light");
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
+  useEffect(() => {
+    if (!mounted) return;
+    setThemeIcon(isDark ? "dark" : "light");
+  }, [isDark, mounted]);
 
   const isHome = pathname === "/";
   const isComponents = pathname.startsWith("/components");
@@ -22,7 +28,7 @@ export function SiteDock() {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-6 z-40 flex justify-center px-4">
       <div className="pointer-events-auto">
-        <Dock className="border border-fg/5 gap-0">
+        <Dock className="gap-0 border border-fg/5 px-1.5">
           <DockItem aria-label="Home" active={isHome}>
             <Tooltip
               content="Home"
@@ -53,7 +59,7 @@ export function SiteDock() {
               </Link>
             </Tooltip>
           </DockItem>
-          <DockSeparator />
+          <DockSeparator className="mx-0.5 h-5" />
           <DockItem aria-label="GitHub">
             <Tooltip
               content="GitHub"
@@ -94,18 +100,28 @@ export function SiteDock() {
             >
               <button
                 type="button"
-                onClick={() => setTheme(isDark ? "light" : "dark")}
+                onClick={() => {
+                  const nextTheme = isDark ? "light" : "dark";
+                  setThemeIcon(nextTheme);
+                  setTheme(nextTheme);
+                }}
                 aria-label="Toggle theme"
                 className="flex h-full w-full items-center justify-center"
               >
                 {mounted ? (
-                  isDark ? (
-                    <Sun className="h-5 w-5" />
-                  ) : (
-                    <Moon className="h-5 w-5" />
-                  )
+                  <ActionSwapIcon
+                    value={themeIcon}
+                    animation="blur"
+                    className="h-5 w-5"
+                  >
+                    {themeIcon === "dark" ? (
+                      <Sun className="h-5 w-5" />
+                    ) : (
+                      <Moon className="h-5 w-5" />
+                    )}
+                  </ActionSwapIcon>
                 ) : (
-                  <span className="h-5 w-5" />
+                  <span className="h-4 w-4" />
                 )}
               </button>
             </Tooltip>
