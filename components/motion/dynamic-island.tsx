@@ -24,23 +24,23 @@ const IslandContext = createContext<IslandContextValue | null>(null);
 // width/height (not transforms), so slots are never scale-distorted.
 const EXPAND_SPRING = {
   type: "spring",
-  stiffness: 550,
-  damping: 28,
+  stiffness: 420,
+  damping: 27,
   mass: 0.5,
 } as const;
 
 const COLLAPSE_SPRING = {
   type: "spring",
-  stiffness: 520,
-  damping: 26,
+  stiffness: 400,
+  damping: 25,
   mass: 0.45,
 } as const;
 
 // Content pops from the pill core just after the shell starts moving.
 const CONTENT_SPRING = {
   type: "spring",
-  stiffness: 560,
-  damping: 30,
+  stiffness: 460,
+  damping: 29,
   mass: 0.5,
 } as const;
 
