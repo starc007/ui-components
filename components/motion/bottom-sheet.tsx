@@ -9,6 +9,7 @@ import {
   type PanInfo,
 } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -38,11 +39,16 @@ export function BottomSheet({
   dismissThreshold = 120,
 }: BottomSheetProps) {
   const [snap, setSnap] = useState(defaultSnap);
+  const [mounted, setMounted] = useState(false);
   const dragY = useMotionValue(0);
   const dragControls = useDragControls();
   const sheetRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const heightRef = useRef(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (open) setSnap(defaultSnap);
@@ -113,7 +119,12 @@ export function BottomSheet({
       ? { maxHeight: "92vh" }
       : { height: `${snapValue * 100}vh` };
 
-  return (
+  // Portal to <body>: an ancestor with backdrop-filter or transform becomes
+  // the containing block for fixed descendants, which would position the
+  // sheet against that ancestor instead of the viewport.
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {open ? (
         <div className="pointer-events-none fixed inset-0 z-50">
@@ -180,6 +191,7 @@ export function BottomSheet({
           </motion.div>
         </div>
       ) : null}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
