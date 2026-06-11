@@ -5,6 +5,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ReactNode,
@@ -44,6 +45,16 @@ const RADIUS = 32;
 function useContentSize() {
   const ref = useRef<HTMLDivElement | null>(null);
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
+
+  // Synchronous mount measure: the shell must own explicit dimensions before
+  // the first interaction. ResizeObserver fires async after mount — a quick
+  // first press could beat it, leaving the shell auto-sized so the view
+  // snapped open instead of springing.
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    setSize({ width: el.offsetWidth, height: el.offsetHeight });
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
@@ -97,8 +108,9 @@ function Slot({
       // property tweens, no delays. Content travels with the shell.
       transition={reduce ? { duration: 0.15 } : CONTENT_SPRING}
       // Anchored to the pill line: content unfurls downward out of it and is
-      // sucked back up into it.
-      style={{ transformOrigin: "top center" }}
+      // sucked back up into it. will-change pre-promotes the layer so the
+      // first blur/transform pass doesn't rasterize mid-animation.
+      style={{ transformOrigin: "top center", willChange: "transform, opacity, filter" }}
       className={cn("flex items-center justify-center", className)}
     >
       {children}
