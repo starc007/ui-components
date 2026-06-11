@@ -151,9 +151,12 @@ export const registry: CategoryEntry[] = [
       {
         slug: "text-animation",
         name: "Text Animation",
-        description: "Animated text primitives for reveal sequences and shimmer loading states.",
+        description: "Animated text primitives for reveal sequences, shimmer loading states and letter-cascade swaps.",
         file: "components/motion/text-reveal.tsx",
-        extraFiles: ["components/motion/text-shimmer.tsx"],
+        extraFiles: [
+          "components/motion/text-shimmer.tsx",
+          "components/motion/text-cascade.tsx",
+        ],
         examples: [
           {
             slug: "reveal",
@@ -172,6 +175,15 @@ export const registry: CategoryEntry[] = [
             file: "components/motion/text-shimmer.tsx",
             previewKey: "motion/text-shimmer",
             previewFile: "components/previews/motion/text-shimmer.preview.tsx",
+          },
+          {
+            slug: "cascade",
+            name: "Text Cascade",
+            description: "Letter-by-letter slot roll for standalone text — old letters drop away as new ones land, left to right.",
+            installSlug: "text-cascade",
+            file: "components/motion/text-cascade.tsx",
+            previewKey: "motion/text-cascade",
+            previewFile: "components/previews/motion/text-cascade.preview.tsx",
           },
         ],
       },
@@ -214,6 +226,15 @@ export const registry: CategoryEntry[] = [
         description: "CTA button and slot primitives for swapping text and icons with blur motion.",
         file: "components/motion/action-swap.tsx",
         examples: [
+          {
+            slug: "cascade",
+            name: "Cascade",
+            description: "Letter-by-letter slot roll — the old label's letters drop away as the new ones land, left to right.",
+            installSlug: "action-swap-cascade",
+            file: "components/motion/action-swap-cascade.tsx",
+            previewKey: "motion/action-swap-cascade",
+            previewFile: "components/previews/motion/action-swap-cascade.preview.tsx",
+          },
           {
             slug: "blur",
             name: "Blur",
