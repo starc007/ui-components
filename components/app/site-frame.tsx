@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { MobileNav } from "@/components/app/mobile-nav";
 import { SiteSidebar } from "@/components/app/site-sidebar";
 import { PageTransition } from "@/components/app/page-transition";
 
@@ -19,6 +20,7 @@ export function SiteFrame({ children }: { children: ReactNode }) {
     <div className="mx-auto max-w-7xl px-4">
       <SiteSidebar />
       <div className="min-w-0 py-8 md:pl-64">
+        <MobileNav />
         <PageTransition>{children}</PageTransition>
       </div>
     </div>
