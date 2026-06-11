@@ -215,6 +215,15 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/action-swap.tsx",
         examples: [
           {
+            slug: "cascade",
+            name: "Cascade",
+            description: "Letter-by-letter slot roll — the old label's letters drop away as the new ones land, left to right.",
+            installSlug: "action-swap-cascade",
+            file: "components/motion/action-swap-cascade.tsx",
+            previewKey: "motion/action-swap-cascade",
+            previewFile: "components/previews/motion/action-swap-cascade.preview.tsx",
+          },
+          {
             slug: "blur",
             name: "Blur",
             description: "Copy-button style swap with blur, opacity and scale.",
@@ -231,15 +240,6 @@ export const registry: CategoryEntry[] = [
             file: "components/motion/action-swap-roll.tsx",
             previewKey: "motion/action-swap-roll",
             previewFile: "components/previews/motion/action-swap-roll.preview.tsx",
-          },
-          {
-            slug: "cascade",
-            name: "Cascade",
-            description: "Letter-by-letter slot roll — the old label's letters drop away as the new ones land, left to right.",
-            installSlug: "action-swap-cascade",
-            file: "components/motion/action-swap-cascade.tsx",
-            previewKey: "motion/action-swap-cascade",
-            previewFile: "components/previews/motion/action-swap-cascade.preview.tsx",
           },
         ],
       },
