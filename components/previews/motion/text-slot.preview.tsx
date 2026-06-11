@@ -41,7 +41,9 @@ export function TextSlotPreview() {
         }}
       >
         {copied ? <Check className="h-4 w-4 text-(--color-success)" /> : <Copy className="h-4 w-4" />}
-        <TextSlot text={copied ? "Copied!" : "Copy link"} />
+        {/* Letter-by-letter cascade: old letters drop away right-lagging
+            while new ones land from above, left to right. */}
+        <TextSlot text={copied ? "Copied!" : "Copy link"} split="char" direction="down" />
       </Button>
 
       <p className="text-lg font-medium text-foreground">
