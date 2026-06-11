@@ -26,7 +26,13 @@ Each component includes a live preview, usage example, source code, and a shadcn
 
 ## Install a component
 
-Open any component page and copy the install command.
+Open any component page and copy the install command. beUI is in the shadcn registry directory under the `@beui` namespace.
+
+```bash
+npx shadcn@latest add @beui/animated-toast-stack
+```
+
+Direct URLs also work:
 
 ```bash
 npx shadcn@latest add https://beui.saura3h.xyz/r/animated-toast-stack.json

@@ -102,7 +102,7 @@ export default async function ComponentPage({
   const cat = findCategory(category);
   const comp = findComponent(category, slug);
   if (!cat || !comp) notFound();
-  const installCommand = `npx shadcn@latest add https://beui.saura3h.xyz/r/${comp.slug}.json`;
+  const installCommand = `npx shadcn@latest add @beui/${comp.slug}`;
   const hasVariantInstallCommands = comp.examples?.some((example) => example.installSlug) ?? false;
 
   return (
@@ -149,7 +149,7 @@ async function ExampleBlock({ example }: { example: ComponentExample }) {
   const source = await loadSource(example.file);
   const usage = await loadSource(example.previewFile);
   const installCommand = example.installSlug
-    ? `npx shadcn@latest add https://beui.saura3h.xyz/r/${example.installSlug}.json`
+    ? `npx shadcn@latest add @beui/${example.installSlug}`
     : null;
 
   return (

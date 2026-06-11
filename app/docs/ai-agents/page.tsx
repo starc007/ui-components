@@ -30,12 +30,11 @@ for (const file of entry.files) {
 // 4. Install external deps
 await runShell(['bun', 'add', ...entry.dependencies]);`;
 
-const SHADCN_SNIPPET = `# Direct install
-npx shadcn@latest add https://beui.saura3h.xyz/r/animated-toast-stack.json
+const SHADCN_SNIPPET = `# Official registry namespace (shadcn directory)
+npx shadcn@latest add @beui/animated-toast-stack
 
-# Namespace install
-npx shadcn@latest registry add @beui=https://beui.saura3h.xyz/r/{name}.json
-npx shadcn@latest add @beui/animated-toast-stack`;
+# Direct URL, no namespace needed
+npx shadcn@latest add https://beui.saura3h.xyz/r/animated-toast-stack.json`;
 
 const ENTRY_SHAPE = `{
   "slug": "swap",
