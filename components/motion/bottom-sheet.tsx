@@ -48,13 +48,33 @@ export function BottomSheet({
     if (open) setSnap(defaultSnap);
   }, [open, defaultSnap]);
 
-  // Lock background scroll while open.
+  // Lock background scroll while open. overflow:hidden alone is ignored by
+  // iOS Safari — boundary scrolls inside the sheet chain to the page, which
+  // scrolls underneath and ends up somewhere else on close. position:fixed
+  // is the lock that actually holds; restore the scroll position after.
   useEffect(() => {
     if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const body = document.body;
+    const scrollY = window.scrollY;
+    const prev = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      overflow: body.style.overflow,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = prev;
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.left = prev.left;
+      body.style.right = prev.right;
+      body.style.overflow = prev.overflow;
+      window.scrollTo(0, scrollY);
     };
   }, [open]);
 
@@ -155,7 +175,8 @@ export function BottomSheet({
                 </div>
               ) : null}
             </div>
-            <div className="flex-1 overflow-y-auto px-4 pb-6">{children}</div>
+            {/* overscroll-contain stops boundary scrolls from chaining to the page. */}
+            <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-6">{children}</div>
           </motion.div>
         </div>
       ) : null}
