@@ -41,6 +41,14 @@ const CONTENT_SPRING = {
 // with zero chance of corner glitches.
 const RADIUS = 32;
 
+// iPhone pill dimensions. Also the shell's pre-measure animate target: if the
+// first commit already has a view active (e.g. a click replayed after
+// hydration), the shell blooms from the pill instead of rendering expanded
+// with no animation. Lives in `animate`, not `initial`, so server and client
+// markup agree.
+const PILL_WIDTH = 126;
+const PILL_HEIGHT = 37;
+
 /** Tracks the natural size of the content so the shell can spring to it. */
 function useContentSize() {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -144,7 +152,11 @@ export function DynamicIsland({
         role="status"
         aria-live="polite"
         initial={false}
-        animate={size ? { width: size.width, height: size.height } : undefined}
+        animate={
+          size
+            ? { width: size.width, height: size.height }
+            : { width: PILL_WIDTH, height: PILL_HEIGHT }
+        }
         transition={reduce ? { duration: 0 } : SHELL_SPRING}
         style={{ borderRadius: RADIUS }}
         // items-start pins content to the top edge while the shell springs, so
