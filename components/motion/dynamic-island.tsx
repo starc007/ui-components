@@ -18,38 +18,27 @@ type IslandContextValue = {
 
 const IslandContext = createContext<IslandContextValue | null>(null);
 
-// Shell physics, Apple style: expansion blooms out of the pill and collapse
-// returns with the same character. One subtle overshoot, then settle — bouncy
-// reads as toy-like, dead reads as heavy. The shell animates real
-// width/height (not transforms), so slots are never scale-distorted.
-const EXPAND_SPRING = {
+// Shell physics in Apple's duration/bounce form (per Emil Kowalski's island
+// lesson): one long perceptual glide with barely-there bounce, identical in
+// both directions. The shell animates real width/height (not transforms), so
+// slots are never scale-distorted.
+const SHELL_SPRING = {
   type: "spring",
-  stiffness: 420,
-  damping: 27,
-  mass: 0.5,
+  duration: 0.8,
+  bounce: 0.2,
 } as const;
 
-const COLLAPSE_SPRING = {
-  type: "spring",
-  stiffness: 400,
-  damping: 25,
-  mass: 0.45,
-} as const;
-
-// Content pops from the pill core just after the shell starts moving.
+// Content gets a touch more life than the shell.
 const CONTENT_SPRING = {
   type: "spring",
-  stiffness: 460,
-  damping: 29,
-  mass: 0.5,
+  duration: 0.8,
+  bounce: 0.35,
 } as const;
 
-// Real radii, tweened separately from the size spring. Springing between a
-// fake huge radius and a small one makes corners glitch mid-resize; these two
-// values are close (18.5 is exactly half the 37px pill) so the corner shape
-// stays stable throughout.
-const RADIUS_COMPACT = 18.5;
-const RADIUS_EXPANDED = 24;
+// Constant radius — never animated. The browser clamps it to half the shell
+// height, so the pill-to-rounded-rect morph falls out of the resize for free
+// with zero chance of corner glitches.
+const RADIUS = 32;
 
 /** Tracks the natural size of the content so the shell can spring to it. */
 function useContentSize() {
@@ -73,16 +62,10 @@ function Slot({
   keyId,
   children,
   className,
-  scaleFrom = 0.8,
-  delay = 0.04,
 }: {
   keyId: string;
   children: ReactNode;
   className?: string;
-  /** Scale the content emerges from — everything originates at the pill. */
-  scaleFrom?: number;
-  /** Lets the shell lead the bloom before content appears. */
-  delay?: number;
 }) {
   const reduce = useReducedMotion();
   return (
@@ -91,7 +74,7 @@ function Slot({
       initial={
         reduce
           ? { opacity: 0 }
-          : { opacity: 0, scale: scaleFrom, y: -8, filter: "blur(8px)" }
+          : { opacity: 0, scale: 0.9, y: -8, filter: "blur(5px)" }
       }
       animate={
         reduce
@@ -105,21 +88,14 @@ function Slot({
           ? { opacity: 0, transition: { duration: 0.1 } }
           : {
               opacity: 0,
-              scale: 0.85,
+              scale: 0.9,
               y: -6,
               transition: { duration: 0.08, ease: EASE_OUT },
             }
       }
-      transition={
-        reduce
-          ? { duration: 0.15 }
-          : {
-              ...CONTENT_SPRING,
-              delay,
-              opacity: { duration: 0.18, ease: EASE_OUT, delay },
-              filter: { duration: 0.22, ease: EASE_OUT, delay },
-            }
-      }
+      // One spring drives transform, opacity and blur together — no per
+      // property tweens, no delays. Content travels with the shell.
+      transition={reduce ? { duration: 0.15 } : CONTENT_SPRING}
       // Anchored to the pill line: content unfurls downward out of it and is
       // sucked back up into it.
       style={{ transformOrigin: "top center" }}
@@ -156,23 +132,9 @@ export function DynamicIsland({
         role="status"
         aria-live="polite"
         initial={false}
-        animate={
-          size
-            ? {
-                width: size.width,
-                height: size.height,
-                borderRadius: expanded ? RADIUS_EXPANDED : RADIUS_COMPACT,
-              }
-            : { borderRadius: expanded ? RADIUS_EXPANDED : RADIUS_COMPACT }
-        }
-        transition={
-          reduce
-            ? { duration: 0 }
-            : {
-                ...(expanded ? EXPAND_SPRING : COLLAPSE_SPRING),
-                borderRadius: { duration: 0.2, ease: EASE_OUT },
-              }
-        }
+        animate={size ? { width: size.width, height: size.height } : undefined}
+        transition={reduce ? { duration: 0 } : SHELL_SPRING}
+        style={{ borderRadius: RADIUS }}
         // items-start pins content to the top edge while the shell springs, so
         // expansion reads as unfurling downward out of the pill. Top-align the
         // island in its parent (like under a notch) to complete the effect.
@@ -189,8 +151,6 @@ export function DynamicIsland({
             {!expanded && compact ? (
               <Slot
                 keyId="compact"
-                scaleFrom={0.85}
-                delay={0.06}
                 // iPhone pill proportions: ~126 x 37.
                 className="min-h-[37px] min-w-[126px] gap-2 px-4 py-1.5 text-xs font-medium"
               >
