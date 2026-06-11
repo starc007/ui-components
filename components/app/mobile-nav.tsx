@@ -1,13 +1,13 @@
 "use client";
 
-import { ChevronsUpDown, Compass } from "lucide-react";
+import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { Button } from "@/components/motion/button";
 import { SidebarNav } from "@/components/app/site-sidebar";
 
-/** Mobile replacement for the sidebar: a trigger that opens the nav in beUI's own bottom sheet. */
+/** Mobile nav: a header hamburger that opens the sidebar list in beUI's own bottom sheet. */
 export function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -19,20 +19,16 @@ export function MobileNav() {
   }, [pathname]);
 
   return (
-    <div className="mb-6 md:hidden">
+    <div className="md:hidden">
       <Button
-        variant="outline"
-        size="md"
+        variant="ghost"
+        size="icon"
         onClick={() => setOpen(true)}
+        aria-label="Open navigation"
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="w-full justify-between rounded-xl"
       >
-        <span className="flex items-center gap-2">
-          <Compass className="h-4 w-4 text-(--color-fg-muted)" />
-          Browse components
-        </span>
-        <ChevronsUpDown className="h-4 w-4 text-(--color-fg-muted)" />
+        <Menu className="h-5 w-5" />
       </Button>
       <BottomSheet
         open={open}
