@@ -1,10 +1,8 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { useEffect, useState } from "react";
 import {
   ActionSwapCascadeButton,
-  ActionSwapCascadeText,
   type ActionSwapItem,
 } from "@/components/motion/action-swap-cascade";
 
@@ -23,27 +21,10 @@ const CTA_ITEMS: ActionSwapItem[] = [
   },
 ];
 
-const LABELS = ["Install skills", "Open settings", "Ship updates"];
-
 export function ActionSwapCascadePreview() {
-  const [label, setLabel] = useState(0);
-
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      setLabel((l) => (l + 1) % LABELS.length);
-    }, 2400);
-    return () => window.clearInterval(id);
-  }, []);
-
   return (
-    <div className="flex w-full flex-col items-center gap-10">
+    <div className="flex w-full justify-center">
       <ActionSwapCascadeButton items={CTA_ITEMS} variant="primary" />
-
-      <p className="text-lg font-medium text-foreground">
-        <ActionSwapCascadeText value={LABELS[label] ?? LABELS[0]}>
-          {LABELS[label] ?? LABELS[0]}
-        </ActionSwapCascadeText>
-      </p>
     </div>
   );
 }

@@ -151,9 +151,12 @@ export const registry: CategoryEntry[] = [
       {
         slug: "text-animation",
         name: "Text Animation",
-        description: "Animated text primitives for reveal sequences and shimmer loading states.",
+        description: "Animated text primitives for reveal sequences, shimmer loading states and letter-cascade swaps.",
         file: "components/motion/text-reveal.tsx",
-        extraFiles: ["components/motion/text-shimmer.tsx"],
+        extraFiles: [
+          "components/motion/text-shimmer.tsx",
+          "components/motion/text-cascade.tsx",
+        ],
         examples: [
           {
             slug: "reveal",
@@ -172,6 +175,15 @@ export const registry: CategoryEntry[] = [
             file: "components/motion/text-shimmer.tsx",
             previewKey: "motion/text-shimmer",
             previewFile: "components/previews/motion/text-shimmer.preview.tsx",
+          },
+          {
+            slug: "cascade",
+            name: "Text Cascade",
+            description: "Letter-by-letter slot roll for standalone text — old letters drop away as new ones land, left to right.",
+            installSlug: "text-cascade",
+            file: "components/motion/text-cascade.tsx",
+            previewKey: "motion/text-cascade",
+            previewFile: "components/previews/motion/text-cascade.preview.tsx",
           },
         ],
       },
