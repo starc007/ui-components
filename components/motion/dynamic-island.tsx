@@ -18,21 +18,21 @@ type IslandContextValue = {
 
 const IslandContext = createContext<IslandContextValue | null>(null);
 
-// Shell physics, Apple style: expansion blooms out of the pill with a visible
-// overshoot, and collapse returns with the same life — the pill squeezes a
-// touch past its size and springs back. The shell animates real width/height
-// (not transforms), so slots are never scale-distorted.
+// Shell physics, Apple style: expansion blooms out of the pill and collapse
+// returns with the same character. One subtle overshoot, then settle — bouncy
+// reads as toy-like, dead reads as heavy. The shell animates real
+// width/height (not transforms), so slots are never scale-distorted.
 const EXPAND_SPRING = {
   type: "spring",
   stiffness: 550,
-  damping: 25,
+  damping: 28,
   mass: 0.5,
 } as const;
 
 const COLLAPSE_SPRING = {
   type: "spring",
   stiffness: 520,
-  damping: 24,
+  damping: 26,
   mass: 0.45,
 } as const;
 
@@ -40,7 +40,7 @@ const COLLAPSE_SPRING = {
 const CONTENT_SPRING = {
   type: "spring",
   stiffness: 560,
-  damping: 28,
+  damping: 30,
   mass: 0.5,
 } as const;
 
