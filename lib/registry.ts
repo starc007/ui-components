@@ -151,12 +151,9 @@ export const registry: CategoryEntry[] = [
       {
         slug: "text-animation",
         name: "Text Animation",
-        description: "Animated text primitives for reveal sequences, shimmer loading states and slot-machine label swaps.",
+        description: "Animated text primitives for reveal sequences and shimmer loading states.",
         file: "components/motion/text-reveal.tsx",
-        extraFiles: [
-          "components/motion/text-shimmer.tsx",
-          "components/motion/text-slot.tsx",
-        ],
+        extraFiles: ["components/motion/text-shimmer.tsx"],
         examples: [
           {
             slug: "reveal",
@@ -175,15 +172,6 @@ export const registry: CategoryEntry[] = [
             file: "components/motion/text-shimmer.tsx",
             previewKey: "motion/text-shimmer",
             previewFile: "components/previews/motion/text-shimmer.preview.tsx",
-          },
-          {
-            slug: "slot",
-            name: "Text Slot",
-            description: "Slot-machine label swap — old text rolls out, new text rolls in through a mask, with width easing and per-word stagger.",
-            installSlug: "text-slot",
-            file: "components/motion/text-slot.tsx",
-            previewKey: "motion/text-slot",
-            previewFile: "components/previews/motion/text-slot.preview.tsx",
           },
         ],
       },
@@ -243,6 +231,15 @@ export const registry: CategoryEntry[] = [
             file: "components/motion/action-swap-roll.tsx",
             previewKey: "motion/action-swap-roll",
             previewFile: "components/previews/motion/action-swap-roll.preview.tsx",
+          },
+          {
+            slug: "cascade",
+            name: "Cascade",
+            description: "Letter-by-letter slot roll — the old label's letters drop away as the new ones land, left to right.",
+            installSlug: "action-swap-cascade",
+            file: "components/motion/action-swap-cascade.tsx",
+            previewKey: "motion/action-swap-cascade",
+            previewFile: "components/previews/motion/action-swap-cascade.preview.tsx",
           },
         ],
       },
