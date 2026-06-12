@@ -57,7 +57,13 @@ export function Tabs({
   return (
     <MotionConfig transition={reduce ? { duration: 0 } : transition}>
       <TabsCtx.Provider value={{ value: current, setValue, layoutId, variant }}>
-        <div className={className}>{children}</div>
+        {/* layoutRoot: the indicator's layoutId measures in page coordinates, so
+            inside fixed/scrolled containers it would replay scroll offsets as
+            movement. The pill only ever travels within the list, so scoping
+            projection to the Tabs wrapper is always correct. */}
+        <motion.div layoutRoot className={className}>
+          {children}
+        </motion.div>
       </TabsCtx.Provider>
     </MotionConfig>
   );

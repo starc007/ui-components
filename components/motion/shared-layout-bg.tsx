@@ -51,8 +51,10 @@ export function SharedLayoutBg({
   const reduce = useReducedMotion();
 
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: The wrapper only clears hover state for child rows.
-    <div
+    // layoutRoot scopes the pill's layout projection to this list, so fixed or
+    // scrolled ancestors can't smear scroll offsets into its movement.
+    <motion.div
+      layoutRoot
       onMouseLeave={() => setActiveId(null)}
       className={cn("flex w-full flex-col", className)}
     >
@@ -97,6 +99,6 @@ export function SharedLayoutBg({
             </>
           );
         })}
-    </div>
+    </motion.div>
   );
 }
