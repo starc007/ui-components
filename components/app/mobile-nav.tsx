@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { Button } from "@/components/motion/button";
+import { HeaderTabs } from "@/components/app/header-tabs";
 import { SidebarNav } from "@/components/app/site-sidebar";
 
 /** Mobile nav: a header hamburger that opens the sidebar list in beUI's own bottom sheet. */
@@ -33,10 +34,11 @@ export function MobileNav() {
       <BottomSheet
         open={open}
         onOpenChange={setOpen}
-        title="Browse"
+        title="Menu"
         snapPoints={[0.85]}
       >
-        <div className="pt-2">
+        <div className="flex flex-col gap-5 pt-2">
+          <HeaderTabs onNavigate={() => setOpen(false)} />
           <SidebarNav onNavigate={() => setOpen(false)} />
         </div>
       </BottomSheet>

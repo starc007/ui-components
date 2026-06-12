@@ -3,9 +3,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useMotionValueEvent, useScroll } from "motion/react";
-import { ArrowRight, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { useState } from "react";
 import { GithubIcon } from "@/components/app/icons";
+import { HeaderTabs } from "@/components/app/header-tabs";
 import { MobileNav } from "@/components/app/mobile-nav";
 import { PressLink } from "@/components/app/press-link";
 import { cn } from "@/lib/utils";
@@ -42,7 +43,7 @@ export function SiteHeader({
           : "border-b border-transparent bg-transparent",
       )}
     >
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4">
+      <div className="relative mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4">
         <div className="flex items-center gap-1.5">
           <MobileNav />
           <Link
@@ -64,6 +65,10 @@ export function SiteHeader({
           </Link>
         </div>
 
+        <div className="absolute left-1/2 hidden -translate-x-1/2 md:block">
+          <HeaderTabs />
+        </div>
+
         <nav className="flex items-center gap-2">
           <PressLink
             href="https://github.com/starc007/ui-components"
@@ -82,14 +87,6 @@ export function SiteHeader({
               <Star className="h-3 w-3" />
               {formattedStarCount ? <span>{formattedStarCount}</span> : null}
             </span>
-          </PressLink>
-
-          <PressLink
-            href="/components/motion"
-            className="group inline-flex items-center gap-1.5 rounded-2xl bg-(--color-fg) px-3 py-2 text-xs font-medium text-(--color-bg) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
-          >
-            Browse
-            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
           </PressLink>
         </nav>
       </div>

@@ -77,23 +77,23 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-(--color-fg)">{cat.name}</h1>
       <p className="mt-2 max-w-2xl text-(--color-fg-muted)">{cat.description}</p>
 
-      <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {cat.components.map((comp) => {
           const Preview = getPreview(cat.slug, comp.slug);
           return (
             <Link
               key={comp.slug}
               href={`/components/${cat.slug}/${comp.slug}`}
-              className="group flex flex-col overflow-hidden rounded-3xl border border-(--color-border) bg-(--color-bg-elev) transition-colors hover:border-(--color-border-strong)"
+              className="group flex flex-col overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-elev) transition-colors hover:border-(--color-border-strong)"
             >
-              <div className="relative flex h-56 items-center justify-center overflow-hidden border-b border-(--color-border) bg-(--color-bg) p-6 mask-b-fade">
-                <div className="pointer-events-none scale-90 [&_*]:!cursor-default">
+              <div className="relative flex h-36 items-center justify-center overflow-hidden border-b border-(--color-border) bg-(--color-bg) p-4 mask-b-fade">
+                <div className="pointer-events-none scale-[0.62] [&_*]:!cursor-default">
                   {Preview ? <Preview /> : null}
                 </div>
               </div>
-              <div className="p-4">
-                <h3 className="text-base font-semibold text-(--color-fg)">{comp.name}</h3>
-                <p className="mt-1 text-sm text-(--color-fg-muted)">{comp.description}</p>
+              <div className="px-3.5 py-3">
+                <h3 className="text-sm font-semibold text-(--color-fg)">{comp.name}</h3>
+                <p className="mt-0.5 line-clamp-1 text-xs text-(--color-fg-muted)">{comp.description}</p>
               </div>
             </Link>
           );

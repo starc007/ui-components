@@ -35,7 +35,7 @@ export type ShadcnRegistryFile = {
 export type ShadcnRegistryItem = {
   $schema: "https://ui.shadcn.com/schema/registry-item.json";
   name: string;
-  type: "registry:component";
+  type: "registry:component" | "registry:block";
   title: string;
   description: string;
   author: string;
@@ -303,7 +303,7 @@ export async function buildShadcnItem(
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: comp.slug,
-    type: "registry:component",
+    type: comp.categorySlug === "blocks" ? "registry:block" : "registry:component",
     title: comp.name,
     description: comp.description,
     author: "Saurabh <saurabh10102@gmail.com>",
