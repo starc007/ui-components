@@ -1,65 +1,99 @@
-import type { ReactNode } from "react";
-import { TiltCardPreview } from "./motion/tilt-card.preview";
-import { MarqueePreview } from "./motion/marquee.preview";
-import { TextAnimationPreview } from "./motion/text-animation.preview";
-import { TextShimmerPreview } from "./motion/text-shimmer.preview";
-import { NumberPreview } from "./motion/number.preview";
-import { AnimatedNumberPreview } from "./motion/animated-number.preview";
-import { NumberTickerPreview } from "./motion/number-ticker.preview";
-import { BottomSheetPreview } from "./motion/bottom-sheet.preview";
-import { TabsPreview } from "./motion/tabs.preview";
-import { SwitchPreview } from "./motion/switch.preview";
-import { CommandPalettePreview } from "./blocks/command-palette.preview";
-import { SharedLayoutBgPreview } from "./motion/shared-layout-bg.preview";
-import { DockPreview } from "./motion/dock.preview";
-import { TooltipPreview } from "./motion/tooltip.preview";
-import { MorphingModalPreview } from "./motion/morphing-modal.preview";
-import { TextRevealPreview } from "./motion/text-reveal.preview";
-import { ButtonBasePreview } from "./motion/button-base.preview";
-import { SwapPreview } from "./blocks/swap.preview";
-import { ButtonStatefulPreview } from "./motion/button-stateful.preview";
-import { ButtonMagneticPreview } from "./motion/button-magnetic.preview";
-import { AnimatedBadgePreview } from "./motion/animated-badge.preview";
-import { AnimatedToastStackPreview } from "./motion/animated-toast-stack.preview";
-import { ExpandableActionBarPreview } from "./blocks/expandable-action-bar.preview";
-import { ActionSwapPreview } from "./motion/action-swap.preview";
-import { ActionSwapBlurPreview } from "./motion/action-swap-blur.preview";
-import { ActionSwapRollPreview } from "./motion/action-swap-roll.preview";
-import { DynamicIslandPreview } from "./blocks/dynamic-island.preview";
-import { ActionSwapCascadePreview } from "./motion/action-swap-cascade.preview";
-import { TextCascadePreview } from "./motion/text-cascade.preview";
+import dynamic from "next/dynamic";
+import type { ComponentType } from "react";
 
-export const previews: Record<string, () => ReactNode> = {
-  "blocks/dynamic-island": DynamicIslandPreview,
-  "blocks/swap": SwapPreview,
-  "blocks/command-palette": CommandPalettePreview,
-  "blocks/expandable-action-bar": ExpandableActionBarPreview,
-  "motion/tilt-card": TiltCardPreview,
-  "motion/marquee": MarqueePreview,
-  "motion/text-animation": TextAnimationPreview,
-  "motion/text-shimmer": TextShimmerPreview,
-  "motion/number": NumberPreview,
-  "motion/animated-number": AnimatedNumberPreview,
-  "motion/number-ticker": NumberTickerPreview,
-  "motion/animated-badge": AnimatedBadgePreview,
-  "motion/animated-toast-stack": AnimatedToastStackPreview,
-  "motion/action-swap": ActionSwapPreview,
-  "motion/action-swap-blur": ActionSwapBlurPreview,
-  "motion/action-swap-roll": ActionSwapRollPreview,
-  "motion/action-swap-cascade": ActionSwapCascadePreview,
-  "motion/bottom-sheet": BottomSheetPreview,
-  "motion/tabs": TabsPreview,
-  "motion/switch": SwitchPreview,
-  "motion/shared-layout-bg": SharedLayoutBgPreview,
-  "motion/dock": DockPreview,
-  "motion/tooltip": TooltipPreview,
-  "motion/morphing-modal": MorphingModalPreview,
-  "motion/text-reveal": TextRevealPreview,
-  "motion/text-cascade": TextCascadePreview,
-  "motion/button": ButtonBasePreview,
-  "motion/button-base": ButtonBasePreview,
-  "motion/button-stateful": ButtonStatefulPreview,
-  "motion/button-magnetic": ButtonMagneticPreview,
+// Every preview is a client component dragging the library + motion with it.
+// Lazy chunks keep a page's JS limited to the previews it actually renders.
+export const previews: Record<string, ComponentType> = {
+  "blocks/dynamic-island": dynamic(() =>
+    import("./blocks/dynamic-island.preview").then((m) => m.DynamicIslandPreview),
+  ),
+  "blocks/swap": dynamic(() =>
+    import("./blocks/swap.preview").then((m) => m.SwapPreview),
+  ),
+  "blocks/command-palette": dynamic(() =>
+    import("./blocks/command-palette.preview").then((m) => m.CommandPalettePreview),
+  ),
+  "blocks/expandable-action-bar": dynamic(() =>
+    import("./blocks/expandable-action-bar.preview").then((m) => m.ExpandableActionBarPreview),
+  ),
+  "motion/tilt-card": dynamic(() =>
+    import("./motion/tilt-card.preview").then((m) => m.TiltCardPreview),
+  ),
+  "motion/marquee": dynamic(() =>
+    import("./motion/marquee.preview").then((m) => m.MarqueePreview),
+  ),
+  "motion/text-animation": dynamic(() =>
+    import("./motion/text-animation.preview").then((m) => m.TextAnimationPreview),
+  ),
+  "motion/text-shimmer": dynamic(() =>
+    import("./motion/text-shimmer.preview").then((m) => m.TextShimmerPreview),
+  ),
+  "motion/number": dynamic(() =>
+    import("./motion/number.preview").then((m) => m.NumberPreview),
+  ),
+  "motion/animated-number": dynamic(() =>
+    import("./motion/animated-number.preview").then((m) => m.AnimatedNumberPreview),
+  ),
+  "motion/number-ticker": dynamic(() =>
+    import("./motion/number-ticker.preview").then((m) => m.NumberTickerPreview),
+  ),
+  "motion/animated-badge": dynamic(() =>
+    import("./motion/animated-badge.preview").then((m) => m.AnimatedBadgePreview),
+  ),
+  "motion/animated-toast-stack": dynamic(() =>
+    import("./motion/animated-toast-stack.preview").then((m) => m.AnimatedToastStackPreview),
+  ),
+  "motion/action-swap": dynamic(() =>
+    import("./motion/action-swap.preview").then((m) => m.ActionSwapPreview),
+  ),
+  "motion/action-swap-blur": dynamic(() =>
+    import("./motion/action-swap-blur.preview").then((m) => m.ActionSwapBlurPreview),
+  ),
+  "motion/action-swap-roll": dynamic(() =>
+    import("./motion/action-swap-roll.preview").then((m) => m.ActionSwapRollPreview),
+  ),
+  "motion/action-swap-cascade": dynamic(() =>
+    import("./motion/action-swap-cascade.preview").then((m) => m.ActionSwapCascadePreview),
+  ),
+  "motion/bottom-sheet": dynamic(() =>
+    import("./motion/bottom-sheet.preview").then((m) => m.BottomSheetPreview),
+  ),
+  "motion/tabs": dynamic(() =>
+    import("./motion/tabs.preview").then((m) => m.TabsPreview),
+  ),
+  "motion/switch": dynamic(() =>
+    import("./motion/switch.preview").then((m) => m.SwitchPreview),
+  ),
+  "motion/shared-layout-bg": dynamic(() =>
+    import("./motion/shared-layout-bg.preview").then((m) => m.SharedLayoutBgPreview),
+  ),
+  "motion/dock": dynamic(() =>
+    import("./motion/dock.preview").then((m) => m.DockPreview),
+  ),
+  "motion/tooltip": dynamic(() =>
+    import("./motion/tooltip.preview").then((m) => m.TooltipPreview),
+  ),
+  "motion/morphing-modal": dynamic(() =>
+    import("./motion/morphing-modal.preview").then((m) => m.MorphingModalPreview),
+  ),
+  "motion/text-reveal": dynamic(() =>
+    import("./motion/text-reveal.preview").then((m) => m.TextRevealPreview),
+  ),
+  "motion/text-cascade": dynamic(() =>
+    import("./motion/text-cascade.preview").then((m) => m.TextCascadePreview),
+  ),
+  "motion/button": dynamic(() =>
+    import("./motion/button-base.preview").then((m) => m.ButtonBasePreview),
+  ),
+  "motion/button-base": dynamic(() =>
+    import("./motion/button-base.preview").then((m) => m.ButtonBasePreview),
+  ),
+  "motion/button-stateful": dynamic(() =>
+    import("./motion/button-stateful.preview").then((m) => m.ButtonStatefulPreview),
+  ),
+  "motion/button-magnetic": dynamic(() =>
+    import("./motion/button-magnetic.preview").then((m) => m.ButtonMagneticPreview),
+  ),
 };
 
 export function getPreview(category: string, slug: string) {
