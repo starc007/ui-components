@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { findCategory, registry } from "@/lib/registry";
-import { getPreview } from "@/components/previews";
 
 export function generateStaticParams() {
   return registry.map((c) => ({ category: c.slug }));
@@ -78,26 +78,19 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
       <p className="mt-2 max-w-2xl text-(--color-fg-muted)">{cat.description}</p>
 
       <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {cat.components.map((comp) => {
-          const Preview = getPreview(cat.slug, comp.slug);
-          return (
-            <Link
-              key={comp.slug}
-              href={`/components/${cat.slug}/${comp.slug}`}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-elev) transition-colors hover:border-(--color-border-strong)"
-            >
-              <div className="relative flex h-36 items-center justify-center overflow-hidden border-b border-(--color-border) bg-(--color-bg) p-4 mask-b-fade">
-                <div className="pointer-events-none scale-[0.62] [&_*]:!cursor-default">
-                  {Preview ? <Preview /> : null}
-                </div>
-              </div>
-              <div className="px-3.5 py-3">
-                <h3 className="text-sm font-semibold text-(--color-fg)">{comp.name}</h3>
-                <p className="mt-0.5 line-clamp-1 text-xs text-(--color-fg-muted)">{comp.description}</p>
-              </div>
-            </Link>
-          );
-        })}
+        {cat.components.map((comp) => (
+          <Link
+            key={comp.slug}
+            href={`/components/${cat.slug}/${comp.slug}`}
+            className="group flex items-start justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-bg-elev) px-4 py-3.5 transition-colors hover:border-(--color-border-strong)"
+          >
+            <div className="min-w-0">
+              <h3 className="text-sm font-semibold text-(--color-fg)">{comp.name}</h3>
+              <p className="mt-1 line-clamp-2 text-xs text-(--color-fg-muted)">{comp.description}</p>
+            </div>
+            <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--color-fg-muted) transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+        ))}
       </div>
     </div>
   );
