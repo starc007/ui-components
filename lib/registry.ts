@@ -33,8 +33,8 @@ export type CategoryEntry = {
 export const registry: CategoryEntry[] = [
   {
     slug: "motion",
-    name: "Motion",
-    description: "A curated set of bespoke motion components with shadcn-compatible registry endpoints.",
+    name: "Components",
+    description: "Bespoke motion primitives with shadcn-compatible registry endpoints.",
     components: [
       {
         slug: "tilt-card",
@@ -101,22 +101,10 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/switch.tsx",
       },
       {
-        slug: "swap",
-        name: "Multi-chain Swap",
-        description: "Cross-chain swap widget with chain + token selectors, morphing views, animated flip and quote.",
-        file: "components/motion/swap.tsx",
-      },
-      {
         slug: "bottom-sheet",
         name: "Bottom Sheet",
         description: "Vaul-inspired draggable bottom sheet with snap points, inertia and glass surface.",
         file: "components/motion/bottom-sheet.tsx",
-      },
-      {
-        slug: "command-palette",
-        name: "Command Palette",
-        description: "⌘K palette with fuzzy filter, spring-animated active row and glass surface.",
-        file: "components/motion/command-palette.tsx",
       },
       {
         slug: "shared-layout-bg",
@@ -135,12 +123,6 @@ export const registry: CategoryEntry[] = [
         name: "Tooltip",
         description: "Hover or focus tooltip with blur enter/exit and spring spawn.",
         file: "components/motion/tooltip.tsx",
-      },
-      {
-        slug: "dynamic-island",
-        name: "Dynamic Island",
-        description: "iOS-style island pill that morphs between live activity views with bouncy shell resize and blur crossfades.",
-        file: "components/motion/dynamic-island.tsx",
       },
       {
         slug: "morphing-modal",
@@ -260,6 +242,31 @@ export const registry: CategoryEntry[] = [
         name: "Animated Toast Stack",
         description: "Stacked toasts with status morphs, swipe dismissal, actions and layout-aware motion.",
         file: "components/motion/animated-toast-stack.tsx",
+      },
+    ],
+  },
+  {
+    slug: "blocks",
+    name: "Blocks",
+    description: "Composed, product-ready widgets built from beUI motion primitives.",
+    components: [
+      {
+        slug: "swap",
+        name: "Multi-chain Swap",
+        description: "Cross-chain swap widget with chain + token selectors, morphing views, animated flip and quote.",
+        file: "components/motion/swap.tsx",
+      },
+      {
+        slug: "dynamic-island",
+        name: "Dynamic Island",
+        description: "iOS-style island pill that morphs between live activity views with bouncy shell resize and blur crossfades.",
+        file: "components/motion/dynamic-island.tsx",
+      },
+      {
+        slug: "command-palette",
+        name: "Command Palette",
+        description: "⌘K palette with fuzzy filter, spring-animated active row and glass surface.",
+        file: "components/motion/command-palette.tsx",
       },
       {
         slug: "expandable-action-bar",

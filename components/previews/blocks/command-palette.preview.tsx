@@ -19,13 +19,14 @@ export function CommandPalettePreview() {
       <p className="text-sm text-(--color-fg-muted)">
         Press{" "}
         <kbd className="rounded border border-(--color-border) bg-(--color-bg-elev) px-1.5 py-0.5 text-xs text-(--color-fg)">
-          ⌘ K
+          ⌘ J
         </kbd>{" "}
-        (or <kbd className="rounded border border-(--color-border) bg-(--color-bg-elev) px-1.5 py-0.5 text-xs text-(--color-fg)">Ctrl K</kbd>) to open.
+        (or <kbd className="rounded border border-(--color-border) bg-(--color-bg-elev) px-1.5 py-0.5 text-xs text-(--color-fg)">Ctrl J</kbd>) to open.
       </p>
       <CommandPalette
         open={open}
         onOpenChange={setOpen}
+        shortcut="j"
         items={[
           { id: "home", label: "Go to Home", group: "Navigation", icon: Home, hint: "G H", onSelect: () => {} },
           { id: "profile", label: "Open profile", group: "Navigation", icon: User, hint: "G P", onSelect: () => {} },

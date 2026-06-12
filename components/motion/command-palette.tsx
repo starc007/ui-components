@@ -2,7 +2,15 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { Search, type LucideIcon } from "lucide-react";
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +48,12 @@ function fuzzyMatch(needle: string, hay: string) {
 
 // Opened via a keyboard shortcut many times a day — entrance must read as
 // instant. Tight spring, even faster exit.
-const PANEL_SPRING = { type: "spring", stiffness: 560, damping: 40, mass: 0.5 } as const;
+const PANEL_SPRING = {
+  type: "spring",
+  stiffness: 560,
+  damping: 40,
+  mass: 0.5,
+} as const;
 
 export function CommandPalette({
   items,
@@ -53,13 +66,19 @@ export function CommandPalette({
   const [internalOpen, setInternalOpen] = useState(false);
   const controlled = controlledOpen !== undefined;
   const open = controlled ? controlledOpen : internalOpen;
-  const setOpen = useCallback((v: boolean) => {
-    if (!controlled) setInternalOpen(v);
-    onOpenChange?.(v);
-  }, [controlled, onOpenChange]);
+  const setOpen = useCallback(
+    (v: boolean) => {
+      if (!controlled) setInternalOpen(v);
+      onOpenChange?.(v);
+    },
+    [controlled, onOpenChange],
+  );
 
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
+  // Portal target only exists client-side; render nothing during SSR/hydration.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const uid = useId();
   const reduce = useReducedMotion();
   const updateQuery = useCallback((value: string) => {
@@ -113,6 +132,10 @@ export function CommandPalette({
     });
   }, [items, query]);
 
+  // Reserve the icon column only when at least one item brings an icon, so
+  // icon-less lists don't render a dead gap before every label.
+  const hasIcons = useMemo(() => items.some((it) => it.icon), [items]);
+
   const grouped = useMemo(() => {
     const map = new Map<string, CommandItem[]>();
     filtered.forEach((it) => {
@@ -151,8 +174,12 @@ export function CommandPalette({
 
   let cursor = 0;
 
-  // Always-mounted container; pointer events fully disabled when closed so clicks pass through to the page.
-  return (
+  if (!mounted) return null;
+
+  // Always-mounted container; pointer events fully disabled when closed so clicks
+  // pass through to the page. Portaled to <body> so ancestors with transforms,
+  // filters, or fixed positioning can't trap the overlay in their stacking context.
+  return createPortal(
     <div
       aria-hidden={!open}
       className={cn(
@@ -205,7 +232,9 @@ export function CommandPalette({
               role="combobox"
               aria-expanded={open}
               aria-controls={`${uid}-list`}
-              aria-activedescendant={filtered.length > 0 ? `${uid}-opt-${active}` : undefined}
+              aria-activedescendant={
+                filtered.length > 0 ? `${uid}-opt-${active}` : undefined
+              }
               aria-autocomplete="list"
               className="h-12 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
             />
@@ -227,7 +256,10 @@ export function CommandPalette({
             ) : (
               grouped.map(([group, list]) => (
                 <div key={group} className="mb-1 last:mb-0">
-                  <div aria-hidden className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <div
+                    aria-hidden
+                    className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+                  >
                     {group}
                   </div>
                   {list.map((it) => {
@@ -264,15 +296,19 @@ export function CommandPalette({
                                 ? { duration: 0 }
                                 : // Tracks rapid arrow-key navigation — keep it tighter
                                   // than SPRING_LAYOUT so it never lags the active row.
-                                  { type: "spring", stiffness: 480, damping: 38 }
+                                  {
+                                    type: "spring",
+                                    stiffness: 480,
+                                    damping: 38,
+                                  }
                             }
                           />
                         ) : null}
                         {Icon ? (
                           <Icon className="relative z-10 h-4 w-4" />
-                        ) : (
+                        ) : hasIcons ? (
                           <span className="relative z-10 h-4 w-4" />
-                        )}
+                        ) : null}
                         <span className="relative z-10 flex-1 truncate">
                           {it.label}
                         </span>
@@ -290,6 +326,7 @@ export function CommandPalette({
           </div>
         </motion.div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
