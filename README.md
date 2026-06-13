@@ -75,6 +75,16 @@ Add components in `components/motion/`, previews in `components/previews/motion/
 
 Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a PR.
 
+## Star history
+
+<a href="https://www.star-history.com/#starc007/ui-components&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=starc007/ui-components&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=starc007/ui-components&type=Date" />
+    <img alt="Star history chart for starc007/ui-components" src="https://api.star-history.com/svg?repos=starc007/ui-components&type=Date" />
+  </picture>
+</a>
+
 ## Author
 
 Saurabh Chauhan · [@saurra3h](https://x.com/saurra3h)
