@@ -274,6 +274,12 @@ export const registry: CategoryEntry[] = [
         description: "Compact icon actions that expand into labeled controls on hover or focus with shared layout motion.",
         file: "components/motion/expandable-action-bar.tsx",
       },
+      {
+        slug: "otp-input",
+        name: "OTP Input",
+        description: "One-time-code input with a gliding focus ring, digits that roll in per slot, error shake and a success check draw.",
+        file: "components/motion/otp-input.tsx",
+      },
     ],
   },
 ];

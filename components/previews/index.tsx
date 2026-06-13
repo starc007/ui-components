@@ -64,6 +64,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/switch": dynamic(() =>
     import("./motion/switch.preview").then((m) => m.SwitchPreview),
   ),
+  "blocks/otp-input": dynamic(() =>
+    import("./blocks/otp-input.preview").then((m) => m.OTPInputPreview),
+  ),
   "motion/shared-layout-bg": dynamic(() =>
     import("./motion/shared-layout-bg.preview").then((m) => m.SharedLayoutBgPreview),
   ),
