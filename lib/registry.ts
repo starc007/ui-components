@@ -275,6 +275,12 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/expandable-action-bar.tsx",
       },
       {
+        slug: "expandable-tabs",
+        name: "Expandable Tabs",
+        description: "Icon tab bar where the active tab expands to a labelled pill, with a panel above that morphs height and slides content direction-aware on switch.",
+        file: "components/motion/expandable-tabs.tsx",
+      },
+      {
         slug: "otp-input",
         name: "OTP Input",
         description: "One-time-code input with a gliding focus ring, digits that roll in per slot, error shake and a success check draw.",
