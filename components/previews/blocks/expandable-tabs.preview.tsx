@@ -30,7 +30,7 @@ function Row({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
 
 function Menu({ rows }: { rows: { icon: LucideIcon; label: string }[] }) {
   return (
-    <div className="flex w-56 flex-col gap-0.5">
+    <div className="flex w-[17.125rem] flex-col gap-0.5">
       {rows.map((r) => (
         <Row key={r.label} icon={r.icon} label={r.label} />
       ))}
