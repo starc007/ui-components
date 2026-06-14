@@ -1,16 +1,29 @@
 "use client";
 
 import {
-  ArrowUpCircle,
-  Bell,
-  BookOpen,
+  BadgeCheck,
+  Brush,
+  CalendarClock,
+  ChartSpline,
   ChevronRight,
-  FolderKanban,
-  Home,
-  LogOut,
-  Settings2,
-  Shield,
-  User,
+  ClipboardCheck,
+  CloudUpload,
+  FileText,
+  Gauge,
+  GitBranch,
+  Images,
+  Inbox,
+  MessageCircle,
+  Megaphone,
+  PackageOpen,
+  RefreshCw,
+  Rocket,
+  Siren,
+  SwatchBook,
+  UploadCloud,
+  Users,
+  Webhook,
+  Workflow,
   type LucideIcon,
 } from "lucide-react";
 import { ExpandableTabs } from "@/components/motion/expandable-tabs";
@@ -43,77 +56,79 @@ export function ExpandableTabsPreview() {
     <div className="flex min-h-88 w-full items-end justify-center">
       <ExpandableTabs
         items={[
-        {
-          id: "dashboard",
-          label: "Dashboard",
-          icon: <Home className="h-4 w-4" />,
-          content: (
-            <Menu
-              rows={[
-                { icon: User, label: "profile" },
-                { icon: ArrowUpCircle, label: "upgrade" },
-                { icon: FolderKanban, label: "projects" },
-                { icon: BookOpen, label: "documentation" },
-                { icon: LogOut, label: "logout" },
-              ]}
-            />
-          ),
-        },
-        {
-          id: "alerts",
-          label: "Alerts",
-          icon: <Bell className="h-4 w-4" />,
-          content: (
-            <Menu
-              rows={[
-                { icon: Bell, label: "mentions" },
-                { icon: Bell, label: "comments" },
-              ]}
-            />
-          ),
-        },
-        {
-          id: "settings",
-          label: "Settings",
-          icon: <Settings2 className="h-4 w-4" />,
-          content: (
-            <Menu
-              rows={[
-                { icon: Settings2, label: "general" },
-                { icon: User, label: "account" },
-                { icon: Shield, label: "privacy" },
-              ]}
-            />
-          ),
-        },
-        {
-          id: "docs",
-          label: "Docs",
-          icon: <BookOpen className="h-4 w-4" />,
-          content: (
-            <Menu
-              rows={[
-                { icon: BookOpen, label: "getting started" },
-                { icon: BookOpen, label: "api reference" },
-                { icon: FolderKanban, label: "examples" },
-                { icon: ArrowUpCircle, label: "changelog" },
-              ]}
-            />
-          ),
-        },
-        {
-          id: "security",
-          label: "Security",
-          icon: <Shield className="h-4 w-4" />,
-          content: (
-            <Menu
-              rows={[
-                { icon: Shield, label: "two-factor auth" },
-                { icon: User, label: "sessions" },
-              ]}
-            />
-          ),
-        },
+          {
+            id: "launch",
+            label: "Launch",
+            icon: <Rocket className="h-4 w-4" />,
+            content: (
+              <Menu
+                rows={[
+                  { icon: FileText, label: "Release Brief" },
+                  { icon: ClipboardCheck, label: "Launch Checklist" },
+                  { icon: Megaphone, label: "Campaign Notes" },
+                  { icon: CalendarClock, label: "Rollout Calendar" },
+                  { icon: CloudUpload, label: "Ship Build" },
+                ]}
+              />
+            ),
+          },
+          {
+            id: "inbox",
+            label: "Inbox",
+            icon: <Inbox className="h-4 w-4" />,
+            content: (
+              <Menu
+                rows={[
+                  { icon: MessageCircle, label: "Client Feedback" },
+                  { icon: Users, label: "Team Requests" },
+                  { icon: BadgeCheck, label: "Approval Notes" },
+                ]}
+              />
+            ),
+          },
+          {
+            id: "flows",
+            label: "Flows",
+            icon: <Workflow className="h-4 w-4" />,
+            content: (
+              <Menu
+                rows={[
+                  { icon: GitBranch, label: "Trigger Map" },
+                  { icon: Webhook, label: "Webhook Runs" },
+                  { icon: RefreshCw, label: "Retry Queue" },
+                ]}
+              />
+            ),
+          },
+          {
+            id: "assets",
+            label: "Assets",
+            icon: <PackageOpen className="h-4 w-4" />,
+            content: (
+              <Menu
+                rows={[
+                  { icon: SwatchBook, label: "Brand Kit" },
+                  { icon: Images, label: "Mockup Library" },
+                  { icon: Brush, label: "Design Tokens" },
+                  { icon: UploadCloud, label: "Export Queue" },
+                ]}
+              />
+            ),
+          },
+          {
+            id: "status",
+            label: "Status",
+            icon: <ChartSpline className="h-4 w-4" />,
+            content: (
+              <Menu
+                rows={[
+                  { icon: Gauge, label: "Activation" },
+                  { icon: ChartSpline, label: "Conversion" },
+                  { icon: Siren, label: "Incidents" },
+                ]}
+              />
+            ),
+          },
         ]}
       />
     </div>
