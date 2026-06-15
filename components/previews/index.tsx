@@ -19,6 +19,9 @@ export const previews: Record<string, ComponentType> = {
   "blocks/expandable-tabs": dynamic(() =>
     import("./blocks/expandable-tabs.preview").then((m) => m.ExpandableTabsPreview),
   ),
+  "blocks/swipeable-list": dynamic(() =>
+    import("./blocks/swipeable-list.preview").then((m) => m.SwipeableListPreview),
+  ),
   "motion/tilt-card": dynamic(() =>
     import("./motion/tilt-card.preview").then((m) => m.TiltCardPreview),
   ),

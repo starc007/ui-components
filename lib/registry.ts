@@ -281,6 +281,12 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/expandable-tabs.tsx",
       },
       {
+        slug: "swipeable-list",
+        name: "Swipeable List",
+        description: "Mobile-style list rows that swipe left or right to reveal contextual action buttons.",
+        file: "components/motion/swipeable-list.tsx",
+      },
+      {
         slug: "otp-input",
         name: "OTP Input",
         description: "One-time-code input with a gliding focus ring, digits that roll in per slot, error shake and a success check draw.",
