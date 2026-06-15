@@ -79,43 +79,40 @@ export function SiteDock() {
               </Link>
             </Tooltip>
           </DockItem>
-          <div
-            onMouseEnter={() => setEmailHovered(true)}
-            onMouseLeave={() => setEmailHovered(false)}
-          >
-            <DockItem aria-label="Email">
-              <Tooltip
-                content={emailCopied ? "Copied!" : "saurabh10102@gmail.com"}
-                side="top"
-                wrapperClassName="h-full w-full items-center justify-center"
+          <DockItem aria-label="Email">
+            <Tooltip
+              content={emailCopied ? "Copied!" : "saurabh10102@gmail.com"}
+              side="top"
+              wrapperClassName="h-full w-full items-center justify-center"
+            >
+              <button
+                type="button"
+                aria-label="Copy email"
+                className="flex h-full w-full items-center justify-center"
+                onPointerEnter={() => setEmailHovered(true)}
+                onPointerLeave={() => setEmailHovered(false)}
+                onClick={() => {
+                  navigator.clipboard.writeText("saurabh10102@gmail.com");
+                  setEmailCopied(true);
+                  setTimeout(() => setEmailCopied(false), 2000);
+                }}
               >
-                <button
-                  type="button"
-                  aria-label="Copy email"
-                  className="flex h-full w-full items-center justify-center"
-                  onClick={() => {
-                    navigator.clipboard.writeText("saurabh10102@gmail.com");
-                    setEmailCopied(true);
-                    setTimeout(() => setEmailCopied(false), 2000);
-                  }}
+                <ActionSwapIcon
+                  value={emailCopied ? "check" : emailHovered ? "copy" : "mail"}
+                  animation="roll"
+                  className="h-4 w-4"
                 >
-                  <ActionSwapIcon
-                    value={emailCopied ? "check" : emailHovered ? "copy" : "mail"}
-                    animation="roll"
-                    className="h-4 w-4"
-                  >
-                    {emailCopied ? (
-                      <Check className="h-4 w-4" />
-                    ) : emailHovered ? (
-                      <Copy className="h-4 w-4" />
-                    ) : (
-                      <Mail className="h-4 w-4" />
-                    )}
-                  </ActionSwapIcon>
-                </button>
-              </Tooltip>
-            </DockItem>
-          </div>
+                  {emailCopied ? (
+                    <Check className="h-4 w-4" />
+                  ) : emailHovered ? (
+                    <Copy className="h-4 w-4" />
+                  ) : (
+                    <Mail className="h-4 w-4" />
+                  )}
+                </ActionSwapIcon>
+              </button>
+            </Tooltip>
+          </DockItem>
           <DockItem aria-label="Toggle theme">
             <Tooltip
               content={mounted && isDark ? "Light mode" : "Dark mode"}
