@@ -243,6 +243,12 @@ export const registry: CategoryEntry[] = [
         description: "Stacked toasts with status morphs, swipe dismissal, actions and layout-aware motion.",
         file: "components/motion/animated-toast-stack.tsx",
       },
+      {
+        slug: "theme-toggle",
+        name: "Theme Toggle",
+        description: "Theme toggle button with a full-page rectangle clip-path reveal via the View Transition API.",
+        file: "components/motion/theme-toggle.tsx",
+      },
     ],
   },
   {

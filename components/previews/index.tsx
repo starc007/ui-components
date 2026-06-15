@@ -103,6 +103,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/button-magnetic": dynamic(() =>
     import("./motion/button-magnetic.preview").then((m) => m.ButtonMagneticPreview),
   ),
+  "motion/theme-toggle": dynamic(() =>
+    import("./motion/theme-toggle.preview").then((m) => m.ThemeTogglePreview),
+  ),
 };
 
 export function getPreview(category: string, slug: string) {
