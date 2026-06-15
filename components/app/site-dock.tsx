@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LayoutGrid, Mail, Moon, Sun } from "lucide-react";
+import { Check, Copy, Home, LayoutGrid, Mail, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Dock, DockItem, DockSeparator } from "@/components/motion/dock";
@@ -15,6 +15,8 @@ export function SiteDock() {
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [themeIcon, setThemeIcon] = useState<"light" | "dark">("light");
+  const [emailHovered, setEmailHovered] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
   useEffect(() => {
@@ -28,7 +30,7 @@ export function SiteDock() {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-6 z-40 flex justify-center px-4">
       <div className="pointer-events-auto">
-        <Dock className="gap-0 border border-fg/5 px-1.5">
+        <Dock size={36} className="gap-0 border border-fg/5 px-1.5">
           <DockItem aria-label="Home" active={isHome}>
             <Tooltip
               content="Home"
@@ -40,7 +42,7 @@ export function SiteDock() {
                 aria-label="Home"
                 className="flex h-full w-full items-center justify-center"
               >
-                <Home className="h-5 w-5" />
+                <Home className="h-4 w-4" />
               </Link>
             </Tooltip>
           </DockItem>
@@ -55,11 +57,11 @@ export function SiteDock() {
                 aria-label="Components"
                 className="flex h-full w-full items-center justify-center"
               >
-                <LayoutGrid className="h-5 w-5" />
+                <LayoutGrid className="h-4 w-4" />
               </Link>
             </Tooltip>
           </DockItem>
-          <DockSeparator className="mx-0.5 h-5" />
+          <DockSeparator className="mx-0.5 h-4" />
           <DockItem aria-label="GitHub">
             <Tooltip
               content="GitHub"
@@ -73,25 +75,47 @@ export function SiteDock() {
                 aria-label="GitHub"
                 className="flex h-full w-full items-center justify-center"
               >
-                <GithubIcon className="h-5 w-5" />
+                <GithubIcon className="h-4 w-4" />
               </Link>
             </Tooltip>
           </DockItem>
-          <DockItem aria-label="Email">
-            <Tooltip
-              content="saurabh10102@gmail.com"
-              side="top"
-              wrapperClassName="h-full w-full items-center justify-center"
-            >
-              <a
-                href="mailto:saurabh10102@gmail.com"
-                aria-label="Email"
-                className="flex h-full w-full items-center justify-center"
+          <div
+            onMouseEnter={() => setEmailHovered(true)}
+            onMouseLeave={() => setEmailHovered(false)}
+          >
+            <DockItem aria-label="Email">
+              <Tooltip
+                content={emailCopied ? "Copied!" : "saurabh10102@gmail.com"}
+                side="top"
+                wrapperClassName="h-full w-full items-center justify-center"
               >
-                <Mail className="h-5 w-5" />
-              </a>
-            </Tooltip>
-          </DockItem>
+                <button
+                  type="button"
+                  aria-label="Copy email"
+                  className="flex h-full w-full items-center justify-center"
+                  onClick={() => {
+                    navigator.clipboard.writeText("saurabh10102@gmail.com");
+                    setEmailCopied(true);
+                    setTimeout(() => setEmailCopied(false), 2000);
+                  }}
+                >
+                  <ActionSwapIcon
+                    value={emailCopied ? "check" : emailHovered ? "copy" : "mail"}
+                    animation="roll"
+                    className="h-4 w-4"
+                  >
+                    {emailCopied ? (
+                      <Check className="h-4 w-4" />
+                    ) : emailHovered ? (
+                      <Copy className="h-4 w-4" />
+                    ) : (
+                      <Mail className="h-4 w-4" />
+                    )}
+                  </ActionSwapIcon>
+                </button>
+              </Tooltip>
+            </DockItem>
+          </div>
           <DockItem aria-label="Toggle theme">
             <Tooltip
               content={mounted && isDark ? "Light mode" : "Dark mode"}
@@ -112,12 +136,12 @@ export function SiteDock() {
                   <ActionSwapIcon
                     value={themeIcon}
                     animation="blur"
-                    className="h-5 w-5"
+                    className="h-4 w-4"
                   >
                     {themeIcon === "dark" ? (
-                      <Sun className="h-5 w-5" />
+                      <Sun className="h-4 w-4" />
                     ) : (
-                      <Moon className="h-5 w-5" />
+                      <Moon className="h-4 w-4" />
                     )}
                   </ActionSwapIcon>
                 ) : (
