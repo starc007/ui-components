@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "right" | "bottom" | "left";
@@ -101,8 +102,10 @@ export function Tooltip({ content, children, side = "top", delay = 120, classNam
   const id = useId();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reduce = useReducedMotion();
+  const canHover = useHoverCapable();
 
   const show = () => {
+    if (!canHover) return;
     if (timer.current) clearTimeout(timer.current);
     const warm = Date.now() - lastHiddenAt < WARM_WINDOW_MS;
     timer.current = setTimeout(() => setOpen(true), warm ? 0 : delay);
