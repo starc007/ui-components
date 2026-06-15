@@ -243,6 +243,12 @@ export const registry: CategoryEntry[] = [
         description: "Stacked toasts with status morphs, swipe dismissal, actions and layout-aware motion.",
         file: "components/motion/animated-toast-stack.tsx",
       },
+      {
+        slug: "theme-toggle",
+        name: "Theme Toggle",
+        description: "Theme toggle button with a full-page rectangle clip-path reveal via the View Transition API.",
+        file: "components/motion/theme-toggle.tsx",
+      },
     ],
   },
   {
@@ -279,6 +285,12 @@ export const registry: CategoryEntry[] = [
         name: "Expandable Tabs",
         description: "Icon tab bar where the active tab expands to a labelled pill, with a panel above that morphs height and slides content direction-aware on switch.",
         file: "components/motion/expandable-tabs.tsx",
+      },
+      {
+        slug: "swipeable-list",
+        name: "Swipeable List",
+        description: "Mobile-style list rows that swipe left or right to reveal contextual action buttons.",
+        file: "components/motion/swipeable-list.tsx",
       },
       {
         slug: "otp-input",

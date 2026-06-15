@@ -2,27 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Check, Copy, Home, LayoutGrid, Mail, Moon, Sun } from "lucide-react";
+import { Check, Copy, Home, LayoutGrid, Mail } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Dock, DockItem, DockSeparator } from "@/components/motion/dock";
 import { ActionSwapIcon } from "@/components/motion/action-swap";
+import { ThemeToggle } from "@/components/motion/theme-toggle";
 import { Tooltip } from "@/components/motion/tooltip";
 import { GithubIcon } from "@/components/app/icons";
 
 export function SiteDock() {
   const pathname = usePathname();
-  const { setTheme, resolvedTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [themeIcon, setThemeIcon] = useState<"light" | "dark">("light");
   const [emailHovered, setEmailHovered] = useState(false);
   const [emailCopied, setEmailCopied] = useState(false);
   useEffect(() => setMounted(true), []);
   const isDark = mounted && resolvedTheme === "dark";
-  useEffect(() => {
-    if (!mounted) return;
-    setThemeIcon(isDark ? "dark" : "light");
-  }, [isDark, mounted]);
 
   const isHome = pathname === "/";
   const isComponents = pathname.startsWith("/components");
@@ -119,32 +115,12 @@ export function SiteDock() {
               side="top"
               wrapperClassName="h-full w-full items-center justify-center"
             >
-              <button
-                type="button"
-                onClick={() => {
-                  const nextTheme = isDark ? "light" : "dark";
-                  setThemeIcon(nextTheme);
-                  setTheme(nextTheme);
-                }}
-                aria-label="Toggle theme"
+              <ThemeToggle
+                variant="rectangle"
+                start="bottom-up"
                 className="flex h-full w-full items-center justify-center"
-              >
-                {mounted ? (
-                  <ActionSwapIcon
-                    value={themeIcon}
-                    animation="blur"
-                    className="h-4 w-4"
-                  >
-                    {themeIcon === "dark" ? (
-                      <Sun className="h-4 w-4" />
-                    ) : (
-                      <Moon className="h-4 w-4" />
-                    )}
-                  </ActionSwapIcon>
-                ) : (
-                  <span className="h-4 w-4" />
-                )}
-              </button>
+                iconClassName="h-4 w-4"
+              />
             </Tooltip>
           </DockItem>
         </Dock>
