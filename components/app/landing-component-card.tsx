@@ -3,21 +3,27 @@ import { ArrowUpRight } from "lucide-react";
 import type { ComponentEntry } from "@/lib/registry";
 import { getPreview } from "@/components/previews";
 
-export function LandingComponentCard({ component }: { component: ComponentEntry }) {
-  const Preview = getPreview("motion", component.slug);
+export function LandingComponentCard({
+  component,
+  category = "motion",
+}: {
+  component: ComponentEntry;
+  category?: string;
+}) {
+  const Preview = getPreview(category, component.slug);
 
   return (
-    <article className="group/card relative min-h-[318px]">
+    <article className="group/card relative min-h-55">
       <Link
-        href={`/components/motion/${component.slug}`}
+        href={`/components/${category}/${component.slug}`}
         aria-label={`View ${component.name}`}
         className="absolute inset-0 z-20 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
       />
       <div
-        className="flex min-h-[318px] flex-col overflow-hidden rounded-lg border border-(--color-border) bg-(--color-bg-elev) transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] [contain:paint] group-hover/card:border-(--color-border-strong) group-focus-within/card:border-(--color-border-strong)"
+        className="flex min-h-55 flex-col overflow-hidden rounded-lg border border-(--color-border) bg-(--color-bg-elev) transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] group-hover/card:border-(--color-border-strong) group-focus-within/card:border-(--color-border-strong)"
       >
-        <div className="relative flex h-52 items-center justify-center overflow-hidden bg-(--color-bg) px-5 py-6 [contain:paint] mask-b-fade">
-          <div className="pointer-events-none flex w-full max-w-full origin-center scale-75 items-center justify-center overflow-hidden transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] [contain:paint] group-hover/card:scale-[0.78] group-focus-within/card:scale-[0.78] [&_*]:!cursor-default">
+        <div className="relative flex h-36 items-center justify-center overflow-hidden bg-(--color-bg) px-5 py-4 contain-[paint] mask-b-fade">
+          <div className="pointer-events-none flex w-full max-w-full origin-center scale-75 items-center justify-center overflow-hidden transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] group-hover/card:scale-[0.78] group-focus-within/card:scale-[0.78] [&_*]:!cursor-default">
             {Preview ? <Preview /> : null}
           </div>
         </div>
