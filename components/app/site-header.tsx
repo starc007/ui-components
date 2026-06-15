@@ -5,8 +5,8 @@ import Image from "next/image";
 import { useMotionValueEvent, useScroll } from "motion/react";
 import { Star } from "lucide-react";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { GithubIcon } from "@/components/app/icons";
-import { HeaderTabs } from "@/components/app/header-tabs";
 import { MobileNav } from "@/components/app/mobile-nav";
 import { PressLink } from "@/components/app/press-link";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,9 @@ export function SiteHeader({
 }) {
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const isComponents = pathname.startsWith("/components/motion") || (pathname.startsWith("/components") && !pathname.startsWith("/components/blocks"));
+  const isBlocks = pathname.startsWith("/components/blocks");
   const formattedStarCount =
     typeof githubStarCount === "number"
       ? formatStarCount(githubStarCount)
@@ -44,7 +47,7 @@ export function SiteHeader({
       )}
     >
       <div className="relative mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-4">
           <MobileNav />
           <Link
             href="/"
@@ -63,10 +66,30 @@ export function SiteHeader({
               v2
             </span>
           </Link>
-        </div>
-
-        <div className="absolute left-1/2 hidden -translate-x-1/2 md:block">
-          <HeaderTabs />
+          <nav className="hidden items-center gap-0.5 md:flex">
+            <Link
+              href="/components/motion"
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                isComponents
+                  ? "text-(--color-fg)"
+                  : "text-(--color-fg-muted) hover:text-(--color-fg)",
+              )}
+            >
+              Components
+            </Link>
+            <Link
+              href="/components/blocks"
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                isBlocks
+                  ? "text-(--color-fg)"
+                  : "text-(--color-fg-muted) hover:text-(--color-fg)",
+              )}
+            >
+              Blocks
+            </Link>
+          </nav>
         </div>
 
         <nav className="flex items-center gap-2">

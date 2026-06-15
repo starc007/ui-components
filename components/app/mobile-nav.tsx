@@ -1,12 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { Button } from "@/components/motion/button";
-import { HeaderTabs } from "@/components/app/header-tabs";
 import { SidebarNav } from "@/components/app/site-sidebar";
+import { cn } from "@/lib/utils";
 
 /** Mobile nav: a header hamburger that opens the sidebar list in beUI's own bottom sheet. */
 export function MobileNav() {
@@ -38,7 +39,32 @@ export function MobileNav() {
         snapPoints={[0.85]}
       >
         <div className="flex flex-col gap-5 pt-2">
-          <HeaderTabs onNavigate={() => setOpen(false)} />
+          <nav className="flex gap-1">
+            <Link
+              href="/components/motion"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                pathname.startsWith("/components/motion") || (pathname.startsWith("/components") && !pathname.startsWith("/components/blocks"))
+                  ? "text-(--color-fg)"
+                  : "text-(--color-fg-muted) hover:text-(--color-fg)",
+              )}
+            >
+              Components
+            </Link>
+            <Link
+              href="/components/blocks"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                pathname.startsWith("/components/blocks")
+                  ? "text-(--color-fg)"
+                  : "text-(--color-fg-muted) hover:text-(--color-fg)",
+              )}
+            >
+              Blocks
+            </Link>
+          </nav>
           <SidebarNav onNavigate={() => setOpen(false)} />
         </div>
       </BottomSheet>

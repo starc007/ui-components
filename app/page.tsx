@@ -55,7 +55,7 @@ export default function Home() {
             Browse all <ArrowRight className="ml-1 h-3.5 w-3.5" />
           </Link>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {blocksCategory.components.map((comp) => (
             <LandingComponentCard key={comp.slug} component={comp} category="blocks" />
           ))}
