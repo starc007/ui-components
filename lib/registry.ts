@@ -293,6 +293,12 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/swipeable-list.tsx",
       },
       {
+        slug: "bouncy-accordion",
+        name: "Bouncy Accordion",
+        description: "Single-open accordion with weighted spring layout, icon rows and reduced-motion-safe content reveals.",
+        file: "components/motion/bouncy-accordion.tsx",
+      },
+      {
         slug: "otp-input",
         name: "OTP Input",
         description: "One-time-code input with a gliding focus ring, digits that roll in per slot, error shake and a success check draw.",

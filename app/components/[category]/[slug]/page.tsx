@@ -2,9 +2,19 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { findCategory, findComponent, registry, type ComponentExample } from "@/lib/registry";
+import {
+  findCategory,
+  findComponent,
+  registry,
+  type ComponentExample,
+} from "@/lib/registry";
 import { CodeBlock } from "@/components/app/code-block";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/motion/tabs";
 import { getPreview, previews } from "@/components/previews";
 import { readSourceFile } from "@/lib/source-files";
 
@@ -26,9 +36,16 @@ export async function generateMetadata({
   const cat = findCategory(category);
   const comp = findComponent(category, slug);
   if (!cat || !comp) return {};
-  const installSlugs = comp.examples?.flatMap((example) => example.installSlug ? [example.installSlug] : []) ?? [];
-  const registryItem = installSlugs[0] ? `/r/${installSlugs[0]}.json` : `/r/${comp.slug}.json`;
-  const directoryItem = installSlugs[0] ? `/${installSlugs[0]}.json` : `/${comp.slug}.json`;
+  const installSlugs =
+    comp.examples?.flatMap((example) =>
+      example.installSlug ? [example.installSlug] : [],
+    ) ?? [];
+  const registryItem = installSlugs[0]
+    ? `/r/${installSlugs[0]}.json`
+    : `/r/${comp.slug}.json`;
+  const directoryItem = installSlugs[0]
+    ? `/${installSlugs[0]}.json`
+    : `/${comp.slug}.json`;
 
   const title = `${comp.name} · ${cat.name} component · beUI v2`;
   const pageUrl = `/components/${cat.slug}/${comp.slug}`;
@@ -73,7 +90,8 @@ export async function generateMetadata({
     alternates: {
       canonical: pageUrl,
       types: {
-        "application/json": installSlugs.length > 0 ? `/r/${comp.slug}` : `/r/${comp.slug}.json`,
+        "application/json":
+          installSlugs.length > 0 ? `/r/${comp.slug}` : `/r/${comp.slug}.json`,
         "text/plain": `/r/${comp.slug}/raw`,
       },
     },
@@ -83,7 +101,11 @@ export async function generateMetadata({
       "beui:registry-item": registryItem,
       "beui:directory-item": directoryItem,
       ...(installSlugs.length > 0
-        ? { "beui:variant-registry-items": installSlugs.map((installSlug) => `/r/${installSlug}.json`) }
+        ? {
+            "beui:variant-registry-items": installSlugs.map(
+              (installSlug) => `/r/${installSlug}.json`,
+            ),
+          }
         : {}),
     },
   };
@@ -103,19 +125,30 @@ export default async function ComponentPage({
   const comp = findComponent(category, slug);
   if (!cat || !comp) notFound();
   const installCommand = `npx shadcn@latest add @beui/${comp.slug}`;
-  const hasVariantInstallCommands = comp.examples?.some((example) => example.installSlug) ?? false;
+  const hasVariantInstallCommands =
+    comp.examples?.some((example) => example.installSlug) ?? false;
 
   return (
     <div>
-      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
-        <Link href={`/components/${cat.slug}`} className="text-(--color-fg-muted) transition-colors hover:text-(--color-fg)">
+      <nav
+        aria-label="Breadcrumb"
+        className="flex items-center gap-1.5 text-sm"
+      >
+        <Link
+          href={`/components/${cat.slug}`}
+          className="text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+        >
           {cat.name}
         </Link>
         <ChevronRight className="h-3.5 w-3.5 text-(--color-fg-muted)" />
         <span className="font-medium text-(--color-fg)">{comp.name}</span>
       </nav>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-(--color-fg)">{comp.name}</h1>
-      <p className="mt-2 max-w-2xl text-(--color-fg-muted)">{comp.description}</p>
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-(--color-fg)">
+        {comp.name}
+      </h1>
+      <p className="mt-2 max-w-2xl text-(--color-fg-muted)">
+        {comp.description}
+      </p>
 
       {comp.examples?.length ? (
         <div className="mt-10 flex flex-col gap-12">
@@ -135,7 +168,7 @@ export default async function ComponentPage({
               Add this component with the shadcn CLI.
             </p>
             <div className="mt-3">
-              <CodeBlock code={installCommand} lang="bash" filename="terminal" />
+              <CodeBlock code={installCommand} lang="bash" />
             </div>
           </div>
         </section>
@@ -155,13 +188,17 @@ async function ExampleBlock({ example }: { example: ComponentExample }) {
   return (
     <section>
       <div className="mb-4 flex items-baseline justify-between gap-3">
-        <h2 className="text-xl font-semibold tracking-tight text-(--color-fg)">{example.name}</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-(--color-fg)">
+          {example.name}
+        </h2>
         <code className="rounded-md bg-(--color-fg)/5 px-2 py-0.5 font-mono text-[11px] text-(--color-fg-muted)">
           {example.file.split("/").pop()}
         </code>
       </div>
       {example.description ? (
-        <p className="mb-4 text-sm text-(--color-fg-muted)">{example.description}</p>
+        <p className="mb-4 text-sm text-(--color-fg-muted)">
+          {example.description}
+        </p>
       ) : null}
       <Tabs defaultValue="preview" variant="pill">
         <TabsList>
@@ -193,7 +230,15 @@ async function ExampleBlock({ example }: { example: ComponentExample }) {
   );
 }
 
-async function DefaultTabs({ category, slug, file }: { category: string; slug: string; file: string }) {
+async function DefaultTabs({
+  category,
+  slug,
+  file,
+}: {
+  category: string;
+  slug: string;
+  file: string;
+}) {
   const Preview = getPreview(category, slug);
   const previewFile = `components/previews/${category}/${slug}.preview.tsx`;
   const source = await loadSource(file);
