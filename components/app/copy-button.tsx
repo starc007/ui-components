@@ -6,7 +6,13 @@ import { useState } from "react";
 import { Button } from "@/components/motion/button";
 import { cn } from "@/lib/utils";
 
-export function CopyButton({ text, className }: { text: string; className?: string }) {
+export function CopyButton({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   return (
@@ -20,7 +26,10 @@ export function CopyButton({ text, className }: { text: string; className?: stri
         setTimeout(() => setCopied(false), 1500);
       }}
       aria-label={copied ? "Copied" : "Copy code"}
-      className={cn("text-(--color-fg-muted) hover:text-(--color-fg)", className)}
+      className={cn(
+        "text-(--color-fg-muted) hover:text-(--color-fg)",
+        className,
+      )}
     >
       <AnimatePresence mode="wait" initial={false}>
         {copied ? (
@@ -29,7 +38,12 @@ export function CopyButton({ text, className }: { text: string; className?: stri
             initial={{ scale: 0.4, opacity: 0, filter: "blur(4px)" }}
             animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
             exit={{ scale: 0.4, opacity: 0, filter: "blur(4px)" }}
-            transition={{ type: "spring", stiffness: 500, damping: 28, mass: 0.5 }}
+            transition={{
+              type: "spring",
+              stiffness: 500,
+              damping: 28,
+              mass: 0.5,
+            }}
             className="inline-flex"
           >
             <Check className="h-3.5 w-3.5 text-(--color-success)" />
@@ -40,7 +54,12 @@ export function CopyButton({ text, className }: { text: string; className?: stri
             initial={{ scale: 0.4, opacity: 0, filter: "blur(4px)" }}
             animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
             exit={{ scale: 0.4, opacity: 0, filter: "blur(4px)" }}
-            transition={{ type: "spring", stiffness: 500, damping: 28, mass: 0.5 }}
+            transition={{
+              type: "spring",
+              stiffness: 500,
+              damping: 28,
+              mass: 0.5,
+            }}
             className="inline-flex"
           >
             <Copy className="h-3.5 w-3.5" />
