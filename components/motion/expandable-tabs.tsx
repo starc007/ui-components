@@ -85,6 +85,17 @@ const CONTENT_VARIANTS: Variants = {
     y: -6,
     scale: 0.98,
     opacity: 0,
+    filter: "blur(4px)",
+    transition: { duration: 0.08, ease: EASE_OUT },
+  },
+};
+
+const REDUCED_CONTENT_VARIANTS: Variants = {
+  enter: { opacity: 0, filter: "blur(0px)" },
+  center: { opacity: 1, filter: "blur(0px)" },
+  exit: {
+    opacity: 0,
+    filter: "blur(0px)",
     transition: { duration: 0.08, ease: EASE_OUT },
   },
 };
@@ -300,10 +311,10 @@ export function ExpandableTabs({
             {active ? (
               <motion.div
                 key={active.id}
-                variants={reduce ? undefined : CONTENT_VARIANTS}
-                initial={reduce ? { opacity: 0 } : "enter"}
-                animate={reduce ? { opacity: 1 } : "center"}
-                exit={reduce ? { opacity: 0 } : "exit"}
+                variants={reduce ? REDUCED_CONTENT_VARIANTS : CONTENT_VARIANTS}
+                initial="enter"
+                animate="center"
+                exit="exit"
                 transition={
                   reduce ? { duration: 0.15, ease: EASE_OUT } : CONTENT_SPRING
                 }
@@ -383,6 +394,7 @@ export function ExpandableTabs({
                           width: isActive ? labelWidth : 0,
                           opacity: isActive ? 1 : 0,
                           marginLeft: isActive ? LABEL_GAP : 0,
+                          filter: "blur(0px)",
                         }
                       : {
                           width: isActive ? labelWidth : 0,

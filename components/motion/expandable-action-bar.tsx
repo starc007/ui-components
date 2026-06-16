@@ -256,6 +256,8 @@ export function ExpandableActionBar({
                               width: isExpanded ? "auto" : 0,
                               opacity: isExpanded ? 1 : 0,
                               marginLeft: isExpanded ? 8 : 0,
+                              x: 0,
+                              filter: "blur(0px)",
                             }
                           : {
                               width: isExpanded ? "auto" : 0,
@@ -265,7 +267,7 @@ export function ExpandableActionBar({
                               filter: isExpanded ? "blur(0px)" : "blur(3px)",
                             }
                       }
-                      transition={LABEL_TRANSITION}
+                      transition={reduce ? { duration: 0 } : LABEL_TRANSITION}
                       className={cn(
                         "inline-block overflow-hidden whitespace-nowrap",
                         classNames?.label,

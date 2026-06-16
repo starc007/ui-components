@@ -92,23 +92,24 @@ function Slot({
       key={keyId}
       initial={
         reduce
-          ? { opacity: 0 }
+          ? { opacity: 0, filter: "blur(0px)" }
           : { opacity: 0, scale: 0.9, y: -8, filter: "blur(5px)" }
       }
       animate={
         reduce
-          ? { opacity: 1 }
+          ? { opacity: 1, filter: "blur(0px)" }
           : { opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }
       }
       // Exit gets sucked up into the pill — fast, blur-free, before the
       // shrinking shell can clip it.
       exit={
         reduce
-          ? { opacity: 0, transition: { duration: 0.1 } }
+          ? { opacity: 0, filter: "blur(0px)", transition: { duration: 0.1 } }
           : {
               opacity: 0,
               scale: 0.9,
               y: -6,
+              filter: "blur(0px)",
               transition: { duration: 0.08, ease: EASE_OUT },
             }
       }
