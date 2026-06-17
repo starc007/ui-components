@@ -17,7 +17,7 @@ const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 const pixel = GeistPixelSquare;
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://beui.saura3h.xyz"),
+  metadataBase: new URL("https://beui.dev"),
   applicationName: "beUI v2",
   title: "beUI v2 · motion components",
   description: "Simple UI components with motion.",

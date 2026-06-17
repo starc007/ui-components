@@ -17,10 +17,10 @@ const ENDPOINTS: { label: string; url: string; desc: string }[] = [
 ];
 
 const FETCH_SNIPPET = `// 1. Discover what exists
-const idx = await fetch('https://beui.saura3h.xyz/r').then((r) => r.json());
+const idx = await fetch('https://beui.dev/r').then((r) => r.json());
 
 // 2. Fetch a component
-const entry = await fetch(\`https://beui.saura3h.xyz/r/\${slug}\`).then((r) => r.json());
+const entry = await fetch(\`https://beui.dev/r/\${slug}\`).then((r) => r.json());
 
 // 3. Write files into the user's project
 for (const file of entry.files) {
@@ -34,16 +34,16 @@ const SHADCN_SNIPPET = `# Official registry namespace (shadcn directory)
 npx shadcn@latest add @beui/animated-toast-stack
 
 # Direct URL, no namespace needed
-npx shadcn@latest add https://beui.saura3h.xyz/r/animated-toast-stack.json`;
+npx shadcn@latest add https://beui.dev/r/animated-toast-stack.json`;
 
 const ENTRY_SHAPE = `{
   "slug": "swap",
   "name": "Multi-chain Swap",
   "description": "Cross-chain swap widget with chain + token selectors, animated flip and quote.",
   "category": "motion",
-  "page_url": "https://beui.saura3h.xyz/components/motion/swap",
-  "detail_url": "https://beui.saura3h.xyz/r/swap",
-  "raw_url": "https://beui.saura3h.xyz/r/swap/raw",
+  "page_url": "https://beui.dev/components/motion/swap",
+  "detail_url": "https://beui.dev/r/swap",
+  "raw_url": "https://beui.dev/r/swap/raw",
   "dependencies": ["motion", "lucide-react", "react"],
   "internal": ["@/lib/utils"],
   "files": [

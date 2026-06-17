@@ -119,7 +119,7 @@ export async function GET(request: Request) {
             color: "#a0a0a0",
           }}
         >
-          <span>beui.saura3h.xyz</span>
+          <span>beui.dev</span>
           <span>Browse the library</span>
         </div>
       </div>

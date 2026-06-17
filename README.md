@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://beui.saura3h.xyz">
+  <a href="https://beui.dev">
     <img src="./public/beui-mark.png" alt="beUI logo" width="88" height="88" />
   </a>
 </p>
@@ -11,11 +11,11 @@
 </p>
 
 <p align="center">
-  <a href="https://beui.saura3h.xyz">Website</a>
+  <a href="https://beui.dev">Website</a>
   ·
-  <a href="https://beui.saura3h.xyz/components/motion">Components</a>
+  <a href="https://beui.dev/components/motion">Components</a>
   ·
-  <a href="https://beui.saura3h.xyz/llms.txt">llms.txt</a>
+  <a href="https://beui.dev/llms.txt">llms.txt</a>
 </p>
 
 ## What is beUI?
@@ -35,7 +35,7 @@ npx shadcn@latest add @beui/animated-toast-stack
 Direct URLs also work:
 
 ```bash
-npx shadcn@latest add https://beui.saura3h.xyz/r/animated-toast-stack.json
+npx shadcn@latest add https://beui.dev/r/animated-toast-stack.json
 ```
 
 You can also copy the source directly from the component page.
@@ -45,11 +45,11 @@ You can also copy the source directly from the component page.
 beUI exposes static endpoints that coding agents can read without scraping the UI.
 
 ```txt
-https://beui.saura3h.xyz/llms.txt
-https://beui.saura3h.xyz/r
-https://beui.saura3h.xyz/r/{slug}
-https://beui.saura3h.xyz/r/{slug}.json
-https://beui.saura3h.xyz/r/{slug}/raw
+https://beui.dev/llms.txt
+https://beui.dev/r
+https://beui.dev/r/{slug}
+https://beui.dev/r/{slug}.json
+https://beui.dev/r/{slug}/raw
 ```
 
 ## Run locally
