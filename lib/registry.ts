@@ -251,6 +251,13 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/theme-toggle.tsx",
         badge: "new",
       },
+      {
+        slug: "bouncy-accordion",
+        name: "Bouncy Accordion",
+        description: "Single-open accordion with weighted spring layout, icon rows and reduced-motion-safe content reveals.",
+        file: "components/motion/bouncy-accordion.tsx",
+        badge: "new",
+      },
     ],
   },
   {
@@ -293,13 +300,6 @@ export const registry: CategoryEntry[] = [
         name: "Swipeable List",
         description: "Mobile-style list rows that swipe left or right to reveal contextual action buttons.",
         file: "components/motion/swipeable-list.tsx",
-        badge: "new",
-      },
-      {
-        slug: "bouncy-accordion",
-        name: "Bouncy Accordion",
-        description: "Single-open accordion with weighted spring layout, icon rows and reduced-motion-safe content reveals.",
-        file: "components/motion/bouncy-accordion.tsx",
         badge: "new",
       },
       {
