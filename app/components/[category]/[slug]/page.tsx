@@ -15,6 +15,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/motion/tabs";
+import { NewBadge } from "@/components/app/new-badge";
 import { getPreview, previews } from "@/components/previews";
 import { readSourceFile } from "@/lib/source-files";
 
@@ -143,9 +144,12 @@ export default async function ComponentPage({
         <ChevronRight className="h-3.5 w-3.5 text-(--color-fg-muted)" />
         <span className="font-medium text-(--color-fg)">{comp.name}</span>
       </nav>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-(--color-fg)">
-        {comp.name}
-      </h1>
+      <div className="mt-4 flex items-center gap-3">
+        <h1 className="text-3xl font-semibold tracking-tight text-(--color-fg)">
+          {comp.name}
+        </h1>
+        {comp.badge === "new" ? <NewBadge className="mt-1" /> : null}
+      </div>
       <p className="mt-2 max-w-2xl text-(--color-fg-muted)">
         {comp.description}
       </p>

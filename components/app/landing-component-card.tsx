@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { ComponentEntry } from "@/lib/registry";
+import { NewBadge } from "@/components/app/new-badge";
 import { getPreview } from "@/components/previews";
 
 export function LandingComponentCard({
@@ -29,9 +30,12 @@ export function LandingComponentCard({
         </div>
         <div className="flex flex-1 items-start justify-between gap-3 border-t border-(--color-border) p-4">
           <div className="min-w-0">
-            <h3 className="font-pixel text-base font-medium text-(--color-fg)">
-              {component.name}
-            </h3>
+            <div className="flex items-center gap-2">
+              <h3 className="truncate font-pixel text-base font-medium text-(--color-fg)">
+                {component.name}
+              </h3>
+              {component.badge === "new" ? <NewBadge /> : null}
+            </div>
             <p className="mt-1 line-clamp-2 text-xs text-(--color-fg-muted)">
               {component.description}
             </p>

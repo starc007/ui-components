@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { findCategory, registry } from "@/lib/registry";
+import { NewBadge } from "@/components/app/new-badge";
 
 export function generateStaticParams() {
   return registry.map((c) => ({ category: c.slug }));
@@ -85,7 +86,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             className="group flex items-start justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-bg-elev) px-4 py-3.5 transition-colors hover:border-(--color-border-strong)"
           >
             <div className="min-w-0">
-              <h3 className="text-sm font-semibold text-(--color-fg)">{comp.name}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="truncate text-sm font-semibold text-(--color-fg)">
+                  {comp.name}
+                </h3>
+                {comp.badge === "new" ? <NewBadge /> : null}
+              </div>
               <p className="mt-1 line-clamp-2 text-xs text-(--color-fg-muted)">{comp.description}</p>
             </div>
             <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--color-fg-muted) transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
