@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import type { ComponentEntry } from "@/lib/registry";
 import { NewBadge } from "@/components/app/new-badge";
 import { getPreview } from "@/components/previews";
@@ -14,33 +13,32 @@ export function LandingComponentCard({
   const Preview = getPreview(category, component.slug);
 
   return (
-    <article className="group/card relative min-h-55">
+    <article className="group/card relative min-h-64">
       <Link
         href={`/components/${category}/${component.slug}`}
         aria-label={`View ${component.name}`}
         className="absolute inset-0 z-20 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
       />
       <div
-        className="flex min-h-55 flex-col overflow-hidden rounded-lg border border-(--color-border) bg-(--color-bg-elev) transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] group-hover/card:border-(--color-border-strong) group-focus-within/card:border-(--color-border-strong)"
+        className="relative flex min-h-64 flex-col overflow-hidden rounded-lg border border-(--color-border) bg-(--color-bg-elev) transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] group-hover/card:border-(--color-border-strong) group-focus-within/card:border-(--color-border-strong)"
       >
-        <div className="relative flex h-36 items-center justify-center overflow-hidden bg-(--color-bg) px-5 py-4 contain-[paint] mask-b-fade">
-          <div className="pointer-events-none flex w-full max-w-full origin-center scale-75 items-center justify-center overflow-hidden transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] group-hover/card:scale-[0.78] group-focus-within/card:scale-[0.78] [&_*]:!cursor-default">
+        <div className="flex items-center justify-between gap-3 border-b border-(--color-border) px-4 py-3">
+          <h3 className="truncate font-pixel text-base font-medium text-(--color-fg)">
+            {component.name}
+          </h3>
+          {component.badge === "new" ? <NewBadge /> : null}
+        </div>
+
+        <div className="relative flex flex-1 items-center justify-center overflow-hidden bg-(--color-bg) px-5 py-5 contain-[paint]">
+          <div className="pointer-events-none flex w-full max-w-full origin-center scale-80 items-center justify-center overflow-hidden transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] group-hover/card:scale-[0.84] group-focus-within/card:scale-[0.84] [&_*]:!cursor-default">
             {Preview ? <Preview /> : null}
           </div>
         </div>
-        <div className="flex flex-1 items-start justify-between gap-3 border-t border-(--color-border) p-4">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="truncate font-pixel text-base font-medium text-(--color-fg)">
-                {component.name}
-              </h3>
-              {component.badge === "new" ? <NewBadge /> : null}
-            </div>
-            <p className="mt-1 line-clamp-2 text-xs text-(--color-fg-muted)">
-              {component.description}
-            </p>
-          </div>
-          <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--color-fg-muted) transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5 group-focus-within/card:translate-x-0.5 group-focus-within/card:-translate-y-0.5" />
+
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 border-t border-(--color-border) bg-(--color-bg-elev)/82 px-4 py-3 opacity-0 backdrop-blur-md transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:translate-y-0 group-hover/card:opacity-100 group-focus-within/card:translate-y-0 group-focus-within/card:opacity-100">
+          <p className="line-clamp-2 text-xs leading-relaxed text-(--color-fg-muted)">
+            {component.description}
+          </p>
         </div>
       </div>
     </article>
