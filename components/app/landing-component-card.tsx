@@ -32,7 +32,7 @@ export function LandingComponentCard({
             {Preview ? <Preview /> : null}
           </div>
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-(--color-bg-elev)/60 px-4 py-3 opacity-0 backdrop-blur-md transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:translate-y-0 group-hover/card:opacity-100 group-focus-within/card:translate-y-0 group-focus-within/card:opacity-100">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 rounded-b-3xl bg-(--color-bg-elev)/60 px-4 py-3 opacity-0 backdrop-blur-md transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:translate-y-0 group-hover/card:opacity-100 group-focus-within/card:translate-y-0 group-focus-within/card:opacity-100">
             <p className="line-clamp-2 text-xs leading-relaxed text-(--color-fg-muted)">
               {component.description}
             </p>
