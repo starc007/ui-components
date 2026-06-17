@@ -17,6 +17,7 @@ export type ComponentEntry = {
   name: string;
   description: string;
   file: string;
+  badge?: "new";
   /** Extra source files bundled under this slug (e.g. multi-file components). */
   extraFiles?: string[];
   /** Per-variant breakdown rendered as separate Preview / Usage / Source on the page. */
@@ -248,6 +249,7 @@ export const registry: CategoryEntry[] = [
         name: "Theme Toggle",
         description: "Theme toggle button with a full-page rectangle clip-path reveal via the View Transition API.",
         file: "components/motion/theme-toggle.tsx",
+        badge: "new",
       },
     ],
   },
@@ -291,18 +293,21 @@ export const registry: CategoryEntry[] = [
         name: "Swipeable List",
         description: "Mobile-style list rows that swipe left or right to reveal contextual action buttons.",
         file: "components/motion/swipeable-list.tsx",
+        badge: "new",
       },
       {
         slug: "bouncy-accordion",
         name: "Bouncy Accordion",
         description: "Single-open accordion with weighted spring layout, icon rows and reduced-motion-safe content reveals.",
         file: "components/motion/bouncy-accordion.tsx",
+        badge: "new",
       },
       {
         slug: "otp-input",
         name: "OTP Input",
         description: "One-time-code input with a gliding focus ring, digits that roll in per slot, error shake and a success check draw.",
         file: "components/motion/otp-input.tsx",
+        badge: "new",
       },
     ],
   },

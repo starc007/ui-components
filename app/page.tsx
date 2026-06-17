@@ -7,12 +7,41 @@ import { LandingComponentCard } from "@/components/app/landing-component-card";
 export default function Home() {
   const motionCategory = registry[0];
   const blocksCategory = registry[1];
+  const newComponents = registry.flatMap((category) =>
+    category.components
+      .filter((component) => component.badge === "new")
+      .map((component) => ({ category: category.slug, component })),
+  );
 
   return (
     <div className="relative">
       <section className="relative isolate overflow-hidden px-4 pb-16 pt-20 md:pt-28">
         <Hero />
       </section>
+
+      {newComponents.length ? (
+        <section className="mx-auto max-w-7xl px-4 pb-16">
+          <div className="mb-8 flex flex-col gap-4 border-t border-(--color-border) pt-12 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="font-pixel text-xs font-medium uppercase text-(--color-fg-muted)">
+                New
+              </p>
+              <h2 className="mt-2 max-w-2xl font-pixel text-3xl font-medium leading-tight text-(--color-fg) md:text-4xl">
+                Recently launched.
+              </h2>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+            {newComponents.map(({ category, component }) => (
+              <LandingComponentCard
+                key={`${category}-${component.slug}`}
+                component={component}
+                category={category}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="mx-auto max-w-7xl px-4 pb-16">
         <div className="mb-8 flex flex-col gap-4 border-t border-(--color-border) pt-12 md:flex-row md:items-center md:justify-between">

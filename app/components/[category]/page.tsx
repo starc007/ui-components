@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { findCategory, registry } from "@/lib/registry";
+import { findCategory, registry, type ComponentEntry } from "@/lib/registry";
+import { NewBadge } from "@/components/app/new-badge";
 
 export function generateStaticParams() {
   return registry.map((c) => ({ category: c.slug }));
@@ -64,34 +64,90 @@ export async function generateMetadata({
   };
 }
 
-export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}) {
   const { category } = await params;
   const cat = findCategory(category);
   if (!cat) notFound();
+  const newComponents = cat.components.filter((comp) => comp.badge === "new");
 
   return (
     <div>
-      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
+      <nav
+        aria-label="Breadcrumb"
+        className="flex items-center gap-1.5 text-sm"
+      >
         <span className="font-medium text-(--color-fg)">{cat.name}</span>
       </nav>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-(--color-fg)">{cat.name}</h1>
-      <p className="mt-2 max-w-2xl text-(--color-fg-muted)">{cat.description}</p>
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-(--color-fg)">
+        {cat.name}
+      </h1>
+      <p className="mt-2 max-w-2xl text-(--color-fg-muted)">
+        {cat.description}
+      </p>
 
-      <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {cat.components.map((comp) => (
-          <Link
-            key={comp.slug}
-            href={`/components/${cat.slug}/${comp.slug}`}
-            className="group flex items-start justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-bg-elev) px-4 py-3.5 transition-colors hover:border-(--color-border-strong)"
-          >
-            <div className="min-w-0">
-              <h3 className="text-sm font-semibold text-(--color-fg)">{comp.name}</h3>
-              <p className="mt-1 line-clamp-2 text-xs text-(--color-fg-muted)">{comp.description}</p>
-            </div>
-            <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--color-fg-muted) transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </Link>
-        ))}
-      </div>
+      {newComponents.length ? (
+        <section className="mt-10">
+          <p className="font-pixel text-xs font-medium uppercase text-(--color-fg-muted)">
+            New
+          </p>
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {newComponents.map((comp) => (
+              <CategoryComponentCard
+                key={comp.slug}
+                categorySlug={cat.slug}
+                component={comp}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section className="mt-10">
+        <p className="font-pixel text-xs font-medium uppercase text-(--color-fg-muted)">
+          All {cat.name}
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {cat.components.map((comp) => (
+            <CategoryComponentCard
+              key={comp.slug}
+              categorySlug={cat.slug}
+              component={comp}
+            />
+          ))}
+        </div>
+      </section>
     </div>
+  );
+}
+
+function CategoryComponentCard({
+  categorySlug,
+  component,
+}: {
+  categorySlug: string;
+  component: ComponentEntry;
+}) {
+  return (
+    <Link
+      href={`/components/${categorySlug}/${component.slug}`}
+      className="group/card relative flex h-40 flex-col overflow-hidden rounded-3xl bg-(--color-bg-elev) transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
+    >
+      <div className="flex shrink-0 items-center justify-between gap-3 px-4 py-3">
+        <h3 className="truncate font-pixel text-base font-medium text-(--color-fg)">
+          {component.name}
+        </h3>
+        {component.badge === "new" ? <NewBadge /> : null}
+      </div>
+
+      <div className="mx-2 mb-2 flex min-h-0 flex-1 items-start overflow-hidden rounded-3xl bg-(--color-bg) px-4 py-4 transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:bg-(--color-bg)/80 group-focus-visible/card:bg-(--color-bg)/80">
+        <p className="line-clamp-3 text-sm leading-relaxed text-(--color-fg-muted)">
+          {component.description}
+        </p>
+      </div>
+    </Link>
   );
 }

@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { GithubIcon } from "@/components/app/icons";
 import { MobileNav } from "@/components/app/mobile-nav";
 import { PressLink } from "@/components/app/press-link";
+import { SiteSearch } from "@/components/app/site-search";
 import { cn } from "@/lib/utils";
 
 function formatStarCount(count: number) {
@@ -93,6 +94,7 @@ export function SiteHeader({
         </div>
 
         <nav className="flex items-center gap-2">
+          <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 lg:w-56" />
           <PressLink
             href="https://github.com/starc007/ui-components"
             target="_blank"

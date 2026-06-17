@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { registry } from "@/lib/registry";
-import { SiteSearch } from "@/components/app/site-search";
+import { NewBadge } from "@/components/app/new-badge";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import { cn } from "@/lib/utils";
 
@@ -87,7 +87,10 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                   onClick={onNavigate}
                   className={linkClass(pathname === href)}
                 >
-                  {comp.name}
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="truncate">{comp.name}</span>
+                    {comp.badge === "new" ? <NewBadge /> : null}
+                  </span>
                 </Link>
               );
             })}
@@ -101,9 +104,6 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 export function SiteSidebar() {
   return (
     <aside className="fixed top-14 hidden h-[calc(100vh-3.5rem)] w-60 overflow-x-visible overflow-y-auto scrollbar-hide py-6 pr-4 md:block">
-      <div className="mb-6">
-        <SiteSearch />
-      </div>
       <SidebarNav />
     </aside>
   );
