@@ -310,6 +310,13 @@ export const registry: CategoryEntry[] = [
         badge: "new",
       },
       {
+        slug: "prediction-market",
+        name: "Prediction Market",
+        description: "Prediction market trade ticket with buy/sell modes, outcome prices, rolling amount entry, quick add chips and trade states.",
+        file: "components/motion/prediction-market.tsx",
+        badge: "new",
+      },
+      {
         slug: "otp-input",
         name: "OTP Input",
         description: "One-time-code input with a gliding focus ring, digits that roll in per slot, error shake and a success check draw.",
