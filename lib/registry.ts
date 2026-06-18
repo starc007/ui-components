@@ -303,6 +303,13 @@ export const registry: CategoryEntry[] = [
         badge: "new",
       },
       {
+        slug: "file-upload",
+        name: "File Upload",
+        description: "Drag-and-drop upload queue with progress rows, retry/remove actions and reduced-motion-safe state changes.",
+        file: "components/motion/file-upload.tsx",
+        badge: "new",
+      },
+      {
         slug: "otp-input",
         name: "OTP Input",
         description: "One-time-code input with a gliding focus ring, digits that roll in per slot, error shake and a success check draw.",

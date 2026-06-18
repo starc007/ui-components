@@ -22,6 +22,9 @@ export const previews: Record<string, ComponentType> = {
   "blocks/swipeable-list": dynamic(() =>
     import("./blocks/swipeable-list.preview").then((m) => m.SwipeableListPreview),
   ),
+  "blocks/file-upload": dynamic(() =>
+    import("./blocks/file-upload.preview").then((m) => m.FileUploadPreview),
+  ),
   "motion/bouncy-accordion": dynamic(() =>
     import("./motion/bouncy-accordion.preview").then(
       (m) => m.BouncyAccordionPreview,
