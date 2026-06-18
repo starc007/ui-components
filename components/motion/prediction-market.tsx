@@ -1,6 +1,6 @@
 "use client";
 
-import { Banknote, CheckCircle2, ChevronDown, Loader2 } from "lucide-react";
+import { Banknote, ChevronDown } from "lucide-react";
 import {
   AnimatePresence,
   animate,
@@ -18,6 +18,7 @@ import {
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
+import { StatefulButton, type ButtonState } from "./button";
 import { NumberTicker } from "./number-ticker";
 import { Tabs, TabsList, TabsTrigger } from "./tabs";
 
@@ -86,7 +87,6 @@ const MODES: { id: PredictionMarketMode; label: string }[] = [
 ];
 
 const DEFAULT_QUICK_AMOUNTS = [10, 50, 100, 500];
-const FAST_TRANSITION = { duration: 0.16, ease: EASE_OUT } as const;
 const DIGIT_TRANSITION = { duration: 0.18, ease: EASE_OUT } as const;
 type AmountInputStyle = CSSProperties & { "--amount-chars": string };
 
@@ -456,15 +456,14 @@ export function PredictionMarket({
 
   const inputSize = amountInputSize(order.amount);
   const payoutSize = payoutTickerSize(quote.payout);
-  const actionLabel = !authenticated
-    ? "Sign In"
-    : status === "placing"
-      ? "Trading"
+  const actionState: ButtonState =
+    status === "placing"
+      ? "loading"
       : status === "filled"
-        ? "Trade filled"
+        ? "success"
         : quote.valid
-          ? "Trade"
-          : quote.error;
+          ? "idle"
+          : "error";
   const showFooter = authenticated;
 
   return (
@@ -563,10 +562,10 @@ export function PredictionMarket({
           ref={amountRef}
           className={cn("rounded-3xl bg-card p-4", classNames?.amount)}
         >
-          <div className="flex min-h-24 flex-col items-center justify-center gap-4 text-center">
+          <div className="flex min-h-24 flex-col items-center justify-center gap-5 text-center">
             <label
               htmlFor={inputId}
-              className="text-xl font-medium text-foreground"
+              className="text-xl font-medium text-foreground mr-6"
             >
               {order.mode === "buy" ? "Amount" : "Shares"}
             </label>
@@ -596,7 +595,7 @@ export function PredictionMarket({
                 type="button"
                 disabled={status === "placing"}
                 onClick={() => addAmount(amount)}
-                className="h-9 rounded-xl bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 hover:bg-muted active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+                className="h-9 rounded-xl bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
               >
                 +{order.mode === "buy" ? formatCompactCurrency(amount) : amount}
               </button>
@@ -605,7 +604,7 @@ export function PredictionMarket({
               type="button"
               disabled={status === "placing"}
               onClick={setMax}
-              className="h-9 rounded-xl bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 hover:bg-muted active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+              className="h-9 rounded-xl bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
             >
               Max
             </button>
@@ -644,56 +643,38 @@ export function PredictionMarket({
             />
           </div>
 
-          <button
-            type="button"
-            disabled={status === "placing"}
+          <StatefulButton
+            state={actionState}
+            variant="primary"
+            size="lg"
+            pressScale={0.98}
             onClick={submit}
+            loadingText="Trading"
+            successText="Trade filled"
+            errorText={quote.error ?? "Enter an amount"}
             className={cn(
-              "flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-base font-semibold text-primary-foreground transition-[background-color,transform,opacity] duration-150 hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground",
+              "h-12 w-full rounded-2xl text-base font-semibold",
               classNames?.action,
             )}
           >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span
-                key={actionLabel}
-                initial={
-                  reduce
-                    ? { opacity: 0 }
-                    : { opacity: 0, transform: "translateY(4px)" }
-                }
-                animate={{ opacity: 1, transform: "translateY(0px)" }}
-                exit={
-                  reduce
-                    ? { opacity: 0 }
-                    : { opacity: 0, transform: "translateY(-4px)" }
-                }
-                transition={FAST_TRANSITION}
-                className="inline-flex items-center gap-2"
-              >
-                {status === "placing" ? (
-                  <Loader2
-                    className={cn("h-4 w-4", !reduce && "animate-spin")}
-                  />
-                ) : status === "filled" ? (
-                  <CheckCircle2 className="h-4 w-4" />
-                ) : null}
-                {actionLabel}
-              </motion.span>
-            </AnimatePresence>
-          </button>
+            Trade
+          </StatefulButton>
         </div>
       ) : (
         <div className="px-4 pb-5">
-          <button
-            type="button"
+          <StatefulButton
+            state="idle"
+            variant="primary"
+            size="lg"
+            pressScale={0.98}
             onClick={submit}
             className={cn(
-              "flex h-14 w-full items-center justify-center rounded-2xl bg-foreground text-base font-semibold text-background transition-transform duration-150 active:scale-[0.98]",
+              "h-14 w-full rounded-2xl text-base font-semibold",
               classNames?.action,
             )}
           >
-            {actionLabel}
-          </button>
+            Sign In
+          </StatefulButton>
         </div>
       )}
     </div>
