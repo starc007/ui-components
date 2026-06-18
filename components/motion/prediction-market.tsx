@@ -14,9 +14,11 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
+import { NumberTicker } from "./number-ticker";
 import { Tabs, TabsList, TabsTrigger } from "./tabs";
 
 export type PredictionMarketMode = "buy" | "sell";
@@ -86,6 +88,7 @@ const MODES: { id: PredictionMarketMode; label: string }[] = [
 const DEFAULT_QUICK_AMOUNTS = [10, 50, 100, 500];
 const FAST_TRANSITION = { duration: 0.16, ease: EASE_OUT } as const;
 const DIGIT_TRANSITION = { duration: 0.18, ease: EASE_OUT } as const;
+type AmountInputStyle = CSSProperties & { "--amount-chars": string };
 
 function useControllableOrder({
   value,
@@ -225,55 +228,125 @@ function buildQuote({
   };
 }
 
-function RollingValue({
+function keyedAmountChars(value: string) {
+  const seen = new Map<string, number>();
+  return value.split("").map((char) => {
+    const count = seen.get(char) ?? 0;
+    seen.set(char, count + 1);
+    return { id: `${char}-${count}`, char };
+  });
+}
+
+function amountInputSize(value: string) {
+  const length = value.replace(/\D/g, "").length;
+  if (length >= 10) return "text-3xl sm:text-4xl";
+  if (length >= 8) return "text-4xl sm:text-5xl";
+  if (length >= 6) return "text-[44px] sm:text-[56px]";
+  return "text-5xl sm:text-6xl";
+}
+
+function payoutTickerSize(value: number) {
+  const length = formatCurrency(value).length;
+  if (length >= 16) return "text-xl sm:text-2xl";
+  if (length >= 13) return "text-2xl";
+  if (length >= 10) return "text-3xl";
+  return "text-4xl";
+}
+
+function AnimatedAmountInput({
+  id,
   value,
+  mode,
+  inputSize,
+  disabled,
   reduce,
-  muted,
+  onChange,
 }: {
+  id: string;
   value: string;
+  mode: PredictionMarketMode;
+  inputSize: string;
+  disabled: boolean;
   reduce: boolean;
-  muted?: boolean;
+  onChange: (value: string) => void;
 }) {
-  const chars = value.split("");
+  const displayValue = value || "0";
+  const chars = keyedAmountChars(displayValue);
+  const inputStyle = {
+    "--amount-chars": String(chars.length),
+  } as AmountInputStyle;
+  const label = mode === "buy" ? "Amount" : "Shares";
 
   return (
-    <span
-      aria-hidden
-      className={cn(
-        "flex justify-center overflow-hidden text-5xl font-semibold leading-none tracking-tight tabular-nums sm:text-6xl",
-        muted ? "text-muted-foreground/55" : "text-foreground",
-      )}
-    >
-      {chars.map((char, index) => (
+    <div className="flex min-w-0 items-center justify-center overflow-hidden">
+      {mode === "buy" ? (
         <span
-          // biome-ignore lint/suspicious/noArrayIndexKey: fixed character slots for rolling display.
-          key={`${index}-${char}`}
-          className="relative inline-block min-w-[0.55em] overflow-hidden"
+          aria-hidden
+          className={cn(
+            "shrink-0 font-semibold leading-none tracking-normal text-muted-foreground/65 tabular-nums transition-[font-size] duration-200",
+            inputSize,
+          )}
         >
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span
-              // biome-ignore lint/suspicious/noArrayIndexKey: fixed visual character slots, animated by position.
-              key={`${index}-${char}`}
-              initial={
-                reduce
-                  ? { opacity: 0 }
-                  : { opacity: 0, transform: "translateY(70%)" }
-              }
-              animate={{ opacity: 1, transform: "translateY(0%)" }}
-              exit={
-                reduce
-                  ? { opacity: 0 }
-                  : { opacity: 0, transform: "translateY(-70%)" }
-              }
-              transition={DIGIT_TRANSITION}
-              className="inline-block"
-            >
-              {char}
-            </motion.span>
-          </AnimatePresence>
+          $
         </span>
-      ))}
-    </span>
+      ) : null}
+
+      <div className="relative min-w-0 shrink">
+        <input
+          id={id}
+          value={value}
+          disabled={disabled}
+          onChange={(event) => onChange(sanitizeAmount(event.target.value))}
+          placeholder="0"
+          inputMode="decimal"
+          aria-label={label}
+          autoComplete="off"
+          className={cn(
+            "w-[calc((var(--amount-chars)+1)*0.62em)] min-w-[0.8em] max-w-[260px] bg-transparent text-left font-semibold leading-none tracking-normal text-transparent outline-none tabular-nums",
+            "caret-foreground transition-[font-size] duration-200 placeholder:text-transparent selection:bg-foreground/10 disabled:cursor-not-allowed",
+            inputSize,
+          )}
+          style={inputStyle}
+        />
+        <div
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute inset-0 flex min-w-0 items-center justify-start overflow-hidden font-semibold leading-none tracking-normal text-foreground tabular-nums transition-[font-size] duration-200",
+            !value && "text-muted-foreground/55",
+            inputSize,
+          )}
+          style={inputStyle}
+        >
+          <AnimatePresence initial={false} mode="popLayout">
+            {chars.map(({ id: charId, char }) => (
+              <motion.span
+                key={charId}
+                layout={reduce ? false : "position"}
+                initial={
+                  reduce
+                    ? { opacity: 0 }
+                    : { opacity: 0, y: 18, filter: "blur(10px)" }
+                }
+                animate={
+                  reduce
+                    ? { opacity: 1 }
+                    : { opacity: 1, y: 0, filter: "blur(0px)" }
+                }
+                exit={
+                  reduce
+                    ? { opacity: 0 }
+                    : { opacity: 0, y: -14, filter: "blur(10px)" }
+                }
+                transition={DIGIT_TRANSITION}
+                className="inline-block min-w-[0.55em] text-center will-change-[transform,opacity,filter]"
+              >
+                {char}
+              </motion.span>
+            ))}
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -381,8 +454,8 @@ export function PredictionMarket({
     }, 650);
   };
 
-  const amountDisplay =
-    order.mode === "buy" ? `$${order.amount || "0"}` : `${order.amount || "0"}`;
+  const inputSize = amountInputSize(order.amount);
+  const payoutSize = payoutTickerSize(quote.payout);
   const actionLabel = !authenticated
     ? "Sign In"
     : status === "placing"
@@ -397,7 +470,7 @@ export function PredictionMarket({
   return (
     <div
       className={cn(
-        "w-full max-w-[400px] overflow-hidden rounded-3xl border border-border bg-card",
+        "w-full max-w-[400px] overflow-hidden rounded-3xl border border-border bg-background",
         className,
         classNames?.root,
       )}
@@ -452,7 +525,7 @@ export function PredictionMarket({
           variant="pill"
           className={classNames?.outcomes}
         >
-          <TabsList className="grid w-full grid-cols-2 gap-2 rounded-[1.75rem] bg-muted p-1.5">
+          <TabsList className="grid w-full grid-cols-2 gap-2 p-1.5">
             {outcomes.map((outcome) => {
               const selected = outcome.id === selectedOutcome.id;
               const isNo =
@@ -488,7 +561,7 @@ export function PredictionMarket({
 
         <div
           ref={amountRef}
-          className={cn("rounded-3xl bg-background p-4", classNames?.amount)}
+          className={cn("rounded-3xl bg-card p-4", classNames?.amount)}
         >
           <div className="flex min-h-24 flex-col items-center justify-center gap-4 text-center">
             <label
@@ -498,22 +571,15 @@ export function PredictionMarket({
               {order.mode === "buy" ? "Amount" : "Shares"}
             </label>
 
-            <div className="relative w-full min-w-0 text-center">
-              <RollingValue
-                value={amountDisplay}
-                reduce={reduce}
-                muted={order.amount === ""}
-              />
-              <input
+            <div className="w-full min-w-0">
+              <AnimatedAmountInput
                 id={inputId}
+                mode={order.mode}
                 value={order.amount}
                 disabled={status === "placing"}
-                onChange={(event) =>
-                  setOrderValue({ amount: sanitizeAmount(event.target.value) })
-                }
-                inputMode="decimal"
-                aria-label={order.mode === "buy" ? "Amount" : "Shares"}
-                className="absolute inset-0 z-10 h-full w-full cursor-text bg-transparent text-center text-5xl text-transparent caret-transparent outline-none disabled:cursor-not-allowed"
+                inputSize={inputSize}
+                reduce={reduce}
+                onChange={(amount) => setOrderValue({ amount })}
               />
             </div>
           </div>
@@ -530,7 +596,7 @@ export function PredictionMarket({
                 type="button"
                 disabled={status === "placing"}
                 onClick={() => addAmount(amount)}
-                className="h-9 rounded-xl border border-border/50 bg-card px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 hover:bg-muted active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+                className="h-9 rounded-xl bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 hover:bg-muted active:scale-95 disabled:pointer-events-none disabled:opacity-50"
               >
                 +{order.mode === "buy" ? formatCompactCurrency(amount) : amount}
               </button>
@@ -539,7 +605,7 @@ export function PredictionMarket({
               type="button"
               disabled={status === "placing"}
               onClick={setMax}
-              className="h-9 rounded-xl border border-border/50 bg-card px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 hover:bg-muted active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+              className="h-9 rounded-xl bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 hover:bg-muted active:scale-95 disabled:pointer-events-none disabled:opacity-50"
             >
               Max
             </button>
@@ -554,8 +620,8 @@ export function PredictionMarket({
             classNames?.footer,
           )}
         >
-          <div className="mb-4 flex items-end justify-between gap-4">
-            <div>
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <div className="min-w-0 shrink">
               <div className="flex items-center gap-2 text-xl font-semibold text-foreground">
                 {order.mode === "buy" ? "To win" : "To receive"}
                 <Banknote className="h-5 w-5 text-emerald-500" />
@@ -564,9 +630,18 @@ export function PredictionMarket({
                 Avg. Price {formatCents(quote.price)}
               </p>
             </div>
-            <div className="text-right text-4xl font-semibold leading-none tracking-tight text-emerald-500 tabular-nums">
-              {formatCurrency(quote.payout)}
-            </div>
+            <NumberTicker
+              value={quote.payout * 100}
+              startOnView={false}
+              duration={0.45}
+              stagger={0}
+              blur
+              className={cn(
+                "ml-auto min-w-0 shrink-0 justify-end whitespace-nowrap text-right font-semibold leading-none tracking-tight text-emerald-500 tabular-nums transition-[font-size] duration-200",
+                payoutSize,
+              )}
+              format={(cents) => formatCurrency(cents / 100)}
+            />
           </div>
 
           <button
@@ -574,7 +649,7 @@ export function PredictionMarket({
             disabled={status === "placing"}
             onClick={submit}
             className={cn(
-              "flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-blue-500 text-base font-semibold text-white transition-[background-color,transform,opacity] duration-150 hover:bg-blue-500/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70",
+              "flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-base font-semibold text-primary-foreground transition-[background-color,transform,opacity] duration-150 hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground",
               classNames?.action,
             )}
           >
