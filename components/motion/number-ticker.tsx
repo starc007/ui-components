@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { animate, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,8 @@ export interface NumberTickerProps {
   startOnView?: boolean;
   prefix?: string;
   suffix?: string;
+  /** Add a small blur during digit rolls. */
+  blur?: boolean;
   className?: string;
   digitClassName?: string;
   /** Insert locale group separators (commas). Server-component safe. */
@@ -36,6 +38,7 @@ export function NumberTicker({
   startOnView = true,
   prefix,
   suffix,
+  blur = false,
   className,
   digitClassName,
   locale,
@@ -103,6 +106,7 @@ export function NumberTicker({
               digit={armed ? digit : 0}
               delay={entered ? 0 : i * stagger}
               duration={duration}
+              blur={blur}
               className={digitClassName}
             />
           );
@@ -117,27 +121,61 @@ function Digit({
   digit,
   delay,
   duration,
+  blur,
   className,
 }: {
   digit: number;
   delay: number;
   duration: number;
+  blur: boolean;
   className?: string;
 }) {
   const reduce = useReducedMotion();
+  const columnRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (reduce || !blur || !columnRef.current || !Number.isFinite(digit)) {
+      return;
+    }
+
+    const node = columnRef.current;
+    const controls = animate(
+      node,
+      { filter: ["blur(10px)", "blur(0px)"] },
+      {
+        duration: Math.min(duration * 0.75, 0.32),
+        delay,
+        ease: EASE_OUT,
+      },
+    );
+
+    return () => {
+      controls.stop();
+      node.style.filter = "blur(0px)";
+    };
+  }, [blur, delay, digit, duration, reduce]);
+
   return (
     <span
       className={cn("relative inline-block overflow-hidden", className)}
       style={{ height: `${DIGIT_HEIGHT_EM}em`, width: "1ch" }}
     >
       <motion.span
+        ref={columnRef}
         initial={{ y: 0 }}
         animate={{ y: `-${digit * DIGIT_HEIGHT_EM}em` }}
-        transition={reduce ? { duration: 0 } : { duration, delay, ease: EASE_OUT }}
-        className="absolute inset-x-0 top-0 flex flex-col items-center"
+        transition={
+          reduce
+            ? { duration: 0 }
+            : { duration, delay, ease: EASE_OUT }
+        }
+        className="absolute inset-x-0 top-0 flex flex-col items-center will-change-[transform,filter]"
       >
         {DIGITS.map((n) => (
-          <span key={n} className="flex h-[1.1em] items-center justify-center leading-none">
+          <span
+            key={n}
+            className="flex h-[1.1em] items-center justify-center leading-none"
+          >
             {n}
           </span>
         ))}

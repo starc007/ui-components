@@ -84,7 +84,17 @@ export function TabsList({ children, className }: { children: ReactNode; classNa
   );
 }
 
-export function TabsTrigger({ value, children, className }: { value: string; children: ReactNode; className?: string }) {
+export function TabsTrigger({
+  value,
+  children,
+  className,
+  indicatorClassName,
+}: {
+  value: string;
+  children: ReactNode;
+  className?: string;
+  indicatorClassName?: string;
+}) {
   const { value: current, setValue, layoutId, variant } = useTabs();
   const active = current === value;
 
@@ -103,10 +113,13 @@ export function TabsTrigger({ value, children, className }: { value: string; chi
       >
         {children}
         {active ? (
-          <motion.span
-            layoutId={layoutId}
-            className="absolute -bottom-px left-0 right-0 h-px bg-primary"
-          />
+        <motion.span
+          layoutId={layoutId}
+          className={cn(
+            "absolute -bottom-px left-0 right-0 h-px bg-primary",
+            indicatorClassName,
+          )}
+        />
         ) : null}
       </button>
     );
@@ -123,8 +136,9 @@ export function TabsTrigger({ value, children, className }: { value: string; chi
           layoutId={layoutId}
           style={{ borderRadius: variant === "pill" ? 9999 : 8 }}
           className={cn(
-            "absolute inset-0 bg-primary shadow-sm",
+            "absolute inset-0 bg-primary",
             radius,
+            indicatorClassName,
           )}
         />
       ) : null}
