@@ -18,7 +18,7 @@ import {
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import { StatefulButton, type ButtonState } from "./button";
+import { StatefulButton, type ButtonState } from "./button/stateful";
 import { NumberTicker } from "./number-ticker";
 import { Tabs, TabsList, TabsTrigger } from "./tabs";
 
