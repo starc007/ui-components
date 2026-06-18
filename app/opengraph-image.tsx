@@ -50,7 +50,7 @@ export default async function OpengraphImage() {
             <span>v2</span>
           </div>
           <div style={{ display: "flex", fontSize: 22, color: "#a3a3a3" }}>
-            beui.saura3h.xyz
+            beui.dev
           </div>
         </div>
 

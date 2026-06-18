@@ -1,7 +1,7 @@
 import { allComponents, findCategory, registry } from "@/lib/registry";
 import { readOptionalSourceFile, readSourceFile, resolveSourceImport, type SourceFile } from "@/lib/source-files";
 
-const SITE_URL = "https://beui.saura3h.xyz";
+const SITE_URL = "https://beui.dev";
 
 export type RegistryFile = {
   path: string;
