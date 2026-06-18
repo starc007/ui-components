@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { Search, type LucideIcon } from "lucide-react";
 import {
+  type ReactNode,
   useCallback,
   useEffect,
   useId,
@@ -21,6 +22,7 @@ export type CommandItem = {
   hint?: string;
   keywords?: string[];
   icon?: LucideIcon;
+  badge?: ReactNode;
   onSelect: () => void;
 };
 
@@ -312,6 +314,11 @@ export function CommandPalette({
                         <span className="relative z-10 flex-1 truncate">
                           {it.label}
                         </span>
+                        {it.badge ? (
+                          <span className="relative z-10 shrink-0">
+                            {it.badge}
+                          </span>
+                        ) : null}
                         {it.hint ? (
                           <kbd className="relative z-10 rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground">
                             {it.hint}

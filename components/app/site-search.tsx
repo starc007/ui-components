@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { CircleDashed, FileText, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,7 @@ import {
   CommandPalette,
   type CommandItem,
 } from "@/components/motion/command-palette";
+import { NewBadge } from "@/components/app/new-badge";
 import { registry } from "@/lib/registry";
 
 const PAGES = [
@@ -32,6 +33,8 @@ export function SiteSearch({ className }: { className?: string }) {
           label: comp.name,
           group: cat.name,
           keywords: [comp.slug, cat.name],
+          icon: CircleDashed,
+          badge: comp.badge === "new" ? <NewBadge /> : undefined,
           onSelect: () => router.push(`/components/${cat.slug}/${comp.slug}`),
         })),
       ),
@@ -40,6 +43,7 @@ export function SiteSearch({ className }: { className?: string }) {
         label: page.name,
         group: "Pages",
         keywords: [page.slug],
+        icon: FileText,
         onSelect: () => router.push(page.href),
       })),
     ],
