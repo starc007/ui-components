@@ -73,6 +73,7 @@ export default async function CategoryPage({
   const cat = findCategory(category);
   if (!cat) notFound();
   const newComponents = cat.components.filter((comp) => comp.badge === "new");
+  const components = cat.components.filter((comp) => comp.badge !== "new");
 
   return (
     <div>
@@ -111,7 +112,7 @@ export default async function CategoryPage({
           All {cat.name}
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {cat.components.map((comp) => (
+          {components.map((comp) => (
             <CategoryComponentCard
               key={comp.slug}
               categorySlug={cat.slug}

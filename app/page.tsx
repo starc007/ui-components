@@ -7,6 +7,12 @@ import { LandingComponentCard } from "@/components/app/landing-component-card";
 export default function Home() {
   const motionCategory = registry[0];
   const blocksCategory = registry[1];
+  const motionComponents = motionCategory.components.filter(
+    (component) => component.badge !== "new",
+  );
+  const blockComponents = blocksCategory.components.filter(
+    (component) => component.badge !== "new",
+  );
   const newComponents = registry.flatMap((category) =>
     category.components
       .filter((component) => component.badge === "new")
@@ -50,7 +56,7 @@ export default function Home() {
               Components
             </p>
             <h2 className="mt-2 max-w-2xl font-pixel text-3xl font-medium leading-tight text-(--color-fg) md:text-4xl">
-              {motionCategory.components.length} components.
+              {motionComponents.length} components.
             </h2>
           </div>
           <Link
@@ -61,7 +67,7 @@ export default function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          {motionCategory.components.map((comp) => (
+          {motionComponents.map((comp) => (
             <LandingComponentCard key={comp.slug} component={comp} category="motion" />
           ))}
         </div>
@@ -74,7 +80,7 @@ export default function Home() {
               Blocks
             </p>
             <h2 className="mt-2 max-w-2xl font-pixel text-3xl font-medium leading-tight text-(--color-fg) md:text-4xl">
-              {blocksCategory.components.length} blocks.
+              {blockComponents.length} blocks.
             </h2>
           </div>
           <Link
@@ -85,7 +91,7 @@ export default function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          {blocksCategory.components.map((comp) => (
+          {blockComponents.map((comp) => (
             <LandingComponentCard key={comp.slug} component={comp} category="blocks" />
           ))}
         </div>
