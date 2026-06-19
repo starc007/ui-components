@@ -290,6 +290,13 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/expandable-action-bar.tsx",
       },
       {
+        slug: "overflow-actions",
+        name: "Overflow Actions",
+        description: "Connected pill rail for primary actions that springs open to reveal extra controls.",
+        file: "components/motion/overflow-actions.tsx",
+        badge: "new",
+      },
+      {
         slug: "expandable-tabs",
         name: "Expandable Tabs",
         description: "Icon tab bar where the active tab expands to a labelled pill, with a panel above that morphs height and slides content direction-aware on switch.",
