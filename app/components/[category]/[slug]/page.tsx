@@ -9,6 +9,7 @@ import {
   type ComponentExample,
 } from "@/lib/registry";
 import { CodeBlock } from "@/components/app/code-block";
+import { InstallCommand } from "@/components/app/install-command";
 import {
   Tabs,
   TabsContent,
@@ -125,7 +126,6 @@ export default async function ComponentPage({
   const cat = findCategory(category);
   const comp = findComponent(category, slug);
   if (!cat || !comp) notFound();
-  const installCommand = `npx shadcn@latest add @beui/${comp.slug}`;
   const hasVariantInstallCommands =
     comp.examples?.some((example) => example.installSlug) ?? false;
 
@@ -165,14 +165,14 @@ export default async function ComponentPage({
       )}
 
       {!hasVariantInstallCommands ? (
-        <section className="mt-12 grid gap-6 border-t border-(--color-border) pt-8">
-          <div>
+        <section className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-6 border-t border-(--color-border) pt-8">
+          <div className="min-w-0">
             <h2 className="text-sm font-semibold text-(--color-fg)">Install</h2>
             <p className="mt-1 text-sm text-(--color-fg-muted)">
               Add this component with the shadcn CLI.
             </p>
             <div className="mt-3">
-              <CodeBlock code={installCommand} lang="bash" />
+              <InstallCommand slug={comp.slug} />
             </div>
           </div>
         </section>
@@ -185,9 +185,7 @@ async function ExampleBlock({ example }: { example: ComponentExample }) {
   const Preview = previews[example.previewKey];
   const source = await loadSource(example.file);
   const usage = await loadSource(example.previewFile);
-  const installCommand = example.installSlug
-    ? `npx shadcn@latest add @beui/${example.installSlug}`
-    : null;
+  const installSlug = example.installSlug ?? null;
 
   return (
     <section>
@@ -222,11 +220,11 @@ async function ExampleBlock({ example }: { example: ComponentExample }) {
           <CodeBlock code={source} filename={example.file} />
         </TabsContent>
       </Tabs>
-      {installCommand ? (
-        <div className="mt-5 border-t border-(--color-border) pt-5">
+      {installSlug ? (
+        <div className="mt-5 min-w-0 border-t border-(--color-border) pt-5">
           <h3 className="text-sm font-semibold text-(--color-fg)">Install</h3>
           <div className="mt-3">
-            <CodeBlock code={installCommand} lang="bash" filename="terminal" />
+            <InstallCommand slug={installSlug} />
           </div>
         </div>
       ) : null}

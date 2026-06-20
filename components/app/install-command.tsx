@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { CopyButton } from "@/components/app/copy-button";
 import { ActionSwapCascadeText } from "@/components/motion/action-swap-cascade";
+import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { registry } from "@/lib/registry";
 import { cn } from "@/lib/utils";
 
@@ -27,18 +28,25 @@ const COMPONENT_SLUGS = registry.flatMap((cat) =>
   ),
 );
 
-export function InstallCommand({ className }: { className?: string }) {
+export function InstallCommand({
+  className,
+  slug,
+}: {
+  className?: string;
+  slug?: string;
+}) {
   const [pm, setPm] = useState<PM>("bun");
   const [nameIndex, setNameIndex] = useState(0);
 
   useEffect(() => {
+    if (slug) return;
     const id = setInterval(() => {
       setNameIndex((i) => (i + 1) % COMPONENT_SLUGS.length);
     }, CYCLE_MS);
     return () => clearInterval(id);
-  }, []);
+  }, [slug]);
 
-  const currentSlug = COMPONENT_SLUGS[nameIndex];
+  const currentSlug = slug ?? COMPONENT_SLUGS[nameIndex];
   const copyValue = `${PM_COMMANDS[pm]} shadcn add ${REGISTRY_URL}/${currentSlug}`;
 
   return (
@@ -48,43 +56,52 @@ export function InstallCommand({ className }: { className?: string }) {
         className,
       )}
     >
-      <div className="flex items-center border-b border-(--color-border) px-3 py-1.5">
-        <div className="flex gap-0.5">
-          {PMS.map((p) => (
-            <button
-              key={p}
-              type="button"
-              onClick={() => setPm(p)}
-              className={cn(
-                "h-7 rounded-md px-2.5 text-xs font-medium transition-colors",
-                pm === p
-                  ? "border border-(--color-border) bg-(--color-bg) text-(--color-fg)"
-                  : "text-(--color-fg-muted) hover:text-(--color-fg)",
-              )}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-        <div className="ml-auto">
+      <div className="flex items-center gap-2 border-b border-(--color-border) px-3 py-1.5">
+        <Tabs
+          value={pm}
+          onValueChange={(v) => setPm(v as PM)}
+          variant="segment"
+        >
+          <TabsList className="gap-0.5 rounded-none bg-transparent p-0">
+            {PMS.map((p) => (
+              <TabsTrigger
+                key={p}
+                value={p}
+                indicatorClassName="bg-(--color-bg) border border-(--color-border) shadow-none"
+                className="h-7 px-2.5 text-xs font-medium text-(--color-fg-muted) hover:text-(--color-fg) aria-[selected=true]:text-(--color-fg)"
+              >
+                {p}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+        <div className="ml-auto shrink-0">
           <CopyButton text={copyValue} />
         </div>
       </div>
 
-      <pre className="px-5 py-4 font-mono text-[13px]">
-        <code className="text-(--color-fg-muted)">
-          <span className="select-none">{"$ "}</span>
-          {PM_COMMANDS[pm]}
-          {" shadcn add "}
-          {REGISTRY_URL}/
+      <div className="overflow-x-auto">
+        <div className="min-w-max px-5 py-4 font-mono text-[13px] whitespace-nowrap">
+          <span className="select-none text-[#6e7781] dark:text-[#8b949e]">{"$ "}</span>
+          <span className="text-[#1f6feb] dark:text-[#ffa657]">
+            {PM_COMMANDS[pm].split(" ")[0]}
+          </span>
+          {PM_COMMANDS[pm].split(" ")[1] && (
+            <span className="text-[#6f42c1] dark:text-[#d2a8ff]">
+              {" "}{PM_COMMANDS[pm].split(" ")[1]}
+            </span>
+          )}
+          <span className="text-[#24292f] dark:text-[#e6edf3]">{" shadcn "}</span>
+          <span className="text-[#0550ae] dark:text-[#79c0ff]">add</span>
+          <span className="text-[#24292f]/50 dark:text-[#e6edf3]/40">{" "}{REGISTRY_URL}/</span>
           <ActionSwapCascadeText
             value={currentSlug}
-            className="font-semibold text-(--color-fg)"
+            className="font-medium text-[#0a3069] dark:text-[#a5d6ff]"
           >
             {currentSlug}
           </ActionSwapCascadeText>
-        </code>
-      </pre>
+        </div>
+      </div>
     </div>
   );
 }

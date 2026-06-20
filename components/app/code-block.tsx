@@ -1,4 +1,3 @@
-// components/code-block.tsx
 import { codeToHtml } from "shiki";
 import {
   transformerNotationHighlight,
@@ -82,9 +81,7 @@ export async function CodeBlock({
 
             <FileIcon className="h-3.5 w-3.5 shrink-0 text-(--color-fg-muted)" />
             <span className="truncate font-mono text-(--color-fg-muted)">
-              {fileDir && (
-                <span className="opacity-60">{fileDir}/</span>
-              )}
+              {fileDir && <span className="opacity-60">{fileDir}/</span>}
               <span className="text-(--color-fg) font-medium">{fileName}</span>
             </span>
           </div>
