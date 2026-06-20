@@ -73,8 +73,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <SiteFrame>{children}</SiteFrame>
           </main>
           <SiteDock />
-          <Analytics />
-          <SpeedInsights />
+          {process.env.NODE_ENV === "production" && <Analytics />}
+          {process.env.NODE_ENV === "production" && <SpeedInsights />}
           <GoogleAnalytics measurementId={googleAnalyticsId} />
         </ThemeProvider>
       </body>
