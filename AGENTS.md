@@ -25,6 +25,62 @@ Prefer `typecheck` + `lint` for quick verification. Do not start the dev server 
 - `lib/ease.ts` — all motion tokens.
 - `scripts/check-registry.ts` — validates the catalog.
 
+## Component catalog
+
+Before building a new component, check this list. If it exists, import it. If it doesn't, create it following the conventions below.
+
+### Components (`motion` category — primitives)
+
+| slug | file | what it does |
+|---|---|---|
+| `tilt-card` | `components/motion/tilt-card.tsx` | 3D perspective tilt on hover with cursor-tracked glare |
+| `button` | `components/motion/button/` | Spring-pressed `Button`, `StatefulButton` (idle/loading/success/error), `MagneticButton` |
+| `marquee` | `components/motion/marquee.tsx` | Infinite horizontal or vertical scroll, pause-on-hover |
+| `tabs` | `components/motion/tabs.tsx` | Pill, segment or underline tabs with spring layoutId indicator |
+| `switch` | `components/motion/switch.tsx` | Toggle with spring-driven thumb and press feedback |
+| `bottom-sheet` | `components/motion/bottom-sheet.tsx` | Draggable bottom sheet with snap points, inertia and glass surface |
+| `shared-layout-bg` | `components/motion/shared-layout-bg.tsx` | Pill that glides between hovered items via shared layout |
+| `dock` | `components/motion/dock.tsx` | macOS-style dock with grouped actions and gliding active pill |
+| `tooltip` | `components/motion/tooltip.tsx` | Hover/focus tooltip with blur enter/exit and spring spawn |
+| `morphing-modal` | `components/motion/morphing-modal.tsx` | Panel that morphs height across inner views with blur cross-fade |
+| `text-reveal` | `components/motion/text-reveal.tsx` | Word or character reveal with spring slide-up and blur |
+| `text-shimmer` | `components/motion/text-shimmer.tsx` | Gradient sweep across text for loading or emphasis |
+| `text-cascade` | `components/motion/text-cascade.tsx` | Letter-by-letter slot roll for standalone text |
+| `number-ticker` | `components/motion/number-ticker.tsx` | Slot-machine rolling digits with staggered entry |
+| `animated-number` | `components/motion/animated-number.tsx` | Spring-driven count-up triggered when in view |
+| `animated-badge` | `components/motion/animated-badge.tsx` | Status badge with animated state icons and pulse feedback |
+| `action-swap` | `components/motion/action-swap.tsx` | Core swap primitives: `ActionSwapButton`, `ActionSwapText`, `ActionSwapIcon` with blur/roll/cascade variants |
+| `action-swap-blur` | `components/motion/action-swap-blur.tsx` | Blur + scale + opacity swap variants |
+| `action-swap-roll` | `components/motion/action-swap-roll.tsx` | Vertical roll-in swap variants |
+| `action-swap-cascade` | `components/motion/action-swap-cascade.tsx` | Letter-cascade swap variants — `ActionSwapCascadeButton`, `ActionSwapCascadeText`, `ActionSwapCascadeIcon` |
+| `animated-toast-stack` | `components/motion/animated-toast-stack.tsx` | Stacked toasts with status morphs, swipe dismissal and layout-aware motion |
+| `theme-toggle` | `components/motion/theme-toggle.tsx` | Theme toggle with full-page clip-path reveal via View Transition API |
+| `bouncy-accordion` | `components/motion/bouncy-accordion.tsx` | Single-open accordion with weighted spring layout and icon rows |
+| `magnetic` | `components/motion/magnetic.tsx` | Cursor-attracted magnetic pull wrapper |
+
+### Blocks (`blocks` category — composed product widgets)
+
+| slug | file | what it does |
+|---|---|---|
+| `swap` | `components/motion/swap.tsx` + `swap/` | Cross-chain swap widget with chain/token selectors and morphing views |
+| `dynamic-island` | `components/motion/dynamic-island.tsx` | iOS-style island pill that morphs between live activity views |
+| `command-palette` | `components/motion/command-palette.tsx` | ⌘K palette with fuzzy filter and spring-animated active row |
+| `expandable-action-bar` | `components/motion/expandable-action-bar.tsx` | Icon actions that expand into labeled controls on hover/focus |
+| `overflow-actions` | `components/motion/overflow-actions.tsx` | Connected pill rail that springs open to reveal extra controls |
+| `expandable-tabs` | `components/motion/expandable-tabs.tsx` | Icon tab bar where active tab expands to labeled pill with height-morphing panel |
+| `swipeable-list` | `components/motion/swipeable-list.tsx` | List rows that swipe left/right to reveal contextual action buttons |
+| `file-upload` | `components/motion/file-upload.tsx` | Drag-and-drop upload queue with progress rows and retry/remove actions |
+| `prediction-market` | `components/motion/prediction-market.tsx` | Trade ticket with buy/sell modes, outcome prices and rolling amount entry |
+| `otp-input` | `components/motion/otp-input.tsx` | One-time-code input with gliding focus ring, roll-in digits, error shake and success draw |
+
+### Site chrome (`components/app/` — not part of the library)
+
+| file | what it does |
+|---|---|
+| `components/app/copy-button.tsx` | Copy-to-clipboard button using `ActionSwapCascadeIcon` for the copy/check swap |
+| `components/app/code-block.tsx` | Syntax-highlighted code block with `CopyButton`, diff/focus transformers and collapsible expand |
+| `components/app/press-link.tsx` | `PressLink` — site CTA link with `SPRING_PRESS` feel, use instead of CSS `.press` on primary CTAs |
+
 ## Motion conventions
 
 - Use tokens from `lib/ease.ts`: `EASE_OUT`, `EASE_OUT_CSS`, `EASE_IN_OUT`, `EASE_DRAWER`, `SPRING_PRESS`, `SPRING_SWAP`, `SPRING_PANEL`, `SPRING_LAYOUT`, `SPRING_MOUSE`. No inline `cubic-bezier` or one-off spring configs; if tuning is genuinely component-specific, keep it a named local const with a comment saying why.

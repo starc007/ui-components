@@ -46,11 +46,11 @@ html[data-beui-vt="circle-blur"]::view-transition-old(root) {
 }
 html[data-beui-vt="circle"]::view-transition-new(root) {
   mix-blend-mode: normal;
-  animation: beui-circle-reveal 500ms ease-out;
+  animation: beui-circle-reveal 700ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 html[data-beui-vt="circle-blur"]::view-transition-new(root) {
   mix-blend-mode: normal;
-  animation: beui-circle-blur-reveal 500ms ease-out;
+  animation: beui-circle-blur-reveal 700ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 @keyframes beui-rect-reveal {
   from { clip-path: var(--beui-vt-from, inset(100% 0 0 0)); }
@@ -92,6 +92,13 @@ export function useThemeToggle({
   const reduce = useReducedMotion() ?? false;
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    if (document.getElementById(VT_STYLE_ID)) return;
+    const el = document.createElement("style");
+    el.id = VT_STYLE_ID;
+    el.textContent = VT_CSS;
+    document.head.appendChild(el);
+  }, []);
   const isDark = mounted && resolvedTheme === "dark";
 
   const toggle = () => {
@@ -134,14 +141,6 @@ export function ThemeToggle({
   ...rest
 }: ThemeToggleProps) {
   const { isDark, mounted, toggle } = useThemeToggle({ variant, start });
-
-  useEffect(() => {
-    if (document.getElementById(VT_STYLE_ID)) return;
-    const el = document.createElement("style");
-    el.id = VT_STYLE_ID;
-    el.textContent = VT_CSS;
-    document.head.appendChild(el);
-  }, []);
 
   return (
     <button

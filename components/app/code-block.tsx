@@ -92,7 +92,7 @@ export async function CodeBlock({
           <CopyButton text={code} />
         </div>
       ) : (
-        <div className="absolute right-3 top-3 z-10 opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="absolute right-3 top-3 z-10">
           <CopyButton text={code} />
         </div>
       )}

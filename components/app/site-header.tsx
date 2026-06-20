@@ -27,7 +27,10 @@ export function SiteHeader({
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const isComponents = pathname.startsWith("/components/motion") || (pathname.startsWith("/components") && !pathname.startsWith("/components/blocks"));
+  const isComponents =
+    pathname.startsWith("/components/motion") ||
+    (pathname.startsWith("/components") &&
+      !pathname.startsWith("/components/blocks"));
   const isBlocks = pathname.startsWith("/components/blocks");
   const formattedStarCount =
     typeof githubStarCount === "number"
@@ -107,7 +110,7 @@ export function SiteHeader({
             }
           >
             <GithubIcon className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Star</span>
+            <span className="hidden sm:inline">Github</span>
             <span className="inline-flex items-center gap-0.5 text-(--color-fg-muted)">
               <Star className="h-3 w-3" />
               {formattedStarCount ? <span>{formattedStarCount}</span> : null}

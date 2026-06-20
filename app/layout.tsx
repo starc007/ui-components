@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/app/theme-provider";
 import { SiteHeader } from "@/components/app/site-header";
 import { SiteDock } from "@/components/app/site-dock";
 import { SiteFrame } from "@/components/app/site-frame";
+import { KeyboardShortcuts } from "@/components/app/keyboard-shortcuts";
 import { getGithubStarCount } from "@/lib/github";
 import { cn } from "@/lib/utils";
 
@@ -66,6 +67,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body className="min-h-screen antialiased">
         <ThemeProvider>
+          <KeyboardShortcuts />
           <SiteHeader githubStarCount={githubStarCount} />
           <main className="pt-14 pb-32">
             <SiteFrame>{children}</SiteFrame>

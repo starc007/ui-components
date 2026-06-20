@@ -1,8 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
+import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
 import { cn } from "@/lib/utils";
 
@@ -31,41 +31,12 @@ export function CopyButton({
         className,
       )}
     >
-      <AnimatePresence mode="wait" initial={false}>
-        {copied ? (
-          <motion.span
-            key="check"
-            initial={{ scale: 0.4, opacity: 0, filter: "blur(4px)" }}
-            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
-            exit={{ scale: 0.4, opacity: 0, filter: "blur(4px)" }}
-            transition={{
-              type: "spring",
-              stiffness: 500,
-              damping: 28,
-              mass: 0.5,
-            }}
-            className="inline-flex"
-          >
-            <Check className="h-3.5 w-3.5 text-(--color-success)" />
-          </motion.span>
-        ) : (
-          <motion.span
-            key="copy"
-            initial={{ scale: 0.4, opacity: 0, filter: "blur(4px)" }}
-            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
-            exit={{ scale: 0.4, opacity: 0, filter: "blur(4px)" }}
-            transition={{
-              type: "spring",
-              stiffness: 500,
-              damping: 28,
-              mass: 0.5,
-            }}
-            className="inline-flex"
-          >
-            <Copy className="h-3.5 w-3.5" />
-          </motion.span>
-        )}
-      </AnimatePresence>
+      <ActionSwapCascadeIcon value={copied ? "check" : "copy"} className="h-3.5 w-3.5">
+        {copied
+          ? <Check className="h-3.5 w-3.5 text-(--color-success)" />
+          : <Copy className="h-3.5 w-3.5" />
+        }
+      </ActionSwapCascadeIcon>
     </Button>
   );
 }
