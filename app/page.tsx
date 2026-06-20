@@ -2,17 +2,30 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { registry } from "@/lib/registry";
 import { Hero } from "@/components/app/hero";
+import { InstallCommand } from "@/components/app/install-command";
 import { LandingComponentCard } from "@/components/app/landing-component-card";
+import { SiteFooter } from "@/components/app/site-footer";
+
+const CURATED: { category: string; slug: string }[] = [
+  { category: "motion", slug: "button" },
+  { category: "motion", slug: "morphing-modal" },
+  { category: "motion", slug: "animated-toast-stack" },
+  { category: "motion", slug: "action-swap" },
+  { category: "motion", slug: "dock" },
+  { category: "motion", slug: "tabs" },
+  { category: "blocks", slug: "dynamic-island" },
+  { category: "blocks", slug: "command-palette" },
+  { category: "blocks", slug: "expandable-action-bar" },
+  { category: "blocks", slug: "expandable-tabs" },
+];
 
 export default function Home() {
-  const motionCategory = registry[0];
-  const blocksCategory = registry[1];
-  const motionComponents = motionCategory.components.filter(
-    (component) => component.badge !== "new",
-  );
-  const blockComponents = blocksCategory.components.filter(
-    (component) => component.badge !== "new",
-  );
+  const curatedComponents = CURATED.flatMap(({ category, slug }) => {
+    const cat = registry.find((c) => c.slug === category);
+    const comp = cat?.components.find((c) => c.slug === slug);
+    return comp ? [{ category, component: comp }] : [];
+  });
+
   const newComponents = registry.flatMap((category) =>
     category.components
       .filter((component) => component.badge === "new")
@@ -25,6 +38,13 @@ export default function Home() {
         <Hero />
       </section>
 
+      <section className="mx-auto max-w-2xl px-4 pb-24">
+        <p className="mb-5 text-center text-sm text-(--color-fg-muted)">
+          Built on Motion. Distributed via shadcn.
+        </p>
+        <InstallCommand />
+      </section>
+
       {newComponents.length ? (
         <section className="mx-auto max-w-7xl px-4 pb-16">
           <div className="mb-8 flex flex-col gap-4 border-t border-(--color-border) pt-12 md:flex-row md:items-center md:justify-between">
@@ -32,7 +52,7 @@ export default function Home() {
               <p className="font-pixel text-xs font-medium uppercase text-(--color-fg-muted)">
                 New
               </p>
-              <h2 className="mt-2 max-w-2xl font-pixel text-3xl font-medium leading-tight text-(--color-fg) md:text-4xl">
+              <h2 className="mt-2 font-pixel text-3xl font-medium leading-tight text-(--color-fg) md:text-4xl">
                 Recently launched.
               </h2>
             </div>
@@ -55,8 +75,8 @@ export default function Home() {
             <p className="font-pixel text-xs font-medium uppercase text-(--color-fg-muted)">
               Components
             </p>
-            <h2 className="mt-2 max-w-2xl font-pixel text-3xl font-medium leading-tight text-(--color-fg) md:text-4xl">
-              {motionComponents.length} components.
+            <h2 className="mt-2 font-pixel text-3xl font-medium leading-tight text-(--color-fg) md:text-4xl">
+              Motion primitives.
             </h2>
           </div>
           <Link
@@ -67,35 +87,17 @@ export default function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          {motionComponents.map((comp) => (
-            <LandingComponentCard key={comp.slug} component={comp} category="motion" />
+          {curatedComponents.map(({ category, component }) => (
+            <LandingComponentCard
+              key={`${category}-${component.slug}`}
+              component={component}
+              category={category}
+            />
           ))}
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-28">
-        <div className="mb-8 flex flex-col gap-4 border-t border-(--color-border) pt-12 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="font-pixel text-xs font-medium uppercase text-(--color-fg-muted)">
-              Blocks
-            </p>
-            <h2 className="mt-2 max-w-2xl font-pixel text-3xl font-medium leading-tight text-(--color-fg) md:text-4xl">
-              {blockComponents.length} blocks.
-            </h2>
-          </div>
-          <Link
-            href="/components/blocks"
-            className="inline-flex items-center self-start text-sm font-medium text-(--color-fg-muted) hover:text-(--color-fg) md:self-center"
-          >
-            Browse all <ArrowRight className="ml-1 h-3.5 w-3.5" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          {blockComponents.map((comp) => (
-            <LandingComponentCard key={comp.slug} component={comp} category="blocks" />
-          ))}
-        </div>
-      </section>
+      <SiteFooter />
     </div>
   );
 }

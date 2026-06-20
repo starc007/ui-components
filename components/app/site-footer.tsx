@@ -1,0 +1,146 @@
+import Link from "next/link";
+import { GithubIcon } from "@/components/app/icons";
+import { registry } from "@/lib/registry";
+
+const motionComponents = registry.find((c) => c.slug === "motion")?.components ?? [];
+const blockComponents = registry.find((c) => c.slug === "blocks")?.components ?? [];
+
+export function SiteFooter() {
+  return (
+    <footer className="border-t border-(--color-border) px-4 pt-14 pb-10">
+      <div className="mx-auto max-w-7xl">
+        {/* Main grid */}
+        <div className="grid grid-cols-2 gap-10 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-1">
+            <p className="font-pixel text-lg font-medium text-(--color-fg)">beUI</p>
+            <p className="mt-2 max-w-[220px] text-sm leading-6 text-(--color-fg-muted)">
+              Motion components for React. Copy-paste via shadcn registry.
+            </p>
+            <p className="mt-5 text-xs text-(--color-fg-muted)">
+              Created by{" "}
+              <Link
+                href="https://x.com/saurra3h"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="font-medium text-(--color-fg) underline-offset-2 hover:underline"
+              >
+                Saurabh
+              </Link>
+            </p>
+            <div className="mt-5 flex items-center gap-3">
+              <Link
+                href="https://github.com/starc007/ui-components"
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label="GitHub"
+                className="text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+              >
+                <GithubIcon className="h-4 w-4" />
+              </Link>
+              <Link
+                href="https://x.com/saurra3h"
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label="X / Twitter"
+                className="text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+
+          {/* Components */}
+          <div>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+              Components
+            </p>
+            <ul className="space-y-2.5">
+              {motionComponents.map((c) => (
+                <li key={c.slug}>
+                  <Link
+                    href={`/components/motion/${c.slug}`}
+                    className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                  >
+                    {c.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Blocks */}
+          <div>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+              Blocks
+            </p>
+            <ul className="space-y-2.5">
+              {blockComponents.map((c) => (
+                <li key={c.slug}>
+                  <Link
+                    href={`/components/blocks/${c.slug}`}
+                    className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                  >
+                    {c.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Links */}
+          <div>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+              Links
+            </p>
+            <ul className="space-y-2.5">
+              <li>
+                <Link
+                  href="/components/motion"
+                  className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                >
+                  Browse all
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://github.com/starc007/ui-components"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                >
+                  GitHub
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://x.com/saurra3h"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                >
+                  X / Twitter
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/llms.txt"
+                  className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                >
+                  llms.txt
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="mt-14 border-t border-(--color-border) pt-6">
+          <p className="text-xs text-(--color-fg-muted)">© 2026 beUI. MIT License.</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
