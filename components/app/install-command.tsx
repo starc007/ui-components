@@ -93,7 +93,7 @@ export function InstallCommand({
           )}
           <span className="text-[#24292f] dark:text-[#e6edf3]">{" shadcn "}</span>
           <span className="text-[#0550ae] dark:text-[#79c0ff]">add</span>
-          <span className="text-[#24292f]/50 dark:text-[#e6edf3]/40">{" "}{REGISTRY_URL}/</span>
+          <span className="text-[#24292f]/70 dark:text-[#e6edf3]/60">{" "}{REGISTRY_URL}/</span>
           <ActionSwapCascadeText
             value={currentSlug}
             className="font-medium text-[#0a3069] dark:text-[#a5d6ff]"

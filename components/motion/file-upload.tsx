@@ -482,6 +482,7 @@ export function FileUpload({
         ref={inputRef}
         id={inputId}
         type="file"
+        aria-label="Upload files"
         accept={accept}
         multiple={multiple}
         disabled={disabled || maxReached}

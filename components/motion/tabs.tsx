@@ -106,7 +106,7 @@ export function TabsTrigger({
         aria-selected={active}
         onClick={() => setValue(value)}
         className={cn(
-          "relative isolate px-3 pb-2.5 pt-1 -mb-px text-sm font-medium transition-colors",
+          "relative isolate px-3 pb-2.5 pt-1 -mb-px text-sm font-medium transition-colors min-h-[44px] inline-flex items-center",
           active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
           className,
         )}
