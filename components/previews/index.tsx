@@ -89,6 +89,21 @@ export const previews: Record<string, ComponentType> = {
   "blocks/otp-input": dynamic(() =>
     import("./blocks/otp-input.preview").then((m) => m.OTPInputPreview),
   ),
+  "blocks/not-found-glitch": dynamic(() =>
+    import("./blocks/not-found-glitch.preview").then((m) => m.NotFoundGlitchPreview),
+  ),
+  "blocks/not-found-magnetic": dynamic(() =>
+    import("./blocks/not-found-magnetic.preview").then((m) => m.NotFoundMagneticPreview),
+  ),
+  "blocks/not-found-spotlight": dynamic(() =>
+    import("./blocks/not-found-spotlight.preview").then((m) => m.NotFoundSpotlightPreview),
+  ),
+  "blocks/not-found-stacked": dynamic(() =>
+    import("./blocks/not-found-stacked.preview").then((m) => m.NotFoundStackedPreview),
+  ),
+  "blocks/not-found-terminal": dynamic(() =>
+    import("./blocks/not-found-terminal.preview").then((m) => m.NotFoundTerminalPreview),
+  ),
   "motion/shared-layout-bg": dynamic(() =>
     import("./motion/shared-layout-bg.preview").then((m) => m.SharedLayoutBgPreview),
   ),

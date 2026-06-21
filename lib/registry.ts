@@ -330,6 +330,73 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/otp-input.tsx",
         badge: "new",
       },
+      {
+        slug: "not-found",
+        name: "404 / Not Found",
+        description: "Animated 404 pages in five styles: glitch scramble, magnetic digits, cursor spotlight, a fanning card stack and a typed terminal.",
+        file: "components/motion/not-found/index.tsx",
+        extraFiles: [
+          "components/motion/not-found/shared.tsx",
+          "components/motion/not-found/glitch.tsx",
+          "components/motion/not-found/magnetic.tsx",
+          "components/motion/not-found/spotlight.tsx",
+          "components/motion/not-found/stacked.tsx",
+          "components/motion/not-found/terminal.tsx",
+        ],
+        badge: "new",
+        examples: [
+          {
+            slug: "glitch",
+            name: "Glitch",
+            description:
+              "Digits scramble through random glyphs before resolving, with a chromatic split on hover.",
+            installSlug: "not-found-glitch",
+            file: "components/motion/not-found/glitch.tsx",
+            previewKey: "blocks/not-found-glitch",
+            previewFile: "components/previews/blocks/not-found-glitch.preview.tsx",
+          },
+          {
+            slug: "magnetic",
+            name: "Magnetic",
+            description:
+              "Each digit is cursor-attracted via the Magnetic wrapper and springs back on leave.",
+            installSlug: "not-found-magnetic",
+            file: "components/motion/not-found/magnetic.tsx",
+            previewKey: "blocks/not-found-magnetic",
+            previewFile: "components/previews/blocks/not-found-magnetic.preview.tsx",
+          },
+          {
+            slug: "spotlight",
+            name: "Spotlight",
+            description:
+              "A dark panel where a cursor-tracked spotlight reveals the bright code from a dim base.",
+            installSlug: "not-found-spotlight",
+            file: "components/motion/not-found/spotlight.tsx",
+            previewKey: "blocks/not-found-spotlight",
+            previewFile: "components/previews/blocks/not-found-spotlight.preview.tsx",
+          },
+          {
+            slug: "stacked",
+            name: "Stacked",
+            description:
+              "A code card over a hidden stack that fans out with a spring on hover.",
+            installSlug: "not-found-stacked",
+            file: "components/motion/not-found/stacked.tsx",
+            previewKey: "blocks/not-found-stacked",
+            previewFile: "components/previews/blocks/not-found-stacked.preview.tsx",
+          },
+          {
+            slug: "terminal",
+            name: "Terminal",
+            description:
+              "A terminal window that types a failed cd command and a 404 status, with a blinking caret.",
+            installSlug: "not-found-terminal",
+            file: "components/motion/not-found/terminal.tsx",
+            previewKey: "blocks/not-found-terminal",
+            previewFile: "components/previews/blocks/not-found-terminal.preview.tsx",
+          },
+        ],
+      },
     ],
   },
 ];
