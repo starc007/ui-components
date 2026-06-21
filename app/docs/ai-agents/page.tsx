@@ -1,10 +1,27 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { CodeBlock } from "@/components/app/code-block";
 
-export const metadata = {
-  title: "AI Agents · beUI v2",
-  description: "Endpoints for coding agents to consume beUI components programmatically.",
+export const metadata: Metadata = {
+  title: "AI Agents",
+  description:
+    "Endpoints for coding agents to consume beUI components programmatically: llms.txt, JSON registry, and raw source.",
+  alternates: { canonical: "/docs/ai-agents" },
+  openGraph: {
+    title: "AI Agents · beUI v2",
+    description:
+      "Endpoints for coding agents to consume beUI components programmatically: llms.txt, JSON registry, and raw source.",
+    url: "/docs/ai-agents",
+    type: "article",
+    siteName: "beUI v2",
+    images: ["/api/og"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Agents · beUI v2",
+    images: ["/api/og"],
+  },
 };
 
 const ENDPOINTS: { label: string; url: string; desc: string }[] = [

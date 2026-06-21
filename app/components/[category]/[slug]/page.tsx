@@ -17,8 +17,14 @@ import {
   TabsTrigger,
 } from "@/components/motion/tabs";
 import { NewBadge } from "@/components/app/new-badge";
+import { JsonLd } from "@/components/app/json-ld";
 import { getPreview, previews } from "@/components/previews";
 import { readSourceFile } from "@/lib/source-files";
+import {
+  breadcrumbJsonLd,
+  componentJsonLd,
+  relatedComponents,
+} from "@/lib/seo";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
@@ -49,7 +55,8 @@ export async function generateMetadata({
     ? `/${installSlugs[0]}.json`
     : `/${comp.slug}.json`;
 
-  const title = `${comp.name} · ${cat.name} component · beUI v2`;
+  const title = `${comp.name} · React motion component`;
+  const ogTitle = `${title} · beUI v2`;
   const pageUrl = `/components/${cat.slug}/${comp.slug}`;
   const imageUrl = `/api/og?component=${comp.slug}`;
   const keywords = [
@@ -69,7 +76,7 @@ export async function generateMetadata({
     description: comp.description,
     keywords,
     openGraph: {
-      title,
+      title: ogTitle,
       description: comp.description,
       url: pageUrl,
       type: "article",
@@ -85,7 +92,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: ogTitle,
       description: comp.description,
       images: [imageUrl],
     },
@@ -128,9 +135,20 @@ export default async function ComponentPage({
   if (!cat || !comp) notFound();
   const hasVariantInstallCommands =
     comp.examples?.some((example) => example.installSlug) ?? false;
+  const related = relatedComponents(cat.slug, comp.slug);
 
   return (
     <div>
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "beUI v2", path: "/" },
+            { name: cat.name, path: `/components/${cat.slug}` },
+            { name: comp.name, path: `/components/${cat.slug}/${comp.slug}` },
+          ]),
+          componentJsonLd(cat, comp),
+        ]}
+      />
       <nav
         aria-label="Breadcrumb"
         className="flex items-center gap-1.5 text-sm"
@@ -175,6 +193,31 @@ export default async function ComponentPage({
               <InstallCommand slug={comp.slug} />
             </div>
           </div>
+        </section>
+      ) : null}
+
+      {related.length ? (
+        <section className="mt-12 border-t border-(--color-border) pt-8">
+          <h2 className="text-sm font-semibold text-(--color-fg)">
+            Related components
+          </h2>
+          <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {related.map((rel) => (
+              <li key={`${rel.category}/${rel.slug}`}>
+                <Link
+                  href={`/components/${rel.category}/${rel.slug}`}
+                  className="group/rel flex h-full flex-col rounded-2xl border border-(--color-border) bg-(--color-bg-elev) p-4 transition-colors hover:bg-(--color-bg-elev)/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent)"
+                >
+                  <span className="font-medium text-(--color-fg)">
+                    {rel.name}
+                  </span>
+                  <span className="mt-1 line-clamp-2 text-sm text-(--color-fg-muted)">
+                    {rel.description}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       ) : null}
     </div>
