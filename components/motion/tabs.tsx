@@ -163,7 +163,17 @@ export function TabsTrigger({
 export function TabsContent({ value, children, className }: { value: string; children: ReactNode; className?: string }) {
   const { value: current } = useTabs();
   const reduce = useReducedMotion();
-  if (current !== value) return null;
+  const active = current === value;
+  // Inactive panels stay mounted but hidden, so their content (e.g. source
+  // code) is present in the server-rendered HTML for crawlers and assistive
+  // tech, instead of being dropped from the DOM.
+  if (!active) {
+    return (
+      <div hidden className={className}>
+        {children}
+      </div>
+    );
+  }
   return (
     <motion.div
       key={value}
