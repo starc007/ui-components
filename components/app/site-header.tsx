@@ -13,10 +13,11 @@ import { SiteSearch } from "@/components/app/site-search";
 import { cn } from "@/lib/utils";
 
 function formatStarCount(count: number) {
-  return new Intl.NumberFormat("en-US", {
-    notation: count >= 1000 ? "compact" : "standard",
-    maximumFractionDigits: count >= 1000 && count < 10000 ? 1 : 0,
-  }).format(count);
+  if (count >= 1000) {
+    const val = Math.round(count / 100) / 10;
+    return `${val}k`;
+  }
+  return String(count);
 }
 
 export function SiteHeader({
