@@ -2,10 +2,25 @@ import type { Metadata } from "next";
 import { MotionPatterns } from "./motion-patterns";
 
 export const metadata: Metadata = {
-  title: "Motion Patterns · beUI v2",
-  description: "Simple motion patterns used across beUI components.",
+  title: "Motion Patterns",
+  description:
+    "The motion tokens and patterns behind beUI: easing, springs and timing used across every component.",
   alternates: {
     canonical: "/docs/motion-patterns",
+  },
+  openGraph: {
+    title: "Motion Patterns · beUI v2",
+    description:
+      "The motion tokens and patterns behind beUI: easing, springs and timing used across every component.",
+    url: "/docs/motion-patterns",
+    type: "article",
+    siteName: "beUI v2",
+    images: ["/api/og"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Motion Patterns · beUI v2",
+    images: ["/api/og"],
   },
 };
 

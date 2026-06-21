@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter, JetBrains_Mono } from "next/font/google";
@@ -10,7 +10,9 @@ import { SiteHeader } from "@/components/app/site-header";
 import { SiteDock } from "@/components/app/site-dock";
 import { SiteFrame } from "@/components/app/site-frame";
 import { KeyboardShortcuts } from "@/components/app/keyboard-shortcuts";
+import { JsonLd } from "@/components/app/json-ld";
 import { getGithubStarCount } from "@/lib/github";
+import { AUTHOR, SITE_DESCRIPTION, SITE_NAME, siteJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -19,9 +21,18 @@ const pixel = GeistPixelSquare;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://beui.dev"),
-  applicationName: "beUI v2",
-  title: "beUI v2 · motion components",
-  description: "Simple UI components with motion.",
+  applicationName: SITE_NAME,
+  title: {
+    default: "beUI v2 · React motion components for shadcn",
+    template: "%s · beUI v2",
+  },
+  description: SITE_DESCRIPTION,
+  authors: [{ name: AUTHOR, url: "https://github.com/starc007" }],
+  creator: AUTHOR,
+  publisher: SITE_NAME,
+  category: "technology",
+  formatDetection: { telephone: false, email: false, address: false },
+  manifest: "/manifest.webmanifest",
   alternates: {
     canonical: "/",
     types: {
@@ -30,27 +41,45 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "beUI v2",
-    description: "Simple UI components with motion.",
+    title: "beUI v2 · React motion components",
+    description: SITE_DESCRIPTION,
     type: "website",
     url: "/",
-    siteName: "beUI v2",
+    siteName: SITE_NAME,
+    locale: "en_US",
     images: [
       {
         url: "/api/og",
         width: 1200,
         height: 630,
-        alt: "beUI v2 UI components",
+        alt: "beUI v2 · React motion components",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "beUI v2",
-    description: "Simple UI components with motion.",
+    title: "beUI v2 · React motion components",
+    description: SITE_DESCRIPTION,
     images: ["/api/og"],
   },
-  keywords: ["Motion components", "UI components", "Component library", "Open source"],
+  keywords: [
+    "React motion components",
+    "Tailwind CSS components",
+    "shadcn registry",
+    "shadcn-compatible components",
+    "framer motion components",
+    "animated UI components",
+    "component library",
+    "copy paste components",
+    "open source",
+  ],
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fcfcfc" },
+    { media: "(prefers-color-scheme: dark)", color: "#151515" },
+  ],
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -66,6 +95,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="alternate" type="application/json" title="shadcn registry" href="/registry.json" />
       </head>
       <body className="min-h-screen antialiased">
+        <JsonLd data={siteJsonLd()} />
         <ThemeProvider>
           <KeyboardShortcuts />
           <SiteHeader githubStarCount={githubStarCount} />

@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { findCategory, registry, type ComponentEntry } from "@/lib/registry";
 import { NewBadge } from "@/components/app/new-badge";
+import { JsonLd } from "@/components/app/json-ld";
+import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
   return registry.map((c) => ({ category: c.slug }));
@@ -17,7 +19,8 @@ export async function generateMetadata({
   const cat = findCategory(category);
   if (!cat) return {};
 
-  const title = `${cat.name} components · beUI v2`;
+  const title = `${cat.name} · React motion components`;
+  const ogTitle = `${title} · beUI v2`;
   const pageUrl = `/components/${cat.slug}`;
   const imageUrl = `/api/og?category=${cat.slug}`;
   const componentNames = cat.components.map((comp) => comp.name);
@@ -35,7 +38,7 @@ export async function generateMetadata({
       ...componentNames,
     ],
     openGraph: {
-      title,
+      title: ogTitle,
       description: cat.description,
       url: pageUrl,
       type: "website",
@@ -51,7 +54,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: ogTitle,
       description: cat.description,
       images: [imageUrl],
     },
@@ -77,6 +80,15 @@ export default async function CategoryPage({
 
   return (
     <div>
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "beUI v2", path: "/" },
+            { name: cat.name, path: `/components/${cat.slug}` },
+          ]),
+          categoryJsonLd(cat),
+        ]}
+      />
       <nav
         aria-label="Breadcrumb"
         className="flex items-center gap-1.5 text-sm"
