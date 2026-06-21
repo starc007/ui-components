@@ -17,6 +17,7 @@ import {
   TabsTrigger,
 } from "@/components/motion/tabs";
 import { NewBadge } from "@/components/app/new-badge";
+import { ComponentCard } from "@/components/app/component-card";
 import { JsonLd } from "@/components/app/json-ld";
 import { getPreview, previews } from "@/components/previews";
 import { readSourceFile } from "@/lib/source-files";
@@ -135,7 +136,7 @@ export default async function ComponentPage({
   if (!cat || !comp) notFound();
   const hasVariantInstallCommands =
     comp.examples?.some((example) => example.installSlug) ?? false;
-  const related = relatedComponents(cat.slug, comp.slug);
+  const related = relatedComponents(cat.slug, comp.slug, 3);
 
   return (
     <div>
@@ -201,23 +202,18 @@ export default async function ComponentPage({
           <h2 className="text-sm font-semibold text-(--color-fg)">
             Related components
           </h2>
-          <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {related.map((rel) => (
-              <li key={`${rel.category}/${rel.slug}`}>
-                <Link
-                  href={`/components/${rel.category}/${rel.slug}`}
-                  className="group/rel flex h-full flex-col rounded-2xl border border-(--color-border) bg-(--color-bg-elev) p-4 transition-colors hover:bg-(--color-bg-elev)/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent)"
-                >
-                  <span className="font-medium text-(--color-fg)">
-                    {rel.name}
-                  </span>
-                  <span className="mt-1 line-clamp-2 text-sm text-(--color-fg-muted)">
-                    {rel.description}
-                  </span>
-                </Link>
-              </li>
+              <ComponentCard
+                key={`${rel.category}/${rel.slug}`}
+                categorySlug={rel.category}
+                slug={rel.slug}
+                name={rel.name}
+                description={rel.description}
+                badge={rel.badge}
+              />
             ))}
-          </ul>
+          </div>
         </section>
       ) : null}
     </div>

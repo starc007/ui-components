@@ -125,6 +125,7 @@ export type RelatedComponent = {
   slug: string;
   name: string;
   description: string;
+  badge?: "new";
 };
 
 /**
@@ -156,5 +157,6 @@ function toRelated(categorySlug: string, c: ComponentEntry): RelatedComponent {
     slug: c.slug,
     name: c.name,
     description: c.description,
+    badge: c.badge,
   };
 }
