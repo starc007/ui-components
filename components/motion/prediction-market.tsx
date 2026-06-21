@@ -673,7 +673,7 @@ export function PredictionMarket({
               classNames?.action,
             )}
           >
-            Sign In
+            Connect
           </StatefulButton>
         </div>
       )}
