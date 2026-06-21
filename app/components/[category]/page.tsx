@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { findCategory, registry, type ComponentEntry } from "@/lib/registry";
-import { NewBadge } from "@/components/app/new-badge";
+import { findCategory, registry } from "@/lib/registry";
+import { ComponentCard } from "@/components/app/component-card";
 import { JsonLd } from "@/components/app/json-ld";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
 
@@ -109,10 +108,13 @@ export default async function CategoryPage({
           </p>
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {newComponents.map((comp) => (
-              <CategoryComponentCard
+              <ComponentCard
                 key={comp.slug}
                 categorySlug={cat.slug}
-                component={comp}
+                slug={comp.slug}
+                name={comp.name}
+                description={comp.description}
+                badge={comp.badge}
               />
             ))}
           </div>
@@ -125,42 +127,17 @@ export default async function CategoryPage({
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {components.map((comp) => (
-            <CategoryComponentCard
+            <ComponentCard
               key={comp.slug}
               categorySlug={cat.slug}
-              component={comp}
+              slug={comp.slug}
+              name={comp.name}
+              description={comp.description}
+              badge={comp.badge}
             />
           ))}
         </div>
       </section>
     </div>
-  );
-}
-
-function CategoryComponentCard({
-  categorySlug,
-  component,
-}: {
-  categorySlug: string;
-  component: ComponentEntry;
-}) {
-  return (
-    <Link
-      href={`/components/${categorySlug}/${component.slug}`}
-      className="group/card relative flex h-40 flex-col overflow-hidden rounded-3xl bg-(--color-bg-elev) transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
-    >
-      <div className="flex shrink-0 items-center justify-between gap-3 px-4 py-3">
-        <h3 className="truncate font-pixel text-base font-medium text-(--color-fg)">
-          {component.name}
-        </h3>
-        {component.badge === "new" ? <NewBadge /> : null}
-      </div>
-
-      <div className="mx-2 mb-2 flex min-h-0 flex-1 items-start overflow-hidden rounded-3xl bg-(--color-bg) px-4 py-4 transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:bg-(--color-bg)/80 group-focus-visible/card:bg-(--color-bg)/80">
-        <p className="line-clamp-3 text-sm leading-relaxed text-(--color-fg-muted)">
-          {component.description}
-        </p>
-      </div>
-    </Link>
   );
 }
