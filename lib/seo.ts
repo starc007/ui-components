@@ -107,12 +107,16 @@ export function categoryJsonLd(cat: CategoryEntry): JsonLdSchema {
     description: cat.description,
     url,
     isPartOf: { "@id": `${SITE}/#website` },
-    hasPart: cat.components.map((comp) => ({
-      "@type": "TechArticle",
-      name: comp.name,
-      description: comp.description,
-      url: abs(`/components/${cat.slug}/${comp.slug}`),
-    })),
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: cat.components.length,
+      itemListElement: cat.components.map((comp, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: comp.name,
+        url: abs(`/components/${cat.slug}/${comp.slug}`),
+      })),
+    },
   };
 }
 
