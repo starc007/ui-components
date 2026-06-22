@@ -24,6 +24,8 @@ import { readSourceFile } from "@/lib/source-files";
 import {
   breadcrumbJsonLd,
   componentJsonLd,
+  componentKeywords,
+  componentMetaDescription,
   relatedComponents,
 } from "@/lib/seo";
 
@@ -60,30 +62,16 @@ export async function generateMetadata({
   const ogTitle = `${title} · beUI`;
   const pageUrl = `/components/${cat.slug}/${comp.slug}`;
   const imageUrl = `/api/og?component=${comp.slug}`;
-  const keywords = [
-    comp.name,
-    `${comp.name} component`,
-    `${comp.name} React component`,
-    `${comp.name} shadcn component`,
-    `free ${comp.name} component`,
-    `${comp.name} motion component`,
-    cat.name,
-    "React motion component",
-    "best motion components",
-    "free motion components",
-    "open source motion components",
-    "Tailwind CSS component",
-    "shadcn registry",
-    "beUI",
-  ];
+  const keywords = componentKeywords(cat, comp);
+  const metaDescription = componentMetaDescription(comp);
 
   return {
     title,
-    description: comp.description,
+    description: metaDescription,
     keywords,
     openGraph: {
       title: ogTitle,
-      description: comp.description,
+      description: metaDescription,
       url: pageUrl,
       type: "article",
       siteName: "beUI",
@@ -99,7 +87,7 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
-      description: comp.description,
+      description: metaDescription,
       images: [imageUrl],
     },
     alternates: {

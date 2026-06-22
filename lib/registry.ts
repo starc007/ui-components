@@ -18,6 +18,8 @@ export type ComponentEntry = {
   description: string;
   file: string;
   badge?: "new";
+  /** Optional hand-tuned SEO keywords, merged on top of generated ones. */
+  keywords?: string[];
   /** Extra source files bundled under this slug (e.g. multi-file components). */
   extraFiles?: string[];
   /** Per-variant breakdown rendered as separate Preview / Usage / Source on the page. */
