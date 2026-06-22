@@ -52,11 +52,11 @@ export function InstallCommand({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl border border-(--color-border) bg-(--color-bg-elev) text-sm",
+        "relative overflow-hidden rounded-xl border border-border bg-card text-sm",
         className,
       )}
     >
-      <div className="flex items-center gap-2 border-b border-(--color-border) px-3 py-1.5">
+      <div className="flex items-center gap-2 border-b border-border px-3 py-1.5">
         <Tabs
           value={pm}
           onValueChange={(v) => setPm(v as PM)}
@@ -67,8 +67,8 @@ export function InstallCommand({
               <TabsTrigger
                 key={p}
                 value={p}
-                indicatorClassName="bg-(--color-bg) border border-(--color-border) shadow-none"
-                className="h-7 px-2.5 text-xs font-medium text-(--color-fg-muted) hover:text-(--color-fg) aria-[selected=true]:text-(--color-fg)"
+                indicatorClassName="bg-background border border-border shadow-none"
+                className="h-7 px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground aria-[selected=true]:text-foreground"
               >
                 {p}
               </TabsTrigger>

@@ -67,22 +67,22 @@ export async function CodeBlock({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-xl border border-(--color-border) bg-(--color-bg-elev)",
+        "group relative overflow-hidden rounded-xl border border-border bg-card",
         "font-mono text-[13px]",
         className,
       )}
     >
       {filename ? (
-        <div className="flex items-center justify-between gap-3 border-b border-(--color-border) bg-(--color-bg)/60 px-4 py-2.5">
+        <div className="flex items-center justify-between gap-3 border-b border-border bg-background/60 px-4 py-2.5">
           <div className="flex min-w-0 items-center gap-2 text-xs">
-            <span className="inline-flex h-5 shrink-0 items-center rounded border border-(--color-border) bg-(--color-bg-elev) px-1.5 font-mono text-[10px] font-semibold tracking-wider text-(--color-fg-muted) uppercase">
+            <span className="inline-flex h-5 shrink-0 items-center rounded border border-border bg-card px-1.5 font-mono text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
               {langLabel}
             </span>
 
-            <FileIcon className="h-3.5 w-3.5 shrink-0 text-(--color-fg-muted)" />
-            <span className="truncate font-mono text-(--color-fg-muted)">
+            <FileIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <span className="truncate font-mono text-muted-foreground">
               {fileDir && <span className="opacity-60">{fileDir}/</span>}
-              <span className="text-(--color-fg) font-medium">{fileName}</span>
+              <span className="text-foreground font-medium">{fileName}</span>
             </span>
           </div>
 
@@ -103,7 +103,7 @@ export async function CodeBlock({
             "[&_code]:font-mono [&_code]:text-[13px]",
             "[&_.shiki]:bg-transparent",
             "[&_.line]:px-5",
-            "[&_.highlighted]:bg-(--color-fg)/[0.07] [&_.highlighted]:border-l-2 [&_.highlighted]:border-blue-500 [&_.highlighted]:!pl-[18px]",
+            "[&_.highlighted]:bg-foreground/[0.07] [&_.highlighted]:border-l-2 [&_.highlighted]:border-blue-500 [&_.highlighted]:!pl-[18px]",
             "[&_.diff.add]:bg-green-500/10 [&_.diff.add]:border-l-2 [&_.diff.add]:border-green-500 [&_.diff.add]:!pl-[18px]",
             "[&_.diff.remove]:bg-red-500/10 [&_.diff.remove]:border-l-2 [&_.diff.remove]:border-red-500 [&_.diff.remove]:!pl-[18px]",
             "[&_.focused]:opacity-100 [&_pre:has(.focused)_.line:not(.focused)]:opacity-30",

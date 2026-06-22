@@ -98,18 +98,18 @@ export default async function CategoryPage({
         aria-label="Breadcrumb"
         className="flex items-center gap-1.5 text-sm"
       >
-        <span className="font-medium text-(--color-fg)">{cat.name}</span>
+        <span className="font-medium text-foreground">{cat.name}</span>
       </nav>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-(--color-fg)">
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
         {cat.name}
       </h1>
-      <p className="mt-2 max-w-2xl text-(--color-fg-muted)">
+      <p className="mt-2 max-w-2xl text-muted-foreground">
         {cat.description}
       </p>
 
       {newComponents.length ? (
         <section className="mt-10">
-          <p className="font-pixel text-xs font-medium uppercase text-(--color-fg-muted)">
+          <p className="font-pixel text-xs font-medium uppercase text-muted-foreground">
             New
           </p>
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -128,7 +128,7 @@ export default async function CategoryPage({
       ) : null}
 
       <section className="mt-10">
-        <p className="font-pixel text-xs font-medium uppercase text-(--color-fg-muted)">
+        <p className="font-pixel text-xs font-medium uppercase text-muted-foreground">
           All {cat.name}
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">

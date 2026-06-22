@@ -86,7 +86,7 @@ export function AnimatedToastStackPreview() {
         placement="fixed"
         maxVisible={4}
         classNames={{
-          surface: "bg-(--color-bg-elev)/95",
+          surface: "bg-card/95",
         }}
         icons={{
           neutral: <Sparkles className="h-3.5 w-3.5" />,
@@ -94,8 +94,8 @@ export function AnimatedToastStackPreview() {
       />
 
       <div className="flex flex-col items-center gap-2 text-center">
-        <p className="text-sm font-medium text-(--color-fg)">Open a real toast</p>
-        <p className="max-w-sm text-xs leading-5 text-(--color-fg-muted)">
+        <p className="text-sm font-medium text-foreground">Open a real toast</p>
+        <p className="max-w-sm text-xs leading-5 text-muted-foreground">
           Toasts render fixed on the screen. Change position to open a toast from that edge.
         </p>
       </div>
@@ -107,7 +107,7 @@ export function AnimatedToastStackPreview() {
               key={example.label}
               type="button"
               onClick={() => openToast(example)}
-              className="inline-flex h-9 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-4 text-xs font-medium text-(--color-fg) transition-colors press hover:border-(--color-border-strong)"
+              className="inline-flex h-9 items-center gap-2 rounded-full border border-border bg-card px-4 text-xs font-medium text-foreground transition-colors press hover:border-(--color-border-strong)"
             >
               {example.status === "loading" ? (
                 <LoaderCircle className="h-3.5 w-3.5" />
@@ -123,7 +123,7 @@ export function AnimatedToastStackPreview() {
         <button
           type="button"
           onClick={clearToasts}
-          className="inline-flex h-9 items-center rounded-full px-4 text-xs font-medium text-(--color-fg-muted) press hover:bg-(--color-fg)/[0.06] hover:text-(--color-fg)"
+          className="inline-flex h-9 items-center rounded-full px-4 text-xs font-medium text-muted-foreground press hover:bg-foreground/[0.06] hover:text-foreground"
         >
           Clear
         </button>
@@ -138,8 +138,8 @@ export function AnimatedToastStackPreview() {
             className={cn(
               "rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors press",
               position === positionOption
-                ? "bg-(--color-fg) text-(--color-bg)"
-                : "bg-(--color-fg)/[0.04] text-(--color-fg-muted) hover:bg-(--color-fg)/[0.08] hover:text-(--color-fg)",
+                ? "bg-foreground text-background"
+                : "bg-foreground/[0.04] text-muted-foreground hover:bg-foreground/[0.08] hover:text-foreground",
             )}
           >
             {positionOption}

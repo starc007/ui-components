@@ -17,24 +17,24 @@ export function LandingComponentCard({
       <Link
         href={`/components/${category}/${component.slug}`}
         aria-label={`View ${component.name}`}
-        className="absolute inset-0 z-20 rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
+        className="absolute inset-0 z-20 rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       />
-      <div className="relative flex h-full flex-col overflow-hidden rounded-3xl bg-(--color-bg-elev) transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint]">
+      <div className="relative flex h-full flex-col overflow-hidden rounded-3xl bg-card transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint]">
         <div className="flex shrink-0 items-center justify-between gap-3 px-4 py-3">
-          <h3 className="truncate font-pixel text-base font-medium text-(--color-fg)">
+          <h3 className="truncate font-pixel text-base font-medium text-foreground">
             {component.name}
           </h3>
           {component.badge === "new" ? <NewBadge /> : null}
         </div>
 
-        <div className="relative mx-2 mb-2 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-3xl bg-(--color-bg) px-5 py-5 contain-[paint]">
+        <div className="relative mx-2 mb-2 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-3xl bg-background px-5 py-5 contain-[paint]">
           <div className="pointer-events-none flex w-full max-w-full origin-center scale-80 items-center justify-center overflow-hidden transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] group-hover/card:scale-[0.84] group-focus-within/card:scale-[0.84] [&_*]:!cursor-default">
             {Preview ? <Preview /> : null}
           </div>
 
-          <div className="pointer-events-none absolute inset-0 rounded-3xl bg-transparent backdrop-blur-0 transition-[background-color,backdrop-filter] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:bg-(--color-bg-elev)/55 group-hover/card:backdrop-blur-md group-focus-within/card:bg-(--color-bg-elev)/55 group-focus-within/card:backdrop-blur-md">
+          <div className="pointer-events-none absolute inset-0 rounded-3xl bg-transparent backdrop-blur-0 transition-[background-color,backdrop-filter] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:bg-card/55 group-hover/card:backdrop-blur-md group-focus-within/card:bg-card/55 group-focus-within/card:backdrop-blur-md">
             <div className="absolute inset-x-0 bottom-0 overflow-hidden rounded-b-3xl px-4 py-3">
-              <p className="line-clamp-2 translate-y-full text-xs leading-relaxed text-(--color-fg-muted) transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:translate-y-0 group-focus-within/card:translate-y-0">
+              <p className="line-clamp-2 translate-y-full text-xs leading-relaxed text-muted-foreground transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:translate-y-0 group-focus-within/card:translate-y-0">
                 {component.description}
               </p>
             </div>

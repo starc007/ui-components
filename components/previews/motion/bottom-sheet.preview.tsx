@@ -10,7 +10,7 @@ export function BottomSheetPreview() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex h-10 items-center rounded-full border border-(--color-border) bg-(--color-bg-elev) px-5 text-sm font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
+        className="inline-flex h-10 items-center rounded-full border border-border bg-card px-5 text-sm font-medium text-foreground press hover:border-(--color-border-strong)"
       >
         Open bottom sheet
       </button>
@@ -21,12 +21,12 @@ export function BottomSheetPreview() {
         title="Quick actions"
         description="Drag the handle, fling, or swipe down to dismiss."
       >
-        <ul className="divide-y divide-(--color-border)">
+        <ul className="divide-y divide-border">
           {["Share", "Duplicate", "Move to folder", "Rename", "Archive", "Delete"].map((item) => (
-            <li key={item} className="py-3 text-sm text-(--color-fg)">{item}</li>
+            <li key={item} className="py-3 text-sm text-foreground">{item}</li>
           ))}
         </ul>
-        <div className="py-12 text-center text-xs text-(--color-fg-muted)">
+        <div className="py-12 text-center text-xs text-muted-foreground">
           Fling up to expand, fling down to dismiss.
         </div>
       </BottomSheet>

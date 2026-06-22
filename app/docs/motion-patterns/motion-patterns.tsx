@@ -120,20 +120,20 @@ export function MotionPatterns() {
               key={pattern.title}
               type="button"
               onClick={() => setActive(pattern)}
-              className="group min-h-32 rounded-2xl border border-(--color-border) bg-(--color-bg-elev) p-4 text-left transition-colors hover:border-(--color-border-strong) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-ring) focus-visible:ring-offset-2 focus-visible:ring-offset-(--color-bg)"
+              className="group min-h-32 rounded-2xl border border-border bg-card p-4 text-left transition-colors hover:border-(--color-border-strong) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <div className="flex items-start justify-between gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg)">
-                  <Icon className="h-4 w-4 text-(--color-fg)" aria-hidden="true" />
+                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background">
+                  <Icon className="h-4 w-4 text-foreground" aria-hidden="true" />
                 </span>
-                <span className="rounded-full border border-(--color-border) bg-(--color-bg) px-2 py-1 font-mono text-[10px] text-(--color-fg-muted)">
+                <span className="rounded-full border border-border bg-background px-2 py-1 font-mono text-[10px] text-muted-foreground">
                   {pattern.spec}
                 </span>
               </div>
-              <h2 className="mt-4 font-pixel text-base uppercase text-(--color-fg)">
+              <h2 className="mt-4 font-pixel text-base uppercase text-foreground">
                 {pattern.title}
               </h2>
-              <p className="mt-1 text-sm leading-5 text-(--color-fg-muted)">
+              <p className="mt-1 text-sm leading-5 text-muted-foreground">
                 {pattern.short}
               </p>
             </button>
@@ -165,20 +165,20 @@ function PatternDetails({ pattern }: { pattern: Pattern }) {
 
   return (
     <div className="space-y-3 pt-2">
-      <section className="rounded-2xl border border-(--color-border) bg-(--color-bg) p-4">
+      <section className="rounded-2xl border border-border bg-background p-4">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="font-pixel text-sm uppercase text-(--color-fg)">
+          <h3 className="font-pixel text-sm uppercase text-foreground">
             Live example
           </h3>
-          <span className="rounded-full border border-(--color-border) bg-(--color-bg-elev) px-2.5 py-1 font-mono text-[11px] text-(--color-fg-muted)">
+          <span className="rounded-full border border-border bg-card px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
             {pattern.spec}
           </span>
         </div>
         <LiveExample pattern={pattern} />
       </section>
 
-      <section className="rounded-2xl border border-(--color-border) bg-(--color-bg) p-4">
-        <h3 className="font-pixel text-sm uppercase text-(--color-fg)">
+      <section className="rounded-2xl border border-border bg-background p-4">
+        <h3 className="font-pixel text-sm uppercase text-foreground">
           Simple guide
         </h3>
         <div className="mt-3 grid gap-3">
@@ -187,10 +187,10 @@ function PatternDetails({ pattern }: { pattern: Pattern }) {
               key={row.label}
               className="grid grid-cols-[72px_minmax(0,1fr)] items-start gap-4"
             >
-              <p className="pt-1 font-mono text-[11px] uppercase text-(--color-fg-muted)">
+              <p className="pt-1 font-mono text-[11px] uppercase text-muted-foreground">
                 {row.label}
               </p>
-              <p className="text-sm leading-6 text-(--color-fg-muted)">
+              <p className="text-sm leading-6 text-muted-foreground">
                 {row.value}
               </p>
             </div>
@@ -198,11 +198,11 @@ function PatternDetails({ pattern }: { pattern: Pattern }) {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-(--color-border) bg-(--color-bg) p-4">
-        <h3 className="font-pixel text-sm uppercase text-(--color-fg)">
+      <section className="rounded-2xl border border-border bg-background p-4">
+        <h3 className="font-pixel text-sm uppercase text-foreground">
           Pseudo code
         </h3>
-        <pre className="mt-3 overflow-x-auto rounded-xl border border-(--color-border) bg-(--color-bg-elev) p-3 text-xs leading-6 text-(--color-fg)">
+        <pre className="mt-3 overflow-x-auto rounded-xl border border-border bg-card p-3 text-xs leading-6 text-foreground">
           <code>{pattern.code}</code>
         </pre>
       </section>
@@ -221,7 +221,7 @@ function LiveExample({ pattern }: { pattern: Pattern }) {
       <DemoFrame>
         <button
           type="button"
-          className="group inline-flex h-11 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-4 text-sm font-medium text-(--color-fg)"
+          className="group inline-flex h-11 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-medium text-foreground"
         >
           <Bell className="h-4 w-4 origin-top motion-safe:group-hover:animate-action-bell" />
           Hover bell
@@ -242,10 +242,10 @@ function LiveExample({ pattern }: { pattern: Pattern }) {
           initial={{ opacity: 0, y: 12, filter: "blur(6px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.52, ease: EASE_OUT }}
-          className="w-56 rounded-2xl bg-(--color-bg-elev) p-4"
+          className="w-56 rounded-2xl bg-card p-4"
         >
-          <p className="font-pixel text-sm uppercase text-(--color-fg)">New card</p>
-          <p className="mt-2 text-sm text-(--color-fg-muted)">Soft reveal with lift.</p>
+          <p className="font-pixel text-sm uppercase text-foreground">New card</p>
+          <p className="mt-2 text-sm text-muted-foreground">Soft reveal with lift.</p>
         </motion.div>
       </DemoFrame>
     );
@@ -258,7 +258,7 @@ function LiveExample({ pattern }: { pattern: Pattern }) {
           type="button"
           whileTap={{ scale: 0.97 }}
           transition={{ type: "spring", stiffness: 500, damping: 32 }}
-          className="h-11 rounded-full bg-(--color-fg) px-5 text-sm font-medium text-(--color-bg)"
+          className="h-11 rounded-full bg-foreground px-5 text-sm font-medium text-background"
         >
           Press me
         </motion.button>
@@ -281,26 +281,26 @@ function LiveExample({ pattern }: { pattern: Pattern }) {
           onBlur={() => setHoverExpand(false)}
           animate={{ width: expanded ? 136 : 44 }}
           transition={{ type: "spring", stiffness: 320, damping: 32 }}
-          className="relative h-11 overflow-hidden rounded-full border border-(--color-border) bg-(--color-bg-elev) text-left"
+          className="relative h-11 overflow-hidden rounded-full border border-border bg-card text-left"
         >
           <motion.span
             animate={{ opacity: expanded ? 0 : 1 }}
             transition={{ duration: 0.12 }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            <PanelTopOpen className="h-4 w-4 text-(--color-fg)" />
+            <PanelTopOpen className="h-4 w-4 text-foreground" />
           </motion.span>
           <motion.span
             animate={{ opacity: expanded ? 1 : 0 }}
             transition={{ duration: 0.12, delay: expanded ? 0.04 : 0 }}
             className="absolute left-3.5 top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center"
           >
-            <PanelTopOpen className="h-4 w-4 text-(--color-fg)" />
+            <PanelTopOpen className="h-4 w-4 text-foreground" />
           </motion.span>
           <motion.span
             animate={{ opacity: expanded ? 1 : 0, x: expanded ? 0 : -4 }}
             transition={{ duration: 0.18, delay: expanded ? 0.06 : 0 }}
-            className="absolute left-10 top-1/2 -translate-y-1/2 whitespace-nowrap text-sm text-(--color-fg)"
+            className="absolute left-10 top-1/2 -translate-y-1/2 whitespace-nowrap text-sm text-foreground"
           >
             Open panel
           </motion.span>
@@ -311,7 +311,7 @@ function LiveExample({ pattern }: { pattern: Pattern }) {
 
   return (
     <DemoFrame>
-      <div className="w-64 rounded-2xl bg-(--color-bg-elev) p-2">
+      <div className="w-64 rounded-2xl bg-card p-2">
         <div className="grid grid-cols-2 gap-1">
           {["Preview", "Code"].map((item) => (
             <button
@@ -321,8 +321,8 @@ function LiveExample({ pattern }: { pattern: Pattern }) {
               className={cn(
                 "rounded-full px-3 py-1.5 text-xs transition-colors",
                 tab === item
-                  ? "bg-(--color-fg) text-(--color-bg)"
-                  : "text-(--color-fg-muted)",
+                  ? "bg-foreground text-background"
+                  : "text-muted-foreground",
               )}
             >
               {item}
@@ -336,7 +336,7 @@ function LiveExample({ pattern }: { pattern: Pattern }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.18, ease: EASE_OUT }}
-            className="mt-3 rounded-xl bg-(--color-bg) p-4 text-sm text-(--color-fg)"
+            className="mt-3 rounded-xl bg-background p-4 text-sm text-foreground"
           >
             {tab === "Preview" ? "Live component view" : "Code sample view"}
           </motion.div>
@@ -354,14 +354,14 @@ function DemoFrame({
   action?: ReactNode;
 }) {
   return (
-    <div className="mt-4 rounded-2xl bg-(--color-bg-elev) p-3">
+    <div className="mt-4 rounded-2xl bg-card p-3">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <span className="font-mono text-[11px] uppercase text-(--color-fg-muted)">
+        <span className="font-mono text-[11px] uppercase text-muted-foreground">
           Try it
         </span>
         {action}
       </div>
-      <div className="flex min-h-32 items-center justify-center rounded-xl bg-(--color-bg) p-4">
+      <div className="flex min-h-32 items-center justify-center rounded-xl bg-background p-4">
         {children}
       </div>
     </div>
@@ -373,7 +373,7 @@ function ReplayButton({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-3 py-1.5 text-xs text-(--color-fg)"
+      className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-foreground"
     >
       <RefreshCw className="h-3 w-3" />
       Replay

@@ -12,16 +12,16 @@ export function CommandPalettePreview() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex h-10 items-center rounded-full border border-(--color-border) bg-(--color-bg-elev) px-5 text-sm font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
+        className="inline-flex h-10 items-center rounded-full border border-border bg-card px-5 text-sm font-medium text-foreground press hover:border-(--color-border-strong)"
       >
         Open command palette
       </button>
-      <p className="text-sm text-(--color-fg-muted)">
+      <p className="text-sm text-muted-foreground">
         Press{" "}
-        <kbd className="rounded border border-(--color-border) bg-(--color-bg-elev) px-1.5 py-0.5 text-xs text-(--color-fg)">
+        <kbd className="rounded border border-border bg-card px-1.5 py-0.5 text-xs text-foreground">
           ⌘ J
         </kbd>{" "}
-        (or <kbd className="rounded border border-(--color-border) bg-(--color-bg-elev) px-1.5 py-0.5 text-xs text-(--color-fg)">Ctrl J</kbd>) to open.
+        (or <kbd className="rounded border border-border bg-card px-1.5 py-0.5 text-xs text-foreground">Ctrl J</kbd>) to open.
       </p>
       <CommandPalette
         open={open}

@@ -7,23 +7,23 @@ const blockComponents = registry.find((c) => c.slug === "blocks")?.components ??
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-(--color-border) px-4 pt-14 pb-10">
+    <footer className="border-t border-border px-4 pt-14 pb-10">
       <div className="mx-auto max-w-7xl">
         {/* Main grid */}
         <div className="grid grid-cols-2 gap-10 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <p className="font-pixel text-lg font-medium text-(--color-fg)">beUI</p>
-            <p className="mt-2 max-w-[220px] text-sm leading-6 text-(--color-fg-muted)">
+            <p className="font-pixel text-lg font-medium text-foreground">beUI</p>
+            <p className="mt-2 max-w-[220px] text-sm leading-6 text-muted-foreground">
               Motion components for React. Copy-paste via shadcn registry.
             </p>
-            <p className="mt-5 text-xs text-(--color-fg-muted)">
+            <p className="mt-5 text-xs text-muted-foreground">
               Created by{" "}
               <Link
                 href="https://x.com/saurra3h"
                 target="_blank"
                 rel="noreferrer noopener"
-                className="font-medium text-(--color-fg) underline-offset-2 hover:underline"
+                className="font-medium text-foreground underline-offset-2 hover:underline"
               >
                 Saurabh
               </Link>
@@ -34,7 +34,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noreferrer noopener"
                 aria-label="GitHub"
-                className="text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                className="text-muted-foreground transition-colors hover:text-foreground"
               >
                 <GithubIcon className="h-4 w-4" />
               </Link>
@@ -43,7 +43,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noreferrer noopener"
                 aria-label="X / Twitter"
-                className="text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                className="text-muted-foreground transition-colors hover:text-foreground"
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -54,7 +54,7 @@ export function SiteFooter() {
 
           {/* Components */}
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Components
             </p>
             <ul className="space-y-2.5">
@@ -62,7 +62,7 @@ export function SiteFooter() {
                 <li key={c.slug}>
                   <Link
                     href={`/components/motion/${c.slug}`}
-                    className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {c.name}
                   </Link>
@@ -73,7 +73,7 @@ export function SiteFooter() {
 
           {/* Blocks */}
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Blocks
             </p>
             <ul className="space-y-2.5">
@@ -81,7 +81,7 @@ export function SiteFooter() {
                 <li key={c.slug}>
                   <Link
                     href={`/components/blocks/${c.slug}`}
-                    className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {c.name}
                   </Link>
@@ -92,14 +92,14 @@ export function SiteFooter() {
 
           {/* Links */}
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Links
             </p>
             <ul className="space-y-2.5">
               <li>
                 <Link
                   href="/components/motion"
-                  className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   Browse all
                 </Link>
@@ -109,7 +109,7 @@ export function SiteFooter() {
                   href="https://github.com/starc007/ui-components"
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   GitHub
                 </Link>
@@ -119,7 +119,7 @@ export function SiteFooter() {
                   href="https://x.com/saurra3h"
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   X / Twitter
                 </Link>
@@ -127,7 +127,7 @@ export function SiteFooter() {
               <li>
                 <Link
                   href="/llms.txt"
-                  className="text-sm text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   llms.txt
                 </Link>
@@ -137,8 +137,8 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-14 border-t border-(--color-border) pt-6">
-          <p className="text-xs text-(--color-fg-muted)">© 2026 beUI. MIT License.</p>
+        <div className="mt-14 border-t border-border pt-6">
+          <p className="text-xs text-muted-foreground">© 2026 beUI. MIT License.</p>
         </div>
       </div>
     </footer>

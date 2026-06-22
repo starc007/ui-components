@@ -28,7 +28,7 @@ export async function ManualInstall({
     <div className="flex flex-col gap-6">
       {deps.length > 0 ? (
         <section>
-          <h3 className="text-sm font-semibold text-(--color-fg)">
+          <h3 className="text-sm font-semibold text-foreground">
             Install dependencies
           </h3>
           <div className="mt-3">
@@ -39,7 +39,7 @@ export async function ManualInstall({
 
       {utilFiles.length > 0 ? (
         <section>
-          <h3 className="text-sm font-semibold text-(--color-fg)">
+          <h3 className="text-sm font-semibold text-foreground">
             Add util file{utilFiles.length > 1 ? "s" : ""}
           </h3>
           <div className="mt-3 flex flex-col gap-4">
@@ -51,7 +51,7 @@ export async function ManualInstall({
       ) : null}
 
       <section>
-        <h3 className="text-sm font-semibold text-(--color-fg)">
+        <h3 className="text-sm font-semibold text-foreground">
           Copy the source code
         </h3>
         <div className="mt-3 flex flex-col gap-4">

@@ -12,9 +12,9 @@ export function TabsPreview() {
             <TabsTrigger value="activity">Activity</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
-          <TabsContent value="overview" className="text-sm text-(--color-fg-muted)">High-level summary.</TabsContent>
-          <TabsContent value="activity" className="text-sm text-(--color-fg-muted)">Recent events.</TabsContent>
-          <TabsContent value="settings" className="text-sm text-(--color-fg-muted)">Preferences.</TabsContent>
+          <TabsContent value="overview" className="text-sm text-muted-foreground">High-level summary.</TabsContent>
+          <TabsContent value="activity" className="text-sm text-muted-foreground">Recent events.</TabsContent>
+          <TabsContent value="settings" className="text-sm text-muted-foreground">Preferences.</TabsContent>
         </Tabs>
       </Section>
       <Section title="Segment">
@@ -42,7 +42,7 @@ export function TabsPreview() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-(--color-fg-muted)">{title}</span>
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{title}</span>
       {children}
     </div>
   );

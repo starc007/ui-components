@@ -73,29 +73,29 @@ const ENTRY_SHAPE = `{
 export default function AIAgentsPage() {
   return (
     <div className="max-w-3xl">
-      <p className="text-xs font-semibold uppercase tracking-wider text-(--color-fg-muted)">Intro</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-(--color-fg)">For AI agents</h1>
-      <p className="mt-3 text-(--color-fg-muted)">
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Intro</p>
+      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">For AI agents</h1>
+      <p className="mt-3 text-muted-foreground">
         beUI exposes a static, agent-friendly surface. Coding agents (Cursor, Claude, GPT, custom MCP) can list components, fetch source with all deps, and drop files into the user&apos;s project with one HTTP call.
       </p>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">Endpoints</h2>
-      <ul className="mt-4 divide-y divide-(--color-border) rounded-2xl border border-(--color-border) bg-(--color-bg-elev)">
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">Endpoints</h2>
+      <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
         {ENDPOINTS.map((e) => (
           <li key={e.url} className="flex items-start justify-between gap-4 p-4">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <code className="rounded-md bg-(--color-fg)/5 px-2 py-0.5 font-mono text-xs text-(--color-fg)">{e.url}</code>
-                <span className="text-sm font-medium text-(--color-fg)">{e.label}</span>
+                <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-xs text-foreground">{e.url}</code>
+                <span className="text-sm font-medium text-foreground">{e.label}</span>
               </div>
-              <p className="mt-1 text-sm text-(--color-fg-muted)">{e.desc}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{e.desc}</p>
             </div>
             {!e.url.includes("{") ? (
               <Link
                 href={e.url}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="inline-flex shrink-0 items-center gap-1 rounded-full border border-(--color-border) bg-(--color-bg) px-3 py-1 text-xs text-(--color-fg-muted) hover:text-(--color-fg)"
+                className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground hover:text-foreground"
               >
                 Open
                 <ArrowUpRight className="h-3 w-3" />
@@ -105,31 +105,31 @@ export default function AIAgentsPage() {
         ))}
       </ul>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">Agent flow</h2>
-      <p className="mt-2 text-(--color-fg-muted)">Four calls, then install. Components are self-contained and own their files.</p>
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">Agent flow</h2>
+      <p className="mt-2 text-muted-foreground">Four calls, then install. Components are self-contained and own their files.</p>
       <div className="mt-4">
         <CodeBlock code={FETCH_SNIPPET} lang="ts" filename="agent.ts" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">shadcn flow</h2>
-      <p className="mt-2 text-(--color-fg-muted)">
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">shadcn flow</h2>
+      <p className="mt-2 text-muted-foreground">
         The shadcn item installs source files and package dependencies. Components use shadcn semantic color utilities directly, so they inherit the target app&apos;s theme without beUI-specific color variables.
       </p>
       <div className="mt-4">
         <CodeBlock code={SHADCN_SNIPPET} lang="bash" filename="terminal" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">Entry shape</h2>
-      <p className="mt-2 text-(--color-fg-muted)">
-        Internal helpers (e.g. <code className="rounded bg-(--color-fg)/5 px-1.5 py-0.5 font-mono text-xs">@/lib/utils</code>) ship inline as <code className="rounded bg-(--color-fg)/5 px-1.5 py-0.5 font-mono text-xs">type: util</code> so the agent does not have to chase imports.
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">Entry shape</h2>
+      <p className="mt-2 text-muted-foreground">
+        Internal helpers (e.g. <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">@/lib/utils</code>) ship inline as <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">type: util</code> so the agent does not have to chase imports.
       </p>
       <div className="mt-4">
         <CodeBlock code={ENTRY_SHAPE} lang="json" filename="r/swap.json" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-(--color-fg)">Caching</h2>
-      <p className="mt-2 text-(--color-fg-muted)">
-        All routes are pre-rendered at build, served with <code className="rounded bg-(--color-fg)/5 px-1.5 py-0.5 font-mono text-xs">cache-control: public, max-age=300, s-maxage=3600</code>.
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">Caching</h2>
+      <p className="mt-2 text-muted-foreground">
+        All routes are pre-rendered at build, served with <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">cache-control: public, max-age=300, s-maxage=3600</code>.
       </p>
     </div>
   );

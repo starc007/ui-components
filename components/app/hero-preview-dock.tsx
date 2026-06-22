@@ -19,24 +19,24 @@ export function HeroPreviewDock() {
     >
 
       <div className="overflow-hidden rounded-3xl glass-strong">
-        <div className="flex items-center gap-2 border-b border-(--color-border) px-4 py-2.5">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-2.5">
           <div className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full border border-(--color-border-strong)" />
             <span className="h-2.5 w-2.5 rounded-full border border-(--color-border-strong)" />
             <span className="h-2.5 w-2.5 rounded-full border border-(--color-border-strong)" />
           </div>
-          <div className="mx-auto flex items-center gap-2 rounded-md border border-(--color-border) bg-(--color-bg)/60 px-3 py-1 text-xs text-(--color-fg-muted)">
-            <span className="h-1.5 w-1.5 rounded-full bg-(--color-fg)" />
+          <div className="mx-auto flex items-center gap-2 rounded-md border border-border bg-background/60 px-3 py-1 text-xs text-muted-foreground">
+            <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
             beui.dev / dashboard
           </div>
-          <div className="flex items-center gap-1 text-(--color-fg-muted)">
-            <kbd className="hidden items-center gap-1 rounded border border-(--color-border) bg-(--color-bg) px-1.5 py-0.5 text-[10px] sm:inline-flex">
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <kbd className="hidden items-center gap-1 rounded border border-border bg-background px-1.5 py-0.5 text-[10px] sm:inline-flex">
               <Command className="h-2.5 w-2.5" /> K
             </kbd>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-px bg-(--color-border) md:grid-cols-[280px_1fr]">
+        <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-[280px_1fr]">
           <SidePanel />
           <MainPanel />
         </div>
@@ -51,8 +51,8 @@ function Pill({ children, solid = false }: { children: React.ReactNode; solid?: 
       className={cn(
         "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium",
         solid
-          ? "border-(--color-fg) bg-(--color-fg) text-(--color-bg)"
-          : "border-(--color-border) bg-(--color-bg-elev) text-(--color-fg-muted)",
+          ? "border-foreground bg-foreground text-background"
+          : "border-border bg-card text-muted-foreground",
       )}
     >
       {children}
@@ -62,9 +62,9 @@ function Pill({ children, solid = false }: { children: React.ReactNode; solid?: 
 
 function SidePanel() {
   return (
-    <div className="bg-(--color-bg)/40 p-4">
+    <div className="bg-background/40 p-4">
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
           Workspace
         </span>
         <Pill solid>Pro</Pill>
@@ -82,13 +82,13 @@ function SidePanel() {
               className={cn(
                 "flex h-8 items-center justify-between rounded-md px-2 text-sm transition-colors",
                 item.active
-                  ? "bg-(--color-bg-elev) text-(--color-fg) font-medium border border-(--color-border)"
-                  : "text-(--color-fg-muted)",
+                  ? "bg-card text-foreground font-medium border border-border"
+                  : "text-muted-foreground",
               )}
             >
               <span>{item.label}</span>
               {item.badge ? (
-                <span className="rounded bg-(--color-bg-elev) px-1.5 py-0.5 text-[10px] text-(--color-fg-muted)">
+                <span className="rounded bg-card px-1.5 py-0.5 text-[10px] text-muted-foreground">
                   {item.badge}
                 </span>
               ) : null}
@@ -97,12 +97,12 @@ function SidePanel() {
         ))}
       </ul>
 
-      <div className="mt-6 rounded-2xl border border-(--color-border) bg-(--color-bg-elev) p-3">
-        <div className="flex items-center gap-2 text-xs text-(--color-fg)">
-          <Sparkles className="h-3.5 w-3.5 text-(--color-fg)" />
+      <div className="mt-6 rounded-2xl border border-border bg-card p-3">
+        <div className="flex items-center gap-2 text-xs text-foreground">
+          <Sparkles className="h-3.5 w-3.5 text-foreground" />
           Bespoke motion components
         </div>
-        <p className="mt-1 text-[11px] text-(--color-fg-muted)">
+        <p className="mt-1 text-[11px] text-muted-foreground">
           Tabs, switches, sheets, palettes. All motion-driven.
         </p>
       </div>
@@ -114,29 +114,29 @@ function MainPanel() {
   const [notifs, setNotifs] = useState(true);
 
   return (
-    <div className="bg-(--color-bg)/40 p-5">
+    <div className="bg-background/40 p-5">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs text-(--color-fg-muted)">Monthly recurring</p>
+          <p className="text-xs text-muted-foreground">Monthly recurring</p>
           <div className="mt-1 flex items-baseline gap-2">
             <NumberTicker
               value={129480}
               prefix="$"
               locale
-              className="text-3xl font-semibold tracking-tight text-(--color-fg)"
+              className="text-3xl font-semibold tracking-tight text-foreground"
             />
-            <span className="inline-flex items-center gap-0.5 rounded-md border border-(--color-border) bg-(--color-bg-elev) px-1.5 py-0.5 text-[11px] font-medium text-(--color-fg)">
+            <span className="inline-flex items-center gap-0.5 rounded-md border border-border bg-card px-1.5 py-0.5 text-[11px] font-medium text-foreground">
               <ArrowUpRight className="h-3 w-3" />
               12.4%
             </span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button type="button" className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg-muted) press hover:text-(--color-fg)">
+          <button type="button" className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-card text-muted-foreground press hover:text-foreground">
             <Bell className="h-3.5 w-3.5" />
           </button>
-          <button type="button" className="inline-flex h-8 items-center gap-1.5 rounded-md border border-(--color-border) bg-(--color-bg-elev) px-2.5 text-xs text-(--color-fg) press">
-            <Search className="h-3.5 w-3.5 text-(--color-fg-muted)" />
+          <button type="button" className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-card px-2.5 text-xs text-foreground press">
+            <Search className="h-3.5 w-3.5 text-muted-foreground" />
             Search
           </button>
         </div>
@@ -167,34 +167,34 @@ function MainPanel() {
             ].map((row) => (
               <li
                 key={row.who}
-                className="flex items-center justify-between rounded-lg border border-(--color-border) bg-(--color-bg-elev) px-3 py-2 text-sm"
+                className="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2 text-sm"
               >
                 <div className="flex items-center gap-2.5">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-(--color-bg) text-[10px] font-semibold text-(--color-fg)">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-background text-[10px] font-semibold text-foreground">
                     {row.who[0]}
                   </span>
-                  <span className="text-(--color-fg)">
+                  <span className="text-foreground">
                     <span className="font-medium">{row.who}</span>{" "}
-                    <span className="text-(--color-fg-muted)">{row.what}</span>
+                    <span className="text-muted-foreground">{row.what}</span>
                   </span>
                 </div>
-                <span className="text-xs text-(--color-fg-muted)">{row.when}</span>
+                <span className="text-xs text-muted-foreground">{row.when}</span>
               </li>
             ))}
           </ul>
         </TabsContent>
 
         <TabsContent value="billing">
-          <div className="flex items-center justify-between rounded-lg border border-(--color-border) bg-(--color-bg-elev) p-4">
+          <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
             <div>
-              <p className="text-sm font-medium text-(--color-fg)">Notifications</p>
-              <p className="text-xs text-(--color-fg-muted)">Email me when invoices are paid.</p>
+              <p className="text-sm font-medium text-foreground">Notifications</p>
+              <p className="text-xs text-muted-foreground">Email me when invoices are paid.</p>
             </div>
             <Switch checked={notifs} onCheckedChange={setNotifs} />
           </div>
-          <div className="mt-3 flex items-center justify-between rounded-lg border border-(--color-border) bg-(--color-bg-elev) p-4">
-            <div className="flex items-center gap-2 text-sm text-(--color-fg)">
-              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-(--color-border) bg-(--color-bg-elev) text-(--color-fg)">
+          <div className="mt-3 flex items-center justify-between rounded-lg border border-border bg-card p-4">
+            <div className="flex items-center gap-2 text-sm text-foreground">
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-border bg-card text-foreground">
                 <Check className="h-3 w-3" strokeWidth={3} />
               </span>
               Plan: Pro
@@ -209,13 +209,13 @@ function MainPanel() {
 
 function Stat({ label, value, suffix }: { label: string; value: number; suffix?: string }) {
   return (
-    <div className="rounded-lg border border-(--color-border) bg-(--color-bg-elev) p-3">
-      <p className="text-[11px] text-(--color-fg-muted)">{label}</p>
+    <div className="rounded-lg border border-border bg-card p-3">
+      <p className="text-[11px] text-muted-foreground">{label}</p>
       <NumberTicker
         value={value}
         suffix={suffix}
         locale
-        className="mt-1 text-lg font-semibold text-(--color-fg)"
+        className="mt-1 text-lg font-semibold text-foreground"
       />
     </div>
   );
@@ -233,20 +233,20 @@ function Spark() {
   const area = `${path} L ${w} ${h} L 0 ${h} Z`;
 
   return (
-    <div className="mt-4 overflow-hidden rounded-lg border border-(--color-border) bg-(--color-bg-elev) p-4">
+    <div className="mt-4 overflow-hidden rounded-lg border border-border bg-card p-4">
       <div className="flex items-center justify-between">
-        <p className="text-xs text-(--color-fg-muted)">Last 14 days</p>
-        <p className="text-xs font-medium text-(--color-fg)">+24%</p>
+        <p className="text-xs text-muted-foreground">Last 14 days</p>
+        <p className="text-xs font-medium text-foreground">+24%</p>
       </div>
       <svg viewBox={`0 0 ${w} ${h}`} className="mt-3 h-16 w-full" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <linearGradient id="spark" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="var(--fg)" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="var(--fg)" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--foreground)" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="var(--foreground)" stopOpacity="0" />
           </linearGradient>
         </defs>
         <path d={area} fill="url(#spark)" />
-        <path d={path} fill="none" stroke="var(--fg)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+        <path d={path} fill="none" stroke="var(--foreground)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
       </svg>
     </div>
   );

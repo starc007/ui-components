@@ -46,8 +46,8 @@ export function MobileNav() {
               className={cn(
                 "rounded-md px-3 py-1.5 text-sm transition-colors",
                 pathname.startsWith("/components/motion") || (pathname.startsWith("/components") && !pathname.startsWith("/components/blocks"))
-                  ? "text-(--color-fg)"
-                  : "text-(--color-fg-muted) hover:text-(--color-fg)",
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               Components
@@ -58,8 +58,8 @@ export function MobileNav() {
               className={cn(
                 "rounded-md px-3 py-1.5 text-sm transition-colors",
                 pathname.startsWith("/components/blocks")
-                  ? "text-(--color-fg)"
-                  : "text-(--color-fg-muted) hover:text-(--color-fg)",
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               Blocks

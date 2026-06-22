@@ -11,7 +11,7 @@ export function TextRevealPreview() {
         <TextReveal
           as="h2"
           text={["Motion that feels", "considered."]}
-          className="text-balance text-4xl font-semibold leading-[0.95] tracking-[-0.04em] text-(--color-fg) sm:text-5xl"
+          className="text-balance text-4xl font-semibold leading-[0.95] tracking-[-0.04em] text-foreground sm:text-5xl"
         />
         <TextReveal
           text="Word by word, with a soft blur."
@@ -19,14 +19,14 @@ export function TextRevealPreview() {
           stagger={0.05}
           blur={6}
           yOffset="20%"
-          className="text-sm text-(--color-fg-muted)"
+          className="text-sm text-muted-foreground"
         />
       </div>
 
       <button
         type="button"
         onClick={() => setKey((k) => k + 1)}
-        className="inline-flex h-9 items-center rounded-full border border-(--color-border) bg-(--color-bg-elev) px-4 text-xs font-medium text-(--color-fg) press hover:border-(--color-border-strong)"
+        className="inline-flex h-9 items-center rounded-full border border-border bg-card px-4 text-xs font-medium text-foreground press hover:border-(--color-border-strong)"
       >
         Replay
       </button>

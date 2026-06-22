@@ -72,7 +72,7 @@ export function DynamicIslandPreview() {
               type="button"
               aria-label="Decline"
               onClick={() => setView(null)}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-(--color-danger) text-white"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-destructive text-white"
             >
               <PhoneOff className="h-3.5 w-3.5" />
             </button>
