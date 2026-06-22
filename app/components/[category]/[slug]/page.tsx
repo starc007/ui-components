@@ -149,20 +149,20 @@ export default async function ComponentPage({
       >
         <Link
           href={`/components/${cat.slug}`}
-          className="text-(--color-fg-muted) transition-colors hover:text-(--color-fg)"
+          className="text-muted-foreground transition-colors hover:text-foreground"
         >
           {cat.name}
         </Link>
-        <ChevronRight className="h-3.5 w-3.5 text-(--color-fg-muted)" />
-        <span className="font-medium text-(--color-fg)">{comp.name}</span>
+        <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+        <span className="font-medium text-foreground">{comp.name}</span>
       </nav>
       <div className="mt-4 flex items-center gap-3">
-        <h1 className="text-3xl font-semibold tracking-tight text-(--color-fg)">
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
           {comp.name}
         </h1>
         {comp.badge === "new" ? <NewBadge className="mt-1" /> : null}
       </div>
-      <p className="mt-2 max-w-2xl text-(--color-fg-muted)">
+      <p className="mt-2 max-w-2xl text-muted-foreground">
         {comp.description}
       </p>
 
@@ -177,10 +177,10 @@ export default async function ComponentPage({
       )}
 
       {!hasVariantInstallCommands ? (
-        <section className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-6 border-t border-(--color-border) pt-8">
+        <section className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-6 border-t border-border pt-8">
           <div className="min-w-0">
-            <h2 className="text-sm font-semibold text-(--color-fg)">Install</h2>
-            <p className="mt-1 text-sm text-(--color-fg-muted)">
+            <h2 className="text-sm font-semibold text-foreground">Install</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
               Add it with the shadcn CLI, or copy the source manually.
             </p>
             <div className="mt-3">
@@ -191,8 +191,8 @@ export default async function ComponentPage({
       ) : null}
 
       {related.length ? (
-        <section className="mt-12 border-t border-(--color-border) pt-8">
-          <h2 className="text-sm font-semibold text-(--color-fg)">
+        <section className="mt-12 border-t border-border pt-8">
+          <h2 className="text-sm font-semibold text-foreground">
             Related components
           </h2>
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -228,15 +228,15 @@ async function ExampleBlock({
   return (
     <section>
       <div className="mb-4 flex items-baseline justify-between gap-3">
-        <h2 className="text-xl font-semibold tracking-tight text-(--color-fg)">
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">
           {example.name}
         </h2>
-        <code className="rounded-md bg-(--color-fg)/5 px-2 py-0.5 font-mono text-[11px] text-(--color-fg-muted)">
+        <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
           {example.file.split("/").pop()}
         </code>
       </div>
       {example.description ? (
-        <p className="mb-4 text-sm text-(--color-fg-muted)">
+        <p className="mb-4 text-sm text-muted-foreground">
           {example.description}
         </p>
       ) : null}
@@ -247,7 +247,7 @@ async function ExampleBlock({
           <TabsTrigger value="source">Code</TabsTrigger>
         </TabsList>
         <TabsContent value="preview" className="mt-4">
-          <div className="flex min-h-[260px] items-center justify-center rounded-2xl border border-(--color-border) bg-(--color-bg-elev) py-10">
+          <div className="flex min-h-[260px] items-center justify-center rounded-2xl border border-border bg-card py-10">
             {Preview ? <Preview /> : null}
           </div>
         </TabsContent>
@@ -259,8 +259,8 @@ async function ExampleBlock({
         </TabsContent>
       </Tabs>
       {installSlug ? (
-        <div className="mt-5 min-w-0 border-t border-(--color-border) pt-5">
-          <h3 className="text-sm font-semibold text-(--color-fg)">Install</h3>
+        <div className="mt-5 min-w-0 border-t border-border pt-5">
+          <h3 className="text-sm font-semibold text-foreground">Install</h3>
           <div className="mt-3">
             <InstallBlock category={category} slug={installSlug} />
           </div>

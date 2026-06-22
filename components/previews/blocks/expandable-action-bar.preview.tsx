@@ -84,7 +84,7 @@ export function ExpandableActionBarPreview() {
         <motion.button
           type="button"
           onClick={() => setExpanded((current) => !current)}
-          className="relative flex h-9 w-[110px] items-center justify-center overflow-hidden rounded-full border border-(--color-border) bg-(--color-bg-elev) text-xs font-medium text-(--color-fg) transition-colors hover:border-(--color-border-strong)"
+          className="relative flex h-9 w-[110px] items-center justify-center overflow-hidden rounded-full border border-border bg-card text-xs font-medium text-foreground transition-colors hover:border-(--color-border-strong)"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.96 }}
         >

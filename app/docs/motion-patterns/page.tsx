@@ -27,10 +27,10 @@ export const metadata: Metadata = {
 export default function MotionPatternsPage() {
   return (
     <div className="max-w-4xl">
-      <h1 className="font-pixel text-4xl uppercase tracking-tight text-(--color-fg)">
+      <h1 className="font-pixel text-4xl uppercase tracking-tight text-foreground">
         Motion Patterns
       </h1>
-      <p className="mt-3 max-w-2xl text-(--color-fg-muted)">
+      <p className="mt-3 max-w-2xl text-muted-foreground">
         Small cards for quick scanning. Open one to see the rule, example and what to avoid.
       </p>
 

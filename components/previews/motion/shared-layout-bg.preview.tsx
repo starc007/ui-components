@@ -21,10 +21,10 @@ export function SharedLayoutBgPreview() {
             className="group flex flex-col gap-1 px-2 py-3 text-left"
           >
             <div className="flex items-center justify-between gap-3">
-              <span className="text-sm font-medium text-(--color-fg)">{it.title}</span>
-              <ArrowUpRight className="h-3.5 w-3.5 text-(--color-fg-muted) transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              <span className="text-sm font-medium text-foreground">{it.title}</span>
+              <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </div>
-            <p className="text-sm text-(--color-fg-muted)">{it.body}</p>
+            <p className="text-sm text-muted-foreground">{it.body}</p>
           </button>
         ))}
       </SharedLayoutBg>

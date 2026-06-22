@@ -47,7 +47,7 @@ export function SiteHeader({
       className={cn(
         "fixed inset-x-0 top-0 z-40 transition-[background,border-color,backdrop-filter] duration-300",
         scrolled
-          ? "border-b border-(--color-border) bg-(--color-bg)/70 backdrop-blur-xl backdrop-saturate-150"
+          ? "border-b border-border bg-background/70 backdrop-blur-xl backdrop-saturate-150"
           : "border-b border-transparent bg-transparent",
       )}
     >
@@ -56,7 +56,7 @@ export function SiteHeader({
           <MobileNav />
           <Link
             href="/"
-            className="group flex items-center gap-2.5 text-sm font-semibold tracking-tight text-(--color-fg)"
+            className="group flex items-center gap-2.5 text-sm font-semibold tracking-tight text-foreground"
           >
             <Image
               src="/beui-mark.png"
@@ -74,8 +74,8 @@ export function SiteHeader({
               className={cn(
                 "rounded-md px-3 py-1.5 text-sm transition-colors",
                 isComponents
-                  ? "text-(--color-fg)"
-                  : "text-(--color-fg-muted) hover:text-(--color-fg)",
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               Components
@@ -85,8 +85,8 @@ export function SiteHeader({
               className={cn(
                 "rounded-md px-3 py-1.5 text-sm transition-colors",
                 isBlocks
-                  ? "text-(--color-fg)"
-                  : "text-(--color-fg-muted) hover:text-(--color-fg)",
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               Blocks
@@ -100,7 +100,7 @@ export function SiteHeader({
             href="https://github.com/starc007/ui-components"
             target="_blank"
             rel="noreferrer noopener"
-            className="group inline-flex items-center gap-1.5 rounded-2xl border border-(--color-border) bg-(--color-bg-elev)/20 px-3 py-2 text-xs font-medium text-(--color-fg) hover:border-(--color-border-strong)"
+            className="group inline-flex items-center gap-1.5 rounded-2xl border border-border bg-card/20 px-3 py-2 text-xs font-medium text-foreground hover:border-(--color-border-strong)"
             aria-label={
               formattedStarCount
                 ? `Star on GitHub, ${formattedStarCount} stars`
@@ -109,7 +109,7 @@ export function SiteHeader({
           >
             <GithubIcon className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Github</span>
-            <span className="inline-flex items-center gap-0.5 text-(--color-fg-muted)">
+            <span className="inline-flex items-center gap-0.5 text-muted-foreground">
               <Star className="h-3 w-3" />
               {formattedStarCount ? <span>{formattedStarCount}</span> : null}
             </span>

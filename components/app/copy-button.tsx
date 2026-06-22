@@ -27,7 +27,7 @@ export function CopyButton({
       }}
       aria-label={copied ? "Copied" : "Copy code"}
       className={cn(
-        "text-(--color-fg-muted) hover:text-(--color-fg)",
+        "text-muted-foreground hover:text-foreground",
         className,
       )}
     >

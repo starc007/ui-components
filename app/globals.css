@@ -3,13 +3,14 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-    --bg: oklch(99% 0 0);
-    --bg-elev: oklch(97% 0 0);
-    --fg: oklch(15% 0 0);
-    --fg-muted: oklch(50% 0 0);
+    /* Base palette (concrete values). */
+    --background: oklch(99% 0 0);
+    --foreground: oklch(15% 0 0);
+    --card: oklch(97% 0 0);
+    --muted-foreground: oklch(50% 0 0);
     --border: oklch(15% 0 0 / 0.06);
+    /* beUI extensions (no shadcn equivalent). */
     --border-strong: oklch(15% 0 0 / 0.12);
-    --accent: oklch(72% 0.18 195);
     --accent-fg: oklch(15% 0 0);
     --neon: oklch(80% 0.22 145);
     --violet: oklch(68% 0.22 295);
@@ -20,29 +21,28 @@
     --glass-border: oklch(15% 0 0 / 0.08);
     --glass-strong-bg: rgb(255 255 255 / 0.7);
     --glass-thin-bg: rgb(255 255 255 / 0.45);
-    --background: var(--bg);
-    --foreground: var(--fg);
-    --card: var(--bg-elev);
-    --card-foreground: var(--fg);
-    --popover: var(--bg-elev);
-    --popover-foreground: var(--fg);
-    --primary: var(--fg);
-    --primary-foreground: var(--bg);
-    --secondary: var(--bg-elev);
-    --secondary-foreground: var(--fg);
-    --muted: var(--bg-elev);
-    --muted-foreground: var(--fg-muted);
+    /* shadcn semantic tokens, mapped onto the base. */
+    --card-foreground: var(--foreground);
+    --popover: var(--card);
+    --popover-foreground: var(--foreground);
+    --primary: var(--foreground);
+    --primary-foreground: var(--background);
+    --secondary: var(--card);
+    --secondary-foreground: var(--foreground);
+    --muted: var(--card);
+    --accent: oklch(72% 0.18 195);
     --accent-foreground: var(--accent-fg);
     --destructive: var(--danger);
     --input: var(--border);
     --ring: var(--border-strong);
 }
 
+/* Dark mode overrides only the base; semantic tokens follow via var(). */
 .dark {
-    --bg: #151515;
-    --bg-elev: #1c1c1c;
-    --fg: oklch(96% 0 0);
-    --fg-muted: oklch(62% 0 0);
+    --background: #151515;
+    --foreground: oklch(96% 0 0);
+    --card: #1c1c1c;
+    --muted-foreground: oklch(62% 0 0);
     --border: rgb(255 255 255 / 0.05);
     --border-strong: rgb(255 255 255 / 0.1);
     --accent: oklch(80% 0.18 195);
@@ -51,22 +51,6 @@
     --glass-border: rgb(255 255 255 / 0.08);
     --glass-strong-bg: rgb(28 28 28 / 0.6);
     --glass-thin-bg: rgb(21 21 21 / 0.45);
-    --background: var(--bg);
-    --foreground: var(--fg);
-    --card: var(--bg-elev);
-    --card-foreground: var(--fg);
-    --popover: var(--bg-elev);
-    --popover-foreground: var(--fg);
-    --primary: var(--fg);
-    --primary-foreground: var(--bg);
-    --secondary: var(--bg-elev);
-    --secondary-foreground: var(--fg);
-    --muted: var(--bg-elev);
-    --muted-foreground: var(--fg-muted);
-    --accent-foreground: var(--accent-fg);
-    --destructive: var(--danger);
-    --input: var(--border);
-    --ring: var(--border-strong);
 }
 
 @theme inline {
@@ -75,17 +59,10 @@
     --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
     --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
-    --color-bg: var(--bg);
-    --color-bg-elev: var(--bg-elev);
-    --color-fg: var(--fg);
-    --color-fg-muted: var(--fg-muted);
     --color-border: var(--border);
     --color-border-strong: var(--border-strong);
-    --color-accent: var(--accent);
-    --color-accent-fg: var(--accent-fg);
     --color-neon: var(--neon);
     --color-violet: var(--violet);
-    --color-danger: var(--danger);
     --color-success: var(--success);
     --color-warning: var(--warning);
     --color-background: var(--background);
@@ -100,6 +77,7 @@
     --color-secondary-foreground: var(--secondary-foreground);
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
     --color-destructive: var(--destructive);
     --color-input: var(--input);
@@ -225,8 +203,8 @@
         overflow-x: clip;
     }
     body {
-        background: var(--bg);
-        color: var(--fg);
+        background: var(--background);
+        color: var(--foreground);
         font-family: var(--font-sans);
         overflow-x: clip;
         -webkit-font-smoothing: antialiased;
@@ -234,7 +212,7 @@
     }
     ::selection {
         background: color-mix(in oklch, var(--accent) 30%, transparent);
-        color: var(--fg);
+        color: var(--foreground);
     }
 }
 
@@ -250,12 +228,12 @@
         background-image:
             linear-gradient(
                 to right,
-                color-mix(in oklch, var(--fg) 6%, transparent) 1px,
+                color-mix(in oklch, var(--foreground) 6%, transparent) 1px,
                 transparent 1px
             ),
             linear-gradient(
                 to bottom,
-                color-mix(in oklch, var(--fg) 6%, transparent) 1px,
+                color-mix(in oklch, var(--foreground) 6%, transparent) 1px,
                 transparent 1px
             );
         background-size: 32px 32px;

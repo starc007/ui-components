@@ -11,14 +11,14 @@ export function NumberTickerPreview() {
   }, []);
   return (
     <div className="flex flex-col items-center gap-3">
-      <p className="text-xs text-(--color-fg-muted)">Active users</p>
+      <p className="text-xs text-muted-foreground">Active users</p>
       <NumberTicker
         value={value}
         prefix=""
-        className="text-4xl font-semibold tracking-tight text-(--color-fg) tabular-nums"
+        className="text-4xl font-semibold tracking-tight text-foreground tabular-nums"
         format={(n) => n.toLocaleString()}
       />
-      <p className="text-xs text-(--color-fg-muted)">live · updates every 2.5s</p>
+      <p className="text-xs text-muted-foreground">live · updates every 2.5s</p>
     </div>
   );
 }

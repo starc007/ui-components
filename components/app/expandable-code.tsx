@@ -43,11 +43,11 @@ export function ExpandableCode({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       {!expanded && canExpand && (
-        <div className="absolute bottom-0 left-0 right-0 flex h-32 items-end justify-center bg-gradient-to-t from-(--color-bg-elev) to-transparent pb-4">
+        <div className="absolute bottom-0 left-0 right-0 flex h-32 items-end justify-center bg-gradient-to-t from-card to-transparent pb-4">
           <button
             type="button"
             onClick={() => setExpanded(true)}
-            className="rounded-full bg-(--color-bg)/80 px-4 py-1.5 text-xs font-medium text-(--color-fg) shadow-sm backdrop-blur-sm transition-colors hover:bg-(--color-bg) border border-(--color-border)"
+            className="rounded-full bg-background/80 px-4 py-1.5 text-xs font-medium text-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-background border border-border"
           >
             Expand Code
           </button>

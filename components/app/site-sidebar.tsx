@@ -28,17 +28,17 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     cn(
       "relative block rounded-lg px-3 py-1.5 text-sm transition-colors",
       active
-        ? "text-(--color-fg) font-medium bg-(--color-fg)/[0.06]"
-        : "text-(--color-fg-muted) hover:text-(--color-fg)",
+        ? "text-foreground font-medium bg-foreground/[0.06]"
+        : "text-muted-foreground hover:text-foreground",
     );
 
   return (
     <nav className="flex flex-col gap-8">
       <div>
-        <p className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+        <p className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           Intro
         </p>
-        <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-(--color-fg)/[0.05]">
+        <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
           {INTRO.map((item) => (
             <Link
               key={item.slug}
@@ -52,10 +52,10 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
         </SharedLayoutBg>
       </div>
       <div>
-        <p className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-(--color-fg-muted)">
+        <p className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           Guides
         </p>
-        <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-(--color-fg)/[0.05]">
+        <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
           {PATTERNS.map((item) => (
             <Link
               key={item.slug}
@@ -73,11 +73,11 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           <Link
             href={`/components/${cat.slug}`}
             onClick={onNavigate}
-            className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-(--color-fg-muted)"
+            className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
           >
             {cat.name}
           </Link>
-          <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-(--color-fg)/[0.05]">
+          <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
             {moveFirstItemsToBottom(cat.components, 3).map((comp) => {
               const href = `/components/${cat.slug}/${comp.slug}`;
               return (

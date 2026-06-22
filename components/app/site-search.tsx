@@ -57,13 +57,13 @@ export function SiteSearch({ className }: { className?: string }) {
         aria-label="Search components"
         onClick={() => setOpen(true)}
         className={cn(
-          "flex h-9 w-full items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-3 text-sm text-(--color-fg-muted) transition-colors hover:border-(--color-border-strong) hover:text-(--color-fg)",
+          "flex h-9 w-full items-center gap-2 rounded-full border border-border bg-card px-3 text-sm text-muted-foreground transition-colors hover:border-(--color-border-strong) hover:text-foreground",
           className,
         )}
       >
         <Search className="h-3.5 w-3.5 shrink-0" />
         <span className="hidden flex-1 text-left sm:block">Search</span>
-        <kbd className="hidden rounded border border-(--color-border) bg-(--color-bg) px-1.5 py-0.5 text-[10px] text-(--color-fg-muted) md:inline-block">
+        <kbd className="hidden rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground md:inline-block">
           ⌘K
         </kbd>
       </button>

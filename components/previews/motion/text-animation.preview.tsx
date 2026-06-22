@@ -33,7 +33,7 @@ export function TextAnimationPreview() {
               stagger={0.045}
               blur={6}
               yOffset="18%"
-              className="text-balance text-3xl font-semibold tracking-tight text-(--color-fg)"
+              className="text-balance text-3xl font-semibold tracking-tight text-foreground"
             />
           ) : (
             <TextShimmer duration={1.8} className="text-xl font-semibold">

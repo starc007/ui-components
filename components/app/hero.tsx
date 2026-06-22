@@ -29,11 +29,11 @@ export function Hero() {
           href="https://github.com/starc007/ui-components"
           target="_blank"
           rel="noreferrer noopener"
-          className="group mb-7 inline-flex min-h-9 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-3 text-xs font-medium text-(--color-fg) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent)"
+          className="group mb-7 inline-flex min-h-9 items-center gap-2 rounded-full border border-border bg-card px-3 text-xs font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-(--color-accent)" />
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
           Tailwind 4 + React 19
-          <ArrowUpRight className="h-3 w-3 text-(--color-fg-muted) transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          <ArrowUpRight className="h-3 w-3 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </PressLink>
       </motion.div>
 
@@ -42,14 +42,14 @@ export function Hero() {
         text={HEADLINE}
         delay={START}
         stagger={STAGGER}
-        className="mx-auto font-pixel text-5xl font-medium leading-[0.9] text-(--color-fg) sm:text-6xl md:text-7xl"
+        className="mx-auto font-pixel text-5xl font-medium leading-[0.9] text-foreground sm:text-6xl md:text-7xl"
       />
 
       <motion.p
         initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={{ duration: 0.5, ease: EASE_OUT, delay: subDelay }}
-        className="mx-auto mt-6 max-w-sm text-pretty text-base leading-7 text-(--color-fg-muted)"
+        className="mx-auto mt-6 max-w-sm text-pretty text-base leading-7 text-muted-foreground"
       >
         Copy-ready components with clean motion.
       </motion.p>
@@ -62,7 +62,7 @@ export function Hero() {
       >
         <PressLink
           href="/components/motion"
-          className="group inline-flex h-10 items-center gap-2 rounded-full bg-(--color-fg) px-4 text-sm font-medium text-(--color-bg) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent)"
+          className="group inline-flex h-10 items-center gap-2 rounded-full bg-foreground px-4 text-sm font-medium text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           Browse components
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -71,7 +71,7 @@ export function Hero() {
           href="https://github.com/starc007/ui-components"
           target="_blank"
           rel="noreferrer noopener"
-          className="inline-flex h-10 items-center gap-2 rounded-full border border-(--color-border) bg-(--color-bg-elev) px-4 text-sm font-medium text-(--color-fg) hover:border-(--color-border-strong) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-accent)"
+          className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-medium text-foreground hover:border-(--color-border-strong) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           <GithubIcon className="h-4 w-4" />
           GitHub

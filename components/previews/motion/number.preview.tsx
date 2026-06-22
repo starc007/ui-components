@@ -36,17 +36,17 @@ export function NumberPreview() {
         >
           {variant === "ticker" ? (
             <div>
-              <p className="text-xs text-(--color-fg-muted)">Active users</p>
+              <p className="text-xs text-muted-foreground">Active users</p>
               <NumberTicker
                 value={value}
-                className="text-3xl font-semibold tracking-tight text-(--color-fg) tabular-nums"
+                className="text-3xl font-semibold tracking-tight text-foreground tabular-nums"
                 format={(number) => number.toLocaleString()}
               />
             </div>
           ) : (
             <div>
-              <p className="text-xs text-(--color-fg-muted)">Revenue</p>
-              <div className="text-3xl font-semibold tracking-tight text-(--color-fg) tabular-nums">
+              <p className="text-xs text-muted-foreground">Revenue</p>
+              <div className="text-3xl font-semibold tracking-tight text-foreground tabular-nums">
                 <AnimatedNumber
                   value={129480}
                   format={(number) => `$${Math.round(number).toLocaleString()}`}
