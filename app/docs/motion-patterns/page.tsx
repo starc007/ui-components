@@ -9,17 +9,17 @@ export const metadata: Metadata = {
     canonical: "/docs/motion-patterns",
   },
   openGraph: {
-    title: "Motion Patterns · beUI v2",
+    title: "Motion Patterns · beUI",
     description:
       "The motion tokens and patterns behind beUI: easing, springs and timing used across every component.",
     url: "/docs/motion-patterns",
     type: "article",
-    siteName: "beUI v2",
+    siteName: "beUI",
     images: ["/api/og"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Motion Patterns · beUI v2",
+    title: "Motion Patterns · beUI",
     images: ["/api/og"],
   },
 };

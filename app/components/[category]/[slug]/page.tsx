@@ -57,7 +57,7 @@ export async function generateMetadata({
     : `/${comp.slug}.json`;
 
   const title = `${comp.name} · React motion component`;
-  const ogTitle = `${title} · beUI v2`;
+  const ogTitle = `${title} · beUI`;
   const pageUrl = `/components/${cat.slug}/${comp.slug}`;
   const imageUrl = `/api/og?component=${comp.slug}`;
   const keywords = [
@@ -65,11 +65,16 @@ export async function generateMetadata({
     `${comp.name} component`,
     `${comp.name} React component`,
     `${comp.name} shadcn component`,
+    `free ${comp.name} component`,
+    `${comp.name} motion component`,
     cat.name,
     "React motion component",
+    "best motion components",
+    "free motion components",
+    "open source motion components",
     "Tailwind CSS component",
     "shadcn registry",
-    "beUI v2",
+    "beUI",
   ];
 
   return {
@@ -81,7 +86,7 @@ export async function generateMetadata({
       description: comp.description,
       url: pageUrl,
       type: "article",
-      siteName: "beUI v2",
+      siteName: "beUI",
       images: [
         {
           url: imageUrl,
@@ -143,7 +148,7 @@ export default async function ComponentPage({
       <JsonLd
         data={[
           breadcrumbJsonLd([
-            { name: "beUI v2", path: "/" },
+            { name: "beUI", path: "/" },
             { name: cat.name, path: `/components/${cat.slug}` },
             { name: comp.name, path: `/components/${cat.slug}/${comp.slug}` },
           ]),

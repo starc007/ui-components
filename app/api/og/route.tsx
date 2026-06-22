@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   const categorySlug = searchParams.get("category");
   const component = componentSlug ? allComponents().find((item) => item.slug === componentSlug) : undefined;
   const category = component?.category ?? (categorySlug ? findCategory(categorySlug) : undefined);
-  const title = component?.name ?? (category ? `${category.name} components` : "beUI v2");
+  const title = component?.name ?? (category ? `${category.name} components` : "beUI");
   const description =
     component?.description ??
     category?.description ??
@@ -62,7 +62,6 @@ export async function GET(request: Request) {
               }}
             />
             <span style={{ fontWeight: 700, color: "#fafafa" }}>beUI</span>
-            <span>v2</span>
           </div>
           <div style={{ display: "flex", fontSize: 22, color: "#a3a3a3" }}>
             {label}

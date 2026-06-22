@@ -7,9 +7,9 @@ import {
 } from "@/lib/registry";
 
 export const SITE = "https://beui.dev";
-export const SITE_NAME = "beUI v2";
+export const SITE_NAME = "beUI";
 export const SITE_DESCRIPTION =
-  "Open-source React motion components built on Motion and Tailwind CSS. Copy-paste source or install via the shadcn CLI.";
+  "Free, open-source, shadcn-compatible motion components for React and Next.js. Built on Motion and Tailwind CSS. Copy-paste the source or install with the shadcn CLI.";
 export const AUTHOR = "Saurabh";
 
 const abs = (path: string) => (path.startsWith("http") ? path : `${SITE}${path}`);

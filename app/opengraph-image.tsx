@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "beUI v2 UI components";
+export const alt = "beUI UI components";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -47,7 +47,6 @@ export default async function OpengraphImage() {
               }}
             />
             <span style={{ fontWeight: 700, color: "#fafafa" }}>beUI</span>
-            <span>v2</span>
           </div>
           <div style={{ display: "flex", fontSize: 22, color: "#a3a3a3" }}>
             beui.dev
