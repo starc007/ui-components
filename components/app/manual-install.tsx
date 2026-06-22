@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { CodeBlock } from "@/components/app/code-block";
 import { buildEntry } from "@/lib/registry-server";
 
@@ -26,6 +28,21 @@ export async function ManualInstall({
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="rounded-xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+        Needs the theme tokens once. Already ran{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+          shadcn init
+        </code>
+        ? You are set.{" "}
+        <Link
+          href="/docs/theme"
+          className="inline-flex items-center gap-1 text-foreground underline underline-offset-4"
+        >
+          Theme setup
+          <ArrowUpRight className="h-3 w-3" />
+        </Link>
+      </div>
+
       {deps.length > 0 ? (
         <section>
           <h3 className="text-sm font-semibold text-foreground">
