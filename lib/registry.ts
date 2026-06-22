@@ -330,6 +330,13 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/otp-input.tsx",
       },
       {
+        slug: "drawer",
+        name: "Drawer",
+        description: "Side panel that slides in from the left or right with a spring, backdrop blur, body scroll lock and esc-to-close.",
+        file: "components/motion/drawer.tsx",
+        badge: "new",
+      },
+      {
         slug: "not-found",
         name: "404 / Not Found",
         description: "Animated 404 pages in five styles: glitch scramble, magnetic digits, cursor spotlight, a fanning card stack and a typed terminal.",

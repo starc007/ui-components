@@ -104,7 +104,7 @@ export function SiteHeader({
             <button
               type="button"
               onClick={() => setPanelOpen(true)}
-              aria-label="Customize"
+              aria-label="Customize theme"
               className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card/20 text-muted-foreground transition-colors hover:text-foreground"
             >
               <SwatchBook className="h-4 w-4" />
