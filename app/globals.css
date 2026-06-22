@@ -53,56 +53,8 @@
     --glass-thin-bg: rgb(21 21 21 / 0.45);
 }
 
-/* Color theme presets. Selected via data-theme on <html>; default (no
-   attribute) keeps the mono palette. Each shifts primary/accent/ring only. */
-[data-theme="violet"] {
-    --primary: oklch(55% 0.2 290);
-    --primary-foreground: oklch(99% 0 0);
-    --accent: oklch(55% 0.2 290);
-    --ring: oklch(55% 0.2 290 / 0.5);
-}
-.dark[data-theme="violet"] {
-    --primary: oklch(72% 0.16 290);
-    --primary-foreground: oklch(15% 0 0);
-    --accent: oklch(72% 0.16 290);
-    --ring: oklch(72% 0.16 290 / 0.55);
-}
-[data-theme="blue"] {
-    --primary: oklch(55% 0.18 255);
-    --primary-foreground: oklch(99% 0 0);
-    --accent: oklch(55% 0.18 255);
-    --ring: oklch(55% 0.18 255 / 0.5);
-}
-.dark[data-theme="blue"] {
-    --primary: oklch(70% 0.15 255);
-    --primary-foreground: oklch(15% 0 0);
-    --accent: oklch(70% 0.15 255);
-    --ring: oklch(70% 0.15 255 / 0.55);
-}
-[data-theme="green"] {
-    --primary: oklch(56% 0.14 150);
-    --primary-foreground: oklch(99% 0 0);
-    --accent: oklch(56% 0.14 150);
-    --ring: oklch(56% 0.14 150 / 0.5);
-}
-.dark[data-theme="green"] {
-    --primary: oklch(72% 0.15 150);
-    --primary-foreground: oklch(15% 0 0);
-    --accent: oklch(72% 0.15 150);
-    --ring: oklch(72% 0.15 150 / 0.55);
-}
-[data-theme="amber"] {
-    --primary: oklch(74% 0.15 70);
-    --primary-foreground: oklch(20% 0.02 70);
-    --accent: oklch(74% 0.15 70);
-    --ring: oklch(74% 0.15 70 / 0.5);
-}
-.dark[data-theme="amber"] {
-    --primary: oklch(80% 0.15 75);
-    --primary-foreground: oklch(18% 0.02 75);
-    --accent: oklch(80% 0.15 75);
-    --ring: oklch(80% 0.15 75 / 0.55);
-}
+/* Color theme presets (full token sets) are injected at runtime from
+   lib/themes.ts via PreferencesProvider, keyed by data-theme on <html>. */
 
 @theme inline {
     /* Strong easing curves shared across every component. */

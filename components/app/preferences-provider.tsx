@@ -7,8 +7,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { type ColorTheme, themesStylesheet } from "@/lib/themes";
 
-export type ColorTheme = "default" | "violet" | "blue" | "green" | "amber";
+export type { ColorTheme };
 // Future: "hugeicons" | "phosphor" | "tabler"
 export type IconSet = "lucide";
 
@@ -56,6 +57,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         setPanelOpen,
       }}
     >
+      {/* Full per-theme token sets, applied via data-theme on <html>. */}
+      <style dangerouslySetInnerHTML={{ __html: themesStylesheet() }} />
       {children}
     </PreferencesCtx.Provider>
   );

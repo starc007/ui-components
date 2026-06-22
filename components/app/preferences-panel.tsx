@@ -1,21 +1,14 @@
 "use client";
 
-import { Check, X } from "lucide-react";
+import { useState } from "react";
+import { Check, Copy, X } from "lucide-react";
 import { Drawer } from "@/components/motion/drawer";
 import { cn } from "@/lib/utils";
+import { THEME_LIST, themeExportCss } from "@/lib/themes";
 import {
-  type ColorTheme,
   type IconSet,
   usePreferences,
 } from "@/components/app/preferences-provider";
-
-const COLOR_THEMES: { id: ColorTheme; name: string; swatch: string }[] = [
-  { id: "default", name: "Mono", swatch: "oklch(40% 0 0)" },
-  { id: "violet", name: "Violet", swatch: "oklch(55% 0.2 290)" },
-  { id: "blue", name: "Blue", swatch: "oklch(55% 0.18 255)" },
-  { id: "green", name: "Green", swatch: "oklch(56% 0.14 150)" },
-  { id: "amber", name: "Amber", swatch: "oklch(74% 0.15 70)" },
-];
 
 const ICON_SETS: { id: IconSet | string; name: string; soon?: boolean }[] = [
   { id: "lucide", name: "Lucide" },
@@ -32,6 +25,13 @@ export function PreferencesPanel() {
     panelOpen,
     setPanelOpen,
   } = usePreferences();
+  const [copied, setCopied] = useState(false);
+
+  const copyTheme = async () => {
+    await navigator.clipboard.writeText(themeExportCss(colorTheme));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <Drawer
@@ -57,8 +57,8 @@ export function PreferencesPanel() {
         <p className="font-pixel text-xs font-medium uppercase text-muted-foreground">
           Theme
         </p>
-        <div className="mt-3 flex items-center gap-2.5">
-          {COLOR_THEMES.map((t) => {
+        <div className="mt-3 flex flex-wrap items-center gap-2.5">
+          {THEME_LIST.map((t) => {
             const active = colorTheme === t.id;
             return (
               <button
@@ -79,6 +79,18 @@ export function PreferencesPanel() {
             );
           })}
         </div>
+        <button
+          type="button"
+          onClick={copyTheme}
+          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-card/70"
+        >
+          {copied ? (
+            <Check className="h-3.5 w-3.5" />
+          ) : (
+            <Copy className="h-3.5 w-3.5" />
+          )}
+          {copied ? "Copied CSS" : "Copy theme CSS"}
+        </button>
       </section>
 
       <section>
