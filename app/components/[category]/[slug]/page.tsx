@@ -72,6 +72,8 @@ export async function generateMetadata({
     "best motion components",
     "free motion components",
     "open source motion components",
+    "framer motion component",
+    "best framer motion components",
     "Tailwind CSS component",
     "shadcn registry",
     "beUI",
