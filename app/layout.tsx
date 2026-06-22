@@ -6,6 +6,8 @@ import { GeistPixelSquare } from "geist/font/pixel";
 import "./globals.css";
 import { GoogleAnalytics } from "@/components/app/google-analytics";
 import { ThemeProvider } from "@/components/app/theme-provider";
+import { PreferencesProvider } from "@/components/app/preferences-provider";
+import { PreferencesPanel } from "@/components/app/preferences-panel";
 import { SiteHeader } from "@/components/app/site-header";
 import { SiteDock } from "@/components/app/site-dock";
 import { SiteFrame } from "@/components/app/site-frame";
@@ -107,15 +109,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-screen antialiased">
         <JsonLd data={siteJsonLd()} />
         <ThemeProvider>
-          <KeyboardShortcuts />
-          <SiteHeader githubStarCount={githubStarCount} />
-          <main className="pt-14 pb-32">
-            <SiteFrame>{children}</SiteFrame>
-          </main>
-          <SiteDock />
-          {process.env.NODE_ENV === "production" && <Analytics />}
-          {process.env.NODE_ENV === "production" && <SpeedInsights />}
-          <GoogleAnalytics measurementId={googleAnalyticsId} />
+          <PreferencesProvider>
+            <KeyboardShortcuts />
+            <SiteHeader githubStarCount={githubStarCount} />
+            <main className="pt-14 pb-32">
+              <SiteFrame>{children}</SiteFrame>
+            </main>
+            <SiteDock />
+            <PreferencesPanel />
+            {process.env.NODE_ENV === "production" && <Analytics />}
+            {process.env.NODE_ENV === "production" && <SpeedInsights />}
+            <GoogleAnalytics measurementId={googleAnalyticsId} />
+          </PreferencesProvider>
         </ThemeProvider>
       </body>
     </html>
