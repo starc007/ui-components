@@ -6,10 +6,13 @@ import { useMotionValueEvent, useScroll } from "motion/react";
 import { Star } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { SwatchBook } from "lucide-react";
 import { GithubIcon } from "@/components/app/icons";
 import { MobileNav } from "@/components/app/mobile-nav";
 import { PressLink } from "@/components/app/press-link";
 import { SiteSearch } from "@/components/app/site-search";
+import { Tooltip } from "@/components/motion/tooltip";
+import { usePreferences } from "@/components/app/preferences-provider";
 import { cn } from "@/lib/utils";
 
 function formatStarCount(count: number) {
@@ -27,6 +30,7 @@ export function SiteHeader({
 }) {
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
+  const { setPanelOpen } = usePreferences();
   const pathname = usePathname();
   const isComponents =
     pathname.startsWith("/components/motion") ||
@@ -96,6 +100,16 @@ export function SiteHeader({
 
         <nav className="flex items-center gap-2">
           <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 lg:w-56" />
+          <Tooltip content="Customize" side="bottom">
+            <button
+              type="button"
+              onClick={() => setPanelOpen(true)}
+              aria-label="Customize theme"
+              className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card/20 text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <SwatchBook className="h-4 w-4" />
+            </button>
+          </Tooltip>
           <PressLink
             href="https://github.com/starc007/ui-components"
             target="_blank"

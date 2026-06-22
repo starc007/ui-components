@@ -104,6 +104,9 @@ export const previews: Record<string, ComponentType> = {
   "blocks/not-found-terminal": dynamic(() =>
     import("./blocks/not-found-terminal.preview").then((m) => m.NotFoundTerminalPreview),
   ),
+  "motion/drawer": dynamic(() =>
+    import("./motion/drawer.preview").then((m) => m.DrawerPreview),
+  ),
   "motion/shared-layout-bg": dynamic(() =>
     import("./motion/shared-layout-bg.preview").then((m) => m.SharedLayoutBgPreview),
   ),

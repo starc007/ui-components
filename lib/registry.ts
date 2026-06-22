@@ -259,6 +259,13 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/bouncy-accordion.tsx",
         badge: "new",
       },
+      {
+        slug: "drawer",
+        name: "Drawer",
+        description: "Side panel that slides in from the left or right with a spring, backdrop blur, body scroll lock and esc-to-close.",
+        file: "components/motion/drawer.tsx",
+        badge: "new",
+      },
     ],
   },
   {
