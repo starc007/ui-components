@@ -30,6 +30,9 @@ export async function generateMetadata({
     keywords: [
       `${cat.name} components`,
       "React motion components",
+      "best motion components",
+      "free motion components",
+      "open source motion components",
       "Tailwind CSS components",
       "shadcn-compatible components",
       "shadcn registry",
