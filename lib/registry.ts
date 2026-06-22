@@ -251,7 +251,6 @@ export const registry: CategoryEntry[] = [
         name: "Theme Toggle",
         description: "Theme toggle button with a full-page rectangle clip-path reveal via the View Transition API.",
         file: "components/motion/theme-toggle.tsx",
-        badge: "new",
       },
       {
         slug: "bouncy-accordion",
@@ -309,7 +308,6 @@ export const registry: CategoryEntry[] = [
         name: "Swipeable List",
         description: "Mobile-style list rows that swipe left or right to reveal contextual action buttons.",
         file: "components/motion/swipeable-list.tsx",
-        badge: "new",
       },
       {
         slug: "file-upload",
@@ -330,7 +328,6 @@ export const registry: CategoryEntry[] = [
         name: "OTP Input",
         description: "One-time-code input with a gliding focus ring, digits that roll in per slot, error shake and a success check draw.",
         file: "components/motion/otp-input.tsx",
-        badge: "new",
       },
       {
         slug: "not-found",
