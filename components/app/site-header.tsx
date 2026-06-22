@@ -67,9 +67,6 @@ export function SiteHeader({
               className="h-6 w-6 rounded-lg"
             />
             <span>beUI</span>
-            <span className="hidden rounded-full border border-(--color-border) bg-(--color-bg-elev) px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-(--color-fg-muted) sm:inline-block">
-              v2
-            </span>
           </Link>
           <nav className="hidden items-center gap-0.5 md:flex">
             <Link

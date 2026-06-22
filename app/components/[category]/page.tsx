@@ -19,7 +19,7 @@ export async function generateMetadata({
   if (!cat) return {};
 
   const title = `${cat.name} · React motion components`;
-  const ogTitle = `${title} · beUI v2`;
+  const ogTitle = `${title} · beUI`;
   const pageUrl = `/components/${cat.slug}`;
   const imageUrl = `/api/og?category=${cat.slug}`;
   const componentNames = cat.components.map((comp) => comp.name);
@@ -33,7 +33,7 @@ export async function generateMetadata({
       "Tailwind CSS components",
       "shadcn-compatible components",
       "shadcn registry",
-      "beUI v2",
+      "beUI",
       ...componentNames,
     ],
     openGraph: {
@@ -41,13 +41,13 @@ export async function generateMetadata({
       description: cat.description,
       url: pageUrl,
       type: "website",
-      siteName: "beUI v2",
+      siteName: "beUI",
       images: [
         {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: `${cat.name} components by beUI v2`,
+          alt: `${cat.name} components by beUI`,
         },
       ],
     },
@@ -82,7 +82,7 @@ export default async function CategoryPage({
       <JsonLd
         data={[
           breadcrumbJsonLd([
-            { name: "beUI v2", path: "/" },
+            { name: "beUI", path: "/" },
             { name: cat.name, path: `/components/${cat.slug}` },
           ]),
           categoryJsonLd(cat),

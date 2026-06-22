@@ -335,7 +335,7 @@ export async function buildShadcnRegistry(): Promise<ShadcnRegistry> {
 
 export async function buildIndex() {
   return {
-    name: "beUI v2",
+    name: "beUI",
     description: "Bespoke motion components for React.",
     site: SITE_URL,
     endpoints: {
