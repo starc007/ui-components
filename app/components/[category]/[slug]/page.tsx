@@ -9,7 +9,7 @@ import {
   type ComponentExample,
 } from "@/lib/registry";
 import { CodeBlock } from "@/components/app/code-block";
-import { InstallCommand } from "@/components/app/install-command";
+import { InstallBlock } from "@/components/app/install-block";
 import {
   Tabs,
   TabsContent,
@@ -169,7 +169,7 @@ export default async function ComponentPage({
       {comp.examples?.length ? (
         <div className="mt-10 flex flex-col gap-12">
           {comp.examples.map((ex) => (
-            <ExampleBlock key={ex.slug} example={ex} />
+            <ExampleBlock key={ex.slug} category={cat.slug} example={ex} />
           ))}
         </div>
       ) : (
@@ -181,10 +181,10 @@ export default async function ComponentPage({
           <div className="min-w-0">
             <h2 className="text-sm font-semibold text-(--color-fg)">Install</h2>
             <p className="mt-1 text-sm text-(--color-fg-muted)">
-              Add this component with the shadcn CLI.
+              Add it with the shadcn CLI, or copy the source manually.
             </p>
             <div className="mt-3">
-              <InstallCommand slug={comp.slug} />
+              <InstallBlock category={cat.slug} slug={comp.slug} />
             </div>
           </div>
         </section>
@@ -213,7 +213,13 @@ export default async function ComponentPage({
   );
 }
 
-async function ExampleBlock({ example }: { example: ComponentExample }) {
+async function ExampleBlock({
+  category,
+  example,
+}: {
+  category: string;
+  example: ComponentExample;
+}) {
   const Preview = previews[example.previewKey];
   const source = await loadSource(example.file);
   const usage = await loadSource(example.previewFile);
@@ -256,7 +262,7 @@ async function ExampleBlock({ example }: { example: ComponentExample }) {
         <div className="mt-5 min-w-0 border-t border-(--color-border) pt-5">
           <h3 className="text-sm font-semibold text-(--color-fg)">Install</h3>
           <div className="mt-3">
-            <InstallCommand slug={installSlug} />
+            <InstallBlock category={category} slug={installSlug} />
           </div>
         </div>
       ) : null}
