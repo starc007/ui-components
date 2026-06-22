@@ -1,4 +1,15 @@
-export type ColorTheme = "default" | "violet" | "blue" | "green" | "amber";
+export type ColorTheme =
+  | "default"
+  | "violet"
+  | "blue"
+  | "green"
+  | "amber"
+  | "blood-orange"
+  | "rose"
+  | "red"
+  | "teal"
+  | "indigo"
+  | "lime";
 
 type Vars = Record<string, string>;
 type Theme = { name: string; swatch: string; light: Vars; dark: Vars };
@@ -121,6 +132,66 @@ export const THEMES: Record<ColorTheme, Theme> = {
       dark: { hue: "oklch(80% 0.15 75)", onHue: "oklch(18% 0.02 75)" },
       tintL: "oklch(74% 0.15 70 / 0.5)",
       tintD: "oklch(80% 0.15 75 / 0.55)",
+    }),
+  },
+  "blood-orange": {
+    name: "Blood Orange",
+    swatch: "oklch(60% 0.19 40)",
+    ...brand({
+      light: { hue: "oklch(60% 0.19 40)", onHue: "oklch(99% 0 0)" },
+      dark: { hue: "oklch(72% 0.17 42)", onHue: "oklch(15% 0 0)" },
+      tintL: "oklch(60% 0.19 40 / 0.5)",
+      tintD: "oklch(72% 0.17 42 / 0.55)",
+    }),
+  },
+  rose: {
+    name: "Rose",
+    swatch: "oklch(58% 0.2 12)",
+    ...brand({
+      light: { hue: "oklch(58% 0.2 12)", onHue: "oklch(99% 0 0)" },
+      dark: { hue: "oklch(70% 0.17 12)", onHue: "oklch(15% 0 0)" },
+      tintL: "oklch(58% 0.2 12 / 0.5)",
+      tintD: "oklch(70% 0.17 12 / 0.55)",
+    }),
+  },
+  red: {
+    name: "Red",
+    swatch: "oklch(55% 0.22 25)",
+    ...brand({
+      light: { hue: "oklch(55% 0.22 25)", onHue: "oklch(99% 0 0)" },
+      dark: { hue: "oklch(68% 0.19 25)", onHue: "oklch(15% 0 0)" },
+      tintL: "oklch(55% 0.22 25 / 0.5)",
+      tintD: "oklch(68% 0.19 25 / 0.55)",
+    }),
+  },
+  teal: {
+    name: "Teal",
+    swatch: "oklch(55% 0.12 185)",
+    ...brand({
+      light: { hue: "oklch(55% 0.12 185)", onHue: "oklch(99% 0 0)" },
+      dark: { hue: "oklch(72% 0.13 185)", onHue: "oklch(15% 0 0)" },
+      tintL: "oklch(55% 0.12 185 / 0.5)",
+      tintD: "oklch(72% 0.13 185 / 0.55)",
+    }),
+  },
+  indigo: {
+    name: "Indigo",
+    swatch: "oklch(50% 0.2 275)",
+    ...brand({
+      light: { hue: "oklch(50% 0.2 275)", onHue: "oklch(99% 0 0)" },
+      dark: { hue: "oklch(70% 0.16 275)", onHue: "oklch(15% 0 0)" },
+      tintL: "oklch(50% 0.2 275 / 0.5)",
+      tintD: "oklch(70% 0.16 275 / 0.55)",
+    }),
+  },
+  lime: {
+    name: "Lime",
+    swatch: "oklch(72% 0.18 130)",
+    ...brand({
+      light: { hue: "oklch(72% 0.18 130)", onHue: "oklch(20% 0.04 130)" },
+      dark: { hue: "oklch(80% 0.18 130)", onHue: "oklch(18% 0.04 130)" },
+      tintL: "oklch(72% 0.18 130 / 0.5)",
+      tintD: "oklch(80% 0.18 130 / 0.55)",
     }),
   },
 };
