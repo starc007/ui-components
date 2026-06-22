@@ -17,7 +17,7 @@ const PM_COMMANDS = {
 type PM = keyof typeof PM_COMMANDS;
 const PMS = Object.keys(PM_COMMANDS) as PM[];
 
-const REGISTRY_URL = "https://beui.dev/r";
+const REGISTRY_NAMESPACE = "@beui";
 const CYCLE_MS = 1800;
 
 const COMPONENT_SLUGS = registry.flatMap((cat) =>
@@ -47,7 +47,7 @@ export function InstallCommand({
   }, [slug]);
 
   const currentSlug = slug ?? COMPONENT_SLUGS[nameIndex];
-  const copyValue = `${PM_COMMANDS[pm]} shadcn add ${REGISTRY_URL}/${currentSlug}`;
+  const copyValue = `${PM_COMMANDS[pm]} shadcn add ${REGISTRY_NAMESPACE}/${currentSlug}`;
 
   return (
     <div
@@ -93,7 +93,7 @@ export function InstallCommand({
           )}
           <span className="text-[#24292f] dark:text-[#e6edf3]">{" shadcn "}</span>
           <span className="text-[#0550ae] dark:text-[#79c0ff]">add</span>
-          <span className="text-[#24292f]/70 dark:text-[#e6edf3]/60">{" "}{REGISTRY_URL}/</span>
+          <span className="text-[#24292f]/70 dark:text-[#e6edf3]/60">{" "}{REGISTRY_NAMESPACE}/</span>
           <ActionSwapCascadeText
             value={currentSlug}
             className="font-medium text-[#0a3069] dark:text-[#a5d6ff]"
