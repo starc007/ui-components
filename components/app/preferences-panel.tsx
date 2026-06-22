@@ -1,8 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Check, SwatchBook, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Check, X } from "lucide-react";
+import { useEffect } from "react";
 import { EASE_DRAWER } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import {
@@ -26,8 +26,14 @@ const ICON_SETS: { id: IconSet | string; name: string; soon?: boolean }[] = [
 ];
 
 export function PreferencesPanel() {
-  const { colorTheme, setColorTheme, iconSet, setIconSet } = usePreferences();
-  const [open, setOpen] = useState(false);
+  const {
+    colorTheme,
+    setColorTheme,
+    iconSet,
+    setIconSet,
+    panelOpen: open,
+    setPanelOpen: setOpen,
+  } = usePreferences();
   const reduce = useReducedMotion();
 
   useEffect(() => {
@@ -35,21 +41,11 @@ export function PreferencesPanel() {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+  }, [open, setOpen]);
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label="Customize"
-        className="fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-lg transition-colors hover:bg-card/80"
-      >
-        <SwatchBook className="h-4.5 w-4.5" />
-      </button>
-
-      <AnimatePresence>
-        {open ? (
+    <AnimatePresence>
+      {open ? (
           <>
             <motion.div
               initial={{ opacity: 0 }}
@@ -86,7 +82,7 @@ export function PreferencesPanel() {
                 <p className="font-pixel text-xs font-medium uppercase text-muted-foreground">
                   Theme
                 </p>
-                <div className="mt-3 grid grid-cols-3 gap-2">
+                <div className="mt-3 flex items-center gap-2.5">
                   {COLOR_THEMES.map((t) => {
                     const active = colorTheme === t.id;
                     return (
@@ -95,22 +91,17 @@ export function PreferencesPanel() {
                         type="button"
                         onClick={() => setColorTheme(t.id)}
                         aria-pressed={active}
+                        aria-label={t.name}
+                        title={t.name}
                         className={cn(
-                          "flex flex-col items-center gap-2 rounded-xl border p-3 transition-colors",
-                          active
-                            ? "border-foreground/30 bg-card"
-                            : "border-border hover:bg-card",
+                          "relative flex h-6 w-6 items-center justify-center rounded-full ring-offset-2 ring-offset-background transition-shadow",
+                          active && "ring-2 ring-foreground/40",
                         )}
+                        style={{ background: t.swatch }}
                       >
-                        <span
-                          className="relative flex h-7 w-7 items-center justify-center rounded-full"
-                          style={{ background: t.swatch }}
-                        >
-                          {active ? (
-                            <Check className="h-3.5 w-3.5 text-white" />
-                          ) : null}
-                        </span>
-                        <span className="text-xs text-foreground">{t.name}</span>
+                        {active ? (
+                          <Check className="h-3 w-3 text-white" />
+                        ) : null}
                       </button>
                     );
                   })}
@@ -157,8 +148,7 @@ export function PreferencesPanel() {
               </section>
             </motion.aside>
           </>
-        ) : null}
-      </AnimatePresence>
-    </>
+      ) : null}
+    </AnimatePresence>
   );
 }
