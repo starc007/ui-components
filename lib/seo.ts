@@ -14,6 +14,61 @@ export const AUTHOR = "Saurabh";
 
 const abs = (path: string) => (path.startsWith("http") ? path : `${SITE}${path}`);
 
+const KEYWORD_SUFFIXES = [
+  "component",
+  "React component",
+  "Next.js component",
+  "Tailwind component",
+  "framer motion component",
+  "shadcn component",
+  "animation",
+  "example",
+];
+const KEYWORD_PREFIXES = ["", "animated ", "free ", "best "];
+
+const BASE_KEYWORDS = [
+  "React motion component",
+  "best motion components",
+  "free motion components",
+  "open source motion components",
+  "framer motion component",
+  "best framer motion components",
+  "Tailwind CSS component",
+  "shadcn registry",
+  "beUI",
+];
+
+/**
+ * Long-tail keyword set for a component, generated from its name and category
+ * plus any hand-tuned `keywords`. Deduped, order-stable.
+ */
+export function componentKeywords(
+  cat: CategoryEntry,
+  comp: ComponentEntry,
+): string[] {
+  const perName = KEYWORD_SUFFIXES.flatMap((suffix) =>
+    KEYWORD_PREFIXES.map((prefix) => `${prefix}${comp.name} ${suffix}`.trim()),
+  );
+  return Array.from(
+    new Set([
+      comp.name,
+      ...perName,
+      ...(comp.keywords ?? []),
+      cat.name,
+      ...BASE_KEYWORDS,
+    ]),
+  );
+}
+
+/**
+ * Meta/social description for a component: its own description plus a short,
+ * keyword-bearing positioning tail. The on-page copy keeps the bare
+ * description; only the SERP/social snippet carries the tail.
+ */
+export function componentMetaDescription(comp: ComponentEntry): string {
+  return `${comp.description} Free, open-source React and Next.js motion component. Copy-paste the source or install with shadcn.`;
+}
+
 /** Site-wide WebSite + SoftwareApplication. Rendered once in the root layout. */
 export function siteJsonLd(): JsonLdSchema[] {
   return [
