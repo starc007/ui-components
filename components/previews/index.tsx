@@ -65,6 +65,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/animated-toast-stack": dynamic(() =>
     import("./motion/animated-toast-stack.preview").then((m) => m.AnimatedToastStackPreview),
   ),
+  "motion/inline-alert": dynamic(() =>
+    import("./motion/inline-alert.preview").then((m) => m.InlineAlertPreview),
+  ),
   "motion/action-swap": dynamic(() =>
     import("./motion/action-swap.preview").then((m) => m.ActionSwapPreview),
   ),

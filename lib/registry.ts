@@ -247,6 +247,13 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/animated-toast-stack.tsx",
       },
       {
+        slug: "inline-alert",
+        name: "Inline Alert",
+        description: "Inline feedback banner with status icon, optional action slot and dismissible spring entrance.",
+        file: "components/motion/inline-alert.tsx",
+        badge: "new",
+      },
+      {
         slug: "theme-toggle",
         name: "Theme Toggle",
         description: "Theme toggle button with a full-page rectangle clip-path reveal via the View Transition API.",
