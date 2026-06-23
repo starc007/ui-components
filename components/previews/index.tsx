@@ -140,6 +140,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/theme-toggle": dynamic(() =>
     import("./motion/theme-toggle.preview").then((m) => m.ThemeTogglePreview),
   ),
+  "motion/skeleton-loader": dynamic(() =>
+    import("./motion/skeleton-loader.preview").then((m) => m.SkeletonLoaderPreview),
+  ),
 };
 
 export function getPreview(category: string, slug: string) {

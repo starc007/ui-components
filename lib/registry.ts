@@ -253,6 +253,13 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/theme-toggle.tsx",
       },
       {
+        slug: "skeleton-loader",
+        name: "Skeleton Loader",
+        description: "Shimmering placeholder block for loading states, with line, pill and circular avatar shapes.",
+        file: "components/motion/skeleton-loader.tsx",
+        badge: "new",
+      },
+      {
         slug: "bouncy-accordion",
         name: "Bouncy Accordion",
         description: "Single-open accordion with weighted spring layout, icon rows and reduced-motion-safe content reveals.",
