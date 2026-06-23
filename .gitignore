@@ -38,3 +38,6 @@ next-env.d.ts
 
 # local working notes
 /docs/
+
+# editor / local agent config
+.claude/
