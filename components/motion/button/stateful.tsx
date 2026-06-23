@@ -14,7 +14,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { EASE_OUT, EASE_OUT_CSS, SPRING_SWAP } from "@/lib/ease";
+import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { Button, type ButtonProps } from "./base";
 
 export type ButtonState = "idle" | "loading" | "success" | "error";
@@ -102,12 +102,13 @@ function TextSlot({
   });
 
   return (
-    <span
+    <motion.span
+      // Single width animator: a framer spring matching the slot motion, so it
+      // never competes with the parent's layout animation (the source of jank).
+      initial={false}
+      animate={{ width }}
+      transition={reduce ? { duration: 0 } : SPRING_SWAP}
       className="relative inline-block overflow-hidden whitespace-nowrap align-bottom"
-      style={{
-        width,
-        transition: reduce ? undefined : `width 220ms ${EASE_OUT_CSS}`,
-      }}
     >
       <span
         ref={measureRef}
@@ -157,7 +158,7 @@ function TextSlot({
           </motion.span>
         </AnimatePresence>
       )}
-    </span>
+    </motion.span>
   );
 }
 
@@ -174,7 +175,6 @@ export const StatefulButton = forwardRef<HTMLButtonElement, StatefulButtonProps>
   },
   ref,
 ) {
-  const reduce = useReducedMotion();
   const isBusy = state === "loading";
   const stateText =
     state === "loading"
@@ -189,9 +189,7 @@ export const StatefulButton = forwardRef<HTMLButtonElement, StatefulButtonProps>
 
   return (
     <Button ref={ref} disabled={disabled || isBusy} aria-busy={isBusy} {...rest}>
-      <motion.span
-        layout={!reduce}
-        transition={SPRING_SWAP}
+      <span
         aria-live="polite"
         className="relative inline-flex items-center justify-center gap-2 overflow-hidden"
       >
@@ -220,7 +218,7 @@ export const StatefulButton = forwardRef<HTMLButtonElement, StatefulButtonProps>
             <IconSlot keyId="idle-icon">{icon}</IconSlot>
           ) : null}
         </AnimatePresence>
-      </motion.span>
+      </span>
     </Button>
   );
 });
