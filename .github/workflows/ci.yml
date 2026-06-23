@@ -22,3 +22,6 @@ jobs:
 
       - name: Typecheck and validate registry
         run: bun run check
+
+      - name: Accessibility tests
+        run: bun test

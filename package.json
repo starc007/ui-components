@@ -28,6 +28,7 @@
     "lint": "biome lint .",
     "typecheck": "tsc --noEmit",
     "check:registry": "bun scripts/check-registry.ts",
+    "test": "bun test",
     "check": "bun run typecheck && bun run lint && bun run check:registry"
   },
   "dependencies": {
@@ -48,10 +49,16 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
+    "@happy-dom/global-registrator": "^20.10.6",
     "@tailwindcss/postcss": "^4.0.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/bun": "^1.3.14",
+    "@types/jest-axe": "^3.5.9",
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
+    "jest-axe": "^10.0.0",
     "postcss": "^8.5.1",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.3"

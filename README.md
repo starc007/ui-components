@@ -11,11 +11,22 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/starc007/ui-components/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/github/license/starc007/ui-components?color=000000&style=flat-square" /></a>
+  <a href="https://github.com/starc007/ui-components/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/starc007/ui-components?color=000000&style=flat-square" /></a>
+  <a href="https://github.com/starc007/ui-components/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/starc007/ui-components/ci.yml?branch=main&color=000000&style=flat-square" /></a>
+  <a href="https://ui.shadcn.com/docs/registry"><img alt="shadcn compatible" src="https://img.shields.io/badge/shadcn-compatible-000000?style=flat-square" /></a>
+</p>
+
+<p align="center">
   <a href="https://beui.dev">Website</a>
   ·
   <a href="https://beui.dev/components/motion">Components</a>
   ·
   <a href="https://beui.dev/llms.txt">llms.txt</a>
+</p>
+
+<p align="center">
+  <a href="https://beui.dev"><img src="./public/demo.gif" alt="beUI components demo" width="640" /></a>
 </p>
 
 ## What is beUI?
