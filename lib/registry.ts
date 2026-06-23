@@ -253,6 +253,13 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/theme-toggle.tsx",
       },
       {
+        slug: "spinner",
+        name: "Spinner",
+        description: "Loading indicator with a sweeping ring or pulsing dots, tuned for compact UI states.",
+        file: "components/motion/spinner.tsx",
+        badge: "new",
+      },
+      {
         slug: "bouncy-accordion",
         name: "Bouncy Accordion",
         description: "Single-open accordion with weighted spring layout, icon rows and reduced-motion-safe content reveals.",
