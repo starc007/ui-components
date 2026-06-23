@@ -206,6 +206,13 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/animated-badge.tsx",
       },
       {
+        slug: "avatar-stack",
+        name: "Avatar Stack",
+        description: "Overlapping avatar group that fans out on hover with spring-driven spacing and a trailing +N counter.",
+        file: "components/motion/avatar-stack.tsx",
+        badge: "new",
+      },
+      {
         slug: "action-swap",
         name: "Action Swap",
         description: "CTA button and slot primitives for swapping text and icons with blur motion.",

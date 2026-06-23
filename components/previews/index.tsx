@@ -62,6 +62,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/animated-badge": dynamic(() =>
     import("./motion/animated-badge.preview").then((m) => m.AnimatedBadgePreview),
   ),
+  "motion/avatar-stack": dynamic(() =>
+    import("./motion/avatar-stack.preview").then((m) => m.AvatarStackPreview),
+  ),
   "motion/animated-toast-stack": dynamic(() =>
     import("./motion/animated-toast-stack.preview").then((m) => m.AnimatedToastStackPreview),
   ),
