@@ -86,12 +86,6 @@ export const previews: Record<string, ComponentType> = {
   "motion/switch": dynamic(() =>
     import("./motion/switch.preview").then((m) => m.SwitchPreview),
   ),
-  "motion/checkbox": dynamic(() =>
-    import("./motion/checkbox.preview").then((m) => m.CheckboxPreview),
-  ),
-  "motion/radio": dynamic(() =>
-    import("./motion/radio.preview").then((m) => m.RadioPreview),
-  ),
   "blocks/otp-input": dynamic(() =>
     import("./blocks/otp-input.preview").then((m) => m.OTPInputPreview),
   ),

@@ -104,22 +104,6 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/switch.tsx",
       },
       {
-        slug: "checkbox",
-        name: "Checkbox",
-        description:
-          "Form choice control with a draw-on checkmark, spring press feedback and indeterminate state support.",
-        file: "components/motion/checkbox.tsx",
-        badge: "new",
-      },
-      {
-        slug: "radio",
-        name: "Radio Group",
-        description:
-          "Single-select choice control with a gliding layoutId indicator dot and spring press feedback.",
-        file: "components/motion/radio.tsx",
-        badge: "new",
-      },
-      {
         slug: "bottom-sheet",
         name: "Bottom Sheet",
         description: "Vaul-inspired draggable bottom sheet with snap points, inertia and glass surface.",
