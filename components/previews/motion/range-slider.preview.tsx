@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 
-import { Slider } from "@/components/motion/slider";
+import { RangeSlider } from "@/components/motion/range-slider";
 
-export function SliderPreview() {
+export function RangeSliderPreview() {
   const [value, setValue] = useState(40);
 
   return (
@@ -13,7 +13,7 @@ export function SliderPreview() {
         <span>Drag the handle</span>
         <span className="tabular-nums text-foreground">{value}</span>
       </div>
-      <Slider value={value} onValueChange={setValue} step={5} aria-label="Value" />
+      <RangeSlider value={value} onValueChange={setValue} step={5} aria-label="Value" />
     </div>
   );
 }

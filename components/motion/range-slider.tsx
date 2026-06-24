@@ -25,7 +25,7 @@ const SPRING_GLIDE = { stiffness: 700, damping: 50, mass: 0.5 } as const;
 // Bouncy grab feedback for the thumb scale only.
 const SPRING_BOUNCY = { type: "spring", stiffness: 500, damping: 14, mass: 0.7 } as const;
 
-export interface SliderProps {
+export interface RangeSliderProps {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
@@ -41,7 +41,7 @@ export interface SliderProps {
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
-export function Slider({
+export function RangeSlider({
   value,
   defaultValue = 0,
   onValueChange,
@@ -52,7 +52,7 @@ export function Slider({
   disabled = false,
   className,
   "aria-label": ariaLabel,
-}: SliderProps) {
+}: RangeSliderProps) {
   const reduce = useReducedMotion();
   const trackRef = useRef<HTMLDivElement>(null);
   const [internal, setInternal] = useState(defaultValue);

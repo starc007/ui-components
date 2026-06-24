@@ -38,7 +38,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `marquee` | `components/motion/marquee.tsx` | Infinite horizontal or vertical scroll, pause-on-hover |
 | `tabs` | `components/motion/tabs.tsx` | Pill, segment or underline tabs with spring layoutId indicator |
 | `switch` | `components/motion/switch.tsx` | Toggle with spring-driven thumb and press feedback |
-| `slider` | `components/motion/slider.tsx` | Range slider with tick dots and a bouncy vertical-bar thumb; track fills dark while dragging, light at rest. Drag + keyboard, controlled/uncontrolled |
+| `range-slider` | `components/motion/range-slider.tsx` | Range slider (`RangeSlider`) with tick dots and a bouncy vertical-bar thumb that glides between snapped steps; drag + keyboard, controlled/uncontrolled |
 | `bottom-sheet` | `components/motion/bottom-sheet.tsx` | Draggable bottom sheet with snap points, inertia and glass surface |
 | `shared-layout-bg` | `components/motion/shared-layout-bg.tsx` | Pill that glides between hovered items via shared layout |
 | `dock` | `components/motion/dock.tsx` | macOS-style dock with grouped actions and gliding active pill |
