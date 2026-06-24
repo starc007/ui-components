@@ -94,7 +94,14 @@ export function RadioGroupItem({
   const selected = groupValue === value;
 
   return (
-    <span className={cn("inline-flex items-center gap-3", className)}>
+    <label
+      htmlFor={id}
+      className={cn(
+        "inline-flex items-center gap-3",
+        disabled ? "cursor-not-allowed" : "cursor-pointer",
+        className,
+      )}
+    >
       <motion.button
         id={id}
         type="button"
@@ -123,16 +130,10 @@ export function RadioGroupItem({
         ) : null}
       </motion.button>
       {label ? (
-        <label
-          htmlFor={id}
-          className={cn(
-            "text-sm text-foreground",
-            disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
-          )}
-        >
+        <span className={cn("select-none text-sm text-foreground", disabled && "opacity-60")}>
           {label}
-        </label>
+        </span>
       ) : null}
-    </span>
+    </label>
   );
 }

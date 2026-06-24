@@ -5,6 +5,8 @@ import type { ReactElement } from "react";
 
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { Button } from "@/components/motion/button";
+import { Checkbox } from "@/components/motion/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
 import { Switch } from "@/components/motion/switch";
 import { Parallax } from "@/components/motion/parallax";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
@@ -55,6 +57,19 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ],
   ["ScrollTo", () => <ScrollTo to="#top">Back to top</ScrollTo>],
   ["RangeSlider", () => <RangeSlider defaultValue={40} aria-label="Volume" />],
+  [
+    "Checkbox",
+    () => <Checkbox checked={false} onCheckedChange={() => {}} label="Accept terms" />,
+  ],
+  [
+    "RadioGroup",
+    () => (
+      <RadioGroup defaultValue="a">
+        <RadioGroupItem value="a" label="Option A" />
+        <RadioGroupItem value="b" label="Option B" />
+      </RadioGroup>
+    ),
+  ],
   [
     "ScrollReveal",
     () => (
