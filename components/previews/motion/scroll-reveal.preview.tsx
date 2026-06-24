@@ -17,14 +17,16 @@ export function ScrollRevealPreview() {
       className="h-80 w-full max-w-lg overflow-y-auto scrollbar-hide rounded-2xl border border-border bg-card"
     >
       <div className="flex flex-col gap-16 p-6">
-        <div className="text-center text-sm text-muted-foreground">Scroll ↓</div>
+        <div className="text-center text-sm text-muted-foreground">
+          Scroll ↓
+        </div>
         {CARDS.map((label, i) => (
           <ScrollReveal
             key={label}
             root={containerRef}
             once={false}
             delay={i * 0.05}
-            className="rounded-xl border border-border bg-muted/50 px-4 py-8 text-center text-base font-medium text-foreground"
+            className="rounded-xl border border-border bg-muted/50 px-4 py-16 text-center text-base font-medium text-foreground"
           >
             {label}
           </ScrollReveal>
