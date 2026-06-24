@@ -20,7 +20,7 @@ export function SmoothScrollPreview() {
   });
 
   return (
-    <div className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-card">
+    <div className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-border bg-card">
       <motion.div
         className="absolute inset-x-0 top-0 z-10 h-0.5 origin-left bg-foreground"
         style={{ scaleX: progress }}
