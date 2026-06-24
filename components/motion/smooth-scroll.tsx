@@ -43,6 +43,8 @@ const SmoothScrollContext = createContext<SmoothScrollApi | null>(null);
 
 export interface SmoothScrollProps {
   children: ReactNode;
+  /** Drive the page (window) when true, or a contained scroll area when false. */
+  root?: boolean;
   /** Smoothing factor; lower is smoother and heavier. */
   lerp?: number;
   /** Wheel / programmatic ease duration in seconds. */
@@ -55,19 +57,38 @@ export interface SmoothScrollProps {
   className?: string;
 }
 
-function maxScroll() {
-  return Math.max(
-    0,
-    document.documentElement.scrollHeight - window.innerHeight,
-  );
+type ScrollSource = Window | HTMLElement;
+
+function readMetrics(target: ScrollSource) {
+  if (target instanceof Window) {
+    const max = Math.max(
+      0,
+      document.documentElement.scrollHeight - window.innerHeight,
+    );
+    return { y: window.scrollY, max };
+  }
+  return {
+    y: target.scrollTop,
+    max: Math.max(0, target.scrollHeight - target.clientHeight),
+  };
 }
 
-function resolveTop(target: ScrollTarget, offset = 0): number {
+function resolveTop(
+  target: ScrollTarget,
+  source: ScrollSource,
+  offset = 0,
+): number {
   if (typeof target === "number") return target + offset;
+  if (source instanceof Window) {
+    const el =
+      typeof target === "string" ? document.querySelector(target) : target;
+    if (!el) return window.scrollY;
+    return el.getBoundingClientRect().top + window.scrollY + offset;
+  }
   const el =
-    typeof target === "string" ? document.querySelector(target) : target;
-  if (!el) return window.scrollY;
-  return el.getBoundingClientRect().top + window.scrollY + offset;
+    typeof target === "string" ? source.querySelector(target) : target;
+  if (!(el instanceof HTMLElement)) return source.scrollTop;
+  return el.offsetTop + offset;
 }
 
 /** Pushes Lenis' live scroll state into the shared motion values. */
@@ -96,20 +117,22 @@ function LenisBridge({
   return null;
 }
 
-/** Native scroll listener used on the reduced-motion path and the no-provider fallback. */
+/** Native scroll listener for the reduced-motion path and the no-provider fallback. */
 function useNativeScrollSync(
   enabled: boolean,
+  getTarget: () => ScrollSource | null,
   scrollY: MotionValue<number>,
   progress: MotionValue<number>,
   velocity: MotionValue<number>,
 ) {
   useEffect(() => {
     if (!enabled) return;
-    let lastY = window.scrollY;
+    const target = getTarget();
+    if (!target) return;
+    let lastY = readMetrics(target).y;
     let lastT = performance.now();
     const onScroll = () => {
-      const y = window.scrollY;
-      const max = maxScroll();
+      const { y, max } = readMetrics(target);
       const now = performance.now();
       const dt = now - lastT || 16;
       scrollY.set(y);
@@ -119,13 +142,14 @@ function useNativeScrollSync(
       lastT = now;
     };
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [enabled, scrollY, progress, velocity]);
+    target.addEventListener("scroll", onScroll, { passive: true });
+    return () => target.removeEventListener("scroll", onScroll);
+  }, [enabled, getTarget, scrollY, progress, velocity]);
 }
 
 export function SmoothScroll({
   children,
+  root = true,
   lerp = 0.1,
   duration = 1.2,
   orientation = "vertical",
@@ -138,6 +162,12 @@ export function SmoothScroll({
   const progress = useMotionValue(0);
   const velocity = useMotionValue(0);
   const lenisRef = useRef<Lenis | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const nativeSource = useCallback(
+    (): ScrollSource | null => (root ? window : containerRef.current),
+    [root],
+  );
 
   const scrollTo = useCallback(
     (target: ScrollTarget, options?: ScrollToOptions) => {
@@ -150,17 +180,17 @@ export function SmoothScroll({
         });
         return;
       }
-      window.scrollTo({
-        top: resolveTop(target, options?.offset),
-        behavior: reduce || options?.immediate ? "auto" : "smooth",
-      });
+      const source = nativeSource();
+      const behavior = reduce || options?.immediate ? "auto" : "smooth";
+      const top = resolveTop(target, source ?? window, options?.offset);
+      (source ?? window).scrollTo({ top, behavior });
     },
-    [reduce],
+    [reduce, nativeSource],
   );
 
-  // Reduced-motion path drives the native listener directly; the Lenis path
-  // leaves it disabled and lets LenisBridge feed the values instead.
-  useNativeScrollSync(!!reduce, scrollY, progress, velocity);
+  // Reduced motion drives the native listener; the Lenis path leaves it
+  // disabled and lets LenisBridge feed the values instead.
+  useNativeScrollSync(!!reduce, nativeSource, scrollY, progress, velocity);
 
   const api = useMemo<SmoothScrollApi>(
     () => ({ lenis: lenisRef.current, scrollY, progress, velocity, scrollTo }),
@@ -170,7 +200,9 @@ export function SmoothScroll({
   if (reduce) {
     return (
       <SmoothScrollContext.Provider value={api}>
-        <div className={className}>{children}</div>
+        <div ref={containerRef} className={className}>
+          {children}
+        </div>
       </SmoothScrollContext.Provider>
     );
   }
@@ -178,7 +210,7 @@ export function SmoothScroll({
   return (
     <SmoothScrollContext.Provider value={api}>
       <ReactLenis
-        root
+        root={root}
         className={className}
         options={{
           lerp,
@@ -213,11 +245,12 @@ export function useSmoothScroll(): SmoothScrollApi {
   const progress = useMotionValue(0);
   const velocity = useMotionValue(0);
 
-  useNativeScrollSync(ctx === null, scrollY, progress, velocity);
+  const windowSource = useCallback((): ScrollSource => window, []);
+  useNativeScrollSync(ctx === null, windowSource, scrollY, progress, velocity);
 
   const scrollTo = useCallback((target: ScrollTarget, options?: ScrollToOptions) => {
     window.scrollTo({
-      top: resolveTop(target, options?.offset),
+      top: resolveTop(target, window, options?.offset),
       behavior: options?.immediate ? "auto" : "smooth",
     });
   }, []);

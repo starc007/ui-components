@@ -1,50 +1,45 @@
 "use client";
 
 import { ArrowUp } from "lucide-react";
-import { motion, useScroll, useSpring } from "motion/react";
-import { useRef } from "react";
 
-// The real <SmoothScroll> is a page-level provider (root mode) shown in the
-// Usage tab. A boxed preview can't hijack the page, so this demos the feel:
-// a contained scroller with a spring-smoothed progress bar and scroll-to-top,
-// the same scroll-driven UI <SmoothScroll> + useSmoothScroll unlock.
+import { SmoothScroll, useSmoothScroll } from "@/components/motion/smooth-scroll";
+
+// In production <SmoothScroll> wraps the page (root). Here it runs in contained
+// mode (root={false}) so the box itself smooth-scrolls — the same engine, and
+// the button uses the useSmoothScroll() hook to glide back to the top.
 const SECTIONS = Array.from({ length: 16 }, (_, i) => i + 1);
 
-export function SmoothScrollPreview() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ container: ref });
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 28,
-    mass: 0.6,
-  });
-
+function ScrollTopButton() {
+  const { scrollTo } = useSmoothScroll();
   return (
-    <div className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-border bg-card">
-      <motion.div
-        className="absolute inset-x-0 top-0 z-10 h-0.5 origin-left bg-foreground"
-        style={{ scaleX: progress }}
-      />
-      <div ref={ref} className="h-64 overflow-y-auto scrollbar-hide">
-        <div className="space-y-3 p-4">
-          {SECTIONS.map((n) => (
-            <div
-              key={`section-${n}`}
-              className="rounded-lg bg-muted/60 px-3 py-4 text-sm text-muted-foreground"
-            >
-              Section {n}
-            </div>
-          ))}
-        </div>
+    <button
+      type="button"
+      onClick={() => scrollTo(0)}
+      className="sticky bottom-3 left-[calc(100%-3rem)] z-10 grid size-9 place-items-center rounded-full border border-border bg-background/80 text-foreground backdrop-blur transition-colors hover:bg-background"
+      aria-label="Scroll to top"
+    >
+      <ArrowUp className="size-4" />
+    </button>
+  );
+}
+
+export function SmoothScrollPreview() {
+  return (
+    <SmoothScroll
+      root={false}
+      className="h-64 w-full max-w-lg overflow-y-auto scrollbar-hide rounded-2xl border border-border bg-card"
+    >
+      <div className="space-y-3 p-4">
+        {SECTIONS.map((n) => (
+          <div
+            key={`section-${n}`}
+            className="rounded-lg bg-muted/60 px-3 py-4 text-sm text-muted-foreground"
+          >
+            Section {n}
+          </div>
+        ))}
       </div>
-      <button
-        type="button"
-        onClick={() => ref.current?.scrollTo({ top: 0, behavior: "smooth" })}
-        className="absolute bottom-3 right-3 z-10 grid size-9 place-items-center rounded-full border border-border bg-background/80 text-foreground backdrop-blur transition-colors hover:bg-background"
-        aria-label="Scroll to top"
-      >
-        <ArrowUp className="size-4" />
-      </button>
-    </div>
+      <ScrollTopButton />
+    </SmoothScroll>
   );
 }
