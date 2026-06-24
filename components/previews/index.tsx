@@ -149,6 +149,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/smooth-scroll": dynamic(() =>
     import("./motion/smooth-scroll.preview").then((m) => m.SmoothScrollPreview),
   ),
+  "motion/scroll-progress": dynamic(() =>
+    import("./motion/scroll-progress.preview").then((m) => m.ScrollProgressPreview),
+  ),
 };
 
 export function getPreview(category: string, slug: string) {

@@ -290,6 +290,14 @@ export const registry: CategoryEntry[] = [
         badge: "new",
         keywords: ["smooth scroll", "lenis", "scroll progress", "momentum scroll", "scroll velocity"],
       },
+      {
+        slug: "scroll-progress",
+        name: "Scroll Progress",
+        description: "Reading-progress indicator — fixed bar or circular ring — driven by scroll position via useSmoothScroll, with spring smoothing.",
+        file: "components/motion/scroll-progress.tsx",
+        badge: "new",
+        keywords: ["scroll progress", "reading progress", "progress bar", "scroll indicator"],
+      },
     ],
   },
   {
