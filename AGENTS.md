@@ -34,7 +34,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | slug | file | what it does |
 |---|---|---|
 | `tilt-card` | `components/motion/tilt-card.tsx` | 3D perspective tilt on hover with cursor-tracked glare |
-| `button` | `components/motion/button/` | Spring-pressed `Button`, `StatefulButton` (idle/loading/success/error), `MagneticButton` |
+| `button` | `components/motion/button/` | Spring-pressed `Button` (optional `ripple` prop for a Material-style press ripple), `StatefulButton` (idle/loading/success/error), `MagneticButton` |
 | `marquee` | `components/motion/marquee.tsx` | Infinite horizontal or vertical scroll, pause-on-hover |
 | `tabs` | `components/motion/tabs.tsx` | Pill, segment or underline tabs with spring layoutId indicator |
 | `switch` | `components/motion/switch.tsx` | Toggle with spring-driven thumb and press feedback |

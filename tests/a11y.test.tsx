@@ -23,6 +23,7 @@ afterEach(cleanup);
 const cases: Array<[name: string, render: () => ReactElement]> = [
   ["Button", () => <Button>Subscribe</Button>],
   ["Button disabled", () => <Button disabled>Subscribe</Button>],
+  ["Button ripple", () => <Button ripple>Subscribe</Button>],
   [
     "Switch",
     () => (
