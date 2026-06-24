@@ -350,6 +350,14 @@ export const registry: CategoryEntry[] = [
           },
         ],
       },
+      {
+        slug: "slider",
+        name: "Slider",
+        description: "Range slider with tick dots and a bouncy vertical-bar thumb; the track fills dark while dragging and stays light at rest. Drag and keyboard control, reduced-motion safe.",
+        file: "components/motion/slider.tsx",
+        badge: "new",
+        keywords: ["slider", "range slider", "range input", "stepped slider", "ticks"],
+      },
     ],
   },
   {

@@ -10,6 +10,7 @@ import { Parallax } from "@/components/motion/parallax";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { ScrollTo } from "@/components/motion/scroll-to";
+import { Slider } from "@/components/motion/slider";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { TextReveal } from "@/components/motion/text-reveal";
@@ -53,6 +54,7 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   ["ScrollTo", () => <ScrollTo to="#top">Back to top</ScrollTo>],
+  ["Slider", () => <Slider defaultValue={40} aria-label="Volume" />],
   [
     "ScrollReveal",
     () => (
