@@ -110,7 +110,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
                 initial={{ scale: 0, opacity: 0.3 }}
                 animate={{ scale: 1, opacity: 0 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.6, ease: EASE_OUT }}
+                transition={{ duration: 0.9, ease: EASE_OUT }}
                 onAnimationComplete={() =>
                   setRipples((prev) => prev.filter((x) => x.id !== r.id))
                 }
