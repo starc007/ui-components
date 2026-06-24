@@ -146,6 +146,15 @@ export const previews: Record<string, ComponentType> = {
   "motion/theme-toggle": dynamic(() =>
     import("./motion/theme-toggle.preview").then((m) => m.ThemeTogglePreview),
   ),
+  "motion/smooth-scroll": dynamic(() =>
+    import("./motion/smooth-scroll.preview").then((m) => m.SmoothScrollPreview),
+  ),
+  "motion/scroll-progress": dynamic(() =>
+    import("./motion/scroll-progress.preview").then((m) => m.ScrollProgressPreview),
+  ),
+  "motion/parallax": dynamic(() =>
+    import("./motion/parallax.preview").then((m) => m.ParallaxPreview),
+  ),
 };
 
 export function getPreview(category: string, slug: string) {
