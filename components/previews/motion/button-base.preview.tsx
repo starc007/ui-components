@@ -26,6 +26,10 @@ export function ButtonBasePreview() {
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <Button variant="primary" size="md" ripple>Ripple</Button>
+        <Button variant="outline" size="md" ripple>Tap me</Button>
+      </div>
     </div>
   );
 }
