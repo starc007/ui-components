@@ -6,6 +6,7 @@ import {
   useMotionValue,
   useReducedMotion,
   useSpring,
+  useTransform,
 } from "motion/react";
 import {
   type KeyboardEvent,
@@ -66,7 +67,11 @@ export function Slider({
     target.set(percent);
   }, [percent, target]);
   const smooth = useSpring(target, SPRING_GLIDE);
-  const left = useMotionTemplate`${reduce ? target : smooth}%`;
+  const pos = reduce ? target : smooth;
+  const left = useMotionTemplate`${pos}%`;
+  // Self-offset the thumb from 0% (flush left) to -100% (flush right) of its
+  // own width so it stays fully inside the track at both ends — no clip, no gap.
+  const thumbX = useTransform(pos, (p) => `${-p}%`);
 
   const steps = Math.floor((max - min) / step);
   const ticks =
@@ -137,25 +142,25 @@ export function Slider({
 
   return (
     <div
+      ref={trackRef}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
       className={cn(
-        "relative flex h-10 w-full touch-none select-none items-center rounded-lg bg-muted",
+        "relative flex h-10 w-full touch-none select-none items-center overflow-hidden rounded-lg bg-muted",
         disabled ? "pointer-events-none opacity-50" : "cursor-grab active:cursor-grabbing",
         className,
       )}
     >
-      {/* inset travel region so the thumb never clips at either end */}
-      <div ref={trackRef} className="relative mx-2 h-full flex-1">
-        {/* fill — consistent resting tone, drag or not */}
-        <motion.div
-          className="absolute inset-y-0 left-0 rounded-full bg-foreground/15"
-          style={{ width: left }}
-        />
+      {/* fill — runs from the left edge to the thumb, consistent tone */}
+      <motion.div
+        className="absolute inset-y-0 left-0 bg-foreground/15"
+        style={{ width: left }}
+      />
 
-        {/* ticks */}
+      {/* ticks — slight inset so the end dots don't clip */}
+      <div className="pointer-events-none absolute inset-x-2 inset-y-0">
         {ticks.map((t) => {
           const tp = ((t - min) / (max - min)) * 100;
           return (
@@ -166,23 +171,23 @@ export function Slider({
             />
           );
         })}
-
-        {/* vertical bar thumb */}
-        <motion.div
-          role="slider"
-          tabIndex={disabled ? -1 : 0}
-          aria-label={ariaLabel}
-          aria-valuemin={min}
-          aria-valuemax={max}
-          aria-valuenow={current}
-          aria-disabled={disabled || undefined}
-          onKeyDown={onKeyDown}
-          animate={reduce ? undefined : { scaleY: active ? 1.35 : 1 }}
-          transition={SPRING_BOUNCY}
-          className="absolute top-1/2 h-5 w-1.5 rounded-sm bg-foreground shadow-sm outline-none ring-foreground/30 focus-visible:ring-4"
-          style={{ left, x: "-50%", y: "-50%" }}
-        />
       </div>
+
+      {/* vertical bar thumb — contained at both ends via thumbX */}
+      <motion.div
+        role="slider"
+        tabIndex={disabled ? -1 : 0}
+        aria-label={ariaLabel}
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={current}
+        aria-disabled={disabled || undefined}
+        onKeyDown={onKeyDown}
+        animate={reduce ? undefined : { scaleY: active ? 1.35 : 1 }}
+        transition={SPRING_BOUNCY}
+        className="absolute top-1/2 h-5 w-1.5 rounded-sm bg-foreground shadow-sm outline-none ring-foreground/30 focus-visible:ring-4"
+        style={{ left, x: thumbX, y: "-50%" }}
+      />
     </div>
   );
 }
