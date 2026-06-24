@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   type KeyboardEvent,
   type PointerEvent,
@@ -21,6 +21,8 @@ export interface SliderProps {
   step?: number;
   /** Render a tick dot at each step. */
   showTicks?: boolean;
+  /** Bloom a magnifier lens ring around the thumb while dragging. */
+  lens?: boolean;
   disabled?: boolean;
   className?: string;
   "aria-label"?: string;
@@ -36,6 +38,7 @@ export function Slider({
   max = 100,
   step = 1,
   showTicks = true,
+  lens = true,
   disabled = false,
   className,
   "aria-label": ariaLabel,
@@ -123,35 +126,40 @@ export function Slider({
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
       className={cn(
-        "relative flex h-10 w-full items-center touch-none select-none",
-        disabled && "pointer-events-none opacity-50",
+        "relative flex h-10 w-full touch-none select-none items-center rounded-full bg-muted",
+        disabled ? "pointer-events-none opacity-50" : "cursor-grab active:cursor-grabbing",
         className,
       )}
     >
-      {/* rail */}
-      <div className="relative h-1.5 w-full rounded-full bg-muted">
-        {/* fill */}
-        <div
-          className="absolute inset-y-0 left-0 rounded-full bg-foreground"
-          style={{ width: `${percent}%` }}
-        />
-        {/* ticks */}
-        {ticks.map((t) => {
-          const tp = ((t - min) / (max - min)) * 100;
-          return (
-            <span
-              key={t}
-              className={cn(
-                "absolute top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full",
-                t <= current ? "bg-background/70" : "bg-foreground/25",
-              )}
-              style={{ left: `${tp}%` }}
-            />
-          );
-        })}
-      </div>
+      {/* ticks */}
+      {ticks.map((t) => {
+        const tp = ((t - min) / (max - min)) * 100;
+        return (
+          <span
+            key={t}
+            className="absolute top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/25"
+            style={{ left: `${tp}%` }}
+          />
+        );
+      })}
 
-      {/* thumb */}
+      {/* lens ring */}
+      {lens && !reduce ? (
+        <AnimatePresence>
+          {active ? (
+            <motion.span
+              className="pointer-events-none absolute top-1/2 size-16 -translate-x-1/2 -translate-y-1/2 rounded-full border border-foreground/40 bg-background/5 backdrop-blur-[1px]"
+              style={{ left: `${percent}%` }}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={SPRING_PRESS}
+            />
+          ) : null}
+        </AnimatePresence>
+      ) : null}
+
+      {/* vertical bar thumb */}
       <motion.div
         role="slider"
         tabIndex={disabled ? -1 : 0}
@@ -161,9 +169,9 @@ export function Slider({
         aria-valuenow={current}
         aria-disabled={disabled || undefined}
         onKeyDown={onKeyDown}
-        animate={reduce ? undefined : { scale: active ? 1.25 : 1 }}
+        animate={reduce ? undefined : { scaleY: active ? 1.3 : 1 }}
         transition={SPRING_PRESS}
-        className="absolute size-5 -translate-x-1/2 rounded-full border-2 border-foreground bg-background shadow-md outline-none ring-foreground/30 focus-visible:ring-4"
+        className="absolute h-5 w-1.5 -translate-x-1/2 rounded-full bg-foreground shadow-sm outline-none ring-foreground/30 focus-visible:ring-4"
         style={{ left: `${percent}%` }}
       />
     </div>
