@@ -7,7 +7,9 @@ GlobalRegistrator.register();
 if (typeof window.matchMedia !== "function") {
   window.matchMedia = (query: string) =>
     ({
-      matches: false,
+      // Render the reduced-motion path in tests: deterministic, no JS springs
+      // or scroll engines to settle, so axe sees stable markup.
+      matches: query.includes("prefers-reduced-motion"),
       media: query,
       onchange: null,
       addListener: () => {},
