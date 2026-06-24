@@ -137,50 +137,52 @@ export function Slider({
 
   return (
     <div
-      ref={trackRef}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
       className={cn(
-        "relative flex h-10 w-full touch-none select-none items-center overflow-hidden rounded-lg bg-muted",
+        "relative flex h-10 w-full touch-none select-none items-center rounded-lg bg-muted",
         disabled ? "pointer-events-none opacity-50" : "cursor-grab active:cursor-grabbing",
         className,
       )}
     >
-      {/* fill — consistent resting tone, drag or not */}
-      <motion.div
-        className="absolute inset-y-0 left-0 bg-foreground/15"
-        style={{ width: left }}
-      />
+      {/* inset travel region so the thumb never clips at either end */}
+      <div ref={trackRef} className="relative mx-2 h-full flex-1">
+        {/* fill — consistent resting tone, drag or not */}
+        <motion.div
+          className="absolute inset-y-0 left-0 rounded-full bg-foreground/15"
+          style={{ width: left }}
+        />
 
-      {/* ticks */}
-      {ticks.map((t) => {
-        const tp = ((t - min) / (max - min)) * 100;
-        return (
-          <span
-            key={t}
-            className="absolute top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/25"
-            style={{ left: `${tp}%` }}
-          />
-        );
-      })}
+        {/* ticks */}
+        {ticks.map((t) => {
+          const tp = ((t - min) / (max - min)) * 100;
+          return (
+            <span
+              key={t}
+              className="absolute top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/25"
+              style={{ left: `${tp}%` }}
+            />
+          );
+        })}
 
-      {/* vertical bar thumb */}
-      <motion.div
-        role="slider"
-        tabIndex={disabled ? -1 : 0}
-        aria-label={ariaLabel}
-        aria-valuemin={min}
-        aria-valuemax={max}
-        aria-valuenow={current}
-        aria-disabled={disabled || undefined}
-        onKeyDown={onKeyDown}
-        animate={reduce ? undefined : { scaleY: active ? 1.35 : 1 }}
-        transition={SPRING_BOUNCY}
-        className="absolute top-1/2 h-5 w-1.5 rounded-sm bg-foreground shadow-sm outline-none ring-foreground/30 focus-visible:ring-4"
-        style={{ left, x: "-50%", y: "-50%" }}
-      />
+        {/* vertical bar thumb */}
+        <motion.div
+          role="slider"
+          tabIndex={disabled ? -1 : 0}
+          aria-label={ariaLabel}
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-valuenow={current}
+          aria-disabled={disabled || undefined}
+          onKeyDown={onKeyDown}
+          animate={reduce ? undefined : { scaleY: active ? 1.35 : 1 }}
+          transition={SPRING_BOUNCY}
+          className="absolute top-1/2 h-5 w-1.5 rounded-sm bg-foreground shadow-sm outline-none ring-foreground/30 focus-visible:ring-4"
+          style={{ left, x: "-50%", y: "-50%" }}
+        />
+      </div>
     </div>
   );
 }
