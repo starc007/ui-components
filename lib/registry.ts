@@ -287,7 +287,10 @@ export const registry: CategoryEntry[] = [
         name: "Scroll Animation",
         description: "Scroll-driven motion: a Lenis smooth-scroll provider and a reading-progress indicator that reads from it.",
         file: "components/motion/smooth-scroll.tsx",
-        extraFiles: ["components/motion/scroll-progress.tsx"],
+        extraFiles: [
+          "components/motion/scroll-progress.tsx",
+          "components/motion/parallax.tsx",
+        ],
         badge: "new",
         keywords: [
           "smooth scroll",
@@ -315,6 +318,15 @@ export const registry: CategoryEntry[] = [
             file: "components/motion/scroll-progress.tsx",
             previewKey: "motion/scroll-progress",
             previewFile: "components/previews/motion/scroll-progress.preview.tsx",
+          },
+          {
+            slug: "parallax",
+            name: "Parallax",
+            description: "Wrapper that drifts its children at a speed factor as they cross the viewport, on either axis. Reduced-motion safe.",
+            installSlug: "parallax",
+            file: "components/motion/parallax.tsx",
+            previewKey: "motion/parallax",
+            previewFile: "components/previews/motion/parallax.preview.tsx",
           },
         ],
       },

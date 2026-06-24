@@ -57,7 +57,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `theme-toggle` | `components/motion/theme-toggle.tsx` | Theme toggle with full-page clip-path reveal via View Transition API |
 | `bouncy-accordion` | `components/motion/bouncy-accordion.tsx` | Single-open accordion with weighted spring layout and icon rows |
 | `magnetic` | `components/motion/magnetic.tsx` | Cursor-attracted magnetic pull wrapper |
-| `scroll-animation` | `components/motion/smooth-scroll.tsx`, `scroll-progress.tsx` | Scroll-driven motion group (variants install as `@beui/smooth-scroll`, `@beui/scroll-progress`). **Smooth Scroll**: Lenis provider (`root` page / `root={false}` contained) + `useSmoothScroll` hook (offset/progress/velocity, `scrollTo`), reduced-motion native. **Scroll Progress**: bar or ring reading `useSmoothScroll().progress` |
+| `scroll-animation` | `components/motion/smooth-scroll.tsx`, `scroll-progress.tsx`, `parallax.tsx` | Scroll-driven motion group (variants install as `@beui/smooth-scroll`, `@beui/scroll-progress`, `@beui/parallax`). **Smooth Scroll**: Lenis provider (`root` page / `root={false}` contained) + `useSmoothScroll` hook (offset/progress/velocity, `scrollTo`), reduced-motion native. **Scroll Progress**: bar or ring reading `useSmoothScroll().progress`. **Parallax**: drifts children at a speed factor across the viewport, either axis |
 
 ### Blocks (`blocks` category — composed product widgets)
 

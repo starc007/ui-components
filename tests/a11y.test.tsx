@@ -6,6 +6,7 @@ import type { ReactElement } from "react";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { Button } from "@/components/motion/button";
 import { Switch } from "@/components/motion/switch";
+import { Parallax } from "@/components/motion/parallax";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
@@ -40,6 +41,14 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ],
   ["ScrollProgress bar", () => <ScrollProgress />],
   ["ScrollProgress circle", () => <ScrollProgress variant="circle" />],
+  [
+    "Parallax",
+    () => (
+      <Parallax>
+        <p>Drifting content.</p>
+      </Parallax>
+    ),
+  ],
   ["TextReveal", () => <TextReveal text="Ship it" />],
   [
     "Tooltip",

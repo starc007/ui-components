@@ -152,6 +152,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/scroll-progress": dynamic(() =>
     import("./motion/scroll-progress.preview").then((m) => m.ScrollProgressPreview),
   ),
+  "motion/parallax": dynamic(() =>
+    import("./motion/parallax.preview").then((m) => m.ParallaxPreview),
+  ),
 };
 
 export function getPreview(category: string, slug: string) {
