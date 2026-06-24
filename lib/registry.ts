@@ -290,6 +290,8 @@ export const registry: CategoryEntry[] = [
         extraFiles: [
           "components/motion/scroll-progress.tsx",
           "components/motion/parallax.tsx",
+          "components/motion/scroll-to.tsx",
+          "components/motion/scroll-reveal.tsx",
         ],
         badge: "new",
         keywords: [
@@ -327,6 +329,24 @@ export const registry: CategoryEntry[] = [
             file: "components/motion/parallax.tsx",
             previewKey: "motion/parallax",
             previewFile: "components/previews/motion/parallax.preview.tsx",
+          },
+          {
+            slug: "scroll-to",
+            name: "Scroll To",
+            description: "Button that smooth-scrolls to a target (offset, selector or element) via the active SmoothScroll provider; reduced-motion jumps instantly.",
+            installSlug: "scroll-to",
+            file: "components/motion/scroll-to.tsx",
+            previewKey: "motion/scroll-to",
+            previewFile: "components/previews/motion/scroll-to.preview.tsx",
+          },
+          {
+            slug: "scroll-reveal",
+            name: "Scroll Reveal",
+            description: "Reveals its children with a spring slide and blur as they enter the viewport, once or every time. Reduced-motion keeps a fade.",
+            installSlug: "scroll-reveal",
+            file: "components/motion/scroll-reveal.tsx",
+            previewKey: "motion/scroll-reveal",
+            previewFile: "components/previews/motion/scroll-reveal.preview.tsx",
           },
         ],
       },
