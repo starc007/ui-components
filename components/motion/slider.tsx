@@ -1,17 +1,27 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+} from "motion/react";
 import {
   type KeyboardEvent,
   type PointerEvent,
   useCallback,
+  useEffect,
   useRef,
   useState,
 } from "react";
 
 import { cn } from "@/lib/utils";
 
-// Bouncy thumb feedback — low damping for a playful overshoot on grab.
+// Smooth glide for the thumb/fill — critically damped, no overshoot, so the
+// handle follows the pointer butterily and eases between snapped steps.
+const SPRING_GLIDE = { stiffness: 700, damping: 50, mass: 0.5 } as const;
+// Bouncy grab feedback for the thumb scale only.
 const SPRING_BOUNCY = { type: "spring", stiffness: 500, damping: 14, mass: 0.7 } as const;
 
 export interface SliderProps {
@@ -49,6 +59,14 @@ export function Slider({
   const controlled = value !== undefined;
   const current = clamp(controlled ? value : internal, min, max);
   const percent = ((current - min) / (max - min)) * 100;
+
+  // Spring-smoothed position drives both the thumb and the fill.
+  const target = useMotionValue(percent);
+  useEffect(() => {
+    target.set(percent);
+  }, [percent, target]);
+  const smooth = useSpring(target, SPRING_GLIDE);
+  const left = useMotionTemplate`${reduce ? target : smooth}%`;
 
   const steps = Math.floor((max - min) / step);
   const ticks =
@@ -130,26 +148,19 @@ export function Slider({
         className,
       )}
     >
-      {/* fill — dark while dragging, light at rest */}
-      <div
-        className={cn(
-          "absolute inset-y-0 left-0 transition-colors duration-200",
-          active ? "bg-foreground" : "bg-foreground/15",
-        )}
-        style={{ width: `${percent}%` }}
+      {/* fill — consistent resting tone, drag or not */}
+      <motion.div
+        className="absolute inset-y-0 left-0 bg-foreground/15"
+        style={{ width: left }}
       />
 
       {/* ticks */}
       {ticks.map((t) => {
         const tp = ((t - min) / (max - min)) * 100;
-        const filled = t <= current;
         return (
           <span
             key={t}
-            className={cn(
-              "absolute top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors",
-              filled && active ? "bg-background/60" : "bg-foreground/25",
-            )}
+            className="absolute top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/25"
             style={{ left: `${tp}%` }}
           />
         );
@@ -167,8 +178,8 @@ export function Slider({
         onKeyDown={onKeyDown}
         animate={reduce ? undefined : { scaleY: active ? 1.35 : 1 }}
         transition={SPRING_BOUNCY}
-        className="absolute h-5 w-1.5 -translate-x-1/2 rounded-sm bg-foreground shadow-sm outline-none ring-foreground/30 focus-visible:ring-4"
-        style={{ left: `${percent}%` }}
+        className="absolute top-1/2 h-5 w-1.5 rounded-sm bg-foreground shadow-sm outline-none ring-foreground/30 focus-visible:ring-4"
+        style={{ left, x: "-50%", y: "-50%" }}
       />
     </div>
   );
