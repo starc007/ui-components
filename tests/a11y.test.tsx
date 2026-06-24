@@ -8,6 +8,8 @@ import { Button } from "@/components/motion/button";
 import { Switch } from "@/components/motion/switch";
 import { Parallax } from "@/components/motion/parallax";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
+import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { ScrollTo } from "@/components/motion/scroll-to";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { TextReveal } from "@/components/motion/text-reveal";
@@ -47,6 +49,15 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
       <Parallax>
         <p>Drifting content.</p>
       </Parallax>
+    ),
+  ],
+  ["ScrollTo", () => <ScrollTo to="#top">Back to top</ScrollTo>],
+  [
+    "ScrollReveal",
+    () => (
+      <ScrollReveal>
+        <p>Revealed content.</p>
+      </ScrollReveal>
     ),
   ],
   ["TextReveal", () => <TextReveal text="Ship it" />],

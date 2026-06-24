@@ -155,6 +155,12 @@ export const previews: Record<string, ComponentType> = {
   "motion/parallax": dynamic(() =>
     import("./motion/parallax.preview").then((m) => m.ParallaxPreview),
   ),
+  "motion/scroll-to": dynamic(() =>
+    import("./motion/scroll-to.preview").then((m) => m.ScrollToPreview),
+  ),
+  "motion/scroll-reveal": dynamic(() =>
+    import("./motion/scroll-reveal.preview").then((m) => m.ScrollRevealPreview),
+  ),
 };
 
 export function getPreview(category: string, slug: string) {
