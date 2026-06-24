@@ -57,6 +57,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `theme-toggle` | `components/motion/theme-toggle.tsx` | Theme toggle with full-page clip-path reveal via View Transition API |
 | `bouncy-accordion` | `components/motion/bouncy-accordion.tsx` | Single-open accordion with weighted spring layout and icon rows |
 | `magnetic` | `components/motion/magnetic.tsx` | Cursor-attracted magnetic pull wrapper |
+| `smooth-scroll` | `components/motion/smooth-scroll.tsx` | Page-level smooth-scroll provider over Lenis with a `useSmoothScroll` hook (scroll offset/progress/velocity, `scrollTo`); reduced-motion falls back to native |
 
 ### Blocks (`blocks` category — composed product widgets)
 

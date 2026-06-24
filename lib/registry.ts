@@ -282,6 +282,14 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/drawer.tsx",
         badge: "new",
       },
+      {
+        slug: "smooth-scroll",
+        name: "Smooth Scroll",
+        description: "Page-level smooth-scroll provider over Lenis with a useSmoothScroll hook exposing scroll offset, progress and velocity. Reduced-motion safe.",
+        file: "components/motion/smooth-scroll.tsx",
+        badge: "new",
+        keywords: ["smooth scroll", "lenis", "scroll progress", "momentum scroll", "scroll velocity"],
+      },
     ],
   },
   {
