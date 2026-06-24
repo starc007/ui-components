@@ -161,6 +161,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/scroll-reveal": dynamic(() =>
     import("./motion/scroll-reveal.preview").then((m) => m.ScrollRevealPreview),
   ),
+  "motion/slider": dynamic(() =>
+    import("./motion/slider.preview").then((m) => m.SliderPreview),
+  ),
 };
 
 export function getPreview(category: string, slug: string) {
