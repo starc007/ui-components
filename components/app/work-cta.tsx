@@ -7,7 +7,7 @@ export function WorkCta() {
   return (
     <section className="px-4 pb-24">
       <div className="mx-auto max-w-7xl">
-        <div className="relative overflow-hidden rounded-[28px] bg-card px-8 py-20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.06),inset_0_-24px_48px_-24px_rgba(0,0,0,0.28)] md:px-16 md:py-24">
+        <div className="relative overflow-hidden rounded-[28px] bg-card px-8 py-20 shadow-[inset_0_1px_0_rgba(255,255,255,0.03),inset_0_-30px_44px_-32px_rgba(0,0,0,0.12)] md:px-16 md:py-24">
           <div className="relative flex flex-col items-center gap-8 text-center">
             <div className="max-w-xl">
               <h2 className="font-pixel text-2xl font-medium text-foreground md:text-[2rem] md:leading-[1.15]">
