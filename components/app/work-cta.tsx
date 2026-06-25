@@ -5,27 +5,45 @@ const CAL_URL = "https://cal.com/saurra3h/30min";
 
 export function WorkCta() {
   return (
-    <section className="px-4 pb-16">
+    <section className="px-4 pb-24">
       <div className="mx-auto max-w-7xl">
-        <div className="flex flex-col items-start gap-6 rounded-2xl border border-border bg-card px-8 py-12 md:flex-row md:items-center md:justify-between md:px-12">
-          <div className="max-w-xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-              Want components built for your product?
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground md:text-base">
-              Custom motion components and frontend systems, built to spec. Book a
-              call to talk it through.
-            </p>
-          </div>
-          <PressLink
-            href={CAL_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground"
+        <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#0a0a0a] px-8 py-16 shadow-2xl md:px-16 md:py-20">
+          {/* concentric-ring depth, monochrome */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-32 -right-28 hidden md:block"
           >
-            Book a call
-            <ArrowUpRight className="h-4 w-4" />
-          </PressLink>
+            <div className="size-[460px] rounded-full border border-white/[0.06]">
+              <div className="absolute inset-14 rounded-full border border-white/[0.05]">
+                <div className="absolute inset-14 rounded-full border border-white/[0.04]" />
+              </div>
+            </div>
+          </div>
+
+          <div className="relative flex flex-col items-start gap-10 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-xl">
+              <p className="text-xs font-medium uppercase tracking-[0.22em] text-white/40">
+                Work with me
+              </p>
+              <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white md:text-[2.6rem] md:leading-[1.05]">
+                Want components built for your product?
+              </h2>
+              <p className="mt-5 max-w-md text-base leading-7 text-white/55">
+                Custom motion components and frontend systems, built to spec. Book a
+                call and let's talk it through.
+              </p>
+            </div>
+
+            <PressLink
+              href={CAL_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-black shadow-lg transition-colors hover:bg-white/90"
+            >
+              Book a call
+              <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </PressLink>
+          </div>
         </div>
       </div>
     </section>
