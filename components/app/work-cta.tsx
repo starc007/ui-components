@@ -7,27 +7,15 @@ export function WorkCta() {
   return (
     <section className="px-4 pb-24">
       <div className="mx-auto max-w-7xl">
-        <div className="relative overflow-hidden rounded-[28px] bg-card px-8 py-20 md:px-16 md:py-24">
-          {/* concentric-ring depth behind the content, theme-derived */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          >
-            <div className="size-[520px] rounded-full border border-foreground/[0.05]">
-              <div className="absolute inset-16 rounded-full border border-foreground/[0.04]">
-                <div className="absolute inset-16 rounded-full border border-foreground/[0.03]" />
-              </div>
-            </div>
-          </div>
-
+        <div className="relative overflow-hidden rounded-[28px] bg-card px-8 py-20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.06),inset_0_-24px_48px_-24px_rgba(0,0,0,0.28)] md:px-16 md:py-24">
           <div className="relative flex flex-col items-center gap-8 text-center">
             <div className="max-w-xl">
               <h2 className="font-pixel text-2xl font-medium text-foreground md:text-[2rem] md:leading-[1.15]">
                 Want components built for your product?
               </h2>
               <p className="mx-auto mt-5 max-w-md text-base leading-7 text-muted-foreground">
-                Custom motion components and frontend systems, built to spec. Book a
-                call and let's talk it through.
+                Custom motion components and frontend systems, built to spec.
+                Book a call and let's talk it through.
               </p>
             </div>
 
