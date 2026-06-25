@@ -7,8 +7,11 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        // Machine endpoints: image generation and raw source text.
+        // Allow the OG image route so social crawlers (Twitter/X, etc.) can
+        // fetch link-preview images; the more specific allow overrides the
+        // /api/ disallow below.
+        allow: ["/", "/api/og"],
+        // Machine endpoints: raw source text and the rest of /api/.
         // Agents fetch these directly; they are not search content.
         disallow: ["/api/", "/r/*/raw"],
       },
