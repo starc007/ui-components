@@ -5,6 +5,7 @@ import { Hero } from "@/components/app/hero";
 import { InstallCommand } from "@/components/app/install-command";
 import { LandingComponentCard } from "@/components/app/landing-component-card";
 import { SiteFooter } from "@/components/app/site-footer";
+import { WorkCta } from "@/components/app/work-cta";
 
 const CURATED: { category: string; slug: string }[] = [
   { category: "motion", slug: "button" },
@@ -96,6 +97,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <WorkCta />
 
       <SiteFooter />
     </div>
