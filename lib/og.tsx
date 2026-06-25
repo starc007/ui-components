@@ -11,6 +11,7 @@ type OgOptions = {
   title?: string;
   description?: string;
   label?: string;
+  command?: string;
 };
 
 // Shared OG canvas for the homepage file route and the dynamic /api/og route,
@@ -20,6 +21,7 @@ export function ogImage({
   title = "beUI",
   description = "Production-ready motion components for React. Copy the source, own the code.",
   label = "Motion components",
+  command = "npx shadcn add @beui/...",
 }: OgOptions = {}): ReactElement {
   const big = title.length > 18 ? 76 : 96;
   return (
@@ -213,7 +215,7 @@ export function ogImage({
         }}
       >
         <span style={{ display: "flex", color: FG, fontWeight: 600 }}>beui.dev</span>
-        <span style={{ display: "flex" }}>npx shadcn add @beui/...</span>
+        <span style={{ display: "flex" }}>{command}</span>
       </div>
     </div>
   );

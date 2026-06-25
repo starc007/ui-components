@@ -18,7 +18,17 @@ export async function GET(request: Request) {
     component?.description ??
     category?.description ??
     "Production-ready motion components for React. Copy the source, own the code.";
-  const label = component ? `${component.category.name} component` : "Motion components";
+  const label = component
+    ? "Component"
+    : category
+      ? category.name
+      : "Motion components";
+  const command = component
+    ? `npx shadcn add @beui/${component.slug}`
+    : "npx shadcn add @beui/...";
 
-  return new ImageResponse(ogImage({ title, description, label }), OG_SIZE);
+  return new ImageResponse(
+    ogImage({ title, description, label, command }),
+    OG_SIZE,
+  );
 }
