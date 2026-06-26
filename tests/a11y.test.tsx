@@ -6,7 +6,7 @@ import type { ReactElement } from "react";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { Button } from "@/components/motion/button";
 import { Checkbox } from "@/components/motion/checkbox";
-import { CreateMenu } from "@/components/motion/create-menu";
+import { BloomMenu } from "@/components/motion/bloom-menu";
 import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
 import { Switch } from "@/components/motion/switch";
 import { Parallax } from "@/components/motion/parallax";
@@ -28,7 +28,7 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ["Button", () => <Button>Subscribe</Button>],
   ["Button disabled", () => <Button disabled>Subscribe</Button>],
   ["Button ripple", () => <Button ripple>Subscribe</Button>],
-  ["CreateMenu", () => <CreateMenu />],
+  ["BloomMenu", () => <BloomMenu />],
   [
     "Switch",
     () => (

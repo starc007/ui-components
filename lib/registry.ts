@@ -429,10 +429,10 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/otp-input.tsx",
       },
       {
-        slug: "create-menu",
-        name: "Create Menu",
-        description: "A button that morphs open into a grid menu via shared layout and clip-path, with a bouncy folder-style expand and staggered items.",
-        file: "components/motion/create-menu.tsx",
+        slug: "bloom-menu",
+        name: "Bloom Menu",
+        description: "A button that morphs open into a menu and blooms iris-out from the center, the grid revealing in every direction with radially staggered items.",
+        file: "components/motion/bloom-menu.tsx",
         badge: "new",
       },
       {
