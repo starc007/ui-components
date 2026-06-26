@@ -22,7 +22,8 @@ function useTabs() {
   return ctx;
 }
 
-// Weighty spring — borrowed from dimi.me/lab/animated-tabs.
+// Weighty spring for the active-tab indicator: a touch of overshoot so it
+// settles with life instead of snapping.
 const transition: Transition = {
   type: "spring",
   stiffness: 170,

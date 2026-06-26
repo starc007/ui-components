@@ -74,6 +74,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `file-upload` | `components/motion/file-upload.tsx` | Drag-and-drop upload queue with progress rows and retry/remove actions |
 | `prediction-market` | `components/motion/prediction-market.tsx` | Trade ticket with buy/sell modes, outcome prices and rolling amount entry |
 | `otp-input` | `components/motion/otp-input.tsx` | One-time-code input with gliding focus ring, roll-in digits, error shake and success draw |
+| `create-menu` | `components/motion/create-menu.tsx` | Button that morphs open into a grid menu via shared layout + clip-path, bouncy folder-style expand with staggered items |
 
 ### Site chrome (`components/app/` — not part of the library)
 

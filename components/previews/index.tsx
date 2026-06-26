@@ -13,6 +13,9 @@ export const previews: Record<string, ComponentType> = {
   "blocks/command-palette": dynamic(() =>
     import("./blocks/command-palette.preview").then((m) => m.CommandPalettePreview),
   ),
+  "blocks/create-menu": dynamic(() =>
+    import("./blocks/create-menu.preview").then((m) => m.CreateMenuPreview),
+  ),
   "blocks/expandable-action-bar": dynamic(() =>
     import("./blocks/expandable-action-bar.preview").then((m) => m.ExpandableActionBarPreview),
   ),
