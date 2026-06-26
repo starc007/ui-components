@@ -429,6 +429,13 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/otp-input.tsx",
       },
       {
+        slug: "create-menu",
+        name: "Create Menu",
+        description: "A button that morphs open into a grid menu via shared layout and clip-path, with a bouncy folder-style expand and staggered items.",
+        file: "components/motion/create-menu.tsx",
+        badge: "new",
+      },
+      {
         slug: "not-found",
         name: "404 / Not Found",
         description: "Animated 404 pages in five styles: glitch scramble, magnetic digits, cursor spotlight, a fanning card stack and a typed terminal.",
