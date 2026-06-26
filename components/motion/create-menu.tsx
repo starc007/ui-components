@@ -60,95 +60,101 @@ export function CreateMenu({ items = ITEMS, onSelect, className }: CreateMenuPro
   const morph = reduce ? { duration: 0.15 } : SPRING_FOLDER;
 
   return (
-    <div ref={ref} className={cn("relative inline-flex font-mono", className)}>
-      {/* keeps layout height while the trigger morphs away */}
+    <div ref={ref} className={cn("relative inline-flex", className)}>
+      {/* spacer keeps the anchor sized to the trigger so the panel can center on it */}
       <div className="h-12 w-44" aria-hidden />
 
-      <AnimatePresence initial={false}>
-        {open ? (
-          <motion.div
-            key="panel"
-            layoutId={layoutId}
-            transition={morph}
-            style={{ borderRadius: 18 }}
-            className="absolute left-0 top-0 z-30 w-[min(86vw,520px)] overflow-hidden border border-border bg-card"
-          >
+      {/* centering layer: trigger and panel share this center, so the morph grows
+          from the middle outward in every direction */}
+      <div className="absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2">
+        <AnimatePresence initial={false}>
+          {open ? (
             <motion.div
-              initial={reduce ? { opacity: 0 } : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: reduce ? 0 : 0.12, duration: 0.2 }}
+              key="panel"
+              layoutId={layoutId}
+              transition={morph}
+              style={{ borderRadius: 18 }}
+              className="w-[min(86vw,520px)] overflow-hidden border border-border bg-card"
             >
-              {/* header */}
-              <div className="flex items-center justify-between border-b border-border px-5 py-4">
-                <span className="text-sm uppercase tracking-[0.18em] text-muted-foreground">
-                  Create new
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  aria-label="Close menu"
-                  className="text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              {/* grid */}
               <motion.div
-                initial={reduce ? false : { clipPath: "inset(0 0 100% 0)" }}
-                animate={{ clipPath: "inset(0 0 0% 0)" }}
-                transition={{ delay: reduce ? 0 : 0.1, duration: 0.4, ease: EASE_OUT }}
-                className="grid grid-cols-3 gap-px bg-border"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: reduce ? 0 : 0.12, duration: 0.2 }}
               >
-                {items.map((item, i) => (
-                  <motion.button
-                    key={item.label}
+                {/* header */}
+                <div className="flex items-center justify-between border-b border-border px-5 py-4">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Create new
+                  </span>
+                  <button
                     type="button"
-                    onClick={() => {
-                      onSelect?.(item.label);
-                      setOpen(false);
-                    }}
-                    initial={
-                      reduce
-                        ? { opacity: 0 }
-                        : { opacity: 0, scale: 0.85, filter: "blur(6px)" }
-                    }
-                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                    transition={{
-                      delay: reduce ? 0 : 0.14 + i * 0.04,
-                      type: "spring",
-                      stiffness: 460,
-                      damping: 30,
-                    }}
-                    className="flex flex-col items-center gap-3 bg-card px-4 py-8 text-muted-foreground transition-colors hover:text-foreground"
+                    onClick={() => setOpen(false)}
+                    aria-label="Close menu"
+                    className="text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    <item.icon className="h-6 w-6" />
-                    <span className="text-xs uppercase tracking-[0.14em]">
-                      {item.label}
-                    </span>
-                  </motion.button>
-                ))}
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                {/* grid */}
+                <motion.div
+                  initial={reduce ? false : { clipPath: "inset(0 0 100% 0)" }}
+                  animate={{ clipPath: "inset(0 0 0% 0)" }}
+                  transition={{
+                    delay: reduce ? 0 : 0.1,
+                    duration: 0.4,
+                    ease: EASE_OUT,
+                  }}
+                  className="grid grid-cols-3 gap-px bg-border"
+                >
+                  {items.map((item, i) => (
+                    <motion.button
+                      key={item.label}
+                      type="button"
+                      onClick={() => {
+                        onSelect?.(item.label);
+                        setOpen(false);
+                      }}
+                      initial={
+                        reduce
+                          ? { opacity: 0 }
+                          : { opacity: 0, scale: 0.85, filter: "blur(6px)" }
+                      }
+                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                      transition={{
+                        delay: reduce ? 0 : 0.14 + i * 0.04,
+                        type: "spring",
+                        stiffness: 460,
+                        damping: 30,
+                      }}
+                      className="flex flex-col items-center gap-3 bg-card px-4 py-8 text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      <item.icon className="h-6 w-6" />
+                      <span className="text-sm font-medium">{item.label}</span>
+                    </motion.button>
+                  ))}
+                </motion.div>
               </motion.div>
             </motion.div>
-          </motion.div>
-        ) : (
-          <motion.button
-            key="trigger"
-            type="button"
-            layoutId={layoutId}
-            transition={morph}
-            style={{ borderRadius: 18 }}
-            onClick={() => setOpen(true)}
-            aria-haspopup="menu"
-            aria-expanded={open}
-            whileTap={reduce ? undefined : { scale: 0.97 }}
-            className="absolute left-0 top-0 inline-flex h-12 w-44 items-center justify-center gap-2 border border-border bg-card text-sm uppercase tracking-[0.16em] text-foreground"
-          >
-            Create new
-            <Plus className="h-4 w-4" />
-          </motion.button>
-        )}
-      </AnimatePresence>
+          ) : (
+            <motion.button
+              key="trigger"
+              type="button"
+              layoutId={layoutId}
+              transition={morph}
+              style={{ borderRadius: 18 }}
+              onClick={() => setOpen(true)}
+              aria-haspopup="menu"
+              aria-expanded={open}
+              whileTap={reduce ? undefined : { scale: 0.97 }}
+              className="inline-flex h-12 w-44 items-center justify-center gap-2 border border-border bg-card text-sm font-medium text-foreground"
+            >
+              Create new
+              <Plus className="h-4 w-4" />
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
