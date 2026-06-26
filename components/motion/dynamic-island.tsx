@@ -19,8 +19,7 @@ type IslandContextValue = {
 
 const IslandContext = createContext<IslandContextValue | null>(null);
 
-// Shell physics in Apple's duration/bounce form (per Emil Kowalski's island
-// lesson): one long perceptual glide with barely-there bounce, identical in
+// Shell physics in Apple's duration/bounce form one long perceptual glide with barely-there bounce, identical in
 // both directions. The shell animates real width/height (not transforms), so
 // slots are never scale-distorted.
 const SHELL_SPRING = {
@@ -52,7 +51,9 @@ const PILL_HEIGHT = 37;
 /** Tracks the natural size of the content so the shell can spring to it. */
 function useContentSize() {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [size, setSize] = useState<{ width: number; height: number } | null>(null);
+  const [size, setSize] = useState<{ width: number; height: number } | null>(
+    null,
+  );
 
   // Synchronous mount measure: the shell must own explicit dimensions before
   // the first interaction. ResizeObserver fires async after mount — a quick
@@ -119,7 +120,10 @@ function Slot({
       // Anchored to the pill line: content unfurls downward out of it and is
       // sucked back up into it. will-change pre-promotes the layer so the
       // first blur/transform pass doesn't rasterize mid-animation.
-      style={{ transformOrigin: "top center", willChange: "transform, opacity, filter" }}
+      style={{
+        transformOrigin: "top center",
+        willChange: "transform, opacity, filter",
+      }}
       className={cn("flex items-center justify-center", className)}
     >
       {children}
@@ -197,9 +201,14 @@ export interface DynamicIslandViewProps {
   className?: string;
 }
 
-export function DynamicIslandView({ id, children, className }: DynamicIslandViewProps) {
+export function DynamicIslandView({
+  id,
+  children,
+  className,
+}: DynamicIslandViewProps) {
   const ctx = useContext(IslandContext);
-  if (!ctx) throw new Error("DynamicIslandView must be used inside <DynamicIsland>");
+  if (!ctx)
+    throw new Error("DynamicIslandView must be used inside <DynamicIsland>");
   const active = ctx.view === id;
 
   return (

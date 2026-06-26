@@ -289,7 +289,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    /* Calm everything down. Per Emil: fewer + gentler, not zero. Keep opacity
+    /* Calm everything down.fewer + gentler, not zero. Keep opacity
      and color transitions for comprehension; drop transform-based motion. */
     *,
     *::before,
