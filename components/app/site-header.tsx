@@ -1,18 +1,17 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
+import { Star, SwatchBook } from "lucide-react";
 import { useMotionValueEvent, useScroll } from "motion/react";
-import { Star } from "lucide-react";
-import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SwatchBook } from "lucide-react";
+import { useState } from "react";
 import { GithubIcon } from "@/components/app/icons";
 import { MobileNav } from "@/components/app/mobile-nav";
+import { usePreferences } from "@/components/app/preferences-provider";
 import { PressLink } from "@/components/app/press-link";
 import { SiteSearch } from "@/components/app/site-search";
 import { Tooltip } from "@/components/motion/tooltip";
-import { usePreferences } from "@/components/app/preferences-provider";
 import { cn } from "@/lib/utils";
 
 function formatStarCount(count: number) {
@@ -37,6 +36,7 @@ export function SiteHeader({
     (pathname.startsWith("/components") &&
       !pathname.startsWith("/components/blocks"));
   const isBlocks = pathname.startsWith("/components/blocks");
+  const isPlayground = pathname.startsWith("/playground");
   const formattedStarCount =
     typeof githubStarCount === "number"
       ? formatStarCount(githubStarCount)
@@ -94,6 +94,17 @@ export function SiteHeader({
               )}
             >
               Blocks
+            </Link>
+            <Link
+              href="/playground"
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                isPlayground
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Playground
             </Link>
           </nav>
         </div>
