@@ -3,12 +3,18 @@
 import { RotateCw } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/motion/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/motion/select";
 import { cn } from "@/lib/utils";
 import { CodePanel } from "./code-panel";
 import { Controls } from "./controls";
 import type { ControlValue, ExplainPoint, Preset, Values } from "./core";
 import { PLAYGROUND_ITEMS, PLAYGROUND_SOON } from "./items";
-import { PlaygroundSelect } from "./select";
 
 /** Plain-English decode of the current code — the teaching layer. */
 function ExplainPanel({ points }: { points: ExplainPoint[] }) {
@@ -126,15 +132,18 @@ export function Playground() {
 
       {/* mobile type switcher */}
       <div className="mb-6 md:hidden">
-        <PlaygroundSelect
-          ariaLabel="Animation type"
-          value={active.slug}
-          options={PLAYGROUND_ITEMS.map((it) => ({
-            label: it.label,
-            value: it.slug,
-          }))}
-          onChange={select}
-        />
+        <Select value={active.slug} onValueChange={select}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {PLAYGROUND_ITEMS.map((it) => (
+              <SelectItem key={it.slug} value={it.slug}>
+                {it.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="grid gap-8 md:grid-cols-[180px_1fr]">

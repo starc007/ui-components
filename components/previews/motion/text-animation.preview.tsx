@@ -1,10 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { EASE_OUT } from "@/lib/ease";
 import { useEffect, useState } from "react";
 import { TextReveal } from "@/components/motion/text-reveal";
 import { TextShimmer } from "@/components/motion/text-shimmer";
+import { EASE_OUT } from "@/lib/ease";
 
 export function TextAnimationPreview() {
   const [variant, setVariant] = useState<"reveal" | "shimmer">("reveal");

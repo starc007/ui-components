@@ -1,7 +1,7 @@
 "use client";
 
-import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { ScrollTo } from "@/components/motion/scroll-to";
+import { SmoothScroll } from "@/components/motion/smooth-scroll";
 
 // ScrollTo uses the active SmoothScroll provider. Here it's contained
 // (root={false}); the nav buttons glide the box to each section.

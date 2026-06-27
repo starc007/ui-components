@@ -3,9 +3,15 @@
 import { Plus, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { RangeSlider } from "@/components/motion/range-slider";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/motion/select";
 import type { ControlDef, ControlValue, Values } from "./core";
 import { CurveEditor } from "./curve-editor";
-import { PlaygroundSelect } from "./select";
 
 /** Decimal places implied by a step (0.05 -> 2, 1 -> 0). */
 function decimals(step: number) {
@@ -58,12 +64,18 @@ export function Controls({
             <div key={c.key} className="block">
               <span className="text-sm font-medium text-foreground">{c.label}</span>
               <div className="mt-2">
-                <PlaygroundSelect
-                  ariaLabel={c.label}
-                  value={v}
-                  options={c.options}
-                  onChange={(next) => onChange(c.key, next)}
-                />
+                <Select value={v} onValueChange={(next) => onChange(c.key, next)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {c.options.map((o) => (
+                      <SelectItem key={o.value} value={o.value}>
+                        {o.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               {c.hint ? <Hint>{c.hint}</Hint> : null}
             </div>

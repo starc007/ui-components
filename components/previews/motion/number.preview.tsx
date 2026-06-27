@@ -1,10 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { EASE_OUT } from "@/lib/ease";
 import { useEffect, useState } from "react";
 import { AnimatedNumber } from "@/components/motion/animated-number";
 import { NumberTicker } from "@/components/motion/number-ticker";
+import { EASE_OUT } from "@/lib/ease";
 
 export function NumberPreview() {
   const [value, setValue] = useState(48273);

@@ -104,6 +104,13 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/switch.tsx",
       },
       {
+        slug: "select",
+        name: "Select",
+        description: "Composable select primitives (Select, SelectTrigger, SelectValue, SelectContent, SelectItem) whose panel bouncily unfolds out of the trigger and separates, with staggered items.",
+        file: "components/motion/select.tsx",
+        badge: "new",
+      },
+      {
         slug: "checkbox",
         name: "Checkbox",
         description:

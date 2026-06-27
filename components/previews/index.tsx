@@ -89,6 +89,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/switch": dynamic(() =>
     import("./motion/switch.preview").then((m) => m.SwitchPreview),
   ),
+  "motion/select": dynamic(() =>
+    import("./motion/select.preview").then((m) => m.SelectPreview),
+  ),
   "motion/checkbox": dynamic(() =>
     import("./motion/checkbox.preview").then((m) => m.CheckboxPreview),
   ),

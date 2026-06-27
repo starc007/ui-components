@@ -13,8 +13,9 @@ import {
   GitBranch,
   Images,
   Inbox,
-  MessageCircle,
+  type LucideIcon,
   Megaphone,
+  MessageCircle,
   PackageOpen,
   RefreshCw,
   Rocket,
@@ -24,7 +25,6 @@ import {
   Users,
   Webhook,
   Workflow,
-  type LucideIcon,
 } from "lucide-react";
 import { ExpandableTabs } from "@/components/motion/expandable-tabs";
 

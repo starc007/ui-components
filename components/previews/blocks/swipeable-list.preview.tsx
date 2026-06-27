@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import {
-  SwipeableList,
   type SwipeAction,
+  SwipeableList,
   type SwipeableListItem,
 } from "@/components/motion/swipeable-list";
 
