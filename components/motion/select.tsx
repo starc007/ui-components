@@ -22,11 +22,8 @@ import {
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
-// Bouncy unfold: the panel grows out of the trigger's edge (height 0 -> content)
-// and a gap opens beneath it, so it reads as separating from the trigger rather
-// than fading in. Mirrors the bouncy-accordion's spring-with-bounce feel.
-const OPEN_TRANSITION: Transition = { type: "spring", duration: 0.5, bounce: 0.34 };
-const CLOSE_TRANSITION: Transition = { type: "spring", duration: 0.3, bounce: 0.12 };
+// Spring with bounce powers the unfold/separation; per-property timings in the
+// content choreograph it (see SelectContent). Mirrors bouncy-accordion's feel.
 const CHEVRON_TRANSITION: Transition = { type: "spring", duration: 0.4, bounce: 0.3 };
 
 const LIST_VARIANTS: Variants = {
@@ -170,15 +167,17 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
       // round back once the panel has pulled away — the two pinch apart.
       initial={false}
       animate={{
-        borderBottomLeftRadius: ctx.open ? [0, 0, 12] : 12,
-        borderBottomRightRadius: ctx.open ? [0, 0, 12] : 12,
+        // open: snap flat (panel attached) then round as it separates.
+        // close: flatten again to "receive" the returning panel, then round shut.
+        borderBottomLeftRadius: ctx.open ? [0, 0, 12] : [12, 0, 12],
+        borderBottomRightRadius: ctx.open ? [0, 0, 12] : [12, 0, 12],
       }}
       transition={
         ctx.reduce
           ? { duration: 0 }
           : ctx.open
             ? { duration: 0.6, times: [0, 0.4, 1], ease: EASE_OUT }
-            : OPEN_TRANSITION
+            : { duration: 0.42, times: [0, 0.5, 1], ease: EASE_OUT }
       }
       className={cn(
         "relative z-10 flex w-full items-center justify-between gap-2 rounded-t-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors",
@@ -274,7 +273,16 @@ export function SelectContent({ className, children }: SelectContentProps) {
                 borderTopLeftRadius: { duration: 0.3, ease: EASE_OUT, delay: 0.14 },
                 borderTopRightRadius: { duration: 0.3, ease: EASE_OUT, delay: 0.14 },
               }
-            : CLOSE_TRANSITION
+            : {
+                // reverse of opening: first re-attach to the trigger (close the
+                // gap, flatten the top), THEN collapse the height up into it —
+                // so it looks like the panel retracts back inside the trigger
+                opacity: { duration: 0.16, delay: 0.12 },
+                marginTop: { type: "spring", duration: 0.3, bounce: 0.1 },
+                borderTopLeftRadius: { duration: 0.16, ease: EASE_OUT },
+                borderTopRightRadius: { duration: 0.16, ease: EASE_OUT },
+                height: { duration: 0.26, ease: EASE_OUT, delay: 0.14 },
+              }
       }
       style={{
         transformOrigin: "top",
