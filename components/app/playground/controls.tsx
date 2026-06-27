@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { RangeSlider } from "@/components/motion/range-slider";
 import type { ControlDef, ControlValue, Values } from "./core";
 import { CurveEditor } from "./curve-editor";
+import { PlaygroundSelect } from "./select";
 
 /** Decimal places implied by a step (0.05 -> 2, 1 -> 0). */
 function decimals(step: number) {
@@ -54,21 +55,18 @@ export function Controls({
         if (c.kind === "select") {
           const v = typeof values[c.key] === "string" ? (values[c.key] as string) : c.options[0]?.value;
           return (
-            <label key={c.key} className="block">
+            <div key={c.key} className="block">
               <span className="text-sm font-medium text-foreground">{c.label}</span>
-              <select
-                value={v}
-                onChange={(e) => onChange(c.key, e.target.value)}
-                className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-              >
-                {c.options.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
+              <div className="mt-2">
+                <PlaygroundSelect
+                  ariaLabel={c.label}
+                  value={v}
+                  options={c.options}
+                  onChange={(next) => onChange(c.key, next)}
+                />
+              </div>
               {c.hint ? <Hint>{c.hint}</Hint> : null}
-            </label>
+            </div>
           );
         }
 

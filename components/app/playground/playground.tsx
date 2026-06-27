@@ -8,6 +8,7 @@ import { CodePanel } from "./code-panel";
 import { Controls } from "./controls";
 import type { ControlValue, ExplainPoint, Preset, Values } from "./core";
 import { PLAYGROUND_ITEMS, PLAYGROUND_SOON } from "./items";
+import { PlaygroundSelect } from "./select";
 
 /** Plain-English decode of the current code — the teaching layer. */
 function ExplainPanel({ points }: { points: ExplainPoint[] }) {
@@ -125,22 +126,20 @@ export function Playground() {
 
       {/* mobile type switcher */}
       <div className="mb-6 md:hidden">
-        <select
+        <PlaygroundSelect
+          ariaLabel="Animation type"
           value={active.slug}
-          onChange={(e) => select(e.target.value)}
-          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
-        >
-          {PLAYGROUND_ITEMS.map((it) => (
-            <option key={it.slug} value={it.slug}>
-              {it.label}
-            </option>
-          ))}
-        </select>
+          options={PLAYGROUND_ITEMS.map((it) => ({
+            label: it.label,
+            value: it.slug,
+          }))}
+          onChange={select}
+        />
       </div>
 
       <div className="grid gap-8 md:grid-cols-[180px_1fr]">
         {/* sidebar */}
-        <nav className="hidden md:block">
+        <nav className="hidden self-start md:sticky md:top-20 md:block">
           <ul className="flex flex-col gap-0.5">
             {PLAYGROUND_ITEMS.map((it) => (
               <li key={it.slug}>
