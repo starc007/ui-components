@@ -45,11 +45,15 @@ export function Playground() {
   const [replayKey, setReplayKey] = useState(0);
   // per-type values so switching types preserves each one's tweaks
   const [valuesByType, setValuesByType] = useState<Record<string, Values>>(() =>
-    Object.fromEntries(PLAYGROUND_ITEMS.map((it) => [it.slug, { ...it.defaults }])),
+    Object.fromEntries(
+      PLAYGROUND_ITEMS.map((it) => [it.slug, { ...it.defaults }]),
+    ),
   );
 
   const active = useMemo(
-    () => PLAYGROUND_ITEMS.find((it) => it.slug === activeSlug) ?? PLAYGROUND_ITEMS[0],
+    () =>
+      PLAYGROUND_ITEMS.find((it) => it.slug === activeSlug) ??
+      PLAYGROUND_ITEMS[0],
     [activeSlug],
   );
   const values = valuesByType[active.slug];
@@ -83,7 +87,7 @@ export function Playground() {
   const Preview = active.Preview;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-24 pt-24 md:pt-28">
+    <div className="mx-auto max-w-7xl px-4 pb-24 pt-10 md:pt-12">
       <header className="mb-8">
         <h1 className="font-pixel text-3xl font-semibold text-foreground md:text-4xl">
           Playground
@@ -146,7 +150,9 @@ export function Playground() {
         <div className="min-w-0">
           {/* vocab: define the type for first-timers */}
           <div className="mb-5">
-            <h2 className="text-lg font-semibold text-foreground">{active.label}</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              {active.label}
+            </h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
               {active.blurb}
             </p>
@@ -157,8 +163,15 @@ export function Playground() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col rounded-2xl border border-border bg-card">
                 <div className="flex items-center justify-between border-b border-border px-5 py-3">
-                  <span className="text-sm font-medium text-foreground">Preview</span>
-                  <Button variant="secondary" size="sm" onClick={replay} className="gap-1.5">
+                  <span className="text-sm font-medium text-foreground">
+                    Preview
+                  </span>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={replay}
+                    className="gap-1.5"
+                  >
                     <RotateCw className="h-3.5 w-3.5" />
                     Replay
                   </Button>
@@ -175,7 +188,11 @@ export function Playground() {
             <div className="rounded-2xl border border-border bg-card p-5">
               <PresetSection presets={active.presets} onApply={applyPreset} />
               <div className="mt-5 border-t border-border pt-5">
-                <Controls controls={active.controls} values={values} onChange={setValue} />
+                <Controls
+                  controls={active.controls}
+                  values={values}
+                  onChange={setValue}
+                />
               </div>
             </div>
           </div>

@@ -26,7 +26,9 @@ export function Controls({
         if (c.kind === "slider") {
           const v = typeof values[c.key] === "number" ? (values[c.key] as number) : c.min;
           return (
-            <label key={c.key} className="block">
+            // not a <label>: RangeSlider is a custom control (carries its own
+            // aria-label), so a wrapping label would have no associated input.
+            <div key={c.key} className="block">
               <span className="flex items-baseline justify-between text-sm">
                 <span className="font-medium text-foreground">{c.label}</span>
                 <span className="font-mono text-xs text-muted-foreground tabular-nums">
@@ -44,7 +46,7 @@ export function Controls({
                 onValueChange={(next) => onChange(c.key, next)}
               />
               {c.hint ? <Hint>{c.hint}</Hint> : null}
-            </label>
+            </div>
           );
         }
 
