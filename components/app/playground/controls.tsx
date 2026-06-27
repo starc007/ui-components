@@ -78,6 +78,8 @@ export function Controls({
             : [];
           const minItems = c.minItems ?? 2;
           const maxItems = c.maxItems ?? 8;
+          const b = c.bounds?.(values) ?? { min: 0, max: 100, step: 1 };
+          const dec = decimals(b.step);
           const setAt = (i: number, val: number) =>
             onChange(
               c.key,
@@ -89,36 +91,55 @@ export function Controls({
               list.filter((_, idx) => idx !== i),
             );
           const add = () =>
-            onChange(c.key, [...list, list[list.length - 1] ?? 0]);
+            onChange(c.key, [...list, list[list.length - 1] ?? b.min]);
 
           return (
             <div key={c.key} className="block">
               <span className="text-sm font-medium text-foreground">
                 {c.label}
               </span>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
+              <div className="mt-3 flex flex-col gap-4">
                 {list.map((n, i) => (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: positional value slots
-                  <div key={i} className="relative">
-                    <input
-                      type="number"
-                      aria-label={`${c.label} value ${i + 1}`}
+                  // biome-ignore lint/suspicious/noArrayIndexKey: positional checkpoint slots
+                  <div key={i}>
+                    <span className="flex items-baseline justify-between text-xs">
+                      <span className="font-medium text-muted-foreground">
+                        Checkpoint {i + 1}
+                        {i === 0
+                          ? " (start)"
+                          : i === list.length - 1
+                            ? " (end)"
+                            : ""}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span className="font-mono text-muted-foreground tabular-nums">
+                          {+n.toFixed(dec)}
+                        </span>
+                        {list.length > minItems ? (
+                          <button
+                            type="button"
+                            onClick={() => removeAt(i)}
+                            aria-label={`Remove checkpoint ${i + 1}`}
+                            className="flex h-4 w-4 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
+                          >
+                            <X className="h-2.5 w-2.5" />
+                          </button>
+                        ) : null}
+                      </span>
+                    </span>
+                    <RangeSlider
+                      className="mt-1.5"
+                      aria-label={`Checkpoint ${i + 1}`}
+                      min={b.min}
+                      max={b.max}
+                      step={b.step}
                       value={n}
-                      min={c.min}
-                      max={c.max}
-                      step={c.step}
-                      onChange={(e) => setAt(i, Number(e.target.value))}
-                      className="w-16 rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground"
+                      onValueChange={(val) => setAt(i, val)}
                     />
-                    {list.length > minItems ? (
-                      <button
-                        type="button"
-                        onClick={() => removeAt(i)}
-                        aria-label={`Remove value ${i + 1}`}
-                        className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        <X className="h-2.5 w-2.5" />
-                      </button>
+                    {c.describe ? (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {c.describe(n, values)}
+                      </p>
                     ) : null}
                   </div>
                 ))}
@@ -126,10 +147,10 @@ export function Controls({
                   <button
                     type="button"
                     onClick={add}
-                    aria-label="Add value"
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-dashed border-border text-muted-foreground transition-colors hover:text-foreground"
+                    className="inline-flex items-center gap-1.5 self-start rounded-full border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    <Plus className="h-4 w-4" />
+                    <Plus className="h-3.5 w-3.5" />
+                    Add checkpoint
                   </button>
                 ) : null}
               </div>

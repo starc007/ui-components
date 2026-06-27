@@ -34,11 +34,12 @@ export type ControlDef =
       key: string;
       label: string;
       hint?: string;
-      min?: number;
-      max?: number;
-      step?: number;
       minItems?: number;
       maxItems?: number;
+      /** Slider bounds for each value; may depend on other controls. */
+      bounds?: (values: Values) => { min: number; max: number; step: number };
+      /** Plain-English meaning of a single value (e.g. "150% size, bigger"). */
+      describe?: (n: number, values: Values) => string;
     }
   | { kind: "curve"; key: string; label: string; hint?: string };
 

@@ -12,6 +12,25 @@ const SEQ: Record<string, number[]> = {
   opacity: [1, 0.2, 1, 0.4, 1],
 };
 
+// Slider range + step for each property's checkpoint values.
+const BOUNDS: Record<string, { min: number; max: number; step: number }> = {
+  x: { min: -200, max: 200, step: 5 },
+  scale: { min: 0, max: 2, step: 0.05 },
+  rotate: { min: -360, max: 360, step: 5 },
+  opacity: { min: 0, max: 1, step: 0.05 },
+};
+
+// What a single value means, in plain English, for the chosen property.
+function describeValue(n: number, prop: string) {
+  if (prop === "scale")
+    return `${Math.round(n * 100)}% size${n > 1 ? ", bigger" : n < 1 ? ", smaller" : ", normal"}`;
+  if (prop === "opacity")
+    return `${Math.round(n * 100)}% visible${n === 0 ? ", invisible" : n === 1 ? ", solid" : ""}`;
+  if (prop === "rotate")
+    return `rotated ${n}°${n === 0 ? ", upright" : ""}`;
+  return `${n}px ${n > 0 ? "right of" : n < 0 ? "left of" : "at"} start`;
+}
+
 function repeatOf(rep: string): Transition {
   if (rep === "loop") return { repeat: Number.POSITIVE_INFINITY, repeatType: "loop" };
   if (rep === "mirror") return { repeat: Number.POSITIVE_INFINITY, repeatType: "mirror" };
@@ -77,12 +96,11 @@ export const keyframesItem: PlaygroundItem = {
       kind: "numberlist",
       key: "frames",
       label: "Keyframe values",
-      hint: "Each box is a checkpoint the box passes through, in order. Edit a value, or add/remove checkpoints.",
-      min: -360,
-      max: 360,
-      step: 0.1,
+      hint: "Each slider is a checkpoint the box passes through, in order. Drag one, or add/remove checkpoints.",
       minItems: 2,
       maxItems: 8,
+      bounds: (v) => BOUNDS[str(v, "property", "scale")] ?? BOUNDS.scale,
+      describe: (n, v) => describeValue(n, str(v, "property", "scale")),
     },
     {
       kind: "slider",
