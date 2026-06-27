@@ -71,6 +71,29 @@ export const springItem: PlaygroundItem = {
     { name: "Slow", values: { stiffness: 80, damping: 20, mass: 1.5 } },
   ],
   Preview: SpringPreview,
+  explain: (v) => {
+    const s = num(v, "stiffness", 500);
+    const d = num(v, "damping", 30);
+    const m = num(v, "mass", 0.6);
+    return [
+      {
+        code: 'type: "spring"',
+        text: "No duration here. Instead of taking a fixed time, the box is pulled to the target like it's on a real spring. The three numbers below decide how that feels.",
+      },
+      {
+        code: `stiffness: ${s}`,
+        text: `How hard the spring pulls. ${s} is ${s < 200 ? "soft, so it moves slowly" : s < 500 ? "medium" : "strong, so it snaps fast"}. Higher = faster, more urgent.`,
+      },
+      {
+        code: `damping: ${d}`,
+        text: `Friction that slows the spring down. ${d < 18 ? `${d} is low, so the box overshoots the target and bounces before settling.` : d < 35 ? `${d} gives a little overshoot, then settles.` : `${d} is high, so it eases in with no bounce.`}`,
+      },
+      {
+        code: `mass: ${m}`,
+        text: `The box's weight. ${m < 0.6 ? `${m} is light, so it reacts quickly.` : m > 1.2 ? `${m} is heavy, so it feels sluggish and slow to start.` : `${m} is medium weight.`} Heavier = slower, more inertia.`,
+      },
+    ];
+  },
   toCode: (v) => `import { motion } from "motion/react";
 
 export function Demo() {

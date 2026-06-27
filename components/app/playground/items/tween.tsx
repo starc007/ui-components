@@ -109,6 +109,25 @@ export const tweenItem: PlaygroundItem = {
     { name: "easeInOut", values: { curve: [0.42, 0, 0.58, 1] } },
   ],
   Preview: TweenPreview,
+  explain: (v) => {
+    const dur = num(v, "duration", 0.6);
+    const curve = arr(v, "curve", FALLBACK);
+    const cap = matchCaption(curve);
+    return [
+      {
+        code: `duration: ${dur}`,
+        text: `A fixed time, in seconds. The whole move always takes ${dur}s, no matter the distance. (Springs don't have this — tweens do.)`,
+      },
+      {
+        code: `ease: [${curve.map((n) => +n.toFixed(2)).join(", ")}]`,
+        text: "The easing curve, written as a cubic-bezier. The four numbers are two control handles (x1, y1, x2, y2) that bend how speed changes over time. You rarely type these by hand — drag the curve handles instead.",
+      },
+      {
+        code: cap.title,
+        text: `This curve reads as "${cap.title}": ${cap.text} The dots in the preview are the box's position at equal time slices, so spacing shows speed.`,
+      },
+    ];
+  },
   toCode: (v) => `import { motion } from "motion/react";
 
 export function Demo() {

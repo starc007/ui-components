@@ -105,6 +105,31 @@ export const staggerItem: PlaygroundItem = {
     { name: "Dramatic", values: { stagger: 0.14, delayChildren: 0.2 } },
   ],
   Preview: StaggerPreview,
+  explain: (v) => {
+    const count = Math.round(num(v, "count", 6));
+    const st = num(v, "stagger", 0.06);
+    const dc = num(v, "delayChildren", 0);
+    const dir = str(v, "direction", "forward");
+    const last = +(dc + (count - 1) * st).toFixed(2);
+    return [
+      {
+        code: "variants={ hidden, show }",
+        text: 'Two named states. "hidden" is the start (invisible, small, nudged down), "show" is the end. Every child animates from hidden to show — you describe states, not steps.',
+      },
+      {
+        code: `staggerChildren: ${st}`,
+        text: `The gap between each child starting, in seconds. They don't all fire at once — child 2 waits ${st}s after child 1, and so on, making the wave.`,
+      },
+      {
+        code: `delayChildren: ${dc}`,
+        text: `How long the whole group waits before the first child starts. ${dc === 0 ? "0 = starts immediately." : `Here, ${dc}s of dead time up front.`}`,
+      },
+      {
+        code: `${count} items, ${dir}`,
+        text: `With ${count} children at ${st}s apart${dc ? ` after a ${dc}s delay` : ""}, the last one begins ${last}s in. ${dir === "reverse" ? "Reverse means the last child fires first." : "Forward fires them first-to-last."}`,
+      },
+    ];
+  },
   toCode: (v) => {
     const dir = str(v, "direction", "forward") === "reverse" ? -1 : 1;
     return `import { motion } from "motion/react";

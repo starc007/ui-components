@@ -29,11 +29,32 @@ export type ControlDef =
       hint?: string;
       options: { label: string; value: string }[];
     }
+  | {
+      kind: "numberlist";
+      key: string;
+      label: string;
+      hint?: string;
+      min?: number;
+      max?: number;
+      step?: number;
+      minItems?: number;
+      maxItems?: number;
+    }
   | { kind: "curve"; key: string; label: string; hint?: string };
 
 export interface Preset {
   name: string;
   values: Values;
+}
+
+/**
+ * One decoded line of the generated code: `code` is the snippet fragment it
+ * refers to (rendered monospace), `text` explains it in plain English using the
+ * current values. This is the teaching layer — it turns the code into a lesson.
+ */
+export interface ExplainPoint {
+  code: string;
+  text: string;
 }
 
 /**
@@ -53,6 +74,14 @@ export interface PlaygroundItem {
   Preview: FC<{ values: Values; replayKey: number }>;
   /** Copy-paste `motion/react` snippet for the current values. */
   toCode: (values: Values) => string;
+  /** Plain-English decode of the current code, for first-time learners. */
+  explain: (values: Values) => ExplainPoint[];
+  /**
+   * Optional: adjust dependent controls when one changes (e.g. reset the
+   * keyframe list when the animated property switches). Receives the changed
+   * key and the already-updated values; returns the final values to store.
+   */
+  coerce?: (key: string, next: Values) => Values;
 }
 
 /** Read a numeric control value with a fallback. */

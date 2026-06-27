@@ -1,5 +1,6 @@
 "use client";
 
+import { Plus, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { RangeSlider } from "@/components/motion/range-slider";
 import type { ControlDef, ControlValue, Values } from "./core";
@@ -68,6 +69,72 @@ export function Controls({
               </select>
               {c.hint ? <Hint>{c.hint}</Hint> : null}
             </label>
+          );
+        }
+
+        if (c.kind === "numberlist") {
+          const list = Array.isArray(values[c.key])
+            ? (values[c.key] as number[])
+            : [];
+          const minItems = c.minItems ?? 2;
+          const maxItems = c.maxItems ?? 8;
+          const setAt = (i: number, val: number) =>
+            onChange(
+              c.key,
+              list.map((n, idx) => (idx === i ? val : n)),
+            );
+          const removeAt = (i: number) =>
+            onChange(
+              c.key,
+              list.filter((_, idx) => idx !== i),
+            );
+          const add = () =>
+            onChange(c.key, [...list, list[list.length - 1] ?? 0]);
+
+          return (
+            <div key={c.key} className="block">
+              <span className="text-sm font-medium text-foreground">
+                {c.label}
+              </span>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                {list.map((n, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: positional value slots
+                  <div key={i} className="relative">
+                    <input
+                      type="number"
+                      aria-label={`${c.label} value ${i + 1}`}
+                      value={n}
+                      min={c.min}
+                      max={c.max}
+                      step={c.step}
+                      onChange={(e) => setAt(i, Number(e.target.value))}
+                      className="w-16 rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground"
+                    />
+                    {list.length > minItems ? (
+                      <button
+                        type="button"
+                        onClick={() => removeAt(i)}
+                        aria-label={`Remove value ${i + 1}`}
+                        className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        <X className="h-2.5 w-2.5" />
+                      </button>
+                    ) : null}
+                  </div>
+                ))}
+                {list.length < maxItems ? (
+                  <button
+                    type="button"
+                    onClick={add}
+                    aria-label="Add value"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-dashed border-border text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                ) : null}
+              </div>
+              {c.hint ? <Hint>{c.hint}</Hint> : null}
+            </div>
           );
         }
 
