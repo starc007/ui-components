@@ -2,7 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
-import { StatefulButton, type ButtonState } from "@/components/motion/button";
+import { type ButtonState, StatefulButton } from "@/components/motion/button";
 
 export function ButtonStatefulPreview() {
   const [okState, setOkState] = useState<ButtonState>("idle");

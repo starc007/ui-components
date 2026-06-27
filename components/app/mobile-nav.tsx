@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { Menu } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { SidebarNav } from "@/components/app/site-sidebar";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { Button } from "@/components/motion/button";
-import { SidebarNav } from "@/components/app/site-sidebar";
 import { cn } from "@/lib/utils";
 
 /** Mobile nav: a header hamburger that opens the sidebar list in beUI's own bottom sheet. */
@@ -63,6 +63,18 @@ export function MobileNav() {
               )}
             >
               Blocks
+            </Link>
+            <Link
+              href="/playground"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                pathname.startsWith("/playground")
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Playground
             </Link>
           </nav>
           <SidebarNav onNavigate={() => setOpen(false)} />

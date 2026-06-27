@@ -4,9 +4,9 @@ import { Check, LoaderCircle, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import {
   AnimatedToastStack,
-  useAnimatedToastStack,
   type ToastInput,
   type ToastPosition,
+  useAnimatedToastStack,
 } from "@/components/motion/animated-toast-stack";
 import { cn } from "@/lib/utils";
 

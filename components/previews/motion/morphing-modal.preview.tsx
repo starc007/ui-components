@@ -1,7 +1,7 @@
 "use client";
 
+import { Ban, Lock, ScanFace, ScrollText, ShieldCheck, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { Ban, Lock, ScrollText, ShieldCheck, ScanFace, Trash2 } from "lucide-react";
 import { MorphingModal } from "@/components/motion/morphing-modal";
 
 type View = "options" | "private-key" | "recovery" | null;

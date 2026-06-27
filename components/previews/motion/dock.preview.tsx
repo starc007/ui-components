@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Calendar, Home, Mail, Music, Settings, Sparkles } from "lucide-react";
+import { useState } from "react";
 import { GithubIcon } from "@/components/app/icons";
 import { Dock, DockItem, DockSeparator } from "@/components/motion/dock";
 

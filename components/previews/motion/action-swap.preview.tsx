@@ -2,9 +2,9 @@
 
 import { Check, Copy, Send, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { EASE_OUT } from "@/lib/ease";
 import { useEffect, useState } from "react";
 import { ActionSwapButton, type ActionSwapItem } from "@/components/motion/action-swap";
+import { EASE_OUT } from "@/lib/ease";
 
 const BLUR_ITEMS: ActionSwapItem[] = [
   {
