@@ -19,6 +19,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 // Bouncy unfold: the panel grows out of the trigger's edge (height 0 -> content)
@@ -165,14 +166,20 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
       aria-expanded={ctx.open}
       aria-controls={ctx.listId}
       onClick={() => ctx.setOpen(!ctx.open)}
-      // square off the bottom corners when open so the panel grows out of a
-      // flush edge — it reads as the trigger extending, not a separate card
+      // Gooey: on open the bottom corners snap flat (panel is attached), then
+      // round back once the panel has pulled away — the two pinch apart.
       initial={false}
       animate={{
-        borderBottomLeftRadius: ctx.open ? 0 : 12,
-        borderBottomRightRadius: ctx.open ? 0 : 12,
+        borderBottomLeftRadius: ctx.open ? [0, 0, 12] : 12,
+        borderBottomRightRadius: ctx.open ? [0, 0, 12] : 12,
       }}
-      transition={ctx.reduce ? { duration: 0 } : OPEN_TRANSITION}
+      transition={
+        ctx.reduce
+          ? { duration: 0 }
+          : ctx.open
+            ? { duration: 0.5, times: [0, 0.45, 1], ease: EASE_OUT }
+            : OPEN_TRANSITION
+      }
       className={cn(
         "relative z-10 flex w-full items-center justify-between gap-2 rounded-t-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors",
         "hover:border-(--color-border-strong) focus-visible:ring-2 focus-visible:ring-foreground/20",
@@ -241,19 +248,40 @@ export function SelectContent({ className, children }: SelectContentProps) {
       aria-labelledby={ctx.triggerId}
       aria-hidden={!open}
       initial={false}
-      animate={{ opacity: open ? 1 : 0, height: open ? height : 0 }}
+      animate={
+        ctx.reduce
+          ? { opacity: open ? 1 : 0, height: open ? height : 0 }
+          : {
+              opacity: open ? 1 : 0,
+              height: open ? height : 0,
+              // born attached (gap 0, top flat), then it pulls down into a gap
+              // and its top rounds — pinching off from the trigger
+              marginTop: open ? [0, 0, 10, 8] : 0,
+              borderTopLeftRadius: open ? [0, 0, 12] : 0,
+              borderTopRightRadius: open ? [0, 0, 12] : 0,
+            }
+      }
       transition={
-        ctx.reduce ? { duration: 0.12 } : open ? OPEN_TRANSITION : CLOSE_TRANSITION
+        ctx.reduce
+          ? { duration: 0.12 }
+          : open
+            ? {
+                opacity: { duration: 0.18 },
+                height: { duration: 0.42, ease: EASE_OUT },
+                marginTop: { duration: 0.5, times: [0, 0.4, 0.85, 1], ease: EASE_OUT },
+                borderTopLeftRadius: { duration: 0.5, times: [0, 0.45, 1], ease: EASE_OUT },
+                borderTopRightRadius: { duration: 0.5, times: [0, 0.45, 1], ease: EASE_OUT },
+              }
+            : CLOSE_TRANSITION
       }
       style={{
         transformOrigin: "top",
         overflow: "hidden",
         pointerEvents: open ? "auto" : "none",
       }}
-      // flush under the trigger: shares its bottom edge (border-t-0), rounds
-      // only the bottom — so panel + trigger look like one growing surface
+      // starts flush under the trigger, then separates into its own rounded pill
       className={cn(
-        "absolute left-0 right-0 top-full z-20 rounded-b-xl border border-t-0 border-border bg-background shadow-lg",
+        "absolute left-0 right-0 top-full z-20 rounded-b-xl border border-border bg-background shadow-lg",
         className,
       )}
     >
