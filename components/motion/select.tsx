@@ -177,7 +177,7 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
         ctx.reduce
           ? { duration: 0 }
           : ctx.open
-            ? { duration: 0.5, times: [0, 0.45, 1], ease: EASE_OUT }
+            ? { duration: 0.6, times: [0, 0.4, 1], ease: EASE_OUT }
             : OPEN_TRANSITION
       }
       className={cn(
@@ -254,11 +254,12 @@ export function SelectContent({ className, children }: SelectContentProps) {
           : {
               opacity: open ? 1 : 0,
               height: open ? height : 0,
-              // born attached (gap 0, top flat), then it pulls down into a gap
-              // and its top rounds — pinching off from the trigger
-              marginTop: open ? [0, 0, 10, 8] : 0,
-              borderTopLeftRadius: open ? [0, 0, 12] : 0,
-              borderTopRightRadius: open ? [0, 0, 12] : 0,
+              // born attached (gap 0, top flat); then a delayed spring drops it
+              // into a gap and rounds its top — the spring's overshoot is the
+              // bounce (smooth, no retract flick)
+              marginTop: open ? 8 : 0,
+              borderTopLeftRadius: open ? 12 : 0,
+              borderTopRightRadius: open ? 12 : 0,
             }
       }
       transition={
@@ -267,10 +268,11 @@ export function SelectContent({ className, children }: SelectContentProps) {
           : open
             ? {
                 opacity: { duration: 0.18 },
-                height: { duration: 0.42, ease: EASE_OUT },
-                marginTop: { duration: 0.5, times: [0, 0.4, 0.85, 1], ease: EASE_OUT },
-                borderTopLeftRadius: { duration: 0.5, times: [0, 0.45, 1], ease: EASE_OUT },
-                borderTopRightRadius: { duration: 0.5, times: [0, 0.45, 1], ease: EASE_OUT },
+                height: { type: "spring", duration: 0.42, bounce: 0.14 },
+                // hold attached, then bounce apart
+                marginTop: { type: "spring", duration: 0.6, bounce: 0.5, delay: 0.12 },
+                borderTopLeftRadius: { duration: 0.3, ease: EASE_OUT, delay: 0.14 },
+                borderTopRightRadius: { duration: 0.3, ease: EASE_OUT, delay: 0.14 },
               }
             : CLOSE_TRANSITION
       }
