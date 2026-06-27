@@ -2,7 +2,6 @@
 
 import { Check, ChevronDown } from "lucide-react";
 import {
-  AnimatePresence,
   motion,
   type Transition,
   useReducedMotion,
@@ -223,39 +222,45 @@ export function SelectContent({ className, children }: SelectContentProps) {
     return () => observer.disconnect();
   });
 
+  // Items stay mounted (open just animates the panel) so each item's label
+  // registration persists — otherwise the trigger would fall back to the
+  // placeholder the moment the panel closes.
+  const open = ctx.open;
   return (
-    <AnimatePresence>
-      {ctx.open ? (
-        <motion.div
-          id={ctx.listId}
-          role="listbox"
-          aria-labelledby={ctx.triggerId}
-          initial={ctx.reduce ? { opacity: 0 } : { opacity: 0, height: 0, marginTop: 0 }}
-          animate={ctx.reduce ? { opacity: 1 } : { opacity: 1, height, marginTop: 8 }}
-          exit={
-            ctx.reduce
-              ? { opacity: 0 }
-              : { opacity: 0, height: 0, marginTop: 0, transition: CLOSE_TRANSITION }
-          }
-          transition={ctx.reduce ? { duration: 0.12 } : OPEN_TRANSITION}
-          style={{ transformOrigin: "top", overflow: "hidden" }}
-          className={cn(
-            "absolute left-0 right-0 top-full z-50 rounded-xl border border-border bg-card shadow-lg",
-            className,
-          )}
-        >
-          <motion.div
-            ref={innerRef}
-            variants={ctx.reduce ? undefined : LIST_VARIANTS}
-            initial="hidden"
-            animate="show"
-            className="p-1"
-          >
-            {children}
-          </motion.div>
-        </motion.div>
-      ) : null}
-    </AnimatePresence>
+    <motion.div
+      id={ctx.listId}
+      role="listbox"
+      aria-labelledby={ctx.triggerId}
+      aria-hidden={!open}
+      initial={false}
+      animate={
+        ctx.reduce
+          ? { opacity: open ? 1 : 0, height: open ? height : 0 }
+          : {
+              opacity: open ? 1 : 0,
+              height: open ? height : 0,
+              marginTop: open ? 8 : 0,
+            }
+      }
+      transition={
+        ctx.reduce ? { duration: 0.12 } : open ? OPEN_TRANSITION : CLOSE_TRANSITION
+      }
+      style={{ transformOrigin: "top", overflow: "hidden", pointerEvents: open ? "auto" : "none" }}
+      className={cn(
+        "absolute left-0 right-0 top-full z-50 rounded-xl border border-border bg-card shadow-lg",
+        className,
+      )}
+    >
+      <motion.div
+        ref={innerRef}
+        variants={ctx.reduce ? undefined : LIST_VARIANTS}
+        initial={false}
+        animate={open ? "show" : "hidden"}
+        className="p-1"
+      >
+        {children}
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -276,7 +281,7 @@ export function SelectItem({
   const selected = ctx.value === value;
   const label = typeof children === "string" ? children : value;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     ctx.register(value, label);
     return () => ctx.unregister(value);
   }, [ctx.register, ctx.unregister, value, label]);
