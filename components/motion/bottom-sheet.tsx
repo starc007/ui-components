@@ -9,8 +9,13 @@ import {
 } from "motion/react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
+import { EASE_DRAWER } from "@/lib/ease";
 import { cn } from "@/lib/utils";
+
+// Vaul-style glide: a long, fully-damped tween reads smoother than a spring on
+// open — no settle/overshoot, just one clean decel. Same curve drives the
+// backdrop fade so the surface and scrim move as one.
+const DRAWER = { duration: 0.5, ease: EASE_DRAWER } as const;
 
 export interface BottomSheetProps {
   open: boolean;
@@ -127,7 +132,7 @@ export function BottomSheet({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: EASE_OUT }}
+            transition={DRAWER}
             onClick={() => onOpenChange(false)}
             // A dim scrim with a light blur. backdrop-blur is GPU-expensive and
             // re-rasterizes every frame the sheet drags over it; a small radius
@@ -146,9 +151,7 @@ export function BottomSheet({
             initial={reduce ? { y: 0, opacity: 0 } : { y: "100%" }}
             animate={reduce ? { y: 0, opacity: 1 } : { y: 0 }}
             exit={reduce ? { y: 0, opacity: 0 } : { y: "100%" }}
-            transition={
-              reduce ? { duration: 0.18, ease: EASE_OUT } : SPRING_PANEL
-            }
+            transition={reduce ? { duration: 0.18, ease: EASE_DRAWER } : DRAWER}
             onAnimationComplete={() => {
               if (sheetRef.current)
                 heightRef.current = sheetRef.current.offsetHeight;
