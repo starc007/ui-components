@@ -5,11 +5,13 @@ import {
   allComponents,
   registry,
 } from "@/lib/registry";
+import { SITE_URL } from "@/lib/site";
 
-export const SITE = "https://beui.dev";
+export const SITE = SITE_URL;
 export const SITE_NAME = "beUI";
+export const SITE_TAGLINE = "The motion toolkit for React & Next.js";
 export const SITE_DESCRIPTION =
-  "Free, open-source, shadcn-compatible motion components for React and Next.js. Built on Motion and Tailwind CSS. Copy-paste the source or install with the shadcn CLI.";
+  "The motion toolkit for React and Next.js. Free, open-source, shadcn-compatible components built on Framer Motion and Tailwind CSS. Copy-paste the source or install with the shadcn CLI.";
 export const AUTHOR = "Saurabh";
 
 const abs = (path: string) => (path.startsWith("http") ? path : `${SITE}${path}`);
@@ -88,6 +90,7 @@ export function siteJsonLd(): JsonLdSchema[] {
       "@id": `${SITE}/#org`,
       name: SITE_NAME,
       url: SITE,
+      slogan: SITE_TAGLINE,
       logo: abs("/beui-mark.png"),
     },
     {
@@ -95,6 +98,8 @@ export function siteJsonLd(): JsonLdSchema[] {
       "@type": "SoftwareApplication",
       "@id": `${SITE}/#app`,
       name: SITE_NAME,
+      alternateName: "beUI motion toolkit",
+      slogan: SITE_TAGLINE,
       description: SITE_DESCRIPTION,
       url: SITE,
       applicationCategory: "DeveloperApplication",

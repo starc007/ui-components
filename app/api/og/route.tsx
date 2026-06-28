@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   const description =
     component?.description ??
     category?.description ??
-    "Production-ready motion components for React. Copy the source, own the code.";
+    "The motion toolkit for React & Next.js. Built on Framer Motion and Tailwind.";
   const label = component
     ? "Component"
     : category

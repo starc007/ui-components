@@ -41,7 +41,7 @@ export default function Home() {
 
       <section className="mx-auto max-w-2xl px-4 pb-24">
         <p className="mb-5 text-center text-sm text-muted-foreground">
-          Built on Motion. Distributed via shadcn.
+          Built on Framer Motion. Distributed via shadcn.
         </p>
         <InstallCommand />
       </section>

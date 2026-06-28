@@ -7,7 +7,7 @@ import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { TextReveal } from "@/components/motion/text-reveal";
 
-const HEADLINE = ["Motion", "components", "for React."];
+const HEADLINE = ["The motion toolkit", "for React & Next.js"];
 const HEADLINE_WORDS = HEADLINE.reduce((n, l) => n + l.split(" ").length, 0);
 const STAGGER = 0.09;
 const START = 0.12;
@@ -49,9 +49,10 @@ export function Hero() {
         initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={{ duration: 0.5, ease: EASE_OUT, delay: subDelay }}
-        className="mx-auto mt-6 max-w-sm text-pretty text-base leading-7 text-muted-foreground"
+        className="mx-auto mt-6 max-w-md text-pretty text-base leading-7 text-muted-foreground"
       >
-        Copy-ready components with clean motion.
+        Copy-paste animated components built on Framer Motion and Tailwind. Free
+        and open source.
       </motion.p>
 
       <motion.div
