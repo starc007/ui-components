@@ -6,12 +6,12 @@ import { CodeBlock } from "@/components/app/code-block";
 export const metadata: Metadata = {
   title: "AI Agents",
   description:
-    "Endpoints for coding agents to consume beUI components programmatically: llms.txt, JSON registry, and raw source.",
+    "Connect the beUI MCP server, or use the agent-friendly endpoints (llms.txt, JSON registry, raw source) to consume components programmatically.",
   alternates: { canonical: "/docs/ai-agents" },
   openGraph: {
     title: "AI Agents · beUI",
     description:
-      "Endpoints for coding agents to consume beUI components programmatically: llms.txt, JSON registry, and raw source.",
+      "Connect the beUI MCP server, or use the agent-friendly endpoints (llms.txt, JSON registry, raw source) to consume components programmatically.",
     url: "/docs/ai-agents",
     type: "article",
     siteName: "beUI",
@@ -32,6 +32,26 @@ const ENDPOINTS: { label: string; url: string; desc: string }[] = [
   { label: "shadcn item", url: "/r/{slug}.json", desc: "Install item with inline file content and shadcn semantic color classes." },
   { label: "Raw source", url: "/r/{slug}/raw", desc: "Plain text .tsx ready to drop in." },
 ];
+
+const MCP_URL = "https://mcp.beui.dev/mcp";
+
+const MCP_CLI_SNIPPET = `# Claude Code
+claude mcp add --transport http beui https://mcp.beui.dev/mcp
+
+# Codex
+codex mcp add beui --url https://mcp.beui.dev/mcp
+
+# Amp
+amp mcp add beui https://mcp.beui.dev/mcp`;
+
+const MCP_MANUAL_SNIPPET = `{
+  "mcpServers": {
+    "beui": {
+      "type": "http",
+      "url": "https://mcp.beui.dev/mcp"
+    }
+  }
+}`;
 
 const FETCH_SNIPPET = `// 1. Discover what exists
 const idx = await fetch('https://beui.dev/r').then((r) => r.json());
@@ -76,7 +96,25 @@ export default function AIAgentsPage() {
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Intro</p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">For AI agents</h1>
       <p className="mt-3 text-muted-foreground">
-        beUI exposes a static, agent-friendly surface. Coding agents (Cursor, Claude, GPT, custom MCP) can list components, fetch source with all deps, and drop files into the user&apos;s project with one HTTP call.
+        beUI exposes a static, agent-friendly surface. Connect the MCP server below, or hit the raw endpoints directly. Coding agents (Claude, Codex, Cursor, Amp) can list components, fetch source with all deps, and drop files into the user&apos;s project.
+      </p>
+
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">MCP server</h2>
+      <p className="mt-2 text-muted-foreground">
+        The fastest path: connect the beUI MCP server and your agent can list, search and install components directly. Hosted at{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">{MCP_URL}</code>.
+      </p>
+      <div className="mt-4">
+        <CodeBlock code={MCP_CLI_SNIPPET} lang="bash" filename="terminal" />
+      </div>
+      <p className="mt-4 text-muted-foreground">
+        Any other client: add it manually to your MCP config.
+      </p>
+      <div className="mt-4">
+        <CodeBlock code={MCP_MANUAL_SNIPPET} lang="json" filename="mcp.json" />
+      </div>
+      <p className="mt-4 text-sm text-muted-foreground">
+        Tools: <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">list_components</code>, <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">search_components</code>, <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">get_component</code>, <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">get_install_command</code>.
       </p>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">Endpoints</h2>
@@ -127,10 +165,6 @@ export default function AIAgentsPage() {
         <CodeBlock code={ENTRY_SHAPE} lang="json" filename="r/swap.json" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">Caching</h2>
-      <p className="mt-2 text-muted-foreground">
-        All routes are pre-rendered at build, served with <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">cache-control: public, max-age=300, s-maxage=3600</code>.
-      </p>
     </div>
   );
 }

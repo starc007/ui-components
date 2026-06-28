@@ -18,6 +18,20 @@ const CURATED: { category: string; slug: string }[] = [
   { category: "blocks", slug: "command-palette" },
   { category: "blocks", slug: "expandable-action-bar" },
   { category: "blocks", slug: "expandable-tabs" },
+  { category: "motion", slug: "tilt-card" },
+  { category: "motion", slug: "bottom-sheet" },
+  { category: "motion", slug: "switch" },
+  { category: "motion", slug: "tooltip" },
+  { category: "motion", slug: "text-animation" },
+  { category: "motion", slug: "number" },
+  { category: "motion", slug: "bouncy-accordion" },
+  { category: "motion", slug: "range-slider" },
+  { category: "motion", slug: "theme-toggle" },
+  { category: "motion", slug: "drawer" },
+  { category: "blocks", slug: "swap" },
+  { category: "blocks", slug: "otp-input" },
+  { category: "blocks", slug: "swipeable-list" },
+  { category: "blocks", slug: "bloom-menu" },
 ];
 
 export default function Home() {
