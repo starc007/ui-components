@@ -42,7 +42,7 @@ export function Hero() {
         text={HEADLINE}
         delay={START}
         stagger={STAGGER}
-        className="mx-auto font-pixel text-6xl font-medium leading-[0.9] text-foreground sm:text-6xl md:text-7xl"
+        className="mx-auto font-pixel text-5xl font-medium leading-[0.9] text-foreground sm:text-6xl md:text-7xl"
       />
 
       <motion.p
