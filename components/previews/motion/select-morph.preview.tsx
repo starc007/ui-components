@@ -1,25 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import { MorphSelect } from "@/components/motion/select-morph";
-
-const OPTIONS = [
-  { label: "Next.js", value: "next" },
-  { label: "Remix", value: "remix" },
-  { label: "Astro", value: "astro" },
-  { label: "Vite", value: "vite" },
-];
+import {
+  MorphSelect,
+  MorphSelectContent,
+  MorphSelectItem,
+  MorphSelectTrigger,
+  MorphSelectValue,
+} from "@/components/motion/select-morph";
 
 export function SelectMorphPreview() {
   const [value, setValue] = useState("next");
   return (
     <div className="w-56">
-      <MorphSelect
-        options={OPTIONS}
-        value={value}
-        onValueChange={setValue}
-        placeholder="Pick a framework"
-      />
+      <MorphSelect value={value} onValueChange={setValue}>
+        <MorphSelectTrigger>
+          <MorphSelectValue placeholder="Pick a framework" />
+        </MorphSelectTrigger>
+        <MorphSelectContent>
+          <MorphSelectItem value="next">Next.js</MorphSelectItem>
+          <MorphSelectItem value="remix">Remix</MorphSelectItem>
+          <MorphSelectItem value="astro">Astro</MorphSelectItem>
+          <MorphSelectItem value="vite">Vite</MorphSelectItem>
+        </MorphSelectContent>
+      </MorphSelect>
     </div>
   );
 }

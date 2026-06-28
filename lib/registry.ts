@@ -122,7 +122,7 @@ export const registry: CategoryEntry[] = [
           {
             slug: "morph",
             name: "Morph Select",
-            description: "The trigger morphs into the panel via a shared layoutId — one continuous surface that grows open and shrinks back, never detaching.",
+            description: "Composable primitives (MorphSelect, MorphSelectTrigger, MorphSelectValue, MorphSelectContent, MorphSelectItem) where the trigger morphs into the panel via a shared layoutId — one continuous surface that grows open and shrinks back, never detaching.",
             installSlug: "select-morph",
             file: "components/motion/select-morph.tsx",
             previewKey: "motion/select-morph",
