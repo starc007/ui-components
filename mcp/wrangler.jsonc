@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "beui-mcp",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-05-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "vars": {
+    "REGISTRY_URL": "https://beui.dev"
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "BeUiMcp", "class_name": "BeUiMcp" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BeUiMcp"] }],
+  // Custom domain. Requires beui.dev's zone on Cloudflare; wrangler provisions
+  // the mcp.beui.dev DNS record on deploy.
+  "routes": [{ "pattern": "mcp.beui.dev", "custom_domain": true }]
+}
