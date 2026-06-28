@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 import { allComponents, registry } from "@/lib/registry";
-
-const SITE = "https://beui.dev";
+import { SITE_URL as SITE } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

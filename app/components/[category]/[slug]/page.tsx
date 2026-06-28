@@ -20,6 +20,7 @@ import { NewBadge } from "@/components/app/new-badge";
 import { ComponentCard } from "@/components/app/component-card";
 import { JsonLd } from "@/components/app/json-ld";
 import { getPreview, previews } from "@/components/previews";
+import { pageUrlFor, withSignature } from "@/lib/signature";
 import { readSourceFile } from "@/lib/source-files";
 import {
   breadcrumbJsonLd,
@@ -169,7 +170,7 @@ export default async function ComponentPage({
       {comp.examples?.length ? (
         <div className="mt-10 flex flex-col gap-12">
           {comp.examples.map((ex) => (
-            <ExampleBlock key={ex.slug} category={cat.slug} example={ex} />
+            <ExampleBlock key={ex.slug} category={cat.slug} pageSlug={comp.slug} example={ex} />
           ))}
         </div>
       ) : (
@@ -215,9 +216,11 @@ export default async function ComponentPage({
 
 async function ExampleBlock({
   category,
+  pageSlug,
   example,
 }: {
   category: string;
+  pageSlug: string;
   example: ComponentExample;
 }) {
   const Preview = previews[example.previewKey];
@@ -255,7 +258,10 @@ async function ExampleBlock({
           <CodeBlock code={usage} filename={example.previewFile} />
         </TabsContent>
         <TabsContent value="source" className="mt-4">
-          <CodeBlock code={source} filename={example.file} />
+          <CodeBlock
+            code={withSignature(source, example.file, pageUrlFor(category, pageSlug))}
+            filename={example.file}
+          />
         </TabsContent>
       </Tabs>
       {installSlug ? (
@@ -300,7 +306,10 @@ async function DefaultTabs({
         <CodeBlock code={usage} filename={previewFile} />
       </TabsContent>
       <TabsContent value="source" className="mt-4">
-        <CodeBlock code={source} filename={file} />
+        <CodeBlock
+          code={withSignature(source, file, pageUrlFor(category, slug))}
+          filename={file}
+        />
       </TabsContent>
     </Tabs>
   );
