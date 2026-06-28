@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: SITE_NAME,
   title: {
-    default: "beUI · Production-ready motion components for React & Next.js",
+    default: "beUI · The motion toolkit for React & Next.js",
     template: "%s · beUI",
   },
   description: SITE_DESCRIPTION,
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "beUI · Production-ready motion components for React & Next.js",
+    title: "beUI · The motion toolkit for React & Next.js",
     description: SITE_DESCRIPTION,
     type: "website",
     url: "/",
@@ -55,13 +55,13 @@ export const metadata: Metadata = {
         url: "/api/og",
         width: 1200,
         height: 630,
-        alt: "beUI · Production-ready motion components for React & Next.js",
+        alt: "beUI · The motion toolkit for React & Next.js",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "beUI · Production-ready motion components for React & Next.js",
+    title: "beUI · The motion toolkit for React & Next.js",
     description: SITE_DESCRIPTION,
     images: ["/api/og"],
   },

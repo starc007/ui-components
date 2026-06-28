@@ -20,7 +20,7 @@ type OgOptions = {
 // Satori-safe styles only (flexbox; every multi-child node sets display:flex).
 export function ogImage({
   title = "beUI",
-  description = "Production-ready motion components for React. Copy the source, own the code.",
+  description = "The motion toolkit for React & Next.js. Built on Framer Motion and Tailwind.",
   label = "Motion components",
   command = "npx shadcn add @beui/...",
 }: OgOptions = {}): ReactElement {
