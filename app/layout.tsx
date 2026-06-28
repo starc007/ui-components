@@ -15,6 +15,7 @@ import { KeyboardShortcuts } from "@/components/app/keyboard-shortcuts";
 import { JsonLd } from "@/components/app/json-ld";
 import { getGithubStarCount } from "@/lib/github";
 import { AUTHOR, SITE_DESCRIPTION, SITE_NAME, siteJsonLd } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -22,7 +23,7 @@ const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 const pixel = GeistPixelSquare;
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://beui.dev"),
+  metadataBase: new URL(SITE_URL),
   applicationName: SITE_NAME,
   title: {
     default: "beUI · Production-ready motion components for React & Next.js",

@@ -1,7 +1,7 @@
 import { allComponents, findCategory, registry } from "@/lib/registry";
+import { pageUrlFor, withSignature } from "@/lib/signature";
+import { SITE_URL } from "@/lib/site";
 import { readOptionalSourceFile, readSourceFile, resolveSourceImport, type SourceFile } from "@/lib/source-files";
-
-const SITE_URL = "https://beui.dev";
 
 export type RegistryFile = {
   path: string;
@@ -250,7 +250,8 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
   const previewSource = await readOptionalSourceFile(previewPath);
   const previewGraph = previewSource ? await collectSourceGraph([previewPath]) : null;
   const componentFileSet = new Set(requiredFiles);
-  const files = mergeRegistryFiles(componentGraph.files, previewGraph?.files ?? [], componentFileSet, previewPath);
+  const pageUrl = pageUrlFor(categorySlug, comp.pageSlug);
+  const files = mergeRegistryFiles(componentGraph.files, previewGraph?.files ?? [], componentFileSet, previewPath, pageUrl);
 
   return {
     slug: comp.slug,
@@ -272,6 +273,7 @@ function mergeRegistryFiles(
   previewFiles: SourceFile[],
   componentFileSet: Set<string>,
   previewPath: string,
+  pageUrl: string,
 ) {
   const seen = new Set<string>();
   const files: RegistryFile[] = [];
@@ -279,10 +281,11 @@ function mergeRegistryFiles(
   for (const file of [...componentFiles, ...previewFiles]) {
     if (seen.has(file.path)) continue;
     seen.add(file.path);
+    const isComponent = file.path !== previewPath && componentFileSet.has(file.path);
     files.push({
       path: file.path,
-      type: file.path === previewPath ? "preview" : componentFileSet.has(file.path) ? "component" : "util",
-      content: file.content,
+      type: file.path === previewPath ? "preview" : isComponent ? "component" : "util",
+      content: isComponent ? withSignature(file.content, file.path, pageUrl) : file.content,
     });
   }
 
@@ -299,6 +302,8 @@ export async function buildShadcnItem(
 
   const graph = await collectSourceGraph([comp.file, ...(comp.extraFiles ?? [])]);
   const dependencies = graph.external.filter((dep) => !SHADCN_DEP_SKIP.has(dep));
+  const componentFileSet = new Set([comp.file, ...(comp.extraFiles ?? [])]);
+  const pageUrl = pageUrlFor(comp.categorySlug, comp.pageSlug);
 
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
@@ -310,7 +315,13 @@ export async function buildShadcnItem(
     dependencies,
     registryDependencies: [],
     files: uniqueByPath(
-      graph.files.map((file) => shadcnFile(file.path, includeContent ? file.content : undefined)),
+      graph.files.map((file) => {
+        if (!includeContent) return shadcnFile(file.path);
+        const content = componentFileSet.has(file.path)
+          ? withSignature(file.content, file.path, pageUrl)
+          : file.content;
+        return shadcnFile(file.path, content);
+      }),
     ),
   };
 }
