@@ -3,12 +3,11 @@
 import {
   AnimatePresence,
   motion,
-  useDragControls,
-  useMotionValue,
-  useReducedMotion,
   type PanInfo,
+  useDragControls,
+  useReducedMotion,
 } from "motion/react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
 import { cn } from "@/lib/utils";
@@ -40,7 +39,6 @@ export function BottomSheet({
 }: BottomSheetProps) {
   const [snap, setSnap] = useState(defaultSnap);
   const [mounted, setMounted] = useState(false);
-  const dragY = useMotionValue(0);
   const dragControls = useDragControls();
   const sheetRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
@@ -96,21 +94,18 @@ export function BottomSheet({
       } else {
         onOpenChange(false);
       }
-      dragY.set(0);
       return;
     }
 
     // Strong upward fling → next snap.
     if (velocity < -500) {
       setSnap(Math.min(snapPoints.length - 1, snap + 1));
-      dragY.set(0);
       return;
     }
 
     // Otherwise snap to nearest by current offset.
     if (offset > 80 && snap > 0) setSnap(snap - 1);
     else if (offset < -80 && snap < snapPoints.length - 1) setSnap(snap + 1);
-    dragY.set(0);
   };
 
   const snapValue = snapPoints[snap];
@@ -134,7 +129,10 @@ export function BottomSheet({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: EASE_OUT }}
             onClick={() => onOpenChange(false)}
-            className="pointer-events-auto absolute inset-0 bg-background/5 backdrop-blur-md backdrop-saturate-150"
+            // A dim scrim with a light blur. backdrop-blur is GPU-expensive and
+            // re-rasterizes every frame the sheet drags over it; a small radius
+            // plus more opacity keeps the glass look without the jank.
+            className="pointer-events-auto absolute inset-0 bg-background/40 backdrop-blur-sm"
           />
           <motion.div
             ref={sheetRef}
@@ -144,7 +142,6 @@ export function BottomSheet({
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0.02, bottom: 0.4 }}
             dragMomentum={false}
-            onDrag={(_, info) => dragY.set(Math.max(0, info.offset.y))}
             onDragEnd={onDragEnd}
             initial={reduce ? { y: 0, opacity: 0 } : { y: "100%" }}
             animate={reduce ? { y: 0, opacity: 1 } : { y: 0 }}
