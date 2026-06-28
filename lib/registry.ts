@@ -300,14 +300,12 @@ export const registry: CategoryEntry[] = [
         name: "Bouncy Accordion",
         description: "Single-open accordion with weighted spring layout, icon rows and reduced-motion-safe content reveals.",
         file: "components/motion/bouncy-accordion.tsx",
-        badge: "new",
       },
       {
         slug: "drawer",
         name: "Drawer",
         description: "Side panel that slides in from the left or right with a spring, backdrop blur, body scroll lock and esc-to-close.",
         file: "components/motion/drawer.tsx",
-        badge: "new",
       },
       {
         slug: "scroll-animation",
@@ -320,7 +318,6 @@ export const registry: CategoryEntry[] = [
           "components/motion/scroll-to.tsx",
           "components/motion/scroll-reveal.tsx",
         ],
-        badge: "new",
         keywords: [
           "smooth scroll",
           "lenis",
@@ -421,7 +418,6 @@ export const registry: CategoryEntry[] = [
         name: "Overflow Actions",
         description: "Connected pill rail for primary actions that springs open to reveal extra controls.",
         file: "components/motion/overflow-actions.tsx",
-        badge: "new",
       },
       {
         slug: "expandable-tabs",
@@ -440,14 +436,12 @@ export const registry: CategoryEntry[] = [
         name: "File Upload",
         description: "Drag-and-drop upload queue with progress rows, retry/remove actions and reduced-motion-safe state changes.",
         file: "components/motion/file-upload.tsx",
-        badge: "new",
       },
       {
         slug: "prediction-market",
         name: "Prediction Market",
         description: "Prediction market trade ticket with buy/sell modes, outcome prices, rolling amount entry, quick add chips and trade states.",
         file: "components/motion/prediction-market.tsx",
-        badge: "new",
       },
       {
         slug: "otp-input",
@@ -475,7 +469,6 @@ export const registry: CategoryEntry[] = [
           "components/motion/not-found/stacked.tsx",
           "components/motion/not-found/terminal.tsx",
         ],
-        badge: "new",
         examples: [
           {
             slug: "glitch",
