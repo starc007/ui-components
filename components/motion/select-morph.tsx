@@ -107,8 +107,15 @@ export function MorphSelect({
             style={{ borderRadius: 12 }}
             className="absolute inset-x-0 top-0 z-30 overflow-hidden border border-border bg-background shadow-lg"
           >
-            {/* header mirrors the trigger so the box morph reads as continuous */}
-            <motion.div layout="position" className={cn(ROW, "text-foreground")}>
+            {/* header mirrors the trigger so the box morph reads as continuous;
+                clicking it collapses the panel back into the trigger */}
+            <motion.button
+              type="button"
+              layout="position"
+              aria-expanded
+              onClick={() => setOpen(false)}
+              className={cn(ROW, "text-foreground outline-none")}
+            >
               <span
                 className={selected ? "text-foreground" : "text-muted-foreground"}
               >
@@ -121,7 +128,7 @@ export function MorphSelect({
               >
                 <ChevronDown className="h-4 w-4" />
               </motion.span>
-            </motion.div>
+            </motion.button>
 
             <div className="h-px bg-border" />
 
