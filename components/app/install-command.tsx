@@ -76,7 +76,11 @@ export function InstallCommand({
           </TabsList>
         </Tabs>
         <div className="ml-auto shrink-0">
-          <CopyButton text={copyValue} />
+          <CopyButton
+            text={copyValue}
+            eventName="copy_install_command"
+            eventLabel={currentSlug}
+          />
         </div>
       </div>
 

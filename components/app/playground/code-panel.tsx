@@ -51,7 +51,7 @@ export function CodePanel({
       )}
     >
       <div className="absolute right-3 top-3 z-10">
-        <CopyButton text={code} />
+        <CopyButton text={code} eventName="copy_playground" />
       </div>
 
       {html ? (

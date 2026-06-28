@@ -41,3 +41,4 @@ next-env.d.ts
 
 # editor / local agent config
 .claude/
+.env
