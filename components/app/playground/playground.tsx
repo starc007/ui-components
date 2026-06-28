@@ -194,8 +194,9 @@ export function Playground() {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
-            {/* left column: preview, then code stacked at the same width */}
-            <div className="flex flex-col gap-6">
+            {/* left column: preview, then code stacked at the same width.
+                min-w-0 lets the code panel scroll instead of widening the grid */}
+            <div className="flex min-w-0 flex-col gap-6">
               <div className="flex flex-col rounded-2xl border border-border bg-card">
                 <div className="flex items-center justify-between border-b border-border px-5 py-3">
                   <span className="text-sm font-medium text-foreground">
@@ -220,7 +221,7 @@ export function Playground() {
             </div>
 
             {/* right column: controls, then the plain-English decode */}
-            <div className="flex flex-col gap-6">
+            <div className="flex min-w-0 flex-col gap-6">
               <div className="rounded-2xl border border-border bg-card p-5">
                 <PresetSection presets={active.presets} onApply={applyPreset} />
                 <div className="mt-5 border-t border-border pt-5">

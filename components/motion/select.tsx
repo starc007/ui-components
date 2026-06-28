@@ -35,6 +35,8 @@ const ITEM_VARIANTS: Variants = {
   show: { opacity: 1, y: 0, filter: "blur(0px)" },
 };
 
+type Placement = "bottom" | "top";
+
 interface SelectContextValue {
   value: string | undefined;
   open: boolean;
@@ -47,6 +49,8 @@ interface SelectContextValue {
   triggerId: string;
   listId: string;
   disabled: boolean;
+  placement: Placement;
+  setPlacement: (p: Placement) => void;
 }
 
 const SelectContext = createContext<SelectContextValue | null>(null);
@@ -80,6 +84,7 @@ export function Select({
   const [open, setOpen] = useState(false);
   const [internal, setInternal] = useState(defaultValue);
   const [labels, setLabels] = useState<Map<string, string>>(new Map());
+  const [placement, setPlacement] = useState<Placement>("bottom");
 
   const controlled = value !== undefined;
   const current = controlled ? value : internal;
@@ -134,8 +139,21 @@ export function Select({
       triggerId: `${baseId}-trigger`,
       listId: `${baseId}-list`,
       disabled,
+      placement,
+      setPlacement,
     }),
-    [current, open, select, register, unregister, labels, reduce, baseId, disabled],
+    [
+      current,
+      open,
+      select,
+      register,
+      unregister,
+      labels,
+      reduce,
+      baseId,
+      disabled,
+      placement,
+    ],
   );
 
   return (
@@ -154,6 +172,16 @@ export interface SelectTriggerProps {
 
 export function SelectTrigger({ className, children }: SelectTriggerProps) {
   const ctx = useSelectContext("SelectTrigger");
+  const isTop = ctx.placement === "top";
+  // edge facing the panel flattens then rounds; the far edge stays rounded.
+  // All four corners are specified so none gets stranded when placement flips.
+  const kf = ctx.open ? [0, 0, 12] : [12, 0, 12];
+  const kfT: Transition = ctx.reduce
+    ? { duration: 0 }
+    : ctx.open
+      ? { duration: 0.6, times: [0, 0.4, 1], ease: EASE_OUT }
+      : { duration: 0.42, times: [0, 0.5, 1], ease: EASE_OUT };
+  const flatT: Transition = { duration: 0 };
   return (
     <motion.button
       type="button"
@@ -163,24 +191,23 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
       aria-expanded={ctx.open}
       aria-controls={ctx.listId}
       onClick={() => ctx.setOpen(!ctx.open)}
-      // Gooey: on open the bottom corners snap flat (panel is attached), then
-      // round back once the panel has pulled away — the two pinch apart.
+      // Gooey: the edge facing the panel snaps flat (panel attached) then rounds
+      // back once the panel pulls away — the two pinch apart.
       initial={false}
       animate={{
-        // open: snap flat (panel attached) then round as it separates.
-        // close: flatten again to "receive" the returning panel, then round shut.
-        borderBottomLeftRadius: ctx.open ? [0, 0, 12] : [12, 0, 12],
-        borderBottomRightRadius: ctx.open ? [0, 0, 12] : [12, 0, 12],
+        borderTopLeftRadius: isTop ? kf : 12,
+        borderTopRightRadius: isTop ? kf : 12,
+        borderBottomLeftRadius: isTop ? 12 : kf,
+        borderBottomRightRadius: isTop ? 12 : kf,
       }}
-      transition={
-        ctx.reduce
-          ? { duration: 0 }
-          : ctx.open
-            ? { duration: 0.6, times: [0, 0.4, 1], ease: EASE_OUT }
-            : { duration: 0.42, times: [0, 0.5, 1], ease: EASE_OUT }
-      }
+      transition={{
+        borderTopLeftRadius: isTop ? kfT : flatT,
+        borderTopRightRadius: isTop ? kfT : flatT,
+        borderBottomLeftRadius: isTop ? flatT : kfT,
+        borderBottomRightRadius: isTop ? flatT : kfT,
+      }}
       className={cn(
-        "relative z-10 flex w-full items-center justify-between gap-2 rounded-t-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors",
+        "relative z-10 flex w-full items-center justify-between gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors",
         "hover:border-(--color-border-strong) focus-visible:ring-2 focus-visible:ring-foreground/20",
         "disabled:pointer-events-none disabled:opacity-50",
         className,
@@ -225,6 +252,8 @@ export function SelectContent({ className, children }: SelectContentProps) {
   const ctx = useSelectContext("SelectContent");
   const innerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  const open = ctx.open;
+  const { setPlacement } = ctx;
 
   useLayoutEffect(() => {
     const node = innerRef.current;
@@ -236,10 +265,38 @@ export function SelectContent({ className, children }: SelectContentProps) {
     return () => observer.disconnect();
   });
 
+  // On open, flip upward when there isn't room below and there's more above.
+  useLayoutEffect(() => {
+    if (!open) return;
+    const trigger = document.getElementById(ctx.triggerId);
+    const node = innerRef.current;
+    if (!trigger || !node) return;
+    const rect = trigger.getBoundingClientRect();
+    const h = node.offsetHeight;
+    const below = window.innerHeight - rect.bottom;
+    const above = rect.top;
+    setPlacement(below < h + 16 && above > below ? "top" : "bottom");
+  }, [open, ctx.triggerId, setPlacement]);
+
+  // Specify EVERY corner + both margins each render. The near edge (facing the
+  // trigger) animates flat->round and the gap opens on that side; the far edge
+  // stays rounded and its margin pinned to 0. Setting all of them avoids a
+  // stranded square corner when the placement flips between opens.
+  const isTop = ctx.placement === "top";
+  const nearGap = open ? 8 : 0;
+  const nearRadius = open ? 12 : 0;
+
+  const gapT: Transition = open
+    ? { type: "spring", duration: 0.6, bounce: 0.5, delay: 0.12 }
+    : { type: "spring", duration: 0.3, bounce: 0.1 };
+  const radiusT: Transition = open
+    ? { duration: 0.3, ease: EASE_OUT, delay: 0.14 }
+    : { duration: 0.16, ease: EASE_OUT };
+  const instant: Transition = { duration: 0 };
+
   // Items stay mounted (open just animates the panel) so each item's label
   // registration persists — otherwise the trigger would fall back to the
   // placeholder the moment the panel closes.
-  const open = ctx.open;
   return (
     <motion.div
       id={ctx.listId}
@@ -253,45 +310,44 @@ export function SelectContent({ className, children }: SelectContentProps) {
           : {
               opacity: open ? 1 : 0,
               height: open ? height : 0,
-              // born attached (gap 0, top flat); then a delayed spring drops it
-              // into a gap and rounds its top — the spring's overshoot is the
-              // bounce (smooth, no retract flick)
-              marginTop: open ? 8 : 0,
-              borderTopLeftRadius: open ? 12 : 0,
-              borderTopRightRadius: open ? 12 : 0,
+              // gap opens on the side facing the trigger
+              marginTop: isTop ? 0 : nearGap,
+              marginBottom: isTop ? nearGap : 0,
+              // near corners go flat->round; far corners stay rounded
+              borderTopLeftRadius: isTop ? 12 : nearRadius,
+              borderTopRightRadius: isTop ? 12 : nearRadius,
+              borderBottomLeftRadius: isTop ? nearRadius : 12,
+              borderBottomRightRadius: isTop ? nearRadius : 12,
             }
       }
       transition={
         ctx.reduce
           ? { duration: 0.12 }
-          : open
-            ? {
-                opacity: { duration: 0.18 },
-                height: { type: "spring", duration: 0.42, bounce: 0.14 },
-                // hold attached, then bounce apart
-                marginTop: { type: "spring", duration: 0.6, bounce: 0.5, delay: 0.12 },
-                borderTopLeftRadius: { duration: 0.3, ease: EASE_OUT, delay: 0.14 },
-                borderTopRightRadius: { duration: 0.3, ease: EASE_OUT, delay: 0.14 },
-              }
-            : {
-                // reverse of opening: first re-attach to the trigger (close the
-                // gap, flatten the top), THEN collapse the height up into it —
-                // so it looks like the panel retracts back inside the trigger
-                opacity: { duration: 0.16, delay: 0.12 },
-                marginTop: { type: "spring", duration: 0.3, bounce: 0.1 },
-                borderTopLeftRadius: { duration: 0.16, ease: EASE_OUT },
-                borderTopRightRadius: { duration: 0.16, ease: EASE_OUT },
-                height: { duration: 0.26, ease: EASE_OUT, delay: 0.14 },
-              }
+          : {
+              opacity: open
+                ? { duration: 0.18 }
+                : { duration: 0.16, delay: 0.12 },
+              height: open
+                ? { type: "spring", duration: 0.42, bounce: 0.14 }
+                : { duration: 0.26, ease: EASE_OUT, delay: 0.14 },
+              marginTop: isTop ? instant : gapT,
+              marginBottom: isTop ? gapT : instant,
+              borderTopLeftRadius: isTop ? instant : radiusT,
+              borderTopRightRadius: isTop ? instant : radiusT,
+              borderBottomLeftRadius: isTop ? radiusT : instant,
+              borderBottomRightRadius: isTop ? radiusT : instant,
+            }
       }
       style={{
-        transformOrigin: "top",
+        transformOrigin: isTop ? "bottom" : "top",
         overflow: "hidden",
         pointerEvents: open ? "auto" : "none",
       }}
-      // starts flush under the trigger, then separates into its own rounded pill
+      // flush against the trigger, then separates into its own rounded pill;
+      // sits above or below depending on available space
       className={cn(
-        "absolute left-0 right-0 top-full z-20 rounded-b-xl border border-border bg-background shadow-lg",
+        "absolute left-0 right-0 z-20 rounded-xl border border-border bg-background shadow-lg",
+        isTop ? "bottom-full" : "top-full",
         className,
       )}
     >
