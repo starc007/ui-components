@@ -7,7 +7,7 @@ import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { TextReveal } from "@/components/motion/text-reveal";
 
-const HEADLINE = ["The motion toolkit", "for React", "& Next.js"];
+const HEADLINE = ["The motion toolkit", "for React & Next.js"];
 const HEADLINE_WORDS = HEADLINE.reduce((n, l) => n + l.split(" ").length, 0);
 const STAGGER = 0.09;
 const START = 0.12;
