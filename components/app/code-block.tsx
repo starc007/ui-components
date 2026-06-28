@@ -86,11 +86,11 @@ export async function CodeBlock({
             </span>
           </div>
 
-          <CopyButton text={code} />
+          <CopyButton text={code} eventLabel={filename ?? lang} />
         </div>
       ) : (
         <div className="absolute right-3 top-3 z-10">
-          <CopyButton text={code} />
+          <CopyButton text={code} eventLabel={filename ?? lang} />
         </div>
       )}
 
