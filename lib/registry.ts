@@ -546,3 +546,19 @@ export function allComponents() {
     c.components.map((comp) => ({ ...comp, category: c }))
   );
 }
+
+/** Top-level components and total installable targets (counting variants). */
+export const COMPONENT_COUNT = registry.reduce(
+  (n, c) => n + c.components.length,
+  0,
+);
+
+export const INSTALLABLE_COUNT = registry.reduce(
+  (n, c) =>
+    n +
+    c.components.reduce((m, comp) => {
+      const variants = (comp.examples ?? []).filter((e) => e.installSlug).length;
+      return m + (variants || 1);
+    }, 0),
+  0,
+);

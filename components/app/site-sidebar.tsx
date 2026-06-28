@@ -73,9 +73,12 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           <Link
             href={`/components/${cat.slug}`}
             onClick={onNavigate}
-            className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+            className="mb-2 flex items-center gap-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
           >
             {cat.name}
+            <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground">
+              {cat.components.length}
+            </span>
           </Link>
           <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
             {moveFirstItemsToBottom(cat.components, 3).map((comp) => {

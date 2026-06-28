@@ -6,6 +6,7 @@ import { EASE_OUT } from "@/lib/ease";
 import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { TextReveal } from "@/components/motion/text-reveal";
+import { INSTALLABLE_COUNT } from "@/lib/registry";
 
 const HEADLINE = ["The motion toolkit", "for React & Next.js"];
 const HEADLINE_WORDS = HEADLINE.reduce((n, l) => n + l.split(" ").length, 0);
@@ -32,7 +33,7 @@ export function Hero() {
           className="group mb-7 inline-flex min-h-9 items-center gap-2 rounded-full border border-border bg-card px-3 text-xs font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          Tailwind 4 + React 19
+          {INSTALLABLE_COUNT} components · Tailwind 4 + React 19
           <ArrowUpRight className="h-3 w-3 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </PressLink>
       </motion.div>
