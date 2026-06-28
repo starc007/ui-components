@@ -106,9 +106,29 @@ export const registry: CategoryEntry[] = [
       {
         slug: "select",
         name: "Select",
-        description: "Composable select primitives (Select, SelectTrigger, SelectValue, SelectContent, SelectItem) whose panel bouncily unfolds out of the trigger and separates, with staggered items.",
+        description: "Composable select primitives whose panel bouncily unfolds out of the trigger and separates, plus a Morph variant where the trigger grows into the panel via shared layout.",
         file: "components/motion/select.tsx",
         badge: "new",
+        examples: [
+          {
+            slug: "default",
+            name: "Select",
+            description: "Composable primitives (Select, SelectTrigger, SelectValue, SelectContent, SelectItem); the panel pinches off the trigger and separates, with staggered items. Position-aware (opens upward when needed).",
+            installSlug: "select",
+            file: "components/motion/select.tsx",
+            previewKey: "motion/select",
+            previewFile: "components/previews/motion/select.preview.tsx",
+          },
+          {
+            slug: "morph",
+            name: "Morph Select",
+            description: "The trigger morphs into the panel via a shared layoutId — one continuous surface that grows open and shrinks back, never detaching.",
+            installSlug: "select-morph",
+            file: "components/motion/select-morph.tsx",
+            previewKey: "motion/select-morph",
+            previewFile: "components/previews/motion/select-morph.preview.tsx",
+          },
+        ],
       },
       {
         slug: "checkbox",

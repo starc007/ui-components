@@ -38,7 +38,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `marquee` | `components/motion/marquee.tsx` | Infinite horizontal or vertical scroll, pause-on-hover |
 | `tabs` | `components/motion/tabs.tsx` | Pill, segment or underline tabs with spring layoutId indicator |
 | `switch` | `components/motion/switch.tsx` | Toggle with spring-driven thumb and press feedback |
-| `select` | `components/motion/select.tsx` | Composable select primitives (`Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`); panel bouncily unfolds out of the trigger and separates, with staggered items |
+| `select` | `components/motion/select.tsx`, `select-morph.tsx` | Composable select primitives (`Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`); panel bouncily unfolds out of the trigger and separates (position-aware). `MorphSelect` (`select-morph.tsx`) is a shared-layout variant where the trigger grows into the panel and back |
 | `range-slider` | `components/motion/range-slider.tsx` | Range slider (`RangeSlider`) with tick dots and a bouncy vertical-bar thumb that glides between snapped steps; drag + keyboard, controlled/uncontrolled |
 | `bottom-sheet` | `components/motion/bottom-sheet.tsx` | Draggable bottom sheet with snap points, inertia and glass surface |
 | `shared-layout-bg` | `components/motion/shared-layout-bg.tsx` | Pill that glides between hovered items via shared layout |
