@@ -42,7 +42,7 @@ export function Hero() {
         text={HEADLINE}
         delay={START}
         stagger={STAGGER}
-        className="mx-auto font-pixel text-5xl font-medium leading-[0.9] text-foreground sm:text-6xl md:text-7xl"
+        className="mx-auto font-pixel text-6xl font-medium leading-[0.9] text-foreground sm:text-6xl md:text-7xl"
       />
 
       <motion.p
@@ -51,7 +51,8 @@ export function Hero() {
         transition={{ duration: 0.5, ease: EASE_OUT, delay: subDelay }}
         className="mx-auto mt-6 max-w-md text-pretty text-base leading-7 text-muted-foreground"
       >
-        Copy-paste animated components built on Framer Motion and Tailwind. Free and open source.
+        Copy-paste animated components built on Framer Motion and Tailwind. Free
+        and open source.
       </motion.p>
 
       <motion.div
