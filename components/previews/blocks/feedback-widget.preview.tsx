@@ -1,8 +1,20 @@
 "use client";
 
+import { useRef } from "react";
 import { FeedbackWidget } from "@/components/motion/feedback-widget";
 
 export function FeedbackWidgetPreview() {
+  const attempts = useRef(0);
+
+  const submitFeedback = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 900));
+    attempts.current += 1;
+
+    if (attempts.current === 1) {
+      throw new Error("Preview submission failed");
+    }
+  };
+
   return (
     <div className="relative h-80 w-full max-w-md overflow-hidden rounded-2xl border border-border bg-background">
       {/* Faux app surface so the corner trigger has something to sit on. */}
@@ -16,9 +28,7 @@ export function FeedbackWidgetPreview() {
         <div className="h-2.5 w-2/3 rounded-full bg-muted-foreground/15" />
       </div>
 
-      <FeedbackWidget
-        onSubmit={() => new Promise((resolve) => setTimeout(resolve, 900))}
-      />
+      <FeedbackWidget onSubmit={submitFeedback} />
     </div>
   );
 }
