@@ -13,6 +13,9 @@ export const previews: Record<string, ComponentType> = {
   "blocks/command-palette": dynamic(() =>
     import("./blocks/command-palette.preview").then((m) => m.CommandPalettePreview),
   ),
+  "blocks/feedback-widget": dynamic(() =>
+    import("./blocks/feedback-widget.preview").then((m) => m.FeedbackWidgetPreview),
+  ),
   "blocks/bloom-menu": dynamic(() =>
     import("./blocks/bloom-menu.preview").then((m) => m.BloomMenuPreview),
   ),

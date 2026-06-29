@@ -470,6 +470,20 @@ export const registry: CategoryEntry[] = [
         badge: "new",
       },
       {
+        slug: "feedback-widget",
+        name: "Feedback Widget",
+        description: "Corner trigger that morphs open into a feedback popup with message entry and animated sending, success and retry states.",
+        file: "components/motion/feedback-widget.tsx",
+        badge: "new",
+        keywords: [
+          "react feedback widget",
+          "feedback popover react",
+          "in-app feedback component",
+          "feedback form animation",
+          "react feedback button",
+        ],
+      },
+      {
         slug: "not-found",
         name: "404 / Not Found",
         description: "Animated 404 pages in five styles: glitch scramble, magnetic digits, cursor spotlight, a fanning card stack and a typed terminal.",
