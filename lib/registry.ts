@@ -104,6 +104,19 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/switch.tsx",
       },
       {
+        slug: "input",
+        name: "Input",
+        description: "Text input with label, left/right icons, a gliding caret, error shake and success check draw.",
+        file: "components/motion/input.tsx",
+        keywords: [
+          "react animated input",
+          "input error shake",
+          "floating label input",
+          "react form input animation",
+          "animated text field",
+        ],
+      },
+      {
         slug: "select",
         name: "Select",
         description: "Composable select primitives whose panel bouncily unfolds out of the trigger and separates, plus a Morph variant where the trigger grows into the panel via shared layout.",
