@@ -122,10 +122,8 @@ export function Table<T>({
   const thRefs = useRef<Record<string, HTMLTableCellElement | null>>({});
   const resizeRef = useRef<{
     key: string;
-    neighborKey: string;
     startX: number;
     startWidth: number;
-    startNeighborWidth: number;
   } | null>(null);
 
   const [widths, setWidths] = useState<Record<string, number>>({});
@@ -234,54 +232,26 @@ export function Table<T>({
     (key: string, e: ReactPointerEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      // The resized column trades width with a neighbor so the total stays
-      // equal to the container — fixed layout then never rescales (no drift,
-      // no leftover gap). Steal from the right neighbor, or the left one for
-      // the last column.
-      // The handle lives between this column and the next, so it always grows
-      // this one and shrinks the right neighbor.
-      const index = orderedColumns.findIndex((c) => c.key === key);
-      const neighbor = orderedColumns[index + 1];
-      if (!neighbor) return;
-      // Freeze every column to its current pixel width first.
-      setWidths((prev) => {
-        const snapshot = { ...prev };
-        for (const column of orderedColumns) {
-          if (snapshot[column.key] == null) {
-            const measured = thRefs.current[column.key]?.getBoundingClientRect()
-              .width;
-            snapshot[column.key] = measured
-              ? Math.round(measured)
-              : minColumnWidth;
-          }
-        }
-        resizeRef.current = {
-          key,
-          neighborKey: neighbor.key,
-          startX: e.clientX,
-          startWidth: snapshot[key],
-          startNeighborWidth: snapshot[neighbor.key],
-        };
-        return snapshot;
-      });
+      // Pin this column to its current pixel width; the flexible last column
+      // absorbs the change so the table keeps filling the container.
+      const measured = thRefs.current[key]?.getBoundingClientRect().width;
+      const startWidth = measured ? Math.round(measured) : minColumnWidth;
+      resizeRef.current = { key, startX: e.clientX, startWidth };
+      setWidths((prev) => ({ ...prev, [key]: startWidth }));
       e.currentTarget.setPointerCapture(e.pointerId);
     },
-    [minColumnWidth, orderedColumns],
+    [minColumnWidth],
   );
 
   const moveResize = useCallback(
     (e: ReactPointerEvent) => {
       const state = resizeRef.current;
       if (!state) return;
-      let delta = e.clientX - state.startX;
-      // Clamp so neither the column nor its neighbor drops below the minimum.
-      delta = Math.max(delta, minColumnWidth - state.startWidth);
-      delta = Math.min(delta, state.startNeighborWidth - minColumnWidth);
-      setWidths((prev) => ({
-        ...prev,
-        [state.key]: state.startWidth + delta,
-        [state.neighborKey]: state.startNeighborWidth - delta,
-      }));
+      const width = Math.max(
+        minColumnWidth,
+        state.startWidth + (e.clientX - state.startX),
+      );
+      setWidths((prev) => ({ ...prev, [state.key]: width }));
     },
     [minColumnWidth],
   );
@@ -393,19 +363,23 @@ export function Table<T>({
     >
       <div ref={scrollRef} className="overflow-auto" style={{ height }}>
         <table
-          className="w-full border-collapse"
+          className="min-w-full border-collapse"
           style={{ tableLayout: "fixed" }}
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}
-            {orderedColumns.map((column) => {
+            {orderedColumns.map((column, index) => {
+              // Leave the last column unsized so it flexes to fill any slack —
+              // no gap when other columns shrink, scroll when they overflow.
+              const isLast = index === orderedColumns.length - 1;
               const override = widths[column.key];
-              const width = override ? `${override}px` : column.width;
+              const width = isLast
+                ? undefined
+                : override
+                  ? `${override}px`
+                  : column.width;
               return (
-                <col
-                  key={column.key}
-                  style={width ? { width } : undefined}
-                />
+                <col key={column.key} style={width ? { width } : undefined} />
               );
             })}
           </colgroup>
