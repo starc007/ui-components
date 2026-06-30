@@ -12,7 +12,7 @@ import {
   useState,
 } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type SortDirection = "asc" | "desc";
@@ -238,9 +238,10 @@ export function Table<T>({
       // equal to the container — fixed layout then never rescales (no drift,
       // no leftover gap). Steal from the right neighbor, or the left one for
       // the last column.
+      // The handle lives between this column and the next, so it always grows
+      // this one and shrinks the right neighbor.
       const index = orderedColumns.findIndex((c) => c.key === key);
-      const neighbor =
-        orderedColumns[index + 1] ?? orderedColumns[index - 1];
+      const neighbor = orderedColumns[index + 1];
       if (!neighbor) return;
       // Freeze every column to its current pixel width first.
       setWidths((prev) => {
@@ -450,15 +451,23 @@ export function Table<T>({
                       "sticky top-0 z-10 border-border border-b bg-muted p-0 font-medium text-muted-foreground",
                       "data-[drop=true]:before:absolute data-[drop=true]:before:inset-y-0 data-[drop=true]:before:left-0 data-[drop=true]:before:w-0.5 data-[drop=true]:before:bg-primary",
                       "data-[dropend=true]:after:absolute data-[dropend=true]:after:inset-y-0 data-[dropend=true]:after:right-0 data-[dropend=true]:after:w-0.5 data-[dropend=true]:after:bg-primary",
-                      isDragging && "opacity-40",
                     )}
                   >
-                    <div
+                    <motion.div
                       className={cn(
                         "flex h-full items-center",
                         alignFlex(column.align),
                       )}
                       style={{ height: rowHeight }}
+                      animate={
+                        reduce
+                          ? { opacity: isDragging ? 0.5 : 1 }
+                          : {
+                              scale: isDragging ? 1.04 : 1,
+                              opacity: isDragging ? 0.5 : 1,
+                            }
+                      }
+                      transition={SPRING_PRESS}
                     >
                       {reorderable ? (
                         <button
@@ -503,8 +512,8 @@ export function Table<T>({
                       ) : (
                         <span className="px-4">{column.header}</span>
                       )}
-                    </div>
-                    {resizable ? (
+                    </motion.div>
+                    {resizable && index < orderedColumns.length - 1 ? (
                       <button
                         type="button"
                         aria-label={`Resize ${column.key} column`}
