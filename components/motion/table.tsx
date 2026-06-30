@@ -228,22 +228,18 @@ export function Table<T>({
     return ordered;
   }, [order, columns]);
 
-  // After a resize every column has a pixel width, so let the table shrink-wrap
-  // to their sum (w-max). No stretch means the browser never reflows columns —
-  // grow past the container and it scrolls, shrink and the extra is background.
-  const sized =
-    orderedColumns.length > 0 &&
-    orderedColumns.every((c) => widths[c.key] != null);
-
   const startResize = useCallback(
     (key: string, e: ReactPointerEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      // Freeze every column to its current pixel width so resizing one only
-      // steals from the trailing spacer, never the other real columns.
+      // Freeze every column except the last to its current pixel width. The
+      // last column stays flexible and owns whatever space is left, so resizing
+      // one column only moves the filler — never the other fixed columns.
+      const lastKey = orderedColumns[orderedColumns.length - 1]?.key;
       setWidths((prev) => {
         const snapshot = { ...prev };
         for (const column of orderedColumns) {
+          if (column.key === lastKey) continue;
           if (snapshot[column.key] == null) {
             const measured = thRefs.current[column.key]?.getBoundingClientRect()
               .width;
@@ -384,14 +380,20 @@ export function Table<T>({
     >
       <div ref={scrollRef} className="overflow-auto" style={{ height }}>
         <table
-          className={cn("border-collapse", sized ? "w-max" : "min-w-full")}
+          className="min-w-full border-collapse"
           style={{ tableLayout: "fixed" }}
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}
-            {orderedColumns.map((column) => {
+            {orderedColumns.map((column, index) => {
+              // Last column stays unsized so it fills the remaining width.
+              const isLast = index === orderedColumns.length - 1;
               const override = widths[column.key];
-              const width = override ? `${override}px` : column.width;
+              const width = isLast
+                ? undefined
+                : override
+                  ? `${override}px`
+                  : column.width;
               return (
                 <col key={column.key} style={width ? { width } : undefined} />
               );
@@ -501,7 +503,7 @@ export function Table<T>({
                         <span className="px-4">{column.header}</span>
                       )}
                     </motion.div>
-                    {resizable ? (
+                    {resizable && index < orderedColumns.length - 1 ? (
                       <button
                         type="button"
                         aria-label={`Resize ${column.key} column`}
