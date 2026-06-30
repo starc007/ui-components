@@ -122,8 +122,10 @@ export function Table<T>({
   const thRefs = useRef<Record<string, HTMLTableCellElement | null>>({});
   const resizeRef = useRef<{
     key: string;
+    neighborKey: string;
     startX: number;
     startWidth: number;
+    startNeighborWidth: number;
   } | null>(null);
 
   const [widths, setWidths] = useState<Record<string, number>>({});
@@ -228,20 +230,19 @@ export function Table<T>({
     return ordered;
   }, [order, columns]);
 
-  // Once every column has an explicit pixel width (after a resize), pin the
-  // table to their sum so the fixed layout stops rescaling them.
-  const tableWidth = useMemo(() => {
-    if (!orderedColumns.every((c) => widths[c.key] != null)) return undefined;
-    const sum = orderedColumns.reduce((acc, c) => acc + widths[c.key], 0);
-    return sum + (selectable ? CHECKBOX_PX : 0);
-  }, [orderedColumns, widths, selectable]);
-
   const startResize = useCallback(
     (key: string, e: ReactPointerEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      // Freeze every column to its current pixel width so the fixed table
-      // layout honors widths absolutely instead of rescaling them to fit.
+      // The resized column trades width with a neighbor so the total stays
+      // equal to the container — fixed layout then never rescales (no drift,
+      // no leftover gap). Steal from the right neighbor, or the left one for
+      // the last column.
+      const index = orderedColumns.findIndex((c) => c.key === key);
+      const neighbor =
+        orderedColumns[index + 1] ?? orderedColumns[index - 1];
+      if (!neighbor) return;
+      // Freeze every column to its current pixel width first.
       setWidths((prev) => {
         const snapshot = { ...prev };
         for (const column of orderedColumns) {
@@ -255,8 +256,10 @@ export function Table<T>({
         }
         resizeRef.current = {
           key,
+          neighborKey: neighbor.key,
           startX: e.clientX,
           startWidth: snapshot[key],
+          startNeighborWidth: snapshot[neighbor.key],
         };
         return snapshot;
       });
@@ -269,11 +272,15 @@ export function Table<T>({
     (e: ReactPointerEvent) => {
       const state = resizeRef.current;
       if (!state) return;
-      const width = Math.max(
-        minColumnWidth,
-        state.startWidth + (e.clientX - state.startX),
-      );
-      setWidths((prev) => ({ ...prev, [state.key]: width }));
+      let delta = e.clientX - state.startX;
+      // Clamp so neither the column nor its neighbor drops below the minimum.
+      delta = Math.max(delta, minColumnWidth - state.startWidth);
+      delta = Math.min(delta, state.startNeighborWidth - minColumnWidth);
+      setWidths((prev) => ({
+        ...prev,
+        [state.key]: state.startWidth + delta,
+        [state.neighborKey]: state.startNeighborWidth - delta,
+      }));
     },
     [minColumnWidth],
   );
@@ -385,11 +392,8 @@ export function Table<T>({
     >
       <div ref={scrollRef} className="overflow-auto" style={{ height }}>
         <table
-          className="border-collapse"
-          style={{
-            tableLayout: "fixed",
-            width: tableWidth ? `${tableWidth}px` : "100%",
-          }}
+          className="w-full border-collapse"
+          style={{ tableLayout: "fixed" }}
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}
