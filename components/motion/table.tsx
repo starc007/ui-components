@@ -232,14 +232,11 @@ export function Table<T>({
     (key: string, e: ReactPointerEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      // Freeze every column except the last to its current pixel width. The
-      // last column stays flexible and owns whatever space is left, so resizing
-      // one column only moves the filler — never the other fixed columns.
-      const lastKey = orderedColumns[orderedColumns.length - 1]?.key;
+      // Freeze every column to its current pixel width so resizing one only
+      // moves the trailing spacer, never the other columns.
       setWidths((prev) => {
         const snapshot = { ...prev };
         for (const column of orderedColumns) {
-          if (column.key === lastKey) continue;
           if (snapshot[column.key] == null) {
             const measured = thRefs.current[column.key]?.getBoundingClientRect()
               .width;
@@ -380,24 +377,20 @@ export function Table<T>({
     >
       <div ref={scrollRef} className="overflow-auto" style={{ height }}>
         <table
-          className="min-w-full border-collapse"
+          className="w-max min-w-full border-collapse"
           style={{ tableLayout: "fixed" }}
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}
-            {orderedColumns.map((column, index) => {
-              // Last column stays unsized so it fills the remaining width.
-              const isLast = index === orderedColumns.length - 1;
+            {orderedColumns.map((column) => {
               const override = widths[column.key];
-              const width = isLast
-                ? undefined
-                : override
-                  ? `${override}px`
-                  : column.width;
+              const width = override ? `${override}px` : column.width;
               return (
                 <col key={column.key} style={width ? { width } : undefined} />
               );
             })}
+            {/* Empty filler owns the leftover space — no gap, content unpinned. */}
+            <col />
           </colgroup>
 
           <thead>
@@ -503,7 +496,7 @@ export function Table<T>({
                         <span className="px-4">{column.header}</span>
                       )}
                     </motion.div>
-                    {resizable && index < orderedColumns.length - 1 ? (
+                    {resizable ? (
                       <button
                         type="button"
                         aria-label={`Resize ${column.key} column`}
@@ -517,6 +510,10 @@ export function Table<T>({
                   </th>
                 );
               })}
+              <th
+                aria-hidden
+                className="sticky top-0 z-10 border-border border-b bg-muted"
+              />
             </tr>
           </thead>
 
@@ -524,7 +521,7 @@ export function Table<T>({
             {sortedRows.length === 0 ? (
               <tr>
                 <td
-                  colSpan={totalColumns}
+                  colSpan={totalColumns + 1}
                   className="p-10 text-center text-muted-foreground"
                 >
                   {emptyState}
@@ -534,7 +531,7 @@ export function Table<T>({
               <>
                 {paddingTop > 0 ? (
                   <tr aria-hidden style={{ height: paddingTop }}>
-                    <td colSpan={totalColumns} />
+                    <td colSpan={totalColumns + 1} />
                   </tr>
                 ) : null}
                 {virtualItems.map((vItem) => {
@@ -573,12 +570,13 @@ export function Table<T>({
                           {readCell(entry.row, column)}
                         </td>
                       ))}
+                      <td aria-hidden />
                     </tr>
                   );
                 })}
                 {paddingBottom > 0 ? (
                   <tr aria-hidden style={{ height: paddingBottom }}>
-                    <td colSpan={totalColumns} />
+                    <td colSpan={totalColumns + 1} />
                   </tr>
                 ) : null}
               </>
