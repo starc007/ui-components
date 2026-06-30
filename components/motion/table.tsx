@@ -232,15 +232,29 @@ export function Table<T>({
     (key: string, e: ReactPointerEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      // Pin this column to its current pixel width; the trailing spacer column
-      // absorbs the change so the table keeps filling the container.
-      const measured = thRefs.current[key]?.getBoundingClientRect().width;
-      const startWidth = measured ? Math.round(measured) : minColumnWidth;
-      resizeRef.current = { key, startX: e.clientX, startWidth };
-      setWidths((prev) => ({ ...prev, [key]: startWidth }));
+      // Freeze every column to its current pixel width so resizing one only
+      // steals from the trailing spacer, never the other real columns.
+      setWidths((prev) => {
+        const snapshot = { ...prev };
+        for (const column of orderedColumns) {
+          if (snapshot[column.key] == null) {
+            const measured = thRefs.current[column.key]?.getBoundingClientRect()
+              .width;
+            snapshot[column.key] = measured
+              ? Math.round(measured)
+              : minColumnWidth;
+          }
+        }
+        resizeRef.current = {
+          key,
+          startX: e.clientX,
+          startWidth: snapshot[key],
+        };
+        return snapshot;
+      });
       e.currentTarget.setPointerCapture(e.pointerId);
     },
-    [minColumnWidth],
+    [minColumnWidth, orderedColumns],
   );
 
   const moveResize = useCallback(
