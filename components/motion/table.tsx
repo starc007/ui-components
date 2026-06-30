@@ -70,7 +70,8 @@ export interface TableProps<T> {
   className?: string;
 }
 
-const CHECKBOX_WIDTH = "48px";
+const CHECKBOX_PX = 48;
+const CHECKBOX_WIDTH = `${CHECKBOX_PX}px`;
 
 function alignFlex(align: TableColumn<unknown>["align"]) {
   if (align === "right") return "justify-end";
@@ -227,16 +228,41 @@ export function Table<T>({
     return ordered;
   }, [order, columns]);
 
+  // Once every column has an explicit pixel width (after a resize), pin the
+  // table to their sum so the fixed layout stops rescaling them.
+  const tableWidth = useMemo(() => {
+    if (!orderedColumns.every((c) => widths[c.key] != null)) return undefined;
+    const sum = orderedColumns.reduce((acc, c) => acc + widths[c.key], 0);
+    return sum + (selectable ? CHECKBOX_PX : 0);
+  }, [orderedColumns, widths, selectable]);
+
   const startResize = useCallback(
     (key: string, e: ReactPointerEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      const startWidth =
-        thRefs.current[key]?.getBoundingClientRect().width ?? minColumnWidth;
-      resizeRef.current = { key, startX: e.clientX, startWidth };
+      // Freeze every column to its current pixel width so the fixed table
+      // layout honors widths absolutely instead of rescaling them to fit.
+      setWidths((prev) => {
+        const snapshot = { ...prev };
+        for (const column of orderedColumns) {
+          if (snapshot[column.key] == null) {
+            const measured = thRefs.current[column.key]?.getBoundingClientRect()
+              .width;
+            snapshot[column.key] = measured
+              ? Math.round(measured)
+              : minColumnWidth;
+          }
+        }
+        resizeRef.current = {
+          key,
+          startX: e.clientX,
+          startWidth: snapshot[key],
+        };
+        return snapshot;
+      });
       e.currentTarget.setPointerCapture(e.pointerId);
     },
-    [minColumnWidth],
+    [minColumnWidth, orderedColumns],
   );
 
   const moveResize = useCallback(
@@ -359,8 +385,11 @@ export function Table<T>({
     >
       <div ref={scrollRef} className="overflow-auto" style={{ height }}>
         <table
-          className="w-full border-collapse"
-          style={{ tableLayout: "fixed" }}
+          className="border-collapse"
+          style={{
+            tableLayout: "fixed",
+            width: tableWidth ? `${tableWidth}px` : "100%",
+          }}
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}
