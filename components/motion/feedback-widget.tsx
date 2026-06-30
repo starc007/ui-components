@@ -321,7 +321,7 @@ export function FeedbackWidget({
                           placeholder={placeholder}
                           disabled={busy}
                           rows={3}
-                          className="mt-2 w-full resize-none bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/60"
+                          className="mt-2 w-full resize-none bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground/60 md:text-sm"
                         />
                       </div>
 
@@ -354,6 +354,7 @@ export function FeedbackWidget({
           ) : (
             <motion.button
               key="trigger"
+              layout
               type="button"
               transition={morph}
               onClick={() => {
@@ -365,7 +366,10 @@ export function FeedbackWidget({
               whileTap={reduce ? undefined : { scale: 0.92 }}
               className="absolute inset-0 flex items-center justify-center bg-transparent text-foreground"
             >
-              <motion.span layout="position">
+              <motion.span
+                layout
+                className="grid h-5 w-5 shrink-0 place-items-center [&>svg]:h-full [&>svg]:w-full"
+              >
                 {icon ?? <MessageSquare className="h-5 w-5" />}
               </motion.span>
             </motion.button>
