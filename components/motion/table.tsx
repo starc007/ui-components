@@ -232,7 +232,7 @@ export function Table<T>({
     (key: string, e: ReactPointerEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      // Pin this column to its current pixel width; the flexible last column
+      // Pin this column to its current pixel width; the trailing spacer column
       // absorbs the change so the table keeps filling the container.
       const measured = thRefs.current[key]?.getBoundingClientRect().width;
       const startWidth = measured ? Math.round(measured) : minColumnWidth;
@@ -368,20 +368,15 @@ export function Table<T>({
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}
-            {orderedColumns.map((column, index) => {
-              // Leave the last column unsized so it flexes to fill any slack —
-              // no gap when other columns shrink, scroll when they overflow.
-              const isLast = index === orderedColumns.length - 1;
+            {orderedColumns.map((column) => {
               const override = widths[column.key];
-              const width = isLast
-                ? undefined
-                : override
-                  ? `${override}px`
-                  : column.width;
+              const width = override ? `${override}px` : column.width;
               return (
                 <col key={column.key} style={width ? { width } : undefined} />
               );
             })}
+            {/* Flexes to fill slack so the table always spans the container. */}
+            <col />
           </colgroup>
 
           <thead>
@@ -487,7 +482,7 @@ export function Table<T>({
                         <span className="px-4">{column.header}</span>
                       )}
                     </motion.div>
-                    {resizable && index < orderedColumns.length - 1 ? (
+                    {resizable ? (
                       <button
                         type="button"
                         aria-label={`Resize ${column.key} column`}
@@ -501,6 +496,10 @@ export function Table<T>({
                   </th>
                 );
               })}
+              <th
+                aria-hidden
+                className="sticky top-0 z-10 border-border border-b bg-muted"
+              />
             </tr>
           </thead>
 
@@ -508,7 +507,7 @@ export function Table<T>({
             {sortedRows.length === 0 ? (
               <tr>
                 <td
-                  colSpan={totalColumns}
+                  colSpan={totalColumns + 1}
                   className="p-10 text-center text-muted-foreground"
                 >
                   {emptyState}
@@ -518,7 +517,7 @@ export function Table<T>({
               <>
                 {paddingTop > 0 ? (
                   <tr aria-hidden style={{ height: paddingTop }}>
-                    <td colSpan={totalColumns} />
+                    <td colSpan={totalColumns + 1} />
                   </tr>
                 ) : null}
                 {virtualItems.map((vItem) => {
@@ -557,12 +556,13 @@ export function Table<T>({
                           {readCell(entry.row, column)}
                         </td>
                       ))}
+                      <td aria-hidden />
                     </tr>
                   );
                 })}
                 {paddingBottom > 0 ? (
                   <tr aria-hidden style={{ height: paddingBottom }}>
-                    <td colSpan={totalColumns} />
+                    <td colSpan={totalColumns + 1} />
                   </tr>
                 ) : null}
               </>
