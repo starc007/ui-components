@@ -114,7 +114,7 @@ export function TablePreview() {
 
   return (
     <div className="flex w-full justify-center p-4">
-      <div className="w-full max-w-2xl">
+      <div className="w-full">
         <Table
           data={data}
           columns={columns}
