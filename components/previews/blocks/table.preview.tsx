@@ -78,7 +78,7 @@ function StatusBadge({ status }: { status: Person["status"] }) {
 }
 
 export function TablePreview() {
-  const data = useMemo(() => buildPeople(10_000), []);
+  const data = useMemo(() => buildPeople(1000), []);
   const [selected, setSelected] = useState<string[]>([]);
 
   const columns = useMemo<TableColumn<Person>[]>(
@@ -119,6 +119,8 @@ export function TablePreview() {
           data={data}
           columns={columns}
           selectable
+          resizable
+          reorderable
           selectedRowIds={selected}
           onSelectionChange={setSelected}
           defaultSort={{ key: "mrr", direction: "desc" }}

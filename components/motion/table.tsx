@@ -1,9 +1,10 @@
 "use client";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ChevronUp } from "lucide-react";
+import { ChevronUp, GripVertical } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import {
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   useCallback,
   useMemo,
@@ -30,7 +31,7 @@ export type TableColumn<T> = {
   sortable?: boolean;
   /** Cell text alignment. */
   align?: "left" | "center" | "right";
-  /** CSS grid/track width, e.g. "1fr", "160px", "20%". Defaults to "1fr". */
+  /** Column width as a CSS length, e.g. "160px" or "20%". Omit to share remaining space equally. */
   width?: string;
   /** Custom cell renderer. Falls back to `row[key]`. */
   cell?: (row: T) => ReactNode;
@@ -51,6 +52,14 @@ export interface TableProps<T> {
   sort?: SortState | null;
   defaultSort?: SortState | null;
   onSortChange?: (sort: SortState | null) => void;
+  /** Allow dragging the right edge of a header to resize that column. */
+  resizable?: boolean;
+  /** Minimum column width in px when resizing. */
+  minColumnWidth?: number;
+  onColumnResize?: (key: string, width: number) => void;
+  /** Allow dragging a header grip to reorder columns. */
+  reorderable?: boolean;
+  onColumnOrderChange?: (keys: string[]) => void;
   /** Fixed row height in px — required for virtualization. */
   rowHeight?: number;
   /** Scroll viewport height in px. */
@@ -96,6 +105,11 @@ export function Table<T>({
   sort: sortProp,
   defaultSort = null,
   onSortChange,
+  resizable = false,
+  minColumnWidth = 64,
+  onColumnResize,
+  reorderable = false,
+  onColumnOrderChange,
   rowHeight = 48,
   height = 440,
   overscan = 10,
@@ -104,6 +118,19 @@ export function Table<T>({
 }: TableProps<T>) {
   const reduce = useReducedMotion();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const thRefs = useRef<Record<string, HTMLTableCellElement | null>>({});
+  const resizeRef = useRef<{
+    key: string;
+    startX: number;
+    startWidth: number;
+  } | null>(null);
+
+  const [widths, setWidths] = useState<Record<string, number>>({});
+  const [order, setOrder] = useState<string[]>(() =>
+    columns.map((c) => c.key),
+  );
+  const [dragKey, setDragKey] = useState<string | null>(null);
+  const [dropIndex, setDropIndex] = useState<number | null>(null);
 
   const [internalSort, setInternalSort] = useState<SortState | null>(
     defaultSort,
@@ -182,6 +209,110 @@ export function Table<T>({
 
   const totalColumns = columns.length + (selectable ? 1 : 0);
 
+  // Apply the user's column order, tolerating columns added/removed at runtime.
+  const orderedColumns = useMemo(() => {
+    const byKey = new Map(columns.map((c) => [c.key, c]));
+    const seen = new Set<string>();
+    const ordered: TableColumn<T>[] = [];
+    for (const key of order) {
+      const column = byKey.get(key);
+      if (column) {
+        ordered.push(column);
+        seen.add(key);
+      }
+    }
+    for (const column of columns) {
+      if (!seen.has(column.key)) ordered.push(column);
+    }
+    return ordered;
+  }, [order, columns]);
+
+  const startResize = useCallback(
+    (key: string, e: ReactPointerEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const startWidth =
+        thRefs.current[key]?.getBoundingClientRect().width ?? minColumnWidth;
+      resizeRef.current = { key, startX: e.clientX, startWidth };
+      e.currentTarget.setPointerCapture(e.pointerId);
+    },
+    [minColumnWidth],
+  );
+
+  const moveResize = useCallback(
+    (e: ReactPointerEvent) => {
+      const state = resizeRef.current;
+      if (!state) return;
+      const width = Math.max(
+        minColumnWidth,
+        state.startWidth + (e.clientX - state.startX),
+      );
+      setWidths((prev) => ({ ...prev, [state.key]: width }));
+    },
+    [minColumnWidth],
+  );
+
+  const endResize = useCallback(
+    (e: ReactPointerEvent) => {
+      const state = resizeRef.current;
+      resizeRef.current = null;
+      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      }
+      if (state) onColumnResize?.(state.key, widths[state.key] ?? state.startWidth);
+    },
+    [onColumnResize, widths],
+  );
+
+  const dropIndexFor = useCallback(
+    (clientX: number) => {
+      for (let i = 0; i < orderedColumns.length; i++) {
+        const rect = thRefs.current[orderedColumns[i].key]?.getBoundingClientRect();
+        if (rect && clientX < rect.left + rect.width / 2) return i;
+      }
+      return orderedColumns.length;
+    },
+    [orderedColumns],
+  );
+
+  const startReorder = useCallback((key: string, e: ReactPointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragKey(key);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }, []);
+
+  const moveReorder = useCallback(
+    (e: ReactPointerEvent) => {
+      if (!dragKey) return;
+      setDropIndex(dropIndexFor(e.clientX));
+    },
+    [dragKey, dropIndexFor],
+  );
+
+  const endReorder = useCallback(
+    (e: ReactPointerEvent) => {
+      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      }
+      if (dragKey && dropIndex !== null) {
+        const keys = orderedColumns.map((c) => c.key);
+        const from = keys.indexOf(dragKey);
+        if (from !== -1) {
+          const without = keys.filter((_, i) => i !== from);
+          let to = dropIndex;
+          if (from < to) to--;
+          without.splice(to, 0, dragKey);
+          setOrder(without);
+          onColumnOrderChange?.(without);
+        }
+      }
+      setDragKey(null);
+      setDropIndex(null);
+    },
+    [dragKey, dropIndex, orderedColumns, onColumnOrderChange],
+  );
+
   const allSelected =
     sortedRows.length > 0 && sortedRows.every((r) => selected.has(r.id));
   const someSelected = sortedRows.some((r) => selected.has(r.id));
@@ -233,12 +364,16 @@ export function Table<T>({
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}
-            {columns.map((column) => (
-              <col
-                key={column.key}
-                style={column.width ? { width: column.width } : undefined}
-              />
-            ))}
+            {orderedColumns.map((column) => {
+              const override = widths[column.key];
+              const width = override ? `${override}px` : column.width;
+              return (
+                <col
+                  key={column.key}
+                  style={width ? { width } : undefined}
+                />
+              );
+            })}
           </colgroup>
 
           <thead>
@@ -255,11 +390,15 @@ export function Table<T>({
                   </div>
                 </th>
               ) : null}
-              {columns.map((column) => {
+              {orderedColumns.map((column, index) => {
                 const active = sort?.key === column.key;
+                const isDragging = dragKey === column.key;
                 return (
                   <th
                     key={column.key}
+                    ref={(el) => {
+                      thRefs.current[column.key] = el;
+                    }}
                     aria-sort={
                       active
                         ? sort?.direction === "asc"
@@ -267,45 +406,82 @@ export function Table<T>({
                           : "descending"
                         : undefined
                     }
-                    className="sticky top-0 z-10 border-border border-b bg-muted p-0 font-medium text-muted-foreground"
+                    data-drop={dragKey ? dropIndex === index : undefined}
+                    data-dropend={
+                      dragKey
+                        ? dropIndex === orderedColumns.length &&
+                          index === orderedColumns.length - 1
+                        : undefined
+                    }
+                    className={cn(
+                      "sticky top-0 z-10 border-border border-b bg-muted p-0 font-medium text-muted-foreground",
+                      "data-[drop=true]:before:absolute data-[drop=true]:before:inset-y-0 data-[drop=true]:before:left-0 data-[drop=true]:before:w-0.5 data-[drop=true]:before:bg-primary",
+                      "data-[dropend=true]:after:absolute data-[dropend=true]:after:inset-y-0 data-[dropend=true]:after:right-0 data-[dropend=true]:after:w-0.5 data-[dropend=true]:after:bg-primary",
+                      isDragging && "opacity-40",
+                    )}
                   >
-                    {column.sortable ? (
+                    <div
+                      className={cn(
+                        "flex h-full items-center",
+                        alignFlex(column.align),
+                      )}
+                      style={{ height: rowHeight }}
+                    >
+                      {reorderable ? (
+                        <button
+                          type="button"
+                          aria-label={`Reorder ${column.key} column`}
+                          onPointerDown={(e) => startReorder(column.key, e)}
+                          onPointerMove={moveReorder}
+                          onPointerUp={endReorder}
+                          className="flex h-full cursor-grab touch-none items-center pl-2 text-muted-foreground/60 transition-colors hover:text-foreground active:cursor-grabbing"
+                        >
+                          <GripVertical className="h-3.5 w-3.5" />
+                        </button>
+                      ) : null}
+                      {column.sortable ? (
+                        <button
+                          type="button"
+                          onClick={() => toggleSort(column.key)}
+                          className={cn(
+                            "flex h-full w-full select-none items-center gap-1 px-4 transition-colors hover:text-foreground",
+                            alignFlex(column.align),
+                            active && "text-foreground",
+                          )}
+                        >
+                          {column.header}
+                          <motion.span
+                            aria-hidden
+                            className="inline-flex"
+                            animate={{
+                              rotate:
+                                active && sort?.direction === "desc" ? 180 : 0,
+                              opacity: active ? 1 : 0.35,
+                            }}
+                            transition={
+                              reduce
+                                ? { duration: 0 }
+                                : { duration: 0.18, ease: EASE_OUT }
+                            }
+                          >
+                            <ChevronUp className="h-3.5 w-3.5" />
+                          </motion.span>
+                        </button>
+                      ) : (
+                        <span className="px-4">{column.header}</span>
+                      )}
+                    </div>
+                    {resizable ? (
                       <button
                         type="button"
-                        onClick={() => toggleSort(column.key)}
-                        className={cn(
-                          "flex h-full w-full select-none items-center gap-1 px-4 transition-colors hover:text-foreground",
-                          alignFlex(column.align),
-                          active && "text-foreground",
-                        )}
-                        style={{ height: rowHeight }}
-                      >
-                        {column.header}
-                        <motion.span
-                          aria-hidden
-                          className="inline-flex"
-                          animate={{
-                            rotate:
-                              active && sort?.direction === "desc" ? 180 : 0,
-                            opacity: active ? 1 : 0.35,
-                          }}
-                          transition={
-                            reduce
-                              ? { duration: 0 }
-                              : { duration: 0.18, ease: EASE_OUT }
-                          }
-                        >
-                          <ChevronUp className="h-3.5 w-3.5" />
-                        </motion.span>
-                      </button>
-                    ) : (
-                      <div
-                        className={cn("flex items-center px-4", alignFlex(column.align))}
-                        style={{ height: rowHeight }}
-                      >
-                        {column.header}
-                      </div>
-                    )}
+                        aria-label={`Resize ${column.key} column`}
+                        tabIndex={-1}
+                        onPointerDown={(e) => startResize(column.key, e)}
+                        onPointerMove={moveResize}
+                        onPointerUp={endResize}
+                        className="absolute top-0 right-0 h-full w-1.5 cursor-col-resize touch-none bg-transparent transition-colors hover:bg-primary/40"
+                      />
+                    ) : null}
                   </th>
                 );
               })}
@@ -354,7 +530,7 @@ export function Table<T>({
                           </div>
                         </td>
                       ) : null}
-                      {columns.map((column) => (
+                      {orderedColumns.map((column) => (
                         <td
                           key={column.key}
                           className={cn(
