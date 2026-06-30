@@ -7,6 +7,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -132,6 +133,16 @@ export function Table<T>({
   );
   const [dragKey, setDragKey] = useState<string | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setContainerWidth(el.clientWidth);
+    const ro = new ResizeObserver(() => setContainerWidth(el.clientWidth));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const [internalSort, setInternalSort] = useState<SortState | null>(
     defaultSort,
@@ -227,6 +238,23 @@ export function Table<T>({
     }
     return ordered;
   }, [order, columns]);
+
+  // Once every column has an explicit width (after a resize), drive the layout
+  // deterministically: real columns keep their exact px and a spacer soaks up
+  // whatever space is left, so the browser never reflows the real columns.
+  const hasAllWidths =
+    orderedColumns.length > 0 &&
+    orderedColumns.every((c) => widths[c.key] != null);
+  const showSpacer = resizable && hasAllWidths;
+  const sumRealWidths =
+    orderedColumns.reduce((sum, c) => sum + (widths[c.key] ?? 0), 0) +
+    (selectable ? CHECKBOX_PX : 0);
+  const spacerWidth = showSpacer
+    ? Math.max(0, containerWidth - sumRealWidths)
+    : 0;
+  const tableWidth = showSpacer
+    ? Math.max(sumRealWidths, containerWidth)
+    : undefined;
 
   const startResize = useCallback(
     (key: string, e: ReactPointerEvent) => {
@@ -377,8 +405,11 @@ export function Table<T>({
     >
       <div ref={scrollRef} className="overflow-auto" style={{ height }}>
         <table
-          className="min-w-full border-collapse"
-          style={{ tableLayout: "fixed" }}
+          className={cn("border-collapse", !tableWidth && "min-w-full")}
+          style={{
+            tableLayout: "fixed",
+            width: tableWidth ? `${tableWidth}px` : undefined,
+          }}
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}
@@ -389,8 +420,8 @@ export function Table<T>({
                 <col key={column.key} style={width ? { width } : undefined} />
               );
             })}
-            {/* Flexes to fill slack so the table always spans the container. */}
-            <col />
+            {/* Soaks up leftover space so the table always spans the container. */}
+            {showSpacer ? <col style={{ width: `${spacerWidth}px` }} /> : null}
           </colgroup>
 
           <thead>
@@ -510,10 +541,12 @@ export function Table<T>({
                   </th>
                 );
               })}
-              <th
-                aria-hidden
-                className="sticky top-0 z-10 border-border border-b bg-muted"
-              />
+              {showSpacer ? (
+                <th
+                  aria-hidden
+                  className="sticky top-0 z-10 border-border border-b bg-muted"
+                />
+              ) : null}
             </tr>
           </thead>
 
@@ -521,7 +554,7 @@ export function Table<T>({
             {sortedRows.length === 0 ? (
               <tr>
                 <td
-                  colSpan={totalColumns + 1}
+                  colSpan={totalColumns + (showSpacer ? 1 : 0)}
                   className="p-10 text-center text-muted-foreground"
                 >
                   {emptyState}
@@ -531,7 +564,7 @@ export function Table<T>({
               <>
                 {paddingTop > 0 ? (
                   <tr aria-hidden style={{ height: paddingTop }}>
-                    <td colSpan={totalColumns + 1} />
+                    <td colSpan={totalColumns + (showSpacer ? 1 : 0)} />
                   </tr>
                 ) : null}
                 {virtualItems.map((vItem) => {
@@ -570,13 +603,13 @@ export function Table<T>({
                           {readCell(entry.row, column)}
                         </td>
                       ))}
-                      <td aria-hidden />
+                      {showSpacer ? <td aria-hidden /> : null}
                     </tr>
                   );
                 })}
                 {paddingBottom > 0 ? (
                   <tr aria-hidden style={{ height: paddingBottom }}>
-                    <td colSpan={totalColumns + 1} />
+                    <td colSpan={totalColumns + (showSpacer ? 1 : 0)} />
                   </tr>
                 ) : null}
               </>
