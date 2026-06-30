@@ -484,6 +484,21 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "table",
+        name: "Table",
+        description:
+          "Virtualized data table that stays smooth at 10k+ rows, with sortable headers, row selection and a sticky header. Minimal, reduced-motion-safe motion.",
+        file: "components/motion/table.tsx",
+        badge: "new",
+        keywords: [
+          "react data table",
+          "virtualized table",
+          "sortable table",
+          "table row selection",
+          "react table 10k rows",
+        ],
+      },
+      {
         slug: "not-found",
         name: "404 / Not Found",
         description: "Animated 404 pages in five styles: glitch scramble, magnetic digits, cursor spotlight, a fanning card stack and a typed terminal.",
