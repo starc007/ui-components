@@ -1,19 +1,13 @@
 "use client";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import {
-  ArrowDownToLine,
-  ArrowUpToLine,
-  MoreVertical,
-  Trash2,
-} from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
 import { cn } from "@/lib/utils";
 import { EditableCell } from "./editable-cell";
+import { RowHandle } from "./row-handle";
 import { TableHeader } from "./table-header";
-import { TableMenu } from "./table-menu";
 import type { HeaderCellRefs, TableProps } from "./types";
 import { useColumnReorder } from "./use-column-reorder";
 import { useColumnResize } from "./use-column-resize";
@@ -137,6 +131,22 @@ export function Table<T>({
     if (deactivateTimer.current) clearTimeout(deactivateTimer.current);
     deactivateTimer.current = setTimeout(() => setActiveColumn(null), 100);
   }, []);
+
+  const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
+  const [activeRow, setActiveRow] = useState<{ id: string; index: number } | null>(
+    null,
+  );
+  const rowTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activateRow = useCallback((id: string, index: number) => {
+    if (rowTimer.current) clearTimeout(rowTimer.current);
+    rowTimer.current = null;
+    setActiveRow({ id, index });
+  }, []);
+  const deactivateRow = useCallback(() => {
+    if (rowTimer.current) clearTimeout(rowTimer.current);
+    rowTimer.current = setTimeout(() => setActiveRow(null), 100);
+  }, []);
+  const activeRowEl = activeRow ? rowRefs.current[activeRow.id] : null;
   // Real columns + checkbox; the trailing spacer adds one more in colSpans.
   const leadColumns = columns.length + (selectable ? 1 : 0);
 
@@ -213,56 +223,28 @@ export function Table<T>({
                 {virtualItems.map((vItem) => {
                   const entry = sortedRows[vItem.index];
                   const isSelected = selected.has(entry.id);
-                  const rowHandle = hasRowMenu ? (
-                    <TableMenu
-                      ariaLabel={`Row ${vItem.index + 1} options`}
-                      triggerClassName="-translate-y-1/2 absolute top-1/2 left-0.5 z-50 flex h-5 w-2 items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100 group-hover:opacity-100"
-                      trigger={<MoreVertical className="h-3 w-3" />}
-                      items={[
-                        ...(onInsertRow
-                          ? [
-                              {
-                                label: "Insert before",
-                                icon: <ArrowUpToLine />,
-                                onSelect: () =>
-                                  onInsertRow(vItem.index, "before"),
-                              },
-                              {
-                                label: "Insert after",
-                                icon: <ArrowDownToLine />,
-                                onSelect: () =>
-                                  onInsertRow(vItem.index, "after"),
-                              },
-                            ]
-                          : []),
-                        ...(onDeleteRow
-                          ? [
-                              {
-                                label: "Delete row",
-                                icon: <Trash2 />,
-                                destructive: true,
-                                onSelect: () =>
-                                  onDeleteRow(entry.id, vItem.index),
-                              },
-                            ]
-                          : []),
-                      ]}
-                    />
-                  ) : null;
                   return (
                     <tr
                       key={entry.id}
+                      ref={(el) => {
+                        rowRefs.current[entry.id] = el;
+                      }}
                       data-selected={isSelected}
                       style={{ height: rowHeight }}
+                      onPointerEnter={
+                        hasRowMenu
+                          ? () => activateRow(entry.id, vItem.index)
+                          : undefined
+                      }
+                      onPointerLeave={hasRowMenu ? deactivateRow : undefined}
                       className={cn(
-                        "group border-border/60 border-b transition-colors",
+                        "border-border/60 border-b transition-colors",
                         "data-[selected=true]:bg-primary/5",
                         "hover:bg-muted/50",
                       )}
                     >
                       {selectable ? (
-                        <td className="relative text-center">
-                          {rowHandle}
+                        <td className="text-center">
                           <div className="flex items-center justify-center">
                             <Checkbox
                               checked={isSelected}
@@ -272,7 +254,7 @@ export function Table<T>({
                           </div>
                         </td>
                       ) : null}
-                      {orderedColumns.map((column, i) => (
+                      {orderedColumns.map((column) => (
                         <td
                           key={column.key}
                           style={
@@ -283,10 +265,8 @@ export function Table<T>({
                           className={cn(
                             "truncate px-4 text-foreground",
                             alignText(column.align),
-                            i === 0 && !selectable && "relative",
                           )}
                         >
-                          {i === 0 && !selectable ? rowHandle : null}
                           {!column.cell && column.editable ? (
                             <EditableCell
                               value={String(readCell(entry.row, column) ?? "")}
@@ -314,6 +294,17 @@ export function Table<T>({
           </tbody>
         </table>
       </div>
+      {hasRowMenu && activeRow ? (
+        <RowHandle
+          rowEl={activeRowEl}
+          id={activeRow.id}
+          index={activeRow.index}
+          onInsertRow={onInsertRow}
+          onDeleteRow={onDeleteRow}
+          onEnter={() => activateRow(activeRow.id, activeRow.index)}
+          onLeave={deactivateRow}
+        />
+      ) : null}
     </div>
   );
 }
