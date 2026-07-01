@@ -114,6 +114,11 @@ export function Table<T>({
 
   const hasRowMenu = !!(onInsertRow || onDeleteRow);
   const hasColumnMenu = !!(onInsertColumn || onDeleteColumn);
+  // Only shrink-wrap (w-max) once every column has an explicit resized width;
+  // otherwise stay fill-width so a flexible column can't size to cell content.
+  const sized =
+    orderedColumns.length > 0 &&
+    orderedColumns.every((c) => widths[c.key] != null);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   // Small delay on leave so the pointer can cross the gap from the header cell
   // to the portal handle without the column deactivating.
@@ -155,7 +160,7 @@ export function Table<T>({
     >
       <div ref={scrollRef} className="overflow-auto" style={{ height }}>
         <table
-          className="w-max min-w-full border-collapse"
+          className={cn("border-collapse", sized ? "w-max min-w-full" : "min-w-full")}
           style={{ tableLayout: "fixed" }}
         >
           <colgroup>
