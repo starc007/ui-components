@@ -67,6 +67,8 @@ export interface TableProps<T> {
   height?: number;
   /** Rows rendered above/below the viewport. */
   overscan?: number;
+  /** Show a footer with the row count (and selected count when selectable). */
+  showRowCount?: boolean;
   emptyState?: ReactNode;
   className?: string;
 }
