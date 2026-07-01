@@ -39,6 +39,7 @@ export function Table<T>({
   reorderable = false,
   onColumnOrderChange,
   onCellEdit,
+  onColumnRename,
   onInsertRow,
   onDeleteRow,
   onInsertColumn,
@@ -193,6 +194,7 @@ export function Table<T>({
             onReorderEnd={endReorder}
             onInsertColumn={onInsertColumn}
             onDeleteColumn={onDeleteColumn}
+            onColumnRename={onColumnRename}
             activeColumn={hasColumnMenu ? activeColumn : null}
             onColumnActivate={hasColumnMenu ? activateColumn : undefined}
             onColumnDeactivate={hasColumnMenu ? deactivateColumn : undefined}

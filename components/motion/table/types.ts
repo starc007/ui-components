@@ -51,6 +51,8 @@ export interface TableProps<T> {
   onColumnOrderChange?: (keys: string[]) => void;
   /** Called when an `editable` cell changes. */
   onCellEdit?: (rowId: string, columnKey: string, value: string) => void;
+  /** When set, non-sortable headers become editable inputs for the column name. */
+  onColumnRename?: (columnKey: string, value: string) => void;
   /** Enables the row menu (Insert before / after). Receives the target index. */
   onInsertRow?: (index: number, position: InsertPosition) => void;
   /** Enables Delete in the row menu. */

@@ -65,6 +65,10 @@ export function TableEditablePreview() {
     [nextCol],
   );
 
+  const onColumnRename = useCallback((key: string, value: string) => {
+    setLabels((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
   const onDeleteColumn = useCallback((key: string) => {
     setKeys((prev) => prev.filter((k) => k !== key));
     setRows((prev) =>
@@ -102,6 +106,7 @@ export function TableEditablePreview() {
         rowHeight={48}
         height={bodyHeight}
         onCellEdit={onCellEdit}
+        onColumnRename={onColumnRename}
         onInsertRow={onInsertRow}
         onDeleteRow={onDeleteRow}
         onInsertColumn={onInsertColumn}

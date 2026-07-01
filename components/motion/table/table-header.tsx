@@ -46,6 +46,7 @@ export interface TableHeaderProps<T> {
   onReorderEnd: (e: ReactPointerEvent) => void;
   onInsertColumn?: (index: number, position: InsertPosition) => void;
   onDeleteColumn?: (columnKey: string, index: number) => void;
+  onColumnRename?: (columnKey: string, value: string) => void;
   activeColumn: string | null;
   onColumnActivate?: (key: string) => void;
   onColumnDeactivate?: () => void;
@@ -160,6 +161,7 @@ export function TableHeader<T>({
   onReorderEnd,
   onInsertColumn,
   onDeleteColumn,
+  onColumnRename,
   activeColumn,
   onColumnActivate,
   onColumnDeactivate,
@@ -280,6 +282,20 @@ export function TableHeader<T>({
                       <ChevronUp className="h-3.5 w-3.5" />
                     </motion.span>
                   </button>
+                ) : onColumnRename ? (
+                  <input
+                    value={
+                      typeof column.header === "string" ? column.header : ""
+                    }
+                    aria-label={`Rename ${column.key} column`}
+                    onChange={(e) =>
+                      onColumnRename(column.key, e.target.value)
+                    }
+                    className={cn(
+                      "min-w-0 flex-1 truncate rounded-md bg-transparent px-4 font-medium text-muted-foreground outline-none transition-colors focus:bg-muted focus:text-foreground",
+                      alignText(column.align),
+                    )}
+                  />
                 ) : (
                   <span
                     className={cn(
