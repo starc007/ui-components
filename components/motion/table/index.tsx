@@ -14,7 +14,7 @@ import { useColumnReorder } from "./use-column-reorder";
 import { useColumnResize } from "./use-column-resize";
 import { useColumnSort } from "./use-column-sort";
 import { useRowSelection } from "./use-row-selection";
-import { CHECKBOX_WIDTH, alignText, readCell } from "./utils";
+import { CHECKBOX_WIDTH, COLUMN_ACTIVE_SHADOW, alignText, readCell } from "./utils";
 
 export type {
   SortDirection,
@@ -116,7 +116,7 @@ export function Table<T>({
   return (
     <div
       className={cn(
-        "w-full overflow-hidden rounded-2xl border border-border bg-background text-sm",
+        "w-full overflow-hidden border border-border bg-background text-sm",
         className,
       )}
     >
@@ -250,11 +250,14 @@ export function Table<T>({
                       {orderedColumns.map((column) => (
                         <td
                           key={column.key}
+                          style={
+                            activeColumn === column.key
+                              ? { boxShadow: COLUMN_ACTIVE_SHADOW }
+                              : undefined
+                          }
                           className={cn(
-                            "truncate border-x border-x-transparent px-4 text-foreground",
+                            "truncate px-4 text-foreground",
                             alignText(column.align),
-                            activeColumn === column.key &&
-                              "border-x-primary bg-primary/5",
                           )}
                         >
                           {!column.cell && column.editable ? (

@@ -4,8 +4,8 @@ import {
   ArrowLeftToLine,
   ArrowRightToLine,
   ChevronUp,
-  GripHorizontal,
   GripVertical,
+  MoreHorizontal,
   Trash2,
 } from "lucide-react";
 import { motion } from "motion/react";
@@ -20,7 +20,7 @@ import type {
   SortState,
   TableColumn,
 } from "./types";
-import { alignFlex, alignText } from "./utils";
+import { alignFlex, alignText, COLUMN_ACTIVE_SHADOW } from "./utils";
 
 export interface TableHeaderProps<T> {
   columns: TableColumn<T>[];
@@ -108,6 +108,7 @@ export function TableHeader<T>({
               }}
               onPointerEnter={() => onColumnActive?.(column.key)}
               onPointerLeave={() => onColumnActive?.(null)}
+              style={isActive ? { boxShadow: COLUMN_ACTIVE_SHADOW } : undefined}
               aria-sort={
                 active
                   ? sort?.direction === "asc"
@@ -122,8 +123,8 @@ export function TableHeader<T>({
                   : undefined
               }
               className={cn(
-                "group sticky top-0 z-10 border-x border-border border-b bg-muted p-0 font-medium text-muted-foreground",
-                isActive ? "border-x-primary bg-primary/5" : "border-x-transparent",
+                "group sticky top-0 z-10 border-border border-b bg-muted p-0 font-medium text-muted-foreground",
+                isActive && "bg-primary/5",
                 "data-[drop=true]:before:absolute data-[drop=true]:before:inset-y-0 data-[drop=true]:before:left-0 data-[drop=true]:before:w-0.5 data-[drop=true]:before:bg-primary",
                 "data-[dropend=true]:after:absolute data-[dropend=true]:after:inset-y-0 data-[dropend=true]:after:right-0 data-[dropend=true]:after:w-0.5 data-[dropend=true]:after:bg-primary",
               )}
@@ -201,7 +202,7 @@ export function TableHeader<T>({
                     "-translate-x-1/2 absolute top-1 left-1/2 z-20 flex h-4 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100",
                     isActive ? "opacity-100" : "opacity-0",
                   )}
-                  trigger={<GripHorizontal className="h-3.5 w-3.5" />}
+                  trigger={<MoreHorizontal className="h-3.5 w-3.5" />}
                   items={[
                     ...(onInsertColumn
                       ? [
