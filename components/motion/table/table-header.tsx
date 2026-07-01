@@ -20,7 +20,7 @@ import type {
   SortState,
   TableColumn,
 } from "./types";
-import { alignFlex } from "./utils";
+import { alignFlex, alignText } from "./utils";
 
 export interface TableHeaderProps<T> {
   columns: TableColumn<T>[];
@@ -176,7 +176,12 @@ export function TableHeader<T>({
                     </motion.span>
                   </button>
                 ) : (
-                  <span className="min-w-0 flex-1 truncate px-4">
+                  <span
+                    className={cn(
+                      "min-w-0 flex-1 truncate px-4",
+                      alignText(column.align),
+                    )}
+                  >
                     {column.header}
                   </span>
                 )}
