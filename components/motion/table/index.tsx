@@ -1,7 +1,7 @@
 "use client";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ArrowDownToLine, ArrowUpToLine, MoreVertical, Trash2 } from "lucide-react";
+import { ArrowDownToLine, ArrowUpToLine, Trash2 } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useMemo, useRef } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
@@ -125,6 +125,7 @@ export function Table<T>({
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}
+            {hasRowMenu ? <col style={{ width: "28px" }} /> : null}
             {orderedColumns.map((column) => {
               const override = widths[column.key];
               const width = override ? `${override}px` : column.width;
@@ -132,7 +133,6 @@ export function Table<T>({
                 <col key={column.key} style={width ? { width } : undefined} />
               );
             })}
-            {hasRowMenu ? <col style={{ width: "48px" }} /> : null}
             {/* Empty filler owns the leftover space — no gap, content unpinned. */}
             <col />
           </colgroup>
@@ -189,7 +189,7 @@ export function Table<T>({
                       data-selected={isSelected}
                       style={{ height: rowHeight }}
                       className={cn(
-                        "border-border/60 border-b transition-colors",
+                        "group border-border/60 border-b transition-colors",
                         "data-[selected=true]:bg-primary/5",
                         "hover:bg-muted/50",
                       )}
@@ -203,6 +203,44 @@ export function Table<T>({
                               aria-label={`Select row ${vItem.index + 1}`}
                             />
                           </div>
+                        </td>
+                      ) : null}
+                      {hasRowMenu ? (
+                        <td className="relative">
+                          <TableMenu
+                            ariaLabel={`Row ${vItem.index + 1} options`}
+                            triggerClassName="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 h-8 w-3 rounded-full bg-primary/25 opacity-0 transition-opacity hover:bg-primary/40 focus-visible:opacity-100 group-hover:opacity-100"
+                            trigger={<span className="sr-only">Row options</span>}
+                            items={[
+                              ...(onInsertRow
+                                ? [
+                                    {
+                                      label: "Insert before",
+                                      icon: <ArrowUpToLine />,
+                                      onSelect: () =>
+                                        onInsertRow(vItem.index, "before"),
+                                    },
+                                    {
+                                      label: "Insert after",
+                                      icon: <ArrowDownToLine />,
+                                      onSelect: () =>
+                                        onInsertRow(vItem.index, "after"),
+                                    },
+                                  ]
+                                : []),
+                              ...(onDeleteRow
+                                ? [
+                                    {
+                                      label: "Delete row",
+                                      icon: <Trash2 />,
+                                      destructive: true,
+                                      onSelect: () =>
+                                        onDeleteRow(entry.id, vItem.index),
+                                    },
+                                  ]
+                                : []),
+                            ]}
+                          />
                         </td>
                       ) : null}
                       {orderedColumns.map((column) => (
@@ -226,46 +264,6 @@ export function Table<T>({
                           )}
                         </td>
                       ))}
-                      {hasRowMenu ? (
-                        <td className="text-center">
-                          <div className="flex items-center justify-center">
-                            <TableMenu
-                              ariaLabel={`Row ${vItem.index + 1} options`}
-                              triggerClassName="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 transition-colors hover:bg-muted hover:text-foreground"
-                              trigger={<MoreVertical className="h-4 w-4" />}
-                              items={[
-                                ...(onInsertRow
-                                  ? [
-                                      {
-                                        label: "Insert before",
-                                        icon: <ArrowUpToLine />,
-                                        onSelect: () =>
-                                          onInsertRow(vItem.index, "before"),
-                                      },
-                                      {
-                                        label: "Insert after",
-                                        icon: <ArrowDownToLine />,
-                                        onSelect: () =>
-                                          onInsertRow(vItem.index, "after"),
-                                      },
-                                    ]
-                                  : []),
-                                ...(onDeleteRow
-                                  ? [
-                                      {
-                                        label: "Delete row",
-                                        icon: <Trash2 />,
-                                        destructive: true,
-                                        onSelect: () =>
-                                          onDeleteRow(entry.id, vItem.index),
-                                      },
-                                    ]
-                                  : []),
-                              ]}
-                            />
-                          </div>
-                        </td>
-                      ) : null}
                       <td aria-hidden />
                     </tr>
                   );

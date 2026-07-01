@@ -89,6 +89,9 @@ export function TableHeader<T>({
             </div>
           </th>
         ) : null}
+        {hasRowMenu ? (
+          <th className="sticky top-0 z-10 border-border border-b bg-muted" />
+        ) : null}
         {columns.map((column, index) => {
           const active = sort?.key === column.key;
           const isDragging = dragKey === column.key;
@@ -112,7 +115,7 @@ export function TableHeader<T>({
                   : undefined
               }
               className={cn(
-                "sticky top-0 z-10 border-border border-b bg-muted p-0 font-medium text-muted-foreground",
+                "group sticky top-0 z-10 border-border border-b bg-muted p-0 font-medium text-muted-foreground",
                 "data-[drop=true]:before:absolute data-[drop=true]:before:inset-y-0 data-[drop=true]:before:left-0 data-[drop=true]:before:w-0.5 data-[drop=true]:before:bg-primary",
                 "data-[dropend=true]:after:absolute data-[dropend=true]:after:inset-y-0 data-[dropend=true]:after:right-0 data-[dropend=true]:after:w-0.5 data-[dropend=true]:after:bg-primary",
               )}
@@ -177,42 +180,40 @@ export function TableHeader<T>({
                     {column.header}
                   </span>
                 )}
-                {hasColumnMenu ? (
-                  <TableMenu
-                    ariaLabel={`${column.key} column options`}
-                    triggerClassName="mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground/50 transition-colors hover:bg-background hover:text-foreground"
-                    trigger={<ChevronDown className="h-3.5 w-3.5" />}
-                    items={[
-                      ...(onInsertColumn
-                        ? [
-                            {
-                              label: "Insert before",
-                              icon: <ArrowLeftToLine />,
-                              onSelect: () =>
-                                onInsertColumn(index, "before"),
-                            },
-                            {
-                              label: "Insert after",
-                              icon: <ArrowRightToLine />,
-                              onSelect: () => onInsertColumn(index, "after"),
-                            },
-                          ]
-                        : []),
-                      ...(onDeleteColumn
-                        ? [
-                            {
-                              label: "Delete column",
-                              icon: <Trash2 />,
-                              destructive: true,
-                              onSelect: () =>
-                                onDeleteColumn(column.key, index),
-                            },
-                          ]
-                        : []),
-                    ]}
-                  />
-                ) : null}
               </motion.div>
+              {hasColumnMenu ? (
+                <TableMenu
+                  ariaLabel={`${column.key} column options`}
+                  triggerClassName="-translate-x-1/2 absolute top-1 left-1/2 z-20 flex h-3.5 w-10 items-center justify-center rounded-full bg-primary/25 text-primary opacity-0 transition-opacity hover:bg-primary/40 focus-visible:opacity-100 group-hover:opacity-100"
+                  trigger={<ChevronDown className="h-3 w-3" />}
+                  items={[
+                    ...(onInsertColumn
+                      ? [
+                          {
+                            label: "Insert before",
+                            icon: <ArrowLeftToLine />,
+                            onSelect: () => onInsertColumn(index, "before"),
+                          },
+                          {
+                            label: "Insert after",
+                            icon: <ArrowRightToLine />,
+                            onSelect: () => onInsertColumn(index, "after"),
+                          },
+                        ]
+                      : []),
+                    ...(onDeleteColumn
+                      ? [
+                          {
+                            label: "Delete column",
+                            icon: <Trash2 />,
+                            destructive: true,
+                            onSelect: () => onDeleteColumn(column.key, index),
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
+              ) : null}
               {resizable ? (
                 <button
                   type="button"
@@ -227,9 +228,6 @@ export function TableHeader<T>({
             </th>
           );
         })}
-        {hasRowMenu ? (
-          <th className="sticky top-0 z-10 border-border border-b bg-muted" />
-        ) : null}
         <th
           aria-hidden
           className="sticky top-0 z-10 border-border border-b bg-muted"
