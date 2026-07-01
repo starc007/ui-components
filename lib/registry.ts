@@ -504,6 +504,7 @@ export const registry: CategoryEntry[] = [
             name: "Data Table",
             description:
               "10k virtualized rows with sortable headers, row selection, column resize and reorder.",
+            installSlug: "table",
             file: "components/motion/table/index.tsx",
             previewKey: "blocks/table",
             previewFile: "components/previews/blocks/table.preview.tsx",
@@ -512,7 +513,8 @@ export const registry: CategoryEntry[] = [
             slug: "editable",
             name: "Editable Table",
             description:
-              "Edit cells inline and add or remove rows and columns — the table re-renders from the updated data and column defs.",
+              "Edit cells inline and insert or delete rows and columns via border handles; the table re-renders from the updated data and column defs.",
+            installSlug: "table-editable",
             file: "components/motion/table/index.tsx",
             previewKey: "blocks/table-editable",
             previewFile: "components/previews/blocks/table-editable.preview.tsx",
