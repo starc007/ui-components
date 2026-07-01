@@ -193,10 +193,10 @@ export function TableHeader<T>({
                 <TableMenu
                   ariaLabel={`${column.key} column options`}
                   triggerClassName={cn(
-                    "-translate-x-1/2 absolute top-0 left-1/2 z-20 flex h-3 w-6 items-center justify-center rounded-b-full bg-primary text-primary-foreground shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100",
+                    "-translate-x-1/2 absolute top-0.5 left-1/2 z-20 flex h-4 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100",
                     isActive ? "opacity-100" : "opacity-0",
                   )}
-                  trigger={<MoreHorizontal className="h-2.5 w-2.5" />}
+                  trigger={<MoreHorizontal className="h-3 w-3" />}
                   items={[
                     ...(onInsertColumn
                       ? [

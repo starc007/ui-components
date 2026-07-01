@@ -192,7 +192,7 @@ export function Table<T>({
                   const rowHandle = hasRowMenu ? (
                     <TableMenu
                       ariaLabel={`Row ${vItem.index + 1} options`}
-                      triggerClassName="-translate-y-1/2 absolute top-1/2 left-0 z-20 flex h-6 w-3 items-center justify-center rounded-r-full bg-primary text-primary-foreground opacity-0 shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100 group-hover:opacity-100"
+                      triggerClassName="-translate-y-1/2 absolute top-1/2 left-0.5 z-20 flex h-8 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100 group-hover:opacity-100"
                       trigger={<MoreVertical className="h-3 w-3" />}
                       items={[
                         ...(onInsertRow
