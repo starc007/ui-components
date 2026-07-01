@@ -288,6 +288,7 @@ export function TableHeader<T>({
                       typeof column.header === "string" ? column.header : ""
                     }
                     aria-label={`Rename ${column.key} column`}
+                    size={1}
                     onChange={(e) =>
                       onColumnRename(column.key, e.target.value)
                     }
