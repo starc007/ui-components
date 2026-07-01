@@ -496,6 +496,27 @@ export const registry: CategoryEntry[] = [
           "sortable table",
           "table row selection",
           "react table 10k rows",
+          "editable table react",
+        ],
+        examples: [
+          {
+            slug: "data",
+            name: "Data Table",
+            description:
+              "10k virtualized rows with sortable headers, row selection, column resize and reorder.",
+            file: "components/motion/table/index.tsx",
+            previewKey: "blocks/table",
+            previewFile: "components/previews/blocks/table.preview.tsx",
+          },
+          {
+            slug: "editable",
+            name: "Editable Table",
+            description:
+              "Edit cells inline and add or remove rows and columns — the table re-renders from the updated data and column defs.",
+            file: "components/motion/table/index.tsx",
+            previewKey: "blocks/table-editable",
+            previewFile: "components/previews/blocks/table-editable.preview.tsx",
+          },
         ],
       },
       {

@@ -42,6 +42,11 @@ export const previews: Record<string, ComponentType> = {
   "blocks/table": dynamic(() =>
     import("./blocks/table.preview").then((m) => m.TablePreview),
   ),
+  "blocks/table-editable": dynamic(() =>
+    import("./blocks/table-editable.preview").then(
+      (m) => m.TableEditablePreview,
+    ),
+  ),
   "motion/bouncy-accordion": dynamic(() =>
     import("./motion/bouncy-accordion.preview").then(
       (m) => m.BouncyAccordionPreview,
