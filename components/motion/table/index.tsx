@@ -1,7 +1,12 @@
 "use client";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ArrowDownToLine, ArrowUpToLine, Trash2 } from "lucide-react";
+import {
+  ArrowDownToLine,
+  ArrowUpToLine,
+  MoreVertical,
+  Trash2,
+} from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useMemo, useRef, useState } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
@@ -109,9 +114,8 @@ export function Table<T>({
   const hasRowMenu = !!(onInsertRow || onDeleteRow);
   const hasColumnMenu = !!(onInsertColumn || onDeleteColumn);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
-  // Real columns + checkbox + row-menu, then the trailing spacer adds one more.
-  const leadColumns =
-    columns.length + (selectable ? 1 : 0) + (hasRowMenu ? 1 : 0);
+  // Real columns + checkbox; the trailing spacer adds one more in colSpans.
+  const leadColumns = columns.length + (selectable ? 1 : 0);
 
   return (
     <div
@@ -127,7 +131,6 @@ export function Table<T>({
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}
-            {hasRowMenu ? <col style={{ width: "28px" }} /> : null}
             {orderedColumns.map((column) => {
               const override = widths[column.key];
               const width = override ? `${override}px` : column.width;
@@ -160,7 +163,6 @@ export function Table<T>({
             onReorderStart={startReorder}
             onReorderMove={moveReorder}
             onReorderEnd={endReorder}
-            hasRowMenu={hasRowMenu}
             onInsertColumn={onInsertColumn}
             onDeleteColumn={onDeleteColumn}
             activeColumn={hasColumnMenu ? activeColumn : null}
@@ -187,6 +189,42 @@ export function Table<T>({
                 {virtualItems.map((vItem) => {
                   const entry = sortedRows[vItem.index];
                   const isSelected = selected.has(entry.id);
+                  const rowHandle = hasRowMenu ? (
+                    <TableMenu
+                      ariaLabel={`Row ${vItem.index + 1} options`}
+                      triggerClassName="-translate-y-1/2 absolute top-1/2 left-0 z-20 flex h-6 w-3 items-center justify-center rounded-r-full bg-primary text-primary-foreground opacity-0 shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100 group-hover:opacity-100"
+                      trigger={<MoreVertical className="h-3 w-3" />}
+                      items={[
+                        ...(onInsertRow
+                          ? [
+                              {
+                                label: "Insert before",
+                                icon: <ArrowUpToLine />,
+                                onSelect: () =>
+                                  onInsertRow(vItem.index, "before"),
+                              },
+                              {
+                                label: "Insert after",
+                                icon: <ArrowDownToLine />,
+                                onSelect: () =>
+                                  onInsertRow(vItem.index, "after"),
+                              },
+                            ]
+                          : []),
+                        ...(onDeleteRow
+                          ? [
+                              {
+                                label: "Delete row",
+                                icon: <Trash2 />,
+                                destructive: true,
+                                onSelect: () =>
+                                  onDeleteRow(entry.id, vItem.index),
+                              },
+                            ]
+                          : []),
+                      ]}
+                    />
+                  ) : null;
                   return (
                     <tr
                       key={entry.id}
@@ -199,7 +237,8 @@ export function Table<T>({
                       )}
                     >
                       {selectable ? (
-                        <td className="text-center">
+                        <td className="relative text-center">
+                          {rowHandle}
                           <div className="flex items-center justify-center">
                             <Checkbox
                               checked={isSelected}
@@ -209,45 +248,7 @@ export function Table<T>({
                           </div>
                         </td>
                       ) : null}
-                      {hasRowMenu ? (
-                        <td className="relative">
-                          <TableMenu
-                            ariaLabel={`Row ${vItem.index + 1} options`}
-                            triggerClassName="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 h-8 w-3 rounded-full bg-primary/25 opacity-0 transition-opacity hover:bg-primary/40 focus-visible:opacity-100 group-hover:opacity-100"
-                            trigger={<span className="sr-only">Row options</span>}
-                            items={[
-                              ...(onInsertRow
-                                ? [
-                                    {
-                                      label: "Insert before",
-                                      icon: <ArrowUpToLine />,
-                                      onSelect: () =>
-                                        onInsertRow(vItem.index, "before"),
-                                    },
-                                    {
-                                      label: "Insert after",
-                                      icon: <ArrowDownToLine />,
-                                      onSelect: () =>
-                                        onInsertRow(vItem.index, "after"),
-                                    },
-                                  ]
-                                : []),
-                              ...(onDeleteRow
-                                ? [
-                                    {
-                                      label: "Delete row",
-                                      icon: <Trash2 />,
-                                      destructive: true,
-                                      onSelect: () =>
-                                        onDeleteRow(entry.id, vItem.index),
-                                    },
-                                  ]
-                                : []),
-                            ]}
-                          />
-                        </td>
-                      ) : null}
-                      {orderedColumns.map((column) => (
+                      {orderedColumns.map((column, i) => (
                         <td
                           key={column.key}
                           style={
@@ -258,8 +259,10 @@ export function Table<T>({
                           className={cn(
                             "truncate px-4 text-foreground",
                             alignText(column.align),
+                            i === 0 && !selectable && "relative",
                           )}
                         >
+                          {i === 0 && !selectable ? rowHandle : null}
                           {!column.cell && column.editable ? (
                             <EditableCell
                               value={String(readCell(entry.row, column) ?? "")}

@@ -43,7 +43,6 @@ export interface TableHeaderProps<T> {
   onReorderStart: (key: string, e: ReactPointerEvent) => void;
   onReorderMove: (e: ReactPointerEvent) => void;
   onReorderEnd: (e: ReactPointerEvent) => void;
-  hasRowMenu: boolean;
   onInsertColumn?: (index: number, position: InsertPosition) => void;
   onDeleteColumn?: (columnKey: string, index: number) => void;
   activeColumn: string | null;
@@ -71,7 +70,6 @@ export function TableHeader<T>({
   onReorderStart,
   onReorderMove,
   onReorderEnd,
-  hasRowMenu,
   onInsertColumn,
   onDeleteColumn,
   activeColumn,
@@ -92,9 +90,6 @@ export function TableHeader<T>({
               />
             </div>
           </th>
-        ) : null}
-        {hasRowMenu ? (
-          <th className="sticky top-0 z-10 border-border border-b bg-muted" />
         ) : null}
         {columns.map((column, index) => {
           const active = sort?.key === column.key;
@@ -124,7 +119,6 @@ export function TableHeader<T>({
               }
               className={cn(
                 "group sticky top-0 z-10 border-border border-b bg-muted p-0 font-medium text-muted-foreground",
-                isActive && "bg-primary/5",
                 "data-[drop=true]:before:absolute data-[drop=true]:before:inset-y-0 data-[drop=true]:before:left-0 data-[drop=true]:before:w-0.5 data-[drop=true]:before:bg-primary",
                 "data-[dropend=true]:after:absolute data-[dropend=true]:after:inset-y-0 data-[dropend=true]:after:right-0 data-[dropend=true]:after:w-0.5 data-[dropend=true]:after:bg-primary",
               )}
@@ -199,10 +193,10 @@ export function TableHeader<T>({
                 <TableMenu
                   ariaLabel={`${column.key} column options`}
                   triggerClassName={cn(
-                    "-translate-x-1/2 absolute top-1 left-1/2 z-20 flex h-4 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100",
+                    "-translate-x-1/2 absolute top-0 left-1/2 z-20 flex h-3 w-6 items-center justify-center rounded-b-full bg-primary text-primary-foreground shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100",
                     isActive ? "opacity-100" : "opacity-0",
                   )}
-                  trigger={<MoreHorizontal className="h-3.5 w-3.5" />}
+                  trigger={<MoreHorizontal className="h-2.5 w-2.5" />}
                   items={[
                     ...(onInsertColumn
                       ? [
