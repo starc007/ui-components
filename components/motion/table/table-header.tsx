@@ -9,7 +9,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { motion } from "motion/react";
-import type { PointerEvent as ReactPointerEvent } from "react";
+import { type PointerEvent as ReactPointerEvent, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Checkbox } from "@/components/motion/checkbox";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
@@ -46,7 +47,94 @@ export interface TableHeaderProps<T> {
   onInsertColumn?: (index: number, position: InsertPosition) => void;
   onDeleteColumn?: (columnKey: string, index: number) => void;
   activeColumn: string | null;
-  onColumnActive?: (key: string | null) => void;
+  onColumnActivate?: (key: string) => void;
+  onColumnDeactivate?: () => void;
+}
+
+/** Column insert / delete menu items shared by the header cell and the portal handle. */
+function columnMenuItems<T>(
+  column: TableColumn<T>,
+  index: number,
+  onInsertColumn?: (index: number, position: InsertPosition) => void,
+  onDeleteColumn?: (columnKey: string, index: number) => void,
+) {
+  return [
+    ...(onInsertColumn
+      ? [
+          {
+            label: "Insert before",
+            icon: <ArrowLeftToLine />,
+            onSelect: () => onInsertColumn(index, "before"),
+          },
+          {
+            label: "Insert after",
+            icon: <ArrowRightToLine />,
+            onSelect: () => onInsertColumn(index, "after"),
+          },
+        ]
+      : []),
+    ...(onDeleteColumn
+      ? [
+          {
+            label: "Delete column",
+            icon: <Trash2 />,
+            destructive: true,
+            onSelect: () => onDeleteColumn(column.key, index),
+          },
+        ]
+      : []),
+  ];
+}
+
+/** The ellipse handle, portaled so it can sit on the column's top border without
+ * the scroll container clipping it. Straddles the border to bridge hover. */
+function ColumnHandle<T>({
+  column,
+  index,
+  thRefs,
+  onInsertColumn,
+  onDeleteColumn,
+  onEnter,
+  onLeave,
+}: {
+  column: TableColumn<T>;
+  index: number;
+  thRefs: HeaderCellRefs;
+  onInsertColumn?: (index: number, position: InsertPosition) => void;
+  onDeleteColumn?: (columnKey: string, index: number) => void;
+  onEnter: () => void;
+  onLeave: () => void;
+}) {
+  useEffect(() => {
+    window.addEventListener("scroll", onLeave, true);
+    return () => window.removeEventListener("scroll", onLeave, true);
+  }, [onLeave]);
+
+  const el = thRefs.current[column.key];
+  if (!el || typeof document === "undefined") return null;
+  const rect = el.getBoundingClientRect();
+
+  return createPortal(
+    <div
+      style={{
+        position: "fixed",
+        top: rect.top,
+        left: rect.left + rect.width / 2,
+        transform: "translate(-50%, -50%)",
+        zIndex: 40,
+      }}
+      onPointerEnter={onEnter}
+      onPointerLeave={onLeave}
+    >
+      <TableMenu
+        ariaLabel={`${column.key} column options`}
+        triggerClassName="flex h-4 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+        trigger={<MoreHorizontal className="h-3 w-3" />}
+        items={columnMenuItems(column, index, onInsertColumn, onDeleteColumn)}
+      />
+    </div>,
+    document.body,
+  );
 }
 
 export function TableHeader<T>({
@@ -73,11 +161,25 @@ export function TableHeader<T>({
   onInsertColumn,
   onDeleteColumn,
   activeColumn,
-  onColumnActive,
+  onColumnActivate,
+  onColumnDeactivate,
 }: TableHeaderProps<T>) {
   const hasColumnMenu = !!(onInsertColumn || onDeleteColumn);
+  const activeIndex = columns.findIndex((c) => c.key === activeColumn);
   return (
-    <thead>
+    <>
+      {hasColumnMenu && activeColumn && activeIndex >= 0 ? (
+        <ColumnHandle
+          column={columns[activeIndex]}
+          index={activeIndex}
+          thRefs={thRefs}
+          onInsertColumn={onInsertColumn}
+          onDeleteColumn={onDeleteColumn}
+          onEnter={() => onColumnActivate?.(activeColumn)}
+          onLeave={() => onColumnDeactivate?.()}
+        />
+      ) : null}
+      <thead>
       <tr style={{ height: rowHeight }}>
         {selectable ? (
           <th className="sticky top-0 z-10 border-border border-b bg-muted">
@@ -101,8 +203,8 @@ export function TableHeader<T>({
               ref={(el) => {
                 thRefs.current[column.key] = el;
               }}
-              onPointerEnter={() => onColumnActive?.(column.key)}
-              onPointerLeave={() => onColumnActive?.(null)}
+              onPointerEnter={() => onColumnActivate?.(column.key)}
+              onPointerLeave={() => onColumnDeactivate?.()}
               style={isActive ? { boxShadow: COLUMN_ACTIVE_SHADOW } : undefined}
               aria-sort={
                 active
@@ -189,42 +291,6 @@ export function TableHeader<T>({
                   </span>
                 )}
               </motion.div>
-              {hasColumnMenu ? (
-                <TableMenu
-                  ariaLabel={`${column.key} column options`}
-                  triggerClassName={cn(
-                    "-translate-x-1/2 absolute top-0.5 left-1/2 z-20 flex h-4 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100",
-                    isActive ? "opacity-100" : "opacity-0",
-                  )}
-                  trigger={<MoreHorizontal className="h-3 w-3" />}
-                  items={[
-                    ...(onInsertColumn
-                      ? [
-                          {
-                            label: "Insert before",
-                            icon: <ArrowLeftToLine />,
-                            onSelect: () => onInsertColumn(index, "before"),
-                          },
-                          {
-                            label: "Insert after",
-                            icon: <ArrowRightToLine />,
-                            onSelect: () => onInsertColumn(index, "after"),
-                          },
-                        ]
-                      : []),
-                    ...(onDeleteColumn
-                      ? [
-                          {
-                            label: "Delete column",
-                            icon: <Trash2 />,
-                            destructive: true,
-                            onSelect: () => onDeleteColumn(column.key, index),
-                          },
-                        ]
-                      : []),
-                  ]}
-                />
-              ) : null}
               {resizable ? (
                 <button
                   type="button"
@@ -245,5 +311,6 @@ export function TableHeader<T>({
         />
       </tr>
     </thead>
+    </>
   );
 }

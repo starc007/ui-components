@@ -8,7 +8,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useReducedMotion } from "motion/react";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
 import { cn } from "@/lib/utils";
 import { EditableCell } from "./editable-cell";
@@ -19,7 +19,12 @@ import { useColumnReorder } from "./use-column-reorder";
 import { useColumnResize } from "./use-column-resize";
 import { useColumnSort } from "./use-column-sort";
 import { useRowSelection } from "./use-row-selection";
-import { CHECKBOX_WIDTH, COLUMN_ACTIVE_SHADOW, alignText, readCell } from "./utils";
+import {
+  CHECKBOX_WIDTH,
+  COLUMN_ACTIVE_SHADOW,
+  alignText,
+  readCell,
+} from "./utils";
 
 export type {
   SortDirection,
@@ -70,8 +75,14 @@ export function Table<T>({
     [data, getRowId],
   );
 
-  const { orderedColumns, dragKey, dropIndex, startReorder, moveReorder, endReorder } =
-    useColumnReorder({ columns, thRefs, onColumnOrderChange });
+  const {
+    orderedColumns,
+    dragKey,
+    dropIndex,
+    startReorder,
+    moveReorder,
+    endReorder,
+  } = useColumnReorder({ columns, thRefs, onColumnOrderChange });
 
   const { sort, sortedRows, toggleSort } = useColumnSort({
     rows,
@@ -114,6 +125,18 @@ export function Table<T>({
   const hasRowMenu = !!(onInsertRow || onDeleteRow);
   const hasColumnMenu = !!(onInsertColumn || onDeleteColumn);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
+  // Small delay on leave so the pointer can cross the gap from the header cell
+  // to the portal handle without the column deactivating.
+  const deactivateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activateColumn = useCallback((key: string) => {
+    if (deactivateTimer.current) clearTimeout(deactivateTimer.current);
+    deactivateTimer.current = null;
+    setActiveColumn(key);
+  }, []);
+  const deactivateColumn = useCallback(() => {
+    if (deactivateTimer.current) clearTimeout(deactivateTimer.current);
+    deactivateTimer.current = setTimeout(() => setActiveColumn(null), 100);
+  }, []);
   // Real columns + checkbox; the trailing spacer adds one more in colSpans.
   const leadColumns = columns.length + (selectable ? 1 : 0);
 
@@ -166,7 +189,8 @@ export function Table<T>({
             onInsertColumn={onInsertColumn}
             onDeleteColumn={onDeleteColumn}
             activeColumn={hasColumnMenu ? activeColumn : null}
-            onColumnActive={hasColumnMenu ? setActiveColumn : undefined}
+            onColumnActivate={hasColumnMenu ? activateColumn : undefined}
+            onColumnDeactivate={hasColumnMenu ? deactivateColumn : undefined}
           />
 
           <tbody>
@@ -192,7 +216,7 @@ export function Table<T>({
                   const rowHandle = hasRowMenu ? (
                     <TableMenu
                       ariaLabel={`Row ${vItem.index + 1} options`}
-                      triggerClassName="-translate-y-1/2 absolute top-1/2 left-0.5 z-20 flex h-8 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100 group-hover:opacity-100"
+                      triggerClassName="-translate-y-1/2 absolute top-1/2 left-0.5 z-50 flex h-5 w-2 items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 shadow-sm transition-opacity hover:bg-primary/90 focus-visible:opacity-100 group-hover:opacity-100"
                       trigger={<MoreVertical className="h-3 w-3" />}
                       items={[
                         ...(onInsertRow
