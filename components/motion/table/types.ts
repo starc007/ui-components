@@ -20,9 +20,13 @@ export type TableColumn<T> = {
   width?: string;
   /** Custom cell renderer. Falls back to `row[key]`. */
   cell?: (row: T) => ReactNode;
+  /** Render an inline text input for this column's cells (ignored when `cell` is set). */
+  editable?: boolean;
   /** Value used for sorting. Falls back to `row[key]`. */
   sortValue?: (row: T) => string | number;
 };
+
+export type InsertPosition = "before" | "after";
 
 export interface TableProps<T> {
   data: T[];
@@ -45,6 +49,16 @@ export interface TableProps<T> {
   /** Allow dragging a header grip to reorder columns. */
   reorderable?: boolean;
   onColumnOrderChange?: (keys: string[]) => void;
+  /** Called when an `editable` cell changes. */
+  onCellEdit?: (rowId: string, columnKey: string, value: string) => void;
+  /** Enables the row menu (Insert before / after). Receives the target index. */
+  onInsertRow?: (index: number, position: InsertPosition) => void;
+  /** Enables Delete in the row menu. */
+  onDeleteRow?: (rowId: string, index: number) => void;
+  /** Enables the column menu (Insert before / after). Receives the target column index. */
+  onInsertColumn?: (index: number, position: InsertPosition) => void;
+  /** Enables Delete in the column menu. */
+  onDeleteColumn?: (columnKey: string, index: number) => void;
   /** Fixed row height in px — required for virtualization. */
   rowHeight?: number;
   /** Scroll viewport height in px. */

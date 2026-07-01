@@ -1,11 +1,14 @@
 "use client";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { ArrowDownToLine, ArrowUpToLine, MoreVertical, Trash2 } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useMemo, useRef } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
 import { cn } from "@/lib/utils";
+import { EditableCell } from "./editable-cell";
 import { TableHeader } from "./table-header";
+import { TableMenu } from "./table-menu";
 import type { HeaderCellRefs, TableProps } from "./types";
 import { useColumnReorder } from "./use-column-reorder";
 import { useColumnResize } from "./use-column-resize";
@@ -36,6 +39,11 @@ export function Table<T>({
   onColumnResize,
   reorderable = false,
   onColumnOrderChange,
+  onCellEdit,
+  onInsertRow,
+  onDeleteRow,
+  onInsertColumn,
+  onDeleteColumn,
   rowHeight = 48,
   height = 440,
   overscan = 10,
@@ -98,7 +106,10 @@ export function Table<T>({
       ? totalSize - virtualItems[virtualItems.length - 1].end
       : 0;
 
-  const totalColumns = columns.length + (selectable ? 1 : 0);
+  const hasRowMenu = !!(onInsertRow || onDeleteRow);
+  // Real columns + checkbox + row-menu, then the trailing spacer adds one more.
+  const leadColumns =
+    columns.length + (selectable ? 1 : 0) + (hasRowMenu ? 1 : 0);
 
   return (
     <div
@@ -121,6 +132,7 @@ export function Table<T>({
                 <col key={column.key} style={width ? { width } : undefined} />
               );
             })}
+            {hasRowMenu ? <col style={{ width: "48px" }} /> : null}
             {/* Empty filler owns the leftover space — no gap, content unpinned. */}
             <col />
           </colgroup>
@@ -146,13 +158,16 @@ export function Table<T>({
             onReorderStart={startReorder}
             onReorderMove={moveReorder}
             onReorderEnd={endReorder}
+            hasRowMenu={hasRowMenu}
+            onInsertColumn={onInsertColumn}
+            onDeleteColumn={onDeleteColumn}
           />
 
           <tbody>
             {sortedRows.length === 0 ? (
               <tr>
                 <td
-                  colSpan={totalColumns + 1}
+                  colSpan={leadColumns + 1}
                   className="p-10 text-center text-muted-foreground"
                 >
                   {emptyState}
@@ -162,7 +177,7 @@ export function Table<T>({
               <>
                 {paddingTop > 0 ? (
                   <tr aria-hidden style={{ height: paddingTop }}>
-                    <td colSpan={totalColumns + 1} />
+                    <td colSpan={leadColumns + 1} />
                   </tr>
                 ) : null}
                 {virtualItems.map((vItem) => {
@@ -198,35 +213,72 @@ export function Table<T>({
                             alignText(column.align),
                           )}
                         >
-                          {readCell(entry.row, column)}
+                          {!column.cell && column.editable ? (
+                            <EditableCell
+                              value={String(readCell(entry.row, column) ?? "")}
+                              label={`${column.key} for row ${vItem.index + 1}`}
+                              onChange={(next) =>
+                                onCellEdit?.(entry.id, column.key, next)
+                              }
+                            />
+                          ) : (
+                            readCell(entry.row, column)
+                          )}
                         </td>
                       ))}
+                      {hasRowMenu ? (
+                        <td className="text-center">
+                          <div className="flex items-center justify-center">
+                            <TableMenu
+                              ariaLabel={`Row ${vItem.index + 1} options`}
+                              triggerClassName="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 transition-colors hover:bg-muted hover:text-foreground"
+                              trigger={<MoreVertical className="h-4 w-4" />}
+                              items={[
+                                ...(onInsertRow
+                                  ? [
+                                      {
+                                        label: "Insert before",
+                                        icon: <ArrowUpToLine />,
+                                        onSelect: () =>
+                                          onInsertRow(vItem.index, "before"),
+                                      },
+                                      {
+                                        label: "Insert after",
+                                        icon: <ArrowDownToLine />,
+                                        onSelect: () =>
+                                          onInsertRow(vItem.index, "after"),
+                                      },
+                                    ]
+                                  : []),
+                                ...(onDeleteRow
+                                  ? [
+                                      {
+                                        label: "Delete row",
+                                        icon: <Trash2 />,
+                                        destructive: true,
+                                        onSelect: () =>
+                                          onDeleteRow(entry.id, vItem.index),
+                                      },
+                                    ]
+                                  : []),
+                              ]}
+                            />
+                          </div>
+                        </td>
+                      ) : null}
                       <td aria-hidden />
                     </tr>
                   );
                 })}
                 {paddingBottom > 0 ? (
                   <tr aria-hidden style={{ height: paddingBottom }}>
-                    <td colSpan={totalColumns + 1} />
+                    <td colSpan={leadColumns + 1} />
                   </tr>
                 ) : null}
               </>
             )}
           </tbody>
         </table>
-      </div>
-
-      {/* Footer status */}
-      <div className="flex items-center justify-between border-border border-t px-4 py-2.5 text-muted-foreground text-xs">
-        <span>
-          {sortedRows.length.toLocaleString()}{" "}
-          {sortedRows.length === 1 ? "row" : "rows"}
-        </span>
-        {selectable && selected.size > 0 ? (
-          <span>{selected.size.toLocaleString()} selected</span>
-        ) : (
-          <span className="tabular-nums">{totalColumns} columns</span>
-        )}
       </div>
     </div>
   );

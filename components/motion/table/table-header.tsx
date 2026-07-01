@@ -1,12 +1,25 @@
 "use client";
 
-import { ChevronUp, GripVertical } from "lucide-react";
+import {
+  ArrowLeftToLine,
+  ArrowRightToLine,
+  ChevronDown,
+  ChevronUp,
+  GripVertical,
+  Trash2,
+} from "lucide-react";
 import { motion } from "motion/react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import type { HeaderCellRefs, SortState, TableColumn } from "./types";
+import { TableMenu } from "./table-menu";
+import type {
+  HeaderCellRefs,
+  InsertPosition,
+  SortState,
+  TableColumn,
+} from "./types";
 import { alignFlex } from "./utils";
 
 export interface TableHeaderProps<T> {
@@ -30,6 +43,9 @@ export interface TableHeaderProps<T> {
   onReorderStart: (key: string, e: ReactPointerEvent) => void;
   onReorderMove: (e: ReactPointerEvent) => void;
   onReorderEnd: (e: ReactPointerEvent) => void;
+  hasRowMenu: boolean;
+  onInsertColumn?: (index: number, position: InsertPosition) => void;
+  onDeleteColumn?: (columnKey: string, index: number) => void;
 }
 
 export function TableHeader<T>({
@@ -53,7 +69,11 @@ export function TableHeader<T>({
   onReorderStart,
   onReorderMove,
   onReorderEnd,
+  hasRowMenu,
+  onInsertColumn,
+  onDeleteColumn,
 }: TableHeaderProps<T>) {
+  const hasColumnMenu = !!(onInsertColumn || onDeleteColumn);
   return (
     <thead>
       <tr style={{ height: rowHeight }}>
@@ -130,15 +150,15 @@ export function TableHeader<T>({
                     type="button"
                     onClick={() => onToggleSort(column.key)}
                     className={cn(
-                      "flex h-full w-full select-none items-center gap-1 px-4 transition-colors hover:text-foreground",
+                      "flex h-full min-w-0 flex-1 select-none items-center gap-1 px-4 transition-colors hover:text-foreground",
                       alignFlex(column.align),
                       active && "text-foreground",
                     )}
                   >
-                    {column.header}
+                    <span className="truncate">{column.header}</span>
                     <motion.span
                       aria-hidden
-                      className="inline-flex"
+                      className="inline-flex shrink-0"
                       animate={{
                         rotate: active && sort?.direction === "desc" ? 180 : 0,
                         opacity: active ? 1 : 0.35,
@@ -153,8 +173,45 @@ export function TableHeader<T>({
                     </motion.span>
                   </button>
                 ) : (
-                  <span className="px-4">{column.header}</span>
+                  <span className="min-w-0 flex-1 truncate px-4">
+                    {column.header}
+                  </span>
                 )}
+                {hasColumnMenu ? (
+                  <TableMenu
+                    ariaLabel={`${column.key} column options`}
+                    triggerClassName="mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground/50 transition-colors hover:bg-background hover:text-foreground"
+                    trigger={<ChevronDown className="h-3.5 w-3.5" />}
+                    items={[
+                      ...(onInsertColumn
+                        ? [
+                            {
+                              label: "Insert before",
+                              icon: <ArrowLeftToLine />,
+                              onSelect: () =>
+                                onInsertColumn(index, "before"),
+                            },
+                            {
+                              label: "Insert after",
+                              icon: <ArrowRightToLine />,
+                              onSelect: () => onInsertColumn(index, "after"),
+                            },
+                          ]
+                        : []),
+                      ...(onDeleteColumn
+                        ? [
+                            {
+                              label: "Delete column",
+                              icon: <Trash2 />,
+                              destructive: true,
+                              onSelect: () =>
+                                onDeleteColumn(column.key, index),
+                            },
+                          ]
+                        : []),
+                    ]}
+                  />
+                ) : null}
               </motion.div>
               {resizable ? (
                 <button
@@ -170,6 +227,9 @@ export function TableHeader<T>({
             </th>
           );
         })}
+        {hasRowMenu ? (
+          <th className="sticky top-0 z-10 border-border border-b bg-muted" />
+        ) : null}
         <th
           aria-hidden
           className="sticky top-0 z-10 border-border border-b bg-muted"
