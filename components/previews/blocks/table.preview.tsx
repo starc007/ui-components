@@ -126,6 +126,7 @@ export function TablePreview() {
           defaultSort={{ key: "mrr", direction: "desc" }}
           height={420}
           rowHeight={52}
+          className="rounded-2xl"
         />
       </div>
     </div>
