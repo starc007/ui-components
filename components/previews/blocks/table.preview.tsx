@@ -114,7 +114,13 @@ export function TablePreview() {
 
   return (
     <div className="flex w-full justify-center p-4">
-      <div className="w-full">
+      <div className="flex w-full flex-col gap-2">
+        <div className="flex items-center justify-between px-1 text-muted-foreground text-xs">
+          <span>{data.length.toLocaleString()} rows</span>
+          {selected.length > 0 ? (
+            <span>{selected.length.toLocaleString()} selected</span>
+          ) : null}
+        </div>
         <Table
           data={data}
           columns={columns}
@@ -126,7 +132,6 @@ export function TablePreview() {
           defaultSort={{ key: "mrr", direction: "desc" }}
           height={420}
           rowHeight={52}
-          showRowCount
           className="rounded-2xl"
         />
       </div>

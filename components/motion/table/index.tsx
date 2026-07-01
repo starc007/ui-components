@@ -47,7 +47,6 @@ export function Table<T>({
   rowHeight = 48,
   height = 440,
   overscan = 10,
-  showRowCount = false,
   emptyState = "No data",
   className,
 }: TableProps<T>) {
@@ -287,17 +286,6 @@ export function Table<T>({
           </tbody>
         </table>
       </div>
-      {showRowCount ? (
-        <div className="flex items-center justify-between border-border border-t px-4 py-2.5 text-muted-foreground text-xs">
-          <span>
-            {sortedRows.length.toLocaleString()}{" "}
-            {sortedRows.length === 1 ? "row" : "rows"}
-          </span>
-          {selectable && selected.size > 0 ? (
-            <span>{selected.size.toLocaleString()} selected</span>
-          ) : null}
-        </div>
-      ) : null}
       {hasRowMenu && activeRow ? (
         <RowHandle
           rowEl={activeRowEl}
