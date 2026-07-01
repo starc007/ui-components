@@ -292,7 +292,7 @@ export function TableHeader<T>({
                       onColumnRename(column.key, e.target.value)
                     }
                     className={cn(
-                      "min-w-0 flex-1 truncate rounded-md bg-transparent px-4 font-medium text-muted-foreground outline-none transition-colors focus:bg-muted focus:text-foreground",
+                      "min-w-0 flex-1 truncate appearance-none rounded-md border-0 bg-transparent px-4 font-medium text-muted-foreground outline-none transition-colors focus:bg-muted focus:text-foreground",
                       alignText(column.align),
                     )}
                   />
