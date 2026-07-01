@@ -487,8 +487,8 @@ export const registry: CategoryEntry[] = [
         slug: "table",
         name: "Table",
         description:
-          "Virtualized data table that stays smooth at 10k+ rows, with sortable headers, row selection and a sticky header. Minimal, reduced-motion-safe motion.",
-        file: "components/motion/table.tsx",
+          "Virtualized data table that stays smooth at 10k+ rows, with sortable headers, row selection, column resize and reorder, and a sticky header. Minimal, reduced-motion-safe motion.",
+        file: "components/motion/table/index.tsx",
         badge: "new",
         keywords: [
           "react data table",
