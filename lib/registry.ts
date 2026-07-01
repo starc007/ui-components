@@ -395,6 +395,54 @@ export const registry: CategoryEntry[] = [
         badge: "new",
         keywords: ["slider", "range slider", "range input", "stepped slider", "ticks"],
       },
+      {
+        slug: "table",
+        name: "Table",
+        description:
+          "Virtualized data table that stays smooth at 10k+ rows, with sortable headers, row selection, column resize and reorder, and a sticky header. Minimal, reduced-motion-safe motion.",
+        file: "components/motion/table/index.tsx",
+        badge: "new",
+        keywords: [
+          "react data table",
+          "virtualized table",
+          "sortable table",
+          "table row selection",
+          "react table 10k rows",
+          "editable table react",
+        ],
+        examples: [
+          {
+            slug: "data",
+            name: "Data Table",
+            description:
+              "10k virtualized rows with sortable headers, row selection, column resize and reorder.",
+            installSlug: "table",
+            file: "components/motion/table/index.tsx",
+            previewKey: "motion/table",
+            previewFile: "components/previews/motion/table.preview.tsx",
+          },
+          {
+            slug: "editable",
+            name: "Editable Table",
+            description:
+              "Edit cells inline and insert or delete rows and columns via border handles; the table re-renders from the updated data and column defs.",
+            installSlug: "table-editable",
+            file: "components/motion/table/index.tsx",
+            previewKey: "motion/table-editable",
+            previewFile: "components/previews/motion/table-editable.preview.tsx",
+          },
+          {
+            slug: "async",
+            name: "Async Table",
+            description:
+              "Loads pages on demand — skeleton rows on first load, then infinite scroll via onEndReached as the virtualized list nears the bottom.",
+            installSlug: "table-async",
+            file: "components/motion/table/index.tsx",
+            previewKey: "motion/table-async",
+            previewFile: "components/previews/motion/table-async.preview.tsx",
+          },
+        ],
+      },
     ],
   },
   {

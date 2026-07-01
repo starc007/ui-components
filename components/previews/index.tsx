@@ -39,6 +39,17 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.PredictionMarketPreview,
     ),
   ),
+  "motion/table": dynamic(() =>
+    import("./motion/table.preview").then((m) => m.TablePreview),
+  ),
+  "motion/table-editable": dynamic(() =>
+    import("./motion/table-editable.preview").then(
+      (m) => m.TableEditablePreview,
+    ),
+  ),
+  "motion/table-async": dynamic(() =>
+    import("./motion/table-async.preview").then((m) => m.TableAsyncPreview),
+  ),
   "motion/bouncy-accordion": dynamic(() =>
     import("./motion/bouncy-accordion.preview").then(
       (m) => m.BouncyAccordionPreview,

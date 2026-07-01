@@ -16,6 +16,7 @@ export interface CheckboxProps {
   label?: string;
   className?: string;
   id?: string;
+  "aria-label"?: string;
 }
 
 export function Checkbox({
@@ -26,6 +27,7 @@ export function Checkbox({
   label,
   className,
   id: idProp,
+  "aria-label": ariaLabel,
 }: CheckboxProps) {
   const autoId = useId();
   const id = idProp ?? autoId;
@@ -47,6 +49,7 @@ export function Checkbox({
         type="button"
         role="checkbox"
         aria-checked={indeterminate ? "mixed" : checked}
+        aria-label={ariaLabel}
         disabled={disabled}
         onClick={() => !disabled && onCheckedChange(!checked)}
         whileTap={reduce || disabled ? undefined : { scale: 0.92 }}
