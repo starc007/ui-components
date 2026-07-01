@@ -21,22 +21,28 @@ export function useColumnReorder<T>({
   const [dragKey, setDragKey] = useState<string | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
 
-  // Apply the current order, tolerating columns added/removed at runtime.
+  // Apply the current order, tolerating columns added/removed at runtime. New
+  // columns are placed at their position in `columns` (after their left
+  // neighbor), not appended — so an inserted column lands where it was added.
   const orderedColumns = useMemo(() => {
     const byKey = new Map(columns.map((c) => [c.key, c]));
-    const seen = new Set<string>();
-    const ordered: TableColumn<T>[] = [];
-    for (const key of order) {
-      const column = byKey.get(key);
-      if (column) {
-        ordered.push(column);
-        seen.add(key);
+    const resultKeys = order.filter((k) => byKey.has(k));
+    const present = new Set(resultKeys);
+    columns.forEach((column, i) => {
+      if (present.has(column.key)) return;
+      let at = resultKeys.length;
+      if (i === 0) {
+        at = 0;
+      } else {
+        const idx = resultKeys.indexOf(columns[i - 1].key);
+        at = idx === -1 ? i : idx + 1;
       }
-    }
-    for (const column of columns) {
-      if (!seen.has(column.key)) ordered.push(column);
-    }
-    return ordered;
+      resultKeys.splice(at, 0, column.key);
+      present.add(column.key);
+    });
+    return resultKeys
+      .map((k) => byKey.get(k))
+      .filter((c): c is TableColumn<T> => c !== undefined);
   }, [order, columns]);
 
   const dropIndexFor = useCallback(
