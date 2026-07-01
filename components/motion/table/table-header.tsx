@@ -128,7 +128,7 @@ function ColumnHandle<T>({
     >
       <TableMenu
         ariaLabel={`${column.key} column options`}
-        triggerClassName="flex h-4 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+        triggerClassName="flex h-2 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
         trigger={<MoreHorizontal className="h-3 w-3" />}
         items={columnMenuItems(column, index, onInsertColumn, onDeleteColumn)}
       />
