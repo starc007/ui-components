@@ -13,12 +13,7 @@ import { useColumnReorder } from "./use-column-reorder";
 import { useColumnResize } from "./use-column-resize";
 import { useColumnSort } from "./use-column-sort";
 import { useRowSelection } from "./use-row-selection";
-import {
-  CHECKBOX_WIDTH,
-  COLUMN_ACTIVE_SHADOW,
-  alignText,
-  readCell,
-} from "./utils";
+import { CHECKBOX_WIDTH, alignText, readCell } from "./utils";
 
 export type {
   SortDirection,
@@ -257,11 +252,6 @@ export function Table<T>({
                       {orderedColumns.map((column) => (
                         <td
                           key={column.key}
-                          style={
-                            activeColumn === column.key
-                              ? { boxShadow: COLUMN_ACTIVE_SHADOW }
-                              : undefined
-                          }
                           className={cn(
                             "truncate px-4 text-foreground",
                             alignText(column.align),

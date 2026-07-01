@@ -4,10 +4,10 @@ import type { TableColumn } from "./types";
 export const CHECKBOX_PX = 48;
 export const CHECKBOX_WIDTH = `${CHECKBOX_PX}px`;
 
-/** Left + right primary lines for the active column — box-shadow avoids
- * border-collapse merging away one side. */
+/** Outlines the active column's header cell on top / left / right — box-shadow
+ * avoids border-collapse merging away a side. */
 export const COLUMN_ACTIVE_SHADOW =
-  "inset 1px 0 0 var(--color-primary), inset -1px 0 0 var(--color-primary)";
+  "inset 1px 0 0 var(--color-primary), inset -1px 0 0 var(--color-primary), inset 0 1px 0 var(--color-primary)";
 
 export function alignFlex(align: TableColumn<unknown>["align"]) {
   if (align === "right") return "justify-end";
