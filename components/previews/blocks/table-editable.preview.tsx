@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { Switch } from "@/components/motion/switch";
 import { Table, type TableColumn } from "@/components/motion/table";
 
 type Row = { id: string; [key: string]: string };
@@ -22,6 +23,7 @@ export function TableEditablePreview() {
   });
   const [nextRow, setNextRow] = useState(5);
   const [nextCol, setNextCol] = useState(1);
+  const [editable, setEditable] = useState(true);
 
   const onCellEdit = useCallback(
     (rowId: string, key: string, value: string) => {
@@ -85,32 +87,40 @@ export function TableEditablePreview() {
       keys.map((key, i) => ({
         key,
         header: labels[key] ?? key,
-        editable: true,
+        editable,
         width: i === 0 ? undefined : "180px",
       })),
-    [keys, labels],
+    [keys, labels, editable],
   );
 
   const bodyHeight = Math.min(Math.max(rows.length, 1), 6) * 48;
 
   return (
     <div className="flex w-full flex-col gap-3 p-4">
-      <p className="text-muted-foreground text-xs">
-        Click a cell to edit. Use the column (⌄) and row (⋮) menus to insert or
-        delete.
-      </p>
+      <div className="flex items-center justify-between">
+        <p className="text-muted-foreground text-xs">
+          {editable
+            ? "Click a cell to edit. Use the column and row handles to insert or delete."
+            : "Read-only."}
+        </p>
+        <Switch
+          checked={editable}
+          onCheckedChange={setEditable}
+          label="Editable"
+        />
+      </div>
       <Table
         data={rows}
         columns={columns}
         getRowId={(row) => row.id}
         rowHeight={48}
         height={bodyHeight}
-        onCellEdit={onCellEdit}
-        onColumnRename={onColumnRename}
-        onInsertRow={onInsertRow}
-        onDeleteRow={onDeleteRow}
-        onInsertColumn={onInsertColumn}
-        onDeleteColumn={onDeleteColumn}
+        onCellEdit={editable ? onCellEdit : undefined}
+        onColumnRename={editable ? onColumnRename : undefined}
+        onInsertRow={editable ? onInsertRow : undefined}
+        onDeleteRow={editable ? onDeleteRow : undefined}
+        onInsertColumn={editable ? onInsertColumn : undefined}
+        onDeleteColumn={editable ? onDeleteColumn : undefined}
         emptyState={
           <button
             type="button"
