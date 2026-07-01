@@ -67,6 +67,12 @@ export interface TableProps<T> {
   height?: number;
   /** Rows rendered above/below the viewport. */
   overscan?: number;
+  /** Fires when the viewport scrolls near the bottom — load the next page. */
+  onEndReached?: () => void;
+  /** Currently fetching — shows skeleton rows and pauses `onEndReached`. */
+  loading?: boolean;
+  /** How many skeleton rows to show while loading more (default 3). */
+  skeletonRows?: number;
   emptyState?: ReactNode;
   className?: string;
 }

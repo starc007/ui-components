@@ -2,11 +2,12 @@
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useReducedMotion } from "motion/react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
 import { cn } from "@/lib/utils";
 import { EditableCell } from "./editable-cell";
 import { RowHandle } from "./row-handle";
+import { SkeletonRows } from "./skeleton-rows";
 import { TableHeader } from "./table-header";
 import type { HeaderCellRefs, TableProps } from "./types";
 import { useColumnReorder } from "./use-column-reorder";
@@ -47,6 +48,9 @@ export function Table<T>({
   rowHeight = 48,
   height = 440,
   overscan = 10,
+  onEndReached,
+  loading = false,
+  skeletonRows = 3,
   emptyState = "No data",
   className,
 }: TableProps<T>) {
@@ -119,6 +123,21 @@ export function Table<T>({
   const sized =
     orderedColumns.length > 0 &&
     orderedColumns.every((c) => widths[c.key] != null);
+
+  // Infinite scroll: fire onEndReached once per near-bottom dwell, paused while
+  // loading; the guard resets when the load completes.
+  const endReachedRef = useRef(false);
+  useEffect(() => {
+    if (!loading) endReachedRef.current = false;
+  }, [loading]);
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el || !onEndReached || loading || endReachedRef.current) return;
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < rowHeight * 4) {
+      endReachedRef.current = true;
+      onEndReached();
+    }
+  }, [onEndReached, loading, rowHeight]);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   // Small delay on leave so the pointer can cross the gap from the header cell
   // to the portal handle without the column deactivating.
@@ -158,7 +177,12 @@ export function Table<T>({
         className,
       )}
     >
-      <div ref={scrollRef} className="overflow-auto" style={{ height }}>
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="overflow-auto"
+        style={{ height }}
+      >
         <table
           className={cn("border-collapse", sized ? "w-max min-w-full" : "min-w-full")}
           style={{ tableLayout: "fixed" }}
@@ -207,14 +231,23 @@ export function Table<T>({
 
           <tbody>
             {sortedRows.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={leadColumns + 1}
-                  className="p-10 text-center text-muted-foreground"
-                >
-                  {emptyState}
-                </td>
-              </tr>
+              loading ? (
+                <SkeletonRows
+                  count={Math.max(1, Math.ceil(height / rowHeight))}
+                  columns={orderedColumns}
+                  selectable={selectable}
+                  rowHeight={rowHeight}
+                />
+              ) : (
+                <tr>
+                  <td
+                    colSpan={leadColumns + 1}
+                    className="p-10 text-center text-muted-foreground"
+                  >
+                    {emptyState}
+                  </td>
+                </tr>
+              )
             ) : (
               <>
                 {paddingTop > 0 ? (
@@ -285,6 +318,14 @@ export function Table<T>({
                   <tr aria-hidden style={{ height: paddingBottom }}>
                     <td colSpan={leadColumns + 1} />
                   </tr>
+                ) : null}
+                {loading ? (
+                  <SkeletonRows
+                    count={skeletonRows}
+                    columns={orderedColumns}
+                    selectable={selectable}
+                    rowHeight={rowHeight}
+                  />
                 ) : null}
               </>
             )}

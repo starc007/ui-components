@@ -47,6 +47,9 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.TableEditablePreview,
     ),
   ),
+  "blocks/table-async": dynamic(() =>
+    import("./blocks/table-async.preview").then((m) => m.TableAsyncPreview),
+  ),
   "motion/bouncy-accordion": dynamic(() =>
     import("./motion/bouncy-accordion.preview").then(
       (m) => m.BouncyAccordionPreview,

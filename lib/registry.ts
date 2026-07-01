@@ -519,6 +519,16 @@ export const registry: CategoryEntry[] = [
             previewKey: "blocks/table-editable",
             previewFile: "components/previews/blocks/table-editable.preview.tsx",
           },
+          {
+            slug: "async",
+            name: "Async Table",
+            description:
+              "Loads pages on demand — skeleton rows on first load, then infinite scroll via onEndReached as the virtualized list nears the bottom.",
+            installSlug: "table-async",
+            file: "components/motion/table/index.tsx",
+            previewKey: "blocks/table-async",
+            previewFile: "components/previews/blocks/table-async.preview.tsx",
+          },
         ],
       },
       {

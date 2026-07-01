@@ -78,7 +78,7 @@ function StatusBadge({ status }: { status: Person["status"] }) {
 }
 
 export function TablePreview() {
-  const data = useMemo(() => buildPeople(1000), []);
+  const data = useMemo(() => buildPeople(10_000), []);
   const [selected, setSelected] = useState<string[]>([]);
 
   const columns = useMemo<TableColumn<Person>[]>(
