@@ -3,7 +3,7 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ArrowDownToLine, ArrowUpToLine, Trash2 } from "lucide-react";
 import { useReducedMotion } from "motion/react";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
 import { cn } from "@/lib/utils";
 import { EditableCell } from "./editable-cell";
@@ -107,6 +107,8 @@ export function Table<T>({
       : 0;
 
   const hasRowMenu = !!(onInsertRow || onDeleteRow);
+  const hasColumnMenu = !!(onInsertColumn || onDeleteColumn);
+  const [activeColumn, setActiveColumn] = useState<string | null>(null);
   // Real columns + checkbox + row-menu, then the trailing spacer adds one more.
   const leadColumns =
     columns.length + (selectable ? 1 : 0) + (hasRowMenu ? 1 : 0);
@@ -161,6 +163,8 @@ export function Table<T>({
             hasRowMenu={hasRowMenu}
             onInsertColumn={onInsertColumn}
             onDeleteColumn={onDeleteColumn}
+            activeColumn={hasColumnMenu ? activeColumn : null}
+            onColumnActive={hasColumnMenu ? setActiveColumn : undefined}
           />
 
           <tbody>
@@ -247,8 +251,10 @@ export function Table<T>({
                         <td
                           key={column.key}
                           className={cn(
-                            "truncate px-4 text-foreground",
+                            "truncate border-x border-x-transparent px-4 text-foreground",
                             alignText(column.align),
+                            activeColumn === column.key &&
+                              "border-x-primary bg-primary/5",
                           )}
                         >
                           {!column.cell && column.editable ? (
