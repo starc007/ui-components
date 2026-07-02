@@ -4,10 +4,12 @@ import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion
 import {
   cloneElement,
   isValidElement,
+  useCallback,
   useEffect,
   useId,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
   type ReactElement,
   type ReactNode,
@@ -148,10 +150,13 @@ export function Popover({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isOpen = isControlled ? open : uncontrolledOpen;
 
-  const setOpen = (nextOpen: boolean) => {
-    if (!isControlled) setUncontrolledOpen(nextOpen);
-    onOpenChange?.(nextOpen);
-  };
+  const setOpen = useCallback(
+    (nextOpen: boolean) => {
+      if (!isControlled) setUncontrolledOpen(nextOpen);
+      onOpenChange?.(nextOpen);
+    },
+    [isControlled, onOpenChange],
+  );
 
   useEffect(() => {
     if (!isOpen || !dismissable) return;
@@ -171,7 +176,7 @@ export function Popover({
       document.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [isOpen, dismissable]);
+  }, [dismissable, isOpen, setOpen]);
 
   if (!isValidElement(trigger)) return null;
 
@@ -179,6 +184,16 @@ export function Popover({
     "aria-expanded": isOpen,
     "aria-haspopup": "dialog",
     "aria-controls": contentId,
+    onKeyDown: (event: ReactKeyboardEvent) => {
+      const triggerProps = trigger.props as {
+        onKeyDown?: (ev: ReactKeyboardEvent) => void;
+      };
+      triggerProps.onKeyDown?.(event);
+      if (event.defaultPrevented) return;
+      if (event.key === "Escape" && isOpen) {
+        setOpen(false);
+      }
+    },
     onClick: (event: ReactMouseEvent) => {
       const triggerProps = trigger.props as {
         onClick?: (ev: ReactMouseEvent) => void;
