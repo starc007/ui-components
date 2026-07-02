@@ -39,6 +39,9 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.PredictionMarketPreview,
     ),
   ),
+  "blocks/wallet-card": dynamic(() =>
+    import("./blocks/wallet-card.preview").then((m) => m.WalletCardPreview),
+  ),
   "motion/table": dynamic(() =>
     import("./motion/table.preview").then((m) => m.TablePreview),
   ),
