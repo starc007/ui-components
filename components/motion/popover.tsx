@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 
 type Side = "top" | "right" | "bottom" | "left";
 type Align = "start" | "center" | "end";
+type AnimationStyle = "spring" | "soft" | "drift";
 
 const sideClass: Record<Side, string> = {
   top: "bottom-full",
@@ -73,15 +74,25 @@ const transformOrigin: Record<Side, Record<Align, string>> = {
   },
 };
 
-function buildMotionVariants(side: Side): Variants {
-  const yOffset = side === "top" ? 8 : side === "bottom" ? -8 : 0;
-  const xOffset = side === "left" ? 8 : side === "right" ? -8 : 0;
+function axisOffset(side: Side, distance: number) {
+  return {
+    yOffset: side === "top" ? distance : side === "bottom" ? -distance : 0,
+    xOffset: side === "left" ? distance : side === "right" ? -distance : 0,
+  };
+}
+
+function buildMotionVariants(side: Side, animationStyle: AnimationStyle): Variants {
+  const offsetDistance = animationStyle === "drift" ? 12 : animationStyle === "soft" ? 6 : 8;
+  const { xOffset, yOffset } = axisOffset(side, offsetDistance);
+  const startScale = animationStyle === "soft" ? 0.97 : animationStyle === "drift" ? 0.99 : 0.94;
+  const startBlur = animationStyle === "soft" ? 4 : animationStyle === "drift" ? 6 : 8;
+  const exitScale = animationStyle === "drift" ? 0.99 : 0.97;
 
   return {
     initial: {
       opacity: 0,
-      scale: 0.94,
-      filter: "blur(8px)",
+      scale: startScale,
+      filter: `blur(${startBlur}px)`,
       x: xOffset,
       y: yOffset,
     },
@@ -99,7 +110,7 @@ function buildMotionVariants(side: Side): Variants {
     },
     exit: {
       opacity: 0,
-      scale: 0.97,
+      scale: exitScale,
       filter: "blur(4px)",
       x: xOffset * 0.45,
       y: yOffset * 0.45,
@@ -107,6 +118,27 @@ function buildMotionVariants(side: Side): Variants {
     },
   };
 }
+
+const CONTENT_VARIANTS: Variants = {
+  initial: { opacity: 0, y: 4 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.18,
+      ease: EASE_OUT,
+      delay: 0.03,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: 2,
+    transition: {
+      duration: 0.1,
+      ease: EASE_OUT,
+    },
+  },
+};
 
 const REDUCED_VARIANTS: Variants = {
   initial: { opacity: 0 },
@@ -128,6 +160,12 @@ export interface PopoverProps {
   sideOffset?: number;
   /** Close when pressing escape or clicking outside. Default true. */
   dismissable?: boolean;
+  /** Close when panel content is clicked (useful for action menus). Default false. */
+  closeOnContentClick?: boolean;
+  /** Motion personality for the panel shell. Default "spring". */
+  animationStyle?: AnimationStyle;
+  /** Optional fixed width utility classes for the panel (default w-72). */
+  widthClassName?: string;
 }
 
 export function Popover({
@@ -142,6 +180,9 @@ export function Popover({
   contentClassName,
   sideOffset = 8,
   dismissable = true,
+  closeOnContentClick = false,
+  animationStyle = "spring",
+  widthClassName = "w-72",
 }: PopoverProps) {
   const reduce = useReducedMotion();
   const contentId = useId();
@@ -203,7 +244,7 @@ export function Popover({
     },
   });
 
-  const variants = reduce ? REDUCED_VARIANTS : buildMotionVariants(side);
+  const variants = reduce ? REDUCED_VARIANTS : buildMotionVariants(side, animationStyle);
 
   return (
     <div ref={wrapperRef} className={cn("relative inline-flex", className)}>
@@ -234,12 +275,24 @@ export function Popover({
                 transformOrigin: transformOrigin[side][align],
                 willChange: "transform, opacity, filter",
               }}
+              data-state={isOpen ? "open" : "closed"}
               className={cn(
-                "w-72 rounded-2xl border border-border bg-popover/90 p-4 text-popover-foreground shadow-2xl backdrop-blur-xl",
+                "rounded-2xl border border-border/70 bg-popover/88 p-4 text-popover-foreground shadow-2xl backdrop-blur-xl",
+                widthClassName,
                 contentClassName,
               )}
+              onClick={() => {
+                if (closeOnContentClick) setOpen(false);
+              }}
             >
-              {children}
+              <motion.div
+                variants={reduce ? REDUCED_VARIANTS : CONTENT_VARIANTS}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                {children}
+              </motion.div>
             </motion.div>
           </div>
         ) : null}
