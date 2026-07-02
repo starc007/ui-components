@@ -443,6 +443,22 @@ export const registry: CategoryEntry[] = [
           },
         ],
       },
+      {
+        slug: "shader-background",
+        name: "Shader Background",
+        description:
+          "Canvas shader backgrounds (mesh gradient, grain, warp, waves, voronoi, dot orbit and more) with a single typed variant prop. Reduced-motion freezes animated variants.",
+        file: "components/motion/shader-background.tsx",
+        badge: "new",
+        keywords: [
+          "shader background react",
+          "webgl background",
+          "mesh gradient react",
+          "animated background react",
+          "canvas shader",
+          "gradient background component",
+        ],
+      },
     ],
   },
   {
