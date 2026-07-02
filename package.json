@@ -32,6 +32,7 @@
     "check": "bun run typecheck && bun run lint && bun run check:registry"
   },
   "dependencies": {
+    "@paper-design/shaders-react": "^0.0.76",
     "@shikijs/transformers": "^4.2.0",
     "@tanstack/react-virtual": "^3.14.4",
     "@vercel/analytics": "^1.4.1",
