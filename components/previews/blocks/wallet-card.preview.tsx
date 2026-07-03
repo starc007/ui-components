@@ -22,6 +22,7 @@ export function WalletCardPreview() {
         balance={balance}
         defaultChange={124.5}
         searchRecent={RECENT_SEARCHES}
+        hasNotifications
       />
       <Button
         variant="ghost"

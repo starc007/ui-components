@@ -6,6 +6,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { AccountAvatar } from "./account-avatar";
 import { HEAD, ITEM, LIST, MORPH } from "./constants";
+import { CopyButton } from "./copy-button";
 import type { WalletAccount } from "./types";
 import { useDismiss } from "./use-dismiss";
 import { truncateAddress } from "./utils";
@@ -149,7 +150,19 @@ export function AccountSwitcher({
               {accounts.map((account) => {
                 const selected = account.id === activeAccount?.id;
                 return (
-                  <motion.li key={account.id} variants={reduce ? undefined : ITEM}>
+                  <motion.li
+                    key={account.id}
+                    variants={reduce ? undefined : ITEM}
+                    className={cn(
+                      "flex items-center rounded-xl pr-1 text-sm transition-colors",
+                      selected
+                        ? "bg-muted text-foreground"
+                        : cn(
+                            "text-muted-foreground",
+                            armed && "hover:bg-muted hover:text-foreground",
+                          ),
+                    )}
+                  >
                     <button
                       type="button"
                       role="option"
@@ -158,15 +171,7 @@ export function AccountSwitcher({
                         onSelect(account.id);
                         setOpen(false);
                       }}
-                      className={cn(
-                        "flex w-full items-center gap-2.5 rounded-xl px-2 py-2 text-left text-sm outline-none transition-colors",
-                        selected
-                          ? "bg-muted text-foreground"
-                          : cn(
-                              "text-muted-foreground",
-                              armed && "hover:bg-muted hover:text-foreground",
-                            ),
-                      )}
+                      className="flex min-w-0 flex-1 items-center gap-2.5 rounded-xl px-2 py-2 text-left outline-none"
                     >
                       <AccountAvatar account={account} />
                       <span className="flex min-w-0 flex-1 flex-col">
@@ -181,6 +186,7 @@ export function AccountSwitcher({
                         <Check className="h-4 w-4 shrink-0 text-foreground" />
                       ) : null}
                     </button>
+                    <CopyButton value={account.address} />
                   </motion.li>
                 );
               })}

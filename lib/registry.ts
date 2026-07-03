@@ -523,7 +523,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "wallet-card",
         name: "Wallet Card",
-        description: "Wallet overview card with an account switcher and search that morph open from their triggers, a rolling balance with a live change indicator, and Send / Deposit actions.",
+        description: "Wallet overview card with an account switcher and search that morph open from their triggers, a cascading balance with a live change pill and privacy toggle, copy-address, and Send / Deposit / Swap / Buy actions.",
         file: "components/motion/wallet-card/index.tsx",
         badge: "new",
         keywords: [

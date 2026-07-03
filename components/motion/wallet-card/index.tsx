@@ -1,9 +1,9 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { Bell, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { ActionSwapText } from "@/components/motion/action-swap";
 import { Button } from "@/components/motion/button";
-import { NumberTicker } from "@/components/motion/number-ticker";
 import { cn } from "@/lib/utils";
 import { AccountSwitcher } from "./account-switcher";
 import { WalletActions } from "./actions";
@@ -28,6 +28,7 @@ export function WalletCard({
   balance,
   balancePrefix = "$",
   defaultChange,
+  defaultBalanceHidden = false,
   onSend,
   onDeposit,
   onSwap,
@@ -36,6 +37,7 @@ export function WalletCard({
   searchRecent,
   onSearchChange,
   onSearchSubmit,
+  hasNotifications = false,
   onNotifications,
   className,
 }: WalletCardProps) {
@@ -43,6 +45,13 @@ export function WalletCard({
   const [internalAccountId, setInternalAccountId] = useState(
     defaultAccountId ?? accounts[0]?.id,
   );
+  const [balanceHidden, setBalanceHidden] = useState(defaultBalanceHidden);
+
+  const shownBalance = `${balancePrefix}${balance.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+  const maskedBalance = "*".repeat(7);
   const activeAccountId = accountControlled ? accountId : internalAccountId;
   const activeAccount =
     accounts.find((a) => a.id === activeAccountId) ?? accounts[0];
@@ -79,27 +88,54 @@ export function WalletCard({
             size="icon"
             onClick={onNotifications}
             aria-label="Notifications"
+            className="relative"
           >
             <Bell className="h-4 w-4" />
+            {hasNotifications ? (
+              <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+              </span>
+            ) : null}
           </Button>
         </div>
       </div>
 
       <div className="mt-8 flex flex-col items-center text-center">
-        <p className="text-xs text-muted-foreground">Balance</p>
-        <NumberTicker
-          value={Math.round(balance * 100)}
-          prefix={balancePrefix}
-          format={(n) =>
-            (n / 100).toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })
-          }
-          startOnView={false}
+        <div className="flex items-center gap-1.5">
+          <p className="text-xs text-muted-foreground">Balance</p>
+          <button
+            type="button"
+            onClick={() => setBalanceHidden((h) => !h)}
+            aria-label={balanceHidden ? "Show balance" : "Hide balance"}
+            aria-pressed={balanceHidden}
+            className="text-muted-foreground outline-none transition-colors hover:text-foreground"
+          >
+            {balanceHidden ? (
+              <EyeOff className="h-3.5 w-3.5" />
+            ) : (
+              <Eye className="h-3.5 w-3.5" />
+            )}
+          </button>
+        </div>
+        {/* One ActionSwapText swaps the number and the asterisk mask with a
+            per-letter cascade — same baseline, no overlap or layout shift. */}
+        <ActionSwapText
+          value={balanceHidden ? "hidden" : shownBalance}
+          animation="cascade"
           className="text-3xl font-semibold text-foreground"
-        />
-        <BalanceDelta balance={balance} initialChange={defaultChange} />
+        >
+          {balanceHidden ? maskedBalance : shownBalance}
+        </ActionSwapText>
+        {balanceHidden ? (
+          <div className="mt-2 flex h-7 items-center justify-center">
+            <span className="translate-y-[3px] text-sm font-semibold text-muted-foreground leading-none tracking-[0.3em]">
+              *****
+            </span>
+          </div>
+        ) : (
+          <BalanceDelta balance={balance} initialChange={defaultChange} />
+        )}
       </div>
 
       <div className="mt-8">
