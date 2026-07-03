@@ -521,6 +521,20 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/prediction-market.tsx",
       },
       {
+        slug: "wallet-card",
+        name: "Wallet Card",
+        description: "Wallet overview card with an account switcher and search that morph open from their triggers, a cascading balance with a live change pill and privacy toggle, copy-address, and Send / Deposit / Swap / Buy actions.",
+        file: "components/motion/wallet-card/index.tsx",
+        badge: "new",
+        keywords: [
+          "wallet card react",
+          "web3 wallet component",
+          "crypto balance component",
+          "account switcher react",
+          "chain switcher react",
+        ],
+      },
+      {
         slug: "otp-input",
         name: "OTP Input",
         description: "One-time-code input with a gliding focus ring, digits that roll in per slot, error shake and a success check draw.",
