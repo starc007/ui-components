@@ -76,6 +76,18 @@ export function MobileNav() {
             >
               Playground
             </Link>
+            <Link
+              href="/sponsors"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                pathname.startsWith("/sponsors")
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Sponsors
+            </Link>
           </nav>
           <SidebarNav onNavigate={() => setOpen(false)} />
         </div>
