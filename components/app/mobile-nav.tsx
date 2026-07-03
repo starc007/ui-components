@@ -39,7 +39,7 @@ export function MobileNav() {
         snapPoints={[0.85]}
       >
         <div className="flex flex-col gap-5 pt-2">
-          <nav className="flex gap-1">
+          <nav className="flex flex-wrap gap-1">
             <Link
               href="/components/motion"
               onClick={() => setOpen(false)}
