@@ -39,7 +39,7 @@ export function MobileNav() {
         snapPoints={[0.85]}
       >
         <div className="flex flex-col gap-5 pt-2">
-          <nav className="flex gap-1">
+          <nav className="flex flex-wrap gap-1">
             <Link
               href="/components/motion"
               onClick={() => setOpen(false)}
@@ -75,6 +75,18 @@ export function MobileNav() {
               )}
             >
               Playground
+            </Link>
+            <Link
+              href="/sponsors"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                pathname.startsWith("/sponsors")
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Sponsors
             </Link>
           </nav>
           <SidebarNav onNavigate={() => setOpen(false)} />

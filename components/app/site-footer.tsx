@@ -116,6 +116,14 @@ export function SiteFooter() {
               </li>
               <li>
                 <Link
+                  href="/sponsors"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Sponsor
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="https://x.com/saurra3h"
                   target="_blank"
                   rel="noreferrer noopener"

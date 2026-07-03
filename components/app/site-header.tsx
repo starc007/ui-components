@@ -37,6 +37,7 @@ export function SiteHeader({
       !pathname.startsWith("/components/blocks"));
   const isBlocks = pathname.startsWith("/components/blocks");
   const isPlayground = pathname.startsWith("/playground");
+  const isSponsors = pathname.startsWith("/sponsors");
   const formattedStarCount =
     typeof githubStarCount === "number"
       ? formatStarCount(githubStarCount)
@@ -105,6 +106,17 @@ export function SiteHeader({
               )}
             >
               Playground
+            </Link>
+            <Link
+              href="/sponsors"
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                isSponsors
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Sponsors
             </Link>
           </nav>
         </div>
