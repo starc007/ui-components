@@ -27,6 +27,7 @@ export function WalletCard({
   onAccountChange,
   balance,
   balancePrefix = "$",
+  defaultChange,
   onSend,
   onDeposit,
   onSwap,
@@ -98,7 +99,7 @@ export function WalletCard({
           startOnView={false}
           className="text-3xl font-semibold text-foreground"
         />
-        <BalanceDelta balance={balance} />
+        <BalanceDelta balance={balance} initialChange={defaultChange} />
       </div>
 
       <div className="mt-8">

@@ -14,6 +14,8 @@ export interface WalletCardProps {
   onAccountChange?: (id: string) => void;
   balance: number;
   balancePrefix?: string;
+  /** Initial balance change shown in the pill before any live change. */
+  defaultChange?: number;
   onSend?: () => void;
   onDeposit?: () => void;
   onSwap?: () => void;

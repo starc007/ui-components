@@ -11,11 +11,17 @@ import { cn } from "@/lib/utils";
  * arrow that pops in whenever the balance moves and persists until it moves
  * again.
  */
-export function BalanceDelta({ balance }: { balance: number }) {
+export function BalanceDelta({
+  balance,
+  initialChange,
+}: {
+  balance: number;
+  initialChange?: number;
+}) {
   const reduce = useReducedMotion();
   const prevRef = useRef(balance);
   const [delta, setDelta] = useState<{ id: number; amount: number } | null>(
-    null,
+    initialChange ? { id: 0, amount: initialChange } : null,
   );
 
   // Persist the last change until the balance moves again — don't auto-hide.

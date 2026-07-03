@@ -20,6 +20,7 @@ export function WalletCardPreview() {
       <WalletCard
         accounts={ACCOUNTS}
         balance={balance}
+        defaultChange={124.5}
         searchRecent={RECENT_SEARCHES}
       />
       <Button
