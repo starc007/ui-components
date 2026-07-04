@@ -33,7 +33,9 @@ export function Marquee({
         fade && vertical && "[mask-image:linear-gradient(to_bottom,transparent,black_12%,black_88%,transparent)]",
         className,
       )}
-      style={{ "--gap": gap } as React.CSSProperties}
+      // gap on the wrapper too, so the seam between the two tracks matches the
+      // spacing between items and the loop stays even.
+      style={{ "--gap": gap, gap } as React.CSSProperties}
     >
       {[0, 1].map((dup) => (
         <div

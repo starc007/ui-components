@@ -5,6 +5,7 @@ import { Hero } from "@/components/app/landing/hero";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
+import { Testimonials } from "@/components/app/landing/testimonials";
 import { WorkCta } from "@/components/app/landing/work-cta";
 
 const CURATED: { category: string; slug: string }[] = [
@@ -111,6 +112,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <Testimonials />
 
       <WorkCta />
 
