@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { findCategory, registry } from "@/lib/registry";
-import { ComponentCard } from "@/components/app/component-card";
-import { JsonLd } from "@/components/app/json-ld";
+import { ComponentCard } from "@/components/app/docs/component-card";
+import { JsonLd } from "@/components/app/analytics/json-ld";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {

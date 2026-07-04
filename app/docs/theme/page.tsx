@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { CodeBlock } from "@/components/app/code-block";
+import { CodeBlock } from "@/components/app/docs/code-block";
 import { THEME_CSS } from "@/lib/theme-css";
 
 export const metadata: Metadata = {

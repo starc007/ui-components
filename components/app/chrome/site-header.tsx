@@ -7,10 +7,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { GithubIcon } from "@/components/app/icons";
-import { MobileNav } from "@/components/app/mobile-nav";
-import { usePreferences } from "@/components/app/preferences-provider";
+import { MobileNav } from "@/components/app/chrome/mobile-nav";
+import { usePreferences } from "@/components/app/preferences/preferences-provider";
 import { PressLink } from "@/components/app/press-link";
-import { SiteSearch } from "@/components/app/site-search";
+import { SiteSearch } from "@/components/app/chrome/site-search";
 import { Tooltip } from "@/components/motion/tooltip";
 import { cn } from "@/lib/utils";
 

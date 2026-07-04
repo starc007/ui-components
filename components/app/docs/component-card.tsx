@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { NewBadge } from "@/components/app/new-badge";
+import { NewBadge } from "@/components/app/docs/new-badge";
 
 export function ComponentCard({
   categorySlug,

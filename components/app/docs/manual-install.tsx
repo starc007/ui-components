@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { CodeBlock } from "@/components/app/code-block";
+import { CodeBlock } from "@/components/app/docs/code-block";
 import { buildEntry } from "@/lib/registry-server";
 
 // Already present in any React project; not worth a copy-paste install line.

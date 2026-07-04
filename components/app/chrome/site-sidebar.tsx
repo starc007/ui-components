@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { registry } from "@/lib/registry";
-import { NewBadge } from "@/components/app/new-badge";
+import { NewBadge } from "@/components/app/docs/new-badge";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import { cn } from "@/lib/utils";
 

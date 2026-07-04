@@ -8,7 +8,7 @@ import {
   CommandPalette,
   type CommandItem,
 } from "@/components/motion/command-palette";
-import { NewBadge } from "@/components/app/new-badge";
+import { NewBadge } from "@/components/app/docs/new-badge";
 import { registry } from "@/lib/registry";
 
 const PAGES = [

@@ -2,8 +2,8 @@
 
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { SiteSidebar } from "@/components/app/site-sidebar";
-import { PageTransition } from "@/components/app/page-transition";
+import { SiteSidebar } from "@/components/app/chrome/site-sidebar";
+import { PageTransition } from "@/components/app/chrome/page-transition";
 
 const SIDEBAR_PATHS = ["/components", "/docs"];
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getSingletonHighlighter, type Highlighter } from "shiki";
-import { CopyButton } from "@/components/app/copy-button";
+import { CopyButton } from "@/components/app/docs/copy-button";
 import { cn } from "@/lib/utils";
 
 // One shared highlighter for the page, created lazily on first render.

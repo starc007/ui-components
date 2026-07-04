@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CopyButton } from "@/components/app/copy-button";
+import { CopyButton } from "@/components/app/docs/copy-button";
 import { ActionSwapCascadeText } from "@/components/motion/action-swap-cascade";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { registry } from "@/lib/registry";
