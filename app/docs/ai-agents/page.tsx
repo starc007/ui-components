@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { CodeBlock } from "@/components/app/code-block";
+import { CodeBlock } from "@/components/app/docs/code-block";
 
 export const metadata: Metadata = {
   title: "AI Agents",
@@ -25,12 +25,36 @@ export const metadata: Metadata = {
 };
 
 const ENDPOINTS: { label: string; url: string; desc: string }[] = [
-  { label: "llms.txt", url: "/llms.txt", desc: "Markdown index in llmstxt.org format." },
-  { label: "Registry index", url: "/r", desc: "JSON catalogue of every component." },
-  { label: "Component detail", url: "/r/{slug}", desc: "JSON with files, deps, source." },
-  { label: "shadcn catalog", url: "/registry.json", desc: "Directory-compatible registry catalog." },
-  { label: "shadcn item", url: "/r/{slug}.json", desc: "Install item with inline file content and shadcn semantic color classes." },
-  { label: "Raw source", url: "/r/{slug}/raw", desc: "Plain text .tsx ready to drop in." },
+  {
+    label: "llms.txt",
+    url: "/llms.txt",
+    desc: "Markdown index in llmstxt.org format.",
+  },
+  {
+    label: "Registry index",
+    url: "/r",
+    desc: "JSON catalogue of every component.",
+  },
+  {
+    label: "Component detail",
+    url: "/r/{slug}",
+    desc: "JSON with files, deps, source.",
+  },
+  {
+    label: "shadcn catalog",
+    url: "/registry.json",
+    desc: "Directory-compatible registry catalog.",
+  },
+  {
+    label: "shadcn item",
+    url: "/r/{slug}.json",
+    desc: "Install item with inline file content and shadcn semantic color classes.",
+  },
+  {
+    label: "Raw source",
+    url: "/r/{slug}/raw",
+    desc: "Plain text .tsx ready to drop in.",
+  },
 ];
 
 const MCP_URL = "https://mcp.beui.dev/mcp";
@@ -92,17 +116,30 @@ const ENTRY_SHAPE = `{
 
 export default function AIAgentsPage() {
   return (
-    <div className="max-w-3xl">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Intro</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">For AI agents</h1>
+    <>
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Intro
+      </p>
+      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
+        For AI agents
+      </h1>
       <p className="mt-3 text-muted-foreground">
-        beUI exposes a static, agent-friendly surface. Connect the MCP server below, or hit the raw endpoints directly. Coding agents (Claude, Codex, Cursor, Amp) can list components, fetch source with all deps, and drop files into the user&apos;s project.
+        beUI exposes a static, agent-friendly surface. Connect the MCP server
+        below, or hit the raw endpoints directly. Coding agents (Claude, Codex,
+        Cursor, Amp) can list components, fetch source with all deps, and drop
+        files into the user&apos;s project.
       </p>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">MCP server</h2>
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+        MCP server
+      </h2>
       <p className="mt-2 text-muted-foreground">
-        The fastest path: connect the beUI MCP server and your agent can list, search and install components directly. Hosted at{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">{MCP_URL}</code>.
+        The fastest path: connect the beUI MCP server and your agent can list,
+        search and install components directly. Hosted at{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+          {MCP_URL}
+        </code>
+        .
       </p>
       <div className="mt-4">
         <CodeBlock code={MCP_CLI_SNIPPET} lang="bash" filename="terminal" />
@@ -114,17 +151,42 @@ export default function AIAgentsPage() {
         <CodeBlock code={MCP_MANUAL_SNIPPET} lang="json" filename="mcp.json" />
       </div>
       <p className="mt-4 text-sm text-muted-foreground">
-        Tools: <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">list_components</code>, <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">search_components</code>, <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">get_component</code>, <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">get_install_command</code>.
+        Tools:{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+          list_components
+        </code>
+        ,{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+          search_components
+        </code>
+        ,{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+          get_component
+        </code>
+        ,{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+          get_install_command
+        </code>
+        .
       </p>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">Endpoints</h2>
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+        Endpoints
+      </h2>
       <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
         {ENDPOINTS.map((e) => (
-          <li key={e.url} className="flex items-start justify-between gap-4 p-4">
+          <li
+            key={e.url}
+            className="flex items-start justify-between gap-4 p-4"
+          >
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-xs text-foreground">{e.url}</code>
-                <span className="text-sm font-medium text-foreground">{e.label}</span>
+                <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-xs text-foreground">
+                  {e.url}
+                </code>
+                <span className="text-sm font-medium text-foreground">
+                  {e.label}
+                </span>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">{e.desc}</p>
             </div>
@@ -143,28 +205,46 @@ export default function AIAgentsPage() {
         ))}
       </ul>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">Agent flow</h2>
-      <p className="mt-2 text-muted-foreground">Four calls, then install. Components are self-contained and own their files.</p>
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+        Agent flow
+      </h2>
+      <p className="mt-2 text-muted-foreground">
+        Four calls, then install. Components are self-contained and own their
+        files.
+      </p>
       <div className="mt-4">
         <CodeBlock code={FETCH_SNIPPET} lang="ts" filename="agent.ts" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">shadcn flow</h2>
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+        shadcn flow
+      </h2>
       <p className="mt-2 text-muted-foreground">
-        The shadcn item installs source files and package dependencies. Components use shadcn semantic color utilities directly, so they inherit the target app&apos;s theme without beUI-specific color variables.
+        The shadcn item installs source files and package dependencies.
+        Components use shadcn semantic color utilities directly, so they inherit
+        the target app&apos;s theme without beUI-specific color variables.
       </p>
       <div className="mt-4">
         <CodeBlock code={SHADCN_SNIPPET} lang="bash" filename="terminal" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">Entry shape</h2>
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+        Entry shape
+      </h2>
       <p className="mt-2 text-muted-foreground">
-        Internal helpers (e.g. <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">@/lib/utils</code>) ship inline as <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">type: util</code> so the agent does not have to chase imports.
+        Internal helpers (e.g.{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+          @/lib/utils
+        </code>
+        ) ship inline as{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+          type: util
+        </code>{" "}
+        so the agent does not have to chase imports.
       </p>
       <div className="mt-4">
         <CodeBlock code={ENTRY_SHAPE} lang="json" filename="r/swap.json" />
       </div>
-
-    </div>
+    </>
   );
 }

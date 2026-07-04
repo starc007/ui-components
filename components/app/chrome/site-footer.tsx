@@ -2,8 +2,13 @@ import Link from "next/link";
 import { GithubIcon } from "@/components/app/icons";
 import { registry } from "@/lib/registry";
 
-const motionComponents = registry.find((c) => c.slug === "motion")?.components ?? [];
-const blockComponents = registry.find((c) => c.slug === "blocks")?.components ?? [];
+// The catalog keeps growing — the footer shows only the newest few per column.
+const FOOTER_LIMIT = 8;
+
+const allMotion = registry.find((c) => c.slug === "motion")?.components ?? [];
+const allBlocks = registry.find((c) => c.slug === "blocks")?.components ?? [];
+const motionComponents = allMotion.slice(-FOOTER_LIMIT).reverse();
+const blockComponents = allBlocks.slice(-FOOTER_LIMIT).reverse();
 
 export function SiteFooter() {
   return (
@@ -68,6 +73,14 @@ export function SiteFooter() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/components/motion"
+                  className="text-sm font-medium text-foreground transition-colors hover:text-muted-foreground"
+                >
+                  View all ({allMotion.length})
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -87,6 +100,14 @@ export function SiteFooter() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/components/blocks"
+                  className="text-sm font-medium text-foreground transition-colors hover:text-muted-foreground"
+                >
+                  View all ({allBlocks.length})
+                </Link>
+              </li>
             </ul>
           </div>
 

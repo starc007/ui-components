@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ArrowUpRight } from "lucide-react";
-import { CopyButton } from "@/components/app/copy-button";
+import { CopyButton } from "@/components/app/docs/copy-button";
 import { PressLink } from "@/components/app/press-link";
 
 export const metadata: Metadata = {

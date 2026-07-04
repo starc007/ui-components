@@ -8,17 +8,17 @@ import {
   registry,
   type ComponentExample,
 } from "@/lib/registry";
-import { CodeBlock } from "@/components/app/code-block";
-import { InstallBlock } from "@/components/app/install-block";
+import { CodeBlock } from "@/components/app/docs/code-block";
+import { InstallBlock } from "@/components/app/docs/install-block";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/motion/tabs";
-import { NewBadge } from "@/components/app/new-badge";
-import { ComponentCard } from "@/components/app/component-card";
-import { JsonLd } from "@/components/app/json-ld";
+import { NewBadge } from "@/components/app/docs/new-badge";
+import { ComponentCard } from "@/components/app/docs/component-card";
+import { JsonLd } from "@/components/app/analytics/json-ld";
 import { getPreview, previews } from "@/components/previews";
 import { pageUrlFor, withSignature } from "@/lib/signature";
 import { readSourceFile } from "@/lib/source-files";

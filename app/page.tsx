@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { registry } from "@/lib/registry";
-import { Hero } from "@/components/app/hero";
-import { InstallCommand } from "@/components/app/install-command";
-import { LandingComponentCard } from "@/components/app/landing-component-card";
-import { SiteFooter } from "@/components/app/site-footer";
-import { WorkCta } from "@/components/app/work-cta";
+import { Hero } from "@/components/app/landing/hero";
+import { InstallCommand } from "@/components/app/docs/install-command";
+import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
+import { SiteFooter } from "@/components/app/chrome/site-footer";
+import { WorkCta } from "@/components/app/landing/work-cta";
 
 const CURATED: { category: string; slug: string }[] = [
   { category: "motion", slug: "button" },

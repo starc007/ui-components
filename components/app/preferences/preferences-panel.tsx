@@ -8,7 +8,7 @@ import { THEME_LIST, themeExportCss } from "@/lib/themes";
 import {
   type IconSet,
   usePreferences,
-} from "@/components/app/preferences-provider";
+} from "@/components/app/preferences/preferences-provider";
 
 const ICON_SETS: { id: IconSet | string; name: string; soon?: boolean }[] = [
   { id: "lucide", name: "Lucide" },

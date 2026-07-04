@@ -1,4 +1,4 @@
-import type { JsonLdSchema } from "@/components/app/json-ld";
+import type { JsonLdSchema } from "@/components/app/analytics/json-ld";
 import {
   type CategoryEntry,
   type ComponentEntry,

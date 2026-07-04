@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ComponentEntry } from "@/lib/registry";
-import { NewBadge } from "@/components/app/new-badge";
+import { NewBadge } from "@/components/app/docs/new-badge";
 import { getPreview } from "@/components/previews";
 
 export function LandingComponentCard({
