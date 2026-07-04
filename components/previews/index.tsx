@@ -198,6 +198,11 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.ShaderBackgroundPreview,
     ),
   ),
+  "motion/cylinder-carousel": dynamic(() =>
+    import("./motion/cylinder-carousel.preview").then(
+      (m) => m.CylinderCarouselPreview,
+    ),
+  ),
 };
 
 export function getPreview(category: string, slug: string) {

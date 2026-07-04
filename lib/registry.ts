@@ -459,6 +459,21 @@ export const registry: CategoryEntry[] = [
           "gradient background component",
         ],
       },
+      {
+        slug: "cylinder-carousel",
+        name: "Cylinder Carousel",
+        description:
+          "A carousel whose items line the inside of a cylinder, receding into the center and growing toward the edges. Drag, scroll or arrow-key to roll it, with a springy glide and snap. Reduced-motion drops the glide.",
+        file: "components/motion/cylinder-carousel.tsx",
+        badge: "new",
+        keywords: [
+          "3d carousel react",
+          "cylinder carousel",
+          "coverflow react",
+          "rolling carousel",
+          "draggable carousel react",
+        ],
+      },
     ],
   },
   {
