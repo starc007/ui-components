@@ -203,6 +203,9 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.CylinderCarouselPreview,
     ),
   ),
+  "motion/loader": dynamic(() =>
+    import("./motion/loader.preview").then((m) => m.LoaderPreview),
+  ),
 };
 
 export function getPreview(category: string, slug: string) {
