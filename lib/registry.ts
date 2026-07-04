@@ -474,6 +474,21 @@ export const registry: CategoryEntry[] = [
           "draggable carousel react",
         ],
       },
+      {
+        slug: "loader",
+        name: "Loader",
+        description:
+          "Loading indicator with seventeen variants: spinner, dots, bars, dot-matrix, dither, morph, comet, scramble, metaballs, newton, helix, percent, and five terminal-style ascii spinners. Scales from one size prop, uses currentColor, and reduced-motion swaps every transform for a calm opacity pulse.",
+        file: "components/motion/loader.tsx",
+        badge: "new",
+        keywords: [
+          "loader react",
+          "loading spinner",
+          "dot matrix loader",
+          "dithering loader",
+          "loading indicator",
+        ],
+      },
     ],
   },
   {
