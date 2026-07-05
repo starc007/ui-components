@@ -6,6 +6,7 @@ import type { ReactElement } from "react";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { Button } from "@/components/motion/button";
 import { Checkbox } from "@/components/motion/checkbox";
+import { Input } from "@/components/motion/input";
 import { BloomMenu } from "@/components/motion/bloom-menu";
 import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
 import { Switch } from "@/components/motion/switch";
@@ -63,6 +64,7 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     "Checkbox",
     () => <Checkbox checked={false} onCheckedChange={() => {}} label="Accept terms" />,
   ],
+  ["Input", () => <Input label="Email" type="email" />],
   [
     "RadioGroup",
     () => (
