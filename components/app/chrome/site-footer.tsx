@@ -119,6 +119,16 @@ export function SiteFooter() {
             <ul className="space-y-2.5">
               <li>
                 <Link
+                  href="https://pro.beui.dev"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-sm font-medium text-accent transition-colors hover:text-accent/80"
+                >
+                  beUI Pro
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/components/motion"
                   className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
