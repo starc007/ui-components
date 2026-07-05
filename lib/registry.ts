@@ -106,7 +106,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "input",
         name: "Input",
-        description: "Text input with label, left/right icons, a gliding caret, error shake and success check draw.",
+        description: "Text input with label, left/right icons, error shake and success check draw.",
         file: "components/motion/input.tsx",
         keywords: [
           "react animated input",

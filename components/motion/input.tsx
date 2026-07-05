@@ -9,21 +9,12 @@ import {
 import {
   useEffect,
   useId,
-  useLayoutEffect,
   useRef,
   useState,
   type InputHTMLAttributes,
   type ReactNode,
 } from "react";
 import { cn } from "@/lib/utils";
-
-// Caret glide — snappy enough to feel attached to the keystroke, soft enough to read.
-const CARET_SPRING = {
-  type: "spring",
-  stiffness: 700,
-  damping: 40,
-  mass: 0.5,
-} as const;
 
 // Horizontal padding inside the field, in px. Wider when an icon occupies the edge.
 const EDGE_PAD = 14;
@@ -60,9 +51,6 @@ export function Input({
   type,
   ...rest
 }: InputProps) {
-  // Password masks characters as dots, so a plain-text mirror can't measure the
-  // caret position. Use the native caret there; the gliding caret is for text.
-  const customCaret = type !== "password";
   const reactId = useId();
   const id = idProp ?? reactId;
   const reduce = useReducedMotion();
@@ -72,32 +60,16 @@ export function Input({
   const value = controlled ? (valueProp ?? "") : internal;
 
   const [focused, setFocused] = useState(false);
-  const [caretIndex, setCaretIndex] = useState<number | null>(null);
-  const [caretX, setCaretX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
 
   const fieldRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const mirrorRef = useRef<HTMLSpanElement>(null);
 
   const hasError = Boolean(error);
   const errorMessage = typeof error === "string" ? error : null;
-  const index = caretIndex ?? value.length;
 
   // Right edge shows the success check, otherwise the caller's right icon.
   const rightSlot = success ? null : rightIcon;
   const leftPad = leftIcon ? ICON_PAD : EDGE_PAD;
   const rightPad = rightSlot || success ? ICON_PAD : EDGE_PAD;
-
-  // Measure text width up to the caret, and read the input's scroll so the
-  // caret stays aligned once the value overflows and the field scrolls.
-  useLayoutEffect(() => {
-    if (mirrorRef.current) {
-      mirrorRef.current.textContent = value.slice(0, index);
-      setCaretX(mirrorRef.current.offsetWidth);
-    }
-    if (inputRef.current) setScrollLeft(inputRef.current.scrollLeft);
-  }, [value, index]);
 
   // Shake the field when an error appears.
   useEffect(() => {
@@ -151,7 +123,6 @@ export function Input({
         ) : null}
 
         <input
-          ref={inputRef}
           id={id}
           type={type}
           value={value}
@@ -159,64 +130,16 @@ export function Input({
           aria-invalid={hasError || undefined}
           aria-describedby={errorMessage ? `${id}-error` : undefined}
           style={{ paddingLeft: leftPad, paddingRight: rightPad }}
-          onChange={(e) => {
-            handleChange(e.target.value);
-            setCaretIndex(e.target.selectionStart);
-          }}
-          onFocus={(e) => {
-            setFocused(true);
-            setCaretIndex(e.target.selectionStart);
-          }}
+          onChange={(e) => handleChange(e.target.value)}
+          onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          onSelect={(e) => setCaretIndex(e.currentTarget.selectionStart)}
-          onScroll={(e) => setScrollLeft(e.currentTarget.scrollLeft)}
           className={cn(
-            "peer h-full w-full bg-transparent text-base leading-6 text-foreground outline-none",
-            customCaret ? "caret-transparent" : "caret-foreground",
+            "peer h-full w-full bg-transparent text-base leading-6 text-foreground caret-foreground outline-none",
             "placeholder:text-muted-foreground/60",
             disabled && "cursor-not-allowed",
           )}
           {...rest}
         />
-
-        {customCaret ? (
-          <>
-            {/* Hidden mirror measures caret x for the value up to the caret index. */}
-            <span
-              ref={mirrorRef}
-              aria-hidden
-              style={{ left: leftPad }}
-              className="pointer-events-none invisible absolute top-1/2 -translate-y-1/2 whitespace-pre text-base leading-6"
-            />
-
-            {/* Custom caret glides between positions and blinks while focused. */}
-            <motion.span
-              aria-hidden
-              initial={false}
-              style={{ left: leftPad }}
-              animate={{
-                x: caretX - scrollLeft,
-                opacity: focused && !disabled ? [1, 1, 0, 0] : 0,
-              }}
-              transition={{
-                x: reduce ? { duration: 0 } : CARET_SPRING,
-                opacity: focused
-                  ? {
-                      duration: 1,
-                      repeat: Infinity,
-                      times: [0, 0.5, 0.5, 1],
-                      ease: "linear",
-                    }
-                  : { duration: 0.1 },
-              }}
-              className={cn(
-                "pointer-events-none absolute top-1/2 h-5 w-px -translate-y-1/2 rounded-full bg-foreground",
-                hasError && "bg-destructive",
-                success && "bg-(--color-success)",
-              )}
-            />
-          </>
-        ) : null}
 
         {success ? (
           <motion.svg
