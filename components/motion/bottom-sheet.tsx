@@ -159,7 +159,7 @@ export function BottomSheet({
             style={heightStyle}
             className={cn(
               "pointer-events-auto absolute bottom-0 left-0 right-0 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-3xl will-change-transform",
-              "border border-border bg-card shadow-xl",
+              "border border-border bg-background shadow-xl",
               className,
             )}
             role="dialog"
