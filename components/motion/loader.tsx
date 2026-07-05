@@ -372,39 +372,34 @@ function Metaballs({ size, speed, reduce }: PartProps) {
 
 function Newton({ size, speed, reduce }: PartProps) {
   const d = size * 0.2;
-  const str = size * 0.42;
-  const swing = 26;
+  const out = d * 1.1;
   const balls = [0, 1, 2, 3, 4];
+  // Only the end balls move: the left slides out and back on the first half,
+  // then the right on the second half — the impact appears to jump the three
+  // still middle balls. Pure horizontal slide, no swing, no strings.
+  const moves: Record<number, { x: number[]; times: number[] }> = {
+    0: { x: [0, -out, 0, 0], times: [0, 0.28, 0.5, 1] },
+    4: { x: [0, 0, out, 0], times: [0, 0.5, 0.78, 1] },
+  };
+
   return (
-    <span
-      className="relative flex items-start justify-center"
-      style={{ width: size, height: str + d, gap: 0 }}
-    >
+    <span className="flex items-center justify-center" style={{ height: d }}>
       {balls.map((i) => {
-        const isEnd = i === 0 || i === balls.length - 1;
-        const keyframes =
-          i === 0
-            ? { rotate: [-swing, 0, 0, -swing] }
-            : { rotate: [0, 0, swing, 0] };
+        const move = moves[i];
         return (
           <motion.span
             key={i}
             className="rounded-full bg-current"
-            style={{
-              width: d,
-              height: d,
-              marginTop: str,
-              transformOrigin: `50% ${-str}px`,
-            }}
-            animate={reduce || !isEnd ? undefined : keyframes}
+            style={{ width: d, height: d }}
+            animate={reduce || !move ? undefined : { x: move.x }}
             transition={
-              reduce || !isEnd
+              reduce || !move
                 ? undefined
                 : {
-                    duration: speed * 1.4,
+                    duration: speed * 1.5,
                     ease: EASE_IN_OUT,
                     repeat: Infinity,
-                    times: i === 0 ? [0, 0.25, 0.75, 1] : [0, 0.25, 0.5, 0.75],
+                    times: move.times,
                   }
             }
           />
