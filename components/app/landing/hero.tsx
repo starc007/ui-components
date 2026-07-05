@@ -3,7 +3,6 @@
 import { motion } from "motion/react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { EASE_OUT } from "@/lib/ease";
-import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { TextReveal } from "@/components/motion/text-reveal";
 import { INSTALLABLE_COUNT } from "@/lib/registry";
@@ -70,13 +69,13 @@ export function Hero() {
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </PressLink>
         <PressLink
-          href="https://github.com/starc007/ui-components"
+          href="https://pro.beui.dev"
           target="_blank"
           rel="noreferrer noopener"
-          className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-medium text-foreground hover:border-(--color-border-strong) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="group inline-flex h-10 items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-4 text-sm font-medium text-accent hover:border-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
-          <GithubIcon className="h-4 w-4" />
-          GitHub
+          Explore Pro
+          <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </PressLink>
       </motion.div>
     </div>
