@@ -10,9 +10,9 @@ export default function robots(): MetadataRoute.Robots {
         // fetch link-preview images; the more specific allow overrides the
         // /api/ disallow below.
         allow: ["/", "/api/og"],
-        // Machine endpoints: raw source text and the rest of /api/.
-        // Agents fetch these directly; they are not search content.
-        disallow: ["/api/", "/r/*/raw"],
+        // API endpoints do not need crawler traffic. Raw registry source stays
+        // crawlable so bots can read its X-Robots-Tag: noindex directive.
+        disallow: ["/api/"],
       },
     ],
     sitemap: `${SITE}/sitemap.xml`,
