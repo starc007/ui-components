@@ -17,13 +17,16 @@ type Status = "idle" | "open" | "sending" | "sent" | "error";
 
 const SUCCESS_DURATION_MS = 1600;
 
-// Folder-open feel for the morph: a touch of overshoot, no wobble.
-const MORPH = {
-  type: "spring",
-  stiffness: 320,
-  damping: 34,
-  mass: 0.9,
-} as const;
+// The trigger grows into the panel with a slight overshoot on open, then uses
+// a calmer curve on close so dismissing feels faster and less prominent.
+const MORPH_OPEN_EASE = [0.34, 1.25, 0.64, 1] as const;
+const MORPH_CLOSE_EASE = [0.22, 1, 0.36, 1] as const;
+const MORPH_OPEN_DURATION = 0.4;
+const MORPH_CLOSE_DURATION = 0.28;
+const MORPH_FADE_DURATION = 0.22;
+const MORPH_SLIDE = 40;
+const MORPH_SCALE = 0.97;
+const MORPH_BLUR = "blur(2px)";
 
 // Celebration sprinkles that burst from the success icon.
 const SPRINKLES = Array.from({ length: 8 }, (_, i) => {
@@ -90,8 +93,17 @@ export function FeedbackWidget({
   );
 
   useEffect(() => {
-    if (status === "open") textareaRef.current?.focus();
-  }, [status]);
+    if (status !== "open") return;
+
+    // Match the wallet account switcher's staged interaction: focusing while
+    // the surface is still expanding makes the caret and focus state appear
+    // inside a scaled panel. Arm the field once the open morph has settled.
+    const timer = window.setTimeout(
+      () => textareaRef.current?.focus(),
+      reduce ? 0 : MORPH_OPEN_DURATION * 1000,
+    );
+    return () => window.clearTimeout(timer);
+  }, [status, reduce]);
 
   // Dismiss on escape or outside click while open (but not mid-send).
   useEffect(() => {
@@ -135,7 +147,43 @@ export function FeedbackWidget({
   };
 
   const left = position === "bottom-left";
-  const morph = reduce ? { duration: 0.15 } : MORPH;
+  const contentOffset = left ? -MORPH_SLIDE : MORPH_SLIDE;
+  const surfaceTransition = reduce
+    ? { duration: 0 }
+    : {
+        layout: {
+          duration: open ? MORPH_OPEN_DURATION : MORPH_CLOSE_DURATION,
+          ease: open ? MORPH_OPEN_EASE : MORPH_CLOSE_EASE,
+        },
+        borderRadius: {
+          duration: open ? MORPH_OPEN_DURATION : MORPH_CLOSE_DURATION,
+          ease: open ? MORPH_OPEN_EASE : MORPH_CLOSE_EASE,
+        },
+      };
+  const contentTransition = reduce
+    ? { duration: 0 }
+    : {
+        opacity: {
+          duration: MORPH_FADE_DURATION,
+          ease: MORPH_CLOSE_EASE,
+        },
+        x: {
+          duration: MORPH_OPEN_DURATION,
+          ease: MORPH_CLOSE_EASE,
+        },
+        scale: {
+          duration: MORPH_OPEN_DURATION,
+          ease: MORPH_CLOSE_EASE,
+        },
+        filter: {
+          duration: MORPH_FADE_DURATION,
+          ease: MORPH_CLOSE_EASE,
+        },
+        rotate: {
+          duration: MORPH_OPEN_DURATION,
+          ease: MORPH_CLOSE_EASE,
+        },
+      };
   const viewInitial = reduce
     ? { opacity: 0 }
     : { opacity: 0, y: 8, filter: "blur(4px)" };
@@ -171,12 +219,12 @@ export function FeedbackWidget({
         className,
       )}
     >
-      {/* One persistent shell owns the surface in every state. Swapping two
-          shared-layout elements here makes their backgrounds crossfade. */}
+      {/* One persistent shell grows out of the corner trigger. The shell and
+          its contents use separate timing so the surface leads the reveal. */}
       <motion.div
         layout
-        animate={{ borderRadius: open ? 26 : 24 }}
-        transition={morph}
+        animate={{ borderRadius: open ? 20 : 40 }}
+        transition={surfaceTransition}
         style={{ transformOrigin: left ? "bottom left" : "bottom right" }}
         className={cn(
           "pointer-events-auto absolute bottom-0 overflow-hidden border border-border bg-background text-foreground shadow-lg",
@@ -188,10 +236,28 @@ export function FeedbackWidget({
           {open ? (
             <motion.div
               key="panel"
-              initial={false}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.14, ease: EASE_OUT }}
+              initial={
+                reduce
+                  ? { opacity: 0 }
+                  : {
+                      opacity: 0,
+                      x: contentOffset,
+                      scale: MORPH_SCALE,
+                      filter: MORPH_BLUR,
+                    }
+              }
+              animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
+              exit={
+                reduce
+                  ? { opacity: 0 }
+                  : {
+                      opacity: 0,
+                      x: contentOffset,
+                      scale: MORPH_SCALE,
+                      filter: MORPH_BLUR,
+                    }
+              }
+              transition={contentTransition}
             >
               <motion.div layout="position">
                 <AnimatePresence mode="popLayout" initial={false} propagate>
@@ -354,9 +420,27 @@ export function FeedbackWidget({
           ) : (
             <motion.button
               key="trigger"
-              layout
               type="button"
-              transition={morph}
+              initial={
+                reduce
+                  ? { opacity: 0 }
+                  : {
+                      opacity: 0,
+                      x: -contentOffset,
+                      filter: MORPH_BLUR,
+                    }
+              }
+              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              exit={
+                reduce
+                  ? { opacity: 0 }
+                  : {
+                      opacity: 0,
+                      x: -contentOffset,
+                      filter: MORPH_BLUR,
+                    }
+              }
+              transition={contentTransition}
               onClick={() => {
                 clearCloseTimer();
                 setStatus("open");
@@ -364,10 +448,18 @@ export function FeedbackWidget({
               aria-label={title}
               aria-haspopup="dialog"
               whileTap={reduce ? undefined : { scale: 0.92 }}
-              className="absolute inset-0 flex items-center justify-center bg-transparent text-foreground"
+              className={cn(
+                "absolute bottom-0 flex h-12 w-12 items-center justify-center bg-transparent text-foreground",
+                left ? "left-0" : "right-0",
+              )}
             >
               <motion.span
-                layout
+                initial={
+                  reduce ? false : { rotate: 45, scale: MORPH_SCALE }
+                }
+                animate={{ rotate: 0, scale: 1 }}
+                exit={{ rotate: 45, scale: MORPH_SCALE }}
+                transition={contentTransition}
                 className="grid h-5 w-5 shrink-0 place-items-center [&>svg]:h-full [&>svg]:w-full"
               >
                 {icon ?? <MessageSquare className="h-5 w-5" />}
