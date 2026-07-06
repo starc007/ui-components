@@ -1,13 +1,16 @@
 "use client";
 
+import { useReducedMotion } from "motion/react";
 import type { ComponentType } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ShaderBackground,
   type ShaderBackgroundProps,
   type ShaderBackgroundVariant,
 } from "@/components/motion/shader-background";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
+
+const AUTOPLAY_MS = 2400;
 
 const VARIANTS: {
   id: string;
@@ -254,9 +257,31 @@ const Background = ShaderBackground as ComponentType<
 export function ShaderBackgroundPreview() {
   const [active, setActive] = useState<string>(VARIANTS[0].id);
   const current = VARIANTS.find((v) => v.id === active) ?? VARIANTS[0];
+  const reduce = useReducedMotion();
+  const [paused, setPaused] = useState(false);
+  const activeRef = useRef(active);
+  activeRef.current = active;
+
+  // Cycles through variants on its own so the preview reads as alive at a
+  // glance; pauses on hover/focus so picking a variant manually sticks.
+  useEffect(() => {
+    if (reduce || paused) return;
+    const id = setInterval(() => {
+      const i = VARIANTS.findIndex((v) => v.id === activeRef.current);
+      setActive(VARIANTS[(i + 1) % VARIANTS.length].id);
+    }, AUTOPLAY_MS);
+    return () => clearInterval(id);
+  }, [reduce, paused]);
 
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-5 p-6">
+    // biome-ignore lint/a11y/noStaticElementInteractions: pause-on-hover for the autoplay timer, not a real control
+    <div
+      className="flex w-full max-w-2xl flex-col gap-5 p-6"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+    >
       <div className="relative h-80 w-full overflow-hidden rounded-2xl border border-border">
         <Background
           key={current.id}

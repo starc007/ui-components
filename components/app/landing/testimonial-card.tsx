@@ -34,7 +34,9 @@ export function TestimonialCard({
       rel="noreferrer noopener"
       className={cn(
         "group block rounded-3xl border border-border bg-card transition-colors duration-200 hover:border-border-strong",
-        compact ? "h-full w-[330px] whitespace-normal p-4" : "p-5",
+        // No forced height: a card sizes to its own tweet, so a short one-liner
+        // doesn't inherit a tall neighbor's height and sit with a dead gap.
+        compact ? "w-[330px] whitespace-normal p-4" : "p-5",
       )}
     >
       <div className="flex items-center gap-3">
