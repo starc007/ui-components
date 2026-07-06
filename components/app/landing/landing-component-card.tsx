@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import type { ComponentEntry } from "@/lib/registry";
 import { NewBadge } from "@/components/app/docs/new-badge";
+import { PreviewFit } from "@/components/app/landing/preview-fit";
 import { getPreview } from "@/components/previews";
 
 export function LandingComponentCard({
@@ -11,9 +15,16 @@ export function LandingComponentCard({
   category?: string;
 }) {
   const Preview = getPreview(category, component.slug);
+  const [hover, setHover] = useState(false);
 
   return (
-    <article className="group/card relative h-64">
+    <article
+      className="group/card relative h-72"
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
+      onFocus={() => setHover(true)}
+      onBlur={() => setHover(false)}
+    >
       <Link
         href={`/components/${category}/${component.slug}`}
         aria-label={`View ${component.name}`}
@@ -27,19 +38,20 @@ export function LandingComponentCard({
           {component.badge === "new" ? <NewBadge /> : null}
         </div>
 
-        <div className="relative mx-2 mb-2 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-3xl bg-background px-5 py-5 contain-[paint]">
-          <div className="pointer-events-none flex w-full max-w-full origin-center scale-80 items-center justify-center overflow-hidden transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] group-hover/card:scale-[0.84] group-focus-within/card:scale-[0.84] [&_*]:!cursor-default">
-            {Preview ? <Preview /> : null}
-          </div>
-
-          <div className="pointer-events-none absolute inset-0 rounded-3xl bg-transparent backdrop-blur-0 transition-[background-color,backdrop-filter] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:bg-card/55 group-hover/card:backdrop-blur-md group-focus-within/card:bg-card/55 group-focus-within/card:backdrop-blur-md">
-            <div className="absolute inset-x-0 bottom-0 translate-y-full px-4 py-3 transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:translate-y-0 group-focus-within/card:translate-y-0">
-              <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                {component.description}
-              </p>
+        <PreviewFit
+          hover={hover}
+          overlay={
+            <div className="pointer-events-none absolute inset-0 rounded-3xl bg-transparent backdrop-blur-0 transition-[background-color,backdrop-filter] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:bg-card/55 group-hover/card:backdrop-blur-md group-focus-within/card:bg-card/55 group-focus-within/card:backdrop-blur-md">
+              <div className="absolute inset-x-0 bottom-0 translate-y-full px-4 py-3 transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:translate-y-0 group-focus-within/card:translate-y-0">
+                <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                  {component.description}
+                </p>
+              </div>
             </div>
-          </div>
-        </div>
+          }
+        >
+          {Preview ? <Preview /> : null}
+        </PreviewFit>
       </div>
     </article>
   );
