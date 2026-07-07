@@ -10,6 +10,8 @@ import {
 } from "@/lib/registry";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { InstallBlock } from "@/components/app/docs/install-block";
+import { PropsTable } from "@/components/app/docs/props-table";
+import { KeepInMind } from "@/components/app/docs/keep-in-mind";
 import {
   Tabs,
   TabsContent,
@@ -22,6 +24,7 @@ import { JsonLd } from "@/components/app/analytics/json-ld";
 import { getPreview, previews } from "@/components/previews";
 import { pageUrlFor, withSignature } from "@/lib/signature";
 import { readSourceFile } from "@/lib/source-files";
+import { getComponentProps } from "@/lib/props-extractor";
 import {
   breadcrumbJsonLd,
   componentJsonLd,
@@ -131,6 +134,7 @@ export default async function ComponentPage({
   const hasVariantInstallCommands =
     comp.examples?.some((example) => example.installSlug) ?? false;
   const related = relatedComponents(cat.slug, comp.slug, 3);
+  const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
 
   return (
     <div>
@@ -191,6 +195,17 @@ export default async function ComponentPage({
         </section>
       ) : null}
 
+      {propsDocs.length ? (
+        <section className="mt-12 border-t border-border pt-8">
+          <h2 className="text-sm font-semibold text-foreground">
+            API Reference
+          </h2>
+          <div className="mt-4">
+            <PropsTable docs={propsDocs} />
+          </div>
+        </section>
+      ) : null}
+
       {related.length ? (
         <section className="mt-12 border-t border-border pt-8">
           <h2 className="text-sm font-semibold text-foreground">
@@ -210,6 +225,8 @@ export default async function ComponentPage({
           </div>
         </section>
       ) : null}
+
+      <KeepInMind />
     </div>
   );
 }
@@ -227,6 +244,7 @@ async function ExampleBlock({
   const source = await loadSource(example.file);
   const usage = await loadSource(example.previewFile);
   const installSlug = example.installSlug ?? null;
+  const propsDocs = getComponentProps(example.file);
 
   return (
     <section>
@@ -269,6 +287,16 @@ async function ExampleBlock({
           <h3 className="text-sm font-semibold text-foreground">Install</h3>
           <div className="mt-3">
             <InstallBlock category={category} slug={installSlug} />
+          </div>
+        </div>
+      ) : null}
+      {propsDocs.length ? (
+        <div className="mt-5 min-w-0 border-t border-border pt-5">
+          <h3 className="text-sm font-semibold text-foreground">
+            API Reference
+          </h3>
+          <div className="mt-3">
+            <PropsTable docs={propsDocs} />
           </div>
         </div>
       ) : null}
