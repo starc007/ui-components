@@ -44,6 +44,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `shared-layout-bg` | `components/motion/shared-layout-bg.tsx` | Pill that glides between hovered items via shared layout |
 | `dock` | `components/motion/dock.tsx` | macOS-style dock with grouped actions and gliding active pill |
 | `tooltip` | `components/motion/tooltip.tsx` | Hover/focus tooltip with blur enter/exit and spring spawn |
+| `popover` | `components/motion/popover.tsx` | Composable gooey popover (`Popover`, `PopoverTrigger`, `PopoverContent`); panel oozes out of the trigger via an SVG goo filter (liquid neck that stretches/pinches) with crisp content fading in on top. Inline-anchored, click or hover trigger, controlled/uncontrolled |
 | `morphing-modal` | `components/motion/morphing-modal.tsx` | Panel that morphs height across inner views with blur cross-fade |
 | `text-reveal` | `components/motion/text-reveal.tsx` | Word or character reveal with spring slide-up and blur |
 | `text-shimmer` | `components/motion/text-shimmer.tsx` | Gradient sweep across text for loading or emphasis |
