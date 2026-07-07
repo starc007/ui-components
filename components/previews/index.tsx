@@ -151,6 +151,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/tooltip": dynamic(() =>
     import("./motion/tooltip.preview").then((m) => m.TooltipPreview),
   ),
+  "motion/popover": dynamic(() =>
+    import("./motion/popover.preview").then((m) => m.PopoverPreview),
+  ),
   "motion/morphing-modal": dynamic(() =>
     import("./motion/morphing-modal.preview").then((m) => m.MorphingModalPreview),
   ),

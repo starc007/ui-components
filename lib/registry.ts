@@ -184,6 +184,22 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/tooltip.tsx",
       },
       {
+        slug: "popover",
+        name: "Popover",
+        description:
+          "Gooey popover whose panel oozes out of the trigger through an SVG goo filter — a liquid neck that stretches and pinches — with crisp content fading in on top. Click or hover trigger, controlled or uncontrolled.",
+        file: "components/motion/popover.tsx",
+        badge: "new",
+        keywords: [
+          "react popover",
+          "gooey popover",
+          "animated popover",
+          "svg goo filter",
+          "metaball popover",
+          "hover popover react",
+        ],
+      },
+      {
         slug: "morphing-modal",
         name: "Morphing Modal",
         description: "Family-app-style modal. A single panel that morphs its height as you navigate between inner views, with blur cross-fade on content.",
