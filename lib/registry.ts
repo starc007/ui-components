@@ -184,6 +184,14 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/tooltip.tsx",
       },
       {
+        slug: "popover",
+        name: "Popover",
+        description:
+          "Click-triggered floating panel with spring scale-in, blur entry and controlled/uncontrolled open state.",
+        file: "components/motion/popover.tsx",
+        badge: "new",
+      },
+      {
         slug: "morphing-modal",
         name: "Morphing Modal",
         description: "Family-app-style modal. A single panel that morphs its height as you navigate between inner views, with blur cross-fade on content.",
