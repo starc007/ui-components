@@ -193,7 +193,7 @@ export const registry: CategoryEntry[] = [
         slug: "popover",
         name: "Popover",
         description:
-          "Gooey popover whose panel oozes out of the trigger through an SVG goo filter — a liquid neck that stretches and pinches — with crisp content fading in on top. Click or hover trigger, controlled or uncontrolled.",
+          "Gooey popover whose panel oozes out of the trigger through an SVG goo filter — a liquid neck that stretches and pinches — with crisp content fading in on top, plus a Morph variant that clip-morphs open from the trigger corner. Click or hover trigger, controlled or uncontrolled.",
         file: "components/motion/popover.tsx",
         badge: "new",
         launchedAt: "2026-07-07",
@@ -204,6 +204,30 @@ export const registry: CategoryEntry[] = [
           "svg goo filter",
           "metaball popover",
           "hover popover react",
+          "morph popover react",
+          "dropdown menu react",
+        ],
+        examples: [
+          {
+            slug: "gooey",
+            name: "Popover",
+            description:
+              "Composable Popover, PopoverTrigger, PopoverContent; the panel oozes out of the trigger through an SVG goo filter with a liquid neck, crisp content fading in on top. Click or hover, controlled or uncontrolled.",
+            installSlug: "popover",
+            file: "components/motion/popover.tsx",
+            previewKey: "motion/popover",
+            previewFile: "components/previews/motion/popover.preview.tsx",
+          },
+          {
+            slug: "morph",
+            name: "Morph Popover",
+            description:
+              "Composable MorphPopover, MorphPopoverTrigger, MorphPopoverContent; the panel is laid out full size but clipped to the corner nearest the trigger, then unclips as one piece — a single-surface morph with a drop-shadow that hugs the shape. Side/align aware, controlled or uncontrolled.",
+            installSlug: "popover-morph",
+            file: "components/motion/popover-morph.tsx",
+            previewKey: "motion/popover-morph",
+            previewFile: "components/previews/motion/popover-morph.preview.tsx",
+          },
         ],
       },
       {
@@ -533,6 +557,22 @@ export const registry: CategoryEntry[] = [
     name: "Blocks",
     description: "Composed, product-ready widgets built from beUI motion primitives.",
     components: [
+      {
+        slug: "availability-scheduler",
+        name: "Availability Scheduler",
+        description: "Weekly availability editor where each day springs between available and unavailable, time ranges add and remove with blur-slide motion, times pick from a scrollable dropdown, and a copy menu clones hours to other days.",
+        file: "components/motion/availability-scheduler/index.tsx",
+        badge: "new",
+        launchedAt: "2026-07-10",
+        keywords: [
+          "availability scheduler react",
+          "weekly hours picker react",
+          "working hours component",
+          "cal.com availability component",
+          "time range picker react",
+          "business hours editor",
+        ],
+      },
       {
         slug: "swap",
         name: "Multi-chain Swap",

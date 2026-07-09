@@ -1,15 +1,24 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  type Variants,
+} from "motion/react";
 import {
   cloneElement,
   isValidElement,
-  useId,
-  useRef,
-  useState,
   type ReactElement,
   type ReactNode,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
+import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
@@ -27,11 +36,15 @@ export interface TooltipProps {
   wrapperClassName?: string;
 }
 
-const wrapperClasses: Record<Side, string> = {
-  top: "bottom-full left-1/2 mb-2 -translate-x-1/2",
-  bottom: "top-full left-1/2 mt-2 -translate-x-1/2",
-  left: "right-full top-1/2 mr-2 -translate-y-1/2",
-  right: "left-full top-1/2 ml-2 -translate-y-1/2",
+// Gap between trigger and tooltip, in px.
+const GAP = 8;
+
+// Centering transform for the fixed-positioned anchor point, per side.
+const anchorTransform: Record<Side, string> = {
+  top: "translate(-50%, -100%)",
+  bottom: "translate(-50%, 0)",
+  left: "translate(-100%, -50%)",
+  right: "translate(0, -50%)",
 };
 
 const transformOrigin: Record<Side, string> = {
@@ -44,10 +57,10 @@ const transformOrigin: Record<Side, string> = {
 // Offset is in the direction *away* from the trigger — content originates near
 // the trigger and rises into resting position.
 const offsetFrom: Record<Side, { x?: number; y?: number }> = {
-  top: { y: 10 },
-  bottom: { y: -10 },
-  left: { x: 10 },
-  right: { x: -10 },
+  top: { y: 8 },
+  bottom: { y: -8 },
+  left: { x: 8 },
+  right: { x: -8 },
 };
 
 function buildVariants(side: Side): Variants {
@@ -55,8 +68,8 @@ function buildVariants(side: Side): Variants {
   return {
     initial: {
       opacity: 0,
-      scale: 0.85,
-      filter: "blur(10px)",
+      scale: 0.9,
+      filter: "blur(5px)",
       x: o.x ?? 0,
       y: o.y ?? 0,
     },
@@ -71,17 +84,17 @@ function buildVariants(side: Side): Variants {
         stiffness: 380,
         damping: 30,
         mass: 0.7,
-        opacity: { duration: 0.22, ease: EASE_OUT },
-        filter: { duration: 0.3, ease: EASE_OUT },
+        opacity: { duration: 0.14, ease: EASE_OUT },
+        filter: { duration: 0.18, ease: EASE_OUT },
       },
     },
     exit: {
       opacity: 0,
-      scale: 0.92,
-      filter: "blur(6px)",
+      scale: 0.94,
+      filter: "blur(3px)",
       x: (o.x ?? 0) * 0.6,
       y: (o.y ?? 0) * 0.6,
-      transition: { duration: 0.14, ease: EASE_OUT },
+      transition: { duration: 0.12, ease: EASE_OUT },
     },
   };
 }
@@ -97,67 +110,142 @@ const REDUCED_VARIANTS: Variants = {
 const WARM_WINDOW_MS = 300;
 let lastHiddenAt = 0;
 
-export function Tooltip({ content, children, side = "top", delay = 120, className, wrapperClassName }: TooltipProps) {
+export function Tooltip({
+  content,
+  children,
+  side = "top",
+  delay = 120,
+  className,
+  wrapperClassName,
+}: TooltipProps) {
   const [open, setOpen] = useState(false);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(
+    null,
+  );
   const id = useId();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const anchorRef = useRef<HTMLSpanElement>(null);
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
 
-  const show = () => {
+  // Anchor point in viewport coords, on the edge of the trigger facing `side`.
+  // Position:fixed means these viewport coords place the tooltip directly, so
+  // it escapes every ancestor's stacking context and overflow.
+  const place = useCallback(() => {
+    const el = anchorRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const point: Record<Side, { top: number; left: number }> = {
+      top: { top: r.top - GAP, left: cx },
+      bottom: { top: r.bottom + GAP, left: cx },
+      left: { top: cy, left: r.left - GAP },
+      right: { top: cy, left: r.right + GAP },
+    };
+    setCoords(point[side]);
+  }, [side]);
+
+  const show = useCallback(() => {
     if (!canHover) return;
     if (timer.current) clearTimeout(timer.current);
     const warm = Date.now() - lastHiddenAt < WARM_WINDOW_MS;
-    timer.current = setTimeout(() => setOpen(true), warm ? 0 : delay);
-  };
-  const hide = () => {
+    timer.current = setTimeout(
+      () => {
+        place();
+        setOpen(true);
+      },
+      warm ? 0 : delay,
+    );
+  }, [canHover, delay, place]);
+
+  const hide = useCallback(() => {
     if (timer.current) {
       clearTimeout(timer.current);
       timer.current = null;
     }
-    if (open) lastHiddenAt = Date.now();
-    setOpen(false);
-  };
+    setOpen((wasOpen) => {
+      if (wasOpen) lastHiddenAt = Date.now();
+      return false;
+    });
+  }, []);
+
+  // Keep the tooltip pinned to the trigger while it's open and the page scrolls
+  // or resizes (fixed coords are viewport-relative).
+  useEffect(() => {
+    if (!open) return;
+    const onMove = () => place();
+    window.addEventListener("scroll", onMove, true);
+    window.addEventListener("resize", onMove);
+    return () => {
+      window.removeEventListener("scroll", onMove, true);
+      window.removeEventListener("resize", onMove);
+    };
+  }, [open, place]);
+
+  const variants = useMemo(
+    () => (reduce ? REDUCED_VARIANTS : buildVariants(side)),
+    [reduce, side],
+  );
 
   if (!isValidElement(children)) return children;
 
-  const trigger = cloneElement(children as ReactElement<Record<string, unknown>>, {
-    onMouseEnter: show,
-    onMouseLeave: hide,
-    onFocus: show,
-    onBlur: hide,
-    "aria-describedby": id,
-  });
-
-  const variants = reduce ? REDUCED_VARIANTS : buildVariants(side);
+  const trigger = cloneElement(
+    children as ReactElement<Record<string, unknown>>,
+    {
+      onMouseEnter: show,
+      onMouseLeave: hide,
+      onFocus: show,
+      onBlur: hide,
+      "aria-describedby": id,
+    },
+  );
 
   return (
-    <span className={cn("relative inline-flex align-middle", wrapperClassName)}>
-      {trigger}
-      <AnimatePresence mode="wait">
-        {open ? (
-          <span className={cn("pointer-events-none absolute z-50", wrapperClasses[side])}>
-            <motion.span
-              id={id}
-              role="tooltip"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              style={{
-                transformOrigin: transformOrigin[side],
-                willChange: "transform, opacity, filter",
-              }}
-              className={cn(
-                "block whitespace-nowrap rounded-lg border border-border bg-popover/85 px-2.5 py-1 text-xs font-medium text-popover-foreground shadow-2xl backdrop-blur-xl",
-                className,
-              )}
-            >
-              {content}
-            </motion.span>
-          </span>
-        ) : null}
-      </AnimatePresence>
-    </span>
+    <>
+      <span
+        ref={anchorRef}
+        className={cn("relative inline-flex align-middle", wrapperClassName)}
+      >
+        {trigger}
+      </span>
+      {typeof document !== "undefined"
+        ? createPortal(
+            <AnimatePresence>
+              {open && coords ? (
+                <span
+                  aria-hidden
+                  className="pointer-events-none fixed z-[9999]"
+                  style={{
+                    top: coords.top,
+                    left: coords.left,
+                    transform: anchorTransform[side],
+                  }}
+                >
+                  <motion.span
+                    id={id}
+                    role="tooltip"
+                    variants={variants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    style={{
+                      transformOrigin: transformOrigin[side],
+                      willChange: "transform, opacity",
+                    }}
+                    className={cn(
+                      "block whitespace-nowrap rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-medium text-foreground shadow-lg",
+                      className,
+                    )}
+                  >
+                    {content}
+                  </motion.span>
+                </span>
+              ) : null}
+            </AnimatePresence>,
+            document.body,
+          )
+        : null}
+    </>
   );
 }

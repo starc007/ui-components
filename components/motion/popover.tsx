@@ -29,7 +29,11 @@ type Side = "top" | "bottom";
 type Align = "start" | "center" | "end";
 type TriggerMode = "click" | "hover";
 
-const GOO_SPRING = { type: "spring", visualDuration: 0.32, bounce: 0.28 } as const;
+const GOO_SPRING = {
+  type: "spring",
+  visualDuration: 0.32,
+  bounce: 0.28,
+} as const;
 const HOVER_CLOSE_DELAY = 120;
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -401,7 +405,17 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
   }, [triggerRef]);
 
   const geo = useMemo(
-    () => buildGeo(sizes.tW, sizes.tH, sizes.cW, sizes.cH, side, align, gap, panelRadius),
+    () =>
+      buildGeo(
+        sizes.tW,
+        sizes.tH,
+        sizes.cW,
+        sizes.cH,
+        side,
+        align,
+        gap,
+        panelRadius,
+      ),
     [sizes, side, align, gap, panelRadius],
   );
   geoRef.current = geo;
@@ -430,11 +444,20 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
     <>
       {/* Goo filter: blur, sharpen the alpha back into solid shapes, then lay
           the crisp original on top so blobs merge with liquid edges. */}
-      <svg aria-hidden width="0" height="0" className="pointer-events-none absolute">
+      <svg
+        aria-hidden
+        width="0"
+        height="0"
+        className="pointer-events-none absolute"
+      >
         <title>Popover goo filter</title>
         <defs>
           <filter id={gooId} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation={gooStrength} result="blur" />
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation={gooStrength}
+              result="blur"
+            />
             <feColorMatrix
               in="blur"
               mode="matrix"
@@ -479,7 +502,12 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
           shadows the trigger; the open panel re-enables its own. */}
       <div
         className="pointer-events-none absolute z-10"
-        style={{ left: geo.left, top: geo.top, width: geo.layerW, height: geo.layerH }}
+        style={{
+          left: geo.left,
+          top: geo.top,
+          width: geo.layerW,
+          height: geo.layerH,
+        }}
       >
         <div
           ref={clipRef}

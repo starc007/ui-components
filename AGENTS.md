@@ -45,7 +45,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `shared-layout-bg` | `components/motion/shared-layout-bg.tsx` | Pill that glides between hovered items via shared layout |
 | `dock` | `components/motion/dock.tsx` | macOS-style dock with grouped actions and gliding active pill |
 | `tooltip` | `components/motion/tooltip.tsx` | Hover/focus tooltip with blur enter/exit and spring spawn |
-| `popover` | `components/motion/popover.tsx` | Composable gooey popover (`Popover`, `PopoverTrigger`, `PopoverContent`); panel oozes out of the trigger via an SVG goo filter (liquid neck that stretches/pinches) with crisp content fading in on top. Inline-anchored, click or hover trigger, controlled/uncontrolled |
+| `popover` | `components/motion/popover.tsx`, `popover-morph.tsx` | Composable popover, two variants. **Gooey** (`Popover`, `PopoverTrigger`, `PopoverContent`, install `@beui/popover`): panel oozes out of the trigger via an SVG goo filter (liquid neck that stretches/pinches) with crisp content fading in on top. **Morph** (`MorphPopover`, `MorphPopoverTrigger`, `MorphPopoverContent`, install `@beui/popover-morph`): panel laid out full size but clipped to the corner nearest the trigger, then unclips as one piece with a drop-shadow that hugs the shape; side/align aware. Both inline-anchored, click trigger, controlled/uncontrolled |
 | `morphing-modal` | `components/motion/morphing-modal.tsx` | Panel that morphs height across inner views with blur cross-fade |
 | `text-reveal` | `components/motion/text-reveal.tsx` | Word or character reveal with spring slide-up and blur |
 | `text-shimmer` | `components/motion/text-shimmer.tsx` | Gradient sweep across text for loading or emphasis |
@@ -78,6 +78,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `prediction-market` | `components/motion/prediction-market.tsx` | Trade ticket with buy/sell modes, outcome prices and rolling amount entry |
 | `otp-input` | `components/motion/otp-input.tsx` | One-time-code input with gliding focus ring, roll-in digits, error shake and success draw |
 | `bloom-menu` | `components/motion/bloom-menu.tsx` | Button that morphs open into a menu and blooms iris-out from center via shared layout + clip-path, with radially staggered items |
+| `availability-scheduler` | `components/motion/availability-scheduler/` | Weekly availability editor (`AvailabilityScheduler`): each day springs between available/unavailable via a shared-layout toggle, time ranges add/remove with blur-slide + layout reflow, times pick from a self-contained scrollable dropdown, and a copy menu clones a day's hours to selected days or every day; controlled/uncontrolled, reduced-motion safe |
 
 ### Site chrome (`components/app/` — not part of the library)
 
