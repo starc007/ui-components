@@ -54,7 +54,7 @@ export function PreferencesPanel() {
       </div>
 
       <section>
-        <p className="font-pixel text-xs font-medium uppercase text-muted-foreground">
+        <p className="font-display text-xs font-medium uppercase text-muted-foreground">
           Theme
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2.5">
@@ -94,7 +94,7 @@ export function PreferencesPanel() {
       </section>
 
       <section>
-        <p className="font-pixel text-xs font-medium uppercase text-muted-foreground">
+        <p className="font-display text-xs font-medium uppercase text-muted-foreground">
           Icons
         </p>
         <div className="mt-3 flex flex-col gap-2">

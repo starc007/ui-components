@@ -130,7 +130,7 @@ export function MotionPatterns() {
                   {pattern.spec}
                 </span>
               </div>
-              <h2 className="mt-4 font-pixel text-base uppercase text-foreground">
+              <h2 className="mt-4 font-display text-base uppercase text-foreground">
                 {pattern.title}
               </h2>
               <p className="mt-1 text-sm leading-5 text-muted-foreground">
@@ -167,7 +167,7 @@ function PatternDetails({ pattern }: { pattern: Pattern }) {
     <div className="space-y-3 pt-2">
       <section className="rounded-2xl border border-border bg-background p-4">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="font-pixel text-sm uppercase text-foreground">
+          <h3 className="font-display text-sm uppercase text-foreground">
             Live example
           </h3>
           <span className="rounded-full border border-border bg-card px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
@@ -178,7 +178,7 @@ function PatternDetails({ pattern }: { pattern: Pattern }) {
       </section>
 
       <section className="rounded-2xl border border-border bg-background p-4">
-        <h3 className="font-pixel text-sm uppercase text-foreground">
+        <h3 className="font-display text-sm uppercase text-foreground">
           Simple guide
         </h3>
         <div className="mt-3 grid gap-3">
@@ -199,7 +199,7 @@ function PatternDetails({ pattern }: { pattern: Pattern }) {
       </section>
 
       <section className="rounded-2xl border border-border bg-background p-4">
-        <h3 className="font-pixel text-sm uppercase text-foreground">
+        <h3 className="font-display text-sm uppercase text-foreground">
           Pseudo code
         </h3>
         <pre className="mt-3 overflow-x-auto rounded-xl border border-border bg-card p-3 text-xs leading-6 text-foreground">
@@ -244,7 +244,7 @@ function LiveExample({ pattern }: { pattern: Pattern }) {
           transition={{ duration: 0.52, ease: EASE_OUT }}
           className="w-56 rounded-2xl bg-card p-4"
         >
-          <p className="font-pixel text-sm uppercase text-foreground">New card</p>
+          <p className="font-display text-sm uppercase text-foreground">New card</p>
           <p className="mt-2 text-sm text-muted-foreground">Soft reveal with lift.</p>
         </motion.div>
       </DemoFrame>

@@ -18,7 +18,7 @@ export function SiteFooter() {
         <div className="grid grid-cols-2 gap-10 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <p className="font-pixel text-lg font-medium text-foreground">beUI</p>
+            <p className="font-display text-lg font-medium text-foreground">beUI</p>
             <p className="mt-2 max-w-[220px] text-sm leading-6 text-muted-foreground">
               The motion toolkit for React & Next.js. Copy-paste via shadcn registry.
             </p>

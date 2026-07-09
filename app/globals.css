@@ -88,9 +88,9 @@
 
     --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
     --font-mono: var(--font-mono), ui-monospace, monospace;
-    --font-pixel:
-        var(--font-geist-pixel-square), var(--font-mono), ui-monospace,
-        monospace;
+    --font-display:
+        var(--font-bricolage), var(--font-inter), ui-sans-serif, system-ui,
+        sans-serif;
 }
 
 @theme {

@@ -2,11 +2,10 @@
 
 import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
 
-// Matches the original flat scale so normal-size previews look unchanged;
-// only previews bigger than the card shrink further to actually fit — no
-// clipping, and the card itself stays a fixed, modest size.
-const BASE_SCALE = 0.8;
-const HOVER_SCALE = 0.84;
+// Cap so a preview never renders larger than intended; only previews bigger
+// than the card shrink further to actually fit — no clipping. `maxScale`
+// per-card lets feature tiles show their preview larger than grid tiles.
+const HOVER_LIFT = 1.05;
 const MIN_SCALE = 0.22;
 
 // A real desktop width for the preview to render at before it gets scaled
@@ -29,10 +28,12 @@ export function PreviewFit({
   children,
   hover,
   overlay,
+  maxScale = 0.82,
 }: {
   children: ReactNode;
   hover: boolean;
   overlay?: ReactNode;
+  maxScale?: number;
 }) {
   const outerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -66,12 +67,12 @@ export function PreviewFit({
     return () => ro.disconnect();
   }, []);
 
-  const scale = Math.min(BASE_SCALE, fitScale) * (hover ? HOVER_SCALE / BASE_SCALE : 1);
+  const scale = Math.min(maxScale, fitScale) * (hover ? HOVER_LIFT : 1);
 
   return (
     <div
       ref={outerRef}
-      className="relative mx-2 mb-2 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-3xl bg-background p-3 contain-[paint]"
+      className="relative m-2 mb-0 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.25rem] bg-background p-3 contain-[paint]"
     >
       <div
         ref={stageRef}
