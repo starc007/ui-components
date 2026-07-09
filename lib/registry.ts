@@ -412,6 +412,14 @@ export const registry: CategoryEntry[] = [
         keywords: ["slider", "range slider", "range input", "stepped slider", "ticks"],
       },
       {
+        slug: "wheel-picker",
+        name: "Wheel Picker",
+        description: "iOS-style picker wheel: a 3D drum on native momentum scroll that snaps to the nearest notch, with wheel, drag and keyboard control. Composes side by side for date and time pickers, reduced-motion safe.",
+        file: "components/motion/wheel-picker.tsx",
+        badge: "new",
+        keywords: ["picker", "wheel picker", "ios picker", "drum picker", "spinner", "time picker", "date picker", "scroll picker"],
+      },
+      {
         slug: "table",
         name: "Table",
         description:

@@ -40,6 +40,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `switch` | `components/motion/switch.tsx` | Toggle with spring-driven thumb and press feedback |
 | `select` | `components/motion/select.tsx`, `select-morph.tsx` | Composable select primitives (`Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`); panel bouncily unfolds out of the trigger and separates (position-aware). `MorphSelect` (`select-morph.tsx`) is a shared-layout variant where the trigger grows into the panel and back |
 | `range-slider` | `components/motion/range-slider.tsx` | Range slider (`RangeSlider`) with tick dots and a bouncy vertical-bar thumb that glides between snapped steps; drag + keyboard, controlled/uncontrolled |
+| `wheel-picker` | `components/motion/wheel-picker.tsx` | iOS-style picker wheel (`WheelPicker`): a 3D drum on custom momentum physics (velocity-projected coast, spring-back settle) with a crisp clipped center band; drag, wheel and keyboard, composes side by side for date/time pickers, controlled/uncontrolled, reduced-motion safe |
 | `bottom-sheet` | `components/motion/bottom-sheet.tsx` | Draggable bottom sheet with snap points, inertia and glass surface |
 | `shared-layout-bg` | `components/motion/shared-layout-bg.tsx` | Pill that glides between hovered items via shared layout |
 | `dock` | `components/motion/dock.tsx` | macOS-style dock with grouped actions and gliding active pill |

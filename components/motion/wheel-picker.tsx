@@ -1,0 +1,455 @@
+"use client";
+
+import { useReducedMotion } from "motion/react";
+import {
+  type KeyboardEvent,
+  type PointerEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type WheelEvent,
+} from "react";
+import { cn } from "@/lib/utils";
+
+export type WheelPickerOption = string | { label: string; value: string };
+
+export interface WheelPickerProps {
+  options: WheelPickerOption[];
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+  /** Rows visible through the window, odd. More = flatter curve. Default 5. */
+  visibleCount?: number;
+  /** Row height in px. Default 36. */
+  itemHeight?: number;
+  disabled?: boolean;
+  className?: string;
+  "aria-label"?: string;
+}
+
+const DEG = Math.PI / 180;
+// Physics constants, tuned for an iOS-like flick rather than reused from the
+// shared spring tokens: the wheel coasts in whole-row units and springs to an
+// integer detent, which a layout spring can't express cleanly.
+const DECELERATION = 0.00042; // rows per ms², how fast a flick bleeds off (lower = freer)
+const MAX_VELOCITY = 0.18; // rows per ms, caps a hard fling
+const VELOCITY_WINDOW = 90; // ms of recent drag to average a release velocity over
+const WHEEL_THROTTLE = 90; // ms between wheel steps
+const easeOutCubic = (p: number) => 1 - (1 - p) ** 3;
+// Overshoots the target by a few percent then settles — the little spring
+// bounce as a row snaps home. `BACK` sets how far it drifts past.
+const BACK = 1.35;
+const easeOutBack = (p: number) =>
+  1 + (BACK + 1) * (p - 1) ** 3 + BACK * (p - 1) ** 2;
+
+const clamp = (v: number, lo: number, hi: number) =>
+  Math.max(lo, Math.min(v, hi));
+
+function optionValue(option: WheelPickerOption) {
+  return typeof option === "string" ? option : option.value;
+}
+function optionLabel(option: WheelPickerOption) {
+  return typeof option === "string" ? option : option.label;
+}
+
+export function WheelPicker({
+  options,
+  value,
+  defaultValue,
+  onValueChange,
+  visibleCount = 5,
+  itemHeight = 36,
+  disabled = false,
+  className,
+  "aria-label": ariaLabel,
+}: WheelPickerProps) {
+  const reduce = useReducedMotion() ?? false;
+  const controlled = value !== undefined;
+  const last = options.length - 1;
+
+  const indexOf = useCallback(
+    (v: string | undefined) => {
+      const i = options.findIndex((o) => optionValue(o) === v);
+      return i < 0 ? 0 : i;
+    },
+    [options],
+  );
+
+  const [internal, setInternal] = useState(() => defaultValue ?? value);
+  const currentValue = controlled ? value : internal;
+  const [grabbing, setGrabbing] = useState(false);
+
+  // Cylinder geometry. Each row spans `itemAngle`; `radius` seats the rows on
+  // the drum; rows past `hideBeyond` sit behind the horizon and are dropped.
+  const { itemAngle, radius, height, hideBeyond } = useMemo(() => {
+    const rowsEachSide = Math.max(1, Math.floor(visibleCount / 2));
+    const cutoff = rowsEachSide + 1;
+    const angle = 90 / cutoff;
+    const r = itemHeight / Math.tan(angle * DEG);
+    return {
+      itemAngle: angle,
+      radius: r,
+      hideBeyond: cutoff,
+      height: Math.round(
+        2 * r * Math.sin(rowsEachSide * angle * DEG) + itemHeight,
+      ),
+    };
+  }, [visibleCount, itemHeight]);
+
+  const container = useRef<HTMLDivElement>(null);
+  const drumRef = useRef<HTMLUListElement>(null);
+  const bandRef = useRef<HTMLUListElement>(null);
+  // Scroll position measured in rows (a float index). One source of truth for
+  // both layers: the drum rotates by `itemAngle·scroll`, the crisp band slides
+  // by `itemHeight·scroll`.
+  const scroll = useRef(indexOf(currentValue));
+  const raf = useRef(0);
+  const emitted = useRef(currentValue);
+
+  const paint = useCallback(
+    (s: number) => {
+      const drum = drumRef.current;
+      const band = bandRef.current;
+      if (drum) {
+        drum.style.transform = `translateZ(${-radius}px) rotateX(${itemAngle * s}deg)`;
+        for (const node of Array.from(drum.children)) {
+          const li = node as HTMLLIElement;
+          const i = Number(li.dataset.index);
+          li.style.visibility =
+            Math.abs(i - s) > hideBeyond ? "hidden" : "visible";
+        }
+      }
+      // The band is the SAME drum, clipped to the centre row — driven by the
+      // identical transform so the crisp copy sits exactly on the dimmed one,
+      // with no parallax ghost as rows cross the window. It needs the same
+      // horizon cull, or the row on the back of the drum bleeds into the front.
+      if (band) {
+        band.style.transform = `translateZ(${-radius}px) rotateX(${itemAngle * s}deg)`;
+        for (const node of Array.from(band.children)) {
+          const li = node as HTMLLIElement;
+          const i = Number(li.dataset.index);
+          li.style.visibility =
+            Math.abs(i - s) > hideBeyond ? "hidden" : "visible";
+        }
+      }
+    },
+    [radius, itemAngle, hideBeyond],
+  );
+
+  const emit = useCallback(
+    (i: number) => {
+      const v = optionValue(options[clamp(i, 0, last)]);
+      if (v === emitted.current) return;
+      emitted.current = v;
+      if (!controlled) setInternal(v);
+      onValueChange?.(v);
+    },
+    [options, last, controlled, onValueChange],
+  );
+
+  const stop = useCallback(() => cancelAnimationFrame(raf.current), []);
+
+  // Ease `scroll` from where it is to an integer detent over `duration`. The
+  // easing may overshoot (spring bounce) before it resolves exactly on `to`.
+  const glide = useCallback(
+    (
+      to: number,
+      duration: number,
+      ease: (p: number) => number = easeOutCubic,
+    ) => {
+      stop();
+      const from = scroll.current;
+      const dist = to - from;
+      if (!dist || duration <= 0) {
+        scroll.current = to;
+        paint(to);
+        emit(to);
+        return;
+      }
+      const start = performance.now();
+      const tick = (now: number) => {
+        const p = (now - start) / duration;
+        if (p >= 1) {
+          scroll.current = to;
+          paint(to);
+          emit(to);
+          return;
+        }
+        scroll.current = from + dist * ease(p);
+        paint(scroll.current);
+        raf.current = requestAnimationFrame(tick);
+      };
+      raf.current = requestAnimationFrame(tick);
+    },
+    [stop, paint, emit],
+  );
+
+  // Project where a flick of `velocity` (rows/ms) coasts to, snap to a row.
+  const fling = useCallback(
+    (velocity: number) => {
+      const from = scroll.current;
+      if (from < 0 || from > last) {
+        glide(clamp(Math.round(from), 0, last), 260); // rubber-band back
+        return;
+      }
+      const dir = Math.sign(velocity);
+      const coast = ((velocity * velocity) / (2 * DECELERATION)) * dir;
+      const to = clamp(Math.round(from + coast), 0, last);
+      // Long, spring-tipped settle so a hard flick reads as free momentum
+      // coasting to rest with a gentle bounce, never a clipped stop.
+      const duration = clamp(
+        Math.sqrt(Math.abs(to - from)) * 300 + 240,
+        280,
+        1700,
+      );
+      glide(to, duration, easeOutBack);
+    },
+    [glide, last],
+  );
+
+  const step = useCallback(
+    (by: number) =>
+      glide(clamp(Math.round(scroll.current) + by, 0, last), 300, easeOutBack),
+    [glide, last],
+  );
+
+  // Drag: track recent points for a release velocity; rubber-band past the ends.
+  const drag = useRef<{
+    y: number;
+    scroll: number;
+    pts: [number, number][];
+  } | null>(null);
+  const onPointerDown = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (disabled || reduce) return;
+      event.currentTarget.setPointerCapture(event.pointerId);
+      stop();
+      setGrabbing(true);
+      drag.current = {
+        y: event.clientY,
+        scroll: scroll.current,
+        pts: [[event.clientY, performance.now()]],
+      };
+    },
+    [disabled, reduce, stop],
+  );
+  const onPointerMove = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      const d = drag.current;
+      if (!d) return;
+      let next = d.scroll + (d.y - event.clientY) / itemHeight;
+      if (next < 0) next *= 0.3;
+      else if (next > last) next = last + (next - last) * 0.3;
+      scroll.current = next;
+      paint(next);
+      emit(Math.round(clamp(next, 0, last)));
+      d.pts.push([event.clientY, performance.now()]);
+      if (d.pts.length > 8) d.pts.shift();
+    },
+    [itemHeight, last, paint, emit],
+  );
+  const onPointerUp = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      const d = drag.current;
+      if (!d) return;
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+      drag.current = null;
+      setGrabbing(false);
+      // Average velocity over the last `VELOCITY_WINDOW` ms of movement rather
+      // than the final two samples — a single noisy frame otherwise makes an
+      // even flick feel like it caught or slipped.
+      const pts = d.pts;
+      let v = 0;
+      if (pts.length > 1) {
+        const latest = pts[pts.length - 1];
+        let ref = pts[0];
+        for (const p of pts) {
+          if (latest[1] - p[1] <= VELOCITY_WINDOW) {
+            ref = p;
+            break;
+          }
+        }
+        const dt = latest[1] - ref[1];
+        if (dt > 0) {
+          const raw = (ref[0] - latest[0]) / itemHeight / dt;
+          v = clamp(raw, -MAX_VELOCITY, MAX_VELOCITY);
+        }
+      }
+      fling(v);
+    },
+    [itemHeight, fling],
+  );
+
+  const wheelAt = useRef(0);
+  const onWheel = useCallback(
+    (event: WheelEvent<HTMLDivElement>) => {
+      if (disabled || reduce) return;
+      event.preventDefault();
+      const now = performance.now();
+      if (now - wheelAt.current < WHEEL_THROTTLE) return;
+      wheelAt.current = now;
+      step(Math.sign(event.deltaY));
+    },
+    [disabled, reduce, step],
+  );
+
+  const onKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (disabled) return;
+      const at = Math.round(scroll.current);
+      const map: Record<string, number> = {
+        ArrowUp: -1,
+        ArrowDown: 1,
+        Home: -at,
+        End: last - at,
+      };
+      if (event.key in map) {
+        event.preventDefault();
+        step(map[event.key]);
+      }
+    },
+    [disabled, last, step],
+  );
+
+  // Paint the starting frame, and follow controlled/value changes from outside
+  // unless a gesture is mid-flight.
+  useEffect(() => {
+    if (drag.current) return;
+    const target = indexOf(currentValue);
+    emitted.current = currentValue;
+    if (Math.abs(Math.round(scroll.current) - target) < 0.001) {
+      paint(scroll.current);
+      return;
+    }
+    glide(target, 260);
+  }, [currentValue, indexOf, paint, glide]);
+
+  useEffect(() => () => cancelAnimationFrame(raf.current), []);
+
+  const maskFade =
+    "[mask-image:linear-gradient(to_bottom,transparent,#000_22%,#000_78%,transparent)]";
+
+  if (reduce) {
+    const pad = (height - itemHeight) / 2;
+    return (
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-2xl border border-border bg-card",
+          disabled && "pointer-events-none opacity-50",
+          className,
+        )}
+        style={{ height }}
+      >
+        <div
+          className="pointer-events-none absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 border-border border-y bg-foreground/[0.04]"
+          style={{ height: itemHeight }}
+        />
+        <ul
+          className={cn(
+            "h-full snap-y snap-mandatory overflow-y-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            maskFade,
+          )}
+          style={{ paddingTop: pad, paddingBottom: pad }}
+        >
+          {options.map((option) => {
+            const v = optionValue(option);
+            return (
+              <li key={v} className="snap-center">
+                <button
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => emit(options.indexOf(option))}
+                  className={cn(
+                    "flex w-full items-center justify-center font-medium",
+                    v === currentValue
+                      ? "text-foreground"
+                      : "text-muted-foreground",
+                  )}
+                  style={{ height: itemHeight }}
+                >
+                  {optionLabel(option)}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={container}
+      role="listbox"
+      aria-label={ariaLabel}
+      tabIndex={disabled ? -1 : 0}
+      onKeyDown={onKeyDown}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onWheel={onWheel}
+      className={cn(
+        "relative touch-none select-none overflow-hidden rounded-2xl border border-border bg-card outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
+        grabbing ? "cursor-grabbing" : "cursor-grab",
+        disabled && "pointer-events-none opacity-50",
+        maskFade,
+        className,
+      )}
+      style={{ height, perspective: 1000 }}
+    >
+      {/* Curved drum of dimmed rows. */}
+      <ul
+        ref={drumRef}
+        aria-hidden
+        className="absolute inset-x-0 top-1/2 m-0 h-0 list-none p-0 [backface-visibility:hidden] [transform-style:preserve-3d]"
+      >
+        {options.map((option, i) => (
+          <li
+            key={optionValue(option)}
+            data-index={i}
+            className="absolute inset-x-0 flex items-center justify-center font-medium text-muted-foreground"
+            style={{
+              top: -itemHeight / 2,
+              height: itemHeight,
+              transform: `rotateX(${-itemAngle * i}deg) translateZ(${radius}px)`,
+            }}
+          >
+            {optionLabel(option)}
+          </li>
+        ))}
+      </ul>
+
+      {/* Center band: the very same drum, clipped to one row and drawn crisp.
+          Its own perspective, centred on the container middle, matches the main
+          drum's projection so the two copies register exactly. */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 overflow-hidden rounded-md bg-foreground/[0.04]"
+        style={{ height: itemHeight, perspective: 1000 }}
+      >
+        <ul
+          ref={bandRef}
+          aria-hidden
+          className="absolute inset-x-0 top-1/2 m-0 h-0 list-none p-0 [backface-visibility:hidden] [transform-style:preserve-3d]"
+        >
+          {options.map((option, i) => (
+            <li
+              key={optionValue(option)}
+              data-index={i}
+              className="absolute inset-x-0 flex items-center justify-center font-medium text-foreground"
+              style={{
+                top: -itemHeight / 2,
+                height: itemHeight,
+                transform: `rotateX(${-itemAngle * i}deg) translateZ(${radius}px)`,
+              }}
+            >
+              {optionLabel(option)}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
