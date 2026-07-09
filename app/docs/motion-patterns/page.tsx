@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 export default function MotionPatternsPage() {
   return (
     <div className="max-w-4xl">
-      <h1 className="font-pixel text-4xl uppercase tracking-tight text-foreground">
+      <h1 className="font-display text-4xl uppercase tracking-tight text-foreground">
         Motion Patterns
       </h1>
       <p className="mt-3 max-w-2xl text-muted-foreground">

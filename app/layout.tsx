@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Inter, JetBrains_Mono } from "next/font/google";
-import { GeistPixelSquare } from "geist/font/pixel";
+import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@/components/app/analytics/google-analytics";
 import { ThemeProvider } from "@/components/app/chrome/theme-provider";
@@ -20,7 +19,10 @@ import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
-const pixel = GeistPixelSquare;
+const display = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -100,7 +102,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
   return (
-    <html lang="en" suppressHydrationWarning className={cn(inter.variable, mono.variable, pixel.variable)}>
+    <html lang="en" suppressHydrationWarning className={cn(inter.variable, mono.variable, display.variable)}>
       <head>
         <link rel="icon" type="image/png" href="/beui-mark.png" />
         <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt" />

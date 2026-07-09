@@ -3,7 +3,10 @@ import { ArrowRight } from "lucide-react";
 import { registry } from "@/lib/registry";
 import { Hero } from "@/components/app/landing/hero";
 import { InstallCommand } from "@/components/app/docs/install-command";
-import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
+import {
+  type CardVariant,
+  LandingComponentCard,
+} from "@/components/app/landing/landing-component-card";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { Testimonials } from "@/components/app/landing/testimonials";
 import { WorkCta } from "@/components/app/landing/work-cta";
@@ -35,6 +38,48 @@ const CURATED: { category: string; slug: string }[] = [
   { category: "blocks", slug: "bloom-menu" },
 ];
 
+// Grid of live-preview cards. The first tile is promoted to a large "feature"
+// showcase once there are enough cards to keep the bento balanced.
+const BENTO_CLASS =
+  "grid grid-cols-1 gap-4 [grid-auto-rows:19rem] sm:grid-cols-2 sm:grid-flow-dense lg:grid-cols-3 xl:grid-cols-4";
+
+function bentoVariant(index: number, total: number): CardVariant {
+  if (index === 0 && total >= 3) return "feature";
+  return "default";
+}
+
+function SectionHeader({
+  eyebrow,
+  title,
+  href,
+}: {
+  eyebrow: string;
+  title: string;
+  href?: string;
+}) {
+  return (
+    <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div>
+        <p className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+          {eyebrow}
+        </p>
+        <h2 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-tight text-foreground md:text-4xl">
+          {title}
+        </h2>
+      </div>
+      {href ? (
+        <Link
+          href={href}
+          className="group inline-flex items-center self-start text-sm font-medium text-muted-foreground transition-colors hover:text-foreground md:self-auto"
+        >
+          Browse all
+          <ArrowRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      ) : null}
+    </div>
+  );
+}
+
 export default function Home() {
   const curatedComponents = CURATED.flatMap(({ category, slug }) => {
     const cat = registry.find((c) => c.slug === category);
@@ -55,7 +100,7 @@ export default function Home() {
 
   return (
     <div className="relative">
-      <section className="relative isolate overflow-hidden px-4 pb-16 pt-20 md:pt-28">
+      <section className="relative isolate overflow-hidden px-4 pb-20 pt-20 md:pt-28">
         <Hero />
       </section>
 
@@ -67,52 +112,34 @@ export default function Home() {
       </section>
 
       {newComponents.length ? (
-        <section className="mx-auto max-w-7xl px-4 pb-16">
-          <div className="mb-8 flex flex-col gap-4 border-t border-border pt-12 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="font-pixel text-xs font-medium uppercase text-muted-foreground">
-                New
-              </p>
-              <h2 className="mt-2 font-pixel text-3xl font-medium leading-tight text-foreground md:text-4xl">
-                Recently launched.
-              </h2>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-            {newComponents.map(({ category, component }) => (
+        <section className="mx-auto max-w-7xl border-t border-border px-4 pb-16 pt-14">
+          <SectionHeader eyebrow="New" title="Recently launched" />
+          <div className={BENTO_CLASS}>
+            {newComponents.map(({ category, component }, i) => (
               <LandingComponentCard
                 key={`${category}-${component.slug}`}
                 component={component}
                 category={category}
+                variant={bentoVariant(i, newComponents.length)}
               />
             ))}
           </div>
         </section>
       ) : null}
 
-      <section className="mx-auto max-w-7xl px-4 pb-16">
-        <div className="mb-8 flex flex-col gap-4 border-t border-border pt-12 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="font-pixel text-xs font-medium uppercase text-muted-foreground">
-              Components
-            </p>
-            <h2 className="mt-2 font-pixel text-3xl font-medium leading-tight text-foreground md:text-4xl">
-              Motion primitives.
-            </h2>
-          </div>
-          <Link
-            href="/components/motion"
-            className="inline-flex items-center self-start text-sm font-medium text-muted-foreground hover:text-foreground md:self-center"
-          >
-            Browse all <ArrowRight className="ml-1 h-3.5 w-3.5" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          {curatedComponents.map(({ category, component }) => (
+      <section className="mx-auto max-w-7xl border-t border-border px-4 pb-16 pt-14">
+        <SectionHeader
+          eyebrow="Components"
+          title="Motion primitives"
+          href="/components/motion"
+        />
+        <div className={BENTO_CLASS}>
+          {curatedComponents.map(({ category, component }, i) => (
             <LandingComponentCard
               key={`${category}-${component.slug}`}
               component={component}
               category={category}
+              variant={bentoVariant(i, curatedComponents.length)}
             />
           ))}
         </div>

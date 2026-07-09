@@ -121,7 +121,7 @@ export function Playground() {
   return (
     <div className="mx-auto max-w-7xl px-4 pb-24 pt-10 md:pt-12">
       <header className="mb-8">
-        <h1 className="font-pixel text-3xl font-semibold text-foreground md:text-4xl">
+        <h1 className="font-display text-3xl font-semibold text-foreground md:text-4xl">
           Playground
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">

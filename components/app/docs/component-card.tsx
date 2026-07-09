@@ -20,7 +20,7 @@ export function ComponentCard({
       className="group/card relative flex h-40 flex-col overflow-hidden rounded-3xl bg-card transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <div className="flex shrink-0 items-center justify-between gap-3 px-4 py-3">
-        <h3 className="truncate font-pixel text-base font-medium text-foreground">
+        <h3 className="truncate font-display text-base font-medium text-foreground">
           {name}
         </h3>
         {badge === "new" ? <NewBadge /> : null}
