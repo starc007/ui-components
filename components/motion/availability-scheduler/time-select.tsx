@@ -21,7 +21,7 @@ export function TimeSelect({
   options: TimeOption[];
 }) {
   return (
-    <Select value={value} onValueChange={onChange} className="w-[128px]">
+    <Select value={value} onValueChange={onChange} className="w-full">
       <SelectTrigger className="tabular-nums">
         <SelectValue className="whitespace-nowrap" />
       </SelectTrigger>

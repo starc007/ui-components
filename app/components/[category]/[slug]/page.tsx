@@ -268,7 +268,7 @@ async function ExampleBlock({
           <TabsTrigger value="source">Code</TabsTrigger>
         </TabsList>
         <TabsContent value="preview" className="mt-4">
-          <div className="flex min-h-[260px] items-center justify-center rounded-2xl border border-border bg-card py-10">
+          <div className="flex min-h-[260px] items-center justify-center py-10">
             {Preview ? <Preview /> : null}
           </div>
         </TabsContent>

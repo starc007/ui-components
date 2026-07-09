@@ -210,7 +210,7 @@ export const registry: CategoryEntry[] = [
         examples: [
           {
             slug: "gooey",
-            name: "Popover",
+            name: "Gooey Popover",
             description:
               "Composable Popover, PopoverTrigger, PopoverContent; the panel oozes out of the trigger through an SVG goo filter with a liquid neck, crisp content fading in on top. Click or hover, controlled or uncontrolled.",
             installSlug: "popover",

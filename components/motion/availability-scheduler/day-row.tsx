@@ -78,17 +78,39 @@ export function DayRow({
     onChange({ enabled: ranges.length > 0, ranges });
   };
 
+  const actions = (
+    <>
+      <Tooltip content="Add time">
+        <IconButton
+          label={`Add time range to ${label}`}
+          reduce={reduce}
+          onClick={addRange}
+        >
+          <Plus className="h-4 w-4" />
+        </IconButton>
+      </Tooltip>
+      <CopyMenu fromLabel={label} reduce={reduce} onApply={onCopy} />
+    </>
+  );
+
   return (
     <motion.div
       layout={reduce ? false : "position"}
       transition={SPRING_LAYOUT}
       style={{ zIndex: depth }}
-      className="relative flex items-start gap-4 py-4"
+      className="relative flex flex-col gap-3 py-4 sm:flex-row sm:items-start sm:gap-4"
     >
-      {/* toggle + label */}
-      <div className="flex w-36 shrink-0 items-center gap-3 pt-1">
-        <Switch checked={state.enabled} onCheckedChange={setEnabled} />
-        <span className="text-sm font-medium text-foreground">{label}</span>
+      {/* toggle + label; actions ride along on mobile */}
+      <div className="flex items-center justify-between sm:w-36 sm:shrink-0 sm:justify-start sm:pt-1">
+        <div className="flex items-center gap-2.5">
+          <Switch
+            checked={state.enabled}
+            onCheckedChange={setEnabled}
+            className="scale-90"
+          />
+          <span className="text-sm font-medium text-foreground">{label}</span>
+        </div>
+        <div className="flex items-center gap-1 sm:hidden">{actions}</div>
       </div>
 
       {/* ranges or unavailable */}
@@ -118,17 +140,21 @@ export function DayRow({
                 transition={SPRING_LAYOUT}
                 className="relative flex items-center gap-2"
               >
-                <TimeSelect
-                  value={r.start}
-                  options={options}
-                  onChange={(v) => updateRange(r.id, { start: v })}
-                />
+                <div className="min-w-0 flex-1 sm:max-w-[132px]">
+                  <TimeSelect
+                    value={r.start}
+                    options={options}
+                    onChange={(v) => updateRange(r.id, { start: v })}
+                  />
+                </div>
                 <span className="text-muted-foreground">–</span>
-                <TimeSelect
-                  value={r.end}
-                  options={options}
-                  onChange={(v) => updateRange(r.id, { end: v })}
-                />
+                <div className="min-w-0 flex-1 sm:max-w-[132px]">
+                  <TimeSelect
+                    value={r.end}
+                    options={options}
+                    onChange={(v) => updateRange(r.id, { end: v })}
+                  />
+                </div>
                 <Tooltip content="Remove">
                   <IconButton
                     label="Remove time range"
@@ -148,7 +174,7 @@ export function DayRow({
               animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
               exit={reduce ? { opacity: 0 } : { opacity: 0, y: -4 }}
               transition={SPRING_LAYOUT}
-              className="py-2 text-sm text-muted-foreground"
+              className="py-1 text-sm text-muted-foreground sm:py-2"
             >
               Unavailable
             </motion.span>
@@ -156,18 +182,9 @@ export function DayRow({
         </AnimatePresence>
       </div>
 
-      {/* actions */}
-      <div className="flex shrink-0 items-center gap-1 pt-0.5">
-        <Tooltip content="Add time">
-          <IconButton
-            label={`Add time range to ${label}`}
-            reduce={reduce}
-            onClick={addRange}
-          >
-            <Plus className="h-4 w-4" />
-          </IconButton>
-        </Tooltip>
-        <CopyMenu fromLabel={label} reduce={reduce} onApply={onCopy} />
+      {/* actions (desktop) */}
+      <div className="hidden shrink-0 items-center gap-1 pt-0.5 sm:flex">
+        {actions}
       </div>
     </motion.div>
   );
