@@ -18,6 +18,9 @@ export type ComponentEntry = {
   description: string;
   file: string;
   badge?: "new";
+  /** ISO date the component shipped. Drives newest-first order in the landing
+   * "Recently launched" section. Set it when adding a "new" component. */
+  launchedAt?: string;
   /** Optional hand-tuned SEO keywords, merged on top of generated ones. */
   keywords?: string[];
   /** Extra source files bundled under this slug (e.g. multi-file components). */
@@ -122,6 +125,7 @@ export const registry: CategoryEntry[] = [
         description: "Composable select primitives whose panel bouncily unfolds out of the trigger and separates, plus a Morph variant where the trigger grows into the panel via shared layout.",
         file: "components/motion/select.tsx",
         badge: "new",
+        launchedAt: "2026-06-28",
         examples: [
           {
             slug: "default",
@@ -150,6 +154,7 @@ export const registry: CategoryEntry[] = [
           "Form choice control with a draw-on checkmark, spring press feedback and indeterminate state support.",
         file: "components/motion/checkbox.tsx",
         badge: "new",
+        launchedAt: "2026-06-23",
       },
       {
         slug: "radio",
@@ -158,6 +163,7 @@ export const registry: CategoryEntry[] = [
           "Single-select choice control with a gliding layoutId indicator dot and spring press feedback.",
         file: "components/motion/radio.tsx",
         badge: "new",
+        launchedAt: "2026-06-23",
       },
       {
         slug: "bottom-sheet",
@@ -190,6 +196,7 @@ export const registry: CategoryEntry[] = [
           "Gooey popover whose panel oozes out of the trigger through an SVG goo filter — a liquid neck that stretches and pinches — with crisp content fading in on top. Click or hover trigger, controlled or uncontrolled.",
         file: "components/motion/popover.tsx",
         badge: "new",
+        launchedAt: "2026-07-07",
         keywords: [
           "react popover",
           "gooey popover",
@@ -409,6 +416,7 @@ export const registry: CategoryEntry[] = [
         description: "Range slider with tick dots and a bouncy vertical-bar thumb that glides between snapped steps; drag and keyboard control, reduced-motion safe.",
         file: "components/motion/range-slider.tsx",
         badge: "new",
+        launchedAt: "2026-06-24",
         keywords: ["slider", "range slider", "range input", "stepped slider", "ticks"],
       },
       {
@@ -417,6 +425,7 @@ export const registry: CategoryEntry[] = [
         description: "iOS-style picker wheel: a 3D drum on native momentum scroll that snaps to the nearest notch, with wheel, drag and keyboard control. Composes side by side for date and time pickers, reduced-motion safe.",
         file: "components/motion/wheel-picker.tsx",
         badge: "new",
+        launchedAt: "2026-07-09",
         keywords: ["picker", "wheel picker", "ios picker", "drum picker", "spinner", "time picker", "date picker", "scroll picker"],
       },
       {
@@ -426,6 +435,7 @@ export const registry: CategoryEntry[] = [
           "Virtualized data table that stays smooth at 10k+ rows, with sortable headers, row selection, column resize and reorder, and a sticky header. Minimal, reduced-motion-safe motion.",
         file: "components/motion/table/index.tsx",
         badge: "new",
+        launchedAt: "2026-07-01",
         keywords: [
           "react data table",
           "virtualized table",
@@ -474,6 +484,7 @@ export const registry: CategoryEntry[] = [
           "Canvas shader backgrounds (mesh gradient, grain, warp, waves, voronoi, dot orbit and more) with a single typed variant prop. Reduced-motion freezes animated variants.",
         file: "components/motion/shader-background.tsx",
         badge: "new",
+        launchedAt: "2026-07-02",
         keywords: [
           "shader background react",
           "webgl background",
@@ -490,6 +501,7 @@ export const registry: CategoryEntry[] = [
           "A carousel whose items line the inside of a cylinder, receding into the center and growing toward the edges. Drag, scroll or arrow-key to roll it, with a springy glide and snap. Reduced-motion drops the glide.",
         file: "components/motion/cylinder-carousel.tsx",
         badge: "new",
+        launchedAt: "2026-07-04",
         keywords: [
           "3d carousel react",
           "cylinder carousel",
@@ -505,6 +517,7 @@ export const registry: CategoryEntry[] = [
           "Loading indicator with seventeen variants: spinner, dots, bars, dot-matrix, dither, morph, comet, scramble, metaballs, newton, helix, percent, and five terminal-style ascii spinners. Scales from one size prop, uses currentColor, and reduced-motion swaps every transform for a calm opacity pulse.",
         file: "components/motion/loader.tsx",
         badge: "new",
+        launchedAt: "2026-07-04",
         keywords: [
           "loader react",
           "loading spinner",
@@ -580,6 +593,7 @@ export const registry: CategoryEntry[] = [
         description: "Wallet overview card with an account switcher and search that morph open from their triggers, a cascading balance with a live change pill and privacy toggle, copy-address, and Send / Deposit / Swap / Buy actions.",
         file: "components/motion/wallet-card/index.tsx",
         badge: "new",
+        launchedAt: "2026-07-03",
         keywords: [
           "wallet card react",
           "web3 wallet component",
@@ -600,6 +614,7 @@ export const registry: CategoryEntry[] = [
         description: "A button that morphs open into a menu and blooms iris-out from the center, the grid revealing in every direction with radially staggered items.",
         file: "components/motion/bloom-menu.tsx",
         badge: "new",
+        launchedAt: "2026-06-26",
       },
       {
         slug: "feedback-widget",
@@ -607,6 +622,7 @@ export const registry: CategoryEntry[] = [
         description: "Corner trigger that morphs open into a feedback popup with message entry and animated sending, success and retry states.",
         file: "components/motion/feedback-widget.tsx",
         badge: "new",
+        launchedAt: "2026-06-29",
         keywords: [
           "react feedback widget",
           "feedback popover react",

@@ -101,6 +101,7 @@ Before building a new component, check this list. If it exists, import it. If it
 - Larger components support controlled + uncontrolled (`value`/`defaultValue`/`onChange`); simple toggles are controlled-only.
 - Biome a11y rules are strict: no redundant ARIA roles on divs/spans; use real elements (`<button>`) for interactive things. `DockItem` renders a `<button>` when given `onClick` and a plain div wrapper when children carry their own link/button — never nest interactive elements.
 - New component = source file + preview + `lib/registry.ts` entry in the same change. `bun run check:registry` must pass.
+- A `new` component's registry entry must set `launchedAt` to the ship date (`YYYY-MM-DD`). The landing "Recently launched" section sorts by it newest-first, so the just-added component leads.
 
 ## Commits
 

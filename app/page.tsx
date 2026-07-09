@@ -42,11 +42,16 @@ export default function Home() {
     return comp ? [{ category, component: comp }] : [];
   });
 
-  const newComponents = registry.flatMap((category) =>
-    category.components
-      .filter((component) => component.badge === "new")
-      .map((component) => ({ category: category.slug, component })),
-  );
+  const newComponents = registry
+    .flatMap((category) =>
+      category.components
+        .filter((component) => component.badge === "new")
+        .map((component) => ({ category: category.slug, component })),
+    )
+    // Newest first: most recently launched components lead the section.
+    .sort((a, b) =>
+      (b.component.launchedAt ?? "").localeCompare(a.component.launchedAt ?? ""),
+    );
 
   return (
     <div className="relative">
