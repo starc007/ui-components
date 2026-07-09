@@ -9,7 +9,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type WheelEvent,
 } from "react";
 import { cn } from "@/lib/utils";
 
@@ -36,7 +35,8 @@ const DEG = Math.PI / 180;
 const DECELERATION = 0.00042; // rows per ms², how fast a flick bleeds off (lower = freer)
 const MAX_VELOCITY = 0.18; // rows per ms, caps a hard fling
 const VELOCITY_WINDOW = 90; // ms of recent drag to average a release velocity over
-const WHEEL_THROTTLE = 90; // ms between wheel steps
+const WHEEL_SENS = 0.012; // rows per pixel of wheel delta
+const WHEEL_SETTLE = 110; // ms of wheel idle before snapping to a row
 const easeOutCubic = (p: number) => 1 - (1 - p) ** 3;
 // Overshoots the target by a few percent then settles — the little spring
 // bounce as a row snaps home. `BACK` sets how far it drifts past.
@@ -223,6 +223,11 @@ export function WheelPicker({
     scroll: number;
     pts: [number, number][];
   } | null>(null);
+  // Coalesce touch/pointer moves to one paint per animation frame — raw move
+  // events fire several times per frame (and off-frame) on high-refresh
+  // screens, and painting each one is what made the drag feel choppy.
+  const dragFrame = useRef(0);
+  const latestY = useRef(0);
   // Shared drag core, driven by a Y coordinate from either a mouse pointer or a
   // native touch. Touch is bound with non-passive listeners in the effect below
   // so the move can preventDefault the page scroll — React's synthetic touch
@@ -244,20 +249,33 @@ export function WheelPicker({
     (y: number) => {
       const d = drag.current;
       if (!d) return;
-      let next = d.scroll + (d.y - y) / itemHeight;
-      if (next < 0) next *= 0.3;
-      else if (next > last) next = last + (next - last) * 0.3;
-      scroll.current = next;
-      paint(next);
-      emit(Math.round(clamp(next, 0, last)));
+      // Record every sample for an accurate release velocity, but only render
+      // the newest position once per frame.
+      latestY.current = y;
       d.pts.push([y, performance.now()]);
       if (d.pts.length > 8) d.pts.shift();
+      if (dragFrame.current) return;
+      dragFrame.current = requestAnimationFrame(() => {
+        dragFrame.current = 0;
+        const dd = drag.current;
+        if (!dd) return;
+        let next = dd.scroll + (dd.y - latestY.current) / itemHeight;
+        if (next < 0) next *= 0.3;
+        else if (next > last) next = last + (next - last) * 0.3;
+        scroll.current = next;
+        paint(next);
+        emit(Math.round(clamp(next, 0, last)));
+      });
     },
     [itemHeight, last, paint, emit],
   );
   const endDrag = useCallback(() => {
     const d = drag.current;
     if (!d) return;
+    if (dragFrame.current) {
+      cancelAnimationFrame(dragFrame.current);
+      dragFrame.current = 0;
+    }
     drag.current = null;
     setGrabbing(false);
     // Average velocity over the last `VELOCITY_WINDOW` ms of movement rather
@@ -308,17 +326,29 @@ export function WheelPicker({
     [endDrag],
   );
 
-  const wheelAt = useRef(0);
+  // Wheel drives `scroll` continuously — like a drag — then snaps once it goes
+  // idle. Firing a fresh eased step per notch instead stacks overlapping
+  // animations that keep interrupting each other, which read as lag.
+  const wheelSnap = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onWheel = useCallback(
-    (event: WheelEvent<HTMLDivElement>) => {
+    (event: globalThis.WheelEvent) => {
+      // Native (non-passive) so preventDefault actually stops the page from
+      // scrolling behind the wheel — React's synthetic wheel listener is
+      // passive, so a handler on the element cannot cancel the scroll.
       if (disabled || reduce) return;
       event.preventDefault();
-      const now = performance.now();
-      if (now - wheelAt.current < WHEEL_THROTTLE) return;
-      wheelAt.current = now;
-      step(Math.sign(event.deltaY));
+      stop();
+      const px = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
+      const next = clamp(scroll.current + px * WHEEL_SENS, 0, last);
+      scroll.current = next;
+      paint(next);
+      emit(Math.round(next));
+      if (wheelSnap.current) clearTimeout(wheelSnap.current);
+      wheelSnap.current = setTimeout(() => {
+        glide(clamp(Math.round(scroll.current), 0, last), 240, easeOutBack);
+      }, WHEEL_SETTLE);
     },
-    [disabled, reduce, step],
+    [disabled, reduce, last, paint, emit, stop, glide],
   );
 
   const onKeyDown = useCallback(
@@ -352,12 +382,19 @@ export function WheelPicker({
     glide(target, 260);
   }, [currentValue, indexOf, paint, glide]);
 
-  useEffect(() => () => cancelAnimationFrame(raf.current), []);
+  useEffect(
+    () => () => {
+      cancelAnimationFrame(raf.current);
+      cancelAnimationFrame(dragFrame.current);
+      if (wheelSnap.current) clearTimeout(wheelSnap.current);
+    },
+    [],
+  );
 
-  // Native touch listeners, bound non-passively so touchmove can block the page
-  // from scrolling while the wheel spins. React's synthetic touch handlers are
-  // passive, so preventDefault there is a no-op and the finger just scrolls the
-  // page instead of the drum.
+  // Native touch + wheel listeners, bound non-passively so touchmove and wheel
+  // can block the page from scrolling while the wheel spins. React's synthetic
+  // touch/wheel handlers are passive, so preventDefault there is a no-op and the
+  // gesture scrolls the page instead of driving the drum.
   useEffect(() => {
     const el = container.current;
     if (!el || reduce || disabled) return;
@@ -376,13 +413,15 @@ export function WheelPicker({
     el.addEventListener("touchmove", onMove, { passive: false });
     el.addEventListener("touchend", onEnd);
     el.addEventListener("touchcancel", onEnd);
+    el.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       el.removeEventListener("touchstart", onStart);
       el.removeEventListener("touchmove", onMove);
       el.removeEventListener("touchend", onEnd);
       el.removeEventListener("touchcancel", onEnd);
+      el.removeEventListener("wheel", onWheel);
     };
-  }, [reduce, disabled, beginDrag, moveDrag, endDrag]);
+  }, [reduce, disabled, beginDrag, moveDrag, endDrag, onWheel]);
 
   const maskFade =
     "[mask-image:linear-gradient(to_bottom,transparent,#000_22%,#000_78%,transparent)]";
@@ -446,7 +485,6 @@ export function WheelPicker({
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
-      onWheel={onWheel}
       className={cn(
         "relative touch-none select-none overflow-hidden rounded-2xl border border-border bg-card outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
         grabbing ? "cursor-grabbing" : "cursor-grab",
