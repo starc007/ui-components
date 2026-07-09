@@ -117,8 +117,10 @@ export function WheelPicker({
         for (const node of Array.from(drum.children)) {
           const li = node as HTMLLIElement;
           const i = Number(li.dataset.index);
-          li.style.visibility =
-            Math.abs(i - s) > hideBeyond ? "hidden" : "visible";
+          const want = Math.abs(i - s) > hideBeyond ? "hidden" : "visible";
+          // Write only on change — an unconditional write every frame thrashes
+          // style recalc and is what made the drag feel draggy on mobile.
+          if (li.style.visibility !== want) li.style.visibility = want;
         }
       }
       // The band is the SAME drum, clipped to the centre row — driven by the
@@ -130,8 +132,8 @@ export function WheelPicker({
         for (const node of Array.from(band.children)) {
           const li = node as HTMLLIElement;
           const i = Number(li.dataset.index);
-          li.style.visibility =
-            Math.abs(i - s) > hideBeyond ? "hidden" : "visible";
+          const want = Math.abs(i - s) > hideBeyond ? "hidden" : "visible";
+          if (li.style.visibility !== want) li.style.visibility = want;
         }
       }
     },
@@ -221,65 +223,89 @@ export function WheelPicker({
     scroll: number;
     pts: [number, number][];
   } | null>(null);
-  const onPointerDown = useCallback(
-    (event: PointerEvent<HTMLDivElement>) => {
-      if (disabled || reduce) return;
-      event.currentTarget.setPointerCapture(event.pointerId);
+  // Shared drag core, driven by a Y coordinate from either a mouse pointer or a
+  // native touch. Touch is bound with non-passive listeners in the effect below
+  // so the move can preventDefault the page scroll — React's synthetic touch
+  // events are passive and can't, which is why finger-drag did nothing on
+  // mobile.
+  const beginDrag = useCallback(
+    (y: number) => {
       stop();
       setGrabbing(true);
       drag.current = {
-        y: event.clientY,
+        y,
         scroll: scroll.current,
-        pts: [[event.clientY, performance.now()]],
+        pts: [[y, performance.now()]],
       };
     },
-    [disabled, reduce, stop],
+    [stop],
   );
-  const onPointerMove = useCallback(
-    (event: PointerEvent<HTMLDivElement>) => {
+  const moveDrag = useCallback(
+    (y: number) => {
       const d = drag.current;
       if (!d) return;
-      let next = d.scroll + (d.y - event.clientY) / itemHeight;
+      let next = d.scroll + (d.y - y) / itemHeight;
       if (next < 0) next *= 0.3;
       else if (next > last) next = last + (next - last) * 0.3;
       scroll.current = next;
       paint(next);
       emit(Math.round(clamp(next, 0, last)));
-      d.pts.push([event.clientY, performance.now()]);
+      d.pts.push([y, performance.now()]);
       if (d.pts.length > 8) d.pts.shift();
     },
     [itemHeight, last, paint, emit],
   );
-  const onPointerUp = useCallback(
-    (event: PointerEvent<HTMLDivElement>) => {
-      const d = drag.current;
-      if (!d) return;
-      event.currentTarget.releasePointerCapture?.(event.pointerId);
-      drag.current = null;
-      setGrabbing(false);
-      // Average velocity over the last `VELOCITY_WINDOW` ms of movement rather
-      // than the final two samples — a single noisy frame otherwise makes an
-      // even flick feel like it caught or slipped.
-      const pts = d.pts;
-      let v = 0;
-      if (pts.length > 1) {
-        const latest = pts[pts.length - 1];
-        let ref = pts[0];
-        for (const p of pts) {
-          if (latest[1] - p[1] <= VELOCITY_WINDOW) {
-            ref = p;
-            break;
-          }
-        }
-        const dt = latest[1] - ref[1];
-        if (dt > 0) {
-          const raw = (ref[0] - latest[0]) / itemHeight / dt;
-          v = clamp(raw, -MAX_VELOCITY, MAX_VELOCITY);
+  const endDrag = useCallback(() => {
+    const d = drag.current;
+    if (!d) return;
+    drag.current = null;
+    setGrabbing(false);
+    // Average velocity over the last `VELOCITY_WINDOW` ms of movement rather
+    // than the final two samples — a single noisy frame otherwise makes an
+    // even flick feel like it caught or slipped.
+    const pts = d.pts;
+    let v = 0;
+    if (pts.length > 1) {
+      const latest = pts[pts.length - 1];
+      let ref = pts[0];
+      for (const p of pts) {
+        if (latest[1] - p[1] <= VELOCITY_WINDOW) {
+          ref = p;
+          break;
         }
       }
-      fling(v);
+      const dt = latest[1] - ref[1];
+      if (dt > 0) {
+        const raw = (ref[0] - latest[0]) / itemHeight / dt;
+        v = clamp(raw, -MAX_VELOCITY, MAX_VELOCITY);
+      }
+    }
+    fling(v);
+  }, [itemHeight, fling]);
+
+  // Mouse / pen only — touch runs through the native listeners in the effect.
+  const onPointerDown = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (disabled || reduce || event.pointerType === "touch") return;
+      event.currentTarget.setPointerCapture(event.pointerId);
+      beginDrag(event.clientY);
     },
-    [itemHeight, fling],
+    [disabled, reduce, beginDrag],
+  );
+  const onPointerMove = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (event.pointerType === "touch") return;
+      moveDrag(event.clientY);
+    },
+    [moveDrag],
+  );
+  const onPointerUp = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (event.pointerType === "touch") return;
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+      endDrag();
+    },
+    [endDrag],
   );
 
   const wheelAt = useRef(0);
@@ -327,6 +353,36 @@ export function WheelPicker({
   }, [currentValue, indexOf, paint, glide]);
 
   useEffect(() => () => cancelAnimationFrame(raf.current), []);
+
+  // Native touch listeners, bound non-passively so touchmove can block the page
+  // from scrolling while the wheel spins. React's synthetic touch handlers are
+  // passive, so preventDefault there is a no-op and the finger just scrolls the
+  // page instead of the drum.
+  useEffect(() => {
+    const el = container.current;
+    if (!el || reduce || disabled) return;
+    const onStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (t) beginDrag(t.clientY);
+    };
+    const onMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t || !drag.current) return;
+      e.preventDefault();
+      moveDrag(t.clientY);
+    };
+    const onEnd = () => endDrag();
+    el.addEventListener("touchstart", onStart, { passive: true });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd);
+    el.addEventListener("touchcancel", onEnd);
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
+    };
+  }, [reduce, disabled, beginDrag, moveDrag, endDrag]);
 
   const maskFade =
     "[mask-image:linear-gradient(to_bottom,transparent,#000_22%,#000_78%,transparent)]";
@@ -404,7 +460,7 @@ export function WheelPicker({
       <ul
         ref={drumRef}
         aria-hidden
-        className="absolute inset-x-0 top-1/2 m-0 h-0 list-none p-0 [backface-visibility:hidden] [transform-style:preserve-3d]"
+        className="absolute inset-x-0 top-1/2 m-0 h-0 list-none p-0 [backface-visibility:hidden] [transform-style:preserve-3d] [will-change:transform]"
       >
         {options.map((option, i) => (
           <li
@@ -432,7 +488,7 @@ export function WheelPicker({
         <ul
           ref={bandRef}
           aria-hidden
-          className="absolute inset-x-0 top-1/2 m-0 h-0 list-none p-0 [backface-visibility:hidden] [transform-style:preserve-3d]"
+          className="absolute inset-x-0 top-1/2 m-0 h-0 list-none p-0 [backface-visibility:hidden] [transform-style:preserve-3d] [will-change:transform]"
         >
           {options.map((option, i) => (
             <li

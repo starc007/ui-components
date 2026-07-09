@@ -52,6 +52,7 @@ export function WheelPickerPreview() {
           value={month}
           onValueChange={setMonth}
           className="w-32 border-0 bg-transparent"
+          visibleCount={7}
           itemHeight={42}
           aria-label="Month"
         />
@@ -60,6 +61,7 @@ export function WheelPickerPreview() {
           value={day}
           onValueChange={setDay}
           className="w-14 border-0 bg-transparent"
+          visibleCount={7}
           itemHeight={42}
           aria-label="Day"
         />
@@ -68,6 +70,7 @@ export function WheelPickerPreview() {
           value={year}
           onValueChange={setYear}
           className="w-20 border-0 bg-transparent"
+          visibleCount={7}
           itemHeight={42}
           aria-label="Year"
         />
