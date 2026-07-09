@@ -37,7 +37,7 @@ export const registry: CategoryEntry[] = [
   {
     slug: "motion",
     name: "Components",
-    description: "Bespoke motion primitives with shadcn-compatible registry endpoints.",
+    description: "Motion primitives with shadcn-compatible registry endpoints.",
     components: [
       {
         slug: "tilt-card",
