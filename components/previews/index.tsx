@@ -196,6 +196,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/range-slider": dynamic(() =>
     import("./motion/range-slider.preview").then((m) => m.RangeSliderPreview),
   ),
+  "motion/wheel-picker": dynamic(() =>
+    import("./motion/wheel-picker.preview").then((m) => m.WheelPickerPreview),
+  ),
   "motion/shader-background": dynamic(() =>
     import("./motion/shader-background.preview").then(
       (m) => m.ShaderBackgroundPreview,

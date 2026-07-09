@@ -71,6 +71,14 @@ export function componentMetaDescription(comp: ComponentEntry): string {
   return `${comp.description} Free, open-source React and Next.js motion component. Copy-paste the source or install with shadcn.`;
 }
 
+/** Trim text to `limit` chars on a word boundary — for fixed-size surfaces
+ * like the OG image where overflow would clip or overrun the layout. */
+export function clampText(text: string, limit: number): string {
+  const s = text.replace(/\s+/g, " ").trim();
+  if (s.length <= limit) return s;
+  return `${s.slice(0, limit - 1).replace(/[\s,;:—-]+\S*$/, "")}…`;
+}
+
 /** Site-wide WebSite + SoftwareApplication. Rendered once in the root layout. */
 export function siteJsonLd(): JsonLdSchema[] {
   return [

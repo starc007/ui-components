@@ -37,7 +37,7 @@ export const registry: CategoryEntry[] = [
   {
     slug: "motion",
     name: "Components",
-    description: "Bespoke motion primitives with shadcn-compatible registry endpoints.",
+    description: "Motion primitives with shadcn-compatible registry endpoints.",
     components: [
       {
         slug: "tilt-card",
@@ -410,6 +410,14 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/range-slider.tsx",
         badge: "new",
         keywords: ["slider", "range slider", "range input", "stepped slider", "ticks"],
+      },
+      {
+        slug: "wheel-picker",
+        name: "Wheel Picker",
+        description: "iOS-style picker wheel: a 3D drum on native momentum scroll that snaps to the nearest notch, with wheel, drag and keyboard control. Composes side by side for date and time pickers, reduced-motion safe.",
+        file: "components/motion/wheel-picker.tsx",
+        badge: "new",
+        keywords: ["picker", "wheel picker", "ios picker", "drum picker", "spinner", "time picker", "date picker", "scroll picker"],
       },
       {
         slug: "table",
