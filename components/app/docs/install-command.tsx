@@ -23,7 +23,9 @@ const CYCLE_MS = 1800;
 const COMPONENT_SLUGS = registry.flatMap((cat) =>
   cat.components.flatMap((comp) =>
     comp.examples
-      ? comp.examples.filter((e) => e.installSlug).map((e) => e.installSlug!)
+      ? comp.examples.flatMap((example) =>
+          example.installSlug ? [example.installSlug] : [],
+        )
       : [comp.slug],
   ),
 );

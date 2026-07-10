@@ -35,8 +35,6 @@ const CURATED: { category: string; slug: string }[] = [
   { category: "blocks", slug: "bloom-menu" },
 ];
 
-// Grid of live-preview cards. The first tile is promoted to a large "feature"
-// showcase.
 const GRID_CLASS =
   "grid grid-cols-1 gap-4 [grid-auto-rows:19rem] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
 
@@ -73,12 +71,6 @@ function SectionHeader({
 }
 
 export default function Home() {
-  const curatedComponents = CURATED.flatMap(({ category, slug }) => {
-    const cat = registry.find((c) => c.slug === category);
-    const comp = cat?.components.find((c) => c.slug === slug);
-    return comp ? [{ category, component: comp }] : [];
-  });
-
   const newComponents = registry
     .flatMap((category) =>
       category.components
@@ -89,6 +81,19 @@ export default function Home() {
     .sort((a, b) =>
       (b.component.launchedAt ?? "").localeCompare(a.component.launchedAt ?? ""),
     );
+  const newComponentKeys = new Set(
+    newComponents.map(
+      ({ category, component }) => `${category}/${component.slug}`,
+    ),
+  );
+  const curatedComponents = CURATED.flatMap(({ category, slug }) => {
+    const cat = registry.find((c) => c.slug === category);
+    const comp = cat?.components.find((c) => c.slug === slug);
+    return comp ? [{ category, component: comp }] : [];
+  }).filter(
+    ({ category, component }) =>
+      !newComponentKeys.has(`${category}/${component.slug}`),
+  );
 
   return (
     <div className="relative">
