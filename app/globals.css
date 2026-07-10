@@ -116,6 +116,7 @@
     --background-image-brand-accent: var(--gradient-accent);
     --animate-marquee: marquee 30s linear infinite;
     --animate-marquee-vertical: marquee-vertical 30s linear infinite;
+    --animate-rainbow-border: rainbow-border 3s linear infinite;
     --animate-shimmer: shimmer 2.5s linear infinite;
     --animate-action-send: action-send 520ms var(--ease-out) both;
     --animate-action-copy: action-copy 520ms var(--ease-out) both;
@@ -146,6 +147,14 @@
         }
         to {
             background-position: -200% 0;
+        }
+    }
+    @keyframes rainbow-border {
+        from {
+            background-position: 0% 50%;
+        }
+        to {
+            background-position: 100% 50%;
         }
     }
     @keyframes action-send {
