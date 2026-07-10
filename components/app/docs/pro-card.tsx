@@ -1,5 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
-import { PressLink } from "@/components/app/press-link";
+import { RainbowCta } from "@/components/app/rainbow-cta";
 
 export function ProCard() {
   return (
@@ -22,17 +22,15 @@ export function ProCard() {
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
         Premium motion components and blocks for React and Next.js.
       </p>
-      <PressLink
+      <RainbowCta
         href="https://pro.beui.dev"
         target="_blank"
         rel="noreferrer noopener"
-        className="group mt-5 inline-flex min-h-10 animate-rainbow-border items-stretch overflow-hidden rounded-lg bg-primary bg-[linear-gradient(90deg,var(--success),var(--warning),var(--accent),var(--violet),var(--success),var(--warning),var(--accent),var(--violet),var(--success))] bg-[length:200%_100%] p-0.5 text-sm font-medium text-primary-foreground motion-reduce:animate-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="mt-5"
       >
-        <span className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 transition-colors group-hover:bg-primary/90">
-          Get lifetime access
-          <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
-        </span>
-      </PressLink>
+        Get lifetime access
+        <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
+      </RainbowCta>
     </section>
   );
 }
