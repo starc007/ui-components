@@ -1,5 +1,4 @@
-import { enrichTweet } from "react-tweet";
-import type { Tweet } from "react-tweet/api";
+import type { Testimonial } from "@/components/app/landing/testimonials-data";
 import { cn } from "@/lib/utils";
 
 function VerifiedBadge() {
@@ -16,20 +15,18 @@ function VerifiedBadge() {
 }
 
 export function TestimonialCard({
-  tweet,
+  testimonial,
   compact = false,
 }: {
-  tweet: Tweet;
+  testimonial: Testimonial;
   compact?: boolean;
 }) {
-  const t = enrichTweet(tweet);
-  const verified = t.user.is_blue_verified || t.user.verified;
   // Swap Twitter's 48px `_normal` avatar for the crisper 73px `_bigger`.
-  const avatar = t.user.profile_image_url_https.replace("_normal", "_bigger");
+  const avatar = testimonial.user.avatar.replace("_normal", "_bigger");
 
   return (
     <a
-      href={t.url}
+      href={`https://x.com/${testimonial.user.username}/status/${testimonial.id}`}
       target="_blank"
       rel="noreferrer noopener"
       className={cn(
@@ -55,12 +52,12 @@ export function TestimonialCard({
         <div className="min-w-0">
           <div className="flex items-center gap-1">
             <span className="truncate font-medium text-foreground">
-              {t.user.name}
+              {testimonial.user.name}
             </span>
-            {verified ? <VerifiedBadge /> : null}
+            {testimonial.user.verified ? <VerifiedBadge /> : null}
           </div>
           <span className="block truncate text-sm text-muted-foreground">
-            @{t.user.screen_name}
+            @{testimonial.user.username}
           </span>
         </div>
       </div>
@@ -73,21 +70,7 @@ export function TestimonialCard({
             : "mt-4 text-[15px] leading-relaxed",
         )}
       >
-        {t.entities.map((item, i) => {
-          if (item.type === "media") return null;
-          if (item.type === "text") {
-            return (
-              // biome-ignore lint/suspicious/noArrayIndexKey: tweet parts are positional and stable
-              <span key={i}>{item.text}</span>
-            );
-          }
-          return (
-            // biome-ignore lint/suspicious/noArrayIndexKey: tweet parts are positional and stable
-            <span key={i} className="text-accent">
-              {item.text}
-            </span>
-          );
-        })}
+        {testimonial.text}
       </p>
     </a>
   );
