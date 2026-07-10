@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { EASE_OUT } from "@/lib/ease";
 import { PressLink } from "@/components/app/press-link";
+import { RainbowCta } from "@/components/app/rainbow-cta";
 import { TextReveal } from "@/components/motion/text-reveal";
 import { INSTALLABLE_COUNT } from "@/lib/registry";
 
@@ -61,21 +62,22 @@ export function Hero() {
         transition={{ duration: 0.5, ease: EASE_OUT, delay: ctaDelay }}
         className="mt-8 flex flex-wrap items-center justify-center gap-3"
       >
-        <PressLink
-          href="/components/motion"
-          className="group inline-flex h-10 items-center gap-2 rounded-full bg-foreground px-4 text-sm font-medium text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-        >
-          Browse components
-          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-        </PressLink>
-        <PressLink
+        <RainbowCta
           href="https://pro.beui.dev"
           target="_blank"
           rel="noreferrer noopener"
-          className="group inline-flex h-10 items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-4 text-sm font-medium text-accent hover:border-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          shape="pill"
+          innerClassName="px-4"
         >
           Explore Pro
           <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        </RainbowCta>
+        <PressLink
+          href="/components/motion"
+          className="group inline-flex min-h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          Browse components
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </PressLink>
       </motion.div>
     </div>

@@ -10,8 +10,9 @@ import {
 } from "@/lib/registry";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { InstallBlock } from "@/components/app/docs/install-block";
-import { PropsTable } from "@/components/app/docs/props-table";
 import { KeepInMind } from "@/components/app/docs/keep-in-mind";
+import { PageNav, type PageNavItem } from "@/components/app/docs/page-nav";
+import { PropsTable } from "@/components/app/docs/props-table";
 import {
   Tabs,
   TabsContent,
@@ -135,98 +136,158 @@ export default async function ComponentPage({
     comp.examples?.some((example) => example.installSlug) ?? false;
   const related = relatedComponents(cat.slug, comp.slug, 3);
   const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
+  const variantNavItems: PageNavItem[] =
+    comp.examples?.map((example) => ({
+      id: example.slug,
+      label: example.name,
+      children: [
+        { id: `${example.slug}-preview`, label: "Preview" },
+        ...(example.installSlug
+          ? [{ id: `${example.slug}-install`, label: "Install" }]
+          : []),
+        ...(getComponentProps(example.file).length
+          ? [
+              {
+                id: `${example.slug}-api-reference`,
+                label: "API Reference",
+              },
+            ]
+          : []),
+      ],
+    })) ?? [];
+  const pageNavItems: PageNavItem[] = [
+    ...(variantNavItems.length
+      ? variantNavItems
+      : [
+          {
+            id: "overview",
+            label: comp.name,
+            children: [
+              { id: "preview", label: "Preview" },
+              ...(!hasVariantInstallCommands
+                ? [{ id: "install", label: "Install" }]
+                : []),
+              ...(propsDocs.length
+                ? [{ id: "api-reference", label: "API Reference" }]
+                : []),
+            ],
+          },
+        ]),
+    ...(related.length
+      ? [{ id: "related-components", label: "Related components" }]
+      : []),
+  ];
 
   return (
-    <div>
-      <JsonLd
-        data={[
-          breadcrumbJsonLd([
-            { name: "beUI", path: "/" },
-            { name: cat.name, path: `/components/${cat.slug}` },
-            { name: comp.name, path: `/components/${cat.slug}/${comp.slug}` },
-          ]),
-          componentJsonLd(cat, comp),
-        ]}
-      />
-      <nav
-        aria-label="Breadcrumb"
-        className="flex items-center gap-1.5 text-sm"
-      >
-        <Link
-          href={`/components/${cat.slug}`}
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          {cat.name}
-        </Link>
-        <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="font-medium text-foreground">{comp.name}</span>
-      </nav>
-      <div className="mt-4 flex items-center gap-3">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-          {comp.name}
-        </h1>
-        {comp.badge === "new" ? <NewBadge className="mt-1" /> : null}
-      </div>
-      <p className="mt-2 max-w-2xl text-muted-foreground">
-        {comp.description}
-      </p>
-
-      {comp.examples?.length ? (
-        <div className="mt-10 flex flex-col gap-12">
-          {comp.examples.map((ex) => (
-            <ExampleBlock key={ex.slug} category={cat.slug} pageSlug={comp.slug} example={ex} />
-          ))}
+    <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_16rem] xl:gap-10 2xl:gap-14">
+      <div className="min-w-0">
+        <JsonLd
+          data={[
+            breadcrumbJsonLd([
+              { name: "beUI", path: "/" },
+              { name: cat.name, path: `/components/${cat.slug}` },
+              { name: comp.name, path: `/components/${cat.slug}/${comp.slug}` },
+            ]),
+            componentJsonLd(cat, comp),
+          ]}
+        />
+        <div id="overview" className="scroll-mt-24">
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1.5 text-sm"
+          >
+            <Link
+              href={`/components/${cat.slug}`}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {cat.name}
+            </Link>
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="font-medium text-foreground">{comp.name}</span>
+          </nav>
+          <div className="mt-4 flex items-center gap-3">
+            <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+              {comp.name}
+            </h1>
+            {comp.badge === "new" ? <NewBadge className="mt-1" /> : null}
+          </div>
+          <p className="mt-2 max-w-2xl text-muted-foreground">
+            {comp.description}
+          </p>
         </div>
-      ) : (
-        <DefaultTabs category={category} slug={slug} file={comp.file} />
-      )}
 
-      {!hasVariantInstallCommands ? (
-        <section className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-6 border-t border-border pt-8">
-          <div className="min-w-0">
-            <h2 className="text-sm font-semibold text-foreground">Install</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Add it with the shadcn CLI, or copy the source manually.
-            </p>
-            <div className="mt-3">
-              <InstallBlock category={cat.slug} slug={comp.slug} />
-            </div>
-          </div>
-        </section>
-      ) : null}
-
-      {propsDocs.length ? (
-        <section className="mt-12 border-t border-border pt-8">
-          <h2 className="text-sm font-semibold text-foreground">
-            API Reference
-          </h2>
-          <div className="mt-4">
-            <PropsTable docs={propsDocs} />
-          </div>
-        </section>
-      ) : null}
-
-      {related.length ? (
-        <section className="mt-12 border-t border-border pt-8">
-          <h2 className="text-sm font-semibold text-foreground">
-            Related components
-          </h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {related.map((rel) => (
-              <ComponentCard
-                key={`${rel.category}/${rel.slug}`}
-                categorySlug={rel.category}
-                slug={rel.slug}
-                name={rel.name}
-                description={rel.description}
-                badge={rel.badge}
+        {comp.examples?.length ? (
+          <div className="mt-10 flex flex-col gap-12">
+            {comp.examples.map((ex) => (
+              <ExampleBlock
+                key={ex.slug}
+                category={cat.slug}
+                pageSlug={comp.slug}
+                example={ex}
               />
             ))}
           </div>
-        </section>
-      ) : null}
+        ) : (
+          <DefaultTabs category={category} slug={slug} file={comp.file} />
+        )}
 
-      <KeepInMind />
+        {!hasVariantInstallCommands ? (
+          <section
+            id="install"
+            className="mt-12 scroll-mt-24 border-t border-border pt-8"
+          >
+            <div className="min-w-0">
+              <h2 className="text-sm font-semibold text-foreground">Install</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Add it with the shadcn CLI, or copy the source manually.
+              </p>
+              <div className="mt-3">
+                <InstallBlock category={cat.slug} slug={comp.slug} />
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        {propsDocs.length ? (
+          <section
+            id="api-reference"
+            className="mt-12 scroll-mt-24 border-t border-border pt-8"
+          >
+            <h2 className="text-sm font-semibold text-foreground">
+              API Reference
+            </h2>
+            <div className="mt-4">
+              <PropsTable docs={propsDocs} />
+            </div>
+          </section>
+        ) : null}
+
+        {related.length ? (
+          <section
+            id="related-components"
+            className="mt-12 scroll-mt-24 border-t border-border pt-8"
+          >
+            <h2 className="text-sm font-semibold text-foreground">
+              Related components
+            </h2>
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+              {related.map((rel) => (
+                <ComponentCard
+                  key={`${rel.category}/${rel.slug}`}
+                  categorySlug={rel.category}
+                  slug={rel.slug}
+                  name={rel.name}
+                  description={rel.description}
+                  badge={rel.badge}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <KeepInMind />
+      </div>
+      <PageNav items={pageNavItems} />
     </div>
   );
 }
@@ -247,7 +308,7 @@ async function ExampleBlock({
   const propsDocs = getComponentProps(example.file);
 
   return (
-    <section>
+    <section id={example.slug} className="scroll-mt-24">
       <div className="mb-4 flex items-baseline justify-between gap-3">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">
           {example.name}
@@ -261,29 +322,38 @@ async function ExampleBlock({
           {example.description}
         </p>
       ) : null}
-      <Tabs defaultValue="preview" variant="pill">
-        <TabsList>
-          <TabsTrigger value="preview">Preview</TabsTrigger>
-          <TabsTrigger value="usage">Usage</TabsTrigger>
-          <TabsTrigger value="source">Code</TabsTrigger>
-        </TabsList>
-        <TabsContent value="preview" className="mt-4">
-          <div className="flex min-h-[260px] items-center justify-center py-10">
-            {Preview ? <Preview /> : null}
-          </div>
-        </TabsContent>
-        <TabsContent value="usage" className="mt-4">
-          <CodeBlock code={usage} filename={example.previewFile} />
-        </TabsContent>
-        <TabsContent value="source" className="mt-4">
-          <CodeBlock
-            code={withSignature(source, example.file, pageUrlFor(category, pageSlug))}
-            filename={example.file}
-          />
-        </TabsContent>
-      </Tabs>
+      <div id={`${example.slug}-preview`} className="scroll-mt-24">
+        <Tabs defaultValue="preview" variant="pill">
+          <TabsList>
+            <TabsTrigger value="preview">Preview</TabsTrigger>
+            <TabsTrigger value="usage">Usage</TabsTrigger>
+            <TabsTrigger value="source">Code</TabsTrigger>
+          </TabsList>
+          <TabsContent value="preview" className="mt-4">
+            <div className="flex min-h-[260px] items-center justify-center py-10">
+              {Preview ? <Preview /> : null}
+            </div>
+          </TabsContent>
+          <TabsContent value="usage" className="mt-4">
+            <CodeBlock code={usage} filename={example.previewFile} />
+          </TabsContent>
+          <TabsContent value="source" className="mt-4">
+            <CodeBlock
+              code={withSignature(
+                source,
+                example.file,
+                pageUrlFor(category, pageSlug),
+              )}
+              filename={example.file}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
       {installSlug ? (
-        <div className="mt-5 min-w-0 border-t border-border pt-5">
+        <div
+          id={`${example.slug}-install`}
+          className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
+        >
           <h3 className="text-sm font-semibold text-foreground">Install</h3>
           <div className="mt-3">
             <InstallBlock category={category} slug={installSlug} />
@@ -291,7 +361,10 @@ async function ExampleBlock({
         </div>
       ) : null}
       {propsDocs.length ? (
-        <div className="mt-5 min-w-0 border-t border-border pt-5">
+        <div
+          id={`${example.slug}-api-reference`}
+          className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
+        >
           <h3 className="text-sm font-semibold text-foreground">
             API Reference
           </h3>
@@ -319,26 +392,28 @@ async function DefaultTabs({
   const usage = await loadSource(previewFile);
 
   return (
-    <Tabs defaultValue="preview" variant="pill" className="mt-8">
-      <TabsList>
-        <TabsTrigger value="preview">Preview</TabsTrigger>
-        <TabsTrigger value="usage">Usage</TabsTrigger>
-        <TabsTrigger value="source">Code</TabsTrigger>
-      </TabsList>
-      <TabsContent value="preview" className="mt-4">
-        <div className="flex min-h-[320px] items-center justify-center py-10">
-          {Preview ? <Preview /> : null}
-        </div>
-      </TabsContent>
-      <TabsContent value="usage" className="mt-4">
-        <CodeBlock code={usage} filename={previewFile} />
-      </TabsContent>
-      <TabsContent value="source" className="mt-4">
-        <CodeBlock
-          code={withSignature(source, file, pageUrlFor(category, slug))}
-          filename={file}
-        />
-      </TabsContent>
-    </Tabs>
+    <section id="preview" className="mt-8 scroll-mt-24">
+      <Tabs defaultValue="preview" variant="pill">
+        <TabsList>
+          <TabsTrigger value="preview">Preview</TabsTrigger>
+          <TabsTrigger value="usage">Usage</TabsTrigger>
+          <TabsTrigger value="source">Code</TabsTrigger>
+        </TabsList>
+        <TabsContent value="preview" className="mt-4">
+          <div className="flex min-h-[320px] items-center justify-center py-10">
+            {Preview ? <Preview /> : null}
+          </div>
+        </TabsContent>
+        <TabsContent value="usage" className="mt-4">
+          <CodeBlock code={usage} filename={previewFile} />
+        </TabsContent>
+        <TabsContent value="source" className="mt-4">
+          <CodeBlock
+            code={withSignature(source, file, pageUrlFor(category, slug))}
+            filename={file}
+          />
+        </TabsContent>
+      </Tabs>
+    </section>
   );
 }
