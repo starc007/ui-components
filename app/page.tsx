@@ -3,10 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { registry } from "@/lib/registry";
 import { Hero } from "@/components/app/landing/hero";
 import { InstallCommand } from "@/components/app/docs/install-command";
-import {
-  type CardVariant,
-  LandingComponentCard,
-} from "@/components/app/landing/landing-component-card";
+import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { Testimonials } from "@/components/app/landing/testimonials";
 import { WorkCta } from "@/components/app/landing/work-cta";
@@ -39,14 +36,9 @@ const CURATED: { category: string; slug: string }[] = [
 ];
 
 // Grid of live-preview cards. The first tile is promoted to a large "feature"
-// showcase once there are enough cards to keep the bento balanced.
-const BENTO_CLASS =
-  "grid grid-cols-1 gap-4 [grid-auto-rows:19rem] sm:grid-cols-2 sm:grid-flow-dense lg:grid-cols-3 xl:grid-cols-4";
-
-function bentoVariant(index: number, total: number): CardVariant {
-  if (index === 0 && total >= 3) return "feature";
-  return "default";
-}
+// showcase.
+const GRID_CLASS =
+  "grid grid-cols-1 gap-4 [grid-auto-rows:19rem] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
 
 function SectionHeader({
   eyebrow,
@@ -114,13 +106,12 @@ export default function Home() {
       {newComponents.length ? (
         <section className="mx-auto max-w-7xl border-t border-border px-4 pb-16 pt-14">
           <SectionHeader eyebrow="New" title="Recently launched" />
-          <div className={BENTO_CLASS}>
-            {newComponents.map(({ category, component }, i) => (
+          <div className={GRID_CLASS}>
+            {newComponents.map(({ category, component }) => (
               <LandingComponentCard
                 key={`${category}-${component.slug}`}
                 component={component}
                 category={category}
-                variant={bentoVariant(i, newComponents.length)}
               />
             ))}
           </div>
@@ -133,13 +124,12 @@ export default function Home() {
           title="Motion primitives"
           href="/components/motion"
         />
-        <div className={BENTO_CLASS}>
-          {curatedComponents.map(({ category, component }, i) => (
+        <div className={GRID_CLASS}>
+          {curatedComponents.map(({ category, component }) => (
             <LandingComponentCard
               key={`${category}-${component.slug}`}
               component={component}
               category={category}
-              variant={bentoVariant(i, curatedComponents.length)}
             />
           ))}
         </div>
