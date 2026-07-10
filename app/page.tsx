@@ -35,8 +35,6 @@ const CURATED: { category: string; slug: string }[] = [
   { category: "blocks", slug: "bloom-menu" },
 ];
 
-// Grid of live-preview cards. The first tile is promoted to a large "feature"
-// showcase.
 const GRID_CLASS =
   "grid grid-cols-1 gap-4 [grid-auto-rows:19rem] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
 

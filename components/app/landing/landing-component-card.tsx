@@ -7,6 +7,7 @@ import type { ComponentEntry } from "@/lib/registry";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { PreviewFit } from "@/components/app/landing/preview-fit";
 import { getPreview } from "@/components/previews";
+import { EASE_OUT_CSS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type CardVariant = "default" | "wide" | "feature";
@@ -43,7 +44,10 @@ export function LandingComponentCard({
         aria-label={`View ${component.name}`}
         className="absolute inset-0 z-20 rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       />
-      <div className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] group-hover/card:border-border-strong">
+      <div
+        className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card transition-colors duration-300 contain-[paint] group-hover/card:border-border-strong"
+        style={{ transitionTimingFunction: EASE_OUT_CSS }}
+      >
         <PreviewFit hover={hover} maxScale={feature ? 1 : 0.82}>
           {Preview ? <Preview /> : null}
         </PreviewFit>
@@ -65,7 +69,10 @@ export function LandingComponentCard({
               {component.description}
             </p>
           </div>
-          <ArrowUpRight className="h-4 w-4 shrink-0 -translate-x-1 text-muted-foreground opacity-0 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:translate-x-0 group-hover/card:opacity-100" />
+          <ArrowUpRight
+            className="h-4 w-4 shrink-0 -translate-x-1 text-muted-foreground opacity-0 transition-[opacity,transform] duration-300 group-hover/card:translate-x-0 group-hover/card:opacity-100"
+            style={{ transitionTimingFunction: EASE_OUT_CSS }}
+          />
         </div>
       </div>
     </article>
