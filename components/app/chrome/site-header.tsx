@@ -36,6 +36,7 @@ export function SiteHeader({
     (pathname.startsWith("/components") &&
       !pathname.startsWith("/components/blocks"));
   const isBlocks = pathname.startsWith("/components/blocks");
+  const isComponentsRoute = pathname.startsWith("/components");
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
   const formattedStarCount =
@@ -56,7 +57,14 @@ export function SiteHeader({
           : "border-b border-transparent bg-transparent",
       )}
     >
-      <div className="relative mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4">
+      <div
+        className={cn(
+          "relative flex h-14 items-center justify-between gap-4",
+          isComponentsRoute
+            ? "w-full px-4 md:px-6 xl:px-8"
+            : "mx-auto max-w-7xl px-4",
+        )}
+      >
         <div className="flex items-center gap-4">
           <MobileNav />
           <Link

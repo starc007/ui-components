@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-    /* Base palette (concrete values). */
+    /* Light mode — beUI Current. */
     --background: oklch(99% 0 0);
     --foreground: oklch(15% 0 0);
     --card: oklch(97% 0 0);
@@ -21,6 +21,16 @@
     --glass-border: oklch(15% 0 0 / 0.08);
     --glass-strong-bg: rgb(255 255 255 / 0.7);
     --glass-thin-bg: rgb(255 255 255 / 0.45);
+    --gradient-bg: linear-gradient(
+        135deg,
+        oklch(99% 0 0) 0%,
+        oklch(96% 0.008 210) 100%
+    );
+    --gradient-accent: linear-gradient(
+        to right,
+        oklch(72% 0.18 195) 0%,
+        oklch(68% 0.22 295) 100%
+    );
     /* shadcn semantic tokens, mapped onto the base. */
     --card-foreground: var(--foreground);
     --popover: var(--card);
@@ -37,7 +47,7 @@
     --ring: var(--border-strong);
 }
 
-/* Dark mode overrides only the base; semantic tokens follow via var(). */
+/* Dark mode — beUI Current. Semantic tokens follow the base via var(). */
 .dark {
     --background: #151515;
     --foreground: oklch(96% 0 0);
@@ -51,6 +61,16 @@
     --glass-border: rgb(255 255 255 / 0.08);
     --glass-strong-bg: rgb(28 28 28 / 0.6);
     --glass-thin-bg: rgb(21 21 21 / 0.45);
+    --gradient-bg: linear-gradient(
+        135deg,
+        oklch(19% 0 0) 0%,
+        oklch(22% 0.008 210) 100%
+    );
+    --gradient-accent: linear-gradient(
+        to right,
+        oklch(80% 0.18 195) 0%,
+        oklch(72% 0.18 295) 100%
+    );
 }
 
 /* Color theme presets (full token sets) are injected at runtime from
@@ -86,14 +106,14 @@
     --color-input: var(--input);
     --color-ring: var(--ring);
 
-    --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-    --font-mono: var(--font-mono), ui-monospace, monospace;
-    --font-display:
-        var(--font-bricolage), var(--font-inter), ui-sans-serif, system-ui,
-        sans-serif;
+    --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+    --font-display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme {
+    --background-image-brand-bg: var(--gradient-bg);
+    --background-image-brand-accent: var(--gradient-accent);
     --animate-marquee: marquee 30s linear infinite;
     --animate-marquee-vertical: marquee-vertical 30s linear infinite;
     --animate-shimmer: shimmer 2.5s linear infinite;

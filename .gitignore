@@ -38,6 +38,8 @@ next-env.d.ts
 
 # local working notes
 /docs/
+/.brand-preview/
+/app/globals.css.bak
 
 # editor / local agent config
 .claude/

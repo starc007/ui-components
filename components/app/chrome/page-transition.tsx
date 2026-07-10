@@ -8,6 +8,9 @@ import { EASE_OUT } from "@/lib/ease";
 export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const reduce = useReducedMotion();
+  // Component pages contain viewport-fixed navigation. Translating an ancestor
+  // makes fixed descendants anchor to that moving element during the transition.
+  const shouldTranslate = !reduce && !pathname.startsWith("/components/");
   const ref = useRef<HTMLDivElement>(null);
   // Skip enter animation on first load so LCP element is visible immediately.
   // After mount, navigations animate normally.
@@ -18,9 +21,15 @@ export function PageTransition({ children }: { children: ReactNode }) {
     <motion.div
       ref={ref}
       key={pathname}
-      initial={mounted ? (reduce ? { opacity: 0 } : { opacity: 0, y: 24 }) : false}
-      animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-      transition={{ duration: reduce ? 0.2 : 0.6, ease: EASE_OUT }}
+      initial={
+        mounted
+          ? shouldTranslate
+            ? { opacity: 0, y: 24 }
+            : { opacity: 0 }
+          : false
+      }
+      animate={shouldTranslate ? { opacity: 1, y: 0 } : { opacity: 1 }}
+      transition={{ duration: shouldTranslate ? 0.6 : 0.2, ease: EASE_OUT }}
       onAnimationComplete={() => {
         const el = ref.current;
         if (!el) return;
