@@ -10,6 +10,7 @@ import { GithubIcon } from "@/components/app/icons";
 import { MobileNav } from "@/components/app/chrome/mobile-nav";
 import { usePreferences } from "@/components/app/preferences/preferences-provider";
 import { PressLink } from "@/components/app/press-link";
+import { RainbowCta } from "@/components/app/rainbow-cta";
 import { SiteSearch } from "@/components/app/chrome/site-search";
 import { Tooltip } from "@/components/motion/tooltip";
 import { cn } from "@/lib/utils";
@@ -126,29 +127,33 @@ export function SiteHeader({
             >
               Sponsors
             </Link>
-            <a
+            <RainbowCta
               href="https://pro.beui.dev"
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:text-accent/80"
+              shape="pill"
+              className="ml-1 min-h-8 text-xs"
+              innerClassName="bg-background px-3 text-foreground group-hover:bg-card"
             >
               Pro
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </a>
+              <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
+            </RainbowCta>
           </nav>
         </div>
 
         <nav className="flex items-center gap-2">
           <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 lg:w-56" />
-          <a
+          <RainbowCta
             href="https://pro.beui.dev"
             target="_blank"
             rel="noreferrer noopener"
-            className="inline-flex items-center gap-1 rounded-2xl border border-border bg-card/20 px-3 py-2 text-xs font-medium text-accent transition-colors hover:border-(--color-border-strong) md:hidden"
+            shape="pill"
+            className="min-h-9 text-xs md:hidden"
+            innerClassName="bg-background px-3 text-foreground group-hover:bg-card"
           >
             Pro
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </a>
+            <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
+          </RainbowCta>
           <Tooltip content="Customize" side="bottom">
             <button
               type="button"
