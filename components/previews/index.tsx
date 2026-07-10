@@ -42,6 +42,11 @@ export const previews: Record<string, ComponentType> = {
   "blocks/wallet-card": dynamic(() =>
     import("./blocks/wallet-card.preview").then((m) => m.WalletCardPreview),
   ),
+  "blocks/availability-scheduler": dynamic(() =>
+    import("./blocks/availability-scheduler.preview").then(
+      (m) => m.AvailabilitySchedulerPreview,
+    ),
+  ),
   "motion/table": dynamic(() =>
     import("./motion/table.preview").then((m) => m.TablePreview),
   ),
@@ -153,6 +158,9 @@ export const previews: Record<string, ComponentType> = {
   ),
   "motion/popover": dynamic(() =>
     import("./motion/popover.preview").then((m) => m.PopoverPreview),
+  ),
+  "motion/popover-morph": dynamic(() =>
+    import("./motion/popover-morph.preview").then((m) => m.MorphPopoverPreview),
   ),
   "motion/morphing-modal": dynamic(() =>
     import("./motion/morphing-modal.preview").then((m) => m.MorphingModalPreview),
