@@ -150,6 +150,11 @@ export const previews: Record<string, ComponentType> = {
   "motion/shared-layout-bg": dynamic(() =>
     import("./motion/shared-layout-bg.preview").then((m) => m.SharedLayoutBgPreview),
   ),
+  "motion/preview-rail": dynamic(() =>
+    import("./motion/preview-rail.preview").then(
+      (m) => m.PreviewRailPreview,
+    ),
+  ),
   "motion/dock": dynamic(() =>
     import("./motion/dock.preview").then((m) => m.DockPreview),
   ),
