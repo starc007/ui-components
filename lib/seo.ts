@@ -197,8 +197,80 @@ export type RelatedComponent = {
 };
 
 /**
- * Related components for internal cross-linking. Prefers same-category
- * siblings, then fills from the wider catalog. Deterministic ordering.
+ * Interaction families used to give related links a stronger signal than
+ * generic words such as "animated" or "component" can provide.
+ */
+const RELATED_FAMILIES: readonly (readonly string[])[] = [
+  ["button", "switch", "input", "select", "checkbox", "radio", "range-slider", "wheel-picker"],
+  ["tabs", "shared-layout-bg", "preview-rail", "dock", "scroll-animation"],
+  ["bottom-sheet", "tooltip", "popover", "morphing-modal", "drawer"],
+  ["text-animation", "number", "animated-badge", "action-swap", "animated-toast-stack", "loader"],
+  ["tilt-card", "marquee", "theme-toggle", "shader-background", "cylinder-carousel"],
+  ["table", "input", "select", "checkbox", "radio"],
+  ["command-palette", "expandable-action-bar", "overflow-actions", "expandable-tabs", "bloom-menu"],
+  ["availability-scheduler", "file-upload", "otp-input", "feedback-widget"],
+  ["swap", "prediction-market", "wallet-card"],
+  ["dynamic-island", "swipeable-list", "not-found"],
+];
+
+const RELATED_STOP_WORDS = new Set([
+  "a",
+  "an",
+  "and",
+  "animated",
+  "animation",
+  "component",
+  "components",
+  "for",
+  "from",
+  "motion",
+  "of",
+  "on",
+  "or",
+  "react",
+  "the",
+  "to",
+  "with",
+]);
+
+function relatedTokens(component: ComponentEntry): Set<string> {
+  const text = [
+    component.slug,
+    component.name,
+    component.description,
+    ...(component.keywords ?? []),
+  ].join(" ");
+
+  return new Set(
+    text
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((token) => token.length > 2 && !RELATED_STOP_WORDS.has(token)),
+  );
+}
+
+function relatedScore(current: ComponentEntry, candidate: ComponentEntry) {
+  const currentTokens = relatedTokens(current);
+  const candidateTokens = relatedTokens(candidate);
+  let score = 0;
+
+  for (const token of currentTokens) {
+    if (candidateTokens.has(token)) score += 1;
+  }
+
+  for (const family of RELATED_FAMILIES) {
+    if (family.includes(current.slug) && family.includes(candidate.slug)) {
+      score += 12;
+    }
+  }
+
+  return score;
+}
+
+/**
+ * Related components for internal cross-linking. Ranks same-category siblings
+ * by interaction family and copy similarity, then uses circular catalog order
+ * as a page-specific tie-breaker. Cross-category items only fill short lists.
  */
 export function relatedComponents(
   categorySlug: string,
@@ -206,9 +278,22 @@ export function relatedComponents(
   limit = 4,
 ): RelatedComponent[] {
   const cat = registry.find((c) => c.slug === categorySlug);
-  const siblings = (cat?.components ?? [])
-    .filter((c) => c.slug !== slug)
-    .map((c) => toRelated(categorySlug, c));
+  const components = cat?.components ?? [];
+  const currentIndex = components.findIndex((component) => component.slug === slug);
+  const current = components[currentIndex];
+  const siblingCount = components.length;
+  const siblings = components
+    .map((component, index) => ({
+      component,
+      score: current ? relatedScore(current, component) : 0,
+      distance:
+        currentIndex < 0
+          ? index
+          : (index - currentIndex + siblingCount) % siblingCount,
+    }))
+    .filter(({ component }) => component.slug !== slug)
+    .sort((a, b) => b.score - a.score || a.distance - b.distance)
+    .map(({ component }) => toRelated(categorySlug, component));
 
   if (siblings.length >= limit) return siblings.slice(0, limit);
 

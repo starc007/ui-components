@@ -270,7 +270,7 @@ export default async function ComponentPage({
             <h2 className="text-sm font-semibold text-foreground">
               Related components
             </h2>
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((rel) => (
                 <ComponentCard
                   key={`${rel.category}/${rel.slug}`}
