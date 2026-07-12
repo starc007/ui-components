@@ -578,6 +578,22 @@ export const registry: CategoryEntry[] = [
     description: "Composed, product-ready widgets built from beUI motion primitives.",
     components: [
       {
+        slug: "knockout-bracket",
+        name: "Knockout Bracket",
+        description: "Google-style tournament bracket that pages one round at a time — the leftmost round stacks compactly while later rounds center between their feeder matches, with cards, elbow connectors, headers and container height animating to every new layout.",
+        file: "components/motion/knockout-bracket.tsx",
+        badge: "new",
+        launchedAt: "2026-07-12",
+        keywords: [
+          "tournament bracket react",
+          "knockout bracket component",
+          "world cup bracket react",
+          "single elimination bracket",
+          "playoff bracket react",
+          "sports bracket animation",
+        ],
+      },
+      {
         slug: "availability-scheduler",
         name: "Availability Scheduler",
         description: "Weekly availability editor where each day springs between available and unavailable, time ranges add and remove with blur-slide motion, times pick from a scrollable dropdown, and a copy menu clones hours to other days.",
