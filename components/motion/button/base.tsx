@@ -74,10 +74,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         if (ripple && !reduce) {
           const rect = event.currentTarget.getBoundingClientRect();
           const size = Math.max(rect.width, rect.height) * 2;
+          const id = nextId.current++;
           setRipples((prev) => [
             ...prev,
             {
-              id: nextId.current++,
+              id,
               x: event.clientX - rect.left,
               y: event.clientY - rect.top,
               size,
@@ -123,7 +124,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     x: "-50%",
                     y: "-50%",
                   }}
-                  initial={{ scale: 0, opacity: 0.3 }}
+                  initial={{ scale: 0.05, opacity: 0.3 }}
                   animate={{ scale: 1, opacity: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 1.6, ease: EASE_OUT }}

@@ -153,8 +153,9 @@ function BouncyAccordionRow({
 
   return (
     <motion.div
+      layout="position"
       initial={false}
-      animate={{ marginTop: separatedFromPrevious ? 12 : 0 }}
+      style={{ marginTop: separatedFromPrevious ? 12 : 0 }}
       transition={reduce ? { duration: 0 } : ROW_TRANSITION}
     >
       <motion.div
@@ -219,14 +220,13 @@ function BouncyAccordionRow({
         </button>
 
         <motion.div
+          layout="size"
           id={contentId}
           role="region"
           aria-labelledby={triggerId}
           aria-hidden={!open}
           initial={false}
-          animate={{
-            height: open && item.description ? contentHeight : 0,
-          }}
+          style={{ height: open && item.description ? contentHeight : 0 }}
           transition={
             reduce
               ? { duration: 0 }

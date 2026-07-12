@@ -256,10 +256,11 @@ function Morph({ size, speed, reduce }: PartProps) {
   );
 }
 
+const COMET_TRAIL = [0, 1, 2, 3, 4, 5];
+
 function Comet({ size, speed, reduce }: PartProps) {
   const head = size * 0.2;
   const r = size / 2 - head / 2;
-  const trail = [0, 1, 2, 3, 4, 5];
   return (
     <span className="relative" style={{ width: size, height: size }}>
       <motion.span
@@ -271,7 +272,7 @@ function Comet({ size, speed, reduce }: PartProps) {
             : { duration: speed, ease: "linear", repeat: Infinity }
         }
       >
-        {trail.map((i) => {
+        {COMET_TRAIL.map((i) => {
           const scale = 1 - i * 0.13;
           const sz = head * scale;
           return (
@@ -370,10 +371,11 @@ function Metaballs({ size, speed, reduce }: PartProps) {
   );
 }
 
+const NEWTON_BALLS = [0, 1, 2, 3, 4];
+
 function Newton({ size, speed, reduce }: PartProps) {
   const d = size * 0.2;
   const out = d * 1.1;
-  const balls = [0, 1, 2, 3, 4];
   // Only the end balls move: the left slides out and back on the first half,
   // then the right on the second half — the impact appears to jump the three
   // still middle balls. Pure horizontal slide, no swing, no strings.
@@ -384,7 +386,7 @@ function Newton({ size, speed, reduce }: PartProps) {
 
   return (
     <span className="flex items-center justify-center" style={{ height: d }}>
-      {balls.map((i) => {
+      {NEWTON_BALLS.map((i) => {
         const move = moves[i];
         return (
           <motion.span

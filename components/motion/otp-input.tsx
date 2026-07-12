@@ -73,7 +73,10 @@ export function OTPInput({
 
   const joined = slots.join("");
   const joinedRef = useRef(joined);
-  joinedRef.current = joined;
+
+  useEffect(() => {
+    joinedRef.current = joined;
+  }, [joined]);
 
   // Pull in external value changes; skip when the parent is just echoing our own
   // onChange, so internal holes survive the controlled round-trip.
@@ -139,7 +142,7 @@ export function OTPInput({
         clearSlot(active);
       } else if (active > 0) {
         clearSlot(active - 1);
-        setActive(active - 1);
+        setActive((current) => Math.max(current - 1, 0));
       }
     } else if (k === "Delete") {
       e.preventDefault();
@@ -204,9 +207,8 @@ export function OTPInput({
           {label}
         </label>
       ) : null}
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: focus proxy for the real input below. */}
-      <div
-        className="relative inline-flex w-max"
+      <fieldset
+        className="relative m-0 inline-flex w-max border-0 p-0"
         onMouseDown={(e) => {
           if (disabled) return;
           // Suppress the native click-caret; we drive the active slot ourselves.
@@ -359,7 +361,7 @@ export function OTPInput({
             </motion.span>
           ) : null}
         </AnimatePresence>
-      </div>
+      </fieldset>
 
       {message ? (
         <p

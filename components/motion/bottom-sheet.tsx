@@ -104,13 +104,16 @@ export function BottomSheet({
 
     // Strong upward fling → next snap.
     if (velocity < -500) {
-      setSnap(Math.min(snapPoints.length - 1, snap + 1));
+      setSnap((current) => Math.min(snapPoints.length - 1, current + 1));
       return;
     }
 
     // Otherwise snap to nearest by current offset.
-    if (offset > 80 && snap > 0) setSnap(snap - 1);
-    else if (offset < -80 && snap < snapPoints.length - 1) setSnap(snap + 1);
+    setSnap((current) => {
+      if (offset > 80 && current > 0) return current - 1;
+      if (offset < -80 && current < snapPoints.length - 1) return current + 1;
+      return current;
+    });
   };
 
   const snapValue = snapPoints[snap];
@@ -128,7 +131,9 @@ export function BottomSheet({
     <AnimatePresence>
       {open ? (
         <div className="pointer-events-none fixed inset-0 z-50">
-          <motion.div
+          <motion.button
+            type="button"
+            aria-label="Close bottom sheet"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

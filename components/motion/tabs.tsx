@@ -1,7 +1,15 @@
 "use client";
 
 import { motion, MotionConfig, useReducedMotion, type Transition } from "motion/react";
-import { createContext, useContext, useId, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useId,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -51,13 +59,20 @@ export function Tabs({
   const reduce = useReducedMotion();
   const controlled = value !== undefined;
   const current = controlled ? value : internal;
-  const setValue = (v: string) => {
-    if (!controlled) setInternal(v);
-    onValueChange?.(v);
-  };
+  const setValue = useCallback(
+    (v: string) => {
+      if (!controlled) setInternal(v);
+      onValueChange?.(v);
+    },
+    [controlled, onValueChange],
+  );
+  const contextValue = useMemo(
+    () => ({ value: current, setValue, layoutId, variant }),
+    [current, layoutId, setValue, variant],
+  );
   return (
     <MotionConfig transition={reduce ? { duration: 0 } : transition}>
-      <TabsCtx.Provider value={{ value: current, setValue, layoutId, variant }}>
+      <TabsCtx.Provider value={contextValue}>
         {/* layoutRoot: the indicator's layoutId measures in page coordinates, so
             inside fixed/scrolled containers it would replay scroll offsets as
             movement. The pill only ever travels within the list, so scoping

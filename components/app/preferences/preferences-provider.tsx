@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -46,17 +47,20 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     else el.dataset.theme = colorTheme;
   }, [colorTheme]);
 
+  const value = useMemo(
+    () => ({
+      colorTheme,
+      setColorTheme,
+      iconSet,
+      setIconSet,
+      panelOpen,
+      setPanelOpen,
+    }),
+    [colorTheme, iconSet, panelOpen],
+  );
+
   return (
-    <PreferencesCtx.Provider
-      value={{
-        colorTheme,
-        setColorTheme,
-        iconSet,
-        setIconSet,
-        panelOpen,
-        setPanelOpen,
-      }}
-    >
+    <PreferencesCtx.Provider value={value}>
       {/* Full per-theme token sets, applied via data-theme on <html>. */}
       <style dangerouslySetInnerHTML={{ __html: themesStylesheet() }} />
       {children}

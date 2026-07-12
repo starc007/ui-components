@@ -302,8 +302,10 @@ async function ExampleBlock({
   example: ComponentExample;
 }) {
   const Preview = previews[example.previewKey];
-  const source = await loadSource(example.file);
-  const usage = await loadSource(example.previewFile);
+  const [source, usage] = await Promise.all([
+    loadSource(example.file),
+    loadSource(example.previewFile),
+  ]);
   const installSlug = example.installSlug ?? null;
   const propsDocs = getComponentProps(example.file);
 
@@ -388,8 +390,10 @@ async function DefaultTabs({
 }) {
   const Preview = getPreview(category, slug);
   const previewFile = `components/previews/${category}/${slug}.preview.tsx`;
-  const source = await loadSource(file);
-  const usage = await loadSource(previewFile);
+  const [source, usage] = await Promise.all([
+    loadSource(file),
+    loadSource(previewFile),
+  ]);
 
   return (
     <section id="preview" className="mt-8 scroll-mt-24">

@@ -275,7 +275,7 @@ export function FeedbackWidget({
                             : SPRINKLES.map((s, i) => (
                                 <motion.span
                                   key={`${s.x}-${s.y}`}
-                                  initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                                  initial={{ opacity: 0, scale: 0.4, x: 0, y: 0 }}
                                   animate={{
                                     opacity: [0, 1, 0],
                                     scale: [0, 1, 0.4],

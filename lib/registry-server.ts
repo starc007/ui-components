@@ -222,9 +222,15 @@ async function collectSourceGraph(initialFiles: string[]): Promise<CollectedSour
     const deps = parseDeps(content);
     for (const dep of deps.external) external.add(dep);
 
-    for (const spec of deps.internal) {
+    const resolvedDeps = await Promise.all(
+      deps.internal.map(async (spec) => ({
+        spec,
+        resolved: await resolveSourceImport(spec, rel),
+      })),
+    );
+
+    for (const { spec, resolved } of resolvedDeps) {
       internal.add(spec);
-      const resolved = await resolveSourceImport(spec, rel);
       if (!resolved) {
         throw new Error(`Cannot resolve internal import "${spec}" from ${rel}`);
       }

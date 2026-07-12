@@ -2,7 +2,7 @@
 
 import { useReducedMotion } from "motion/react";
 import type { ComponentType } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ShaderBackground,
   type ShaderBackgroundProps,
@@ -259,16 +259,16 @@ export function ShaderBackgroundPreview() {
   const current = VARIANTS.find((v) => v.id === active) ?? VARIANTS[0];
   const reduce = useReducedMotion();
   const [paused, setPaused] = useState(false);
-  const activeRef = useRef(active);
-  activeRef.current = active;
 
   // Cycles through variants on its own so the preview reads as alive at a
   // glance; pauses on hover/focus so picking a variant manually sticks.
   useEffect(() => {
     if (reduce || paused) return;
     const id = setInterval(() => {
-      const i = VARIANTS.findIndex((v) => v.id === activeRef.current);
-      setActive(VARIANTS[(i + 1) % VARIANTS.length].id);
+      setActive((currentActive) => {
+        const i = VARIANTS.findIndex((v) => v.id === currentActive);
+        return VARIANTS[(i + 1) % VARIANTS.length].id;
+      });
     }, AUTOPLAY_MS);
     return () => clearInterval(id);
   }, [reduce, paused]);

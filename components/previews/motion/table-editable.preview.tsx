@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Switch } from "@/components/motion/switch";
 import { Table, type TableColumn } from "@/components/motion/table";
 
@@ -21,8 +21,8 @@ export function TableEditablePreview() {
     role: "Role",
     team: "Team",
   });
-  const [nextRow, setNextRow] = useState(5);
-  const [nextCol, setNextCol] = useState(1);
+  const nextRow = useRef(5);
+  const nextCol = useRef(1);
   const [editable, setEditable] = useState(true);
 
   const onCellEdit = useCallback(
@@ -39,12 +39,12 @@ export function TableEditablePreview() {
       const at = position === "after" ? index + 1 : index;
       setRows((prev) => {
         const next = [...prev];
-        next.splice(at, 0, { id: `r${nextRow}` });
+        next.splice(at, 0, { id: `r${nextRow.current}` });
         return next;
       });
-      setNextRow((n) => n + 1);
+      nextRow.current += 1;
     },
-    [nextRow],
+    [],
   );
 
   const onDeleteRow = useCallback((rowId: string) => {
@@ -53,18 +53,18 @@ export function TableEditablePreview() {
 
   const onInsertColumn = useCallback(
     (index: number, position: "before" | "after") => {
-      const key = `field${nextCol}`;
+      const key = `field${nextCol.current}`;
       const at = position === "after" ? index + 1 : index;
-      setLabels((prev) => ({ ...prev, [key]: `Field ${nextCol}` }));
+      setLabels((prev) => ({ ...prev, [key]: `Field ${nextCol.current}` }));
       setKeys((prev) => {
         const next = [...prev];
         next.splice(at, 0, key);
         return next;
       });
       setRows((prev) => prev.map((row) => ({ ...row, [key]: "" })));
-      setNextCol((n) => n + 1);
+      nextCol.current += 1;
     },
-    [nextCol],
+    [],
   );
 
   const onColumnRename = useCallback((key: string, value: string) => {

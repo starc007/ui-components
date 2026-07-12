@@ -418,7 +418,6 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
       ),
     [sizes, side, align, gap, panelRadius],
   );
-  geoRef.current = geo;
 
   // Morph the same clip on the goo body and the content, so the whole popover
   // oozes as one and the text reveals with it.
@@ -430,6 +429,7 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
   }, []);
 
   useLayoutEffect(() => {
+    geoRef.current = geo;
     render(geo, progress.get());
   }, [geo, progress, render]);
 

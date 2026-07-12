@@ -164,11 +164,9 @@ export function Tooltip({
       clearTimeout(timer.current);
       timer.current = null;
     }
-    setOpen((wasOpen) => {
-      if (wasOpen) lastHiddenAt = Date.now();
-      return false;
-    });
-  }, []);
+    if (open) lastHiddenAt = Date.now();
+    setOpen(false);
+  }, [open]);
 
   // Keep the tooltip pinned to the trigger while it's open and the page scrolls
   // or resizes (fixed coords are viewport-relative).
@@ -229,10 +227,7 @@ export function Tooltip({
                     initial="initial"
                     animate="animate"
                     exit="exit"
-                    style={{
-                      transformOrigin: transformOrigin[side],
-                      willChange: "transform, opacity",
-                    }}
+                    style={{ transformOrigin: transformOrigin[side] }}
                     className={cn(
                       "block whitespace-nowrap rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-medium text-foreground shadow-lg",
                       className,

@@ -30,27 +30,25 @@ export function useColumnResize<T>({
       e.stopPropagation();
       // Freeze every column to its current pixel width so resizing one only
       // moves the trailing spacer, never the other columns.
-      setWidths((prev) => {
-        const snapshot = { ...prev };
-        for (const column of orderedColumns) {
-          if (snapshot[column.key] == null) {
-            const measured = thRefs.current[column.key]?.getBoundingClientRect()
-              .width;
-            snapshot[column.key] = measured
-              ? Math.round(measured)
-              : minColumnWidth;
-          }
+      const snapshot = { ...widths };
+      for (const column of orderedColumns) {
+        if (snapshot[column.key] == null) {
+          const measured = thRefs.current[column.key]?.getBoundingClientRect()
+            .width;
+          snapshot[column.key] = measured
+            ? Math.round(measured)
+            : minColumnWidth;
         }
-        resizeRef.current = {
-          key,
-          startX: e.clientX,
-          startWidth: snapshot[key],
-        };
-        return snapshot;
-      });
+      }
+      resizeRef.current = {
+        key,
+        startX: e.clientX,
+        startWidth: snapshot[key],
+      };
+      setWidths(snapshot);
       e.currentTarget.setPointerCapture(e.pointerId);
     },
-    [minColumnWidth, orderedColumns, thRefs],
+    [minColumnWidth, orderedColumns, thRefs, widths],
   );
 
   const moveResize = useCallback(

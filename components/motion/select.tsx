@@ -22,6 +22,8 @@ import {
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
+const INSTANT_TRANSITION: Transition = { duration: 0 };
+
 // Spring with bounce powers the unfold/separation; per-property timings in the
 // content choreograph it (see SelectContent). Mirrors bouncy-accordion's feel.
 const CHEVRON_TRANSITION: Transition = { type: "spring", duration: 0.4, bounce: 0.3 };
@@ -181,7 +183,6 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
     : ctx.open
       ? { duration: 0.6, times: [0, 0.4, 1], ease: EASE_OUT }
       : { duration: 0.42, times: [0, 0.5, 1], ease: EASE_OUT };
-  const flatT: Transition = { duration: 0 };
   return (
     <motion.button
       type="button"
@@ -201,10 +202,10 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
         borderBottomRightRadius: isTop ? 12 : kf,
       }}
       transition={{
-        borderTopLeftRadius: isTop ? kfT : flatT,
-        borderTopRightRadius: isTop ? kfT : flatT,
-        borderBottomLeftRadius: isTop ? flatT : kfT,
-        borderBottomRightRadius: isTop ? flatT : kfT,
+        borderTopLeftRadius: isTop ? kfT : INSTANT_TRANSITION,
+        borderTopRightRadius: isTop ? kfT : INSTANT_TRANSITION,
+        borderBottomLeftRadius: isTop ? INSTANT_TRANSITION : kfT,
+        borderBottomRightRadius: isTop ? INSTANT_TRANSITION : kfT,
       }}
       className={cn(
         "relative z-10 flex w-full items-center justify-between gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors",
@@ -292,7 +293,6 @@ export function SelectContent({ className, children }: SelectContentProps) {
   const radiusT: Transition = open
     ? { duration: 0.3, ease: EASE_OUT, delay: 0.14 }
     : { duration: 0.16, ease: EASE_OUT };
-  const instant: Transition = { duration: 0 };
 
   // Items stay mounted (open just animates the panel) so each item's label
   // registration persists — otherwise the trigger would fall back to the
@@ -330,12 +330,12 @@ export function SelectContent({ className, children }: SelectContentProps) {
               height: open
                 ? { type: "spring", duration: 0.42, bounce: 0.14 }
                 : { duration: 0.26, ease: EASE_OUT, delay: 0.14 },
-              marginTop: isTop ? instant : gapT,
-              marginBottom: isTop ? gapT : instant,
-              borderTopLeftRadius: isTop ? instant : radiusT,
-              borderTopRightRadius: isTop ? instant : radiusT,
-              borderBottomLeftRadius: isTop ? radiusT : instant,
-              borderBottomRightRadius: isTop ? radiusT : instant,
+              marginTop: isTop ? INSTANT_TRANSITION : gapT,
+              marginBottom: isTop ? gapT : INSTANT_TRANSITION,
+              borderTopLeftRadius: isTop ? INSTANT_TRANSITION : radiusT,
+              borderTopRightRadius: isTop ? INSTANT_TRANSITION : radiusT,
+              borderBottomLeftRadius: isTop ? radiusT : INSTANT_TRANSITION,
+              borderBottomRightRadius: isTop ? radiusT : INSTANT_TRANSITION,
             }
       }
       style={{

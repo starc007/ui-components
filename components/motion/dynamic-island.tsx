@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -118,12 +119,8 @@ function Slot({
       // property tweens, no delays. Content travels with the shell.
       transition={reduce ? { duration: 0.15 } : CONTENT_SPRING}
       // Anchored to the pill line: content unfurls downward out of it and is
-      // sucked back up into it. will-change pre-promotes the layer so the
-      // first blur/transform pass doesn't rasterize mid-animation.
-      style={{
-        transformOrigin: "top center",
-        willChange: "transform, opacity, filter",
-      }}
+      // sucked back up into it.
+      style={{ transformOrigin: "top center" }}
       className={cn("flex items-center justify-center", className)}
     >
       {children}
@@ -150,9 +147,10 @@ export function DynamicIsland({
   const reduce = useReducedMotion();
   const expanded = view !== null;
   const [sizerRef, size] = useContentSize();
+  const contextValue = useMemo(() => ({ view }), [view]);
 
   return (
-    <IslandContext.Provider value={{ view }}>
+    <IslandContext.Provider value={contextValue}>
       <motion.div
         role="status"
         aria-live="polite"

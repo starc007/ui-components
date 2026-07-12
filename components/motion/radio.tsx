@@ -3,8 +3,10 @@
 import { motion, MotionConfig, useReducedMotion } from "motion/react";
 import {
   createContext,
+  useCallback,
   useContext,
   useId,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -49,14 +51,21 @@ export function RadioGroup({
   const reduce = useReducedMotion();
   const controlled = value !== undefined;
   const current = controlled ? value : internal;
-  const setValue = (next: string) => {
-    if (!controlled) setInternal(next);
-    onValueChange?.(next);
-  };
+  const setValue = useCallback(
+    (next: string) => {
+      if (!controlled) setInternal(next);
+      onValueChange?.(next);
+    },
+    [controlled, onValueChange],
+  );
+  const contextValue = useMemo(
+    () => ({ value: current, setValue, layoutId }),
+    [current, layoutId, setValue],
+  );
 
   return (
     <MotionConfig transition={reduce ? { duration: 0 } : SPRING_LAYOUT}>
-      <RadioCtx.Provider value={{ value: current, setValue, layoutId }}>
+      <RadioCtx.Provider value={contextValue}>
         <div
           role="radiogroup"
           className={cn(

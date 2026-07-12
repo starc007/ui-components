@@ -48,7 +48,9 @@ export function MorphingModal({
         open ? "pointer-events-auto" : "pointer-events-none",
       )}
     >
-      <motion.div
+      <motion.button
+        type="button"
+        aria-label="Close modal"
         initial={false}
         animate={{ opacity: open ? 1 : 0 }}
         transition={{ duration: 0.2, ease: EASE_OUT }}

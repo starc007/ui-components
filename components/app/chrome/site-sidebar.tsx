@@ -20,17 +20,18 @@ function moveFirstItemsToBottom<T>(items: T[], count: number) {
   return [...items.slice(count), ...items.slice(0, count)];
 }
 
+function linkClass(active: boolean) {
+  return cn(
+    "relative block rounded-lg px-3 py-1.5 text-sm transition-colors",
+    active
+      ? "text-foreground font-medium bg-foreground/[0.06]"
+      : "text-muted-foreground hover:text-foreground",
+  );
+}
+
 /** Nav list shared by the desktop sidebar and the mobile bottom sheet. */
 export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
-
-  const linkClass = (active: boolean) =>
-    cn(
-      "relative block rounded-lg px-3 py-1.5 text-sm transition-colors",
-      active
-        ? "text-foreground font-medium bg-foreground/[0.06]"
-        : "text-muted-foreground hover:text-foreground",
-    );
 
   return (
     <nav className="flex flex-col gap-8">

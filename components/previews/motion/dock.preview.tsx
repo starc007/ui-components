@@ -5,20 +5,21 @@ import { useState } from "react";
 import { GithubIcon } from "@/components/app/icons";
 import { Dock, DockItem, DockSeparator } from "@/components/motion/dock";
 
+const ITEMS = [
+  { id: "home", icon: Home, label: "Home" },
+  { id: "mail", icon: Mail, label: "Mail" },
+  { id: "calendar", icon: Calendar, label: "Calendar" },
+  { id: "music", icon: Music, label: "Music" },
+  { id: "discover", icon: Sparkles, label: "Discover" },
+];
+
 export function DockPreview() {
   const [active, setActive] = useState("home");
-  const items = [
-    { id: "home", icon: Home, label: "Home" },
-    { id: "mail", icon: Mail, label: "Mail" },
-    { id: "calendar", icon: Calendar, label: "Calendar" },
-    { id: "music", icon: Music, label: "Music" },
-    { id: "discover", icon: Sparkles, label: "Discover" },
-  ];
 
   return (
     <div className="flex w-full justify-center">
       <Dock>
-        {items.map(({ id, icon: Icon, label }) => (
+        {ITEMS.map(({ id, icon: Icon, label }) => (
           <DockItem
             key={id}
             aria-label={label}

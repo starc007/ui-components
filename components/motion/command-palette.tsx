@@ -189,7 +189,9 @@ export function CommandPalette({
         open ? "pointer-events-auto" : "pointer-events-none",
       )}
     >
-      <motion.div
+      <motion.button
+        type="button"
+        aria-label="Close command palette"
         initial={false}
         animate={{ opacity: open ? 1 : 0 }}
         transition={{ duration: open ? 0.18 : 0.12, ease: EASE_OUT }}

@@ -268,15 +268,15 @@ export function AnimatedToastStack({
   icons,
   renderToast,
 }: AnimatedToastStackProps) {
-  const [mounted, setMounted] = useState(false);
+  const [portalTarget, setPortalTarget] = useState<Element | null>(null);
   const visibleToasts = toasts.slice(-maxVisible);
   const isBottom = position.startsWith("bottom");
   const resolvedPlacement = placement ?? (fixed ? "fixed" : "static");
   const shouldPortal = portal ?? resolvedPlacement === "fixed";
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setPortalTarget(shouldPortal ? (portalRoot ?? document.body) : null);
+  }, [portalRoot, shouldPortal]);
 
   const stack = (
     <ol
@@ -308,12 +308,12 @@ export function AnimatedToastStack({
     </ol>
   );
 
-  if (shouldPortal && !mounted) {
+  if (shouldPortal && !portalTarget) {
     return null;
   }
 
-  if (shouldPortal) {
-    return createPortal(stack, portalRoot ?? document.body);
+  if (shouldPortal && portalTarget) {
+    return createPortal(stack, portalTarget);
   }
 
   return stack;

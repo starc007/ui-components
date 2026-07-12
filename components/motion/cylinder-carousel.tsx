@@ -392,10 +392,10 @@ export function CylinderCarousel({
   const stageHeight = height ?? size;
 
   return (
-    <>
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: custom draggable + keyboard carousel */}
       <div
         ref={stageRef}
+        role="application"
+        aria-roledescription="carousel"
         // biome-ignore lint/a11y/noNoninteractiveTabindex: focusable custom carousel widget
         tabIndex={0}
         onKeyDown={(e) => {
@@ -449,6 +449,5 @@ export function CylinderCarousel({
           </CarouselBall>
         ))}
       </div>
-    </>
   );
 }
