@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
 import { ChevronLeft, ChevronRight, Shield } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import { useMemo, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
@@ -49,26 +49,29 @@ export interface KnockoutBracketProps {
 // Keep CARD_H in sync with the card's internal spacing.
 const CARD_W = 250;
 const CARD_H = 124;
-const GAP_X = 28;
+// Pocket (20) + stem (20) — matches the CSS `]` connector geometry.
+const GAP_X = 40;
 const GAP_Y = 20;
 const COL_W = CARD_W + GAP_X;
 const ROW = CARD_H + GAP_Y;
 const VISIBLE_COLS = 3;
+const CONNECTOR_POCKET = 20;
+const CONNECTOR_STEM = GAP_X - CONNECTOR_POCKET;
 // Tall enough for 44px chevron hit areas without clipping the focus ring.
 const HEADER_H = 44;
 // Breathing room baked into the computed layout so the base column isn't flush
 // against the clip edge and connector nubs aren't shaved off.
-const PAD_X = 16;
+const PAD_X = 8;
 const PAD_Y = 12;
 
-// Bracket reflow needs a heavier, overdamped spring than SPRING_LAYOUT —
-// many cards + connectors + stage height must glide as one piece without
-// bounce. Tuned past critical damping so the settle is a smooth coast.
+// Firmer than SPRING_LAYOUT so the many cards, connectors and stage height
+// glide as one piece; damping just over critical (~1.05) settles with no bounce
+// and no lazy overdamped tail.
 const REFLOW = {
   type: "spring",
-  stiffness: 220,
-  damping: 34,
-  mass: 1.05,
+  stiffness: 260,
+  damping: 32,
+  mass: 0.9,
 } as const;
 
 // Opacity cross-fades a touch ahead of the position spring so columns don't
@@ -80,6 +83,59 @@ const REFLOW_OPACITY = {
 
 const clamp = (n: number, lo: number, hi: number) =>
   Math.min(hi, Math.max(lo, n));
+
+// Column x-offset and window test — shared by the render pass and the memoized
+// layout so the two can't drift. Module-level (stable identity) so the layout
+// memo can call them without widening its dependency list.
+const colX = (r: number, page: number) => PAD_X + (r - page) * COL_W;
+const isInWindow = (r: number, page: number, visibleCols: number) =>
+  r >= page && r < page + visibleCols;
+
+type Connector = {
+  key: string;
+  /** Feeder card right edge — left of the `]` pocket. */
+  x: number;
+  /** Top feeder center Y. */
+  y: number;
+  /** Distance between the two feeder centers. */
+  height: number;
+  visible: boolean;
+};
+
+// CSS `]` pocket + stem: border-y/border-r + a hairline to the child.
+// Transform/opacity only — no SVG path morph, so paging stays flicker-free.
+function BracketConnector({
+  connector,
+  transition,
+}: {
+  connector: Connector;
+  transition: object;
+}) {
+  const { x, y, height, visible } = connector;
+  const geo = visible
+    ? transition
+    : {
+        ...transition,
+        x: { duration: 0 },
+        y: { duration: 0 },
+        height: { duration: 0 },
+      };
+  return (
+    <motion.div
+      aria-hidden="true"
+      initial={false}
+      animate={{ x, y, height, opacity: visible ? 1 : 0 }}
+      transition={geo}
+      className="pointer-events-none absolute left-0 top-0 rounded-r-xl border-y border-r border-border"
+      style={{ width: CONNECTOR_POCKET, willChange: "transform" }}
+    >
+      <span
+        className="absolute left-full top-1/2 h-px bg-border"
+        style={{ width: CONNECTOR_STEM }}
+      />
+    </motion.div>
+  );
+}
 
 function TeamFlag({ code }: { code: string }) {
   const [failed, setFailed] = useState(false);
@@ -246,12 +302,6 @@ export function KnockoutBracket({
     ? { duration: 0 }
     : { ...REFLOW, opacity: REFLOW_OPACITY };
 
-  // Layout is computed, not scrolled. The leftmost visible round (`page`) is the
-  // base and stacks at a fixed rhythm; every later match centers on its feeders,
-  // and rounds behind the window collapse onto their parent match.
-  const xOf = (r: number) => PAD_X + (r - page) * COL_W;
-  const inWindow = (r: number) => r >= page && r < page + visibleCols;
-
   const pageStatus = useMemo(() => {
     const names = rounds
       .slice(page, page + visibleCols)
@@ -261,10 +311,12 @@ export function KnockoutBracket({
     return `Showing ${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
   }, [rounds, page, visibleCols]);
 
-  // Layout is computed, not scrolled — so cards and connectors derive from one
+  // Layout is computed, not scrolled. The leftmost visible round (`page`) is the
+  // base and stacks at a fixed rhythm; every later match centers on its feeders,
+  // and behind rounds spread out (below). Cards and connectors derive from one
   // pass and page together under the shared transition.
   const { cy, containerHeight, connectors } = useMemo(() => {
-    const centers: number[][] = rounds.map((r) => r.matches.map(() => 0));
+    const centers: number[][] = new Array(rounds.length);
     const base = rounds[page];
     centers[page] = base.matches.map((_, i) => PAD_Y + i * ROW + CARD_H / 2);
     for (let r = page + 1; r < rounds.length; r++) {
@@ -272,27 +324,31 @@ export function KnockoutBracket({
         (_, k) => (centers[r - 1][2 * k] + centers[r - 1][2 * k + 1]) / 2,
       );
     }
+    // Behind rounds keep their natural spread (spacing halves each step out,
+    // each match straddling its parent) instead of collapsing, so paging back
+    // slides a formed column in from the left just as paging forward does.
     for (let r = page - 1; r >= 0; r--) {
-      centers[r] = rounds[r].matches.map(
-        (_, i) => centers[r + 1][Math.floor(i / 2)],
-      );
+      const half = ROW / 2 ** (page - r + 1);
+      centers[r] = rounds[r].matches.map((_, i) => {
+        const parent = centers[r + 1][Math.floor(i / 2)];
+        return parent + (i % 2 === 0 ? -half : half);
+      });
     }
 
-    const x = (r: number) => PAD_X + (r - page) * COL_W;
-    const within = (r: number) => r >= page && r < page + visibleCols;
-    const list: { key: string; dA: string; dB: string; visible: boolean }[] =
-      [];
+    const list: Connector[] = [];
     for (let r = 1; r < rounds.length; r++) {
-      const feederRight = x(r) - GAP_X;
-      const midX = x(r) - GAP_X / 2;
-      const childLeft = x(r);
-      const visible = within(r) && within(r - 1);
+      const feederRight = colX(r - 1, page) + CARD_W;
+      const visible =
+        isInWindow(r, page, visibleCols) &&
+        isInWindow(r - 1, page, visibleCols);
       rounds[r].matches.forEach((_, k) => {
-        const childY = centers[r][k];
+        const yTop = centers[r - 1][2 * k];
+        const yBot = centers[r - 1][2 * k + 1];
         list.push({
           key: `${r}-${k}`,
-          dA: `M ${feederRight} ${centers[r - 1][2 * k]} H ${midX} V ${childY} H ${childLeft}`,
-          dB: `M ${feederRight} ${centers[r - 1][2 * k + 1]} H ${midX} V ${childY} H ${childLeft}`,
+          x: feederRight,
+          y: yTop,
+          height: Math.max(0, yBot - yTop),
           visible,
         });
       });
@@ -325,40 +381,53 @@ export function KnockoutBracket({
           {pageStatus}
         </div>
 
-        {/* Header row: chevrons pinned to the ends, round names glide per column.
-            Clip so paging titles enter/exit at the canvas edge, not beyond it. */}
-        <div className="relative overflow-hidden" style={{ height: HEADER_H }}>
+        {/* Only the gliding round titles are clipped (they enter/exit at the
+            canvas edge); the chevron buttons sit outside that clip. */}
+        <div className="relative" style={{ height: HEADER_H }}>
+          <div className="absolute inset-0 overflow-hidden">
+            {rounds.map((round, r) => (
+              <motion.div
+                key={round.name}
+                aria-hidden={isInWindow(r, page, visibleCols) ? undefined : true}
+                initial={false}
+                animate={{
+                  x: colX(r, page),
+                  opacity: isInWindow(r, page, visibleCols) ? 1 : 0,
+                }}
+                transition={transition}
+                className="absolute left-0 top-0 flex h-full items-center justify-center text-sm font-bold text-foreground"
+                style={{ width: CARD_W }}
+              >
+                {round.name}
+              </motion.div>
+            ))}
+          </div>
           {page > 0 && (
             <button
               type="button"
               onClick={() => setPage((p) => clamp(p - 1, 0, maxPage))}
               aria-label="Previous round"
-              className="absolute left-0 top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-foreground/10 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              // Inset by PAD_X so the hover fill clears the scroll clip; 44px
+              // button is the tap target, the inner circle the visible affordance.
+              style={{ left: PAD_X }}
+              className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"
             >
-              <ChevronLeft className="size-5" />
+              <span className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors group-hover:bg-foreground/10 group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring">
+                <ChevronLeft className="size-5" />
+              </span>
             </button>
           )}
-          {rounds.map((round, r) => (
-            <motion.div
-              key={round.name}
-              aria-hidden={inWindow(r) ? undefined : true}
-              initial={false}
-              animate={{ x: xOf(r), opacity: inWindow(r) ? 1 : 0 }}
-              transition={transition}
-              className="absolute left-0 top-0 flex h-full items-center justify-center text-sm font-bold text-foreground"
-              style={{ width: CARD_W }}
-            >
-              {round.name}
-            </motion.div>
-          ))}
           {page < maxPage && (
             <button
               type="button"
               onClick={() => setPage((p) => clamp(p + 1, 0, maxPage))}
               aria-label="Next round"
-              className="absolute right-0 top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-foreground/10 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              style={{ right: PAD_X }}
+              className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"
             >
-              <ChevronRight className="size-5" />
+              <span className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors group-hover:bg-foreground/10 group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring">
+                <ChevronRight className="size-5" />
+              </span>
             </button>
           )}
         </div>
@@ -372,41 +441,16 @@ export function KnockoutBracket({
           transition={transition}
           style={{ width: containerWidth }}
         >
-          <svg
-            aria-hidden="true"
-            className="pointer-events-none absolute left-0 top-0 text-border"
-            width={containerWidth}
-            height={containerHeight}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-          >
-            {connectors.map((c) => {
-              // Off-window connectors snap their path instead of morphing it — the
-              // shape is invisible anyway, so only the visible pairs pay for the
-              // (CPU-bound) `d` interpolation.
-              const pathTransition = c.visible
-                ? transition
-                : { ...transition, d: { duration: 0 } };
-              return (
-                <g key={c.key}>
-                  <motion.path
-                    initial={false}
-                    animate={{ d: c.dA, opacity: c.visible ? 1 : 0 }}
-                    transition={pathTransition}
-                  />
-                  <motion.path
-                    initial={false}
-                    animate={{ d: c.dB, opacity: c.visible ? 1 : 0 }}
-                    transition={pathTransition}
-                  />
-                </g>
-              );
-            })}
-          </svg>
+          {connectors.map((c) => (
+            <BracketConnector
+              key={c.key}
+              connector={c}
+              transition={transition}
+            />
+          ))}
 
           {rounds.map((round, r) => {
-            const roundVisible = inWindow(r);
+            const roundVisible = isInWindow(r, page, visibleCols);
             return (
               <ul
                 key={round.name}
@@ -420,7 +464,7 @@ export function KnockoutBracket({
                     aria-label={matchLabel(round.name, match)}
                     initial={false}
                     animate={{
-                      x: xOf(r),
+                      x: colX(r, page),
                       y: cy[r][k] - CARD_H / 2,
                       opacity: roundVisible ? 1 : 0,
                     }}
