@@ -10,6 +10,12 @@ export function ProCard() {
       <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-success">
         Limited Offer - Extra 30% off
       </p>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Use code{" "}
+        <code className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono font-semibold text-foreground">
+          BEUIPRO
+        </code>
+      </p>
       <h2
         id="beui-pro-card-title"
         className="mt-2 text-xl font-semibold leading-tight tracking-tight text-foreground"
