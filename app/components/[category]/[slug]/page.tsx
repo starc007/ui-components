@@ -21,11 +21,13 @@ import {
 } from "@/components/motion/tabs";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { ComponentCard } from "@/components/app/docs/component-card";
+import { CopyPage } from "@/components/app/docs/copy-page";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { getPreview, previews } from "@/components/previews";
 import { pageUrlFor, withSignature } from "@/lib/signature";
 import { readSourceFile } from "@/lib/source-files";
 import { getComponentProps } from "@/lib/props-extractor";
+import { componentDates } from "@/lib/component-dates";
 import {
   breadcrumbJsonLd,
   componentJsonLd,
@@ -134,6 +136,7 @@ export default async function ComponentPage({
   if (!cat || !comp) notFound();
   const hasVariantInstallCommands =
     comp.examples?.some((example) => example.installSlug) ?? false;
+  const dates = componentDates(cat.slug, comp.slug);
   const related = relatedComponents(cat.slug, comp.slug, 3);
   const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
   const variantNavItems: PageNavItem[] =
@@ -205,14 +208,30 @@ export default async function ComponentPage({
             <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
             <span className="font-medium text-foreground">{comp.name}</span>
           </nav>
-          <div className="mt-4 flex items-center gap-3">
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-              {comp.name}
-            </h1>
-            {comp.badge === "new" ? <NewBadge className="mt-1" /> : null}
+          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+                {comp.name}
+              </h1>
+              {comp.badge === "new" ? <NewBadge className="mt-1" /> : null}
+            </div>
+            <CopyPage
+              pageUrl={pageUrlFor(cat.slug, comp.slug)}
+              markdownPath={`/components/${cat.slug}/${comp.slug}.md`}
+              componentName={comp.name}
+            />
           </div>
           <p className="mt-2 max-w-2xl text-muted-foreground">
             {comp.description}
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Updated{" "}
+            <time dateTime={dates.updatedAt}>
+              {new Intl.DateTimeFormat("en", {
+                dateStyle: "medium",
+                timeZone: "UTC",
+              }).format(new Date(`${dates.updatedAt}T00:00:00Z`))}
+            </time>
           </p>
         </div>
 

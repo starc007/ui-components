@@ -1,4 +1,5 @@
 import type { JsonLdSchema } from "@/components/app/analytics/json-ld";
+import { componentDates } from "@/lib/component-dates";
 import {
   type CategoryEntry,
   type ComponentEntry,
@@ -139,6 +140,7 @@ export function componentJsonLd(
   comp: ComponentEntry,
 ): JsonLdSchema {
   const url = abs(`/components/${cat.slug}/${comp.slug}`);
+  const dates = componentDates(cat.slug, comp.slug);
   return {
     "@context": "https://schema.org",
     "@type": "TechArticle",
@@ -150,13 +152,21 @@ export function componentJsonLd(
     image: abs(`/api/og?component=${comp.slug}`),
     inLanguage: "en",
     isPartOf: { "@id": `${SITE}/#website` },
-    author: { "@type": "Person", name: AUTHOR },
+    datePublished: dates.publishedAt,
+    dateModified: dates.updatedAt,
+    author: {
+      "@type": "Person",
+      name: AUTHOR,
+      url: "https://saura3h.xyz",
+      sameAs: "https://github.com/starc007",
+    },
     publisher: { "@id": `${SITE}/#org` },
     about: {
       "@type": "SoftwareSourceCode",
       name: comp.name,
       description: comp.description,
       codeRepository: "https://github.com/starc007/ui-components",
+      license: "https://github.com/starc007/ui-components/blob/main/LICENSE",
       programmingLanguage: "TypeScript",
       runtimePlatform: "React",
       codeSampleType: "full (compile ready)",

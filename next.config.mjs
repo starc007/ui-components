@@ -83,6 +83,14 @@ const LEGACY_COMPONENT_REDIRECTS = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async rewrites() {
+    return [
+      {
+        source: "/components/:category/:slug.md",
+        destination: "/r/:slug.md?category=:category",
+      },
+    ];
+  },
   async redirects() {
     return [
       ...BLOCK_COMPONENTS.map((slug) => ({

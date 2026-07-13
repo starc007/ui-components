@@ -2,6 +2,12 @@ import type { MetadataRoute } from "next";
 import { SITE_URL as SITE } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
+  const searchCrawlerRule = (userAgent: string) => ({
+    userAgent,
+    allow: ["/", "/api/og"],
+    disallow: ["/api/"],
+  });
+
   return {
     rules: [
       {
@@ -14,6 +20,8 @@ export default function robots(): MetadataRoute.Robots {
         // crawlable so bots can read its X-Robots-Tag: noindex directive.
         disallow: ["/api/"],
       },
+      searchCrawlerRule("OAI-SearchBot"),
+      searchCrawlerRule("ChatGPT-User"),
     ],
     sitemap: `${SITE}/sitemap.xml`,
     host: SITE,

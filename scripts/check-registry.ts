@@ -1,4 +1,5 @@
 import { allComponents } from "../lib/registry";
+import { componentDates } from "../lib/component-dates";
 import { allShadcnTargets, buildEntry, buildShadcnItem } from "../lib/registry-server";
 import { readSourceFile } from "../lib/source-files";
 
@@ -9,6 +10,12 @@ const installSlugLabels = new Map<string, string[]>();
 for (const component of allComponents()) {
   const label = `${component.category.slug}/${component.slug}`;
   slugLabels.set(component.slug, [...(slugLabels.get(component.slug) ?? []), label]);
+
+  try {
+    componentDates(component.category.slug, component.slug);
+  } catch (error) {
+    errors.push(`${label}: ${(error as Error).message}`);
+  }
 
   try {
     const entry = await buildEntry(component.category.slug, component.slug);
