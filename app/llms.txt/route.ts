@@ -14,11 +14,12 @@ export async function GET() {
   lines.push(`- Registry index (JSON): ${idx.endpoints.index}`);
   lines.push(`- Component detail (JSON): ${idx.endpoints.detail}`);
   lines.push(`- Raw source (text/plain): ${idx.endpoints.raw}`);
+  lines.push(`- Component Markdown: ${idx.endpoints.markdown}`);
   lines.push("");
   lines.push("## Components");
   lines.push("");
   for (const c of idx.components) {
-    lines.push(`- [${c.name}](${c.detail_url}): ${c.description}`);
+    lines.push(`- [${c.name}](${c.markdown_url}): ${c.description}`);
   }
   lines.push("");
   lines.push("## Usage for agents");

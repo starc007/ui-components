@@ -1,4 +1,5 @@
 import { allComponents, findCategory, registry } from "@/lib/registry";
+import { componentDates } from "@/lib/component-dates";
 import { pageUrlFor, withSignature } from "@/lib/signature";
 import { SITE_URL } from "@/lib/site";
 import { readOptionalSourceFile, readSourceFile, resolveSourceImport, type SourceFile } from "@/lib/source-files";
@@ -18,6 +19,9 @@ export type RegistryEntry = {
   detail_url: string;
   raw_url: string;
   page_url: string;
+  markdown_url: string;
+  published_at: string;
+  updated_at: string;
   dependencies: string[];
   internal: string[];
   files: RegistryFile[];
@@ -257,6 +261,7 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
   const previewGraph = previewSource ? await collectSourceGraph([previewPath]) : null;
   const componentFileSet = new Set(requiredFiles);
   const pageUrl = pageUrlFor(categorySlug, comp.pageSlug);
+  const dates = componentDates(categorySlug, comp.pageSlug);
   const files = mergeRegistryFiles(componentGraph.files, previewGraph?.files ?? [], componentFileSet, previewPath, pageUrl);
 
   return {
@@ -268,6 +273,9 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
     detail_url: `${SITE_URL}/r/${slug}`,
     raw_url: `${SITE_URL}/r/${slug}/raw`,
     page_url: `${SITE_URL}/components/${categorySlug}/${comp.pageSlug}`,
+    markdown_url: `${SITE_URL}/components/${categorySlug}/${comp.pageSlug}.md`,
+    published_at: dates.publishedAt,
+    updated_at: dates.updatedAt,
     dependencies: Array.from(new Set([...componentGraph.external, ...(previewGraph?.external ?? [])])).sort(),
     internal: Array.from(new Set([...componentGraph.internal, ...(previewGraph?.internal ?? [])])).sort(),
     files,
@@ -364,21 +372,28 @@ export async function buildIndex() {
       directory_item: `${SITE_URL}/{slug}.json`,
       detail: `${SITE_URL}/r/{slug}`,
       raw: `${SITE_URL}/r/{slug}/raw`,
+      markdown: `${SITE_URL}/components/{category}/{slug}.md`,
     },
     categories: registry.map((c) => ({
       slug: c.slug,
       name: c.name,
       description: c.description,
     })),
-    components: allComponents().map((c) => ({
-      slug: c.slug,
-      name: c.name,
-      description: c.description,
-      category: c.category.slug,
-      detail_url: `${SITE_URL}/r/${c.slug}`,
-      raw_url: `${SITE_URL}/r/${c.slug}/raw`,
-      page_url: `${SITE_URL}/components/${c.category.slug}/${c.slug}`,
-    })),
+    components: allComponents().map((c) => {
+      const dates = componentDates(c.category.slug, c.slug);
+      return {
+        slug: c.slug,
+        name: c.name,
+        description: c.description,
+        category: c.category.slug,
+        published_at: dates.publishedAt,
+        updated_at: dates.updatedAt,
+        detail_url: `${SITE_URL}/r/${c.slug}`,
+        raw_url: `${SITE_URL}/r/${c.slug}/raw`,
+        page_url: `${SITE_URL}/components/${c.category.slug}/${c.slug}`,
+        markdown_url: `${SITE_URL}/components/${c.category.slug}/${c.slug}.md`,
+      };
+    }),
   };
 }
 
