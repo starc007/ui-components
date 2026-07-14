@@ -578,6 +578,22 @@ export const registry: CategoryEntry[] = [
     description: "Composed, product-ready widgets built from beUI motion primitives.",
     components: [
       {
+        slug: "notification-stack",
+        name: "Notification Stack",
+        description:
+          "Compact notification cards that spring from a stacked summary into a readable list on hover, focus or tap.",
+        file: "components/motion/notification-stack.tsx",
+        badge: "new",
+        launchedAt: "2026-07-14",
+        keywords: [
+          "notification stack react",
+          "hover notification cards",
+          "animated notification list",
+          "stacked cards react",
+          "notification center component",
+        ],
+      },
+      {
         slug: "knockout-bracket",
         name: "Knockout Bracket",
         description: "Google-style tournament bracket that pages one round at a time — the leftmost round stacks compactly while later rounds center between their feeder matches, with cards, elbow connectors, headers and container height animating to every new layout.",

@@ -68,6 +68,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
+| `notification-stack` | `components/motion/notification-stack.tsx` | Compact notification cards that spring from a stacked summary into a readable list on hover, focus or tap |
 | `swap` | `components/motion/swap.tsx` + `swap/` | Cross-chain swap widget with chain/token selectors and morphing views |
 | `dynamic-island` | `components/motion/dynamic-island.tsx` | iOS-style island pill that morphs between live activity views |
 | `command-palette` | `components/motion/command-palette.tsx` | ⌘K palette with fuzzy filter and spring-animated active row |
