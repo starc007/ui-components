@@ -63,7 +63,7 @@ export function Hero() {
         className="mt-8 flex flex-wrap items-center justify-center gap-3"
       >
         <RainbowCta
-          href="https://pro.beui.dev"
+          href="https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=hero"
           target="_blank"
           rel="noreferrer noopener"
           shape="pill"

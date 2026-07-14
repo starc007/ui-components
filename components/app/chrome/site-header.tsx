@@ -128,7 +128,7 @@ export function SiteHeader({
               Sponsors
             </Link>
             <RainbowCta
-              href="https://pro.beui.dev"
+              href="https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=navbar"
               target="_blank"
               rel="noreferrer noopener"
               shape="pill"
@@ -144,7 +144,7 @@ export function SiteHeader({
         <nav className="flex items-center gap-2">
           <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 lg:w-56" />
           <RainbowCta
-            href="https://pro.beui.dev"
+            href="https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=navbar"
             target="_blank"
             rel="noreferrer noopener"
             shape="pill"

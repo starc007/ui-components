@@ -119,7 +119,7 @@ export function SiteFooter() {
             <ul className="space-y-2.5">
               <li>
                 <Link
-                  href="https://pro.beui.dev"
+                  href="https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=footer"
                   target="_blank"
                   rel="noreferrer noopener"
                   className="text-sm font-medium text-accent transition-colors hover:text-accent/80"
