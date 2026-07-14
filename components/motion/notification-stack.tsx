@@ -305,7 +305,7 @@ export function NotificationStack({
         >
           <span
             className={cn(
-              "grid h-8 w-8 shrink-0 place-items-center rounded-full bg-destructive text-xs font-medium text-primary-foreground",
+              "grid size-7 shrink-0 place-items-center rounded-full bg-orange-600 text-xs font-medium text-white shadow-[inset_0_1px_2px_rgb(0_0_0/0.2),inset_0_-1px_0_rgb(255_255_255/0.16)] dark:bg-orange-500",
               classNames?.count,
             )}
           >
