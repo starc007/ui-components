@@ -245,7 +245,7 @@ export function NotificationStack({
           layout
           initial={false}
           transition={backgroundTransition}
-          className="absolute inset-0 rounded-3xl bg-muted/70"
+          className="absolute inset-0 rounded-3xl bg-muted"
         />
         <span
           className={cn(

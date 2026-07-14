@@ -49,9 +49,10 @@ export interface ActionSwapIconProps {
 }
 
 const BLUR_TRANSITION = { duration: 0.2, ease: "easeInOut" } as const;
-const ROLL_TRANSITION = { duration: 0.24, ease: EASE_OUT } as const;
+const ROLL_TRANSITION = SPRING_SWAP;
+const ROLL_EXIT_TRANSITION = { duration: 0.14, ease: EASE_OUT } as const;
 const SWAP_BLUR = "blur(8px)";
-const ROLL_BLUR = "blur(6px)";
+const ROLL_BLUR = "blur(3px)";
 
 // Cascade rolls the label one letter at a time, left to right. The leaving
 // and landing strings overlap as independent layers (no shared cells), so
@@ -92,7 +93,7 @@ const TEXT_VARIANTS: Record<CoreAnimation, Variants> = {
     },
   },
   roll: {
-    initial: { opacity: 0, y: "115%", filter: ROLL_BLUR },
+    initial: { opacity: 0, y: "90%", filter: ROLL_BLUR },
     animate: {
       opacity: 1,
       y: "0%",
@@ -101,9 +102,9 @@ const TEXT_VARIANTS: Record<CoreAnimation, Variants> = {
     },
     exit: {
       opacity: 0,
-      y: "-115%",
+      y: "-90%",
       filter: ROLL_BLUR,
-      transition: { duration: 0.18, ease: "easeInOut" },
+      transition: ROLL_EXIT_TRANSITION,
     },
   },
 };
@@ -125,7 +126,7 @@ const ICON_VARIANTS: Record<CoreAnimation, Variants> = {
     },
   },
   roll: {
-    initial: { opacity: 0, y: 16, filter: ROLL_BLUR },
+    initial: { opacity: 0, y: 12, filter: ROLL_BLUR },
     animate: {
       opacity: 1,
       y: 0,
@@ -134,9 +135,9 @@ const ICON_VARIANTS: Record<CoreAnimation, Variants> = {
     },
     exit: {
       opacity: 0,
-      y: -16,
+      y: -12,
       filter: ROLL_BLUR,
-      transition: { duration: 0.18, ease: "easeInOut" },
+      transition: ROLL_EXIT_TRANSITION,
     },
   },
 };
