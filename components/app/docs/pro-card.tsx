@@ -23,7 +23,7 @@ export function ProCard() {
         Premium motion components and blocks for React and Next.js.
       </p>
       <RainbowCta
-        href="https://pro.beui.dev"
+        href="https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=component_sidebar"
         target="_blank"
         rel="noreferrer noopener"
         className="mt-5"
