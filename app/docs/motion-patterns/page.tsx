@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { MotionPatterns } from "./motion-patterns";
 
 export const metadata: Metadata = {
-  title: "Motion Patterns",
+  title: "Motion Guides",
   description:
-    "The motion tokens and patterns behind beUI: easing, springs and timing used across every component.",
+    "Practical motion guidance for React interfaces: when to animate, which beUI token to use, timing ranges, reduced motion, and copy-ready patterns.",
   alternates: {
     canonical: "/docs/motion-patterns",
   },
   openGraph: {
-    title: "Motion Patterns · beUI",
+    title: "Motion Guides · beUI",
     description:
-      "The motion tokens and patterns behind beUI: easing, springs and timing used across every component.",
+      "Practical guidance for purposeful animation, timing, easing, springs, and accessible motion in React interfaces.",
     url: "/docs/motion-patterns",
     type: "article",
     siteName: "beUI",
@@ -19,19 +19,24 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Motion Patterns · beUI",
+    title: "Motion Guides · beUI",
     images: ["/api/og"],
   },
 };
 
 export default function MotionPatternsPage() {
   return (
-    <div className="max-w-4xl">
-      <h1 className="font-display text-4xl uppercase tracking-tight text-foreground">
-        Motion Patterns
+    <div className="w-full">
+      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+        beUI motion system
+      </p>
+      <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+        Motion that explains, not distracts.
       </h1>
-      <p className="mt-3 max-w-2xl text-muted-foreground">
-        Small cards for quick scanning. Open one to see the rule, example and what to avoid.
+      <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
+        A practical guide to deciding when something should move, choosing the
+        right token, and shipping motion that stays fast, coherent, and
+        accessible.
       </p>
 
       <MotionPatterns />
