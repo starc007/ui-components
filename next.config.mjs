@@ -1,6 +1,7 @@
 // Block source files still live under components/motion. Keep inferred and
 // historical motion-category URLs pointed at their public block docs pages.
 const BLOCK_COMPONENTS = [
+  "infinite-masonry",
   "swap",
   "dynamic-island",
   "command-palette",
@@ -83,6 +84,14 @@ const LEGACY_COMPONENT_REDIRECTS = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
+  },
   async rewrites() {
     return [
       {

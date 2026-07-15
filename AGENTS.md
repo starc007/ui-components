@@ -68,6 +68,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
+| `infinite-masonry` | `components/motion/infinite-masonry.tsx` | Responsive virtualized masonry with measured variable-height cards, automatic lanes and infinite loading near the scroll boundary |
 | `notification-stack` | `components/motion/notification-stack.tsx` | Compact notification cards that spring from a stacked summary into a readable list on hover, focus or tap |
 | `swap` | `components/motion/swap.tsx` + `swap/` | Cross-chain swap widget with chain/token selectors and morphing views |
 | `dynamic-island` | `components/motion/dynamic-island.tsx` | iOS-style island pill that morphs between live activity views |
