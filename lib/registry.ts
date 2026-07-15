@@ -578,6 +578,22 @@ export const registry: CategoryEntry[] = [
     description: "Composed, product-ready widgets built from beUI motion primitives.",
     components: [
       {
+        slug: "infinite-masonry",
+        name: "Infinite Masonry",
+        description:
+          "Responsive virtualized masonry that measures variable-height cards and loads more data as the user nears the end.",
+        file: "components/motion/infinite-masonry.tsx",
+        badge: "new",
+        launchedAt: "2026-07-15",
+        keywords: [
+          "react masonry",
+          "infinite scroll masonry",
+          "virtualized masonry",
+          "masonry grid react",
+          "infinite gallery",
+        ],
+      },
+      {
         slug: "notification-stack",
         name: "Notification Stack",
         description:
