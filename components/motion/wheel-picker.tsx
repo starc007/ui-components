@@ -10,6 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { createTickPlayer } from "@/lib/tick-sound";
 import { cn } from "@/lib/utils";
 
 export type WheelPickerOption = string | { label: string; value: string };
@@ -24,6 +25,8 @@ export interface WheelPickerProps {
   /** Row height in px. Default 36. */
   itemHeight?: number;
   disabled?: boolean;
+  /** Play a short tick each time the selected value changes. Default false. */
+  sound?: boolean;
   className?: string;
   "aria-label"?: string;
 }
@@ -62,6 +65,7 @@ export function WheelPicker({
   visibleCount = 5,
   itemHeight = 36,
   disabled = false,
+  sound = false,
   className,
   "aria-label": ariaLabel,
 }: WheelPickerProps) {
@@ -107,6 +111,8 @@ export function WheelPicker({
   const scroll = useRef(indexOf(currentValue));
   const raf = useRef(0);
   const emitted = useRef(currentValue);
+  const tickPlayer = useRef<ReturnType<typeof createTickPlayer> | null>(null);
+  const lastTick = useRef(indexOf(currentValue));
 
   const paint = useCallback(
     (s: number) => {
@@ -140,15 +146,37 @@ export function WheelPicker({
     [radius, itemAngle, hideBeyond],
   );
 
+  const getPlayer = useCallback(() => {
+    if (!tickPlayer.current) tickPlayer.current = createTickPlayer();
+    return tickPlayer.current;
+  }, []);
+
   const emit = useCallback(
     (i: number) => {
       const v = optionValue(options[clamp(i, 0, last)]);
       if (v === emitted.current) return;
       emitted.current = v;
+      // Reduced motion has no drum/glide path to tick from — it's an
+      // onClick straight into emit, so the tick lives here instead.
+      if (sound && reduce) getPlayer().play();
       if (!controlled) setInternal(v);
       onValueChange?.(v);
     },
-    [options, last, controlled, onValueChange],
+    [options, last, controlled, onValueChange, sound, reduce, getPlayer],
+  );
+
+  // Drum path: fires a tick whenever the nearest row changes, independent of
+  // `emit` (which only fires on settle during a glide/fling, not per row
+  // crossed). Gated on `!reduce` since the reduced render never calls this.
+  const maybeTick = useCallback(
+    (pos: number) => {
+      if (!sound || reduce) return;
+      const row = clamp(Math.round(pos), 0, last);
+      if (row === lastTick.current) return;
+      lastTick.current = row;
+      getPlayer().play();
+    },
+    [sound, reduce, last, getPlayer],
   );
 
   const stop = useCallback(() => cancelAnimationFrame(raf.current), []);
@@ -167,6 +195,7 @@ export function WheelPicker({
       if (!dist || duration <= 0) {
         scroll.current = to;
         paint(to);
+        maybeTick(to);
         emit(to);
         return;
       }
@@ -176,16 +205,18 @@ export function WheelPicker({
         if (p >= 1) {
           scroll.current = to;
           paint(to);
+          maybeTick(to);
           emit(to);
           return;
         }
         scroll.current = from + dist * ease(p);
         paint(scroll.current);
+        maybeTick(scroll.current);
         raf.current = requestAnimationFrame(tick);
       };
       raf.current = requestAnimationFrame(tick);
     },
-    [stop, paint, emit],
+    [stop, paint, emit, maybeTick],
   );
 
   // Project where a flick of `velocity` (rows/ms) coasts to, snap to a row.
@@ -264,10 +295,11 @@ export function WheelPicker({
         else if (next > last) next = last + (next - last) * 0.3;
         scroll.current = next;
         paint(next);
+        maybeTick(next);
         emit(Math.round(clamp(next, 0, last)));
       });
     },
-    [itemHeight, last, paint, emit],
+    [itemHeight, last, paint, emit, maybeTick],
   );
   const endDrag = useCallback(() => {
     const d = drag.current;
@@ -342,13 +374,14 @@ export function WheelPicker({
       const next = clamp(scroll.current + px * WHEEL_SENS, 0, last);
       scroll.current = next;
       paint(next);
+      maybeTick(next);
       emit(Math.round(next));
       if (wheelSnap.current) clearTimeout(wheelSnap.current);
       wheelSnap.current = setTimeout(() => {
         glide(clamp(Math.round(scroll.current), 0, last), 240, easeOutBack);
       }, WHEEL_SETTLE);
     },
-    [disabled, reduce, last, paint, emit, stop, glide],
+    [disabled, reduce, last, paint, emit, stop, glide, maybeTick],
   );
 
   const onKeyDown = useCallback(
@@ -387,6 +420,7 @@ export function WheelPicker({
       cancelAnimationFrame(raf.current);
       cancelAnimationFrame(dragFrame.current);
       if (wheelSnap.current) clearTimeout(wheelSnap.current);
+      tickPlayer.current?.dispose();
     },
     [],
   );
