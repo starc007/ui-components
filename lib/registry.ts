@@ -92,9 +92,12 @@ export const registry: CategoryEntry[] = [
         slug: "expanding-arrow-button",
         name: "Animated CTA Buttons",
         description:
-          "Expressive call-to-action buttons with expanding directional motion and press-and-hold confirmation.",
+          "Expressive call-to-action buttons with expanding, hold, and slide interactions.",
         file: "components/motion/expanding-arrow-button.tsx",
-        extraFiles: ["components/motion/hold-action-button.tsx"],
+        extraFiles: [
+          "components/motion/hold-action-button.tsx",
+          "components/motion/slide-action-button.tsx",
+        ],
         badge: "new",
         launchedAt: "2026-07-16",
         examples: [
@@ -118,6 +121,17 @@ export const registry: CategoryEntry[] = [
             previewKey: "motion/hold-action-button",
             previewFile:
               "components/previews/motion/hold-action-button.preview.tsx",
+          },
+          {
+            slug: "slide-action",
+            name: "Slide Action Button",
+            description:
+              "Drag the thumb to the end to confirm an action; release early to spring back.",
+            installSlug: "slide-action-button",
+            file: "components/motion/slide-action-button.tsx",
+            previewKey: "motion/slide-action-button",
+            previewFile:
+              "components/previews/motion/slide-action-button.preview.tsx",
           },
         ],
       },
