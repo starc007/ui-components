@@ -26,7 +26,10 @@ export function TestimonialCard({
 
   return (
     <a
-      href={`https://x.com/${testimonial.user.username}/status/${testimonial.id}`}
+      href={
+        testimonial.url ??
+        `https://x.com/${testimonial.user.username}/status/${testimonial.id}`
+      }
       target="_blank"
       rel="noreferrer noopener"
       className={cn(

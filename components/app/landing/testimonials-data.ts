@@ -1,5 +1,6 @@
 export type Testimonial = {
   id: string;
+  url?: string;
   text: string;
   user: {
     name: string;
@@ -10,6 +11,50 @@ export type Testimonial = {
 };
 
 export const TESTIMONIALS = [
+  {
+    id: "2077284160578941335",
+    text: "@saurra3h crazy sick ser.",
+    user: {
+      name: "ajeet patel",
+      username: "Iampatelajeet",
+      avatar:
+        "https://pbs.twimg.com/profile_images/2073764792356212736/0Ueie-5y_200x200.jpg",
+      verified: true,
+    },
+  },
+  {
+    id: "2074173881599025299",
+    text: "@saurra3h love the motion",
+    user: {
+      name: "izayl",
+      username: "izayl_",
+      avatar:
+        "https://pbs.twimg.com/profile_images/1658144277288095744/2VpFVWpR_200x200.jpg",
+      verified: false,
+    },
+  },
+  {
+    id: "2077378979590492457",
+    text: "@saurra3h huge fan of this library 🙌",
+    user: {
+      name: "Adithya Krishna",
+      username: "adii_kris",
+      avatar:
+        "https://pbs.twimg.com/profile_images/2071594961775321088/ItLcm5aK_200x200.jpg",
+      verified: true,
+    },
+  },
+  {
+    id: "Da2GeFtkT5L",
+    url: "https://www.threads.com/@treshnanda/post/Da2GeFtkT5L",
+    text: "Indeed, my favorite component library right now! Thanks for releasing such an amazing component library bro!",
+    user: {
+      name: "Nanda",
+      username: "treshnanda",
+      avatar: "https://unavatar.io/threads/treshnanda",
+      verified: false,
+    },
+  },
   {
     id: "2070915664668512304",
     text: "Really like the animations throughout @saurra3h's ui-components.\n\nA lot of the components have smooth, thoughtfully designed interactions.",
