@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Switch } from "@/components/motion/switch";
 import { WheelPicker } from "@/components/motion/wheel-picker";
 
 const MONTHS = [
@@ -27,6 +28,7 @@ export function WheelPickerPreview() {
   const [month, setMonth] = useState("June");
   const [year, setYear] = useState("2004");
   const [day, setDay] = useState("9");
+  const [sound, setSound] = useState(false);
 
   const monthIndex = MONTHS.indexOf(month);
   const dayCount = daysIn(monthIndex, Number(year));
@@ -54,6 +56,7 @@ export function WheelPickerPreview() {
           className="w-32 border-0 bg-transparent"
           visibleCount={7}
           itemHeight={42}
+          sound={sound}
           aria-label="Month"
         />
         <WheelPicker
@@ -63,6 +66,7 @@ export function WheelPickerPreview() {
           className="w-14 border-0 bg-transparent"
           visibleCount={7}
           itemHeight={42}
+          sound={sound}
           aria-label="Day"
         />
         <WheelPicker
@@ -72,9 +76,16 @@ export function WheelPickerPreview() {
           className="w-20 border-0 bg-transparent"
           visibleCount={7}
           itemHeight={42}
+          sound={sound}
           aria-label="Year"
         />
       </div>
+      <Switch
+        checked={sound}
+        onCheckedChange={setSound}
+        label="Tick sound"
+        className="origin-left scale-[0.85] [&_label]:text-sm"
+      />
     </div>
   );
 }
