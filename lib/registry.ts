@@ -89,6 +89,15 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "expanding-arrow-button",
+        name: "Expanding Arrow Button",
+        description:
+          "A directional CTA whose accent tile expands into an animated dotted-arrow trail on hover or focus.",
+        file: "components/motion/expanding-arrow-button.tsx",
+        badge: "new",
+        launchedAt: "2026-07-16",
+      },
+      {
         slug: "marquee",
         name: "Marquee",
         description: "Infinite horizontal or vertical scroll with pause-on-hover.",
