@@ -6,10 +6,10 @@
 const DURATION = 0.02; // seconds, total click length
 const ATTACK = 0.001; // seconds, near-instant onset
 const DECAY_TAU = 0.006; // seconds, exponential decay time constant
-const FILTER_FREQ = 2200; // Hz, bandpass center
+const FILTER_FREQ = 4000; // Hz, bandpass center
 const FILTER_Q = 1;
 const MASTER_GAIN = 0.12;
-const DETUNE_RANGE = 40; // cents, ± random pitch variation between ticks
+const DETUNE_RANGE = 80; // cents, ± random pitch variation between ticks
 
 type AudioContextCtor = typeof AudioContext;
 
