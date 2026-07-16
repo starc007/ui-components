@@ -1,45 +1,74 @@
 import type { ReactElement } from "react";
+import { SITE_URL } from "@/lib/site";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
-const BG = "#0a0a0a";
-const FG = "#fafafa";
-const MUTED = "#8a8a8a";
-const HAIRLINE = "rgba(255,255,255,0.12)";
-const LOGO_SRC = "https://beui.dev/beui-mark.png";
+const FG = "#17151f";
+const MUTED = "rgba(23,21,31,0.66)";
+const LOGO_SRC = `${SITE_URL}/beui-mark.png`;
+
+export type OgVariant = "home" | "category" | "component";
 
 type OgOptions = {
   title?: string;
   description?: string;
   label?: string;
   command?: string;
+  variant?: OgVariant;
+  backgroundSrc?: string;
+  logoSrc?: string;
 };
 
-// Shared OG canvas for the homepage file route and the dynamic /api/og route.
-// Monochrome and text-led: real logo mark, no accent color, no gradients.
-// Satori-safe styles only (flexbox; every multi-child node sets display:flex).
+function titleSize(title: string) {
+  if (title.length <= 12) return 108;
+  if (title.length <= 22) return 94;
+  if (title.length <= 34) return 82;
+  return 70;
+}
+
+// Shared Satori-safe OG canvas for the homepage and dynamic social cards.
+// The shader is exported to a static image so edge rendering stays deterministic.
 export function ogImage({
-  title = "beUI",
-  description = "The motion toolkit for React & Next.js. Built on Framer Motion and Tailwind.",
+  title = "The motion toolkit for React & Next.js",
+  description = "Free, open-source motion components with the source included.",
   label = "Motion components",
   command = "npx shadcn add @beui/...",
+  variant = "home",
+  backgroundSrc = `${SITE_URL}/og/grainient-${variant}.jpg`,
+  logoSrc = LOGO_SRC,
 }: OgOptions = {}): ReactElement {
-  const big = title.length > 18 ? 84 : 108;
   return (
     <div
       style={{
         height: "100%",
         width: "100%",
+        boxSizing: "border-box",
+        position: "relative",
+        overflow: "hidden",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        padding: 72,
-        background: BG,
+        padding: "54px 62px",
         color: FG,
-        fontFamily: "system-ui, -apple-system, sans-serif",
+        fontFamily: "Geist",
+        background: "#f3f0eb",
       }}
     >
-      {/* top bar: logo + label */}
+      {/* biome-ignore lint/performance/noImgElement: Satori OG render, not the DOM. */}
+      <img
+        src={backgroundSrc}
+        width={OG_SIZE.width}
+        height={OG_SIZE.height}
+        alt=""
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: OG_SIZE.width,
+          height: OG_SIZE.height,
+          objectFit: "cover",
+        }}
+      />
+
       <div
         style={{
           display: "flex",
@@ -47,31 +76,62 @@ export function ogImage({
           justifyContent: "space-between",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          {/* biome-ignore lint/performance/noImgElement: satori OG render, not the DOM. */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          {/* biome-ignore lint/performance/noImgElement: Satori OG render, not the DOM. */}
           <img
-            src={LOGO_SRC}
-            width={56}
-            height={56}
-            style={{ borderRadius: 14 }}
+            src={logoSrc}
+            width={48}
+            height={48}
+            style={{ borderRadius: 13 }}
             alt=""
           />
-          <span style={{ fontSize: 32, fontWeight: 700, letterSpacing: "-0.02em" }}>
+          <span
+            style={{
+              display: "flex",
+              fontFamily: "Geist",
+              fontSize: 28,
+              fontWeight: 500,
+              letterSpacing: "-0.04em",
+            }}
+          >
             beui
           </span>
         </div>
-        <div style={{ display: "flex", fontSize: 24, color: MUTED }}>{label}</div>
-      </div>
 
-      {/* title + description */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 960 }}>
         <div
           style={{
             display: "flex",
-            fontSize: big,
-            fontWeight: 800,
-            letterSpacing: "-0.045em",
-            lineHeight: 0.98,
+            padding: "10px 16px",
+            borderRadius: 999,
+            border: "1px solid rgba(23,21,31,0.14)",
+            background: "rgba(255,255,255,0.3)",
+            fontFamily: "Geist Mono",
+            fontSize: 15,
+            fontWeight: 500,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+          }}
+        >
+          {label}
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 20,
+          maxWidth: 1000,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            fontFamily: "Geist",
+            fontSize: titleSize(title),
+            fontWeight: 500,
+            letterSpacing: "-0.072em",
+            lineHeight: 0.9,
           }}
         >
           {title}
@@ -79,30 +139,38 @@ export function ogImage({
         <div
           style={{
             display: "flex",
-            fontSize: 30,
-            lineHeight: 1.3,
+            maxWidth: 780,
+            fontSize: 25,
+            lineHeight: 1.28,
             color: MUTED,
-            maxWidth: 760,
           }}
         >
           {description}
         </div>
       </div>
 
-      {/* footer */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-        <div style={{ display: "flex", height: 1, background: HAIRLINE }} />
-        <div
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span style={{ display: "flex", fontSize: 20 }}>React · Next.js · Tailwind</span>
+        <span
           style={{
             display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            fontSize: 24,
+            padding: "13px 19px",
+            borderRadius: 999,
+            background: FG,
+            color: "#fffdf8",
+            fontFamily: "Geist Mono",
+            fontSize: command.length > 40 ? 13 : 16,
+            fontWeight: 500,
           }}
         >
-          <span style={{ display: "flex", fontWeight: 600 }}>beui.dev</span>
-          <span style={{ display: "flex", color: MUTED }}>{command}</span>
-        </div>
+          {command}
+        </span>
       </div>
     </div>
   );
