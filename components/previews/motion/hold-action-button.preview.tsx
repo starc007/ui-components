@@ -14,7 +14,16 @@ export function HoldActionButtonPreview() {
           window.setTimeout(() => setConfirmed(false), 1800);
         }}
       >
-        Hold to confirm
+        Hold for vertical fill
+      </HoldActionButton>
+      <HoldActionButton
+        type="horizontal"
+        onHoldComplete={() => {
+          setConfirmed(true);
+          window.setTimeout(() => setConfirmed(false), 1800);
+        }}
+      >
+        Hold for horizontal fill
       </HoldActionButton>
       <p className="h-4 text-xs text-muted-foreground" aria-live="polite">
         {confirmed ? "Action confirmed" : "Release early to cancel"}

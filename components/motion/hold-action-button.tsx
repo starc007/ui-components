@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 export interface HoldActionButtonProps extends Omit<
   HTMLMotionProps<"button">,
   | "children"
+  | "type"
   | "onClick"
   | "onPointerDown"
   | "onPointerUp"
@@ -24,6 +25,7 @@ export interface HoldActionButtonProps extends Omit<
   | "onKeyUp"
 > {
   children: ReactNode;
+  type?: "vertical" | "horizontal";
   holdingLabel?: ReactNode;
   completeLabel?: ReactNode;
   holdDuration?: number;
@@ -38,6 +40,7 @@ export const HoldActionButton = forwardRef<
 >(function HoldActionButton(
   {
     children,
+    type = "vertical",
     holdingLabel = "Keep holding",
     completeLabel = "Done",
     holdDuration = 1600,
@@ -102,6 +105,10 @@ export const HoldActionButton = forwardRef<
   };
 
   const active = holding || completed;
+  const activeTransform =
+    type === "horizontal" ? "translateX(0%)" : "translateY(0%)";
+  const idleTransform =
+    type === "horizontal" ? "translateX(-100%)" : "translateY(115%)";
 
   return (
     <motion.button
@@ -119,8 +126,8 @@ export const HoldActionButton = forwardRef<
       whileTap={reduce || disabled ? undefined : { scale: 0.98 }}
       transition={SPRING_PRESS}
       className={cn(
-        "relative inline-grid h-16 min-w-72 touch-none select-none place-items-center overflow-hidden rounded-[22px] bg-slate-950 px-8 text-white",
-        "outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "relative inline-grid h-16 min-w-72 touch-none select-none place-items-center overflow-hidden rounded-[22px] bg-primary px-8 text-primary-foreground",
+        "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         "disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
@@ -134,7 +141,7 @@ export const HoldActionButton = forwardRef<
             ? { opacity: active ? 1 : 0, transform: "none" }
             : {
                 opacity: 1,
-                transform: active ? "translateY(0%)" : "translateY(115%)",
+                transform: active ? activeTransform : idleTransform,
               }
         }
         transition={
@@ -144,28 +151,52 @@ export const HoldActionButton = forwardRef<
         }
         onAnimationComplete={handleFillComplete}
         className={cn(
-          "absolute inset-0 bg-sky-500 will-change-[opacity,transform]",
+          "absolute inset-0 bg-sky-400 will-change-[opacity,transform]",
           fillClassName,
         )}
       >
         {!reduce ? (
-          <motion.svg
-            viewBox="0 0 240 24"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-            animate={{ transform: active ? "translateX(-50%)" : "translateX(0%)" }}
-            transition={{
-              duration: 1.1,
-              ease: "linear",
-              repeat: active ? Number.POSITIVE_INFINITY : 0,
-            }}
-            className="absolute -top-5 left-0 h-6 w-[200%] text-sky-500"
-          >
-            <path
-              d="M0 12C20 2 40 2 60 12s40 10 60 0 40-10 60 0 40 10 60 0v12H0Z"
-              fill="currentColor"
-            />
-          </motion.svg>
+          type === "horizontal" ? (
+            <motion.svg
+              viewBox="0 0 24 240"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+              animate={{
+                transform: active ? "translateY(-50%)" : "translateY(0%)",
+              }}
+              transition={{
+                duration: 1.1,
+                ease: "linear",
+                repeat: active ? Number.POSITIVE_INFINITY : 0,
+              }}
+              className="absolute -right-5 top-0 h-[200%] w-6 text-sky-400"
+            >
+              <path
+                d="M0 0h12C2 20 2 40 12 60s10 40 0 60-10 40 0 60 10 40 0 60H0Z"
+                fill="currentColor"
+              />
+            </motion.svg>
+          ) : (
+            <motion.svg
+              viewBox="0 0 240 24"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+              animate={{
+                transform: active ? "translateX(-50%)" : "translateX(0%)",
+              }}
+              transition={{
+                duration: 1.1,
+                ease: "linear",
+                repeat: active ? Number.POSITIVE_INFINITY : 0,
+              }}
+              className="absolute -top-5 left-0 h-6 w-[200%] text-sky-400"
+            >
+              <path
+                d="M0 12C20 2 40 2 60 12s40 10 60 0 40-10 60 0 40 10 60 0v12H0Z"
+                fill="currentColor"
+              />
+            </motion.svg>
+          )
         ) : null}
       </motion.span>
 

@@ -112,7 +112,7 @@ export const registry: CategoryEntry[] = [
             slug: "hold-action",
             name: "Hold Action Button",
             description:
-              "Hold to complete while a liquid wave fills the action; release early to cancel.",
+              "Hold to complete with a vertical or horizontal liquid fill; release early to cancel.",
             installSlug: "hold-action-button",
             file: "components/motion/hold-action-button.tsx",
             previewKey: "motion/hold-action-button",
