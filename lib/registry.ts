@@ -90,12 +90,36 @@ export const registry: CategoryEntry[] = [
       },
       {
         slug: "expanding-arrow-button",
-        name: "Expanding Arrow Button",
+        name: "Animated CTA Buttons",
         description:
-          "A directional CTA whose accent tile expands into an animated dotted-arrow trail on hover or focus.",
+          "Expressive call-to-action buttons with expanding directional motion and press-and-hold confirmation.",
         file: "components/motion/expanding-arrow-button.tsx",
+        extraFiles: ["components/motion/hold-action-button.tsx"],
         badge: "new",
         launchedAt: "2026-07-16",
+        examples: [
+          {
+            slug: "expanding-arrow",
+            name: "Expanding Arrow Button",
+            description:
+              "An accent tile that expands into a dotted-arrow trail on hover or focus.",
+            file: "components/motion/expanding-arrow-button.tsx",
+            previewKey: "motion/expanding-arrow-button",
+            previewFile:
+              "components/previews/motion/expanding-arrow-button.preview.tsx",
+          },
+          {
+            slug: "hold-action",
+            name: "Hold Action Button",
+            description:
+              "Hold to complete while a liquid wave fills the action; release early to cancel.",
+            installSlug: "hold-action-button",
+            file: "components/motion/hold-action-button.tsx",
+            previewKey: "motion/hold-action-button",
+            previewFile:
+              "components/previews/motion/hold-action-button.preview.tsx",
+          },
+        ],
       },
       {
         slug: "marquee",

@@ -213,6 +213,11 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.ExpandingArrowButtonPreview,
     ),
   ),
+  "motion/hold-action-button": dynamic(() =>
+    import("./motion/hold-action-button.preview").then(
+      (m) => m.HoldActionButtonPreview,
+    ),
+  ),
   "motion/theme-toggle": dynamic(() =>
     import("./motion/theme-toggle.preview").then((m) => m.ThemeTogglePreview),
   ),
