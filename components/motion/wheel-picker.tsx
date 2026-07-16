@@ -170,8 +170,11 @@ export function WheelPicker({
   // crossed). Gated on `!reduce` since the reduced render never calls this.
   const maybeTick = useCallback(
     (pos: number) => {
-      if (!sound || reduce) return;
       const row = clamp(Math.round(pos), 0, last);
+      if (!sound || reduce) {
+        lastTick.current = row;
+        return;
+      }
       if (row === lastTick.current) return;
       lastTick.current = row;
       getPlayer().play();
@@ -267,6 +270,7 @@ export function WheelPicker({
   const beginDrag = useCallback(
     (y: number) => {
       stop();
+      if (sound) getPlayer().prepare();
       setGrabbing(true);
       drag.current = {
         y,
@@ -274,7 +278,7 @@ export function WheelPicker({
         pts: [[y, performance.now()]],
       };
     },
-    [stop],
+    [stop, sound, getPlayer],
   );
   const moveDrag = useCallback(
     (y: number) => {
@@ -369,6 +373,7 @@ export function WheelPicker({
       // passive, so a handler on the element cannot cancel the scroll.
       if (disabled || reduce) return;
       event.preventDefault();
+      if (sound) getPlayer().prepare();
       stop();
       const px = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
       const next = clamp(scroll.current + px * WHEEL_SENS, 0, last);
@@ -381,7 +386,18 @@ export function WheelPicker({
         glide(clamp(Math.round(scroll.current), 0, last), 240, easeOutBack);
       }, WHEEL_SETTLE);
     },
-    [disabled, reduce, last, paint, emit, stop, glide, maybeTick],
+    [
+      disabled,
+      reduce,
+      sound,
+      last,
+      paint,
+      emit,
+      stop,
+      glide,
+      maybeTick,
+      getPlayer,
+    ],
   );
 
   const onKeyDown = useCallback(
@@ -396,10 +412,11 @@ export function WheelPicker({
       };
       if (event.key in map) {
         event.preventDefault();
+        if (sound) getPlayer().prepare();
         step(map[event.key]);
       }
     },
-    [disabled, last, step],
+    [disabled, sound, last, step, getPlayer],
   );
 
   // Paint the starting frame, and follow controlled/value changes from outside
