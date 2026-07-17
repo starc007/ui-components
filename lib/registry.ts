@@ -89,6 +89,53 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "expanding-arrow-button",
+        name: "Animated CTA Buttons",
+        description:
+          "Expressive call-to-action buttons with expanding, hold, and slide interactions.",
+        file: "components/motion/expanding-arrow-button.tsx",
+        extraFiles: [
+          "components/motion/hold-action-button.tsx",
+          "components/motion/slide-action-button.tsx",
+        ],
+        badge: "new",
+        launchedAt: "2026-07-16",
+        examples: [
+          {
+            slug: "expanding-arrow",
+            name: "Expanding Arrow Button",
+            description:
+              "An accent tile that expands into a dotted-arrow trail on hover or focus.",
+            file: "components/motion/expanding-arrow-button.tsx",
+            previewKey: "motion/expanding-arrow-button",
+            previewFile:
+              "components/previews/motion/expanding-arrow-button.preview.tsx",
+          },
+          {
+            slug: "hold-action",
+            name: "Hold Action Button",
+            description:
+              "Hold to complete with a vertical or horizontal liquid fill; release early to cancel.",
+            installSlug: "hold-action-button",
+            file: "components/motion/hold-action-button.tsx",
+            previewKey: "motion/hold-action-button",
+            previewFile:
+              "components/previews/motion/hold-action-button.preview.tsx",
+          },
+          {
+            slug: "slide-action",
+            name: "Slide Action Button",
+            description:
+              "Drag the thumb to the end to confirm an action; release early to spring back.",
+            installSlug: "slide-action-button",
+            file: "components/motion/slide-action-button.tsx",
+            previewKey: "motion/slide-action-button",
+            previewFile:
+              "components/previews/motion/slide-action-button.preview.tsx",
+          },
+        ],
+      },
+      {
         slug: "marquee",
         name: "Marquee",
         description: "Infinite horizontal or vertical scroll with pause-on-hover.",

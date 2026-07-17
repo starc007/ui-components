@@ -208,6 +208,21 @@ export const previews: Record<string, ComponentType> = {
   "motion/button-magnetic": dynamic(() =>
     import("./motion/button-magnetic.preview").then((m) => m.ButtonMagneticPreview),
   ),
+  "motion/expanding-arrow-button": dynamic(() =>
+    import("./motion/expanding-arrow-button.preview").then(
+      (m) => m.ExpandingArrowButtonPreview,
+    ),
+  ),
+  "motion/hold-action-button": dynamic(() =>
+    import("./motion/hold-action-button.preview").then(
+      (m) => m.HoldActionButtonPreview,
+    ),
+  ),
+  "motion/slide-action-button": dynamic(() =>
+    import("./motion/slide-action-button.preview").then(
+      (m) => m.SlideActionButtonPreview,
+    ),
+  ),
   "motion/theme-toggle": dynamic(() =>
     import("./motion/theme-toggle.preview").then((m) => m.ThemeTogglePreview),
   ),
