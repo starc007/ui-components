@@ -172,6 +172,22 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/bottom-sheet.tsx",
       },
       {
+        slug: "pull-to-refresh",
+        name: "Pull to Refresh",
+        description:
+          "Native-feeling pull-to-refresh container with drag resistance, threshold feedback and async refresh handling.",
+        file: "components/motion/pull-to-refresh.tsx",
+        badge: "new",
+        launchedAt: "2026-07-17",
+        keywords: [
+          "pull to refresh react",
+          "swipe to refresh",
+          "mobile refresh gesture",
+          "touch refresh component",
+          "overscroll refresh",
+        ],
+      },
+      {
         slug: "shared-layout-bg",
         name: "Shared Layout Background",
         description: "A pill that glides between hovered items via motion's shared layout, with blur enter/exit.",

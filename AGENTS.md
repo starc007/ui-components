@@ -42,6 +42,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `range-slider` | `components/motion/range-slider.tsx` | Range slider (`RangeSlider`) with tick dots and a bouncy vertical-bar thumb that glides between snapped steps; drag + keyboard, controlled/uncontrolled |
 | `wheel-picker` | `components/motion/wheel-picker.tsx` | iOS-style picker wheel (`WheelPicker`): a 3D drum on custom momentum physics (velocity-projected coast, spring-back settle) with a crisp clipped center band; drag, wheel and keyboard, optional synthesized tick sound per row crossed (`sound` prop, default off), composes side by side for date/time pickers, controlled/uncontrolled, reduced-motion safe |
 | `bottom-sheet` | `components/motion/bottom-sheet.tsx` | Draggable bottom sheet with snap points, inertia and glass surface |
+| `pull-to-refresh` | `components/motion/pull-to-refresh.tsx` | Native-feeling refresh container with touch and mouse pull resistance, threshold feedback and async refresh handling |
 | `shared-layout-bg` | `components/motion/shared-layout-bg.tsx` | Pill that glides between hovered items via shared layout |
 | `preview-rail` | `components/motion/preview-rail.tsx` | Vertical or horizontal navigation ticks that form a pyramid around the hovered item with a gliding preview card |
 | `dock` | `components/motion/dock.tsx` | macOS-style dock with grouped actions and gliding active pill |

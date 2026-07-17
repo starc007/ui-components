@@ -4,18 +4,19 @@ import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 
 import { AnimatedBadge } from "@/components/motion/animated-badge";
+import { BloomMenu } from "@/components/motion/bloom-menu";
 import { Button } from "@/components/motion/button";
 import { Checkbox } from "@/components/motion/checkbox";
 import { Input } from "@/components/motion/input";
-import { BloomMenu } from "@/components/motion/bloom-menu";
-import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
-import { Switch } from "@/components/motion/switch";
 import { Parallax } from "@/components/motion/parallax";
+import { PullToRefresh } from "@/components/motion/pull-to-refresh";
+import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
+import { RangeSlider } from "@/components/motion/range-slider";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { ScrollTo } from "@/components/motion/scroll-to";
-import { RangeSlider } from "@/components/motion/range-slider";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
+import { Switch } from "@/components/motion/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { TextReveal } from "@/components/motion/text-reveal";
 import { Tooltip } from "@/components/motion/tooltip";
@@ -60,6 +61,14 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ],
   ["ScrollTo", () => <ScrollTo to="#top">Back to top</ScrollTo>],
   ["RangeSlider", () => <RangeSlider defaultValue={40} aria-label="Volume" />],
+  [
+    "PullToRefresh",
+    () => (
+      <PullToRefresh onRefresh={() => {}}>
+        <p>Refreshable content.</p>
+      </PullToRefresh>
+    ),
+  ],
   [
     "Checkbox",
     () => <Checkbox checked={false} onCheckedChange={() => {}} label="Accept terms" />,
