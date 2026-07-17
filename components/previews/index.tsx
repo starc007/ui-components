@@ -120,6 +120,11 @@ export const previews: Record<string, ComponentType> = {
   "motion/bottom-sheet": dynamic(() =>
     import("./motion/bottom-sheet.preview").then((m) => m.BottomSheetPreview),
   ),
+  "motion/pull-to-refresh": dynamic(() =>
+    import("./motion/pull-to-refresh.preview").then(
+      (m) => m.PullToRefreshPreview,
+    ),
+  ),
   "motion/tabs": dynamic(() =>
     import("./motion/tabs.preview").then((m) => m.TabsPreview),
   ),
