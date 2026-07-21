@@ -190,6 +190,11 @@ export const previews: Record<string, ComponentType> = {
   "motion/morphing-modal": dynamic(() =>
     import("./motion/morphing-modal.preview").then((m) => m.MorphingModalPreview),
   ),
+  "motion/center-morph-modal": dynamic(() =>
+    import("./motion/center-morph-modal.preview").then(
+      (m) => m.CenterMorphModalPreview,
+    ),
+  ),
   "motion/text-reveal": dynamic(() =>
     import("./motion/text-reveal.preview").then((m) => m.TextRevealPreview),
   ),

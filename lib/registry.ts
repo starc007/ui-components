@@ -320,6 +320,22 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/morphing-modal.tsx",
       },
       {
+        slug: "center-morph-modal",
+        name: "Center Morph Modal",
+        description:
+          "A composable modal whose full-size surface unfolds from its exact center toward every edge, then folds back the same way with an inset close control.",
+        file: "components/motion/center-morph-modal.tsx",
+        badge: "new",
+        launchedAt: "2026-07-21",
+        keywords: [
+          "react morph modal",
+          "center expanding modal",
+          "animated modal react",
+          "framer motion modal",
+          "radial modal animation",
+        ],
+      },
+      {
         slug: "text-animation",
         name: "Text Animation",
         description: "Animated text primitives for reveal sequences, shimmer loading states and letter-cascade swaps.",

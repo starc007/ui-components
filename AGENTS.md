@@ -49,6 +49,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `tooltip` | `components/motion/tooltip.tsx` | Hover/focus tooltip with blur enter/exit and spring spawn |
 | `popover` | `components/motion/popover.tsx`, `popover-morph.tsx` | Composable popover, two variants. **Gooey** (`Popover`, `PopoverTrigger`, `PopoverContent`, install `@beui/popover`): panel oozes out of the trigger via an SVG goo filter (liquid neck that stretches/pinches) with crisp content fading in on top. **Morph** (`MorphPopover`, `MorphPopoverTrigger`, `MorphPopoverContent`, install `@beui/popover-morph`): panel laid out full size but clipped to the corner nearest the trigger, then unclips as one piece with a drop-shadow that hugs the shape; side/align aware. Both inline-anchored, click trigger, controlled/uncontrolled |
 | `morphing-modal` | `components/motion/morphing-modal.tsx` | Panel that morphs height across inner views with blur cross-fade |
+| `center-morph-modal` | `components/motion/center-morph-modal.tsx` | Composable modal whose full-size surface unfolds from its exact center toward every edge, then folds back the same way with an inset close control |
 | `text-reveal` | `components/motion/text-reveal.tsx` | Word or character reveal with spring slide-up and blur |
 | `text-shimmer` | `components/motion/text-shimmer.tsx` | Gradient sweep across text for loading or emphasis |
 | `text-cascade` | `components/motion/text-cascade.tsx` | Letter-by-letter slot roll for standalone text |

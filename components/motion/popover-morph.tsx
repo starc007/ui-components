@@ -15,7 +15,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { SPRING_PANEL } from "@/lib/ease";
+import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -149,6 +149,10 @@ function clipHidden(side: Side, align: Align, radius: number) {
 }
 const clipShown = (radius: number) => `inset(0% 0% 0% 0% round ${radius}px)`;
 
+// Preserve the original spring character on the wrapper, but tween the complex
+// clip-path so it cannot snap when the spring resolves its final distance.
+const MORPH_CLIP_TRANSITION = { duration: 0.32, ease: EASE_OUT } as const;
+
 export interface MorphPopoverContentProps {
   children: ReactNode;
   side?: Side;
@@ -178,21 +182,25 @@ export function MorphPopoverContent({
   const marginStyle =
     side === "bottom" ? { marginTop: sideOffset } : { marginBottom: sideOffset };
 
-  // Close animates with the same spring as open, so it morphs back to the
-  // corner instead of snapping shut.
+  // Both directions travel between the exact same hidden/show states. Exit
+  // targets "hidden" directly instead of introducing separate choreography.
   const wrap = reduce
     ? undefined
     : {
-        hidden: { opacity: 0, scale: 0.96 },
+        hidden: { opacity: 0, scale: 0.96, transition: SPRING_PANEL },
         show: { opacity: 1, scale: 1, transition: SPRING_PANEL },
-        exit: { opacity: 0, scale: 0.96, transition: SPRING_PANEL },
       };
   const clip = reduce
     ? undefined
     : {
-        hidden: { clipPath: clipHidden(side, align, radius) },
-        show: { clipPath: clipShown(radius), transition: SPRING_PANEL },
-        exit: { clipPath: clipHidden(side, align, radius), transition: SPRING_PANEL },
+        hidden: {
+          clipPath: clipHidden(side, align, radius),
+          transition: MORPH_CLIP_TRANSITION,
+        },
+        show: {
+          clipPath: clipShown(radius),
+          transition: MORPH_CLIP_TRANSITION,
+        },
       };
 
   return (
@@ -204,7 +212,7 @@ export function MorphPopoverContent({
           variants={wrap}
           initial={reduce ? { opacity: 0 } : "hidden"}
           animate={reduce ? { opacity: 1 } : "show"}
-          exit={reduce ? { opacity: 0 } : "exit"}
+          exit={reduce ? { opacity: 0 } : "hidden"}
           transition={reduce ? { duration: 0.12 } : undefined}
           style={{ transformOrigin: originFor(side, align), ...marginStyle }}
           className={cn(
