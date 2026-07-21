@@ -40,6 +40,7 @@ export function SiteHeader({
   const isComponentsRoute = pathname.startsWith("/components");
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
+  const isHome = pathname === "/";
   const formattedStarCount =
     typeof githubStarCount === "number"
       ? formatStarCount(githubStarCount)
@@ -127,33 +128,13 @@ export function SiteHeader({
             >
               Sponsors
             </Link>
-            <RainbowCta
-              href="https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=navbar"
-              target="_blank"
-              rel="noreferrer noopener"
-              shape="pill"
-              className="ml-1 min-h-8 text-xs"
-              innerClassName="bg-background px-3 text-foreground group-hover:bg-card"
-            >
-              Pro
-              <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
-            </RainbowCta>
           </nav>
         </div>
 
         <nav className="flex items-center gap-2">
-          <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 lg:w-56" />
-          <RainbowCta
-            href="https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=navbar"
-            target="_blank"
-            rel="noreferrer noopener"
-            shape="pill"
-            className="min-h-9 text-xs md:hidden"
-            innerClassName="bg-background px-3 text-foreground group-hover:bg-card"
-          >
-            Pro
-            <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
-          </RainbowCta>
+          {isHome ? null : (
+            <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 lg:w-56" />
+          )}
           <Tooltip content="Customize" side="bottom">
             <button
               type="button"
@@ -176,12 +157,22 @@ export function SiteHeader({
             }
           >
             <GithubIcon className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Github</span>
             <span className="inline-flex items-center gap-0.5 text-muted-foreground">
-              <Star className="h-3 w-3" />
+              {/*<Star className="h-3 w-3" />*/}
               {formattedStarCount ? <span>{formattedStarCount}</span> : null}
             </span>
           </PressLink>
+          <RainbowCta
+            href="https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=navbar"
+            target="_blank"
+            rel="noreferrer noopener"
+            shape="pill"
+            className="min-h-9 text-xs"
+            innerClassName="bg-foreground px-3 text-background sm:px-3.5"
+          >
+            Get Pro
+            <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
+          </RainbowCta>
         </nav>
       </div>
     </header>
