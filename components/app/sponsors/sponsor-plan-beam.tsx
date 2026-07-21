@@ -21,8 +21,8 @@ export function SponsorPlanBeam({
     <BorderBeam
       size="md"
       colorVariant="colorful"
-      strength={0.78}
-      borderRadius={16}
+      strength={0.82}
+      borderRadius={24}
       className={cn("h-full", className)}
     >
       {children}
