@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
 // Cap so a preview never renders larger than intended; only previews bigger
 // than the card shrink further to actually fit — no clipping. `maxScale`
@@ -37,7 +38,8 @@ export function PreviewFit({
 }) {
   const outerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const [fitScale, setFitScale] = useState(1);
+  const [fitScale, setFitScale] = useState(MIN_SCALE);
+  const [measured, setMeasured] = useState(false);
 
   useLayoutEffect(() => {
     const outer = outerRef.current;
@@ -58,6 +60,7 @@ export function PreviewFit({
         (outerH * 0.94) / stageH,
       );
       setFitScale(Math.max(MIN_SCALE, fit));
+      setMeasured(true);
     };
 
     measure();
@@ -77,7 +80,12 @@ export function PreviewFit({
       <div
         ref={stageRef}
         style={{ width: STAGE_WIDTH, transform: `scale(${scale})` }}
-        className="pointer-events-none flex origin-center shrink-0 items-center justify-center transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] [&_*]:!cursor-default"
+        className={cn(
+          "pointer-events-none flex origin-center shrink-0 items-center justify-center contain-[paint] [&_*]:!cursor-default",
+          measured
+            ? "transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)]"
+            : "invisible",
+        )}
       >
         {children}
       </div>
