@@ -25,6 +25,10 @@ const COMPONENT_DATES = {
   "motion/tooltip": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
   "motion/popover": { publishedAt: "2026-07-07", updatedAt: "2026-07-13" },
   "motion/morphing-modal": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
+  "motion/center-morph-modal": {
+    publishedAt: "2026-07-21",
+    updatedAt: "2026-07-21",
+  },
   "motion/text-animation": { publishedAt: "2026-05-17", updatedAt: "2026-06-28" },
   "motion/number": { publishedAt: "2026-05-17", updatedAt: "2026-06-28" },
   "motion/animated-badge": { publishedAt: "2026-06-05", updatedAt: "2026-06-10" },

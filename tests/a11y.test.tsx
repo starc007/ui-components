@@ -6,6 +6,11 @@ import type { ReactElement } from "react";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { BloomMenu } from "@/components/motion/bloom-menu";
 import { Button } from "@/components/motion/button";
+import {
+  CenterMorphModal,
+  CenterMorphModalContent,
+  CenterMorphModalTrigger,
+} from "@/components/motion/center-morph-modal";
 import { Checkbox } from "@/components/motion/checkbox";
 import { Input } from "@/components/motion/input";
 import { Parallax } from "@/components/motion/parallax";
@@ -31,6 +36,19 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ["Button disabled", () => <Button disabled>Subscribe</Button>],
   ["Button ripple", () => <Button ripple>Subscribe</Button>],
   ["BloomMenu", () => <BloomMenu />],
+  [
+    "CenterMorphModal",
+    () => (
+      <CenterMorphModal>
+        <CenterMorphModalTrigger>
+          <button type="button">Open profile</button>
+        </CenterMorphModalTrigger>
+        <CenterMorphModalContent ariaLabel="Profile details">
+          <p>Profile details</p>
+        </CenterMorphModalContent>
+      </CenterMorphModal>
+    ),
+  ],
   [
     "Switch",
     () => (
