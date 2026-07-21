@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ArrowUpRight, Check, Gem, Medal, Trophy } from "lucide-react";
+import { ArrowUpRight, Check, CircleCheck, Gem, Medal, Trophy } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { CopyButton } from "@/components/app/docs/copy-button";
 import { PressLink } from "@/components/app/press-link";
@@ -156,7 +156,13 @@ function SponsorPlanCard({
   );
 }
 
-export default function SponsorsPage() {
+export default async function SponsorsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ success?: string }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const checkoutSucceeded = resolvedSearchParams?.success === "true";
   const evmAddress = process.env.SPONSOR_EVM_ADDRESS;
   const solAddress = process.env.SPONSOR_SOL_ADDRESS;
   const sponsorPlans = [
@@ -211,6 +217,20 @@ export default function SponsorsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16">
+      {checkoutSucceeded ? (
+        <div className="mx-auto mb-8 flex max-w-xl gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
+          <CircleCheck className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <div>
+            <p className="text-sm font-semibold text-emerald-950 dark:text-emerald-100">
+              Sponsorship checkout complete
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-emerald-900/75 dark:text-emerald-100/75">
+              Thanks for sponsoring beUI. I’ll follow up for logo assets and
+              placement details.
+            </p>
+          </div>
+        </div>
+      ) : null}
       <div className="max-w-2xl">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Sponsors
