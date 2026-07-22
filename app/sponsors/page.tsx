@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
-import { ArrowUpRight, Check, CircleCheck, Gem, Medal, Trophy } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { ArrowUpRight, Check, CircleCheck, Gem, Medal, Trophy } from "lucide-react";
+import type { Metadata } from "next";
 import { CopyButton } from "@/components/app/docs/copy-button";
 import { PressLink } from "@/components/app/press-link";
 import { SponsorPlanBeam } from "@/components/app/sponsors/sponsor-plan-beam";
@@ -129,7 +129,7 @@ function SponsorPlanCard({
           </span>
           <span className="ml-2 text-sm text-muted-foreground">/mo</span>
         </div>
-        <ul className="mt-6 min-h-32 space-y-3 text-sm text-foreground">
+        <ul className="mb-6 mt-6 min-h-32 space-y-3 text-sm text-foreground">
           {benefits.map((benefit) => (
             <li key={benefit} className="flex gap-2.5">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-foreground" />
@@ -173,6 +173,7 @@ export default async function SponsorsPage({
         "Maximum visibility for teams that want their logo in the highest-signal sponsor slot.",
       benefits: [
         "Largest logo placement on the sponsors page",
+        "Largest logo placement in the docs sidebar",
         "Largest logo placement in the README",
         "Shoutout on X after sponsorship",
         "Priority feedback channel for requests",
@@ -190,6 +191,7 @@ export default async function SponsorsPage({
         "Prominent placement for product teams supporting polished open-source UI.",
       benefits: [
         "Larger logo placement on the sponsors page",
+        "Large logo placement in the docs sidebar",
         "Larger logo placement in the README",
         "Shoutout on X after sponsorship",
       ],
@@ -205,6 +207,7 @@ export default async function SponsorsPage({
         "A simple way to support ongoing component work and be listed publicly.",
       benefits: [
         "Logo on the sponsors page",
+        "Logo placement in the docs sidebar",
         "Logo in the README",
         "Public sponsor listing",
       ],
