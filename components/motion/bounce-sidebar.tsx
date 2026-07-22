@@ -32,8 +32,7 @@ export interface BounceSidebarProps {
   indicatorClassName?: string;
 }
 
-const DOT_SIZE = 8;
-const DOT_OPTICAL_OFFSET = 1;
+const DOT_SIZE = 6;
 
 // A compact, lightly underdamped spring gives the dot a quick landing without
 // turning the sidebar into a playful toy. The sideways arc carries the bounce.
@@ -90,9 +89,7 @@ export function BounceSidebar({
     animationRef.current?.stop();
     x.set(0);
     y.set(
-      selectedItem.offsetTop +
-        (selectedItem.offsetHeight - DOT_SIZE) / 2 +
-        DOT_OPTICAL_OFFSET,
+      selectedItem.offsetTop + (selectedItem.offsetHeight - DOT_SIZE) / 2,
     );
     hasPositionRef.current = true;
   }, [x, y]);
@@ -103,9 +100,7 @@ export function BounceSidebar({
       if (!selectedItem) return;
 
       const destinationY =
-        selectedItem.offsetTop +
-        (selectedItem.offsetHeight - DOT_SIZE) / 2 +
-        DOT_OPTICAL_OFFSET;
+        selectedItem.offsetTop + (selectedItem.offsetHeight - DOT_SIZE) / 2;
 
       animationRef.current?.stop();
 
@@ -119,11 +114,19 @@ export function BounceSidebar({
 
       const startY = y.get();
       const distance = destinationY - startY;
-      const controlX = -Math.min(28, Math.max(8, Math.abs(distance) * 0.25));
-      const controlY = destinationY;
+      const travel = Math.abs(distance);
+      const longJumpProgress = Math.min(1, Math.max(0, (travel - 48) / 120));
+      const controlX = -Math.min(40, Math.max(8, travel * 0.25));
+      const midpointY = (startY + destinationY) / 2;
+      const controlY =
+        destinationY + (midpointY - destinationY) * longJumpProgress;
 
       animationRef.current = animate(0, 1, {
         ...BOUNCE_SPRING,
+        stiffness:
+          BOUNCE_SPRING.stiffness - 60 * longJumpProgress,
+        damping: BOUNCE_SPRING.damping + longJumpProgress,
+        mass: BOUNCE_SPRING.mass + 0.15 * longJumpProgress,
         onUpdate: (progress) => {
           x.set(quadraticBezier(0, controlX, 0, progress));
           y.set(quadraticBezier(startY, controlY, destinationY, progress));
@@ -176,7 +179,7 @@ export function BounceSidebar({
           <li
             aria-hidden="true"
             role="presentation"
-            className="pointer-events-none absolute inset-0 "
+            className="pointer-events-none absolute inset-0"
           >
             <motion.span
               style={{ x, y }}
