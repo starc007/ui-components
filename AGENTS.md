@@ -44,6 +44,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `bottom-sheet` | `components/motion/bottom-sheet.tsx` | Draggable bottom sheet with snap points, inertia and glass surface |
 | `pull-to-refresh` | `components/motion/pull-to-refresh.tsx` | Native-feeling refresh container with touch and mouse pull resistance, threshold feedback and async refresh handling |
 | `shared-layout-bg` | `components/motion/shared-layout-bg.tsx` | Pill that glides between hovered items via shared layout |
+| `bounce-sidebar` | `components/motion/bounce-sidebar.tsx` | Vertical navigation whose active dot jumps between rows on a curved spring path; controlled/uncontrolled, links or buttons, reduced-motion safe |
 | `preview-rail` | `components/motion/preview-rail.tsx` | Vertical or horizontal navigation ticks that form a pyramid around the hovered item with a gliding preview card |
 | `dock` | `components/motion/dock.tsx` | macOS-style dock with grouped actions and gliding active pill |
 | `tooltip` | `components/motion/tooltip.tsx` | Hover/focus tooltip with blur enter/exit and spring spawn |

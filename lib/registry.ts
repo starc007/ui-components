@@ -241,6 +241,23 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/shared-layout-bg.tsx",
       },
       {
+        slug: "bounce-sidebar",
+        name: "Bounce Sidebar",
+        description:
+          "A vertical sidebar whose active dot jumps between destinations on a curved, spring-loaded path.",
+        file: "components/motion/bounce-sidebar.tsx",
+        badge: "new",
+        launchedAt: "2026-07-22",
+        keywords: [
+          "animated sidebar react",
+          "bounce sidebar",
+          "sidebar navigation",
+          "spring navigation indicator",
+          "curved motion path",
+          "active navigation dot",
+        ],
+      },
+      {
         slug: "preview-rail",
         name: "Preview Rail",
         description: "Codex app-inspired navigation rail with compact ticks that form a hover pyramid and reveal a floating destination preview.",
