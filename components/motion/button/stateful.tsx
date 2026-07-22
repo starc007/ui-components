@@ -1,18 +1,18 @@
 "use client";
 
+import { Check, Loader2, X } from "lucide-react";
 import {
   AnimatePresence,
   motion,
   useReducedMotion,
   type Variants,
 } from "motion/react";
-import { Check, Loader2, X } from "lucide-react";
 import {
   forwardRef,
+  type ReactNode,
   useLayoutEffect,
   useRef,
   useState,
-  type ReactNode,
 } from "react";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { Button, type ButtonProps } from "./base";
@@ -97,8 +97,9 @@ function TextSlot({
   const label = typeof children === "string" ? children : null;
   const cascade = label !== null && !reduce;
 
-  // Width is set instantly from the measurer; the parent's single `layout`
-  // animation smooths the resize (text + icons together) so nothing competes.
+  // Measure strings with the same per-letter layout as the cascade. Measuring
+  // the whole string preserves kerning, which can make it narrower than the
+  // inline-block letters and clip the final glyph during the width animation.
   useLayoutEffect(() => {
     const nextWidth = measureRef.current?.offsetWidth;
     if (!nextWidth) return;
@@ -117,7 +118,17 @@ function TextSlot({
         aria-hidden
         className="invisible inline-block whitespace-nowrap"
       >
-        {children}
+        {cascade
+          ? label.split("").map((char, index) => (
+              <span
+                // biome-ignore lint/suspicious/noArrayIndexKey: position is the slot identity.
+                key={index}
+                className="inline-block whitespace-pre"
+              >
+                {char}
+              </span>
+            ))
+          : children}
       </span>
 
       {cascade ? (
