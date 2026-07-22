@@ -213,7 +213,9 @@ export default async function ComponentPage({
               <h1 className="text-3xl font-semibold tracking-tight text-foreground">
                 {comp.name}
               </h1>
-              {comp.badge === "new" ? <NewBadge className="mt-1" /> : null}
+              {comp.badge === "new" ? (
+                <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
+              ) : null}
             </div>
             <CopyPage
               pageUrl={pageUrlFor(cat.slug, comp.slug)}
@@ -298,6 +300,7 @@ export default async function ComponentPage({
                   name={rel.name}
                   description={rel.description}
                   badge={rel.badge}
+                  launchedAt={rel.launchedAt}
                 />
               ))}
             </div>

@@ -93,7 +93,9 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                 >
                   <span className="flex items-center justify-between gap-2">
                     <span className="truncate">{comp.name}</span>
-                    {comp.badge === "new" ? <NewBadge /> : null}
+                    {comp.badge === "new" ? (
+                      <NewBadge launchedAt={comp.launchedAt} />
+                    ) : null}
                   </span>
                 </Link>
               );

@@ -34,7 +34,10 @@ export function SiteSearch({ className }: { className?: string }) {
           group: cat.name,
           keywords: [comp.slug, cat.name],
           icon: CircleDashed,
-          badge: comp.badge === "new" ? <NewBadge /> : undefined,
+          badge:
+            comp.badge === "new" ? (
+              <NewBadge launchedAt={comp.launchedAt} />
+            ) : undefined,
           onSelect: () => router.push(`/components/${cat.slug}/${comp.slug}`),
         })),
       ),

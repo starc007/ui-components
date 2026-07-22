@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { findCategory, registry } from "@/lib/registry";
 import { ComponentCard } from "@/components/app/docs/component-card";
 import { JsonLd } from "@/components/app/analytics/json-ld";
+import { isComponentNew } from "@/lib/component-status";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
@@ -80,8 +81,13 @@ export default async function CategoryPage({
   const { category } = await params;
   const cat = findCategory(category);
   if (!cat) notFound();
-  const newComponents = cat.components.filter((comp) => comp.badge === "new");
-  const components = cat.components.filter((comp) => comp.badge !== "new");
+  const now = Date.now();
+  const newComponents = cat.components.filter((comp) =>
+    isComponentNew(comp, now),
+  );
+  const components = cat.components.filter(
+    (comp) => !isComponentNew(comp, now),
+  );
 
   return (
     <div>
@@ -121,6 +127,7 @@ export default async function CategoryPage({
                 name={comp.name}
                 description={comp.description}
                 badge={comp.badge}
+                launchedAt={comp.launchedAt}
               />
             ))}
           </div>
@@ -140,6 +147,7 @@ export default async function CategoryPage({
               name={comp.name}
               description={comp.description}
               badge={comp.badge}
+              launchedAt={comp.launchedAt}
             />
           ))}
         </div>

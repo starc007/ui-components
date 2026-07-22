@@ -7,6 +7,7 @@ import { LandingComponentCard } from "@/components/app/landing/landing-component
 import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { Testimonials } from "@/components/app/landing/testimonials";
 import { WorkCta } from "@/components/app/landing/work-cta";
+import { isComponentNew } from "@/lib/component-status";
 
 const CURATED: { category: string; slug: string }[] = [
   { category: "motion", slug: "button" },
@@ -74,7 +75,7 @@ export default function Home() {
   const newComponents = registry
     .flatMap((category) =>
       category.components
-        .filter((component) => component.badge === "new")
+        .filter((component) => isComponentNew(component))
         .map((component) => ({ category: category.slug, component })),
     )
     // Newest first: most recently launched components lead the section.

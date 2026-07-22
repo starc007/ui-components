@@ -1,6 +1,30 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { getNewBadgeRemainingMs } from "@/lib/component-status";
 import { cn } from "@/lib/utils";
 
-export function NewBadge({ className }: { className?: string }) {
+export function NewBadge({
+  launchedAt,
+  className,
+}: {
+  launchedAt?: string;
+  className?: string;
+}) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const remaining = getNewBadgeRemainingMs(launchedAt);
+    setVisible(remaining > 0);
+
+    if (remaining <= 0) return;
+
+    const timeout = window.setTimeout(() => setVisible(false), remaining);
+    return () => window.clearTimeout(timeout);
+  }, [launchedAt]);
+
+  if (!visible) return null;
+
   return (
     <span
       className={cn(

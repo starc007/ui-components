@@ -204,6 +204,7 @@ export type RelatedComponent = {
   name: string;
   description: string;
   badge?: "new";
+  launchedAt?: string;
 };
 
 /**
@@ -321,5 +322,6 @@ function toRelated(categorySlug: string, c: ComponentEntry): RelatedComponent {
     name: c.name,
     description: c.description,
     badge: c.badge,
+    launchedAt: c.launchedAt,
   };
 }

@@ -7,12 +7,14 @@ export function ComponentCard({
   name,
   description,
   badge,
+  launchedAt,
 }: {
   categorySlug: string;
   slug: string;
   name: string;
   description: string;
   badge?: "new";
+  launchedAt?: string;
 }) {
   return (
     <Link
@@ -23,7 +25,7 @@ export function ComponentCard({
         <h3 className="truncate font-display text-base font-medium text-foreground">
           {name}
         </h3>
-        {badge === "new" ? <NewBadge /> : null}
+        {badge === "new" ? <NewBadge launchedAt={launchedAt} /> : null}
       </div>
 
       <div className="mx-2 mb-2 flex min-h-0 flex-1 items-start overflow-hidden rounded-3xl bg-background px-4 py-4 transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:bg-background/80 group-focus-visible/card:bg-background/80">

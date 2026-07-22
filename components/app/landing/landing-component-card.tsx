@@ -78,7 +78,9 @@ export function LandingComponentCard({
               >
                 {component.name}
               </h3>
-              {component.badge === "new" ? <NewBadge /> : null}
+              {component.badge === "new" ? (
+                <NewBadge launchedAt={component.launchedAt} />
+              ) : null}
             </div>
             <p className="mt-0.5 line-clamp-1 text-xs leading-relaxed text-muted-foreground">
               {component.description}
