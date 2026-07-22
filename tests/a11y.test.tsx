@@ -14,6 +14,11 @@ import {
 import { Checkbox } from "@/components/motion/checkbox";
 import { Input } from "@/components/motion/input";
 import { Parallax } from "@/components/motion/parallax";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/motion/popover";
 import { PullToRefresh } from "@/components/motion/pull-to-refresh";
 import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
 import { RangeSlider } from "@/components/motion/range-slider";
@@ -56,6 +61,17 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   ["AnimatedBadge", () => <AnimatedBadge status="success">Live</AnimatedBadge>],
+  [
+    "Popover",
+    () => (
+      <Popover>
+        <PopoverTrigger>
+          <Button>Open details</Button>
+        </PopoverTrigger>
+        <PopoverContent>Popover details</PopoverContent>
+      </Popover>
+    ),
+  ],
   [
     "SmoothScroll",
     () => (

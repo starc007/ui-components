@@ -2,10 +2,10 @@
 
 import {
   animate,
+  type MotionValue,
   useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
-  type MotionValue,
 } from "motion/react";
 import {
   cloneElement,
@@ -29,12 +29,20 @@ type Side = "top" | "bottom";
 type Align = "start" | "center" | "end";
 type TriggerMode = "click" | "hover";
 
-const GOO_SPRING = {
+// This morph needs less bounce than layout motion: too much overshoot makes
+// the liquid neck balloon past the final panel edges.
+const GOO_OPEN_SPRING = {
   type: "spring",
-  visualDuration: 0.32,
-  bounce: 0.28,
+  visualDuration: 0.3,
+  bounce: 0.15,
+} as const;
+const GOO_CLOSE_SPRING = {
+  type: "spring",
+  visualDuration: 0.21,
+  bounce: 0.15,
 } as const;
 const HOVER_CLOSE_DELAY = 120;
+const CIRCLE_KAPPA = 0.5523;
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
@@ -85,7 +93,20 @@ function buildGeo(
   };
 }
 
-function insetFor(rect: Rect, layerW: number, layerH: number): string {
+function rectAtProgress(geo: Geo, progress: number): Rect {
+  const trigger = geo.trigger;
+  const panel = geo.panel;
+
+  return {
+    x: lerp(trigger.x, panel.x, progress),
+    y: lerp(trigger.y, panel.y, progress),
+    w: lerp(trigger.w, panel.w, progress),
+    h: lerp(trigger.h, panel.h, progress),
+    r: lerp(trigger.r, panel.r, progress),
+  };
+}
+
+function insetFor(rect: Rect, layerW: number, layerH: number) {
   const top = rect.y;
   const right = layerW - (rect.x + rect.w);
   const bottom = layerH - (rect.y + rect.h);
@@ -93,17 +114,34 @@ function insetFor(rect: Rect, layerW: number, layerH: number): string {
   return `inset(${top}px ${right}px ${bottom}px ${left}px round ${rect.r}px)`;
 }
 
-function insetForProgress(geo: Geo, p: number): string {
-  const t = geo.trigger;
-  const pn = geo.panel;
-  const rect: Rect = {
-    x: lerp(t.x, pn.x, p),
-    y: lerp(t.y, pn.y, p),
-    w: lerp(t.w, pn.w, p),
-    h: lerp(t.h, pn.h, p),
-    r: lerp(t.r, pn.r, p),
-  };
-  return insetFor(rect, geo.layerW, geo.layerH);
+function roundedRectShape(rect: Rect) {
+  const radius = Math.max(0, Math.min(rect.r, rect.w / 2, rect.h / 2));
+  const control = radius * CIRCLE_KAPPA;
+  const x1 = rect.x;
+  const y1 = rect.y;
+  const x2 = rect.x + rect.w;
+  const y2 = rect.y + rect.h;
+  const px = (value: number) => `${value.toFixed(3)}px`;
+
+  return (
+    `shape(from ${px(x1 + radius)} ${px(y1)}, ` +
+    `line to ${px(x2 - radius)} ${px(y1)}, ` +
+    `curve to ${px(x2)} ${px(y1 + radius)} with ${px(x2 - radius + control)} ${px(y1)} / ${px(x2)} ${px(y1 + radius - control)}, ` +
+    `line to ${px(x2)} ${px(y2 - radius)}, ` +
+    `curve to ${px(x2 - radius)} ${px(y2)} with ${px(x2)} ${px(y2 - radius + control)} / ${px(x2 - radius + control)} ${px(y2)}, ` +
+    `line to ${px(x1 + radius)} ${px(y2)}, ` +
+    `curve to ${px(x1)} ${px(y2 - radius)} with ${px(x1 + radius - control)} ${px(y2)} / ${px(x1)} ${px(y2 - radius + control)}, ` +
+    `line to ${px(x1)} ${px(y1 + radius)}, ` +
+    `curve to ${px(x1 + radius)} ${px(y1)} with ${px(x1)} ${px(y1 + radius - control)} / ${px(x1 + radius - control)} ${px(y1)}, ` +
+    "close)"
+  );
+}
+
+function clipForProgress(geo: Geo, progress: number, supportsShape: boolean) {
+  const rect = rectAtProgress(geo, progress);
+  return supportsShape
+    ? roundedRectShape(rect)
+    : insetFor(rect, geo.layerW, geo.layerH);
 }
 
 interface PopoverContextValue {
@@ -213,7 +251,11 @@ export function Popover({
     const animation = animate(
       progress,
       open ? 1 : 0,
-      reduce ? { duration: 0 } : GOO_SPRING,
+      reduce
+        ? { duration: 0 }
+        : open
+          ? GOO_OPEN_SPRING
+          : GOO_CLOSE_SPRING,
     );
     return () => animation.stop();
   }, [open, progress, reduce]);
@@ -377,6 +419,7 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
   const blobRef = useRef<HTMLDivElement>(null);
   const clipRef = useRef<HTMLDivElement>(null);
   const geoRef = useRef<Geo | null>(null);
+  const supportsShapeRef = useRef(false);
 
   const [sizes, setSizes] = useState({ tW: 0, tH: 0, cW: 0, cH: 0 });
 
@@ -423,12 +466,19 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
   // oozes as one and the text reveals with it.
   const render = useCallback((g: Geo | null, p: number) => {
     if (!g || g.layerW === 0) return;
-    const clip = insetForProgress(g, p);
+    const clip = clipForProgress(g, p, supportsShapeRef.current);
     if (blobRef.current) blobRef.current.style.clipPath = clip;
     if (clipRef.current) clipRef.current.style.clipPath = clip;
   }, []);
 
   useLayoutEffect(() => {
+    supportsShapeRef.current =
+      typeof CSS !== "undefined" &&
+      typeof CSS.supports === "function" &&
+      CSS.supports(
+        "clip-path",
+        "shape(from 0px 0px, line to 1px 1px, close)",
+      );
     geoRef.current = geo;
     render(geo, progress.get());
   }, [geo, progress, render]);
@@ -494,7 +544,9 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
         <div
           ref={blobRef}
           className="absolute inset-0 bg-popover"
-          style={{ clipPath: insetForProgress(geo, progress.get()) }}
+          style={{
+            clipPath: clipForProgress(geo, progress.get(), false),
+          }}
         />
       </div>
 
@@ -514,7 +566,7 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
           inert={!open}
           className="absolute inset-0"
           style={{
-            clipPath: insetForProgress(geo, progress.get()),
+            clipPath: clipForProgress(geo, progress.get(), false),
             pointerEvents: open ? "auto" : "none",
           }}
         >
