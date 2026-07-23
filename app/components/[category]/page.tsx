@@ -6,6 +6,27 @@ import { JsonLd } from "@/components/app/analytics/json-ld";
 import { isComponentNew } from "@/lib/component-status";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
 
+const categoryContent = {
+  motion: {
+    title: "Animated React Components — Copy-Paste Motion UI",
+    heading: "Animated React components",
+    description:
+      "Explore free, open-source animated React components built with Motion and Tailwind CSS. Copy the TypeScript source into your app and customize every interaction.",
+    supportingText:
+      "Browse motion components for navigation, forms, text, feedback, overlays, and scroll experiences. Each one includes a live preview, install command, source code, API reference, and reduced-motion support.",
+    allLabel: "All animated components",
+  },
+  blocks: {
+    title: "Animated React UI Blocks — Product-Ready Motion",
+    heading: "Animated React UI blocks",
+    description:
+      "Explore product-ready animated React blocks built with Motion and Tailwind CSS. Copy complete interactions into your app and adapt the source to your product.",
+    supportingText:
+      "Browse composed interfaces for uploads, navigation, trading, scheduling, notifications, and more. Every block includes a live preview, install command, TypeScript source, and implementation details.",
+    allLabel: "All animated blocks",
+  },
+} as const;
+
 export function generateStaticParams() {
   return registry.map((c) => ({ category: c.slug }));
 }
@@ -19,7 +40,10 @@ export async function generateMetadata({
   const cat = findCategory(category);
   if (!cat) return {};
 
-  const title = `${cat.name} · React motion components`;
+  const content =
+    categoryContent[cat.slug as keyof typeof categoryContent] ??
+    categoryContent.motion;
+  const title = content.title;
   const ogTitle = `${title} · beUI`;
   const pageUrl = `/components/${cat.slug}`;
   const imageUrl = `/api/og?category=${cat.slug}`;
@@ -27,7 +51,7 @@ export async function generateMetadata({
 
   return {
     title,
-    description: cat.description,
+    description: content.description,
     keywords: [
       `${cat.name} components`,
       "React motion components",
@@ -45,7 +69,7 @@ export async function generateMetadata({
     ],
     openGraph: {
       title: ogTitle,
-      description: cat.description,
+      description: content.description,
       url: pageUrl,
       type: "website",
       siteName: "beUI",
@@ -61,7 +85,7 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
-      description: cat.description,
+      description: content.description,
       images: [imageUrl],
     },
     alternates: {
@@ -81,6 +105,9 @@ export default async function CategoryPage({
   const { category } = await params;
   const cat = findCategory(category);
   if (!cat) notFound();
+  const content =
+    categoryContent[cat.slug as keyof typeof categoryContent] ??
+    categoryContent.motion;
   const now = Date.now();
   const newComponents = cat.components.filter((comp) =>
     isComponentNew(comp, now),
@@ -107,10 +134,13 @@ export default async function CategoryPage({
         <span className="font-medium text-foreground">{cat.name}</span>
       </nav>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
-        {cat.name}
+        {content.heading}
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">
-        {cat.description}
+        {content.description}
+      </p>
+      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+        {content.supportingText}
       </p>
 
       {newComponents.length ? (
@@ -136,7 +166,7 @@ export default async function CategoryPage({
 
       <section className="mt-10">
         <p className="font-display text-xs font-medium uppercase text-muted-foreground">
-          All {cat.name}
+          {content.allLabel}
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {components.map((comp) => (

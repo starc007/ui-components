@@ -40,7 +40,8 @@ export const registry: CategoryEntry[] = [
   {
     slug: "motion",
     name: "Components",
-    description: "Motion primitives with shadcn-compatible registry endpoints.",
+    description:
+      "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
         slug: "tilt-card",
@@ -671,7 +672,8 @@ export const registry: CategoryEntry[] = [
   {
     slug: "blocks",
     name: "Blocks",
-    description: "Composed, product-ready widgets built from beUI motion primitives.",
+    description:
+      "Product-ready animated React UI blocks built with Motion and Tailwind CSS, available as customizable copy-paste source.",
     components: [
       {
         slug: "infinite-masonry",
