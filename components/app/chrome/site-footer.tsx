@@ -20,7 +20,8 @@ export function SiteFooter() {
           <div className="col-span-2 md:col-span-1">
             <p className="font-display text-lg font-medium text-foreground">beUI</p>
             <p className="mt-2 max-w-[220px] text-sm leading-6 text-muted-foreground">
-              The motion toolkit for React & Next.js. Copy-paste via shadcn registry.
+              Animated components for React and Next.js. Copy-paste via the
+              shadcn registry.
             </p>
             <p className="mt-5 text-xs text-muted-foreground">
               Created by{" "}

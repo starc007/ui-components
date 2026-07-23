@@ -166,7 +166,7 @@ export class BeUiMcp extends McpAgent<Env, Record<string, never>, Record<string,
 
 const LANDING = `beUI MCP server
 
-The motion toolkit for React & Next.js, as a remote MCP server.
+Animated components for React and Next.js, available through a remote MCP server.
 
 Connect your MCP client to:
   https://mcp.beui.dev/mcp   (Streamable HTTP, recommended)

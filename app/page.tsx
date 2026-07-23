@@ -63,7 +63,7 @@ function SectionHeader({
           href={href}
           className="group inline-flex items-center self-start text-sm font-medium text-muted-foreground transition-colors hover:text-foreground md:self-auto"
         >
-          Browse all
+          Browse animated React components
           <ArrowRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
       ) : null}

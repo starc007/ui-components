@@ -23,11 +23,11 @@ export async function GET(request: Request) {
   const title =
     component?.name ??
     category?.name ??
-    "The motion toolkit for React & Next.js";
+    "Animated components for React and Next.js";
   const description = clampText(
     component?.description ??
       category?.description ??
-      "The motion toolkit for React & Next.js. Built on Framer Motion and Tailwind.",
+      "Free, open-source React components built with Motion and Tailwind CSS.",
     OG_DESCRIPTION_LIMIT,
   );
   const label = component

@@ -10,9 +10,10 @@ import { SITE_URL } from "@/lib/site";
 
 export const SITE = SITE_URL;
 export const SITE_NAME = "beUI";
-export const SITE_TAGLINE = "The motion toolkit for React & Next.js";
+export const SITE_TITLE = "Animated Components for React and Next.js";
+export const SITE_TAGLINE = "Animated components for React and Next.js";
 export const SITE_DESCRIPTION =
-  "The motion toolkit for React and Next.js. Free, open-source, shadcn-compatible components built on Framer Motion and Tailwind CSS. Copy-paste the source or install with the shadcn CLI.";
+  "Free, open-source animated components for React and Next.js, built with Motion and Tailwind CSS. Copy the source or install with the shadcn CLI.";
 export const AUTHOR = "Saurabh";
 
 const abs = (path: string) => (path.startsWith("http") ? path : `${SITE}${path}`);
@@ -107,7 +108,7 @@ export function siteJsonLd(): JsonLdSchema[] {
       "@type": "SoftwareApplication",
       "@id": `${SITE}/#app`,
       name: SITE_NAME,
-      alternateName: "beUI motion toolkit",
+      alternateName: "beUI animated components",
       slogan: SITE_TAGLINE,
       description: SITE_DESCRIPTION,
       url: SITE,

@@ -40,7 +40,8 @@ export const registry: CategoryEntry[] = [
   {
     slug: "motion",
     name: "Components",
-    description: "Motion primitives with shadcn-compatible registry endpoints.",
+    description:
+      "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
         slug: "tilt-card",
@@ -239,6 +240,23 @@ export const registry: CategoryEntry[] = [
         name: "Shared Layout Background",
         description: "A pill that glides between hovered items via motion's shared layout, with blur enter/exit.",
         file: "components/motion/shared-layout-bg.tsx",
+      },
+      {
+        slug: "bounce-sidebar",
+        name: "Bounce Sidebar",
+        description:
+          "A vertical sidebar whose active dot jumps between destinations on a curved, spring-loaded path.",
+        file: "components/motion/bounce-sidebar.tsx",
+        badge: "new",
+        launchedAt: "2026-07-22",
+        keywords: [
+          "animated sidebar react",
+          "bounce sidebar",
+          "sidebar navigation",
+          "spring navigation indicator",
+          "curved motion path",
+          "active navigation dot",
+        ],
       },
       {
         slug: "preview-rail",
@@ -654,7 +672,8 @@ export const registry: CategoryEntry[] = [
   {
     slug: "blocks",
     name: "Blocks",
-    description: "Composed, product-ready widgets built from beUI motion primitives.",
+    description:
+      "Product-ready animated React UI blocks built with Motion and Tailwind CSS, available as customizable copy-paste source.",
     components: [
       {
         slug: "infinite-masonry",

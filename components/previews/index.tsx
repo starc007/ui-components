@@ -170,6 +170,11 @@ export const previews: Record<string, ComponentType> = {
   "motion/shared-layout-bg": dynamic(() =>
     import("./motion/shared-layout-bg.preview").then((m) => m.SharedLayoutBgPreview),
   ),
+  "motion/bounce-sidebar": dynamic(() =>
+    import("./motion/bounce-sidebar.preview").then(
+      (m) => m.BounceSidebarPreview,
+    ),
+  ),
   "motion/preview-rail": dynamic(() =>
     import("./motion/preview-rail.preview").then(
       (m) => m.PreviewRailPreview,

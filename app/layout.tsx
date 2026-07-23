@@ -13,7 +13,13 @@ import { SiteFrame } from "@/components/app/chrome/site-frame";
 import { KeyboardShortcuts } from "@/components/app/chrome/keyboard-shortcuts";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { getGithubStarCount } from "@/lib/github";
-import { AUTHOR, SITE_DESCRIPTION, SITE_NAME, siteJsonLd } from "@/lib/seo";
+import {
+  AUTHOR,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE,
+  siteJsonLd,
+} from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +36,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: SITE_NAME,
   title: {
-    default: "beUI · The motion toolkit for React & Next.js",
+    default: `${SITE_TITLE} · beUI`,
     template: "%s · beUI",
   },
   description: SITE_DESCRIPTION,
@@ -48,7 +54,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "beUI · The motion toolkit for React & Next.js",
+    title: `${SITE_TITLE} · beUI`,
     description: SITE_DESCRIPTION,
     type: "website",
     url: "/",
@@ -59,13 +65,13 @@ export const metadata: Metadata = {
         url: "/api/og",
         width: 1200,
         height: 630,
-        alt: "beUI · The motion toolkit for React & Next.js",
+        alt: `${SITE_TITLE} · beUI`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "beUI · The motion toolkit for React & Next.js",
+    title: `${SITE_TITLE} · beUI`,
     description: SITE_DESCRIPTION,
     images: ["/api/og"],
   },

@@ -5,6 +5,7 @@ import type { ReactElement } from "react";
 
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { BloomMenu } from "@/components/motion/bloom-menu";
+import { BounceSidebar } from "@/components/motion/bounce-sidebar";
 import { Button } from "@/components/motion/button";
 import {
   CenterMorphModal,
@@ -41,6 +42,19 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ["Button disabled", () => <Button disabled>Subscribe</Button>],
   ["Button ripple", () => <Button ripple>Subscribe</Button>],
   ["BloomMenu", () => <BloomMenu />],
+  [
+    "BounceSidebar",
+    () => (
+      <BounceSidebar
+        defaultValue="components"
+        items={[
+          { id: "overview", label: "Overview" },
+          { id: "components", label: "Components" },
+          { id: "changelog", label: "Changelog" },
+        ]}
+      />
+    ),
+  ],
   [
     "CenterMorphModal",
     () => (
