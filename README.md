@@ -7,7 +7,7 @@
 <h1 align="center">beUI v2</h1>
 
 <p align="center">
-  The motion toolkit for React & Next.js. Copy the source, own the code.
+  Animated components for React and Next.js. Copy the source, own the code.
 </p>
 
 <p align="center">

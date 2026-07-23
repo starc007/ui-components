@@ -361,7 +361,7 @@ export async function buildShadcnRegistry(): Promise<ShadcnRegistry> {
 export async function buildIndex() {
   return {
     name: "beUI",
-    description: "The motion toolkit for React and Next.js.",
+    description: "Animated components for React and Next.js.",
     site: SITE_URL,
     endpoints: {
       llms: `${SITE_URL}/llms.txt`,

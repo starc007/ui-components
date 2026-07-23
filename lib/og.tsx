@@ -29,7 +29,7 @@ function titleSize(title: string) {
 // Shared Satori-safe OG canvas for the homepage and dynamic social cards.
 // The shader is exported to a static image so edge rendering stays deterministic.
 export function ogImage({
-  title = "The motion toolkit for React & Next.js",
+  title = "Animated components for React and Next.js",
   description = "Free, open-source motion components with the source included.",
   label = "Motion components",
   command = "npx shadcn add @beui/...",
