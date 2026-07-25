@@ -90,6 +90,11 @@ export const previews: Record<string, ComponentType> = {
   "motion/text-shimmer": dynamic(() =>
     import("./motion/text-shimmer.preview").then((m) => m.TextShimmerPreview),
   ),
+  "motion/chromatic-text-reveal": dynamic(() =>
+    import("./motion/chromatic-text-reveal.preview").then(
+      (m) => m.ChromaticTextRevealPreview,
+    ),
+  ),
   "motion/number": dynamic(() =>
     import("./motion/number.preview").then((m) => m.NumberPreview),
   ),
