@@ -356,13 +356,28 @@ export const registry: CategoryEntry[] = [
       {
         slug: "text-animation",
         name: "Text Animation",
-        description: "Animated text primitives for reveal sequences, shimmer loading states and letter-cascade swaps.",
+        description:
+          "Animated text primitives for spring reveals, chromatic sweeps, shimmer loading states and letter-cascade swaps.",
         file: "components/motion/text-reveal.tsx",
+        badge: "new",
+        launchedAt: "2026-07-25",
         extraFiles: [
+          "components/motion/chromatic-text-reveal.tsx",
           "components/motion/text-shimmer.tsx",
           "components/motion/text-cascade.tsx",
         ],
         examples: [
+          {
+            slug: "chromatic-reveal",
+            name: "Dia Text Animation",
+            description:
+              "A Dia-inspired text effect with a fixed sentence prefix and a cycling final word revealed by a colorful sweep.",
+            installSlug: "chromatic-text-reveal",
+            file: "components/motion/chromatic-text-reveal.tsx",
+            previewKey: "motion/chromatic-text-reveal",
+            previewFile:
+              "components/previews/motion/chromatic-text-reveal.preview.tsx",
+          },
           {
             slug: "reveal",
             name: "Text Reveal",

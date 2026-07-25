@@ -13,6 +13,7 @@ import {
   CenterMorphModalTrigger,
 } from "@/components/motion/center-morph-modal";
 import { Checkbox } from "@/components/motion/checkbox";
+import { ChromaticTextReveal } from "@/components/motion/chromatic-text-reveal";
 import { Input } from "@/components/motion/input";
 import { Parallax } from "@/components/motion/parallax";
 import {
@@ -52,6 +53,15 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
           { id: "components", label: "Components" },
           { id: "changelog", label: "Changelog" },
         ]}
+      />
+    ),
+  ],
+  [
+    "ChromaticTextReveal",
+    () => (
+      <ChromaticTextReveal
+        prefix="Make it feel"
+        words={["alive.", "effortless."]}
       />
     ),
   ],

@@ -2,17 +2,24 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { ChromaticTextReveal } from "@/components/motion/chromatic-text-reveal";
 import { TextReveal } from "@/components/motion/text-reveal";
 import { TextShimmer } from "@/components/motion/text-shimmer";
 import { EASE_OUT } from "@/lib/ease";
 
+const variants = ["chromatic", "reveal", "shimmer"] as const;
+
 export function TextAnimationPreview() {
-  const [variant, setVariant] = useState<"reveal" | "shimmer">("reveal");
+  const [variant, setVariant] =
+    useState<(typeof variants)[number]>("chromatic");
 
   useEffect(() => {
     const id = window.setInterval(() => {
-      setVariant((currentVariant) => currentVariant === "reveal" ? "shimmer" : "reveal");
-    }, 3000);
+      setVariant((currentVariant) => {
+        const index = variants.indexOf(currentVariant);
+        return variants[(index + 1) % variants.length];
+      });
+    }, 3200);
     return () => window.clearInterval(id);
   }, []);
 
@@ -34,6 +41,13 @@ export function TextAnimationPreview() {
               blur={6}
               yOffset="18%"
               className="text-balance text-3xl font-semibold tracking-tight text-foreground"
+            />
+          ) : variant === "chromatic" ? (
+            <ChromaticTextReveal
+              prefix="Motion that feels"
+              words={["natural.", "intentional.", "alive."]}
+              startOnView={false}
+              className="text-3xl font-semibold tracking-tight"
             />
           ) : (
             <TextShimmer duration={1.8} className="text-xl font-semibold">
