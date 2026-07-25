@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Star, SwatchBook } from "lucide-react";
+import { ArrowUpRight, SwatchBook } from "lucide-react";
 import { useMotionValueEvent, useScroll } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
