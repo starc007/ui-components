@@ -53,11 +53,27 @@ export function PreviewFit({
       // already-shrunk box, compounding into the wrong scale every render.
       const outerW = outer.clientWidth;
       const outerH = outer.clientHeight;
-      const stageH = stage.offsetHeight;
-      if (!outerW || !outerH || !stageH) return;
+      const childSizes = Array.from(stage.children, (child) => {
+        const element = child as HTMLElement;
+        return {
+          width: Math.max(element.offsetWidth, element.scrollWidth),
+          height: Math.max(element.offsetHeight, element.scrollHeight),
+        };
+      });
+      const contentW = Math.max(
+        stage.offsetWidth,
+        stage.scrollWidth,
+        ...childSizes.map(({ width }) => width),
+      );
+      const contentH = Math.max(
+        stage.offsetHeight,
+        stage.scrollHeight,
+        ...childSizes.map(({ height }) => height),
+      );
+      if (!outerW || !outerH || !contentW || !contentH) return;
       const fit = Math.min(
-        (outerW * 0.94) / STAGE_WIDTH,
-        (outerH * 0.94) / stageH,
+        (outerW * 0.94) / contentW,
+        (outerH * 0.94) / contentH,
       );
       setFitScale(Math.max(MIN_SCALE, fit));
       setMeasured(true);
@@ -67,6 +83,9 @@ export function PreviewFit({
     const ro = new ResizeObserver(measure);
     ro.observe(outer);
     ro.observe(stage);
+    Array.from(stage.children).forEach((child) => {
+      ro.observe(child);
+    });
     return () => ro.disconnect();
   }, []);
 
@@ -81,7 +100,7 @@ export function PreviewFit({
         ref={stageRef}
         style={{ width: STAGE_WIDTH, transform: `scale(${scale})` }}
         className={cn(
-          "pointer-events-none flex origin-center shrink-0 items-center justify-center contain-[paint] [&_*]:!cursor-default",
+          "pointer-events-none flex origin-center shrink-0 items-center justify-center [&_*]:!cursor-default",
           measured
             ? "transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)]"
             : "invisible",

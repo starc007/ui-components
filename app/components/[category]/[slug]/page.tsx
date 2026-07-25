@@ -134,6 +134,7 @@ export default async function ComponentPage({
   const cat = findCategory(category);
   const comp = findComponent(category, slug);
   if (!cat || !comp) notFound();
+  const hasMultipleVariants = (comp.examples?.length ?? 0) > 1;
   const hasVariantInstallCommands =
     comp.examples?.some((example) => example.installSlug) ?? false;
   const dates = componentDates(cat.slug, comp.slug);
@@ -213,7 +214,7 @@ export default async function ComponentPage({
               <h1 className="text-3xl font-semibold tracking-tight text-foreground">
                 {comp.name}
               </h1>
-              {comp.badge === "new" ? (
+              {comp.badge === "new" && !hasMultipleVariants ? (
                 <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
               ) : null}
             </div>
@@ -334,9 +335,14 @@ async function ExampleBlock({
   return (
     <section id={example.slug} className="scroll-mt-24">
       <div className="mb-4 flex items-baseline justify-between gap-3">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">
-          {example.name}
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">
+            {example.name}
+          </h2>
+          {example.badge === "new" ? (
+            <NewBadge launchedAt={example.launchedAt} />
+          ) : null}
+        </div>
         <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
           {example.file.split("/").pop()}
         </code>

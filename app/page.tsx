@@ -76,7 +76,27 @@ export default function Home() {
     .flatMap((category) =>
       category.components
         .filter((component) => isComponentNew(component))
-        .map((component) => ({ category: category.slug, component })),
+        .map((component) => {
+          const newVariant = component.examples
+            ?.filter((example) => isComponentNew(example))
+            .sort((a, b) =>
+              (b.launchedAt ?? "").localeCompare(a.launchedAt ?? ""),
+            )[0];
+
+          return {
+            category: category.slug,
+            previewKey: newVariant?.previewKey,
+            component: newVariant
+              ? {
+                  ...component,
+                  name: newVariant.name,
+                  description:
+                    newVariant.description ?? component.description,
+                  launchedAt: newVariant.launchedAt,
+                }
+              : component,
+          };
+        }),
     )
     // Newest first: most recently launched components lead the section.
     .sort((a, b) =>
@@ -113,11 +133,12 @@ export default function Home() {
         <section className="mx-auto max-w-7xl border-t border-border px-4 pb-16 pt-14">
           <SectionHeader eyebrow="New" title="Recently launched" />
           <div className={GRID_CLASS}>
-            {newComponents.map(({ category, component }) => (
+            {newComponents.map(({ category, component, previewKey }) => (
               <LandingComponentCard
                 key={`${category}-${component.slug}`}
                 component={component}
                 category={category}
+                previewKey={previewKey}
               />
             ))}
           </div>

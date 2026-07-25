@@ -2,6 +2,9 @@ export type ComponentExample = {
   slug: string;
   name: string;
   description?: string;
+  badge?: "new";
+  /** ISO date this variant shipped. */
+  launchedAt?: string;
   /** Optional install slug for variants that have their own registry command. */
   installSlug?: string;
   /** Source file shown under Source tab. */
@@ -372,6 +375,8 @@ export const registry: CategoryEntry[] = [
             name: "Dia Text Animation",
             description:
               "A Dia-inspired text effect with a fixed sentence prefix and a cycling final word revealed by a colorful sweep.",
+            badge: "new",
+            launchedAt: "2026-07-25",
             installSlug: "chromatic-text-reveal",
             file: "components/motion/chromatic-text-reveal.tsx",
             previewKey: "motion/chromatic-text-reveal",

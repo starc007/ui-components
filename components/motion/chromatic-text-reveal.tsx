@@ -131,7 +131,7 @@ export function ChromaticTextReveal({
 
   return (
     <span ref={ref} className={cn("inline-flex items-baseline", className)}>
-      <span>
+      <span className="whitespace-nowrap">
         {prefix}
         {hasWords ? "\u00A0" : null}
       </span>

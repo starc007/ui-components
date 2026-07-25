@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 import type { ComponentEntry } from "@/lib/registry";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { PreviewFit } from "@/components/app/landing/preview-fit";
-import { getPreview } from "@/components/previews";
+import { getPreview, previews } from "@/components/previews";
 import { EASE_OUT_CSS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -23,17 +23,21 @@ export function LandingComponentCard({
   component,
   category = "motion",
   variant = "default",
+  previewKey,
 }: {
   component: ComponentEntry;
   category?: string;
   variant?: CardVariant;
+  previewKey?: string;
 }) {
   const cardRef = useRef<HTMLElement>(null);
   const shouldRenderPreview = useInView(cardRef, {
     once: true,
     margin: "400px 0px",
   });
-  const Preview = getPreview(category, component.slug);
+  const Preview = previewKey
+    ? previews[previewKey]
+    : getPreview(category, component.slug);
   const [hover, setHover] = useState(false);
   const feature = variant === "feature";
 
