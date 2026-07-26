@@ -41,8 +41,12 @@ export interface KnockoutBracketProps {
   rounds: Round[];
   /** Round shown as the leftmost column on mount. Defaults to 1, clamped to the valid range. */
   initialRound?: number;
+  /** Third place play-off, rendered under the bracket instead of inside it. */
+  thirdPlace?: Match;
   className?: string;
 }
+
+const THIRD_PLACE_LABEL = "Third place play-off";
 
 // Card geometry drives the whole computed layout — every later match sits at the
 // exact vertical midpoint of its two feeders, so pairs line up with connectors.
@@ -286,6 +290,7 @@ function MatchCard({ match }: { match: Match }) {
 export function KnockoutBracket({
   rounds,
   initialRound = 1,
+  thirdPlace,
   className,
 }: KnockoutBracketProps) {
   const reduce = useReducedMotion();
@@ -479,6 +484,24 @@ export function KnockoutBracket({
             );
           })}
         </motion.div>
+
+        {/* Outside the bracket stage — it feeds off the semi-finals rather than
+            into the final, so it gets its own rule instead of a column. */}
+        {thirdPlace && (
+          <div
+            className="mt-8 border-t border-border pt-6"
+            style={{ paddingLeft: PAD_X }}
+          >
+            <ul aria-label={THIRD_PLACE_LABEL} className="m-0 list-none p-0">
+              <li aria-label={matchLabel(THIRD_PLACE_LABEL, thirdPlace)}>
+                <p className="mb-2 text-sm leading-5 text-muted-foreground/70">
+                  {THIRD_PLACE_LABEL}
+                </p>
+                <MatchCard match={thirdPlace} />
+              </li>
+            </ul>
+          </div>
+        )}
       </section>
     </div>
   );
@@ -800,3 +823,13 @@ export const ROUNDS: Round[] = [
     ],
   },
 ];
+
+// Both slots stay TBD until the semi-finals resolve, same as the final.
+export const THIRD_PLACE: Match = {
+  id: "tp-1",
+  date: "Sun, 19 Jul",
+  time: "3:00 am",
+  status: "upcoming",
+  home: { team: null, score: null },
+  away: { team: null, score: null },
+};

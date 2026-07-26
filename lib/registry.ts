@@ -729,11 +729,24 @@ export const registry: CategoryEntry[] = [
       },
       {
         slug: "knockout-bracket",
-        name: "Knockout Bracket",
-        description: "Google-style tournament bracket that pages one round at a time — the leftmost round stacks compactly while later rounds center between their feeder matches, with cards, elbow connectors, headers and container height animating to every new layout.",
+        name: "Fixtures",
+        description: "Animated tournament fixtures. The knockout bracket version pages through rounds and can show a third place play-off below the tree.",
         file: "components/motion/knockout-bracket.tsx",
         badge: "new",
         launchedAt: "2026-07-12",
+        examples: [
+          {
+            slug: "knockout-bracket",
+            name: "Knockout Bracket",
+            description:
+              "Pages one round at a time. The leftmost round stacks at a fixed rhythm, each later round centers between its two feeder matches, and cards, elbow connectors, headers and stage height animate into every new layout. A third place play-off sits below the tree under its own rule.",
+            installSlug: "knockout-bracket",
+            file: "components/motion/knockout-bracket.tsx",
+            previewKey: "blocks/knockout-bracket",
+            previewFile:
+              "components/previews/blocks/knockout-bracket.preview.tsx",
+          },
+        ],
         keywords: [
           "tournament bracket react",
           "knockout bracket component",
