@@ -19,6 +19,9 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.KnockoutBracketPreview,
     ),
   ),
+  "blocks/knockout-wheel": dynamic(() =>
+    import("./blocks/knockout-wheel.preview").then((m) => m.KnockoutWheelPreview),
+  ),
   "blocks/dynamic-island": dynamic(() =>
     import("./blocks/dynamic-island.preview").then((m) => m.DynamicIslandPreview),
   ),

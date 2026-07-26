@@ -730,11 +730,24 @@ export const registry: CategoryEntry[] = [
       {
         slug: "knockout-bracket",
         name: "Fixtures",
-        description: "Animated tournament fixtures. The knockout bracket version pages through rounds and can show a third place play-off below the tree.",
+        description: "Animated tournament fixtures in two styles: a knockout bracket that pages through rounds, and a wheel that wraps the same tree around the champion.",
         file: "components/motion/knockout-bracket.tsx",
         badge: "new",
-        launchedAt: "2026-07-12",
+        launchedAt: "2026-07-27",
+        extraFiles: ["components/motion/knockout-wheel.tsx"],
         examples: [
+          {
+            slug: "knockout-wheel",
+            name: "Knockout Wheel",
+            description:
+              "The tournament drawn radially. The champion holds the hub, each round is a ring further out, and the teams themselves form the rim. Nodes spring in ring by ring, and hovering one traces that team's run back to the center while the rest recede.",
+            badge: "new",
+            launchedAt: "2026-07-27",
+            installSlug: "knockout-wheel",
+            file: "components/motion/knockout-wheel.tsx",
+            previewKey: "blocks/knockout-wheel",
+            previewFile: "components/previews/blocks/knockout-wheel.preview.tsx",
+          },
           {
             slug: "knockout-bracket",
             name: "Knockout Bracket",
