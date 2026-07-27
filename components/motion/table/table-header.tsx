@@ -191,6 +191,7 @@ export function TableHeader<T>({
                 indeterminate={!allSelected && someSelected}
                 onCheckedChange={onToggleAll}
                 aria-label="Select all rows"
+                className="size-6"
               />
             </div>
           </th>
@@ -250,7 +251,7 @@ export function TableHeader<T>({
                     onPointerDown={(e) => onReorderStart(column.key, e)}
                     onPointerMove={onReorderMove}
                     onPointerUp={onReorderEnd}
-                    className="flex h-full cursor-grab touch-none items-center pl-2 text-muted-foreground/60 transition-colors hover:text-foreground active:cursor-grabbing"
+                    className="flex h-full w-6 cursor-grab touch-none items-center justify-center text-muted-foreground/60 transition-colors hover:text-foreground active:cursor-grabbing"
                   >
                     <GripVertical className="h-3.5 w-3.5" />
                   </button>

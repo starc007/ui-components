@@ -184,6 +184,7 @@ export function CommandPalette({
   return createPortal(
     <div
       aria-hidden={!open}
+      inert={!open}
       className={cn(
         "fixed inset-0 z-[100]",
         open ? "pointer-events-auto" : "pointer-events-none",

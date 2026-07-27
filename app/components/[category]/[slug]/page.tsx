@@ -343,7 +343,7 @@ async function ExampleBlock({
             <NewBadge launchedAt={example.launchedAt} />
           ) : null}
         </div>
-        <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
+        <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
           {example.file.split("/").pop()}
         </code>
       </div>
@@ -384,7 +384,7 @@ async function ExampleBlock({
           id={`${example.slug}-install`}
           className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
         >
-          <h3 className="text-sm font-semibold text-foreground">Install</h3>
+          <h2 className="text-sm font-semibold text-foreground">Install</h2>
           <div className="mt-3">
             <InstallBlock category={category} slug={installSlug} />
           </div>
@@ -395,9 +395,9 @@ async function ExampleBlock({
           id={`${example.slug}-api-reference`}
           className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
         >
-          <h3 className="text-sm font-semibold text-foreground">
+          <h2 className="text-sm font-semibold text-foreground">
             API Reference
-          </h3>
+          </h2>
           <div className="mt-3">
             <PropsTable docs={propsDocs} />
           </div>
@@ -425,6 +425,7 @@ async function DefaultTabs({
 
   return (
     <section id="preview" className="mt-8 scroll-mt-24">
+      <h2 className="sr-only">Preview</h2>
       <Tabs defaultValue="preview" variant="pill">
         <TabsList>
           <TabsTrigger value="preview">Preview</TabsTrigger>

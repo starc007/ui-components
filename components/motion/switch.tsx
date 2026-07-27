@@ -12,10 +12,18 @@ export interface SwitchProps {
   onCheckedChange: (checked: boolean) => void;
   disabled?: boolean;
   label?: string;
+  ariaLabel?: string;
   className?: string;
 }
 
-export function Switch({ checked, onCheckedChange, disabled, label, className }: SwitchProps) {
+export function Switch({
+  checked,
+  onCheckedChange,
+  disabled,
+  label,
+  ariaLabel,
+  className,
+}: SwitchProps) {
   const id = useId();
   const thumbRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
@@ -44,6 +52,7 @@ export function Switch({ checked, onCheckedChange, disabled, label, className }:
           type="button"
           role="switch"
           aria-checked={checked}
+          aria-label={ariaLabel}
           disabled={disabled}
           onClick={() => !disabled && onCheckedChange(!checked)}
           onPointerDown={(e) => {

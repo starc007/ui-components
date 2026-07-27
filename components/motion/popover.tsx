@@ -408,6 +408,7 @@ export interface PopoverContentProps {
 
 export function PopoverContent({ children, className }: PopoverContentProps) {
   const ctx = usePopoverContext("PopoverContent");
+  const [portalReady, setPortalReady] = useState(false);
   const {
     side,
     align,
@@ -431,7 +432,13 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
   const clipRef = useRef<HTMLDivElement>(null);
   const geoRef = useRef<Geo | null>(null);
   const supportsShapeRef = useRef(false);
-  const layout = usePopoverPortalPosition(triggerRef, measureRef, true);
+  const layout = usePopoverPortalPosition(
+    triggerRef,
+    measureRef,
+    portalReady,
+  );
+
+  useEffect(() => setPortalReady(true), []);
 
   const geo = useMemo(
     () =>
@@ -477,7 +484,9 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
       : {};
   const maskId = `${gooId}-trigger-cutout`;
 
-  if (typeof document === "undefined") return null;
+  // Match the server and first client render, then attach the portal after
+  // hydration. This preserves SSR without regenerating the page on the client.
+  if (!portalReady) return null;
 
   return createPortal(
     <div

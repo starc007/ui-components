@@ -145,9 +145,9 @@ export default async function CategoryPage({
 
       {newComponents.length ? (
         <section className="mt-10">
-          <p className="font-display text-xs font-medium uppercase text-muted-foreground">
+          <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
             New
-          </p>
+          </h2>
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {newComponents.map((comp) => (
               <ComponentCard
@@ -165,9 +165,9 @@ export default async function CategoryPage({
       ) : null}
 
       <section className="mt-10">
-        <p className="font-display text-xs font-medium uppercase text-muted-foreground">
+        <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
           {content.allLabel}
-        </p>
+        </h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {components.map((comp) => (
             <ComponentCard
