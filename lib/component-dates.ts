@@ -24,6 +24,7 @@ const COMPONENT_DATES = {
   "motion/preview-rail": { publishedAt: "2026-07-11", updatedAt: "2026-07-27" },
   "motion/dock": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
   "motion/tooltip": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
+  "motion/context-menu": { publishedAt: "2026-07-27", updatedAt: "2026-07-27" },
   "motion/popover": { publishedAt: "2026-07-07", updatedAt: "2026-07-27" },
   "motion/morphing-modal": { publishedAt: "2026-05-17", updatedAt: "2026-07-27" },
   "motion/center-morph-modal": {

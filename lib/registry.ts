@@ -294,6 +294,23 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/tooltip.tsx",
       },
       {
+        slug: "context-menu",
+        name: "Animated Context Menu",
+        description:
+          "Composable context-menu primitives with a pointer-origin clip morph, a gliding active row, checkbox and radio choices, keyboard navigation, typeahead, and long-press support.",
+        file: "components/motion/context-menu.tsx",
+        badge: "new",
+        launchedAt: "2026-07-27",
+        keywords: [
+          "react context menu",
+          "animated context menu",
+          "right click menu",
+          "context menu keyboard navigation",
+          "long press menu react",
+          "composable menu primitives",
+        ],
+      },
+      {
         slug: "popover",
         name: "Popover",
         description:
