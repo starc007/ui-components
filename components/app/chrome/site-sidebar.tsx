@@ -14,6 +14,7 @@ const INTRO = [
 
 const PATTERNS = [
   { slug: "motion-patterns", name: "Motion Guides", href: "/docs/motion-patterns" },
+  { slug: "openui", name: "OpenUI", href: "/docs/openui" },
 ];
 
 function moveFirstItemsToBottom<T>(items: T[], count: number) {
