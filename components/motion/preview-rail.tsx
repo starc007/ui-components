@@ -69,7 +69,7 @@ export function PreviewRail({
   const displayedId = hoveredId ?? focusedId ?? "";
   const displayedIndex = items.findIndex((item) => item.id === displayedId);
   const rowTemplate = items.length
-    ? `repeat(${items.length}, 1.25rem)`
+    ? `repeat(${items.length}, 1.5rem)`
     : undefined;
   const isHorizontal = orientation === "horizontal";
 
@@ -148,8 +148,8 @@ export function PreviewRail({
               className={cn(
                 "relative flex text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                 isHorizontal
-                  ? "h-12 w-5 items-end justify-center"
-                  : "h-5 w-12 items-center",
+                  ? "h-12 w-6 items-end justify-center"
+                  : "h-6 w-12 items-center",
               )}
             >
               <motion.span
@@ -187,8 +187,8 @@ export function PreviewRail({
           <div
             key={item.id}
             className={cn(
-              "relative flex h-5 items-center",
-              isHorizontal ? "w-5 justify-center" : undefined,
+              "relative flex h-6 items-center",
+              isHorizontal ? "w-6 justify-center" : undefined,
             )}
           >
             {item.id === displayedId ? (

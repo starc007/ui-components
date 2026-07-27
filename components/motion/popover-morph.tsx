@@ -202,11 +202,14 @@ export function MorphPopoverContent({
 }: MorphPopoverContentProps) {
   const ctx = useMorphContext("MorphPopoverContent");
   const reduce = useReducedMotion() ?? false;
+  const [portalReady, setPortalReady] = useState(false);
   const layout = usePopoverPortalPosition(
     ctx.triggerRef,
     ctx.contentRef,
-    ctx.open,
+    portalReady && ctx.open,
   );
+
+  useEffect(() => setPortalReady(true), []);
   const left = layout
     ? align === "end"
       ? layout.trigger.left + layout.trigger.width - layout.content.width
@@ -239,7 +242,8 @@ export function MorphPopoverContent({
         },
       };
 
-  if (typeof document === "undefined") return null;
+  // Keep the server and first client render identical, then mount the portal.
+  if (!portalReady) return null;
 
   return createPortal(
     <AnimatePresence>

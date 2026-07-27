@@ -14,7 +14,10 @@ import {
 } from "@/components/motion/center-morph-modal";
 import { Checkbox } from "@/components/motion/checkbox";
 import { ChromaticTextReveal } from "@/components/motion/chromatic-text-reveal";
+import { CommandPalette } from "@/components/motion/command-palette";
 import { Input } from "@/components/motion/input";
+import { Marquee } from "@/components/motion/marquee";
+import { MorphingModal } from "@/components/motion/morphing-modal";
 import {
   KnockoutWheel,
   ROUNDS as KNOCKOUT_WHEEL_ROUNDS,
@@ -31,6 +34,13 @@ import { RangeSlider } from "@/components/motion/range-slider";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { ScrollTo } from "@/components/motion/scroll-to";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/motion/select";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { Switch } from "@/components/motion/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
@@ -105,13 +115,58 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   [
+    "Marquee with interactive content",
+    () => (
+      <Marquee>
+        <a href="/components">Browse components</a>
+        <button type="button">Pause preview</button>
+      </Marquee>
+    ),
+  ],
+  [
+    "CommandPalette closed",
+    () => (
+      <CommandPalette
+        items={[
+          {
+            id: "docs",
+            label: "Open documentation",
+            onSelect: () => {},
+          },
+        ]}
+      />
+    ),
+  ],
+  [
+    "Select closed",
+    () => (
+      <Select defaultValue="react">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="react">React</SelectItem>
+          <SelectItem value="next">Next.js</SelectItem>
+        </SelectContent>
+      </Select>
+    ),
+  ],
+  [
+    "MorphingModal closed",
+    () => (
+      <MorphingModal viewId={null} onClose={() => {}}>
+        <button type="button">Modal action</button>
+      </MorphingModal>
+    ),
+  ],
+  [
     "SmoothScroll",
     () => (
       <SmoothScroll>
-        <main>
+        <div>
           <h1>Page</h1>
           <p>Scrollable content.</p>
-        </main>
+        </div>
       </SmoothScroll>
     ),
   ],
@@ -184,8 +239,8 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
 describe("accessibility", () => {
   for (const [name, renderCase] of cases) {
     test(`${name} has no axe violations`, async () => {
-      const { container } = render(renderCase());
-      const results = await axe(container);
+      render(<main>{renderCase()}</main>);
+      const results = await axe(document.body);
       expect(results.violations).toEqual([]);
     });
   }

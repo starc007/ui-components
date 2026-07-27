@@ -106,6 +106,7 @@ export function DayRow({
           <Switch
             checked={state.enabled}
             onCheckedChange={setEnabled}
+            ariaLabel={`Toggle ${label} availability`}
             className="scale-90"
           />
           <span className="text-sm font-medium text-foreground">{label}</span>

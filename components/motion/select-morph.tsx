@@ -220,6 +220,7 @@ export function MorphSelectTrigger({
           absolute, so this keeps surrounding layout from shifting) */}
       <div
         aria-hidden
+        inert
         className={cn(ROW, "invisible rounded-xl border border-border")}
       >
         {children}

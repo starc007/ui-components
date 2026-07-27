@@ -240,6 +240,7 @@ function Morph({ size, speed, reduce }: PartProps) {
       <motion.path
         fill="currentColor"
         d={MORPH_PATHS[0]}
+        initial={false}
         style={{ transformBox: "fill-box", transformOrigin: "center" }}
         animate={
           reduce
@@ -355,16 +356,18 @@ function Metaballs({ size, speed, reduce }: PartProps) {
         <motion.circle
           cy="50"
           r="15"
+          initial={false}
           animate={reduce ? { opacity: [0.4, 1, 0.4] } : { cx: [30, 70, 30] }}
           transition={{ duration: speed * 1.6, ease: EASE_IN_OUT, repeat: Infinity }}
-          cx={reduce ? 40 : undefined}
+          cx={reduce ? 40 : 30}
         />
         <motion.circle
           cy="50"
           r="15"
+          initial={false}
           animate={reduce ? { opacity: [0.4, 1, 0.4] } : { cx: [70, 30, 70] }}
           transition={{ duration: speed * 1.6, ease: EASE_IN_OUT, repeat: Infinity }}
-          cx={reduce ? 60 : undefined}
+          cx={reduce ? 60 : 70}
         />
       </g>
     </svg>

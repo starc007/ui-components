@@ -41,6 +41,7 @@ export function Marquee({
         <div
           key={dup}
           aria-hidden={dup === 1}
+          inert={dup === 1}
           style={{
             animationDuration: `${speed}s`,
             animationDirection: reverse ? "reverse" : "normal",
