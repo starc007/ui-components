@@ -15,6 +15,10 @@ import {
 import { Checkbox } from "@/components/motion/checkbox";
 import { ChromaticTextReveal } from "@/components/motion/chromatic-text-reveal";
 import { Input } from "@/components/motion/input";
+import {
+  KnockoutWheel,
+  ROUNDS as KNOCKOUT_WHEEL_ROUNDS,
+} from "@/components/motion/knockout-wheel";
 import { Parallax } from "@/components/motion/parallax";
 import {
   Popover,
@@ -43,6 +47,10 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ["Button disabled", () => <Button disabled>Subscribe</Button>],
   ["Button ripple", () => <Button ripple>Subscribe</Button>],
   ["BloomMenu", () => <BloomMenu />],
+  [
+    "KnockoutWheel",
+    () => <KnockoutWheel rounds={KNOCKOUT_WHEEL_ROUNDS} />,
+  ],
   [
     "BounceSidebar",
     () => (

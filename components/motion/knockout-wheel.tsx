@@ -511,11 +511,15 @@ export function KnockoutWheel({
     [visible],
   );
   const winners = useMemo(() => championPath(visible), [visible]);
+  const activeNode = useMemo(
+    () => nodes.find((node) => node.id === active),
+    [active, nodes],
+  );
   // Pointing at one flag isolates that flag. Only at rest does the wheel fall
   // back to lighting the champion's whole run.
   const lit = useMemo(
-    () => (active ? new Set([active]) : winners),
-    [active, winners],
+    () => (activeNode ? new Set([activeNode.id]) : winners),
+    [activeNode, winners],
   );
 
   // Stable identity, or every mark re-renders on each pointer move.
@@ -542,9 +546,7 @@ export function KnockoutWheel({
 
   // Tooltip is hover-only by design, so touch gets the same label anchored to
   // the tapped flag. It flips to the far side near the rim so it stays on stage.
-  const tapped = canHover
-    ? undefined
-    : nodes.find((node) => node.id === active);
+  const tapped = canHover ? undefined : activeNode;
   const tapAbove = tapped ? tapped.y > CENTER : false;
 
   // Arrow keys follow the geometry: up walks toward the hub, down walks out to
@@ -566,7 +568,7 @@ export function KnockoutWheel({
     return { ring: byDepth, firstChild: child };
   }, [nodes]);
 
-  const tabStop = nodes.some((node) => node.id === active) ? active : nodes[0]?.id;
+  const tabStop = activeNode?.id ?? nodes[0]?.id;
 
   // Stable callbacks so the memoized anchors don't re-render on every hover.
   const onKey = useCallback(

@@ -740,7 +740,7 @@ export const registry: CategoryEntry[] = [
             slug: "knockout-wheel",
             name: "Knockout Wheel",
             description:
-              "The tournament drawn radially. The champion holds the hub, each round is a ring further out, and the teams themselves form the rim. Nodes spring in ring by ring, and hovering one traces that team's run back to the center while the rest recede.",
+              "The tournament drawn radially. The champion holds the hub, each round is a ring further out, and the teams themselves form the rim. Nodes spring in ring by ring, and hovering one isolates that team while the rest recede.",
             badge: "new",
             launchedAt: "2026-07-27",
             installSlug: "knockout-wheel",

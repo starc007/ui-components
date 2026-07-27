@@ -47,7 +47,7 @@ const COMPONENT_DATES = {
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
   "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-07-15" },
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-07-14" },
-  "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-07-12" },
+  "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-07-27" },
   "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-07-10" },
   "blocks/swap": { publishedAt: "2026-05-19", updatedAt: "2026-06-13" },
   "blocks/dynamic-island": { publishedAt: "2026-06-10", updatedAt: "2026-07-13" },
