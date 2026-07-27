@@ -227,15 +227,6 @@ export default async function ComponentPage({
           <p className="mt-2 max-w-2xl text-muted-foreground">
             {comp.description}
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Updated{" "}
-            <time dateTime={dates.updatedAt}>
-              {new Intl.DateTimeFormat("en", {
-                dateStyle: "medium",
-                timeZone: "UTC",
-              }).format(new Date(`${dates.updatedAt}T00:00:00Z`))}
-            </time>
-          </p>
         </div>
 
         {comp.examples?.length ? (
@@ -308,7 +299,35 @@ export default async function ComponentPage({
           </section>
         ) : null}
 
-        <KeepInMind />
+        {comp.credit ? (
+          <section className="mt-12 border-t border-border pt-8">
+            <h2 className="text-sm font-semibold text-foreground">Built by</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Fixtures was created by{" "}
+              <Link
+                href={comp.credit.url}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={`${comp.credit.name} on X`}
+                className="font-medium text-foreground underline-offset-2 hover:underline"
+              >
+                {comp.credit.name}
+              </Link>
+              .
+            </p>
+          </section>
+        ) : (
+          <KeepInMind />
+        )}
+        <p className="mt-6 text-xs text-muted-foreground">
+          Updated{" "}
+          <time dateTime={dates.updatedAt}>
+            {new Intl.DateTimeFormat("en", {
+              dateStyle: "medium",
+              timeZone: "UTC",
+            }).format(new Date(`${dates.updatedAt}T00:00:00Z`))}
+          </time>
+        </p>
       </div>
       <PageNav items={pageNavItems} />
     </div>

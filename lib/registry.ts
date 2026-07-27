@@ -20,6 +20,11 @@ export type ComponentEntry = {
   name: string;
   description: string;
   file: string;
+  /** Optional contributor credit shown on the website only. */
+  credit?: {
+    name: string;
+    url: string;
+  };
   badge?: "new";
   /** ISO date the component shipped. Drives newest-first order in the landing
    * "Recently launched" section. Set it when adding a "new" component. */
@@ -752,6 +757,10 @@ export const registry: CategoryEntry[] = [
         badge: "new",
         launchedAt: "2026-07-27",
         extraFiles: ["components/motion/knockout-wheel.tsx"],
+        credit: {
+          name: "Avinit",
+          url: "https://x.com/0xvntr",
+        },
         examples: [
           {
             slug: "knockout-wheel",
