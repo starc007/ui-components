@@ -295,7 +295,7 @@ export const registry: CategoryEntry[] = [
       },
       {
         slug: "context-menu",
-        name: "Context Menu",
+        name: "Animated Context Menu",
         description:
           "Composable context-menu primitives with a pointer-origin clip morph, a gliding active row, checkbox and radio choices, keyboard navigation, typeahead, and long-press support.",
         file: "components/motion/context-menu.tsx",
