@@ -23,6 +23,8 @@ import {
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
+import { usePopoverPortalPosition } from "@/components/motion/popover-position";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -161,6 +163,7 @@ interface PopoverContextValue {
   contentId: string;
   progress: MotionValue<number>;
   triggerRef: React.MutableRefObject<HTMLElement | null>;
+  contentRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 const PopoverContext = createContext<PopoverContextValue | null>(null);
@@ -211,6 +214,7 @@ export function Popover({
   const contentId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const progress = useMotionValue(defaultOpen ? 1 : 0);
 
@@ -263,9 +267,14 @@ export function Popover({
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    // Trigger and panel share rootRef, so moving between them isn't "outside".
+    // The panel is portalled, so both trees participate in outside detection.
     const onPointer = (e: PointerEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node))
+      const target = e.target as Node;
+      if (
+        rootRef.current &&
+        !rootRef.current.contains(target) &&
+        !contentRef.current?.contains(target)
+      )
         setOpen(false);
     };
     window.addEventListener("keydown", onKey);
@@ -294,6 +303,7 @@ export function Popover({
       contentId,
       progress,
       triggerRef,
+      contentRef,
     }),
     [
       open,
@@ -409,57 +419,33 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
     contentId,
     progress,
     triggerRef,
+    contentRef,
     open,
     triggerMode,
     openHover,
     scheduleClose,
   } = ctx;
 
-  const measureRef = useRef<HTMLDivElement>(null);
+  const measureRef = contentRef;
   const blobRef = useRef<HTMLDivElement>(null);
   const clipRef = useRef<HTMLDivElement>(null);
   const geoRef = useRef<Geo | null>(null);
   const supportsShapeRef = useRef(false);
-
-  const [sizes, setSizes] = useState({ tW: 0, tH: 0, cW: 0, cH: 0 });
-
-  useLayoutEffect(() => {
-    const triggerNode = triggerRef.current;
-    const contentNode = measureRef.current;
-    if (!contentNode) return;
-
-    const measure = () => {
-      const tW = triggerNode?.offsetWidth ?? 0;
-      const tH = triggerNode?.offsetHeight ?? 0;
-      const cW = contentNode.offsetWidth;
-      const cH = contentNode.offsetHeight;
-      setSizes((prev) =>
-        prev.tW === tW && prev.tH === tH && prev.cW === cW && prev.cH === cH
-          ? prev
-          : { tW, tH, cW, cH },
-      );
-    };
-    measure();
-
-    const observer = new ResizeObserver(measure);
-    observer.observe(contentNode);
-    if (triggerNode) observer.observe(triggerNode);
-    return () => observer.disconnect();
-  }, [triggerRef]);
+  const layout = usePopoverPortalPosition(triggerRef, measureRef, true);
 
   const geo = useMemo(
     () =>
       buildGeo(
-        sizes.tW,
-        sizes.tH,
-        sizes.cW,
-        sizes.cH,
+        layout?.trigger.width ?? 0,
+        layout?.trigger.height ?? 0,
+        layout?.content.width ?? 0,
+        layout?.content.height ?? 0,
         side,
         align,
         gap,
         panelRadius,
       ),
-    [sizes, side, align, gap, panelRadius],
+    [layout, side, align, gap, panelRadius],
   );
 
   // Morph the same clip on the goo body and the content, so the whole popover
@@ -489,18 +475,25 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
     triggerMode === "hover"
       ? { onMouseEnter: openHover, onMouseLeave: scheduleClose }
       : {};
+  const maskId = `${gooId}-trigger-cutout`;
 
-  return (
-    <>
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
+    <div
+      data-popover-portal=""
+      className="pointer-events-none fixed left-0 top-0 z-[9999] isolate size-0"
+      style={{
+        visibility: layout ? "visible" : "hidden",
+        transform: `translate3d(${layout?.trigger.left ?? 0}px, ${layout?.trigger.top ?? 0}px, 0)`,
+      }}
+    >
       {/* Goo filter: blur, sharpen the alpha back into solid shapes, then lay
-          the crisp original on top so blobs merge with liquid edges. */}
-      <svg
-        aria-hidden
-        width="0"
-        height="0"
-        className="pointer-events-none absolute"
-      >
-        <title>Popover goo filter</title>
+          the crisp original on top so blobs merge with liquid edges. The mask
+          removes the real trigger area so this top-layer copy never covers its
+          label or focus ring. */}
+      <svg aria-hidden width="0" height="0" className="absolute">
+        <title>Popover visual effects</title>
         <defs>
           <filter id={gooId} x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur
@@ -516,10 +509,29 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
             />
             <feComposite in="SourceGraphic" in2="goo" operator="atop" />
           </filter>
+          <mask
+            id={maskId}
+            maskUnits="userSpaceOnUse"
+            maskContentUnits="userSpaceOnUse"
+            x={0}
+            y={0}
+            width={geo.layerW}
+            height={geo.layerH}
+          >
+            <rect width={geo.layerW} height={geo.layerH} fill="white" />
+            <rect
+              x={geo.trigger.x}
+              y={geo.trigger.y}
+              width={geo.trigger.w}
+              height={geo.trigger.h}
+              rx={geo.trigger.r}
+              fill="black"
+            />
+          </mask>
         </defs>
       </svg>
 
-      {/* Goo body: static trigger pill + morphing blob, behind the trigger. */}
+      {/* Goo body: static trigger pill + morphing blob. */}
       <div
         aria-hidden
         className="pointer-events-none absolute z-[-1]"
@@ -529,6 +541,8 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
           width: geo.layerW,
           height: geo.layerH,
           filter: reduce ? undefined : `url(#${gooId})`,
+          mask: `url(#${maskId})`,
+          WebkitMask: `url(#${maskId})`,
         }}
       >
         <div
@@ -550,8 +564,8 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
         />
       </div>
 
-      {/* Content, clipped by the same morph. pointer-events-none so it never
-          shadows the trigger; the open panel re-enables its own. */}
+      {/* Content is clipped by the same morph. The portal wrapper stays
+          pointer-transparent; only the fully open panel accepts interaction. */}
       <div
         className="pointer-events-none absolute z-10"
         style={{
@@ -590,6 +604,7 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
           </div>
         </div>
       </div>
-    </>
+    </div>,
+    document.body,
   );
 }
