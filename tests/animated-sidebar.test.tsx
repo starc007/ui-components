@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, mock, test } from "bun:test";
-import { cleanup, fireEvent, render, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  within,
+} from "@testing-library/react";
+import { useState } from "react";
 import {
   AnimatedSidebar,
   AnimatedSidebarClose,
@@ -8,6 +14,9 @@ import {
   AnimatedSidebarMenu,
   AnimatedSidebarMenuButton,
   AnimatedSidebarMenuItem,
+  AnimatedSidebarMenuSub,
+  AnimatedSidebarMenuSubButton,
+  AnimatedSidebarMenuSubItem,
   AnimatedSidebarProvider,
   AnimatedSidebarTrigger,
 } from "@/components/motion/animated-sidebar";
@@ -42,6 +51,8 @@ function SidebarExample({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
+  const [projectsOpen, setProjectsOpen] = useState(false);
+
   return (
     <AnimatedSidebarProvider open={open} onOpenChange={onOpenChange}>
       <AnimatedSidebar ariaLabel="Workspace navigation">
@@ -54,7 +65,19 @@ function SidebarExample({
               </AnimatedSidebarMenuButton>
             </AnimatedSidebarMenuItem>
             <AnimatedSidebarMenuItem>
-              <AnimatedSidebarMenuButton>Projects</AnimatedSidebarMenuButton>
+              <AnimatedSidebarMenuButton
+                ariaExpanded={projectsOpen}
+                onSelect={() => setProjectsOpen((current) => !current)}
+              >
+                Projects
+              </AnimatedSidebarMenuButton>
+              <AnimatedSidebarMenuSub open={projectsOpen}>
+                <AnimatedSidebarMenuSubItem>
+                  <AnimatedSidebarMenuSubButton>
+                    Active projects
+                  </AnimatedSidebarMenuSubButton>
+                </AnimatedSidebarMenuSubItem>
+              </AnimatedSidebarMenuSub>
             </AnimatedSidebarMenuItem>
           </AnimatedSidebarMenu>
         </AnimatedSidebarContent>
@@ -111,6 +134,22 @@ describe("AnimatedSidebar", () => {
     expect(
       getByLabelText("Workspace navigation").getAttribute("data-state"),
     ).toBe("expanded");
+  });
+
+  test("reveals nested navigation from its parent item", () => {
+    const { getByRole, queryByRole } = render(<SidebarExample />);
+    const projects = getByRole("button", { name: "Projects" });
+
+    expect(queryByRole("button", { name: "Active projects" })).toBeNull();
+
+    fireEvent.click(projects);
+    expect(projects.getAttribute("aria-expanded")).toBe("true");
+    expect(
+      getByRole("button", { name: "Active projects" }),
+    ).toBeTruthy();
+
+    fireEvent.click(projects);
+    expect(projects.getAttribute("aria-expanded")).toBe("false");
   });
 
   test("uses a dismissible sheet only on mobile", () => {

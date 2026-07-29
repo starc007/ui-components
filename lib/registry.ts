@@ -270,7 +270,7 @@ export const registry: CategoryEntry[] = [
         slug: "animated-sidebar",
         name: "Animated Sidebar",
         description:
-          "A composable application sidebar that folds into an animated icon rail on desktop and becomes a focus-managed sheet on mobile.",
+          "A composable application sidebar with morphing nested navigation that folds into an animated icon rail on desktop and becomes a focus-managed sheet on mobile.",
         file: "components/motion/animated-sidebar.tsx",
         badge: "new",
         launchedAt: "2026-07-29",
@@ -282,6 +282,7 @@ export const registry: CategoryEntry[] = [
           "icon sidebar",
           "sidebar drawer",
           "composable sidebar",
+          "nested sidebar navigation",
           "accessible navigation menu",
         ],
       },

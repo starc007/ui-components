@@ -31,23 +31,55 @@ import {
   AnimatedSidebarMenu,
   AnimatedSidebarMenuButton,
   AnimatedSidebarMenuItem,
+  AnimatedSidebarMenuSub,
+  AnimatedSidebarMenuSubButton,
+  AnimatedSidebarMenuSubItem,
   AnimatedSidebarProvider,
   AnimatedSidebarRail,
   AnimatedSidebarTrigger,
 } from "@/components/motion/animated-sidebar";
 
 const destinations = [
-  { label: "People", icon: CircleUserRound },
-  { label: "Companies", icon: Building2 },
-  { label: "Opportunities", icon: Target },
-  { label: "Tasks", icon: ListTodo },
-  { label: "Notes", icon: NotebookTabs },
-  { label: "Workflows", icon: Workflow },
-  { label: "Dashboard", icon: LayoutGrid },
-];
+  {
+    label: "People",
+    icon: CircleUserRound,
+    children: ["All people", "Recent activity", "Segments"],
+  },
+  {
+    label: "Companies",
+    icon: Building2,
+  },
+  {
+    label: "Opportunities",
+    icon: Target,
+    children: ["Pipeline", "Forecast", "Closed deals"],
+  },
+  {
+    label: "Tasks",
+    icon: ListTodo,
+  },
+  {
+    label: "Notes",
+    icon: NotebookTabs,
+  },
+  {
+    label: "Workflows",
+    icon: Workflow,
+    children: ["Automations", "Runs", "Templates"],
+  },
+  {
+    label: "Dashboard",
+    icon: LayoutGrid,
+  },
+] satisfies {
+  label: string;
+  icon: typeof CircleUserRound;
+  children?: string[];
+}[];
 
 export function AnimatedSidebarPreview() {
   const [active, setActive] = useState("People");
+  const [openSection, setOpenSection] = useState<string | null>(null);
 
   return (
     <div className="w-full px-0 py-2 sm:p-3">
@@ -120,15 +152,43 @@ export function AnimatedSidebarPreview() {
               </AnimatedSidebarGroupLabel>
               <AnimatedSidebarGroupContent>
                 <AnimatedSidebarMenu>
-                  {destinations.map(({ label, icon: Icon }) => (
+                  {destinations.map(({ label, icon: Icon, children }) => (
                     <AnimatedSidebarMenuItem key={label}>
                       <AnimatedSidebarMenuButton
-                        isActive={active === label}
+                        isActive={
+                          active === label ||
+                          children?.includes(active) === true
+                        }
+                        ariaExpanded={
+                          children ? openSection === label : undefined
+                        }
                         icon={<Icon className="size-4" />}
-                        onSelect={() => setActive(label)}
+                        onSelect={() => {
+                          setActive(label);
+                          setOpenSection((current) => {
+                            if (!children) return null;
+                            return current === label ? null : label;
+                          });
+                        }}
                       >
                         {label}
                       </AnimatedSidebarMenuButton>
+                      {children ? (
+                        <AnimatedSidebarMenuSub
+                          open={openSection === label}
+                        >
+                          {children.map((child) => (
+                            <AnimatedSidebarMenuSubItem key={child}>
+                              <AnimatedSidebarMenuSubButton
+                                isActive={active === child}
+                                onSelect={() => setActive(child)}
+                              >
+                                {child}
+                              </AnimatedSidebarMenuSubButton>
+                            </AnimatedSidebarMenuSubItem>
+                          ))}
+                        </AnimatedSidebarMenuSub>
+                      ) : null}
                     </AnimatedSidebarMenuItem>
                   ))}
                 </AnimatedSidebarMenu>

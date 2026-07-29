@@ -32,6 +32,8 @@ export interface SharedLayoutBgProps
   pillClassName?: string;
   /** Horizontal inset of the pill relative to each row (px). Default 20. */
   inset?: number;
+  /** Optional positioning override for the pill wrapper inside each item. */
+  pillContainerClassName?: string;
 }
 
 const variants: Variants = {
@@ -55,6 +57,7 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
       className,
       onMouseLeave,
       pillClassName,
+      pillContainerClassName,
       inset = 20,
       ...props
     },
@@ -92,7 +95,10 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
                   animate="animate"
                   exit="exit"
                   custom={activeId !== null}
-                  className="pointer-events-none absolute inset-y-0"
+                  className={cn(
+                    "pointer-events-none absolute inset-y-0",
+                    pillContainerClassName,
+                  )}
                   style={{ left: -inset, right: -inset }}
                 >
                   {activeId === childKey ? (

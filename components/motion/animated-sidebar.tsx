@@ -1,9 +1,12 @@
 "use client";
 
+import { ChevronRight } from "lucide-react";
 import {
+  AnimatePresence,
   type HTMLMotionProps,
   motion,
   useReducedMotion,
+  type Variants,
 } from "motion/react";
 import {
   type ButtonHTMLAttributes,
@@ -61,6 +64,48 @@ const LABEL_EXIT_TRANSITION = {
   duration: 0.12,
   ease: EASE_OUT,
 } as const;
+
+const SUBMENU_TRANSITION = {
+  duration: 0.18,
+  ease: EASE_OUT,
+} as const;
+
+const SUBMENU_VARIANTS: Variants = {
+  closed: {
+    opacity: 0,
+    clipPath: "inset(0 0 100% 0 round 8px)",
+    transition: {
+      duration: 0.14,
+      ease: EASE_OUT,
+      staggerChildren: 0.025,
+      staggerDirection: -1,
+    },
+  },
+  open: {
+    opacity: 1,
+    clipPath: "inset(0 0 0% 0 round 8px)",
+    transition: {
+      duration: 0.2,
+      delayChildren: 0.035,
+      ease: EASE_OUT,
+      staggerChildren: 0.045,
+    },
+  },
+};
+
+const SUBMENU_ITEM_VARIANTS: Variants = {
+  closed: {
+    opacity: 0,
+    y: -6,
+    filter: "blur(3px)",
+  },
+  open: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: SUBMENU_TRANSITION,
+  },
+};
 
 const REDUCED_TRANSITION = {
   duration: 0.16,
@@ -762,6 +807,7 @@ export const AnimatedSidebarMenu = forwardRef<
       as="ul"
       inset={0}
       pillClassName="rounded-xl bg-muted/70"
+      pillContainerClassName="inset-y-auto top-0 h-9"
       data-slot="sidebar-menu"
       className={cn("flex w-full min-w-0 list-none flex-col gap-0.5", className)}
     >
@@ -772,17 +818,166 @@ export const AnimatedSidebarMenu = forwardRef<
 
 export const AnimatedSidebarMenuItem = forwardRef<
   HTMLLIElement,
-  HTMLAttributes<HTMLLIElement>
+  HTMLMotionProps<"li">
 >(function AnimatedSidebarMenuItem({ className, ...props }, forwardedRef) {
   return (
-    <li
+    <motion.li
       {...props}
       ref={forwardedRef}
+      layout="position"
+      transition={SPRING_LAYOUT}
       data-slot="sidebar-menu-item"
       className={cn("relative", className)}
     />
   );
 });
+
+export interface AnimatedSidebarMenuSubProps
+  extends Omit<HTMLMotionProps<"ul">, "children"> {
+  open: boolean;
+  children?: ReactNode;
+}
+
+export const AnimatedSidebarMenuSub = forwardRef<
+  HTMLUListElement,
+  AnimatedSidebarMenuSubProps
+>(function AnimatedSidebarMenuSub(
+  { open, children, className, ...props },
+  forwardedRef,
+) {
+  const context = useAnimatedSidebar();
+  const panel = useAnimatedSidebarPanel();
+
+  return (
+    <AnimatePresence initial={false} mode="popLayout">
+      {open && !panel.collapsed ? (
+        <motion.ul
+          {...props}
+          ref={forwardedRef}
+          key="sidebar-submenu"
+          variants={context.reduce ? undefined : SUBMENU_VARIANTS}
+          initial={context.reduce ? false : "closed"}
+          animate={context.reduce ? { opacity: 1 } : "open"}
+          exit={context.reduce ? { opacity: 0 } : "closed"}
+          transition={context.reduce ? { duration: 0.12 } : undefined}
+          data-slot="sidebar-menu-sub"
+          className={cn(
+            "relative mt-1 ml-5 flex min-w-0 flex-col gap-0.5 border-border border-l pl-3",
+            className,
+          )}
+        >
+          {children}
+        </motion.ul>
+      ) : null}
+    </AnimatePresence>
+  );
+});
+
+export const AnimatedSidebarMenuSubItem = forwardRef<
+  HTMLLIElement,
+  HTMLMotionProps<"li">
+>(function AnimatedSidebarMenuSubItem(
+  { className, ...props },
+  forwardedRef,
+) {
+  return (
+    <motion.li
+      {...props}
+      ref={forwardedRef}
+      variants={SUBMENU_ITEM_VARIANTS}
+      data-slot="sidebar-menu-sub-item"
+      className={cn("relative min-w-0", className)}
+    />
+  );
+});
+
+export interface AnimatedSidebarMenuSubButtonProps {
+  children: ReactNode;
+  icon?: ReactNode;
+  href?: string;
+  isActive?: boolean;
+  disabled?: boolean;
+  closeOnSelect?: boolean;
+  target?: "_blank" | "_self" | "_parent" | "_top";
+  rel?: string;
+  onSelect?: () => void;
+  className?: string;
+}
+
+export function AnimatedSidebarMenuSubButton({
+  children,
+  icon,
+  href,
+  isActive = false,
+  disabled = false,
+  closeOnSelect = true,
+  target,
+  rel,
+  onSelect,
+  className,
+}: AnimatedSidebarMenuSubButtonProps) {
+  const context = useAnimatedSidebar();
+
+  const select = (
+    event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
+  ) => {
+    if (disabled) {
+      event.preventDefault();
+      return;
+    }
+    onSelect?.();
+    if (context.isMobile && closeOnSelect) context.setOpenMobile(false);
+  };
+
+  const content = (
+    <>
+      <span
+        aria-hidden="true"
+        className="grid size-4 shrink-0 place-items-center"
+      >
+        {icon ?? <span className="size-1 rounded-full bg-current" />}
+      </span>
+      <span className="min-w-0 flex-1 truncate">{children}</span>
+    </>
+  );
+
+  const interactiveClassName = cn(
+    "flex min-h-8 w-full min-w-0 items-center gap-2 rounded-lg px-2 text-left text-xs outline-none",
+    "text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground",
+    "focus-visible:bg-muted/70 focus-visible:ring-2 focus-visible:ring-ring",
+    isActive && "bg-muted/70 text-foreground",
+    disabled && "cursor-not-allowed opacity-40",
+    className,
+  );
+
+  return href ? (
+    <a
+      href={href}
+      target={target}
+      rel={
+        rel ??
+        (target === "_blank" ? "noreferrer noopener" : undefined)
+      }
+      aria-current={isActive ? "page" : undefined}
+      aria-disabled={disabled || undefined}
+      tabIndex={disabled ? -1 : undefined}
+      onClick={select}
+      className={interactiveClassName}
+    >
+      {content}
+    </a>
+  ) : (
+    <button
+      type="button"
+      disabled={disabled}
+      aria-current={isActive ? "page" : undefined}
+      onClick={select}
+      className={interactiveClassName}
+    >
+      {content}
+    </button>
+  );
+}
 
 export interface AnimatedSidebarMenuButtonProps {
   children: ReactNode;
@@ -790,6 +985,7 @@ export interface AnimatedSidebarMenuButtonProps {
   badge?: ReactNode;
   href?: string;
   isActive?: boolean;
+  ariaExpanded?: boolean;
   disabled?: boolean;
   closeOnSelect?: boolean;
   target?: "_blank" | "_self" | "_parent" | "_top";
@@ -804,6 +1000,7 @@ export function AnimatedSidebarMenuButton({
   badge,
   href,
   isActive = false,
+  ariaExpanded,
   disabled = false,
   closeOnSelect = true,
   target,
@@ -869,6 +1066,21 @@ export function AnimatedSidebarMenuButton({
           {badge}
         </span>
       ) : null}
+      {ariaExpanded !== undefined ? (
+        <motion.span
+          aria-hidden="true"
+          initial={false}
+          animate={{
+            opacity: panel.collapsed ? 0 : 1,
+            rotate: ariaExpanded ? 90 : 0,
+            x: panel.collapsed ? 4 : 0,
+          }}
+          transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
+          className="relative z-10 grid size-4 shrink-0 place-items-center text-muted-foreground"
+        >
+          <ChevronRight className="size-3.5" />
+        </motion.span>
+      ) : null}
     </>
   );
 
@@ -890,6 +1102,7 @@ export function AnimatedSidebarMenuButton({
         (target === "_blank" ? "noreferrer noopener" : undefined)
       }
       aria-current={isActive ? "page" : undefined}
+      aria-expanded={ariaExpanded}
       aria-disabled={disabled || undefined}
       aria-label={panel.collapsed ? textLabel : undefined}
       title={panel.collapsed ? textLabel : undefined}
@@ -904,6 +1117,7 @@ export function AnimatedSidebarMenuButton({
       type="button"
       disabled={disabled}
       aria-current={isActive ? "page" : undefined}
+      aria-expanded={ariaExpanded}
       aria-label={panel.collapsed ? textLabel : undefined}
       title={panel.collapsed ? textLabel : undefined}
       onClick={select}

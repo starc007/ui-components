@@ -24,7 +24,7 @@ const COMPONENT_DATES = {
   "motion/bounce-sidebar": { publishedAt: "2026-07-22", updatedAt: "2026-07-22" },
   "motion/animated-sidebar": {
     publishedAt: "2026-07-29",
-    updatedAt: "2026-07-29",
+    updatedAt: "2026-07-30",
   },
   "motion/preview-rail": { publishedAt: "2026-07-11", updatedAt: "2026-07-11" },
   "motion/dock": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
