@@ -267,6 +267,25 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "animated-sidebar",
+        name: "Animated Sidebar",
+        description:
+          "A composable application sidebar that folds into an animated icon rail on desktop and becomes a focus-managed sheet on mobile.",
+        file: "components/motion/animated-sidebar.tsx",
+        badge: "new",
+        launchedAt: "2026-07-29",
+        keywords: [
+          "animated sidebar react",
+          "mobile sidebar",
+          "responsive sidebar",
+          "collapsible sidebar",
+          "icon sidebar",
+          "sidebar drawer",
+          "composable sidebar",
+          "accessible navigation menu",
+        ],
+      },
+      {
         slug: "preview-rail",
         name: "Preview Rail",
         description: "Codex app-inspired navigation rail with compact ticks that form a hover pyramid and reveal a floating destination preview.",

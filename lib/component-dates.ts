@@ -20,8 +20,12 @@ const COMPONENT_DATES = {
   "motion/radio": { publishedAt: "2026-06-23", updatedAt: "2026-07-13" },
   "motion/bottom-sheet": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
   "motion/pull-to-refresh": { publishedAt: "2026-07-17", updatedAt: "2026-07-17" },
-  "motion/shared-layout-bg": { publishedAt: "2026-05-17", updatedAt: "2026-06-22" },
+  "motion/shared-layout-bg": { publishedAt: "2026-05-17", updatedAt: "2026-07-29" },
   "motion/bounce-sidebar": { publishedAt: "2026-07-22", updatedAt: "2026-07-22" },
+  "motion/animated-sidebar": {
+    publishedAt: "2026-07-29",
+    updatedAt: "2026-07-29",
+  },
   "motion/preview-rail": { publishedAt: "2026-07-11", updatedAt: "2026-07-11" },
   "motion/dock": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
   "motion/tooltip": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
