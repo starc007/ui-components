@@ -9,8 +9,8 @@ import {
   Inbox,
   LayoutGrid,
   ListTodo,
-  Menu,
   NotebookTabs,
+  PanelLeft,
   Search,
   Sparkles,
   Target,
@@ -35,10 +35,6 @@ import {
   AnimatedSidebarRail,
   AnimatedSidebarTrigger,
 } from "@/components/motion/animated-sidebar";
-import {
-  NotificationStack,
-  type NotificationStackItem,
-} from "@/components/motion/notification-stack";
 
 const destinations = [
   { label: "People", icon: CircleUserRound },
@@ -50,25 +46,12 @@ const destinations = [
   { label: "Dashboard", icon: LayoutGrid },
 ];
 
-const notifications: NotificationStackItem[] = [
-  {
-    id: "mention",
-    title: "You have 3 new mentions",
-    description: "Design review · 2m",
-  },
-  {
-    id: "sync",
-    title: "Workspace sync complete",
-    description: "24 contacts updated",
-  },
-];
-
 export function AnimatedSidebarPreview() {
   const [active, setActive] = useState("People");
 
   return (
     <div className="w-full px-0 py-2 sm:p-3">
-      <AnimatedSidebarProvider className="h-[820px] min-h-0 overflow-hidden rounded-2xl border border-foreground/[0.08] bg-background">
+      <AnimatedSidebarProvider className="h-[720px] min-h-0 overflow-hidden rounded-2xl border border-foreground/[0.08] bg-background">
         <AnimatedSidebar
           ariaLabel="Solace workspace"
           collapsible="icon"
@@ -76,8 +59,8 @@ export function AnimatedSidebarPreview() {
           panelClassName="h-full border-foreground/[0.08]"
         >
           <AnimatedSidebarHeader className="p-3 pb-2">
-            <div className="flex min-h-11 items-center gap-3 overflow-hidden px-1">
-              <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-foreground text-background">
+            <div className="flex min-h-11 items-center gap-3 overflow-hidden px-2">
+              <div className="grid size-7 shrink-0 place-items-center rounded-lg bg-foreground text-background">
                 <Command aria-hidden="true" className="size-4" />
               </div>
               <button
@@ -153,28 +136,11 @@ export function AnimatedSidebarPreview() {
             </AnimatedSidebarGroup>
           </AnimatedSidebarContent>
 
-          <AnimatedSidebarFooter className="gap-3 border-none p-2.5">
-            <div className="group-data-[state=collapsed]/sidebar:hidden">
-              <NotificationStack
-                items={notifications}
-                maxVisible={2}
-                className="max-w-none rounded-2xl"
-                classNames={{
-                  card:
-                    " px-3 shadow-none",
-                  content: "gap-1 py-3",
-                  title: "text-xs",
-                  description: "text-[10px]",
-                  footer: "mt-1 min-h-8",
-                  count:
-                    "size-6 bg-foreground text-[10px] text-background shadow-none dark:bg-foreground",
-                }}
-              />
-            </div>
+          <AnimatedSidebarFooter className="gap-3 border-none p-3">
 
             <button
               type="button"
-              className="flex min-h-11 w-full items-center gap-3 overflow-hidden rounded-xl p-1 text-left outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring group-data-[state=collapsed]/sidebar:justify-center"
+              className="flex min-h-11 w-full items-center gap-3 overflow-hidden rounded-xl p-1 text-left outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
             >
               <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#d5ff66] text-xs font-semibold text-[#172000]">
                 AS
@@ -200,7 +166,7 @@ export function AnimatedSidebarPreview() {
         <AnimatedSidebarInset className="min-h-0 bg-background">
           <header className="flex h-16 shrink-0 items-center gap-3 border-border border-b px-4">
             <AnimatedSidebarTrigger className="text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-              <Menu aria-hidden="true" className="size-4" />
+              <PanelLeft aria-hidden="true" className="size-4" />
             </AnimatedSidebarTrigger>
             <div className="h-5 w-px bg-border" />
             <p className="text-sm font-medium text-foreground">{active}</p>

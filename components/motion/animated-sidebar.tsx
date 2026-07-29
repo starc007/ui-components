@@ -25,7 +25,6 @@ import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import {
   EASE_DRAWER,
   EASE_OUT,
-  EASE_OUT_CSS,
   SPRING_LAYOUT,
 } from "@/lib/ease";
 import { cn } from "@/lib/utils";
@@ -41,6 +40,26 @@ const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 const PANEL_TRANSITION = {
   duration: 0.36,
   ease: EASE_DRAWER,
+} as const;
+
+// The desktop rail is one surface changing shape, so a lightly underdamped
+// spring makes the width settle without scaling or stretching its contents.
+const SIDEBAR_MORPH_TRANSITION = {
+  type: "spring",
+  stiffness: 380,
+  damping: 28,
+  mass: 0.75,
+} as const;
+
+const LABEL_ENTER_TRANSITION = {
+  duration: 0.2,
+  delay: 0.08,
+  ease: EASE_OUT,
+} as const;
+
+const LABEL_EXIT_TRANSITION = {
+  duration: 0.12,
+  ease: EASE_OUT,
 } as const;
 
 const REDUCED_TRANSITION = {
@@ -453,15 +472,13 @@ export const AnimatedSidebar = forwardRef<HTMLElement, AnimatedSidebarProps>(
         data-collapsible={collapsible}
         data-variant={variant}
         data-side={side}
-        style={{
-          ...style,
-          width,
-          transitionDuration: context.reduce ? "0ms" : "280ms",
-          transitionProperty: "width",
-          transitionTimingFunction: EASE_OUT_CSS,
-        }}
+        animate={{ width }}
+        transition={
+          context.reduce ? { duration: 0 } : SIDEBAR_MORPH_TRANSITION
+        }
+        style={style}
         className={cn(
-          "group/sidebar relative hidden h-auto shrink-0 md:block",
+          "group/sidebar relative hidden h-auto shrink-0 md:block will-change-[width]",
           "peer",
           side === "right" && "order-last",
           className,
@@ -833,7 +850,11 @@ export function AnimatedSidebarMenuButton({
           x: panel.collapsed ? -4 : 0,
         }}
         transition={
-          context.reduce ? REDUCED_TRANSITION : PANEL_TRANSITION
+          context.reduce
+            ? REDUCED_TRANSITION
+            : panel.collapsed
+              ? LABEL_EXIT_TRANSITION
+              : LABEL_ENTER_TRANSITION
         }
         aria-hidden={panel.collapsed}
         className={cn(
@@ -852,11 +873,10 @@ export function AnimatedSidebarMenuButton({
   );
 
   const interactiveClassName = cn(
-    "relative flex min-h-9 w-full min-w-0 items-center gap-2.5 overflow-hidden rounded-xl px-2.5 text-left text-sm font-medium outline-none",
+    "relative flex min-h-9 w-full min-w-0 items-center gap-2.5 overflow-hidden rounded-xl px-3 text-left text-sm font-medium outline-none",
     "text-muted-foreground transition-colors hover:text-foreground",
     "focus-visible:bg-muted/70 focus-visible:ring-2 focus-visible:ring-ring",
     isActive && "text-foreground",
-    panel.collapsed && "justify-center px-0",
     disabled && "cursor-not-allowed opacity-40",
     className,
   );
