@@ -4,6 +4,12 @@ import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 
 import { AnimatedBadge } from "@/components/motion/animated-badge";
+import {
+  AnimatedSidebar,
+  AnimatedSidebarContent,
+  AnimatedSidebarProvider,
+  AnimatedSidebarTrigger,
+} from "@/components/motion/animated-sidebar";
 import { BloomMenu } from "@/components/motion/bloom-menu";
 import { BounceSidebar } from "@/components/motion/bounce-sidebar";
 import { Button } from "@/components/motion/button";
@@ -16,12 +22,12 @@ import { Checkbox } from "@/components/motion/checkbox";
 import { ChromaticTextReveal } from "@/components/motion/chromatic-text-reveal";
 import { CommandPalette } from "@/components/motion/command-palette";
 import { Input } from "@/components/motion/input";
+import {
+  ROUNDS as KNOCKOUT_WHEEL_ROUNDS,
+  KnockoutWheel,
+} from "@/components/motion/knockout-wheel";
 import { Marquee } from "@/components/motion/marquee";
 import { MorphingModal } from "@/components/motion/morphing-modal";
-import {
-  KnockoutWheel,
-  ROUNDS as KNOCKOUT_WHEEL_ROUNDS,
-} from "@/components/motion/knockout-wheel";
 import { Parallax } from "@/components/motion/parallax";
 import {
   Popover,
@@ -103,6 +109,21 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   ["AnimatedBadge", () => <AnimatedBadge status="success">Live</AnimatedBadge>],
+  [
+    "AnimatedSidebar expanded",
+    () => (
+      <AnimatedSidebarProvider>
+        <AnimatedSidebar ariaLabel="Workspace navigation">
+          <AnimatedSidebarContent>
+            <a href="/overview">Overview</a>
+          </AnimatedSidebarContent>
+        </AnimatedSidebar>
+        <div>
+          <AnimatedSidebarTrigger>Toggle</AnimatedSidebarTrigger>
+        </div>
+      </AnimatedSidebarProvider>
+    ),
+  ],
   [
     "Popover",
     () => (

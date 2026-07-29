@@ -183,6 +183,11 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.BounceSidebarPreview,
     ),
   ),
+  "motion/animated-sidebar": dynamic(() =>
+    import("./motion/animated-sidebar.preview").then(
+      (m) => m.AnimatedSidebarPreview,
+    ),
+  ),
   "motion/preview-rail": dynamic(() =>
     import("./motion/preview-rail.preview").then(
       (m) => m.PreviewRailPreview,
