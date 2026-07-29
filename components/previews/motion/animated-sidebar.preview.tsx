@@ -164,9 +164,11 @@ export function AnimatedSidebarPreview() {
                         }
                         icon={<Icon className="size-4" />}
                         onSelect={() => {
-                          setActive(label);
                           setOpenSection((current) => {
-                            if (!children) return null;
+                            if (!children) {
+                              setActive(label);
+                              return null;
+                            }
                             return current === label ? null : label;
                           });
                         }}

@@ -29,6 +29,7 @@ import {
   EASE_DRAWER,
   EASE_OUT,
   SPRING_LAYOUT,
+  SPRING_PRESS,
 } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -951,7 +952,7 @@ export function AnimatedSidebarMenuSubButton({
   );
 
   return href ? (
-    <a
+    <motion.a
       href={href}
       target={target}
       rel={
@@ -962,20 +963,24 @@ export function AnimatedSidebarMenuSubButton({
       aria-disabled={disabled || undefined}
       tabIndex={disabled ? -1 : undefined}
       onClick={select}
+      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
+      transition={SPRING_PRESS}
       className={interactiveClassName}
     >
       {content}
-    </a>
+    </motion.a>
   ) : (
-    <button
+    <motion.button
       type="button"
       disabled={disabled}
       aria-current={isActive ? "page" : undefined}
       onClick={select}
+      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
+      transition={SPRING_PRESS}
       className={interactiveClassName}
     >
       {content}
-    </button>
+    </motion.button>
   );
 }
 
@@ -1002,7 +1007,7 @@ export function AnimatedSidebarMenuButton({
   isActive = false,
   ariaExpanded,
   disabled = false,
-  closeOnSelect = true,
+  closeOnSelect,
   target,
   rel,
   onSelect,
@@ -1020,7 +1025,11 @@ export function AnimatedSidebarMenuButton({
       return;
     }
     onSelect?.();
-    if (context.isMobile && closeOnSelect) context.setOpenMobile(false);
+    const shouldCloseOnSelect =
+      closeOnSelect ?? ariaExpanded === undefined;
+    if (context.isMobile && shouldCloseOnSelect) {
+      context.setOpenMobile(false);
+    }
   };
 
   const content = (
@@ -1094,7 +1103,7 @@ export function AnimatedSidebarMenuButton({
   );
 
   return href ? (
-    <a
+    <motion.a
       href={href}
       target={target}
       rel={
@@ -1108,12 +1117,14 @@ export function AnimatedSidebarMenuButton({
       title={panel.collapsed ? textLabel : undefined}
       tabIndex={disabled ? -1 : undefined}
       onClick={select}
+      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
+      transition={SPRING_PRESS}
       className={interactiveClassName}
     >
       {content}
-    </a>
+    </motion.a>
   ) : (
-    <button
+    <motion.button
       type="button"
       disabled={disabled}
       aria-current={isActive ? "page" : undefined}
@@ -1121,9 +1132,11 @@ export function AnimatedSidebarMenuButton({
       aria-label={panel.collapsed ? textLabel : undefined}
       title={panel.collapsed ? textLabel : undefined}
       onClick={select}
+      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
+      transition={SPRING_PRESS}
       className={interactiveClassName}
     >
       {content}
-    </button>
+    </motion.button>
   );
 }

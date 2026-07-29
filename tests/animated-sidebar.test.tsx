@@ -170,6 +170,13 @@ describe("AnimatedSidebar", () => {
 
     fireEvent.click(trigger);
     fireEvent.click(getByRole("button", { name: "Projects" }));
+    expect(dialog.getAttribute("data-state")).toBe("expanded");
+
+    fireEvent.click(
+      within(dialog).getByRole("button", {
+        name: "Active projects",
+      }),
+    );
     expect(dialog.getAttribute("data-state")).toBe("collapsed");
     expect(dialog.hasAttribute("inert")).toBe(true);
     expect(document.body.style.position).toBe("");
