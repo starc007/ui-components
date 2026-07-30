@@ -387,64 +387,62 @@ function ImagePreviewDialog({
   if (typeof document === "undefined") return null;
 
   const src = item ? imageSource(item) : undefined;
+  const content =
+    item && src ? (
+      <div className="pointer-events-none fixed inset-0 z-[10000]">
+        <motion.button
+          type="button"
+          aria-label="Close image preview"
+          tabIndex={-1}
+          className="pointer-events-auto absolute inset-0 size-full cursor-default bg-black/45 backdrop-blur-xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reduce ? undefined : { opacity: 0 }}
+          transition={{ duration: reduce ? 0.1 : 0.2, ease: EASE_OUT }}
+          onClick={onClose}
+        />
 
-  return createPortal(
-    <AnimatePresence>
-      {item && src ? (
-        <div className="pointer-events-none fixed inset-0 z-[10000]">
-          <motion.button
-            type="button"
-            aria-label="Close image preview"
-            tabIndex={-1}
-            className="pointer-events-auto absolute inset-0 size-full cursor-default bg-black/45 backdrop-blur-xl"
+        <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-8">
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Preview of ${item.name}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={reduce ? undefined : { opacity: 0 }}
-            transition={{ duration: reduce ? 0.1 : 0.2, ease: EASE_OUT }}
-            onClick={onClose}
-          />
-
-          <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-8">
-            <motion.div
-              role="dialog"
-              aria-modal="true"
-              aria-label={`Preview of ${item.name}`}
-              initial={
-                { opacity: 0 }
+            transition={ITEM_TRANSITION}
+            className="pointer-events-auto relative"
+          >
+            <motion.img
+              layoutId={reduce ? undefined : layoutId}
+              src={src}
+              alt={item.name}
+              className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl"
+              transition={{ layout: SPRING_LAYOUT }}
+            />
+            <motion.button
+              ref={closeRef}
+              type="button"
+              aria-label="Close image preview"
+              onClick={onClose}
+              initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={
+                reduce ? undefined : { opacity: 0, scale: 0.8 }
               }
-              animate={{ opacity: 1 }}
-              exit={reduce ? undefined : { opacity: 0 }}
-              transition={ITEM_TRANSITION}
-              className="pointer-events-auto relative"
+              whileTap={reduce ? undefined : { scale: 0.92 }}
+              transition={SPRING_PRESS}
+              className="absolute -right-3 -top-3 grid size-9 place-items-center rounded-full bg-background text-foreground shadow-xl outline-none ring-1 ring-border/70 transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <motion.img
-                layoutId={reduce ? undefined : layoutId}
-                src={src}
-                alt={item.name}
-                className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl"
-                transition={{ layout: SPRING_LAYOUT }}
-              />
-              <motion.button
-                ref={closeRef}
-                type="button"
-                aria-label="Close image preview"
-                onClick={onClose}
-                initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={
-                  reduce ? undefined : { opacity: 0, scale: 0.8 }
-                }
-                whileTap={reduce ? undefined : { scale: 0.92 }}
-                transition={SPRING_PRESS}
-                className="absolute -right-3 -top-3 grid size-9 place-items-center rounded-full bg-background text-foreground shadow-xl outline-none ring-1 ring-border/70 transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                <X className="size-4" />
-              </motion.button>
-            </motion.div>
-          </div>
+              <X className="size-4" />
+            </motion.button>
+          </motion.div>
         </div>
-      ) : null}
-    </AnimatePresence>,
+      </div>
+    ) : null;
+
+  return createPortal(
+    reduce ? content : <AnimatePresence>{content}</AnimatePresence>,
     document.body,
   );
 }
@@ -507,6 +505,21 @@ function AttachmentRow({
           },
         }
       : ITEM_TRANSITION;
+  const showUploadProgress = uploading || uploadComplete;
+  const uploadProgress = (
+    <motion.span
+      role="progressbar"
+      aria-label={`Uploading ${item.name}`}
+      className="pointer-events-none absolute inset-0 -z-10 origin-left bg-emerald-400/25 dark:bg-emerald-500/20"
+      initial={{ opacity: 1, scaleX: 0 }}
+      animate={{ opacity: 1, scaleX: 1 }}
+      exit={reduce ? undefined : { opacity: 0 }}
+      transition={{
+        duration: reduce ? 0.1 : UPLOAD_PROGRESS_MS / 1000,
+        ease: EASE_OUT,
+      }}
+    />
+  );
 
   return (
     <motion.li
@@ -640,22 +653,15 @@ function AttachmentRow({
           </>
         )}
 
-        <AnimatePresence>
-          {uploading || uploadComplete ? (
-            <motion.span
-              role="progressbar"
-              aria-label={`Uploading ${item.name}`}
-              className="pointer-events-none absolute inset-0 -z-10 origin-left bg-emerald-400/25 dark:bg-emerald-500/20"
-              initial={{ opacity: 1, scaleX: 0 }}
-              animate={{ opacity: 1, scaleX: 1 }}
-              exit={reduce ? undefined : { opacity: 0 }}
-              transition={{
-                duration: reduce ? 0.1 : UPLOAD_PROGRESS_MS / 1000,
-                ease: EASE_OUT,
-              }}
-            />
-          ) : null}
-        </AnimatePresence>
+        {reduce ? (
+          showUploadProgress ? (
+            uploadProgress
+          ) : null
+        ) : (
+          <AnimatePresence>
+            {showUploadProgress ? uploadProgress : null}
+          </AnimatePresence>
+        )}
       </div>
 
       <RowAction
