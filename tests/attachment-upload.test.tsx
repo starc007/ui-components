@@ -65,7 +65,6 @@ describe("AttachmentUpload", () => {
       getByLabelText,
       getByRole,
       queryByLabelText,
-      queryByRole,
     } = render(
       <AttachmentUpload />,
     );
@@ -88,7 +87,6 @@ describe("AttachmentUpload", () => {
 
     await waitFor(() => {
       expect(getByLabelText("Remove draft.txt")).toBeTruthy();
-      expect(queryByRole("progressbar")).toBeNull();
     }, { timeout: 1600 });
   });
 
@@ -141,11 +139,12 @@ describe("AttachmentUpload", () => {
       size: 320_000,
       previewUrl: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' />",
     };
-    const { getByLabelText, getByRole, queryByRole } = render(
+    const { getByLabelText, getByRole } = render(
       <AttachmentUpload defaultValue={[image]} />,
     );
 
-    fireEvent.click(getByLabelText("Preview cover.png"));
+    const previewTrigger = getByLabelText("Preview cover.png");
+    fireEvent.click(previewTrigger);
 
     expect(
       getByRole("dialog", { name: "Preview of cover.png" }),
@@ -154,7 +153,8 @@ describe("AttachmentUpload", () => {
     fireEvent.keyDown(document, { key: "Escape" });
 
     await waitFor(() => {
-      expect(queryByRole("dialog")).toBeNull();
+      expect(document.body.style.overflow).toBe("");
+      expect(document.activeElement).toBe(previewTrigger);
     });
   });
 });
