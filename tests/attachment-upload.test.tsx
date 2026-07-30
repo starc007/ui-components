@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, mock, test } from "bun:test";
-import { cleanup, fireEvent, render } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  waitFor,
+} from "@testing-library/react";
 import {
   AttachmentUpload,
   type AttachmentUploadItem,
@@ -65,5 +70,30 @@ describe("AttachmentUpload", () => {
     fireEvent.click(getByLabelText("Play note.m4a"));
 
     expect(onAudioToggle).toHaveBeenCalledWith(audio);
+  });
+
+  test("opens image rows in a dismissible preview dialog", async () => {
+    const image: AttachmentUploadItem = {
+      id: "cover",
+      name: "cover.png",
+      kind: "image",
+      size: 320_000,
+      previewUrl: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' />",
+    };
+    const { getByLabelText, getByRole, queryByRole } = render(
+      <AttachmentUpload defaultValue={[image]} />,
+    );
+
+    fireEvent.click(getByLabelText("Preview cover.png"));
+
+    expect(
+      getByRole("dialog", { name: "Preview of cover.png" }),
+    ).toBeTruthy();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    await waitFor(() => {
+      expect(queryByRole("dialog")).toBeNull();
+    });
   });
 });

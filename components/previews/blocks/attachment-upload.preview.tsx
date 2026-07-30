@@ -15,11 +15,12 @@ const INITIAL_ITEMS: AttachmentUploadItem[] = [
     href: "data:application/pdf,beUI%20launch%20brief",
   },
   {
-    id: "cover",
-    name: "launch-cover.jpeg",
+    id: "flowers",
+    name: "orange-flowers.jpg",
     kind: "image",
-    size: 198_000,
-    href: "/og/grainient-component.jpg",
+    size: 9_800_000,
+    previewUrl:
+      "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=85",
   },
   {
     id: "voice-note",
@@ -27,33 +28,6 @@ const INITIAL_ITEMS: AttachmentUploadItem[] = [
     kind: "audio",
     currentTime: 12,
     duration: 48,
-  },
-  {
-    id: "flowers",
-    name: "orange-flowers.jpg",
-    kind: "image",
-    display: "media",
-    size: 10_300_000,
-    previewUrl:
-      "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=520&q=80",
-  },
-  {
-    id: "field",
-    name: "green-field.jpg",
-    kind: "image",
-    display: "media",
-    size: 5_800_000,
-    previewUrl:
-      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=520&q=80",
-  },
-  {
-    id: "cosmos",
-    name: "pink-cosmos.jpg",
-    kind: "image",
-    display: "media",
-    size: 8_200_000,
-    previewUrl:
-      "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=520&q=80",
   },
 ];
 

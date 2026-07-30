@@ -20,18 +20,18 @@ import {
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type AttachmentUploadKind = "file" | "link" | "image" | "audio";
-export type AttachmentUploadDisplay = "row" | "media";
 export type AttachmentRejectReason = "too-large" | "max-files";
 
 export type AttachmentUploadItem = {
   id: string;
   name: string;
   kind: AttachmentUploadKind;
-  display?: AttachmentUploadDisplay;
   size?: number;
   href?: string;
   previewUrl?: string;
@@ -44,7 +44,6 @@ export type AttachmentUploadClassNames = {
   dropzone?: string;
   list?: string;
   row?: string;
-  media?: string;
 };
 
 export interface AttachmentUploadProps {
@@ -139,6 +138,11 @@ function AttachmentIcon({ kind }: { kind: AttachmentUploadKind }) {
   return <Paperclip className="size-4" />;
 }
 
+function imageSource(item: AttachmentUploadItem) {
+  if (item.kind !== "image") return undefined;
+  return item.previewUrl ?? item.href;
+}
+
 function RemoveButton({
   label,
   onClick,
@@ -165,10 +169,175 @@ function RemoveButton({
   );
 }
 
+function ImageThumbnail({
+  item,
+  onPreview,
+  reduce,
+}: {
+  item: AttachmentUploadItem;
+  onPreview: (item: AttachmentUploadItem) => void;
+  reduce: boolean;
+}) {
+  const src = imageSource(item);
+
+  if (!src) {
+    return (
+      <span
+        aria-hidden="true"
+        className="grid size-8 shrink-0 place-items-center rounded-lg bg-muted text-muted-foreground"
+      >
+        <FileImage className="size-4" />
+      </span>
+    );
+  }
+
+  return (
+    <Tooltip
+      side="top"
+      delay={160}
+      wrapperClassName="shrink-0"
+      className="rounded-xl p-1 shadow-xl"
+      content={
+        <span className="block w-32">
+          <img
+            src={src}
+            alt=""
+            className="h-20 w-full rounded-lg object-cover"
+          />
+          <span className="block px-1 pb-0.5 pt-1 text-center text-[10px] font-medium text-muted-foreground">
+            Click to preview
+          </span>
+        </span>
+      }
+    >
+      <motion.button
+        type="button"
+        aria-label={`Preview ${item.name}`}
+        onClick={(event) => {
+          event.currentTarget.blur();
+          onPreview(item);
+        }}
+        whileTap={reduce ? undefined : { scale: 0.94 }}
+        transition={SPRING_PRESS}
+        className="group/image relative size-9 shrink-0 overflow-hidden rounded-[10px] bg-muted outline-none ring-1 ring-border/70 focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <img
+          src={src}
+          alt=""
+          className="size-full object-cover"
+        />
+      </motion.button>
+    </Tooltip>
+  );
+}
+
+function ImagePreviewDialog({
+  item,
+  onClose,
+  reduce,
+}: {
+  item: AttachmentUploadItem | null;
+  onClose: () => void;
+  reduce: boolean;
+}) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!item) return;
+
+    const previousFocus =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+      if (event.key === "Tab") {
+        event.preventDefault();
+        closeRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [item, onClose]);
+
+  if (typeof document === "undefined") return null;
+
+  const src = item ? imageSource(item) : undefined;
+
+  return createPortal(
+    <AnimatePresence>
+      {item && src ? (
+        <div className="pointer-events-none fixed inset-0 z-[10000]">
+          <motion.button
+            type="button"
+            aria-label="Close image preview"
+            tabIndex={-1}
+            className="pointer-events-auto absolute inset-0 size-full cursor-default bg-black/45 backdrop-blur-xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduce ? 0.1 : 0.2, ease: EASE_OUT }}
+            onClick={onClose}
+          />
+
+          <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-8">
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Preview of ${item.name}`}
+              initial={
+                reduce
+                  ? { opacity: 0 }
+                  : { opacity: 0, scale: 0.96, y: 12 }
+              }
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={
+                reduce
+                  ? { opacity: 0 }
+                  : { opacity: 0, scale: 0.97, y: 8 }
+              }
+              transition={ITEM_TRANSITION}
+              className="pointer-events-auto relative"
+            >
+              <img
+                src={src}
+                alt={item.name}
+                className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl"
+              />
+              <motion.button
+                ref={closeRef}
+                type="button"
+                aria-label="Close image preview"
+                onClick={onClose}
+                whileTap={reduce ? undefined : { scale: 0.92 }}
+                transition={SPRING_PRESS}
+                className="absolute -right-3 -top-3 grid size-9 place-items-center rounded-full bg-background text-foreground shadow-xl outline-none ring-1 ring-border/70 transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <X className="size-4" />
+              </motion.button>
+            </motion.div>
+          </div>
+        </div>
+      ) : null}
+    </AnimatePresence>,
+    document.body,
+  );
+}
+
 function AttachmentRow({
   item,
   playing,
   onAudioToggle,
+  onImagePreview,
   onRemove,
   reduce,
   className,
@@ -176,6 +345,7 @@ function AttachmentRow({
   item: AttachmentUploadItem;
   playing: boolean;
   onAudioToggle?: (item: AttachmentUploadItem) => void;
+  onImagePreview: (item: AttachmentUploadItem) => void;
   onRemove: (item: AttachmentUploadItem) => void;
   reduce: boolean;
   className?: string;
@@ -199,12 +369,20 @@ function AttachmentRow({
       )}
     >
       <div className="flex min-w-0 flex-1 items-center gap-3 self-stretch rounded-xl bg-background px-2 py-1">
-        <span
-          aria-hidden="true"
-          className="grid size-7 shrink-0 place-items-center text-muted-foreground"
-        >
-          <AttachmentIcon kind={item.kind} />
-        </span>
+        {item.kind === "image" ? (
+          <ImageThumbnail
+            item={item}
+            onPreview={onImagePreview}
+            reduce={reduce}
+          />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="grid size-7 shrink-0 place-items-center text-muted-foreground"
+          >
+            <AttachmentIcon kind={item.kind} />
+          </span>
+        )}
 
         {item.kind === "audio" ? (
           <>
@@ -307,50 +485,6 @@ function AttachmentRow({
   );
 }
 
-function MediaTile({
-  item,
-  onRemove,
-  reduce,
-}: {
-  item: AttachmentUploadItem;
-  onRemove: (item: AttachmentUploadItem) => void;
-  reduce: boolean;
-}) {
-  return (
-    <motion.li
-      layout={!reduce}
-      initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
-      transition={ITEM_TRANSITION}
-      className="group relative h-24 min-w-28 flex-1 overflow-visible"
-    >
-      <div
-        className="relative h-full overflow-hidden rounded-2xl border border-border bg-muted bg-cover bg-center"
-        style={
-          item.previewUrl
-            ? { backgroundImage: `url("${item.previewUrl}")` }
-            : undefined
-        }
-      >
-        {item.previewUrl ? null : (
-          <span className="grid h-full place-items-center text-muted-foreground">
-            <FileImage className="size-5" />
-          </span>
-        )}
-        <span className="absolute bottom-2 left-2 rounded-full bg-black/65 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-          {formatBytes(item.size) ?? "Image"}
-        </span>
-      </div>
-      <RemoveButton
-        label={`Remove ${item.name}`}
-        onClick={() => onRemove(item)}
-        className="absolute -right-2 -top-2 size-7 rounded-full border border-border bg-background shadow-sm"
-      />
-    </motion.li>
-  );
-}
-
 export function AttachmentUpload({
   value,
   defaultValue,
@@ -377,6 +511,8 @@ export function AttachmentUpload({
   const ownedUrlsRef = useRef(new Set<string>());
   const reduce = useReducedMotion() ?? false;
   const [dragging, setDragging] = useState(false);
+  const [previewItem, setPreviewItem] =
+    useState<AttachmentUploadItem | null>(null);
   const [items, setItems] = useControllableList({
     value,
     defaultValue,
@@ -392,8 +528,6 @@ export function AttachmentUpload({
   );
 
   const maxReached = items.length >= maxFiles;
-  const rowItems = items.filter((item) => item.display !== "media");
-  const mediaItems = items.filter((item) => item.display === "media");
 
   const addFiles = useCallback(
     (incomingFiles: File[]) => {
@@ -430,7 +564,6 @@ export function AttachmentUpload({
           id: `${Date.now()}-${index}-${file.name}`,
           name: file.name,
           kind,
-          display: kind === "image" ? ("media" as const) : ("row" as const),
           size: file.size,
           previewUrl: kind === "image" ? objectUrl : undefined,
           href: objectUrl,
@@ -466,16 +599,27 @@ export function AttachmentUpload({
         URL.revokeObjectURL(ownedUrl);
         ownedUrlsRef.current.delete(ownedUrl);
       }
+      if (previewItem?.id === item.id) setPreviewItem(null);
       setItems(items.filter((entry) => entry.id !== item.id));
       onRemove?.(item);
     },
-    [items, onRemove, setItems],
+    [items, onRemove, previewItem, setItems],
   );
 
   const resetDrag = useCallback(() => {
     dragDepthRef.current = 0;
     setDragging(false);
   }, []);
+  const closePreview = useCallback(() => setPreviewItem(null), []);
+
+  useEffect(() => {
+    if (
+      previewItem &&
+      !items.some((item) => item.id === previewItem.id)
+    ) {
+      setPreviewItem(null);
+    }
+  }, [items, previewItem]);
 
   return (
     <div className={cn("w-full", className)}>
@@ -578,15 +722,16 @@ export function AttachmentUpload({
             {attachmentsLabel}
           </h3>
 
-          {rowItems.length > 0 ? (
+          {items.length > 0 ? (
             <ul className={cn("mt-3 space-y-2", classNames?.list)}>
               <AnimatePresence initial={false}>
-                {rowItems.map((item) => (
+                {items.map((item) => (
                   <AttachmentRow
                     key={item.id}
                     item={item}
                     playing={playingId === item.id}
                     onAudioToggle={onAudioToggle}
+                    onImagePreview={setPreviewItem}
                     onRemove={removeItem}
                     reduce={reduce}
                     className={classNames?.row}
@@ -595,29 +740,14 @@ export function AttachmentUpload({
               </AnimatePresence>
             </ul>
           ) : null}
-
-          {mediaItems.length > 0 ? (
-            <ul
-              className={cn(
-                "mt-4 flex items-stretch gap-3 overflow-x-auto py-2",
-                classNames?.media,
-              )}
-            >
-              <AnimatePresence initial={false}>
-                {mediaItems.map((item) => (
-                  <MediaTile
-                    key={item.id}
-                    item={item}
-                    onRemove={removeItem}
-                    reduce={reduce}
-                  />
-                ))}
-              </AnimatePresence>
-            </ul>
-          ) : null}
         </section>
       ) : null}
 
+      <ImagePreviewDialog
+        item={previewItem}
+        onClose={closePreview}
+        reduce={reduce}
+      />
     </div>
   );
 }
