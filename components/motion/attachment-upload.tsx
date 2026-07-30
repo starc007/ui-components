@@ -15,7 +15,12 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+  AnimatePresence,
+  LayoutGroup,
+  motion,
+  useReducedMotion,
+} from "motion/react";
 import {
   useCallback,
   useEffect,
@@ -25,7 +30,11 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { Tooltip } from "@/components/motion/tooltip";
-import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
+import {
+  EASE_OUT,
+  SPRING_LAYOUT,
+  SPRING_PRESS,
+} from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type AttachmentUploadKind = "file" | "link" | "image" | "audio";
@@ -271,10 +280,12 @@ function RowAction({
 
 function ImageThumbnail({
   item,
+  layoutId,
   onPreview,
   reduce,
 }: {
   item: AttachmentUploadItem;
+  layoutId: string;
   onPreview: (item: AttachmentUploadItem) => void;
   reduce: boolean;
 }) {
@@ -321,10 +332,12 @@ function ImageThumbnail({
         transition={SPRING_PRESS}
         className="group/image relative size-9 shrink-0 overflow-hidden rounded-[10px] bg-muted outline-none ring-1 ring-border/70 focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <img
+        <motion.img
+          layoutId={layoutId}
           src={src}
           alt=""
           className="size-full object-cover"
+          transition={{ layout: SPRING_LAYOUT }}
         />
       </motion.button>
     </Tooltip>
@@ -333,10 +346,12 @@ function ImageThumbnail({
 
 function ImagePreviewDialog({
   item,
+  layoutId,
   onClose,
   reduce,
 }: {
   item: AttachmentUploadItem | null;
+  layoutId?: string;
   onClose: () => void;
   reduce: boolean;
 }) {
@@ -395,29 +410,28 @@ function ImagePreviewDialog({
               aria-modal="true"
               aria-label={`Preview of ${item.name}`}
               initial={
-                reduce
-                  ? { opacity: 0 }
-                  : { opacity: 0, scale: 0.96, y: 12 }
+                { opacity: 0 }
               }
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={
-                reduce
-                  ? { opacity: 0 }
-                  : { opacity: 0, scale: 0.97, y: 8 }
-              }
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={ITEM_TRANSITION}
               className="pointer-events-auto relative"
             >
-              <img
+              <motion.img
+                layoutId={layoutId}
                 src={src}
                 alt={item.name}
                 className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl"
+                transition={{ layout: SPRING_LAYOUT }}
               />
               <motion.button
                 ref={closeRef}
                 type="button"
                 aria-label="Close image preview"
                 onClick={onClose}
+                initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.8 }}
                 whileTap={reduce ? undefined : { scale: 0.92 }}
                 transition={SPRING_PRESS}
                 className="absolute -right-3 -top-3 grid size-9 place-items-center rounded-full bg-background text-foreground shadow-xl outline-none ring-1 ring-border/70 transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
@@ -440,6 +454,8 @@ function AttachmentRow({
   uploadComplete,
   failed,
   removing,
+  arrivalIndex,
+  imageLayoutId,
   onAudioToggle,
   onImagePreview,
   onRemove,
@@ -453,6 +469,8 @@ function AttachmentRow({
   uploadComplete: boolean;
   failed: boolean;
   removing: boolean;
+  arrivalIndex: number;
+  imageLayoutId: string;
   onAudioToggle?: (item: AttachmentUploadItem) => void;
   onImagePreview: (item: AttachmentUploadItem) => void;
   onRemove: (item: AttachmentUploadItem) => void;
@@ -474,14 +492,33 @@ function AttachmentRow({
         : failed
           ? "failed"
           : "idle";
+  const arrivalDelay = Math.min(Math.max(arrivalIndex, 0), 5) * 0.055;
+  const rowTransition =
+    !reduce && arrivalIndex >= 0
+      ? {
+          ...SPRING_LAYOUT,
+          delay: arrivalDelay,
+          opacity: {
+            duration: 0.16,
+            ease: EASE_OUT,
+            delay: arrivalDelay,
+          },
+        }
+      : ITEM_TRANSITION;
 
   return (
     <motion.li
       layout={!reduce}
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={
+        reduce
+          ? { opacity: 0 }
+          : arrivalIndex >= 0
+            ? { opacity: 0, y: -16, scale: 0.985 }
+            : { opacity: 0, y: 6 }
+      }
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={reduce ? { opacity: 0 } : { opacity: 0, y: -4 }}
-      transition={ITEM_TRANSITION}
+      transition={rowTransition}
       className={cn(
         "flex min-h-14 items-center gap-1 rounded-2xl bg-muted/70 p-1",
         className,
@@ -498,6 +535,7 @@ function AttachmentRow({
         {item.kind === "image" ? (
           <ImageThumbnail
             item={item}
+            layoutId={imageLayoutId}
             onPreview={onImagePreview}
             reduce={reduce}
           />
@@ -861,8 +899,14 @@ export function AttachmentUpload({
     }
   }, [items, previewItem]);
 
+  const uploadOrder = Array.from(uploadingIds);
+  const previewLayoutId = previewItem
+    ? `attachment-image-${previewItem.id}`
+    : undefined;
+
   return (
-    <div className={cn("w-full", className)}>
+    <LayoutGroup id={inputId}>
+      <div className={cn("w-full", className)}>
       <input
         ref={inputRef}
         id={inputId}
@@ -964,7 +1008,7 @@ export function AttachmentUpload({
 
           {items.length > 0 ? (
             <ul className={cn("mt-3 space-y-2", classNames?.list)}>
-              <AnimatePresence initial={false}>
+              <AnimatePresence initial={uploadOrder.length > 0}>
                 {items.map((item) => (
                   <AttachmentRow
                     key={item.id}
@@ -980,6 +1024,8 @@ export function AttachmentUpload({
                     }
                     failed={item.status === "failed"}
                     removing={removingIds.has(item.id)}
+                    arrivalIndex={uploadOrder.indexOf(item.id)}
+                    imageLayoutId={`attachment-image-${item.id}`}
                     onAudioToggle={onAudioToggle}
                     onImagePreview={setPreviewItem}
                     onRemove={requestRemove}
@@ -996,9 +1042,11 @@ export function AttachmentUpload({
 
       <ImagePreviewDialog
         item={previewItem}
+        layoutId={previewLayoutId}
         onClose={closePreview}
         reduce={reduce}
       />
-    </div>
+      </div>
+    </LayoutGroup>
   );
 }

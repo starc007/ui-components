@@ -83,7 +83,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `overflow-actions` | `components/motion/overflow-actions.tsx` | Connected pill rail that springs open to reveal extra controls |
 | `expandable-tabs` | `components/motion/expandable-tabs.tsx` | Icon tab bar where active tab expands to labeled pill with height-morphing panel |
 | `swipeable-list` | `components/motion/swipeable-list.tsx` | List rows that swipe left/right to reveal contextual action buttons |
-| `file-upload` | `components/motion/file-upload.tsx`, `attachment-upload.tsx` | Two upload patterns. `AttachmentUpload` mixes compact file/image rows, upload/success/failure/removal feedback with retry, hover and fullscreen image previews, and an audio waveform; `FileUpload` is the original progress queue with retry/remove actions |
+| `file-upload` | `components/motion/file-upload.tsx`, `attachment-upload.tsx` | Two upload patterns. `AttachmentUpload` mixes staggered file/image rows, upload/success/failure/removal feedback with retry, shared-layout image previews, and an audio waveform; `FileUpload` is the original progress queue with retry/remove actions |
 | `prediction-market` | `components/motion/prediction-market.tsx` | Trade ticket with buy/sell modes, outcome prices and rolling amount entry |
 | `otp-input` | `components/motion/otp-input.tsx` | One-time-code input with gliding focus ring, roll-in digits, error shake and success draw |
 | `bloom-menu` | `components/motion/bloom-menu.tsx` | Button that morphs open into a menu and blooms iris-out from center via shared layout + clip-path, with radially staggered items |
