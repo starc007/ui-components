@@ -40,3 +40,6 @@ globalThis.IntersectionObserver ??=
 if (typeof window.scrollTo !== "function") {
   window.scrollTo = () => {};
 }
+
+URL.createObjectURL ??= () => "blob:test-upload";
+URL.revokeObjectURL ??= () => {};

@@ -70,6 +70,8 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
             name: "brief.pdf",
             kind: "file",
             size: 240_000,
+            status: "failed",
+            error: "Upload failed",
           },
           {
             id: "voice",
@@ -79,6 +81,7 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
             duration: 18,
           },
         ]}
+        onRetry={() => {}}
       />
     ),
   ],

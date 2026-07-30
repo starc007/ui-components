@@ -887,7 +887,7 @@ export const registry: CategoryEntry[] = [
             slug: "attachment-upload",
             name: "Attachment Upload",
             description:
-              "A mixed attachment workspace with a dropzone, compact file and image rows, hover and fullscreen image previews, and an audio waveform.",
+              "A mixed attachment workspace with a dropzone, animated upload, success, failure, retry and removal feedback, compact file and image rows, hover and fullscreen image previews, and an audio waveform.",
             badge: "new",
             launchedAt: "2026-07-30",
             installSlug: "attachment-upload",

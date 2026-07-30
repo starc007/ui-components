@@ -1,14 +1,17 @@
 "use client";
 
 import {
-  Download,
+  AlertCircle,
+  Check,
   ExternalLink,
   FileImage,
   Link as LinkIcon,
+  LoaderCircle,
   Mic,
   Paperclip,
   Pause,
   Play,
+  RotateCcw,
   Upload,
   X,
 } from "lucide-react";
@@ -27,6 +30,11 @@ import { cn } from "@/lib/utils";
 
 export type AttachmentUploadKind = "file" | "link" | "image" | "audio";
 export type AttachmentRejectReason = "too-large" | "max-files";
+export type AttachmentUploadStatus =
+  | "idle"
+  | "uploading"
+  | "complete"
+  | "failed";
 
 export type AttachmentUploadItem = {
   id: string;
@@ -37,6 +45,8 @@ export type AttachmentUploadItem = {
   previewUrl?: string;
   currentTime?: number;
   duration?: number;
+  status?: AttachmentUploadStatus;
+  error?: string;
   file?: File;
 };
 
@@ -53,6 +63,7 @@ export interface AttachmentUploadProps {
   onFilesAdded?: (items: AttachmentUploadItem[], files: File[]) => void;
   onFilesRejected?: (files: File[], reason: AttachmentRejectReason) => void;
   onRemove?: (item: AttachmentUploadItem) => void;
+  onRetry?: (item: AttachmentUploadItem) => void;
   playingId?: string;
   onAudioToggle?: (item: AttachmentUploadItem) => void;
   accept?: string;
@@ -69,6 +80,9 @@ export interface AttachmentUploadProps {
 
 const ITEM_TRANSITION = { duration: 0.2, ease: EASE_OUT } as const;
 const DEFAULT_MAX_FILE_SIZE = 500 * 1024 * 1024;
+const UPLOAD_PROGRESS_MS = 900;
+const UPLOAD_COMPLETE_HOLD_MS = 1000;
+const REMOVE_PENDING_MS = 420;
 
 const WAVEFORM_BARS = [
   18, 31, 24, 39, 30, 43, 27, 18, 9, 29, 38, 24, 34, 18, 26, 37, 21, 14,
@@ -143,29 +157,115 @@ function imageSource(item: AttachmentUploadItem) {
   return item.previewUrl ?? item.href;
 }
 
-function RemoveButton({
+type RowActionState =
+  | "idle"
+  | "uploading"
+  | "complete"
+  | "failed"
+  | "removing";
+
+function RowAction({
   label,
   onClick,
-  className,
+  state,
+  retryable = false,
+  reduce = false,
 }: {
   label: string;
   onClick: () => void;
-  className?: string;
+  state: RowActionState;
+  retryable?: boolean;
+  reduce?: boolean;
 }) {
+  if (state === "uploading") {
+    return <span aria-hidden="true" className="size-9 shrink-0" />;
+  }
+
+  if (state === "complete") {
+    return (
+      <Tooltip content="Upload complete" side="top" delay={100}>
+        <motion.span
+          role="status"
+          aria-label={`Upload complete for ${label}`}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.75 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={ITEM_TRANSITION}
+          className="grid size-9 shrink-0 place-items-center rounded-xl text-emerald-600 dark:text-emerald-400"
+        >
+          <Check className="size-4" />
+        </motion.span>
+      </Tooltip>
+    );
+  }
+
+  if (state === "removing") {
+    return (
+      <Tooltip content="Removing attachment" side="top" delay={100}>
+        <span
+          role="status"
+          aria-label={`Removing ${label}`}
+          className="grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground"
+        >
+          <motion.span
+            animate={reduce ? undefined : { rotate: 360 }}
+            transition={{
+              duration: 0.7,
+              ease: "linear",
+              repeat: Infinity,
+            }}
+            className="grid place-items-center"
+          >
+            <LoaderCircle className="size-4" />
+          </motion.span>
+        </span>
+      </Tooltip>
+    );
+  }
+
+  if (state === "failed") {
+    if (!retryable) {
+      return (
+        <Tooltip content="Upload failed" side="top" delay={100}>
+          <span
+            role="status"
+            aria-label={`Upload failed for ${label}`}
+            className="grid size-9 shrink-0 place-items-center rounded-xl text-destructive"
+          >
+            <AlertCircle className="size-4" />
+          </span>
+        </Tooltip>
+      );
+    }
+
+    return (
+      <Tooltip content="Retry upload" side="top" delay={100}>
+        <motion.button
+          type="button"
+          aria-label={`Retry ${label}`}
+          onClick={onClick}
+          whileTap={reduce ? undefined : { scale: 0.92 }}
+          transition={SPRING_PRESS}
+          className="grid size-9 shrink-0 place-items-center rounded-xl text-destructive outline-none transition-colors hover:bg-destructive/10 focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <RotateCcw className="size-4" />
+        </motion.button>
+      </Tooltip>
+    );
+  }
+
   return (
-    <motion.button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      whileTap={{ scale: 0.92 }}
-      transition={SPRING_PRESS}
-      className={cn(
-        "grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring",
-        className,
-      )}
-    >
-      <X className="size-4" />
-    </motion.button>
+    <Tooltip content="Remove attachment" side="top" delay={100}>
+      <motion.button
+        type="button"
+        aria-label={`Remove ${label}`}
+        onClick={onClick}
+        whileTap={reduce ? undefined : { scale: 0.92 }}
+        transition={SPRING_PRESS}
+        className="grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <X className="size-4" />
+      </motion.button>
+    </Tooltip>
   );
 }
 
@@ -336,17 +436,27 @@ function ImagePreviewDialog({
 function AttachmentRow({
   item,
   playing,
+  uploading,
+  uploadComplete,
+  failed,
+  removing,
   onAudioToggle,
   onImagePreview,
   onRemove,
+  onRetry,
   reduce,
   className,
 }: {
   item: AttachmentUploadItem;
   playing: boolean;
+  uploading: boolean;
+  uploadComplete: boolean;
+  failed: boolean;
+  removing: boolean;
   onAudioToggle?: (item: AttachmentUploadItem) => void;
   onImagePreview: (item: AttachmentUploadItem) => void;
   onRemove: (item: AttachmentUploadItem) => void;
+  onRetry?: (item: AttachmentUploadItem) => void;
   reduce: boolean;
   className?: string;
 }) {
@@ -355,6 +465,15 @@ function AttachmentRow({
     item.duration && item.duration > 0
       ? Math.min(1, Math.max(0, (item.currentTime ?? 0) / item.duration))
       : 0;
+  const actionState: RowActionState = removing
+    ? "removing"
+    : uploading
+      ? "uploading"
+      : uploadComplete
+        ? "complete"
+        : failed
+          ? "failed"
+          : "idle";
 
   return (
     <motion.li
@@ -368,7 +487,14 @@ function AttachmentRow({
         className,
       )}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-3 self-stretch rounded-xl bg-background px-2 py-1">
+      <div className="relative isolate flex min-w-0 flex-1 items-center gap-3 self-stretch overflow-hidden rounded-xl bg-background px-2 py-1">
+        {failed ? (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-10 bg-destructive/10"
+          />
+        ) : null}
+
         {item.kind === "image" ? (
           <ImageThumbnail
             item={item}
@@ -447,39 +573,63 @@ function AttachmentRow({
           </>
         ) : (
           <>
-            <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
-              {item.name}
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-medium text-foreground">
+                {item.name}
+              </span>
+              {failed ? (
+                <span className="block truncate text-[11px] text-destructive">
+                  {item.error ?? "Upload failed"}
+                </span>
+              ) : null}
             </span>
             <span className="shrink-0 text-xs text-muted-foreground">
               {item.kind === "link" ? "Web" : size}
             </span>
-            {item.href ? (
+            {item.kind === "link" && item.href ? (
               <a
                 href={item.href}
-                target={item.kind === "link" ? "_blank" : undefined}
-                rel={item.kind === "link" ? "noreferrer noopener" : undefined}
-                download={item.kind === "link" ? undefined : item.name}
-                aria-label={
-                  item.kind === "link"
-                    ? `Open ${item.name}`
-                    : `Download ${item.name}`
-                }
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={`Open ${item.name}`}
                 className="grid size-8 shrink-0 place-items-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               >
-                {item.kind === "link" ? (
-                  <ExternalLink className="size-4" />
-                ) : (
-                  <Download className="size-4" />
-                )}
+                <ExternalLink className="size-4" />
               </a>
             ) : null}
           </>
         )}
+
+        <AnimatePresence>
+          {uploading || uploadComplete ? (
+            <motion.span
+              role="progressbar"
+              aria-label={`Uploading ${item.name}`}
+              className="pointer-events-none absolute inset-0 -z-10 origin-left bg-emerald-400/25 dark:bg-emerald-500/20"
+              initial={{ opacity: 1, scaleX: 0 }}
+              animate={{ opacity: 1, scaleX: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: reduce ? 0.1 : UPLOAD_PROGRESS_MS / 1000,
+                ease: EASE_OUT,
+              }}
+            />
+          ) : null}
+        </AnimatePresence>
       </div>
 
-      <RemoveButton
-        label={`Remove ${item.name}`}
-        onClick={() => onRemove(item)}
+      <RowAction
+        label={item.name}
+        onClick={() => {
+          if (actionState === "failed") {
+            onRetry?.(item);
+            return;
+          }
+          onRemove(item);
+        }}
+        state={actionState}
+        retryable={onRetry !== undefined}
+        reduce={reduce}
       />
     </motion.li>
   );
@@ -492,6 +642,7 @@ export function AttachmentUpload({
   onFilesAdded,
   onFilesRejected,
   onRemove,
+  onRetry,
   playingId,
   onAudioToggle,
   accept,
@@ -509,25 +660,53 @@ export function AttachmentUpload({
   const inputRef = useRef<HTMLInputElement>(null);
   const dragDepthRef = useRef(0);
   const ownedUrlsRef = useRef(new Set<string>());
+  const lifecycleTimersRef = useRef(
+    new Set<ReturnType<typeof setTimeout>>(),
+  );
   const reduce = useReducedMotion() ?? false;
   const [dragging, setDragging] = useState(false);
   const [previewItem, setPreviewItem] =
     useState<AttachmentUploadItem | null>(null);
+  const [uploadingIds, setUploadingIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [uploadCompleteIds, setUploadCompleteIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [removingIds, setRemovingIds] = useState<Set<string>>(
+    () => new Set(),
+  );
   const [items, setItems] = useControllableList({
     value,
     defaultValue,
     onValueChange,
   });
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
 
   useEffect(
     () => () => {
       for (const url of ownedUrlsRef.current) URL.revokeObjectURL(url);
       ownedUrlsRef.current.clear();
+      for (const timer of lifecycleTimersRef.current) {
+        clearTimeout(timer);
+      }
+      lifecycleTimersRef.current.clear();
     },
     [],
   );
 
   const maxReached = items.length >= maxFiles;
+  const scheduleLifecycle = useCallback(
+    (callback: () => void, delay: number) => {
+      const timer = setTimeout(() => {
+        lifecycleTimersRef.current.delete(timer);
+        callback();
+      }, delay);
+      lifecycleTimersRef.current.add(timer);
+    },
+    [],
+  );
 
   const addFiles = useCallback(
     (incomingFiles: File[]) => {
@@ -575,6 +754,28 @@ export function AttachmentUpload({
 
       if (added.length === 0) return;
       setItems([...items, ...added]);
+      const addedIds = added.map((item) => item.id);
+      setUploadingIds((current) => new Set([...current, ...addedIds]));
+      scheduleLifecycle(
+        () => {
+          setUploadingIds((current) => {
+            const next = new Set(current);
+            for (const id of addedIds) next.delete(id);
+            return next;
+          });
+          setUploadCompleteIds(
+            (current) => new Set([...current, ...addedIds]),
+          );
+          scheduleLifecycle(() => {
+            setUploadCompleteIds((current) => {
+              const next = new Set(current);
+              for (const id of addedIds) next.delete(id);
+              return next;
+            });
+          }, UPLOAD_COMPLETE_HOLD_MS);
+        },
+        reduce ? 140 : UPLOAD_PROGRESS_MS,
+      );
       onFilesAdded?.(added, accepted);
     },
     [
@@ -585,11 +786,13 @@ export function AttachmentUpload({
       multiple,
       onFilesAdded,
       onFilesRejected,
+      reduce,
+      scheduleLifecycle,
       setItems,
     ],
   );
 
-  const removeItem = useCallback(
+  const finalizeRemove = useCallback(
     (item: AttachmentUploadItem) => {
       const ownedUrl = [item.previewUrl, item.href].find(
         (url): url is string =>
@@ -599,11 +802,48 @@ export function AttachmentUpload({
         URL.revokeObjectURL(ownedUrl);
         ownedUrlsRef.current.delete(ownedUrl);
       }
-      if (previewItem?.id === item.id) setPreviewItem(null);
-      setItems(items.filter((entry) => entry.id !== item.id));
+      setPreviewItem((current) =>
+        current?.id === item.id ? null : current,
+      );
+      setUploadingIds((current) => {
+        const next = new Set(current);
+        next.delete(item.id);
+        return next;
+      });
+      setUploadCompleteIds((current) => {
+        const next = new Set(current);
+        next.delete(item.id);
+        return next;
+      });
+      setItems(itemsRef.current.filter((entry) => entry.id !== item.id));
       onRemove?.(item);
     },
-    [items, onRemove, previewItem, setItems],
+    [onRemove, setItems],
+  );
+
+  const requestRemove = useCallback(
+    (item: AttachmentUploadItem) => {
+      if (removingIds.has(item.id)) return;
+
+      setRemovingIds((current) => new Set(current).add(item.id));
+      scheduleLifecycle(
+        () => {
+          finalizeRemove(item);
+          setRemovingIds((current) => {
+            const next = new Set(current);
+            next.delete(item.id);
+            return next;
+          });
+        },
+        reduce ? 140 : REMOVE_PENDING_MS,
+      );
+    },
+    [
+      finalizeRemove,
+      reduce,
+      removingIds,
+      scheduleLifecycle,
+    ],
   );
 
   const resetDrag = useCallback(() => {
@@ -730,9 +970,20 @@ export function AttachmentUpload({
                     key={item.id}
                     item={item}
                     playing={playingId === item.id}
+                    uploading={
+                      uploadingIds.has(item.id) ||
+                      item.status === "uploading"
+                    }
+                    uploadComplete={
+                      uploadCompleteIds.has(item.id) ||
+                      item.status === "complete"
+                    }
+                    failed={item.status === "failed"}
+                    removing={removingIds.has(item.id)}
                     onAudioToggle={onAudioToggle}
                     onImagePreview={setPreviewItem}
-                    onRemove={removeItem}
+                    onRemove={requestRemove}
+                    onRetry={onRetry}
                     reduce={reduce}
                     className={classNames?.row}
                   />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AttachmentUpload,
   type AttachmentUploadItem,
@@ -13,6 +13,8 @@ const INITIAL_ITEMS: AttachmentUploadItem[] = [
     kind: "file",
     size: 32_400_000,
     href: "data:application/pdf,beUI%20launch%20brief",
+    status: "failed",
+    error: "Upload failed",
   },
   {
     id: "flowers",
@@ -34,6 +36,16 @@ const INITIAL_ITEMS: AttachmentUploadItem[] = [
 export function AttachmentUploadPreview() {
   const [items, setItems] = useState(INITIAL_ITEMS);
   const [playingId, setPlayingId] = useState<string>();
+  const retryTimersRef = useRef<number[]>([]);
+
+  useEffect(
+    () => () => {
+      for (const timer of retryTimersRef.current) {
+        window.clearTimeout(timer);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!playingId) return;
@@ -70,6 +82,35 @@ export function AttachmentUploadPreview() {
       <AttachmentUpload
         value={items}
         onValueChange={setItems}
+        onRetry={(retryItem) => {
+          setItems((current) =>
+            current.map((item) =>
+              item.id === retryItem.id
+                ? { ...item, status: "uploading", error: undefined }
+                : item,
+            ),
+          );
+
+          const completeTimer = window.setTimeout(() => {
+            setItems((current) =>
+              current.map((item) =>
+                item.id === retryItem.id
+                  ? { ...item, status: "complete" }
+                  : item,
+              ),
+            );
+          }, 900);
+          const readyTimer = window.setTimeout(() => {
+            setItems((current) =>
+              current.map((item) =>
+                item.id === retryItem.id
+                  ? { ...item, status: "idle" }
+                  : item,
+              ),
+            );
+          }, 1900);
+          retryTimersRef.current.push(completeTimer, readyTimer);
+        }}
         playingId={playingId}
         onAudioToggle={(item) => {
           setPlayingId((current) =>
