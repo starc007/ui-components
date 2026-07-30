@@ -62,7 +62,7 @@ const COMPONENT_DATES = {
   "blocks/overflow-actions": { publishedAt: "2026-06-19", updatedAt: "2026-06-28" },
   "blocks/expandable-tabs": { publishedAt: "2026-06-14", updatedAt: "2026-06-28" },
   "blocks/swipeable-list": { publishedAt: "2026-06-15", updatedAt: "2026-06-28" },
-  "blocks/file-upload": { publishedAt: "2026-06-18", updatedAt: "2026-06-21" },
+  "blocks/file-upload": { publishedAt: "2026-06-18", updatedAt: "2026-07-30" },
   "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-06-21" },
   "blocks/wallet-card": { publishedAt: "2026-07-03", updatedAt: "2026-07-03" },
   "blocks/otp-input": { publishedAt: "2026-06-13", updatedAt: "2026-07-13" },

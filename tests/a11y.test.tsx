@@ -3,6 +3,7 @@ import { cleanup, render } from "@testing-library/react";
 import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 
+import { AttachmentUpload } from "@/components/motion/attachment-upload";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import {
   AnimatedSidebar,
@@ -59,6 +60,28 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "AttachmentUpload",
+    () => (
+      <AttachmentUpload
+        defaultValue={[
+          {
+            id: "brief",
+            name: "brief.pdf",
+            kind: "file",
+            size: 240_000,
+          },
+          {
+            id: "voice",
+            name: "note.m4a",
+            kind: "audio",
+            currentTime: 4,
+            duration: 18,
+          },
+        ]}
+      />
+    ),
+  ],
   ["Button", () => <Button>Subscribe</Button>],
   ["Button disabled", () => <Button disabled>Subscribe</Button>],
   ["Button ripple", () => <Button ripple>Subscribe</Button>],

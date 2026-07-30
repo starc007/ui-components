@@ -876,8 +876,44 @@ export const registry: CategoryEntry[] = [
       {
         slug: "file-upload",
         name: "File Upload",
-        description: "Drag-and-drop upload queue with progress rows, retry/remove actions and reduced-motion-safe state changes.",
+        description:
+          "Two file upload patterns: an attachment workspace for mixed files, links, audio and media, plus a progress queue with retry and removal.",
         file: "components/motion/file-upload.tsx",
+        extraFiles: ["components/motion/attachment-upload.tsx"],
+        badge: "new",
+        launchedAt: "2026-07-30",
+        examples: [
+          {
+            slug: "attachment-upload",
+            name: "Attachment Upload",
+            description:
+              "A mixed attachment workspace with a dropzone, compact file and link rows, an audio waveform, and media tiles.",
+            badge: "new",
+            launchedAt: "2026-07-30",
+            installSlug: "attachment-upload",
+            file: "components/motion/attachment-upload.tsx",
+            previewKey: "blocks/attachment-upload",
+            previewFile:
+              "components/previews/blocks/attachment-upload.preview.tsx",
+          },
+          {
+            slug: "upload-queue",
+            name: "Upload Queue",
+            description:
+              "A drag-and-drop upload queue with progress rows, upload states, retry, and removal.",
+            installSlug: "file-upload",
+            file: "components/motion/file-upload.tsx",
+            previewKey: "blocks/file-upload",
+            previewFile: "components/previews/blocks/file-upload.preview.tsx",
+          },
+        ],
+        keywords: [
+          "attachment upload react",
+          "file attachment component",
+          "mixed media upload",
+          "audio attachment waveform",
+          "drag and drop attachments",
+        ],
       },
       {
         slug: "prediction-market",
