@@ -17,10 +17,10 @@ Prefer `typecheck` + `lint` for quick verification. Do not start the dev server 
 
 ## Layout
 
-- `components/motion/` — the library. One file per component; multi-file widgets get a folder (`swap/`, `button/`).
+- `components/motion/` and `components/agents/` — the library. One file per component; multi-file widgets get a folder (`swap/`, `button/`, `loading-states/`).
 - `components/previews/` — demo per component, registered in `components/previews/index.tsx`. Previews ship through the registry too.
 - `components/app/` — site chrome (header, hero, dock, code blocks). Not part of the library.
-- `lib/registry.ts` — component catalog (slugs, files, examples). Two categories: `motion` (display name "Components", primitives) and `blocks` (composed widgets: swap, dynamic island, command palette, expandable action bar). Blocks emit `registry:block` shadcn items. Preview files live under `components/previews/<category>/`. `lib/registry-server.ts` builds registry items by following each file's `@/` and relative imports and bundling everything it finds. Internal imports are therefore safe and encouraged; a component that imports `@/lib/ease` ships `lib/ease.ts` with it.
+- `lib/registry.ts` — component catalog (slugs, files, examples). Three categories: `motion` (display name "Components", primitives), `agents` (AI and agent interface primitives), and `blocks` (composed widgets: swap, dynamic island, command palette, expandable action bar). Blocks emit `registry:block` shadcn items. Preview files live under `components/previews/<category>/`. `lib/registry-server.ts` builds registry items by following each file's `@/` and relative imports and bundling everything it finds. Internal imports are therefore safe and encouraged; a component that imports `@/lib/ease` ships `lib/ease.ts` with it.
 - `app/r/*` — registry endpoints (shadcn items, raw source, index). beUI is listed in shadcn's official registry directory as the `@beui` namespace with URL template `https://beui.dev/r/{name}.json` — that path shape and existing install slugs are public contract; never break or rename them.
 - `lib/ease.ts` — all motion tokens.
 - `scripts/check-registry.ts` — validates the catalog.
@@ -69,6 +69,12 @@ Before building a new component, check this list. If it exists, import it. If it
 | `bouncy-accordion` | `components/motion/bouncy-accordion.tsx` | Single-open accordion with weighted spring layout and icon rows |
 | `magnetic` | `components/motion/magnetic.tsx` | Cursor-attracted magnetic pull wrapper |
 | `scroll-animation` | `components/motion/smooth-scroll.tsx`, `scroll-progress.tsx`, `parallax.tsx`, `scroll-to.tsx`, `scroll-reveal.tsx` | Scroll-driven motion group (variants install as `@beui/smooth-scroll`, `@beui/scroll-progress`, `@beui/parallax`, `@beui/scroll-to`, `@beui/scroll-reveal`). **Smooth Scroll**: Lenis provider (`root` page / `root={false}` contained) + `useSmoothScroll` hook (offset/progress/velocity, `scrollTo`), reduced-motion native. **Scroll Progress**: bar or ring reading `useSmoothScroll().progress`. **Parallax**: drifts children at a speed factor across the viewport, either axis. **Scroll To**: button that smooth-scrolls to a target via the provider. **Scroll Reveal**: spring slide + blur reveal on viewport enter |
+
+### AI Agents (`agents` category — agent interface primitives)
+
+| slug | file | what it does |
+|---|---|---|
+| `loading-states` | `components/agents/loading-states/` | Three agent loading states: `ThinkingShimmer`, compact live-timed `AgentProgress`, and `ReasoningText` with an ASCII loader, shimmering phrases, and cascade/swap/scramble styles; each variant is independently installable and reduced-motion safe |
 
 ### Blocks (`blocks` category — composed product widgets)
 

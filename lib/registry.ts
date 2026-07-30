@@ -732,6 +732,77 @@ export const registry: CategoryEntry[] = [
     ],
   },
   {
+    slug: "agents",
+    name: "AI Agents",
+    description:
+      "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
+    components: [
+      {
+        slug: "loading-states",
+        name: "Agent Loading States",
+        description:
+          "Three thoughtful loading states for AI interfaces: shimmering status text, live agent progress, and cycling reasoning phrases.",
+        file: "components/agents/loading-states/index.ts",
+        extraFiles: [
+          "components/agents/loading-states/thinking-shimmer.tsx",
+          "components/agents/loading-states/agent-progress.tsx",
+          "components/agents/loading-states/reasoning-text.tsx",
+        ],
+        badge: "new",
+        launchedAt: "2026-07-30",
+        keywords: [
+          "AI agent loading state",
+          "agent thinking animation",
+          "Claude thinking animation",
+          "AI reasoning indicator",
+          "LLM loading component",
+          "chatbot thinking indicator",
+        ],
+        examples: [
+          {
+            slug: "reasoning-text",
+            name: "Reasoning Text",
+            description:
+              "Claude-inspired reasoning copy with an ASCII loader, shimmering text, and cascade, phrase-swap, or per-letter scramble transitions.",
+            badge: "new",
+            launchedAt: "2026-07-30",
+            installSlug: "reasoning-text",
+            file: "components/agents/loading-states/reasoning-text.tsx",
+            previewKey: "agents/reasoning-text",
+            previewFile:
+              "components/previews/agents/reasoning-text.preview.tsx",
+          },
+          {
+            slug: "thinking-shimmer",
+            name: "Thinking Shimmer",
+            description:
+              "A quiet shimmer that keeps the agent's current status readable while work continues.",
+            badge: "new",
+            launchedAt: "2026-07-30",
+            installSlug: "thinking-shimmer",
+            file: "components/agents/loading-states/thinking-shimmer.tsx",
+            previewKey: "agents/thinking-shimmer",
+            previewFile:
+              "components/previews/agents/thinking-shimmer.preview.tsx",
+          },
+          {
+            slug: "agent-progress",
+            name: "Agent Progress",
+            description:
+              "A compact activity glyph, action verb, and live tabular timer for longer-running agent work.",
+            badge: "new",
+            launchedAt: "2026-07-30",
+            installSlug: "agent-progress",
+            file: "components/agents/loading-states/agent-progress.tsx",
+            previewKey: "agents/agent-progress",
+            previewFile:
+              "components/previews/agents/agent-progress.preview.tsx",
+          },
+        ],
+      },
+    ],
+  },
+  {
     slug: "blocks",
     name: "Blocks",
     description:

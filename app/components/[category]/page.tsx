@@ -25,6 +25,15 @@ const categoryContent = {
       "Browse composed interfaces for uploads, navigation, trading, scheduling, notifications, and more. Every block includes a live preview, install command, TypeScript source, and implementation details.",
     allLabel: "All animated blocks",
   },
+  agents: {
+    title: "AI Agent Components — Animated React AI Interfaces",
+    heading: "Animated AI agent components",
+    description:
+      "Build clear, responsive AI experiences with open-source React components for agent reasoning, progress, tool activity, and conversation states.",
+    supportingText:
+      "Each agent component is designed for long-running, interruptible AI work and includes a live preview, shadcn install command, TypeScript source, API reference, and reduced-motion support.",
+    allLabel: "All agent components",
+  },
 } as const;
 
 export function generateStaticParams() {
