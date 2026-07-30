@@ -52,6 +52,11 @@ export const previews: Record<string, ComponentType> = {
   "blocks/file-upload": dynamic(() =>
     import("./blocks/file-upload.preview").then((m) => m.FileUploadPreview),
   ),
+  "blocks/attachment-upload": dynamic(() =>
+    import("./blocks/attachment-upload.preview").then(
+      (m) => m.AttachmentUploadPreview,
+    ),
+  ),
   "blocks/prediction-market": dynamic(() =>
     import("./blocks/prediction-market.preview").then(
       (m) => m.PredictionMarketPreview,
