@@ -1,18 +1,26 @@
 "use client";
 
 import {
-  Download,
+  AlertCircle,
+  Check,
   ExternalLink,
   FileImage,
   Link as LinkIcon,
+  LoaderCircle,
   Mic,
   Paperclip,
   Pause,
   Play,
+  RotateCcw,
   Upload,
   X,
 } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+  AnimatePresence,
+  LayoutGroup,
+  motion,
+  useReducedMotion,
+} from "motion/react";
 import {
   useCallback,
   useEffect,
@@ -20,23 +28,34 @@ import {
   useRef,
   useState,
 } from "react";
-import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
+import { createPortal } from "react-dom";
+import { Tooltip } from "@/components/motion/tooltip";
+import {
+  EASE_OUT,
+  SPRING_LAYOUT,
+  SPRING_PRESS,
+} from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type AttachmentUploadKind = "file" | "link" | "image" | "audio";
-export type AttachmentUploadDisplay = "row" | "media";
 export type AttachmentRejectReason = "too-large" | "max-files";
+export type AttachmentUploadStatus =
+  | "idle"
+  | "uploading"
+  | "complete"
+  | "failed";
 
 export type AttachmentUploadItem = {
   id: string;
   name: string;
   kind: AttachmentUploadKind;
-  display?: AttachmentUploadDisplay;
   size?: number;
   href?: string;
   previewUrl?: string;
   currentTime?: number;
   duration?: number;
+  status?: AttachmentUploadStatus;
+  error?: string;
   file?: File;
 };
 
@@ -44,7 +63,6 @@ export type AttachmentUploadClassNames = {
   dropzone?: string;
   list?: string;
   row?: string;
-  media?: string;
 };
 
 export interface AttachmentUploadProps {
@@ -54,6 +72,7 @@ export interface AttachmentUploadProps {
   onFilesAdded?: (items: AttachmentUploadItem[], files: File[]) => void;
   onFilesRejected?: (files: File[], reason: AttachmentRejectReason) => void;
   onRemove?: (item: AttachmentUploadItem) => void;
+  onRetry?: (item: AttachmentUploadItem) => void;
   playingId?: string;
   onAudioToggle?: (item: AttachmentUploadItem) => void;
   accept?: string;
@@ -70,6 +89,9 @@ export interface AttachmentUploadProps {
 
 const ITEM_TRANSITION = { duration: 0.2, ease: EASE_OUT } as const;
 const DEFAULT_MAX_FILE_SIZE = 500 * 1024 * 1024;
+const UPLOAD_PROGRESS_MS = 900;
+const UPLOAD_COMPLETE_HOLD_MS = 1000;
+const REMOVE_PENDING_MS = 420;
 
 const WAVEFORM_BARS = [
   18, 31, 24, 39, 30, 43, 27, 18, 9, 29, 38, 24, 34, 18, 26, 37, 21, 14,
@@ -139,44 +161,320 @@ function AttachmentIcon({ kind }: { kind: AttachmentUploadKind }) {
   return <Paperclip className="size-4" />;
 }
 
-function RemoveButton({
+function imageSource(item: AttachmentUploadItem) {
+  if (item.kind !== "image") return undefined;
+  return item.previewUrl ?? item.href;
+}
+
+type RowActionState =
+  | "idle"
+  | "uploading"
+  | "complete"
+  | "failed"
+  | "removing";
+
+function RowAction({
   label,
   onClick,
-  className,
+  state,
+  retryable = false,
+  reduce = false,
 }: {
   label: string;
   onClick: () => void;
-  className?: string;
+  state: RowActionState;
+  retryable?: boolean;
+  reduce?: boolean;
 }) {
+  if (state === "uploading") {
+    return <span aria-hidden="true" className="size-9 shrink-0" />;
+  }
+
+  if (state === "complete") {
+    return (
+      <Tooltip content="Upload complete" side="top" delay={100}>
+        <motion.span
+          role="status"
+          aria-label={`Upload complete for ${label}`}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.75 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={ITEM_TRANSITION}
+          className="grid size-9 shrink-0 place-items-center rounded-xl text-emerald-600 dark:text-emerald-400"
+        >
+          <Check className="size-4" />
+        </motion.span>
+      </Tooltip>
+    );
+  }
+
+  if (state === "removing") {
+    return (
+      <Tooltip content="Removing attachment" side="top" delay={100}>
+        <span
+          role="status"
+          aria-label={`Removing ${label}`}
+          className="grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground"
+        >
+          <motion.span
+            animate={reduce ? undefined : { rotate: 360 }}
+            transition={{
+              duration: 0.7,
+              ease: "linear",
+              repeat: Infinity,
+            }}
+            className="grid place-items-center"
+          >
+            <LoaderCircle className="size-4" />
+          </motion.span>
+        </span>
+      </Tooltip>
+    );
+  }
+
+  if (state === "failed") {
+    if (!retryable) {
+      return (
+        <Tooltip content="Upload failed" side="top" delay={100}>
+          <span
+            role="status"
+            aria-label={`Upload failed for ${label}`}
+            className="grid size-9 shrink-0 place-items-center rounded-xl text-destructive"
+          >
+            <AlertCircle className="size-4" />
+          </span>
+        </Tooltip>
+      );
+    }
+
+    return (
+      <Tooltip content="Retry upload" side="top" delay={100}>
+        <motion.button
+          type="button"
+          aria-label={`Retry ${label}`}
+          onClick={onClick}
+          whileTap={reduce ? undefined : { scale: 0.92 }}
+          transition={SPRING_PRESS}
+          className="grid size-9 shrink-0 place-items-center rounded-xl text-destructive outline-none transition-colors hover:bg-destructive/10 focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <RotateCcw className="size-4" />
+        </motion.button>
+      </Tooltip>
+    );
+  }
+
   return (
-    <motion.button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      whileTap={{ scale: 0.92 }}
-      transition={SPRING_PRESS}
-      className={cn(
-        "grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring",
-        className,
-      )}
+    <Tooltip content="Remove attachment" side="top" delay={100}>
+      <motion.button
+        type="button"
+        aria-label={`Remove ${label}`}
+        onClick={onClick}
+        whileTap={reduce ? undefined : { scale: 0.92 }}
+        transition={SPRING_PRESS}
+        className="grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <X className="size-4" />
+      </motion.button>
+    </Tooltip>
+  );
+}
+
+function ImageThumbnail({
+  item,
+  layoutId,
+  onPreview,
+  reduce,
+}: {
+  item: AttachmentUploadItem;
+  layoutId?: string;
+  onPreview: (item: AttachmentUploadItem) => void;
+  reduce: boolean;
+}) {
+  const src = imageSource(item);
+
+  if (!src) {
+    return (
+      <span
+        aria-hidden="true"
+        className="grid size-8 shrink-0 place-items-center rounded-lg bg-muted text-muted-foreground"
+      >
+        <FileImage className="size-4" />
+      </span>
+    );
+  }
+
+  return (
+    <Tooltip
+      side="top"
+      delay={160}
+      wrapperClassName="shrink-0"
+      className="rounded-xl p-1 shadow-xl"
+      content={
+        <span className="block w-32">
+          <img
+            src={src}
+            alt=""
+            className="h-20 w-full rounded-lg object-cover"
+          />
+          <span className="block px-1 pb-0.5 pt-1 text-center text-[10px] font-medium text-muted-foreground">
+            Click to preview
+          </span>
+        </span>
+      }
     >
-      <X className="size-4" />
-    </motion.button>
+      <motion.button
+        type="button"
+        aria-label={`Preview ${item.name}`}
+        onClick={(event) => {
+          event.currentTarget.blur();
+          onPreview(item);
+        }}
+        whileTap={reduce ? undefined : { scale: 0.94 }}
+        transition={SPRING_PRESS}
+        className="group/image relative size-9 shrink-0 overflow-hidden rounded-[10px] bg-muted outline-none ring-1 ring-border/70 focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <motion.img
+          layoutId={layoutId}
+          src={src}
+          alt=""
+          className="size-full object-cover"
+          transition={{ layout: SPRING_LAYOUT }}
+        />
+      </motion.button>
+    </Tooltip>
+  );
+}
+
+function ImagePreviewDialog({
+  item,
+  layoutId,
+  onClose,
+  reduce,
+}: {
+  item: AttachmentUploadItem | null;
+  layoutId?: string;
+  onClose: () => void;
+  reduce: boolean;
+}) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!item) return;
+
+    const previousFocus =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+      if (event.key === "Tab") {
+        event.preventDefault();
+        closeRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [item, onClose]);
+
+  if (typeof document === "undefined") return null;
+
+  const src = item ? imageSource(item) : undefined;
+  const content =
+    item && src ? (
+      <div className="pointer-events-none fixed inset-0 z-[10000]">
+        <motion.button
+          type="button"
+          aria-label="Close image preview"
+          tabIndex={-1}
+          className="pointer-events-auto absolute inset-0 size-full cursor-default bg-black/45 backdrop-blur-xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reduce ? undefined : { opacity: 0 }}
+          transition={{ duration: reduce ? 0.1 : 0.2, ease: EASE_OUT }}
+          onClick={onClose}
+        />
+
+        <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-8">
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Preview of ${item.name}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduce ? undefined : { opacity: 0 }}
+            transition={ITEM_TRANSITION}
+            className="pointer-events-auto relative"
+          >
+            <motion.img
+              layoutId={reduce ? undefined : layoutId}
+              src={src}
+              alt={item.name}
+              className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl"
+              transition={{ layout: SPRING_LAYOUT }}
+            />
+            <motion.button
+              ref={closeRef}
+              type="button"
+              aria-label="Close image preview"
+              onClick={onClose}
+              initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={
+                reduce ? undefined : { opacity: 0, scale: 0.8 }
+              }
+              whileTap={reduce ? undefined : { scale: 0.92 }}
+              transition={SPRING_PRESS}
+              className="absolute -right-3 -top-3 grid size-9 place-items-center rounded-full bg-background text-foreground shadow-xl outline-none ring-1 ring-border/70 transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <X className="size-4" />
+            </motion.button>
+          </motion.div>
+        </div>
+      </div>
+    ) : null;
+
+  return createPortal(
+    reduce ? content : <AnimatePresence>{content}</AnimatePresence>,
+    document.body,
   );
 }
 
 function AttachmentRow({
   item,
   playing,
+  uploading,
+  uploadComplete,
+  failed,
+  removing,
+  arrivalIndex,
+  imageLayoutId,
   onAudioToggle,
+  onImagePreview,
   onRemove,
+  onRetry,
   reduce,
   className,
 }: {
   item: AttachmentUploadItem;
   playing: boolean;
+  uploading: boolean;
+  uploadComplete: boolean;
+  failed: boolean;
+  removing: boolean;
+  arrivalIndex: number;
+  imageLayoutId?: string;
   onAudioToggle?: (item: AttachmentUploadItem) => void;
+  onImagePreview: (item: AttachmentUploadItem) => void;
   onRemove: (item: AttachmentUploadItem) => void;
+  onRetry?: (item: AttachmentUploadItem) => void;
   reduce: boolean;
   className?: string;
 }) {
@@ -185,26 +483,85 @@ function AttachmentRow({
     item.duration && item.duration > 0
       ? Math.min(1, Math.max(0, (item.currentTime ?? 0) / item.duration))
       : 0;
+  const actionState: RowActionState = removing
+    ? "removing"
+    : uploading
+      ? "uploading"
+      : uploadComplete
+        ? "complete"
+        : failed
+          ? "failed"
+          : "idle";
+  const arrivalDelay = Math.min(Math.max(arrivalIndex, 0), 5) * 0.055;
+  const rowTransition =
+    !reduce && arrivalIndex >= 0
+      ? {
+          ...SPRING_LAYOUT,
+          delay: arrivalDelay,
+          opacity: {
+            duration: 0.16,
+            ease: EASE_OUT,
+            delay: arrivalDelay,
+          },
+        }
+      : ITEM_TRANSITION;
+  const showUploadProgress = uploading || uploadComplete;
+  const uploadProgress = (
+    <motion.span
+      role="progressbar"
+      aria-label={`Uploading ${item.name}`}
+      className="pointer-events-none absolute inset-0 -z-10 origin-left bg-emerald-400/25 dark:bg-emerald-500/20"
+      initial={{ opacity: 1, scaleX: 0 }}
+      animate={{ opacity: 1, scaleX: 1 }}
+      exit={reduce ? undefined : { opacity: 0 }}
+      transition={{
+        duration: reduce ? 0.1 : UPLOAD_PROGRESS_MS / 1000,
+        ease: EASE_OUT,
+      }}
+    />
+  );
 
   return (
     <motion.li
       layout={!reduce}
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={reduce ? { opacity: 0 } : { opacity: 0, y: -4 }}
-      transition={ITEM_TRANSITION}
+      initial={
+        reduce
+          ? { opacity: 0 }
+          : arrivalIndex >= 0
+            ? { opacity: 0, y: -16, scale: 0.985 }
+            : { opacity: 0, y: 6 }
+      }
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={reduce ? undefined : { opacity: 0, y: -4 }}
+      transition={rowTransition}
       className={cn(
         "flex min-h-14 items-center gap-1 rounded-2xl bg-muted/70 p-1",
         className,
       )}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-3 self-stretch rounded-xl bg-background px-2 py-1">
-        <span
-          aria-hidden="true"
-          className="grid size-7 shrink-0 place-items-center text-muted-foreground"
-        >
-          <AttachmentIcon kind={item.kind} />
-        </span>
+      <div className="relative isolate flex min-w-0 flex-1 items-center gap-3 self-stretch overflow-hidden rounded-xl bg-background px-2 py-1">
+        {failed ? (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-10 bg-destructive/10"
+          />
+        ) : null}
+
+        {item.kind === "image" ? (
+          <ImageThumbnail
+            item={item}
+            layoutId={imageLayoutId}
+            onPreview={onImagePreview}
+            reduce={reduce}
+          />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="grid size-7 shrink-0 place-items-center text-muted-foreground"
+          >
+            <AttachmentIcon kind={item.kind} />
+          </span>
+        )}
 
         {item.kind === "audio" ? (
           <>
@@ -269,83 +626,56 @@ function AttachmentRow({
           </>
         ) : (
           <>
-            <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
-              {item.name}
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-medium text-foreground">
+                {item.name}
+              </span>
+              {failed ? (
+                <span className="block truncate text-[11px] text-destructive">
+                  {item.error ?? "Upload failed"}
+                </span>
+              ) : null}
             </span>
             <span className="shrink-0 text-xs text-muted-foreground">
               {item.kind === "link" ? "Web" : size}
             </span>
-            {item.href ? (
+            {item.kind === "link" && item.href ? (
               <a
                 href={item.href}
-                target={item.kind === "link" ? "_blank" : undefined}
-                rel={item.kind === "link" ? "noreferrer noopener" : undefined}
-                download={item.kind === "link" ? undefined : item.name}
-                aria-label={
-                  item.kind === "link"
-                    ? `Open ${item.name}`
-                    : `Download ${item.name}`
-                }
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={`Open ${item.name}`}
                 className="grid size-8 shrink-0 place-items-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               >
-                {item.kind === "link" ? (
-                  <ExternalLink className="size-4" />
-                ) : (
-                  <Download className="size-4" />
-                )}
+                <ExternalLink className="size-4" />
               </a>
             ) : null}
           </>
         )}
-      </div>
 
-      <RemoveButton
-        label={`Remove ${item.name}`}
-        onClick={() => onRemove(item)}
-      />
-    </motion.li>
-  );
-}
-
-function MediaTile({
-  item,
-  onRemove,
-  reduce,
-}: {
-  item: AttachmentUploadItem;
-  onRemove: (item: AttachmentUploadItem) => void;
-  reduce: boolean;
-}) {
-  return (
-    <motion.li
-      layout={!reduce}
-      initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
-      transition={ITEM_TRANSITION}
-      className="group relative h-24 min-w-28 flex-1 overflow-visible"
-    >
-      <div
-        className="relative h-full overflow-hidden rounded-2xl border border-border bg-muted bg-cover bg-center"
-        style={
-          item.previewUrl
-            ? { backgroundImage: `url("${item.previewUrl}")` }
-            : undefined
-        }
-      >
-        {item.previewUrl ? null : (
-          <span className="grid h-full place-items-center text-muted-foreground">
-            <FileImage className="size-5" />
-          </span>
+        {reduce ? (
+          showUploadProgress ? (
+            uploadProgress
+          ) : null
+        ) : (
+          <AnimatePresence>
+            {showUploadProgress ? uploadProgress : null}
+          </AnimatePresence>
         )}
-        <span className="absolute bottom-2 left-2 rounded-full bg-black/65 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-          {formatBytes(item.size) ?? "Image"}
-        </span>
       </div>
-      <RemoveButton
-        label={`Remove ${item.name}`}
-        onClick={() => onRemove(item)}
-        className="absolute -right-2 -top-2 size-7 rounded-full border border-border bg-background shadow-sm"
+
+      <RowAction
+        label={item.name}
+        onClick={() => {
+          if (actionState === "failed") {
+            onRetry?.(item);
+            return;
+          }
+          onRemove(item);
+        }}
+        state={actionState}
+        retryable={onRetry !== undefined}
+        reduce={reduce}
       />
     </motion.li>
   );
@@ -358,6 +688,7 @@ export function AttachmentUpload({
   onFilesAdded,
   onFilesRejected,
   onRemove,
+  onRetry,
   playingId,
   onAudioToggle,
   accept,
@@ -375,25 +706,53 @@ export function AttachmentUpload({
   const inputRef = useRef<HTMLInputElement>(null);
   const dragDepthRef = useRef(0);
   const ownedUrlsRef = useRef(new Set<string>());
+  const lifecycleTimersRef = useRef(
+    new Set<ReturnType<typeof setTimeout>>(),
+  );
   const reduce = useReducedMotion() ?? false;
   const [dragging, setDragging] = useState(false);
+  const [previewItem, setPreviewItem] =
+    useState<AttachmentUploadItem | null>(null);
+  const [uploadingIds, setUploadingIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [uploadCompleteIds, setUploadCompleteIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [removingIds, setRemovingIds] = useState<Set<string>>(
+    () => new Set(),
+  );
   const [items, setItems] = useControllableList({
     value,
     defaultValue,
     onValueChange,
   });
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
 
   useEffect(
     () => () => {
       for (const url of ownedUrlsRef.current) URL.revokeObjectURL(url);
       ownedUrlsRef.current.clear();
+      for (const timer of lifecycleTimersRef.current) {
+        clearTimeout(timer);
+      }
+      lifecycleTimersRef.current.clear();
     },
     [],
   );
 
   const maxReached = items.length >= maxFiles;
-  const rowItems = items.filter((item) => item.display !== "media");
-  const mediaItems = items.filter((item) => item.display === "media");
+  const scheduleLifecycle = useCallback(
+    (callback: () => void, delay: number) => {
+      const timer = setTimeout(() => {
+        lifecycleTimersRef.current.delete(timer);
+        callback();
+      }, delay);
+      lifecycleTimersRef.current.add(timer);
+    },
+    [],
+  );
 
   const addFiles = useCallback(
     (incomingFiles: File[]) => {
@@ -430,7 +789,6 @@ export function AttachmentUpload({
           id: `${Date.now()}-${index}-${file.name}`,
           name: file.name,
           kind,
-          display: kind === "image" ? ("media" as const) : ("row" as const),
           size: file.size,
           previewUrl: kind === "image" ? objectUrl : undefined,
           href: objectUrl,
@@ -442,6 +800,28 @@ export function AttachmentUpload({
 
       if (added.length === 0) return;
       setItems([...items, ...added]);
+      const addedIds = added.map((item) => item.id);
+      setUploadingIds((current) => new Set([...current, ...addedIds]));
+      scheduleLifecycle(
+        () => {
+          setUploadingIds((current) => {
+            const next = new Set(current);
+            for (const id of addedIds) next.delete(id);
+            return next;
+          });
+          setUploadCompleteIds(
+            (current) => new Set([...current, ...addedIds]),
+          );
+          scheduleLifecycle(() => {
+            setUploadCompleteIds((current) => {
+              const next = new Set(current);
+              for (const id of addedIds) next.delete(id);
+              return next;
+            });
+          }, UPLOAD_COMPLETE_HOLD_MS);
+        },
+        reduce ? 140 : UPLOAD_PROGRESS_MS,
+      );
       onFilesAdded?.(added, accepted);
     },
     [
@@ -452,11 +832,13 @@ export function AttachmentUpload({
       multiple,
       onFilesAdded,
       onFilesRejected,
+      reduce,
+      scheduleLifecycle,
       setItems,
     ],
   );
 
-  const removeItem = useCallback(
+  const finalizeRemove = useCallback(
     (item: AttachmentUploadItem) => {
       const ownedUrl = [item.previewUrl, item.href].find(
         (url): url is string =>
@@ -466,19 +848,73 @@ export function AttachmentUpload({
         URL.revokeObjectURL(ownedUrl);
         ownedUrlsRef.current.delete(ownedUrl);
       }
-      setItems(items.filter((entry) => entry.id !== item.id));
+      setPreviewItem((current) =>
+        current?.id === item.id ? null : current,
+      );
+      setUploadingIds((current) => {
+        const next = new Set(current);
+        next.delete(item.id);
+        return next;
+      });
+      setUploadCompleteIds((current) => {
+        const next = new Set(current);
+        next.delete(item.id);
+        return next;
+      });
+      setItems(itemsRef.current.filter((entry) => entry.id !== item.id));
       onRemove?.(item);
     },
-    [items, onRemove, setItems],
+    [onRemove, setItems],
+  );
+
+  const requestRemove = useCallback(
+    (item: AttachmentUploadItem) => {
+      if (removingIds.has(item.id)) return;
+
+      setRemovingIds((current) => new Set(current).add(item.id));
+      scheduleLifecycle(
+        () => {
+          finalizeRemove(item);
+          setRemovingIds((current) => {
+            const next = new Set(current);
+            next.delete(item.id);
+            return next;
+          });
+        },
+        reduce ? 140 : REMOVE_PENDING_MS,
+      );
+    },
+    [
+      finalizeRemove,
+      reduce,
+      removingIds,
+      scheduleLifecycle,
+    ],
   );
 
   const resetDrag = useCallback(() => {
     dragDepthRef.current = 0;
     setDragging(false);
   }, []);
+  const closePreview = useCallback(() => setPreviewItem(null), []);
+
+  useEffect(() => {
+    if (
+      previewItem &&
+      !items.some((item) => item.id === previewItem.id)
+    ) {
+      setPreviewItem(null);
+    }
+  }, [items, previewItem]);
+
+  const uploadOrder = Array.from(uploadingIds);
+  const previewLayoutId = previewItem
+    ? `attachment-image-${previewItem.id}`
+    : undefined;
 
   return (
-    <div className={cn("w-full", className)}>
+    <LayoutGroup id={inputId}>
+      <div className={cn("w-full", className)}>
       <input
         ref={inputRef}
         id={inputId}
@@ -578,38 +1014,34 @@ export function AttachmentUpload({
             {attachmentsLabel}
           </h3>
 
-          {rowItems.length > 0 ? (
+          {items.length > 0 ? (
             <ul className={cn("mt-3 space-y-2", classNames?.list)}>
-              <AnimatePresence initial={false}>
-                {rowItems.map((item) => (
+              <AnimatePresence initial={uploadOrder.length > 0}>
+                {items.map((item) => (
                   <AttachmentRow
                     key={item.id}
                     item={item}
                     playing={playingId === item.id}
+                    uploading={
+                      uploadingIds.has(item.id) ||
+                      item.status === "uploading"
+                    }
+                    uploadComplete={
+                      uploadCompleteIds.has(item.id) ||
+                      item.status === "complete"
+                    }
+                    failed={item.status === "failed"}
+                    removing={removingIds.has(item.id)}
+                    arrivalIndex={uploadOrder.indexOf(item.id)}
+                    imageLayoutId={
+                      reduce ? undefined : `attachment-image-${item.id}`
+                    }
                     onAudioToggle={onAudioToggle}
-                    onRemove={removeItem}
+                    onImagePreview={setPreviewItem}
+                    onRemove={requestRemove}
+                    onRetry={onRetry}
                     reduce={reduce}
                     className={classNames?.row}
-                  />
-                ))}
-              </AnimatePresence>
-            </ul>
-          ) : null}
-
-          {mediaItems.length > 0 ? (
-            <ul
-              className={cn(
-                "mt-4 flex items-stretch gap-3 overflow-x-auto py-2",
-                classNames?.media,
-              )}
-            >
-              <AnimatePresence initial={false}>
-                {mediaItems.map((item) => (
-                  <MediaTile
-                    key={item.id}
-                    item={item}
-                    onRemove={removeItem}
-                    reduce={reduce}
                   />
                 ))}
               </AnimatePresence>
@@ -618,6 +1050,13 @@ export function AttachmentUpload({
         </section>
       ) : null}
 
-    </div>
+      <ImagePreviewDialog
+        item={previewItem}
+        layoutId={reduce ? undefined : previewLayoutId}
+        onClose={closePreview}
+        reduce={reduce}
+      />
+      </div>
+    </LayoutGroup>
   );
 }

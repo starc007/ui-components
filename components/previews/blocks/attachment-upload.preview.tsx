@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AttachmentUpload,
   type AttachmentUploadItem,
@@ -13,13 +13,16 @@ const INITIAL_ITEMS: AttachmentUploadItem[] = [
     kind: "file",
     size: 32_400_000,
     href: "data:application/pdf,beUI%20launch%20brief",
+    status: "failed",
+    error: "Upload failed",
   },
   {
-    id: "cover",
-    name: "launch-cover.jpeg",
+    id: "flowers",
+    name: "orange-flowers.jpg",
     kind: "image",
-    size: 198_000,
-    href: "/og/grainient-component.jpg",
+    size: 9_800_000,
+    previewUrl:
+      "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=85",
   },
   {
     id: "voice-note",
@@ -28,38 +31,21 @@ const INITIAL_ITEMS: AttachmentUploadItem[] = [
     currentTime: 12,
     duration: 48,
   },
-  {
-    id: "flowers",
-    name: "orange-flowers.jpg",
-    kind: "image",
-    display: "media",
-    size: 10_300_000,
-    previewUrl:
-      "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=520&q=80",
-  },
-  {
-    id: "field",
-    name: "green-field.jpg",
-    kind: "image",
-    display: "media",
-    size: 5_800_000,
-    previewUrl:
-      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=520&q=80",
-  },
-  {
-    id: "cosmos",
-    name: "pink-cosmos.jpg",
-    kind: "image",
-    display: "media",
-    size: 8_200_000,
-    previewUrl:
-      "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=520&q=80",
-  },
 ];
 
 export function AttachmentUploadPreview() {
   const [items, setItems] = useState(INITIAL_ITEMS);
   const [playingId, setPlayingId] = useState<string>();
+  const retryTimersRef = useRef<number[]>([]);
+
+  useEffect(
+    () => () => {
+      for (const timer of retryTimersRef.current) {
+        window.clearTimeout(timer);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!playingId) return;
@@ -96,6 +82,35 @@ export function AttachmentUploadPreview() {
       <AttachmentUpload
         value={items}
         onValueChange={setItems}
+        onRetry={(retryItem) => {
+          setItems((current) =>
+            current.map((item) =>
+              item.id === retryItem.id
+                ? { ...item, status: "uploading", error: undefined }
+                : item,
+            ),
+          );
+
+          const completeTimer = window.setTimeout(() => {
+            setItems((current) =>
+              current.map((item) =>
+                item.id === retryItem.id
+                  ? { ...item, status: "complete" }
+                  : item,
+              ),
+            );
+          }, 900);
+          const readyTimer = window.setTimeout(() => {
+            setItems((current) =>
+              current.map((item) =>
+                item.id === retryItem.id
+                  ? { ...item, status: "idle" }
+                  : item,
+              ),
+            );
+          }, 1900);
+          retryTimersRef.current.push(completeTimer, readyTimer);
+        }}
         playingId={playingId}
         onAudioToggle={(item) => {
           setPlayingId((current) =>

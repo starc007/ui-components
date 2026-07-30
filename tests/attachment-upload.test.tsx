@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, mock, test } from "bun:test";
-import { cleanup, fireEvent, render } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  waitFor,
+} from "@testing-library/react";
 import {
   AttachmentUpload,
   type AttachmentUploadItem,
@@ -15,16 +20,22 @@ const FILE_ITEM: AttachmentUploadItem = {
 };
 
 describe("AttachmentUpload", () => {
-  test("removes attachments in uncontrolled mode", () => {
+  test("shows pending feedback before removing an attachment", async () => {
     const onRemove = mock(() => {});
-    const { getByLabelText, queryByText } = render(
+    const { getByLabelText, queryByLabelText, queryByText } = render(
       <AttachmentUpload defaultValue={[FILE_ITEM]} onRemove={onRemove} />,
     );
 
     fireEvent.click(getByLabelText("Remove brief.pdf"));
 
-    expect(queryByText("brief.pdf")).toBeNull();
-    expect(onRemove).toHaveBeenCalledWith(FILE_ITEM);
+    expect(getByLabelText("Removing brief.pdf")).toBeTruthy();
+    expect(queryByText("brief.pdf")).toBeTruthy();
+
+    await waitFor(() => {
+      expect(onRemove).toHaveBeenCalledWith(FILE_ITEM);
+      expect(queryByLabelText("Removing brief.pdf")).toBeNull();
+      expect(queryByLabelText("Remove brief.pdf")).toBeNull();
+    });
   });
 
   test("rejects files over the size limit", () => {
@@ -46,6 +57,59 @@ describe("AttachmentUpload", () => {
     expect(onFilesRejected).toHaveBeenCalledWith([file], "too-large");
   });
 
+  test("shows upload progress for newly added files", async () => {
+    const file = new File(["draft"], "draft.txt", {
+      type: "text/plain",
+    });
+    const {
+      getByLabelText,
+      getByRole,
+      queryByLabelText,
+    } = render(
+      <AttachmentUpload />,
+    );
+
+    fireEvent.change(getByLabelText("Upload attachments"), {
+      target: { files: [file] },
+    });
+
+    expect(
+      getByRole("progressbar", { name: "Uploading draft.txt" }),
+    ).toBeTruthy();
+    expect(queryByLabelText("Remove draft.txt")).toBeNull();
+
+    await waitFor(() => {
+      expect(
+        getByLabelText("Upload complete for draft.txt"),
+      ).toBeTruthy();
+      expect(queryByLabelText("Remove draft.txt")).toBeNull();
+    });
+
+    await waitFor(() => {
+      expect(getByLabelText("Remove draft.txt")).toBeTruthy();
+    }, { timeout: 1600 });
+  });
+
+  test("shows failed uploads with a retry action", () => {
+    const failedItem: AttachmentUploadItem = {
+      ...FILE_ITEM,
+      status: "failed",
+      error: "Network interrupted",
+    };
+    const onRetry = mock(() => {});
+    const { getByLabelText, getByText } = render(
+      <AttachmentUpload
+        defaultValue={[failedItem]}
+        onRetry={onRetry}
+      />,
+    );
+
+    expect(getByText("Network interrupted")).toBeTruthy();
+    fireEvent.click(getByLabelText("Retry brief.pdf"));
+
+    expect(onRetry).toHaveBeenCalledWith(failedItem);
+  });
+
   test("forwards audio playback actions", () => {
     const audio: AttachmentUploadItem = {
       id: "note",
@@ -65,5 +129,30 @@ describe("AttachmentUpload", () => {
     fireEvent.click(getByLabelText("Play note.m4a"));
 
     expect(onAudioToggle).toHaveBeenCalledWith(audio);
+  });
+
+  test("opens image rows in a dismissible preview dialog", async () => {
+    const image: AttachmentUploadItem = {
+      id: "cover",
+      name: "cover.png",
+      kind: "image",
+      size: 320_000,
+      previewUrl: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' />",
+    };
+    const { getByLabelText, getByRole } = render(
+      <AttachmentUpload defaultValue={[image]} />,
+    );
+
+    fireEvent.click(getByLabelText("Preview cover.png"));
+
+    expect(
+      getByRole("dialog", { name: "Preview of cover.png" }),
+    ).toBeTruthy();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    await waitFor(() => {
+      expect(document.body.style.overflow).toBe("");
+    });
   });
 });
