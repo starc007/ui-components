@@ -22,7 +22,7 @@ const FILE_ITEM: AttachmentUploadItem = {
 describe("AttachmentUpload", () => {
   test("shows pending feedback before removing an attachment", async () => {
     const onRemove = mock(() => {});
-    const { getByLabelText, queryByText } = render(
+    const { getByLabelText, queryByLabelText, queryByText } = render(
       <AttachmentUpload defaultValue={[FILE_ITEM]} onRemove={onRemove} />,
     );
 
@@ -32,8 +32,9 @@ describe("AttachmentUpload", () => {
     expect(queryByText("brief.pdf")).toBeTruthy();
 
     await waitFor(() => {
-      expect(queryByText("brief.pdf")).toBeNull();
       expect(onRemove).toHaveBeenCalledWith(FILE_ITEM);
+      expect(queryByLabelText("Removing brief.pdf")).toBeNull();
+      expect(queryByLabelText("Remove brief.pdf")).toBeNull();
     });
   });
 
@@ -86,8 +87,8 @@ describe("AttachmentUpload", () => {
     });
 
     await waitFor(() => {
-      expect(queryByRole("progressbar")).toBeNull();
       expect(getByLabelText("Remove draft.txt")).toBeTruthy();
+      expect(queryByRole("progressbar")).toBeNull();
     }, { timeout: 1600 });
   });
 

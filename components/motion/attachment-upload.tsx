@@ -285,7 +285,7 @@ function ImageThumbnail({
   reduce,
 }: {
   item: AttachmentUploadItem;
-  layoutId: string;
+  layoutId?: string;
   onPreview: (item: AttachmentUploadItem) => void;
   reduce: boolean;
 }) {
@@ -399,7 +399,7 @@ function ImagePreviewDialog({
             className="pointer-events-auto absolute inset-0 size-full cursor-default bg-black/45 backdrop-blur-xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            exit={reduce ? undefined : { opacity: 0 }}
             transition={{ duration: reduce ? 0.1 : 0.2, ease: EASE_OUT }}
             onClick={onClose}
           />
@@ -413,12 +413,12 @@ function ImagePreviewDialog({
                 { opacity: 0 }
               }
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              exit={reduce ? undefined : { opacity: 0 }}
               transition={ITEM_TRANSITION}
               className="pointer-events-auto relative"
             >
               <motion.img
-                layoutId={layoutId}
+                layoutId={reduce ? undefined : layoutId}
                 src={src}
                 alt={item.name}
                 className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl"
@@ -431,7 +431,9 @@ function ImagePreviewDialog({
                 onClick={onClose}
                 initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.8 }}
+                exit={
+                  reduce ? undefined : { opacity: 0, scale: 0.8 }
+                }
                 whileTap={reduce ? undefined : { scale: 0.92 }}
                 transition={SPRING_PRESS}
                 className="absolute -right-3 -top-3 grid size-9 place-items-center rounded-full bg-background text-foreground shadow-xl outline-none ring-1 ring-border/70 transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
@@ -470,7 +472,7 @@ function AttachmentRow({
   failed: boolean;
   removing: boolean;
   arrivalIndex: number;
-  imageLayoutId: string;
+  imageLayoutId?: string;
   onAudioToggle?: (item: AttachmentUploadItem) => void;
   onImagePreview: (item: AttachmentUploadItem) => void;
   onRemove: (item: AttachmentUploadItem) => void;
@@ -517,7 +519,7 @@ function AttachmentRow({
             : { opacity: 0, y: 6 }
       }
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={reduce ? { opacity: 0 } : { opacity: 0, y: -4 }}
+      exit={reduce ? undefined : { opacity: 0, y: -4 }}
       transition={rowTransition}
       className={cn(
         "flex min-h-14 items-center gap-1 rounded-2xl bg-muted/70 p-1",
@@ -646,7 +648,7 @@ function AttachmentRow({
               className="pointer-events-none absolute inset-0 -z-10 origin-left bg-emerald-400/25 dark:bg-emerald-500/20"
               initial={{ opacity: 1, scaleX: 0 }}
               animate={{ opacity: 1, scaleX: 1 }}
-              exit={{ opacity: 0 }}
+              exit={reduce ? undefined : { opacity: 0 }}
               transition={{
                 duration: reduce ? 0.1 : UPLOAD_PROGRESS_MS / 1000,
                 ease: EASE_OUT,
@@ -1025,7 +1027,9 @@ export function AttachmentUpload({
                     failed={item.status === "failed"}
                     removing={removingIds.has(item.id)}
                     arrivalIndex={uploadOrder.indexOf(item.id)}
-                    imageLayoutId={`attachment-image-${item.id}`}
+                    imageLayoutId={
+                      reduce ? undefined : `attachment-image-${item.id}`
+                    }
                     onAudioToggle={onAudioToggle}
                     onImagePreview={setPreviewItem}
                     onRemove={requestRemove}
@@ -1042,7 +1046,7 @@ export function AttachmentUpload({
 
       <ImagePreviewDialog
         item={previewItem}
-        layoutId={previewLayoutId}
+        layoutId={reduce ? undefined : previewLayoutId}
         onClose={closePreview}
         reduce={reduce}
       />
