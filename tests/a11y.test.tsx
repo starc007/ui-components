@@ -3,6 +3,9 @@ import { cleanup, render } from "@testing-library/react";
 import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 
+import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
+import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
+import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
 import { AttachmentUpload } from "@/components/motion/attachment-upload";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import {
@@ -88,6 +91,23 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
         onRetry={() => {}}
       />
     ),
+  ],
+  ["ThinkingShimmer", () => <ThinkingShimmer />],
+  [
+    "AgentProgress",
+    () => <AgentProgress elapsedSeconds={12.4} label="Searching" />,
+  ],
+  [
+    "ReasoningText cascade",
+    () => <ReasoningText variant="cascade" phrases={["Thinking"]} />,
+  ],
+  [
+    "ReasoningText swap",
+    () => <ReasoningText variant="swap" phrases={["Thinking"]} />,
+  ],
+  [
+    "ReasoningText scramble",
+    () => <ReasoningText variant="scramble" phrases={["Thinking"]} />,
   ],
   ["Button", () => <Button>Subscribe</Button>],
   ["Button disabled", () => <Button disabled>Subscribe</Button>],

@@ -1,5 +1,10 @@
 import { cn } from "@/lib/utils";
 import type { ElementType, ReactNode } from "react";
+import {
+  TEXT_SHIMMER_CLASS_NAME,
+  TEXT_SHIMMER_KEYFRAMES,
+  textShimmerStyle,
+} from "@/lib/text-shimmer";
 
 export interface TextShimmerProps {
   children: ReactNode;
@@ -12,13 +17,13 @@ export function TextShimmer({ children, as: Comp = "span", duration = 2.5, class
   return (
     <>
       <style>
-        {`@keyframes beui-text-shimmer{from{background-position:200% 0}to{background-position:-200% 0}}`}
+        {TEXT_SHIMMER_KEYFRAMES}
       </style>
       <Comp
-        style={{ animation: `beui-text-shimmer ${duration}s linear infinite` }}
+        style={textShimmerStyle(duration)}
         className={cn(
-          "inline-block bg-[length:200%_100%] bg-clip-text text-transparent",
-          "bg-[linear-gradient(110deg,var(--muted-foreground)_30%,var(--foreground)_50%,var(--muted-foreground)_70%)]",
+          "inline-block",
+          TEXT_SHIMMER_CLASS_NAME,
           className,
         )}
       >

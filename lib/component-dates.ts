@@ -51,6 +51,10 @@ const COMPONENT_DATES = {
   "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-07-13" },
   "motion/cylinder-carousel": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
+  "agents/loading-states": {
+    publishedAt: "2026-07-30",
+    updatedAt: "2026-07-30",
+  },
   "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-07-15" },
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-07-14" },
   "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-07-27" },
