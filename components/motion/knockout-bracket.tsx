@@ -371,9 +371,13 @@ export function KnockoutBracket({
     const base = rounds[page];
     centers[page] = base.matches.map((_, i) => PAD_Y + i * ROW + CARD_H / 2);
     for (let r = page + 1; r < rounds.length; r++) {
-      centers[r] = rounds[r].matches.map(
-        (_, k) => (centers[r - 1][2 * k] + centers[r - 1][2 * k + 1]) / 2,
-      );
+      centers[r] = rounds[r].matches.map((_, k) => {
+        // A round with more matches than its feeders allow (an odd draw, a bye
+        // left out) falls back to the fixed rhythm instead of laying out at NaN.
+        const top = centers[r - 1][2 * k] ?? PAD_Y + k * ROW + CARD_H / 2;
+        const bottom = centers[r - 1][2 * k + 1] ?? top;
+        return (top + bottom) / 2;
+      });
     }
     // Behind rounds keep their natural spread (spacing halves each step out,
     // each match straddling its parent) instead of collapsing, so paging back
@@ -381,7 +385,7 @@ export function KnockoutBracket({
     for (let r = page - 1; r >= 0; r--) {
       const half = ROW / 2 ** (page - r + 1);
       centers[r] = rounds[r].matches.map((_, i) => {
-        const parent = centers[r + 1][Math.floor(i / 2)];
+        const parent = centers[r + 1][Math.floor(i / 2)] ?? PAD_Y;
         return parent + (i % 2 === 0 ? -half : half);
       });
     }
@@ -393,8 +397,8 @@ export function KnockoutBracket({
         isInWindow(r, page, visibleCols) &&
         isInWindow(r - 1, page, visibleCols);
       rounds[r].matches.forEach((_, k) => {
-        const yTop = centers[r - 1][2 * k];
-        const yBot = centers[r - 1][2 * k + 1];
+        const yTop = centers[r - 1][2 * k] ?? centers[r][k];
+        const yBot = centers[r - 1][2 * k + 1] ?? yTop;
         list.push({
           key: `${r}-${k}`,
           x: feederRight,
