@@ -39,7 +39,9 @@ export function BubbleSlider({ format, className, ...options }: BubbleSliderProp
     ...options,
     formatValueText: format,
   });
-  const readout = format ? format(current) : Math.round(current);
+  // The value is already snapped to the step — rounding here would only make
+  // the bubble disagree with aria-valuenow on a fractional scale.
+  const readout = format ? format(current) : current;
 
   const target = useMotionValue(percent);
   useEffect(() => {
