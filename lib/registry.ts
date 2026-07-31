@@ -616,7 +616,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "range-slider",
         name: "Range Slider",
-        description: "Range slider with tick dots and a bouncy vertical-bar thumb that glides between snapped steps; drag and keyboard control, reduced-motion safe.",
+        description: "Slider with tick dots and a vertical-bar thumb that bounces as it lands on each step. Drag or keyboard, reduced-motion safe.",
         file: "components/motion/range-slider.tsx",
         badge: "new",
         launchedAt: "2026-07-31",
@@ -634,7 +634,7 @@ export const registry: CategoryEntry[] = [
             slug: "stepped",
             name: "Range Slider",
             description:
-              "Tick dots and a bouncy vertical-bar thumb that glides between snapped steps.",
+              "Tick dots, and a vertical-bar thumb that bounces as it lands on each step.",
             installSlug: "range-slider",
             file: "components/motion/range-slider.tsx",
             previewKey: "motion/range-slider",
@@ -644,7 +644,7 @@ export const registry: CategoryEntry[] = [
             slug: "fluid",
             name: "Fluid Slider",
             description:
-              "Thumbless pill: the fill glides behind a rounded liquid cap, and the label inverts wherever the fill covers it.",
+              "No thumb. The fill slides behind a rounded liquid cap, and the label flips color wherever the fill covers it.",
             installSlug: "range-slider-fluid",
             badge: "new",
             launchedAt: "2026-07-31",
@@ -656,7 +656,7 @@ export const registry: CategoryEntry[] = [
             slug: "wave",
             name: "Wave Slider",
             description:
-              "Equalizer bars that rise into a crest around the handle and fall as it passes, so the value reads as a travelling wave.",
+              "Equalizer bars peak around the handle and drop back once it passes, so the value moves down the track as a wave.",
             installSlug: "range-slider-wave",
             badge: "new",
             launchedAt: "2026-07-31",
@@ -668,7 +668,7 @@ export const registry: CategoryEntry[] = [
             slug: "bubble",
             name: "Bubble Slider",
             description:
-              "Value bubble that pops out of the thumb on grab, then leans and squashes with drag velocity before settling upright.",
+              "Grab the thumb and a value bubble pops out of it. The bubble tilts and squashes with how fast you drag, then settles upright.",
             installSlug: "range-slider-bubble",
             badge: "new",
             launchedAt: "2026-07-31",
@@ -680,7 +680,7 @@ export const registry: CategoryEntry[] = [
             slug: "ruler",
             name: "Ruler Slider",
             description:
-              "The scale scrolls under a fixed needle instead of a handle moving along a track; flicks carry momentum and settle onto the nearest tick. Fractional steps read at the step's own precision.",
+              "The needle stays put and the scale scrolls under it. A flick keeps going and settles on the nearest tick. Fractional steps read at the step's own precision.",
             installSlug: "range-slider-ruler",
             badge: "new",
             launchedAt: "2026-07-31",
