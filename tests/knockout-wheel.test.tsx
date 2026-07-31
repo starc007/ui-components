@@ -2,6 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import {
   KnockoutWheel,
+  type Round,
   ROUNDS,
 } from "@/components/motion/knockout-wheel";
 
@@ -46,5 +47,50 @@ describe("KnockoutWheel", () => {
         container.querySelectorAll(".stroke-foreground").length,
       ).toBeGreaterThan(1);
     });
+  });
+
+  test("draws a small logo-less draw with initials and a narrower stage", () => {
+    const rounds: Round[] = [
+      {
+        name: "Semi-finals",
+        matches: [1, 2].map((n) => ({
+          id: `sf-${n}`,
+          home: { team: { name: `Alpha ${n}` }, score: 2 },
+          away: { team: { name: `Beta ${n}` }, score: 1 },
+          winner: "home" as const,
+        })),
+      },
+      {
+        name: "Grand final",
+        matches: [
+          {
+            id: "gf-1",
+            home: { team: { name: "Alpha 1" }, score: 3 },
+            away: { team: { name: "Alpha 2" }, score: 2 },
+            winner: "home" as const,
+          },
+        ],
+      },
+    ];
+
+    const { container, getByLabelText } = render(
+      <KnockoutWheel rounds={rounds} />,
+    );
+
+    getByLabelText("Tournament wheel, won by Alpha 1");
+    // No artwork anywhere, so every mark falls back to initials. The shallowest
+    // draw has the smallest nodes, so it's where the size floor has to hold:
+    // 15 units is ~10px once the 32rem stage scales the 760-unit box.
+    const marks = [...container.querySelectorAll<SVGTextElement>("text")];
+    expect(marks.length).toBeGreaterThan(0);
+    expect(container.querySelectorAll("image")).toHaveLength(0);
+    for (const mark of marks) {
+      expect(Number(mark.getAttribute("font-size"))).toBeGreaterThanOrEqual(15);
+    }
+    // Node radius grows with depth, so a shallow draw has the *smallest* marks
+    // and needs the stage floor most — it must not shrink with the draw.
+    expect(container.firstElementChild?.firstElementChild?.className).toContain(
+      "min-w-[32rem]",
+    );
   });
 });
