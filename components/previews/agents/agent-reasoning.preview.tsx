@@ -1,6 +1,7 @@
 "use client";
 
 import { RotateCcw } from "lucide-react";
+import { useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { AgentReasoning } from "@/components/agents/agent-reasoning";
 
@@ -17,34 +18,48 @@ const REASONING = [
   "Finishing with a compact summary that can be revisited.",
 ].join("\n");
 
-const STREAM_CHUNK = 3;
-const STREAM_INTERVAL = 32;
-const STREAM_SECONDS =
-  (Math.ceil(REASONING.length / STREAM_CHUNK) * STREAM_INTERVAL) / 1000;
+const STREAM_CHARACTERS_PER_SECOND = 90;
+const STREAM_SECONDS = REASONING.length / STREAM_CHARACTERS_PER_SECOND;
 
 function ReasoningDemo() {
+  const reduce = useReducedMotion() ?? false;
   const [stream, setStream] = useState("");
   const [complete, setComplete] = useState(false);
 
   useEffect(() => {
-    let cursor = 0;
+    if (reduce) {
+      setStream(REASONING);
+      setComplete(true);
+      return;
+    }
+
+    const startedAt = performance.now();
+    let frame = 0;
     let completionTimer: number | undefined;
 
-    const streamTimer = window.setInterval(() => {
-      cursor = Math.min(cursor + STREAM_CHUNK, REASONING.length);
-      setStream(REASONING.slice(0, cursor));
+    const streamNextFrame = (now: number) => {
+      const elapsed = (now - startedAt) / 1000;
+      const cursor = Math.min(
+        REASONING.length,
+        Math.floor(elapsed * STREAM_CHARACTERS_PER_SECOND),
+      );
+      const next = REASONING.slice(0, cursor);
+      setStream((current) => (current === next ? current : next));
 
       if (cursor === REASONING.length) {
-        window.clearInterval(streamTimer);
         completionTimer = window.setTimeout(() => setComplete(true), 500);
+      } else {
+        frame = requestAnimationFrame(streamNextFrame);
       }
-    }, STREAM_INTERVAL);
+    };
+
+    frame = requestAnimationFrame(streamNextFrame);
 
     return () => {
-      window.clearInterval(streamTimer);
+      cancelAnimationFrame(frame);
       if (completionTimer) window.clearTimeout(completionTimer);
     };
-  }, []);
+  }, [reduce]);
 
   const lines = stream.split("\n").filter(Boolean);
 
@@ -60,12 +75,6 @@ function ReasoningDemo() {
           key={index}
         >
           {line}
-          {!complete && index === lines.length - 1 ? (
-            <span
-              aria-hidden="true"
-              className="ml-0.5 inline-block h-3 w-px animate-pulse bg-muted-foreground/60 align-[-1px] motion-reduce:animate-none"
-            />
-          ) : null}
         </p>
       ))}
     </AgentReasoning>

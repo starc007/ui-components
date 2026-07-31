@@ -13,7 +13,12 @@ import {
   type ReactNode,
 } from "react";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
-import { EASE_OUT, SPRING_PANEL, SPRING_SWAP } from "@/lib/ease";
+import {
+  EASE_OUT,
+  SPRING_LAYOUT,
+  SPRING_PANEL,
+  SPRING_SWAP,
+} from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type AgentReasoningStatus = "thinking" | "complete";
@@ -96,7 +101,6 @@ export function AgentReasoning({
   const contentRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const previousStatus = useRef(status);
-  const childCount = Children.count(children);
   const [contentHeight, setContentHeight] = useState(0);
   const [currentOpen, setOpen] = useControllableOpen({
     open,
@@ -104,24 +108,19 @@ export function AgentReasoning({
     onOpenChange,
   });
   const thinking = status === "thinking";
-  const thinkingRef = useRef(thinking);
-  thinkingRef.current = thinking;
   const expanded = thinking || currentOpen;
   const cappedHeight = Math.min(contentHeight, Math.max(0, maxHeight));
+  const viewportHeight = thinking ? Math.max(0, maxHeight) : cappedHeight;
   const capped = contentHeight > maxHeight;
+  const streamOffset = thinking
+    ? Math.min(0, viewportHeight - contentHeight)
+    : 0;
 
   useLayoutEffect(() => {
     const node = contentRef.current;
     if (!node) return;
 
-    const measure = () => {
-      setContentHeight(node.offsetHeight);
-
-      const viewport = viewportRef.current;
-      if (thinkingRef.current && viewport) {
-        viewport.scrollTop = viewport.scrollHeight;
-      }
-    };
+    const measure = () => setContentHeight(node.offsetHeight);
     measure();
 
     if (typeof ResizeObserver === "undefined") return;
@@ -136,13 +135,6 @@ export function AgentReasoning({
     }
     previousStatus.current = status;
   }, [collapseOnComplete, setOpen, status]);
-
-  useEffect(() => {
-    const viewport = viewportRef.current;
-    if (thinking && viewport && childCount > 0) {
-      viewport.scrollTop = viewport.scrollHeight;
-    }
-  }, [childCount, thinking]);
 
   const toggle = () => {
     const next = !currentOpen;
@@ -198,7 +190,7 @@ export function AgentReasoning({
         aria-hidden={!expanded}
         inert={!expanded}
         initial={false}
-        animate={{ height: expanded ? cappedHeight : 0 }}
+        animate={{ height: expanded ? viewportHeight : 0 }}
         transition={reduce ? { duration: 0 } : SPRING_PANEL}
         className="overflow-hidden"
       >
@@ -209,14 +201,19 @@ export function AgentReasoning({
             capped && expanded && !thinking ? "overflow-y-auto" : "overflow-y-hidden",
           )}
           style={{
-            height: cappedHeight,
+            height: viewportHeight,
             maskImage: capped
-              ? "linear-gradient(to bottom, transparent, black 12px, black calc(100% - 12px), transparent)"
+              ? thinking
+                ? "linear-gradient(to bottom, transparent, black 12px)"
+                : "linear-gradient(to bottom, transparent, black 12px, black calc(100% - 12px), transparent)"
               : undefined,
           }}
         >
-          <div
+          <motion.div
             ref={contentRef}
+            initial={false}
+            animate={{ y: streamOffset }}
+            transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
             className={cn("space-y-2 py-2 text-muted-foreground", contentClassName)}
           >
             {Children.toArray(children).map((child, index) => (
@@ -231,7 +228,7 @@ export function AgentReasoning({
                 {child}
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </motion.div>
     </div>
