@@ -531,8 +531,17 @@ export const registry: CategoryEntry[] = [
       {
         slug: "theme-toggle",
         name: "Theme Toggle",
-        description: "Theme toggle button with a full-page rectangle clip-path reveal via the View Transition API.",
+        description: "Theme toggle button that repaints the whole page through the View Transition API — a rectangle or circle clip-path reveal, or slats that open across the screen like a shutter.",
         file: "components/motion/theme-toggle.tsx",
+        badge: "new",
+        launchedAt: "2026-08-01",
+        keywords: [
+          "theme toggle",
+          "dark mode toggle",
+          "view transition theme",
+          "clip path theme reveal",
+          "blinds transition",
+        ],
       },
       {
         slug: "bouncy-accordion",
