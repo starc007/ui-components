@@ -809,24 +809,24 @@ export const registry: CategoryEntry[] = [
         slug: "agent-reasoning",
         name: "Agent Reasoning",
         description:
-          "A live reasoning stream that stays visible while an agent works, then folds into an elapsed-time disclosure the user can revisit.",
+          "A streaming worklog that remains visible while an agent works, then settles into a compact timed summary that can be reopened.",
         file: "components/agents/agent-reasoning.tsx",
         badge: "new",
         launchedAt: "2026-08-01",
         keywords: [
           "AI reasoning component",
           "agent thinking disclosure",
-          "collapsible chain of thought UI",
-          "AI thought process React",
+          "collapsible reasoning log",
+          "AI worklog React",
           "reasoning stream component",
-          "Thought for seconds UI",
+          "elapsed reasoning UI",
         ],
         examples: [
           {
             slug: "agent-reasoning",
             name: "Agent Reasoning",
             description:
-              "Streams reasoning while work is active, automatically summarizes the elapsed time on completion, and remains available as an accessible disclosure.",
+              "Streams a live worklog, settles into an elapsed-time summary, and keeps the completed details available as an accessible disclosure.",
             file: "components/agents/agent-reasoning.tsx",
             previewKey: "agents/agent-reasoning",
             previewFile:
@@ -860,7 +860,7 @@ export const registry: CategoryEntry[] = [
             slug: "reasoning-text",
             name: "Reasoning Text",
             description:
-              "Claude-inspired reasoning copy with an ASCII loader, shimmering text, and cascade, phrase-swap, or per-letter scramble transitions.",
+              "Shimmering reasoning copy with an ASCII loader and cascade, phrase-swap, or per-letter scramble transitions.",
             badge: "new",
             launchedAt: "2026-07-30",
             installSlug: "reasoning-text",
