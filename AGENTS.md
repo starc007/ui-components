@@ -116,8 +116,6 @@ Before building a new component, check this list. If it exists, import it. If it
 
 ## Code conventions
 
-- External examples supplied during design work are private context only. Ship original interaction, code, naming, and copy; do not publish comparisons or attribution unless explicitly requested.
-
 - Named exports only. Every component accepts `className` merged via `cn()` from `lib/utils`. Interactive components are `"use client"`.
 - Larger components support controlled + uncontrolled (`value`/`defaultValue`/`onChange`); simple toggles are controlled-only.
 - Biome a11y rules are strict: no redundant ARIA roles on divs/spans; use real elements (`<button>`) for interactive things. `DockItem` renders a `<button>` when given `onClick` and a plain div wrapper when children carry their own link/button — never nest interactive elements.
