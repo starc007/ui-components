@@ -275,6 +275,26 @@ export const previews: Record<string, ComponentType> = {
   "motion/range-slider": dynamic(() =>
     import("./motion/range-slider.preview").then((m) => m.RangeSliderPreview),
   ),
+  "motion/range-slider-fluid": dynamic(() =>
+    import("./motion/range-slider-fluid.preview").then(
+      (m) => m.RangeSliderFluidPreview,
+    ),
+  ),
+  "motion/range-slider-wave": dynamic(() =>
+    import("./motion/range-slider-wave.preview").then(
+      (m) => m.RangeSliderWavePreview,
+    ),
+  ),
+  "motion/range-slider-bubble": dynamic(() =>
+    import("./motion/range-slider-bubble.preview").then(
+      (m) => m.RangeSliderBubblePreview,
+    ),
+  ),
+  "motion/range-slider-ruler": dynamic(() =>
+    import("./motion/range-slider-ruler.preview").then(
+      (m) => m.RangeSliderRulerPreview,
+    ),
+  ),
   "motion/wheel-picker": dynamic(() =>
     import("./motion/wheel-picker.preview").then((m) => m.WheelPickerPreview),
   ),

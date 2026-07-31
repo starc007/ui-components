@@ -47,3 +47,11 @@ export const SPRING_MOUSE = {
   damping: 15,
   mass: 0.3,
 } as const;
+
+/** Dragged handles and fills (sliders) — critically damped `useSpring` config,
+ * so the value follows the pointer butterily and never rebounds off an end. */
+export const SPRING_GLIDE = {
+  stiffness: 700,
+  damping: 50,
+  mass: 0.5,
+} as const;

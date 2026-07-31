@@ -38,6 +38,10 @@ import {
 import { PullToRefresh } from "@/components/motion/pull-to-refresh";
 import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
 import { RangeSlider } from "@/components/motion/range-slider";
+import { BubbleSlider } from "@/components/motion/range-slider-bubble";
+import { FluidSlider } from "@/components/motion/range-slider-fluid";
+import { RulerSlider } from "@/components/motion/range-slider-ruler";
+import { WaveSlider } from "@/components/motion/range-slider-wave";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { ScrollTo } from "@/components/motion/scroll-to";
@@ -229,6 +233,19 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ],
   ["ScrollTo", () => <ScrollTo to="#top">Back to top</ScrollTo>],
   ["RangeSlider", () => <RangeSlider defaultValue={40} aria-label="Volume" />],
+  [
+    "FluidSlider",
+    () => <FluidSlider defaultValue={35} label="Brightness" aria-label="Brightness" />,
+  ],
+  ["WaveSlider", () => <WaveSlider defaultValue={45} aria-label="Gain" />],
+  ["BubbleSlider", () => <BubbleSlider defaultValue={28} aria-label="Volume" />],
+  [
+    "RulerSlider",
+    () => (
+      <RulerSlider defaultValue={72.5} min={40} max={120} step={0.5} unit="kg" aria-label="Weight" />
+    ),
+  ],
+  ["FluidSlider disabled", () => <FluidSlider defaultValue={35} disabled aria-label="Brightness" />],
   [
     "PullToRefresh",
     () => (
