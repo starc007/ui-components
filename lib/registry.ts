@@ -664,6 +664,18 @@ export const registry: CategoryEntry[] = [
             previewKey: "motion/range-slider-wave",
             previewFile: "components/previews/motion/range-slider-wave.preview.tsx",
           },
+          {
+            slug: "bubble",
+            name: "Bubble Slider",
+            description:
+              "Value bubble that pops out of the thumb on grab, then leans and squashes with drag velocity before settling upright.",
+            installSlug: "range-slider-bubble",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-bubble.tsx",
+            previewKey: "motion/range-slider-bubble",
+            previewFile: "components/previews/motion/range-slider-bubble.preview.tsx",
+          },
         ],
       },
       {
