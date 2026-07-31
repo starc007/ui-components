@@ -777,10 +777,6 @@ export const registry: CategoryEntry[] = [
         badge: "new",
         launchedAt: "2026-07-27",
         extraFiles: ["components/motion/knockout-wheel.tsx"],
-        credit: {
-          name: "Avinit",
-          url: "https://x.com/0xvntr",
-        },
         examples: [
           {
             slug: "knockout-wheel",
