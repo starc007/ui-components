@@ -676,6 +676,18 @@ export const registry: CategoryEntry[] = [
             previewKey: "motion/range-slider-bubble",
             previewFile: "components/previews/motion/range-slider-bubble.preview.tsx",
           },
+          {
+            slug: "ruler",
+            name: "Ruler Slider",
+            description:
+              "The scale scrolls under a fixed needle instead of a handle moving along a track; flicks carry momentum and settle onto the nearest tick. Fractional steps read at the step's own precision.",
+            installSlug: "range-slider-ruler",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-ruler.tsx",
+            previewKey: "motion/range-slider-ruler",
+            previewFile: "components/previews/motion/range-slider-ruler.preview.tsx",
+          },
         ],
       },
       {

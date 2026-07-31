@@ -290,6 +290,11 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.RangeSliderBubblePreview,
     ),
   ),
+  "motion/range-slider-ruler": dynamic(() =>
+    import("./motion/range-slider-ruler.preview").then(
+      (m) => m.RangeSliderRulerPreview,
+    ),
+  ),
   "motion/wheel-picker": dynamic(() =>
     import("./motion/wheel-picker.preview").then((m) => m.WheelPickerPreview),
   ),
