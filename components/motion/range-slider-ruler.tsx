@@ -3,7 +3,7 @@
 import { animate, motion, useMotionValue, useMotionValueEvent, useReducedMotion } from "motion/react";
 import { type KeyboardEvent, useEffect, useRef } from "react";
 
-import { type SliderOptions, useSlider } from "@/lib/hooks/use-slider";
+import { type SliderOptions, snapSliderValue, useSlider } from "@/lib/hooks/use-slider";
 import { cn } from "@/lib/utils";
 
 // Settle spring for the snap after a flick — quick, no overshoot past the tick.
@@ -58,31 +58,42 @@ export function RulerSlider({
   // While the pointer drives the strip (or its momentum still runs), x owns the
   // value; outside of that the value owns x.
   const interacting = useRef(false);
+  // True only while the pointer is down. It keeps a cancelled momentum's
+  // transition end from snapping underneath a fresh grab.
+  const holding = useRef(false);
+  // A new gesture or key press bumps this, so a snap that resolves late cannot
+  // clear interacting underneath an active drag.
+  const gesture = useRef(0);
 
   // ponytail: every tick is in the DOM — fine to a few hundred (80 units at
   // step 0.5 is 161). Window to the visible span if a finer step is ever needed.
+  // Each tick carries an offset because max sits `remainder` of a step past the
+  // last whole tick. Whenever remainder is under 0.5 that point falls inside
+  // the previous box, so an appended flex box can never centre on it.
   const ticks = Array.from({ length: wholeSteps + 1 }, (_, i) => ({
     // toFixed trims float dust from fractional steps (0.1 + 0.2 …).
     value: Number((min + i * step).toFixed(6)),
     major: i % majorEvery === 0,
-    width: gap,
+    offset: i * gap,
   }));
-  // A box of width 2·f·gap appended after N full ones centres at (N + f)·gap,
-  // which is exactly where max sits. Its label can crowd the tick before it
-  // when f is tiny; a scale that ends a hair past a step looks like that.
-  if (remainder > 0) ticks.push({ value: max, major: true, width: 2 * remainder * gap });
+  // A tiny remainder puts this label close to the one before it. That is what
+  // a scale ending a hair past a step looks like.
+  if (remainder > 0) ticks.push({ value: max, major: true, offset: maxOffset });
 
   const snapToTick = () => {
-    // Round onto a step, but never past the end: on a scale that stops mid-step
-    // the flick settles on max, not on the tick beyond it.
-    const snapped = Math.max(-maxOffset, Math.min(0, -Math.round(-x.get() / gap) * gap));
+    // The same nearest-tick rule useSlider applies. max counts as a candidate
+    // when the step does not divide the range, so a flick near the end does
+    // not settle on the last whole step.
+    const target = snapSliderValue(min + (-x.get() / gap) * step, min, max, step);
+    const snapped = -((target - min) / step) * gap;
+    const id = ++gesture.current;
     if (reduce) {
       x.set(snapped);
       interacting.current = false;
       return;
     }
     animate(x, snapped, SPRING_SNAP).then(() => {
-      interacting.current = false;
+      if (gesture.current === id) interacting.current = false;
     });
   };
 
@@ -92,7 +103,9 @@ export function RulerSlider({
     ...sliderProps,
     onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => {
       x.stop();
+      gesture.current++;
       interacting.current = false;
+      holding.current = false;
       sliderProps.onKeyDown(event);
     },
   };
@@ -137,22 +150,30 @@ export function RulerSlider({
           dragMomentum={!reduce}
           dragTransition={{ power: 0.22, timeConstant: 320 }}
           onDragStart={() => {
+            gesture.current++;
             interacting.current = true;
+            holding.current = true;
           }}
           // Momentum end when there is momentum, drag end when there is not.
-          onDragTransitionEnd={snapToTick}
+          onDragTransitionEnd={() => {
+            if (!holding.current) snapToTick();
+          }}
           onDragEnd={() => {
+            holding.current = false;
             if (reduce) snapToTick();
           }}
-          style={{ x, marginLeft: -gap / 2 }}
-          className="absolute inset-y-0 left-1/2 flex items-end"
+          // The ticks are positioned rather than laid out, so the row needs an
+          // explicit width plus half a gap of slop each side to cover the
+          // whole drag surface.
+          style={{ x, marginLeft: -gap / 2, width: maxOffset + gap }}
+          className="absolute inset-y-0 left-1/2"
         >
           {ticks.map((tick) => (
             // pb reserves the label row, so minor ticks need no spacer node
             <span
               key={tick.value}
-              className="relative flex h-full shrink-0 flex-col items-center justify-end pb-[18px]"
-              style={{ width: tick.width }}
+              className="absolute bottom-0 flex -translate-x-1/2 flex-col items-center pb-[18px]"
+              style={{ left: tick.offset + gap / 2 }}
             >
               <span
                 className={cn(

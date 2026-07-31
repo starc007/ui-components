@@ -37,7 +37,7 @@ export function BubbleSlider({ format, className, ...options }: BubbleSliderProp
   // A bare number needs no valueText — it would only repeat aria-valuenow.
   const { percent, current, dragging, trackProps, sliderProps } = useSlider({
     ...options,
-    formatValueText: format ?? options.formatValueText,
+    formatValueText: options.formatValueText ?? format,
   });
   // The value is already snapped to the step — rounding here would only make
   // the bubble disagree with aria-valuenow on a fractional scale.

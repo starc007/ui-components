@@ -2,7 +2,7 @@ import { afterEach, describe, expect, mock, test } from "bun:test";
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import type { ReactElement } from "react";
 
-import type { SliderOptions } from "@/lib/hooks/use-slider";
+import { type SliderOptions, snapSliderValue } from "@/lib/hooks/use-slider";
 import { RangeSlider } from "@/components/motion/range-slider";
 import { BubbleSlider } from "@/components/motion/range-slider-bubble";
 import { FluidSlider } from "@/components/motion/range-slider-fluid";
@@ -10,6 +10,19 @@ import { RulerSlider } from "@/components/motion/range-slider-ruler";
 import { WaveSlider } from "@/components/motion/range-slider-wave";
 
 afterEach(cleanup);
+
+describe("snapSliderValue", () => {
+  test("stays at min when the range is empty or inverted", () => {
+    expect(snapSliderValue(5, 10, 10, 1)).toBe(10);
+    expect(snapSliderValue(5, 20, 10, 1)).toBe(20);
+  });
+
+  test("clamps without a grid when step is not positive", () => {
+    expect(snapSliderValue(50, 0, 100, 0)).toBe(50);
+    expect(snapSliderValue(150, 0, 100, -1)).toBe(100);
+    expect(snapSliderValue(-5, 0, 100, 0)).toBe(0);
+  });
+});
 
 /** Track geometry happy-dom does not lay out, so pointer maths has real numbers. */
 function stubTrackRect(element: Element, left = 0, width = 200) {
@@ -126,13 +139,89 @@ for (const { name, render: renderVariant } of variants) {
       expect(slider.getAttribute("aria-valuenow")).toBe("10");
       expect(onValueChange).toHaveBeenLastCalledWith(10);
     });
+
+    test("pointer near max snaps to max when the step does not divide the range", () => {
+      const onValueChange = mock(() => {});
+      const { getByRole } = render(
+        renderVariant({ defaultValue: 0, min: 0, max: 10, step: 4, onValueChange }),
+      );
+      const slider = getByRole("slider");
+      const track = slider.parentElement as HTMLElement;
+      stubTrackRect(track);
+
+      // 190/200 lands on 9.5, closer to max (10) than to the last whole step (8)
+      fireEvent.pointerDown(track, { clientX: 190, pointerId: 1 });
+      expect(slider.getAttribute("aria-valuenow")).toBe("10");
+      expect(onValueChange).toHaveBeenLastCalledWith(10);
+
+      // 170/200 lands on 8.5, which is still closer to 8
+      fireEvent.pointerDown(track, { clientX: 170, pointerId: 1 });
+      expect(slider.getAttribute("aria-valuenow")).toBe("8");
+    });
+
+    test("focuses the slider when the track is pressed", () => {
+      const { getByRole } = render(renderVariant({ defaultValue: 0 }));
+      const slider = getByRole("slider");
+      const track = slider.parentElement as HTMLElement;
+      stubTrackRect(track);
+
+      fireEvent.pointerDown(track, { clientX: 100, pointerId: 1 });
+
+      expect(document.activeElement).toBe(slider);
+    });
+
+    test("stays put on an empty range without producing NaN", () => {
+      const onValueChange = mock(() => {});
+      const { getByRole } = render(
+        renderVariant({ defaultValue: 5, min: 5, max: 5, onValueChange }),
+      );
+      const slider = getByRole("slider");
+
+      expect(slider.getAttribute("aria-valuenow")).toBe("5");
+      fireEvent.keyDown(slider, { key: "ArrowRight" });
+      expect(slider.getAttribute("aria-valuenow")).toBe("5");
+      expect(onValueChange).toHaveBeenLastCalledWith(5);
+    });
+
+    test("falls back to a unit step when step is not positive", () => {
+      const onValueChange = mock(() => {});
+      const { getByRole } = render(
+        renderVariant({ defaultValue: 10, step: 0, onValueChange }),
+      );
+      const slider = getByRole("slider");
+
+      fireEvent.keyDown(slider, { key: "ArrowRight" });
+      expect(slider.getAttribute("aria-valuenow")).toBe("11");
+      expect(onValueChange).toHaveBeenLastCalledWith(11);
+    });
   });
 }
+
+describe("RangeSlider", () => {
+  test("draws a dot on every step of a range float division under-counts", () => {
+    // 0.3 / 0.1 is 2.9999999999999996, so a bare floor would drop the last dot
+    const { container } = render(
+      <RangeSlider defaultValue={0} min={0} max={0.3} step={0.1} aria-label="Level" />,
+    );
+    // the tick dots are the only spans the slider renders
+    expect(container.querySelectorAll("span")).toHaveLength(4);
+  });
+});
 
 describe("FluidSlider", () => {
   test("announces the formatted value, not the bare number", () => {
     const { getByRole } = render(<FluidSlider defaultValue={35} aria-label="Brightness" />);
     expect(getByRole("slider").getAttribute("aria-valuetext")).toBe("35%");
+  });
+
+  test("shows a fractional value instead of rounding it", () => {
+    const { getByRole, getAllByText } = render(
+      <FluidSlider defaultValue={72.5} step={0.5} aria-label="Brightness" />,
+    );
+    // rounding here would announce "73%" while aria-valuenow stayed 72.5
+    expect(getByRole("slider").getAttribute("aria-valuenow")).toBe("72.5");
+    expect(getByRole("slider").getAttribute("aria-valuetext")).toBe("72.5%");
+    expect(getAllByText("72.5%")).toHaveLength(2);
   });
 
   test("uses a custom format for both the label and the announcement", () => {
@@ -156,6 +245,18 @@ describe("BubbleSlider", () => {
       <BubbleSlider defaultValue={28} format={(v) => `$${v}`} aria-label="Budget" />,
     );
     expect(getByRole("slider").getAttribute("aria-valuetext")).toBe("$28");
+  });
+
+  test("lets a caller's formatValueText outrank format", () => {
+    const { getByRole } = render(
+      <BubbleSlider
+        defaultValue={28}
+        format={(v) => `$${v}`}
+        formatValueText={(v) => `${v} dollars`}
+        aria-label="Budget"
+      />,
+    );
+    expect(getByRole("slider").getAttribute("aria-valuetext")).toBe("28 dollars");
   });
 
   test("shows a fractional value in the bubble instead of rounding it", () => {
@@ -252,6 +353,48 @@ describe("RulerSlider", () => {
     expect(slider.getAttribute("aria-valuenow")).toBe("10");
   });
 
+  test("puts the max tick where the value actually sits, not a box past it", () => {
+    const gap = 14;
+    const { getByText } = render(
+      <RulerSlider
+        defaultValue={0}
+        min={0}
+        max={10}
+        step={4}
+        gap={gap}
+        majorEvery={1}
+        aria-label="Level"
+      />,
+    );
+    // ticks are offset from the strip's left edge, which sits half a gap before
+    // the first tick: value v lands at ((v - min) / step) * gap + gap / 2
+    const leftOf = (label: string) =>
+      (getByText(label).parentElement as HTMLElement).style.left;
+
+    expect(leftOf("8")).toBe(`${2 * gap + gap / 2}px`);
+    // 10 is 2.5 steps in, so 35px, not the 42px an appended box would centre at
+    expect(leftOf("10")).toBe(`${2.5 * gap + gap / 2}px`);
+  });
+
+  test("keyboard past the last whole step settles on max", () => {
+    const onValueChange = mock(() => {});
+    const { getByRole } = render(
+      <RulerSlider
+        defaultValue={8}
+        min={0}
+        max={10}
+        step={4}
+        onValueChange={onValueChange}
+        aria-label="Level"
+      />,
+    );
+    const slider = getByRole("slider");
+
+    fireEvent.keyDown(slider, { key: "ArrowRight" });
+    expect(slider.getAttribute("aria-valuenow")).toBe("10");
+    expect(onValueChange).toHaveBeenLastCalledWith(10);
+  });
+
   test("clamps to the ends and honours PageUp/PageDown", () => {
     const { getByRole } = render(
       <RulerSlider defaultValue={100} min={40} max={120} step={0.5} aria-label="Weight" />,
@@ -270,5 +413,54 @@ describe("RulerSlider", () => {
     expect(slider.getAttribute("aria-valuenow")).toBe("40");
     fireEvent.keyDown(slider, { key: "ArrowLeft" });
     expect(slider.getAttribute("aria-valuenow")).toBe("40");
+  });
+
+  test("stays put when controlled, and still reports the requested value", () => {
+    const onValueChange = mock(() => {});
+    const { getByRole } = render(
+      <RulerSlider value={70} min={40} max={120} onValueChange={onValueChange} aria-label="Weight" />,
+    );
+    const slider = getByRole("slider");
+
+    fireEvent.keyDown(slider, { key: "ArrowRight" });
+
+    expect(slider.getAttribute("aria-valuenow")).toBe("70");
+    expect(onValueChange).toHaveBeenCalledWith(71);
+  });
+
+  test("ignores input and leaves the tab order when disabled", () => {
+    const onValueChange = mock(() => {});
+    const { getByRole } = render(
+      <RulerSlider
+        defaultValue={70}
+        min={40}
+        max={120}
+        disabled
+        onValueChange={onValueChange}
+        aria-label="Weight"
+      />,
+    );
+    const slider = getByRole("slider");
+
+    expect(slider.getAttribute("tabindex")).toBe("-1");
+    expect(slider.getAttribute("aria-disabled")).toBe("true");
+
+    fireEvent.keyDown(slider, { key: "ArrowRight" });
+
+    expect(slider.getAttribute("aria-valuenow")).toBe("70");
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  test("survives an empty range and a non-positive step", () => {
+    const { getByRole, unmount } = render(
+      <RulerSlider defaultValue={5} min={5} max={5} aria-label="Level" />,
+    );
+    expect(getByRole("slider").getAttribute("aria-valuenow")).toBe("5");
+    unmount();
+
+    const next = render(<RulerSlider defaultValue={10} step={0} aria-label="Level" />);
+    const slider = next.getByRole("slider");
+    fireEvent.keyDown(slider, { key: "ArrowRight" });
+    expect(slider.getAttribute("aria-valuenow")).toBe("11");
   });
 });

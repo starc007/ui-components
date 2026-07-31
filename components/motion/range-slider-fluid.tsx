@@ -29,7 +29,9 @@ export interface FluidSliderProps extends SliderOptions {
  */
 export function FluidSlider({
   label,
-  format = (v) => `${Math.round(v)}%`,
+  // The value arrives already snapped to the step. Rounding it again would
+  // only make the label and the announcement disagree with aria-valuenow.
+  format = (v) => `${v}%`,
   className,
   ...options
 }: FluidSliderProps) {
