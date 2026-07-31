@@ -41,8 +41,10 @@ export function RulerSlider({
 
   const { current, min, max, step, commit, sliderProps } = useSlider({
     ...options,
-    // "72.5 kg" beats a bare "72.5" for a screen reader
-    formatValueText: unit ? (v) => `${readout(v)} ${unit}` : undefined,
+    // "72.5 kg" beats a bare "72.5" for a screen reader — but a caller who
+    // formats the announcement itself outranks the unit.
+    formatValueText:
+      options.formatValueText ?? (unit ? (v) => `${readout(v)} ${unit}` : undefined),
   });
 
   // The range need not divide by the step (0–10 by 4). Full ticks stop at the

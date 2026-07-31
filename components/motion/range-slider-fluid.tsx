@@ -36,7 +36,7 @@ export function FluidSlider({
   const reduce = useReducedMotion();
   const { percent, current, dragging, trackProps, sliderProps } = useSlider({
     ...options,
-    formatValueText: format,
+    formatValueText: options.formatValueText ?? format,
   });
 
   const target = useMotionValue(percent);
