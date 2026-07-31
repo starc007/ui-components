@@ -652,6 +652,18 @@ export const registry: CategoryEntry[] = [
             previewKey: "motion/range-slider-fluid",
             previewFile: "components/previews/motion/range-slider-fluid.preview.tsx",
           },
+          {
+            slug: "wave",
+            name: "Wave Slider",
+            description:
+              "Equalizer bars that rise into a crest around the handle and fall as it passes, so the value reads as a travelling wave.",
+            installSlug: "range-slider-wave",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-wave.tsx",
+            previewKey: "motion/range-slider-wave",
+            previewFile: "components/previews/motion/range-slider-wave.preview.tsx",
+          },
         ],
       },
       {
