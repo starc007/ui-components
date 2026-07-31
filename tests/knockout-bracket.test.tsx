@@ -74,4 +74,62 @@ describe("KnockoutBracket", () => {
       expect(card.style.transform ?? "").not.toContain("NaN");
     }
   });
+
+  test("an uneven round stacks its unfed cards instead of overlapping", () => {
+    // Two matches fed by two: the second has no feeder pair at all.
+    const uneven: Round[] = [
+      {
+        name: "Semi-finals",
+        matches: [1, 2].map((n) => ({
+          id: `sf-${n}`,
+          home: { team: { name: `Team ${n}A` }, score: 1 },
+          away: { team: { name: `Team ${n}B` }, score: 0 },
+          winner: "home" as const,
+        })),
+      },
+      {
+        name: "Final",
+        matches: [1, 2].map((n) => ({
+          id: `f-${n}`,
+          home: { team: { name: `Team ${n}A` }, score: null },
+          away: { team: null, score: null },
+        })),
+      },
+    ];
+    const { getByLabelText } = render(
+      <KnockoutBracket rounds={uneven} initialRound={0} />,
+    );
+
+    const ys = [...getByLabelText("Final").querySelectorAll<HTMLElement>("li")]
+      .map((li) => Number(li.style.transform.match(/translateY\((-?[\d.]+)px/)?.[1]))
+      .sort((a, b) => a - b);
+    expect(ys).toHaveLength(2);
+    // 124px cards: anything under that height apart is an overlap.
+    expect(ys[1] - ys[0]).toBeGreaterThanOrEqual(124);
+  });
+
+  test("a time-only match keeps its time in the accessible label", () => {
+    const { getByLabelText } = render(
+      <KnockoutBracket
+        rounds={[
+          ROUNDS[1],
+          {
+            name: "Grand final",
+            matches: [
+              {
+                id: "gf-1",
+                time: "4:00 pm",
+                status: "upcoming",
+                home: { team: { name: "Team A1" }, score: null },
+                away: { team: { name: "Team A3" }, score: null },
+              },
+            ],
+          },
+        ]}
+        initialRound={0}
+      />,
+    );
+
+    getByLabelText("Grand final: Team A1 versus Team A3, 4:00 pm");
+  });
 });

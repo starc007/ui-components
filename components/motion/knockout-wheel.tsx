@@ -325,8 +325,11 @@ function TeamMark({
   loadFlag: boolean;
   transition: object;
 }) {
-  const [failed, setFailed] = useState(false);
-  const src = node.team && !failed ? crestSrc(node.team) : null;
+  // The failed URL, not a boolean: a corrected logo on the same node should be
+  // tried again rather than stay initials for the life of the wheel.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const resolved = node.team ? crestSrc(node.team) : null;
+  const src = resolved === failedSrc ? null : resolved;
   const showFlag = src != null && loadFlag;
   // A square logo is fitted whole; a 4:3 flag is cropped to fill the disc.
   const box = node.team?.logo
@@ -360,7 +363,7 @@ function TeamMark({
             initial={false}
             animate={fade}
             transition={transition}
-            onError={() => setFailed(true)}
+            onError={() => setFailedSrc(src)}
           />
         </>
       ) : node.team ? (

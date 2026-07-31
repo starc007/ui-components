@@ -177,8 +177,11 @@ const initials = (name: string) =>
 // Fixed 28px slot whatever it holds, so names and scores stay aligned down the
 // column: flag, crest, initials or the TBD shield.
 function TeamCrest({ team }: { team: Team | null }) {
-  const [failed, setFailed] = useState(false);
-  const src = team && !failed ? crestSrc(team) : null;
+  // The failed URL, not a boolean: a corrected logo on the same match should be
+  // tried again rather than stay initials for the life of the card.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const resolved = team ? crestSrc(team) : null;
+  const src = resolved === failedSrc ? null : resolved;
 
   return (
     <span className="flex h-5 w-7 shrink-0 items-center justify-center">
@@ -190,7 +193,7 @@ function TeamCrest({ team }: { team: Team | null }) {
           alt=""
           loading="lazy"
           draggable={false}
-          onError={() => setFailed(true)}
+          onError={() => setFailedSrc(src)}
           className={cn(
             "shrink-0 rounded-[4px] border border-border/40",
             // Flags are 4:3 and fill the slot; a logo keeps its own shape inside it.
@@ -283,8 +286,10 @@ function matchLabel(roundName: string, m: Match) {
   const sides = finished
     ? `${sideLabel(m.home)}, ${sideLabel(m.away)}`
     : `${sideLabel(m.home)} versus ${sideLabel(m.away)}`;
-  const when =
-    !finished && m.date ? `, ${m.date}${m.time ? `, ${m.time}` : ""}` : "";
+  // Same pair the card's header row shows, so a time-only match isn't announced
+  // without its kick-off.
+  const schedule = finished ? [] : [m.date, m.time].filter(Boolean);
+  const when = schedule.length ? `, ${schedule.join(", ")}` : "";
   const winnerName = m.winner ? m[m.winner].team?.name : undefined;
   const outcome = winnerName ? `, ${winnerName} won` : "";
   return `${roundName}: ${sides}${when}${outcome}`;
@@ -371,13 +376,21 @@ export function KnockoutBracket({
     const base = rounds[page];
     centers[page] = base.matches.map((_, i) => PAD_Y + i * ROW + CARD_H / 2);
     for (let r = page + 1; r < rounds.length; r++) {
-      centers[r] = rounds[r].matches.map((_, k) => {
-        // A round with more matches than its feeders allow (an odd draw, a bye
-        // left out) falls back to the fixed rhythm instead of laying out at NaN.
-        const top = centers[r - 1][2 * k] ?? PAD_Y + k * ROW + CARD_H / 2;
-        const bottom = centers[r - 1][2 * k + 1] ?? top;
-        return (top + bottom) / 2;
-      });
+      const feeders = centers[r - 1];
+      const row: number[] = [];
+      for (let k = 0; k < rounds[r].matches.length; k++) {
+        const top = feeders[2 * k];
+        if (top == null) {
+          // A round with more matches than its feeders allow (an odd draw, a bye
+          // left out) stacks a full row under the last card placed in this
+          // round — a fixed rhythm from the top can land on top of a midpoint.
+          const prev = row[k - 1];
+          row[k] = prev == null ? PAD_Y + CARD_H / 2 : prev + ROW;
+        } else {
+          row[k] = (top + (feeders[2 * k + 1] ?? top)) / 2;
+        }
+      }
+      centers[r] = row;
     }
     // Behind rounds keep their natural spread (spacing halves each step out,
     // each match straddling its parent) instead of collapsing, so paging back
@@ -409,10 +422,17 @@ export function KnockoutBracket({
       });
     }
 
-    const baseCount = base.matches.length;
+    // Measured, not derived from the base count: a fallback-stacked round can
+    // run past the base column, and the stage clips its overflow.
+    // Seeded with one card's center so an empty round yields a real height
+    // rather than -Infinity.
+    const lowest = Math.max(
+      PAD_Y + CARD_H / 2,
+      ...centers.slice(page, page + visibleCols).flat(),
+    );
     return {
       cy: centers,
-      containerHeight: (baseCount - 1) * ROW + CARD_H + 2 * PAD_Y,
+      containerHeight: lowest + CARD_H / 2 + PAD_Y,
       connectors: list,
     };
   }, [rounds, page, visibleCols]);
