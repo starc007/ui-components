@@ -104,6 +104,8 @@ export function AgentReasoning({
     onOpenChange,
   });
   const thinking = status === "thinking";
+  const thinkingRef = useRef(thinking);
+  thinkingRef.current = thinking;
   const expanded = thinking || currentOpen;
   const cappedHeight = Math.min(contentHeight, Math.max(0, maxHeight));
   const capped = contentHeight > maxHeight;
@@ -112,7 +114,14 @@ export function AgentReasoning({
     const node = contentRef.current;
     if (!node) return;
 
-    const measure = () => setContentHeight(node.offsetHeight);
+    const measure = () => {
+      setContentHeight(node.offsetHeight);
+
+      const viewport = viewportRef.current;
+      if (thinkingRef.current && viewport) {
+        viewport.scrollTop = viewport.scrollHeight;
+      }
+    };
     measure();
 
     if (typeof ResizeObserver === "undefined") return;
