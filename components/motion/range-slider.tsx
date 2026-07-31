@@ -17,11 +17,9 @@ import {
   useState,
 } from "react";
 
+import { SPRING_GLIDE } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
-// Smooth glide for the thumb/fill — critically damped, no overshoot, so the
-// handle follows the pointer butterily and eases between snapped steps.
-const SPRING_GLIDE = { stiffness: 700, damping: 50, mass: 0.5 } as const;
 // Bouncy grab feedback for the thumb scale only.
 const SPRING_BOUNCY = { type: "spring", stiffness: 500, damping: 14, mass: 0.7 } as const;
 
