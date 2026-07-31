@@ -29,31 +29,42 @@ export type MatchSide = {
 
 export type Match = {
   id: string;
-  date: string;
+  /** Kick-off day, already formatted. Omit it and the card drops the date row. */
+  date?: string;
   time?: string;
-  status: "finished" | "upcoming";
+  /** Omit it and a match with a `winner` counts as finished. */
+  status?: "finished" | "upcoming";
   home: MatchSide;
   away: MatchSide;
   /** Decides the marker and which side dims. */
   winner?: "home" | "away";
+  /** Replaces the derived result chip ("FT", "FT (P)") — e.g. "AET", "BO5", "Forfeit". */
+  badge?: string;
 };
 
 export type Round = {
+  /** Shown as the column header — "Round of 32", "Upper bracket final", "Last 8". */
   name: string;
   matches: Match[];
 };
 
 export interface KnockoutBracketProps {
-  /** Ordered rounds; each must hold half as many matches as the one before (16 → 8 → 4 → 2 → 1). */
+  /**
+   * The whole draw, ordered widest round first. Any single-elimination
+   * tournament fits: each round holds half the matches of the one before it
+   * (16 → 8 → 4 → 2 → 1) and `rounds[r].matches[k]` is fed by matches `2k` and
+   * `2k + 1` of the round before it. Two rounds are enough.
+   */
   rounds: Round[];
   /** Round shown as the leftmost column on mount. Defaults to 1, clamped to the valid range. */
   initialRound?: number;
   /** Third place play-off, rendered under the bracket instead of inside it. */
   thirdPlace?: Match;
+  /** Heading over `thirdPlace`. Defaults to "Third place play-off". */
+  thirdPlaceLabel?: string;
   className?: string;
 }
 
-const THIRD_PLACE_LABEL = "Third place play-off";
 
 // Card geometry drives the whole computed layout — every later match sits at the
 // exact vertical midpoint of its two feeders, so pairs line up with connectors.
@@ -263,36 +274,41 @@ function sideLabel(side: MatchSide) {
   return `${name} ${side.score}${pen}`;
 }
 
+/** `status` is optional, so a decided match reads as finished without it. */
+const isFinished = (m: Match) =>
+  m.status ? m.status === "finished" : m.winner != null;
+
 function matchLabel(roundName: string, m: Match) {
-  const sides =
-    m.status === "finished"
-      ? `${sideLabel(m.home)}, ${sideLabel(m.away)}`
-      : `${sideLabel(m.home)} versus ${sideLabel(m.away)}`;
+  const finished = isFinished(m);
+  const sides = finished
+    ? `${sideLabel(m.home)}, ${sideLabel(m.away)}`
+    : `${sideLabel(m.home)} versus ${sideLabel(m.away)}`;
   const when =
-    m.status === "upcoming"
-      ? `, ${m.date}${m.time ? `, ${m.time}` : ""}`
-      : "";
+    !finished && m.date ? `, ${m.date}${m.time ? `, ${m.time}` : ""}` : "";
   const winnerName = m.winner ? m[m.winner].team?.name : undefined;
   const outcome = winnerName ? `, ${winnerName} won` : "";
   return `${roundName}: ${sides}${when}${outcome}`;
 }
 
 function MatchCard({ match }: { match: Match }) {
-  const decided = match.status === "finished" && match.winner != null;
+  const finished = isFinished(match);
+  const decided = finished && match.winner != null;
   const shootout =
     match.home.penalties != null || match.away.penalties != null;
-  const badge =
-    match.status === "finished" ? (shootout ? "FT (P)" : "FT") : null;
+  // A per-match `badge` wins, so a draw that isn't football can label its own
+  // result ("AET", "BO5", "Forfeit") instead of the derived full-time chip.
+  const badge = match.badge ?? (finished ? (shootout ? "FT (P)" : "FT") : null);
 
   return (
     <div
       style={{ width: CARD_W, height: CARD_H }}
       className="rounded-2xl border border-border bg-card p-4"
     >
-      <div className="mb-3 flex items-center justify-between gap-2">
+      {/* h-5 holds the row open when a match carries no date or badge, so a
+          dateless draw's cards don't sit top-heavy inside the fixed CARD_H. */}
+      <div className="mb-3 flex h-5 items-center justify-between gap-2">
         <span className="min-w-0 flex-1 truncate text-sm leading-5 text-muted-foreground">
-          {match.date}
-          {match.time ? `, ${match.time}` : ""}
+          {[match.date, match.time].filter(Boolean).join(", ")}
         </span>
         {badge && (
           <span className="shrink-0 rounded-full bg-background px-2.5 text-xs font-medium leading-5 text-muted-foreground">
@@ -320,6 +336,7 @@ export function KnockoutBracket({
   rounds,
   initialRound = 1,
   thirdPlace,
+  thirdPlaceLabel = "Third place play-off",
   className,
 }: KnockoutBracketProps) {
   const reduce = useReducedMotion();
@@ -521,10 +538,10 @@ export function KnockoutBracket({
             className="mt-8 border-t border-border pt-6"
             style={{ paddingLeft: PAD_X }}
           >
-            <ul aria-label={THIRD_PLACE_LABEL} className="m-0 list-none p-0">
-              <li aria-label={matchLabel(THIRD_PLACE_LABEL, thirdPlace)}>
+            <ul aria-label={thirdPlaceLabel} className="m-0 list-none p-0">
+              <li aria-label={matchLabel(thirdPlaceLabel, thirdPlace)}>
                 <p className="mb-2 text-sm leading-5 text-muted-foreground/70">
-                  {THIRD_PLACE_LABEL}
+                  {thirdPlaceLabel}
                 </p>
                 <MatchCard match={thirdPlace} />
               </li>

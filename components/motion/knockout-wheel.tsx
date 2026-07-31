@@ -46,12 +46,19 @@ export type Match = {
 };
 
 export type Round = {
+  /** Read out with the match in tooltips and the screen-reader list. */
   name: string;
   matches: Match[];
 };
 
 export interface KnockoutWheelProps {
-  /** Ordered outermost round first; each must hold half as many matches as the one before (16 → 8 → 4 → 2 → 1). */
+  /**
+   * The whole draw, ordered widest round first — the same array the knockout
+   * bracket takes. Any single-elimination tournament fits: each round holds half
+   * the matches of the one before it (16 → 8 → 4 → 2 → 1) and `rounds[r].matches[k]`
+   * is fed by matches `2k` and `2k + 1` of the round before it. Two rounds are
+   * enough; the wheel grows a ring per round and sizes itself to the rim.
+   */
   rounds: Round[];
   /**
    * Index of the outermost round to draw. Earlier rounds are dropped and the
