@@ -33,7 +33,7 @@ export interface AgentReasoningProps {
   collapseOnComplete?: boolean;
   /** Label displayed while reasoning is active. */
   thinkingLabel?: ReactNode;
-  /** Optional completed summary. Defaults to “Thought for Ns”. */
+  /** Optional completed summary. Defaults to “Reasoning complete · Ns”. */
   summary?: ReactNode;
   /** Maximum visible reasoning height before the content scrolls. */
   maxHeight?: number;
@@ -82,7 +82,7 @@ export function AgentReasoning({
   defaultOpen = false,
   onOpenChange,
   collapseOnComplete = true,
-  thinkingLabel = "Thinking…",
+  thinkingLabel = "Working through it…",
   summary,
   maxHeight = 192,
   children,
@@ -142,9 +142,13 @@ export function AgentReasoning({
   };
 
   const completedSummary = summary ?? (
-    <>
-      Thought for <span className="tabular-nums">{formatDuration(duration)}</span>
-    </>
+    <span className="inline-flex items-center gap-1.5">
+      <span>Reasoning complete</span>
+      <span aria-hidden="true" className="text-muted-foreground/50">
+        ·
+      </span>
+      <span className="tabular-nums">{formatDuration(duration)}</span>
+    </span>
   );
 
   return (

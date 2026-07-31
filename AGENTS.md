@@ -75,7 +75,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | slug | file | what it does |
 |---|---|---|
 | `loading-states` | `components/agents/loading-states/` | Three agent loading states: `ThinkingShimmer`, compact live-timed `AgentProgress`, and `ReasoningText` with an ASCII loader, shimmering phrases, and cascade/swap/scramble styles; each variant is independently installable and reduced-motion safe |
-| `agent-reasoning` | `components/agents/agent-reasoning.tsx` | Live agent reasoning disclosure (`AgentReasoning`): stays expanded while thinking, streams appended reasoning lines, then folds into a “Thought for Ns” summary that can be reopened; controlled/uncontrolled, capped scrolling, reduced-motion safe |
+| `agent-reasoning` | `components/agents/agent-reasoning.tsx` | Live agent reasoning disclosure (`AgentReasoning`): stays expanded while working, streams appended reasoning lines, then settles into a timed summary that can be reopened; controlled/uncontrolled, capped scrolling, reduced-motion safe |
 
 ### Blocks (`blocks` category — composed product widgets)
 
@@ -115,6 +115,8 @@ Before building a new component, check this list. If it exists, import it. If it
 - Site CTAs use `PressLink` (`components/app/press-link.tsx`), which matches the library Button's `SPRING_PRESS` feel. Don't reach for the CSS `.press` utility on primary CTAs.
 
 ## Code conventions
+
+- External examples supplied during design work are private context only. Ship original interaction, code, naming, and copy; do not publish comparisons or attribution unless explicitly requested.
 
 - Named exports only. Every component accepts `className` merged via `cn()` from `lib/utils`. Interactive components are `"use client"`.
 - Larger components support controlled + uncontrolled (`value`/`defaultValue`/`onChange`); simple toggles are controlled-only.
