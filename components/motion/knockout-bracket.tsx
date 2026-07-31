@@ -557,9 +557,13 @@ export function KnockoutBracket({
   );
 }
 
-// ── Mock data ────────────────────────────────────────────────────────────────
-// A full World Cup knockout stage, handy as a starting shape. Each round holds
-// half as many matches as the one before it (16 → 8 → 4 → 2 → 1).
+// ── Sample data ──────────────────────────────────────────────────────────────
+// A full World Cup knockout stage, here to demo the shape. Swap it for your own
+// tournament. Rounds run widest first and each holds half as many matches as the
+// one before it (16 → 8 → 4 → 2 → 1); `matches[k]` of a round is fed by matches
+// `2k` and `2k + 1` of the round before it, which is what pairs the connectors.
+// Any draw works: start at the round you have (Round of 16, quarter-finals),
+// give teams a `logo` instead of a country `code`, or neither for initials.
 
 export const TEAMS = {
   southAfrica: { name: "South Africa", code: "za" },

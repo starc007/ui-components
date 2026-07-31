@@ -677,8 +677,10 @@ export function KnockoutWheel({
         className,
       )}
     >
-      {/* Below the min width the rim's 32 flags collapse to ~21px, too small to
-          tell apart or tap, so the wheel holds its size and pans instead. */}
+      {/* Below the min width the rim's marks collapse too small to tell apart or
+          tap, so the wheel holds its size and pans instead. The floor is fixed,
+          not rim-derived: node radius grows with depth, so a shallower draw has
+          *smaller* marks and needs the width more, not less. */}
       <div className="relative mx-auto w-full min-w-[32rem] max-w-[34rem]">
         <svg
           ref={ref}
@@ -795,10 +797,14 @@ export function KnockoutWheel({
   );
 }
 
-// ── Mock data ────────────────────────────────────────────────────────────────
-// A finished 32-team cup, matching the knockout bracket's shape so both fixture
-// styles demo the same size draw. Each round holds half as many matches as the
-// one before it (16 → 8 → 4 → 2 → 1).
+// ── Sample data ──────────────────────────────────────────────────────────────
+// A finished 32-team cup, here to demo the shape. Swap it for your own
+// tournament. Rounds run widest first and each holds half as many matches as the
+// one before it (16 → 8 → 4 → 2 → 1); `matches[k]` of a round is fed by matches
+// `2k` and `2k + 1` of the round before it, which is what pairs the branches.
+// Any draw works: pass fewer rounds for a smaller cup, give teams a `logo`
+// instead of a country `code`, or neither for initials. The knockout bracket
+// takes the same array, so one dataset feeds both fixture styles.
 
 export const TEAMS = {
   spain: { name: "Spain", code: "es" },
