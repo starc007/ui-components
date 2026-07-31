@@ -45,7 +45,7 @@ const COMPONENT_DATES = {
   "motion/bouncy-accordion": { publishedAt: "2026-06-16", updatedAt: "2026-07-13" },
   "motion/drawer": { publishedAt: "2026-06-22", updatedAt: "2026-06-22" },
   "motion/scroll-animation": { publishedAt: "2026-06-24", updatedAt: "2026-06-28" },
-  "motion/range-slider": { publishedAt: "2026-06-24", updatedAt: "2026-06-24" },
+  "motion/range-slider": { publishedAt: "2026-06-24", updatedAt: "2026-07-31" },
   "motion/wheel-picker": { publishedAt: "2026-07-09", updatedAt: "2026-07-09" },
   "motion/table": { publishedAt: "2026-07-01", updatedAt: "2026-07-13" },
   "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-07-13" },

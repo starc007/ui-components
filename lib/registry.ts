@@ -619,8 +619,40 @@ export const registry: CategoryEntry[] = [
         description: "Range slider with tick dots and a bouncy vertical-bar thumb that glides between snapped steps; drag and keyboard control, reduced-motion safe.",
         file: "components/motion/range-slider.tsx",
         badge: "new",
-        launchedAt: "2026-06-24",
-        keywords: ["slider", "range slider", "range input", "stepped slider", "ticks"],
+        launchedAt: "2026-07-31",
+        keywords: [
+          "slider",
+          "range slider",
+          "range input",
+          "stepped slider",
+          "ticks",
+          "volume slider",
+          "ruler picker",
+        ],
+        examples: [
+          {
+            slug: "stepped",
+            name: "Range Slider",
+            description:
+              "Tick dots and a bouncy vertical-bar thumb that glides between snapped steps.",
+            installSlug: "range-slider",
+            file: "components/motion/range-slider.tsx",
+            previewKey: "motion/range-slider",
+            previewFile: "components/previews/motion/range-slider.preview.tsx",
+          },
+          {
+            slug: "fluid",
+            name: "Fluid Slider",
+            description:
+              "Thumbless pill: the fill glides behind a rounded liquid cap, and the label inverts wherever the fill covers it.",
+            installSlug: "range-slider-fluid",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-fluid.tsx",
+            previewKey: "motion/range-slider-fluid",
+            previewFile: "components/previews/motion/range-slider-fluid.preview.tsx",
+          },
+        ],
       },
       {
         slug: "wheel-picker",
