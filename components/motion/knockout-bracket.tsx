@@ -8,8 +8,15 @@ import { cn } from "@/lib/utils";
 
 export type Team = {
   name: string;
-  /** ISO 3166-1 alpha-2 code used to load the flag from flagcdn.com (England is gb-eng). */
-  code: string;
+  /**
+   * Any square image URL — club crest, org mark, player photo. Wins over `code`.
+   * Drawn as-is on the card surface, so a transparent-background mark inked for
+   * one theme disappears in the other: ship artwork that reads on both, or pick
+   * the URL yourself from your theme state.
+   */
+  logo?: string;
+  /** ISO 3166-1 alpha-2 code, loaded from flagcdn.com (England is gb-eng). Used when `logo` is absent. */
+  code?: string;
 };
 
 export type MatchSide = {
@@ -141,28 +148,56 @@ function BracketConnector({
   );
 }
 
-function TeamFlag({ code }: { code: string }) {
+/** A `logo` is used as given; a country `code` loads a flag from flagcdn.com. */
+const crestSrc = (team: Team) =>
+  team.logo ?? (team.code ? `https://flagcdn.com/w80/${team.code}.png` : null);
+
+/** Two-letter stand-in when a team has no artwork — "Real Madrid" → RM.
+ * Spread, not `word[0]`: an emoji or astral first character is a surrogate pair
+ * and indexing it renders a replacement glyph. */
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => [...word][0])
+    .join("")
+    .toUpperCase();
+
+// Fixed 28px slot whatever it holds, so names and scores stay aligned down the
+// column: flag, crest, initials or the TBD shield.
+function TeamCrest({ team }: { team: Team | null }) {
   const [failed, setFailed] = useState(false);
-  if (failed) {
-    return (
-      <span className="flex h-5 w-7 shrink-0 items-center justify-center">
-        <Shield className="size-5 fill-current text-muted-foreground/50" />
-      </span>
-    );
-  }
+  const src = team && !failed ? crestSrc(team) : null;
+
   return (
-    // Plain <img> served by flagcdn.com — swap this if you need self-hosted assets.
-    // biome-ignore lint/performance/noImgElement: remote flagcdn asset, no next/image benefit
-    <img
-      src={`https://flagcdn.com/w80/${code}.png`}
-      alt=""
-      width={28}
-      height={20}
-      loading="lazy"
-      draggable={false}
-      onError={() => setFailed(true)}
-      className="h-5 w-7 shrink-0 rounded-[4px] border border-border/40 object-cover"
-    />
+    <span className="flex h-5 w-7 shrink-0 items-center justify-center">
+      {src ? (
+        // Plain <img> — flags come from flagcdn.com, logos from wherever you host them.
+        // biome-ignore lint/performance/noImgElement: remote asset, no next/image benefit
+        <img
+          src={src}
+          alt=""
+          loading="lazy"
+          draggable={false}
+          onError={() => setFailed(true)}
+          className={cn(
+            "shrink-0 rounded-[4px] border border-border/40",
+            // Flags are 4:3 and fill the slot; a logo keeps its own shape inside it.
+            team?.logo
+              ? "h-5 w-5 border-transparent object-contain"
+              : "h-5 w-7 object-cover",
+          )}
+        />
+      ) : team ? (
+        // text-foreground, not muted: the /10 tint lifts the disc toward the
+        // muted ramp, leaving 4.44:1 light and 3.55:1 dark — both under AA.
+        <span className="grid size-5 place-items-center rounded-full bg-foreground/10 text-[10px] font-semibold leading-none text-foreground">
+          {initials(team.name)}
+        </span>
+      ) : (
+        <Shield className="size-5 fill-current text-muted-foreground/50" />
+      )}
+    </span>
   );
 }
 
@@ -190,13 +225,7 @@ function TeamRow({
   const dim = decided && !isWinner;
   return (
     <div className="flex items-center gap-3">
-      {side.team ? (
-        <TeamFlag code={side.team.code} />
-      ) : (
-        <span className="flex h-5 w-7 shrink-0 items-center justify-center">
-          <Shield className="size-5 fill-current text-muted-foreground/50" />
-        </span>
-      )}
+      <TeamCrest team={side.team} />
       <span
         className={cn(
           "min-w-0 flex-1 truncate text-base font-medium",

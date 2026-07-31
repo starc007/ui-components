@@ -18,8 +18,15 @@ import { cn } from "@/lib/utils";
 
 export type Team = {
   name: string;
-  /** ISO 3166-1 alpha-2 code used to load the flag from flagcdn.com (England is gb-eng). */
-  code: string;
+  /**
+   * Any square image URL — club crest, org mark, player photo. Wins over `code`.
+   * Drawn as-is on the node's card-colored disc, so a transparent-background
+   * mark inked for one theme disappears in the other: ship artwork that reads on
+   * both, or pick the URL yourself from your theme state.
+   */
+  logo?: string;
+  /** ISO 3166-1 alpha-2 code, loaded from flagcdn.com (England is gb-eng). Used when `logo` is absent. */
+  code?: string;
 };
 
 export type MatchSide = {
@@ -71,6 +78,10 @@ const HUB_R = 34;
 // Nodes grow outward so the crowded outer ring still reads at small sizes.
 const NODE_MIN = 14.2;
 const NODE_STEP = 2.2;
+// Initials floor, in viewBox units. The stage never goes below 32rem against a
+// 760-unit box (scale ~0.674), so 15 units is ~10px on screen — under that, two
+// letters are a smudge. `node.r * 0.8` alone puts the inner ring at 7.6px.
+const INITIALS_MIN = 15;
 // Siblings pull slightly toward their parent, opening a lane between subtrees.
 const SIBLING_GAP = 0.9;
 // Puts the hub's two feeders on the horizontal, where there's room for them.
@@ -128,6 +139,21 @@ type WheelLink = {
 const keepTogether = (text: string) => text.replace(/ /g, " ");
 
 const teamName = (side: MatchSide) => keepTogether(side.team?.name ?? "TBD");
+
+/** A `logo` is used as given; a country `code` loads a flag from flagcdn.com. */
+const crestSrc = (team: Team) =>
+  team.logo ?? (team.code ? `https://flagcdn.com/w80/${team.code}.png` : null);
+
+/** Two-letter stand-in when a team has no artwork — "Real Madrid" → RM.
+ * Spread, not `word[0]`: an emoji or astral first character is a surrogate pair
+ * and indexing it renders a replacement glyph. */
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => [...word][0])
+    .join("")
+    .toUpperCase();
 
 /** Teams · score, in the order they were played. The round is prepended by the
  * caller that has it, so the round list can reuse this without repeating it. */
@@ -293,7 +319,12 @@ function TeamMark({
   transition: object;
 }) {
   const [failed, setFailed] = useState(false);
-  const showFlag = node.team != null && loadFlag && !failed;
+  const src = node.team && !failed ? crestSrc(node.team) : null;
+  const showFlag = src != null && loadFlag;
+  // A square logo is fitted whole; a 4:3 flag is cropped to fill the disc.
+  const box = node.team?.logo
+    ? { w: node.r * 1.44, h: node.r * 1.44, fit: "xMidYMid meet" }
+    : { w: node.r * 2.68, h: node.r * 2, fit: "xMidYMid slice" };
   // Dimming rides on the mark itself rather than a scrim tinted with the page
   // background, so the wheel recedes correctly on any surface it's dropped on.
   const fade = { opacity: dimmed ? 0.38 : 1 };
@@ -308,21 +339,38 @@ function TeamMark({
           <clipPath id={clipId}>
             <circle cx={node.x} cy={node.y} r={node.r} />
           </clipPath>
-          {/* Plain <image> served by flagcdn.com — swap this if you need self-hosted assets. */}
+          {/* Plain <image> — flags from flagcdn.com, logos from wherever you host
+              them. A 4:3 flag is cropped to fill the disc; a logo is fitted whole
+              inside it, since a crest cropped to a circle loses its shape. */}
           <motion.image
-            href={`https://flagcdn.com/w80/${node.team.code}.png`}
-            x={node.x - node.r * 1.34}
-            y={node.y - node.r}
-            width={node.r * 2.68}
-            height={node.r * 2}
+            href={src}
+            x={node.x - box.w / 2}
+            y={node.y - box.h / 2}
+            width={box.w}
+            height={box.h}
             clipPath={`url(#${clipId})`}
-            preserveAspectRatio="xMidYMid slice"
+            preserveAspectRatio={box.fit}
             initial={false}
             animate={fade}
             transition={transition}
             onError={() => setFailed(true)}
           />
         </>
+      ) : node.team ? (
+        // No artwork on this team — initials keep the ring readable.
+        <motion.text
+          x={node.x}
+          y={node.y}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={Math.max(node.r * 0.8, INITIALS_MIN)}
+          initial={false}
+          animate={fade}
+          transition={transition}
+          className="fill-muted-foreground font-semibold"
+        >
+          {initials(node.team.name)}
+        </motion.text>
       ) : (
         // Same shield the knockout bracket uses for a TBD slot, so an
         // undecided place reads identically across both fixture styles.
