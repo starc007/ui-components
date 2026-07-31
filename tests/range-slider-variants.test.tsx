@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render } from "@testing-library/react";
 import type { ReactElement } from "react";
 
 import type { SliderOptions } from "@/lib/hooks/use-slider";
+import { RangeSlider } from "@/components/motion/range-slider";
 import { BubbleSlider } from "@/components/motion/range-slider-bubble";
 import { FluidSlider } from "@/components/motion/range-slider-fluid";
 import { RulerSlider } from "@/components/motion/range-slider-ruler";
@@ -16,9 +17,10 @@ function stubTrackRect(element: Element, left = 0, width = 200) {
     ({ left, width, right: left + width, top: 0, bottom: 40, height: 40, x: left, y: 0 }) as DOMRect;
 }
 
-// The three track-style variants share every value path through useSlider, so
+// The four track-style variants share every value path through useSlider, so
 // they run the same suite; the ruler drives its scale differently and has its own.
 const variants: Array<{ name: string; render: (props?: SliderOptions) => ReactElement }> = [
+  { name: "RangeSlider", render: (props) => <RangeSlider aria-label="Level" {...props} /> },
   { name: "FluidSlider", render: (props) => <FluidSlider aria-label="Level" {...props} /> },
   { name: "WaveSlider", render: (props) => <WaveSlider aria-label="Level" {...props} /> },
   { name: "BubbleSlider", render: (props) => <BubbleSlider aria-label="Level" {...props} /> },
@@ -106,6 +108,24 @@ for (const { name, render: renderVariant } of variants) {
 
       expect(container).toBeTruthy();
     });
+
+    test("never reports past max when the step does not divide the range", () => {
+      const onValueChange = mock(() => {});
+      const { getByRole } = render(
+        renderVariant({ defaultValue: 0, min: 0, max: 10, step: 4, onValueChange }),
+      );
+      const slider = getByRole("slider");
+
+      fireEvent.keyDown(slider, { key: "ArrowRight" });
+      expect(slider.getAttribute("aria-valuenow")).toBe("4");
+      fireEvent.keyDown(slider, { key: "ArrowRight" });
+      expect(slider.getAttribute("aria-valuenow")).toBe("8");
+
+      // the next step lands on 12 — max, not the step beyond it
+      fireEvent.keyDown(slider, { key: "ArrowRight" });
+      expect(slider.getAttribute("aria-valuenow")).toBe("10");
+      expect(onValueChange).toHaveBeenLastCalledWith(10);
+    });
   });
 }
 
@@ -136,6 +156,21 @@ describe("BubbleSlider", () => {
       <BubbleSlider defaultValue={28} format={(v) => `$${v}`} aria-label="Budget" />,
     );
     expect(getByRole("slider").getAttribute("aria-valuetext")).toBe("$28");
+  });
+
+  test("shows a fractional value in the bubble instead of rounding it", () => {
+    const { getByRole, getByText } = render(
+      <BubbleSlider defaultValue={0} step={0.5} aria-label="Weight" />,
+    );
+    const slider = getByRole("slider");
+    const track = slider.parentElement as HTMLElement;
+    stubTrackRect(track);
+
+    // the bubble only mounts while dragging — 145/200 of 0–100 is 72.5
+    fireEvent.pointerDown(track, { clientX: 145, pointerId: 1 });
+
+    expect(slider.getAttribute("aria-valuenow")).toBe("72.5");
+    expect(getByText("72.5")).toBeTruthy();
   });
 });
 
@@ -188,6 +223,33 @@ describe("RulerSlider", () => {
     expect(getByRole("slider").getAttribute("aria-valuetext")).toBe("70 kg");
     // major tick labels stay trimmed: "40", never "40.0"
     expect(getByText("40")).toBeTruthy();
+  });
+
+  test("keeps a caller's formatValueText when no unit is given", () => {
+    const { getByRole } = render(
+      <RulerSlider
+        defaultValue={70}
+        min={40}
+        max={120}
+        formatValueText={(v) => `${v} kilos`}
+        aria-label="Weight"
+      />,
+    );
+    expect(getByRole("slider").getAttribute("aria-valuetext")).toBe("70 kilos");
+  });
+
+  test("ends the scale at max when the step does not divide the range", () => {
+    const { getByRole, getByText, queryByText } = render(
+      <RulerSlider defaultValue={0} min={0} max={10} step={4} majorEvery={1} aria-label="Level" />,
+    );
+    const slider = getByRole("slider");
+
+    // ticks run 0, 4, 8, then max itself — never the 12 a whole step would give
+    expect(getByText("10")).toBeTruthy();
+    expect(queryByText("12")).toBeNull();
+
+    fireEvent.keyDown(slider, { key: "End" });
+    expect(slider.getAttribute("aria-valuenow")).toBe("10");
   });
 
   test("clamps to the ends and honours PageUp/PageDown", () => {
