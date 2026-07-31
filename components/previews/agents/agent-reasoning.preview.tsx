@@ -7,7 +7,13 @@ import { AgentReasoning } from "@/components/agents/agent-reasoning";
 const REASONING = [
   "Mapping the request into active, settled, and reopened states.",
   "Keeping the worklog visible while new details arrive.",
+  "Reviewing the surrounding component API so the new behavior remains composable.",
+  "Checking how the content grows when a streamed sentence wraps onto another line.",
+  "Capping the viewport before the worklog pushes the rest of the page downward.",
+  "Following the newest output automatically while the agent is still working.",
+  "Preserving manual scrolling once the run is complete so earlier details remain readable.",
   "Tuning the transition to stay calm during longer tasks.",
+  "Verifying keyboard access, reduced motion, and the expanded disclosure state.",
   "Finishing with a compact summary that can be revisited.",
 ].join("\n");
 
