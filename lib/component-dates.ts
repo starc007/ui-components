@@ -55,6 +55,10 @@ const COMPONENT_DATES = {
     publishedAt: "2026-07-30",
     updatedAt: "2026-07-30",
   },
+  "agents/agent-reasoning": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-01",
+  },
   "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-07-15" },
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-07-14" },
   "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-07-27" },

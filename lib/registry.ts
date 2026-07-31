@@ -806,6 +806,35 @@ export const registry: CategoryEntry[] = [
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
       {
+        slug: "agent-reasoning",
+        name: "Agent Reasoning",
+        description:
+          "A live reasoning stream that stays visible while an agent works, then folds into an elapsed-time disclosure the user can revisit.",
+        file: "components/agents/agent-reasoning.tsx",
+        badge: "new",
+        launchedAt: "2026-08-01",
+        keywords: [
+          "AI reasoning component",
+          "agent thinking disclosure",
+          "collapsible chain of thought UI",
+          "AI thought process React",
+          "reasoning stream component",
+          "Thought for seconds UI",
+        ],
+        examples: [
+          {
+            slug: "agent-reasoning",
+            name: "Agent Reasoning",
+            description:
+              "Streams reasoning while work is active, automatically summarizes the elapsed time on completion, and remains available as an accessible disclosure.",
+            file: "components/agents/agent-reasoning.tsx",
+            previewKey: "agents/agent-reasoning",
+            previewFile:
+              "components/previews/agents/agent-reasoning.preview.tsx",
+          },
+        ],
+      },
+      {
         slug: "loading-states",
         name: "Agent Loading States",
         description:

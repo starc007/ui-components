@@ -3,6 +3,7 @@ import { cleanup, render } from "@testing-library/react";
 import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 
+import { AgentReasoning } from "@/components/agents/agent-reasoning";
 import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
 import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
@@ -67,6 +68,14 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "AgentReasoning complete",
+    () => (
+      <AgentReasoning status="complete" duration={8} defaultOpen>
+        <p>Checked the request and prepared a response.</p>
+      </AgentReasoning>
+    ),
+  ],
   [
     "AttachmentUpload",
     () => (
