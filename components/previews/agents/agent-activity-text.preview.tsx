@@ -3,25 +3,26 @@
 import { RotateCcw } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
-import { AgentReasoning } from "@/components/agents/agent-reasoning";
+import {
+  AgentActivity,
+  type AgentActivityItem,
+} from "@/components/agents/agent-activity";
 
 const REASONING = [
-  "Mapping the request into active, settled, and reopened states.",
-  "Keeping the worklog visible while new details arrive.",
-  "Reviewing the surrounding component API so the new behavior remains composable.",
-  "Checking how the content grows when a streamed sentence wraps onto another line.",
-  "Capping the viewport before the worklog pushes the rest of the page downward.",
-  "Following the newest output automatically while the agent is still working.",
-  "Preserving manual scrolling once the run is complete so earlier details remain readable.",
-  "Tuning the transition to stay calm during longer tasks.",
-  "Verifying keyboard access, reduced motion, and the expanded disclosure state.",
-  "Finishing with a compact summary that can be revisited.",
+  "Reading the request and separating the content model from its presentation.",
+  "The activity shell can stay consistent while each event supplies its own compact renderer.",
+  "Text remains freeform so partial tokens can update without recreating the surrounding timeline.",
+  "As each sentence wraps, the measured stream moves upward through a single transform instead of repeatedly jumping the native scroll position.",
+  "Older context stays available above the fold while the newest tokens remain crisp at the bottom edge.",
+  "Once the run finishes, the viewport switches from automatic following to ordinary user-controlled scrolling.",
+  "Opening the completed disclosure returns to the beginning so the reasoning can be read in order.",
+  "The capped viewport follows the latest sentence and preserves the full log after completion.",
 ].join("\n");
 
-const STREAM_CHARACTERS_PER_SECOND = 90;
-const STREAM_SECONDS = REASONING.length / STREAM_CHARACTERS_PER_SECOND;
+const CHARACTERS_PER_SECOND = 90;
+const STREAM_SECONDS = REASONING.length / CHARACTERS_PER_SECOND;
 
-function ReasoningDemo() {
+function StreamingTextDemo() {
   const reduce = useReducedMotion() ?? false;
   const [stream, setStream] = useState("");
   const [complete, setComplete] = useState(false);
@@ -38,10 +39,9 @@ function ReasoningDemo() {
     let completionTimer: number | undefined;
 
     const streamNextFrame = (now: number) => {
-      const elapsed = (now - startedAt) / 1000;
       const cursor = Math.min(
         REASONING.length,
-        Math.floor(elapsed * STREAM_CHARACTERS_PER_SECOND),
+        Math.floor(((now - startedAt) / 1000) * CHARACTERS_PER_SECOND),
       );
       const next = REASONING.slice(0, cursor);
       setStream((current) => (current === next ? current : next));
@@ -54,40 +54,40 @@ function ReasoningDemo() {
     };
 
     frame = requestAnimationFrame(streamNextFrame);
-
     return () => {
       cancelAnimationFrame(frame);
       if (completionTimer) window.clearTimeout(completionTimer);
     };
   }, [reduce]);
 
-  const lines = stream.split("\n").filter(Boolean);
+  const items: AgentActivityItem[] = stream
+    .split("\n")
+    .filter(Boolean)
+    .map((content, index) => ({
+      id: `reasoning-${index}`,
+      type: "text",
+      content,
+    }));
 
   return (
-    <AgentReasoning
-      status={complete ? "complete" : "thinking"}
+    <AgentActivity
+      items={items}
+      contentType="text"
+      status={complete ? "complete" : "working"}
       duration={STREAM_SECONDS}
-      maxHeight={196}
-    >
-      {lines.map((line, index) => (
-        <p
-          // biome-ignore lint/suspicious/noArrayIndexKey: streamed lines are append-only and keep their position while text grows.
-          key={index}
-        >
-          {line}
-        </p>
-      ))}
-    </AgentReasoning>
+      defaultOpen={reduce}
+      collapseOnComplete={!reduce}
+      maxHeight={180}
+    />
   );
 }
 
-export function AgentReasoningPreview() {
+export function AgentActivityTextPreview() {
   const [run, setRun] = useState(0);
 
   return (
-    <div className="relative h-[300px] w-full max-w-lg">
-      <ReasoningDemo key={run} />
-
+    <div className="relative h-[330px] w-full max-w-lg">
+      <StreamingTextDemo key={run} />
       <button
         type="button"
         onClick={() => setRun((current) => current + 1)}

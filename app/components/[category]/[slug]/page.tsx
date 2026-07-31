@@ -137,11 +137,16 @@ export default async function ComponentPage({
   const hasMultipleVariants = (comp.examples?.length ?? 0) > 1;
   const hasVariantInstallCommands =
     comp.examples?.some((example) => example.installSlug) ?? false;
+  const examplesShareSource =
+    (comp.examples?.length ?? 0) > 1 &&
+    new Set(comp.examples?.map((example) => example.file)).size === 1;
+  const shouldShowExampleApi = (index: number) =>
+    !examplesShareSource || index === (comp.examples?.length ?? 0) - 1;
   const dates = componentDates(cat.slug, comp.slug);
   const related = relatedComponents(cat.slug, comp.slug, 3);
   const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
   const variantNavItems: PageNavItem[] =
-    comp.examples?.map((example) => ({
+    comp.examples?.map((example, index) => ({
       id: example.slug,
       label: example.name,
       children: [
@@ -149,7 +154,7 @@ export default async function ComponentPage({
         ...(example.installSlug
           ? [{ id: `${example.slug}-install`, label: "Install" }]
           : []),
-        ...(getComponentProps(example.file).length
+        ...(shouldShowExampleApi(index) && getComponentProps(example.file).length
           ? [
               {
                 id: `${example.slug}-api-reference`,
@@ -231,12 +236,13 @@ export default async function ComponentPage({
 
         {comp.examples?.length ? (
           <div className="mt-10 flex flex-col gap-12">
-            {comp.examples.map((ex) => (
+            {comp.examples.map((ex, index) => (
               <ExampleBlock
                 key={ex.slug}
                 category={cat.slug}
                 pageSlug={comp.slug}
                 example={ex}
+                showApiReference={shouldShowExampleApi(index)}
               />
             ))}
           </div>
@@ -338,10 +344,12 @@ async function ExampleBlock({
   category,
   pageSlug,
   example,
+  showApiReference,
 }: {
   category: string;
   pageSlug: string;
   example: ComponentExample;
+  showApiReference: boolean;
 }) {
   const Preview = previews[example.previewKey];
   const [source, usage] = await Promise.all([
@@ -349,7 +357,7 @@ async function ExampleBlock({
     loadSource(example.previewFile),
   ]);
   const installSlug = example.installSlug ?? null;
-  const propsDocs = getComponentProps(example.file);
+  const propsDocs = showApiReference ? getComponentProps(example.file) : [];
 
   return (
     <section id={example.slug} className="scroll-mt-24">

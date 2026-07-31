@@ -75,7 +75,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | slug | file | what it does |
 |---|---|---|
 | `loading-states` | `components/agents/loading-states/` | Three agent loading states: `ThinkingShimmer`, compact live-timed `AgentProgress`, and `ReasoningText` with an ASCII loader, shimmering phrases, and cascade/swap/scramble styles; each variant is independently installable and reduced-motion safe |
-| `agent-reasoning` | `components/agents/agent-reasoning.tsx` | Live agent reasoning disclosure (`AgentReasoning`): stays expanded while working, streams appended reasoning lines, then settles into a timed summary that can be reopened; controlled/uncontrolled, capped scrolling, reduced-motion safe |
+| `agent-activity` | `components/agents/agent-activity/` | Adaptive agent activity disclosure (`AgentActivity`): renders streaming freeform text, typed reasoning steps, search results, tool calls, or a chronological mix; derives a matching active/completed summary, smoothly follows entries in a capped viewport, then collapses into a reopenable disclosure |
 
 ### Blocks (`blocks` category — composed product widgets)
 

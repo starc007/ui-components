@@ -55,7 +55,7 @@ const COMPONENT_DATES = {
     publishedAt: "2026-07-30",
     updatedAt: "2026-07-30",
   },
-  "agents/agent-reasoning": {
+  "agents/agent-activity": {
     publishedAt: "2026-08-01",
     updatedAt: "2026-08-01",
   },

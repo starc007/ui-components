@@ -806,31 +806,71 @@ export const registry: CategoryEntry[] = [
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
       {
-        slug: "agent-reasoning",
-        name: "Agent Reasoning",
+        slug: "agent-activity",
+        name: "Agent Activity",
         description:
-          "A streaming worklog that remains visible while an agent works, then settles into a compact timed summary that can be reopened.",
-        file: "components/agents/agent-reasoning.tsx",
+          "One adaptive activity stream for reasoning steps, web searches, tool calls, or a chronological mix of all three.",
+        file: "components/agents/agent-activity/index.tsx",
         badge: "new",
         launchedAt: "2026-08-01",
         keywords: [
-          "AI reasoning component",
-          "agent thinking disclosure",
-          "collapsible reasoning log",
-          "AI worklog React",
-          "reasoning stream component",
-          "elapsed reasoning UI",
+          "AI agent activity component",
+          "agent tool calls UI",
+          "AI search results React",
+          "agent reasoning timeline",
+          "mixed agent activity stream",
+          "collapsible AI activity",
         ],
         examples: [
           {
-            slug: "agent-reasoning",
-            name: "Agent Reasoning",
+            slug: "streaming-text",
+            name: "Streaming Text",
             description:
-              "Streams a live worklog, settles into an elapsed-time summary, and keeps the completed details available as an accessible disclosure.",
-            file: "components/agents/agent-reasoning.tsx",
-            previewKey: "agents/agent-reasoning",
+              "Streams freeform reasoning text into the capped viewport and keeps the completed log available behind a timed disclosure.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-activity-text",
             previewFile:
-              "components/previews/agents/agent-reasoning.preview.tsx",
+              "components/previews/agents/agent-activity-text.preview.tsx",
+          },
+          {
+            slug: "reasoning-steps",
+            name: "Reasoning Steps",
+            description:
+              "Shows completed, active, and pending reasoning steps with optional trailing metadata.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-activity-steps",
+            previewFile:
+              "components/previews/agents/agent-activity-steps.preview.tsx",
+          },
+          {
+            slug: "web-search",
+            name: "Web Search",
+            description:
+              "Presents a search query, compact result rows, an optional highlighted result, and an overflow count.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-activity-search",
+            previewFile:
+              "components/previews/agents/agent-activity-search.preview.tsx",
+          },
+          {
+            slug: "tool-calls",
+            name: "Tool Calls",
+            description:
+              "Summarizes read, edit, and run events with monospace targets and optional line-change counts.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-activity-tools",
+            previewFile:
+              "components/previews/agents/agent-activity-tools.preview.tsx",
+          },
+          {
+            slug: "mixed-activity",
+            name: "Mixed Activity",
+            description:
+              "Streams reasoning, search, and tool events in one chronological run while the viewport smoothly follows new work.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-activity-mixed",
+            previewFile:
+              "components/previews/agents/agent-activity.preview.tsx",
           },
         ],
       },

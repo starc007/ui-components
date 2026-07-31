@@ -3,7 +3,7 @@ import { cleanup, render } from "@testing-library/react";
 import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 
-import { AgentReasoning } from "@/components/agents/agent-reasoning";
+import { AgentActivity } from "@/components/agents/agent-activity";
 import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
 import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
@@ -69,11 +69,91 @@ afterEach(cleanup);
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
   [
-    "AgentReasoning complete",
+    "AgentActivity text complete",
     () => (
-      <AgentReasoning status="complete" duration={8} defaultOpen>
-        <p>Checked the request and prepared a response.</p>
-      </AgentReasoning>
+      <AgentActivity
+        status="complete"
+        duration={5}
+        defaultOpen
+        items={[
+          {
+            id: "reasoning",
+            type: "text",
+            content: "Checked the request and prepared a response.",
+          },
+        ]}
+      />
+    ),
+  ],
+  [
+    "AgentActivity steps complete",
+    () => (
+      <AgentActivity
+        status="complete"
+        duration={6}
+        defaultOpen
+        items={[
+          { id: "read", type: "step", label: "Read the brief" },
+          { id: "plan", type: "step", label: "Prepared the plan" },
+        ]}
+      />
+    ),
+  ],
+  [
+    "AgentActivity search complete",
+    () => (
+      <AgentActivity
+        status="complete"
+        defaultOpen
+        items={[
+          {
+            id: "search",
+            type: "search",
+            query: "component accessibility guidance",
+            results: [
+              {
+                id: "result",
+                title: "Accessibility guide",
+                domain: "example.com",
+                url: "https://example.com/guide",
+              },
+            ],
+          },
+        ]}
+      />
+    ),
+  ],
+  [
+    "AgentActivity tools complete",
+    () => (
+      <AgentActivity
+        status="complete"
+        defaultOpen
+        items={[
+          { id: "read", type: "tool", action: "read", target: "brief.md" },
+          {
+            id: "edit",
+            type: "tool",
+            action: "edit",
+            target: "plan.ts",
+            additions: 12,
+            deletions: 3,
+          },
+        ]}
+      />
+    ),
+  ],
+  [
+    "AgentActivity mixed complete",
+    () => (
+      <AgentActivity
+        status="complete"
+        defaultOpen
+        items={[
+          { id: "step", type: "step", label: "Checked the request" },
+          { id: "tool", type: "tool", action: "read", target: "brief.md" },
+        ]}
+      />
     ),
   ],
   [
