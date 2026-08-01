@@ -24,7 +24,7 @@ export function PropsTable({ docs }: { docs: ComponentPropsDoc[] }) {
                   {prop.required ? "" : "?"}
                 </code>
                 <div className="min-w-0">
-                  <code className="w-fit rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
+                  <code className="w-fit rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
                     {prop.type}
                   </code>
                   {prop.description ? (
@@ -33,7 +33,7 @@ export function PropsTable({ docs }: { docs: ComponentPropsDoc[] }) {
                     </p>
                   ) : null}
                 </div>
-                <code className="h-fit w-fit rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-muted-foreground sm:justify-self-end">
+                <code className="h-fit w-fit rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground sm:justify-self-end">
                   {prop.defaultValue ?? "—"}
                 </code>
               </div>

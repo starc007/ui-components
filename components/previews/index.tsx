@@ -19,6 +19,9 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.KnockoutBracketPreview,
     ),
   ),
+  "blocks/knockout-wheel": dynamic(() =>
+    import("./blocks/knockout-wheel.preview").then((m) => m.KnockoutWheelPreview),
+  ),
   "blocks/dynamic-island": dynamic(() =>
     import("./blocks/dynamic-island.preview").then((m) => m.DynamicIslandPreview),
   ),
@@ -48,6 +51,11 @@ export const previews: Record<string, ComponentType> = {
   ),
   "blocks/file-upload": dynamic(() =>
     import("./blocks/file-upload.preview").then((m) => m.FileUploadPreview),
+  ),
+  "blocks/attachment-upload": dynamic(() =>
+    import("./blocks/attachment-upload.preview").then(
+      (m) => m.AttachmentUploadPreview,
+    ),
   ),
   "blocks/prediction-market": dynamic(() =>
     import("./blocks/prediction-market.preview").then(
@@ -180,6 +188,11 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.BounceSidebarPreview,
     ),
   ),
+  "motion/animated-sidebar": dynamic(() =>
+    import("./motion/animated-sidebar.preview").then(
+      (m) => m.AnimatedSidebarPreview,
+    ),
+  ),
   "motion/preview-rail": dynamic(() =>
     import("./motion/preview-rail.preview").then(
       (m) => m.PreviewRailPreview,
@@ -190,6 +203,9 @@ export const previews: Record<string, ComponentType> = {
   ),
   "motion/tooltip": dynamic(() =>
     import("./motion/tooltip.preview").then((m) => m.TooltipPreview),
+  ),
+  "motion/context-menu": dynamic(() =>
+    import("./motion/context-menu.preview").then((m) => m.ContextMenuPreview),
   ),
   "motion/popover": dynamic(() =>
     import("./motion/popover.preview").then((m) => m.PopoverPreview),
@@ -258,6 +274,26 @@ export const previews: Record<string, ComponentType> = {
   ),
   "motion/range-slider": dynamic(() =>
     import("./motion/range-slider.preview").then((m) => m.RangeSliderPreview),
+  ),
+  "motion/range-slider-fluid": dynamic(() =>
+    import("./motion/range-slider-fluid.preview").then(
+      (m) => m.RangeSliderFluidPreview,
+    ),
+  ),
+  "motion/range-slider-wave": dynamic(() =>
+    import("./motion/range-slider-wave.preview").then(
+      (m) => m.RangeSliderWavePreview,
+    ),
+  ),
+  "motion/range-slider-bubble": dynamic(() =>
+    import("./motion/range-slider-bubble.preview").then(
+      (m) => m.RangeSliderBubblePreview,
+    ),
+  ),
+  "motion/range-slider-ruler": dynamic(() =>
+    import("./motion/range-slider-ruler.preview").then(
+      (m) => m.RangeSliderRulerPreview,
+    ),
   ),
   "motion/wheel-picker": dynamic(() =>
     import("./motion/wheel-picker.preview").then((m) => m.WheelPickerPreview),

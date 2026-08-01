@@ -38,9 +38,9 @@ export default function ThemePage() {
       </h1>
       <p className="mt-3 text-muted-foreground">
         beUI components style themselves with shadcn semantic tokens
-        (<code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">bg-primary</code>,
+        (<code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">bg-primary</code>,
         {" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">text-muted-foreground</code>,
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">text-muted-foreground</code>,
         {" "}border, ring). Set those tokens up once and every component works.
         Two ways:
       </p>
@@ -61,9 +61,9 @@ export default function ThemePage() {
       </h2>
       <p className="mt-2 text-muted-foreground">
         Not using shadcn? Paste this into your{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">globals.css</code>{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">globals.css</code>{" "}
         directly below{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">@import "tailwindcss";</code>.
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">@import "tailwindcss";</code>.
         It defines the tokens, motion animations and surface utilities the
         components use. Requires Tailwind CSS v4.
       </p>

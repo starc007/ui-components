@@ -227,15 +227,6 @@ export default async function ComponentPage({
           <p className="mt-2 max-w-2xl text-muted-foreground">
             {comp.description}
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Updated{" "}
-            <time dateTime={dates.updatedAt}>
-              {new Intl.DateTimeFormat("en", {
-                dateStyle: "medium",
-                timeZone: "UTC",
-              }).format(new Date(`${dates.updatedAt}T00:00:00Z`))}
-            </time>
-          </p>
         </div>
 
         {comp.examples?.length ? (
@@ -308,7 +299,35 @@ export default async function ComponentPage({
           </section>
         ) : null}
 
-        <KeepInMind />
+        {comp.credit ? (
+          <section className="mt-12 border-t border-border pt-8">
+            <h2 className="text-sm font-semibold text-foreground">Built by</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Fixtures was created by{" "}
+              <Link
+                href={comp.credit.url}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={`${comp.credit.name} on X`}
+                className="font-medium text-foreground underline-offset-2 hover:underline"
+              >
+                {comp.credit.name}
+              </Link>
+              .
+            </p>
+          </section>
+        ) : (
+          <KeepInMind />
+        )}
+        <p className="mt-6 text-xs text-muted-foreground">
+          Updated{" "}
+          <time dateTime={dates.updatedAt}>
+            {new Intl.DateTimeFormat("en", {
+              dateStyle: "medium",
+              timeZone: "UTC",
+            }).format(new Date(`${dates.updatedAt}T00:00:00Z`))}
+          </time>
+        </p>
       </div>
       <PageNav items={pageNavItems} />
     </div>
@@ -343,7 +362,7 @@ async function ExampleBlock({
             <NewBadge launchedAt={example.launchedAt} />
           ) : null}
         </div>
-        <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
+        <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
           {example.file.split("/").pop()}
         </code>
       </div>
@@ -384,7 +403,7 @@ async function ExampleBlock({
           id={`${example.slug}-install`}
           className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
         >
-          <h3 className="text-sm font-semibold text-foreground">Install</h3>
+          <h2 className="text-sm font-semibold text-foreground">Install</h2>
           <div className="mt-3">
             <InstallBlock category={category} slug={installSlug} />
           </div>
@@ -395,9 +414,9 @@ async function ExampleBlock({
           id={`${example.slug}-api-reference`}
           className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
         >
-          <h3 className="text-sm font-semibold text-foreground">
+          <h2 className="text-sm font-semibold text-foreground">
             API Reference
-          </h3>
+          </h2>
           <div className="mt-3">
             <PropsTable docs={propsDocs} />
           </div>
@@ -425,6 +444,7 @@ async function DefaultTabs({
 
   return (
     <section id="preview" className="mt-8 scroll-mt-24">
+      <h2 className="sr-only">Preview</h2>
       <Tabs defaultValue="preview" variant="pill">
         <TabsList>
           <TabsTrigger value="preview">Preview</TabsTrigger>

@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Playground",
   description:
     "Tweak spring, tween and stagger properties, watch them play, and copy the motion code. Built on beUI's motion tokens.",
+  alternates: { canonical: "/playground" },
 };
 
 export default function PlaygroundPage() {

@@ -588,7 +588,7 @@ export function FileUpload({
         </span>
       </button>
 
-      <div className={cn("space-y-2", classNames?.queue)}>
+      <ul className={cn("space-y-2", classNames?.queue)}>
         <AnimatePresence initial={false}>
           {items.map((item) => (
             <FileUploadRow
@@ -600,7 +600,7 @@ export function FileUpload({
             />
           ))}
         </AnimatePresence>
-      </div>
+      </ul>
     </div>
   );
 }

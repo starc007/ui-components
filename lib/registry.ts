@@ -20,6 +20,11 @@ export type ComponentEntry = {
   name: string;
   description: string;
   file: string;
+  /** Optional contributor credit shown on the website only. */
+  credit?: {
+    name: string;
+    url: string;
+  };
   badge?: "new";
   /** ISO date the component shipped. Drives newest-first order in the landing
    * "Recently launched" section. Set it when adding a "new" component. */
@@ -262,6 +267,26 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "animated-sidebar",
+        name: "Animated Sidebar",
+        description:
+          "A composable application sidebar with morphing nested navigation that folds into an animated icon rail on desktop and becomes a focus-managed sheet on mobile.",
+        file: "components/motion/animated-sidebar.tsx",
+        badge: "new",
+        launchedAt: "2026-07-29",
+        keywords: [
+          "animated sidebar react",
+          "mobile sidebar",
+          "responsive sidebar",
+          "collapsible sidebar",
+          "icon sidebar",
+          "sidebar drawer",
+          "composable sidebar",
+          "nested sidebar navigation",
+          "accessible navigation menu",
+        ],
+      },
+      {
         slug: "preview-rail",
         name: "Preview Rail",
         description: "Codex app-inspired navigation rail with compact ticks that form a hover pyramid and reveal a floating destination preview.",
@@ -292,6 +317,23 @@ export const registry: CategoryEntry[] = [
         name: "Tooltip",
         description: "Hover or focus tooltip with blur enter/exit and spring spawn.",
         file: "components/motion/tooltip.tsx",
+      },
+      {
+        slug: "context-menu",
+        name: "Animated Context Menu",
+        description:
+          "Composable context-menu primitives with a pointer-origin clip morph, a gliding active row, checkbox and radio choices, keyboard navigation, typeahead, and long-press support.",
+        file: "components/motion/context-menu.tsx",
+        badge: "new",
+        launchedAt: "2026-07-27",
+        keywords: [
+          "react context menu",
+          "animated context menu",
+          "right click menu",
+          "context menu keyboard navigation",
+          "long press menu react",
+          "composable menu primitives",
+        ],
       },
       {
         slug: "popover",
@@ -574,11 +616,79 @@ export const registry: CategoryEntry[] = [
       {
         slug: "range-slider",
         name: "Range Slider",
-        description: "Range slider with tick dots and a bouncy vertical-bar thumb that glides between snapped steps; drag and keyboard control, reduced-motion safe.",
+        description: "Slider with tick dots and a vertical-bar thumb that bounces as it lands on each step. Drag or keyboard, reduced-motion safe.",
         file: "components/motion/range-slider.tsx",
         badge: "new",
-        launchedAt: "2026-06-24",
-        keywords: ["slider", "range slider", "range input", "stepped slider", "ticks"],
+        launchedAt: "2026-07-31",
+        keywords: [
+          "slider",
+          "range slider",
+          "range input",
+          "stepped slider",
+          "ticks",
+          "volume slider",
+          "ruler picker",
+        ],
+        examples: [
+          {
+            slug: "stepped",
+            name: "Range Slider",
+            description:
+              "Tick dots, and a vertical-bar thumb that bounces as it lands on each step.",
+            installSlug: "range-slider",
+            file: "components/motion/range-slider.tsx",
+            previewKey: "motion/range-slider",
+            previewFile: "components/previews/motion/range-slider.preview.tsx",
+          },
+          {
+            slug: "fluid",
+            name: "Fluid Slider",
+            description:
+              "No thumb. The fill slides behind a rounded liquid cap, and the label flips color wherever the fill covers it.",
+            installSlug: "range-slider-fluid",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-fluid.tsx",
+            previewKey: "motion/range-slider-fluid",
+            previewFile: "components/previews/motion/range-slider-fluid.preview.tsx",
+          },
+          {
+            slug: "wave",
+            name: "Wave Slider",
+            description:
+              "Equalizer bars peak around the handle and drop back once it passes, so the value moves down the track as a wave.",
+            installSlug: "range-slider-wave",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-wave.tsx",
+            previewKey: "motion/range-slider-wave",
+            previewFile: "components/previews/motion/range-slider-wave.preview.tsx",
+          },
+          {
+            slug: "bubble",
+            name: "Bubble Slider",
+            description:
+              "Grab the thumb and a value bubble pops out of it. The bubble tilts and squashes with how fast you drag, then settles upright.",
+            installSlug: "range-slider-bubble",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-bubble.tsx",
+            previewKey: "motion/range-slider-bubble",
+            previewFile: "components/previews/motion/range-slider-bubble.preview.tsx",
+          },
+          {
+            slug: "ruler",
+            name: "Ruler Slider",
+            description:
+              "The needle stays put and the scale scrolls under it. A flick keeps going and settles on the nearest tick. Fractional steps read at the step's own precision.",
+            installSlug: "range-slider-ruler",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-ruler.tsx",
+            previewKey: "motion/range-slider-ruler",
+            previewFile: "components/previews/motion/range-slider-ruler.preview.tsx",
+          },
+        ],
       },
       {
         slug: "wheel-picker",
@@ -729,11 +839,37 @@ export const registry: CategoryEntry[] = [
       },
       {
         slug: "knockout-bracket",
-        name: "Knockout Bracket",
-        description: "Google-style tournament bracket that pages one round at a time — the leftmost round stacks compactly while later rounds center between their feeder matches, with cards, elbow connectors, headers and container height animating to every new layout.",
+        name: "Fixtures",
+        description: "Animated tournament fixtures in two styles: a knockout bracket that pages through rounds, and a wheel that wraps the same tree around the champion. Both read the same array of rounds, so one dataset draws either.",
         file: "components/motion/knockout-bracket.tsx",
         badge: "new",
-        launchedAt: "2026-07-12",
+        launchedAt: "2026-07-27",
+        extraFiles: ["components/motion/knockout-wheel.tsx"],
+        examples: [
+          {
+            slug: "knockout-wheel",
+            name: "Knockout Wheel",
+            description:
+              "The tournament drawn radially. The champion holds the hub, each round is a ring further out, and the teams themselves form the rim. Nodes spring in ring by ring, and hovering one isolates that team while the rest recede. Teams show a flag, a logo or their initials, and a deeper draw grows another ring.",
+            badge: "new",
+            launchedAt: "2026-07-27",
+            installSlug: "knockout-wheel",
+            file: "components/motion/knockout-wheel.tsx",
+            previewKey: "blocks/knockout-wheel",
+            previewFile: "components/previews/blocks/knockout-wheel.preview.tsx",
+          },
+          {
+            slug: "knockout-bracket",
+            name: "Knockout Bracket",
+            description:
+              "Pages one round at a time. The leftmost round stacks at a fixed rhythm, each later round centers between its two feeder matches, and cards, elbow connectors, headers and stage height animate into every new layout. A third place play-off sits below the tree under its own rule. Round names, team artwork, dates and result chips all come from the data you pass.",
+            installSlug: "knockout-bracket",
+            file: "components/motion/knockout-bracket.tsx",
+            previewKey: "blocks/knockout-bracket",
+            previewFile:
+              "components/previews/blocks/knockout-bracket.preview.tsx",
+          },
+        ],
         keywords: [
           "tournament bracket react",
           "knockout bracket component",
@@ -804,8 +940,44 @@ export const registry: CategoryEntry[] = [
       {
         slug: "file-upload",
         name: "File Upload",
-        description: "Drag-and-drop upload queue with progress rows, retry/remove actions and reduced-motion-safe state changes.",
+        description:
+          "Two file upload patterns: an attachment workspace for mixed files, links, audio and media, plus a progress queue with retry and removal.",
         file: "components/motion/file-upload.tsx",
+        extraFiles: ["components/motion/attachment-upload.tsx"],
+        badge: "new",
+        launchedAt: "2026-07-30",
+        examples: [
+          {
+            slug: "attachment-upload",
+            name: "Attachment Upload",
+            description:
+              "A mixed attachment workspace with a dropzone, staggered file and image rows, animated upload, success, failure, retry and removal feedback, shared-layout image previews, and an audio waveform.",
+            badge: "new",
+            launchedAt: "2026-07-30",
+            installSlug: "attachment-upload",
+            file: "components/motion/attachment-upload.tsx",
+            previewKey: "blocks/attachment-upload",
+            previewFile:
+              "components/previews/blocks/attachment-upload.preview.tsx",
+          },
+          {
+            slug: "upload-queue",
+            name: "Upload Queue",
+            description:
+              "A drag-and-drop upload queue with progress rows, upload states, retry, and removal.",
+            installSlug: "file-upload",
+            file: "components/motion/file-upload.tsx",
+            previewKey: "blocks/file-upload",
+            previewFile: "components/previews/blocks/file-upload.preview.tsx",
+          },
+        ],
+        keywords: [
+          "attachment upload react",
+          "file attachment component",
+          "mixed media upload",
+          "audio attachment waveform",
+          "drag and drop attachments",
+        ],
       },
       {
         slug: "prediction-market",

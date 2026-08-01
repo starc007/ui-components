@@ -3,7 +3,14 @@ import { cleanup, render } from "@testing-library/react";
 import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 
+import { AttachmentUpload } from "@/components/motion/attachment-upload";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
+import {
+  AnimatedSidebar,
+  AnimatedSidebarContent,
+  AnimatedSidebarProvider,
+  AnimatedSidebarTrigger,
+} from "@/components/motion/animated-sidebar";
 import { BloomMenu } from "@/components/motion/bloom-menu";
 import { BounceSidebar } from "@/components/motion/bounce-sidebar";
 import { Button } from "@/components/motion/button";
@@ -14,7 +21,14 @@ import {
 } from "@/components/motion/center-morph-modal";
 import { Checkbox } from "@/components/motion/checkbox";
 import { ChromaticTextReveal } from "@/components/motion/chromatic-text-reveal";
+import { CommandPalette } from "@/components/motion/command-palette";
 import { Input } from "@/components/motion/input";
+import {
+  ROUNDS as KNOCKOUT_WHEEL_ROUNDS,
+  KnockoutWheel,
+} from "@/components/motion/knockout-wheel";
+import { Marquee } from "@/components/motion/marquee";
+import { MorphingModal } from "@/components/motion/morphing-modal";
 import { Parallax } from "@/components/motion/parallax";
 import {
   Popover,
@@ -24,9 +38,20 @@ import {
 import { PullToRefresh } from "@/components/motion/pull-to-refresh";
 import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
 import { RangeSlider } from "@/components/motion/range-slider";
+import { BubbleSlider } from "@/components/motion/range-slider-bubble";
+import { FluidSlider } from "@/components/motion/range-slider-fluid";
+import { RulerSlider } from "@/components/motion/range-slider-ruler";
+import { WaveSlider } from "@/components/motion/range-slider-wave";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { ScrollTo } from "@/components/motion/scroll-to";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/motion/select";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { Switch } from "@/components/motion/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
@@ -39,10 +64,39 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "AttachmentUpload",
+    () => (
+      <AttachmentUpload
+        defaultValue={[
+          {
+            id: "brief",
+            name: "brief.pdf",
+            kind: "file",
+            size: 240_000,
+            status: "failed",
+            error: "Upload failed",
+          },
+          {
+            id: "voice",
+            name: "note.m4a",
+            kind: "audio",
+            currentTime: 4,
+            duration: 18,
+          },
+        ]}
+        onRetry={() => {}}
+      />
+    ),
+  ],
   ["Button", () => <Button>Subscribe</Button>],
   ["Button disabled", () => <Button disabled>Subscribe</Button>],
   ["Button ripple", () => <Button ripple>Subscribe</Button>],
   ["BloomMenu", () => <BloomMenu />],
+  [
+    "KnockoutWheel",
+    () => <KnockoutWheel rounds={KNOCKOUT_WHEEL_ROUNDS} />,
+  ],
   [
     "BounceSidebar",
     () => (
@@ -86,6 +140,21 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ],
   ["AnimatedBadge", () => <AnimatedBadge status="success">Live</AnimatedBadge>],
   [
+    "AnimatedSidebar expanded",
+    () => (
+      <AnimatedSidebarProvider>
+        <AnimatedSidebar ariaLabel="Workspace navigation">
+          <AnimatedSidebarContent>
+            <a href="/overview">Overview</a>
+          </AnimatedSidebarContent>
+        </AnimatedSidebar>
+        <div>
+          <AnimatedSidebarTrigger>Toggle</AnimatedSidebarTrigger>
+        </div>
+      </AnimatedSidebarProvider>
+    ),
+  ],
+  [
     "Popover",
     () => (
       <Popover>
@@ -97,13 +166,58 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   [
+    "Marquee with interactive content",
+    () => (
+      <Marquee>
+        <a href="/components">Browse components</a>
+        <button type="button">Pause preview</button>
+      </Marquee>
+    ),
+  ],
+  [
+    "CommandPalette closed",
+    () => (
+      <CommandPalette
+        items={[
+          {
+            id: "docs",
+            label: "Open documentation",
+            onSelect: () => {},
+          },
+        ]}
+      />
+    ),
+  ],
+  [
+    "Select closed",
+    () => (
+      <Select defaultValue="react">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="react">React</SelectItem>
+          <SelectItem value="next">Next.js</SelectItem>
+        </SelectContent>
+      </Select>
+    ),
+  ],
+  [
+    "MorphingModal closed",
+    () => (
+      <MorphingModal viewId={null} onClose={() => {}}>
+        <button type="button">Modal action</button>
+      </MorphingModal>
+    ),
+  ],
+  [
     "SmoothScroll",
     () => (
       <SmoothScroll>
-        <main>
+        <div>
           <h1>Page</h1>
           <p>Scrollable content.</p>
-        </main>
+        </div>
       </SmoothScroll>
     ),
   ],
@@ -119,6 +233,19 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ],
   ["ScrollTo", () => <ScrollTo to="#top">Back to top</ScrollTo>],
   ["RangeSlider", () => <RangeSlider defaultValue={40} aria-label="Volume" />],
+  [
+    "FluidSlider",
+    () => <FluidSlider defaultValue={35} label="Brightness" aria-label="Brightness" />,
+  ],
+  ["WaveSlider", () => <WaveSlider defaultValue={45} aria-label="Gain" />],
+  ["BubbleSlider", () => <BubbleSlider defaultValue={28} aria-label="Volume" />],
+  [
+    "RulerSlider",
+    () => (
+      <RulerSlider defaultValue={72.5} min={40} max={120} step={0.5} unit="kg" aria-label="Weight" />
+    ),
+  ],
+  ["FluidSlider disabled", () => <FluidSlider defaultValue={35} disabled aria-label="Brightness" />],
   [
     "PullToRefresh",
     () => (
@@ -176,8 +303,8 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
 describe("accessibility", () => {
   for (const [name, renderCase] of cases) {
     test(`${name} has no axe violations`, async () => {
-      const { container } = render(renderCase());
-      const results = await axe(container);
+      render(<main>{renderCase()}</main>);
+      const results = await axe(document.body);
       expect(results.violations).toEqual([]);
     });
   }
