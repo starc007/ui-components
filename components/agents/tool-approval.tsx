@@ -9,6 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { createHighlighter, type Highlighter } from "shiki";
 import {
   type ReactNode,
   useCallback,
@@ -35,6 +36,12 @@ export interface ToolApprovalParameter {
   value: ReactNode;
 }
 
+export interface ToolApprovalCodeProps {
+  code: string;
+  language?: "bash" | "json" | "typescript";
+  className?: string;
+}
+
 export interface ToolApprovalProps {
   tool: ReactNode;
   title?: ReactNode;
@@ -58,6 +65,82 @@ function getStatusCopy(status: ToolApprovalStatus) {
   if (status === "complete") return "Completed";
   if (status === "error") return "Failed";
   return "Approval required";
+}
+
+function getStatusBadgeClass(status: ToolApprovalStatus) {
+  if (status === "pending") {
+    return "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400";
+  }
+  if (status === "approving" || status === "running") {
+    return "border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400";
+  }
+  if (status === "approved" || status === "complete") {
+    return "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400";
+  }
+  return "border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400";
+}
+
+let toolApprovalHighlighter: Promise<Highlighter> | null = null;
+
+function getToolApprovalHighlighter() {
+  if (!toolApprovalHighlighter) {
+    toolApprovalHighlighter = createHighlighter({
+      themes: ["github-light-high-contrast", "github-dark-high-contrast"],
+      langs: ["bash", "json", "typescript"],
+    });
+  }
+  return toolApprovalHighlighter;
+}
+
+export function ToolApprovalCode({
+  code,
+  language = "bash",
+  className,
+}: ToolApprovalCodeProps) {
+  const [html, setHtml] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getToolApprovalHighlighter().then((highlighter) => {
+      if (cancelled) return;
+      setHtml(
+        highlighter.codeToHtml(code, {
+          lang: language,
+          themes: {
+            light: "github-light-high-contrast",
+            dark: "github-dark-high-contrast",
+          },
+          defaultColor: false,
+        }),
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [code, language]);
+
+  return (
+    <div
+      className={cn(
+        "overflow-x-auto rounded-lg border border-border/50 bg-muted/30 px-2.5 py-2 text-xs leading-5",
+        "[&_.shiki]:!bg-transparent [&_.shiki]:text-[var(--shiki-light)] [&_.shiki_span]:text-[var(--shiki-light)]",
+        "dark:[&_.shiki]:text-[var(--shiki-dark)] dark:[&_.shiki_span]:text-[var(--shiki-dark)]",
+        className,
+      )}
+    >
+      {html ? (
+        <div
+          className="[&_code]:font-mono [&_pre]:m-0"
+          // Shiki escapes the supplied code before returning highlighted HTML.
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      ) : (
+        <pre className="m-0 font-mono text-foreground/85">
+          <code>{code}</code>
+        </pre>
+      )}
+    </div>
+  );
 }
 
 export function ToolApproval({
@@ -103,7 +186,7 @@ export function ToolApproval({
       data-state={status}
       aria-busy={busy}
       className={cn(
-        "w-full overflow-hidden rounded-xl border border-border bg-muted/20 text-sm",
+        "w-full overflow-hidden rounded-2xl border border-border/60 bg-muted/20 text-sm",
         className,
       )}
     >
@@ -111,7 +194,7 @@ export function ToolApproval({
         <span
           aria-hidden="true"
           className={cn(
-            "mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg border border-border bg-background text-muted-foreground",
+            "mt-0.5 grid size-8 shrink-0 place-items-center rounded-xl border border-border/60 bg-background text-muted-foreground",
             error && "text-destructive",
           )}
         >
@@ -136,7 +219,12 @@ export function ToolApproval({
                 {tool}
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+            <span
+              className={cn(
+                "shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors",
+                getStatusBadgeClass(status),
+              )}
+            >
               {getStatusCopy(status)}
             </span>
           </div>
@@ -174,11 +262,11 @@ export function ToolApproval({
         transition={reduce ? { duration: 0 } : SPRING_PANEL}
         className="overflow-hidden"
       >
-        <dl className="mx-4 mb-4 grid gap-2 rounded-lg border border-border bg-background/70 p-3">
+        <dl className="mx-4 mb-4 grid gap-2 rounded-xl border border-border/50 bg-background/70 p-3">
           {parameters.map((parameter) => (
             <div
               key={parameter.id}
-              className="grid grid-cols-[minmax(0,7rem)_minmax(0,1fr)] gap-3 text-xs"
+              className="grid grid-cols-[minmax(0,7rem)_minmax(0,1fr)] items-center gap-3 text-xs"
             >
               <dt className="text-muted-foreground">{parameter.label}</dt>
               <dd className="min-w-0 break-words font-mono text-foreground/85">
@@ -196,14 +284,14 @@ export function ToolApproval({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: reduce ? 0.12 : 0.22, ease: EASE_OUT }}
-            className="flex flex-wrap items-center gap-2 border-t border-border px-4 py-3"
+            className="flex flex-wrap items-center gap-2 border-t border-border/60 px-4 py-3"
           >
             <motion.button
               type="button"
               onClick={onApprove}
               whileTap={reduce ? undefined : { scale: 0.97 }}
               transition={SPRING_PRESS}
-              className="rounded-lg bg-foreground px-3 py-1.5 text-xs font-medium text-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="rounded-xl bg-foreground px-3 py-1.5 text-xs font-medium text-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Allow once
             </motion.button>
@@ -213,7 +301,7 @@ export function ToolApproval({
                 onClick={onAlwaysAllow}
                 whileTap={reduce ? undefined : { scale: 0.97 }}
                 transition={SPRING_PRESS}
-                className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                className="rounded-xl border border-border/60 bg-background px-3 py-1.5 text-xs font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
               >
                 Always allow
               </motion.button>
@@ -221,7 +309,7 @@ export function ToolApproval({
             <button
               type="button"
               onClick={onDeny}
-              className="rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              className="rounded-xl px-3 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
             >
               Deny
             </button>

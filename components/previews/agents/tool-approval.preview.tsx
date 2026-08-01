@@ -4,6 +4,7 @@ import { RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ToolApproval,
+  ToolApprovalCode,
   type ToolApprovalStatus,
 } from "@/components/agents/tool-approval";
 
@@ -53,7 +54,12 @@ export function ToolApprovalPreview() {
           {
             id: "command",
             label: "Command",
-            value: "bun test tests/a11y.test.tsx",
+            value: (
+              <ToolApprovalCode
+                code="bun test tests/a11y.test.tsx"
+                language="bash"
+              />
+            ),
           },
           { id: "directory", label: "Directory", value: "ui-components" },
         ]}
