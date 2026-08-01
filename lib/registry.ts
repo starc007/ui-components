@@ -806,6 +806,23 @@ export const registry: CategoryEntry[] = [
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
       {
+        slug: "todo-list",
+        name: "Todo List",
+        description:
+          "A collapsible agent task plan with morphing status marks, a completion count, compact metadata, and smooth list updates.",
+        file: "components/agents/todo-list.tsx",
+        badge: "new",
+        launchedAt: "2026-08-02",
+        keywords: [
+          "AI agent todo list React",
+          "agent task progress UI",
+          "LLM task plan component",
+          "AI checklist React",
+          "streaming todo list",
+          "agent workflow status",
+        ],
+      },
+      {
         slug: "code-block",
         name: "Code Block",
         description:

@@ -12,6 +12,7 @@ import { AgentProgress } from "@/components/agents/loading-states/agent-progress
 import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
 import { StreamingResponse } from "@/components/agents/streaming-response";
+import { TodoList } from "@/components/agents/todo-list";
 import { ToolApproval } from "@/components/agents/tool-approval";
 import { ToolResult } from "@/components/agents/tool-result";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
@@ -75,6 +76,18 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "TodoList active",
+    () => (
+      <TodoList
+        items={[
+          { id: "one", title: "Inspect files", status: "completed" },
+          { id: "two", title: "Update implementation", status: "in-progress" },
+          { id: "three", title: "Run checks", status: "pending" },
+        ]}
+      />
+    ),
+  ],
   [
     "CodeBlock streaming",
     () => (

@@ -74,6 +74,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
+| `todo-list` | `components/agents/todo-list.tsx` | Collapsible agent task plan (`TodoList`) with pending/in-progress/completed/cancelled states, morphing progress-to-check marks, a completion count, stable streaming rows, bounded smooth following, and compact per-task metadata |
 | `code-block` | `components/agents/code-block.tsx` | Syntax-highlighted agent code surface (`CodeBlock`) with stable streamed updates, optional line numbers and focused lines, bounded smooth following, filename/language metadata, and copy feedback |
 | `approval-card` | `components/agents/approval-card/` | Human-in-the-loop decision surface (`ApprovalCard`) for approval/rejection/revision actions and single-choice, multiple-choice, freeform, or multi-step questions; single choices advance by default, with controlled/uncontrolled answers and step state, reduced-motion safe transitions, and collapsed submitted outcomes |
 | `file-diff` | `components/agents/file-diff.tsx` | Progressive syntax-highlighted file change disclosure (`FileDiff`) with stable line rows, live addition/deletion counts, bounded smooth following, copy support, and completion collapse |

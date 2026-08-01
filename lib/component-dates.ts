@@ -63,6 +63,10 @@ const COMPONENT_DATES = {
     publishedAt: "2026-08-02",
     updatedAt: "2026-08-02",
   },
+  "agents/todo-list": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
   "agents/tool-result": {
     publishedAt: "2026-08-01",
     updatedAt: "2026-08-01",
