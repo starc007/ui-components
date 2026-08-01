@@ -216,7 +216,7 @@ export default async function ComponentPage({
           </nav>
           <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+              <h1 className="text-3xl font-medium tracking-tight text-foreground">
                 {comp.name}
               </h1>
               {comp.badge === "new" && !hasMultipleVariants ? (
