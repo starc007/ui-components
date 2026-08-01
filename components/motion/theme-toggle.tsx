@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { useReducedMotion } from "motion/react";
 import { useEffect, useState, type ComponentPropsWithoutRef } from "react";
 import { ActionSwapIcon } from "@/components/motion/action-swap";
+import { EASE_OUT_CSS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type ThemeVariant = "rectangle" | "circle" | "circle-blur" | "blinds";
@@ -28,8 +29,10 @@ export interface ThemeToggleProps
 
 const VT_STYLE_ID = "beui-theme-toggle-vt";
 
-// Duration/easing is component-specific: View Transition API uses CSS, not
-// motion springs. 400ms + ease-out mirrors native OS mode-switch timing.
+// View transitions animate in CSS, not motion springs, so easing here is
+// either EASE_OUT_CSS or a keyword. The circle variants keep the Material
+// standard curve because their reveal expands symmetrically rather than
+// decelerating. Durations differ per variant to match native OS mode switches.
 const VT_CSS = `
 html[data-beui-vt="rect"]::view-transition-old(root) {
   animation: none;
@@ -80,7 +83,7 @@ html[data-beui-vt="blinds"]::view-transition-new(root) {
   );
   mask-size: 72px 100%;
   mask-repeat: repeat;
-  animation: beui-blinds-reveal 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: beui-blinds-reveal 700ms ${EASE_OUT_CSS};
 }
 @keyframes beui-rect-reveal {
   from { clip-path: var(--beui-vt-from, inset(100% 0 0 0)); }
