@@ -809,7 +809,7 @@ export const registry: CategoryEntry[] = [
         slug: "streaming-response",
         name: "Streaming Response",
         description:
-          "A stable response surface with completion actions for copying, retrying, and feedback.",
+          "A stable response surface with completion actions, rendered content, and an expandable source summary.",
         file: "components/agents/streaming-response.tsx",
         badge: "new",
         launchedAt: "2026-08-01",
@@ -817,6 +817,7 @@ export const registry: CategoryEntry[] = [
           "AI streaming response React",
           "LLM token stream UI",
           "chat response actions",
+          "AI response sources",
           "AI answer component",
           "streaming text React",
         ],

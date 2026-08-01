@@ -3,6 +3,7 @@
 import { RotateCcw } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
+import type { CitationItem } from "@/components/agents/citations";
 import { StreamingResponse } from "@/components/agents/streaming-response";
 
 const PIECES = [
@@ -38,6 +39,27 @@ const status = complete ? "ready" : "streaming";
 \`\`\``;
 
 const CHARACTERS_PER_SECOND = 110;
+
+const RESPONSE_SOURCES: CitationItem[] = [
+  {
+    id: "motion-react",
+    title: "Motion for React",
+    domain: "motion.dev",
+    url: "https://motion.dev/docs/react",
+  },
+  {
+    id: "aria-busy",
+    title: "ARIA live regions",
+    domain: "developer.mozilla.org",
+    url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy",
+  },
+  {
+    id: "react-rendering",
+    title: "Rendering elements",
+    domain: "react.dev",
+    url: "https://react.dev/learn/conditional-rendering",
+  },
+];
 
 function ResponseDemo({ onReplay }: { onReplay: () => void }) {
   const reduce = useReducedMotion() ?? false;
@@ -76,6 +98,7 @@ function ResponseDemo({ onReplay }: { onReplay: () => void }) {
       status={complete ? "complete" : "streaming"}
       copyText={RESPONSE_MARKDOWN}
       onRetry={onReplay}
+      sources={RESPONSE_SOURCES}
     >
       <p>
         {reveal(0)}
@@ -118,7 +141,7 @@ export function StreamingResponsePreview() {
   const [run, setRun] = useState(0);
 
   return (
-    <div className="relative h-[430px] w-full max-w-xl">
+    <div className="relative h-[500px] w-full max-w-xl">
       <ResponseDemo key={run} onReplay={() => setRun((value) => value + 1)} />
       <button
         type="button"

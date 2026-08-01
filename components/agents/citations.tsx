@@ -36,6 +36,18 @@ export interface CitationProps {
   className?: string;
 }
 
+export interface CitationListProps {
+  citations: CitationItem[];
+  idPrefix?: string;
+  className?: string;
+}
+
+export interface CitationStackProps {
+  citations: CitationItem[];
+  limit?: number;
+  className?: string;
+}
+
 function citationTargetId(prefix: string, citationId: string) {
   return `${prefix}-${citationId.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
 }
@@ -60,14 +72,23 @@ export function Citation({
   );
 }
 
-function CitationFavicon({ url }: { url?: string }) {
+export function CitationFavicon({
+  url,
+  className,
+}: {
+  url?: string;
+  className?: string;
+}) {
   const favicon = url ? getFaviconUrl(url) : null;
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
 
   return (
     <span
       aria-hidden="true"
-      className="grid size-5 shrink-0 place-items-center text-muted-foreground"
+      className={cn(
+        "grid size-5 shrink-0 place-items-center text-muted-foreground",
+        className,
+      )}
     >
       {favicon && failedUrl !== favicon ? (
         // biome-ignore lint/performance/noImgElement: Dynamic cross-site favicons keep this framework-agnostic registry component portable.
@@ -87,6 +108,27 @@ function CitationFavicon({ url }: { url?: string }) {
   );
 }
 
+export function CitationStack({
+  citations,
+  limit = 3,
+  className,
+}: CitationStackProps) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn("flex -space-x-1.5", className)}
+    >
+      {citations.slice(0, limit).map((citation) => (
+        <CitationFavicon
+          key={citation.id}
+          url={citation.url}
+          className="size-6 rounded-full bg-background ring-2 ring-background"
+        />
+      ))}
+    </span>
+  );
+}
+
 function CitationRow({
   citation,
   index,
@@ -100,7 +142,7 @@ function CitationRow({
     <>
       <CitationFavicon url={citation.url} />
       <span className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <span className="truncate font-medium text-foreground/80 transition-colors group-hover/citation:text-foreground">
+        <span className="truncate text-sm font-medium text-foreground/80 transition-colors group-hover/citation:text-foreground">
           {citation.title}
         </span>
         {citation.domain ? (
@@ -136,6 +178,45 @@ function CitationRow({
   ) : (
     <div id={id} className={className}>
       {content}
+    </div>
+  );
+}
+
+export function CitationList({
+  citations,
+  idPrefix = "citation",
+  className,
+}: CitationListProps) {
+  const reduce = useReducedMotion() ?? false;
+
+  return (
+    <div className={cn("grid gap-0.5", className)}>
+      <AnimatePresence mode="popLayout">
+        {citations.map((citation, index) => (
+          <motion.div
+            layout="position"
+            key={citation.id}
+            initial={reduce ? { opacity: 1 } : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -3 }}
+            transition={
+              reduce
+                ? { duration: 0 }
+                : {
+                    opacity: { duration: 0.18, ease: EASE_OUT },
+                    y: SPRING_LAYOUT,
+                    layout: SPRING_LAYOUT,
+                  }
+            }
+          >
+            <CitationRow
+              citation={citation}
+              index={index + 1}
+              idPrefix={idPrefix}
+            />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }
@@ -196,34 +277,11 @@ export function Citations({
         transition={reduce ? { duration: 0 } : SPRING_PANEL}
         className="overflow-hidden"
       >
-        <div className="mt-1 grid gap-0.5">
-          <AnimatePresence mode="popLayout">
-            {citations.map((citation, index) => (
-              <motion.div
-                layout="position"
-                key={citation.id}
-                initial={reduce ? { opacity: 1 } : { opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -3 }}
-                transition={
-                  reduce
-                    ? { duration: 0 }
-                    : {
-                        opacity: { duration: 0.18, ease: EASE_OUT },
-                        y: SPRING_LAYOUT,
-                        layout: SPRING_LAYOUT,
-                      }
-                }
-              >
-                <CitationRow
-                  citation={citation}
-                  index={index + 1}
-                  idPrefix={resolvedPrefix}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+        <CitationList
+          citations={citations}
+          idPrefix={resolvedPrefix}
+          className="mt-1"
+        />
       </motion.div>
     </div>
   );

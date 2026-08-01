@@ -4,13 +4,12 @@ import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 
 import { AgentActivity } from "@/components/agents/agent-activity";
+import { Citation, Citations } from "@/components/agents/citations";
 import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
 import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
-import { Citation, Citations } from "@/components/agents/citations";
 import { StreamingResponse } from "@/components/agents/streaming-response";
 import { ToolApproval } from "@/components/agents/tool-approval";
-import { AttachmentUpload } from "@/components/motion/attachment-upload";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import {
   AnimatedSidebar,
@@ -18,6 +17,7 @@ import {
   AnimatedSidebarProvider,
   AnimatedSidebarTrigger,
 } from "@/components/motion/animated-sidebar";
+import { AttachmentUpload } from "@/components/motion/attachment-upload";
 import { BloomMenu } from "@/components/motion/bloom-menu";
 import { BounceSidebar } from "@/components/motion/bounce-sidebar";
 import { Button } from "@/components/motion/button";
@@ -78,6 +78,15 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
         status="complete"
         copyText="The response is ready."
         onRetry={() => {}}
+        defaultSourcesOpen
+        sources={[
+          {
+            id: "docs",
+            title: "Product documentation",
+            domain: "example.com",
+            url: "https://example.com/docs",
+          },
+        ]}
       >
         The response is ready.
       </StreamingResponse>
