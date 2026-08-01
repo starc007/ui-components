@@ -5,11 +5,13 @@ import type { ReactElement } from "react";
 
 import { AgentActivity } from "@/components/agents/agent-activity";
 import { Citation, Citations } from "@/components/agents/citations";
+import { FileDiff } from "@/components/agents/file-diff";
 import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
 import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
 import { StreamingResponse } from "@/components/agents/streaming-response";
 import { ToolApproval } from "@/components/agents/tool-approval";
+import { ToolResult } from "@/components/agents/tool-result";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import {
   AnimatedSidebar,
@@ -90,6 +92,39 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
       >
         The response is ready.
       </StreamingResponse>
+    ),
+  ],
+  [
+    "ToolResult terminal output",
+    () => (
+      <ToolResult
+        tool="terminal.run"
+        title="Tests passed"
+        kind="terminal"
+        status="success"
+        copyText="49 pass"
+        onRetry={() => {}}
+      >
+        49 pass
+      </ToolResult>
+    ),
+  ],
+  [
+    "FileDiff complete",
+    () => (
+      <FileDiff
+        file="src/runner.ts"
+        status="complete"
+        copyText="return normalize(result);"
+        lines={[
+          {
+            id: "line",
+            type: "added",
+            newLine: 20,
+            content: "return normalize(result);",
+          },
+        ]}
+      />
     ),
   ],
   [

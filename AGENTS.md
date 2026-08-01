@@ -74,6 +74,8 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
+| `file-diff` | `components/agents/file-diff.tsx` | Progressive syntax-highlighted file change disclosure (`FileDiff`) with stable line rows, live addition/deletion counts, bounded smooth following, copy support, and completion collapse |
+| `tool-result` | `components/agents/tool-result.tsx` | Lightweight execution disclosure (`ToolResult`) for syntax-highlighted terminal output and request responses; bounded auto-following output, success/error/cancelled states, completion collapse, copy/retry actions, and the reusable `ToolResultOutput` renderer |
 | `loading-states` | `components/agents/loading-states/` | Three agent loading states: `ThinkingShimmer`, compact live-timed `AgentProgress`, and `ReasoningText` with an ASCII loader, shimmering phrases, and cascade/swap/scramble styles; each variant is independently installable and reduced-motion safe |
 | `agent-activity` | `components/agents/agent-activity/` | Adaptive agent activity disclosure (`AgentActivity`): renders streaming freeform text, typed reasoning steps, search results, tool calls, or a chronological mix; derives a matching active/completed summary, smoothly follows entries in a capped viewport, then collapses into a reopenable disclosure |
 | `streaming-response` | `components/agents/streaming-response.tsx` | Renderer-agnostic streamed answer surface (`StreamingResponse`) with completion-only copy, retry, feedback, and an optional expandable source summary |

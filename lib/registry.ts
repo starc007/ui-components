@@ -806,6 +806,60 @@ export const registry: CategoryEntry[] = [
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
       {
+        slug: "file-diff",
+        name: "File Diff",
+        description:
+          "A syntax-highlighted file change disclosure with progressive rows, line numbers, live change counts, smooth following, and completion collapse.",
+        file: "components/agents/file-diff.tsx",
+        badge: "new",
+        launchedAt: "2026-08-01",
+        keywords: [
+          "AI file diff React",
+          "agent code changes UI",
+          "streaming diff component",
+          "file edit result",
+          "code additions deletions",
+        ],
+      },
+      {
+        slug: "tool-result",
+        name: "Tool Result",
+        description:
+          "A lightweight execution disclosure for syntax-highlighted terminal output and request responses that collapses into a compact completed state.",
+        file: "components/agents/tool-result.tsx",
+        badge: "new",
+        launchedAt: "2026-08-01",
+        keywords: [
+          "AI tool result React",
+          "agent terminal output UI",
+          "streaming command result",
+          "agent API response",
+          "tool execution status",
+        ],
+        examples: [
+          {
+            slug: "terminal-output",
+            name: "Terminal Output",
+            description:
+              "Streams command output into a bounded viewport, follows new lines, then collapses into the completed run summary.",
+            file: "components/agents/tool-result.tsx",
+            previewKey: "agents/tool-result-terminal",
+            previewFile:
+              "components/previews/agents/tool-result-terminal.preview.tsx",
+          },
+          {
+            slug: "request-result",
+            name: "Request Result",
+            description:
+              "Presents an in-flight request and its highlighted response payload with retry and copy actions.",
+            file: "components/agents/tool-result.tsx",
+            previewKey: "agents/tool-result-request",
+            previewFile:
+              "components/previews/agents/tool-result-request.preview.tsx",
+          },
+        ],
+      },
+      {
         slug: "streaming-response",
         name: "Streaming Response",
         description:

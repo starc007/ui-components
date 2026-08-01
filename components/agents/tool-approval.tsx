@@ -9,7 +9,6 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { createHighlighter, type Highlighter } from "shiki";
 import {
   type ReactNode,
   useCallback,
@@ -18,6 +17,10 @@ import {
   useRef,
   useState,
 } from "react";
+import {
+  AgentCode,
+  type AgentCodeLanguage,
+} from "@/components/agents/agent-code";
 import { EASE_OUT, SPRING_PANEL, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -38,7 +41,7 @@ export interface ToolApprovalParameter {
 
 export interface ToolApprovalCodeProps {
   code: string;
-  language?: "bash" | "json" | "typescript";
+  language?: AgentCodeLanguage;
   className?: string;
 }
 
@@ -80,66 +83,20 @@ function getStatusBadgeClass(status: ToolApprovalStatus) {
   return "border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400";
 }
 
-let toolApprovalHighlighter: Promise<Highlighter> | null = null;
-
-function getToolApprovalHighlighter() {
-  if (!toolApprovalHighlighter) {
-    toolApprovalHighlighter = createHighlighter({
-      themes: ["github-light-high-contrast", "github-dark-high-contrast"],
-      langs: ["bash", "json", "typescript"],
-    });
-  }
-  return toolApprovalHighlighter;
-}
-
 export function ToolApprovalCode({
   code,
   language = "bash",
   className,
 }: ToolApprovalCodeProps) {
-  const [html, setHtml] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    getToolApprovalHighlighter().then((highlighter) => {
-      if (cancelled) return;
-      setHtml(
-        highlighter.codeToHtml(code, {
-          lang: language,
-          themes: {
-            light: "github-light-high-contrast",
-            dark: "github-dark-high-contrast",
-          },
-          defaultColor: false,
-        }),
-      );
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [code, language]);
-
   return (
-    <div
+    <AgentCode
+      code={code}
+      language={language}
       className={cn(
-        "overflow-x-auto rounded-lg border border-border/50 bg-muted/30 px-2.5 py-2 text-xs leading-5",
-        "[&_.shiki]:!bg-transparent [&_.shiki]:text-[var(--shiki-light)] [&_.shiki_span]:text-[var(--shiki-light)]",
-        "dark:[&_.shiki]:text-[var(--shiki-dark)] dark:[&_.shiki_span]:text-[var(--shiki-dark)]",
+        "rounded-lg border border-border/50 bg-muted/30 px-2.5 py-2",
         className,
       )}
-    >
-      {html ? (
-        <div
-          className="[&_code]:font-mono [&_pre]:m-0"
-          // Shiki escapes the supplied code before returning highlighted HTML.
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      ) : (
-        <pre className="m-0 font-mono text-foreground/85">
-          <code>{code}</code>
-        </pre>
-      )}
-    </div>
+    />
   );
 }
 
