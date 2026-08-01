@@ -7,6 +7,9 @@ import { AgentActivity } from "@/components/agents/agent-activity";
 import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
 import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
+import { SourceCitation, Sources } from "@/components/agents/sources";
+import { StreamingResponse } from "@/components/agents/streaming-response";
+import { ToolApproval } from "@/components/agents/tool-approval";
 import { AttachmentUpload } from "@/components/motion/attachment-upload";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import {
@@ -68,6 +71,52 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "StreamingResponse complete",
+    () => (
+      <StreamingResponse
+        status="complete"
+        copyText="The response is ready."
+        onRetry={() => {}}
+      >
+        The response is ready.
+      </StreamingResponse>
+    ),
+  ],
+  [
+    "ToolApproval pending",
+    () => (
+      <ToolApproval
+        tool="terminal.run"
+        description="Run the test suite in this workspace."
+        defaultOpen
+        parameters={[{ id: "command", label: "Command", value: "bun test" }]}
+        onApprove={() => {}}
+        onAlwaysAllow={() => {}}
+        onDeny={() => {}}
+      />
+    ),
+  ],
+  [
+    "Sources expanded",
+    () => (
+      <div>
+        A supported claim <SourceCitation sourceId="guide" index={1} />
+        <Sources
+          defaultOpen
+          sources={[
+            {
+              id: "guide",
+              title: "Accessibility guide",
+              domain: "example.com",
+              description: "Disclosure interaction guidance.",
+              url: "https://example.com/guide",
+            },
+          ]}
+        />
+      </div>
+    ),
+  ],
   [
     "AgentActivity text complete",
     () => (

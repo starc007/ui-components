@@ -806,6 +806,54 @@ export const registry: CategoryEntry[] = [
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
       {
+        slug: "streaming-response",
+        name: "Streaming Response",
+        description:
+          "A stable response surface with a live cursor and completion actions for copying, retrying, and feedback.",
+        file: "components/agents/streaming-response.tsx",
+        badge: "new",
+        launchedAt: "2026-08-01",
+        keywords: [
+          "AI streaming response React",
+          "LLM token stream UI",
+          "chat response actions",
+          "AI answer component",
+          "streaming cursor React",
+        ],
+      },
+      {
+        slug: "tool-approval",
+        name: "Tool Approval",
+        description:
+          "A human-in-the-loop permission card for reviewing tool details, allowing once, remembering access, or denying execution.",
+        file: "components/agents/tool-approval.tsx",
+        badge: "new",
+        launchedAt: "2026-08-01",
+        keywords: [
+          "AI tool approval UI",
+          "agent permission component",
+          "human in the loop React",
+          "approve agent action",
+          "AI tool confirmation",
+        ],
+      },
+      {
+        slug: "sources",
+        name: "Sources",
+        description:
+          "Inline citations paired with a collapsible, progressively rendered source list for grounded agent responses.",
+        file: "components/agents/sources.tsx",
+        badge: "new",
+        launchedAt: "2026-08-01",
+        keywords: [
+          "AI citations React",
+          "LLM sources component",
+          "chat source list",
+          "RAG citation UI",
+          "AI grounded response",
+        ],
+      },
+      {
         slug: "agent-activity",
         name: "Agent Activity",
         description:
@@ -846,7 +894,7 @@ export const registry: CategoryEntry[] = [
             slug: "web-search",
             name: "Web Search",
             description:
-              "Presents a search query, compact result rows, an optional highlighted result, and an overflow count.",
+              "Presents a search query, progressively rendered result rows, and an overflow count.",
             file: "components/agents/agent-activity/index.tsx",
             previewKey: "agents/agent-activity-search",
             previewFile:
