@@ -63,7 +63,7 @@ const COMPONENT_DATES = {
     publishedAt: "2026-08-01",
     updatedAt: "2026-08-01",
   },
-  "agents/sources": {
+  "agents/citations": {
     publishedAt: "2026-08-01",
     updatedAt: "2026-08-01",
   },

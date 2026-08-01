@@ -27,7 +27,6 @@ export interface StreamingResponseProps {
   feedback?: StreamingResponseFeedback;
   defaultFeedback?: StreamingResponseFeedback;
   onFeedbackChange?: (feedback: StreamingResponseFeedback) => void;
-  showCursor?: boolean;
   className?: string;
   contentClassName?: string;
   actionsClassName?: string;
@@ -74,7 +73,6 @@ export function StreamingResponse({
   feedback,
   defaultFeedback = null,
   onFeedbackChange,
-  showCursor = true,
   className,
   contentClassName,
   actionsClassName,
@@ -126,18 +124,6 @@ export function StreamingResponse({
         )}
       >
         {children}
-        {streaming && showCursor ? (
-          <motion.span
-            aria-hidden="true"
-            className="ml-0.5 inline-block h-[1.05em] w-px translate-y-[0.16em] bg-current"
-            animate={reduce ? { opacity: 0.7 } : { opacity: [0.25, 1, 0.25] }}
-            transition={
-              reduce
-                ? { duration: 0 }
-                : { duration: 0.9, repeat: Number.POSITIVE_INFINITY, ease: EASE_OUT }
-            }
-          />
-        ) : null}
       </div>
 
       <AnimatePresence initial={false}>

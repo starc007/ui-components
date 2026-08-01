@@ -5,15 +5,48 @@ import { useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { StreamingResponse } from "@/components/agents/streaming-response";
 
-const RESPONSE =
-  "The activity stream can stay focused on what the agent is doing, while the response surface handles the final answer. Keeping those responsibilities separate prevents incoming tokens from remounting controls or shifting completed content.\n\nFor implementation, preserve each rendered block, append only new text, and reveal response actions after the stream closes. This keeps copying, retrying, and feedback available without competing with the answer while it is still being written.";
+const PIECES = [
+  "A streaming response can link directly to ",
+  "Motion's React guide",
+  " while the rest of the answer continues to arrive.",
+  "The same response can preserve useful structure:",
+  "Links stay interactive as nearby text streams",
+  "Lists keep their spacing and hierarchy",
+  "Code remains readable without shifting the response",
+  "Set ",
+  "aria-busy",
+  " while new content is still arriving.",
+  'const status = complete ? "ready" : "streaming";',
+] as const;
+
+const STARTS = PIECES.map((_, index) =>
+  PIECES.slice(0, index).reduce((total, piece) => total + piece.length, 0),
+);
+const RESPONSE_LENGTH = PIECES.reduce((total, piece) => total + piece.length, 0);
+const RESPONSE_MARKDOWN = `A streaming response can link directly to [Motion's React guide](https://motion.dev/docs/react) while the rest of the answer continues to arrive.
+
+The same response can preserve useful structure:
+
+- Links stay interactive as nearby text streams
+- Lists keep their spacing and hierarchy
+- Code remains readable without shifting the response
+
+Set \`aria-busy\` while new content is still arriving.
+
+\`\`\`tsx
+const status = complete ? "ready" : "streaming";
+\`\`\``;
 
 const CHARACTERS_PER_SECOND = 110;
 
 function ResponseDemo({ onReplay }: { onReplay: () => void }) {
   const reduce = useReducedMotion() ?? false;
-  const [content, setContent] = useState(reduce ? RESPONSE : "");
+  const [cursor, setCursor] = useState(reduce ? RESPONSE_LENGTH : 0);
   const [complete, setComplete] = useState(reduce);
+
+  const reveal = (index: number) =>
+    PIECES[index].slice(0, Math.max(0, cursor - STARTS[index]));
+  const started = (index: number) => cursor > STARTS[index];
 
   useEffect(() => {
     if (reduce) return;
@@ -23,11 +56,11 @@ function ResponseDemo({ onReplay }: { onReplay: () => void }) {
     let completionTimer: number | undefined;
     const stream = (now: number) => {
       const cursor = Math.min(
-        RESPONSE.length,
+        RESPONSE_LENGTH,
         Math.floor(((now - startedAt) / 1000) * CHARACTERS_PER_SECOND),
       );
-      setContent(RESPONSE.slice(0, cursor));
-      if (cursor < RESPONSE.length) frame = requestAnimationFrame(stream);
+      setCursor(cursor);
+      if (cursor < RESPONSE_LENGTH) frame = requestAnimationFrame(stream);
       else completionTimer = window.setTimeout(() => setComplete(true), 450);
     };
 
@@ -41,11 +74,42 @@ function ResponseDemo({ onReplay }: { onReplay: () => void }) {
   return (
     <StreamingResponse
       status={complete ? "complete" : "streaming"}
-      copyText={RESPONSE}
+      copyText={RESPONSE_MARKDOWN}
       onRetry={onReplay}
-      contentClassName="whitespace-pre-wrap"
     >
-      {content}
+      <p>
+        {reveal(0)}
+        {started(1) ? (
+          <a
+            href="https://motion.dev/docs/react"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            {reveal(1)}
+          </a>
+        ) : null}
+        {reveal(2)}
+      </p>
+      {started(3) ? <p>{reveal(3)}</p> : null}
+      {started(4) ? (
+        <ul>
+          <li>{reveal(4)}</li>
+          {started(5) ? <li>{reveal(5)}</li> : null}
+          {started(6) ? <li>{reveal(6)}</li> : null}
+        </ul>
+      ) : null}
+      {started(7) ? (
+        <p>
+          {reveal(7)}
+          {started(8) ? <code>{reveal(8)}</code> : null}
+          {reveal(9)}
+        </p>
+      ) : null}
+      {started(10) ? (
+        <pre>
+          <code>{reveal(10)}</code>
+        </pre>
+      ) : null}
     </StreamingResponse>
   );
 }
@@ -54,7 +118,7 @@ export function StreamingResponsePreview() {
   const [run, setRun] = useState(0);
 
   return (
-    <div className="relative h-[360px] w-full max-w-xl">
+    <div className="relative h-[430px] w-full max-w-xl">
       <ResponseDemo key={run} onReplay={() => setRun((value) => value + 1)} />
       <button
         type="button"

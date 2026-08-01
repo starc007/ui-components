@@ -14,8 +14,8 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.ToolApprovalPreview,
     ),
   ),
-  "agents/sources": dynamic(() =>
-    import("./agents/sources.preview").then((m) => m.SourcesPreview),
+  "agents/citations": dynamic(() =>
+    import("./agents/citations.preview").then((m) => m.CitationsPreview),
   ),
   "agents/agent-activity-text": dynamic(() =>
     import("./agents/agent-activity-text.preview").then(

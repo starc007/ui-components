@@ -9,19 +9,18 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL, SPRING_SWAP } from "@/lib/ease";
+import { getFaviconUrl } from "@/lib/favicon";
 import { cn } from "@/lib/utils";
 
-export interface SourceItem {
+export interface CitationItem {
   id: string;
   title: ReactNode;
   domain?: ReactNode;
-  description?: ReactNode;
   url?: string;
-  icon?: ReactNode;
 }
 
-export interface SourcesProps {
-  sources: SourceItem[];
+export interface CitationsProps {
+  citations: CitationItem[];
   title?: ReactNode;
   open?: boolean;
   defaultOpen?: boolean;
@@ -30,29 +29,29 @@ export interface SourcesProps {
   className?: string;
 }
 
-export interface SourceCitationProps {
-  sourceId: string;
+export interface CitationProps {
+  citationId: string;
   index: number;
   idPrefix?: string;
   className?: string;
 }
 
-function sourceTargetId(prefix: string, sourceId: string) {
-  return `${prefix}-${sourceId.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
+function citationTargetId(prefix: string, citationId: string) {
+  return `${prefix}-${citationId.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
 }
 
-export function SourceCitation({
-  sourceId,
+export function Citation({
+  citationId,
   index,
-  idPrefix = "source",
+  idPrefix = "citation",
   className,
-}: SourceCitationProps) {
+}: CitationProps) {
   return (
     <a
-      href={`#${sourceTargetId(idPrefix, sourceId)}`}
-      aria-label={`View source ${index}`}
+      href={`#${citationTargetId(idPrefix, citationId)}`}
+      aria-label={`View citation ${index}`}
       className={cn(
-        "mx-0.5 inline-flex min-w-4 -translate-y-0.5 items-center justify-center rounded-md bg-muted px-1 py-0.5 text-[10px] font-semibold leading-none text-muted-foreground no-underline outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring",
+        "mx-0.5 inline-flex min-w-4 -translate-y-0.5 items-center justify-center rounded-md bg-muted/60 px-1 py-0.5 text-[10px] font-semibold leading-none text-muted-foreground no-underline outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
     >
@@ -61,52 +60,73 @@ export function SourceCitation({
   );
 }
 
-function SourceRow({
-  source,
+function CitationFavicon({ url }: { url?: string }) {
+  const favicon = url ? getFaviconUrl(url) : null;
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+
+  return (
+    <span
+      aria-hidden="true"
+      className="grid size-5 shrink-0 place-items-center text-muted-foreground"
+    >
+      {favicon && failedUrl !== favicon ? (
+        // biome-ignore lint/performance/noImgElement: Dynamic cross-site favicons keep this framework-agnostic registry component portable.
+        <img
+          src={favicon}
+          alt=""
+          width={16}
+          height={16}
+          referrerPolicy="no-referrer"
+          onError={() => setFailedUrl(favicon)}
+          className="size-4 rounded-sm object-contain"
+        />
+      ) : (
+        <Globe2 className="size-3.5" />
+      )}
+    </span>
+  );
+}
+
+function CitationRow({
+  citation,
   index,
   idPrefix,
 }: {
-  source: SourceItem;
+  citation: CitationItem;
   index: number;
   idPrefix: string;
 }) {
   const content = (
     <>
-      <span
-        aria-hidden="true"
-        className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg border border-border bg-background text-muted-foreground"
-      >
-        {source.icon ?? <Globe2 className="size-3.5" />}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="flex min-w-0 items-center gap-2">
-          <span className="truncate font-medium text-foreground/90">
-            {index}. {source.title}
-          </span>
-          {source.domain ? (
-            <span className="min-w-0 truncate text-xs text-muted-foreground/60">
-              {source.domain}
-            </span>
-          ) : null}
+      <CitationFavicon url={citation.url} />
+      <span className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <span className="truncate font-medium text-foreground/80 transition-colors group-hover/citation:text-foreground">
+          {citation.title}
         </span>
-        {source.description ? (
-          <span className="mt-0.5 line-clamp-2 block text-xs leading-5 text-muted-foreground">
-            {source.description}
+        {citation.domain ? (
+          <span className="min-w-0 truncate text-xs text-muted-foreground/60">
+            {citation.domain}
           </span>
         ) : null}
       </span>
-      {source.url ? (
-        <ExternalLink className="mt-1 size-3.5 shrink-0 text-muted-foreground/50" />
-      ) : null}
+      <span className="flex shrink-0 items-center gap-1.5">
+        <span className="grid size-5 place-items-center rounded-md bg-foreground/[0.05] text-[10px] font-semibold tabular-nums text-muted-foreground">
+          {index}
+        </span>
+        {citation.url ? (
+          <ExternalLink className="size-3.5 text-muted-foreground/40 transition-colors group-hover/citation:text-muted-foreground" />
+        ) : null}
+      </span>
     </>
   );
   const className =
-    "flex items-start gap-2.5 rounded-lg p-2 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-2 focus-visible:ring-ring";
+    "group/citation flex items-center gap-2 rounded-md px-1.5 py-1 outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  const id = citationTargetId(idPrefix, citation.id);
 
-  return source.url ? (
+  return citation.url ? (
     <a
-      id={sourceTargetId(idPrefix, source.id)}
-      href={source.url}
+      id={id}
+      href={citation.url}
       target="_blank"
       rel="noreferrer noopener"
       className={className}
@@ -114,25 +134,25 @@ function SourceRow({
       {content}
     </a>
   ) : (
-    <div id={sourceTargetId(idPrefix, source.id)} className={className}>
+    <div id={id} className={className}>
       {content}
     </div>
   );
 }
 
-export function Sources({
-  sources,
+export function Citations({
+  citations,
   title = "Sources",
   open,
   defaultOpen = false,
   onOpenChange,
   idPrefix,
   className,
-}: SourcesProps) {
+}: CitationsProps) {
   const reduce = useReducedMotion() ?? false;
   const baseId = useId();
   const contentId = `${baseId}-content`;
-  const resolvedPrefix = idPrefix ?? "source";
+  const resolvedPrefix = idPrefix ?? "citation";
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const currentOpen = open ?? internalOpen;
   const setOpen = useCallback(
@@ -150,12 +170,12 @@ export function Sources({
         aria-expanded={currentOpen}
         aria-controls={contentId}
         onClick={() => setOpen(!currentOpen)}
-        className="group flex min-h-8 items-center gap-2 rounded-lg text-left text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        className="group -ml-1 flex min-h-8 items-center gap-2 rounded-lg px-1 text-left text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
       >
         <BookOpenText className="size-4" />
         <span className="font-medium">{title}</span>
         <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums">
-          {sources.length}
+          {citations.length}
         </span>
         <motion.span
           aria-hidden="true"
@@ -176,12 +196,12 @@ export function Sources({
         transition={reduce ? { duration: 0 } : SPRING_PANEL}
         className="overflow-hidden"
       >
-        <div className="mt-2 space-y-0.5 border-l border-border pl-3">
+        <div className="mt-1 grid gap-0.5">
           <AnimatePresence mode="popLayout">
-            {sources.map((source, index) => (
+            {citations.map((citation, index) => (
               <motion.div
                 layout="position"
-                key={source.id}
+                key={citation.id}
                 initial={reduce ? { opacity: 1 } : { opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduce ? { opacity: 0 } : { opacity: 0, y: -3 }}
@@ -195,8 +215,8 @@ export function Sources({
                       }
                 }
               >
-                <SourceRow
-                  source={source}
+                <CitationRow
+                  citation={citation}
                   index={index + 1}
                   idPrefix={resolvedPrefix}
                 />

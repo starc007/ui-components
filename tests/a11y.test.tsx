@@ -7,12 +7,9 @@ import { AgentActivity } from "@/components/agents/agent-activity";
 import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
 import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
-import { SourceCitation, Sources } from "@/components/agents/sources";
+import { Citation, Citations } from "@/components/agents/citations";
 import { StreamingResponse } from "@/components/agents/streaming-response";
-import {
-  ToolApproval,
-  ToolApprovalCode,
-} from "@/components/agents/tool-approval";
+import { ToolApproval } from "@/components/agents/tool-approval";
 import { AttachmentUpload } from "@/components/motion/attachment-upload";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import {
@@ -94,11 +91,7 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
         description="Run the test suite in this workspace."
         defaultOpen
         parameters={[
-          {
-            id: "command",
-            label: "Command",
-            value: <ToolApprovalCode code="bun test" />,
-          },
+          { id: "command", label: "Command", value: "bun test" },
         ]}
         onApprove={() => {}}
         onAlwaysAllow={() => {}}
@@ -107,18 +100,17 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   [
-    "Sources expanded",
+    "Citations expanded",
     () => (
       <div>
-        A supported claim <SourceCitation sourceId="guide" index={1} />
-        <Sources
+        A supported claim <Citation citationId="guide" index={1} />
+        <Citations
           defaultOpen
-          sources={[
+          citations={[
             {
               id: "guide",
               title: "Accessibility guide",
               domain: "example.com",
-              description: "Disclosure interaction guidance.",
               url: "https://example.com/guide",
             },
           ]}

@@ -809,7 +809,7 @@ export const registry: CategoryEntry[] = [
         slug: "streaming-response",
         name: "Streaming Response",
         description:
-          "A stable response surface with a live cursor and completion actions for copying, retrying, and feedback.",
+          "A stable response surface with completion actions for copying, retrying, and feedback.",
         file: "components/agents/streaming-response.tsx",
         badge: "new",
         launchedAt: "2026-08-01",
@@ -818,7 +818,7 @@ export const registry: CategoryEntry[] = [
           "LLM token stream UI",
           "chat response actions",
           "AI answer component",
-          "streaming cursor React",
+          "streaming text React",
         ],
       },
       {
@@ -838,17 +838,17 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
-        slug: "sources",
-        name: "Sources",
+        slug: "citations",
+        name: "Citations",
         description:
-          "Inline citations paired with a collapsible, progressively rendered source list for grounded agent responses.",
-        file: "components/agents/sources.tsx",
+          "Inline citation markers paired with a collapsible, progressively rendered reference collection for grounded agent responses.",
+        file: "components/agents/citations.tsx",
         badge: "new",
         launchedAt: "2026-08-01",
         keywords: [
           "AI citations React",
-          "LLM sources component",
-          "chat source list",
+          "LLM citations component",
+          "chat citation list",
           "RAG citation UI",
           "AI grounded response",
         ],
