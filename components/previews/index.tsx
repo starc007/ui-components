@@ -55,6 +55,9 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.AgentActivityMixedPreview,
     ),
   ),
+  "agents/agent-trace": dynamic(() =>
+    import("./agents/agent-trace.preview").then((m) => m.AgentTracePreview),
+  ),
   "agents/thinking-shimmer": dynamic(() =>
     import("./agents/thinking-shimmer.preview").then(
       (m) => m.ThinkingShimmerPreview,

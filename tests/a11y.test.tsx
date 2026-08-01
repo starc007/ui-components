@@ -251,6 +251,31 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   [
+    "AgentActivity trace complete",
+    () => (
+      <AgentActivity
+        status="complete"
+        defaultOpen
+        items={[
+          {
+            id: "message",
+            type: "trace",
+            kind: "thinking",
+            label: "Thinking",
+            detail: "Planning the interaction",
+          },
+          {
+            id: "tool",
+            type: "trace",
+            kind: "run",
+            label: "Validate types",
+            detail: "bun run typecheck",
+          },
+        ]}
+      />
+    ),
+  ],
+  [
     "AttachmentUpload",
     () => (
       <AttachmentUpload

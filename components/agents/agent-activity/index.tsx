@@ -3,13 +3,13 @@
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
+  type ReactNode,
   useCallback,
   useEffect,
   useId,
   useLayoutEffect,
   useRef,
   useState,
-  type ReactNode,
 } from "react";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
 import {
@@ -35,8 +35,10 @@ export type {
   AgentActivityStep,
   AgentActivityText,
   AgentActivityTool,
+  AgentActivityTrace,
   AgentSearchResult,
   AgentStepStatus,
+  AgentTraceKind,
 } from "./types";
 
 function formatDuration(duration: number) {
@@ -80,6 +82,7 @@ function getContentType(items: AgentActivityItem[]): AgentActivityContentType {
 function getActiveLabel(type: AgentActivityContentType) {
   if (type === "search") return "Searching the web…";
   if (type === "tool") return "Running tools…";
+  if (type === "trace") return "Working through the run…";
   if (type === "mixed") return "Working through it…";
   return "Thinking…";
 }
@@ -99,6 +102,15 @@ function getSummary(
   if (type === "search") return "Searched the web";
   if (type === "tool") {
     return `Ran ${items.length} ${items.length === 1 ? "tool" : "tools"}`;
+  }
+  if (type === "trace") {
+    const messages = items.filter(
+      (item) =>
+        item.type === "trace" &&
+        (item.kind === "thinking" || item.kind === "message"),
+    ).length;
+    const tools = items.length - messages;
+    return `${tools} ${tools === 1 ? "tool call" : "tool calls"}, ${messages} ${messages === 1 ? "message" : "messages"}`;
   }
   return `Completed ${items.length} ${items.length === 1 ? "step" : "steps"}`;
 }
@@ -238,7 +250,7 @@ export function AgentActivity({
             initial={false}
             animate={{ y: streamOffset }}
             transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
-            className={cn("space-y-2.5 py-3", contentClassName)}
+            className={cn("space-y-0.5 py-2", contentClassName)}
           >
             <AnimatePresence mode="popLayout">
               {items.map((item) => (

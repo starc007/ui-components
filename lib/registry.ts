@@ -912,7 +912,7 @@ export const registry: CategoryEntry[] = [
         slug: "agent-activity",
         name: "Agent Activity",
         description:
-          "One adaptive activity stream for reasoning steps, web searches, tool calls, or a chronological mix of all three.",
+          "One adaptive activity stream for reasoning, searches, tool calls, structured execution traces, or a chronological mix.",
         file: "components/agents/agent-activity/index.tsx",
         badge: "new",
         launchedAt: "2026-08-01",
@@ -922,6 +922,7 @@ export const registry: CategoryEntry[] = [
           "AI search results React",
           "agent reasoning timeline",
           "mixed agent activity stream",
+          "agent execution trace UI",
           "collapsible AI activity",
         ],
         examples: [
@@ -974,6 +975,15 @@ export const registry: CategoryEntry[] = [
             previewKey: "agents/agent-activity-mixed",
             previewFile:
               "components/previews/agents/agent-activity.preview.tsx",
+          },
+          {
+            slug: "agent-trace",
+            name: "Agent Trace",
+            description:
+              "Streams messages and structured actions into a compact execution ledger, then summarizes the completed run by tool-call and message counts.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-trace",
+            previewFile: "components/previews/agents/agent-trace.preview.tsx",
           },
         ],
       },

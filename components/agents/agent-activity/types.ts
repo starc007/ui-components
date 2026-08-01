@@ -42,11 +42,29 @@ export interface AgentActivityTool {
   deletions?: number;
 }
 
+export type AgentTraceKind =
+  | "thinking"
+  | "message"
+  | "write"
+  | "run"
+  | "read"
+  | (string & {});
+
+export interface AgentActivityTrace {
+  id: string;
+  type: "trace";
+  kind: AgentTraceKind;
+  label: ReactNode;
+  detail?: ReactNode;
+  icon?: ReactNode;
+}
+
 export type AgentActivityItem =
   | AgentActivityStep
   | AgentActivityText
   | AgentActivitySearch
-  | AgentActivityTool;
+  | AgentActivityTool
+  | AgentActivityTrace;
 
 export type AgentActivityContentType = AgentActivityItem["type"] | "mixed";
 
