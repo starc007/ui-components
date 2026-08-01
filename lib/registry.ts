@@ -806,6 +806,46 @@ export const registry: CategoryEntry[] = [
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
       {
+        slug: "approval-card",
+        name: "Approval Card",
+        description:
+          "A human-in-the-loop decision surface for approvals, single or multiple-choice questions, custom responses, and multi-step review flows.",
+        file: "components/agents/approval-card/index.tsx",
+        extraFiles: ["components/agents/approval-card/types.ts"],
+        badge: "new",
+        launchedAt: "2026-08-01",
+        keywords: [
+          "AI approval card React",
+          "human in the loop UI",
+          "agent clarification question",
+          "AI multiple choice prompt",
+          "approve agent decision",
+          "agent review workflow",
+        ],
+        examples: [
+          {
+            slug: "questions",
+            name: "Questions",
+            description:
+              "Guides the user through single-choice, multiple-choice, and freeform questions before returning the completed response to the agent.",
+            file: "components/agents/approval-card/index.tsx",
+            previewKey: "agents/approval-card-question",
+            previewFile:
+              "components/previews/agents/approval-card-question.preview.tsx",
+          },
+          {
+            slug: "review",
+            name: "Review and Approve",
+            description:
+              "Pauses an agent workflow for approval, revision, or rejection and collapses into the recorded decision.",
+            file: "components/agents/approval-card/index.tsx",
+            previewKey: "agents/approval-card-review",
+            previewFile:
+              "components/previews/agents/approval-card-review.preview.tsx",
+          },
+        ],
+      },
+      {
         slug: "file-diff",
         name: "File Diff",
         description:

@@ -4,6 +4,7 @@ import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 
 import { AgentActivity } from "@/components/agents/agent-activity";
+import { ApprovalCard } from "@/components/agents/approval-card";
 import { Citation, Citations } from "@/components/agents/citations";
 import { FileDiff } from "@/components/agents/file-diff";
 import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
@@ -73,6 +74,36 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "ApprovalCard question",
+    () => (
+      <ApprovalCard
+        questions={[
+          {
+            id: "scope",
+            title: "Choose a release scope",
+            options: [
+              { value: "focused", label: "Focused" },
+              { value: "broad", label: "Broad" },
+            ],
+            allowCustom: true,
+          },
+        ]}
+        onSubmit={() => {}}
+      />
+    ),
+  ],
+  [
+    "ApprovalCard review",
+    () => (
+      <ApprovalCard
+        title="Publish this update?"
+        onApprove={() => {}}
+        onRequestChanges={() => {}}
+        onReject={() => {}}
+      />
+    ),
+  ],
   [
     "StreamingResponse complete",
     () => (
