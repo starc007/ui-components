@@ -840,21 +840,17 @@ export const registry: CategoryEntry[] = [
       {
         slug: "knockout-bracket",
         name: "Fixtures",
-        description: "Animated tournament fixtures in two styles: a knockout bracket that pages through rounds, and a wheel that wraps the same tree around the champion.",
+        description: "Animated tournament fixtures in two styles: a knockout bracket that pages through rounds, and a wheel that wraps the same tree around the champion. Both read the same array of rounds, so one dataset draws either.",
         file: "components/motion/knockout-bracket.tsx",
         badge: "new",
         launchedAt: "2026-07-27",
         extraFiles: ["components/motion/knockout-wheel.tsx"],
-        credit: {
-          name: "Avinit",
-          url: "https://x.com/0xvntr",
-        },
         examples: [
           {
             slug: "knockout-wheel",
             name: "Knockout Wheel",
             description:
-              "The tournament drawn radially. The champion holds the hub, each round is a ring further out, and the teams themselves form the rim. Nodes spring in ring by ring, and hovering one isolates that team while the rest recede.",
+              "The tournament drawn radially. The champion holds the hub, each round is a ring further out, and the teams themselves form the rim. Nodes spring in ring by ring, and hovering one isolates that team while the rest recede. Teams show a flag, a logo or their initials, and a deeper draw grows another ring.",
             badge: "new",
             launchedAt: "2026-07-27",
             installSlug: "knockout-wheel",
@@ -866,7 +862,7 @@ export const registry: CategoryEntry[] = [
             slug: "knockout-bracket",
             name: "Knockout Bracket",
             description:
-              "Pages one round at a time. The leftmost round stacks at a fixed rhythm, each later round centers between its two feeder matches, and cards, elbow connectors, headers and stage height animate into every new layout. A third place play-off sits below the tree under its own rule.",
+              "Pages one round at a time. The leftmost round stacks at a fixed rhythm, each later round centers between its two feeder matches, and cards, elbow connectors, headers and stage height animate into every new layout. A third place play-off sits below the tree under its own rule. Round names, team artwork, dates and result chips all come from the data you pass.",
             installSlug: "knockout-bracket",
             file: "components/motion/knockout-bracket.tsx",
             previewKey: "blocks/knockout-bracket",

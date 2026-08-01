@@ -8,8 +8,15 @@ import { cn } from "@/lib/utils";
 
 export type Team = {
   name: string;
-  /** ISO 3166-1 alpha-2 code used to load the flag from flagcdn.com (England is gb-eng). */
-  code: string;
+  /**
+   * Any square image URL — club crest, org mark, player photo. Wins over `code`.
+   * Drawn as-is on the card surface, so a transparent-background mark inked for
+   * one theme disappears in the other: ship artwork that reads on both, or pick
+   * the URL yourself from your theme state.
+   */
+  logo?: string;
+  /** ISO 3166-1 alpha-2 code, loaded from flagcdn.com (England is gb-eng). Used when `logo` is absent. */
+  code?: string;
 };
 
 export type MatchSide = {
@@ -22,31 +29,42 @@ export type MatchSide = {
 
 export type Match = {
   id: string;
-  date: string;
+  /** Kick-off day, already formatted. Omit it and the card drops the date row. */
+  date?: string;
   time?: string;
-  status: "finished" | "upcoming";
+  /** Omit it and a match with a `winner` counts as finished. */
+  status?: "finished" | "upcoming";
   home: MatchSide;
   away: MatchSide;
   /** Decides the marker and which side dims. */
   winner?: "home" | "away";
+  /** Replaces the derived result chip ("FT", "FT (P)") — e.g. "AET", "BO5", "Forfeit". */
+  badge?: string;
 };
 
 export type Round = {
+  /** Shown as the column header — "Round of 32", "Upper bracket final", "Last 8". */
   name: string;
   matches: Match[];
 };
 
 export interface KnockoutBracketProps {
-  /** Ordered rounds; each must hold half as many matches as the one before (16 → 8 → 4 → 2 → 1). */
+  /**
+   * The whole draw, ordered widest round first. Any single-elimination
+   * tournament fits: each round holds half the matches of the one before it
+   * (16 → 8 → 4 → 2 → 1) and `rounds[r].matches[k]` is fed by matches `2k` and
+   * `2k + 1` of the round before it. Two rounds are enough.
+   */
   rounds: Round[];
   /** Round shown as the leftmost column on mount. Defaults to 1, clamped to the valid range. */
   initialRound?: number;
   /** Third place play-off, rendered under the bracket instead of inside it. */
   thirdPlace?: Match;
+  /** Heading over `thirdPlace`. Defaults to "Third place play-off". */
+  thirdPlaceLabel?: string;
   className?: string;
 }
 
-const THIRD_PLACE_LABEL = "Third place play-off";
 
 // Card geometry drives the whole computed layout — every later match sits at the
 // exact vertical midpoint of its two feeders, so pairs line up with connectors.
@@ -141,28 +159,59 @@ function BracketConnector({
   );
 }
 
-function TeamFlag({ code }: { code: string }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) {
-    return (
-      <span className="flex h-5 w-7 shrink-0 items-center justify-center">
-        <Shield className="size-5 fill-current text-muted-foreground/50" />
-      </span>
-    );
-  }
+/** A `logo` is used as given; a country `code` loads a flag from flagcdn.com. */
+const crestSrc = (team: Team) =>
+  team.logo ?? (team.code ? `https://flagcdn.com/w80/${team.code}.png` : null);
+
+/** Two-letter stand-in when a team has no artwork — "Real Madrid" → RM.
+ * Spread, not `word[0]`: an emoji or astral first character is a surrogate pair
+ * and indexing it renders a replacement glyph. */
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => [...word][0])
+    .join("")
+    .toUpperCase();
+
+// Fixed 28px slot whatever it holds, so names and scores stay aligned down the
+// column: flag, crest, initials or the TBD shield.
+function TeamCrest({ team }: { team: Team | null }) {
+  // The failed URL, not a boolean: a corrected logo on the same match should be
+  // tried again rather than stay initials for the life of the card.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const resolved = team ? crestSrc(team) : null;
+  const src = resolved === failedSrc ? null : resolved;
+
   return (
-    // Plain <img> served by flagcdn.com — swap this if you need self-hosted assets.
-    // biome-ignore lint/performance/noImgElement: remote flagcdn asset, no next/image benefit
-    <img
-      src={`https://flagcdn.com/w80/${code}.png`}
-      alt=""
-      width={28}
-      height={20}
-      loading="lazy"
-      draggable={false}
-      onError={() => setFailed(true)}
-      className="h-5 w-7 shrink-0 rounded-[4px] border border-border/40 object-cover"
-    />
+    <span className="flex h-5 w-7 shrink-0 items-center justify-center">
+      {src ? (
+        // Plain <img> — flags come from flagcdn.com, logos from wherever you host them.
+        // biome-ignore lint/performance/noImgElement: remote asset, no next/image benefit
+        <img
+          src={src}
+          alt=""
+          loading="lazy"
+          draggable={false}
+          onError={() => setFailedSrc(src)}
+          className={cn(
+            "shrink-0 rounded-[4px] border border-border/40",
+            // Flags are 4:3 and fill the slot; a logo keeps its own shape inside it.
+            team?.logo
+              ? "h-5 w-5 border-transparent object-contain"
+              : "h-5 w-7 object-cover",
+          )}
+        />
+      ) : team ? (
+        // text-foreground, not muted: the /10 tint lifts the disc toward the
+        // muted ramp, leaving 4.44:1 light and 3.55:1 dark — both under AA.
+        <span className="grid size-5 place-items-center rounded-full bg-foreground/10 text-[10px] font-semibold leading-none text-foreground">
+          {initials(team.name)}
+        </span>
+      ) : (
+        <Shield className="size-5 fill-current text-muted-foreground/50" />
+      )}
+    </span>
   );
 }
 
@@ -190,13 +239,7 @@ function TeamRow({
   const dim = decided && !isWinner;
   return (
     <div className="flex items-center gap-3">
-      {side.team ? (
-        <TeamFlag code={side.team.code} />
-      ) : (
-        <span className="flex h-5 w-7 shrink-0 items-center justify-center">
-          <Shield className="size-5 fill-current text-muted-foreground/50" />
-        </span>
-      )}
+      <TeamCrest team={side.team} />
       <span
         className={cn(
           "min-w-0 flex-1 truncate text-base font-medium",
@@ -234,36 +277,43 @@ function sideLabel(side: MatchSide) {
   return `${name} ${side.score}${pen}`;
 }
 
+/** `status` is optional, so a decided match reads as finished without it. */
+const isFinished = (m: Match) =>
+  m.status ? m.status === "finished" : m.winner != null;
+
 function matchLabel(roundName: string, m: Match) {
-  const sides =
-    m.status === "finished"
-      ? `${sideLabel(m.home)}, ${sideLabel(m.away)}`
-      : `${sideLabel(m.home)} versus ${sideLabel(m.away)}`;
-  const when =
-    m.status === "upcoming"
-      ? `, ${m.date}${m.time ? `, ${m.time}` : ""}`
-      : "";
+  const finished = isFinished(m);
+  const sides = finished
+    ? `${sideLabel(m.home)}, ${sideLabel(m.away)}`
+    : `${sideLabel(m.home)} versus ${sideLabel(m.away)}`;
+  // Same pair the card's header row shows, so a time-only match isn't announced
+  // without its kick-off.
+  const schedule = finished ? [] : [m.date, m.time].filter(Boolean);
+  const when = schedule.length ? `, ${schedule.join(", ")}` : "";
   const winnerName = m.winner ? m[m.winner].team?.name : undefined;
   const outcome = winnerName ? `, ${winnerName} won` : "";
   return `${roundName}: ${sides}${when}${outcome}`;
 }
 
 function MatchCard({ match }: { match: Match }) {
-  const decided = match.status === "finished" && match.winner != null;
+  const finished = isFinished(match);
+  const decided = finished && match.winner != null;
   const shootout =
     match.home.penalties != null || match.away.penalties != null;
-  const badge =
-    match.status === "finished" ? (shootout ? "FT (P)" : "FT") : null;
+  // A per-match `badge` wins, so a draw that isn't football can label its own
+  // result ("AET", "BO5", "Forfeit") instead of the derived full-time chip.
+  const badge = match.badge ?? (finished ? (shootout ? "FT (P)" : "FT") : null);
 
   return (
     <div
       style={{ width: CARD_W, height: CARD_H }}
       className="rounded-2xl border border-border bg-card p-4"
     >
-      <div className="mb-3 flex items-center justify-between gap-2">
+      {/* h-5 holds the row open when a match carries no date or badge, so a
+          dateless draw's cards don't sit top-heavy inside the fixed CARD_H. */}
+      <div className="mb-3 flex h-5 items-center justify-between gap-2">
         <span className="min-w-0 flex-1 truncate text-sm leading-5 text-muted-foreground">
-          {match.date}
-          {match.time ? `, ${match.time}` : ""}
+          {[match.date, match.time].filter(Boolean).join(", ")}
         </span>
         {badge && (
           <span className="shrink-0 rounded-full bg-background px-2.5 text-xs font-medium leading-5 text-muted-foreground">
@@ -291,6 +341,7 @@ export function KnockoutBracket({
   rounds,
   initialRound = 1,
   thirdPlace,
+  thirdPlaceLabel = "Third place play-off",
   className,
 }: KnockoutBracketProps) {
   const reduce = useReducedMotion();
@@ -325,9 +376,21 @@ export function KnockoutBracket({
     const base = rounds[page];
     centers[page] = base.matches.map((_, i) => PAD_Y + i * ROW + CARD_H / 2);
     for (let r = page + 1; r < rounds.length; r++) {
-      centers[r] = rounds[r].matches.map(
-        (_, k) => (centers[r - 1][2 * k] + centers[r - 1][2 * k + 1]) / 2,
-      );
+      const feeders = centers[r - 1];
+      const row: number[] = [];
+      for (let k = 0; k < rounds[r].matches.length; k++) {
+        const top = feeders[2 * k];
+        if (top == null) {
+          // A round with more matches than its feeders allow (an odd draw, a bye
+          // left out) stacks a full row under the last card placed in this
+          // round — a fixed rhythm from the top can land on top of a midpoint.
+          const prev = row[k - 1];
+          row[k] = prev == null ? PAD_Y + CARD_H / 2 : prev + ROW;
+        } else {
+          row[k] = (top + (feeders[2 * k + 1] ?? top)) / 2;
+        }
+      }
+      centers[r] = row;
     }
     // Behind rounds keep their natural spread (spacing halves each step out,
     // each match straddling its parent) instead of collapsing, so paging back
@@ -335,7 +398,7 @@ export function KnockoutBracket({
     for (let r = page - 1; r >= 0; r--) {
       const half = ROW / 2 ** (page - r + 1);
       centers[r] = rounds[r].matches.map((_, i) => {
-        const parent = centers[r + 1][Math.floor(i / 2)];
+        const parent = centers[r + 1][Math.floor(i / 2)] ?? PAD_Y;
         return parent + (i % 2 === 0 ? -half : half);
       });
     }
@@ -347,8 +410,8 @@ export function KnockoutBracket({
         isInWindow(r, page, visibleCols) &&
         isInWindow(r - 1, page, visibleCols);
       rounds[r].matches.forEach((_, k) => {
-        const yTop = centers[r - 1][2 * k];
-        const yBot = centers[r - 1][2 * k + 1];
+        const yTop = centers[r - 1][2 * k] ?? centers[r][k];
+        const yBot = centers[r - 1][2 * k + 1] ?? yTop;
         list.push({
           key: `${r}-${k}`,
           x: feederRight,
@@ -359,10 +422,17 @@ export function KnockoutBracket({
       });
     }
 
-    const baseCount = base.matches.length;
+    // Measured, not derived from the base count: a fallback-stacked round can
+    // run past the base column, and the stage clips its overflow.
+    // Seeded with one card's center so an empty round yields a real height
+    // rather than -Infinity.
+    const lowest = Math.max(
+      PAD_Y + CARD_H / 2,
+      ...centers.slice(page, page + visibleCols).flat(),
+    );
     return {
       cy: centers,
-      containerHeight: (baseCount - 1) * ROW + CARD_H + 2 * PAD_Y,
+      containerHeight: lowest + CARD_H / 2 + PAD_Y,
       connectors: list,
     };
   }, [rounds, page, visibleCols]);
@@ -492,10 +562,10 @@ export function KnockoutBracket({
             className="mt-8 border-t border-border pt-6"
             style={{ paddingLeft: PAD_X }}
           >
-            <ul aria-label={THIRD_PLACE_LABEL} className="m-0 list-none p-0">
-              <li aria-label={matchLabel(THIRD_PLACE_LABEL, thirdPlace)}>
+            <ul aria-label={thirdPlaceLabel} className="m-0 list-none p-0">
+              <li aria-label={matchLabel(thirdPlaceLabel, thirdPlace)}>
                 <p className="mb-2 text-sm leading-5 text-muted-foreground/70">
-                  {THIRD_PLACE_LABEL}
+                  {thirdPlaceLabel}
                 </p>
                 <MatchCard match={thirdPlace} />
               </li>
@@ -507,9 +577,13 @@ export function KnockoutBracket({
   );
 }
 
-// ── Mock data ────────────────────────────────────────────────────────────────
-// A full World Cup knockout stage, handy as a starting shape. Each round holds
-// half as many matches as the one before it (16 → 8 → 4 → 2 → 1).
+// ── Sample data ──────────────────────────────────────────────────────────────
+// A full World Cup knockout stage, here to demo the shape. Swap it for your own
+// tournament. Rounds run widest first and each holds half as many matches as the
+// one before it (16 → 8 → 4 → 2 → 1); `matches[k]` of a round is fed by matches
+// `2k` and `2k + 1` of the round before it, which is what pairs the connectors.
+// Any draw works: start at the round you have (Round of 16, quarter-finals),
+// give teams a `logo` instead of a country `code`, or neither for initials.
 
 export const TEAMS = {
   southAfrica: { name: "South Africa", code: "za" },

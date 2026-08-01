@@ -18,8 +18,15 @@ import { cn } from "@/lib/utils";
 
 export type Team = {
   name: string;
-  /** ISO 3166-1 alpha-2 code used to load the flag from flagcdn.com (England is gb-eng). */
-  code: string;
+  /**
+   * Any square image URL — club crest, org mark, player photo. Wins over `code`.
+   * Drawn as-is on the node's card-colored disc, so a transparent-background
+   * mark inked for one theme disappears in the other: ship artwork that reads on
+   * both, or pick the URL yourself from your theme state.
+   */
+  logo?: string;
+  /** ISO 3166-1 alpha-2 code, loaded from flagcdn.com (England is gb-eng). Used when `logo` is absent. */
+  code?: string;
 };
 
 export type MatchSide = {
@@ -39,12 +46,19 @@ export type Match = {
 };
 
 export type Round = {
+  /** Read out with the match in tooltips and the screen-reader list. */
   name: string;
   matches: Match[];
 };
 
 export interface KnockoutWheelProps {
-  /** Ordered outermost round first; each must hold half as many matches as the one before (16 → 8 → 4 → 2 → 1). */
+  /**
+   * The whole draw, ordered widest round first — the same array the knockout
+   * bracket takes. Any single-elimination tournament fits: each round holds half
+   * the matches of the one before it (16 → 8 → 4 → 2 → 1) and `rounds[r].matches[k]`
+   * is fed by matches `2k` and `2k + 1` of the round before it. Two rounds are
+   * enough; the wheel grows a ring per round and sizes itself to the rim.
+   */
   rounds: Round[];
   /**
    * Index of the outermost round to draw. Earlier rounds are dropped and the
@@ -71,6 +85,10 @@ const HUB_R = 34;
 // Nodes grow outward so the crowded outer ring still reads at small sizes.
 const NODE_MIN = 14.2;
 const NODE_STEP = 2.2;
+// Initials floor, in viewBox units. The stage never goes below 32rem against a
+// 760-unit box (scale ~0.674), so 15 units is ~10px on screen — under that, two
+// letters are a smudge. `node.r * 0.8` alone puts the inner ring at 7.6px.
+const INITIALS_MIN = 15;
 // Siblings pull slightly toward their parent, opening a lane between subtrees.
 const SIBLING_GAP = 0.9;
 // Puts the hub's two feeders on the horizontal, where there's room for them.
@@ -128,6 +146,21 @@ type WheelLink = {
 const keepTogether = (text: string) => text.replace(/ /g, " ");
 
 const teamName = (side: MatchSide) => keepTogether(side.team?.name ?? "TBD");
+
+/** A `logo` is used as given; a country `code` loads a flag from flagcdn.com. */
+const crestSrc = (team: Team) =>
+  team.logo ?? (team.code ? `https://flagcdn.com/w80/${team.code}.png` : null);
+
+/** Two-letter stand-in when a team has no artwork — "Real Madrid" → RM.
+ * Spread, not `word[0]`: an emoji or astral first character is a surrogate pair
+ * and indexing it renders a replacement glyph. */
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => [...word][0])
+    .join("")
+    .toUpperCase();
 
 /** Teams · score, in the order they were played. The round is prepended by the
  * caller that has it, so the round list can reuse this without repeating it. */
@@ -292,8 +325,16 @@ function TeamMark({
   loadFlag: boolean;
   transition: object;
 }) {
-  const [failed, setFailed] = useState(false);
-  const showFlag = node.team != null && loadFlag && !failed;
+  // The failed URL, not a boolean: a corrected logo on the same node should be
+  // tried again rather than stay initials for the life of the wheel.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const resolved = node.team ? crestSrc(node.team) : null;
+  const src = resolved === failedSrc ? null : resolved;
+  const showFlag = src != null && loadFlag;
+  // A square logo is fitted whole; a 4:3 flag is cropped to fill the disc.
+  const box = node.team?.logo
+    ? { w: node.r * 1.44, h: node.r * 1.44, fit: "xMidYMid meet" }
+    : { w: node.r * 2.68, h: node.r * 2, fit: "xMidYMid slice" };
   // Dimming rides on the mark itself rather than a scrim tinted with the page
   // background, so the wheel recedes correctly on any surface it's dropped on.
   const fade = { opacity: dimmed ? 0.38 : 1 };
@@ -308,21 +349,38 @@ function TeamMark({
           <clipPath id={clipId}>
             <circle cx={node.x} cy={node.y} r={node.r} />
           </clipPath>
-          {/* Plain <image> served by flagcdn.com — swap this if you need self-hosted assets. */}
+          {/* Plain <image> — flags from flagcdn.com, logos from wherever you host
+              them. A 4:3 flag is cropped to fill the disc; a logo is fitted whole
+              inside it, since a crest cropped to a circle loses its shape. */}
           <motion.image
-            href={`https://flagcdn.com/w80/${node.team.code}.png`}
-            x={node.x - node.r * 1.34}
-            y={node.y - node.r}
-            width={node.r * 2.68}
-            height={node.r * 2}
+            href={src}
+            x={node.x - box.w / 2}
+            y={node.y - box.h / 2}
+            width={box.w}
+            height={box.h}
             clipPath={`url(#${clipId})`}
-            preserveAspectRatio="xMidYMid slice"
+            preserveAspectRatio={box.fit}
             initial={false}
             animate={fade}
             transition={transition}
-            onError={() => setFailed(true)}
+            onError={() => setFailedSrc(src)}
           />
         </>
+      ) : node.team ? (
+        // No artwork on this team — initials keep the ring readable.
+        <motion.text
+          x={node.x}
+          y={node.y}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={Math.max(node.r * 0.8, INITIALS_MIN)}
+          initial={false}
+          animate={fade}
+          transition={transition}
+          className="fill-muted-foreground font-semibold"
+        >
+          {initials(node.team.name)}
+        </motion.text>
       ) : (
         // Same shield the knockout bracket uses for a TBD slot, so an
         // undecided place reads identically across both fixture styles.
@@ -622,8 +680,10 @@ export function KnockoutWheel({
         className,
       )}
     >
-      {/* Below the min width the rim's 32 flags collapse to ~21px, too small to
-          tell apart or tap, so the wheel holds its size and pans instead. */}
+      {/* Below the min width the rim's marks collapse too small to tell apart or
+          tap, so the wheel holds its size and pans instead. The floor is fixed,
+          not rim-derived: node radius grows with depth, so a shallower draw has
+          *smaller* marks and needs the width more, not less. */}
       <div className="relative mx-auto w-full min-w-[32rem] max-w-[34rem]">
         <svg
           ref={ref}
@@ -740,10 +800,14 @@ export function KnockoutWheel({
   );
 }
 
-// ── Mock data ────────────────────────────────────────────────────────────────
-// A finished 32-team cup, matching the knockout bracket's shape so both fixture
-// styles demo the same size draw. Each round holds half as many matches as the
-// one before it (16 → 8 → 4 → 2 → 1).
+// ── Sample data ──────────────────────────────────────────────────────────────
+// A finished 32-team cup, here to demo the shape. Swap it for your own
+// tournament. Rounds run widest first and each holds half as many matches as the
+// one before it (16 → 8 → 4 → 2 → 1); `matches[k]` of a round is fed by matches
+// `2k` and `2k + 1` of the round before it, which is what pairs the branches.
+// Any draw works: pass fewer rounds for a smaller cup, give teams a `logo`
+// instead of a country `code`, or neither for initials. The knockout bracket
+// takes the same array, so one dataset feeds both fixture styles.
 
 export const TEAMS = {
   spain: { name: "Spain", code: "es" },
