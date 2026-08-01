@@ -6,6 +6,7 @@ import type { ReactElement } from "react";
 import { AgentActivity } from "@/components/agents/agent-activity";
 import { ApprovalCard } from "@/components/agents/approval-card";
 import { Citation, Citations } from "@/components/agents/citations";
+import { CodeBlock } from "@/components/agents/code-block";
 import { FileDiff } from "@/components/agents/file-diff";
 import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
 import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
@@ -74,6 +75,16 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "CodeBlock streaming",
+    () => (
+      <CodeBlock
+        filename="task.ts"
+        code={"export async function run() {\n  return true;\n}"}
+        status="streaming"
+      />
+    ),
+  ],
   [
     "ApprovalCard question",
     () => (

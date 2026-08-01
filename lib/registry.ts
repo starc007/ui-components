@@ -806,6 +806,23 @@ export const registry: CategoryEntry[] = [
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
       {
+        slug: "code-block",
+        name: "Code Block",
+        description:
+          "A syntax-highlighted code surface with stable streaming updates, line numbers, focused lines, smooth following, and copy feedback.",
+        file: "components/agents/code-block.tsx",
+        badge: "new",
+        launchedAt: "2026-08-02",
+        keywords: [
+          "AI code block React",
+          "streaming code component",
+          "syntax highlighted code block",
+          "LLM code response UI",
+          "agent generated code",
+          "Shiki React code block",
+        ],
+      },
+      {
         slug: "approval-card",
         name: "Approval Card",
         description:
