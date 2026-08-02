@@ -38,6 +38,7 @@ export interface ChatPreviewProps {
   reply?: string | ((prompt: string) => string);
   showAvatars?: boolean;
   showMetadata?: boolean;
+  showRail?: boolean;
   assistantVariant?: MessageBubbleVariant;
   userVariant?: MessageBubbleVariant;
   placeholder?: string;
@@ -68,6 +69,7 @@ export function ChatPreview({
   reply = DEFAULT_REPLY,
   showAvatars = false,
   showMetadata = false,
+  showRail = false,
   assistantVariant = "soft",
   userVariant = "solid",
   placeholder = "Send a message…",
@@ -199,6 +201,7 @@ export function ChatPreview({
     >
       <MessageScroller
         busy={loading}
+        navigation={showRail ? "rail" : undefined}
         className="min-h-0 flex-1"
         viewportClassName={cn("px-3 py-4", viewportClassName)}
         contentClassName="min-h-full"
@@ -207,6 +210,7 @@ export function ChatPreview({
           {messages.map((message) => (
             <Message
               key={message.id}
+              id={message.id}
               from={message.from}
               animateIn={message.from === "user" && message.animateIn}
             >
@@ -251,7 +255,7 @@ export function ChatPreview({
             </Message>
           ))}
           {pending ? (
-            <Message from="assistant">
+            <Message id="pending-assistant" from="assistant">
               {showAvatars ? (
                 <MessageAvatar>
                   <Bot />

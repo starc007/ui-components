@@ -26,12 +26,43 @@ const MESSAGES: ChatPreviewMessage[] = [
     from: "assistant",
     content: "Yes. Those states make the first version feel dependable.",
   },
+  {
+    id: "evidence-question",
+    from: "user",
+    content: "How should we present tool results?",
+  },
+  {
+    id: "evidence-answer",
+    from: "assistant",
+    content: "Keep results close to the action that produced them.",
+  },
+  {
+    id: "approval-question",
+    from: "user",
+    content: "What about actions that need confirmation?",
+  },
+  {
+    id: "approval-answer",
+    from: "assistant",
+    content: "Pause the run, explain the impact, and ask before continuing.",
+  },
+  {
+    id: "summary-question",
+    from: "user",
+    content: "Can the transcript stay easy to navigate?",
+  },
+  {
+    id: "summary-answer",
+    from: "assistant",
+    content: "Use the rail to jump between turns without losing your place.",
+  },
 ];
 
 export function MessageScrollerPreview() {
   return (
     <ChatPreview
       initialMessages={MESSAGES}
+      showRail
       reply="The viewport follows while you stay at the live edge. Scroll upward while this response streams and it will leave your reading position alone."
       placeholder="Send another message…"
     />

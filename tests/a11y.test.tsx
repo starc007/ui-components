@@ -60,6 +60,7 @@ import {
   PopoverTrigger,
 } from "@/components/motion/popover";
 import { PullToRefresh } from "@/components/motion/pull-to-refresh";
+import { PreviewRail } from "@/components/motion/preview-rail";
 import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
 import { RangeSlider } from "@/components/motion/range-slider";
 import { BubbleSlider } from "@/components/motion/range-slider-bubble";
@@ -134,6 +135,20 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
           </MessageContent>
         </Message>
       </MessageScroller>
+    ),
+  ],
+  [
+    "PreviewRail button navigation",
+    () => (
+      <PreviewRail
+        items={[
+          { id: "first", label: "First message" },
+          { id: "second", label: "Second message" },
+        ]}
+        activeId="first"
+        showPreview={false}
+        highlightActive
+      />
     ),
   ],
   [

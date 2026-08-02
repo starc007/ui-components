@@ -225,7 +225,7 @@ export const agentGuides = {
       {
         title: "Release",
         description:
-          "A deliberate scroll away transfers control back to the reader immediately.",
+          "A deliberate scroll or rail jump transfers control back to the reader immediately.",
       },
       {
         title: "Resume",
@@ -247,7 +247,7 @@ export const agentGuides = {
       {
         title: "Protect the transcript",
         description:
-          "Scroll behavior stays outside message state. Rows can stream, render Markdown, or contain tools without being rewritten by the viewport.",
+          "Scroll behavior stays outside message state. An optional rail derives navigation from Message rows without rewriting their streamed content.",
       },
     ],
     implementation: {
@@ -273,7 +273,7 @@ export const agentGuides = {
       },
     ],
     contract: {
-      owns: "The scroll viewport, live-edge following, reader release, and transcript accessibility state.",
+      owns: "The scroll viewport, live-edge following, optional message navigation, reader release, and transcript accessibility state.",
       leaves:
         "Message data, transport, persistence, branching, and content rendering to the application.",
     },
