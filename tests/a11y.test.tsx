@@ -11,6 +11,16 @@ import { FileDiff } from "@/components/agents/file-diff";
 import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
 import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
+import {
+  Message,
+  MessageContent,
+  MessageScroller,
+} from "@/components/agents/message";
+import {
+  MessageBubble,
+  MessageBubbleCollapsible,
+  MessageBubbleContent,
+} from "@/components/agents/message-bubble";
 import { PromptInput } from "@/components/agents/prompt-input";
 import { StreamingResponse } from "@/components/agents/streaming-response";
 import { TodoList } from "@/components/agents/todo-list";
@@ -77,6 +87,54 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "MessageBubble collapsible",
+    () => (
+      <MessageBubble>
+        <MessageBubbleContent>
+          <MessageBubbleCollapsible>
+            This is a longer assistant response that can be expanded when the
+            reader wants the complete detail.
+          </MessageBubbleCollapsible>
+        </MessageBubbleContent>
+      </MessageBubble>
+    ),
+  ],
+  [
+    "MessageBubble interactive",
+    () => (
+      <MessageBubble variant="tint" align="end">
+        <MessageBubbleContent render={<button type="button" />}>
+          Save this direction
+        </MessageBubbleContent>
+      </MessageBubble>
+    ),
+  ],
+  [
+    "Message streaming",
+    () => (
+      <MessageScroller>
+        <Message from="user">
+          <MessageContent>
+            <MessageBubble variant="solid">
+              <MessageBubbleContent>Plan this release.</MessageBubbleContent>
+            </MessageBubble>
+          </MessageContent>
+        </Message>
+        <Message from="assistant">
+          <MessageContent>
+            <MessageBubble variant="ghost">
+              <MessageBubbleContent>
+                <StreamingResponse status="streaming" announce={false}>
+                  I am reviewing the scope.
+                </StreamingResponse>
+              </MessageBubbleContent>
+            </MessageBubble>
+          </MessageContent>
+        </Message>
+      </MessageScroller>
+    ),
+  ],
   [
     "PromptInput",
     () => (

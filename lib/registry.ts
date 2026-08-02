@@ -806,6 +806,72 @@ export const registry: CategoryEntry[] = [
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
       {
+        slug: "message-bubble",
+        name: "Message Bubble",
+        description:
+          "A focused conversational surface with visual tones, independent alignment, grouped messages, expandable content, and interactive link or button support.",
+        file: "components/agents/message-bubble.tsx",
+        badge: "new",
+        launchedAt: "2026-08-02",
+        keywords: [
+          "message bubble React",
+          "chat bubble component",
+          "AI conversation bubble",
+          "expandable chat message",
+          "interactive chat suggestion",
+          "grouped message bubbles",
+        ],
+        examples: [
+          {
+            slug: "surfaces",
+            name: "Animated Surfaces",
+            description:
+              "Aligned conversational surfaces with grouped responses and an interactive suggestion.",
+            file: "components/agents/message-bubble.tsx",
+            previewKey: "agents/message-bubble",
+            previewFile:
+              "components/previews/agents/message-bubble.preview.tsx",
+          },
+          {
+            slug: "avatars",
+            name: "With Avatars",
+            description:
+              "Progressively arriving messages with sender avatars, metadata, delivery state, and grouped follow-up alignment.",
+            file: "components/agents/message-bubble.tsx",
+            previewKey: "agents/message-bubble-avatars",
+            previewFile:
+              "components/previews/agents/message-bubble-avatars.preview.tsx",
+          },
+          {
+            slug: "show-more",
+            name: "Show More",
+            description:
+              "A long assistant message with a compact line-clamped preview and animated disclosure control.",
+            file: "components/agents/message-bubble.tsx",
+            previewKey: "agents/message-bubble-collapsible",
+            previewFile:
+              "components/previews/agents/message-bubble-collapsible.preview.tsx",
+          },
+        ],
+      },
+      {
+        slug: "message",
+        name: "Message",
+        description:
+          "Composable conversation primitives for message rows, grouped bubbles, avatars, metadata, live markers, actions, and reader-aware streaming scroll.",
+        file: "components/agents/message.tsx",
+        badge: "new",
+        launchedAt: "2026-08-02",
+        keywords: [
+          "AI message React",
+          "chat message component",
+          "streaming assistant message",
+          "LLM conversation UI",
+          "agent chat bubbles",
+          "AI chat interface React",
+        ],
+      },
+      {
         slug: "prompt-input",
         name: "Prompt Input",
         description:

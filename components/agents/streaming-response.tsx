@@ -46,6 +46,10 @@ export interface StreamingResponseProps {
   feedback?: StreamingResponseFeedback;
   defaultFeedback?: StreamingResponseFeedback;
   onFeedbackChange?: (feedback: StreamingResponseFeedback) => void;
+  /** Set false when a surrounding conversation log announces streamed text. */
+  announce?: boolean;
+  /** Hides the built-in completion actions without changing response status. */
+  showActions?: boolean;
   className?: string;
   contentClassName?: string;
   actionsClassName?: string;
@@ -97,6 +101,8 @@ export function StreamingResponse({
   feedback,
   defaultFeedback = null,
   onFeedbackChange,
+  announce = true,
+  showActions = true,
   className,
   contentClassName,
   actionsClassName,
@@ -115,8 +121,8 @@ export function StreamingResponse({
   const complete = status === "complete";
   const canCopy = Boolean(copyText || onCopy);
   const hasSources = sources.length > 0;
-  const showActions =
-    !streaming && (canCopy || onRetry || complete || hasSources);
+  const shouldShowActions =
+    showActions && !streaming && (canCopy || onRetry || complete || hasSources);
   const sourcesContentId = `${baseId}-sources`;
   const resolvedSourcePrefix =
     sourceIdPrefix ?? `response-source-${baseId.replace(/:/g, "")}`;
@@ -158,7 +164,7 @@ export function StreamingResponse({
       className={cn("w-full", className)}
     >
       <div
-        aria-live="polite"
+        aria-live={announce ? "polite" : "off"}
         className={cn(
           "text-sm leading-6 text-foreground/90 [&_a]:font-medium [&_a]:underline [&_a]:underline-offset-4 [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.9em] [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_p+p]:mt-3 [&_pre]:my-3 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-border [&_pre]:bg-muted/45 [&_pre]:p-3 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5",
           contentClassName,
@@ -168,7 +174,7 @@ export function StreamingResponse({
       </div>
 
       <AnimatePresence initial={false}>
-        {showActions ? (
+        {shouldShowActions ? (
           <motion.div
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}

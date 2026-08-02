@@ -55,6 +55,14 @@ const COMPONENT_DATES = {
     publishedAt: "2026-07-30",
     updatedAt: "2026-07-30",
   },
+  "agents/message-bubble": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/message": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
     updatedAt: "2026-08-01",
@@ -81,7 +89,7 @@ const COMPONENT_DATES = {
   },
   "agents/streaming-response": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
   },
   "agents/tool-approval": {
     publishedAt: "2026-08-01",
