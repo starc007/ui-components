@@ -11,6 +11,7 @@ import { FileDiff } from "@/components/agents/file-diff";
 import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
 import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
+import { PromptInput } from "@/components/agents/prompt-input";
 import { StreamingResponse } from "@/components/agents/streaming-response";
 import { TodoList } from "@/components/agents/todo-list";
 import { ToolApproval } from "@/components/agents/tool-approval";
@@ -76,6 +77,23 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "PromptInput",
+    () => (
+      <PromptInput
+        actions={[
+          { value: "image", label: "Attach image" },
+          { value: "skill", label: "Use a skill" },
+        ]}
+        models={[
+          { value: "gpt-5.2", label: "GPT-5.2" },
+          { value: "claude-sonnet-4", label: "Claude Sonnet 4" },
+        ]}
+        defaultModel="gpt-5.2"
+        onSubmit={() => {}}
+      />
+    ),
+  ],
   [
     "TodoList active",
     () => (

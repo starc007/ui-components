@@ -74,6 +74,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
+| `prompt-input` | `components/agents/prompt-input.tsx` | Auto-growing agent composer (`PromptInput`) with controlled/uncontrolled prompt and model state, a configurable animated actions menu, model selection, Enter-to-send, multiline input, and send/stop actions |
 | `todo-list` | `components/agents/todo-list.tsx` | Collapsible agent task plan (`TodoList`) with pending/in-progress/completed/cancelled states, morphing progress-to-check marks, a completion count, stable streaming rows, bounded smooth following, and compact per-task metadata |
 | `code-block` | `components/agents/code-block.tsx` | Syntax-highlighted agent code surface (`CodeBlock`) with stable streamed updates, optional line numbers and focused lines, bounded smooth following, filename/language metadata, and copy feedback |
 | `approval-card` | `components/agents/approval-card/` | Human-in-the-loop decision surface (`ApprovalCard`) for approval/rejection/revision actions and single-choice, multiple-choice, freeform, or multi-step questions; single choices advance by default, with controlled/uncontrolled answers and step state, reduced-motion safe transitions, and collapsed submitted outcomes |

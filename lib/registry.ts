@@ -806,6 +806,23 @@ export const registry: CategoryEntry[] = [
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
       {
+        slug: "prompt-input",
+        name: "Prompt Input",
+        description:
+          "An auto-growing agent composer with prompt actions, model selection, keyboard submission, and animated send and stop states.",
+        file: "components/agents/prompt-input.tsx",
+        badge: "new",
+        launchedAt: "2026-08-02",
+        keywords: [
+          "AI prompt input React",
+          "model selector dropdown",
+          "chat composer component",
+          "agent input UI",
+          "AI textarea React",
+          "LLM model picker",
+        ],
+      },
+      {
         slug: "todo-list",
         name: "Todo List",
         description:
