@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 export interface PreviewRailItem {
   id: string;
   label: string;
+  ariaLabel?: string;
   description?: ReactNode;
   href?: string;
   target?: "_blank" | "_self" | "_parent" | "_top";
@@ -25,20 +26,33 @@ export interface PreviewRailProps {
   onItemSelect?: (item: PreviewRailItem) => void;
   renderPreview?: (item: PreviewRailItem) => ReactNode;
   showPreview?: boolean;
+  previewSide?: "before" | "after";
   highlightActive?: boolean;
   itemSize?: number;
   children?: ReactNode;
   className?: string;
   railClassName?: string;
+  previewContainerClassName?: string;
   previewClassName?: string;
 }
 
 function DefaultPreview({ item }: { item: PreviewRailItem }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-      <p className="font-medium text-card-foreground">{item.label}</p>
+    <div
+      data-slot="preview-rail-card"
+      className="rounded-2xl border border-border bg-card p-4 shadow-sm"
+    >
+      <p
+        data-slot="preview-rail-title"
+        className="font-medium text-card-foreground"
+      >
+        {item.label}
+      </p>
       {item.description ? (
-        <div className="mt-1 text-sm leading-6 text-muted-foreground">
+        <div
+          data-slot="preview-rail-description"
+          className="mt-1 text-sm leading-6 text-muted-foreground"
+        >
           {item.description}
         </div>
       ) : null}
@@ -56,11 +70,13 @@ export function PreviewRail({
   onItemSelect,
   renderPreview,
   showPreview = true,
+  previewSide = "after",
   highlightActive = false,
   itemSize = 24,
   children,
   className,
   railClassName,
+  previewContainerClassName,
   previewClassName,
 }: PreviewRailProps) {
   const uid = useId();
@@ -184,9 +200,10 @@ export function PreviewRail({
                 item.rel ??
                 (item.target === "_blank" ? "noreferrer noopener" : undefined)
               }
-              aria-label={item.label}
+              aria-label={item.ariaLabel ?? item.label}
               aria-current={selected ? "page" : undefined}
               onPointerEnter={handlePointerEnter}
+              onMouseEnter={handlePointerEnter}
               onPointerDown={() => setFocusedId(null)}
               onFocus={(event) => handleFocus(event.currentTarget)}
               onClick={handleSelect}
@@ -200,9 +217,10 @@ export function PreviewRail({
               key={item.id}
               data-slot="preview-rail-item"
               type="button"
-              aria-label={item.label}
+              aria-label={item.ariaLabel ?? item.label}
               aria-current={selected ? "location" : undefined}
               onPointerEnter={handlePointerEnter}
+              onMouseEnter={handlePointerEnter}
               onPointerDown={() => setFocusedId(null)}
               onFocus={(event) => handleFocus(event.currentTarget)}
               onClick={handleSelect}
@@ -227,15 +245,21 @@ export function PreviewRail({
             "pointer-events-none absolute z-50 grid",
             isHorizontal
               ? "top-1/2 left-1/2 h-5 w-fit max-w-full -translate-x-1/2 -translate-y-1/2 justify-center"
-              : "inset-y-0 right-4 left-16 content-center",
+              : previewSide === "before"
+                ? "inset-y-0 right-16 left-4 content-center"
+                : "inset-y-0 right-4 left-16 content-center",
+            previewContainerClassName,
           )}
         >
           {items.map((item) => (
             <div
               key={item.id}
+              style={
+                isHorizontal ? { width: itemSize } : { height: itemSize }
+              }
               className={cn(
-                "relative flex h-6 items-center",
-                isHorizontal ? "w-6 justify-center" : undefined,
+                "relative flex items-center",
+                isHorizontal ? "justify-center" : undefined,
               )}
             >
               {item.id === displayedId ? (
@@ -243,7 +267,10 @@ export function PreviewRail({
                   className={cn(
                     isHorizontal
                       ? "absolute bottom-12 left-1/2 w-72 -translate-x-1/2"
-                      : "w-full max-w-sm",
+                      : cn(
+                          "w-full max-w-sm",
+                          previewSide === "before" && "ml-auto",
+                        ),
                     previewClassName,
                   )}
                 >

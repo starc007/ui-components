@@ -16,6 +16,63 @@ import {
 } from "@/components/motion/preview-rail";
 import { cn } from "@/lib/utils";
 
+const PREVIEW_TITLE_LENGTH = 56;
+const PREVIEW_DESCRIPTION_LENGTH = 88;
+
+function truncateMessageText(text: string, limit: number) {
+  if (text.length <= limit) return text;
+  const excerpt = text.slice(0, limit);
+  const boundary = excerpt.lastIndexOf(" ");
+  return `${excerpt.slice(0, boundary > limit * 0.65 ? boundary : limit).trim()}…`;
+}
+
+function getMessageText(message: HTMLElement) {
+  const surface =
+    message.querySelector<HTMLElement>('[data-slot="message-bubble-content"]') ??
+    message.querySelector<HTMLElement>('[data-slot="message-content"]') ??
+    message;
+  return (surface.textContent ?? "").replace(/\s+/g, " ").trim();
+}
+
+function getMessagePreview(
+  message: HTMLElement,
+  assistantResponse?: HTMLElement,
+) {
+  const text = getMessageText(message);
+  if (!text) {
+    return { label: "Message", description: undefined };
+  }
+
+  if (text.length <= PREVIEW_TITLE_LENGTH) {
+    const responseText = assistantResponse
+      ? getMessageText(assistantResponse)
+      : "";
+    return {
+      label: text,
+      description: responseText
+        ? truncateMessageText(responseText, PREVIEW_DESCRIPTION_LENGTH)
+        : undefined,
+    };
+  }
+
+  const titleExcerpt = text.slice(0, PREVIEW_TITLE_LENGTH);
+  const titleBoundary = titleExcerpt.lastIndexOf(" ");
+  const titleEnd =
+    titleBoundary > PREVIEW_TITLE_LENGTH * 0.65
+      ? titleBoundary
+      : PREVIEW_TITLE_LENGTH;
+  const label = `${text.slice(0, titleEnd).trim()}…`;
+  const responseText = assistantResponse
+    ? getMessageText(assistantResponse)
+    : text.slice(titleEnd).trim();
+  return {
+    label,
+    description: responseText
+      ? truncateMessageText(responseText, PREVIEW_DESCRIPTION_LENGTH)
+      : undefined,
+  };
+}
+
 export interface MessageScrollerProps extends ComponentPropsWithRef<"div"> {
   /** Keep streamed output pinned while the reader remains near the end. */
   followOutput?: boolean;
@@ -168,10 +225,19 @@ export function MessageScroller({
       }
       targets.set(id, message);
       const sender = message.dataset.from ?? "conversation";
+      const assistantResponse =
+        sender === "user"
+          ? messages
+              .slice(index + 1)
+              .find((candidate) => candidate.dataset.from === "assistant")
+          : undefined;
+      const preview = getMessagePreview(message, assistantResponse);
 
       return {
         id,
-        label: `Go to ${sender} message ${index + 1} of ${messages.length}`,
+        label: preview.label,
+        description: preview.description,
+        ariaLabel: `Go to ${sender} message ${index + 1} of ${messages.length}`,
       };
     });
 
@@ -182,7 +248,9 @@ export function MessageScroller({
         current.every(
           (item, index) =>
             item.id === nextItems[index]?.id &&
-            item.label === nextItems[index]?.label,
+            item.label === nextItems[index]?.label &&
+            item.description === nextItems[index]?.description &&
+            item.ariaLabel === nextItems[index]?.ariaLabel,
         );
       return unchanged ? current : nextItems;
     });
@@ -391,10 +459,12 @@ export function MessageScroller({
           label={navigationLabel}
           activeId={activeRailId}
           onItemSelect={scrollToRailItem}
-          showPreview={false}
+          previewSide="before"
           highlightActive
           itemSize={14}
           className="h-full min-h-0 overflow-hidden"
+          previewContainerClassName="right-8 left-3"
+          previewClassName="mr-1 w-64 max-w-full [&_[data-slot=preview-rail-card]]:h-20 [&_[data-slot=preview-rail-card]]:overflow-hidden [&_[data-slot=preview-rail-card]]:p-3 [&_[data-slot=preview-rail-title]]:line-clamp-1 [&_[data-slot=preview-rail-title]]:text-xs [&_[data-slot=preview-rail-title]]:leading-4 [&_[data-slot=preview-rail-description]]:line-clamp-2 [&_[data-slot=preview-rail-description]]:text-xs [&_[data-slot=preview-rail-description]]:leading-4"
           railClassName={cn(
             "absolute inset-y-3 right-1 w-7 content-center py-1 [&_[data-slot=preview-rail-item]]:w-7 [&_[data-slot=preview-rail-item]]:justify-end [&_[data-slot=preview-rail-tick]]:h-px [&_[data-slot=preview-rail-tick]]:w-4 [&_[data-slot=preview-rail-tick]]:origin-right",
             railOverflowing

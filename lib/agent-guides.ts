@@ -247,7 +247,7 @@ export const agentGuides = {
       {
         title: "Protect the transcript",
         description:
-          "Scroll behavior stays outside message state. An optional rail derives navigation from Message rows without rewriting their streamed content.",
+          "Scroll behavior stays outside message state. An optional rail derives navigation and hover excerpts from Message rows without rewriting their streamed content.",
       },
     ],
     implementation: {
