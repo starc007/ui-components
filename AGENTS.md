@@ -18,7 +18,7 @@ Prefer `typecheck` + `lint` for quick verification. Do not start the dev server 
 ## Layout
 
 - `components/motion/` and `components/agents/` — the library. One file per component; multi-file widgets get a folder (`swap/`, `button/`, `loading-states/`).
-- `components/previews/` — demo per component, registered in `components/previews/index.tsx`. Previews ship through the registry too.
+- `components/previews/` — demo per component, registered in `components/previews/index.tsx`. Previews ship through the registry too. When an interactive preview uses internal demo helpers, set the registry entry's `usageFile` to a separate public composition so the Usage tab stays copyable.
 - `components/app/` — site chrome (header, hero, dock, code blocks). Not part of the library.
 - `lib/registry.ts` — component catalog (slugs, files, examples). Three categories: `motion` (display name "Components", primitives), `agents` (AI and agent interface primitives), and `blocks` (composed widgets: swap, dynamic island, command palette, expandable action bar). Blocks emit `registry:block` shadcn items. Preview files live under `components/previews/<category>/`. `lib/registry-server.ts` builds registry items by following each file's `@/` and relative imports and bundling everything it finds. Internal imports are therefore safe and encouraged; a component that imports `@/lib/ease` ships `lib/ease.ts` with it.
 - `app/r/*` — registry endpoints (shadcn items, raw source, index). beUI is listed in shadcn's official registry directory as the `@beui` namespace with URL template `https://beui.dev/r/{name}.json` — that path shape and existing install slugs are public contract; never break or rename them.

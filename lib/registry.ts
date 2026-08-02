@@ -15,6 +15,8 @@ export type ComponentExample = {
   previewKey: string;
   /** Path to the preview file used for the Usage tab. */
   previewFile: string;
+  /** Optional composition file shown instead of the live preview source. */
+  usageFile?: string;
 };
 
 export type ComponentEntry = {
@@ -35,6 +37,8 @@ export type ComponentEntry = {
   keywords?: string[];
   /** Extra source files bundled under this slug (e.g. multi-file components). */
   extraFiles?: string[];
+  /** Optional composition file shown instead of the live preview source. */
+  usageFile?: string;
   /** Per-variant breakdown rendered as separate Preview / Usage / Source on the page. */
   examples?: ComponentExample[];
   /** Optional behavior guide rendered on the component documentation page. */
@@ -836,6 +840,8 @@ export const registry: CategoryEntry[] = [
             previewKey: "agents/message-bubble",
             previewFile:
               "components/previews/agents/message-bubble.preview.tsx",
+            usageFile:
+              "components/previews/agents/message-bubble.usage.tsx",
           },
           {
             slug: "avatars",
@@ -876,6 +882,7 @@ export const registry: CategoryEntry[] = [
           "agent chat bubbles",
           "AI chat interface React",
         ],
+        usageFile: "components/previews/agents/message.usage.tsx",
       },
       {
         slug: "message-scroller",
@@ -884,6 +891,8 @@ export const registry: CategoryEntry[] = [
         description:
           "A reader-aware conversation viewport that follows streamed output at the live edge and releases control when the reader moves away.",
         file: "components/agents/message-scroller.tsx",
+        usageFile:
+          "components/previews/agents/message-scroller.usage.tsx",
         badge: "new",
         launchedAt: "2026-08-02",
         keywords: [

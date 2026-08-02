@@ -265,7 +265,12 @@ export default async function ComponentPage({
             ))}
           </div>
         ) : (
-          <DefaultTabs category={category} slug={slug} file={comp.file} />
+          <DefaultTabs
+            category={category}
+            slug={slug}
+            file={comp.file}
+            usageFile={comp.usageFile}
+          />
         )}
 
         {!hasVariantInstallCommands ? (
@@ -372,9 +377,10 @@ async function ExampleBlock({
   showApiReference: boolean;
 }) {
   const Preview = previews[example.previewKey];
+  const usageFile = example.usageFile ?? example.previewFile;
   const [source, usage] = await Promise.all([
     loadSource(example.file),
-    loadSource(example.previewFile),
+    loadSource(usageFile),
   ]);
   const installSlug = example.installSlug ?? null;
   const propsDocs = showApiReference ? getComponentProps(example.file) : [];
@@ -412,7 +418,7 @@ async function ExampleBlock({
             </div>
           </TabsContent>
           <TabsContent value="usage" className="mt-4">
-            <CodeBlock code={usage} filename={example.previewFile} />
+            <CodeBlock code={usage} filename={usageFile} />
           </TabsContent>
           <TabsContent value="source" className="mt-4">
             <CodeBlock
@@ -458,16 +464,19 @@ async function DefaultTabs({
   category,
   slug,
   file,
+  usageFile,
 }: {
   category: string;
   slug: string;
   file: string;
+  usageFile?: string;
 }) {
   const Preview = getPreview(category, slug);
   const previewFile = `components/previews/${category}/${slug}.preview.tsx`;
+  const resolvedUsageFile = usageFile ?? previewFile;
   const [source, usage] = await Promise.all([
     loadSource(file),
-    loadSource(previewFile),
+    loadSource(resolvedUsageFile),
   ]);
 
   return (
@@ -485,7 +494,7 @@ async function DefaultTabs({
           </div>
         </TabsContent>
         <TabsContent value="usage" className="mt-4">
-          <CodeBlock code={usage} filename={previewFile} />
+          <CodeBlock code={usage} filename={resolvedUsageFile} />
         </TabsContent>
         <TabsContent value="source" className="mt-4">
           <CodeBlock
