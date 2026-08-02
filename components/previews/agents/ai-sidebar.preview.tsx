@@ -132,14 +132,14 @@ export function AISidebarPreview() {
   return (
     <div className="w-full px-0 py-2 sm:p-3">
       <AnimatedSidebarProvider
-        style={{ "--sidebar-width": "19rem" }}
+        style={{ "--sidebar-width": "16rem" }}
         className="h-[720px] min-h-0 w-full overflow-hidden rounded-2xl border border-foreground/[0.08] bg-background"
       >
         <AnimatedSidebar
           ariaLabel="Workspace resources"
-          collapsible="icon"
+          collapsible="offcanvas"
           className="min-h-0 w-full"
-          panelClassName="h-full w-full border-0 bg-background"
+          panelClassName="h-full bg-background"
         >
           <AnimatedSidebarContent className="gap-4 overflow-hidden px-2 py-4">
             <AnimatedSidebarGroup className="shrink-0 px-1 py-0">
@@ -165,7 +165,7 @@ export function AISidebarPreview() {
                 Projects
               </AnimatedSidebarGroupLabel>
               <AnimatedSidebarGroupContent className="relative min-h-0 flex-1 overflow-hidden">
-                <div className="h-full overflow-y-auto overscroll-contain [overflow-anchor:none] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="h-full overflow-y-auto overscroll-contain pb-8 [overflow-anchor:none] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   <AISidebar
                     items={items}
                     activeId={active}

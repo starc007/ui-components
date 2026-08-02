@@ -32,7 +32,10 @@ export function AISidebarUsage() {
 
   return (
     <AnimatedSidebarProvider>
-      <AnimatedSidebar ariaLabel="Project resources">
+      <AnimatedSidebar
+        ariaLabel="Project resources"
+        collapsible="offcanvas"
+      >
         <AnimatedSidebarContent>
           <AnimatedSidebarGroup>
             <AnimatedSidebarGroupLabel>Resources</AnimatedSidebarGroupLabel>
