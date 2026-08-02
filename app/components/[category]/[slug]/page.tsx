@@ -21,6 +21,7 @@ import {
 } from "@/components/motion/tabs";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { ComponentCard } from "@/components/app/docs/component-card";
+import { ComponentGuide } from "@/components/app/docs/component-guide";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { getPreview, previews } from "@/components/previews";
@@ -65,7 +66,7 @@ export async function generateMetadata({
     ? `/${installSlugs[0]}.json`
     : `/${comp.slug}.json`;
 
-  const title = `${comp.name} · React motion component`;
+  const title = comp.guide?.seo.title ?? `${comp.name} · React motion component`;
   const ogTitle = `${title} · beUI`;
   const pageUrl = `/components/${cat.slug}/${comp.slug}`;
   const imageUrl = `/api/og?component=${comp.slug}`;
@@ -166,7 +167,18 @@ export default async function ComponentPage({
     })) ?? [];
   const pageNavItems: PageNavItem[] = [
     ...(variantNavItems.length
-      ? variantNavItems
+      ? [
+          ...variantNavItems,
+          ...(!hasVariantInstallCommands
+            ? [{ id: "install", label: "Install" }]
+            : []),
+          ...(comp.guide
+            ? [
+                { id: "composition", label: "Composition" },
+                { id: "behavior", label: "How it works" },
+              ]
+            : []),
+        ]
       : [
           {
             id: "overview",
@@ -178,6 +190,12 @@ export default async function ComponentPage({
                 : []),
               ...(propsDocs.length
                 ? [{ id: "api-reference", label: "API Reference" }]
+                : []),
+              ...(comp.guide
+                ? [
+                    { id: "composition", label: "Composition" },
+                    { id: "behavior", label: "How it works" },
+                  ]
                 : []),
             ],
           },
@@ -280,6 +298,8 @@ export default async function ComponentPage({
             </div>
           </section>
         ) : null}
+
+        {comp.guide ? <ComponentGuide guide={comp.guide} /> : null}
 
         {related.length ? (
           <section

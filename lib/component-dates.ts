@@ -53,7 +53,7 @@ const COMPONENT_DATES = {
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
   "agents/loading-states": {
     publishedAt: "2026-07-30",
-    updatedAt: "2026-07-30",
+    updatedAt: "2026-08-02",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
@@ -69,7 +69,7 @@ const COMPONENT_DATES = {
   },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
   },
   "agents/code-block": {
     publishedAt: "2026-08-02",
@@ -85,11 +85,11 @@ const COMPONENT_DATES = {
   },
   "agents/tool-result": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
   },
   "agents/file-diff": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
   },
   "agents/streaming-response": {
     publishedAt: "2026-08-01",
@@ -97,15 +97,15 @@ const COMPONENT_DATES = {
   },
   "agents/tool-approval": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
   },
   "agents/citations": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
   },
   "agents/agent-activity": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
   },
   "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-07-15" },
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-07-14" },

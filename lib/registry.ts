@@ -1,3 +1,5 @@
+import { type AgentGuide, agentGuides } from "@/lib/agent-guides";
+
 export type ComponentExample = {
   slug: string;
   name: string;
@@ -35,6 +37,8 @@ export type ComponentEntry = {
   extraFiles?: string[];
   /** Per-variant breakdown rendered as separate Preview / Usage / Source on the page. */
   examples?: ComponentExample[];
+  /** Optional behavior guide rendered on the component documentation page. */
+  guide?: AgentGuide;
 };
 
 export type CategoryEntry = {
@@ -808,6 +812,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "message-bubble",
         name: "Message Bubble",
+        guide: agentGuides["message-bubble"],
         description:
           "A focused conversational surface with visual tones, independent alignment, grouped messages, expandable content, and interactive link or button support.",
         file: "components/agents/message-bubble.tsx",
@@ -857,6 +862,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "message",
         name: "Message",
+        guide: agentGuides.message,
         description:
           "Composable conversation primitives for message rows, grouped bubbles, avatars, metadata, live markers, and a mount-only trailing-edge pop-up for newly sent rows.",
         file: "components/agents/message.tsx",
@@ -874,6 +880,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "message-scroller",
         name: "Message Scroller",
+        guide: agentGuides["message-scroller"],
         description:
           "A reader-aware conversation viewport that follows streamed output at the live edge and releases control when the reader moves away.",
         file: "components/agents/message-scroller.tsx",
@@ -891,6 +898,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "prompt-input",
         name: "Prompt Input",
+        guide: agentGuides["prompt-input"],
         description:
           "An auto-growing agent composer with prompt actions, model selection, keyboard submission, and animated send and stop states.",
         file: "components/agents/prompt-input.tsx",
@@ -908,6 +916,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "todo-list",
         name: "Todo List",
+        guide: agentGuides["todo-list"],
         description:
           "A collapsible agent task plan with morphing status marks, a completion count, compact metadata, and smooth list updates.",
         file: "components/agents/todo-list.tsx",
@@ -925,6 +934,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "code-block",
         name: "Code Block",
+        guide: agentGuides["code-block"],
         description:
           "A syntax-highlighted code surface with stable streaming updates, line numbers, focused lines, smooth following, and copy feedback.",
         file: "components/agents/code-block.tsx",
@@ -942,6 +952,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "approval-card",
         name: "Approval Card",
+        guide: agentGuides["approval-card"],
         description:
           "A human-in-the-loop decision surface for approvals, single or multiple-choice questions, custom responses, and multi-step review flows.",
         file: "components/agents/approval-card/index.tsx",
@@ -982,6 +993,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "file-diff",
         name: "File Diff",
+        guide: agentGuides["file-diff"],
         description:
           "A syntax-highlighted file change disclosure with progressive rows, line numbers, live change counts, smooth following, and completion collapse.",
         file: "components/agents/file-diff.tsx",
@@ -998,6 +1010,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "tool-result",
         name: "Tool Result",
+        guide: agentGuides["tool-result"],
         description:
           "A lightweight execution disclosure for syntax-highlighted terminal output and request responses that collapses into a compact completed state.",
         file: "components/agents/tool-result.tsx",
@@ -1036,6 +1049,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "streaming-response",
         name: "Streaming Response",
+        guide: agentGuides["streaming-response"],
         description:
           "A stable response surface with completion actions, rendered content, and an expandable source summary.",
         file: "components/agents/streaming-response.tsx",
@@ -1053,6 +1067,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "tool-approval",
         name: "Tool Approval",
+        guide: agentGuides["tool-approval"],
         description:
           "A human-in-the-loop permission card for reviewing tool details, allowing once, remembering access, or denying execution.",
         file: "components/agents/tool-approval.tsx",
@@ -1069,6 +1084,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "citations",
         name: "Citations",
+        guide: agentGuides.citations,
         description:
           "Inline citation markers paired with a collapsible, progressively rendered reference collection for grounded agent responses.",
         file: "components/agents/citations.tsx",
@@ -1085,6 +1101,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "agent-activity",
         name: "Agent Activity",
+        guide: agentGuides["agent-activity"],
         description:
           "One adaptive activity stream for reasoning, searches, tool calls, structured execution traces, or a chronological mix.",
         file: "components/agents/agent-activity/index.tsx",
@@ -1164,6 +1181,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "loading-states",
         name: "Agent Loading States",
+        guide: agentGuides["loading-states"],
         description:
           "Three thoughtful loading states for AI interfaces: shimmering status text, live agent progress, and cycling reasoning phrases.",
         file: "components/agents/loading-states/index.ts",
