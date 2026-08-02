@@ -4,6 +4,130 @@ import type { ComponentType } from "react";
 // Every preview is a client component dragging the library + motion with it.
 // Lazy chunks keep a page's JS limited to the previews it actually renders.
 export const previews: Record<string, ComponentType> = {
+  "agents/chat-app": dynamic(() =>
+    import("./agents/chat-app.preview").then(
+      (m) => m.ChatAppPreview,
+    ),
+  ),
+  "agents/ai-sidebar": dynamic(() =>
+    import("./agents/ai-sidebar.preview").then((m) => m.AISidebarPreview),
+  ),
+  "agents/message-bubble": dynamic(() =>
+    import("./agents/message-bubble.preview").then(
+      (m) => m.MessageBubblePreview,
+    ),
+  ),
+  "agents/message-bubble-avatars": dynamic(() =>
+    import("./agents/message-bubble-avatars.preview").then(
+      (m) => m.MessageBubbleAvatarsPreview,
+    ),
+  ),
+  "agents/message-bubble-collapsible": dynamic(() =>
+    import("./agents/message-bubble-collapsible.preview").then(
+      (m) => m.MessageBubbleCollapsiblePreview,
+    ),
+  ),
+  "agents/message": dynamic(() =>
+    import("./agents/message.preview").then((m) => m.MessagePreview),
+  ),
+  "agents/message-scroller": dynamic(() =>
+    import("./agents/message-scroller.preview").then(
+      (m) => m.MessageScrollerPreview,
+    ),
+  ),
+  "agents/prompt-input": dynamic(() =>
+    import("./agents/prompt-input.preview").then((m) => m.PromptInputPreview),
+  ),
+  "agents/todo-list": dynamic(() =>
+    import("./agents/todo-list.preview").then((m) => m.TodoListPreview),
+  ),
+  "agents/code-block": dynamic(() =>
+    import("./agents/code-block.preview").then((m) => m.CodeBlockPreview),
+  ),
+  "agents/approval-card-question": dynamic(() =>
+    import("./agents/approval-card-question.preview").then(
+      (m) => m.ApprovalCardQuestionPreview,
+    ),
+  ),
+  "agents/approval-card-review": dynamic(() =>
+    import("./agents/approval-card-review.preview").then(
+      (m) => m.ApprovalCardReviewPreview,
+    ),
+  ),
+  "agents/tool-result-terminal": dynamic(() =>
+    import("./agents/tool-result-terminal.preview").then(
+      (m) => m.ToolResultTerminalPreview,
+    ),
+  ),
+  "agents/file-diff": dynamic(() =>
+    import("./agents/file-diff.preview").then((m) => m.FileDiffPreview),
+  ),
+  "agents/tool-result-request": dynamic(() =>
+    import("./agents/tool-result-request.preview").then(
+      (m) => m.ToolResultRequestPreview,
+    ),
+  ),
+  "agents/streaming-response": dynamic(() =>
+    import("./agents/streaming-response.preview").then(
+      (m) => m.StreamingResponsePreview,
+    ),
+  ),
+  "agents/image-generation": dynamic(() =>
+    import("./agents/image-generation.preview").then(
+      (m) => m.ImageGenerationPreview,
+    ),
+  ),
+  "agents/tool-approval": dynamic(() =>
+    import("./agents/tool-approval.preview").then(
+      (m) => m.ToolApprovalPreview,
+    ),
+  ),
+  "agents/citations": dynamic(() =>
+    import("./agents/citations.preview").then((m) => m.CitationsPreview),
+  ),
+  "agents/agent-activity-text": dynamic(() =>
+    import("./agents/agent-activity-text.preview").then(
+      (m) => m.AgentActivityTextPreview,
+    ),
+  ),
+  "agents/agent-activity-steps": dynamic(() =>
+    import("./agents/agent-activity-steps.preview").then(
+      (m) => m.AgentActivityStepsPreview,
+    ),
+  ),
+  "agents/agent-activity-search": dynamic(() =>
+    import("./agents/agent-activity-search.preview").then(
+      (m) => m.AgentActivitySearchPreview,
+    ),
+  ),
+  "agents/agent-activity-tools": dynamic(() =>
+    import("./agents/agent-activity-tools.preview").then(
+      (m) => m.AgentActivityToolsPreview,
+    ),
+  ),
+  "agents/agent-activity-mixed": dynamic(() =>
+    import("./agents/agent-activity.preview").then(
+      (m) => m.AgentActivityMixedPreview,
+    ),
+  ),
+  "agents/agent-trace": dynamic(() =>
+    import("./agents/agent-trace.preview").then((m) => m.AgentTracePreview),
+  ),
+  "agents/thinking-shimmer": dynamic(() =>
+    import("./agents/thinking-shimmer.preview").then(
+      (m) => m.ThinkingShimmerPreview,
+    ),
+  ),
+  "agents/agent-progress": dynamic(() =>
+    import("./agents/agent-progress.preview").then(
+      (m) => m.AgentProgressPreview,
+    ),
+  ),
+  "agents/reasoning-text": dynamic(() =>
+    import("./agents/reasoning-text.preview").then(
+      (m) => m.ReasoningTextPreview,
+    ),
+  ),
   "blocks/infinite-masonry": dynamic(() =>
     import("./blocks/infinite-masonry.preview").then(
       (m) => m.InfiniteMasonryPreview,

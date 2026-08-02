@@ -9,31 +9,50 @@ import { cn } from "@/lib/utils";
 export interface PreviewRailItem {
   id: string;
   label: string;
+  ariaLabel?: string;
   description?: ReactNode;
-  href: string;
+  href?: string;
   target?: "_blank" | "_self" | "_parent" | "_top";
   rel?: string;
 }
 
 export interface PreviewRailProps {
   items: PreviewRailItem[];
+  label?: string;
   orientation?: "vertical" | "horizontal";
   activeId?: string;
   defaultActiveId?: string;
   onActiveChange?: (id: string) => void;
+  onItemSelect?: (item: PreviewRailItem) => void;
   renderPreview?: (item: PreviewRailItem) => ReactNode;
+  showPreview?: boolean;
+  previewSide?: "before" | "after";
+  highlightActive?: boolean;
+  itemSize?: number;
   children?: ReactNode;
   className?: string;
   railClassName?: string;
+  previewContainerClassName?: string;
   previewClassName?: string;
 }
 
 function DefaultPreview({ item }: { item: PreviewRailItem }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-      <p className="font-medium text-card-foreground">{item.label}</p>
+    <div
+      data-slot="preview-rail-card"
+      className="rounded-2xl border border-border bg-card p-4 shadow-sm"
+    >
+      <p
+        data-slot="preview-rail-title"
+        className="font-medium text-card-foreground"
+      >
+        {item.label}
+      </p>
       {item.description ? (
-        <div className="mt-1 text-sm leading-6 text-muted-foreground">
+        <div
+          data-slot="preview-rail-description"
+          className="mt-1 text-sm leading-6 text-muted-foreground"
+        >
           {item.description}
         </div>
       ) : null}
@@ -43,14 +62,21 @@ function DefaultPreview({ item }: { item: PreviewRailItem }) {
 
 export function PreviewRail({
   items,
+  label = "Section navigation",
   orientation = "vertical",
   activeId,
   defaultActiveId,
   onActiveChange,
+  onItemSelect,
   renderPreview,
+  showPreview = true,
+  previewSide = "after",
+  highlightActive = false,
+  itemSize = 24,
   children,
   className,
   railClassName,
+  previewContainerClassName,
   previewClassName,
 }: PreviewRailProps) {
   const uid = useId();
@@ -67,9 +93,10 @@ export function PreviewRail({
     ? requestedActiveId
     : (items[0]?.id ?? "");
   const displayedId = hoveredId ?? focusedId ?? "";
-  const displayedIndex = items.findIndex((item) => item.id === displayedId);
+  const highlightedId = displayedId || (highlightActive ? selectedId : "");
+  const displayedIndex = items.findIndex((item) => item.id === highlightedId);
   const rowTemplate = items.length
-    ? `repeat(${items.length}, 1.5rem)`
+    ? `repeat(${items.length}, ${itemSize}px)`
     : undefined;
   const isHorizontal = orientation === "horizontal";
 
@@ -95,7 +122,7 @@ export function PreviewRail({
       )}
     >
       <nav
-        aria-label="Section navigation"
+        aria-label={label}
         onPointerLeave={() => setHoveredId(null)}
         style={
           isHorizontal
@@ -112,8 +139,7 @@ export function PreviewRail({
       >
         {items.map((item, index) => {
           const selected = item.id === selectedId;
-          const displayed = item.id === displayedId;
-          const highlighted = displayed;
+          const highlighted = item.id === highlightedId;
           const distance =
             displayedIndex < 0 ? Number.POSITIVE_INFINITY : Math.abs(index - displayedIndex);
           const scale = highlighted
@@ -124,35 +150,10 @@ export function PreviewRail({
                 ? 0.44
                 : 0.25;
 
-          return (
-            <a
-              key={item.id}
-              href={item.href}
-              target={item.target}
-              rel={
-                item.rel ??
-                (item.target === "_blank" ? "noreferrer noopener" : undefined)
-              }
-              aria-label={item.label}
-              aria-current={selected ? "page" : undefined}
-              onPointerEnter={() => {
-                if (canHover) setHoveredId(item.id);
-              }}
-              onPointerDown={() => setFocusedId(null)}
-              onFocus={(event) => {
-                if (event.currentTarget.matches(":focus-visible")) {
-                  setFocusedId(item.id);
-                }
-              }}
-              onClick={() => selectItem(item.id)}
-              className={cn(
-                "relative flex text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                isHorizontal
-                  ? "h-12 w-6 items-end justify-center"
-                  : "h-6 w-12 items-center",
-              )}
-            >
+          const itemContent = (
+            <>
               <motion.span
+                data-slot="preview-rail-tick"
                 aria-hidden="true"
                 animate={isHorizontal ? { scaleY: scale } : { scaleX: scale }}
                 transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
@@ -164,90 +165,164 @@ export function PreviewRail({
                   highlighted ? "text-foreground" : undefined,
                 )}
               />
+            </>
+          );
+
+          const sharedClassName = cn(
+            "relative flex text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            isHorizontal
+              ? "h-12 w-6 items-end justify-center"
+              : "h-6 w-12 items-center",
+          );
+          const sharedStyle = isHorizontal
+            ? { width: itemSize }
+            : { height: itemSize };
+          const handlePointerEnter = () => {
+            if (canHover) setHoveredId(item.id);
+          };
+          const handleFocus = (currentTarget: HTMLElement) => {
+            if (currentTarget.matches(":focus-visible")) {
+              setFocusedId(item.id);
+            }
+          };
+          const handleSelect = () => {
+            selectItem(item.id);
+            onItemSelect?.(item);
+          };
+
+          return item.href ? (
+            <a
+              key={item.id}
+              data-slot="preview-rail-item"
+              href={item.href}
+              target={item.target}
+              rel={
+                item.rel ??
+                (item.target === "_blank" ? "noreferrer noopener" : undefined)
+              }
+              aria-label={item.ariaLabel ?? item.label}
+              aria-current={selected ? "page" : undefined}
+              onPointerEnter={handlePointerEnter}
+              onMouseEnter={handlePointerEnter}
+              onPointerDown={() => setFocusedId(null)}
+              onFocus={(event) => handleFocus(event.currentTarget)}
+              onClick={handleSelect}
+              style={sharedStyle}
+              className={sharedClassName}
+            >
+              {itemContent}
             </a>
+          ) : (
+            <button
+              key={item.id}
+              data-slot="preview-rail-item"
+              type="button"
+              aria-label={item.ariaLabel ?? item.label}
+              aria-current={selected ? "location" : undefined}
+              onPointerEnter={handlePointerEnter}
+              onMouseEnter={handlePointerEnter}
+              onPointerDown={() => setFocusedId(null)}
+              onFocus={(event) => handleFocus(event.currentTarget)}
+              onClick={handleSelect}
+              style={sharedStyle}
+              className={sharedClassName}
+            >
+              {itemContent}
+            </button>
           );
         })}
       </nav>
 
-      <div
-        aria-hidden="true"
-        style={
-          isHorizontal
-            ? { gridTemplateColumns: rowTemplate }
-            : { gridTemplateRows: rowTemplate }
-        }
-        className={cn(
-          "pointer-events-none absolute z-50 grid",
-          isHorizontal
-            ? "top-1/2 left-1/2 h-5 w-fit max-w-full -translate-x-1/2 -translate-y-1/2 justify-center"
-            : "inset-y-0 right-4 left-16 content-center",
-        )}
-      >
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className={cn(
-              "relative flex h-6 items-center",
-              isHorizontal ? "w-6 justify-center" : undefined,
-            )}
-          >
-            {item.id === displayedId ? (
-              <div
-                className={cn(
-                  isHorizontal
-                    ? "absolute bottom-12 left-1/2 w-72 -translate-x-1/2"
-                    : "w-full max-w-sm",
-                  previewClassName,
-                )}
-              >
-                <motion.div
-                  layoutId={`preview-rail-card-${uid}`}
-                  transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
+      {showPreview ? (
+        <div
+          aria-hidden="true"
+          style={
+            isHorizontal
+              ? { gridTemplateColumns: rowTemplate }
+              : { gridTemplateRows: rowTemplate }
+          }
+          className={cn(
+            "pointer-events-none absolute z-50 grid",
+            isHorizontal
+              ? "top-1/2 left-1/2 h-5 w-fit max-w-full -translate-x-1/2 -translate-y-1/2 justify-center"
+              : previewSide === "before"
+                ? "inset-y-0 right-16 left-4 content-center"
+                : "inset-y-0 right-4 left-16 content-center",
+            previewContainerClassName,
+          )}
+        >
+          {items.map((item) => (
+            <div
+              key={item.id}
+              style={
+                isHorizontal ? { width: itemSize } : { height: itemSize }
+              }
+              className={cn(
+                "relative flex items-center",
+                isHorizontal ? "justify-center" : undefined,
+              )}
+            >
+              {item.id === displayedId ? (
+                <div
+                  className={cn(
+                    isHorizontal
+                      ? "absolute bottom-12 left-1/2 w-72 -translate-x-1/2"
+                      : cn(
+                          "w-full max-w-sm",
+                          previewSide === "before" && "ml-auto",
+                        ),
+                    previewClassName,
+                  )}
                 >
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                      key={item.id}
-                      initial={
-                        reduce
-                          ? { opacity: 0 }
-                          : { opacity: 0, y: 4, filter: "blur(6px)" }
-                      }
-                      animate={
-                        reduce
-                          ? { opacity: 1 }
-                          : { opacity: 1, y: 0, filter: "blur(0px)" }
-                      }
-                      exit={
-                        reduce
-                          ? { opacity: 0 }
-                          : {
-                              opacity: 0,
-                              y: -2,
-                              filter: "blur(4px)",
-                              transition: {
-                                duration: 0.12,
-                                ease: EASE_OUT,
-                              },
-                            }
-                      }
-                      transition={{
-                        duration: reduce ? 0 : 0.18,
-                        ease: EASE_OUT,
-                      }}
-                    >
-                      {renderPreview ? (
-                        renderPreview(item)
-                      ) : (
-                        <DefaultPreview item={item} />
-                      )}
-                    </motion.div>
-                  </AnimatePresence>
-                </motion.div>
-              </div>
-            ) : null}
-          </div>
-        ))}
-      </div>
+                  <motion.div
+                    layoutId={`preview-rail-card-${uid}`}
+                    transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
+                  >
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.div
+                        key={item.id}
+                        initial={
+                          reduce
+                            ? { opacity: 0 }
+                            : { opacity: 0, y: 4, filter: "blur(6px)" }
+                        }
+                        animate={
+                          reduce
+                            ? { opacity: 1 }
+                            : { opacity: 1, y: 0, filter: "blur(0px)" }
+                        }
+                        exit={
+                          reduce
+                            ? { opacity: 0 }
+                            : {
+                                opacity: 0,
+                                y: -2,
+                                filter: "blur(4px)",
+                                transition: {
+                                  duration: 0.12,
+                                  ease: EASE_OUT,
+                                },
+                              }
+                        }
+                        transition={{
+                          duration: reduce ? 0 : 0.18,
+                          ease: EASE_OUT,
+                        }}
+                      >
+                        {renderPreview ? (
+                          renderPreview(item)
+                        ) : (
+                          <DefaultPreview item={item} />
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
+                  </motion.div>
+                </div>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       {children ? (
         <div className="min-h-0 min-w-0 flex-1">{children}</div>

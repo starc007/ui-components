@@ -51,6 +51,74 @@ const COMPONENT_DATES = {
   "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-07-13" },
   "motion/cylinder-carousel": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
+  "agents/loading-states": {
+    publishedAt: "2026-07-30",
+    updatedAt: "2026-08-02",
+  },
+  "agents/chat-app": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/message-bubble": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/message": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/message-scroller": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/ai-sidebar": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/approval-card": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/code-block": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/todo-list": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/prompt-input": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/tool-result": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/file-diff": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/streaming-response": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/image-generation": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/tool-approval": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/citations": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/agent-activity": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
   "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-07-15" },
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-07-14" },
   "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-07-27" },

@@ -70,6 +70,8 @@ export function componentKeywords(
  * description; only the SERP/social snippet carries the tail.
  */
 export function componentMetaDescription(comp: ComponentEntry): string {
+  if (comp.guide?.seo.description) return comp.guide.seo.description;
+
   return `${comp.description} Free, open-source React and Next.js motion component. Copy-paste the source or install with shadcn.`;
 }
 
@@ -146,9 +148,9 @@ export function componentJsonLd(
     "@context": "https://schema.org",
     "@type": "TechArticle",
     "@id": `${url}#article`,
-    headline: `${comp.name} · React motion component`,
+    headline: comp.guide?.seo.title ?? `${comp.name} · React motion component`,
     name: comp.name,
-    description: comp.description,
+    description: comp.guide?.seo.description ?? comp.description,
     url,
     image: abs(`/api/og?component=${comp.slug}`),
     inLanguage: "en",
@@ -165,7 +167,7 @@ export function componentJsonLd(
     about: {
       "@type": "SoftwareSourceCode",
       name: comp.name,
-      description: comp.description,
+      description: comp.guide?.seo.description ?? comp.description,
       codeRepository: "https://github.com/starc007/ui-components",
       license: "https://github.com/starc007/ui-components/blob/main/LICENSE",
       programmingLanguage: "TypeScript",

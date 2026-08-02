@@ -75,7 +75,13 @@ export async function buildComponentMarkdown(
     "---",
     `title: ${JSON.stringify(component.name)}`,
     `description: ${JSON.stringify(component.description)}`,
-    `category: ${JSON.stringify(categorySlug === "blocks" ? "Blocks" : "Components")}`,
+    `category: ${JSON.stringify(
+      categorySlug === "blocks"
+        ? "Blocks"
+        : categorySlug === "agents"
+          ? "AI Agents"
+          : "Components",
+    )}`,
     `publishedAt: ${JSON.stringify(dates.publishedAt)}`,
     `updatedAt: ${JSON.stringify(dates.updatedAt)}`,
     `documentation: ${JSON.stringify(pageUrl)}`,

@@ -45,7 +45,7 @@ export function MobileNav() {
               onClick={() => setOpen(false)}
               className={cn(
                 "rounded-md px-3 py-1.5 text-sm transition-colors",
-                pathname.startsWith("/components/motion") || (pathname.startsWith("/components") && !pathname.startsWith("/components/blocks"))
+                pathname.startsWith("/components/motion")
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
@@ -63,6 +63,18 @@ export function MobileNav() {
               )}
             >
               Blocks
+            </Link>
+            <Link
+              href="/components/agents"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                pathname.startsWith("/components/agents")
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Agents
             </Link>
             <Link
               href="/playground"
