@@ -815,61 +815,6 @@ export const registry: CategoryEntry[] = [
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
       {
-        slug: "chat-app",
-        name: "Chat App",
-        description:
-          "A complete agent conversation workspace composing navigation, messages, streaming, planning, approvals, tools, code, diffs, generated media, sources, and prompt input.",
-        file: "components/agents/chat-app.tsx",
-        usageFile:
-          "components/previews/agents/chat-app-usage.tsx",
-        extraFiles: [
-          "components/agents/agent-activity/index.tsx",
-          "components/agents/ai-sidebar.tsx",
-          "components/agents/approval-card/index.tsx",
-          "components/agents/code-block.tsx",
-          "components/agents/file-diff.tsx",
-          "components/agents/image-generation.tsx",
-          "components/agents/loading-states/thinking-shimmer.tsx",
-          "components/agents/message.tsx",
-          "components/agents/message-bubble.tsx",
-          "components/agents/message-scroller.tsx",
-          "components/agents/prompt-input.tsx",
-          "components/agents/streaming-response.tsx",
-          "components/agents/todo-list.tsx",
-          "components/agents/tool-approval.tsx",
-          "components/agents/tool-result.tsx",
-        ],
-        badge: "new",
-        launchedAt: "2026-08-02",
-        keywords: [
-          "AI chat app React",
-          "agent workspace example",
-          "complete AI chat interface",
-          "AI SDK compatible chat UI",
-          "agent conversation layout",
-          "LLM chat app component",
-        ],
-      },
-      {
-        slug: "ai-sidebar",
-        name: "AI Sidebar",
-        guide: agentGuides["ai-sidebar"],
-        description:
-          "A collapsible AI workspace sidebar for folders, projects, files, and bookmarks with keyboard navigation, optimistic moves, inline rename, and overflow-aware labels.",
-        file: "components/agents/ai-sidebar.tsx",
-        usageFile: "components/previews/agents/ai-sidebar.usage.tsx",
-        badge: "new",
-        launchedAt: "2026-08-02",
-        keywords: [
-          "AI sidebar React",
-          "agent workspace sidebar",
-          "draggable resource tree",
-          "project file sidebar",
-          "collapsible AI navigation",
-          "folder tree React",
-        ],
-      },
-      {
         slug: "message-bubble",
         name: "Message Bubble",
         guide: agentGuides["message-bubble"],
@@ -877,7 +822,7 @@ export const registry: CategoryEntry[] = [
           "A focused conversational surface with visual tones, independent alignment, grouped messages, expandable content, and interactive link or button support.",
         file: "components/agents/message-bubble.tsx",
         badge: "new",
-        launchedAt: "2026-08-02",
+        launchedAt: "2026-08-03",
         keywords: [
           "message bubble React",
           "chat bubble component",
@@ -929,7 +874,7 @@ export const registry: CategoryEntry[] = [
           "Composable conversation primitives for message rows, grouped bubbles, avatars, metadata, live markers, and a mount-only trailing-edge pop-up for newly sent rows.",
         file: "components/agents/message.tsx",
         badge: "new",
-        launchedAt: "2026-08-02",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI message React",
           "chat message component",
@@ -950,7 +895,7 @@ export const registry: CategoryEntry[] = [
         usageFile:
           "components/previews/agents/message-scroller.usage.tsx",
         badge: "new",
-        launchedAt: "2026-08-02",
+        launchedAt: "2026-08-03",
         keywords: [
           "message scroller React",
           "AI chat autoscroll",
@@ -968,7 +913,7 @@ export const registry: CategoryEntry[] = [
           "An auto-growing agent composer with prompt actions, model selection, keyboard submission, and animated send and stop states.",
         file: "components/agents/prompt-input.tsx",
         badge: "new",
-        launchedAt: "2026-08-02",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI prompt input React",
           "model selector dropdown",
@@ -986,7 +931,7 @@ export const registry: CategoryEntry[] = [
           "A collapsible agent task plan with morphing status marks, a completion count, compact metadata, and smooth list updates.",
         file: "components/agents/todo-list.tsx",
         badge: "new",
-        launchedAt: "2026-08-02",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI agent todo list React",
           "agent task progress UI",
@@ -1004,7 +949,7 @@ export const registry: CategoryEntry[] = [
           "A syntax-highlighted code surface with stable streaming updates, line numbers, focused lines, smooth following, and copy feedback.",
         file: "components/agents/code-block.tsx",
         badge: "new",
-        launchedAt: "2026-08-02",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI code block React",
           "streaming code component",
@@ -1023,7 +968,7 @@ export const registry: CategoryEntry[] = [
         file: "components/agents/approval-card/index.tsx",
         extraFiles: ["components/agents/approval-card/types.ts"],
         badge: "new",
-        launchedAt: "2026-08-01",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI approval card React",
           "human in the loop UI",
@@ -1063,7 +1008,7 @@ export const registry: CategoryEntry[] = [
           "A syntax-highlighted file change disclosure with progressive rows, line numbers, live change counts, smooth following, and completion collapse.",
         file: "components/agents/file-diff.tsx",
         badge: "new",
-        launchedAt: "2026-08-01",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI file diff React",
           "agent code changes UI",
@@ -1080,7 +1025,7 @@ export const registry: CategoryEntry[] = [
           "A lightweight execution disclosure for syntax-highlighted terminal output and request responses that collapses into a compact completed state.",
         file: "components/agents/tool-result.tsx",
         badge: "new",
-        launchedAt: "2026-08-01",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI tool result React",
           "agent terminal output UI",
@@ -1119,7 +1064,7 @@ export const registry: CategoryEntry[] = [
           "A stable response surface with completion actions, rendered content, and an expandable source summary.",
         file: "components/agents/streaming-response.tsx",
         badge: "new",
-        launchedAt: "2026-08-01",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI streaming response React",
           "LLM token stream UI",
@@ -1137,7 +1082,7 @@ export const registry: CategoryEntry[] = [
           "A stable generated-image surface that moves from queued work through progressive refinement to a completed result without layout shift.",
         file: "components/agents/image-generation.tsx",
         badge: "new",
-        launchedAt: "2026-08-02",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI image generation React",
           "generated image loading UI",
@@ -1155,7 +1100,7 @@ export const registry: CategoryEntry[] = [
           "A human-in-the-loop permission card for reviewing tool details, allowing once, remembering access, or denying execution.",
         file: "components/agents/tool-approval.tsx",
         badge: "new",
-        launchedAt: "2026-08-01",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI tool approval UI",
           "agent permission component",
@@ -1172,7 +1117,7 @@ export const registry: CategoryEntry[] = [
           "Inline citation markers paired with a collapsible, progressively rendered reference collection for grounded agent responses.",
         file: "components/agents/citations.tsx",
         badge: "new",
-        launchedAt: "2026-08-01",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI citations React",
           "LLM citations component",
@@ -1189,7 +1134,7 @@ export const registry: CategoryEntry[] = [
           "One adaptive activity stream for reasoning, searches, tool calls, structured execution traces, or a chronological mix.",
         file: "components/agents/agent-activity/index.tsx",
         badge: "new",
-        launchedAt: "2026-08-01",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI agent activity component",
           "agent tool calls UI",
@@ -1274,7 +1219,7 @@ export const registry: CategoryEntry[] = [
           "components/agents/loading-states/reasoning-text.tsx",
         ],
         badge: "new",
-        launchedAt: "2026-07-30",
+        launchedAt: "2026-08-03",
         keywords: [
           "AI agent loading state",
           "agent thinking animation",
@@ -1290,7 +1235,7 @@ export const registry: CategoryEntry[] = [
             description:
               "Shimmering reasoning copy with an ASCII loader and cascade, phrase-swap, or per-letter scramble transitions.",
             badge: "new",
-            launchedAt: "2026-07-30",
+            launchedAt: "2026-08-03",
             installSlug: "reasoning-text",
             file: "components/agents/loading-states/reasoning-text.tsx",
             previewKey: "agents/reasoning-text",
@@ -1303,7 +1248,7 @@ export const registry: CategoryEntry[] = [
             description:
               "A quiet shimmer that keeps the agent's current status readable while work continues.",
             badge: "new",
-            launchedAt: "2026-07-30",
+            launchedAt: "2026-08-03",
             installSlug: "thinking-shimmer",
             file: "components/agents/loading-states/thinking-shimmer.tsx",
             previewKey: "agents/thinking-shimmer",
@@ -1316,13 +1261,67 @@ export const registry: CategoryEntry[] = [
             description:
               "A compact activity glyph, action verb, and live tabular timer for longer-running agent work.",
             badge: "new",
-            launchedAt: "2026-07-30",
+            launchedAt: "2026-08-03",
             installSlug: "agent-progress",
             file: "components/agents/loading-states/agent-progress.tsx",
             previewKey: "agents/agent-progress",
             previewFile:
               "components/previews/agents/agent-progress.preview.tsx",
           },
+        ],
+      },
+      {
+        slug: "ai-sidebar",
+        name: "AI Sidebar",
+        guide: agentGuides["ai-sidebar"],
+        description:
+          "A collapsible AI workspace sidebar for folders, projects, files, and bookmarks with keyboard navigation, optimistic moves, inline rename, and overflow-aware labels.",
+        file: "components/agents/ai-sidebar.tsx",
+        usageFile: "components/previews/agents/ai-sidebar.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI sidebar React",
+          "agent workspace sidebar",
+          "draggable resource tree",
+          "project file sidebar",
+          "collapsible AI navigation",
+          "folder tree React",
+        ],
+      },
+      {
+        slug: "chat-app",
+        name: "Chat App",
+        description:
+          "A complete agent conversation workspace composing navigation, messages, streaming, planning, approvals, tools, code, diffs, generated media, sources, and prompt input.",
+        file: "components/agents/chat-app.tsx",
+        usageFile:
+          "components/previews/agents/chat-app-usage.tsx",
+        extraFiles: [
+          "components/agents/agent-activity/index.tsx",
+          "components/agents/ai-sidebar.tsx",
+          "components/agents/approval-card/index.tsx",
+          "components/agents/code-block.tsx",
+          "components/agents/file-diff.tsx",
+          "components/agents/image-generation.tsx",
+          "components/agents/loading-states/thinking-shimmer.tsx",
+          "components/agents/message.tsx",
+          "components/agents/message-bubble.tsx",
+          "components/agents/message-scroller.tsx",
+          "components/agents/prompt-input.tsx",
+          "components/agents/streaming-response.tsx",
+          "components/agents/todo-list.tsx",
+          "components/agents/tool-approval.tsx",
+          "components/agents/tool-result.tsx",
+        ],
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI chat app React",
+          "agent workspace example",
+          "complete AI chat interface",
+          "AI SDK compatible chat UI",
+          "agent conversation layout",
+          "LLM chat app component",
         ],
       },
     ],

@@ -19,7 +19,7 @@ export function getNewBadgeRemainingMs(
   now = Date.now(),
 ) {
   const launched = launchTimestamp(launchedAt);
-  if (launched === null || now < launched) return 0;
+  if (launched === null) return 0;
 
   return Math.max(0, launched + NEW_BADGE_DURATION_MS - now);
 }
