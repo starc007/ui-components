@@ -1065,6 +1065,24 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "image-generation",
+        name: "Image Generation",
+        guide: agentGuides["image-generation"],
+        description:
+          "A stable generated-image surface that moves from queued work through progressive refinement to a completed result without layout shift.",
+        file: "components/agents/image-generation.tsx",
+        badge: "new",
+        launchedAt: "2026-08-02",
+        keywords: [
+          "AI image generation React",
+          "generated image loading UI",
+          "AI image progress component",
+          "image generation animation",
+          "text to image interface",
+          "AI media result",
+        ],
+      },
+      {
         slug: "tool-approval",
         name: "Tool Approval",
         guide: agentGuides["tool-approval"],

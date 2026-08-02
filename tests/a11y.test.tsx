@@ -8,6 +8,7 @@ import { ApprovalCard } from "@/components/agents/approval-card";
 import { Citation, Citations } from "@/components/agents/citations";
 import { CodeBlock } from "@/components/agents/code-block";
 import { FileDiff } from "@/components/agents/file-diff";
+import { ImageGeneration } from "@/components/agents/image-generation";
 import { AgentProgress } from "@/components/agents/loading-states/agent-progress";
 import { ReasoningText } from "@/components/agents/loading-states/reasoning-text";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
@@ -172,6 +173,17 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
         code={"export async function run() {\n  return true;\n}"}
         status="streaming"
       />
+    ),
+  ],
+  [
+    "ImageGeneration active",
+    () => (
+      <ImageGeneration
+        label="Generated mountain landscape"
+        status="generating"
+      >
+        <div className="size-full bg-muted" />
+      </ImageGeneration>
     ),
   ],
   [

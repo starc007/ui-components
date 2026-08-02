@@ -851,6 +851,87 @@ export const agentGuides = {
         "The content is an opaque loading state, a structured tool event, or a short message with no response lifecycle.",
     },
   },
+  "image-generation": {
+    seo: {
+      title: "AI Image Generation Animation · React Component",
+      description:
+        "A React image-generation surface with stable aspect ratio, queued and refining states, progressive media reveal, completion feedback, and retry recovery.",
+    },
+    introduction:
+      "Generated media should occupy its final space before pixels are ready. The surface keeps one stable canvas while generation state progressively reveals the result, then settles into an ordinary image that remains easy to inspect.",
+    composition: {
+      description:
+        "Place generated media inside the response row that owns its prompt and completion state.",
+      tree: "Message\n└── MessageContent\n    └── ImageGeneration\n        └── GeneratedMedia",
+    },
+    lifecycle: [
+      {
+        title: "Reserve",
+        description:
+          "The final aspect ratio is present before generated media becomes available.",
+      },
+      {
+        title: "Resolve",
+        description:
+          "A single dither cluster responds to fine-pointer movement while the result resolves.",
+      },
+      {
+        title: "Settle",
+        description:
+          "The veil and blur clear without remounting or resizing the completed image.",
+      },
+    ],
+    principles: [
+      {
+        title: "Keep one canvas",
+        description:
+          "Generation phases update visual treatment inside a fixed aspect ratio so nearby transcript content never shifts.",
+      },
+      {
+        title: "Reveal progressively",
+        description:
+          "The responsive particle field, focus, and saturation communicate refinement without pretending to expose model progress as a percentage.",
+      },
+      {
+        title: "Preserve the result",
+        description:
+          "Completion removes generation effects and leaves the supplied media as the primary, stable content.",
+      },
+    ],
+    implementation: {
+      title: "Keep generated media mounted across status changes",
+      description:
+        "Drive the veil and media treatment from generation status instead of replacing the canvas at every phase. Remounting can replay loading motion, flash the background, and shift the surrounding conversation.",
+    },
+    connections: [
+      {
+        slug: "message",
+        name: "Message",
+        description: "Keeps the generated result attached to its assistant turn.",
+      },
+      {
+        slug: "streaming-response",
+        name: "Streaming Response",
+        description: "Carries accompanying text before or after the media result.",
+      },
+      {
+        slug: "prompt-input",
+        name: "Prompt Input",
+        description: "Collects the instruction that starts generation.",
+      },
+    ],
+    contract: {
+      owns: "Canvas geometry, generation-state presentation, progressive media reveal, status messaging, and retry affordance.",
+      leaves:
+        "Prompt submission, generation transport, progress interpretation, media loading, persistence, and moderation to the application.",
+    },
+    guidance: {
+      useWhen:
+        "Generated visual media needs a stable place in a conversation while work moves through queued, active, refining, complete, or failed states.",
+      avoidWhen:
+        "The result is already available, the media has no generation lifecycle, or the application needs an editable image workspace rather than a status surface.",
+    },
+  },
   "tool-approval": {
     seo: {
       title: "AI Tool Approval · React Component",

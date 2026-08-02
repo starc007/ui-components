@@ -64,6 +64,11 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.StreamingResponsePreview,
     ),
   ),
+  "agents/image-generation": dynamic(() =>
+    import("./agents/image-generation.preview").then(
+      (m) => m.ImageGenerationPreview,
+    ),
+  ),
   "agents/tool-approval": dynamic(() =>
     import("./agents/tool-approval.preview").then(
       (m) => m.ToolApprovalPreview,

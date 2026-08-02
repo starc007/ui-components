@@ -49,7 +49,7 @@ const AGENT_CATEGORY_GROUPS = [
     title: "Response and evidence components",
     description:
       "Render rich answers as they arrive, reveal completion actions at the right time, and connect generated claims to inspectable sources.",
-    slugs: ["streaming-response", "citations"],
+    slugs: ["streaming-response", "image-generation", "citations"],
   },
   {
     id: "progress",
