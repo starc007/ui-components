@@ -46,6 +46,154 @@ export interface AgentGuide {
 }
 
 export const agentGuides = {
+  "animated-sidebar": {
+    seo: {
+      title: "Animated Sidebar · React Component",
+      description:
+        "A composable React application sidebar with responsive collapse, nested navigation, an animated icon rail, and a focus-managed mobile sheet.",
+    },
+    introduction:
+      "An application sidebar is the responsive shell around persistent navigation. It coordinates desktop collapse, mobile presentation, nested destinations, and the content inset without owning the data rendered inside those regions.",
+    composition: {
+      description:
+        "Compose navigation groups inside the sidebar and place the application surface in the sibling inset.",
+      tree: "AnimatedSidebarProvider\n├── AnimatedSidebar\n│   ├── AnimatedSidebarHeader\n│   ├── AnimatedSidebarContent\n│   │   └── AnimatedSidebarMenu\n│   ├── AnimatedSidebarFooter\n│   └── AnimatedSidebarRail\n└── AnimatedSidebarInset",
+    },
+    lifecycle: [
+      {
+        title: "Compose the shell",
+        description:
+          "Header, navigation groups, footer, rail, and inset establish one responsive application frame.",
+      },
+      {
+        title: "Change presentation",
+        description:
+          "Desktop navigation folds into an icon rail while mobile navigation becomes a focus-managed sheet.",
+      },
+      {
+        title: "Preserve the destination",
+        description:
+          "Active and expanded navigation state remains application-owned while the shell changes shape around it.",
+      },
+    ],
+    principles: [
+      {
+        title: "Keep state composable",
+        description:
+          "Controlled and uncontrolled provider state lets the shell fit both local layouts and routed applications.",
+      },
+      {
+        title: "Keep content independent",
+        description:
+          "The inset responds to sidebar width without coupling page content to menu implementation details.",
+      },
+      {
+        title: "Protect mobile focus",
+        description:
+          "The mobile sheet traps focus, closes on Escape, and restores focus to the trigger when dismissed.",
+      },
+    ],
+    implementation: {
+      title: "Keep navigation state outside visual motion",
+      description:
+        "Let routing or application state decide the active destination. The sidebar should animate presentation changes without replacing links, remounting content, or inferring navigation state from motion.",
+    },
+    connections: [
+      {
+        slug: "ai-sidebar",
+        name: "AI Sidebar",
+        description:
+          "Composes the shell with editable projects, folders, files, and bookmarks.",
+      },
+    ],
+    contract: {
+      owns: "Responsive sidebar presentation, desktop collapse, mobile disclosure, navigation composition, rail behavior, and inset layout.",
+      leaves:
+        "Routing, destination data, authorization, resource editing, and inset content to the application or composed components.",
+    },
+    guidance: {
+      useWhen:
+        "An application needs responsive persistent navigation with a coordinated content inset and mobile sheet.",
+      avoidWhen:
+        "A short static link list needs no responsive shell, collapsed rail, mobile focus management, or inset coordination.",
+    },
+  },
+  "ai-sidebar": {
+    seo: {
+      title: "AI Sidebar for Agent Workspaces · React Component",
+      description:
+        "A collapsible React AI sidebar for draggable folders, projects, files, and bookmarks with keyboard navigation, rename, and optimistic rollback.",
+    },
+    introduction:
+      "An AI sidebar organizes changing workspace resources rather than only routing between fixed destinations. Folder and project rows disclose children, while files and bookmarks become the active resource and can move or rename without destabilizing the surrounding workspace.",
+    composition: {
+      description:
+        "Place the resource tree inside Animated Sidebar content and keep the selected resource surface in the sibling inset.",
+      tree: "AnimatedSidebarProvider\n├── AnimatedSidebar\n│   ├── AnimatedSidebarContent\n│   │   └── AISidebar\n│   │       ├── Folder or project\n│   │       └── File or bookmark\n│   └── AnimatedSidebarRail\n└── AnimatedSidebarInset",
+    },
+    lifecycle: [
+      {
+        title: "Disclose",
+        description:
+          "Folders and projects reveal children without becoming active destinations.",
+      },
+      {
+        title: "Interact",
+        description:
+          "Files select, rename, and move through distinct pointer and keyboard paths.",
+      },
+      {
+        title: "Persist",
+        description:
+          "Moves render immediately, then settle or roll back after persistence responds.",
+      },
+    ],
+    principles: [
+      {
+        title: "Separate disclosure from selection",
+        description:
+          "Folder clicks only expand or collapse. Files and bookmarks own active-resource selection.",
+      },
+      {
+        title: "Resolve gesture conflicts",
+        description:
+          "Whole-row dragging suppresses the following click, and double-click rename applies only to leaf resources.",
+      },
+      {
+        title: "Keep the frame stable",
+        description:
+          "Only the resource list scrolls, leaving utility actions, the section heading, and inset content fixed while folders open.",
+      },
+    ],
+    implementation: {
+      title: "Treat movement as an optimistic transaction",
+      description:
+        "Update the local tree first and persist the normalized source, target, and position. Restore the captured tree and announce the rollback when saving fails.",
+    },
+    connections: [
+      {
+        slug: "message-scroller",
+        name: "Message Scroller",
+        description: "Can fill the inset with the selected conversation.",
+      },
+      {
+        slug: "prompt-input",
+        name: "Prompt Input",
+        description: "Can anchor the composer beneath active resource content.",
+      },
+    ],
+    contract: {
+      owns: "Resource disclosure, leaf selection, keyboard focus, drag targets, rename presentation, overflow labels, and optimistic rollback.",
+      leaves:
+        "Sidebar shell behavior, authorization, persistence, resource fetching, and inset content to the application.",
+    },
+    guidance: {
+      useWhen:
+        "An agent workspace needs editable folders, projects, files, bookmarks, or conversations inside a collapsible sidebar.",
+      avoidWhen:
+        "The sidebar contains only fixed application destinations with no hierarchy, editing, movement, or optimistic state.",
+    },
+  },
   "message-bubble": {
     seo: {
       title: "Message Bubble for AI Chat · React Component",

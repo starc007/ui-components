@@ -67,6 +67,10 @@ const COMPONENT_DATES = {
     publishedAt: "2026-08-02",
     updatedAt: "2026-08-02",
   },
+  "agents/ai-sidebar": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
     updatedAt: "2026-08-02",

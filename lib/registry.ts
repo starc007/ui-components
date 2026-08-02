@@ -277,6 +277,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "animated-sidebar",
         name: "Animated Sidebar",
+        guide: agentGuides["animated-sidebar"],
         description:
           "A composable application sidebar with morphing nested navigation that folds into an animated icon rail on desktop and becomes a focus-managed sheet on mobile.",
         file: "components/motion/animated-sidebar.tsx",
@@ -813,6 +814,25 @@ export const registry: CategoryEntry[] = [
     description:
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
+      {
+        slug: "ai-sidebar",
+        name: "AI Sidebar",
+        guide: agentGuides["ai-sidebar"],
+        description:
+          "A collapsible AI workspace sidebar for folders, projects, files, and bookmarks with keyboard navigation, optimistic moves, inline rename, and overflow-aware labels.",
+        file: "components/agents/ai-sidebar.tsx",
+        usageFile: "components/previews/agents/ai-sidebar.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-08-02",
+        keywords: [
+          "AI sidebar React",
+          "agent workspace sidebar",
+          "draggable resource tree",
+          "project file sidebar",
+          "collapsible AI navigation",
+          "folder tree React",
+        ],
+      },
       {
         slug: "message-bubble",
         name: "Message Bubble",

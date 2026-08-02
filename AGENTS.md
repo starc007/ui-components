@@ -74,6 +74,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
+| `ai-sidebar` | `components/agents/ai-sidebar.tsx` | Collapsible AI workspace sidebar (`AISidebar`) for folders, projects, files, and bookmarks with full-row drag and keyboard moves, optimistic rollback, inline rename, persistent menu hover, open-folder icons, and overflow-only marquee labels |
 | `message-bubble` | `components/agents/message-bubble.tsx` | Focused conversational surface (`MessageBubble`) with six visual treatments, independent alignment, an opt-in mount-only surface pop, compact grouping, polymorphic links/buttons, and `MessageBubbleCollapsible` for long responses; streaming geometry updates immediately |
 | `message` | `components/agents/message.tsx` | Composable conversation message (`Message`) with bubble, avatar, header, footer, group, marker, and typing primitives plus an opt-in mount-only trailing-edge pop-up for newly sent rows; re-exports the independently installable `MessageScroller` for compatibility |
 | `message-scroller` | `components/agents/message-scroller.tsx` | Reader-aware conversation viewport (`MessageScroller`) that follows streamed growth only at the live edge, releases on deliberate navigation, and can add a compact message rail that previews, tracks, and scrolls to rendered messages |
