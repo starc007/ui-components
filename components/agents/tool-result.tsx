@@ -28,7 +28,8 @@ import {
   type AgentCodeLanguage,
 } from "@/components/agents/agent-code";
 import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
-import { SPRING_PANEL, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type ToolResultStatus = "running" | "success" | "error" | "cancelled";
@@ -195,6 +196,9 @@ export function ToolResult({
   );
 
   useEffect(() => {
+    if (previousStatus.current !== "running" && status === "running") {
+      setOpen(true);
+    }
     if (
       previousStatus.current === "running" &&
       status !== "running" &&
@@ -296,16 +300,11 @@ export function ToolResult({
         </motion.span>
       </button>
 
-      <motion.div
+      <AgentDisclosure
         id={contentId}
         role="region"
         aria-labelledby={triggerId}
-        aria-hidden={!currentOpen}
-        inert={!currentOpen}
-        initial={false}
-        animate={{ height: currentOpen ? "auto" : 0 }}
-        transition={reduce ? { duration: 0 } : SPRING_PANEL}
-        className="overflow-hidden"
+        open={currentOpen}
       >
         <div className="pl-6 pt-1.5">
           <div className="overflow-hidden rounded-xl bg-muted/80">
@@ -347,7 +346,7 @@ export function ToolResult({
             ) : null}
           </div>
         </div>
-      </motion.div>
+      </AgentDisclosure>
     </div>
   );
 }

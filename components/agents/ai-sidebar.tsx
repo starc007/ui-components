@@ -195,7 +195,11 @@ function moveResource(
   if (move.targetId && containsResource(source, move.targetId)) return null;
 
   const target = move.targetId ? findResource(items, move.targetId) : undefined;
-  if (move.position === "inside" && (!target || !canContain(target))) return null;
+  if (
+    move.position === "inside" &&
+    (!target || target.disabled || !canContain(target))
+  )
+    return null;
 
   const removed = removeResource(items, move.itemId);
   if (!removed.removed) return null;
@@ -463,7 +467,7 @@ function ResourceRow({
         <MarqueeLabel active={hovered || menuOpen}>{row.item.label}</MarqueeLabel>
       )}
 
-      {!renaming ? (
+      {!renaming && !row.item.disabled ? (
         <MorphPopover
           open={menuOpen}
           onOpenChange={onMenuOpenChange}
@@ -525,6 +529,7 @@ export function AISidebar({
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
+  const movePendingRef = useRef(false);
   const renderedItems = internalItems;
   const selectedId = activeId ?? internalActiveId;
 
@@ -566,10 +571,15 @@ export function AISidebar({
 
   const performMove = useCallback(
     async (move: SidebarResourceMove) => {
+      if (movePendingRef.current) {
+        setAnnouncement("Wait for the current move to finish.");
+        return;
+      }
       const before = renderedItems;
       const next = moveResource(before, move);
       if (!next || next === before) return;
 
+      movePendingRef.current = true;
       updateItems(next);
       setDropTarget(null);
       setDraggingId(null);
@@ -587,6 +597,8 @@ export function AISidebar({
         updateItems(before);
         setAnnouncement(`Move failed. ${moved?.label ?? "Item"} was restored.`);
         onMoveError?.(error, move);
+      } finally {
+        movePendingRef.current = false;
       }
     },
     [onMove, onMoveError, renderedItems, updateItems],
@@ -621,6 +633,43 @@ export function AISidebar({
       const next = flat[index + 1];
       const moveModifier = event.altKey && event.shiftKey;
 
+      if (event.key === "ArrowDown" && !moveModifier && next) {
+        event.preventDefault();
+        focusRow(next.item.id);
+        return;
+      }
+      if (event.key === "ArrowUp" && !moveModifier && previous) {
+        event.preventDefault();
+        focusRow(previous.item.id);
+        return;
+      }
+      if (event.key === "Home" && flat[0]) {
+        event.preventDefault();
+        focusRow(flat[0].item.id);
+        return;
+      }
+      if (event.key === "End" && flat.at(-1)) {
+        event.preventDefault();
+        focusRow(flat.at(-1)?.item.id ?? row.item.id);
+        return;
+      }
+
+      if (row.item.disabled) {
+        if (event.key === "ArrowLeft" && row.parentId) {
+          event.preventDefault();
+          focusRow(row.parentId);
+        } else if (
+          moveModifier ||
+          ["ArrowRight", "Enter", " ", "F2", "ContextMenu"].includes(
+            event.key,
+          ) ||
+          (event.shiftKey && event.key === "F10")
+        ) {
+          event.preventDefault();
+        }
+        return;
+      }
+
       if (moveModifier && event.key === "ArrowUp" && previous) {
         event.preventDefault();
         void performMove({ itemId: row.item.id, targetId: previous.item.id, position: "before" });
@@ -643,19 +692,7 @@ export function AISidebar({
         return;
       }
 
-      if (event.key === "ArrowDown" && next) {
-        event.preventDefault();
-        focusRow(next.item.id);
-      } else if (event.key === "ArrowUp" && previous) {
-        event.preventDefault();
-        focusRow(previous.item.id);
-      } else if (event.key === "Home" && flat[0]) {
-        event.preventDefault();
-        focusRow(flat[0].item.id);
-      } else if (event.key === "End" && flat.at(-1)) {
-        event.preventDefault();
-        focusRow(flat.at(-1)?.item.id ?? row.item.id);
-      } else if (event.key === "ArrowRight" && canContain(row.item)) {
+      if (event.key === "ArrowRight" && canContain(row.item)) {
         event.preventDefault();
         if (!expandedIds.has(row.item.id)) toggle(row.item.id);
         else if (next?.parentId === row.item.id) focusRow(next.item.id);
@@ -756,7 +793,10 @@ export function AISidebar({
               const rect = event.currentTarget.getBoundingClientRect();
               const ratio = (event.clientY - rect.top) / rect.height;
               const position =
-                canContain(targetRow.item) && ratio >= 0.25 && ratio <= 0.75
+                !targetRow.item.disabled &&
+                canContain(targetRow.item) &&
+                ratio >= 0.25 &&
+                ratio <= 0.75
                   ? "inside"
                   : ratio < 0.5
                     ? "before"

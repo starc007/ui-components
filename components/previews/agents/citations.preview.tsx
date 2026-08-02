@@ -46,11 +46,12 @@ function CitationsDemo() {
     <div className="space-y-4">
       <p className="text-sm leading-6 text-foreground/90">
         Use layout-aware motion for newly appended results{" "}
-        <Citation citationId="motion" index={1} /> and preserve accessible
-        disclosure behavior <Citation citationId="wai" index={2} /> as the list
+        <Citation citationId="motion" index={1} idPrefix="preview-source" /> and preserve accessible
+        disclosure behavior <Citation citationId="wai" index={2} idPrefix="preview-source" /> as the list
         grows.
       </p>
       <Citations
+        idPrefix="preview-source"
         citations={CITATION_ITEMS.slice(0, visible)}
         defaultOpen
       />

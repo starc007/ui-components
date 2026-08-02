@@ -12,10 +12,10 @@ import {
   useState,
 } from "react";
 import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
+import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import {
   EASE_OUT,
   SPRING_LAYOUT,
-  SPRING_PANEL,
   SPRING_SWAP,
 } from "@/lib/ease";
 import { cn } from "@/lib/utils";
@@ -228,6 +228,9 @@ export function TodoList({
   );
 
   useEffect(() => {
+    if (previousComplete.current && !allComplete) {
+      setOpen(true);
+    }
     if (!previousComplete.current && allComplete && collapseOnComplete) {
       setOpen(false);
     }
@@ -299,16 +302,11 @@ export function TodoList({
         </motion.span>
       </button>
 
-      <motion.div
+      <AgentDisclosure
         id={contentId}
         role="region"
         aria-labelledby={triggerId}
-        aria-hidden={!currentOpen}
-        inert={!currentOpen}
-        initial={false}
-        animate={{ height: currentOpen ? "auto" : 0 }}
-        transition={reduce ? { duration: 0 } : SPRING_PANEL}
-        className="overflow-hidden"
+        open={currentOpen}
       >
         <div
           ref={viewportRef}
@@ -383,7 +381,7 @@ export function TodoList({
             </p>
           )}
         </div>
-      </motion.div>
+      </AgentDisclosure>
     </section>
   );
 }

@@ -12,10 +12,10 @@ import {
   useState,
 } from "react";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
+import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import {
   EASE_OUT,
   SPRING_LAYOUT,
-  SPRING_PANEL,
   SPRING_SWAP,
 } from "@/lib/ease";
 import { cn } from "@/lib/utils";
@@ -225,16 +225,12 @@ export function AgentActivity({
         </button>
       )}
 
-      <motion.div
+      <AgentDisclosure
         id={contentId}
         role="region"
         aria-labelledby={triggerId}
-        aria-hidden={!expanded}
-        inert={!expanded}
-        initial={false}
-        animate={{ height: expanded ? viewportHeight : 0 }}
-        transition={reduce ? { duration: 0 } : SPRING_PANEL}
-        className="overflow-hidden"
+        open={expanded}
+        openHeight={viewportHeight}
       >
         <div
           ref={viewportRef}
@@ -277,7 +273,7 @@ export function AgentActivity({
             </AnimatePresence>
           </motion.div>
         </div>
-      </motion.div>
+      </AgentDisclosure>
     </div>
   );
 }

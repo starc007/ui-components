@@ -339,7 +339,11 @@ export function MessageScroller({
       typeof MutationObserver === "undefined"
         ? null
         : new MutationObserver(scheduleRailSync);
-    mutationObserver?.observe(content, { childList: true, subtree: true });
+    mutationObserver?.observe(content, {
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
 
     const resizeObserver =
       typeof ResizeObserver === "undefined"
@@ -437,7 +441,7 @@ export function MessageScroller({
         ref={contentRef}
         role="log"
         aria-live="polite"
-        aria-relevant="additions"
+        aria-relevant="additions text"
         aria-busy={busy}
         className={contentClassName}
         {...contentProps}

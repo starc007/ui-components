@@ -21,7 +21,8 @@ import {
   AgentCode,
   type AgentCodeLanguage,
 } from "@/components/agents/agent-code";
-import { EASE_OUT, SPRING_PANEL, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type ToolApprovalStatus =
@@ -210,14 +211,9 @@ export function ToolApproval({
         </div>
       </div>
 
-      <motion.div
+      <AgentDisclosure
         id={detailsId}
-        aria-hidden={!currentOpen}
-        inert={!currentOpen}
-        initial={false}
-        animate={{ height: currentOpen ? "auto" : 0 }}
-        transition={reduce ? { duration: 0 } : SPRING_PANEL}
-        className="overflow-hidden"
+        open={currentOpen}
       >
         <dl className="mx-4 mb-4 grid gap-2 rounded-xl border border-border/50 bg-background/70 p-3">
           {parameters.map((parameter) => (
@@ -232,7 +228,7 @@ export function ToolApproval({
             </div>
           ))}
         </dl>
-      </motion.div>
+      </AgentDisclosure>
 
       <AnimatePresence initial={false}>
         {pending ? (

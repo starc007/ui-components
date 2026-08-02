@@ -22,7 +22,8 @@ import {
   CitationList,
   CitationStack,
 } from "@/components/agents/citations";
-import { EASE_OUT, SPRING_PANEL, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type StreamingResponseStatus = "streaming" | "complete" | "error";
@@ -243,21 +244,16 @@ export function StreamingResponse({
             </div>
 
             {hasSources ? (
-              <motion.div
+              <AgentDisclosure
                 id={sourcesContentId}
-                aria-hidden={!currentSourcesOpen}
-                inert={!currentSourcesOpen}
-                initial={false}
-                animate={{ height: currentSourcesOpen ? "auto" : 0 }}
-                transition={reduce ? { duration: 0 } : SPRING_PANEL}
-                className="overflow-hidden"
+                open={currentSourcesOpen}
               >
                 <CitationList
                   citations={sources}
                   idPrefix={resolvedSourcePrefix}
                   className="mt-2 rounded-xl bg-muted p-2"
                 />
-              </motion.div>
+              </AgentDisclosure>
             ) : null}
           </motion.div>
         ) : null}

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { cleanup, render } from "@testing-library/react";
+import { act, cleanup, render } from "@testing-library/react";
 import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 
@@ -305,8 +305,9 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     "Citations expanded",
     () => (
       <div>
-        A supported claim <Citation citationId="guide" index={1} />
+        A supported claim <Citation citationId="guide" index={1} idPrefix="test-source" />
         <Citations
+          idPrefix="test-source"
           defaultOpen
           citations={[
             {
@@ -690,7 +691,11 @@ describe("accessibility", () => {
   for (const [name, renderCase] of cases) {
     test(`${name} has no axe violations`, async () => {
       render(<main>{renderCase()}</main>);
-      const results = await axe(document.body);
+      let results: Awaited<ReturnType<typeof axe>> | undefined;
+      await act(async () => {
+        results = await axe(document.body);
+      });
+      if (!results) throw new Error("Accessibility audit did not complete");
       expect(results.violations).toEqual([]);
     });
   }

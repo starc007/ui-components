@@ -822,6 +822,23 @@ export const registry: CategoryEntry[] = [
         file: "components/agents/chat-app.tsx",
         usageFile:
           "components/previews/agents/chat-app-usage.tsx",
+        extraFiles: [
+          "components/agents/agent-activity/index.tsx",
+          "components/agents/ai-sidebar.tsx",
+          "components/agents/approval-card/index.tsx",
+          "components/agents/code-block.tsx",
+          "components/agents/file-diff.tsx",
+          "components/agents/image-generation.tsx",
+          "components/agents/loading-states/thinking-shimmer.tsx",
+          "components/agents/message.tsx",
+          "components/agents/message-bubble.tsx",
+          "components/agents/message-scroller.tsx",
+          "components/agents/prompt-input.tsx",
+          "components/agents/streaming-response.tsx",
+          "components/agents/todo-list.tsx",
+          "components/agents/tool-approval.tsx",
+          "components/agents/tool-result.tsx",
+        ],
         badge: "new",
         launchedAt: "2026-08-02",
         keywords: [

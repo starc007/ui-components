@@ -11,12 +11,13 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
 import { Button } from "@/components/motion/button";
 import { Checkbox } from "@/components/motion/checkbox";
 import { Input } from "@/components/motion/input";
 import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
-import { EASE_OUT, SPRING_PANEL, SPRING_SWAP } from "@/lib/ease";
+import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import type {
   ApprovalCardAnswer,
@@ -344,12 +345,7 @@ export function ApprovalCard({
             ) : null}
           </div>
 
-          <motion.div
-            initial={false}
-            animate={{ height: interactive ? "auto" : 0 }}
-            transition={reduce ? { duration: 0 } : SPRING_PANEL}
-            className="overflow-hidden"
-          >
+          <AgentDisclosure open={interactive}>
             {questionMode && question ? (
               <AnimatePresence initial={false} mode="wait">
                 <motion.div
@@ -457,7 +453,7 @@ export function ApprovalCard({
                 ) : null}
               </div>
             )}
-          </motion.div>
+          </AgentDisclosure>
 
           {!interactive ? (
             <p className="mt-1 text-sm text-muted-foreground">

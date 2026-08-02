@@ -22,7 +22,8 @@ import {
   AgentCodeLine,
   useAgentCodeTokens,
 } from "@/components/agents/agent-code";
-import { SPRING_PANEL, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type FileDiffStatus = "streaming" | "complete";
@@ -108,6 +109,9 @@ export function FileDiff({
   );
 
   useEffect(() => {
+    if (previousStatus.current !== "streaming" && status === "streaming") {
+      setOpen(true);
+    }
     if (
       previousStatus.current === "streaming" &&
       status === "complete" &&
@@ -197,23 +201,19 @@ export function FileDiff({
         </motion.span>
       </button>
 
-      <motion.div
+      <AgentDisclosure
         id={contentId}
         role="region"
         aria-labelledby={triggerId}
-        aria-hidden={!currentOpen}
-        inert={!currentOpen}
-        initial={false}
-        animate={{ height: currentOpen ? "auto" : 0 }}
-        transition={reduce ? { duration: 0 } : SPRING_PANEL}
-        className="overflow-hidden"
+        open={currentOpen}
       >
         <div className="pl-6 pt-1.5">
           <div className="overflow-hidden rounded-xl bg-muted/80">
             <div
               ref={viewportRef}
+              data-slot="file-diff-viewport"
               aria-live="polite"
-              className="scrollbar-hide overflow-y-auto"
+              className="scrollbar-hide overflow-auto"
               style={{ maxHeight }}
             >
               <div className="font-mono text-xs leading-5">
@@ -282,7 +282,7 @@ export function FileDiff({
             ) : null}
           </div>
         </div>
-      </motion.div>
+      </AgentDisclosure>
     </div>
   );
 }

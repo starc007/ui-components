@@ -12,7 +12,14 @@ import {
   WandSparkles,
 } from "lucide-react";
 import { useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useRef, useState, type ComponentProps } from "react";
+import {
+  type ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { AgentActivity } from "@/components/agents/agent-activity";
 import {
   AISidebar,
@@ -91,19 +98,6 @@ const resources: SidebarResource[] = [
   { id: "archive", label: "Archived runs", kind: "folder" },
 ];
 
-const plan: TodoItem[] = [
-  { id: "inspect", title: "Inspect the checkout flow", status: "completed" },
-  { id: "patch", title: "Prepare the validation patch", status: "completed" },
-  { id: "checks", title: "Run focused checks", status: "completed" },
-  {
-    id: "review",
-    title: "Collect release approval",
-    status: "in-progress",
-    progress: 72,
-    detail: "72%",
-  },
-];
-
 const diffLines = [
   {
     id: "context-1",
@@ -159,7 +153,7 @@ function GeneratedPreview() {
   return (
     <svg
       viewBox="0 0 640 420"
-      aria-label="Generated checkout confirmation preview"
+      aria-hidden="true"
       className="size-full"
     >
       <rect width="640" height="420" fill="currentColor" className="text-muted" />
@@ -186,7 +180,9 @@ export function ChatAppExample({
   className,
 }: Pick<ComponentProps<typeof ChatApp>, "className">) {
   const reduce = useReducedMotion() ?? false;
-  const timers = useRef<number[]>([]);
+  const toolTimers = useRef<number[]>([]);
+  const chatTimers = useRef<number[]>([]);
+  const approvalTimers = useRef<number[]>([]);
   const runId = useRef(0);
   const [items, setItems] = useState(resources);
   const [activeResource, setActiveResource] = useState("checkout");
@@ -194,17 +190,54 @@ export function ChatAppExample({
   const [pending, setPending] = useState(false);
   const [activeReply, setActiveReply] = useState<string | null>(null);
   const [messages, setMessages] = useState<AddedMessage[]>([]);
-  const [toolStatus, setToolStatus] =
-    useState<ToolApprovalStatus>("pending");
+  const [toolStatus, setToolStatus] = useState<ToolApprovalStatus>("pending");
   const [approvalStatus, setApprovalStatus] =
     useState<ApprovalCardStatus>("pending");
 
-  const clearTimers = useCallback(() => {
-    timers.current.forEach(window.clearTimeout);
-    timers.current = [];
+  const clearToolTimers = useCallback(() => {
+    toolTimers.current.forEach(window.clearTimeout);
+    toolTimers.current = [];
   }, []);
 
-  useEffect(() => () => clearTimers(), [clearTimers]);
+  const clearChatTimers = useCallback(() => {
+    chatTimers.current.forEach(window.clearTimeout);
+    chatTimers.current = [];
+  }, []);
+
+  const clearApprovalTimers = useCallback(() => {
+    approvalTimers.current.forEach(window.clearTimeout);
+    approvalTimers.current = [];
+  }, []);
+
+  useEffect(
+    () => () => {
+      clearToolTimers();
+      clearChatTimers();
+      clearApprovalTimers();
+    },
+    [clearApprovalTimers, clearChatTimers, clearToolTimers],
+  );
+
+  const plan = useMemo<TodoItem[]>(() => {
+    const checksStatus =
+      toolStatus === "complete"
+        ? "completed"
+        : toolStatus === "running"
+          ? "in-progress"
+          : toolStatus === "denied" || toolStatus === "error"
+            ? "cancelled"
+            : "pending";
+    return [
+      { id: "inspect", title: "Inspect the checkout flow", status: "completed" },
+      { id: "patch", title: "Prepare the validation patch", status: "completed" },
+      { id: "checks", title: "Run focused checks", status: checksStatus },
+      {
+        id: "review",
+        title: "Collect release approval",
+        status: toolStatus === "complete" ? "in-progress" : "pending",
+      },
+    ];
+  }, [toolStatus]);
 
   useEffect(() => {
     if (!activeReply) return;
@@ -256,9 +289,9 @@ export function ChatAppExample({
   }, [activeReply, reduce]);
 
   const approveTool = () => {
-    clearTimers();
+    clearToolTimers();
     setToolStatus("approving");
-    timers.current = [
+    toolTimers.current = [
       window.setTimeout(() => setToolStatus("approved"), 450),
       window.setTimeout(() => setToolStatus("running"), 850),
       window.setTimeout(() => setToolStatus("complete"), 1650),
@@ -275,7 +308,7 @@ export function ChatAppExample({
     ]);
     setInput("");
     setPending(true);
-    timers.current.push(
+    chatTimers.current.push(
       window.setTimeout(() => {
         setMessages((current) => [
           ...current,
@@ -293,7 +326,7 @@ export function ChatAppExample({
   };
 
   const stop = () => {
-    clearTimers();
+    clearChatTimers();
     setPending(false);
     setMessages((current) =>
       current.map((message) =>
@@ -428,95 +461,168 @@ export function ChatAppExample({
                   status={toolStatus}
                   defaultOpen
                   parameters={[
-                    { id: "command", label: "Command", value: <ToolApprovalCode code="bun test checkout --coverage" language="bash" /> },
+                    {
+                      id: "command",
+                      label: "Command",
+                      value: (
+                        <ToolApprovalCode
+                          code="bun test checkout --coverage"
+                          language="bash"
+                        />
+                      ),
+                    },
                     { id: "scope", label: "Scope", value: "Current workspace" },
                   ]}
                   onApprove={approveTool}
                   onAlwaysAllow={approveTool}
-                  onDeny={() => setToolStatus("denied")}
-                />
-              </MessageContent>
-            </Message>
-
-            <Message from="assistant">
-              <MessageAvatar placeholder />
-              <MessageContent className="gap-3">
-                <ToolResult
-                  tool="terminal.run"
-                  title="Checkout checks passed"
-                  status="success"
-                  kind="terminal"
-                  meta="2.8s"
-                  defaultOpen
-                  collapseOnComplete={false}
-                >
-                  <ToolResultOutput>{"✓ validation contract\n✓ checkout keyboard flow\n✓ order submission recovery"}</ToolResultOutput>
-                </ToolResult>
-                <FileDiff
-                  file="checkout/submit.ts"
-                  lines={diffLines}
-                  status="complete"
-                  defaultOpen
-                  collapseOnComplete={false}
-                />
-                <CodeBlock
-                  filename="validation.ts"
-                  language="typescript"
-                  status="complete"
-                  code={"export function validateOrder(order: Order) {\n  return schema.safeParse(order);\n}"}
-                  showLineNumbers
-                />
-              </MessageContent>
-            </Message>
-
-            <Message from="assistant">
-              <MessageAvatar placeholder />
-              <MessageContent className="gap-3">
-                <ImageGeneration
-                  status="complete"
-                  prompt="a clear checkout confirmation screen"
-                  resolution="1280 × 840"
-                  size="compact"
-                >
-                  <GeneratedPreview />
-                </ImageGeneration>
-                <MessageBubble variant="ghost" className="w-full">
-                  <MessageBubbleContent>
-                    <StreamingResponse
-                      status="complete"
-                      copyText="The checkout patch is ready for review."
-                      sources={[
-                        { id: "message", title: "Message composition", domain: "beui.dev", url: "/components/agents/message" },
-                        { id: "diff", title: "File Diff", domain: "beui.dev", url: "/components/agents/file-diff" },
-                        { id: "approval", title: "Tool Approval", domain: "beui.dev", url: "/components/agents/tool-approval" },
-                      ]}
-                    >
-                      <p>The checkout patch is ready for review.</p>
-                      <ul>
-                        <li>Validation now runs before submission.</li>
-                        <li>Failure output stays inside the current flow.</li>
-                        <li>Focused checks pass without changing the layout.</li>
-                      </ul>
-                    </StreamingResponse>
-                  </MessageBubbleContent>
-                </MessageBubble>
-              </MessageContent>
-            </Message>
-
-            <Message from="assistant">
-              <MessageAvatar placeholder />
-              <MessageContent>
-                <ApprovalCard
-                  questions={approvalQuestions}
-                  status={approvalStatus}
-                  onSubmit={() => {
-                    setApprovalStatus("submitting");
-                    timers.current.push(window.setTimeout(() => setApprovalStatus("answered"), 650));
+                  onDeny={() => {
+                    clearToolTimers();
+                    setToolStatus("denied");
                   }}
-                  result="Release direction sent to the agent."
                 />
               </MessageContent>
             </Message>
+
+            {toolStatus === "running" || toolStatus === "complete" ? (
+              <Message from="assistant" animateIn>
+                <MessageAvatar placeholder />
+                <MessageContent className="gap-3">
+                  <ToolResult
+                    tool="terminal.run"
+                    title={
+                      toolStatus === "running"
+                        ? "Running checkout checks"
+                        : "Checkout checks passed"
+                    }
+                    status={toolStatus === "running" ? "running" : "success"}
+                    kind="terminal"
+                    meta={toolStatus === "running" ? "Live" : "2.8s"}
+                    defaultOpen
+                    collapseOnComplete={false}
+                  >
+                    <ToolResultOutput>
+                      {toolStatus === "running"
+                        ? "✓ validation contract\n… checkout keyboard flow"
+                        : "✓ validation contract\n✓ checkout keyboard flow\n✓ order submission recovery"}
+                    </ToolResultOutput>
+                  </ToolResult>
+                  {toolStatus === "complete" ? (
+                    <>
+                      <FileDiff
+                        file="checkout/submit.ts"
+                        lines={diffLines}
+                        status="complete"
+                        defaultOpen
+                        collapseOnComplete={false}
+                      />
+                      <CodeBlock
+                        filename="validation.ts"
+                        language="typescript"
+                        status="complete"
+                        code={"export function validateOrder(order: Order) {\n  return schema.safeParse(order);\n}"}
+                        showLineNumbers
+                      />
+                    </>
+                  ) : null}
+                </MessageContent>
+              </Message>
+            ) : toolStatus === "denied" || toolStatus === "error" ? (
+              <Message from="assistant" animateIn>
+                <MessageAvatar placeholder />
+                <MessageContent>
+                  <ToolResult
+                    tool="terminal.run"
+                    title="Checkout checks were not run"
+                    status={toolStatus === "denied" ? "cancelled" : "error"}
+                    kind="terminal"
+                    defaultOpen
+                    collapseOnComplete={false}
+                  >
+                    <ToolResultOutput>
+                      {toolStatus === "denied"
+                        ? "Permission was not granted. No command was run."
+                        : "The command could not be completed."}
+                    </ToolResultOutput>
+                  </ToolResult>
+                </MessageContent>
+              </Message>
+            ) : null}
+
+            {toolStatus === "complete" ? (
+              <Message from="assistant" animateIn>
+                <MessageAvatar placeholder />
+                <MessageContent className="gap-3">
+                  <ImageGeneration
+                    status="complete"
+                    prompt="a clear checkout confirmation screen"
+                    resolution="1280 × 840"
+                    size="compact"
+                  >
+                    <GeneratedPreview />
+                  </ImageGeneration>
+                  <MessageBubble variant="ghost" className="w-full">
+                    <MessageBubbleContent>
+                      <StreamingResponse
+                        status="complete"
+                        copyText="The checkout patch is ready for review."
+                        sources={[
+                          {
+                            id: "message",
+                            title: "Message composition",
+                            domain: "beui.dev",
+                            url: "/components/agents/message",
+                          },
+                          {
+                            id: "diff",
+                            title: "File Diff",
+                            domain: "beui.dev",
+                            url: "/components/agents/file-diff",
+                          },
+                          {
+                            id: "approval",
+                            title: "Tool Approval",
+                            domain: "beui.dev",
+                            url: "/components/agents/tool-approval",
+                          },
+                        ]}
+                      >
+                        <p>The checkout patch is ready for review.</p>
+                        <ul>
+                          <li>Validation now runs before submission.</li>
+                          <li>Failure output stays inside the current flow.</li>
+                          <li>
+                            Focused checks pass without changing the layout.
+                          </li>
+                        </ul>
+                      </StreamingResponse>
+                    </MessageBubbleContent>
+                  </MessageBubble>
+                </MessageContent>
+              </Message>
+            ) : null}
+
+            {toolStatus === "complete" ? (
+              <Message from="assistant" animateIn>
+                <MessageAvatar placeholder />
+                <MessageContent>
+                  <ApprovalCard
+                    questions={approvalQuestions}
+                    status={approvalStatus}
+                    onSubmit={() => {
+                      setApprovalStatus("submitting");
+                      clearApprovalTimers();
+                      approvalTimers.current.push(
+                        window.setTimeout(
+                          () => setApprovalStatus("answered"),
+                          650,
+                        ),
+                      );
+                    }}
+                    result="Release direction sent to the agent."
+                  />
+                </MessageContent>
+              </Message>
+            ) : null}
 
             {messages.map((message) => (
               <Message key={message.id} from={message.from} animateIn>

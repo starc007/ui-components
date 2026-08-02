@@ -8,7 +8,8 @@ import {
   useId,
   useState,
 } from "react";
-import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL, SPRING_SWAP } from "@/lib/ease";
+import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
 import { getFaviconUrl } from "@/lib/favicon";
 import { cn } from "@/lib/utils";
 
@@ -32,7 +33,8 @@ export interface CitationsProps {
 export interface CitationProps {
   citationId: string;
   index: number;
-  idPrefix?: string;
+  /** Must match the related Citations idPrefix. */
+  idPrefix: string;
   className?: string;
 }
 
@@ -55,7 +57,7 @@ function citationTargetId(prefix: string, citationId: string) {
 export function Citation({
   citationId,
   index,
-  idPrefix = "citation",
+  idPrefix,
   className,
 }: CitationProps) {
   return (
@@ -184,10 +186,13 @@ function CitationRow({
 
 export function CitationList({
   citations,
-  idPrefix = "citation",
+  idPrefix,
   className,
 }: CitationListProps) {
   const reduce = useReducedMotion() ?? false;
+  const baseId = useId();
+  const resolvedPrefix =
+    idPrefix ?? `citation-list-${baseId.replace(/:/g, "")}`;
 
   return (
     <div className={cn("grid gap-0.5", className)}>
@@ -212,7 +217,7 @@ export function CitationList({
             <CitationRow
               citation={citation}
               index={index + 1}
-              idPrefix={idPrefix}
+              idPrefix={resolvedPrefix}
             />
           </motion.div>
         ))}
@@ -233,7 +238,8 @@ export function Citations({
   const reduce = useReducedMotion() ?? false;
   const baseId = useId();
   const contentId = `${baseId}-content`;
-  const resolvedPrefix = idPrefix ?? "citation";
+  const resolvedPrefix =
+    idPrefix ?? `citation-${baseId.replace(/:/g, "")}`;
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const currentOpen = open ?? internalOpen;
   const setOpen = useCallback(
@@ -268,21 +274,16 @@ export function Citations({
         </motion.span>
       </button>
 
-      <motion.div
+      <AgentDisclosure
         id={contentId}
-        aria-hidden={!currentOpen}
-        inert={!currentOpen}
-        initial={false}
-        animate={{ height: currentOpen ? "auto" : 0 }}
-        transition={reduce ? { duration: 0 } : SPRING_PANEL}
-        className="overflow-hidden"
+        open={currentOpen}
       >
         <CitationList
           citations={citations}
           idPrefix={resolvedPrefix}
           className="mt-1"
         />
-      </motion.div>
+      </AgentDisclosure>
     </div>
   );
 }
