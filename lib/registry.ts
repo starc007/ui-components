@@ -815,6 +815,25 @@ export const registry: CategoryEntry[] = [
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
       {
+        slug: "chat-app",
+        name: "Chat App",
+        description:
+          "A complete agent conversation workspace composing navigation, messages, streaming, planning, approvals, tools, code, diffs, generated media, sources, and prompt input.",
+        file: "components/agents/chat-app.tsx",
+        usageFile:
+          "components/previews/agents/chat-app-usage.tsx",
+        badge: "new",
+        launchedAt: "2026-08-02",
+        keywords: [
+          "AI chat app React",
+          "agent workspace example",
+          "complete AI chat interface",
+          "AI SDK compatible chat UI",
+          "agent conversation layout",
+          "LLM chat app component",
+        ],
+      },
+      {
         slug: "ai-sidebar",
         name: "AI Sidebar",
         guide: agentGuides["ai-sidebar"],

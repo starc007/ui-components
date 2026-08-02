@@ -7,6 +7,8 @@ import {
   type KeyboardEvent,
   type ReactNode,
   type TextareaHTMLAttributes,
+  useCallback,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -88,6 +90,7 @@ export function PromptInput({
 }: PromptInputProps) {
   const reduce = useReducedMotion() ?? false;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const measurementRef = useRef<HTMLDivElement>(null);
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [internalModel, setInternalModel] = useState(
     defaultModel ?? models[0]?.value,
@@ -100,22 +103,31 @@ export function PromptInput({
   );
   const canSubmit = Boolean(currentValue.trim()) && !disabled && !loading;
 
-  useLayoutEffect(() => {
+  const resizeTextarea = useCallback(() => {
     const textarea = textareaRef.current;
-    if (!textarea || textarea.value !== currentValue) return;
+    const measurement = measurementRef.current;
+    if (!textarea || !measurement || textarea.value !== currentValue) return;
 
     const lineHeight = 24;
-    if (minRows === maxRows) {
-      textarea.style.height = `${minRows * lineHeight}px`;
-      return;
-    }
-
-    textarea.style.height = "0px";
-    textarea.style.height = `${Math.min(
-      Math.max(textarea.scrollHeight, minRows * lineHeight),
+    const nextHeight = Math.min(
+      Math.max(measurement.scrollHeight, minRows * lineHeight),
       maxRows * lineHeight,
-    )}px`;
+    );
+    const height = `${nextHeight}px`;
+    if (textarea.style.height !== height) textarea.style.height = height;
   }, [currentValue, maxRows, minRows]);
+
+  useLayoutEffect(() => {
+    resizeTextarea();
+  }, [resizeTextarea]);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(resizeTextarea);
+    observer.observe(textarea);
+    return () => observer.disconnect();
+  }, [resizeTextarea]);
 
   const setValue = (next: string) => {
     if (value === undefined) setInternalValue(next);
@@ -155,11 +167,18 @@ export function PromptInput({
     <form
       onSubmit={submit}
       className={cn(
-        "w-full rounded-2xl border border-border/80 bg-background p-2 transition-colors focus-within:border-foreground/25",
+        "relative w-full rounded-2xl border border-border/80 bg-background p-2 transition-colors focus-within:border-foreground/25",
         disabled && "opacity-60",
         className,
       )}
     >
+      <div
+        ref={measurementRef}
+        aria-hidden="true"
+        className="pointer-events-none invisible absolute inset-x-2 top-0 whitespace-pre-wrap px-2 text-sm leading-6 [overflow-wrap:break-word]"
+      >
+        {`${currentValue}\u200b`}
+      </div>
       <textarea
         ref={textareaRef}
         value={currentValue}
