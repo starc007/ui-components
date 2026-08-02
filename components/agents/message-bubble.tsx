@@ -21,7 +21,6 @@ import {
 import {
   EASE_OUT,
   SPRING_LAYOUT,
-  SPRING_PANEL,
   SPRING_SWAP,
 } from "@/lib/ease";
 import { cn } from "@/lib/utils";
@@ -53,6 +52,7 @@ export interface MessageBubbleProps
   variant?: MessageBubbleVariant;
   /** Defaults to the surrounding Message alignment when omitted. */
   align?: MessageBubbleAlign;
+  /** Plays the bubble entrance once when this component mounts. */
   animateIn?: boolean;
   children?: ReactNode;
 }
@@ -90,15 +90,23 @@ function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
 }
 
 const BUBBLE_CONTENT_REVEAL = {
-  duration: 0.14,
+  duration: 0.12,
   ease: EASE_OUT,
-  delay: 0.11,
+  delay: 0.04,
+} as const;
+
+// Sent bubbles should pop into place quickly with one restrained overshoot.
+const BUBBLE_POP = {
+  type: "spring",
+  stiffness: 520,
+  damping: 27,
+  mass: 0.52,
 } as const;
 
 export function MessageBubble({
   variant = "soft",
   align,
-  animateIn = true,
+  animateIn = false,
   className,
   children,
   initial,
@@ -120,7 +128,7 @@ export function MessageBubble({
         data-slot="message-bubble"
         data-align={resolvedAlign}
         data-variant={variant}
-        layout={layout ?? "position"}
+        layout={layout}
         initial={initial ?? false}
         animate={animate}
         exit={
@@ -181,7 +189,7 @@ export function MessageBubbleContent({
   const reduce = useReducedMotion() ?? false;
   const { align = "start", animateIn, variant } =
     useContext(MessageBubbleContext);
-  const [, setLayoutVersion] = useState(0);
+  const [layoutVersion, setLayoutVersion] = useState(0);
   const notifyLayout = useCallback(
     () => setLayoutVersion((version) => version + 1),
     [],
@@ -194,12 +202,13 @@ export function MessageBubbleContent({
       {variant !== "ghost" ? (
         <motion.span
           aria-hidden="true"
-          layout={!reduce}
+          layout={reduce ? false : "size"}
+          layoutDependency={layoutVersion}
           initial={
             animateIn && !reduce
               ? {
                   opacity: 0,
-                  scale: 0,
+                  scale: 0.92,
                 }
               : false
           }
@@ -207,14 +216,17 @@ export function MessageBubbleContent({
           transition={
             reduce
               ? { duration: 0 }
-              : { ...SPRING_PANEL, layout: SPRING_LAYOUT }
+              : {
+                  opacity: { duration: 0.12, ease: EASE_OUT },
+                  scale: BUBBLE_POP,
+                  layout: SPRING_LAYOUT,
+                }
           }
           className={bubbleSurfaceClass(variant, align)}
         />
       ) : null}
       <MessageBubbleLayoutContext.Provider value={notifyLayout}>
         <motion.div
-          layout="position"
           initial={
             animateIn
               ? reduce

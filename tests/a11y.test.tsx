@@ -14,13 +14,13 @@ import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shi
 import {
   Message,
   MessageContent,
-  MessageScroller,
 } from "@/components/agents/message";
 import {
   MessageBubble,
   MessageBubbleCollapsible,
   MessageBubbleContent,
 } from "@/components/agents/message-bubble";
+import { MessageScroller } from "@/components/agents/message-scroller";
 import { PromptInput } from "@/components/agents/prompt-input";
 import { StreamingResponse } from "@/components/agents/streaming-response";
 import { TodoList } from "@/components/agents/todo-list";
@@ -114,7 +114,7 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     "Message streaming",
     () => (
       <MessageScroller>
-        <Message from="user">
+        <Message from="user" animateIn>
           <MessageContent>
             <MessageBubble variant="solid">
               <MessageBubbleContent>Plan this release.</MessageBubbleContent>

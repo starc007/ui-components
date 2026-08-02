@@ -22,6 +22,11 @@ export const previews: Record<string, ComponentType> = {
   "agents/message": dynamic(() =>
     import("./agents/message.preview").then((m) => m.MessagePreview),
   ),
+  "agents/message-scroller": dynamic(() =>
+    import("./agents/message-scroller.preview").then(
+      (m) => m.MessageScrollerPreview,
+    ),
+  ),
   "agents/prompt-input": dynamic(() =>
     import("./agents/prompt-input.preview").then((m) => m.PromptInputPreview),
   ),

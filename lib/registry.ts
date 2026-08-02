@@ -826,7 +826,7 @@ export const registry: CategoryEntry[] = [
             slug: "surfaces",
             name: "Animated Surfaces",
             description:
-              "Aligned conversational surfaces with grouped responses and an interactive suggestion.",
+              "An interactive conversation where each newly sent user row pops up once while the assistant streams into a stable row.",
             file: "components/agents/message-bubble.tsx",
             previewKey: "agents/message-bubble",
             previewFile:
@@ -858,7 +858,7 @@ export const registry: CategoryEntry[] = [
         slug: "message",
         name: "Message",
         description:
-          "Composable conversation primitives for message rows, grouped bubbles, avatars, metadata, live markers, actions, and reader-aware streaming scroll.",
+          "Composable conversation primitives for message rows, grouped bubbles, avatars, metadata, live markers, and a mount-only trailing-edge pop-up for newly sent rows.",
         file: "components/agents/message.tsx",
         badge: "new",
         launchedAt: "2026-08-02",
@@ -869,6 +869,23 @@ export const registry: CategoryEntry[] = [
           "LLM conversation UI",
           "agent chat bubbles",
           "AI chat interface React",
+        ],
+      },
+      {
+        slug: "message-scroller",
+        name: "Message Scroller",
+        description:
+          "A reader-aware conversation viewport that follows streamed output at the live edge and releases control when the reader moves away.",
+        file: "components/agents/message-scroller.tsx",
+        badge: "new",
+        launchedAt: "2026-08-02",
+        keywords: [
+          "message scroller React",
+          "AI chat autoscroll",
+          "streaming conversation viewport",
+          "follow output chat UI",
+          "LLM message scroll",
+          "accessible chat transcript",
         ],
       },
       {

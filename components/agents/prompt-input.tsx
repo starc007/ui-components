@@ -105,6 +105,11 @@ export function PromptInput({
     if (!textarea || textarea.value !== currentValue) return;
 
     const lineHeight = 24;
+    if (minRows === maxRows) {
+      textarea.style.height = `${minRows * lineHeight}px`;
+      return;
+    }
+
     textarea.style.height = "0px";
     textarea.style.height = `${Math.min(
       Math.max(textarea.scrollHeight, minRows * lineHeight),
@@ -129,6 +134,7 @@ export function PromptInput({
 
     onSubmit?.(prompt, currentModelValue);
     if (value === undefined) setInternalValue("");
+    textareaRef.current?.focus({ preventScroll: true });
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {

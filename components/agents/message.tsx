@@ -5,14 +5,9 @@ import {
   type ComponentPropsWithRef,
   createContext,
   type ReactNode,
-  type Ref,
-  useCallback,
   useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
 } from "react";
-import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { MessageSideContext } from "@/components/agents/message-context";
 
@@ -22,6 +17,8 @@ export {
   MessageBubbleContent,
   MessageBubbleGroup,
 } from "@/components/agents/message-bubble";
+export { MessageScroller } from "@/components/agents/message-scroller";
+export type { MessageScrollerProps } from "@/components/agents/message-scroller";
 
 export type MessageFrom = "user" | "assistant";
 
@@ -36,25 +33,9 @@ const MessageContext = createContext<MessageContextValue>({
 export interface MessageProps
   extends Omit<ComponentPropsWithRef<typeof motion.article>, "children"> {
   from: MessageFrom;
+  /** Plays a trailing-edge pop-up once when this message row mounts. */
+  animateIn?: boolean;
   children: ReactNode;
-}
-
-export interface MessageScrollerProps extends ComponentPropsWithRef<"div"> {
-  /** Keep streamed output pinned while the reader remains near the end. */
-  followOutput?: boolean;
-  /** Distance from the end that still counts as following the output. */
-  followThreshold?: number;
-  /** Smoothly follow growing content. */
-  smooth?: boolean;
-  /** Reports when the reader leaves or returns to the live edge. */
-  onFollowChange?: (following: boolean) => void;
-  label?: string;
-  viewportClassName?: string;
-  viewportRef?: Ref<HTMLDivElement>;
-  viewportProps?: Omit<
-    ComponentPropsWithRef<"div">,
-    "children" | "className"
-  >;
 }
 
 export interface MessageGroupProps extends ComponentPropsWithRef<"div"> {
@@ -76,12 +57,24 @@ export interface MessageTypingProps extends ComponentPropsWithRef<"span"> {
   label?: string;
 }
 
+// A sent row should rise from the live edge without changing measured layout.
+const MESSAGE_POP_UP = {
+  type: "spring",
+  stiffness: 480,
+  damping: 32,
+  mass: 0.62,
+} as const;
+
 export function Message({
   from,
+  animateIn = false,
   children,
   className,
+  initial,
+  animate,
   transition,
   exit,
+  style,
   ...props
 }: MessageProps) {
   const reduce = useReducedMotion() ?? false;
@@ -90,26 +83,51 @@ export function Message({
     <MessageSideContext.Provider value={from === "user" ? "end" : "start"}>
       <MessageContext.Provider value={{ from }}>
         <motion.article
-        data-slot="message"
-        data-from={from}
-        aria-label={props["aria-label"] ?? `${from} message`}
-        initial={false}
-        animate={{ opacity: 1 }}
-        exit={
-          exit ??
-          (reduce
-            ? { opacity: 0 }
-            : { opacity: 0 })
-        }
-        transition={transition ?? (reduce ? { duration: 0.12 } : SPRING_LAYOUT)}
-        className={cn(
-          "group/message flex w-full items-start gap-2",
-          from === "user" ? "flex-row-reverse" : "flex-row",
-          className,
-        )}
-        {...props}
-      >
-        {children}
+          data-slot="message"
+          data-from={from}
+          aria-label={props["aria-label"] ?? `${from} message`}
+          initial={
+            initial ??
+            (animateIn && !reduce
+              ? {
+                  opacity: 0,
+                  transform: "translateY(8px) scale(0.95)",
+                }
+              : false)
+          }
+          animate={
+            animate ??
+            (animateIn && !reduce
+              ? {
+                  opacity: 1,
+                  transform: "translateY(0px) scale(1)",
+                }
+              : { opacity: 1 })
+          }
+          exit={
+            exit ??
+            (reduce
+              ? { opacity: 0 }
+              : {
+                  opacity: 0,
+                  transform: "translateY(-3px) scale(0.99)",
+                })
+          }
+          transition={
+            transition ?? (reduce ? { duration: 0.12 } : MESSAGE_POP_UP)
+          }
+          style={{
+            transformOrigin: from === "user" ? "100% 100%" : "0% 100%",
+            ...style,
+          }}
+          className={cn(
+            "group/message flex w-full items-start gap-2",
+            from === "user" ? "flex-row-reverse" : "flex-row",
+            className,
+          )}
+          {...props}
+        >
+          {children}
         </motion.article>
       </MessageContext.Provider>
     </MessageSideContext.Provider>
@@ -250,152 +268,5 @@ export function MessageTyping({
         />
       ))}
     </span>
-  );
-}
-
-export function MessageScroller({
-  followOutput = true,
-  followThreshold = 56,
-  smooth = true,
-  onFollowChange,
-  label = "Conversation",
-  viewportClassName,
-  viewportRef: externalViewportRef,
-  viewportProps,
-  className,
-  children,
-  ...props
-}: MessageScrollerProps) {
-  const reduce = useReducedMotion() ?? false;
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const followingRef = useRef(followOutput);
-  const programmaticScrollRef = useRef(false);
-  const scrollTimerRef = useRef<number | undefined>(undefined);
-  const frameRef = useRef<number | undefined>(undefined);
-  const {
-    onScroll: onViewportScroll,
-    onWheel: onViewportWheel,
-    onTouchStart: onViewportTouchStart,
-    ...restViewportProps
-  } = viewportProps ?? {};
-
-  const setViewportRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      viewportRef.current = node;
-      if (typeof externalViewportRef === "function") {
-        externalViewportRef(node);
-      } else if (externalViewportRef) {
-        externalViewportRef.current = node;
-      }
-    },
-    [externalViewportRef],
-  );
-
-  const setFollowing = useCallback(
-    (next: boolean) => {
-      if (followingRef.current === next) return;
-      followingRef.current = next;
-      onFollowChange?.(next);
-    },
-    [onFollowChange],
-  );
-
-  const scrollToEnd = useCallback(
-    (behavior: ScrollBehavior) => {
-      const viewport = viewportRef.current;
-      if (!viewport) return;
-
-      programmaticScrollRef.current = true;
-      if (typeof viewport.scrollTo === "function") {
-        viewport.scrollTo({ top: viewport.scrollHeight, behavior });
-      } else {
-        viewport.scrollTop = viewport.scrollHeight;
-      }
-      if (scrollTimerRef.current) window.clearTimeout(scrollTimerRef.current);
-      scrollTimerRef.current = window.setTimeout(() => {
-        programmaticScrollRef.current = false;
-      }, behavior === "smooth" ? 320 : 0);
-    },
-    [],
-  );
-
-  const handleScroll = useCallback(() => {
-    const viewport = viewportRef.current;
-    if (!viewport || programmaticScrollRef.current) return;
-
-    const distance =
-      viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
-    setFollowing(distance <= followThreshold);
-  }, [followThreshold, setFollowing]);
-
-  const leaveLiveEdge = useCallback(() => {
-    programmaticScrollRef.current = false;
-  }, []);
-
-  useLayoutEffect(() => {
-    followingRef.current = followOutput;
-    if (!followOutput) return;
-
-    frameRef.current = requestAnimationFrame(() => scrollToEnd("auto"));
-    return () => {
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
-    };
-  }, [followOutput, scrollToEnd]);
-
-  useEffect(() => {
-    const content = contentRef.current;
-    if (!content || typeof ResizeObserver === "undefined") return;
-
-    const observer = new ResizeObserver(() => {
-      if (!followOutput || !followingRef.current) return;
-      scrollToEnd(reduce || !smooth ? "auto" : "smooth");
-    });
-    observer.observe(content);
-
-    return () => observer.disconnect();
-  }, [followOutput, reduce, scrollToEnd, smooth]);
-
-  useEffect(
-    () => () => {
-      if (scrollTimerRef.current) window.clearTimeout(scrollTimerRef.current);
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
-    },
-    [],
-  );
-
-  return (
-    <div
-      data-slot="message-scroller"
-      className={cn("min-h-0", className)}
-      {...props}
-    >
-      <div
-        ref={setViewportRef}
-        role="log"
-        aria-label={label}
-        aria-live="polite"
-        aria-relevant="additions text"
-        {...restViewportProps}
-        onScroll={(event) => {
-          handleScroll();
-          onViewportScroll?.(event);
-        }}
-        onWheel={(event) => {
-          leaveLiveEdge();
-          onViewportWheel?.(event);
-        }}
-        onTouchStart={(event) => {
-          leaveLiveEdge();
-          onViewportTouchStart?.(event);
-        }}
-        className={cn(
-          "h-full overflow-y-auto overscroll-contain [scrollbar-gutter:stable]",
-          viewportClassName,
-        )}
-      >
-        <div ref={contentRef}>{children}</div>
-      </div>
-    </div>
   );
 }
