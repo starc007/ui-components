@@ -407,6 +407,7 @@ function SwipeableListRow({
     >
       <div
         aria-hidden={!openSide}
+        inert={!openSide}
         className={cn(
           "absolute inset-0 z-0 flex overflow-hidden rounded-2xl",
           classNames?.rail,

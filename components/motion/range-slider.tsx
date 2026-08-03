@@ -8,58 +8,24 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import {
-  type KeyboardEvent,
-  type PointerEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect } from "react";
 
+import { SPRING_GLIDE } from "@/lib/ease";
+import { type SliderOptions, useSlider } from "@/lib/hooks/use-slider";
 import { cn } from "@/lib/utils";
 
-// Smooth glide for the thumb/fill — critically damped, no overshoot, so the
-// handle follows the pointer butterily and eases between snapped steps.
-const SPRING_GLIDE = { stiffness: 700, damping: 50, mass: 0.5 } as const;
 // Bouncy grab feedback for the thumb scale only.
 const SPRING_BOUNCY = { type: "spring", stiffness: 500, damping: 14, mass: 0.7 } as const;
 
-export interface RangeSliderProps {
-  value?: number;
-  defaultValue?: number;
-  onValueChange?: (value: number) => void;
-  min?: number;
-  max?: number;
-  step?: number;
+export interface RangeSliderProps extends SliderOptions {
   /** Render a tick dot at each step. */
   showTicks?: boolean;
-  disabled?: boolean;
   className?: string;
-  "aria-label"?: string;
 }
 
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
-
-export function RangeSlider({
-  value,
-  defaultValue = 0,
-  onValueChange,
-  min = 0,
-  max = 100,
-  step = 1,
-  showTicks = true,
-  disabled = false,
-  className,
-  "aria-label": ariaLabel,
-}: RangeSliderProps) {
+export function RangeSlider({ showTicks = true, className, ...options }: RangeSliderProps) {
   const reduce = useReducedMotion();
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [internal, setInternal] = useState(defaultValue);
-  const [active, setActive] = useState(false);
-  const controlled = value !== undefined;
-  const current = clamp(controlled ? value : internal, min, max);
-  const percent = ((current - min) / (max - min)) * 100;
+  const { percent, dragging, min, max, step, trackProps, sliderProps } = useSlider(options);
 
   // Spring-smoothed position drives both the thumb and the fill.
   const target = useMotionValue(percent);
@@ -73,94 +39,33 @@ export function RangeSlider({
   // own width so it stays fully inside the track at both ends — no clip, no gap.
   const thumbX = useTransform(pos, (p) => `${-p}%`);
 
-  const steps = Math.floor((max - min) / step);
+  // Floor rather than round, so a range the step does not divide (0 to 10 by 4)
+  // stops its dots at the last whole step instead of drawing one past max.
+  // toFixed comes first because 0.3/0.1 is 2.9999999999999996, which would
+  // floor to 2 and drop the last dot.
+  const steps = Math.floor(Number(((max - min) / step).toFixed(6)));
   const ticks =
     showTicks && steps > 0 && steps <= 50
-      ? Array.from({ length: steps + 1 }, (_, i) => min + i * step)
+      ? Array.from({ length: steps + 1 }, (_, i) => Number((min + i * step).toFixed(6)))
       : [];
-
-  const commit = useCallback(
-    (next: number) => {
-      const snapped = clamp(Math.round((next - min) / step) * step + min, min, max);
-      if (!controlled) setInternal(snapped);
-      onValueChange?.(snapped);
-    },
-    [controlled, onValueChange, min, max, step],
-  );
-
-  const valueFromX = useCallback(
-    (clientX: number) => {
-      const rect = trackRef.current?.getBoundingClientRect();
-      if (!rect) return current;
-      const ratio = clamp((clientX - rect.left) / rect.width, 0, 1);
-      return min + ratio * (max - min);
-    },
-    [current, min, max],
-  );
-
-  const onPointerDown = useCallback(
-    (event: PointerEvent<HTMLDivElement>) => {
-      if (disabled) return;
-      event.currentTarget.setPointerCapture(event.pointerId);
-      setActive(true);
-      commit(valueFromX(event.clientX));
-    },
-    [disabled, commit, valueFromX],
-  );
-
-  const onPointerMove = useCallback(
-    (event: PointerEvent<HTMLDivElement>) => {
-      if (!active || disabled) return;
-      commit(valueFromX(event.clientX));
-    },
-    [active, disabled, commit, valueFromX],
-  );
-
-  const endDrag = useCallback((event: PointerEvent<HTMLDivElement>) => {
-    event.currentTarget.releasePointerCapture?.(event.pointerId);
-    setActive(false);
-  }, []);
-
-  const onKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLDivElement>) => {
-      if (disabled) return;
-      const map: Record<string, number> = {
-        ArrowRight: current + step,
-        ArrowUp: current + step,
-        ArrowLeft: current - step,
-        ArrowDown: current - step,
-        Home: min,
-        End: max,
-      };
-      if (event.key in map) {
-        event.preventDefault();
-        commit(map[event.key]);
-      }
-    },
-    [disabled, current, step, min, max, commit],
-  );
 
   return (
     <div
-      ref={trackRef}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
+      {...trackProps}
       className={cn(
         "relative flex h-10 w-full touch-none select-none items-center overflow-hidden rounded-lg bg-muted",
-        disabled ? "pointer-events-none opacity-50" : "cursor-grab active:cursor-grabbing",
+        options.disabled
+          ? "pointer-events-none opacity-50"
+          : "cursor-grab active:cursor-grabbing",
         className,
       )}
     >
       {/* fill — runs from the left edge to the thumb, consistent tone */}
-      <motion.div
-        className="absolute inset-y-0 left-0 bg-foreground/15"
-        style={{ width: left }}
-      />
+      <motion.div className="absolute inset-y-0 left-0 bg-foreground/15" style={{ width: left }} />
 
-      {/* ticks — slight inset so the end dots don't clip */}
-      <div className="pointer-events-none absolute inset-x-2 inset-y-0">
+      {/* Ticks, inset by half the thumb's width. That inset is the span the
+          thumb's own centre travels, so a dot sits where the thumb lands. */}
+      <div className="pointer-events-none absolute inset-x-[3px] inset-y-0">
         {ticks.map((t) => {
           const tp = ((t - min) / (max - min)) * 100;
           return (
@@ -175,17 +80,10 @@ export function RangeSlider({
 
       {/* vertical bar thumb — contained at both ends via thumbX */}
       <motion.div
-        role="slider"
-        tabIndex={disabled ? -1 : 0}
-        aria-label={ariaLabel}
-        aria-valuemin={min}
-        aria-valuemax={max}
-        aria-valuenow={current}
-        aria-disabled={disabled || undefined}
-        onKeyDown={onKeyDown}
-        animate={reduce ? undefined : { scaleY: active ? 1.35 : 1 }}
+        {...sliderProps}
+        animate={reduce ? undefined : { scaleY: dragging ? 1.35 : 1 }}
         transition={SPRING_BOUNCY}
-        className="absolute top-1/2 h-5 w-1.5 rounded-sm bg-foreground shadow-sm outline-none ring-foreground/30 focus-visible:ring-4"
+        className="absolute top-1/2 h-5 w-1.5 rounded-sm bg-foreground shadow-sm outline-none ring-inset ring-foreground/30 focus-visible:ring-4"
         style={{ left, x: thumbX, y: "-50%" }}
       />
     </div>

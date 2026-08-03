@@ -32,11 +32,9 @@ export function SiteHeader({
   const [scrolled, setScrolled] = useState(false);
   const { setPanelOpen } = usePreferences();
   const pathname = usePathname();
-  const isComponents =
-    pathname.startsWith("/components/motion") ||
-    (pathname.startsWith("/components") &&
-      !pathname.startsWith("/components/blocks"));
+  const isComponents = pathname.startsWith("/components/motion");
   const isBlocks = pathname.startsWith("/components/blocks");
+  const isAgents = pathname.startsWith("/components/agents");
   const isComponentsRoute = pathname.startsWith("/components");
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
@@ -105,6 +103,17 @@ export function SiteHeader({
               )}
             >
               Blocks
+            </Link>
+            <Link
+              href="/components/agents"
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                isAgents
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Agents
             </Link>
             <Link
               href="/playground"

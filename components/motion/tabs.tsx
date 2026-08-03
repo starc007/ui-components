@@ -113,7 +113,6 @@ export function TabsTrigger({
 }) {
   const { value: current, setValue, layoutId, variant } = useTabs();
   const active = current === value;
-  const usesDefaultIndicator = indicatorClassName === undefined;
 
   if (variant === "underline") {
     return (
@@ -142,9 +141,6 @@ export function TabsTrigger({
     );
   }
 
-  // The default max-contrast pill uses exclusion so labels invert exactly as
-  // the indicator passes beneath them. Custom indicators retain explicit text
-  // colors because their background may not be suitable for blending.
   const radius = variant === "pill" ? "rounded-full" : "rounded-md";
 
   return (
@@ -167,16 +163,10 @@ export function TabsTrigger({
         onClick={() => setValue(value)}
         className={cn(
           "relative z-10 inline-flex items-center justify-center whitespace-nowrap bg-transparent px-3.5 py-1.5 text-sm font-medium outline-none",
-          usesDefaultIndicator
-            ? "text-white mix-blend-exclusion transition-opacity"
-            : "transition-colors",
-          usesDefaultIndicator
-            ? active
-              ? "opacity-100"
-              : "opacity-70 hover:opacity-100"
-            : active
-              ? "text-primary-foreground"
-              : "text-muted-foreground hover:text-foreground",
+          "transition-colors",
+          active
+            ? "text-primary-foreground"
+            : "text-muted-foreground hover:text-foreground",
           radius,
           className,
         )}

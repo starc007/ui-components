@@ -128,7 +128,7 @@ export const TESTIMONIALS = [
       name: "Tyler Gibbs",
       username: "Tylerbryy",
       avatar:
-        "https://pbs.twimg.com/profile_images/2068918593962536960/gmAsn6Nj_normal.jpg",
+        "https://pbs.twimg.com/profile_images/2077596476687998978/WvlUT0v1_normal.jpg",
       verified: true,
     },
   },

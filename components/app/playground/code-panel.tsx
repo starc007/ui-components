@@ -10,7 +10,7 @@ let hlPromise: Promise<Highlighter> | null = null;
 function highlighter() {
   if (!hlPromise) {
     hlPromise = getSingletonHighlighter({
-      themes: ["github-light", "github-dark"],
+      themes: ["github-light-high-contrast", "github-dark-high-contrast"],
       langs: ["tsx"],
     });
   }
@@ -33,7 +33,10 @@ export function CodePanel({
       setHtml(
         hl.codeToHtml(code, {
           lang: "tsx",
-          themes: { light: "github-light", dark: "github-dark" },
+          themes: {
+            light: "github-light-high-contrast",
+            dark: "github-dark-high-contrast",
+          },
           defaultColor: false,
         }),
       );

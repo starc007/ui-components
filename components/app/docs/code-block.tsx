@@ -50,8 +50,8 @@ export async function CodeBlock({
   const html = await codeToHtml(code, {
     lang: shikiLang,
     themes: {
-      light: "github-light",
-      dark: "github-dark",
+      light: "github-light-high-contrast",
+      dark: "github-dark-high-contrast",
     },
     defaultColor: false,
     transformers: [
@@ -81,7 +81,7 @@ export async function CodeBlock({
 
             <FileIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             <span className="truncate font-mono text-muted-foreground">
-              {fileDir && <span className="opacity-60">{fileDir}/</span>}
+              {fileDir && <span className="text-foreground">{fileDir}/</span>}
               <span className="text-foreground font-medium">{fileName}</span>
             </span>
           </div>

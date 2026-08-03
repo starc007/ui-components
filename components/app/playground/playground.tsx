@@ -20,7 +20,7 @@ import { PLAYGROUND_ITEMS, PLAYGROUND_SOON } from "./items";
 function ExplainPanel({ points }: { points: ExplainPoint[] }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-5">
-      <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
+      <span className="text-[11px] font-medium uppercase tracking-wider text-foreground">
         How it works
       </span>
       <ul className="mt-3 flex flex-col gap-3.5">
@@ -51,7 +51,7 @@ function PresetSection({
   if (presets.length === 0) return null;
   return (
     <div>
-      <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
+      <span className="text-[11px] font-medium uppercase tracking-wider text-foreground">
         Try
       </span>
       <div className="mt-2 flex flex-wrap gap-1.5">
@@ -167,7 +167,7 @@ export function Playground() {
               </li>
             ))}
             {PLAYGROUND_SOON.length > 0 ? (
-              <li className="mt-3 px-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
+              <li className="mt-3 px-3 text-[11px] font-medium uppercase tracking-wider text-foreground">
                 Soon
               </li>
             ) : null}

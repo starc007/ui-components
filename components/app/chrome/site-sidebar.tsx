@@ -9,13 +9,25 @@ import { cn } from "@/lib/utils";
 
 const INTRO = [
   { slug: "home", name: "Home", href: "/components/motion" },
-  { slug: "ai-agents", name: "AI Agents", href: "/docs/ai-agents" },
 ];
 
 const PATTERNS = [
   { slug: "motion-patterns", name: "Motion Guides", href: "/docs/motion-patterns" },
+  { slug: "ai-agents", name: "Agent Guide", href: "/docs/ai-agents" },
   { slug: "openui", name: "OpenUI", href: "/docs/openui" },
 ];
+
+const SIDEBAR_CATEGORY_ORDER: Record<string, number> = {
+  agents: 0,
+  motion: 1,
+  blocks: 2,
+};
+
+const SIDEBAR_CATEGORIES = [...registry].sort(
+  (a, b) =>
+    (SIDEBAR_CATEGORY_ORDER[a.slug] ?? Number.MAX_SAFE_INTEGER) -
+    (SIDEBAR_CATEGORY_ORDER[b.slug] ?? Number.MAX_SAFE_INTEGER),
+);
 
 function moveFirstItemsToBottom<T>(items: T[], count: number) {
   return [...items.slice(count), ...items.slice(0, count)];
@@ -70,7 +82,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           ))}
         </SharedLayoutBg>
       </div>
-      {registry.map((cat) => (
+      {SIDEBAR_CATEGORIES.map((cat) => (
         <div key={cat.slug}>
           <Link
             href={`/components/${cat.slug}`}

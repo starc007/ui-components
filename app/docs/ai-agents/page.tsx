@@ -152,19 +152,19 @@ export default function AIAgentsPage() {
       </div>
       <p className="mt-4 text-sm text-muted-foreground">
         Tools:{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
           list_components
         </code>
         ,{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
           search_components
         </code>
         ,{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
           get_component
         </code>
         ,{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
           get_install_command
         </code>
         .
@@ -233,11 +233,11 @@ export default function AIAgentsPage() {
       </h2>
       <p className="mt-2 text-muted-foreground">
         Internal helpers (e.g.{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
           @/lib/utils
         </code>
         ) ship inline as{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs">
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
           type: util
         </code>{" "}
         so the agent does not have to chase imports.

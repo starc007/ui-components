@@ -21,6 +21,7 @@ import {
 } from "@/components/motion/tabs";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { ComponentCard } from "@/components/app/docs/component-card";
+import { ComponentGuide } from "@/components/app/docs/component-guide";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { getPreview, previews } from "@/components/previews";
@@ -65,7 +66,7 @@ export async function generateMetadata({
     ? `/${installSlugs[0]}.json`
     : `/${comp.slug}.json`;
 
-  const title = `${comp.name} · React motion component`;
+  const title = comp.guide?.seo.title ?? `${comp.name} · React motion component`;
   const ogTitle = `${title} · beUI`;
   const pageUrl = `/components/${cat.slug}/${comp.slug}`;
   const imageUrl = `/api/og?component=${comp.slug}`;
@@ -137,11 +138,16 @@ export default async function ComponentPage({
   const hasMultipleVariants = (comp.examples?.length ?? 0) > 1;
   const hasVariantInstallCommands =
     comp.examples?.some((example) => example.installSlug) ?? false;
+  const examplesShareSource =
+    (comp.examples?.length ?? 0) > 1 &&
+    new Set(comp.examples?.map((example) => example.file)).size === 1;
+  const shouldShowExampleApi = (index: number) =>
+    !examplesShareSource || index === (comp.examples?.length ?? 0) - 1;
   const dates = componentDates(cat.slug, comp.slug);
   const related = relatedComponents(cat.slug, comp.slug, 3);
   const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
   const variantNavItems: PageNavItem[] =
-    comp.examples?.map((example) => ({
+    comp.examples?.map((example, index) => ({
       id: example.slug,
       label: example.name,
       children: [
@@ -149,7 +155,7 @@ export default async function ComponentPage({
         ...(example.installSlug
           ? [{ id: `${example.slug}-install`, label: "Install" }]
           : []),
-        ...(getComponentProps(example.file).length
+        ...(shouldShowExampleApi(index) && getComponentProps(example.file).length
           ? [
               {
                 id: `${example.slug}-api-reference`,
@@ -161,7 +167,18 @@ export default async function ComponentPage({
     })) ?? [];
   const pageNavItems: PageNavItem[] = [
     ...(variantNavItems.length
-      ? variantNavItems
+      ? [
+          ...variantNavItems,
+          ...(!hasVariantInstallCommands
+            ? [{ id: "install", label: "Install" }]
+            : []),
+          ...(comp.guide
+            ? [
+                { id: "composition", label: "Composition" },
+                { id: "behavior", label: "How it works" },
+              ]
+            : []),
+        ]
       : [
           {
             id: "overview",
@@ -173,6 +190,12 @@ export default async function ComponentPage({
                 : []),
               ...(propsDocs.length
                 ? [{ id: "api-reference", label: "API Reference" }]
+                : []),
+              ...(comp.guide
+                ? [
+                    { id: "composition", label: "Composition" },
+                    { id: "behavior", label: "How it works" },
+                  ]
                 : []),
             ],
           },
@@ -211,7 +234,7 @@ export default async function ComponentPage({
           </nav>
           <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+              <h1 className="text-3xl font-medium tracking-tight text-foreground">
                 {comp.name}
               </h1>
               {comp.badge === "new" && !hasMultipleVariants ? (
@@ -227,30 +250,27 @@ export default async function ComponentPage({
           <p className="mt-2 max-w-2xl text-muted-foreground">
             {comp.description}
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Updated{" "}
-            <time dateTime={dates.updatedAt}>
-              {new Intl.DateTimeFormat("en", {
-                dateStyle: "medium",
-                timeZone: "UTC",
-              }).format(new Date(`${dates.updatedAt}T00:00:00Z`))}
-            </time>
-          </p>
         </div>
 
         {comp.examples?.length ? (
           <div className="mt-10 flex flex-col gap-12">
-            {comp.examples.map((ex) => (
+            {comp.examples.map((ex, index) => (
               <ExampleBlock
                 key={ex.slug}
                 category={cat.slug}
                 pageSlug={comp.slug}
                 example={ex}
+                showApiReference={shouldShowExampleApi(index)}
               />
             ))}
           </div>
         ) : (
-          <DefaultTabs category={category} slug={slug} file={comp.file} />
+          <DefaultTabs
+            category={category}
+            slug={slug}
+            file={comp.file}
+            usageFile={comp.usageFile}
+          />
         )}
 
         {!hasVariantInstallCommands ? (
@@ -284,6 +304,8 @@ export default async function ComponentPage({
           </section>
         ) : null}
 
+        {comp.guide ? <ComponentGuide guide={comp.guide} /> : null}
+
         {related.length ? (
           <section
             id="related-components"
@@ -308,7 +330,35 @@ export default async function ComponentPage({
           </section>
         ) : null}
 
-        <KeepInMind />
+        {comp.credit ? (
+          <section className="mt-12 border-t border-border pt-8">
+            <h2 className="text-sm font-semibold text-foreground">Built by</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Fixtures was created by{" "}
+              <Link
+                href={comp.credit.url}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={`${comp.credit.name} on X`}
+                className="font-medium text-foreground underline-offset-2 hover:underline"
+              >
+                {comp.credit.name}
+              </Link>
+              .
+            </p>
+          </section>
+        ) : cat.slug !== "agents" ? (
+          <KeepInMind />
+        ) : null}
+        <p className="mt-6 text-xs text-muted-foreground">
+          Updated{" "}
+          <time dateTime={dates.updatedAt}>
+            {new Intl.DateTimeFormat("en", {
+              dateStyle: "medium",
+              timeZone: "UTC",
+            }).format(new Date(`${dates.updatedAt}T00:00:00Z`))}
+          </time>
+        </p>
       </div>
       <PageNav items={pageNavItems} />
     </div>
@@ -319,18 +369,21 @@ async function ExampleBlock({
   category,
   pageSlug,
   example,
+  showApiReference,
 }: {
   category: string;
   pageSlug: string;
   example: ComponentExample;
+  showApiReference: boolean;
 }) {
   const Preview = previews[example.previewKey];
+  const usageFile = example.usageFile ?? example.previewFile;
   const [source, usage] = await Promise.all([
     loadSource(example.file),
-    loadSource(example.previewFile),
+    loadSource(usageFile),
   ]);
   const installSlug = example.installSlug ?? null;
-  const propsDocs = getComponentProps(example.file);
+  const propsDocs = showApiReference ? getComponentProps(example.file) : [];
 
   return (
     <section id={example.slug} className="scroll-mt-24">
@@ -343,7 +396,7 @@ async function ExampleBlock({
             <NewBadge launchedAt={example.launchedAt} />
           ) : null}
         </div>
-        <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
+        <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
           {example.file.split("/").pop()}
         </code>
       </div>
@@ -365,7 +418,7 @@ async function ExampleBlock({
             </div>
           </TabsContent>
           <TabsContent value="usage" className="mt-4">
-            <CodeBlock code={usage} filename={example.previewFile} />
+            <CodeBlock code={usage} filename={usageFile} />
           </TabsContent>
           <TabsContent value="source" className="mt-4">
             <CodeBlock
@@ -384,7 +437,7 @@ async function ExampleBlock({
           id={`${example.slug}-install`}
           className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
         >
-          <h3 className="text-sm font-semibold text-foreground">Install</h3>
+          <h2 className="text-sm font-semibold text-foreground">Install</h2>
           <div className="mt-3">
             <InstallBlock category={category} slug={installSlug} />
           </div>
@@ -395,9 +448,9 @@ async function ExampleBlock({
           id={`${example.slug}-api-reference`}
           className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
         >
-          <h3 className="text-sm font-semibold text-foreground">
+          <h2 className="text-sm font-semibold text-foreground">
             API Reference
-          </h3>
+          </h2>
           <div className="mt-3">
             <PropsTable docs={propsDocs} />
           </div>
@@ -411,20 +464,24 @@ async function DefaultTabs({
   category,
   slug,
   file,
+  usageFile,
 }: {
   category: string;
   slug: string;
   file: string;
+  usageFile?: string;
 }) {
   const Preview = getPreview(category, slug);
   const previewFile = `components/previews/${category}/${slug}.preview.tsx`;
+  const resolvedUsageFile = usageFile ?? previewFile;
   const [source, usage] = await Promise.all([
     loadSource(file),
-    loadSource(previewFile),
+    loadSource(resolvedUsageFile),
   ]);
 
   return (
     <section id="preview" className="mt-8 scroll-mt-24">
+      <h2 className="sr-only">Preview</h2>
       <Tabs defaultValue="preview" variant="pill">
         <TabsList>
           <TabsTrigger value="preview">Preview</TabsTrigger>
@@ -437,7 +494,7 @@ async function DefaultTabs({
           </div>
         </TabsContent>
         <TabsContent value="usage" className="mt-4">
-          <CodeBlock code={usage} filename={previewFile} />
+          <CodeBlock code={usage} filename={resolvedUsageFile} />
         </TabsContent>
         <TabsContent value="source" className="mt-4">
           <CodeBlock

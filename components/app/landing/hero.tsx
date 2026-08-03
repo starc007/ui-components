@@ -46,15 +46,10 @@ export function Hero() {
         className="mx-auto font-display text-5xl font-semibold leading-[0.92] tracking-tight text-foreground sm:text-6xl md:text-7xl"
       />
 
-      <motion.p
-        initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        transition={{ duration: 0.5, ease: EASE_OUT, delay: subDelay }}
-        className="mx-auto mt-6 max-w-md text-pretty text-base leading-7 text-muted-foreground"
-      >
+      <p className="mx-auto mt-6 max-w-md text-pretty text-base leading-7 text-muted-foreground">
         Copy-paste React components built with Motion and Tailwind CSS. Free,
         open source, and fully customizable.
-      </motion.p>
+      </p>
 
       <motion.div
         initial={{ opacity: 0, y: 10 }}

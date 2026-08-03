@@ -1,3 +1,5 @@
+import { type AgentGuide, agentGuides } from "@/lib/agent-guides";
+
 export type ComponentExample = {
   slug: string;
   name: string;
@@ -13,6 +15,8 @@ export type ComponentExample = {
   previewKey: string;
   /** Path to the preview file used for the Usage tab. */
   previewFile: string;
+  /** Optional composition file shown instead of the live preview source. */
+  usageFile?: string;
 };
 
 export type ComponentEntry = {
@@ -20,6 +24,11 @@ export type ComponentEntry = {
   name: string;
   description: string;
   file: string;
+  /** Optional contributor credit shown on the website only. */
+  credit?: {
+    name: string;
+    url: string;
+  };
   badge?: "new";
   /** ISO date the component shipped. Drives newest-first order in the landing
    * "Recently launched" section. Set it when adding a "new" component. */
@@ -28,8 +37,12 @@ export type ComponentEntry = {
   keywords?: string[];
   /** Extra source files bundled under this slug (e.g. multi-file components). */
   extraFiles?: string[];
+  /** Optional composition file shown instead of the live preview source. */
+  usageFile?: string;
   /** Per-variant breakdown rendered as separate Preview / Usage / Source on the page. */
   examples?: ComponentExample[];
+  /** Optional behavior guide rendered on the component documentation page. */
+  guide?: AgentGuide;
 };
 
 export type CategoryEntry = {
@@ -262,6 +275,27 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "animated-sidebar",
+        name: "Animated Sidebar",
+        guide: agentGuides["animated-sidebar"],
+        description:
+          "A composable application sidebar with morphing nested navigation that folds into an animated icon rail on desktop and becomes a focus-managed sheet on mobile.",
+        file: "components/motion/animated-sidebar.tsx",
+        badge: "new",
+        launchedAt: "2026-07-29",
+        keywords: [
+          "animated sidebar react",
+          "mobile sidebar",
+          "responsive sidebar",
+          "collapsible sidebar",
+          "icon sidebar",
+          "sidebar drawer",
+          "composable sidebar",
+          "nested sidebar navigation",
+          "accessible navigation menu",
+        ],
+      },
+      {
         slug: "preview-rail",
         name: "Preview Rail",
         description: "Codex app-inspired navigation rail with compact ticks that form a hover pyramid and reveal a floating destination preview.",
@@ -292,6 +326,23 @@ export const registry: CategoryEntry[] = [
         name: "Tooltip",
         description: "Hover or focus tooltip with blur enter/exit and spring spawn.",
         file: "components/motion/tooltip.tsx",
+      },
+      {
+        slug: "context-menu",
+        name: "Animated Context Menu",
+        description:
+          "Composable context-menu primitives with a pointer-origin clip morph, a gliding active row, checkbox and radio choices, keyboard navigation, typeahead, and long-press support.",
+        file: "components/motion/context-menu.tsx",
+        badge: "new",
+        launchedAt: "2026-07-27",
+        keywords: [
+          "react context menu",
+          "animated context menu",
+          "right click menu",
+          "context menu keyboard navigation",
+          "long press menu react",
+          "composable menu primitives",
+        ],
       },
       {
         slug: "popover",
@@ -489,8 +540,17 @@ export const registry: CategoryEntry[] = [
       {
         slug: "theme-toggle",
         name: "Theme Toggle",
-        description: "Theme toggle button with a full-page rectangle clip-path reveal via the View Transition API.",
+        description: "Theme toggle button that repaints the whole page through the View Transition API — a rectangle or circle clip-path reveal, or slats that open across the screen like a shutter.",
         file: "components/motion/theme-toggle.tsx",
+        badge: "new",
+        launchedAt: "2026-08-01",
+        keywords: [
+          "theme toggle",
+          "dark mode toggle",
+          "view transition theme",
+          "clip path theme reveal",
+          "blinds transition",
+        ],
       },
       {
         slug: "bouncy-accordion",
@@ -574,11 +634,79 @@ export const registry: CategoryEntry[] = [
       {
         slug: "range-slider",
         name: "Range Slider",
-        description: "Range slider with tick dots and a bouncy vertical-bar thumb that glides between snapped steps; drag and keyboard control, reduced-motion safe.",
+        description: "Slider with tick dots and a vertical-bar thumb that bounces as it lands on each step. Drag or keyboard, reduced-motion safe.",
         file: "components/motion/range-slider.tsx",
         badge: "new",
-        launchedAt: "2026-06-24",
-        keywords: ["slider", "range slider", "range input", "stepped slider", "ticks"],
+        launchedAt: "2026-07-31",
+        keywords: [
+          "slider",
+          "range slider",
+          "range input",
+          "stepped slider",
+          "ticks",
+          "volume slider",
+          "ruler picker",
+        ],
+        examples: [
+          {
+            slug: "stepped",
+            name: "Range Slider",
+            description:
+              "Tick dots, and a vertical-bar thumb that bounces as it lands on each step.",
+            installSlug: "range-slider",
+            file: "components/motion/range-slider.tsx",
+            previewKey: "motion/range-slider",
+            previewFile: "components/previews/motion/range-slider.preview.tsx",
+          },
+          {
+            slug: "fluid",
+            name: "Fluid Slider",
+            description:
+              "No thumb. The fill slides behind a rounded liquid cap, and the label flips color wherever the fill covers it.",
+            installSlug: "range-slider-fluid",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-fluid.tsx",
+            previewKey: "motion/range-slider-fluid",
+            previewFile: "components/previews/motion/range-slider-fluid.preview.tsx",
+          },
+          {
+            slug: "wave",
+            name: "Wave Slider",
+            description:
+              "Equalizer bars peak around the handle and drop back once it passes, so the value moves down the track as a wave.",
+            installSlug: "range-slider-wave",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-wave.tsx",
+            previewKey: "motion/range-slider-wave",
+            previewFile: "components/previews/motion/range-slider-wave.preview.tsx",
+          },
+          {
+            slug: "bubble",
+            name: "Bubble Slider",
+            description:
+              "Grab the thumb and a value bubble pops out of it. The bubble tilts and squashes with how fast you drag, then settles upright.",
+            installSlug: "range-slider-bubble",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-bubble.tsx",
+            previewKey: "motion/range-slider-bubble",
+            previewFile: "components/previews/motion/range-slider-bubble.preview.tsx",
+          },
+          {
+            slug: "ruler",
+            name: "Ruler Slider",
+            description:
+              "The needle stays put and the scale scrolls under it. A flick keeps going and settles on the nearest tick. Fractional steps read at the step's own precision.",
+            installSlug: "range-slider-ruler",
+            badge: "new",
+            launchedAt: "2026-07-31",
+            file: "components/motion/range-slider-ruler.tsx",
+            previewKey: "motion/range-slider-ruler",
+            previewFile: "components/previews/motion/range-slider-ruler.preview.tsx",
+          },
+        ],
       },
       {
         slug: "wheel-picker",
@@ -690,6 +818,524 @@ export const registry: CategoryEntry[] = [
     ],
   },
   {
+    slug: "agents",
+    name: "AI Agents",
+    description:
+      "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
+    components: [
+      {
+        slug: "message-bubble",
+        name: "Message Bubble",
+        guide: agentGuides["message-bubble"],
+        description:
+          "A focused conversational surface with visual tones, independent alignment, grouped messages, expandable content, and interactive link or button support.",
+        file: "components/agents/message-bubble.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "message bubble React",
+          "chat bubble component",
+          "AI conversation bubble",
+          "expandable chat message",
+          "interactive chat suggestion",
+          "grouped message bubbles",
+        ],
+        examples: [
+          {
+            slug: "surfaces",
+            name: "Animated Surfaces",
+            description:
+              "An interactive conversation where each newly sent user row pops up once while the assistant streams into a stable row.",
+            file: "components/agents/message-bubble.tsx",
+            previewKey: "agents/message-bubble",
+            previewFile:
+              "components/previews/agents/message-bubble.preview.tsx",
+            usageFile:
+              "components/previews/agents/message-bubble.usage.tsx",
+          },
+          {
+            slug: "avatars",
+            name: "With Avatars",
+            description:
+              "Progressively arriving messages with sender avatars, metadata, delivery state, and grouped follow-up alignment.",
+            file: "components/agents/message-bubble.tsx",
+            previewKey: "agents/message-bubble-avatars",
+            previewFile:
+              "components/previews/agents/message-bubble-avatars.preview.tsx",
+          },
+          {
+            slug: "show-more",
+            name: "Show More",
+            description:
+              "A long assistant message with a compact line-clamped preview and animated disclosure control.",
+            file: "components/agents/message-bubble.tsx",
+            previewKey: "agents/message-bubble-collapsible",
+            previewFile:
+              "components/previews/agents/message-bubble-collapsible.preview.tsx",
+          },
+        ],
+      },
+      {
+        slug: "message",
+        name: "Message",
+        guide: agentGuides.message,
+        description:
+          "Composable conversation primitives for message rows, grouped bubbles, avatars, metadata, live markers, and a mount-only trailing-edge pop-up for newly sent rows.",
+        file: "components/agents/message.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI message React",
+          "chat message component",
+          "streaming assistant message",
+          "LLM conversation UI",
+          "agent chat bubbles",
+          "AI chat interface React",
+        ],
+        usageFile: "components/previews/agents/message.usage.tsx",
+      },
+      {
+        slug: "message-scroller",
+        name: "Message Scroller",
+        guide: agentGuides["message-scroller"],
+        description:
+          "A reader-aware conversation viewport that follows streamed output at the live edge and releases control when the reader moves away.",
+        file: "components/agents/message-scroller.tsx",
+        usageFile:
+          "components/previews/agents/message-scroller.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "message scroller React",
+          "AI chat autoscroll",
+          "streaming conversation viewport",
+          "follow output chat UI",
+          "LLM message scroll",
+          "accessible chat transcript",
+        ],
+      },
+      {
+        slug: "prompt-input",
+        name: "Prompt Input",
+        guide: agentGuides["prompt-input"],
+        description:
+          "An auto-growing agent composer with prompt actions, model selection, keyboard submission, and animated send and stop states.",
+        file: "components/agents/prompt-input.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI prompt input React",
+          "model selector dropdown",
+          "chat composer component",
+          "agent input UI",
+          "AI textarea React",
+          "LLM model picker",
+        ],
+      },
+      {
+        slug: "todo-list",
+        name: "Todo List",
+        guide: agentGuides["todo-list"],
+        description:
+          "A collapsible agent task plan with morphing status marks, a completion count, compact metadata, and smooth list updates.",
+        file: "components/agents/todo-list.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI agent todo list React",
+          "agent task progress UI",
+          "LLM task plan component",
+          "AI checklist React",
+          "streaming todo list",
+          "agent workflow status",
+        ],
+      },
+      {
+        slug: "code-block",
+        name: "Code Block",
+        guide: agentGuides["code-block"],
+        description:
+          "A syntax-highlighted code surface with stable streaming updates, line numbers, focused lines, smooth following, and copy feedback.",
+        file: "components/agents/code-block.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI code block React",
+          "streaming code component",
+          "syntax highlighted code block",
+          "LLM code response UI",
+          "agent generated code",
+          "Shiki React code block",
+        ],
+      },
+      {
+        slug: "approval-card",
+        name: "Approval Card",
+        guide: agentGuides["approval-card"],
+        description:
+          "A human-in-the-loop decision surface for approvals, single or multiple-choice questions, custom responses, and multi-step review flows.",
+        file: "components/agents/approval-card/index.tsx",
+        extraFiles: ["components/agents/approval-card/types.ts"],
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI approval card React",
+          "human in the loop UI",
+          "agent clarification question",
+          "AI multiple choice prompt",
+          "approve agent decision",
+          "agent review workflow",
+        ],
+        examples: [
+          {
+            slug: "questions",
+            name: "Questions",
+            description:
+              "Guides the user through single-choice, multiple-choice, and freeform questions before returning the completed response to the agent.",
+            file: "components/agents/approval-card/index.tsx",
+            previewKey: "agents/approval-card-question",
+            previewFile:
+              "components/previews/agents/approval-card-question.preview.tsx",
+          },
+          {
+            slug: "review",
+            name: "Review and Approve",
+            description:
+              "Pauses an agent workflow for approval, revision, or rejection and collapses into the recorded decision.",
+            file: "components/agents/approval-card/index.tsx",
+            previewKey: "agents/approval-card-review",
+            previewFile:
+              "components/previews/agents/approval-card-review.preview.tsx",
+          },
+        ],
+      },
+      {
+        slug: "file-diff",
+        name: "File Diff",
+        guide: agentGuides["file-diff"],
+        description:
+          "A syntax-highlighted file change disclosure with progressive rows, line numbers, live change counts, smooth following, and completion collapse.",
+        file: "components/agents/file-diff.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI file diff React",
+          "agent code changes UI",
+          "streaming diff component",
+          "file edit result",
+          "code additions deletions",
+        ],
+      },
+      {
+        slug: "tool-result",
+        name: "Tool Result",
+        guide: agentGuides["tool-result"],
+        description:
+          "A lightweight execution disclosure for syntax-highlighted terminal output and request responses that collapses into a compact completed state.",
+        file: "components/agents/tool-result.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI tool result React",
+          "agent terminal output UI",
+          "streaming command result",
+          "agent API response",
+          "tool execution status",
+        ],
+        examples: [
+          {
+            slug: "terminal-output",
+            name: "Terminal Output",
+            description:
+              "Streams command output into a bounded viewport, follows new lines, then collapses into the completed run summary.",
+            file: "components/agents/tool-result.tsx",
+            previewKey: "agents/tool-result-terminal",
+            previewFile:
+              "components/previews/agents/tool-result-terminal.preview.tsx",
+          },
+          {
+            slug: "request-result",
+            name: "Request Result",
+            description:
+              "Presents an in-flight request and its highlighted response payload with retry and copy actions.",
+            file: "components/agents/tool-result.tsx",
+            previewKey: "agents/tool-result-request",
+            previewFile:
+              "components/previews/agents/tool-result-request.preview.tsx",
+          },
+        ],
+      },
+      {
+        slug: "streaming-response",
+        name: "Streaming Response",
+        guide: agentGuides["streaming-response"],
+        description:
+          "A stable response surface with completion actions, rendered content, and an expandable source summary.",
+        file: "components/agents/streaming-response.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI streaming response React",
+          "LLM token stream UI",
+          "chat response actions",
+          "AI response sources",
+          "AI answer component",
+          "streaming text React",
+        ],
+      },
+      {
+        slug: "image-generation",
+        name: "Image Generation",
+        guide: agentGuides["image-generation"],
+        description:
+          "A stable generated-image surface that moves from queued work through progressive refinement to a completed result without layout shift.",
+        file: "components/agents/image-generation.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI image generation React",
+          "generated image loading UI",
+          "AI image progress component",
+          "image generation animation",
+          "text to image interface",
+          "AI media result",
+        ],
+      },
+      {
+        slug: "tool-approval",
+        name: "Tool Approval",
+        guide: agentGuides["tool-approval"],
+        description:
+          "A human-in-the-loop permission card for reviewing tool details, allowing once, remembering access, or denying execution.",
+        file: "components/agents/tool-approval.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI tool approval UI",
+          "agent permission component",
+          "human in the loop React",
+          "approve agent action",
+          "AI tool confirmation",
+        ],
+      },
+      {
+        slug: "citations",
+        name: "Citations",
+        guide: agentGuides.citations,
+        description:
+          "Inline citation markers paired with a collapsible, progressively rendered reference collection for grounded agent responses.",
+        file: "components/agents/citations.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI citations React",
+          "LLM citations component",
+          "chat citation list",
+          "RAG citation UI",
+          "AI grounded response",
+        ],
+      },
+      {
+        slug: "agent-activity",
+        name: "Agent Activity",
+        guide: agentGuides["agent-activity"],
+        description:
+          "One adaptive activity stream for reasoning, searches, tool calls, structured execution traces, or a chronological mix.",
+        file: "components/agents/agent-activity/index.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI agent activity component",
+          "agent tool calls UI",
+          "AI search results React",
+          "agent reasoning timeline",
+          "mixed agent activity stream",
+          "agent execution trace UI",
+          "collapsible AI activity",
+        ],
+        examples: [
+          {
+            slug: "streaming-text",
+            name: "Streaming Text",
+            description:
+              "Streams freeform reasoning text into the capped viewport and keeps the completed log available behind a timed disclosure.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-activity-text",
+            previewFile:
+              "components/previews/agents/agent-activity-text.preview.tsx",
+          },
+          {
+            slug: "reasoning-steps",
+            name: "Reasoning Steps",
+            description:
+              "Shows completed, active, and pending reasoning steps with optional trailing metadata.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-activity-steps",
+            previewFile:
+              "components/previews/agents/agent-activity-steps.preview.tsx",
+          },
+          {
+            slug: "web-search",
+            name: "Web Search",
+            description:
+              "Presents a search query, progressively rendered result rows, and an overflow count.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-activity-search",
+            previewFile:
+              "components/previews/agents/agent-activity-search.preview.tsx",
+          },
+          {
+            slug: "tool-calls",
+            name: "Tool Calls",
+            description:
+              "Summarizes read, edit, and run events with monospace targets and optional line-change counts.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-activity-tools",
+            previewFile:
+              "components/previews/agents/agent-activity-tools.preview.tsx",
+          },
+          {
+            slug: "mixed-activity",
+            name: "Mixed Activity",
+            description:
+              "Streams reasoning, search, and tool events in one chronological run while the viewport smoothly follows new work.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-activity-mixed",
+            previewFile:
+              "components/previews/agents/agent-activity.preview.tsx",
+          },
+          {
+            slug: "agent-trace",
+            name: "Agent Trace",
+            description:
+              "Streams messages and structured actions into a compact execution ledger, then summarizes the completed run by tool-call and message counts.",
+            file: "components/agents/agent-activity/index.tsx",
+            previewKey: "agents/agent-trace",
+            previewFile: "components/previews/agents/agent-trace.preview.tsx",
+          },
+        ],
+      },
+      {
+        slug: "loading-states",
+        name: "Agent Loading States",
+        guide: agentGuides["loading-states"],
+        description:
+          "Three thoughtful loading states for AI interfaces: shimmering status text, live agent progress, and cycling reasoning phrases.",
+        file: "components/agents/loading-states/index.ts",
+        extraFiles: [
+          "components/agents/loading-states/thinking-shimmer.tsx",
+          "components/agents/loading-states/agent-progress.tsx",
+          "components/agents/loading-states/reasoning-text.tsx",
+        ],
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI agent loading state",
+          "agent thinking animation",
+          "Claude thinking animation",
+          "AI reasoning indicator",
+          "LLM loading component",
+          "chatbot thinking indicator",
+        ],
+        examples: [
+          {
+            slug: "reasoning-text",
+            name: "Reasoning Text",
+            description:
+              "Shimmering reasoning copy with an ASCII loader and cascade, phrase-swap, or per-letter scramble transitions.",
+            badge: "new",
+            launchedAt: "2026-08-03",
+            installSlug: "reasoning-text",
+            file: "components/agents/loading-states/reasoning-text.tsx",
+            previewKey: "agents/reasoning-text",
+            previewFile:
+              "components/previews/agents/reasoning-text.preview.tsx",
+          },
+          {
+            slug: "thinking-shimmer",
+            name: "Thinking Shimmer",
+            description:
+              "A quiet shimmer that keeps the agent's current status readable while work continues.",
+            badge: "new",
+            launchedAt: "2026-08-03",
+            installSlug: "thinking-shimmer",
+            file: "components/agents/loading-states/thinking-shimmer.tsx",
+            previewKey: "agents/thinking-shimmer",
+            previewFile:
+              "components/previews/agents/thinking-shimmer.preview.tsx",
+          },
+          {
+            slug: "agent-progress",
+            name: "Agent Progress",
+            description:
+              "A compact activity glyph, action verb, and live tabular timer for longer-running agent work.",
+            badge: "new",
+            launchedAt: "2026-08-03",
+            installSlug: "agent-progress",
+            file: "components/agents/loading-states/agent-progress.tsx",
+            previewKey: "agents/agent-progress",
+            previewFile:
+              "components/previews/agents/agent-progress.preview.tsx",
+          },
+        ],
+      },
+      {
+        slug: "ai-sidebar",
+        name: "AI Sidebar",
+        guide: agentGuides["ai-sidebar"],
+        description:
+          "A collapsible AI workspace sidebar for folders, projects, files, and bookmarks with keyboard navigation, optimistic moves, inline rename, and overflow-aware labels.",
+        file: "components/agents/ai-sidebar.tsx",
+        usageFile: "components/previews/agents/ai-sidebar.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI sidebar React",
+          "agent workspace sidebar",
+          "draggable resource tree",
+          "project file sidebar",
+          "collapsible AI navigation",
+          "folder tree React",
+        ],
+      },
+      {
+        slug: "chat-app",
+        name: "Chat App",
+        description:
+          "A complete agent conversation workspace composing navigation, messages, streaming, planning, approvals, tools, code, diffs, generated media, sources, and prompt input.",
+        file: "components/agents/chat-app.tsx",
+        usageFile:
+          "components/previews/agents/chat-app-usage.tsx",
+        extraFiles: [
+          "components/agents/agent-activity/index.tsx",
+          "components/agents/ai-sidebar.tsx",
+          "components/agents/approval-card/index.tsx",
+          "components/agents/code-block.tsx",
+          "components/agents/file-diff.tsx",
+          "components/agents/image-generation.tsx",
+          "components/agents/loading-states/thinking-shimmer.tsx",
+          "components/agents/message.tsx",
+          "components/agents/message-bubble.tsx",
+          "components/agents/message-scroller.tsx",
+          "components/agents/prompt-input.tsx",
+          "components/agents/streaming-response.tsx",
+          "components/agents/todo-list.tsx",
+          "components/agents/tool-approval.tsx",
+          "components/agents/tool-result.tsx",
+        ],
+        launchedAt: "2026-08-03",
+        keywords: [
+          "AI chat app React",
+          "agent workspace example",
+          "complete AI chat interface",
+          "AI SDK compatible chat UI",
+          "agent conversation layout",
+          "LLM chat app component",
+        ],
+      },
+    ],
+  },
+  {
     slug: "blocks",
     name: "Blocks",
     description:
@@ -729,11 +1375,37 @@ export const registry: CategoryEntry[] = [
       },
       {
         slug: "knockout-bracket",
-        name: "Knockout Bracket",
-        description: "Google-style tournament bracket that pages one round at a time — the leftmost round stacks compactly while later rounds center between their feeder matches, with cards, elbow connectors, headers and container height animating to every new layout.",
+        name: "Fixtures",
+        description: "Animated tournament fixtures in two styles: a knockout bracket that pages through rounds, and a wheel that wraps the same tree around the champion. Both read the same array of rounds, so one dataset draws either.",
         file: "components/motion/knockout-bracket.tsx",
         badge: "new",
-        launchedAt: "2026-07-12",
+        launchedAt: "2026-07-27",
+        extraFiles: ["components/motion/knockout-wheel.tsx"],
+        examples: [
+          {
+            slug: "knockout-wheel",
+            name: "Knockout Wheel",
+            description:
+              "The tournament drawn radially. The champion holds the hub, each round is a ring further out, and the teams themselves form the rim. Nodes spring in ring by ring, and hovering one isolates that team while the rest recede. Teams show a flag, a logo or their initials, and a deeper draw grows another ring.",
+            badge: "new",
+            launchedAt: "2026-07-27",
+            installSlug: "knockout-wheel",
+            file: "components/motion/knockout-wheel.tsx",
+            previewKey: "blocks/knockout-wheel",
+            previewFile: "components/previews/blocks/knockout-wheel.preview.tsx",
+          },
+          {
+            slug: "knockout-bracket",
+            name: "Knockout Bracket",
+            description:
+              "Pages one round at a time. The leftmost round stacks at a fixed rhythm, each later round centers between its two feeder matches, and cards, elbow connectors, headers and stage height animate into every new layout. A third place play-off sits below the tree under its own rule. Round names, team artwork, dates and result chips all come from the data you pass.",
+            installSlug: "knockout-bracket",
+            file: "components/motion/knockout-bracket.tsx",
+            previewKey: "blocks/knockout-bracket",
+            previewFile:
+              "components/previews/blocks/knockout-bracket.preview.tsx",
+          },
+        ],
         keywords: [
           "tournament bracket react",
           "knockout bracket component",
@@ -804,8 +1476,44 @@ export const registry: CategoryEntry[] = [
       {
         slug: "file-upload",
         name: "File Upload",
-        description: "Drag-and-drop upload queue with progress rows, retry/remove actions and reduced-motion-safe state changes.",
+        description:
+          "Two file upload patterns: an attachment workspace for mixed files, links, audio and media, plus a progress queue with retry and removal.",
         file: "components/motion/file-upload.tsx",
+        extraFiles: ["components/motion/attachment-upload.tsx"],
+        badge: "new",
+        launchedAt: "2026-07-30",
+        examples: [
+          {
+            slug: "attachment-upload",
+            name: "Attachment Upload",
+            description:
+              "A mixed attachment workspace with a dropzone, staggered file and image rows, animated upload, success, failure, retry and removal feedback, shared-layout image previews, and an audio waveform.",
+            badge: "new",
+            launchedAt: "2026-07-30",
+            installSlug: "attachment-upload",
+            file: "components/motion/attachment-upload.tsx",
+            previewKey: "blocks/attachment-upload",
+            previewFile:
+              "components/previews/blocks/attachment-upload.preview.tsx",
+          },
+          {
+            slug: "upload-queue",
+            name: "Upload Queue",
+            description:
+              "A drag-and-drop upload queue with progress rows, upload states, retry, and removal.",
+            installSlug: "file-upload",
+            file: "components/motion/file-upload.tsx",
+            previewKey: "blocks/file-upload",
+            previewFile: "components/previews/blocks/file-upload.preview.tsx",
+          },
+        ],
+        keywords: [
+          "attachment upload react",
+          "file attachment component",
+          "mixed media upload",
+          "audio attachment waveform",
+          "drag and drop attachments",
+        ],
       },
       {
         slug: "prediction-market",

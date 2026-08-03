@@ -6,6 +6,7 @@ const VARIANTS: { variant: ThemeVariant; label: string }[] = [
   { variant: "rectangle", label: "Rectangle" },
   { variant: "circle", label: "Circle" },
   { variant: "circle-blur", label: "Circle blur" },
+  { variant: "blinds", label: "Blinds" },
 ];
 
 export function ThemeTogglePreview() {

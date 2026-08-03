@@ -1,7 +1,8 @@
 /**
  * Component publication and modification dates derived from git history.
  * Keep these dates in sync when a component's public docs or implementation
- * changes so sitemap and article freshness signals stay truthful.
+ * changes so sitemap and article freshness signals stay truthful. Site-wide
+ * maintenance should not refresh every component's public update date.
  */
 const COMPONENT_DATES = {
   "motion/tilt-card": { publishedAt: "2026-05-17", updatedAt: "2026-06-22" },
@@ -19,12 +20,17 @@ const COMPONENT_DATES = {
   "motion/radio": { publishedAt: "2026-06-23", updatedAt: "2026-07-13" },
   "motion/bottom-sheet": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
   "motion/pull-to-refresh": { publishedAt: "2026-07-17", updatedAt: "2026-07-17" },
-  "motion/shared-layout-bg": { publishedAt: "2026-05-17", updatedAt: "2026-06-22" },
+  "motion/shared-layout-bg": { publishedAt: "2026-05-17", updatedAt: "2026-07-29" },
   "motion/bounce-sidebar": { publishedAt: "2026-07-22", updatedAt: "2026-07-22" },
+  "motion/animated-sidebar": {
+    publishedAt: "2026-07-29",
+    updatedAt: "2026-07-30",
+  },
   "motion/preview-rail": { publishedAt: "2026-07-11", updatedAt: "2026-07-11" },
   "motion/dock": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
   "motion/tooltip": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
-  "motion/popover": { publishedAt: "2026-07-07", updatedAt: "2026-07-21" },
+  "motion/context-menu": { publishedAt: "2026-07-27", updatedAt: "2026-07-27" },
+  "motion/popover": { publishedAt: "2026-07-07", updatedAt: "2026-07-27" },
   "motion/morphing-modal": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
   "motion/center-morph-modal": {
     publishedAt: "2026-07-21",
@@ -39,15 +45,83 @@ const COMPONENT_DATES = {
   "motion/bouncy-accordion": { publishedAt: "2026-06-16", updatedAt: "2026-07-13" },
   "motion/drawer": { publishedAt: "2026-06-22", updatedAt: "2026-06-22" },
   "motion/scroll-animation": { publishedAt: "2026-06-24", updatedAt: "2026-06-28" },
-  "motion/range-slider": { publishedAt: "2026-06-24", updatedAt: "2026-06-24" },
+  "motion/range-slider": { publishedAt: "2026-06-24", updatedAt: "2026-07-31" },
   "motion/wheel-picker": { publishedAt: "2026-07-09", updatedAt: "2026-07-09" },
   "motion/table": { publishedAt: "2026-07-01", updatedAt: "2026-07-13" },
   "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-07-13" },
   "motion/cylinder-carousel": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
+  "agents/loading-states": {
+    publishedAt: "2026-07-30",
+    updatedAt: "2026-08-02",
+  },
+  "agents/chat-app": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/message-bubble": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/message": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/message-scroller": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/ai-sidebar": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/approval-card": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/code-block": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/todo-list": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/prompt-input": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/tool-result": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/file-diff": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/streaming-response": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/image-generation": {
+    publishedAt: "2026-08-02",
+    updatedAt: "2026-08-02",
+  },
+  "agents/tool-approval": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/citations": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
+  "agents/agent-activity": {
+    publishedAt: "2026-08-01",
+    updatedAt: "2026-08-02",
+  },
   "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-07-15" },
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-07-14" },
-  "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-07-12" },
+  "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-07-27" },
   "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-07-10" },
   "blocks/swap": { publishedAt: "2026-05-19", updatedAt: "2026-06-13" },
   "blocks/dynamic-island": { publishedAt: "2026-06-10", updatedAt: "2026-07-13" },
@@ -56,7 +130,7 @@ const COMPONENT_DATES = {
   "blocks/overflow-actions": { publishedAt: "2026-06-19", updatedAt: "2026-06-28" },
   "blocks/expandable-tabs": { publishedAt: "2026-06-14", updatedAt: "2026-06-28" },
   "blocks/swipeable-list": { publishedAt: "2026-06-15", updatedAt: "2026-06-28" },
-  "blocks/file-upload": { publishedAt: "2026-06-18", updatedAt: "2026-06-21" },
+  "blocks/file-upload": { publishedAt: "2026-06-18", updatedAt: "2026-07-30" },
   "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-06-21" },
   "blocks/wallet-card": { publishedAt: "2026-07-03", updatedAt: "2026-07-03" },
   "blocks/otp-input": { publishedAt: "2026-06-13", updatedAt: "2026-07-13" },

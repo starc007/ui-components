@@ -33,7 +33,7 @@ export function LandingComponentCard({
   const cardRef = useRef<HTMLElement>(null);
   const shouldRenderPreview = useInView(cardRef, {
     once: true,
-    margin: "400px 0px",
+    margin: "0px",
   });
   const Preview = previewKey
     ? previews[previewKey]
