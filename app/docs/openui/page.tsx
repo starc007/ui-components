@@ -27,40 +27,43 @@ export const metadata: Metadata = {
 const INSTALL_SNIPPET = `# OpenUI runtime + schema validation
 npm install @openuidev/react-lang zod
 
+# Your model SDK (any provider works)
+npm install openai
+
 # Pull the beUI components you want to expose (shadcn registry)
 npx shadcn@latest add @beui/button @beui/animated-badge @beui/animated-number`;
 
-const DEFINE_SNIPPET = `import { defineComponent } from "@openuidev/react-lang";
+const DEFINE_SNIPPET = `import { defineComponent, useTriggerAction } from "@openuidev/react-lang";
 import { z } from "zod/v4";
 import { Button } from "@/components/motion/button";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { AnimatedNumber } from "@/components/motion/animated-number";
 
-// The root node. Every response stacks its children into this container.
-const Stack = defineComponent({
-  name: "Stack",
-  description: "Vertical container. Children stack top to bottom with spacing.",
-  props: z.object({ children: z.array(z.any()) }),
-  component: ({ props, renderNode }) => (
-    <div className="flex flex-col gap-3">{renderNode(props.children)}</div>
-  ),
-});
-
 // beUI Button — the model picks a variant and an optional press ripple.
+// \`useTriggerAction\` keeps it live: pressing it sends \`action\` back to the
+// model, so generated buttons continue the conversation instead of sitting inert.
 const BeButton = defineComponent({
   name: "Button",
   description:
-    "Spring-pressed action button. Use for the primary call to action in a response.",
+    "Spring-pressed action button. \`action\` is the message sent to the model when pressed.",
   props: z.object({
     label: z.string(),
+    action: z.string(),
     variant: z.enum(["primary", "secondary", "ghost", "outline"]).default("primary"),
     ripple: z.boolean().default(false),
   }),
-  component: ({ props }) => (
-    <Button variant={props.variant} ripple={props.ripple}>
-      {props.label}
-    </Button>
-  ),
+  component: ({ props }) => {
+    const triggerAction = useTriggerAction();
+    return (
+      <Button
+        variant={props.variant}
+        ripple={props.ripple}
+        onClick={() => triggerAction(props.action)}
+      >
+        {props.label}
+      </Button>
+    );
+  },
 });
 
 // beUI status pill with a pulse and animated state icon.
@@ -93,6 +96,21 @@ const BeStat = defineComponent({
       <AnimatedNumber value={props.value} className="text-2xl font-semibold" />
     </div>
   ),
+});
+
+// The root node stacks the components above. Describe its children as a union
+// of each component's \`.ref\` (declared after the components exist): the runtime
+// validates what may nest here, and the model sees exactly which nodes are
+// allowed inside — both of which \`z.any()\` would throw away.
+const StackChild = z.union([BeButton.ref, BeBadge.ref, BeStat.ref]);
+
+const Stack = defineComponent({
+  name: "Stack",
+  description: "Vertical container. Children stack top to bottom with spacing.",
+  props: z.object({ children: z.array(StackChild) }),
+  component: ({ props, renderNode }) => (
+    <div className="flex flex-col gap-3">{renderNode(props.children)}</div>
+  ),
 });`;
 
 const LIBRARY_SNIPPET = `import { createLibrary } from "@openuidev/react-lang";
@@ -117,6 +135,29 @@ export const beuiLibrary = createLibrary({
   ],
 });`;
 
+const PROMPT_SNIPPET = `import OpenAI from "openai";
+import { beuiLibrary } from "./beui-library";
+
+const openai = new OpenAI();
+
+// The model produces the OpenUI Lang; beuiLibrary.prompt() tells it how.
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+
+  const stream = await openai.chat.completions.create({
+    model: "gpt-4o",
+    stream: true,
+    messages: [
+      // Grammar + a signature and description for every registered component,
+      // so the model only ever emits nodes your library defines.
+      { role: "system", content: beuiLibrary.prompt() },
+      ...messages,
+    ],
+  });
+
+  return new Response(stream.toReadableStream());
+}`;
+
 const RENDER_SNIPPET = `"use client";
 
 import { Renderer } from "@openuidev/react-lang";
@@ -126,12 +167,21 @@ import { beuiLibrary } from "./beui-library";
 export function GenerativeResponse({
   response,
   isStreaming,
+  onSend,
 }: {
   response: string | null;
   isStreaming: boolean;
+  onSend: (message: string) => void;
 }) {
   return (
-    <Renderer response={response} library={beuiLibrary} isStreaming={isStreaming} />
+    <Renderer
+      response={response}
+      library={beuiLibrary}
+      isStreaming={isStreaming}
+      // A registered Button was pressed — send its message back to the
+      // model to continue the conversation.
+      onAction={(event) => onSend(event.humanFriendlyMessage)}
+    />
   );
 }`;
 
@@ -215,12 +265,21 @@ export default function OpenUIPage() {
         <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
           props
         </code>{" "}
-        schema validates the model&apos;s output as it streams, and the{" "}
+        schema validates the model&apos;s output as it streams, the{" "}
         <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
           description
         </code>{" "}
-        is injected into the system prompt — so the model learns each
-        component&apos;s intent from the same string that documents it.
+        is injected into the system prompt so the model learns each
+        component&apos;s intent, and{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+          useTriggerAction
+        </code>{" "}
+        keeps rendered controls interactive. Describe a container&apos;s children
+        as a union of the registered{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+          .ref
+        </code>{" "}
+        schemas so nesting is both validated and advertised to the model.
       </p>
       <div className="mt-4">
         <CodeBlock code={DEFINE_SNIPPET} lang="tsx" filename="beui-library.tsx" />
@@ -248,6 +307,31 @@ export default function OpenUIPage() {
       </div>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+        Generate the prompt
+      </h2>
+      <p className="mt-2 text-muted-foreground">
+        The client renders OpenUI Lang, but the model has to produce it. On the
+        server, call{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+          beuiLibrary.prompt()
+        </code>{" "}
+        to build the system prompt — the OpenUI Lang grammar plus a signature and
+        description for every registered component — and stream the model&apos;s
+        reply back to the browser.
+      </p>
+      <div className="mt-4">
+        <CodeBlock code={PROMPT_SNIPPET} lang="tsx" filename="app/api/generate/route.ts" />
+      </div>
+      <p className="mt-4 text-sm text-muted-foreground">
+        In the Next.js App Router, run{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+          npx @openuidev/cli generate
+        </code>{" "}
+        to serialize the library to JSON at build time and read that from the
+        route, so the server bundle never imports your client components.
+      </p>
+
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
         Render the stream
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -256,7 +340,12 @@ export default function OpenUIPage() {
           &lt;Renderer&gt;
         </code>{" "}
         on the client. It parses the OpenUI Lang your server streams and paints
-        beUI components progressively as tokens arrive.
+        beUI components progressively as tokens arrive. Wire{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+          onAction
+        </code>{" "}
+        to send a pressed button&apos;s message back to the model and continue
+        the loop.
       </p>
       <div className="mt-4">
         <CodeBlock code={RENDER_SNIPPET} lang="tsx" filename="generative-response.tsx" />
