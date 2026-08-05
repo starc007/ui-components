@@ -119,10 +119,14 @@ export function CommandPalette({
 
   useEffect(() => {
     if (!open) return;
-    const prev = document.body.style.overflow;
+    const root = document.documentElement;
+    const previousRootOverflow = root.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    root.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = prev;
+      root.style.overflow = previousRootOverflow;
+      document.body.style.overflow = previousBodyOverflow;
     };
   }, [open]);
 
@@ -252,7 +256,7 @@ export function CommandPalette({
             id={`${uid}-list`}
             role="listbox"
             aria-label="Commands"
-            className="max-h-[60vh] overflow-y-auto p-2"
+            className="max-h-[60vh] overflow-y-auto overscroll-contain p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {filtered.length === 0 ? (
               <div className="p-8 text-center text-sm text-muted-foreground">
