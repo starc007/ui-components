@@ -3,7 +3,7 @@ import { type NextFetchEvent, type NextRequest, NextResponse } from "next/server
 /**
  * Registry installs happen via the shadcn CLI fetching `/r/{slug}.json`. That
  * request is headless (no browser, no gtag), and the route is force-static so
- * no per-request handler runs. Middleware runs on every request even for
+ * no per-request handler runs. Proxy runs on every matching request even for
  * static assets, so we tag installs here and report them to GA4 server-side
  * via the Measurement Protocol, keeping the route on the CDN.
  */
@@ -12,7 +12,7 @@ export const config = { matcher: "/r/:path*" };
 const GA_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 const GA_SECRET = process.env.GA_API_SECRET;
 
-export function middleware(req: NextRequest, event: NextFetchEvent) {
+export function proxy(req: NextRequest, event: NextFetchEvent) {
   const pass = NextResponse.next();
 
   const { pathname } = req.nextUrl;
