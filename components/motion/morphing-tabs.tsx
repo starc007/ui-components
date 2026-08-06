@@ -692,7 +692,7 @@ export function MorphingTabs({
           aria-label={ariaLabel}
           aria-orientation="horizontal"
           className={cn(
-            "relative z-10 flex h-full gap-3 md:gap-4",
+            "relative z-30 flex h-full gap-3 md:gap-4",
             classNames?.rail,
           )}
         >
