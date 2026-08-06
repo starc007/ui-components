@@ -1468,6 +1468,21 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/expandable-tabs.tsx",
       },
       {
+        slug: "morphing-tabs",
+        name: "Morphing Tabs",
+        description: "Reorderable tabs whose selected item grows into a white content surface, with the active shape gliding as tabs move and a shared morph between rooms.",
+        file: "components/motion/morphing-tabs.tsx",
+        badge: "new",
+        launchedAt: "2026-08-06",
+        keywords: [
+          "reorderable tabs react",
+          "drag tabs react",
+          "morphing tabs component",
+          "animated tab panel",
+          "shared layout tabs",
+        ],
+      },
+      {
         slug: "swipeable-list",
         name: "Swipeable List",
         description: "Mobile-style list rows that swipe left or right to reveal contextual action buttons.",

@@ -129,6 +129,7 @@ const COMPONENT_DATES = {
   "blocks/expandable-action-bar": { publishedAt: "2026-06-05", updatedAt: "2026-06-22" },
   "blocks/overflow-actions": { publishedAt: "2026-06-19", updatedAt: "2026-06-28" },
   "blocks/expandable-tabs": { publishedAt: "2026-06-14", updatedAt: "2026-06-28" },
+  "blocks/morphing-tabs": { publishedAt: "2026-08-06", updatedAt: "2026-08-06" },
   "blocks/swipeable-list": { publishedAt: "2026-06-15", updatedAt: "2026-06-28" },
   "blocks/file-upload": { publishedAt: "2026-06-18", updatedAt: "2026-07-30" },
   "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-06-21" },
