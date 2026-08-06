@@ -170,6 +170,9 @@ export const previews: Record<string, ComponentType> = {
   "blocks/expandable-tabs": dynamic(() =>
     import("./blocks/expandable-tabs.preview").then((m) => m.ExpandableTabsPreview),
   ),
+  "blocks/morphing-tabs": dynamic(() =>
+    import("./blocks/morphing-tabs.preview").then((m) => m.MorphingTabsPreview),
+  ),
   "blocks/swipeable-list": dynamic(() =>
     import("./blocks/swipeable-list.preview").then((m) => m.SwipeableListPreview),
   ),
