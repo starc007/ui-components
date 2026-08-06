@@ -41,7 +41,7 @@ function RoomPanel({ id }: { id: string }) {
         </p>
         <div className="mt-8 flex items-center gap-3 text-xs font-medium text-black/50">
           <span className="size-2 rounded-full" style={{ backgroundColor: room.accent }} />
-          drag the active room to reorder
+          drag any room to reorder
         </div>
       </div>
     </div>
