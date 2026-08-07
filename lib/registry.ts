@@ -1558,6 +1558,21 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/otp-input.tsx",
       },
       {
+        slug: "signup-form",
+        name: "Sign Up Form",
+        description: "Composed sign-up form that flags a field only once it is left, then clears the moment it is fixed, with a length-weighted strength meter, password reveal and an animated submit lifecycle.",
+        file: "components/motion/signup-form.tsx",
+        badge: "new",
+        launchedAt: "2026-08-08",
+        keywords: [
+          "react signup form",
+          "react registration form component",
+          "animated form validation react",
+          "password strength meter react",
+          "tailwind sign up form",
+        ],
+      },
+      {
         slug: "bloom-menu",
         name: "Bloom Menu",
         description: "A button that morphs open into a menu and blooms iris-out from the center, the grid revealing in every direction with radially staggered items.",
