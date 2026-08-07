@@ -77,6 +77,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/motion/select";
+import { SignUpForm } from "@/components/motion/signup-form";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { Switch } from "@/components/motion/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
@@ -683,6 +684,19 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
         <TabsContent value="one">First panel</TabsContent>
         <TabsContent value="two">Second panel</TabsContent>
       </Tabs>
+    ),
+  ],
+  [
+    "SignUpForm",
+    () => <SignUpForm />,
+  ],
+  [
+    "SignUpForm with a form-level error",
+    () => (
+      <SignUpForm
+        defaultValues={{ email: "not-an-email", password: "short" }}
+        errorMessage="That email is already registered."
+      />
     ),
   ],
 ];

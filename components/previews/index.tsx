@@ -289,6 +289,9 @@ export const previews: Record<string, ComponentType> = {
   "blocks/otp-input": dynamic(() =>
     import("./blocks/otp-input.preview").then((m) => m.OTPInputPreview),
   ),
+  "blocks/signup-form": dynamic(() =>
+    import("./blocks/signup-form.preview").then((m) => m.SignUpFormPreview),
+  ),
   "blocks/not-found-glitch": dynamic(() =>
     import("./blocks/not-found-glitch.preview").then((m) => m.NotFoundGlitchPreview),
   ),
