@@ -135,6 +135,7 @@ const COMPONENT_DATES = {
   "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-06-21" },
   "blocks/wallet-card": { publishedAt: "2026-07-03", updatedAt: "2026-07-03" },
   "blocks/otp-input": { publishedAt: "2026-06-13", updatedAt: "2026-07-13" },
+  "blocks/signup-form": { publishedAt: "2026-08-08", updatedAt: "2026-08-08" },
   "blocks/bloom-menu": { publishedAt: "2026-06-26", updatedAt: "2026-06-26" },
   "blocks/feedback-widget": { publishedAt: "2026-06-29", updatedAt: "2026-07-13" },
   "blocks/not-found": { publishedAt: "2026-06-21", updatedAt: "2026-06-21" },
