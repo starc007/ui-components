@@ -188,10 +188,17 @@ export function SignUpForm({
   const setValue = useCallback(
     <K extends keyof SignUpValues>(key: K, next: SignUpValues[K]) => {
       const nextValues = { ...values, [key]: next };
-      if (!controlled) setInternalValues(nextValues);
+      if (!controlled) {
+        setInternalValues(nextValues);
+        if (statusProp === undefined) {
+          setInternalStatus((current) =>
+            current === "success" || current === "error" ? "idle" : current,
+          );
+        }
+      }
       onValuesChange?.(nextValues);
     },
-    [controlled, onValuesChange, values],
+    [controlled, onValuesChange, statusProp, values],
   );
 
   const touch = useCallback((key: keyof SignUpValues) => {
@@ -208,6 +215,7 @@ export function SignUpForm({
 
   const strength = passwordStrength(values.password);
   const showStrength = strengthMeter && values.password.length > 0;
+  const isSubmitting = status === "loading";
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -240,7 +248,7 @@ export function SignUpForm({
       noValidate
       onSubmit={handleSubmit}
       className={cn(
-        "flex w-full max-w-sm flex-col gap-5 rounded-3xl border border-border bg-card p-6",
+        "flex w-full max-w-sm flex-col gap-5 rounded-3xl border border-border p-6",
         className,
         classNames?.root,
       )}
@@ -276,6 +284,7 @@ export function SignUpForm({
           autoComplete="name"
           placeholder="Ada Lovelace"
           leftIcon={<User />}
+          disabled={isSubmitting}
           value={values.name}
           onChange={(next) => setValue("name", next)}
           onBlur={() => touch("name")}
@@ -290,6 +299,7 @@ export function SignUpForm({
           autoComplete="email"
           placeholder="you@example.com"
           leftIcon={<Mail />}
+          disabled={isSubmitting}
           value={values.email}
           onChange={(next) => setValue("email", next)}
           onBlur={() => touch("email")}
@@ -307,6 +317,7 @@ export function SignUpForm({
             rightIcon={
               <button
                 type="button"
+                disabled={isSubmitting}
                 onClick={() => setRevealPassword((prev) => !prev)}
                 aria-label={revealPassword ? "Hide password" : "Show password"}
                 className="text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:text-foreground"
@@ -314,11 +325,11 @@ export function SignUpForm({
                 {revealPassword ? <EyeOff /> : <Eye />}
               </button>
             }
+            disabled={isSubmitting}
             value={values.password}
             onChange={(next) => setValue("password", next)}
             onBlur={() => touch("password")}
             error={shownError("password")}
-            success={isValid("password")}
           />
 
           <AnimatePresence initial={false}>
@@ -367,6 +378,7 @@ export function SignUpForm({
           autoComplete="new-password"
           placeholder="Re-enter your password"
           leftIcon={<Lock />}
+          disabled={isSubmitting}
           value={values.confirmPassword}
           onChange={(next) => setValue("confirmPassword", next)}
           onBlur={() => touch("confirmPassword")}
@@ -378,6 +390,7 @@ export function SignUpForm({
       <div className={cn("flex flex-col gap-1.5", classNames?.terms)}>
         <Checkbox
           checked={values.terms}
+          disabled={isSubmitting}
           onCheckedChange={(next) => {
             setValue("terms", next);
             touch("terms");
