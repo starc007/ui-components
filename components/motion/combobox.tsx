@@ -555,22 +555,9 @@ export function ComboboxContent({
       <motion.div
         ref={measureRef}
         initial={false}
-        animate={{
-          opacity: context.open ? 1 : 0,
-          transform:
-            context.open || context.reduce
-              ? "translate3d(0, 0, 0)"
-              : actualSide === "bottom"
-                ? "translate3d(0, -6px, 0)"
-                : "translate3d(0, 6px, 0)",
-        }}
+        animate={{ opacity: context.open ? 1 : 0 }}
         transition={
           context.reduce || !morphReady ? { duration: 0 } : COMBOBOX_MORPH
-        }
-        style={
-          actualSide === "bottom"
-            ? { transformOrigin: "top" }
-            : { transformOrigin: "bottom" }
         }
       >
         {children}
