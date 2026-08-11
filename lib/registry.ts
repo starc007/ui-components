@@ -215,7 +215,7 @@ export const registry: CategoryEntry[] = [
         slug: "combobox",
         name: "Combobox",
         description:
-          "Composable searchable selection primitives whose input is the trigger, with a measured list that springs open and detaches from the field, stable collision-aware placement, grouped filtering, keyboard navigation, a spring-gliding active row and controlled or uncontrolled state.",
+          "Searchable combobox with a morphing portal, grouped filtering, keyboard navigation, and controlled or uncontrolled state.",
         file: "components/motion/combobox.tsx",
         badge: "new",
         launchedAt: "2026-08-11",
