@@ -212,6 +212,23 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "combobox",
+        name: "Combobox",
+        description:
+          "Composable searchable selection primitives whose input is the trigger, with a measured list that springs open and detaches from the field, stable collision-aware placement, grouped filtering, keyboard navigation, a spring-gliding active row and controlled or uncontrolled state.",
+        file: "components/motion/combobox.tsx",
+        badge: "new",
+        launchedAt: "2026-08-11",
+        keywords: [
+          "react combobox",
+          "animated combobox",
+          "searchable select react",
+          "autocomplete component",
+          "command menu select",
+          "accessible listbox",
+        ],
+      },
+      {
         slug: "checkbox",
         name: "Checkbox",
         description:
