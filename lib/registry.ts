@@ -219,6 +219,7 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/combobox.tsx",
         badge: "new",
         launchedAt: "2026-08-11",
+        guide: agentGuides.combobox,
         keywords: [
           "react combobox",
           "animated combobox",

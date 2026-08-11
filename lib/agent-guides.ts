@@ -46,6 +46,71 @@ export interface AgentGuide {
 }
 
 export const agentGuides = {
+  combobox: {
+    seo: {
+      title: "Animated Combobox · React Component",
+      description:
+        "A composable React combobox with searchable input, portalled listbox, grouped filtering, keyboard navigation, and controlled or uncontrolled state.",
+    },
+    introduction:
+      "A combobox combines text input with a filtered listbox while keeping focus in the input. It manages search, active-option navigation, selection, and portal positioning without owning the option data or surrounding form.",
+    composition: {
+      description:
+        "Place the searchable input inside the trigger, then compose listbox primitives inside the portalled content.",
+      tree: "Combobox\n├── ComboboxTrigger\n│   └── ComboboxInput\n└── ComboboxContent\n    └── ComboboxList\n        ├── ComboboxEmpty\n        ├── ComboboxGroup\n        │   ├── ComboboxLabel\n        │   └── ComboboxItem\n        └── ComboboxSeparator",
+    },
+    lifecycle: [
+      {
+        title: "Open",
+        description:
+          "Focus or pointer input opens the detached listbox and activates the selected or first available option.",
+      },
+      {
+        title: "Filter",
+        description:
+          "Typing narrows registered options while arrow keys move the active descendant without moving DOM focus.",
+      },
+      {
+        title: "Select",
+        description:
+          "Choosing an option updates the value, clears the query, closes the listbox, and restores the selected label in the input.",
+      },
+    ],
+    principles: [
+      {
+        title: "Keep focus in the input",
+        description:
+          "Options expose active state through aria-activedescendant so typing and keyboard navigation remain one continuous interaction.",
+      },
+      {
+        title: "Separate data from presentation",
+        description:
+          "Composable item and group primitives register searchable metadata while callers retain ownership of labels, icons, and option data.",
+      },
+      {
+        title: "Keep the popup anchored",
+        description:
+          "The listbox renders in a body portal and follows trigger geometry across scrolling, resizing, and collision-aware side changes.",
+      },
+    ],
+    implementation: {
+      title: "Treat input focus as the interaction anchor",
+      description:
+        "Keep DOM focus on the input from open through selection. Pointer interaction with options should preserve that focus while active option state and scrolling update independently.",
+    },
+    connections: [],
+    contract: {
+      owns: "Query state, option registration, filtering, active-option navigation, selection presentation, popup positioning, and open-state motion.",
+      leaves:
+        "Option data, form submission, async loading, validation, and persisted value state to the application.",
+    },
+    guidance: {
+      useWhen:
+        "A selection list is long enough to benefit from typing, grouped discovery, or keyboard search.",
+      avoidWhen:
+        "A short list is easier to scan in a standard select, or the user is entering unrestricted text rather than choosing a known option.",
+    },
+  },
   "animated-sidebar": {
     seo: {
       title: "Animated Sidebar · React Component",
