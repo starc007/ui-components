@@ -72,10 +72,32 @@ describe("Combobox", () => {
     fireEvent.click(getByRole("option", { name: "Astro" }));
     expect(onValueChange).toHaveBeenCalledWith("astro");
     expect(input.getAttribute("aria-expanded")).toBe("false");
+    expect(input.hasAttribute("aria-activedescendant")).toBe(false);
     await waitFor(() => expect(input.getAttribute("value")).toBe("Astro"));
 
     fireEvent.click(input);
     expect(input.getAttribute("aria-expanded")).toBe("true");
+  });
+
+  test("renders the popup in a body portal and closes when focus leaves", async () => {
+    const { container, getByRole } = render(
+      <div>
+        <ExampleCombobox />
+        <button type="button">Outside</button>
+      </div>,
+    );
+    const input = getByRole("combobox", { name: "Search frameworks" });
+    fireEvent.focus(input);
+
+    const panel = document.querySelector<HTMLElement>(
+      "[data-combobox-content]",
+    );
+    expect(panel).toBeTruthy();
+    expect(panel?.parentElement).toBe(document.body);
+    expect(container.contains(panel)).toBe(false);
+
+    fireEvent.focus(getByRole("button", { name: "Outside" }));
+    expect(input.getAttribute("aria-expanded")).toBe("false");
   });
 
   test("wraps keyboard navigation and skips disabled options", async () => {
@@ -161,21 +183,37 @@ describe("Combobox", () => {
         </ComboboxContent>
       </Combobox>,
     );
-    const trigger = container.querySelector("label");
+    const trigger = container.querySelector<HTMLElement>("[data-state]");
     if (trigger) {
       trigger.getBoundingClientRect = () =>
-        ({ top: 80, bottom: 100, height: 20 } as DOMRect);
+        ({
+          left: 20,
+          right: 220,
+          top: 80,
+          bottom: 100,
+          width: 200,
+          height: 20,
+        }) as DOMRect;
     }
 
     const input = getByRole("combobox", { name: "Search frameworks" });
-    const panel = container.querySelector<HTMLElement>(
+    const panel = document.querySelector<HTMLElement>(
       "[data-combobox-content]",
     );
+    const measureNode = panel?.firstElementChild as HTMLElement | undefined;
+    if (measureNode) {
+      Object.defineProperties(measureNode, {
+        offsetHeight: { configurable: true, value: 40 },
+        offsetWidth: { configurable: true, value: 200 },
+      });
+    }
     fireEvent.focus(input);
-    await waitFor(() => expect(panel?.style.bottom).toBe("100%"));
+    fireEvent.scroll(window);
+    await waitFor(() => expect(panel?.dataset.side).toBe("top"));
 
     fireEvent.keyDown(input, { key: "Escape" });
-    expect(panel?.style.bottom).toBe("100%");
+    expect(panel?.dataset.side).toBe("top");
+    expect(panel?.style.bottom).toBe("20px");
     expect(panel?.style.top).toBe("");
 
     Object.defineProperty(window, "innerHeight", {
