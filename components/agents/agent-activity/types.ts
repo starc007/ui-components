@@ -89,6 +89,16 @@ export interface AgentActivityProps {
   activeLabel?: ReactNode;
   /** Optional completed summary. Derived from the item types by default. */
   summary?: ReactNode;
+  /** Optional renderer for the contents of the active status row. */
+  renderWorkingStatus?: (context: {
+    label: ReactNode;
+    duration: number;
+  }) => ReactNode;
+  /** Optional renderer for the contents before the built-in disclosure chevron. */
+  renderCompletedStatus?: (context: {
+    summary: ReactNode;
+    duration: number;
+  }) => ReactNode;
   /** Maximum visible activity height before the stream begins gliding. */
   maxHeight?: number;
   className?: string;

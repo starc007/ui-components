@@ -11,3 +11,7 @@ export {
   ThinkingShimmer,
   type ThinkingShimmerProps,
 } from "./thinking-shimmer";
+export {
+  TextScramble,
+  type TextScrambleProps,
+} from "./text-scramble";

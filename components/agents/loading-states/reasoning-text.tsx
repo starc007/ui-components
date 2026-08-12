@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import { Loader } from "@/components/motion/loader";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import {
@@ -10,6 +10,7 @@ import {
   textShimmerStyle,
 } from "@/lib/text-shimmer";
 import { cn } from "@/lib/utils";
+import { TextScramble } from "./text-scramble";
 
 const DEFAULT_PHRASES = [
   "Thinking",
@@ -18,7 +19,6 @@ const DEFAULT_PHRASES = [
   "Forming a response",
 ];
 
-const SCRAMBLE_GLYPHS = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789#%&@$?/";
 const CASCADE_STAGGER = 0.025;
 
 export type ReasoningTextVariant = "cascade" | "swap" | "scramble";
@@ -135,71 +135,19 @@ function SwapPhrase({ phrase, reduce, shimmerDuration }: PhraseProps) {
 
 function ScramblePhrase({
   phrase,
-  reduce,
   shimmerDuration,
 }: PhraseProps) {
   const target = `${phrase}…`;
-  const [display, setDisplay] = useState(target);
-  const mounted = useRef(false);
-
-  useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      return;
-    }
-
-    if (reduce) {
-      setDisplay(target);
-      return;
-    }
-
-    const characters = target.split("");
-    const startedAt = performance.now();
-    const duration = Math.min(760, Math.max(420, characters.length * 32));
-    let frame = 0;
-    let lastUpdate = 0;
-
-    const animate = (now: number) => {
-      if (now - lastUpdate >= 40) {
-        lastUpdate = now;
-        const progress = Math.min((now - startedAt) / duration, 1);
-        const settled = Math.floor(progress * characters.length);
-
-        setDisplay(
-          characters
-            .map((character, characterIndex) => {
-              if (characterIndex < settled || character === " ") {
-                return character;
-              }
-              return SCRAMBLE_GLYPHS[
-                Math.floor(Math.random() * SCRAMBLE_GLYPHS.length)
-              ];
-            })
-            .join(""),
-        );
-      }
-
-      if (now - startedAt < duration) {
-        frame = requestAnimationFrame(animate);
-      } else {
-        setDisplay(target);
-      }
-    };
-
-    frame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frame);
-  }, [reduce, target]);
 
   return (
-    <span
+    <TextScramble
+      text={target}
       className={cn(
-        "col-start-1 row-start-1 inline-block justify-self-start whitespace-pre font-mono tabular-nums",
+        "col-start-1 row-start-1 justify-self-start tabular-nums",
         TEXT_SHIMMER_CLASS_NAME,
       )}
       style={textShimmerStyle(shimmerDuration)}
-    >
-      {display}
-    </span>
+    />
   );
 }
 

@@ -1,12 +1,14 @@
 import { afterEach, describe, expect, mock, test } from "bun:test";
-import { cleanup, fireEvent, render } from "@testing-library/react";
+import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { AISidebar } from "@/components/agents/ai-sidebar";
 import { ApprovalCard } from "@/components/agents/approval-card";
+import { AgentActivity } from "@/components/agents/agent-activity";
 import { Citation, Citations } from "@/components/agents/citations";
 import { FileDiff } from "@/components/agents/file-diff";
 import { MessageScroller } from "@/components/agents/message-scroller";
 import { TodoList } from "@/components/agents/todo-list";
 import { ToolResult } from "@/components/agents/tool-result";
+import { TextScramble } from "@/components/agents/loading-states/text-scramble";
 import { ChatAppPreview } from "@/components/previews/agents/chat-app.preview";
 import { ChatAppExample } from "@/components/previews/agents/chat-app-usage";
 import { buildShadcnItem } from "@/lib/registry-server";
@@ -14,6 +16,41 @@ import { buildShadcnItem } from "@/lib/registry-server";
 afterEach(cleanup);
 
 describe("agent production contracts", () => {
+  test("customizes activity status content without replacing disclosure semantics", () => {
+    const activity = render(
+      <AgentActivity
+        items={[{ id: "one", type: "text", content: "Inspect context" }]}
+        status="working"
+        renderWorkingStatus={({ label }) => <span>Custom {label}</span>}
+        renderCompletedStatus={({ summary }) => <span>Done: {summary}</span>}
+      />,
+    );
+
+    expect(activity.getByRole("status").textContent).toContain("Custom");
+    expect(activity.queryByRole("button")).toBeNull();
+
+    activity.rerender(
+      <AgentActivity
+        items={[{ id: "one", type: "text", content: "Inspect context" }]}
+        status="complete"
+        summary="Completed work"
+        renderCompletedStatus={({ summary }) => <span>Done: {summary}</span>}
+      />,
+    );
+    const trigger = activity.getByRole("button", { name: /Done: Completed work/ });
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(trigger);
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+  });
+
+  test("renders the final TextScramble value when reduced motion is requested", async () => {
+    const scramble = render(<TextScramble text="Thinking…" />);
+    expect(scramble.getByText("Thinking…")).toBeTruthy();
+
+    scramble.rerender(<TextScramble text="Running tools…" />);
+    await waitFor(() => expect(scramble.getByText("Running tools…")).toBeTruthy());
+  });
+
   test("packages every component used by the complete chat app", async () => {
     const item = await buildShadcnItem("agents", "chat-app");
     const paths = new Set(item?.files.map((file) => file.path));
