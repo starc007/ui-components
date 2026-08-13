@@ -245,6 +245,22 @@ export default function AIAgentsPage() {
       <div className="mt-4">
         <CodeBlock code={ENTRY_SHAPE} lang="json" filename="r/swap.json" />
       </div>
+
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+        Generative UI
+      </h2>
+      <p className="mt-2 text-muted-foreground">
+        Want the model to compose these components into a live interface? Follow
+        the{" "}
+        <Link
+          href="/docs/openui"
+          className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
+        >
+          OpenUI integration guide
+        </Link>{" "}
+        to register a custom component library, generate its system prompt, and
+        render interactive OpenUI Lang as it streams.
+      </p>
     </>
   );
 }

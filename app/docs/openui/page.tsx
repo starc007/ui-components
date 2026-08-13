@@ -1,31 +1,45 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { JsonLd } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
+import { breadcrumbJsonLd, docsArticleJsonLd } from "@/lib/seo";
+
+const PAGE_TITLE = "OpenUI integration guide";
+const PAGE_DESCRIPTION =
+  "Build an OpenUI React integration with beUI. Register animated components, generate the system prompt, stream OpenUI Lang, and render interactive UI.";
+const PAGE_PATH = "/docs/openui";
+const PAGE_IMAGE = "/api/og?page=openui";
 
 export const metadata: Metadata = {
-  title: "OpenUI",
-  description:
-    "Register beUI components as an OpenUI library so a generative UI runtime renders model output with real, animated beUI components.",
-  alternates: { canonical: "/docs/openui" },
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
+  alternates: { canonical: PAGE_PATH },
   openGraph: {
-    title: "OpenUI · beUI",
-    description:
-      "Register beUI components as an OpenUI library so a generative UI runtime renders model output with real, animated beUI components.",
-    url: "/docs/openui",
+    title: `${PAGE_TITLE} · beUI`,
+    description: PAGE_DESCRIPTION,
+    url: PAGE_PATH,
     type: "article",
     siteName: "beUI",
-    images: ["/api/og"],
+    images: [
+      {
+        url: PAGE_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "Use beUI with OpenUI",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "OpenUI · beUI",
-    images: ["/api/og"],
+    title: `${PAGE_TITLE} · beUI`,
+    description: PAGE_DESCRIPTION,
+    images: [{ url: PAGE_IMAGE, alt: "Use beUI with OpenUI" }],
   },
 };
 
-const INSTALL_SNIPPET = `# OpenUI runtime + schema validation
-npm install @openuidev/react-lang zod
+const INSTALL_SNIPPET = `# OpenUI runtime, server prompt generation, and schema validation
+npm install @openuidev/react-lang @openuidev/lang-core zod
 
 # Your model SDK (any provider works)
 npm install openai
@@ -136,12 +150,12 @@ export const beuiLibrary = createLibrary({
 });`;
 
 const PROMPT_SNIPPET = `import OpenAI from "openai";
-import beuiLibrarySpec from "./generated/beui-library.spec.json";
 import { generateSystemPrompt } from "@openuidev/lang-core";
+import beuiLibrarySpec from "@/lib/generated/beui-library.spec.json";
 
 const openai = new OpenAI();
 
-// The model produces the OpenUI Lang; beuiLibrary.prompt() tells it how.
+// The generated library spec teaches the model which OpenUI Lang it may emit.
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
@@ -156,13 +170,31 @@ export async function POST(req: Request) {
     ],
   });
 
-  return new Response(stream.toReadableStream());
+  const response = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      const encoder = new TextEncoder();
+
+      try {
+        for await (const chunk of stream) {
+          const content = chunk.choices[0]?.delta.content;
+          if (content) controller.enqueue(encoder.encode(content));
+        }
+        controller.close();
+      } catch (error) {
+        controller.error(error);
+      }
+    },
+  });
+
+  return new Response(response, {
+    headers: { "Content-Type": "text/plain; charset=utf-8" },
+  });
 }`;
 
 const RENDER_SNIPPET = `"use client";
 
 import { Renderer } from "@openuidev/react-lang";
-import { beuiLibrary } from "./beui-library";
+import { beuiLibrary } from "@/lib/beui-library";
 
 // \`response\` is the OpenUI Lang your server streams from the model.
 export function GenerativeResponse({
@@ -207,6 +239,28 @@ const RESOURCES: { label: string; url: string; desc: string }[] = [
 export default function OpenUIPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "OpenUI integration", path: PAGE_PATH },
+          ]),
+          docsArticleJsonLd({
+            path: PAGE_PATH,
+            headline: PAGE_TITLE,
+            description: PAGE_DESCRIPTION,
+            image: PAGE_IMAGE,
+            datePublished: "2026-07-27",
+            dateModified: "2026-08-13",
+            about: [
+              "OpenUI React integration",
+              "Custom OpenUI component library",
+              "Generative UI",
+              "beUI",
+            ],
+          }),
+        ]}
+      />
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         Integration
       </p>
@@ -224,9 +278,10 @@ export default function OpenUIPage() {
         </Link>{" "}
         is a generative UI framework: instead of returning markdown, the model
         emits an abstract UI tree (OpenUI Lang) and a React runtime maps every
-        node to a component <em>you</em> register. Register beUI components as
-        that library and each generated response renders with real, animated
-        beUI motion — the model can only ever use the components you allow.
+        node to a component <em>you</em> register. This OpenUI React integration
+        turns beUI into a custom OpenUI component library, so each generated
+        response uses real, animated components—and only the components you
+        allow.
       </p>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
@@ -283,7 +338,7 @@ export default function OpenUIPage() {
         schemas so nesting is both validated and advertised to the model.
       </p>
       <div className="mt-4">
-        <CodeBlock code={DEFINE_SNIPPET} lang="tsx" filename="beui-library.tsx" />
+        <CodeBlock code={DEFINE_SNIPPET} lang="tsx" filename="lib/beui-library.tsx" />
       </div>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
@@ -304,7 +359,7 @@ export default function OpenUIPage() {
         with notes that steer how the model reaches for each one.
       </p>
       <div className="mt-4">
-        <CodeBlock code={LIBRARY_SNIPPET} lang="tsx" filename="beui-library.tsx" />
+        <CodeBlock code={LIBRARY_SNIPPET} lang="tsx" filename="lib/beui-library.tsx" />
       </div>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
@@ -314,22 +369,23 @@ export default function OpenUIPage() {
         The client renders OpenUI Lang, but the model has to produce it. In the
         CLI, call{" "}
         <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          @openuidev/cli generate --spec ./library/beUILibrary.tsx --out ./generated/beui-library.spec.json
+          npx @openuidev/cli@latest generate --spec ./lib/beui-library.tsx --out ./lib/generated/beui-library.spec.json
         </code>{" "}
-        to build the library spec — the OpenUI Lang grammar plus a signature and
-        description for every registered component — and stream the model&apos;s
-        reply back to the browser.
+        to build the library spec. The backend combines its component
+        signatures, descriptions, and nesting constraints with the OpenUI Lang
+        grammar, then streams the model&apos;s reply back to the browser.
       </p>
       <div className="mt-4">
         <CodeBlock code={PROMPT_SNIPPET} lang="tsx" filename="app/api/generate/route.ts" />
       </div>
       <p className="mt-4 text-sm text-muted-foreground">
-        In the Next.js App Router, run{" "}
+        Run that command when the library changes. It serializes the library to
+        JSON at build time, and the route imports that generated file through
+        the same{" "}
         <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          npx @openuidev/cli generate
+          @/lib/generated
         </code>{" "}
-        to serialize the library to JSON at build time and read that from the
-        route, so the server bundle never imports your client components.
+        path, so the server bundle never imports your client components.
       </p>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
@@ -358,12 +414,8 @@ export default function OpenUIPage() {
       <p className="mt-2 text-muted-foreground">
         beUI components own their files and ship through the registry, so
         there&apos;s no runtime to bolt on — the library above <em>is</em> the
-        integration. Every component gates transform motion behind{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          useReducedMotion
-        </code>{" "}
-        and styles with shadcn tokens, so model-generated UIs stay accessible
-        and inherit the host app&apos;s theme without extra wiring.
+        integration. They use semantic controls and shadcn tokens, so
+        model-generated UIs inherit the host app&apos;s theme without extra wiring.
       </p>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">

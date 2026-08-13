@@ -137,6 +137,52 @@ export function breadcrumbJsonLd(crumbs: Crumb[]): JsonLdSchema {
   };
 }
 
+type DocsArticleJsonLdOptions = {
+  path: string;
+  headline: string;
+  description: string;
+  image: string;
+  datePublished: string;
+  dateModified: string;
+  about?: string[];
+};
+
+/** Documentation guide: TechArticle metadata with stable site authorship. */
+export function docsArticleJsonLd({
+  path,
+  headline,
+  description,
+  image,
+  datePublished,
+  dateModified,
+  about,
+}: DocsArticleJsonLdOptions): JsonLdSchema {
+  const url = abs(path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "@id": `${url}#article`,
+    headline,
+    description,
+    url,
+    image: abs(image),
+    inLanguage: "en",
+    isPartOf: { "@id": `${SITE}/#website` },
+    datePublished,
+    dateModified,
+    author: {
+      "@type": "Person",
+      name: AUTHOR,
+      url: "https://saura3h.xyz",
+      sameAs: "https://github.com/starc007",
+    },
+    publisher: { "@id": `${SITE}/#org` },
+    ...(about?.length
+      ? { about: about.map((name) => ({ "@type": "Thing", name })) }
+      : {}),
+  };
+}
+
 /** Per-component page: SoftwareSourceCode + TechArticle. */
 export function componentJsonLd(
   cat: CategoryEntry,
