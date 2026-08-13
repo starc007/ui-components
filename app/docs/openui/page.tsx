@@ -136,7 +136,8 @@ export const beuiLibrary = createLibrary({
 });`;
 
 const PROMPT_SNIPPET = `import OpenAI from "openai";
-import { beuiLibrary } from "./beui-library";
+import beuiLibrarySpec from "./generated/beui-library.spec.json";
+import { generateSystemPrompt } from "@openuidev/lang-core";
 
 const openai = new OpenAI();
 
@@ -150,7 +151,7 @@ export async function POST(req: Request) {
     messages: [
       // Grammar + a signature and description for every registered component,
       // so the model only ever emits nodes your library defines.
-      { role: "system", content: beuiLibrary.prompt() },
+      { role: "system", content: generateSystemPrompt({ library: beuiLibrarySpec }) },
       ...messages,
     ],
   });
@@ -310,12 +311,12 @@ export default function OpenUIPage() {
         Generate the prompt
       </h2>
       <p className="mt-2 text-muted-foreground">
-        The client renders OpenUI Lang, but the model has to produce it. On the
-        server, call{" "}
+        The client renders OpenUI Lang, but the model has to produce it. In the
+        CLI, call{" "}
         <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          beuiLibrary.prompt()
+          @openuidev/cli generate --spec ./library/beUILibrary.tsx --out ./generated/beui-library.spec.json
         </code>{" "}
-        to build the system prompt — the OpenUI Lang grammar plus a signature and
+        to build the library spec — the OpenUI Lang grammar plus a signature and
         description for every registered component — and stream the model&apos;s
         reply back to the browser.
       </p>
