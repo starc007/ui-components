@@ -55,19 +55,14 @@ export async function GET(request: Request) {
   const command = component
     ? `npx shadcn add @beui/${component.slug}`
     : page?.command ?? "npx shadcn add @beui/...";
-  const variant = component
-    ? "component"
-    : category || page
-      ? "category"
-      : "home";
   const origin = requestUrl.origin;
   const [fonts, assets] = await Promise.all([
     getOgFonts(origin),
-    getOgAssets(variant, origin),
+    getOgAssets(origin),
   ]);
 
   return new ImageResponse(
-    ogImage({ title, description, label, command, variant, ...assets }),
+    ogImage({ title, description, label, command, ...assets }),
     { ...OG_SIZE, fonts },
   );
 }

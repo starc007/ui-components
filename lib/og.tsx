@@ -7,14 +7,11 @@ const FG = "#17151f";
 const MUTED = "rgba(23,21,31,0.66)";
 const LOGO_SRC = `${SITE_URL}/beui-mark.png`;
 
-export type OgVariant = "home" | "category" | "component";
-
 type OgOptions = {
   title?: string;
   description?: string;
   label?: string;
   command?: string;
-  variant?: OgVariant;
   backgroundSrc?: string;
   logoSrc?: string;
 };
@@ -33,8 +30,7 @@ export function ogImage({
   description = "Free, open-source motion components with the source included.",
   label = "Motion components",
   command = "npx shadcn add @beui/...",
-  variant = "home",
-  backgroundSrc = `${SITE_URL}/og/grainient-${variant}.jpg`,
+  backgroundSrc = `${SITE_URL}/og/dither-wave.png`,
   logoSrc = LOGO_SRC,
 }: OgOptions = {}): ReactElement {
   return (
