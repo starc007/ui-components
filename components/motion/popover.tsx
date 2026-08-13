@@ -146,6 +146,37 @@ function clipForProgress(geo: Geo, progress: number, supportsShape: boolean) {
     : insetFor(rect, geo.layerW, geo.layerH);
 }
 
+function roundedRectPath(rect: Rect) {
+  const radius = Math.max(0, Math.min(rect.r, rect.w / 2, rect.h / 2));
+  const n = (value: number) => value.toFixed(3);
+  const x1 = rect.x;
+  const y1 = rect.y;
+  const x2 = rect.x + rect.w;
+  const y2 = rect.y + rect.h;
+  const arc = `A${n(radius)} ${n(radius)} 0 0 1`;
+
+  // A zero radius makes every arc degenerate to a line, so this also draws
+  // plain rectangles.
+  return (
+    `M${n(x1 + radius)} ${n(y1)}` +
+    `H${n(x2 - radius)}${arc} ${n(x2)} ${n(y1 + radius)}` +
+    `V${n(y2 - radius)}${arc} ${n(x2 - radius)} ${n(y2)}` +
+    `H${n(x1 + radius)}${arc} ${n(x1)} ${n(y2 - radius)}` +
+    `V${n(y1 + radius)}${arc} ${n(x1 + radius)} ${n(y1)}Z`
+  );
+}
+
+// The goo layer is portalled above the page, so its copy of the trigger pill
+// would cover the real trigger's label and focus ring. Punching the trigger
+// back out keeps the real one visible and clips the blur to the layer box.
+// This is a clip path rather than a CSS mask on purpose: WebKit silently
+// ignores `mask: url(#id)` pointing at an SVG <mask> element, which left the
+// label hidden behind the goo in Safari.
+function triggerCutout(geo: Geo) {
+  const layer = { x: 0, y: 0, w: geo.layerW, h: geo.layerH, r: 0 };
+  return `path(evenodd, "${roundedRectPath(layer)} ${roundedRectPath(geo.trigger)}")`;
+}
+
 interface PopoverContextValue {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -482,7 +513,6 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
     triggerMode === "hover"
       ? { onMouseEnter: openHover, onMouseLeave: scheduleClose }
       : {};
-  const maskId = `${gooId}-trigger-cutout`;
 
   // Match the server and first client render, then attach the portal after
   // hydration. This preserves SSR without regenerating the page on the client.
@@ -498,9 +528,7 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
       }}
     >
       {/* Goo filter: blur, sharpen the alpha back into solid shapes, then lay
-          the crisp original on top so blobs merge with liquid edges. The mask
-          removes the real trigger area so this top-layer copy never covers its
-          label or focus ring. */}
+          the crisp original on top so blobs merge with liquid edges. */}
       <svg aria-hidden width="0" height="0" className="absolute">
         <title>Popover visual effects</title>
         <defs>
@@ -518,25 +546,6 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
             />
             <feComposite in="SourceGraphic" in2="goo" operator="atop" />
           </filter>
-          <mask
-            id={maskId}
-            maskUnits="userSpaceOnUse"
-            maskContentUnits="userSpaceOnUse"
-            x={0}
-            y={0}
-            width={geo.layerW}
-            height={geo.layerH}
-          >
-            <rect width={geo.layerW} height={geo.layerH} fill="white" />
-            <rect
-              x={geo.trigger.x}
-              y={geo.trigger.y}
-              width={geo.trigger.w}
-              height={geo.trigger.h}
-              rx={geo.trigger.r}
-              fill="black"
-            />
-          </mask>
         </defs>
       </svg>
 
@@ -550,8 +559,7 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
           width: geo.layerW,
           height: geo.layerH,
           filter: reduce ? undefined : `url(#${gooId})`,
-          mask: `url(#${maskId})`,
-          WebkitMask: `url(#${maskId})`,
+          clipPath: triggerCutout(geo),
         }}
       >
         <div

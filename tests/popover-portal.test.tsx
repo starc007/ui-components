@@ -67,6 +67,36 @@ describe("portalled popovers", () => {
     });
   });
 
+  // The goo layer paints above the page, so the trigger has to be cut back out
+  // of it. WebKit ignores `mask: url(#id)` that points at an SVG <mask>
+  // element, which hid the trigger's label behind the goo in Safari. Keep the
+  // cutout a clip path.
+  test("Gooey cuts the trigger out with a clip path, not an SVG mask", async () => {
+    const { getByRole } = render(
+      <Popover>
+        <PopoverTrigger>
+          <button type="button">Open Gooey</button>
+        </PopoverTrigger>
+        <PopoverContent>Gooey actions</PopoverContent>
+      </Popover>,
+    );
+    setTriggerRect(getByRole("button", { name: "Open Gooey" }));
+    fireEvent(window, new Event("resize"));
+
+    const gooLayer = await waitFor(() => {
+      const layer = document.querySelector<HTMLElement>(
+        '[data-popover-portal] div[aria-hidden="true"]',
+      );
+      // Two subpaths: the layer box, then the trigger that even-odd knocks out.
+      expect(layer?.style.clipPath).toStartWith("path(evenodd,");
+      expect(layer?.style.clipPath.match(/M/g)).toHaveLength(2);
+      return layer as HTMLElement;
+    });
+
+    expect(gooLayer.getAttribute("style")).not.toContain("mask");
+    expect(document.querySelector("[data-popover-portal] mask")).toBeNull();
+  });
+
   test("Morph escapes clipping and tracks the trigger in viewport coordinates", async () => {
     const { getByRole, getByText } = render(
       <div style={{ overflow: "hidden" }}>
