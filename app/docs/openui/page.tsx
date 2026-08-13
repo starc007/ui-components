@@ -159,15 +159,14 @@ const openai = new OpenAI();
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
-  const stream = await openai.chat.completions.create({
-    model: "gpt-4o",
+  const stream = await openai.responses.create({
+    model: "gpt-5.6-sol",
     stream: true,
-    messages: [
-      // Grammar + a signature and description for every registered component,
-      // so the model only ever emits nodes your library defines.
-      { role: "system", content: generateSystemPrompt({ library: beuiLibrarySpec }) },
-      ...messages,
-    ],
+    store: false,
+    // Grammar + a signature and description for every registered component,
+    // so the model only ever emits nodes your library defines.
+    instructions: generateSystemPrompt({ library: beuiLibrarySpec }),
+    input: messages,
   });
 
   const response = new ReadableStream<Uint8Array>({
@@ -175,9 +174,10 @@ export async function POST(req: Request) {
       const encoder = new TextEncoder();
 
       try {
-        for await (const chunk of stream) {
-          const content = chunk.choices[0]?.delta.content;
-          if (content) controller.enqueue(encoder.encode(content));
+        for await (const event of stream) {
+          if (event.type === "response.output_text.delta") {
+            controller.enqueue(encoder.encode(event.delta));
+          }
         }
         controller.close();
       } catch (error) {
