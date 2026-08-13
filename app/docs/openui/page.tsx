@@ -9,7 +9,7 @@ const PAGE_TITLE = "OpenUI integration guide";
 const PAGE_DESCRIPTION =
   "Build an OpenUI React integration with beUI. Register animated components, generate the system prompt, stream OpenUI Lang, and render interactive UI.";
 const PAGE_PATH = "/docs/openui";
-const PAGE_IMAGE = "/api/og?page=openui";
+const PAGE_IMAGE = "/api/og?page=openui&v=2";
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -251,7 +251,7 @@ export default function OpenUIPage() {
             description: PAGE_DESCRIPTION,
             image: PAGE_IMAGE,
             datePublished: "2026-07-27",
-            dateModified: "2026-08-13",
+            dateModified: "2026-08-14",
             about: [
               "OpenUI React integration",
               "Custom OpenUI component library",
