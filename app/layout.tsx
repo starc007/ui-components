@@ -116,6 +116,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       className={cn(sans.variable, mono.variable)}
     >
       <head>
+        {process.env.NODE_ENV === "production" && (
+          <script
+            defer
+            src="https://collect.tracwell.app/script.js"
+            data-project-key="tw_live_b83ebcb2a50b4e3b82f65ca32c086623"
+            data-collection-mode="private"
+            data-consent="granted"
+            data-respect-do-not-track="true"
+          />
+        )}
         <link rel="icon" type="image/png" href="/beui-mark.png" />
         <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt" />
         <link rel="alternate" type="application/json" title="Component registry" href="/r" />

@@ -212,6 +212,24 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "combobox",
+        name: "Combobox",
+        description:
+          "Searchable combobox with a morphing portal, grouped filtering, keyboard navigation, and controlled or uncontrolled state.",
+        file: "components/motion/combobox.tsx",
+        badge: "new",
+        launchedAt: "2026-08-11",
+        guide: agentGuides.combobox,
+        keywords: [
+          "react combobox",
+          "animated combobox",
+          "searchable select react",
+          "autocomplete component",
+          "command menu select",
+          "accessible listbox",
+        ],
+      },
+      {
         slug: "checkbox",
         name: "Checkbox",
         description:
@@ -1468,6 +1486,21 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/expandable-tabs.tsx",
       },
       {
+        slug: "morphing-tabs",
+        name: "Morphing Tabs",
+        description: "Reorderable tabs whose selected item grows into a white content surface, with the active shape gliding as tabs move and a shared morph between rooms.",
+        file: "components/motion/morphing-tabs.tsx",
+        badge: "new",
+        launchedAt: "2026-08-06",
+        keywords: [
+          "reorderable tabs react",
+          "drag tabs react",
+          "morphing tabs component",
+          "animated tab panel",
+          "shared layout tabs",
+        ],
+      },
+      {
         slug: "swipeable-list",
         name: "Swipeable List",
         description: "Mobile-style list rows that swipe left or right to reveal contextual action buttons.",
@@ -1541,6 +1574,21 @@ export const registry: CategoryEntry[] = [
         name: "OTP Input",
         description: "One-time-code input with a gliding focus ring, digits that roll in per slot, error shake and a success check draw.",
         file: "components/motion/otp-input.tsx",
+      },
+      {
+        slug: "signup-form",
+        name: "Sign Up Form",
+        description: "Composed sign-up form that flags a field only once it is left, then clears the moment it is fixed, with a length-weighted strength meter, password reveal and an animated submit lifecycle.",
+        file: "components/motion/signup-form.tsx",
+        badge: "new",
+        launchedAt: "2026-08-08",
+        keywords: [
+          "react signup form",
+          "react registration form component",
+          "animated form validation react",
+          "password strength meter react",
+          "tailwind sign up form",
+        ],
       },
       {
         slug: "bloom-menu",

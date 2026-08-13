@@ -170,6 +170,9 @@ export const previews: Record<string, ComponentType> = {
   "blocks/expandable-tabs": dynamic(() =>
     import("./blocks/expandable-tabs.preview").then((m) => m.ExpandableTabsPreview),
   ),
+  "blocks/morphing-tabs": dynamic(() =>
+    import("./blocks/morphing-tabs.preview").then((m) => m.MorphingTabsPreview),
+  ),
   "blocks/swipeable-list": dynamic(() =>
     import("./blocks/swipeable-list.preview").then((m) => m.SwipeableListPreview),
   ),
@@ -277,6 +280,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/select-morph": dynamic(() =>
     import("./motion/select-morph.preview").then((m) => m.SelectMorphPreview),
   ),
+  "motion/combobox": dynamic(() =>
+    import("./motion/combobox.preview").then((m) => m.ComboboxPreview),
+  ),
   "motion/checkbox": dynamic(() =>
     import("./motion/checkbox.preview").then((m) => m.CheckboxPreview),
   ),
@@ -285,6 +291,9 @@ export const previews: Record<string, ComponentType> = {
   ),
   "blocks/otp-input": dynamic(() =>
     import("./blocks/otp-input.preview").then((m) => m.OTPInputPreview),
+  ),
+  "blocks/signup-form": dynamic(() =>
+    import("./blocks/signup-form.preview").then((m) => m.SignUpFormPreview),
   ),
   "blocks/not-found-glitch": dynamic(() =>
     import("./blocks/not-found-glitch.preview").then((m) => m.NotFoundGlitchPreview),
