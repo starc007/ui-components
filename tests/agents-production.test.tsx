@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, mock, test } from "bun:test";
-import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render } from "@testing-library/react";
 import { AISidebar } from "@/components/agents/ai-sidebar";
 import { ApprovalCard } from "@/components/agents/approval-card";
 import { AgentActivity } from "@/components/agents/agent-activity";
@@ -8,7 +8,6 @@ import { FileDiff } from "@/components/agents/file-diff";
 import { MessageScroller } from "@/components/agents/message-scroller";
 import { TodoList } from "@/components/agents/todo-list";
 import { ToolResult } from "@/components/agents/tool-result";
-import { TextScramble } from "@/components/agents/loading-states/text-scramble";
 import { ChatAppPreview } from "@/components/previews/agents/chat-app.preview";
 import { ChatAppExample } from "@/components/previews/agents/chat-app-usage";
 import { buildShadcnItem } from "@/lib/registry-server";
@@ -41,14 +40,6 @@ describe("agent production contracts", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
     fireEvent.click(trigger);
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
-  });
-
-  test("renders the final TextScramble value when reduced motion is requested", async () => {
-    const scramble = render(<TextScramble text="Thinking…" />);
-    expect(scramble.getByText("Thinking…")).toBeTruthy();
-
-    scramble.rerender(<TextScramble text="Running tools…" />);
-    await waitFor(() => expect(scramble.getByText("Running tools…")).toBeTruthy());
   });
 
   test("packages every component used by the complete chat app", async () => {

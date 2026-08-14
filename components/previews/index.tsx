@@ -222,6 +222,11 @@ export const previews: Record<string, ComponentType> = {
   "motion/text-animation": dynamic(() =>
     import("./motion/text-animation.preview").then((m) => m.TextAnimationPreview),
   ),
+  "motion/text-scramble": dynamic(() =>
+    import("./motion/text-scramble.preview").then(
+      (m) => m.TextScramblePreview,
+    ),
+  ),
   "motion/text-shimmer": dynamic(() =>
     import("./motion/text-shimmer.preview").then((m) => m.TextShimmerPreview),
   ),

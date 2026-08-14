@@ -77,7 +77,8 @@ export function TextScramble({
 
   return (
     <span className={cn("inline-block whitespace-pre", className)} style={style}>
-      {reduce ? text : display}
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true">{reduce ? text : display}</span>
     </span>
   );
 }

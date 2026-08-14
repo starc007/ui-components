@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useId, useState, type ReactNode } from "react";
 import { Loader } from "@/components/motion/loader";
+import { TextScramble } from "@/components/motion/text-scramble";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import {
   TEXT_SHIMMER_CLASS_NAME,
@@ -10,7 +11,6 @@ import {
   textShimmerStyle,
 } from "@/lib/text-shimmer";
 import { cn } from "@/lib/utils";
-import { TextScramble } from "./text-scramble";
 
 const DEFAULT_PHRASES = [
   "Thinking",

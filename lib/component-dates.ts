@@ -37,7 +37,7 @@ const COMPONENT_DATES = {
     publishedAt: "2026-07-21",
     updatedAt: "2026-07-21",
   },
-  "motion/text-animation": { publishedAt: "2026-05-17", updatedAt: "2026-07-25" },
+  "motion/text-animation": { publishedAt: "2026-05-17", updatedAt: "2026-08-14" },
   "motion/number": { publishedAt: "2026-05-17", updatedAt: "2026-06-28" },
   "motion/animated-badge": { publishedAt: "2026-06-05", updatedAt: "2026-06-10" },
   "motion/action-swap": { publishedAt: "2026-06-10", updatedAt: "2026-06-28" },
@@ -54,7 +54,7 @@ const COMPONENT_DATES = {
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
   "agents/loading-states": {
     publishedAt: "2026-07-30",
-    updatedAt: "2026-08-02",
+    updatedAt: "2026-08-14",
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
