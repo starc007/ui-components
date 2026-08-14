@@ -35,7 +35,8 @@ export function SiteHeader({
   const isComponents = pathname.startsWith("/components/motion");
   const isBlocks = pathname.startsWith("/components/blocks");
   const isAgents = pathname.startsWith("/components/agents");
-  const isComponentsRoute = pathname.startsWith("/components");
+  const isDocsShell =
+    pathname.startsWith("/components") || pathname.startsWith("/docs");
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
   const isHome = pathname === "/";
@@ -60,7 +61,7 @@ export function SiteHeader({
       <div
         className={cn(
           "relative flex h-14 items-center justify-between gap-4",
-          isComponentsRoute
+          isDocsShell
             ? "w-full px-4 md:px-6 xl:px-8"
             : "mx-auto max-w-7xl px-4",
         )}
