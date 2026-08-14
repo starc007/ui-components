@@ -126,6 +126,8 @@ export function AgentActivity({
   collapseOnComplete = true,
   activeLabel,
   summary,
+  renderWorkingStatus,
+  renderCompletedStatus,
   maxHeight = 208,
   className,
   contentClassName,
@@ -202,7 +204,9 @@ export function AgentActivity({
           role="status"
           className="flex h-7 min-w-0 items-center text-muted-foreground"
         >
-          <ThinkingShimmer>{liveLabel}</ThinkingShimmer>
+          {renderWorkingStatus
+            ? renderWorkingStatus({ label: liveLabel, duration })
+            : <ThinkingShimmer>{liveLabel}</ThinkingShimmer>}
         </div>
       ) : (
         <button
@@ -213,7 +217,11 @@ export function AgentActivity({
           onClick={toggle}
           className="group flex h-7 min-w-0 items-center gap-1.5 rounded-md text-left font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <span className="truncate">{completedSummary}</span>
+          <span className="truncate">
+            {renderCompletedStatus
+              ? renderCompletedStatus({ summary: completedSummary, duration })
+              : completedSummary}
+          </span>
           <motion.span
             aria-hidden="true"
             animate={{ rotate: expanded ? 180 : 0 }}

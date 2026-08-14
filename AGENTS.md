@@ -58,6 +58,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `text-reveal` | `components/motion/text-reveal.tsx` | Word or character reveal with spring slide-up and blur |
 | `text-shimmer` | `components/motion/text-shimmer.tsx` | Gradient sweep across text for loading or emphasis |
 | `text-cascade` | `components/motion/text-cascade.tsx` | Letter-by-letter slot roll for standalone text |
+| `text-scramble` | `components/motion/text-scramble.tsx` | Controlled character scramble that resolves changed text while exposing a stable accessible value |
 | `number-ticker` | `components/motion/number-ticker.tsx` | Slot-machine rolling digits with staggered entry |
 | `animated-number` | `components/motion/animated-number.tsx` | Spring-driven count-up triggered when in view |
 | `animated-badge` | `components/motion/animated-badge.tsx` | Status badge with animated state icons and pulse feedback |

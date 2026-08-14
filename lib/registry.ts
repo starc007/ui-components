@@ -429,7 +429,7 @@ export const registry: CategoryEntry[] = [
         slug: "text-animation",
         name: "Text Animation",
         description:
-          "Animated text primitives for spring reveals, chromatic sweeps, shimmer loading states and letter-cascade swaps.",
+          "Animated text primitives for spring reveals, chromatic sweeps, shimmer loading states, letter-cascade swaps and character scrambles.",
         file: "components/motion/text-reveal.tsx",
         badge: "new",
         launchedAt: "2026-07-25",
@@ -437,8 +437,22 @@ export const registry: CategoryEntry[] = [
           "components/motion/chromatic-text-reveal.tsx",
           "components/motion/text-shimmer.tsx",
           "components/motion/text-cascade.tsx",
+          "components/motion/text-scramble.tsx",
         ],
         examples: [
+          {
+            slug: "text-scramble",
+            name: "Text Scramble",
+            description:
+              "A controlled character scramble that resolves changed text while keeping its final value accessible.",
+            badge: "new",
+            launchedAt: "2026-08-14",
+            installSlug: "text-scramble",
+            file: "components/motion/text-scramble.tsx",
+            previewKey: "motion/text-scramble",
+            previewFile:
+              "components/previews/motion/text-scramble.preview.tsx",
+          },
           {
             slug: "chromatic-reveal",
             name: "Dia Text Animation",
