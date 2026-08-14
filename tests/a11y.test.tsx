@@ -82,6 +82,7 @@ import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { Switch } from "@/components/motion/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { TextReveal } from "@/components/motion/text-reveal";
+import { TextScramble } from "@/components/motion/text-scramble";
 import { Tooltip } from "@/components/motion/tooltip";
 
 afterEach(cleanup);
@@ -665,6 +666,7 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   ["TextReveal", () => <TextReveal text="Ship it" />],
+  ["TextScramble", () => <TextScramble text="Running checks…" />],
   [
     "Tooltip",
     () => (
