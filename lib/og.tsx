@@ -7,14 +7,11 @@ const FG = "#17151f";
 const MUTED = "rgba(23,21,31,0.66)";
 const LOGO_SRC = `${SITE_URL}/beui-mark.png`;
 
-export type OgVariant = "home" | "category" | "component";
-
 type OgOptions = {
   title?: string;
   description?: string;
   label?: string;
   command?: string;
-  variant?: OgVariant;
   backgroundSrc?: string;
   logoSrc?: string;
 };
@@ -33,8 +30,7 @@ export function ogImage({
   description = "Free, open-source motion components with the source included.",
   label = "Motion components",
   command = "npx shadcn add @beui/...",
-  variant = "home",
-  backgroundSrc = `${SITE_URL}/og/grainient-${variant}.jpg`,
+  backgroundSrc = `${SITE_URL}/og/dither-wave.png`,
   logoSrc = LOGO_SRC,
 }: OgOptions = {}): ReactElement {
   return (
@@ -47,8 +43,6 @@ export function ogImage({
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "54px 62px",
         color: FG,
         fontFamily: "Geist",
         background: "#f3f0eb",
@@ -69,108 +63,125 @@ export function ogImage({
         }}
       />
 
+      {/* Keep the safe-area padding on this wrapper. Satori offsets absolute
+          children when padding lives on their positioned parent. */}
       <div
         style={{
+          position: "relative",
+          height: "100%",
+          width: "100%",
+          boxSizing: "border-box",
           display: "flex",
-          alignItems: "center",
+          flexDirection: "column",
           justifyContent: "space-between",
+          padding: "54px 62px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          {/* biome-ignore lint/performance/noImgElement: Satori OG render, not the DOM. */}
-          <img
-            src={logoSrc}
-            width={48}
-            height={48}
-            style={{ borderRadius: 13 }}
-            alt=""
-          />
-          <span
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {/* biome-ignore lint/performance/noImgElement: Satori OG render, not the DOM. */}
+            <img
+              src={logoSrc}
+              width={48}
+              height={48}
+              style={{ borderRadius: 13 }}
+              alt=""
+            />
+            <span
+              style={{
+                display: "flex",
+                fontFamily: "Geist",
+                fontSize: 28,
+                fontWeight: 500,
+                letterSpacing: "-0.04em",
+              }}
+            >
+              beui
+            </span>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              padding: "10px 16px",
+              borderRadius: 999,
+              border: "1px solid rgba(23,21,31,0.14)",
+              background: "rgba(255,255,255,0.3)",
+              fontFamily: "Geist Mono",
+              fontSize: 15,
+              fontWeight: 500,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+            }}
+          >
+            {label}
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 20,
+            maxWidth: 1000,
+          }}
+        >
+          <div
             style={{
               display: "flex",
               fontFamily: "Geist",
-              fontSize: 28,
+              fontSize: titleSize(title),
               fontWeight: 500,
-              letterSpacing: "-0.04em",
+              letterSpacing: "-0.072em",
+              lineHeight: 0.9,
             }}
           >
-            beui
+            {title}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              maxWidth: 780,
+              fontSize: 25,
+              lineHeight: 1.28,
+              color: MUTED,
+            }}
+          >
+            {description}
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <span style={{ display: "flex", fontSize: 20 }}>
+            React · Next.js · Tailwind
+          </span>
+          <span
+            style={{
+              display: "flex",
+              padding: "13px 19px",
+              borderRadius: 999,
+              background: FG,
+              color: "#fffdf8",
+              fontFamily: "Geist Mono",
+              fontSize: command.length > 40 ? 13 : 16,
+              fontWeight: 500,
+            }}
+          >
+            {command}
           </span>
         </div>
-
-        <div
-          style={{
-            display: "flex",
-            padding: "10px 16px",
-            borderRadius: 999,
-            border: "1px solid rgba(23,21,31,0.14)",
-            background: "rgba(255,255,255,0.3)",
-            fontFamily: "Geist Mono",
-            fontSize: 15,
-            fontWeight: 500,
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
-          }}
-        >
-          {label}
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 20,
-          maxWidth: 1000,
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            fontFamily: "Geist",
-            fontSize: titleSize(title),
-            fontWeight: 500,
-            letterSpacing: "-0.072em",
-            lineHeight: 0.9,
-          }}
-        >
-          {title}
-        </div>
-        <div
-          style={{
-            display: "flex",
-            maxWidth: 780,
-            fontSize: 25,
-            lineHeight: 1.28,
-            color: MUTED,
-          }}
-        >
-          {description}
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span style={{ display: "flex", fontSize: 20 }}>React · Next.js · Tailwind</span>
-        <span
-          style={{
-            display: "flex",
-            padding: "13px 19px",
-            borderRadius: 999,
-            background: FG,
-            color: "#fffdf8",
-            fontFamily: "Geist Mono",
-            fontSize: command.length > 40 ? 13 : 16,
-            fontWeight: 500,
-          }}
-        >
-          {command}
-        </span>
       </div>
     </div>
   );
