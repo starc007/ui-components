@@ -570,6 +570,26 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/animated-toast-stack.tsx",
       },
       {
+        slug: "pixel-toast",
+        name: "Pixel Toast",
+        description:
+          "Premium-feeling toast notification with layered depth, action slots and a two-row pixel countdown.",
+        file: "components/motion/pixel-toast.tsx",
+        credit: {
+          name: "Abhiraj35",
+          url: "https://www.abhiraj01.me",
+        },
+        badge: "new",
+        launchedAt: "2026-08-14",
+        keywords: [
+          "react toast notification",
+          "animated toast",
+          "countdown toast",
+          "pixel progress toast",
+          "premium toast notification",
+        ],
+      },
+      {
         slug: "theme-toggle",
         name: "Theme Toggle",
         description: "Theme toggle button that repaints the whole page through the View Transition API — a rectangle or circle clip-path reveal, or slats that open across the screen like a shutter.",

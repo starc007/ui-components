@@ -42,6 +42,7 @@ const COMPONENT_DATES = {
   "motion/animated-badge": { publishedAt: "2026-06-05", updatedAt: "2026-06-10" },
   "motion/action-swap": { publishedAt: "2026-06-10", updatedAt: "2026-06-28" },
   "motion/animated-toast-stack": { publishedAt: "2026-06-05", updatedAt: "2026-07-13" },
+  "motion/pixel-toast": { publishedAt: "2026-08-14", updatedAt: "2026-08-14" },
   "motion/theme-toggle": { publishedAt: "2026-06-15", updatedAt: "2026-06-20" },
   "motion/bouncy-accordion": { publishedAt: "2026-06-16", updatedAt: "2026-07-13" },
   "motion/drawer": { publishedAt: "2026-06-22", updatedAt: "2026-06-22" },

@@ -250,6 +250,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/animated-toast-stack": dynamic(() =>
     import("./motion/animated-toast-stack.preview").then((m) => m.AnimatedToastStackPreview),
   ),
+  "motion/pixel-toast": dynamic(() =>
+    import("./motion/pixel-toast.preview").then((m) => m.PixelToastPreview),
+  ),
   "motion/action-swap": dynamic(() =>
     import("./motion/action-swap.preview").then((m) => m.ActionSwapPreview),
   ),
