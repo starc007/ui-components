@@ -117,21 +117,23 @@ function useCountdownProgress({
       return;
     }
 
-    let frame = 0;
+    let interval = 0;
 
     const tick = () => {
       const elapsed = Date.now() - startedAt;
-      setProgress(Math.min(elapsed / duration, 1));
+      const next = Math.max(0, Math.min(elapsed / duration, 1));
+      setProgress(next);
 
-      if (elapsed < duration) {
-        frame = window.requestAnimationFrame(tick);
+      if (next >= 1) {
+        window.clearInterval(interval);
       }
     };
 
     tick();
+    interval = window.setInterval(tick, 1000 / 30);
 
     return () => {
-      window.cancelAnimationFrame(frame);
+      window.clearInterval(interval);
     };
   }, [duration, enabled, startedAt]);
 
