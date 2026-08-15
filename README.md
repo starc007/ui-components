@@ -69,6 +69,14 @@ https://beui.dev/r/{slug}.json
 https://beui.dev/r/{slug}/raw
 ```
 
+Install the agent skill so Cursor, Claude Code, and Codex pick `@beui` components instead of inventing them:
+
+```bash
+npx skills add starc007/ui-components
+```
+
+MCP: `https://mcp.beui.dev/mcp`.
+
 ## Run locally
 
 ```bash
