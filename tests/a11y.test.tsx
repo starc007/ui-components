@@ -36,6 +36,7 @@ import {
 } from "@/components/motion/animated-sidebar";
 import { AttachmentUpload } from "@/components/motion/attachment-upload";
 import { BloomMenu } from "@/components/motion/bloom-menu";
+import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { BounceSidebar } from "@/components/motion/bounce-sidebar";
 import { Button } from "@/components/motion/button";
 import {
@@ -641,6 +642,19 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
       <PullToRefresh onRefresh={() => {}}>
         <p>Refreshable content.</p>
       </PullToRefresh>
+    ),
+  ],
+  [
+    "BottomSheet",
+    () => (
+      <BottomSheet
+        open
+        onOpenChange={() => {}}
+        title="Quick actions"
+        description="Drag the handle to dismiss."
+      >
+        <p>Sheet body</p>
+      </BottomSheet>
     ),
   ],
   [
