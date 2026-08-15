@@ -100,6 +100,7 @@ Before building a new component, check this list. If it exists, import it. If it
 |---|---|---|
 | `infinite-masonry` | `components/motion/infinite-masonry.tsx` | Responsive virtualized masonry with measured variable-height cards, automatic lanes and infinite loading near the scroll boundary |
 | `notification-stack` | `components/motion/notification-stack.tsx` | Compact notification cards that spring from a stacked summary into a readable list on hover, focus or tap |
+| `project-folder` | `components/motion/project-folder.tsx` | Project folder whose file fan opens on hover/focus, morphs into a focus-managed overlay on click, and retraces the complete path when closed; controlled/uncontrolled open and expanded state, reduced-motion safe |
 | `swap` | `components/motion/swap.tsx` + `swap/` | Cross-chain swap widget with chain/token selectors and morphing views |
 | `dynamic-island` | `components/motion/dynamic-island.tsx` | iOS-style island pill that morphs between live activity views |
 | `command-palette` | `components/motion/command-palette.tsx` | ⌘K palette with fuzzy filter and spring-animated active row |

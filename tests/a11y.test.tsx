@@ -61,6 +61,7 @@ import {
 } from "@/components/motion/popover";
 import { PullToRefresh } from "@/components/motion/pull-to-refresh";
 import { PreviewRail } from "@/components/motion/preview-rail";
+import { ProjectFolder } from "@/components/motion/project-folder";
 import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
 import { RangeSlider } from "@/components/motion/range-slider";
 import { BubbleSlider } from "@/components/motion/range-slider-bubble";
@@ -482,6 +483,20 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ["Button disabled", () => <Button disabled>Subscribe</Button>],
   ["Button ripple", () => <Button ripple>Subscribe</Button>],
   ["BloomMenu", () => <BloomMenu />],
+  [
+    "ProjectFolder",
+    () => (
+      <ProjectFolder
+        title="Brand direction"
+        description="Updated a moment ago"
+        count={2}
+        previews={[
+          { id: "one", content: <span>Preview one</span> },
+          { id: "two", content: <span>Preview two</span> },
+        ]}
+      />
+    ),
+  ],
   [
     "KnockoutWheel",
     () => <KnockoutWheel rounds={KNOCKOUT_WHEEL_ROUNDS} />,
