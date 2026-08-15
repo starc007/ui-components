@@ -138,6 +138,11 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.NotificationStackPreview,
     ),
   ),
+  "blocks/project-folder": dynamic(() =>
+    import("./blocks/project-folder.preview").then(
+      (m) => m.ProjectFolderPreview,
+    ),
+  ),
   "blocks/knockout-bracket": dynamic(() =>
     import("./blocks/knockout-bracket.preview").then(
       (m) => m.KnockoutBracketPreview,
