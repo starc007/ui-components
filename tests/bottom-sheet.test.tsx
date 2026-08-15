@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test } from "bun:test";
+import { afterEach, describe, expect, mock, test } from "bun:test";
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import { useState } from "react";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
@@ -33,10 +33,20 @@ describe("BottomSheet", () => {
   });
 
   test("closes on Escape", () => {
-    const { getByRole, queryByRole } = render(<TestSheet />);
+    const onOpenChange = mock((_: boolean) => {});
+    const { getByRole } = render(
+      <BottomSheet
+        open
+        onOpenChange={onOpenChange}
+        title="Quick actions"
+        description="Drag the handle to dismiss."
+      >
+        <p>Sheet body</p>
+      </BottomSheet>,
+    );
     expect(getByRole("dialog", { name: "Quick actions" })).toBeTruthy();
     fireEvent.keyDown(window, { key: "Escape" });
-    expect(queryByRole("dialog")).toBeNull();
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
   test("keeps the title outside the drag handle", () => {
