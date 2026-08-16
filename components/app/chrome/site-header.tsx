@@ -86,7 +86,7 @@ export function SiteHeader({
             <Link
               href="/components/motion"
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-md px-2 py-1.5 text-sm transition-colors lg:px-3",
                 isComponents
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -97,7 +97,7 @@ export function SiteHeader({
             <Link
               href="/components/blocks"
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-md px-2 py-1.5 text-sm transition-colors lg:px-3",
                 isBlocks
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -108,7 +108,7 @@ export function SiteHeader({
             <Link
               href="/components/agents"
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-md px-2 py-1.5 text-sm transition-colors lg:px-3",
                 isAgents
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -119,7 +119,7 @@ export function SiteHeader({
             <Link
               href="/playground"
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-md px-2 py-1.5 text-sm transition-colors lg:px-3",
                 isPlayground
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -130,7 +130,7 @@ export function SiteHeader({
             <Link
               href="/sponsors"
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-md px-2 py-1.5 text-sm transition-colors lg:px-3",
                 isSponsors
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -142,15 +142,18 @@ export function SiteHeader({
         </div>
 
         <nav className="flex items-center gap-2">
+          {/* The primary nav appears at md, so the header row is tightest
+              between md and lg: the search falls back to its icon there and
+              the secondary Customize control waits until the row fits. */}
           {isHome ? null : (
-            <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 lg:w-56" />
+            <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 md:w-9 md:justify-center md:px-0 lg:w-56 lg:justify-start lg:px-3" />
           )}
           <Tooltip content="Customize" side="bottom">
             <button
               type="button"
               onClick={() => setPanelOpen(true)}
               aria-label="Customize theme"
-              className="hidden h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card/20 text-muted-foreground transition-colors hover:text-foreground sm:flex"
+              className="hidden h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card/20 text-muted-foreground transition-colors hover:text-foreground sm:flex md:hidden lg:flex"
             >
               <SwatchBook className="h-4 w-4" />
             </button>
