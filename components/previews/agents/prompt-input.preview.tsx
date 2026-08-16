@@ -10,7 +10,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { PromptInput } from "@/components/agents/prompt-input";
 import { EASE_OUT } from "@/lib/ease";
-import { useFavicon } from "@/lib/favicon";
+import { useFavicon } from "@/lib/hooks/use-favicon";
 
 function ModelLogo({ url }: { url: string }) {
   const favicon = useFavicon(url);

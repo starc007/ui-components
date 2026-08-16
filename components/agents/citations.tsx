@@ -10,7 +10,7 @@ import {
 } from "react";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
-import { useFavicon } from "@/lib/favicon";
+import { useFavicon } from "@/lib/hooks/use-favicon";
 import { cn } from "@/lib/utils";
 
 export interface CitationItem {
