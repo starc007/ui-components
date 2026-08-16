@@ -12,7 +12,6 @@ import {
   useContext,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -31,7 +30,9 @@ type MorphContextValue = {
   toggle: () => void;
   triggerId: string;
   contentId: string;
+  /** The element the panel measures against — see `registerTrigger`. */
   triggerRef: React.MutableRefObject<HTMLElement | null>;
+  registerTrigger: (node: HTMLElement | null) => void;
   contentRef: React.MutableRefObject<HTMLDivElement | null>;
 };
 
@@ -66,8 +67,8 @@ export function MorphPopover({
   className,
 }: MorphPopoverProps) {
   const baseId = useId();
-  const rootRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLElement | null>(null);
+  const [root, setRoot] = useState<HTMLDivElement | null>(null);
+  const [trigger, setTrigger] = useState<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const controlled = controlledOpen !== undefined;
@@ -86,10 +87,13 @@ export function MorphPopover({
   // when something else already clones the element — a Tooltip wrapping the
   // button, say — and an unregistered trigger leaves the panel with nothing to
   // measure against, so it renders permanently invisible. The root boxes the
-  // trigger exactly (the content portals out of it), so it stands in.
-  useLayoutEffect(() => {
-    if (!triggerRef.current) triggerRef.current = rootRef.current;
-  });
+  // trigger exactly (the content portals out of it), so it stands in until a
+  // real trigger registers, and stands in again if that one unmounts. Both are
+  // state, so a trigger arriving while the panel is open re-anchors it.
+  const anchorRef = useMemo<React.MutableRefObject<HTMLElement | null>>(
+    () => ({ current: trigger ?? root }),
+    [root, trigger],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -97,8 +101,8 @@ export function MorphPopover({
     const onPointer = (e: PointerEvent) => {
       const target = e.target as Node;
       if (
-        rootRef.current &&
-        !rootRef.current.contains(target) &&
+        root &&
+        !root.contains(target) &&
         !contentRef.current?.contains(target)
       )
         setOpen(false);
@@ -109,7 +113,7 @@ export function MorphPopover({
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointerdown", onPointer);
     };
-  }, [open, setOpen]);
+  }, [open, root, setOpen]);
 
   const ctx = useMemo<MorphContextValue>(
     () => ({
@@ -118,15 +122,16 @@ export function MorphPopover({
       toggle,
       triggerId: `${baseId}-trigger`,
       contentId: `${baseId}-content`,
-      triggerRef,
+      triggerRef: anchorRef,
+      registerTrigger: setTrigger,
       contentRef,
     }),
-    [open, setOpen, toggle, baseId],
+    [open, setOpen, toggle, baseId, anchorRef],
   );
 
   return (
     <MorphContext.Provider value={ctx}>
-      <div ref={rootRef} className={cn("relative inline-flex", className)}>
+      <div ref={setRoot} className={cn("relative inline-flex", className)}>
         {children}
       </div>
     </MorphContext.Provider>
@@ -160,9 +165,7 @@ export function MorphPopoverTrigger({ children }: MorphPopoverTriggerProps) {
 
   return cloneElement(child, {
     id: ctx.triggerId,
-    ref: mergeRefs(childRef, (node: HTMLElement | null) => {
-      ctx.triggerRef.current = node;
-    }),
+    ref: mergeRefs(childRef, ctx.registerTrigger),
     onClick: (e: unknown) => {
       childOnClick?.(e);
       ctx.toggle();
