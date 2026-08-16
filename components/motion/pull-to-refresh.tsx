@@ -23,7 +23,7 @@ import {
   SPRING_PANEL,
   SPRING_SWAP,
 } from "@/lib/ease";
-import { capturePointer, TOUCH_GESTURE_CLASS } from "@/lib/touch";
+import { capturePointer, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type PullToRefreshStatus =
@@ -460,9 +460,12 @@ export function PullToRefresh({
         // only takes over once the content is already at the top. The callout
         // has to be off from the first frame though: iOS decides on it while
         // the finger is still resting, long before the pull is recognised.
-        TOUCH_GESTURE_CLASS,
+        // Whatever the consumer renders inside stays selectable with a mouse;
+        // only the pull itself suppresses selection, and only while it runs,
+        // so dragging the page down cannot highlight it on the way.
+        TOUCH_GESTURE_CONTENT_CLASS,
         status === "pulling" || status === "ready"
-          ? "cursor-grabbing"
+          ? "cursor-grabbing select-none"
           : "cursor-grab",
         (disabled || isRefreshing) && "cursor-default",
         className,

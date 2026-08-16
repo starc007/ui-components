@@ -17,7 +17,7 @@ import {
   type ReactNode,
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
-import { TOUCH_GESTURE_CLASS } from "@/lib/touch";
+import { TOUCH_GESTURE_CLASS, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export interface SlideActionButtonProps extends Omit<
@@ -130,7 +130,9 @@ export function SlideActionButton({
       className={cn(
         "relative h-16 w-72 overflow-hidden rounded-[22px] bg-primary/10 p-1",
         "ring-1 ring-primary/10",
-        TOUCH_GESTURE_CLASS,
+        // The track only carries the label — the slide starts on the thumb,
+        // which suppresses selection for the whole gesture on its own.
+        TOUCH_GESTURE_CONTENT_CLASS,
         className,
       )}
       {...rest}
