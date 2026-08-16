@@ -184,12 +184,15 @@ export function ExpandableActionBar({
         onFocus={onRootFocus}
         onBlur={onRootBlur}
         transition={ITEM_TRANSITION}
-        className={cn("inline-flex", classNames?.root, className)}
+        className={cn("inline-flex max-w-full", classNames?.root, className)}
       >
         <motion.div
           layout="size"
           className={cn(
-            "relative inline-flex items-center overflow-hidden rounded-full border border-border bg-card/90 shadow-2xl backdrop-blur-xl",
+            // Labelled actions can outgrow the space the bar sits in — the pill
+            // stays inside it and scrolls its rail rather than running off the
+            // edge, where the last action is unreachable.
+            "scrollbar-hide relative inline-flex max-w-full items-center overflow-x-auto overflow-y-hidden rounded-full border border-border bg-card/90 shadow-2xl backdrop-blur-xl",
             SIZE_CLASS[size],
             classNames?.track,
           )}
@@ -218,7 +221,7 @@ export function ExpandableActionBar({
                 whileTap={reduce || item.disabled ? undefined : { scale: 0.96 }}
                 transition={ITEM_TRANSITION}
                 className={cn(
-                  "relative isolate inline-flex items-center justify-center overflow-hidden rounded-full font-medium text-muted-foreground outline-none transition-[color,background-color] duration-150 ease-out",
+                  "relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-medium text-muted-foreground outline-none transition-[color,background-color] duration-150 ease-out",
                   "focus-visible:text-foreground disabled:pointer-events-none disabled:opacity-40",
                   isHighlighted && "text-foreground",
                   ITEM_SIZE_CLASS[size],

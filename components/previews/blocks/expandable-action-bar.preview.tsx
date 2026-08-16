@@ -67,7 +67,7 @@ export function ExpandableActionBarPreview() {
 
   return (
     <div className="flex min-h-72 w-full flex-col items-center justify-center gap-6">
-      <div className="flex min-h-24 items-center justify-center">
+      <div className="flex min-h-24 w-full items-center justify-center">
         <ExpandableActionBar
           items={items}
           expanded={expanded}
