@@ -1426,6 +1426,22 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "project-folder",
+        name: "Project Folder",
+        description:
+          "An interactive project folder that opens its file fan on hover or focus, expands into a focus-managed overlay, then retraces the complete path when closed.",
+        file: "components/motion/project-folder.tsx",
+        badge: "new",
+        launchedAt: "2026-08-15",
+        keywords: [
+          "react folder card",
+          "animated project folder",
+          "file preview component",
+          "folder hover animation",
+          "project card react",
+        ],
+      },
+      {
         slug: "knockout-bracket",
         name: "Fixtures",
         description: "Animated tournament fixtures in two styles: a knockout bracket that pages through rounds, and a wheel that wraps the same tree around the champion. Both read the same array of rounds, so one dataset draws either.",
