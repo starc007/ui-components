@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
+import { ExpandableActionBar } from "@/components/motion/expandable-action-bar";
 import {
   Popover,
   PopoverContent,
@@ -173,6 +174,107 @@ describe("Tooltip", () => {
     fireEvent.pointerDown(outside, touch);
     fireEvent.click(outside);
     await waitFor(() => expect(document.querySelectorAll("[role=tooltip]")).toHaveLength(0));
+    expect(outsideClicks).toBe(1);
+
+    outside.remove();
+    restore();
+  });
+});
+
+describe("ExpandableActionBar", () => {
+  const items = [
+    { id: "send", label: "Send", icon: <span>S</span> },
+    { id: "export", label: "Export", icon: <span>E</span> },
+  ];
+
+  test("the first tap on a collapsed bar expands it and runs no action", async () => {
+    const restore = withTouchCapability();
+    const fired: string[] = [];
+    const { getByTitle } = render(
+      <ExpandableActionBar
+        items={items}
+        onAction={(item) => fired.push(item.id)}
+      />,
+    );
+
+    const send = getByTitle("Send");
+    // The compatibility mouse burst a tap fires must not drive the bar.
+    fireEvent.pointerEnter(send, touch);
+    fireEvent.pointerDown(send, touch);
+    fireEvent.click(send);
+    expect(fired).toEqual([]);
+
+    // ...and the second tap acts, now that the labels are readable.
+    fireEvent.pointerDown(send, touch);
+    fireEvent.click(send);
+    expect(fired).toEqual(["send"]);
+    restore();
+  });
+
+  test("a mouse click acts straight away", () => {
+    const restore = withTouchCapability();
+    const fired: string[] = [];
+    const { getByTitle } = render(
+      <ExpandableActionBar
+        items={items}
+        onAction={(item) => fired.push(item.id)}
+      />,
+    );
+
+    const send = getByTitle("Send");
+    fireEvent.pointerEnter(send, mouse);
+    fireEvent.pointerDown(send, mouse);
+    fireEvent.click(send);
+    expect(fired).toEqual(["send"]);
+    restore();
+  });
+
+  test("a controlled bar that declines to expand still acts on the second tap", () => {
+    const restore = withTouchCapability();
+    const fired: string[] = [];
+    const { getByTitle } = render(
+      <ExpandableActionBar
+        items={items}
+        expanded={false}
+        onAction={(item) => fired.push(item.id)}
+      />,
+    );
+
+    const send = getByTitle("Send");
+    fireEvent.pointerDown(send, touch);
+    fireEvent.click(send);
+    fireEvent.pointerDown(send, touch);
+    fireEvent.click(send);
+    expect(fired).toEqual(["send"]);
+    restore();
+  });
+
+  test("the tap that dismisses an expanded bar does not also fire what it hit", async () => {
+    const restore = withTouchCapability();
+    const outside = document.createElement("button");
+    let outsideClicks = 0;
+    outside.addEventListener("click", () => {
+      outsideClicks += 1;
+    });
+    document.body.appendChild(outside);
+
+    const { getByTitle } = render(<ExpandableActionBar items={items} />);
+    const send = getByTitle("Send");
+    fireEvent.pointerDown(send, touch);
+    fireEvent.click(send);
+
+    fireEvent.pointerDown(outside, touch);
+    fireEvent.click(outside);
+    expect(outsideClicks).toBe(0);
+    expect(send.closest("[aria-hidden]")).toBeNull();
+
+    // The swallower releases with that click, so once the bar has finished
+    // collapsing the next tap lands normally.
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    });
+    fireEvent.pointerDown(outside, touch);
+    fireEvent.click(outside);
     expect(outsideClicks).toBe(1);
 
     outside.remove();
