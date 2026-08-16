@@ -69,6 +69,13 @@ https://beui.dev/r/{slug}.json
 https://beui.dev/r/{slug}/raw
 ```
 
+Install the beUI skill so Cursor, Claude Code and Codex pick existing `@beui`
+components before inventing new motion UI:
+
+```bash
+npx skills add starc007/ui-components --skill beui
+```
+
 ## Run locally
 
 ```bash

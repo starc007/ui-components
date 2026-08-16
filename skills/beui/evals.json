@@ -1,0 +1,59 @@
+{
+  "skill_name": "beui",
+  "evals": [
+    {
+      "id": "toast",
+      "prompt": "Show a toast when the form saves.",
+      "expected_slugs": ["animated-toast-stack"],
+      "not_slugs": ["notification-stack"]
+    },
+    {
+      "id": "bottom-sheet",
+      "prompt": "Add a mobile bottom sheet like Vaul.",
+      "expected_slugs": ["bottom-sheet"],
+      "not_slugs": ["drawer", "center-morph-modal"]
+    },
+    {
+      "id": "thinking",
+      "prompt": "Add a thinking indicator while the agent works.",
+      "expected_slugs": ["thinking-shimmer"],
+      "not_slugs": ["loader", "text-shimmer"]
+    },
+    {
+      "id": "gooey-popover",
+      "prompt": "I want a liquid gooey popover that oozes out of the button.",
+      "expected_slugs": ["popover"],
+      "not_slugs": ["popover-morph"]
+    },
+    {
+      "id": "wave-slider",
+      "prompt": "Build an equalizer-style wave slider.",
+      "expected_slugs": ["range-slider-wave"],
+      "not_slugs": ["range-slider"]
+    },
+    {
+      "id": "chat",
+      "prompt": "Build a streaming AI chat with a prompt box and a thread that follows new tokens.",
+      "expected_slugs": ["message-scroller", "message", "prompt-input"],
+      "not_slugs": ["loader"]
+    },
+    {
+      "id": "attachments",
+      "prompt": "Chat composer attachments for images, audio, and files.",
+      "expected_slugs": ["attachment-upload"],
+      "not_slugs": ["file-upload"]
+    },
+    {
+      "id": "project-folder",
+      "prompt": "Add an animated project folder card that opens into details.",
+      "expected_slugs": ["project-folder"],
+      "not_slugs": ["file-upload"]
+    },
+    {
+      "id": "command-palette",
+      "prompt": "Add a Cmd+K command palette.",
+      "expected_slugs": ["command-palette"],
+      "not_slugs": ["combobox"]
+    }
+  ]
+}
