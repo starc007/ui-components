@@ -10,6 +10,11 @@ import {
   type ReactNode,
 } from "react";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
+import {
+  capturePointer,
+  releasePointer,
+  TOUCH_GESTURE_CLASS,
+} from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export interface HoldActionButtonProps extends Omit<
@@ -72,15 +77,23 @@ export const HoldActionButton = forwardRef<
 
   const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
     if (event.button !== 0) return;
-    event.currentTarget.setPointerCapture(event.pointerId);
+    // Start first: capture is a convenience, and a browser that refuses it
+    // must not take the hold down with it.
     startHold();
+    capturePointer(event.currentTarget, event.pointerId);
   };
 
   const handlePointerUp = (event: PointerEvent<HTMLButtonElement>) => {
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
+    releasePointer(event.currentTarget, event.pointerId);
     cancelHold();
+  };
+
+  const handlePointerLeave = (event: PointerEvent<HTMLButtonElement>) => {
+    // Dragging the cursor off the button abandons the hold. A finger does not
+    // get the same reading: WebKit fires leave repeatedly for a touch that
+    // never moved, which would cancel every hold on the frame it started.
+    // Lifting or cancelling the touch already ends it.
+    if (event.pointerType !== "touch") cancelHold();
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
@@ -119,14 +132,15 @@ export const HoldActionButton = forwardRef<
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerCancel={cancelHold}
-      onPointerLeave={cancelHold}
+      onPointerLeave={handlePointerLeave}
       onKeyDown={handleKeyDown}
       onKeyUp={handleKeyUp}
       onContextMenu={(event) => event.preventDefault()}
       whileTap={reduce || disabled ? undefined : { scale: 0.98 }}
       transition={SPRING_PRESS}
       className={cn(
-        "relative inline-grid h-16 min-w-72 touch-none select-none place-items-center overflow-hidden rounded-[22px] bg-primary px-8 text-primary-foreground",
+        "relative inline-grid h-16 min-w-72 touch-none place-items-center overflow-hidden rounded-[22px] bg-primary px-8 text-primary-foreground",
+        TOUCH_GESTURE_CLASS,
         "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         "disabled:pointer-events-none disabled:opacity-50",
         className,

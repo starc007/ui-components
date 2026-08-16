@@ -27,6 +27,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL } from "@/lib/ease";
+import { TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 type OpenModality = "pointer" | "keyboard" | "touch";
@@ -278,7 +279,11 @@ export function ContextMenuTrigger({
     "aria-controls": context.open ? context.menuId : undefined,
     "aria-haspopup": "menu",
     "aria-expanded": context.open,
-    className: cn(childProps.className, className),
+    // The long press is ours: without this iOS runs its own on the same
+    // gesture and drops the selection callout and its handles on top of the
+    // menu we just opened. `touch-none` stays off — the page still has to
+    // scroll from the trigger.
+    className: cn(TOUCH_GESTURE_CLASS, childProps.className, className),
     onContextMenu: (event: ReactMouseEvent<HTMLElement>) => {
       childProps.onContextMenu?.(event);
       if (event.defaultPrevented || disabled) return;
