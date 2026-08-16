@@ -24,6 +24,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_GLIDE, SPRING_PRESS } from "@/lib/ease";
+import { TOUCH_GESTURE_CLASS, capturePointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type MorphingTabsItem = {
@@ -532,7 +533,7 @@ export function MorphingTabs({
 
       if (!drag.moved) {
         drag.moved = true;
-        event.currentTarget.setPointerCapture(event.pointerId);
+        capturePointer(event.currentTarget, event.pointerId);
         if (drag.id === activeId) {
           surfaceAnimationRef.current?.stop();
           surfaceLeft.set(drag.startLeft);
@@ -747,7 +748,10 @@ export function MorphingTabs({
                 surfaceClassName={classNames?.activeTab}
                 zIndex={isDragging ? 30 : isActive ? 20 : 1}
                 className={cn(
-                  "group absolute left-0 top-0 flex select-none touch-pan-y items-stretch",
+                  // The drag is ours end to end, so iPadOS must not answer the
+                  // press with its callout or a native drag of the label.
+                  "group absolute left-0 top-0 flex touch-pan-y items-stretch",
+                  TOUCH_GESTURE_CLASS,
                   item.disabled && "cursor-not-allowed",
                   isDragging ? "cursor-grabbing" : "cursor-grab",
                 )}
