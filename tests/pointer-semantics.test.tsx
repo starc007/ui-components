@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/motion/popover";
+import { PreviewRail } from "@/components/motion/preview-rail";
 import { Tooltip } from "@/components/motion/tooltip";
 
 // Every component here used to pick an interaction *mode* from a device
@@ -360,6 +361,60 @@ describe("NotificationStack", () => {
     expect(stack.getAttribute("aria-expanded")).toBe("false");
 
     outside.remove();
+    restore();
+  });
+});
+
+describe("PreviewRail", () => {
+  const items = [
+    { id: "one", label: "One", description: "First", href: "#one" },
+    { id: "two", label: "Two", description: "Second", href: "#two" },
+  ];
+
+  test("a tap previews the link before it follows it", () => {
+    const restore = withTouchCapability();
+    const { container, getByLabelText } = render(<PreviewRail items={items} />);
+    const two = getByLabelText("Two");
+
+    fireEvent.pointerDown(two, touch);
+    const first = fireEvent.click(two);
+    expect(first).toBe(false); // default prevented: the page stays put
+    expect(container.textContent).toContain("Second");
+
+    fireEvent.pointerDown(two, touch);
+    const second = fireEvent.click(two);
+    expect(second).toBe(true);
+    restore();
+  });
+
+  test("a mouse click follows the link on the first go", () => {
+    const restore = withTouchCapability();
+    const { getByLabelText } = render(<PreviewRail items={items} />);
+    const two = getByLabelText("Two");
+
+    fireEvent.pointerDown(two, mouse);
+    expect(fireEvent.click(two)).toBe(true);
+    restore();
+  });
+
+  test("keyboard activation leaves no preview behind, and focus loss clears a tapped one", () => {
+    const restore = withTouchCapability();
+    const { container, getByLabelText } = render(
+      <PreviewRail items={items.map(({ href, ...rest }) => rest)} />,
+    );
+    const two = getByLabelText("Two");
+
+    // Enter on a focused tick: a click with no pointerdown behind it. It used
+    // to light the tick with nothing but a future outside tap to clear it.
+    fireEvent.click(two, { detail: 0 });
+    expect(container.textContent).not.toContain("Second");
+
+    fireEvent.pointerDown(two, touch);
+    fireEvent.click(two);
+    expect(container.textContent).toContain("Second");
+
+    fireEvent.blur(two);
+    expect(container.textContent).not.toContain("Second");
     restore();
   });
 });
