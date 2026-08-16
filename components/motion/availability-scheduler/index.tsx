@@ -45,6 +45,8 @@ export function AvailabilityScheduler({
   const [internal, setInternal] = useState<WeekAvailability>(
     () => defaultValue ?? defaultWeek(),
   );
+  // The row that last opened a dropdown paints above the rest — see DayRow.
+  const [openDay, setOpenDay] = useState<DayKey | null>(null);
   const controlled = value !== undefined;
   const week = controlled ? value : internal;
 
@@ -84,7 +86,7 @@ export function AvailabilityScheduler({
   return (
     <LayoutGroup id={groupId}>
       <div className={cn("w-full max-w-xl divide-y divide-border", className)}>
-        {WEEKDAYS.map(({ key, label }, i) => (
+        {WEEKDAYS.map(({ key, label }) => (
           <DayRow
             key={key}
             day={key}
@@ -92,9 +94,10 @@ export function AvailabilityScheduler({
             state={week[key]}
             options={options}
             reduce={reduce}
-            depth={WEEKDAYS.length - i}
+            elevated={openDay === key}
             onChange={(next) => setDay(key, next)}
             onCopy={(targets) => copyDay(key, targets)}
+            onPanelOpen={() => setOpenDay(key)}
           />
         ))}
       </div>

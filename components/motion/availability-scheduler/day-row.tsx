@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { Plus, X } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Switch } from "@/components/motion/switch";
 import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_LAYOUT } from "@/lib/ease";
@@ -24,23 +24,36 @@ export function DayRow({
   state,
   options,
   reduce,
-  depth,
+  elevated,
   onChange,
   onCopy,
+  onPanelOpen,
 }: {
   day: DayKey;
   label: string;
   state: DayAvailability;
   options: TimeOption[];
   reduce: boolean;
-  // Higher = painted above later rows, so a downward-opening panel always sits
-  // over the rows below it — during both open and close animations.
-  depth: number;
+  // True while this row holds the dropdown that opened last, which paints it
+  // above every other row. A time panel opens downward when there is room and
+  // upward when there isn't, so it has to clear the rows on either side of it
+  // — no fixed paint order can satisfy both directions. The flag stays on
+  // after the panel closes so the collapse animation stays on top too.
+  elevated: boolean;
   onChange: (next: DayAvailability) => void;
   onCopy: (targets: DayKey[]) => void;
+  onPanelOpen: () => void;
 }) {
   const idRef = useRef(0);
   const nextId = () => `${day}-n${idRef.current++}`;
+  // Same rule one level down: ranges stack against each other inside the row.
+  const [openRangeId, setOpenRangeId] = useState<string | null>(null);
+
+  const onRangePanelOpen = (id: string, open: boolean) => {
+    if (!open) return;
+    setOpenRangeId(id);
+    onPanelOpen();
+  };
 
   const setEnabled = (enabled: boolean) => {
     if (enabled && state.ranges.length === 0) {
@@ -97,7 +110,7 @@ export function DayRow({
     <motion.div
       layout={reduce ? false : "position"}
       transition={SPRING_LAYOUT}
-      style={{ zIndex: depth }}
+      style={{ zIndex: elevated ? 1 : undefined }}
       className="relative flex flex-col gap-3 py-4 sm:flex-row sm:items-start sm:gap-4"
     >
       {/* toggle + label; actions ride along on mobile */}
@@ -118,11 +131,11 @@ export function DayRow({
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <AnimatePresence initial={false} mode="popLayout">
           {state.enabled ? (
-            state.ranges.map((r, i) => (
+            state.ranges.map((r) => (
               <motion.div
                 key={r.id}
                 layout={reduce ? false : "position"}
-                style={{ zIndex: state.ranges.length - i }}
+                style={{ zIndex: openRangeId === r.id ? 1 : undefined }}
                 initial={
                   reduce
                     ? { opacity: 0 }
@@ -146,6 +159,7 @@ export function DayRow({
                     value={r.start}
                     options={options}
                     onChange={(v) => updateRange(r.id, { start: v })}
+                    onOpenChange={(open) => onRangePanelOpen(r.id, open)}
                   />
                 </div>
                 <span className="text-muted-foreground">–</span>
@@ -154,6 +168,7 @@ export function DayRow({
                     value={r.end}
                     options={options}
                     onChange={(v) => updateRange(r.id, { end: v })}
+                    onOpenChange={(open) => onRangePanelOpen(r.id, open)}
                   />
                 </div>
                 <Tooltip content="Remove">
