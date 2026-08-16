@@ -83,6 +83,7 @@ type SpringTabProps = {
   anyDragging: boolean;
   surfaceHost: HTMLDivElement | null;
   surfaceWidth: number;
+  tabWidth: number;
   surfaceClassName?: string;
   zIndex: number;
   className: string;
@@ -96,7 +97,10 @@ type SpringTabProps = {
 };
 
 const DRAG_THRESHOLD = 5;
-const TAB_WIDTH = 176;
+// The design width of a tab, and the narrowest it may shrink to before the
+// label stops reading. See `tabWidth` in MorphingTabs.
+const MAX_TAB_WIDTH = 176;
+const MIN_TAB_WIDTH = 96;
 const TAB_HEIGHT = 56;
 const TAB_TOP = 24;
 const TAB_RADIUS = 24;
@@ -121,14 +125,18 @@ function moveItem(order: string[], from: number, to: number) {
   return next;
 }
 
-function liquidTabPath(tabLeft: number, surfaceWidth: number) {
+function liquidTabPath(
+  tabLeft: number,
+  surfaceWidth: number,
+  tabWidth: number,
+) {
   const panelLeft = SURFACE_INSET;
   const panelRight = surfaceWidth - SURFACE_INSET;
   const left = Math.max(
     panelLeft,
-    Math.min(panelRight - TAB_WIDTH, tabLeft),
+    Math.min(panelRight - tabWidth, tabLeft),
   );
-  const right = left + TAB_WIDTH;
+  const right = left + tabWidth;
   const top = RAIL_HEIGHT - TAB_HEIGHT;
   const bottom = RAIL_HEIGHT;
   const leftJoin = Math.max(panelLeft, left - LIQUID_JOIN);
@@ -170,6 +178,7 @@ function SpringTab({
   anyDragging,
   surfaceHost,
   surfaceWidth,
+  tabWidth,
   surfaceClassName,
   zIndex,
   className,
@@ -233,6 +242,7 @@ function SpringTab({
                 }
                 left={liquidDriver}
                 surfaceWidth={surfaceWidth}
+                tabWidth={tabWidth}
               />
             </svg>,
             surfaceHost,
@@ -259,12 +269,14 @@ function SpringTab({
 function LiquidSurfacePath({
   left,
   surfaceWidth,
+  tabWidth,
 }: {
   left: MotionValue<number>;
   surfaceWidth: number;
+  tabWidth: number;
 }) {
   const path = useTransform(left, (value) =>
-    liquidTabPath(value, surfaceWidth),
+    liquidTabPath(value, surfaceWidth, tabWidth),
   );
   return <motion.path d={path} fill="currentColor" />;
 }
@@ -343,12 +355,27 @@ export function MorphingTabs({
       : firstEnabledItem;
   const activeId = activeItem?.id ?? null;
 
+  // The rail cannot scroll: the liquid surface is one continuous shape spanning
+  // the panel, so its notch has to stay over the tab that cut it. Slots narrow
+  // to fit the panel instead — down to a floor where a truncated label still
+  // reads — and keep the design width whenever there is room for it.
+  const tabWidth = useMemo(() => {
+    const count = order.length;
+    if (!surfaceWidth || count === 0) return MAX_TAB_WIDTH;
+    const available =
+      surfaceWidth - SURFACE_INSET * 2 - tabGap * (count - 1);
+    return Math.max(
+      MIN_TAB_WIDTH,
+      Math.min(MAX_TAB_WIDTH, Math.floor(available / count)),
+    );
+  }, [order.length, surfaceWidth, tabGap]);
+
   const slotLefts = useMemo(
     () =>
       order.map(
-        (_, index) => SURFACE_INSET + index * (TAB_WIDTH + tabGap),
+        (_, index) => SURFACE_INSET + index * (tabWidth + tabGap),
       ),
-    [order, tabGap],
+    [order, tabGap, tabWidth],
   );
 
   const dragStartIndex = draggingId ? order.indexOf(draggingId) : -1;
@@ -471,7 +498,7 @@ export function MorphingTabs({
       const startIndex = orderRef.current.indexOf(id);
       if (startIndex < 0) return;
       const capturedSlots = orderRef.current.map(
-        (_, index) => SURFACE_INSET + index * (TAB_WIDTH + tabGap),
+        (_, index) => SURFACE_INSET + index * (tabWidth + tabGap),
       );
       const startLeft = capturedSlots[startIndex];
 
@@ -491,7 +518,7 @@ export function MorphingTabs({
         slotLefts: capturedSlots,
       };
     },
-    [dragLeft, itemMap, tabGap],
+    [dragLeft, itemMap, tabGap, tabWidth],
   );
 
   const moveDrag = useCallback(
@@ -528,13 +555,13 @@ export function MorphingTabs({
           index < drag.slotLefts.length;
           index += 1
         ) {
-          if (visualLeft + TAB_WIDTH / 2 >= drag.slotLefts[index]) {
+          if (visualLeft + tabWidth / 2 >= drag.slotLefts[index]) {
             targetIndex = index;
           }
         }
       } else {
         for (let index = drag.startIndex - 1; index >= 0; index -= 1) {
-          if (visualLeft <= drag.slotLefts[index] + TAB_WIDTH / 2) {
+          if (visualLeft <= drag.slotLefts[index] + tabWidth / 2) {
             targetIndex = index;
           }
         }
@@ -546,7 +573,7 @@ export function MorphingTabs({
         setDragTargetIndex(targetIndex);
       }
     },
-    [activeId, dragLeft, surfaceLeft],
+    [activeId, dragLeft, surfaceLeft, tabWidth],
   );
 
   const finishDrag = useCallback(
@@ -716,6 +743,7 @@ export function MorphingTabs({
                 anyDragging={Boolean(draggingId)}
                 surfaceHost={rootRef.current}
                 surfaceWidth={surfaceWidth}
+                tabWidth={tabWidth}
                 surfaceClassName={classNames?.activeTab}
                 zIndex={isDragging ? 30 : isActive ? 20 : 1}
                 className={cn(
@@ -732,7 +760,7 @@ export function MorphingTabs({
               >
                 <div
                   style={{
-                    width: TAB_WIDTH,
+                    width: tabWidth,
                     height: TAB_HEIGHT,
                     marginTop: TAB_TOP,
                   }}
