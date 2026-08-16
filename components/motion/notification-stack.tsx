@@ -4,15 +4,18 @@ import { ArrowUpRight, BellOff } from "lucide-react";
 import { motion, useReducedMotion, type Transition } from "motion/react";
 import {
   useCallback,
+  useEffect,
   useRef,
   useState,
   type FocusEvent,
   type KeyboardEvent,
+  type PointerEvent,
   type ReactNode,
 } from "react";
 import { ActionSwapText } from "@/components/motion/action-swap";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { cn } from "@/lib/utils";
 
 export type NotificationStackItem = {
@@ -134,12 +137,28 @@ export function NotificationStack({
 }: NotificationStackProps) {
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
+  const canTouch = useTouchCapable();
   const hasFocus = useRef(false);
+  const rootRef = useRef<HTMLButtonElement>(null);
   const [isExpanded, setIsExpanded] = useControllableExpanded({
     expanded,
     defaultExpanded,
     onExpandedChange,
   });
+
+  // A pointer leaving the stack is what collapses it, and a finger never
+  // leaves: without this the stack stays open for good once tapped, and when
+  // `onViewAll` is set the next tap follows the link instead of closing. The
+  // tap that lands somewhere else stands in for the pointer leaving.
+  useEffect(() => {
+    if (!canTouch || !isExpanded) return;
+    const onPointerDown = (event: globalThis.PointerEvent) => {
+      if (rootRef.current?.contains(event.target as Node)) return;
+      setIsExpanded(false);
+    };
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => window.removeEventListener("pointerdown", onPointerDown);
+  }, [canTouch, isExpanded, setIsExpanded]);
 
   const visibleItems = items.slice(0, Math.max(1, maxVisible));
   const primaryItem = visibleItems[0];
@@ -194,6 +213,7 @@ export function NotificationStack({
 
   return (
     <motion.button
+      ref={rootRef}
       type="button"
       initial={false}
       aria-expanded={isExpanded}
@@ -202,11 +222,17 @@ export function NotificationStack({
           ? `${items.length} notifications. ${expandedLabel}.`
           : `${items.length} notifications. Expand notifications.`
       }
-      onPointerEnter={() => {
-        if (canHover) setIsExpanded(true);
+      // A tap reports as a hover on its way past — enter, leave, then click —
+      // so an unfiltered hover path expands, collapses and expands again in
+      // the space of one tap, springs and all. The tap has its own route
+      // through `handleClick`.
+      onPointerEnter={(event: PointerEvent<HTMLButtonElement>) => {
+        if (canHover && event.pointerType !== "touch") setIsExpanded(true);
       }}
-      onPointerLeave={() => {
-        if (canHover && !hasFocus.current) setIsExpanded(false);
+      onPointerLeave={(event: PointerEvent<HTMLButtonElement>) => {
+        if (canHover && event.pointerType !== "touch" && !hasFocus.current) {
+          setIsExpanded(false);
+        }
       }}
       onFocus={() => {
         hasFocus.current = true;
