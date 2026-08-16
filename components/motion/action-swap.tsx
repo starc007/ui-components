@@ -167,7 +167,9 @@ export function ActionSwapText({
   const [width, setWidth] = useState<number>();
 
   useLayoutEffect(() => {
-    const nextWidth = measureRef.current?.offsetWidth;
+    // Subpixel width, not offsetWidth: a rounded-down integer leaves the label
+    // a fraction too narrow, which now reads as a spurious ellipsis.
+    const nextWidth = measureRef.current?.getBoundingClientRect().width;
     if (!nextWidth) return;
     setWidth((currentWidth) => (currentWidth === nextWidth ? currentWidth : nextWidth));
   });
@@ -181,7 +183,12 @@ export function ActionSwapText({
 
   return (
     <span
-      className={cn("relative inline-block overflow-hidden whitespace-nowrap align-bottom", className)}
+      className={cn(
+        // The measured width is an intrinsic size, so it has to be capped to
+        // the container or the swap overflows (and paints over) its siblings.
+        "relative inline-block max-w-full overflow-hidden whitespace-nowrap align-bottom",
+        className,
+      )}
       style={{
         width,
         transition: reduce ? undefined : `width 220ms ${EASE_OUT_CSS}`,
@@ -229,7 +236,9 @@ export function ActionSwapText({
             initial={reduce ? false : "initial"}
             animate={reduce ? { opacity: 1, filter: "blur(0px)", scale: 1, y: 0 } : "animate"}
             exit={reduce ? undefined : "exit"}
-            className="absolute left-0 top-0 inline-block will-change-[opacity,filter,transform]"
+            // Truncation lives on the layer that holds the text — the layer
+            // moves as a whole, so clipping it never eats the roll.
+            className="absolute left-0 top-0 inline-block max-w-full truncate will-change-[opacity,filter,transform]"
           >
             {children}
           </motion.span>
