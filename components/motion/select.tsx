@@ -68,6 +68,14 @@ export interface SelectProps {
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   /**
+   * Controlled open state of the panel. A layout that stacks selects can hold
+   * this to keep exactly one panel open — the panel is absolutely positioned
+   * inside its field, so two open at once paint over each other's options.
+   */
+  open?: boolean;
+  /** Uncontrolled initial open state. Default false. */
+  defaultOpen?: boolean;
+  /**
    * Fires whenever the panel opens or closes. The panel is absolutely
    * positioned inside the field, so a layout that stacks selects has to know
    * which one is open to paint it above its neighbours.
@@ -82,6 +90,8 @@ export function Select({
   value,
   defaultValue,
   onValueChange,
+  open: openProp,
+  defaultOpen = false,
   onOpenChange,
   disabled = false,
   className,
@@ -90,20 +100,22 @@ export function Select({
   const reduce = useReducedMotion() ?? false;
   const baseId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
-  const [open, setOpenState] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [internal, setInternal] = useState(defaultValue);
   const [labels, setLabels] = useState<Map<string, string>>(new Map());
   const [placement, setPlacement] = useState<Placement>("bottom");
 
   const controlled = value !== undefined;
   const current = controlled ? value : internal;
+  const openControlled = openProp !== undefined;
+  const open = openControlled ? openProp : internalOpen;
 
   const setOpen = useCallback(
     (next: boolean) => {
-      setOpenState(next);
+      if (!openControlled) setInternalOpen(next);
       onOpenChange?.(next);
     },
-    [onOpenChange],
+    [onOpenChange, openControlled],
   );
 
   const select = useCallback(
