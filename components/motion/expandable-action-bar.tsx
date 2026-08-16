@@ -12,6 +12,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from "react";
+import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { cn } from "@/lib/utils";
 
 export type ExpandableActionBarSize = "sm" | "md";
@@ -131,6 +132,8 @@ export function ExpandableActionBar({
   });
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const collapseTimer = useRef<number | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const canTouch = useTouchCapable();
 
   const clearCollapseTimer = useCallback(() => {
     if (collapseTimer.current) window.clearTimeout(collapseTimer.current);
@@ -152,6 +155,19 @@ export function ExpandableActionBar({
   }, [clearCollapseTimer, collapseDelay, setIsExpanded]);
 
   useEffect(() => clearCollapseTimer, [clearCollapseTimer]);
+
+  // A finger never hovers and Safari does not focus a button on tap, so an
+  // expanded bar would have nothing to close it. The tap that lands elsewhere
+  // stands in for the pointer leaving.
+  useEffect(() => {
+    if (!isExpanded || !canTouch || !expandOnHover) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (trackRef.current?.contains(event.target as Node)) return;
+      close();
+    };
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => window.removeEventListener("pointerdown", onPointerDown);
+  }, [canTouch, close, expandOnHover, isExpanded]);
 
   const onRootMouseEnter = () => {
     if (expandOnHover) open();
@@ -187,6 +203,7 @@ export function ExpandableActionBar({
         className={cn("inline-flex max-w-full", classNames?.root, className)}
       >
         <motion.div
+          ref={trackRef}
           layout="size"
           className={cn(
             // Labelled actions can outgrow the space the bar sits in — the pill
@@ -215,6 +232,14 @@ export function ExpandableActionBar({
                 }}
                 onClick={(event: MouseEvent<HTMLButtonElement>) => {
                   event.currentTarget.blur();
+                  // Nothing reveals the labels on touch, so the first tap
+                  // expands the bar and the next one runs the action — the
+                  // same bargain NotificationStack strikes.
+                  if (canTouch && expandOnHover && !isExpanded) {
+                    open();
+                    setHoveredId(item.id);
+                    return;
+                  }
                   item.onClick?.();
                   onAction?.(item);
                 }}
