@@ -11,6 +11,7 @@ import {
   useState,
 } from "react";
 import { createTickPlayer } from "@/lib/tick-sound";
+import { capturePointer, releasePointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type WheelPickerOption = string | { label: string; value: string };
@@ -341,8 +342,8 @@ export function WheelPicker({
   const onPointerDown = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       if (disabled || reduce || event.pointerType === "touch") return;
-      event.currentTarget.setPointerCapture(event.pointerId);
       beginDrag(event.clientY);
+      capturePointer(event.currentTarget, event.pointerId);
     },
     [disabled, reduce, beginDrag],
   );
@@ -356,7 +357,9 @@ export function WheelPicker({
   const onPointerUp = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       if (event.pointerType === "touch") return;
-      event.currentTarget.releasePointerCapture?.(event.pointerId);
+      // Also the pointercancel handler, where the capture is already gone —
+      // an unguarded release throws there and the drum never settles.
+      releasePointer(event.currentTarget, event.pointerId);
       endDrag();
     },
     [endDrag],

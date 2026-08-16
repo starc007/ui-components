@@ -19,6 +19,7 @@ import {
   useState,
   type WheelEvent as ReactWheelEvent,
 } from "react";
+import { capturePointer, releasePointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 // Carousel-specific: a soft spring that receives the release velocity, so a
@@ -308,7 +309,7 @@ export function CylinderCarousel({
       e.preventDefault();
       stopGlide();
       draggingRef.current = true;
-      e.currentTarget.setPointerCapture(e.pointerId);
+      capturePointer(e.currentTarget, e.pointerId);
       const now = performance.now();
       drag.current = {
         startX: e.clientX,
@@ -339,9 +340,7 @@ export function CylinderCarousel({
     (e: ReactPointerEvent) => {
       if (!draggingRef.current) return;
       draggingRef.current = false;
-      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      }
+      releasePointer(e.currentTarget, e.pointerId);
       const d = drag.current;
       const dt = d.lastT - d.prevT;
       const vpx = dt > 0 ? (d.lastX - d.prevX) / dt : 0; // px per ms

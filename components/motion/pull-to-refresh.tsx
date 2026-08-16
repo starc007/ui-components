@@ -23,6 +23,7 @@ import {
   SPRING_PANEL,
   SPRING_SWAP,
 } from "@/lib/ease";
+import { capturePointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type PullToRefreshStatus =
@@ -410,7 +411,7 @@ export function PullToRefresh({
       return;
     }
 
-    event.currentTarget.setPointerCapture(event.pointerId);
+    capturePointer(event.currentTarget, event.pointerId);
     gestureRef.current = {
       active: true,
       startX: event.clientX,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { capturePointer } from "@/lib/touch";
 
 const SIZE = 200;
 const PAD = 34; // room for overshoot handles past the 0..1 core
@@ -89,8 +90,8 @@ export function CurveEditor({
           r={7}
           className="cursor-grab fill-primary"
           onPointerDown={(e) => {
-            (e.target as SVGElement).setPointerCapture(e.pointerId);
             setDrag(h);
+            capturePointer(e.target as SVGElement, e.pointerId);
           }}
         />
       ))}
