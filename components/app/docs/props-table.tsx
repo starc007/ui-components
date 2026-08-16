@@ -24,7 +24,7 @@ export function PropsTable({ docs }: { docs: ComponentPropsDoc[] }) {
                   {prop.required ? "" : "?"}
                 </code>
                 <div className="min-w-0">
-                  <code className="w-fit rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
+                  <code className="w-fit wrap-anywhere rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
                     {prop.type}
                   </code>
                   {prop.description ? (
@@ -33,7 +33,10 @@ export function PropsTable({ docs }: { docs: ComponentPropsDoc[] }) {
                     </p>
                   ) : null}
                 </div>
-                <code className="h-fit w-fit rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground sm:justify-self-end">
+                {/* Grid items size to their min-content by default, so a long
+                    default value would push its chip out of the last track and
+                    paint over the type column. Let it wrap inside the track. */}
+                <code className="h-fit w-fit min-w-0 wrap-anywhere rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground sm:justify-self-end">
                   {prop.defaultValue ?? "—"}
                 </code>
               </div>
