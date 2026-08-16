@@ -19,7 +19,7 @@ const COMPONENT_DATES = {
   "motion/combobox": { publishedAt: "2026-08-11", updatedAt: "2026-08-11" },
   "motion/checkbox": { publishedAt: "2026-06-23", updatedAt: "2026-07-01" },
   "motion/radio": { publishedAt: "2026-06-23", updatedAt: "2026-07-13" },
-  "motion/bottom-sheet": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
+  "motion/bottom-sheet": { publishedAt: "2026-05-17", updatedAt: "2026-08-15" },
   "motion/pull-to-refresh": { publishedAt: "2026-07-17", updatedAt: "2026-07-17" },
   "motion/shared-layout-bg": { publishedAt: "2026-05-17", updatedAt: "2026-07-29" },
   "motion/bounce-sidebar": { publishedAt: "2026-07-22", updatedAt: "2026-07-22" },
