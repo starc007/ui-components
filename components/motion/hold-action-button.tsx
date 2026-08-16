@@ -139,7 +139,8 @@ export const HoldActionButton = forwardRef<
       whileTap={reduce || disabled ? undefined : { scale: 0.98 }}
       transition={SPRING_PRESS}
       className={cn(
-        "relative inline-grid h-16 min-w-72 touch-none place-items-center overflow-hidden rounded-[22px] bg-primary px-8 text-primary-foreground",
+        "relative inline-grid h-16 min-w-72 touch-none place-items-center overflow-hidden rounded-[var(--hold-radius)] bg-primary px-8 text-primary-foreground",
+        "[--hold-radius:22px]",
         TOUCH_GESTURE_CLASS,
         "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         "disabled:pointer-events-none disabled:opacity-50",
@@ -147,72 +148,82 @@ export const HoldActionButton = forwardRef<
       )}
       {...rest}
     >
-      <motion.span
+      {/* Safari hands the fill its own compositing layer and then stops
+          applying the button's rounded overflow clip to it, so the liquid
+          bleeds past the corners. clip-path survives compositing. It lives on
+          this static layer rather than the button so it never cuts the focus
+          ring, and reads the same radius so the two cannot drift apart. */}
+      <span
         aria-hidden="true"
-        initial={false}
-        animate={
-          reduce
-            ? { opacity: active ? 1 : 0, transform: "none" }
-            : {
-                opacity: 1,
-                transform: active ? activeTransform : idleTransform,
-              }
-        }
-        transition={
-          active
-            ? { duration: holdDuration / 1000, ease: "linear" }
-            : { duration: reduce ? 0.15 : 0.24, ease: EASE_OUT }
-        }
-        onAnimationComplete={handleFillComplete}
-        className={cn(
-          "absolute inset-0 bg-sky-400 will-change-[opacity,transform]",
-          fillClassName,
-        )}
+        className="pointer-events-none absolute inset-0 [clip-path:inset(0_round_var(--hold-radius))]"
       >
-        {!reduce ? (
-          type === "horizontal" ? (
-            <motion.svg
-              viewBox="0 0 24 240"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-              animate={{
-                transform: active ? "translateY(-50%)" : "translateY(0%)",
-              }}
-              transition={{
-                duration: 1.1,
-                ease: "linear",
-                repeat: active ? Number.POSITIVE_INFINITY : 0,
-              }}
-              className="absolute -right-5 top-0 h-[200%] w-6 text-sky-400"
-            >
-              <path
-                d="M0 0h12C2 20 2 40 12 60s10 40 0 60-10 40 0 60 10 40 0 60H0Z"
-                fill="currentColor"
-              />
-            </motion.svg>
-          ) : (
-            <motion.svg
-              viewBox="0 0 240 24"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-              animate={{
-                transform: active ? "translateX(-50%)" : "translateX(0%)",
-              }}
-              transition={{
-                duration: 1.1,
-                ease: "linear",
-                repeat: active ? Number.POSITIVE_INFINITY : 0,
-              }}
-              className="absolute -top-5 left-0 h-6 w-[200%] text-sky-400"
-            >
-              <path
-                d="M0 12C20 2 40 2 60 12s40 10 60 0 40-10 60 0 40 10 60 0v12H0Z"
-                fill="currentColor"
-              />
-            </motion.svg>
-          )
-        ) : null}
-      </motion.span>
+        <motion.span
+          aria-hidden="true"
+          initial={false}
+          animate={
+            reduce
+              ? { opacity: active ? 1 : 0, transform: "none" }
+              : {
+                  opacity: 1,
+                  transform: active ? activeTransform : idleTransform,
+                }
+          }
+          transition={
+            active
+              ? { duration: holdDuration / 1000, ease: "linear" }
+              : { duration: reduce ? 0.15 : 0.24, ease: EASE_OUT }
+          }
+          onAnimationComplete={handleFillComplete}
+          className={cn(
+            "absolute inset-0 bg-sky-400 will-change-[opacity,transform]",
+            fillClassName,
+          )}
+        >
+          {!reduce ? (
+            type === "horizontal" ? (
+              <motion.svg
+                viewBox="0 0 24 240"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+                animate={{
+                  transform: active ? "translateY(-50%)" : "translateY(0%)",
+                }}
+                transition={{
+                  duration: 1.1,
+                  ease: "linear",
+                  repeat: active ? Number.POSITIVE_INFINITY : 0,
+                }}
+                className="absolute -right-5 top-0 h-[200%] w-6 text-sky-400"
+              >
+                <path
+                  d="M0 0h12C2 20 2 40 12 60s10 40 0 60-10 40 0 60 10 40 0 60H0Z"
+                  fill="currentColor"
+                />
+              </motion.svg>
+            ) : (
+              <motion.svg
+                viewBox="0 0 240 24"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+                animate={{
+                  transform: active ? "translateX(-50%)" : "translateX(0%)",
+                }}
+                transition={{
+                  duration: 1.1,
+                  ease: "linear",
+                  repeat: active ? Number.POSITIVE_INFINITY : 0,
+                }}
+                className="absolute -top-5 left-0 h-6 w-[200%] text-sky-400"
+              >
+                <path
+                  d="M0 12C20 2 40 2 60 12s40 10 60 0 40-10 60 0 40 10 60 0v12H0Z"
+                  fill="currentColor"
+                />
+              </motion.svg>
+            )
+          ) : null}
+        </motion.span>
+      </span>
 
       <span
         className={cn(
