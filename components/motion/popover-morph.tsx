@@ -12,6 +12,7 @@ import {
   useContext,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -80,6 +81,15 @@ export function MorphPopover({
     [controlled, onOpenChange],
   );
   const toggle = useCallback(() => setOpen(!open), [setOpen, open]);
+
+  // A trigger normally registers itself through MorphPopoverTrigger. It can't
+  // when something else already clones the element — a Tooltip wrapping the
+  // button, say — and an unregistered trigger leaves the panel with nothing to
+  // measure against, so it renders permanently invisible. The root boxes the
+  // trigger exactly (the content portals out of it), so it stands in.
+  useLayoutEffect(() => {
+    if (!triggerRef.current) triggerRef.current = rootRef.current;
+  });
 
   useEffect(() => {
     if (!open) return;
