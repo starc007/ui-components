@@ -94,11 +94,11 @@ Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a PR.
 
 ## Star history
 
-<a href="https://www.star-history.com/#starc007/ui-components&Date">
+<a href="https://star-history.dera.page/#starc007/ui-components&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=starc007/ui-components&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=starc007/ui-components&type=Date" />
-    <img alt="Star history chart for starc007/ui-components" src="https://api.star-history.com/svg?repos=starc007/ui-components&type=Date" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=starc007/ui-components&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=starc007/ui-components&type=Date" />
+    <img alt="Star history chart for starc007/ui-components" src="https://star-history.dera.page/svg?repos=starc007/ui-components&type=Date" />
   </picture>
 </a>
 
