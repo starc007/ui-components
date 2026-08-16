@@ -48,17 +48,19 @@ function consumeActivation(source: Event) {
 }
 
 /**
- * Close an open overlay on Escape or a pointerdown outside `ref`.
+ * Close an open overlay on Escape or a pointerdown outside `ref`. Pass `null`
+ * for `ref` when what counts as inside isn't one element, and say so with
+ * `ignore` instead.
  *
  * The pointerdown listener is capture-phase: a bubble-phase one is blinded by
  * any handler in between that stops propagation, and an overlay cannot know
- * what it is layered over. `onDismiss` must be stable (wrap in useCallback) so
- * the listeners aren't re-bound every render while open.
+ * what it is layered over. `onDismiss` and `ignore` must be stable (wrap in
+ * useCallback) so the listeners aren't re-bound every render while open.
  */
 export function useDismiss(
   open: boolean,
   onDismiss: () => void,
-  ref: RefObject<HTMLElement | null>,
+  ref: RefObject<HTMLElement | null> | null,
   {
     behavior = "pass-through",
     escape: dismissOnEscape = true,
@@ -71,9 +73,8 @@ export function useDismiss(
       if (dismissOnEscape && event.key === "Escape") onDismiss();
     };
     const onPointer = (event: PointerEvent) => {
-      const root = ref.current;
       const target = event.target as Element | null;
-      if (!root || !target || root.contains(target)) return;
+      if (!target || ref?.current?.contains(target)) return;
       if (ignore?.(target)) return;
       if (behavior === "consume") consumeActivation(event);
       onDismiss();

@@ -6,7 +6,6 @@ import {
   type KeyboardEvent,
   memo,
   useCallback,
-  useEffect,
   useId,
   useMemo,
   useRef,
@@ -14,8 +13,8 @@ import {
 } from "react";
 import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PANEL } from "@/lib/ease";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
-import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { cn } from "@/lib/utils";
 
 export type Team = {
@@ -99,6 +98,18 @@ const HUB_ANGLE = 90;
 // Module scope so the memoized marks keep a stable transition identity.
 const DIM_TRANSITION = { duration: 0.18 } as const;
 const NO_TRANSITION = { duration: 0 } as const;
+
+// Which input the user is holding *right now* — a device capability cannot
+// answer that. A touchscreen laptop hovers and taps, and iPadOS reports a fine
+// hovering pointer for a finger, so both paths stay live and each handler
+// branches on the event it was given instead.
+//
+// A pen resting on the glass is making contact, not hovering: `buttons` is the
+// tell, and it sends a pen tap down the same route a finger takes.
+const isHoveringPointer = (event: {
+  pointerType: string;
+  buttons: number;
+}) => event.pointerType !== "touch" && event.buttons === 0;
 
 // Math.sin/cos are implementation-defined down in the last digits, so the SSR
 // engine and the browser disagree and React reports a hydration mismatch on
@@ -479,8 +490,12 @@ const WheelAnchor = memo(function WheelAnchor({
   onKey: (node: WheelNode, key: string) => void;
 }) {
   const size = pct(node.r * 2);
-  // Pointer and capture-phase focus props: Tooltip clones the child with
-  // onMouseEnter/onFocus, so those names would be overwritten.
+  // Capture-phase focus props, so a Tooltip cloning the child cannot overwrite
+  // them. Both interaction paths are always attached: iPadOS answers the hover
+  // query with true for a finger, so hanging the tap path off "cannot hover"
+  // left it unreachable on the very device it was written for. The event says
+  // which input arrived.
+  const tapPointer = useRef<string | null>(null);
   const trigger = (
     <button
       type="button"
@@ -495,18 +510,26 @@ const WheelAnchor = memo(function WheelAnchor({
       }}
       onFocusCapture={() => onFocusNode(node.id)}
       onBlurCapture={() => onFocusNode(null)}
-      onPointerEnter={canHover ? () => onHover(node.id) : undefined}
-      onPointerLeave={canHover ? () => onHover(null) : undefined}
+      onPointerEnter={(event) => {
+        if (isHoveringPointer(event)) onHover(node.id);
+      }}
+      onPointerLeave={(event) => {
+        if (isHoveringPointer(event)) onHover(null);
+      }}
+      onPointerDown={(event) => {
+        tapPointer.current = event.pointerType;
+      }}
       // Click, not pointerdown: a tap focuses the button first, and unpinning
       // has to also drop that focus or the flag stays lit.
-      onClick={
-        canHover
-          ? undefined
-          : (event) => {
-              onToggle(node.id);
-              if (isPinned) event.currentTarget.blur();
-            }
-      }
+      onClick={(event) => {
+        const pointerType = tapPointer.current;
+        tapPointer.current = null;
+        // A hovering pointer lit the flag on its way in and puts it out on the
+        // way past; only a gesture without a hover pins one.
+        if (pointerType === null || pointerType === "mouse") return;
+        onToggle(node.id);
+        if (isPinned) event.currentTarget.blur();
+      }}
       // ring-foreground, not the ring token: --ring is a 10% white hairline
       // that disappears over a flag. Focus has to be obvious.
       className="block h-full w-full rounded-full outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -548,18 +571,19 @@ export function KnockoutWheel({
 }: KnockoutWheelProps) {
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
-  const canTouch = useTouchCapable();
   const uid = useId().replace(/:/g, "");
   const ref = useRef<SVGSVGElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   // 63 flags for a 32-team draw, and SVG <image> has no lazy attribute — so the
   // requests wait until the wheel is nearly on screen.
   const inView = useInView(ref, { once: true, margin: "300px" });
-  // Hover and focus are tracked apart. Sharing one slot let a stray mouse move
-  // clear the isolation while a node still held focus.
+  // Hover, tap and focus are tracked apart. Sharing one slot let a stray mouse
+  // move clear the isolation while a node still held focus, and a tap has to
+  // outlive the pointerleave that a finger fires the moment it lifts.
   const [hovered, setHovered] = useState<string | null>(null);
+  const [pinned, setPinned] = useState<string | null>(null);
   const [focused, setFocused] = useState<string | null>(null);
-  const active = hovered ?? focused;
+  const active = hovered ?? pinned ?? focused;
 
   // Everything downstream reads the trimmed catalog, so the kept round's own
   // teams become the rim and the sr-only list matches what's drawn.
@@ -656,26 +680,36 @@ export function KnockoutWheel({
   );
 
   const onToggle = useCallback(
-    (id: string) => setHovered((current) => (current === id ? null : id)),
+    (id: string) => setPinned((current) => (current === id ? null : id)),
+    [],
+  );
+
+  // A tap on another flag hands the isolation over rather than ending it.
+  const onFlag = useCallback(
+    (target: Element) =>
+      Boolean(stageRef.current?.contains(target) && target.closest("button")),
     [],
   );
 
   // A finger never leaves the flag it lit, so the isolation would hold for good
   // — and bare stage reports no pointer event of its own to end it. The next
-  // tap that isn't on a flag stands in for the pointer leaving.
-  useEffect(() => {
-    if (!canTouch || (!hovered && !focused)) return;
-    const onPointerDown = (event: PointerEvent) => {
-      const target = event.target as Element | null;
-      const stage = stageRef.current;
-      if (target && stage?.contains(target) && target.closest("button")) return;
-      setHovered(null);
-      const active = document.activeElement;
-      if (active instanceof HTMLElement && stage?.contains(active)) active.blur();
-    };
-    window.addEventListener("pointerdown", onPointerDown);
-    return () => window.removeEventListener("pointerdown", onPointerDown);
-  }, [canTouch, focused, hovered]);
+  // pointerdown that isn't on a flag stands in for the pointer leaving; it is
+  // consumed, since a wheel spanning the viewport makes tapping past it the
+  // natural way out and there is no reason for that tap to do anything else.
+  // Only a pinned flag arms this: a mouse ends its own hover, and the browser
+  // drops focus on its own.
+  const unpin = useCallback(() => {
+    setPinned(null);
+    const focus = document.activeElement;
+    if (focus instanceof HTMLElement && stageRef.current?.contains(focus)) {
+      focus.blur();
+    }
+  }, []);
+
+  useDismiss(pinned !== null, unpin, null, {
+    behavior: "consume",
+    ignore: onFlag,
+  });
 
   // Round · teams · score for a decided match; a rim node is just a team. A slot
   // whose team isn't known yet reads TBD, matching the shield drawn in its place.
@@ -775,7 +809,7 @@ export function KnockoutWheel({
             node={node}
             caption={captions.get(node.id) ?? ""}
             isTabStop={node.id === tabStop}
-            isPinned={node.id === hovered}
+            isPinned={node.id === pinned}
             canHover={canHover}
             uid={uid}
             onHover={setHovered}

@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { ExpandableActionBar } from "@/components/motion/expandable-action-bar";
+import { KnockoutWheel, ROUNDS } from "@/components/motion/knockout-wheel";
 import { NotificationStack } from "@/components/motion/notification-stack";
 import {
   Popover,
@@ -416,5 +417,95 @@ describe("PreviewRail", () => {
     fireEvent.blur(two);
     expect(container.textContent).not.toContain("Second");
     restore();
+  });
+});
+
+describe("KnockoutWheel", () => {
+  // iPadOS answers this query with true while a finger is the only input
+  // there is — the case the tap path was written for and used to miss.
+  function withHoverCapability() {
+    const original = window.matchMedia;
+    window.matchMedia = ((query: string) =>
+      ({
+        matches:
+          query.includes("prefers-reduced-motion") || query.includes("hover"),
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      }) as MediaQueryList) as typeof window.matchMedia;
+    return () => {
+      window.matchMedia = original;
+    };
+  }
+
+  test("a tap isolates a flag on a machine that claims it can hover", async () => {
+    const restoreHover = withHoverCapability();
+    const restore = withTouchCapability();
+    const { container, getAllByRole } = render(<KnockoutWheel rounds={ROUNDS} />);
+    const rim = getAllByRole("button").at(-1) as HTMLButtonElement;
+
+    fireEvent.pointerDown(rim, touch);
+    fireEvent.click(rim);
+    await waitFor(() => {
+      expect(container.querySelectorAll(".stroke-foreground")).toHaveLength(1);
+    });
+
+    // ...and tapping it again releases the isolation.
+    fireEvent.pointerDown(rim, touch);
+    fireEvent.click(rim);
+    await waitFor(() => {
+      expect(
+        container.querySelectorAll(".stroke-foreground").length,
+      ).toBeGreaterThan(1);
+    });
+    restore();
+    restoreHover();
+  });
+
+  test("a mouse click leaves the isolation to the hover it already has", () => {
+    const restoreHover = withHoverCapability();
+    const { container, getAllByRole } = render(<KnockoutWheel rounds={ROUNDS} />);
+    const rim = getAllByRole("button").at(-1) as HTMLButtonElement;
+
+    fireEvent.pointerDown(rim, mouse);
+    fireEvent.click(rim);
+    expect(
+      container.querySelectorAll(".stroke-foreground").length,
+    ).toBeGreaterThan(1);
+    restoreHover();
+  });
+
+  test("no window listener is installed until a tap pins a flag", () => {
+    const restoreHover = withHoverCapability();
+    const outside = document.createElement("button");
+    let outsideClicks = 0;
+    outside.addEventListener("click", () => {
+      outsideClicks += 1;
+    });
+    document.body.appendChild(outside);
+
+    const { container, getAllByRole } = render(<KnockoutWheel rounds={ROUNDS} />);
+    const rim = getAllByRole("button").at(-1) as HTMLButtonElement;
+
+    // Mouse users never pin, so an outside mousedown must not reach in.
+    fireEvent.pointerDown(outside, mouse);
+    fireEvent.click(outside);
+    expect(outsideClicks).toBe(1);
+
+    fireEvent.pointerDown(rim, touch);
+    fireEvent.click(rim);
+    fireEvent.pointerDown(outside, touch);
+    fireEvent.click(outside);
+    expect(outsideClicks).toBe(1);
+    expect(
+      container.querySelectorAll(".stroke-foreground").length,
+    ).toBeGreaterThan(1);
+
+    outside.remove();
+    restoreHover();
   });
 });
