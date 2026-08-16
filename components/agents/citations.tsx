@@ -10,7 +10,7 @@ import {
 } from "react";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
-import { getFaviconUrl } from "@/lib/favicon";
+import { useFavicon } from "@/lib/favicon";
 import { cn } from "@/lib/utils";
 
 export interface CitationItem {
@@ -81,8 +81,7 @@ export function CitationFavicon({
   url?: string;
   className?: string;
 }) {
-  const favicon = url ? getFaviconUrl(url) : null;
-  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const favicon = useFavicon(url);
 
   return (
     <span
@@ -92,15 +91,15 @@ export function CitationFavicon({
         className,
       )}
     >
-      {favicon && failedUrl !== favicon ? (
+      {favicon.src ? (
         // biome-ignore lint/performance/noImgElement: Dynamic cross-site favicons keep this framework-agnostic registry component portable.
         <img
-          src={favicon}
+          ref={favicon.ref}
+          src={favicon.src}
           alt=""
           width={16}
           height={16}
           referrerPolicy="no-referrer"
-          onError={() => setFailedUrl(favicon)}
           className="size-4 rounded-sm object-contain"
         />
       ) : (
