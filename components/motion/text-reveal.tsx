@@ -52,50 +52,80 @@ export function TextReveal({
   return (
     <Comp ref={ref} className={cn("block", className)}>
       {lines.map((line) => {
-        const units = split === "word" ? line.split(" ") : Array.from(line);
         const lineCount = lineCounts.get(line) ?? 0;
         lineCounts.set(line, lineCount + 1);
         const lineKey = `${line}-${lineCount}`;
         const unitCounts = new Map<string, number>();
 
+        const renderUnit = (unit: string, i: number, units: string[]) => {
+          const d = delay + unitIndex * stagger;
+          unitIndex += 1;
+          const unitCount = unitCounts.get(unit) ?? 0;
+          unitCounts.set(unit, unitCount + 1);
+          const unitKey = `${unit}-${unitCount}`;
+          const initial = reduce
+            ? { opacity: 0 }
+            : { y: yOffset, opacity: 0, filter: `blur(${blur}px)` };
+          const animate = shouldAnimate
+            ? reduce
+              ? { opacity: 1 }
+              : { y: 0, opacity: 1, filter: "blur(0px)" }
+            : initial;
+          const transition: Transition = reduce
+            ? { opacity: { duration: 0.25, ease: EASE_OUT, delay: d * 0.3 } }
+            : {
+                y: { type: "spring" as const, ...s, delay: d },
+                opacity: { duration: 0.7, ease: EASE_OUT, delay: d },
+                filter: { duration: 0.9, ease: EASE_OUT, delay: d },
+              };
+          return (
+            <motion.span
+              key={unitKey}
+              initial={initial}
+              animate={animate}
+              transition={transition}
+              // `whitespace-pre` is load-bearing for `split="char"`: a space is
+              // its own inline-block unit and would otherwise collapse to zero
+              // width, running every word together.
+              className="inline-block whitespace-pre will-change-transform"
+            >
+              {unit}
+              {split === "word" && i < units.length - 1 ? (
+                <span className="inline-block">&nbsp;</span>
+              ) : null}
+            </motion.span>
+          );
+        };
+
+        if (split === "char") {
+          // Characters animate one at a time, but each word (plus the space
+          // that follows it) sits in its own inline-block so a long line wraps
+          // between words instead of mid-word.
+          const words = line.match(/\S+\s*|\s+/g) ?? [];
+          const wordCounts = new Map<string, number>();
+
+          return (
+            <span key={lineKey} className="block">
+              {words.map((word) => {
+                const wordCount = wordCounts.get(word) ?? 0;
+                wordCounts.set(word, wordCount + 1);
+
+                return (
+                  <span
+                    key={`${word}-${wordCount}`}
+                    className="inline-block whitespace-pre"
+                  >
+                    {Array.from(word).map(renderUnit)}
+                  </span>
+                );
+              })}
+            </span>
+          );
+        }
+
         return (
           <span key={lineKey} className="block">
-            {units.map((unit, i) => {
-              const d = delay + unitIndex * stagger;
-              unitIndex += 1;
-              const unitCount = unitCounts.get(unit) ?? 0;
-              unitCounts.set(unit, unitCount + 1);
-              const unitKey = `${unit}-${unitCount}`;
-              const initial = reduce
-                ? { opacity: 0 }
-                : { y: yOffset, opacity: 0, filter: `blur(${blur}px)` };
-              const animate = shouldAnimate
-                ? reduce
-                  ? { opacity: 1 }
-                  : { y: 0, opacity: 1, filter: "blur(0px)" }
-                : initial;
-              const transition: Transition = reduce
-                ? { opacity: { duration: 0.25, ease: EASE_OUT, delay: d * 0.3 } }
-                : {
-                    y: { type: "spring" as const, ...s, delay: d },
-                    opacity: { duration: 0.7, ease: EASE_OUT, delay: d },
-                    filter: { duration: 0.9, ease: EASE_OUT, delay: d },
-                  };
-              return (
-                <motion.span
-                  key={unitKey}
-                  initial={initial}
-                  animate={animate}
-                  transition={transition}
-                  className="inline-block will-change-transform"
-                >
-                  {unit}
-                  {split === "word" && i < units.length - 1 ? (
-                    <span className="inline-block">&nbsp;</span>
-                  ) : null}
-                </motion.span>
-              );
-            })}
+            {line.split(" ").map(renderUnit)}
           </span>
         );
       })}
