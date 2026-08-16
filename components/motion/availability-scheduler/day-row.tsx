@@ -25,9 +25,10 @@ export function DayRow({
   options,
   reduce,
   elevated,
+  openPanel,
   onChange,
   onCopy,
-  onPanelOpen,
+  onPanelOpenChange,
 }: {
   day: DayKey;
   label: string;
@@ -40,19 +41,27 @@ export function DayRow({
   // — no fixed paint order can satisfy both directions. The flag stays on
   // after the panel closes so the collapse animation stays on top too.
   elevated: boolean;
+  /** Id of the one time panel the scheduler is holding open, if any. */
+  openPanel: string | null;
   onChange: (next: DayAvailability) => void;
   onCopy: (targets: DayKey[]) => void;
-  onPanelOpen: () => void;
+  onPanelOpenChange: (panelId: string, open: boolean) => void;
 }) {
   const idRef = useRef(0);
   const nextId = () => `${day}-n${idRef.current++}`;
   // Same rule one level down: ranges stack against each other inside the row.
   const [openRangeId, setOpenRangeId] = useState<string | null>(null);
 
-  const onRangePanelOpen = (id: string, open: boolean) => {
-    if (!open) return;
-    setOpenRangeId(id);
-    onPanelOpen();
+  const panelId = (rangeId: string, edge: "start" | "end") =>
+    `${rangeId}:${edge}`;
+
+  const onRangePanelOpenChange = (
+    rangeId: string,
+    id: string,
+    open: boolean,
+  ) => {
+    if (open) setOpenRangeId(rangeId);
+    onPanelOpenChange(id, open);
   };
 
   const setEnabled = (enabled: boolean) => {
@@ -159,7 +168,10 @@ export function DayRow({
                     value={r.start}
                     options={options}
                     onChange={(v) => updateRange(r.id, { start: v })}
-                    onOpenChange={(open) => onRangePanelOpen(r.id, open)}
+                    open={openPanel === panelId(r.id, "start")}
+                    onOpenChange={(open) =>
+                      onRangePanelOpenChange(r.id, panelId(r.id, "start"), open)
+                    }
                   />
                 </div>
                 <span className="text-muted-foreground">–</span>
@@ -168,7 +180,10 @@ export function DayRow({
                     value={r.end}
                     options={options}
                     onChange={(v) => updateRange(r.id, { end: v })}
-                    onOpenChange={(open) => onRangePanelOpen(r.id, open)}
+                    open={openPanel === panelId(r.id, "end")}
+                    onOpenChange={(open) =>
+                      onRangePanelOpenChange(r.id, panelId(r.id, "end"), open)
+                    }
                   />
                 </div>
                 <Tooltip content="Remove">

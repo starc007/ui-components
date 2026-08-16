@@ -47,6 +47,12 @@ export function AvailabilityScheduler({
   );
   // The row that last opened a dropdown paints above the rest — see DayRow.
   const [openDay, setOpenDay] = useState<DayKey | null>(null);
+  // Exactly one time panel is open at a time, and the scheduler is the one that
+  // knows which. A panel is absolutely positioned inside its own field, so two
+  // open at once paint over each other's options — and nothing else can close
+  // the first: a Select only dismisses on an outside *pointerdown*, which
+  // keyboard and assistive-technology activation never fires.
+  const [openPanel, setOpenPanel] = useState<string | null>(null);
   const controlled = value !== undefined;
   const week = controlled ? value : internal;
 
@@ -63,6 +69,18 @@ export function AvailabilityScheduler({
       commit({ ...week, [day]: next });
     },
     [commit, week],
+  );
+
+  const panelOpenChange = useCallback(
+    (day: DayKey, id: string, open: boolean) => {
+      setOpenPanel((current) =>
+        open ? id : current === id ? null : current,
+      );
+      // Elevation stays on the row that opened last so the panel's collapse
+      // animation finishes above its neighbours.
+      if (open) setOpenDay(day);
+    },
+    [],
   );
 
   const copyDay = useCallback(
@@ -95,9 +113,10 @@ export function AvailabilityScheduler({
             options={options}
             reduce={reduce}
             elevated={openDay === key}
+            openPanel={openPanel}
             onChange={(next) => setDay(key, next)}
             onCopy={(targets) => copyDay(key, targets)}
-            onPanelOpen={() => setOpenDay(key)}
+            onPanelOpenChange={(id, open) => panelOpenChange(key, id, open)}
           />
         ))}
       </div>
