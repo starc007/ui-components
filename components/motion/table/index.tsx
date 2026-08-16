@@ -14,7 +14,7 @@ import { useColumnReorder } from "./use-column-reorder";
 import { useColumnResize } from "./use-column-resize";
 import { useColumnSort } from "./use-column-sort";
 import { useRowSelection } from "./use-row-selection";
-import { CHECKBOX_WIDTH, alignText, readCell } from "./utils";
+import { CHECKBOX_PX, CHECKBOX_WIDTH, alignText, readCell } from "./utils";
 
 export type {
   SortDirection,
@@ -124,6 +124,23 @@ export function Table<T>({
     orderedColumns.length > 0 &&
     orderedColumns.every((c) => widths[c.key] != null);
 
+  // Cells carry no intrinsic width of their own (editable columns render bare
+  // inputs), so in a container narrower than the columns the table would shrink
+  // every one of them toward zero instead of scrolling. Floor it at what the
+  // columns actually asked for — declared px widths, `minColumnWidth` for the
+  // ones sharing the remainder — and let the viewport scroll past it.
+  const minTableWidth = useMemo(() => {
+    const total = orderedColumns.reduce((sum, column) => {
+      const resized = widths[column.key];
+      if (resized != null) return sum + resized;
+      const declared = column.width?.endsWith("px")
+        ? Number.parseFloat(column.width)
+        : Number.NaN;
+      return sum + (Number.isFinite(declared) ? declared : minColumnWidth);
+    }, selectable ? CHECKBOX_PX : 0);
+    return Math.round(total);
+  }, [minColumnWidth, orderedColumns, selectable, widths]);
+
   // Infinite scroll: fire onEndReached once per near-bottom dwell, paused while
   // loading; the guard resets when the load completes.
   const endReachedRef = useRef(false);
@@ -184,8 +201,11 @@ export function Table<T>({
         style={{ height }}
       >
         <table
-          className={cn("border-collapse", sized ? "w-max min-w-full" : "min-w-full")}
-          style={{ tableLayout: "fixed" }}
+          className={cn("border-collapse", sized ? "w-max" : undefined)}
+          style={{
+            tableLayout: "fixed",
+            minWidth: `max(100%, ${minTableWidth}px)`,
+          }}
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}
