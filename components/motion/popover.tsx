@@ -25,6 +25,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
+import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -232,7 +233,7 @@ export function Popover({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
-  trigger = "click",
+  trigger: requestedTrigger = "click",
   side = "bottom",
   align = "center",
   sideOffset = 14,
@@ -241,6 +242,13 @@ export function Popover({
   className,
 }: PopoverProps) {
   const reduce = useReducedMotion() ?? false;
+  const canTouch = useTouchCapable();
+  // A finger cannot hover, and Safari does not focus a button on tap either, so
+  // a hover trigger leaves the panel unreachable. Fall back to the click
+  // plumbing there — same trigger, a gesture the device actually has. Keyed on
+  // touch rather than on the absence of hover because iPadOS reports both.
+  const trigger: TriggerMode =
+    requestedTrigger === "hover" && canTouch ? "click" : requestedTrigger;
   const gooId = useId().replace(/:/g, "");
   const contentId = useId();
   const rootRef = useRef<HTMLDivElement>(null);

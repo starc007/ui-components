@@ -1,9 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { cn } from "@/lib/utils";
 
 export interface PreviewRailItem {
@@ -82,11 +83,26 @@ export function PreviewRail({
   const uid = useId();
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
+  const canTouch = useTouchCapable();
+  const rootRef = useRef<HTMLDivElement>(null);
   const [internalActiveId, setInternalActiveId] = useState(
     defaultActiveId ?? items[0]?.id ?? "",
   );
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [focusedId, setFocusedId] = useState<string | null>(null);
+
+  // A finger cannot hover, so the pyramid and the preview card would never
+  // appear: a tap stands in for the hover, and the next tap outside the rail
+  // stands in for the pointer leaving it.
+  useEffect(() => {
+    if (!canTouch || !hoveredId) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (rootRef.current?.contains(event.target as Node)) return;
+      setHoveredId(null);
+    };
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => window.removeEventListener("pointerdown", onPointerDown);
+  }, [canTouch, hoveredId]);
 
   const requestedActiveId = activeId ?? internalActiveId;
   const selectedId = items.some((item) => item.id === requestedActiveId)
@@ -108,6 +124,7 @@ export function PreviewRail({
   return (
     <motion.div
       layoutRoot
+      ref={rootRef}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
           setFocusedId(null);
@@ -123,7 +140,11 @@ export function PreviewRail({
     >
       <nav
         aria-label={label}
-        onPointerLeave={() => setHoveredId(null)}
+        onPointerLeave={(event) => {
+          // A touch pointer leaves on lift, which would clear the tick the tap
+          // just chose — that one is cleared by the outside tap instead.
+          if (event.pointerType !== "touch") setHoveredId(null);
+        }}
         style={
           isHorizontal
             ? { gridTemplateColumns: rowTemplate }
@@ -186,6 +207,7 @@ export function PreviewRail({
             }
           };
           const handleSelect = () => {
+            if (canTouch) setHoveredId(item.id);
             selectItem(item.id);
             onItemSelect?.(item);
           };

@@ -21,6 +21,7 @@ import {
 import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "right" | "bottom" | "left";
@@ -127,6 +128,7 @@ export function Tooltip({
   const anchorRef = useRef<HTMLSpanElement>(null);
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
+  const canTouch = useTouchCapable();
 
   // Anchor point in viewport coords, on the edge of the trigger facing `side`.
   // Position:fixed means these viewport coords place the tooltip directly, so
@@ -147,7 +149,6 @@ export function Tooltip({
   }, [side]);
 
   const show = useCallback(() => {
-    if (!canHover) return;
     if (timer.current) clearTimeout(timer.current);
     const warm = Date.now() - lastHiddenAt < WARM_WINDOW_MS;
     timer.current = setTimeout(
@@ -157,7 +158,13 @@ export function Tooltip({
       },
       warm ? 0 : delay,
     );
-  }, [canHover, delay, place]);
+  }, [delay, place]);
+
+  // Hover is the only source that needs gating: a touch tap fires a phantom
+  // mouseenter that then sticks until you tap elsewhere.
+  const showOnHover = useCallback(() => {
+    if (canHover) show();
+  }, [canHover, show]);
 
   const hide = useCallback(() => {
     if (timer.current) {
@@ -167,6 +174,30 @@ export function Tooltip({
     if (open) lastHiddenAt = Date.now();
     setOpen(false);
   }, [open]);
+
+  // A finger never hovers, and Safari does not focus a button on tap either, so
+  // the label is only reachable if the tap itself opens the tooltip.
+  const toggleOnTap = useCallback(() => {
+    if (!canTouch) return;
+    if (open) {
+      hide();
+      return;
+    }
+    if (timer.current) clearTimeout(timer.current);
+    place();
+    setOpen(true);
+  }, [canTouch, hide, open, place]);
+
+  // ...and closed again by the next tap that lands somewhere else.
+  useEffect(() => {
+    if (!open || !canTouch) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (anchorRef.current?.contains(event.target as Node)) return;
+      hide();
+    };
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => window.removeEventListener("pointerdown", onPointerDown);
+  }, [canTouch, hide, open]);
 
   // Keep the tooltip pinned to the trigger while it's open and the page scrolls
   // or resizes (fixed coords are viewport-relative).
@@ -188,16 +219,20 @@ export function Tooltip({
 
   if (!isValidElement(children)) return children;
 
-  const trigger = cloneElement(
-    children as ReactElement<Record<string, unknown>>,
-    {
-      onMouseEnter: show,
-      onMouseLeave: hide,
-      onFocus: show,
-      onBlur: hide,
-      "aria-describedby": id,
+  const child = children as ReactElement<Record<string, unknown>>;
+  const childClick = child.props.onClick as ((event: unknown) => void) | undefined;
+
+  const trigger = cloneElement(child, {
+    onMouseEnter: showOnHover,
+    onMouseLeave: hide,
+    onFocus: show,
+    onBlur: hide,
+    onClick: (event: unknown) => {
+      childClick?.(event);
+      toggleOnTap();
     },
-  );
+    "aria-describedby": id,
+  });
 
   return (
     <>
