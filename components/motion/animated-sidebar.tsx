@@ -1032,6 +1032,13 @@ export function AnimatedSidebarMenuButton({
     if (context.isMobile && shouldCloseOnSelect) {
       context.setOpenMobile(false);
     }
+    // A submenu cannot render in the icon rail, so opening one from there
+    // leaves its children unreachable — a pointer can still fall back to the
+    // rail or the shortcut, a finger has nothing. Selecting a group unfolds
+    // the panel that is about to hold it.
+    if (ariaExpanded !== undefined && panel.collapsed && !context.isMobile) {
+      context.setOpen(true);
+    }
   };
 
   const content = (
