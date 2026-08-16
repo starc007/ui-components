@@ -25,7 +25,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
-import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -46,6 +46,33 @@ const GOO_CLOSE_SPRING = {
 } as const;
 const HOVER_CLOSE_DELAY = 120;
 const CIRCLE_KAPPA = 0.5523;
+
+// Which input the user is holding *right now* — a device capability cannot
+// answer that. A touchscreen laptop hovers and taps, and iPadOS reports a fine
+// hovering pointer for a finger, so both paths stay live and every handler
+// branches on the event it was given instead.
+//
+// A pen that rests on the glass is making contact, not hovering: `buttons` is
+// the tell, and it keeps a pen tap out of the hover path so it takes the same
+// route a finger does.
+const isHoveringPointer = (event: {
+  pointerType: string;
+  buttons: number;
+}) => event.pointerType !== "touch" && event.buttons === 0;
+
+// `onPointerEnter`/`onPointerLeave` rather than the mouse pair: a tap fires
+// compatibility mouseenter/mouseleave that carry no pointerType at all, and
+// they are what made the panel flicker open and shut under a finger.
+function makeHoverHandlers(enter: () => void, leave: () => void) {
+  return {
+    onPointerEnter: (event: React.PointerEvent) => {
+      if (isHoveringPointer(event)) enter();
+    },
+    onPointerLeave: (event: React.PointerEvent) => {
+      if (isHoveringPointer(event)) leave();
+    },
+  };
+}
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
@@ -233,7 +260,7 @@ export function Popover({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
-  trigger: requestedTrigger = "click",
+  trigger = "click",
   side = "bottom",
   align = "center",
   sideOffset = 14,
@@ -242,13 +269,6 @@ export function Popover({
   className,
 }: PopoverProps) {
   const reduce = useReducedMotion() ?? false;
-  const canTouch = useTouchCapable();
-  // A finger cannot hover, and Safari does not focus a button on tap either, so
-  // a hover trigger leaves the panel unreachable. Fall back to the click
-  // plumbing there — same trigger, a gesture the device actually has. Keyed on
-  // touch rather than on the absence of hover because iPadOS reports both.
-  const trigger: TriggerMode =
-    requestedTrigger === "hover" && canTouch ? "click" : requestedTrigger;
   const gooId = useId().replace(/:/g, "");
   const contentId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -303,26 +323,17 @@ export function Popover({
     return () => animation.stop();
   }, [open, progress, reduce]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    // The panel is portalled, so both trees participate in outside detection.
-    const onPointer = (e: PointerEvent) => {
-      const target = e.target as Node;
-      if (
-        rootRef.current &&
-        !rootRef.current.contains(target) &&
-        !contentRef.current?.contains(target)
-      )
-        setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    if (trigger === "click") window.addEventListener("pointerdown", onPointer);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open, setOpen, trigger]);
+  const close = useCallback(() => setOpen(false), [setOpen]);
+  // The panel is portalled, so both trees participate in outside detection.
+  const ignoreContent = useCallback(
+    (target: Element) => Boolean(contentRef.current?.contains(target)),
+    [],
+  );
+  // A hover trigger opens on tap as well now, so it needs the same outside
+  // dismissal the click trigger always had. The gesture passes through to
+  // whatever it landed on, which is the light-dismiss bargain the platform's
+  // own popovers strike.
+  useDismiss(open, close, rootRef, { ignore: ignoreContent });
 
   const ctx = useMemo<PopoverContextValue>(
     () => ({
@@ -364,9 +375,7 @@ export function Popover({
   );
 
   const hoverHandlers =
-    trigger === "hover"
-      ? { onMouseEnter: openHover, onMouseLeave: scheduleClose }
-      : {};
+    trigger === "hover" ? makeHoverHandlers(openHover, scheduleClose) : {};
 
   return (
     <PopoverContext.Provider value={ctx}>
@@ -398,6 +407,9 @@ export interface PopoverTriggerProps {
 
 export function PopoverTrigger({ children }: PopoverTriggerProps) {
   const ctx = usePopoverContext("PopoverTrigger");
+  // What the last gesture on the trigger was, and whether the panel was
+  // already open when it started. A click reports neither.
+  const gesture = useRef<{ pointerType: string; wasOpen: boolean } | null>(null);
 
   if (!isValidElement(children)) return children;
 
@@ -406,17 +418,43 @@ export function PopoverTrigger({ children }: PopoverTriggerProps) {
   const childRef = (childProps as { ref?: Ref<HTMLElement> }).ref;
 
   const compose =
-    (name: string, handler: () => void) =>
-    (event: { defaultPrevented?: boolean }) => {
+    <E extends { defaultPrevented?: boolean }>(
+      name: string,
+      handler: (event: E) => void,
+    ) =>
+    (event: E) => {
       (childProps[name] as ((e: unknown) => void) | undefined)?.(event);
-      if (!event.defaultPrevented) handler();
+      if (!event.defaultPrevented) handler(event);
     };
 
+  // The hover trigger keeps its hover path and *adds* a tap one, rather than
+  // swapping mode on a device that reports a touchscreen: a touchscreen laptop
+  // has both inputs and the mouse must keep working. A hovering pointer has
+  // already opened the panel on its way in, and a keyboard press arrives with
+  // no pointerdown behind it, so only a tap toggles here. Which panel state
+  // the tap acts on is read from the gesture's start, because a browser that
+  // focuses the trigger on contact would otherwise open it mid-gesture and let
+  // the click close it again.
   const handlers: Record<string, unknown> =
     ctx.triggerMode === "hover"
       ? {
           onFocus: compose("onFocus", ctx.openHover),
           onBlur: compose("onBlur", ctx.scheduleClose),
+          onPointerDown: compose<React.PointerEvent>(
+            "onPointerDown",
+            (event) => {
+              gesture.current = {
+                pointerType: event.pointerType,
+                wasOpen: ctx.open,
+              };
+            },
+          ),
+          onClick: compose("onClick", () => {
+            const tap = gesture.current;
+            gesture.current = null;
+            if (!tap || tap.pointerType === "mouse") return;
+            ctx.setOpen(!tap.wasOpen);
+          }),
         }
       : { onClick: compose("onClick", ctx.toggle) };
 
@@ -518,9 +556,7 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
   useMotionValueEvent(progress, "change", (p) => render(geoRef.current, p));
 
   const hoverHandlers =
-    triggerMode === "hover"
-      ? { onMouseEnter: openHover, onMouseLeave: scheduleClose }
-      : {};
+    triggerMode === "hover" ? makeHoverHandlers(openHover, scheduleClose) : {};
 
   // Match the server and first client render, then attach the portal after
   // hydration. This preserves SSR without regenerating the page on the client.
