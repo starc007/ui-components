@@ -26,6 +26,7 @@ export interface HoldActionButtonProps extends Omit<
   | "onPointerUp"
   | "onPointerCancel"
   | "onPointerLeave"
+  | "onPointerMove"
   | "onKeyDown"
   | "onKeyUp"
 > {
@@ -89,11 +90,28 @@ export const HoldActionButton = forwardRef<
   };
 
   const handlePointerLeave = (event: PointerEvent<HTMLButtonElement>) => {
-    // Dragging the cursor off the button abandons the hold. A finger does not
-    // get the same reading: WebKit fires leave repeatedly for a touch that
-    // never moved, which would cancel every hold on the frame it started.
-    // Lifting or cancelling the touch already ends it.
+    // Only reached when the capture below was refused: a captured pointer gets
+    // no boundary events at all. A finger does not get this reading either way
+    // — WebKit fires leave repeatedly for a touch that never moved, which
+    // would cancel every hold on the frame it started.
     if (event.pointerType !== "touch") cancelHold();
+  };
+
+  const handlePointerMove = (event: PointerEvent<HTMLButtonElement>) => {
+    // Leaving the button abandons the hold, and while the pointer is captured
+    // nothing announces that: no boundary events, and `touch-none` means a
+    // finger sliding off cannot scroll and so cannot cancel either. Measure it
+    // instead — off the button ends the hold, wherever the pointer then goes.
+    if (!holding) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const outside =
+      event.clientX < rect.left ||
+      event.clientX > rect.right ||
+      event.clientY < rect.top ||
+      event.clientY > rect.bottom;
+
+    if (outside) cancelHold();
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
@@ -130,6 +148,7 @@ export const HoldActionButton = forwardRef<
       disabled={disabled}
       aria-label={typeof children === "string" ? children : undefined}
       onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={cancelHold}
       onPointerLeave={handlePointerLeave}
