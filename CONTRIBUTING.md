@@ -30,3 +30,5 @@ Internal imports are safe: the registry build follows `@/lib` and relative impor
 2. Create a fork or feature branch.
 3. Keep changes focused and include the component source, preview and registry entry together.
 4. Open a pull request against `main`.
+
+Agents working in this repository should follow [`skills/beui/SKILL.md`](./skills/beui/SKILL.md) and `AGENTS.md`.
