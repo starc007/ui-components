@@ -9,6 +9,7 @@ import {
 import {
   cloneElement,
   isValidElement,
+  type PointerEvent,
   type ReactElement,
   type ReactNode,
   useCallback,
@@ -20,8 +21,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
-import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
-import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "right" | "bottom" | "left";
@@ -111,6 +111,18 @@ const REDUCED_VARIANTS: Variants = {
 const WARM_WINDOW_MS = 300;
 let lastHiddenAt = 0;
 
+// Which input the user is holding *right now* — a device capability cannot
+// answer that. A touchscreen laptop hovers and taps, and iPadOS reports a fine
+// hovering pointer for a finger, so both paths stay live and each handler
+// branches on the event it was given instead.
+//
+// A pen resting on the glass is making contact, not hovering: `buttons` is the
+// tell, and it sends a pen tap down the same route a finger takes.
+const isHoveringPointer = (event: {
+  pointerType: string;
+  buttons: number;
+}) => event.pointerType !== "touch" && event.buttons === 0;
+
 export function Tooltip({
   content,
   children,
@@ -127,8 +139,6 @@ export function Tooltip({
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const anchorRef = useRef<HTMLSpanElement>(null);
   const reduce = useReducedMotion();
-  const canHover = useHoverCapable();
-  const canTouch = useTouchCapable();
 
   // Anchor point in viewport coords, on the edge of the trigger facing `side`.
   // Position:fixed means these viewport coords place the tooltip directly, so
@@ -160,12 +170,6 @@ export function Tooltip({
     );
   }, [delay, place]);
 
-  // Hover is the only source that needs gating: a touch tap fires a phantom
-  // mouseenter that then sticks until you tap elsewhere.
-  const showOnHover = useCallback(() => {
-    if (canHover) show();
-  }, [canHover, show]);
-
   const hide = useCallback(() => {
     if (timer.current) {
       clearTimeout(timer.current);
@@ -176,9 +180,16 @@ export function Tooltip({
   }, [open]);
 
   // A finger never hovers, and Safari does not focus a button on tap either, so
-  // the label is only reachable if the tap itself opens the tooltip.
+  // the label is only reachable if the tap itself opens the tooltip. A click
+  // carries no pointerType, so the pointerdown that preceded it is what says
+  // whether this was a tap; keyboard activation arrives with no pointerdown at
+  // all, and focus has already shown the label there.
+  const tapPointer = useRef<string | null>(null);
+
   const toggleOnTap = useCallback(() => {
-    if (!canTouch) return;
+    const pointerType = tapPointer.current;
+    tapPointer.current = null;
+    if (pointerType === null || pointerType === "mouse") return;
     if (open) {
       hide();
       return;
@@ -186,18 +197,11 @@ export function Tooltip({
     if (timer.current) clearTimeout(timer.current);
     place();
     setOpen(true);
-  }, [canTouch, hide, open, place]);
+  }, [hide, open, place]);
 
-  // ...and closed again by the next tap that lands somewhere else.
-  useEffect(() => {
-    if (!open || !canTouch) return;
-    const onPointerDown = (event: PointerEvent) => {
-      if (anchorRef.current?.contains(event.target as Node)) return;
-      hide();
-    };
-    window.addEventListener("pointerdown", onPointerDown);
-    return () => window.removeEventListener("pointerdown", onPointerDown);
-  }, [canTouch, hide, open]);
+  // ...and closed again by the next tap that lands somewhere else. The label
+  // covers nothing interactive, so that tap passes through to what it hit.
+  useDismiss(open, hide, anchorRef);
 
   // Keep the tooltip pinned to the trigger while it's open and the page scrolls
   // or resizes (fixed coords are viewport-relative).
@@ -220,17 +224,31 @@ export function Tooltip({
   if (!isValidElement(children)) return children;
 
   const child = children as ReactElement<Record<string, unknown>>;
-  const childClick = child.props.onClick as ((event: unknown) => void) | undefined;
+  // The child keeps whatever handler it already had — the anchor composes with
+  // it rather than overwriting it.
+  const compose =
+    <E,>(name: string, handler: (event: E) => void) =>
+    (event: E) => {
+      (child.props[name] as ((e: unknown) => void) | undefined)?.(event);
+      handler(event);
+    };
 
   const trigger = cloneElement(child, {
-    onMouseEnter: showOnHover,
-    onMouseLeave: hide,
-    onFocus: show,
-    onBlur: hide,
-    onClick: (event: unknown) => {
-      childClick?.(event);
-      toggleOnTap();
-    },
+    // Pointer events, not the mouse pair: a tap fires compatibility
+    // mouseenter/mouseleave that carry no pointerType, which raced the tap
+    // path into opening and closing the same label.
+    onPointerEnter: compose<PointerEvent>("onPointerEnter", (event) => {
+      if (isHoveringPointer(event)) show();
+    }),
+    onPointerLeave: compose<PointerEvent>("onPointerLeave", (event) => {
+      if (isHoveringPointer(event)) hide();
+    }),
+    onFocus: compose("onFocus", show),
+    onBlur: compose("onBlur", hide),
+    onPointerDown: compose<PointerEvent>("onPointerDown", (event) => {
+      tapPointer.current = event.pointerType;
+    }),
+    onClick: compose("onClick", toggleOnTap),
     "aria-describedby": id,
   });
 
