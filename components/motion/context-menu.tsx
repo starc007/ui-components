@@ -234,7 +234,12 @@ export function ContextMenuTrigger({
 
   const onPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
     childProps.onPointerDown?.(event);
-    if (event.defaultPrevented || disabled || event.pointerType !== "touch") return;
+    // A pen presses the same way a finger does and gets no `contextmenu` out
+    // of the platform for it, so it holds to open too. A mouse has the right
+    // button and is left to `onContextMenu`.
+    const pressToOpen =
+      event.pointerType === "touch" || event.pointerType === "pen";
+    if (event.defaultPrevented || disabled || !pressToOpen) return;
 
     const origin = { x: event.clientX, y: event.clientY };
     touchOrigin.current = origin;

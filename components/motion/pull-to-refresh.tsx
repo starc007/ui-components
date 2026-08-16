@@ -400,9 +400,12 @@ export function PullToRefresh({
     return () => animationRef.current?.stop();
   }, []);
 
-  const startMousePull = (event: ReactPointerEvent<HTMLElement>) => {
+  const startPointerPull = (event: ReactPointerEvent<HTMLElement>) => {
+    // Everything but touch: a finger is driven by the native listeners above,
+    // which can `preventDefault` the page scroll a passive React handler
+    // cannot. A pen fires no touch events at all, so this is its only route.
     if (
-      event.pointerType !== "mouse" ||
+      event.pointerType === "touch" ||
       event.button !== 0 ||
       event.currentTarget.scrollTop > 0 ||
       disabled ||
@@ -420,7 +423,7 @@ export function PullToRefresh({
     };
   };
 
-  const moveMousePull = (event: ReactPointerEvent<HTMLElement>) => {
+  const movePointerPull = (event: ReactPointerEvent<HTMLElement>) => {
     const gesture = gestureRef.current;
     if (!gesture.active || gesture.pointerId !== event.pointerId) return;
 
@@ -446,8 +449,8 @@ export function PullToRefresh({
       aria-busy={isRefreshing}
       data-state={status}
       data-disabled={disabled || undefined}
-      onPointerDown={startMousePull}
-      onPointerMove={moveMousePull}
+      onPointerDown={startPointerPull}
+      onPointerMove={movePointerPull}
       onPointerUp={(event) => {
         if (gestureRef.current.pointerId === event.pointerId) finishPull();
       }}
