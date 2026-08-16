@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { ExpandableActionBar } from "@/components/motion/expandable-action-bar";
+import { NotificationStack } from "@/components/motion/notification-stack";
 import {
   Popover,
   PopoverContent,
@@ -276,6 +277,87 @@ describe("ExpandableActionBar", () => {
     fireEvent.pointerDown(outside, touch);
     fireEvent.click(outside);
     expect(outsideClicks).toBe(1);
+
+    outside.remove();
+    restore();
+  });
+});
+
+describe("NotificationStack", () => {
+  const items = [
+    { id: "a", title: "Motion review approved" },
+    { id: "b", title: "The pull request is ready" },
+  ];
+
+  test("a pen resting on the stack does not expand it before its tap", () => {
+    const onViewAll = () => {
+      viewedAll += 1;
+    };
+    let viewedAll = 0;
+    const { getByRole } = render(
+      <NotificationStack items={items} onViewAll={onViewAll} />,
+    );
+
+    const stack = getByRole("button");
+    // Contact, not hover: pointerenter arrives with the pen already down.
+    fireEvent.pointerEnter(stack, { pointerType: "pen", buttons: 1 });
+    expect(stack.getAttribute("aria-expanded")).toBe("false");
+
+    fireEvent.pointerDown(stack, { pointerType: "pen", buttons: 1 });
+    fireEvent.click(stack);
+    expect(stack.getAttribute("aria-expanded")).toBe("true");
+    expect(viewedAll).toBe(0);
+
+    fireEvent.pointerDown(stack, { pointerType: "pen", buttons: 1 });
+    fireEvent.click(stack);
+    expect(viewedAll).toBe(1);
+  });
+
+  test("a hovering pen expands it the way a mouse does", () => {
+    const { container } = render(<NotificationStack items={items} />);
+    const stack = container.querySelector("button") as HTMLButtonElement;
+    fireEvent.pointerEnter(stack, { pointerType: "pen", buttons: 0 });
+    expect(stack.getAttribute("aria-expanded")).toBe("true");
+  });
+
+  test("the tap that collapses it does not fire the control it landed on", () => {
+    const restore = withTouchCapability();
+    const outside = document.createElement("button");
+    let outsideClicks = 0;
+    outside.addEventListener("click", () => {
+      outsideClicks += 1;
+    });
+    document.body.appendChild(outside);
+
+    const { container } = render(<NotificationStack items={items} />);
+    const stack = container.querySelector("button") as HTMLButtonElement;
+    fireEvent.pointerDown(stack, touch);
+    fireEvent.click(stack);
+    expect(stack.getAttribute("aria-expanded")).toBe("true");
+
+    fireEvent.pointerDown(outside, touch);
+    fireEvent.click(outside);
+    expect(stack.getAttribute("aria-expanded")).toBe("false");
+    expect(outsideClicks).toBe(0);
+
+    outside.remove();
+    restore();
+  });
+
+  test("an outside pointerdown that a handler stops still dismisses", () => {
+    const restore = withTouchCapability();
+    const outside = document.createElement("div");
+    outside.addEventListener("pointerdown", (event) => event.stopPropagation());
+    document.body.appendChild(outside);
+
+    const { container } = render(<NotificationStack items={items} />);
+    const stack = container.querySelector("button") as HTMLButtonElement;
+    fireEvent.pointerDown(stack, touch);
+    fireEvent.click(stack);
+    expect(stack.getAttribute("aria-expanded")).toBe("true");
+
+    fireEvent.pointerDown(outside, touch);
+    expect(stack.getAttribute("aria-expanded")).toBe("false");
 
     outside.remove();
     restore();

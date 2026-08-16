@@ -1,21 +1,19 @@
 "use client";
 
 import { ArrowUpRight, BellOff } from "lucide-react";
-import { motion, useReducedMotion, type Transition } from "motion/react";
+import { motion, type Transition, useReducedMotion } from "motion/react";
 import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
   type FocusEvent,
   type KeyboardEvent,
   type PointerEvent,
   type ReactNode,
+  useCallback,
+  useRef,
+  useState,
 } from "react";
 import { ActionSwapText } from "@/components/motion/action-swap";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
-import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
-import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 
 export type NotificationStackItem = {
@@ -52,6 +50,18 @@ export interface NotificationStackProps {
 
 const STACK_PEEK = 8;
 const STACK_INSET = 12;
+
+// Which input the user is holding *right now* — a device capability cannot
+// answer that. A touchscreen laptop hovers and taps, and iPadOS reports a fine
+// hovering pointer for a finger, so both paths stay live and each handler
+// branches on the event it was given instead.
+//
+// A pen resting on the glass is making contact, not hovering: `buttons` is the
+// tell, and it sends a pen tap down the same route a finger takes.
+const isHoveringPointer = (event: {
+  pointerType: string;
+  buttons: number;
+}) => event.pointerType !== "touch" && event.buttons === 0;
 
 function useControllableExpanded({
   expanded,
@@ -136,29 +146,36 @@ export function NotificationStack({
   classNames,
 }: NotificationStackProps) {
   const reduce = useReducedMotion();
-  const canHover = useHoverCapable();
-  const canTouch = useTouchCapable();
   const hasFocus = useRef(false);
   const rootRef = useRef<HTMLButtonElement>(null);
+  // What the last gesture on the stack was, and whether it was already
+  // expanded when that gesture started. A click reports neither.
+  const gesture = useRef<{ pointerType: string; wasExpanded: boolean } | null>(
+    null,
+  );
   const [isExpanded, setIsExpanded] = useControllableExpanded({
     expanded,
     defaultExpanded,
     onExpandedChange,
   });
+  // Set by the tap that expands the stack, and the reason the outside-tap
+  // dismisser exists at all — a hovering pointer has its own way out.
+  const [tapExpanded, setTapExpanded] = useState(false);
+
+  const collapse = useCallback(() => {
+    setTapExpanded(false);
+    setIsExpanded(false);
+  }, [setIsExpanded]);
 
   // A pointer leaving the stack is what collapses it, and a finger never
   // leaves: without this the stack stays open for good once tapped, and when
   // `onViewAll` is set the next tap follows the link instead of closing. The
-  // tap that lands somewhere else stands in for the pointer leaving.
-  useEffect(() => {
-    if (!canTouch || !isExpanded) return;
-    const onPointerDown = (event: globalThis.PointerEvent) => {
-      if (rootRef.current?.contains(event.target as Node)) return;
-      setIsExpanded(false);
-    };
-    window.addEventListener("pointerdown", onPointerDown);
-    return () => window.removeEventListener("pointerdown", onPointerDown);
-  }, [canTouch, isExpanded, setIsExpanded]);
+  // tap that lands somewhere else stands in for the pointer leaving, and it is
+  // consumed rather than passed through — the expanded stack covers the page,
+  // so the tap that dismisses it is aimed at nothing else.
+  useDismiss(tapExpanded && isExpanded, collapse, rootRef, {
+    behavior: "consume",
+  });
 
   const visibleItems = items.slice(0, Math.max(1, maxVisible));
   const primaryItem = visibleItems[0];
@@ -187,19 +204,27 @@ export function NotificationStack({
   const handleBlur = (event: FocusEvent<HTMLButtonElement>) => {
     if (event.currentTarget.contains(event.relatedTarget)) return;
     hasFocus.current = false;
-    setIsExpanded(false);
+    collapse();
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     if (event.key !== "Escape") return;
     event.preventDefault();
-    setIsExpanded(false);
+    collapse();
     event.currentTarget.blur();
   };
 
   const handleClick = () => {
-    if (!isExpanded) {
+    const tap = gesture.current;
+    gesture.current = null;
+    // Read from where the gesture started, not from now: a browser that
+    // focuses the stack on contact expands it mid-tap, and the first tap would
+    // then follow `onViewAll` instead of opening the list it was meant to.
+    const wasExpanded = tap ? tap.wasExpanded : isExpanded;
+
+    if (!wasExpanded) {
       setIsExpanded(true);
+      if (tap && tap.pointerType !== "mouse") setTapExpanded(true);
       return;
     }
 
@@ -208,7 +233,7 @@ export function NotificationStack({
       return;
     }
 
-    setIsExpanded(false);
+    collapse();
   };
 
   return (
@@ -227,12 +252,16 @@ export function NotificationStack({
       // the space of one tap, springs and all. The tap has its own route
       // through `handleClick`.
       onPointerEnter={(event: PointerEvent<HTMLButtonElement>) => {
-        if (canHover && event.pointerType !== "touch") setIsExpanded(true);
+        if (isHoveringPointer(event)) setIsExpanded(true);
       }}
       onPointerLeave={(event: PointerEvent<HTMLButtonElement>) => {
-        if (canHover && event.pointerType !== "touch" && !hasFocus.current) {
-          setIsExpanded(false);
-        }
+        if (isHoveringPointer(event) && !hasFocus.current) collapse();
+      }}
+      onPointerDown={(event: PointerEvent<HTMLButtonElement>) => {
+        gesture.current = {
+          pointerType: event.pointerType,
+          wasExpanded: isExpanded,
+        };
       }}
       onFocus={() => {
         hasFocus.current = true;
