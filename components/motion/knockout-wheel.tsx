@@ -6,6 +6,7 @@ import {
   type KeyboardEvent,
   memo,
   useCallback,
+  useEffect,
   useId,
   useMemo,
   useRef,
@@ -14,6 +15,7 @@ import {
 import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PANEL } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { cn } from "@/lib/utils";
 
 export type Team = {
@@ -546,8 +548,10 @@ export function KnockoutWheel({
 }: KnockoutWheelProps) {
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
+  const canTouch = useTouchCapable();
   const uid = useId().replace(/:/g, "");
   const ref = useRef<SVGSVGElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   // 63 flags for a 32-team draw, and SVG <image> has no lazy attribute — so the
   // requests wait until the wheel is nearly on screen.
   const inView = useInView(ref, { once: true, margin: "300px" });
@@ -656,6 +660,23 @@ export function KnockoutWheel({
     [],
   );
 
+  // A finger never leaves the flag it lit, so the isolation would hold for good
+  // — and bare stage reports no pointer event of its own to end it. The next
+  // tap that isn't on a flag stands in for the pointer leaving.
+  useEffect(() => {
+    if (!canTouch || (!hovered && !focused)) return;
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Element | null;
+      const stage = stageRef.current;
+      if (target && stage?.contains(target) && target.closest("button")) return;
+      setHovered(null);
+      const active = document.activeElement;
+      if (active instanceof HTMLElement && stage?.contains(active)) active.blur();
+    };
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => window.removeEventListener("pointerdown", onPointerDown);
+  }, [canTouch, focused, hovered]);
+
   // Round · teams · score for a decided match; a rim node is just a team. A slot
   // whose team isn't known yet reads TBD, matching the shield drawn in its place.
   const captions = useMemo(
@@ -684,7 +705,10 @@ export function KnockoutWheel({
           tap, so the wheel holds its size and pans instead. The floor is fixed,
           not rim-derived: node radius grows with depth, so a shallower draw has
           *smaller* marks and needs the width more, not less. */}
-      <div className="relative mx-auto w-full min-w-[32rem] max-w-[34rem]">
+      <div
+        ref={stageRef}
+        className="relative mx-auto w-full min-w-[32rem] max-w-[34rem]"
+      >
         <svg
           ref={ref}
           viewBox={`0 0 ${SIZE} ${SIZE}`}
