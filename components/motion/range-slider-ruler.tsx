@@ -4,6 +4,7 @@ import { animate, motion, useMotionValue, useMotionValueEvent, useReducedMotion 
 import { type KeyboardEvent, useEffect, useRef } from "react";
 
 import { type SliderOptions, snapSliderValue, useSlider } from "@/lib/hooks/use-slider";
+import { TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 // Settle spring for the snap after a flick — quick, no overshoot past the tick.
@@ -124,7 +125,8 @@ export function RulerSlider({
     <div
       {...rootProps}
       className={cn(
-        "relative w-full touch-none select-none overflow-hidden",
+        "relative w-full touch-none overflow-hidden",
+        TOUCH_GESTURE_CLASS,
         options.disabled
           ? "pointer-events-none opacity-50"
           : "cursor-grab active:cursor-grabbing",

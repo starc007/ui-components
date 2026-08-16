@@ -12,6 +12,7 @@ import { useEffect } from "react";
 
 import { SPRING_GLIDE } from "@/lib/ease";
 import { type SliderOptions, useSlider } from "@/lib/hooks/use-slider";
+import { TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 // Bouncy grab feedback for the thumb scale only.
@@ -53,7 +54,8 @@ export function RangeSlider({ showTicks = true, className, ...options }: RangeSl
     <div
       {...trackProps}
       className={cn(
-        "relative flex h-10 w-full touch-none select-none items-center overflow-hidden rounded-lg bg-muted",
+        "relative flex h-10 w-full touch-none items-center overflow-hidden rounded-lg bg-muted",
+        TOUCH_GESTURE_CLASS,
         options.disabled
           ? "pointer-events-none opacity-50"
           : "cursor-grab active:cursor-grabbing",

@@ -19,7 +19,11 @@ import {
   useState,
   type WheelEvent as ReactWheelEvent,
 } from "react";
-import { capturePointer, releasePointer } from "@/lib/touch";
+import {
+  capturePointer,
+  releasePointer,
+  TOUCH_GESTURE_CLASS,
+} from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 // Carousel-specific: a soft spring that receives the release velocity, so a
@@ -419,7 +423,10 @@ export function CylinderCarousel({
         }}
         className={cn(
           // clip-path, not overflow: it also clips the GPU-composited balls
-          "relative w-full touch-none select-none outline-none [clip-path:inset(0)]",
+          "relative w-full touch-none outline-none [clip-path:inset(0)]",
+          // The stage drives the roll from the press itself, so iOS must not
+          // claim the same touch for its callout or a slide drag.
+          TOUCH_GESTURE_CLASS,
           "cursor-grab active:cursor-grabbing",
           "focus-visible:ring-2 focus-visible:ring-foreground/20",
           className,

@@ -14,6 +14,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type SwipeSide = "left" | "right";
@@ -450,7 +451,10 @@ function SwipeableListRow({
         onDragEnd={onDragEnd}
         style={{ x }}
         className={cn(
-          "relative z-10 min-h-[72px] cursor-grab touch-pan-y select-none rounded-2xl border border-border bg-card px-4 py-3 shadow-sm active:cursor-grabbing",
+          // `touch-pan-y`, not `touch-none`: the row owns the horizontal
+          // swipe, the page keeps the vertical scroll through it.
+          "relative z-10 min-h-[72px] cursor-grab touch-pan-y rounded-2xl border border-border bg-card px-4 py-3 shadow-sm active:cursor-grabbing",
+          TOUCH_GESTURE_CLASS,
           classNames?.surface,
         )}
       >

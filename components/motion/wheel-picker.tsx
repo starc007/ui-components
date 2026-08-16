@@ -11,7 +11,11 @@ import {
   useState,
 } from "react";
 import { createTickPlayer } from "@/lib/tick-sound";
-import { capturePointer, releasePointer } from "@/lib/touch";
+import {
+  capturePointer,
+  releasePointer,
+  TOUCH_GESTURE_CLASS,
+} from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type WheelPickerOption = string | { label: string; value: string };
@@ -540,7 +544,10 @@ export function WheelPicker({
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
       className={cn(
-        "relative touch-none select-none overflow-hidden rounded-2xl border border-border bg-card outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
+        "relative touch-none overflow-hidden rounded-2xl border border-border bg-card outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
+        // The drum owns the whole gesture; iOS must not open its callout or
+        // start a drag out of the same press and cancel ours.
+        TOUCH_GESTURE_CLASS,
         grabbing ? "cursor-grabbing" : "cursor-grab",
         disabled && "pointer-events-none opacity-50",
         maskFade,

@@ -10,6 +10,7 @@ import {
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { EASE_DRAWER } from "@/lib/ease";
+import { TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 // Vaul-style glide: a long, fully-damped tween reads smoother than a spring on
@@ -173,7 +174,13 @@ export function BottomSheet({
           >
             <div
               onPointerDown={(e) => dragControls.start(e)}
-              className="flex cursor-grab touch-none flex-col items-center px-4 pb-2 pt-3 active:cursor-grabbing"
+              // The grip starts the sheet drag on pointerdown, so a slow pull
+              // must not hand the touch to iOS's callout — which would leave
+              // the sheet frozen mid-drag with a selection over the title.
+              className={cn(
+                "flex cursor-grab touch-none flex-col items-center px-4 pb-2 pt-3 active:cursor-grabbing",
+                TOUCH_GESTURE_CLASS,
+              )}
             >
               <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" />
               {title || description ? (
