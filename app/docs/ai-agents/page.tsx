@@ -6,12 +6,12 @@ import { CodeBlock } from "@/components/app/docs/code-block";
 export const metadata: Metadata = {
   title: "AI Agents",
   description:
-    "Connect the beUI MCP server, or use the agent-friendly endpoints (llms.txt, JSON registry, raw source) to consume components programmatically.",
+    "Install the beUI agent skill, connect the MCP server, or use the agent-friendly endpoints (llms.txt, JSON registry, raw source) to consume components programmatically.",
   alternates: { canonical: "/docs/ai-agents" },
   openGraph: {
     title: "AI Agents · beUI",
     description:
-      "Connect the beUI MCP server, or use the agent-friendly endpoints (llms.txt, JSON registry, raw source) to consume components programmatically.",
+      "Install the beUI agent skill, connect the MCP server, or use the agent-friendly endpoints (llms.txt, JSON registry, raw source) to consume components programmatically.",
     url: "/docs/ai-agents",
     type: "article",
     siteName: "beUI",
@@ -58,6 +58,8 @@ const ENDPOINTS: { label: string; url: string; desc: string }[] = [
 ];
 
 const MCP_URL = "https://mcp.beui.dev/mcp";
+
+const SKILL_SNIPPET = `npx skills add starc007/ui-components --skill beui`;
 
 const MCP_CLI_SNIPPET = `# Claude Code
 claude mcp add --transport http beui https://mcp.beui.dev/mcp
@@ -124,11 +126,28 @@ export default function AIAgentsPage() {
         For AI agents
       </h1>
       <p className="mt-3 text-muted-foreground">
-        beUI exposes a static, agent-friendly surface. Connect the MCP server
-        below, or hit the raw endpoints directly. Coding agents (Claude, Codex,
-        Cursor, Amp) can list components, fetch source with all deps, and drop
-        files into the user&apos;s project.
+        beUI exposes a static, agent-friendly surface. Install the beUI skill,
+        connect the MCP server below, or hit the raw endpoints directly. Coding
+        agents (Claude, Codex, Cursor, Amp) can list components, fetch source
+        with all deps, and drop files into the user&apos;s project.
       </p>
+
+      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+        Agent skill
+      </h2>
+      <p className="mt-2 text-muted-foreground">
+        The skill teaches coding agents to fetch the live registry first, pick
+        the closest{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+          items[].name
+        </code>{" "}
+        install slug, inspect it with shadcn, then install and compose from
+        the generated source. Use it when you want agents to choose existing
+        beUI components instead of inventing custom motion widgets.
+      </p>
+      <div className="mt-4">
+        <CodeBlock code={SKILL_SNIPPET} lang="bash" filename="terminal" />
+      </div>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
         MCP server
