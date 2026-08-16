@@ -358,25 +358,41 @@ export function MorphingTabs({
 
   // The rail cannot scroll: the liquid surface is one continuous shape spanning
   // the panel, so its notch has to stay over the tab that cut it. Slots narrow
-  // to fit the panel instead — down to a floor where a truncated label still
-  // reads — and keep the design width whenever there is room for it.
-  const tabWidth = useMemo(() => {
+  // to fit the panel instead, in that order of sacrifice:
+  //   1. the design width, down to a floor where a truncated label still reads;
+  //   2. the gap between slots, so the floor survives one panel narrower;
+  //   3. the floor itself — a cramped tab is still tappable, a clipped one is
+  //      not reachable at all.
+  // Every tier fits inside the panel by construction, so no tab is ever cut off
+  // and the notch never has to be clamped away from the tab that cut it.
+  const { tabWidth, slotGap } = useMemo(() => {
     const count = order.length;
-    if (!surfaceWidth || count === 0) return MAX_TAB_WIDTH;
-    const available =
-      surfaceWidth - SURFACE_INSET * 2 - tabGap * (count - 1);
-    return Math.max(
-      MIN_TAB_WIDTH,
-      Math.min(MAX_TAB_WIDTH, Math.floor(available / count)),
-    );
+    if (!surfaceWidth || count === 0) {
+      return { tabWidth: MAX_TAB_WIDTH, slotGap: tabGap };
+    }
+    const inner = surfaceWidth - SURFACE_INSET * 2;
+    const widthAt = (gap: number) =>
+      Math.floor((inner - gap * (count - 1)) / count);
+
+    if (widthAt(tabGap) >= MIN_TAB_WIDTH) {
+      return {
+        tabWidth: Math.min(MAX_TAB_WIDTH, widthAt(tabGap)),
+        slotGap: tabGap,
+      };
+    }
+    if (count > 1 && widthAt(0) >= MIN_TAB_WIDTH) {
+      const gap = Math.floor((inner - MIN_TAB_WIDTH * count) / (count - 1));
+      return { tabWidth: MIN_TAB_WIDTH, slotGap: Math.max(0, gap) };
+    }
+    return { tabWidth: Math.max(0, widthAt(0)), slotGap: 0 };
   }, [order.length, surfaceWidth, tabGap]);
 
   const slotLefts = useMemo(
     () =>
       order.map(
-        (_, index) => SURFACE_INSET + index * (tabWidth + tabGap),
+        (_, index) => SURFACE_INSET + index * (tabWidth + slotGap),
       ),
-    [order, tabGap, tabWidth],
+    [order, slotGap, tabWidth],
   );
 
   const dragStartIndex = draggingId ? order.indexOf(draggingId) : -1;
@@ -499,7 +515,7 @@ export function MorphingTabs({
       const startIndex = orderRef.current.indexOf(id);
       if (startIndex < 0) return;
       const capturedSlots = orderRef.current.map(
-        (_, index) => SURFACE_INSET + index * (tabWidth + tabGap),
+        (_, index) => SURFACE_INSET + index * (tabWidth + slotGap),
       );
       const startLeft = capturedSlots[startIndex];
 
@@ -519,7 +535,7 @@ export function MorphingTabs({
         slotLefts: capturedSlots,
       };
     },
-    [dragLeft, itemMap, tabGap, tabWidth],
+    [dragLeft, itemMap, slotGap, tabWidth],
   );
 
   const moveDrag = useCallback(
