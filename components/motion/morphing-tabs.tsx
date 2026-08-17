@@ -776,7 +776,18 @@ export function MorphingTabs({
                 onPointerMove={moveDrag}
                 onPointerUp={(event) => finishDrag(event.pointerId)}
                 onPointerCancel={(event) => finishDrag(event.pointerId)}
-                onLostPointerCapture={(event) => finishDrag(event.pointerId)}
+                // A touch is implicitly captured by whatever it landed on —
+                // here the label inside the tab — so the moment the drag takes
+                // the capture for the tab itself, that child *loses* it, and
+                // the notification bubbles straight back up to this handler.
+                // Ending the drag on it kills the gesture on the frame it
+                // starts. Only the tab losing its own capture means the
+                // platform took the pointer away. A mouse has no implicit
+                // capture, which is why this only ever bit on a real finger.
+                onLostPointerCapture={(event) => {
+                  if (event.target !== event.currentTarget) return;
+                  finishDrag(event.pointerId);
+                }}
               >
                 <div
                   style={{
