@@ -1,6 +1,7 @@
 "use client";
 
 import { type KeyboardEvent, type PointerEvent, useCallback, useRef, useState } from "react";
+import { capturePointer, releasePointer } from "@/lib/touch";
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
@@ -90,10 +91,12 @@ export function useSlider({
   const onPointerDown = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       if (disabled) return;
-      // optional: test DOMs and older browsers omit pointer capture
-      event.currentTarget.setPointerCapture?.(event.pointerId);
+      // Start the drag first: capture is a convenience, and a browser that
+      // refuses it — or a test DOM that has no pointer capture at all — must
+      // not take the drag down with it.
       draggingRef.current = true;
       setDragging(true);
+      capturePointer(event.currentTarget, event.pointerId);
       // A click on the track should land keyboard focus on the handle.
       sliderEl.current?.focus({ preventScroll: true });
       commitFromX(event.clientX);
@@ -110,11 +113,7 @@ export function useSlider({
   );
 
   const endDrag = useCallback((event: PointerEvent<HTMLDivElement>) => {
-    // Releasing without capture throws. The other pointer hooks guard it the
-    // same way.
-    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
+    releasePointer(event.currentTarget, event.pointerId);
     draggingRef.current = false;
     setDragging(false);
   }, []);

@@ -1,18 +1,21 @@
 "use client";
 
 import { ArrowUpRight, BellOff } from "lucide-react";
-import { motion, useReducedMotion, type Transition } from "motion/react";
+import { motion, type Transition, useReducedMotion } from "motion/react";
 import {
+  type FocusEvent,
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactNode,
   useCallback,
   useRef,
   useState,
-  type FocusEvent,
-  type KeyboardEvent,
-  type ReactNode,
 } from "react";
 import { ActionSwapText } from "@/components/motion/action-swap";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
-import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
+import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { cn } from "@/lib/utils";
 
 export type NotificationStackItem = {
@@ -133,12 +136,34 @@ export function NotificationStack({
   classNames,
 }: NotificationStackProps) {
   const reduce = useReducedMotion();
-  const canHover = useHoverCapable();
   const hasFocus = useRef(false);
+  const rootRef = useRef<HTMLButtonElement>(null);
+  const hover = useHoverGesture();
+  // What the last gesture on the stack was, and whether it was already
+  // expanded when that gesture started. A click reports neither.
+  const tap = useTapGesture<boolean>();
   const [isExpanded, setIsExpanded] = useControllableExpanded({
     expanded,
     defaultExpanded,
     onExpandedChange,
+  });
+  // Set by the tap that expands the stack, and the reason the outside-tap
+  // dismisser exists at all — a hovering pointer has its own way out.
+  const [tapExpanded, setTapExpanded] = useState(false);
+
+  const collapse = useCallback(() => {
+    setTapExpanded(false);
+    setIsExpanded(false);
+  }, [setIsExpanded]);
+
+  // A pointer leaving the stack is what collapses it, and a finger never
+  // leaves: without this the stack stays open for good once tapped, and when
+  // `onViewAll` is set the next tap follows the link instead of closing. The
+  // tap that lands somewhere else stands in for the pointer leaving, and it is
+  // consumed rather than passed through — the expanded stack covers the page,
+  // so the tap that dismisses it is aimed at nothing else.
+  useDismiss(tapExpanded && isExpanded, collapse, rootRef, {
+    behavior: "consume",
   });
 
   const visibleItems = items.slice(0, Math.max(1, maxVisible));
@@ -168,19 +193,30 @@ export function NotificationStack({
   const handleBlur = (event: FocusEvent<HTMLButtonElement>) => {
     if (event.currentTarget.contains(event.relatedTarget)) return;
     hasFocus.current = false;
-    setIsExpanded(false);
+    collapse();
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    // A key press is the start of a keyboard activation, never part of a tap:
+    // whatever a taken-away gesture left behind must not be read as one.
+    tap.drop();
     if (event.key !== "Escape") return;
     event.preventDefault();
-    setIsExpanded(false);
-    event.currentTarget.blur();
+    collapse();
+    // Focus stays where the keyboard put it. Blurring here collapsed the stack
+    // *and* threw the user back to the top of the document.
   };
 
   const handleClick = () => {
-    if (!isExpanded) {
+    const gesture = tap.take();
+    // Read from where the gesture started, not from now: a browser that
+    // focuses the stack on contact expands it mid-tap, and the first tap would
+    // then follow `onViewAll` instead of opening the list it was meant to.
+    const wasExpanded = gesture ? gesture.state : isExpanded;
+
+    if (!wasExpanded) {
       setIsExpanded(true);
+      if (gesture && gesture.pointerType !== "mouse") setTapExpanded(true);
       return;
     }
 
@@ -189,11 +225,12 @@ export function NotificationStack({
       return;
     }
 
-    setIsExpanded(false);
+    collapse();
   };
 
   return (
     <motion.button
+      ref={rootRef}
       type="button"
       initial={false}
       aria-expanded={isExpanded}
@@ -202,12 +239,22 @@ export function NotificationStack({
           ? `${items.length} notifications. ${expandedLabel}.`
           : `${items.length} notifications. Expand notifications.`
       }
-      onPointerEnter={() => {
-        if (canHover) setIsExpanded(true);
+      // A tap reports as a hover on its way past — enter, leave, then click —
+      // so an unfiltered hover path expands, collapses and expands again in
+      // the space of one tap, springs and all. The tap has its own route
+      // through `handleClick`.
+      onPointerEnter={(event: PointerEvent<HTMLButtonElement>) => {
+        if (hover.enter(event)) setIsExpanded(true);
       }}
-      onPointerLeave={() => {
-        if (canHover && !hasFocus.current) setIsExpanded(false);
+      onPointerLeave={(event: PointerEvent<HTMLButtonElement>) => {
+        if (hover.leave(event) && !hasFocus.current) collapse();
       }}
+      onPointerDown={(event: PointerEvent<HTMLButtonElement>) => {
+        tap.start(event, isExpanded);
+      }}
+      // The platform can take the gesture away mid-press — a scroll, a system
+      // swipe — and no click follows it.
+      onPointerCancel={tap.drop}
       onFocus={() => {
         hasFocus.current = true;
         setIsExpanded(true);

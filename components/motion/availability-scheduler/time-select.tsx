@@ -14,14 +14,24 @@ import type { TimeOption } from "./types";
 export function TimeSelect({
   value,
   onChange,
+  open,
+  onOpenChange,
   options,
 }: {
   value: string;
   onChange: (v: string) => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   options: TimeOption[];
 }) {
   return (
-    <Select value={value} onValueChange={onChange} className="w-full">
+    <Select
+      value={value}
+      onValueChange={onChange}
+      open={open}
+      onOpenChange={onOpenChange}
+      className="w-full"
+    >
       <SelectTrigger className="tabular-nums">
         <SelectValue className="whitespace-nowrap" />
       </SelectTrigger>

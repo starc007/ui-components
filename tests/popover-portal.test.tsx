@@ -131,3 +131,51 @@ describe("portalled popovers", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
   });
 });
+
+describe("Escape from the morph panel", () => {
+  test("hands focus back to the registered trigger", async () => {
+    const { getByRole } = render(
+      <MorphPopover defaultOpen>
+        <MorphPopoverTrigger>
+          <button type="button">Open Morph</button>
+        </MorphPopoverTrigger>
+        <MorphPopoverContent>
+          <button type="button">Pick</button>
+        </MorphPopoverContent>
+      </MorphPopover>,
+    );
+
+    const trigger = getByRole("button", { name: "Open Morph" });
+    const pick = getByRole("button", { name: "Pick" });
+    pick.focus();
+    expect(document.activeElement).toBe(pick);
+
+    fireEvent.keyDown(pick, { key: "Escape" });
+    await waitFor(() =>
+      expect(trigger.getAttribute("aria-expanded")).toBe("false"),
+    );
+    // The panel goes inert on close, so focus cannot be left inside it.
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  // Without MorphPopoverTrigger the panel measures against the root, which is
+  // a plain box that cannot hold focus. Leaving focus put beats blurring it.
+  test("leaves focus alone when only the unfocusable anchor is available", () => {
+    const opens: boolean[] = [];
+    const { getByRole } = render(
+      <MorphPopover defaultOpen onOpenChange={(next) => opens.push(next)}>
+        <button type="button">Bare</button>
+        <MorphPopoverContent>
+          <button type="button">Pick</button>
+        </MorphPopoverContent>
+      </MorphPopover>,
+    );
+
+    const pick = getByRole("button", { name: "Pick" });
+    pick.focus();
+
+    fireEvent.keyDown(pick, { key: "Escape" });
+    expect(opens).toEqual([false]);
+    expect(document.activeElement).toBe(pick);
+  });
+});

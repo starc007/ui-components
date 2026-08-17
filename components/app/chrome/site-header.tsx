@@ -86,7 +86,7 @@ export function SiteHeader({
             <Link
               href="/components/motion"
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
                 isComponents
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -97,7 +97,7 @@ export function SiteHeader({
             <Link
               href="/components/blocks"
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
                 isBlocks
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -108,7 +108,7 @@ export function SiteHeader({
             <Link
               href="/components/agents"
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
                 isAgents
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -119,7 +119,7 @@ export function SiteHeader({
             <Link
               href="/playground"
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
                 isPlayground
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -130,7 +130,7 @@ export function SiteHeader({
             <Link
               href="/sponsors"
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
                 isSponsors
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -142,8 +142,15 @@ export function SiteHeader({
         </div>
 
         <nav className="flex items-center gap-2">
+          {/* The primary nav appears at md, so the header row is tightest
+              between md and lg: the search falls back to its icon there.
+              Customize is already icon-sized and is the only way into theme
+              preferences, so it stays — the mobile sheet has no entry for it. */}
           {isHome ? null : (
-            <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 lg:w-56" />
+            // Between md and lg the field is back to its icon, so its label and
+            // shortcut hint have to go with it — left in, they overflow the
+            // 36px button and paint over the controls beside it.
+            <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 md:w-9 md:justify-center md:px-0 md:max-lg:[&>kbd]:hidden md:max-lg:[&>span]:hidden lg:w-56 lg:justify-start lg:px-3" />
           )}
           <Tooltip content="Customize" side="bottom">
             <button
@@ -178,7 +185,7 @@ export function SiteHeader({
             rel="noreferrer noopener"
             shape="pill"
             className="min-h-9 text-xs"
-            innerClassName="bg-foreground px-3 text-background sm:px-3.5"
+            innerClassName="whitespace-nowrap bg-foreground px-3 text-background sm:px-3.5"
           >
             Get Pro
             <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />

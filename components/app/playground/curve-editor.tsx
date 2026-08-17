@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { capturePointer, TOUCH_GESTURE_CLASS } from "@/lib/touch";
+import { cn } from "@/lib/utils";
 
 const SIZE = 200;
 const PAD = 34; // room for overshoot handles past the 0..1 core
@@ -53,7 +55,12 @@ export function CurveEditor({
     <svg
       ref={ref}
       viewBox={`0 0 ${SIZE} ${SIZE}`}
-      className="w-full touch-none select-none rounded-xl border border-border bg-background"
+      className={cn(
+        "w-full touch-none rounded-xl border border-border bg-background",
+        // The handles own the whole press, so iOS must not open its callout
+        // out of the same one and cancel the drag.
+        TOUCH_GESTURE_CLASS,
+      )}
       // a global pointermove while dragging keeps tracking outside the handle
       onPointerMove={(e) => drag !== null && move(e, drag)}
       onPointerUp={() => setDrag(null)}
@@ -89,8 +96,8 @@ export function CurveEditor({
           r={7}
           className="cursor-grab fill-primary"
           onPointerDown={(e) => {
-            (e.target as SVGElement).setPointerCapture(e.pointerId);
             setDrag(h);
+            capturePointer(e.target as SVGElement, e.pointerId);
           }}
         />
       ))}

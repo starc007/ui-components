@@ -1,9 +1,19 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useId, useState, type ReactNode } from "react";
+import {
+  type MouseEvent,
+  type PointerEvent,
+  type ReactNode,
+  useCallback,
+  useId,
+  useRef,
+  useState,
+} from "react";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
-import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
+import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { cn } from "@/lib/utils";
 
 export interface PreviewRailItem {
@@ -81,18 +91,32 @@ export function PreviewRail({
 }: PreviewRailProps) {
   const uid = useId();
   const reduce = useReducedMotion();
-  const canHover = useHoverCapable();
+  const rootRef = useRef<HTMLDivElement>(null);
   const [internalActiveId, setInternalActiveId] = useState(
     defaultActiveId ?? items[0]?.id ?? "",
   );
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  // A finger cannot hover, so a tap lights the tick instead. Kept apart from
+  // the hovered one: they end in different ways, and a stray mouse move must
+  // not clear a tick the keyboard or a tap chose.
+  const [pinnedId, setPinnedId] = useState<string | null>(null);
   const [focusedId, setFocusedId] = useState<string | null>(null);
+  // A click carries no pointerType, so the pointerdown before it is what says
+  // whether the activation was a tap. Keyboard activation has none at all.
+  const tap = useTapGesture<boolean>();
+  const hover = useHoverGesture();
+
+  const clearPinned = useCallback(() => setPinnedId(null), []);
+
+  // The next tap outside the rail stands in for the pointer leaving it. The
+  // card is a preview, so that tap passes through to whatever it landed on.
+  useDismiss(pinnedId !== null, clearPinned, rootRef);
 
   const requestedActiveId = activeId ?? internalActiveId;
   const selectedId = items.some((item) => item.id === requestedActiveId)
     ? requestedActiveId
     : (items[0]?.id ?? "");
-  const displayedId = hoveredId ?? focusedId ?? "";
+  const displayedId = hoveredId ?? pinnedId ?? focusedId ?? "";
   const highlightedId = displayedId || (highlightActive ? selectedId : "");
   const displayedIndex = items.findIndex((item) => item.id === highlightedId);
   const rowTemplate = items.length
@@ -108,9 +132,13 @@ export function PreviewRail({
   return (
     <motion.div
       layoutRoot
+      ref={rootRef}
       onBlur={(event) => {
+        // Both tick sources leave with the focus: a tap does not always land
+        // focus, but when it does, tabbing away must not strand the card.
         if (!event.currentTarget.contains(event.relatedTarget)) {
           setFocusedId(null);
+          setPinnedId(null);
         }
       }}
       className={cn(
@@ -123,7 +151,11 @@ export function PreviewRail({
     >
       <nav
         aria-label={label}
-        onPointerLeave={() => setHoveredId(null)}
+        onPointerLeave={(event) => {
+          // A touch pointer leaves on lift, which would clear the tick the tap
+          // just chose — that one is cleared by the outside tap instead.
+          if (hover.leave(event)) setHoveredId(null);
+        }}
         style={
           isHorizontal
             ? { gridTemplateColumns: rowTemplate }
@@ -177,15 +209,39 @@ export function PreviewRail({
           const sharedStyle = isHorizontal
             ? { width: itemSize }
             : { height: itemSize };
-          const handlePointerEnter = () => {
-            if (canHover) setHoveredId(item.id);
+          const handlePointerEnter = (event: PointerEvent<HTMLElement>) => {
+            if (hover.enter(event)) setHoveredId(item.id);
           };
+          const handlePointerDown = (event: PointerEvent<HTMLElement>) => {
+            tap.start(event, pinnedId === item.id);
+            setFocusedId(null);
+          };
+          // A gesture the platform takes away sends no click, and a key press
+          // starts an activation that never had a pointer behind it: either
+          // one leaves a record the next click would read as a tap of its own.
+          const dropGesture = () => tap.drop();
           const handleFocus = (currentTarget: HTMLElement) => {
             if (currentTarget.matches(":focus-visible")) {
               setFocusedId(item.id);
             }
           };
-          const handleSelect = () => {
+          const handleSelect = (event: MouseEvent<HTMLElement>) => {
+            const gesture = tap.take();
+            const tapped =
+              gesture !== null && gesture.pointerType !== "mouse";
+
+            if (tapped) {
+              // A link would otherwise show its preview and leave the page in
+              // the same tap, so the card is never read: the first tap lights
+              // the tick, the second follows the link.
+              if (item.href && !gesture.state) {
+                event.preventDefault();
+                setPinnedId(item.id);
+                return;
+              }
+              setPinnedId(item.id);
+            }
+
             selectItem(item.id);
             onItemSelect?.(item);
           };
@@ -203,8 +259,9 @@ export function PreviewRail({
               aria-label={item.ariaLabel ?? item.label}
               aria-current={selected ? "page" : undefined}
               onPointerEnter={handlePointerEnter}
-              onMouseEnter={handlePointerEnter}
-              onPointerDown={() => setFocusedId(null)}
+              onPointerDown={handlePointerDown}
+              onPointerCancel={dropGesture}
+              onKeyDown={dropGesture}
               onFocus={(event) => handleFocus(event.currentTarget)}
               onClick={handleSelect}
               style={sharedStyle}
@@ -220,8 +277,9 @@ export function PreviewRail({
               aria-label={item.ariaLabel ?? item.label}
               aria-current={selected ? "location" : undefined}
               onPointerEnter={handlePointerEnter}
-              onMouseEnter={handlePointerEnter}
-              onPointerDown={() => setFocusedId(null)}
+              onPointerDown={handlePointerDown}
+              onPointerCancel={dropGesture}
+              onKeyDown={dropGesture}
               onFocus={(event) => handleFocus(event.currentTarget)}
               onClick={handleSelect}
               style={sharedStyle}

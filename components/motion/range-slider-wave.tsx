@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { useMemo } from "react";
 
 import { type SliderOptions, useSlider } from "@/lib/hooks/use-slider";
+import { TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 // Per-bar spring: soft enough that the crest wobbles as it travels.
@@ -47,7 +48,8 @@ export function WaveSlider({ bars = BARS, className, ...options }: WaveSliderPro
     <div
       {...trackProps}
       className={cn(
-        "relative flex h-20 w-full touch-none select-none items-center justify-between gap-1",
+        "relative flex h-20 w-full touch-none items-center justify-between gap-1",
+        TOUCH_GESTURE_CLASS,
         options.disabled
           ? "pointer-events-none opacity-50"
           : "cursor-grab active:cursor-grabbing",

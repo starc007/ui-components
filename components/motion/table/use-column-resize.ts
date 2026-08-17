@@ -4,6 +4,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { capturePointer, releasePointer } from "@/lib/touch";
 import type { HeaderCellRefs, TableColumn } from "./types";
 
 export function useColumnResize<T>({
@@ -46,7 +47,7 @@ export function useColumnResize<T>({
         startWidth: snapshot[key],
       };
       setWidths(snapshot);
-      e.currentTarget.setPointerCapture(e.pointerId);
+      capturePointer(e.currentTarget, e.pointerId);
     },
     [minColumnWidth, orderedColumns, thRefs, widths],
   );
@@ -68,9 +69,7 @@ export function useColumnResize<T>({
     (e: ReactPointerEvent) => {
       const state = resizeRef.current;
       resizeRef.current = null;
-      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      }
+      releasePointer(e.currentTarget, e.pointerId);
       if (state) {
         onColumnResize?.(state.key, widths[state.key] ?? state.startWidth);
       }

@@ -10,23 +10,22 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { PromptInput } from "@/components/agents/prompt-input";
 import { EASE_OUT } from "@/lib/ease";
-import { getFaviconUrl } from "@/lib/favicon";
+import { useFavicon } from "@/lib/hooks/use-favicon";
 
 function ModelLogo({ url }: { url: string }) {
-  const src = getFaviconUrl(url);
-  const [failed, setFailed] = useState(false);
+  const favicon = useFavicon(url);
 
-  if (!src || failed) return <Bot />;
+  if (!favicon.src) return <Bot />;
 
   return (
     // biome-ignore lint/performance/noImgElement: Remote provider favicons keep the registry preview framework-agnostic.
     <img
-      src={src}
+      ref={favicon.ref}
+      src={favicon.src}
       alt=""
       width={16}
       height={16}
       referrerPolicy="no-referrer"
-      onError={() => setFailed(true)}
       className="size-4 rounded-sm object-contain"
     />
   );
@@ -46,7 +45,8 @@ const MODELS = [
   {
     value: "gemini-3.6-flash",
     label: "Gemini 3.6 Flash",
-    icon: <ModelLogo url="https://gemini.google.com" />,
+    // gemini.google.com has no /favicon.ico; Google DeepMind ships Gemini.
+    icon: <ModelLogo url="https://deepmind.google" />,
   },
   {
     value: "grok-4.5",

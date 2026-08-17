@@ -30,7 +30,9 @@ type MorphContextValue = {
   toggle: () => void;
   triggerId: string;
   contentId: string;
+  /** The element the panel measures against — see `registerTrigger`. */
   triggerRef: React.MutableRefObject<HTMLElement | null>;
+  registerTrigger: (node: HTMLElement | null) => void;
   contentRef: React.MutableRefObject<HTMLDivElement | null>;
 };
 
@@ -65,8 +67,8 @@ export function MorphPopover({
   className,
 }: MorphPopoverProps) {
   const baseId = useId();
-  const rootRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLElement | null>(null);
+  const [root, setRoot] = useState<HTMLDivElement | null>(null);
+  const [trigger, setTrigger] = useState<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const controlled = controlledOpen !== undefined;
@@ -81,17 +83,46 @@ export function MorphPopover({
   );
   const toggle = useCallback(() => setOpen(!open), [setOpen, open]);
 
+  // A trigger normally registers itself through MorphPopoverTrigger. It can't
+  // when something else already clones the element — a Tooltip wrapping the
+  // button, say — and an unregistered trigger leaves the panel with nothing to
+  // measure against, so it renders permanently invisible. The root boxes the
+  // trigger exactly (the content portals out of it), so it stands in until a
+  // real trigger registers, and stands in again if that one unmounts. Both are
+  // state, so a trigger arriving while the panel is open re-anchors it.
+  const anchorRef = useMemo<React.MutableRefObject<HTMLElement | null>>(
+    () => ({ current: trigger ?? root }),
+    [root, trigger],
+  );
+
+  // The panel is a `role="dialog"` and goes inert the moment it closes, so
+  // focus cannot be left sitting inside it: a dismissal hands it back to the
+  // trigger, the way the ARIA dialog pattern asks. A pointer dismissal takes
+  // the focus onward itself when it lands on something focusable — this only
+  // catches the case where it would otherwise be stranded. When no trigger has
+  // registered, the root anchor stands in only if it can actually hold focus;
+  // there is nowhere better than where the keyboard already is, so leave it.
+  const close = useCallback(() => {
+    setOpen(false);
+    const focused = document.activeElement;
+    const inPanel =
+      focused instanceof HTMLElement && contentRef.current?.contains(focused);
+    if (!inPanel) return;
+    const restore = trigger ?? (root && root.tabIndex >= 0 ? root : null);
+    restore?.focus();
+  }, [root, setOpen, trigger]);
+
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     const onPointer = (e: PointerEvent) => {
       const target = e.target as Node;
       if (
-        rootRef.current &&
-        !rootRef.current.contains(target) &&
+        root &&
+        !root.contains(target) &&
         !contentRef.current?.contains(target)
       )
-        setOpen(false);
+        close();
     };
     window.addEventListener("keydown", onKey);
     window.addEventListener("pointerdown", onPointer);
@@ -99,7 +130,7 @@ export function MorphPopover({
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointerdown", onPointer);
     };
-  }, [open, setOpen]);
+  }, [open, root, close]);
 
   const ctx = useMemo<MorphContextValue>(
     () => ({
@@ -108,15 +139,16 @@ export function MorphPopover({
       toggle,
       triggerId: `${baseId}-trigger`,
       contentId: `${baseId}-content`,
-      triggerRef,
+      triggerRef: anchorRef,
+      registerTrigger: setTrigger,
       contentRef,
     }),
-    [open, setOpen, toggle, baseId],
+    [open, setOpen, toggle, baseId, anchorRef],
   );
 
   return (
     <MorphContext.Provider value={ctx}>
-      <div ref={rootRef} className={cn("relative inline-flex", className)}>
+      <div ref={setRoot} className={cn("relative inline-flex", className)}>
         {children}
       </div>
     </MorphContext.Provider>
@@ -150,9 +182,7 @@ export function MorphPopoverTrigger({ children }: MorphPopoverTriggerProps) {
 
   return cloneElement(child, {
     id: ctx.triggerId,
-    ref: mergeRefs(childRef, (node: HTMLElement | null) => {
-      ctx.triggerRef.current = node;
-    }),
+    ref: mergeRefs(childRef, ctx.registerTrigger),
     onClick: (e: unknown) => {
       childOnClick?.(e);
       ctx.toggle();

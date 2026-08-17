@@ -14,7 +14,7 @@ import { useColumnReorder } from "./use-column-reorder";
 import { useColumnResize } from "./use-column-resize";
 import { useColumnSort } from "./use-column-sort";
 import { useRowSelection } from "./use-row-selection";
-import { CHECKBOX_WIDTH, alignText, readCell } from "./utils";
+import { alignText, CHECKBOX_PX, CHECKBOX_WIDTH, readCell } from "./utils";
 
 export type {
   SortDirection,
@@ -22,6 +22,51 @@ export type {
   TableColumn,
   TableProps,
 } from "./types";
+
+/**
+ * Narrowest a column of bare inputs may be floored to and still show a value:
+ * the cell's own `px-4` eats 32 of it.
+ */
+const INPUT_COLUMN_WIDTH = 120;
+
+/** The root font size Tailwind's rem scale assumes, and the pre-measure guess. */
+const DEFAULT_ROOT_FONT_SIZE = 16;
+
+/**
+ * What one `rem` is worth here, in px. The default until the first client
+ * layout, so the server and the hydrating client emit the same floor; measured
+ * once after that, because a document that sets its own `html { font-size }`
+ * lays a rem column out against that size and a floor computed from 16 would
+ * fall short by the same factor.
+ */
+function useRootFontSize() {
+  const [size, setSize] = useState(DEFAULT_ROOT_FONT_SIZE);
+  useEffect(() => {
+    const measured = Number.parseFloat(
+      getComputedStyle(document.documentElement).fontSize,
+    );
+    if (measured > 0) setSize(measured);
+  }, []);
+  return size;
+}
+
+/**
+ * The absolute width a column declared, in px, or null when it declared a share
+ * of the remainder instead (`fr`, `%`, `auto`, `calc()`, nothing at all) — those
+ * are worth whatever is left over, which is not a width this can add up.
+ */
+function resolveColumnWidth(
+  width: string | undefined,
+  rootFontSize: number,
+): number | null {
+  if (!width) return null;
+  const value = Number.parseFloat(width);
+  if (!Number.isFinite(value)) return null;
+  if (width.endsWith("px")) return value;
+  // rem is the other absolute length the repo writes.
+  if (width.endsWith("rem")) return value * rootFontSize;
+  return null;
+}
 
 export function Table<T>({
   data,
@@ -124,6 +169,41 @@ export function Table<T>({
     orderedColumns.length > 0 &&
     orderedColumns.every((c) => widths[c.key] != null);
 
+  const rootFontSize = useRootFontSize();
+  // In a container narrower than the columns, `table-layout: fixed` shrinks
+  // every column toward zero instead of scrolling. Floor the table at what the
+  // columns actually asked for — an absolute declared width where there is one,
+  // and for the ones sharing the remainder whatever content they can fall back
+  // on — then let the viewport scroll past it.
+  const minTableWidth = useMemo(() => {
+    // A column whose cells render bare inputs has no content for the fallback
+    // to measure, which is exactly the column that collapses; a renamable
+    // header is an input too, and in a fixed layout the header row is what
+    // sizes the column.
+    const inputOnly = (column: (typeof orderedColumns)[number]) =>
+      Boolean(onColumnRename) || (!column.cell && Boolean(column.editable));
+    const total = orderedColumns.reduce((sum, column) => {
+      const resized = widths[column.key];
+      if (resized != null) return sum + resized;
+      const declared = resolveColumnWidth(column.width, rootFontSize);
+      if (declared != null) return sum + declared;
+      return (
+        sum +
+        (inputOnly(column)
+          ? Math.max(minColumnWidth, INPUT_COLUMN_WIDTH)
+          : minColumnWidth)
+      );
+    }, selectable ? CHECKBOX_PX : 0);
+    return Math.round(total);
+  }, [
+    minColumnWidth,
+    onColumnRename,
+    orderedColumns,
+    rootFontSize,
+    selectable,
+    widths,
+  ]);
+
   // Infinite scroll: fire onEndReached once per near-bottom dwell, paused while
   // loading; the guard resets when the load completes.
   const endReachedRef = useRef(false);
@@ -184,8 +264,11 @@ export function Table<T>({
         style={{ height }}
       >
         <table
-          className={cn("border-collapse", sized ? "w-max min-w-full" : "min-w-full")}
-          style={{ tableLayout: "fixed" }}
+          className={cn("border-collapse", sized ? "w-max" : undefined)}
+          style={{
+            tableLayout: "fixed",
+            minWidth: `max(100%, ${minTableWidth}px)`,
+          }}
         >
           <colgroup>
             {selectable ? <col style={{ width: CHECKBOX_WIDTH }} /> : null}

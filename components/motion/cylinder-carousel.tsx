@@ -19,6 +19,11 @@ import {
   useState,
   type WheelEvent as ReactWheelEvent,
 } from "react";
+import {
+  capturePointer,
+  releasePointer,
+  TOUCH_GESTURE_CLASS,
+} from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 // Carousel-specific: a soft spring that receives the release velocity, so a
@@ -308,7 +313,7 @@ export function CylinderCarousel({
       e.preventDefault();
       stopGlide();
       draggingRef.current = true;
-      e.currentTarget.setPointerCapture(e.pointerId);
+      capturePointer(e.currentTarget, e.pointerId);
       const now = performance.now();
       drag.current = {
         startX: e.clientX,
@@ -339,9 +344,7 @@ export function CylinderCarousel({
     (e: ReactPointerEvent) => {
       if (!draggingRef.current) return;
       draggingRef.current = false;
-      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      }
+      releasePointer(e.currentTarget, e.pointerId);
       const d = drag.current;
       const dt = d.lastT - d.prevT;
       const vpx = dt > 0 ? (d.lastX - d.prevX) / dt : 0; // px per ms
@@ -420,7 +423,10 @@ export function CylinderCarousel({
         }}
         className={cn(
           // clip-path, not overflow: it also clips the GPU-composited balls
-          "relative w-full touch-none select-none outline-none [clip-path:inset(0)]",
+          "relative w-full touch-none outline-none [clip-path:inset(0)]",
+          // The stage drives the roll from the press itself, so iOS must not
+          // claim the same touch for its callout or a slide drag.
+          TOUCH_GESTURE_CLASS,
           "cursor-grab active:cursor-grabbing",
           "focus-visible:ring-2 focus-visible:ring-foreground/20",
           className,

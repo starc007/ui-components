@@ -24,6 +24,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_GLIDE, SPRING_PRESS } from "@/lib/ease";
+import { TOUCH_GESTURE_CLASS, capturePointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type MorphingTabsItem = {
@@ -83,6 +84,7 @@ type SpringTabProps = {
   anyDragging: boolean;
   surfaceHost: HTMLDivElement | null;
   surfaceWidth: number;
+  tabWidth: number;
   surfaceClassName?: string;
   zIndex: number;
   className: string;
@@ -96,7 +98,10 @@ type SpringTabProps = {
 };
 
 const DRAG_THRESHOLD = 5;
-const TAB_WIDTH = 176;
+// The design width of a tab, and the narrowest it may shrink to before the
+// label stops reading. See `tabWidth` in MorphingTabs.
+const MAX_TAB_WIDTH = 176;
+const MIN_TAB_WIDTH = 96;
 const TAB_HEIGHT = 56;
 const TAB_TOP = 24;
 const TAB_RADIUS = 24;
@@ -121,14 +126,18 @@ function moveItem(order: string[], from: number, to: number) {
   return next;
 }
 
-function liquidTabPath(tabLeft: number, surfaceWidth: number) {
+function liquidTabPath(
+  tabLeft: number,
+  surfaceWidth: number,
+  tabWidth: number,
+) {
   const panelLeft = SURFACE_INSET;
   const panelRight = surfaceWidth - SURFACE_INSET;
   const left = Math.max(
     panelLeft,
-    Math.min(panelRight - TAB_WIDTH, tabLeft),
+    Math.min(panelRight - tabWidth, tabLeft),
   );
-  const right = left + TAB_WIDTH;
+  const right = left + tabWidth;
   const top = RAIL_HEIGHT - TAB_HEIGHT;
   const bottom = RAIL_HEIGHT;
   const leftJoin = Math.max(panelLeft, left - LIQUID_JOIN);
@@ -170,6 +179,7 @@ function SpringTab({
   anyDragging,
   surfaceHost,
   surfaceWidth,
+  tabWidth,
   surfaceClassName,
   zIndex,
   className,
@@ -233,6 +243,7 @@ function SpringTab({
                 }
                 left={liquidDriver}
                 surfaceWidth={surfaceWidth}
+                tabWidth={tabWidth}
               />
             </svg>,
             surfaceHost,
@@ -259,12 +270,14 @@ function SpringTab({
 function LiquidSurfacePath({
   left,
   surfaceWidth,
+  tabWidth,
 }: {
   left: MotionValue<number>;
   surfaceWidth: number;
+  tabWidth: number;
 }) {
   const path = useTransform(left, (value) =>
-    liquidTabPath(value, surfaceWidth),
+    liquidTabPath(value, surfaceWidth, tabWidth),
   );
   return <motion.path d={path} fill="currentColor" />;
 }
@@ -343,12 +356,43 @@ export function MorphingTabs({
       : firstEnabledItem;
   const activeId = activeItem?.id ?? null;
 
+  // The rail cannot scroll: the liquid surface is one continuous shape spanning
+  // the panel, so its notch has to stay over the tab that cut it. Slots narrow
+  // to fit the panel instead, in that order of sacrifice:
+  //   1. the design width, down to a floor where a truncated label still reads;
+  //   2. the gap between slots, so the floor survives one panel narrower;
+  //   3. the floor itself — a cramped tab is still tappable, a clipped one is
+  //      not reachable at all.
+  // Every tier fits inside the panel by construction, so no tab is ever cut off
+  // and the notch never has to be clamped away from the tab that cut it.
+  const { tabWidth, slotGap } = useMemo(() => {
+    const count = order.length;
+    if (!surfaceWidth || count === 0) {
+      return { tabWidth: MAX_TAB_WIDTH, slotGap: tabGap };
+    }
+    const inner = surfaceWidth - SURFACE_INSET * 2;
+    const widthAt = (gap: number) =>
+      Math.floor((inner - gap * (count - 1)) / count);
+
+    if (widthAt(tabGap) >= MIN_TAB_WIDTH) {
+      return {
+        tabWidth: Math.min(MAX_TAB_WIDTH, widthAt(tabGap)),
+        slotGap: tabGap,
+      };
+    }
+    if (count > 1 && widthAt(0) >= MIN_TAB_WIDTH) {
+      const gap = Math.floor((inner - MIN_TAB_WIDTH * count) / (count - 1));
+      return { tabWidth: MIN_TAB_WIDTH, slotGap: Math.max(0, gap) };
+    }
+    return { tabWidth: Math.max(0, widthAt(0)), slotGap: 0 };
+  }, [order.length, surfaceWidth, tabGap]);
+
   const slotLefts = useMemo(
     () =>
       order.map(
-        (_, index) => SURFACE_INSET + index * (TAB_WIDTH + tabGap),
+        (_, index) => SURFACE_INSET + index * (tabWidth + slotGap),
       ),
-    [order, tabGap],
+    [order, slotGap, tabWidth],
   );
 
   const dragStartIndex = draggingId ? order.indexOf(draggingId) : -1;
@@ -471,7 +515,7 @@ export function MorphingTabs({
       const startIndex = orderRef.current.indexOf(id);
       if (startIndex < 0) return;
       const capturedSlots = orderRef.current.map(
-        (_, index) => SURFACE_INSET + index * (TAB_WIDTH + tabGap),
+        (_, index) => SURFACE_INSET + index * (tabWidth + slotGap),
       );
       const startLeft = capturedSlots[startIndex];
 
@@ -491,7 +535,7 @@ export function MorphingTabs({
         slotLefts: capturedSlots,
       };
     },
-    [dragLeft, itemMap, tabGap],
+    [dragLeft, itemMap, slotGap, tabWidth],
   );
 
   const moveDrag = useCallback(
@@ -505,7 +549,7 @@ export function MorphingTabs({
 
       if (!drag.moved) {
         drag.moved = true;
-        event.currentTarget.setPointerCapture(event.pointerId);
+        capturePointer(event.currentTarget, event.pointerId);
         if (drag.id === activeId) {
           surfaceAnimationRef.current?.stop();
           surfaceLeft.set(drag.startLeft);
@@ -528,13 +572,13 @@ export function MorphingTabs({
           index < drag.slotLefts.length;
           index += 1
         ) {
-          if (visualLeft + TAB_WIDTH / 2 >= drag.slotLefts[index]) {
+          if (visualLeft + tabWidth / 2 >= drag.slotLefts[index]) {
             targetIndex = index;
           }
         }
       } else {
         for (let index = drag.startIndex - 1; index >= 0; index -= 1) {
-          if (visualLeft <= drag.slotLefts[index] + TAB_WIDTH / 2) {
+          if (visualLeft <= drag.slotLefts[index] + tabWidth / 2) {
             targetIndex = index;
           }
         }
@@ -546,7 +590,7 @@ export function MorphingTabs({
         setDragTargetIndex(targetIndex);
       }
     },
-    [activeId, dragLeft, surfaceLeft],
+    [activeId, dragLeft, surfaceLeft, tabWidth],
   );
 
   const finishDrag = useCallback(
@@ -716,10 +760,14 @@ export function MorphingTabs({
                 anyDragging={Boolean(draggingId)}
                 surfaceHost={rootRef.current}
                 surfaceWidth={surfaceWidth}
+                tabWidth={tabWidth}
                 surfaceClassName={classNames?.activeTab}
                 zIndex={isDragging ? 30 : isActive ? 20 : 1}
                 className={cn(
-                  "group absolute left-0 top-0 flex select-none touch-pan-y items-stretch",
+                  // The drag is ours end to end, so iPadOS must not answer the
+                  // press with its callout or a native drag of the label.
+                  "group absolute left-0 top-0 flex touch-pan-y items-stretch",
+                  TOUCH_GESTURE_CLASS,
                   item.disabled && "cursor-not-allowed",
                   isDragging ? "cursor-grabbing" : "cursor-grab",
                 )}
@@ -728,11 +776,22 @@ export function MorphingTabs({
                 onPointerMove={moveDrag}
                 onPointerUp={(event) => finishDrag(event.pointerId)}
                 onPointerCancel={(event) => finishDrag(event.pointerId)}
-                onLostPointerCapture={(event) => finishDrag(event.pointerId)}
+                // A touch is implicitly captured by whatever it landed on —
+                // here the label inside the tab — so the moment the drag takes
+                // the capture for the tab itself, that child *loses* it, and
+                // the notification bubbles straight back up to this handler.
+                // Ending the drag on it kills the gesture on the frame it
+                // starts. Only the tab losing its own capture means the
+                // platform took the pointer away. A mouse has no implicit
+                // capture, which is why this only ever bit on a real finger.
+                onLostPointerCapture={(event) => {
+                  if (event.target !== event.currentTarget) return;
+                  finishDrag(event.pointerId);
+                }}
               >
                 <div
                   style={{
-                    width: TAB_WIDTH,
+                    width: tabWidth,
                     height: TAB_HEIGHT,
                     marginTop: TAB_TOP,
                   }}

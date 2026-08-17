@@ -29,7 +29,23 @@ describe("BottomSheet", () => {
     const { getByRole } = render(<TestSheet />);
     const dialog = getByRole("dialog", { name: "Quick actions" });
     expect(dialog.getAttribute("aria-labelledby")).toBeTruthy();
+    const descriptionId = dialog.getAttribute("aria-describedby");
+    expect(descriptionId).toBeTruthy();
+    expect(document.getElementById(descriptionId ?? "")?.textContent).toBe(
+      "Drag the handle to dismiss.",
+    );
     expect(dialog.getAttribute("aria-label")).toBeNull();
+  });
+
+  test("falls back to a label when the sheet has no title", () => {
+    const { getByRole } = render(
+      <BottomSheet open onOpenChange={() => {}}>
+        <p>Sheet body</p>
+      </BottomSheet>,
+    );
+
+    const dialog = getByRole("dialog", { name: "Bottom sheet" });
+    expect(dialog.getAttribute("aria-labelledby")).toBeNull();
   });
 
   test("closes on Escape", () => {
@@ -51,7 +67,11 @@ describe("BottomSheet", () => {
 
   test("keeps the title outside the drag handle", () => {
     const { getByRole } = render(<TestSheet />);
+    const dialog = getByRole("dialog", { name: "Quick actions" });
     const title = getByRole("heading", { name: "Quick actions" });
+    const handle = dialog.querySelector(".touch-none");
+    expect(handle).toBeTruthy();
+    expect(handle?.className).toContain("[-webkit-touch-callout:none]");
     expect(title.closest(".touch-none")).toBeNull();
   });
 });

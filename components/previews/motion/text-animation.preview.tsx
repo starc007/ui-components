@@ -24,7 +24,7 @@ export function TextAnimationPreview() {
   }, []);
 
   return (
-    <div className="relative flex min-h-20 w-full items-center justify-center text-center">
+    <div className="@container relative flex min-h-20 w-full items-center justify-center text-center">
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={variant}
@@ -43,11 +43,13 @@ export function TextAnimationPreview() {
               className="text-balance text-3xl font-semibold tracking-tight text-foreground"
             />
           ) : variant === "chromatic" ? (
+            // This sentence never wraps, so it scales with the column it sits
+            // in rather than overflowing it at narrow widths.
             <ChromaticTextReveal
               prefix="Motion that feels"
               words={["natural.", "intentional.", "alive."]}
               startOnView={false}
-              className="text-3xl font-semibold tracking-tight"
+              className="font-semibold tracking-tight [font-size:clamp(1.125rem,7.8cqw,1.875rem)]"
             />
           ) : (
             <TextShimmer duration={1.8} className="text-xl font-semibold">

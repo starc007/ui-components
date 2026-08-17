@@ -9,9 +9,9 @@ import {
 } from "motion/react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 import { ITEM, LIST, MORPH } from "./constants";
-import { useDismiss } from "./use-dismiss";
 
 /**
  * Search icon that morphs into a full-width search bar via a shared layoutId,

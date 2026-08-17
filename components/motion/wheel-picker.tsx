@@ -11,6 +11,11 @@ import {
   useState,
 } from "react";
 import { createTickPlayer } from "@/lib/tick-sound";
+import {
+  capturePointer,
+  releasePointer,
+  TOUCH_GESTURE_CLASS,
+} from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type WheelPickerOption = string | { label: string; value: string };
@@ -341,8 +346,8 @@ export function WheelPicker({
   const onPointerDown = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       if (disabled || reduce || event.pointerType === "touch") return;
-      event.currentTarget.setPointerCapture(event.pointerId);
       beginDrag(event.clientY);
+      capturePointer(event.currentTarget, event.pointerId);
     },
     [disabled, reduce, beginDrag],
   );
@@ -356,7 +361,9 @@ export function WheelPicker({
   const onPointerUp = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
       if (event.pointerType === "touch") return;
-      event.currentTarget.releasePointerCapture?.(event.pointerId);
+      // Also the pointercancel handler, where the capture is already gone —
+      // an unguarded release throws there and the drum never settles.
+      releasePointer(event.currentTarget, event.pointerId);
       endDrag();
     },
     [endDrag],
@@ -537,7 +544,10 @@ export function WheelPicker({
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
       className={cn(
-        "relative touch-none select-none overflow-hidden rounded-2xl border border-border bg-card outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
+        "relative touch-none overflow-hidden rounded-2xl border border-border bg-card outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
+        // The drum owns the whole gesture; iOS must not open its callout or
+        // start a drag out of the same press and cancel ours.
+        TOUCH_GESTURE_CLASS,
         grabbing ? "cursor-grabbing" : "cursor-grab",
         disabled && "pointer-events-none opacity-50",
         maskFade,

@@ -14,6 +14,7 @@ import { useEffect } from "react";
 
 import { SPRING_GLIDE, SPRING_PANEL, SPRING_PRESS } from "@/lib/ease";
 import { type SliderOptions, useSlider } from "@/lib/hooks/use-slider";
+import { TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 // Loose enough that the bubble keeps leaning a beat after the pointer stops.
@@ -75,7 +76,8 @@ export function BubbleSlider({ format, className, ...options }: BubbleSliderProp
       <div
         {...trackProps}
         className={cn(
-          "relative h-2 w-full touch-none select-none rounded-full bg-muted",
+          "relative h-2 w-full touch-none rounded-full bg-muted",
+          TOUCH_GESTURE_CLASS,
           options.disabled ? undefined : "cursor-grab active:cursor-grabbing",
         )}
       >

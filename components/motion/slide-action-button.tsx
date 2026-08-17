@@ -17,6 +17,7 @@ import {
   type ReactNode,
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
+import { TOUCH_GESTURE_CLASS, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export interface SlideActionButtonProps extends Omit<
@@ -129,6 +130,9 @@ export function SlideActionButton({
       className={cn(
         "relative h-16 w-72 overflow-hidden rounded-[22px] bg-primary/10 p-1",
         "ring-1 ring-primary/10",
+        // The track only carries the label — the slide starts on the thumb,
+        // which suppresses selection for the whole gesture on its own.
+        TOUCH_GESTURE_CONTENT_CLASS,
         className,
       )}
       {...rest}
@@ -177,6 +181,7 @@ export function SlideActionButton({
         transition={SPRING_PRESS}
         className={cn(
           "relative z-10 grid size-14 touch-none cursor-grab place-items-center rounded-[18px] bg-primary text-primary-foreground shadow-sm",
+          TOUCH_GESTURE_CLASS,
           "outline-none active:cursor-grabbing focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           completed && "cursor-default bg-background text-foreground",
           thumbClassName,

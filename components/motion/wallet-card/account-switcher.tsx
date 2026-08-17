@@ -3,12 +3,12 @@
 import { Check, ChevronDown } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 import { AccountAvatar } from "./account-avatar";
 import { HEAD, ITEM, LIST, MORPH } from "./constants";
 import { CopyButton } from "./copy-button";
 import type { WalletAccount } from "./types";
-import { useDismiss } from "./use-dismiss";
 import { truncateAddress } from "./utils";
 
 /**

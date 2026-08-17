@@ -27,6 +27,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL } from "@/lib/ease";
+import { holdSelection, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 type OpenModality = "pointer" | "keyboard" | "touch";
@@ -213,6 +214,7 @@ export function ContextMenuTrigger({
   const context = useContextMenuContext("ContextMenuTrigger");
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchOrigin = useRef<MenuPoint | null>(null);
+  const releaseSelection = useRef<(() => void) | null>(null);
 
   const cancelLongPress = useCallback(() => {
     if (longPressTimer.current) {
@@ -222,7 +224,15 @@ export function ContextMenuTrigger({
     touchOrigin.current = null;
   }, []);
 
-  useEffect(() => cancelLongPress, [cancelLongPress]);
+  // Held for the whole press, not just the timer: a gesture that turned into a
+  // drag must not paint a selection under the finger either.
+  const endPress = useCallback(() => {
+    cancelLongPress();
+    releaseSelection.current?.();
+    releaseSelection.current = null;
+  }, [cancelLongPress]);
+
+  useEffect(() => endPress, [endPress]);
 
   if (!isValidElement(children)) {
     throw new Error("<ContextMenuTrigger> requires a single React element");
@@ -233,7 +243,20 @@ export function ContextMenuTrigger({
 
   const onPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
     childProps.onPointerDown?.(event);
-    if (event.defaultPrevented || disabled || event.pointerType !== "touch") return;
+    // A pen presses the same way a finger does and gets no `contextmenu` out
+    // of the platform for it, so it holds to open too. A mouse has the right
+    // button and is left to `onContextMenu`.
+    const pressToOpen =
+      event.pointerType === "touch" || event.pointerType === "pen";
+    if (event.defaultPrevented || disabled || !pressToOpen) return;
+
+    // `pointer-coarse:select-none` misses this press on a laptop whose mouse
+    // is the primary pointer and whose touchscreen is not, and the platform's
+    // own long-press selection then claims the gesture and cancels ours. The
+    // press is the only thing that knows which input is on the glass, so it
+    // takes selection away itself — for its own duration, and no longer.
+    releaseSelection.current?.();
+    releaseSelection.current = holdSelection(event.currentTarget);
 
     const origin = { x: event.clientX, y: event.clientY };
     touchOrigin.current = origin;
@@ -278,12 +301,18 @@ export function ContextMenuTrigger({
     "aria-controls": context.open ? context.menuId : undefined,
     "aria-haspopup": "menu",
     "aria-expanded": context.open,
-    className: cn(childProps.className, className),
+    // The long press is ours: without this iOS runs its own on the same
+    // gesture and drops the selection callout and its handles on top of the
+    // menu we just opened. Only the press gesture is ours though — the child
+    // is the consumer's content, so a mouse can still select the text in it
+    // and right-click the selection. `touch-none` stays off too: the page
+    // still has to scroll from the trigger.
+    className: cn(TOUCH_GESTURE_CONTENT_CLASS, childProps.className, className),
     onContextMenu: (event: ReactMouseEvent<HTMLElement>) => {
       childProps.onContextMenu?.(event);
       if (event.defaultPrevented || disabled) return;
       event.preventDefault();
-      cancelLongPress();
+      endPress();
       context.openAt({ x: event.clientX, y: event.clientY }, "pointer");
     },
     onKeyDown,
@@ -291,11 +320,11 @@ export function ContextMenuTrigger({
     onPointerMove,
     onPointerUp: (event: ReactPointerEvent<HTMLElement>) => {
       childProps.onPointerUp?.(event);
-      cancelLongPress();
+      endPress();
     },
     onPointerCancel: (event: ReactPointerEvent<HTMLElement>) => {
       childProps.onPointerCancel?.(event);
-      cancelLongPress();
+      endPress();
     },
   });
 }

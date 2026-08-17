@@ -13,6 +13,9 @@ import {
 } from "react";
 import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PANEL } from "@/lib/ease";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
+import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
 
@@ -477,8 +480,13 @@ const WheelAnchor = memo(function WheelAnchor({
   onKey: (node: WheelNode, key: string) => void;
 }) {
   const size = pct(node.r * 2);
-  // Pointer and capture-phase focus props: Tooltip clones the child with
-  // onMouseEnter/onFocus, so those names would be overwritten.
+  // Capture-phase focus props, so a Tooltip cloning the child cannot overwrite
+  // them. Both interaction paths are always attached: iPadOS answers the hover
+  // query with true for a finger, so hanging the tap path off "cannot hover"
+  // left it unreachable on the very device it was written for. The event says
+  // which input arrived.
+  const tap = useTapGesture<boolean>();
+  const hover = useHoverGesture();
   const trigger = (
     <button
       type="button"
@@ -486,6 +494,10 @@ const WheelAnchor = memo(function WheelAnchor({
       tabIndex={isTabStop ? 0 : -1}
       aria-label={caption}
       onKeyDown={(event: KeyboardEvent) => {
+        // A key press starts a keyboard activation, which never had a pointer
+        // behind it: a gesture the platform took away must not be read as the
+        // tap behind the click this press synthesizes.
+        tap.drop();
         if (!event.key.startsWith("Arrow")) return;
         // Arrows drive the wheel here, so they must not also scroll the page.
         event.preventDefault();
@@ -493,18 +505,26 @@ const WheelAnchor = memo(function WheelAnchor({
       }}
       onFocusCapture={() => onFocusNode(node.id)}
       onBlurCapture={() => onFocusNode(null)}
-      onPointerEnter={canHover ? () => onHover(node.id) : undefined}
-      onPointerLeave={canHover ? () => onHover(null) : undefined}
+      onPointerEnter={(event) => {
+        if (hover.enter(event)) onHover(node.id);
+      }}
+      onPointerLeave={(event) => {
+        if (hover.leave(event)) onHover(null);
+      }}
+      onPointerDown={(event) => {
+        tap.start(event, isPinned);
+      }}
+      onPointerCancel={tap.drop}
       // Click, not pointerdown: a tap focuses the button first, and unpinning
       // has to also drop that focus or the flag stays lit.
-      onClick={
-        canHover
-          ? undefined
-          : (event) => {
-              onToggle(node.id);
-              if (isPinned) event.currentTarget.blur();
-            }
-      }
+      onClick={(event) => {
+        const gesture = tap.take();
+        // A hovering pointer lit the flag on its way in and puts it out on the
+        // way past; only a gesture without a hover pins one.
+        if (!gesture || gesture.pointerType === "mouse") return;
+        onToggle(node.id);
+        if (gesture.state) event.currentTarget.blur();
+      }}
       // ring-foreground, not the ring token: --ring is a 10% white hairline
       // that disappears over a flag. Focus has to be obvious.
       className="block h-full w-full rounded-full outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -548,14 +568,17 @@ export function KnockoutWheel({
   const canHover = useHoverCapable();
   const uid = useId().replace(/:/g, "");
   const ref = useRef<SVGSVGElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   // 63 flags for a 32-team draw, and SVG <image> has no lazy attribute — so the
   // requests wait until the wheel is nearly on screen.
   const inView = useInView(ref, { once: true, margin: "300px" });
-  // Hover and focus are tracked apart. Sharing one slot let a stray mouse move
-  // clear the isolation while a node still held focus.
+  // Hover, tap and focus are tracked apart. Sharing one slot let a stray mouse
+  // move clear the isolation while a node still held focus, and a tap has to
+  // outlive the pointerleave that a finger fires the moment it lifts.
   const [hovered, setHovered] = useState<string | null>(null);
+  const [pinned, setPinned] = useState<string | null>(null);
   const [focused, setFocused] = useState<string | null>(null);
-  const active = hovered ?? focused;
+  const active = hovered ?? pinned ?? focused;
 
   // Everything downstream reads the trimmed catalog, so the kept round's own
   // teams become the rim and the sr-only list matches what's drawn.
@@ -652,9 +675,36 @@ export function KnockoutWheel({
   );
 
   const onToggle = useCallback(
-    (id: string) => setHovered((current) => (current === id ? null : id)),
+    (id: string) => setPinned((current) => (current === id ? null : id)),
     [],
   );
+
+  // A tap on another flag hands the isolation over rather than ending it.
+  const onFlag = useCallback(
+    (target: Element) =>
+      Boolean(stageRef.current?.contains(target) && target.closest("button")),
+    [],
+  );
+
+  // A finger never leaves the flag it lit, so the isolation would hold for good
+  // — and bare stage reports no pointer event of its own to end it. The next
+  // pointerdown that isn't on a flag stands in for the pointer leaving; it is
+  // consumed, since a wheel spanning the viewport makes tapping past it the
+  // natural way out and there is no reason for that tap to do anything else.
+  // Only a pinned flag arms this: a mouse ends its own hover, and the browser
+  // drops focus on its own.
+  const unpin = useCallback(() => {
+    setPinned(null);
+    const focus = document.activeElement;
+    if (focus instanceof HTMLElement && stageRef.current?.contains(focus)) {
+      focus.blur();
+    }
+  }, []);
+
+  useDismiss(pinned !== null, unpin, null, {
+    behavior: "consume",
+    ignore: onFlag,
+  });
 
   // Round · teams · score for a decided match; a rim node is just a team. A slot
   // whose team isn't known yet reads TBD, matching the shield drawn in its place.
@@ -684,7 +734,10 @@ export function KnockoutWheel({
           tap, so the wheel holds its size and pans instead. The floor is fixed,
           not rim-derived: node radius grows with depth, so a shallower draw has
           *smaller* marks and needs the width more, not less. */}
-      <div className="relative mx-auto w-full min-w-[32rem] max-w-[34rem]">
+      <div
+        ref={stageRef}
+        className="relative mx-auto w-full min-w-[32rem] max-w-[34rem]"
+      >
         <svg
           ref={ref}
           viewBox={`0 0 ${SIZE} ${SIZE}`}
@@ -751,7 +804,7 @@ export function KnockoutWheel({
             node={node}
             caption={captions.get(node.id) ?? ""}
             isTabStop={node.id === tabStop}
-            isPinned={node.id === hovered}
+            isPinned={node.id === pinned}
             canHover={canHover}
             uid={uid}
             onHover={setHovered}

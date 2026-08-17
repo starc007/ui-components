@@ -1,17 +1,21 @@
 "use client";
 
-import { LayoutGroup, motion, useReducedMotion, type Transition } from "motion/react";
+import { LayoutGroup, motion, type Transition, useReducedMotion } from "motion/react";
 import {
+  type FocusEvent,
+  type MouseEvent,
+  type PointerEvent,
+  type ReactNode,
   useCallback,
   useEffect,
   useId,
   useMemo,
   useRef,
   useState,
-  type FocusEvent,
-  type MouseEvent,
-  type ReactNode,
 } from "react";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
+import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { cn } from "@/lib/utils";
 
 export type ExpandableActionBarSize = "sm" | "md";
@@ -46,6 +50,12 @@ export interface ExpandableActionBarProps {
   activeId?: string;
   onAction?: (item: ExpandableActionBarItem) => void;
   size?: ExpandableActionBarSize;
+  /**
+   * Expand when a pointer that hovers rests on the bar. Default true. It also
+   * governs the touch equivalent: with no hover to reveal the labels, the
+   * first tap expands the bar and runs no action, and the second one acts.
+   * Set false to make every tap and click act immediately.
+   */
   expandOnHover?: boolean;
   expandOnFocus?: boolean;
   collapseDelay?: number;
@@ -130,7 +140,15 @@ export function ExpandableActionBar({
     onExpandedChange,
   });
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  // Set by the tap that expands the bar, and the reason the outside-tap
+  // dismisser exists at all — a hovering pointer has its own way out.
+  const [tapExpanded, setTapExpanded] = useState(false);
   const collapseTimer = useRef<number | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  // What the last gesture on an action was, and whether the bar was already
+  // expanded when it started. A click reports neither.
+  const tap = useTapGesture<boolean>();
+  const hover = useHoverGesture();
 
   const clearCollapseTimer = useCallback(() => {
     if (collapseTimer.current) window.clearTimeout(collapseTimer.current);
@@ -147,17 +165,41 @@ export function ExpandableActionBar({
     const timer = window.setTimeout(() => {
       setIsExpanded(false);
       setHoveredId(null);
+      setTapExpanded(false);
     }, collapseDelay);
     collapseTimer.current = timer;
   }, [clearCollapseTimer, collapseDelay, setIsExpanded]);
 
   useEffect(() => clearCollapseTimer, [clearCollapseTimer]);
 
-  const onRootMouseEnter = () => {
-    if (expandOnHover) open();
+  // A collapse from outside takes the labels with it, so the arm the tap that
+  // expanded the bar left behind has to go too — otherwise the next tap runs
+  // an action whose label nobody can read. Only on the way down from expanded:
+  // a controlled bar that declined to expand at all keeps its arm, which is
+  // what lets its second tap act.
+  const wasExpanded = useRef(isExpanded);
+  useEffect(() => {
+    if (wasExpanded.current && !isExpanded) setTapExpanded(false);
+    wasExpanded.current = isExpanded;
+  }, [isExpanded]);
+
+  // A finger never hovers and Safari does not focus a button on tap, so a bar a
+  // tap expanded would have nothing to close it. The tap that lands elsewhere
+  // stands in for the pointer leaving — and it is consumed rather than passed
+  // through, because the labelled bar is exactly the kind of surface people
+  // dismiss by tapping just past it, over whatever control is there.
+  useDismiss(tapExpanded && isExpanded, close, trackRef, {
+    behavior: "consume",
+  });
+
+  const onRootPointerEnter = (event: PointerEvent<HTMLDivElement>) => {
+    // The gesture is told about every enter, `expandOnHover` or not: it is
+    // what the matching leave is read against.
+    if (hover.enter(event) && expandOnHover) open();
   };
 
-  const onRootMouseLeave = () => {
+  const onRootPointerLeave = (event: PointerEvent<HTMLDivElement>) => {
+    if (!hover.leave(event)) return;
     setHoveredId(null);
     if (expandOnHover) close();
   };
@@ -179,17 +221,25 @@ export function ExpandableActionBar({
     <LayoutGroup id={layoutId}>
       <motion.div
         layout="size"
-        onMouseEnter={onRootMouseEnter}
-        onMouseLeave={onRootMouseLeave}
+        // Pointer events, not the mouse pair: a tap fires compatibility
+        // mouseenter/mouseleave that carry no pointerType, and the bar growing
+        // under a stationary finger fired the leave before the click ever
+        // landed — so one tap expanded, collapsed and ran nothing.
+        onPointerEnter={onRootPointerEnter}
+        onPointerLeave={onRootPointerLeave}
         onFocus={onRootFocus}
         onBlur={onRootBlur}
         transition={ITEM_TRANSITION}
-        className={cn("inline-flex", classNames?.root, className)}
+        className={cn("inline-flex max-w-full", classNames?.root, className)}
       >
         <motion.div
+          ref={trackRef}
           layout="size"
           className={cn(
-            "relative inline-flex items-center overflow-hidden rounded-full border border-border bg-card/90 shadow-2xl backdrop-blur-xl",
+            // Labelled actions can outgrow the space the bar sits in — the pill
+            // stays inside it and scrolls its rail rather than running off the
+            // edge, where the last action is unreachable.
+            "scrollbar-hide relative inline-flex max-w-full items-center overflow-x-auto overflow-y-hidden rounded-full border border-border bg-card/90 shadow-2xl backdrop-blur-xl",
             SIZE_CLASS[size],
             classNames?.track,
           )}
@@ -206,19 +256,49 @@ export function ExpandableActionBar({
                 type="button"
                 disabled={item.disabled}
                 title={typeof item.label === "string" ? item.label : undefined}
-                onMouseEnter={() => {
+                onPointerEnter={(event: PointerEvent<HTMLButtonElement>) => {
+                  if (!hover.enter(event)) return;
                   clearCollapseTimer();
                   setHoveredId(item.id);
                 }}
+                onPointerDown={(event: PointerEvent<HTMLButtonElement>) => {
+                  tap.start(event, isExpanded);
+                }}
+                // A gesture the platform takes away sends no click, and a key
+                // press starts an activation that never had a pointer behind
+                // it: either one would otherwise leave the finger in place for
+                // the next click to spend.
+                onPointerCancel={tap.drop}
+                onKeyDown={tap.drop}
                 onClick={(event: MouseEvent<HTMLButtonElement>) => {
                   event.currentTarget.blur();
+                  const gesture = tap.take();
+                  // Nothing reveals the labels to a finger, so the first tap
+                  // expands the bar and the next one runs the action. The bar
+                  // state is read from the gesture's start: a browser that
+                  // focuses the button on contact expands it mid-tap, and that
+                  // first tap would otherwise fire the action it was meant to
+                  // reveal. `tapExpanded` arms the second tap, so a controlled
+                  // bar that declines to expand still runs the action rather
+                  // than swallowing every tap.
+                  const firstTap =
+                    gesture !== null &&
+                    gesture.pointerType !== "mouse" &&
+                    !gesture.state &&
+                    !tapExpanded;
+                  if (firstTap && expandOnHover) {
+                    setTapExpanded(true);
+                    open();
+                    setHoveredId(item.id);
+                    return;
+                  }
                   item.onClick?.();
                   onAction?.(item);
                 }}
                 whileTap={reduce || item.disabled ? undefined : { scale: 0.96 }}
                 transition={ITEM_TRANSITION}
                 className={cn(
-                  "relative isolate inline-flex items-center justify-center overflow-hidden rounded-full font-medium text-muted-foreground outline-none transition-[color,background-color] duration-150 ease-out",
+                  "relative isolate inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-medium text-muted-foreground outline-none transition-[color,background-color] duration-150 ease-out",
                   "focus-visible:text-foreground disabled:pointer-events-none disabled:opacity-40",
                   isHighlighted && "text-foreground",
                   ITEM_SIZE_CLASS[size],
