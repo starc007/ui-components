@@ -599,6 +599,82 @@ describe("NotificationStack", () => {
   });
 });
 
+describe("consumed dismissal", () => {
+  const items = [
+    { id: "send", label: "Send", icon: <span>S</span> },
+    { id: "export", label: "Export", icon: <span>E</span> },
+  ];
+
+  test("releases the swallower when the keyboard takes over", () => {
+    const restore = withTouchCapability();
+    const outside = document.createElement("button");
+    let outsideClicks = 0;
+    outside.addEventListener("click", () => {
+      outsideClicks += 1;
+    });
+    document.body.appendChild(outside);
+
+    const { getByTitle } = render(<ExpandableActionBar items={items} />);
+    const send = getByTitle("Send");
+    fireEvent.pointerDown(send, touch);
+    fireEvent.click(send);
+
+    // The dismissing gesture is dragged away and released outside: it
+    // dismisses, but no click and no cancel ever follows it.
+    fireEvent.pointerDown(outside, touch);
+
+    // Enter on a focused control must not hand its click to that gesture.
+    fireEvent.keyDown(outside, { key: "Enter" });
+    fireEvent.click(outside, { detail: 0 });
+    expect(outsideClicks).toBe(1);
+
+    outside.remove();
+    restore();
+  });
+
+  test("leaves a click that belongs to another open overlay alone", async () => {
+    const restore = withTouchCapability();
+    let picked = 0;
+    const { getByTitle, getByRole } = render(
+      <>
+        <ExpandableActionBar items={items} />
+        <Popover defaultOpen>
+          <PopoverTrigger>
+            <button type="button">Menu</button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <button
+              type="button"
+              onClick={() => {
+                picked += 1;
+              }}
+            >
+              Pick
+            </button>
+          </PopoverContent>
+        </Popover>
+      </>,
+    );
+
+    const send = getByTitle("Send");
+    fireEvent.pointerDown(send, touch);
+    fireEvent.click(send);
+
+    // Opened from the keyboard, so the gesture that expanded the bar is not
+    // also the one that dismissed it.
+    fireEvent.click(getByRole("button", { name: "Menu" }), { detail: 0 });
+
+    // The bar is behind the popover and dismisses on this tap — but the tap
+    // belongs to the popover in front of it.
+    const pick = getByRole("button", { name: "Pick" });
+    fireEvent.pointerDown(pick, touch);
+    fireEvent.click(pick);
+    expect(picked).toBe(1);
+
+    restore();
+  });
+});
+
 describe("PreviewRail", () => {
   const items = [
     { id: "one", label: "One", description: "First", href: "#one" },
