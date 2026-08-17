@@ -1,8 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion, type HTMLMotionProps, type Variants } from "motion/react";
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
-import { EASE_OUT, EASE_OUT_CSS, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { useState } from "react";
+import type { ReactNode } from "react";
+import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type ActionSwapItem = {
@@ -163,14 +164,6 @@ export function ActionSwapText({
   className,
 }: ActionSwapTextProps) {
   const reduce = useReducedMotion();
-  const measureRef = useRef<HTMLSpanElement>(null);
-  const [width, setWidth] = useState<number>();
-
-  useLayoutEffect(() => {
-    const nextWidth = measureRef.current?.offsetWidth;
-    if (!nextWidth) return;
-    setWidth((currentWidth) => (currentWidth === nextWidth ? currentWidth : nextWidth));
-  });
 
   // Cascade needs a plain string to split into letters; non-string content
   // and reduced motion fall back to the closest single-element animation.
@@ -181,18 +174,30 @@ export function ActionSwapText({
 
   return (
     <span
-      className={cn("relative inline-block overflow-hidden whitespace-nowrap align-bottom", className)}
+      className={cn(
+        "relative -my-[0.08em] inline-block whitespace-nowrap py-[0.08em] align-bottom",
+        className,
+      )}
       style={{
-        width,
-        transition: reduce ? undefined : `width 220ms ${EASE_OUT_CSS}`,
+        clipPath: "inset(0 -999px)",
+        WebkitClipPath: "inset(0 -999px)",
       }}
     >
       <span
-        ref={measureRef}
         aria-hidden
         className="invisible inline-block whitespace-nowrap"
       >
-        {children}
+        {cascade
+          ? label.split("").map((char, index) => (
+              <span
+                // biome-ignore lint/suspicious/noArrayIndexKey: position is the slot identity.
+                key={index}
+                className="inline-block whitespace-pre"
+              >
+                {char}
+              </span>
+            ))
+          : children}
       </span>
       {cascade ? (
         <>
@@ -205,7 +210,7 @@ export function ActionSwapText({
               initial="initial"
               animate="animate"
               exit="exit"
-              className="absolute left-0 top-0 inline-block whitespace-pre"
+              className="absolute left-0 top-[0.08em] inline-block whitespace-pre"
             >
               {label.split("").map((char, i) => (
                 <motion.span
@@ -229,7 +234,7 @@ export function ActionSwapText({
             initial={reduce ? false : "initial"}
             animate={reduce ? { opacity: 1, filter: "blur(0px)", scale: 1, y: 0 } : "animate"}
             exit={reduce ? undefined : "exit"}
-            className="absolute left-0 top-0 inline-block will-change-[opacity,filter,transform]"
+            className="absolute left-0 top-[0.08em] inline-block will-change-[opacity,filter,transform]"
           >
             {children}
           </motion.span>
