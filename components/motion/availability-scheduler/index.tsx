@@ -1,7 +1,14 @@
 "use client";
 
 import { LayoutGroup, useReducedMotion } from "motion/react";
-import { useCallback, useId, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { cn } from "@/lib/utils";
 import { DayRow } from "./day-row";
 import {
@@ -73,7 +80,10 @@ export function AvailabilityScheduler({
     }
     return ids;
   }, [week]);
-  if (openPanel !== null && !livePanels.has(openPanel)) setOpenPanel(null);
+
+  useEffect(() => {
+    if (openPanel !== null && !livePanels.has(openPanel)) setOpenPanel(null);
+  }, [livePanels, openPanel]);
 
   const commit = useCallback(
     (next: WeekAvailability) => {

@@ -123,6 +123,7 @@ export const registry: CategoryEntry[] = [
             name: "Expanding Arrow Button",
             description:
               "An accent tile that expands into a dotted-arrow trail on hover or focus.",
+            installSlug: "expanding-arrow-button",
             file: "components/motion/expanding-arrow-button.tsx",
             previewKey: "motion/expanding-arrow-button",
             previewFile:
