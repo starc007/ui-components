@@ -116,6 +116,29 @@ describe("ContextMenu", () => {
     expect(getByRole("menu")).toBeTruthy();
   });
 
+  test("takes selection away for the duration of a press, and no longer", () => {
+    const { getByRole } = render(<ExampleMenu />);
+    const trigger = getByRole("button", { name: "Launch plan" });
+
+    // The media query behind the class reads the machine's *primary* pointer,
+    // so on a laptop with a mouse and a touchscreen this press is the only
+    // thing that knows a finger is on the glass.
+    fireEvent.pointerDown(trigger, { pointerType: "touch", buttons: 1 });
+    expect(trigger.style.userSelect).toBe("none");
+
+    // A press that becomes a drag keeps it: the finger must not paint a
+    // selection on its way either.
+    fireEvent.pointerMove(trigger, { clientX: 200, clientY: 200 });
+    expect(trigger.style.userSelect).toBe("none");
+
+    fireEvent.pointerUp(trigger, { pointerType: "touch", buttons: 0 });
+    expect(trigger.style.userSelect).toBe("");
+
+    // A mouse selects and right-clicks as it always did.
+    fireEvent.pointerDown(trigger, { pointerType: "mouse", buttons: 1 });
+    expect(trigger.style.userSelect).toBe("");
+  });
+
   test("keeps reopening after repeated dismissals", async () => {
     const { getByRole } = render(<ExampleMenu />);
     const trigger = getByRole("button", { name: "Launch plan" });
