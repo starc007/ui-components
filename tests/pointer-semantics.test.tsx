@@ -29,6 +29,17 @@ function withTouchCapability() {
 
 const mouse = { pointerType: "mouse", buttons: 0 } as const;
 const touch = { pointerType: "touch", buttons: 1 } as const;
+// A pen with no hover reports contact on the way in and, per the spec, its
+// release boundary event on the way out — after the click, buttons back to 0.
+const penDown = { pointerType: "pen", buttons: 1 } as const;
+const penUp = { pointerType: "pen", buttons: 0 } as const;
+// A mouse dragged off a surface with the button still held.
+const mouseHeld = { pointerType: "mouse", buttons: 1 } as const;
+
+const settle = (ms: number) =>
+  act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, ms));
+  });
 
 afterEach(cleanup);
 
@@ -77,6 +88,67 @@ describe("Popover trigger='hover'", () => {
       expect(trigger.getAttribute("aria-expanded")).toBe("false"),
     );
     restore();
+  });
+
+  test("keeps the panel a pen tap opened, whichever way the boundary lands", async () => {
+    const { getByRole } = render(
+      <Popover trigger="hover">
+        <PopoverTrigger>
+          <button type="button">Hover me</button>
+        </PopoverTrigger>
+        <PopoverContent>Panel</PopoverContent>
+      </Popover>,
+    );
+
+    const trigger = getByRole("button", { name: "Hover me" });
+    // Chromium order: the release boundary event comes after the click.
+    fireEvent.pointerEnter(trigger, penDown);
+    fireEvent.pointerDown(trigger, penDown);
+    fireEvent.click(trigger);
+    await waitFor(() =>
+      expect(trigger.getAttribute("aria-expanded")).toBe("true"),
+    );
+    fireEvent.pointerLeave(trigger, penUp);
+    await settle(200);
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+
+    // WebKit order: the boundary event comes first and used to schedule the
+    // close that then fired 120ms after the click had opened the panel.
+    fireEvent.pointerDown(trigger, penDown);
+    fireEvent.click(trigger);
+    await waitFor(() =>
+      expect(trigger.getAttribute("aria-expanded")).toBe("false"),
+    );
+    fireEvent.pointerEnter(trigger, penDown);
+    fireEvent.pointerDown(trigger, penDown);
+    fireEvent.pointerLeave(trigger, penUp);
+    fireEvent.click(trigger);
+    await settle(200);
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+  });
+
+  test("closes when a held mouse drags off the trigger", async () => {
+    const { getByRole } = render(
+      <Popover trigger="hover">
+        <PopoverTrigger>
+          <button type="button">Hover me</button>
+        </PopoverTrigger>
+        <PopoverContent>Panel</PopoverContent>
+      </Popover>,
+    );
+
+    const trigger = getByRole("button", { name: "Hover me" });
+    fireEvent.pointerEnter(trigger, mouse);
+    await waitFor(() =>
+      expect(trigger.getAttribute("aria-expanded")).toBe("true"),
+    );
+
+    // Pressed inside, released outside: this leave is the only exit notice
+    // the panel gets.
+    fireEvent.pointerDown(trigger, mouseHeld);
+    fireEvent.pointerLeave(trigger, mouseHeld);
+    await settle(200);
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
   });
 
   test("records the tap even when the child prevents the pointerdown default", async () => {
@@ -161,6 +233,48 @@ describe("Tooltip", () => {
     fireEvent.click(trigger);
     await waitFor(() => expect(document.querySelectorAll("[role=tooltip]")).toHaveLength(1));
     restore();
+  });
+
+  test("keeps the label a pen tap opened when the pen lifts off", async () => {
+    const { getByRole } = render(
+      <Tooltip content="Like this post" delay={0}>
+        <button type="button">Like</button>
+      </Tooltip>,
+    );
+
+    const trigger = getByRole("button", { name: "Like" });
+    fireEvent.pointerEnter(trigger, penDown);
+    fireEvent.pointerDown(trigger, penDown);
+    fireEvent.click(trigger);
+    await waitFor(() =>
+      expect(document.querySelectorAll("[role=tooltip]")).toHaveLength(1),
+    );
+
+    // Long enough for the exit animation to have taken it away had the leave
+    // been read as the end of a hover.
+    fireEvent.pointerLeave(trigger, penUp);
+    await settle(300);
+    expect(document.querySelectorAll("[role=tooltip]")).toHaveLength(1);
+  });
+
+  test("hides when a held mouse drags off the trigger", async () => {
+    const { getByRole } = render(
+      <Tooltip content="Like this post" delay={0}>
+        <button type="button">Like</button>
+      </Tooltip>,
+    );
+
+    const trigger = getByRole("button", { name: "Like" });
+    fireEvent.pointerEnter(trigger, mouse);
+    await waitFor(() =>
+      expect(document.querySelectorAll("[role=tooltip]")).toHaveLength(1),
+    );
+
+    fireEvent.pointerDown(trigger, mouseHeld);
+    fireEvent.pointerLeave(trigger, mouseHeld);
+    await waitFor(() =>
+      expect(document.querySelectorAll("[role=tooltip]")).toHaveLength(0),
+    );
   });
 
   test("keyboard activation does not close the label focus just opened", async () => {
@@ -277,6 +391,43 @@ describe("ExpandableActionBar", () => {
     restore();
   });
 
+  test("stays expanded after the pen that tapped it lifts off", async () => {
+    const fired: string[] = [];
+    const { getByTitle } = render(
+      <ExpandableActionBar
+        items={items}
+        onAction={(item) => fired.push(item.id)}
+      />,
+    );
+
+    const send = getByTitle("Send");
+    fireEvent.pointerEnter(send, penDown);
+    fireEvent.pointerDown(send, penDown);
+    fireEvent.click(send);
+    expect(fired).toEqual([]);
+
+    fireEvent.pointerLeave(send, penUp);
+    await settle(200);
+    // The labels the first tap revealed are still readable for the second.
+    fireEvent.pointerDown(send, penDown);
+    fireEvent.click(send);
+    expect(fired).toEqual(["send"]);
+  });
+
+  test("collapses when a held mouse drags off the bar", async () => {
+    const { getByTitle } = render(<ExpandableActionBar items={items} />);
+    const send = getByTitle("Send");
+
+    fireEvent.pointerEnter(send, mouse);
+    const label = send.querySelector("[aria-hidden]");
+    await waitFor(() => expect(label?.getAttribute("aria-hidden")).toBe("false"));
+
+    fireEvent.pointerDown(send, mouseHeld);
+    fireEvent.pointerLeave(send, mouseHeld);
+    await settle(200);
+    expect(label?.getAttribute("aria-hidden")).toBe("true");
+  });
+
   test("a cancelled tap does not swallow the next keyboard action", () => {
     const restore = withTouchCapability();
     const fired: string[] = [];
@@ -367,6 +518,18 @@ describe("NotificationStack", () => {
     const stack = container.querySelector("button") as HTMLButtonElement;
     fireEvent.pointerEnter(stack, { pointerType: "pen", buttons: 0 });
     expect(stack.getAttribute("aria-expanded")).toBe("true");
+  });
+
+  test("collapses when a held mouse drags off the stack", () => {
+    const { getByRole } = render(<NotificationStack items={items} />);
+    const stack = getByRole("button");
+
+    fireEvent.pointerEnter(stack, mouse);
+    expect(stack.getAttribute("aria-expanded")).toBe("true");
+
+    fireEvent.pointerDown(stack, mouseHeld);
+    fireEvent.pointerLeave(stack, mouseHeld);
+    expect(stack.getAttribute("aria-expanded")).toBe("false");
   });
 
   test("a cancelled tap does not stand in for the next keyboard activation", () => {

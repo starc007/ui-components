@@ -14,9 +14,9 @@ import {
 import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PANEL } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
-import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type Team = {
@@ -486,6 +486,7 @@ const WheelAnchor = memo(function WheelAnchor({
   // left it unreachable on the very device it was written for. The event says
   // which input arrived.
   const tap = useTapGesture<boolean>();
+  const hover = useHoverGesture();
   const trigger = (
     <button
       type="button"
@@ -505,10 +506,10 @@ const WheelAnchor = memo(function WheelAnchor({
       onFocusCapture={() => onFocusNode(node.id)}
       onBlurCapture={() => onFocusNode(null)}
       onPointerEnter={(event) => {
-        if (isHoveringPointer(event)) onHover(node.id);
+        if (hover.enter(event)) onHover(node.id);
       }}
       onPointerLeave={(event) => {
-        if (isHoveringPointer(event)) onHover(null);
+        if (hover.leave(event)) onHover(null);
       }}
       onPointerDown={(event) => {
         tap.start(event, isPinned);

@@ -26,8 +26,11 @@ import {
 import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import {
+  type HoverGesture,
+  useHoverGesture,
+} from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
-import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -51,14 +54,20 @@ const CIRCLE_KAPPA = 0.5523;
 
 // `onPointerEnter`/`onPointerLeave` rather than the mouse pair: a tap fires
 // compatibility mouseenter/mouseleave that carry no pointerType at all, and
-// they are what made the panel flicker open and shut under a finger.
-function makeHoverHandlers(enter: () => void, leave: () => void) {
+// they are what made the panel flicker open and shut under a finger. The
+// gesture pairs the two, so the panel a pen tap opened is not closed again by
+// the boundary event that ends the same tap.
+function makeHoverHandlers(
+  hover: HoverGesture,
+  enter: () => void,
+  leave: () => void,
+) {
   return {
     onPointerEnter: (event: React.PointerEvent) => {
-      if (isHoveringPointer(event)) enter();
+      if (hover.enter(event)) enter();
     },
     onPointerLeave: (event: React.PointerEvent) => {
-      if (isHoveringPointer(event)) leave();
+      if (hover.leave(event)) leave();
     },
   };
 }
@@ -264,6 +273,7 @@ export function Popover({
   const triggerRef = useRef<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rootHover = useHoverGesture();
   const progress = useMotionValue(defaultOpen ? 1 : 0);
 
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
@@ -364,7 +374,9 @@ export function Popover({
   );
 
   const hoverHandlers =
-    trigger === "hover" ? makeHoverHandlers(openHover, scheduleClose) : {};
+    trigger === "hover"
+      ? makeHoverHandlers(rootHover, openHover, scheduleClose)
+      : {};
 
   return (
     <PopoverContext.Provider value={ctx}>
@@ -502,6 +514,7 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
   } = ctx;
 
   const measureRef = contentRef;
+  const panelHover = useHoverGesture();
   const blobRef = useRef<HTMLDivElement>(null);
   const clipRef = useRef<HTMLDivElement>(null);
   const geoRef = useRef<Geo | null>(null);
@@ -553,7 +566,9 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
   useMotionValueEvent(progress, "change", (p) => render(geoRef.current, p));
 
   const hoverHandlers =
-    triggerMode === "hover" ? makeHoverHandlers(openHover, scheduleClose) : {};
+    triggerMode === "hover"
+      ? makeHoverHandlers(panelHover, openHover, scheduleClose)
+      : {};
 
   // Match the server and first client render, then attach the portal after
   // hydration. This preserves SSR without regenerating the page on the client.

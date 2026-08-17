@@ -22,8 +22,8 @@ import {
 import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
-import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "right" | "bottom" | "left";
@@ -128,6 +128,7 @@ export function Tooltip({
   const id = useId();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const anchorRef = useRef<HTMLSpanElement>(null);
+  const hover = useHoverGesture();
   const reduce = useReducedMotion();
 
   // Anchor point in viewport coords, on the edge of the trigger facing `side`.
@@ -227,10 +228,10 @@ export function Tooltip({
     // mouseenter/mouseleave that carry no pointerType, which raced the tap
     // path into opening and closing the same label.
     onPointerEnter: compose<PointerEvent>("onPointerEnter", (event) => {
-      if (isHoveringPointer(event)) show();
+      if (hover.enter(event)) show();
     }),
     onPointerLeave: compose<PointerEvent>("onPointerLeave", (event) => {
-      if (isHoveringPointer(event)) hide();
+      if (hover.leave(event)) hide();
     }),
     onFocus: compose("onFocus", show),
     onBlur: compose("onBlur", hide),

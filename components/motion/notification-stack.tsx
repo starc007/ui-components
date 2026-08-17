@@ -14,8 +14,8 @@ import {
 import { ActionSwapText } from "@/components/motion/action-swap";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
-import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type NotificationStackItem = {
@@ -138,6 +138,7 @@ export function NotificationStack({
   const reduce = useReducedMotion();
   const hasFocus = useRef(false);
   const rootRef = useRef<HTMLButtonElement>(null);
+  const hover = useHoverGesture();
   // What the last gesture on the stack was, and whether it was already
   // expanded when that gesture started. A click reports neither.
   const tap = useTapGesture<boolean>();
@@ -242,10 +243,10 @@ export function NotificationStack({
       // the space of one tap, springs and all. The tap has its own route
       // through `handleClick`.
       onPointerEnter={(event: PointerEvent<HTMLButtonElement>) => {
-        if (isHoveringPointer(event)) setIsExpanded(true);
+        if (hover.enter(event)) setIsExpanded(true);
       }}
       onPointerLeave={(event: PointerEvent<HTMLButtonElement>) => {
-        if (isHoveringPointer(event) && !hasFocus.current) collapse();
+        if (hover.leave(event) && !hasFocus.current) collapse();
       }}
       onPointerDown={(event: PointerEvent<HTMLButtonElement>) => {
         tap.start(event, isExpanded);

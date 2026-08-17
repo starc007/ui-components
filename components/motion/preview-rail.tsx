@@ -12,8 +12,8 @@ import {
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
-import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export interface PreviewRailItem {
@@ -104,6 +104,7 @@ export function PreviewRail({
   // A click carries no pointerType, so the pointerdown before it is what says
   // whether the activation was a tap. Keyboard activation has none at all.
   const tap = useTapGesture<boolean>();
+  const hover = useHoverGesture();
 
   const clearPinned = useCallback(() => setPinnedId(null), []);
 
@@ -153,7 +154,7 @@ export function PreviewRail({
         onPointerLeave={(event) => {
           // A touch pointer leaves on lift, which would clear the tick the tap
           // just chose — that one is cleared by the outside tap instead.
-          if (isHoveringPointer(event)) setHoveredId(null);
+          if (hover.leave(event)) setHoveredId(null);
         }}
         style={
           isHorizontal
@@ -209,7 +210,7 @@ export function PreviewRail({
             ? { width: itemSize }
             : { height: itemSize };
           const handlePointerEnter = (event: PointerEvent<HTMLElement>) => {
-            if (isHoveringPointer(event)) setHoveredId(item.id);
+            if (hover.enter(event)) setHoveredId(item.id);
           };
           const handlePointerDown = (event: PointerEvent<HTMLElement>) => {
             tap.start(event, pinnedId === item.id);

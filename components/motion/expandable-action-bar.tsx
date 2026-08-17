@@ -14,8 +14,8 @@ import {
   useState,
 } from "react";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
-import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type ExpandableActionBarSize = "sm" | "md";
@@ -148,6 +148,7 @@ export function ExpandableActionBar({
   // What the last gesture on an action was, and whether the bar was already
   // expanded when it started. A click reports neither.
   const tap = useTapGesture<boolean>();
+  const hover = useHoverGesture();
 
   const clearCollapseTimer = useCallback(() => {
     if (collapseTimer.current) window.clearTimeout(collapseTimer.current);
@@ -181,11 +182,13 @@ export function ExpandableActionBar({
   });
 
   const onRootPointerEnter = (event: PointerEvent<HTMLDivElement>) => {
-    if (expandOnHover && isHoveringPointer(event)) open();
+    // The gesture is told about every enter, `expandOnHover` or not: it is
+    // what the matching leave is read against.
+    if (hover.enter(event) && expandOnHover) open();
   };
 
   const onRootPointerLeave = (event: PointerEvent<HTMLDivElement>) => {
-    if (!isHoveringPointer(event)) return;
+    if (!hover.leave(event)) return;
     setHoveredId(null);
     if (expandOnHover) close();
   };
@@ -243,7 +246,7 @@ export function ExpandableActionBar({
                 disabled={item.disabled}
                 title={typeof item.label === "string" ? item.label : undefined}
                 onPointerEnter={(event: PointerEvent<HTMLButtonElement>) => {
-                  if (!isHoveringPointer(event)) return;
+                  if (!hover.enter(event)) return;
                   clearCollapseTimer();
                   setHoveredId(item.id);
                 }}
