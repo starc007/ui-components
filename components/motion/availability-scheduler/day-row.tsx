@@ -12,6 +12,7 @@ import { TimeSelect } from "./time-select";
 import {
   type DayAvailability,
   type DayKey,
+  panelKey,
   type TimeOption,
   type TimeRange,
   toMinutes,
@@ -52,12 +53,8 @@ export function DayRow({
   // Same rule one level down: ranges stack against each other inside the row.
   const [openRangeId, setOpenRangeId] = useState<string | null>(null);
 
-  // The scheduler holds one open panel for the whole week, so the id has to name
-  // one week-wide. A range id is only unique within its day — ids belong to the
-  // value, and a controlled one may well number its ranges per day — so two
-  // rows would otherwise answer to the same open panel.
   const panelId = (rangeId: string, edge: "start" | "end") =>
-    `${day}:${rangeId}:${edge}`;
+    panelKey(day, rangeId, edge);
 
   const onRangePanelOpenChange = (
     rangeId: string,

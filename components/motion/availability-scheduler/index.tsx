@@ -5,12 +5,13 @@ import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { DayRow } from "./day-row";
 import {
+  buildOptions,
   type DayAvailability,
   type DayKey,
+  defaultWeek,
+  panelKey,
   WEEKDAYS,
   type WeekAvailability,
-  buildOptions,
-  defaultWeek,
 } from "./types";
 
 export type {
@@ -55,6 +56,24 @@ export function AvailabilityScheduler({
   const [openPanel, setOpenPanel] = useState<string | null>(null);
   const controlled = value !== undefined;
   const week = controlled ? value : internal;
+
+  // Which panels the week currently puts on screen. A field that leaves — its
+  // day switched off, its range removed — never reports its panel closed: the
+  // only thing that dismisses a controlled Select is an outside pointerdown,
+  // and a field on its way out is no longer there to hear one. Keeping its id
+  // would reopen the panel the moment the same range came back.
+  const livePanels = useMemo(() => {
+    const ids = new Set<string>();
+    for (const { key } of WEEKDAYS) {
+      if (!week[key].enabled) continue;
+      for (const range of week[key].ranges) {
+        ids.add(panelKey(key, range.id, "start"));
+        ids.add(panelKey(key, range.id, "end"));
+      }
+    }
+    return ids;
+  }, [week]);
+  if (openPanel !== null && !livePanels.has(openPanel)) setOpenPanel(null);
 
   const commit = useCallback(
     (next: WeekAvailability) => {

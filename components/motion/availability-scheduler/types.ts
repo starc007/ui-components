@@ -15,6 +15,17 @@ export const WEEKDAYS: { key: DayKey; label: string }[] = [
   { key: "sun", label: "Sunday" },
 ];
 
+// ─── panels ──────────────────────────────────────────────────────────────────
+
+/**
+ * Names one time field week-wide, because the scheduler holds a single open
+ * panel for the whole week. Range ids belong to the value and are only unique
+ * within a day, so the day is part of the name — and the scheduler builds the
+ * same keys to ask whether the panel it is holding is still on screen.
+ */
+export const panelKey = (day: DayKey, rangeId: string, edge: "start" | "end") =>
+  `${day}:${rangeId}:${edge}`;
+
 // ─── time helpers ────────────────────────────────────────────────────────────
 
 export const toMinutes = (v: string) => {

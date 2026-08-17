@@ -52,4 +52,25 @@ describe("AvailabilityScheduler open panel", () => {
     expect(tueStart.getAttribute("aria-expanded")).toBe("false");
     expect(openFields(container)).toHaveLength(1);
   });
+
+  test("switching a day off releases the panel it was holding open", () => {
+    const { container, getByRole } = render(
+      <Scheduler initial={defaultWeek()} />,
+    );
+    const [monStart] = fields(container);
+
+    fireEvent.click(monStart);
+    expect(openFields(container)).toHaveLength(1);
+
+    // Keyboard-style activation: no outside pointerdown, so nothing dismisses
+    // the controlled Select as its field leaves. The day keeps its range ids,
+    // so the very same panel comes back when it returns.
+    const monSwitch = getByRole("switch", {
+      name: "Toggle Monday availability",
+    });
+    fireEvent.click(monSwitch);
+    fireEvent.click(monSwitch);
+
+    expect(openFields(container)).toHaveLength(0);
+  });
 });
