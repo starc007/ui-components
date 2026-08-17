@@ -322,7 +322,18 @@ export function Popover({
     return () => animation.stop();
   }, [open, progress, reduce]);
 
-  const close = useCallback(() => setOpen(false), [setOpen]);
+  // The panel is a `role="dialog"` and goes inert the moment it closes, so
+  // focus cannot be left sitting inside it: Escape hands it back to the
+  // trigger, the way the ARIA dialog pattern asks. A pointer dismissal takes
+  // the focus onward itself when it lands on something focusable — this only
+  // catches the case where it would otherwise be stranded.
+  const close = useCallback(() => {
+    setOpen(false);
+    const focused = document.activeElement;
+    const inPanel =
+      focused instanceof HTMLElement && contentRef.current?.contains(focused);
+    if (inPanel) triggerRef.current?.focus();
+  }, [setOpen]);
   // The panel is portalled, so both trees participate in outside detection.
   const ignoreContent = useCallback(
     (target: Element) => Boolean(contentRef.current?.contains(target)),

@@ -203,7 +203,8 @@ export function NotificationStack({
     if (event.key !== "Escape") return;
     event.preventDefault();
     collapse();
-    event.currentTarget.blur();
+    // Focus stays where the keyboard put it. Blurring here collapsed the stack
+    // *and* threw the user back to the top of the document.
   };
 
   const handleClick = () => {

@@ -599,6 +599,50 @@ describe("NotificationStack", () => {
   });
 });
 
+describe("Escape", () => {
+  test("hands focus back to the popover trigger", async () => {
+    const { getByRole } = render(
+      <Popover defaultOpen>
+        <PopoverTrigger>
+          <button type="button">Menu</button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <button type="button">Pick</button>
+        </PopoverContent>
+      </Popover>,
+    );
+
+    const trigger = getByRole("button", { name: "Menu" });
+    const pick = getByRole("button", { name: "Pick" });
+    pick.focus();
+    expect(document.activeElement).toBe(pick);
+
+    fireEvent.keyDown(pick, { key: "Escape" });
+    await waitFor(() =>
+      expect(trigger.getAttribute("aria-expanded")).toBe("false"),
+    );
+    // The panel goes inert on close, so focus cannot be left inside it.
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  test("leaves focus on the notification stack it collapsed", () => {
+    const { getByRole } = render(
+      <NotificationStack
+        items={[{ id: "a", title: "Motion review approved" }]}
+      />,
+    );
+
+    const stack = getByRole("button");
+    stack.focus();
+    fireEvent.focus(stack);
+    expect(stack.getAttribute("aria-expanded")).toBe("true");
+
+    fireEvent.keyDown(stack, { key: "Escape" });
+    expect(stack.getAttribute("aria-expanded")).toBe("false");
+    expect(document.activeElement).toBe(stack);
+  });
+});
+
 describe("consumed dismissal", () => {
   const items = [
     { id: "send", label: "Send", icon: <span>S</span> },
