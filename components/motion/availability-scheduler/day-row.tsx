@@ -1,7 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
 import { Plus, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useRef, useState } from "react";
 import { Switch } from "@/components/motion/switch";
 import { Tooltip } from "@/components/motion/tooltip";
@@ -52,8 +52,12 @@ export function DayRow({
   // Same rule one level down: ranges stack against each other inside the row.
   const [openRangeId, setOpenRangeId] = useState<string | null>(null);
 
+  // The scheduler holds one open panel for the whole week, so the id has to name
+  // one week-wide. A range id is only unique within its day — ids belong to the
+  // value, and a controlled one may well number its ranges per day — so two
+  // rows would otherwise answer to the same open panel.
   const panelId = (rangeId: string, edge: "start" | "end") =>
-    `${rangeId}:${edge}`;
+    `${day}:${rangeId}:${edge}`;
 
   const onRangePanelOpenChange = (
     rangeId: string,
