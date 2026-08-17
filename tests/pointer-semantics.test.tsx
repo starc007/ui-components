@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
-import { useState } from "react";
+import { ThemeProvider } from "next-themes";
+import { type ComponentPropsWithoutRef, useState } from "react";
 import { ExpandableActionBar } from "@/components/motion/expandable-action-bar";
 import { KnockoutWheel, ROUNDS } from "@/components/motion/knockout-wheel";
 import { NotificationStack } from "@/components/motion/notification-stack";
@@ -11,6 +12,7 @@ import {
 } from "@/components/motion/popover";
 import { PreviewRail } from "@/components/motion/preview-rail";
 import { SwipeableList } from "@/components/motion/swipeable-list";
+import { ThemeToggle } from "@/components/motion/theme-toggle";
 import { Tooltip } from "@/components/motion/tooltip";
 
 // Every component here used to pick an interaction *mode* from a device
@@ -321,6 +323,91 @@ describe("Tooltip", () => {
     expect(outsideClicks).toBe(1);
 
     outside.remove();
+    restore();
+  });
+
+  test("a tap runs the trigger's own onClick as well as raising the label", async () => {
+    const restore = withTouchCapability();
+    let activations = 0;
+    const { getByRole } = render(
+      <Tooltip content="Like this post" delay={0}>
+        <button
+          type="button"
+          onClick={() => {
+            activations += 1;
+          }}
+        >
+          Like
+        </button>
+      </Tooltip>,
+    );
+
+    const trigger = getByRole("button", { name: "Like" });
+    fireEvent.pointerDown(trigger, touch);
+    fireEvent.click(trigger);
+    await waitFor(() =>
+      expect(document.querySelectorAll("[role=tooltip]")).toHaveLength(1),
+    );
+    expect(activations).toBe(1);
+    restore();
+  });
+
+  // A trigger whose activation is the component's own, not a prop: it spreads
+  // the props it is handed *over* its handler, so anything the tooltip writes
+  // onto the child replaces the thing the control exists to do. The dock's
+  // theme control is exactly this shape, and a tap on it stopped switching the
+  // theme.
+  test("a trigger that owns its activation still activates on tap", async () => {
+    const restore = withTouchCapability();
+    let activations = 0;
+    function OwnActivation(props: ComponentPropsWithoutRef<"button">) {
+      return (
+        <button
+          type="button"
+          onClick={() => {
+            activations += 1;
+          }}
+          {...props}
+        >
+          Own
+        </button>
+      );
+    }
+
+    const { getByRole } = render(
+      <Tooltip content="Owns its click" delay={0}>
+        <OwnActivation />
+      </Tooltip>,
+    );
+
+    const trigger = getByRole("button", { name: "Own" });
+    fireEvent.pointerDown(trigger, touch);
+    fireEvent.click(trigger);
+    await waitFor(() =>
+      expect(document.querySelectorAll("[role=tooltip]")).toHaveLength(1),
+    );
+    expect(activations).toBe(1);
+    restore();
+  });
+
+  test("a tap on the wrapped ThemeToggle switches the theme", async () => {
+    const restore = withTouchCapability();
+    const { getByRole } = render(
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <Tooltip content="Light mode" delay={0}>
+          <ThemeToggle variant="rectangle" start="bottom-up" />
+        </Tooltip>
+      </ThemeProvider>,
+    );
+
+    const trigger = await waitFor(() =>
+      getByRole("button", { name: "Switch to light mode" }),
+    );
+    fireEvent.pointerDown(trigger, touch);
+    fireEvent.click(trigger);
+    await waitFor(() =>
+      expect(trigger.getAttribute("aria-label")).toBe("Switch to dark mode"),
+    );
     restore();
   });
 });

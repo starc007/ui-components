@@ -213,45 +213,48 @@ export function Tooltip({
 
   if (!isValidElement(children)) return children;
 
-  const child = children as ReactElement<Record<string, unknown>>;
-  // The child keeps whatever handler it already had — the anchor composes with
-  // it rather than overwriting it.
-  const compose =
-    <E,>(name: string, handler: (event: E) => void) =>
-    (event: E) => {
-      (child.props[name] as ((e: unknown) => void) | undefined)?.(event);
-      handler(event);
-    };
-
-  const trigger = cloneElement(child, {
-    // Pointer events, not the mouse pair: a tap fires compatibility
-    // mouseenter/mouseleave that carry no pointerType, which raced the tap
-    // path into opening and closing the same label.
-    onPointerEnter: compose<PointerEvent>("onPointerEnter", (event) => {
-      if (hover.enter(event)) show();
-    }),
-    onPointerLeave: compose<PointerEvent>("onPointerLeave", (event) => {
-      if (hover.leave(event)) hide();
-    }),
-    onFocus: compose("onFocus", show),
-    onBlur: compose("onBlur", hide),
-    onPointerDown: compose<PointerEvent>("onPointerDown", (event) => {
-      tap.start(event, open);
-    }),
-    // A gesture the platform took away sends no click, and a key press starts
-    // an activation that never had a pointer behind it. Either way the record
-    // has to go, or the next click reads a finger that has long since lifted.
-    onPointerCancel: compose("onPointerCancel", tap.drop),
-    onKeyDown: compose("onKeyDown", tap.drop),
-    onClick: compose("onClick", toggleOnTap),
+  // The label describes the trigger, so it has to name the trigger itself.
+  // Everything else the tooltip needs is read off the anchor below instead of
+  // cloned on: a handler written onto the child is the child's handler as far
+  // as that child can tell, and a component that owns its activation —
+  // hard-wiring onClick and spreading the rest of its props over it, as
+  // ThemeToggle does — then runs the tooltip's instead of its own. Composing
+  // with `props.onClick` cannot save it either, because a component element's
+  // props hold nothing the component does internally.
+  const trigger = cloneElement(children as ReactElement<Record<string, unknown>>, {
     "aria-describedby": id,
   });
 
   return (
     <>
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: the anchor is not a
+          control — it observes the trigger it wraps. Every event listed reaches
+          it on its own (pointerdown/click/keydown/pointercancel bubble, focus
+          and blur arrive as focusin/focusout, and enter/leave are derived from
+          pointerover/pointerout along a path the anchor is on), so the trigger
+          keeps every handler it came with. */}
       <span
         ref={anchorRef}
         className={cn("relative inline-flex align-middle", wrapperClassName)}
+        // Pointer events, not the mouse pair: a tap fires compatibility
+        // mouseenter/mouseleave that carry no pointerType, which raced the tap
+        // path into opening and closing the same label.
+        onPointerEnter={(event: PointerEvent) => {
+          if (hover.enter(event)) show();
+        }}
+        onPointerLeave={(event: PointerEvent) => {
+          if (hover.leave(event)) hide();
+        }}
+        onFocus={show}
+        onBlur={hide}
+        onPointerDown={(event: PointerEvent) => tap.start(event, open)}
+        // A gesture the platform took away sends no click, and a key press
+        // starts an activation that never had a pointer behind it. Either way
+        // the record has to go, or the next click reads a finger that has long
+        // since lifted.
+        onPointerCancel={tap.drop}
+        onKeyDown={tap.drop}
+        onClick={toggleOnTap}
       >
         {trigger}
       </span>
