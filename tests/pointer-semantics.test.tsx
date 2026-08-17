@@ -9,6 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/motion/popover";
 import { PreviewRail } from "@/components/motion/preview-rail";
+import { SwipeableList } from "@/components/motion/swipeable-list";
 import { Tooltip } from "@/components/motion/tooltip";
 
 // Every component here used to pick an interaction *mode* from a device
@@ -596,6 +597,33 @@ describe("NotificationStack", () => {
 
     outside.remove();
     restore();
+  });
+});
+
+describe("SwipeableList", () => {
+  test("leaves the row's content selectable to a mouse", () => {
+    const { getByText } = render(
+      <SwipeableList
+        items={[
+          {
+            id: "one",
+            title: "Design review",
+            description: "Selectable copy",
+            rightActions: [
+              { id: "delete", label: "Delete", icon: <span>x</span> },
+            ],
+          },
+        ]}
+      />,
+    );
+
+    const surface = getByText("Selectable copy").closest(
+      "[class*='cursor-grab']",
+    ) as HTMLElement;
+    // The row wraps content the consumer rendered, so selection is suppressed
+    // only where the platform runs its own press gestures.
+    expect(surface.className).toContain("pointer-coarse:select-none");
+    expect(surface.className.split(/\s+/)).not.toContain("select-none");
   });
 });
 
