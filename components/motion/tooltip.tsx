@@ -22,6 +22,7 @@ import {
 import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
@@ -173,20 +174,19 @@ export function Tooltip({
   // carries no pointerType, so the pointerdown that preceded it is what says
   // whether this was a tap; keyboard activation arrives with no pointerdown at
   // all, and focus has already shown the label there.
-  const tapPointer = useRef<string | null>(null);
+  const tap = useTapGesture<boolean>();
 
   const toggleOnTap = useCallback(() => {
-    const pointerType = tapPointer.current;
-    tapPointer.current = null;
-    if (pointerType === null || pointerType === "mouse") return;
-    if (open) {
+    const gesture = tap.take();
+    if (!gesture || gesture.pointerType === "mouse") return;
+    if (gesture.state) {
       hide();
       return;
     }
     if (timer.current) clearTimeout(timer.current);
     place();
     setOpen(true);
-  }, [hide, open, place]);
+  }, [hide, place, tap]);
 
   // ...and closed again by the next tap that lands somewhere else. The label
   // covers nothing interactive, so that tap passes through to what it hit.
@@ -235,8 +235,13 @@ export function Tooltip({
     onFocus: compose("onFocus", show),
     onBlur: compose("onBlur", hide),
     onPointerDown: compose<PointerEvent>("onPointerDown", (event) => {
-      tapPointer.current = event.pointerType;
+      tap.start(event, open);
     }),
+    // A gesture the platform took away sends no click, and a key press starts
+    // an activation that never had a pointer behind it. Either way the record
+    // has to go, or the next click reads a finger that has long since lifted.
+    onPointerCancel: compose("onPointerCancel", tap.drop),
+    onKeyDown: compose("onKeyDown", tap.drop),
     onClick: compose("onClick", toggleOnTap),
     "aria-describedby": id,
   });

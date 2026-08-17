@@ -12,6 +12,7 @@ import {
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
@@ -102,7 +103,7 @@ export function PreviewRail({
   const [focusedId, setFocusedId] = useState<string | null>(null);
   // A click carries no pointerType, so the pointerdown before it is what says
   // whether the activation was a tap. Keyboard activation has none at all.
-  const tapPointer = useRef<string | null>(null);
+  const tap = useTapGesture<boolean>();
 
   const clearPinned = useCallback(() => setPinnedId(null), []);
 
@@ -211,24 +212,28 @@ export function PreviewRail({
             if (isHoveringPointer(event)) setHoveredId(item.id);
           };
           const handlePointerDown = (event: PointerEvent<HTMLElement>) => {
-            tapPointer.current = event.pointerType;
+            tap.start(event, pinnedId === item.id);
             setFocusedId(null);
           };
+          // A gesture the platform takes away sends no click, and a key press
+          // starts an activation that never had a pointer behind it: either
+          // one leaves a record the next click would read as a tap of its own.
+          const dropGesture = () => tap.drop();
           const handleFocus = (currentTarget: HTMLElement) => {
             if (currentTarget.matches(":focus-visible")) {
               setFocusedId(item.id);
             }
           };
           const handleSelect = (event: MouseEvent<HTMLElement>) => {
-            const pointerType = tapPointer.current;
-            tapPointer.current = null;
-            const tapped = pointerType !== null && pointerType !== "mouse";
+            const gesture = tap.take();
+            const tapped =
+              gesture !== null && gesture.pointerType !== "mouse";
 
             if (tapped) {
               // A link would otherwise show its preview and leave the page in
               // the same tap, so the card is never read: the first tap lights
               // the tick, the second follows the link.
-              if (item.href && pinnedId !== item.id) {
+              if (item.href && !gesture.state) {
                 event.preventDefault();
                 setPinnedId(item.id);
                 return;
@@ -254,6 +259,8 @@ export function PreviewRail({
               aria-current={selected ? "page" : undefined}
               onPointerEnter={handlePointerEnter}
               onPointerDown={handlePointerDown}
+              onPointerCancel={dropGesture}
+              onKeyDown={dropGesture}
               onFocus={(event) => handleFocus(event.currentTarget)}
               onClick={handleSelect}
               style={sharedStyle}
@@ -270,6 +277,8 @@ export function PreviewRail({
               aria-current={selected ? "location" : undefined}
               onPointerEnter={handlePointerEnter}
               onPointerDown={handlePointerDown}
+              onPointerCancel={dropGesture}
+              onKeyDown={dropGesture}
               onFocus={(event) => handleFocus(event.currentTarget)}
               onClick={handleSelect}
               style={sharedStyle}

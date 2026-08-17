@@ -14,6 +14,7 @@ import {
   useState,
 } from "react";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
@@ -146,9 +147,7 @@ export function ExpandableActionBar({
   const trackRef = useRef<HTMLDivElement | null>(null);
   // What the last gesture on an action was, and whether the bar was already
   // expanded when it started. A click reports neither.
-  const gesture = useRef<{ pointerType: string; wasExpanded: boolean } | null>(
-    null,
-  );
+  const tap = useTapGesture<boolean>();
 
   const clearCollapseTimer = useCallback(() => {
     if (collapseTimer.current) window.clearTimeout(collapseTimer.current);
@@ -249,15 +248,17 @@ export function ExpandableActionBar({
                   setHoveredId(item.id);
                 }}
                 onPointerDown={(event: PointerEvent<HTMLButtonElement>) => {
-                  gesture.current = {
-                    pointerType: event.pointerType,
-                    wasExpanded: isExpanded,
-                  };
+                  tap.start(event, isExpanded);
                 }}
+                // A gesture the platform takes away sends no click, and a key
+                // press starts an activation that never had a pointer behind
+                // it: either one would otherwise leave the finger in place for
+                // the next click to spend.
+                onPointerCancel={tap.drop}
+                onKeyDown={tap.drop}
                 onClick={(event: MouseEvent<HTMLButtonElement>) => {
                   event.currentTarget.blur();
-                  const tap = gesture.current;
-                  gesture.current = null;
+                  const gesture = tap.take();
                   // Nothing reveals the labels to a finger, so the first tap
                   // expands the bar and the next one runs the action. The bar
                   // state is read from the gesture's start: a browser that
@@ -267,9 +268,9 @@ export function ExpandableActionBar({
                   // bar that declines to expand still runs the action rather
                   // than swallowing every tap.
                   const firstTap =
-                    tap !== null &&
-                    tap.pointerType !== "mouse" &&
-                    !tap.wasExpanded &&
+                    gesture !== null &&
+                    gesture.pointerType !== "mouse" &&
+                    !gesture.state &&
                     !tapExpanded;
                   if (firstTap && expandOnHover) {
                     setTapExpanded(true);

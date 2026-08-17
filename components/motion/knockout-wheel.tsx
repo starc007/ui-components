@@ -14,6 +14,7 @@ import {
 import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PANEL } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
@@ -484,7 +485,7 @@ const WheelAnchor = memo(function WheelAnchor({
   // query with true for a finger, so hanging the tap path off "cannot hover"
   // left it unreachable on the very device it was written for. The event says
   // which input arrived.
-  const tapPointer = useRef<string | null>(null);
+  const tap = useTapGesture<boolean>();
   const trigger = (
     <button
       type="button"
@@ -492,6 +493,10 @@ const WheelAnchor = memo(function WheelAnchor({
       tabIndex={isTabStop ? 0 : -1}
       aria-label={caption}
       onKeyDown={(event: KeyboardEvent) => {
+        // A key press starts a keyboard activation, which never had a pointer
+        // behind it: a gesture the platform took away must not be read as the
+        // tap behind the click this press synthesizes.
+        tap.drop();
         if (!event.key.startsWith("Arrow")) return;
         // Arrows drive the wheel here, so they must not also scroll the page.
         event.preventDefault();
@@ -506,18 +511,18 @@ const WheelAnchor = memo(function WheelAnchor({
         if (isHoveringPointer(event)) onHover(null);
       }}
       onPointerDown={(event) => {
-        tapPointer.current = event.pointerType;
+        tap.start(event, isPinned);
       }}
+      onPointerCancel={tap.drop}
       // Click, not pointerdown: a tap focuses the button first, and unpinning
       // has to also drop that focus or the flag stays lit.
       onClick={(event) => {
-        const pointerType = tapPointer.current;
-        tapPointer.current = null;
+        const gesture = tap.take();
         // A hovering pointer lit the flag on its way in and puts it out on the
         // way past; only a gesture without a hover pins one.
-        if (pointerType === null || pointerType === "mouse") return;
+        if (!gesture || gesture.pointerType === "mouse") return;
         onToggle(node.id);
-        if (isPinned) event.currentTarget.blur();
+        if (gesture.state) event.currentTarget.blur();
       }}
       // ring-foreground, not the ring token: --ring is a 10% white hairline
       // that disappears over a flag. Focus has to be obvious.

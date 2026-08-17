@@ -79,6 +79,31 @@ describe("Popover trigger='hover'", () => {
     restore();
   });
 
+  test("records the tap even when the child prevents the pointerdown default", async () => {
+    const restore = withTouchCapability();
+    const { getByRole } = render(
+      <Popover trigger="hover">
+        <PopoverTrigger>
+          <button
+            type="button"
+            onPointerDown={(event) => event.preventDefault()}
+          >
+            Hover me
+          </button>
+        </PopoverTrigger>
+        <PopoverContent>Panel</PopoverContent>
+      </Popover>,
+    );
+
+    const trigger = getByRole("button", { name: "Hover me" });
+    fireEvent.pointerDown(trigger, touch);
+    fireEvent.click(trigger);
+    await waitFor(() =>
+      expect(trigger.getAttribute("aria-expanded")).toBe("true"),
+    );
+    restore();
+  });
+
   test("leaves a mouse click on the trigger alone", async () => {
     const restore = withTouchCapability();
     const { getByRole } = render(
@@ -252,6 +277,28 @@ describe("ExpandableActionBar", () => {
     restore();
   });
 
+  test("a cancelled tap does not swallow the next keyboard action", () => {
+    const restore = withTouchCapability();
+    const fired: string[] = [];
+    const { getByTitle } = render(
+      <ExpandableActionBar
+        items={items}
+        onAction={(item) => fired.push(item.id)}
+      />,
+    );
+
+    const send = getByTitle("Send");
+    fireEvent.pointerDown(send, touch);
+    fireEvent.pointerCancel(send, touch);
+
+    // Enter on the focused action: the bar is collapsed, but a keyboard user
+    // reads the labels from the accessible name, so it acts straight away.
+    fireEvent.keyDown(send, { key: "Enter" });
+    fireEvent.click(send, { detail: 0 });
+    expect(fired).toEqual(["send"]);
+    restore();
+  });
+
   test("the tap that dismisses an expanded bar does not also fire what it hit", async () => {
     const restore = withTouchCapability();
     const outside = document.createElement("button");
@@ -320,6 +367,29 @@ describe("NotificationStack", () => {
     const stack = container.querySelector("button") as HTMLButtonElement;
     fireEvent.pointerEnter(stack, { pointerType: "pen", buttons: 0 });
     expect(stack.getAttribute("aria-expanded")).toBe("true");
+  });
+
+  test("a cancelled tap does not stand in for the next keyboard activation", () => {
+    let viewedAll = 0;
+    const { getByRole } = render(
+      <NotificationStack
+        items={items}
+        onViewAll={() => {
+          viewedAll += 1;
+        }}
+      />,
+    );
+
+    const stack = getByRole("button");
+    fireEvent.pointerDown(stack, touch);
+    fireEvent.pointerCancel(stack, touch);
+
+    // Focus expands the stack, so Enter on it is the "view all" activation.
+    fireEvent.focus(stack);
+    expect(stack.getAttribute("aria-expanded")).toBe("true");
+    fireEvent.keyDown(stack, { key: "Enter" });
+    fireEvent.click(stack, { detail: 0 });
+    expect(viewedAll).toBe(1);
   });
 
   test("the tap that collapses it does not fire the control it landed on", () => {
@@ -395,6 +465,36 @@ describe("PreviewRail", () => {
 
     fireEvent.pointerDown(two, mouse);
     expect(fireEvent.click(two)).toBe(true);
+    restore();
+  });
+
+  test("a cancelled tap is not spent on the next keyboard activation", () => {
+    const restore = withTouchCapability();
+    const { container, getByLabelText } = render(<PreviewRail items={items} />);
+    const two = getByLabelText("Two");
+
+    // The OS claims the touch mid-gesture — a scroll, a system edge swipe — so
+    // no click ever lands on the tick.
+    fireEvent.pointerDown(two, touch);
+    fireEvent.pointerCancel(two, touch);
+
+    // Enter on the focused tick must navigate on the first press.
+    expect(fireEvent.click(two, { detail: 0 })).toBe(true);
+    expect(container.textContent).not.toContain("Second");
+    restore();
+  });
+
+  test("a gesture that ends in a key press is not spent on that key's click", () => {
+    const restore = withTouchCapability();
+    const { container, getByLabelText } = render(<PreviewRail items={items} />);
+    const two = getByLabelText("Two");
+
+    // Pressed, then dragged away and released outside: no click, no cancel.
+    fireEvent.pointerDown(two, touch);
+    fireEvent.keyDown(two, { key: "Enter" });
+
+    expect(fireEvent.click(two, { detail: 0 })).toBe(true);
+    expect(container.textContent).not.toContain("Second");
     restore();
   });
 

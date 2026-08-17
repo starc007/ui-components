@@ -26,6 +26,7 @@ import {
 import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
@@ -397,7 +398,7 @@ export function PopoverTrigger({ children }: PopoverTriggerProps) {
   const ctx = usePopoverContext("PopoverTrigger");
   // What the last gesture on the trigger was, and whether the panel was
   // already open when it started. A click reports neither.
-  const gesture = useRef<{ pointerType: string; wasOpen: boolean } | null>(null);
+  const tap = useTapGesture<boolean>();
 
   if (!isValidElement(children)) return children;
 
@@ -415,6 +416,18 @@ export function PopoverTrigger({ children }: PopoverTriggerProps) {
       if (!event.defaultPrevented) handler(event);
     };
 
+  // Observation, not action. `compose` steps aside for a child that handled
+  // the event itself, which is right for anything that *does* something — but
+  // a child preventing the pointerdown default (to hold focus, say) has not
+  // said the gesture didn't happen. Skipping the record there left the panel
+  // reading whatever the gesture before it had put in.
+  const observe =
+    <E,>(name: string, handler: (event: E) => void) =>
+    (event: E) => {
+      (childProps[name] as ((e: unknown) => void) | undefined)?.(event);
+      handler(event);
+    };
+
   // The hover trigger keeps its hover path and *adds* a tap one, rather than
   // swapping mode on a device that reports a touchscreen: a touchscreen laptop
   // has both inputs and the mouse must keep working. A hovering pointer has
@@ -428,20 +441,16 @@ export function PopoverTrigger({ children }: PopoverTriggerProps) {
       ? {
           onFocus: compose("onFocus", ctx.openHover),
           onBlur: compose("onBlur", ctx.scheduleClose),
-          onPointerDown: compose<React.PointerEvent>(
+          onPointerDown: observe<React.PointerEvent>(
             "onPointerDown",
-            (event) => {
-              gesture.current = {
-                pointerType: event.pointerType,
-                wasOpen: ctx.open,
-              };
-            },
+            (event) => tap.start(event, ctx.open),
           ),
+          onPointerCancel: observe("onPointerCancel", tap.drop),
+          onKeyDown: observe("onKeyDown", tap.drop),
           onClick: compose("onClick", () => {
-            const tap = gesture.current;
-            gesture.current = null;
-            if (!tap || tap.pointerType === "mouse") return;
-            ctx.setOpen(!tap.wasOpen);
+            const gesture = tap.take();
+            if (!gesture || gesture.pointerType === "mouse") return;
+            ctx.setOpen(!gesture.state);
           }),
         }
       : { onClick: compose("onClick", ctx.toggle) };

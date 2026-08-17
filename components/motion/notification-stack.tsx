@@ -14,6 +14,7 @@ import {
 import { ActionSwapText } from "@/components/motion/action-swap";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
@@ -139,9 +140,7 @@ export function NotificationStack({
   const rootRef = useRef<HTMLButtonElement>(null);
   // What the last gesture on the stack was, and whether it was already
   // expanded when that gesture started. A click reports neither.
-  const gesture = useRef<{ pointerType: string; wasExpanded: boolean } | null>(
-    null,
-  );
+  const tap = useTapGesture<boolean>();
   const [isExpanded, setIsExpanded] = useControllableExpanded({
     expanded,
     defaultExpanded,
@@ -197,6 +196,9 @@ export function NotificationStack({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    // A key press is the start of a keyboard activation, never part of a tap:
+    // whatever a taken-away gesture left behind must not be read as one.
+    tap.drop();
     if (event.key !== "Escape") return;
     event.preventDefault();
     collapse();
@@ -204,16 +206,15 @@ export function NotificationStack({
   };
 
   const handleClick = () => {
-    const tap = gesture.current;
-    gesture.current = null;
+    const gesture = tap.take();
     // Read from where the gesture started, not from now: a browser that
     // focuses the stack on contact expands it mid-tap, and the first tap would
     // then follow `onViewAll` instead of opening the list it was meant to.
-    const wasExpanded = tap ? tap.wasExpanded : isExpanded;
+    const wasExpanded = gesture ? gesture.state : isExpanded;
 
     if (!wasExpanded) {
       setIsExpanded(true);
-      if (tap && tap.pointerType !== "mouse") setTapExpanded(true);
+      if (gesture && gesture.pointerType !== "mouse") setTapExpanded(true);
       return;
     }
 
@@ -247,11 +248,11 @@ export function NotificationStack({
         if (isHoveringPointer(event) && !hasFocus.current) collapse();
       }}
       onPointerDown={(event: PointerEvent<HTMLButtonElement>) => {
-        gesture.current = {
-          pointerType: event.pointerType,
-          wasExpanded: isExpanded,
-        };
+        tap.start(event, isExpanded);
       }}
+      // The platform can take the gesture away mid-press — a scroll, a system
+      // swipe — and no click follows it.
+      onPointerCancel={tap.drop}
       onFocus={() => {
         hasFocus.current = true;
         setIsExpanded(true);
