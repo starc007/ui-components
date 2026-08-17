@@ -11,7 +11,10 @@ function minWidthOf(container: HTMLElement) {
   return table?.style.minWidth ?? null;
 }
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  document.documentElement.style.fontSize = "";
+});
 
 describe("Table intrinsic width floor", () => {
   test("a column of bare inputs is floored at a width a value fits in", () => {
@@ -67,6 +70,20 @@ describe("Table intrinsic width floor", () => {
 
     // 12rem = 192, plus the default 64 minimum for the fr column.
     expect(minWidthOf(container)).toBe("max(100%, 256px)");
+  });
+
+  test("a rem width is worth what the document's root says it is", () => {
+    document.documentElement.style.fontSize = "20px";
+    const columns: TableColumn<Row>[] = [
+      { key: "name", header: "Name", width: "12rem" },
+      { key: "role", header: "Role", width: "2fr" },
+    ];
+    const { container } = render(
+      <Table data={DATA} columns={columns} getRowId={(r) => r.id} />,
+    );
+
+    // The browser lays that column out at 240, so the floor has to reserve 240.
+    expect(minWidthOf(container)).toBe("max(100%, 304px)");
   });
 
   test("minColumnWidth raises the floor for shared columns", () => {

@@ -14,7 +14,7 @@ import { useColumnReorder } from "./use-column-reorder";
 import { useColumnResize } from "./use-column-resize";
 import { useColumnSort } from "./use-column-sort";
 import { useRowSelection } from "./use-row-selection";
-import { CHECKBOX_PX, CHECKBOX_WIDTH, alignText, readCell } from "./utils";
+import { alignText, CHECKBOX_PX, CHECKBOX_WIDTH, readCell } from "./utils";
 
 export type {
   SortDirection,
@@ -29,19 +29,42 @@ export type {
  */
 const INPUT_COLUMN_WIDTH = 120;
 
+/** The root font size Tailwind's rem scale assumes, and the pre-measure guess. */
+const DEFAULT_ROOT_FONT_SIZE = 16;
+
+/**
+ * What one `rem` is worth here, in px. The default until the first client
+ * layout, so the server and the hydrating client emit the same floor; measured
+ * once after that, because a document that sets its own `html { font-size }`
+ * lays a rem column out against that size and a floor computed from 16 would
+ * fall short by the same factor.
+ */
+function useRootFontSize() {
+  const [size, setSize] = useState(DEFAULT_ROOT_FONT_SIZE);
+  useEffect(() => {
+    const measured = Number.parseFloat(
+      getComputedStyle(document.documentElement).fontSize,
+    );
+    if (measured > 0) setSize(measured);
+  }, []);
+  return size;
+}
+
 /**
  * The absolute width a column declared, in px, or null when it declared a share
  * of the remainder instead (`fr`, `%`, `auto`, `calc()`, nothing at all) — those
  * are worth whatever is left over, which is not a width this can add up.
  */
-function resolveColumnWidth(width: string | undefined): number | null {
+function resolveColumnWidth(
+  width: string | undefined,
+  rootFontSize: number,
+): number | null {
   if (!width) return null;
   const value = Number.parseFloat(width);
   if (!Number.isFinite(value)) return null;
   if (width.endsWith("px")) return value;
-  // rem is the other absolute length the repo writes; resolve against the root
-  // size Tailwind's own scale assumes.
-  if (width.endsWith("rem")) return value * 16;
+  // rem is the other absolute length the repo writes.
+  if (width.endsWith("rem")) return value * rootFontSize;
   return null;
 }
 
@@ -146,6 +169,7 @@ export function Table<T>({
     orderedColumns.length > 0 &&
     orderedColumns.every((c) => widths[c.key] != null);
 
+  const rootFontSize = useRootFontSize();
   // In a container narrower than the columns, `table-layout: fixed` shrinks
   // every column toward zero instead of scrolling. Floor the table at what the
   // columns actually asked for — an absolute declared width where there is one,
@@ -161,7 +185,7 @@ export function Table<T>({
     const total = orderedColumns.reduce((sum, column) => {
       const resized = widths[column.key];
       if (resized != null) return sum + resized;
-      const declared = resolveColumnWidth(column.width);
+      const declared = resolveColumnWidth(column.width, rootFontSize);
       if (declared != null) return sum + declared;
       return (
         sum +
@@ -175,6 +199,7 @@ export function Table<T>({
     minColumnWidth,
     onColumnRename,
     orderedColumns,
+    rootFontSize,
     selectable,
     widths,
   ]);
