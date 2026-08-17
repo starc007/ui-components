@@ -13,6 +13,7 @@ import { type PointerEvent as ReactPointerEvent, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Checkbox } from "@/components/motion/checkbox";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
+import { TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 import { TableMenu } from "./table-menu";
 import type {
@@ -251,7 +252,12 @@ export function TableHeader<T>({
                     onPointerDown={(e) => onReorderStart(column.key, e)}
                     onPointerMove={onReorderMove}
                     onPointerUp={onReorderEnd}
-                    className="flex h-full w-6 cursor-grab touch-none items-center justify-center text-muted-foreground/60 transition-colors hover:text-foreground active:cursor-grabbing"
+                    className={cn(
+                      "flex h-full w-6 cursor-grab touch-none items-center justify-center text-muted-foreground/60 transition-colors hover:text-foreground active:cursor-grabbing",
+                      // The grip owns the whole press, so iOS must not open its
+                      // callout out of the same one and cancel the drag.
+                      TOUCH_GESTURE_CLASS,
+                    )}
                   >
                     <GripVertical className="h-3.5 w-3.5" />
                   </button>
@@ -317,7 +323,11 @@ export function TableHeader<T>({
                   onPointerDown={(e) => onResizeStart(column.key, e)}
                   onPointerMove={onResizeMove}
                   onPointerUp={onResizeEnd}
-                  className="absolute top-0 right-0 h-full w-1.5 cursor-col-resize touch-none bg-transparent transition-colors hover:bg-primary/40"
+                  className={cn(
+                    "absolute top-0 right-0 h-full w-1.5 cursor-col-resize touch-none bg-transparent transition-colors hover:bg-primary/40",
+                    // Same for the resize drag: the handle drives it end to end.
+                    TOUCH_GESTURE_CLASS,
+                  )}
                 />
               ) : null}
             </th>
