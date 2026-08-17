@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
+import { useState } from "react";
 import { ExpandableActionBar } from "@/components/motion/expandable-action-bar";
 import { KnockoutWheel, ROUNDS } from "@/components/motion/knockout-wheel";
 import { NotificationStack } from "@/components/motion/notification-stack";
@@ -448,6 +449,45 @@ describe("ExpandableActionBar", () => {
     fireEvent.keyDown(send, { key: "Enter" });
     fireEvent.click(send, { detail: 0 });
     expect(fired).toEqual(["send"]);
+    restore();
+  });
+
+  test("an external collapse disarms the tap that expanded the bar", () => {
+    const restore = withTouchCapability();
+    const fired: string[] = [];
+
+    function ControlledBar() {
+      const [expanded, setExpanded] = useState(false);
+      return (
+        <>
+          <ExpandableActionBar
+            items={items}
+            expanded={expanded}
+            onExpandedChange={setExpanded}
+            onAction={(item) => fired.push(item.id)}
+          />
+          <button type="button" onClick={() => setExpanded(false)}>
+            Collapse
+          </button>
+        </>
+      );
+    }
+
+    const { getByTitle, getByRole } = render(<ControlledBar />);
+    const send = getByTitle("Send");
+    fireEvent.pointerDown(send, touch);
+    fireEvent.click(send);
+    expect(fired).toEqual([]);
+
+    // Collapsed from the keyboard, so no outside pointer gesture dismisses the
+    // bar on the way.
+    fireEvent.click(getByRole("button", { name: "Collapse" }), { detail: 0 });
+
+    // The labels are gone, so this tap has to reveal them again rather than
+    // act on what it cannot read.
+    fireEvent.pointerDown(send, touch);
+    fireEvent.click(send);
+    expect(fired).toEqual([]);
     restore();
   });
 
