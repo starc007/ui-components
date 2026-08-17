@@ -95,9 +95,26 @@ export function MorphPopover({
     [root, trigger],
   );
 
+  // The panel is a `role="dialog"` and goes inert the moment it closes, so
+  // focus cannot be left sitting inside it: a dismissal hands it back to the
+  // trigger, the way the ARIA dialog pattern asks. A pointer dismissal takes
+  // the focus onward itself when it lands on something focusable — this only
+  // catches the case where it would otherwise be stranded. When no trigger has
+  // registered, the root anchor stands in only if it can actually hold focus;
+  // there is nowhere better than where the keyboard already is, so leave it.
+  const close = useCallback(() => {
+    setOpen(false);
+    const focused = document.activeElement;
+    const inPanel =
+      focused instanceof HTMLElement && contentRef.current?.contains(focused);
+    if (!inPanel) return;
+    const restore = trigger ?? (root && root.tabIndex >= 0 ? root : null);
+    restore?.focus();
+  }, [root, setOpen, trigger]);
+
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     const onPointer = (e: PointerEvent) => {
       const target = e.target as Node;
       if (
@@ -105,7 +122,7 @@ export function MorphPopover({
         !root.contains(target) &&
         !contentRef.current?.contains(target)
       )
-        setOpen(false);
+        close();
     };
     window.addEventListener("keydown", onKey);
     window.addEventListener("pointerdown", onPointer);
@@ -113,7 +130,7 @@ export function MorphPopover({
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointerdown", onPointer);
     };
-  }, [open, root, setOpen]);
+  }, [open, root, close]);
 
   const ctx = useMemo<MorphContextValue>(
     () => ({
