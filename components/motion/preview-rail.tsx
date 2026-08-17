@@ -12,6 +12,7 @@ import {
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export interface PreviewRailItem {
@@ -43,18 +44,6 @@ export interface PreviewRailProps {
   previewContainerClassName?: string;
   previewClassName?: string;
 }
-
-// Which input the user is holding *right now* — a device capability cannot
-// answer that. A touchscreen laptop hovers and taps, and iPadOS reports a fine
-// hovering pointer for a finger, so both paths stay live and each handler
-// branches on the event it was given instead.
-//
-// A pen resting on the glass is making contact, not hovering: `buttons` is the
-// tell, and it sends a pen tap down the same route a finger takes.
-const isHoveringPointer = (event: {
-  pointerType: string;
-  buttons: number;
-}) => event.pointerType !== "touch" && event.buttons === 0;
 
 function DefaultPreview({ item }: { item: PreviewRailItem }) {
   return (

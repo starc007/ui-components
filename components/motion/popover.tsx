@@ -26,6 +26,7 @@ import {
 import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -46,19 +47,6 @@ const GOO_CLOSE_SPRING = {
 } as const;
 const HOVER_CLOSE_DELAY = 120;
 const CIRCLE_KAPPA = 0.5523;
-
-// Which input the user is holding *right now* — a device capability cannot
-// answer that. A touchscreen laptop hovers and taps, and iPadOS reports a fine
-// hovering pointer for a finger, so both paths stay live and every handler
-// branches on the event it was given instead.
-//
-// A pen that rests on the glass is making contact, not hovering: `buttons` is
-// the tell, and it keeps a pen tap out of the hover path so it takes the same
-// route a finger does.
-const isHoveringPointer = (event: {
-  pointerType: string;
-  buttons: number;
-}) => event.pointerType !== "touch" && event.buttons === 0;
 
 // `onPointerEnter`/`onPointerLeave` rather than the mouse pair: a tap fires
 // compatibility mouseenter/mouseleave that carry no pointerType at all, and

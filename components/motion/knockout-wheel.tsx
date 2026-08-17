@@ -15,6 +15,7 @@ import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PANEL } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type Team = {
@@ -98,18 +99,6 @@ const HUB_ANGLE = 90;
 // Module scope so the memoized marks keep a stable transition identity.
 const DIM_TRANSITION = { duration: 0.18 } as const;
 const NO_TRANSITION = { duration: 0 } as const;
-
-// Which input the user is holding *right now* — a device capability cannot
-// answer that. A touchscreen laptop hovers and taps, and iPadOS reports a fine
-// hovering pointer for a finger, so both paths stay live and each handler
-// branches on the event it was given instead.
-//
-// A pen resting on the glass is making contact, not hovering: `buttons` is the
-// tell, and it sends a pen tap down the same route a finger takes.
-const isHoveringPointer = (event: {
-  pointerType: string;
-  buttons: number;
-}) => event.pointerType !== "touch" && event.buttons === 0;
 
 // Math.sin/cos are implementation-defined down in the last digits, so the SSR
 // engine and the browser disagree and React reports a hydration mismatch on

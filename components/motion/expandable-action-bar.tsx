@@ -14,6 +14,7 @@ import {
   useState,
 } from "react";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { isHoveringPointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type ExpandableActionBarSize = "sm" | "md";
@@ -90,18 +91,6 @@ const ICON_SIZE_CLASS: Record<ExpandableActionBarSize, string> = {
   sm: "h-3.5 w-3.5",
   md: "h-4 w-4",
 };
-
-// Which input the user is holding *right now* — a device capability cannot
-// answer that. A touchscreen laptop hovers and taps, and iPadOS reports a fine
-// hovering pointer for a finger, so both paths stay live and each handler
-// branches on the event it was given instead.
-//
-// A pen resting on the glass is making contact, not hovering: `buttons` is the
-// tell, and it sends a pen tap down the same route a finger takes.
-const isHoveringPointer = (event: {
-  pointerType: string;
-  buttons: number;
-}) => event.pointerType !== "touch" && event.buttons === 0;
 
 function useControllableExpanded({
   expanded,
