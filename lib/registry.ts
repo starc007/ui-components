@@ -1499,6 +1499,22 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/command-palette.tsx",
       },
       {
+        slug: "morphing-search",
+        name: "Morphing Search",
+        description:
+          "Search field that expands into a glass results surface from the same shell, whether opened by click or keyboard shortcut.",
+        file: "components/motion/morphing-search.tsx",
+        badge: "new",
+        launchedAt: "2026-08-18",
+        keywords: [
+          "morphing search react",
+          "animated search component",
+          "search overlay react",
+          "keyboard search shortcut",
+          "command search ui",
+        ],
+      },
+      {
         slug: "expandable-action-bar",
         name: "Expandable Action Bar",
         description: "Compact icon actions that expand into labeled controls on hover or focus with shared layout motion.",

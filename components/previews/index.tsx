@@ -160,6 +160,11 @@ export const previews: Record<string, ComponentType> = {
   "blocks/command-palette": dynamic(() =>
     import("./blocks/command-palette.preview").then((m) => m.CommandPalettePreview),
   ),
+  "blocks/morphing-search": dynamic(() =>
+    import("./blocks/morphing-search.preview").then(
+      (m) => m.MorphingSearchPreview,
+    ),
+  ),
   "blocks/feedback-widget": dynamic(() =>
     import("./blocks/feedback-widget.preview").then((m) => m.FeedbackWidgetPreview),
   ),

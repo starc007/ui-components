@@ -54,6 +54,7 @@ import {
 } from "@/components/motion/knockout-wheel";
 import { Marquee } from "@/components/motion/marquee";
 import { MorphingModal } from "@/components/motion/morphing-modal";
+import { MorphingSearch } from "@/components/motion/morphing-search";
 import { Parallax } from "@/components/motion/parallax";
 import {
   Popover,
@@ -696,6 +697,35 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ],
   ["TextReveal", () => <TextReveal text="Ship it" />],
   ["TextScramble", () => <TextScramble text="Running checks…" />],
+  [
+    "MorphingSearch closed",
+    () => (
+      <MorphingSearch
+        items={[
+          {
+            id: "docs",
+            title: "Documentation",
+            description: "Read the component guide",
+          },
+        ]}
+      />
+    ),
+  ],
+  [
+    "MorphingSearch open",
+    () => (
+      <MorphingSearch
+        defaultOpen
+        items={[
+          {
+            id: "docs",
+            title: "Documentation",
+            description: "Read the component guide",
+          },
+        ]}
+      />
+    ),
+  ],
   [
     "Tooltip",
     () => (
