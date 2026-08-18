@@ -50,6 +50,7 @@ type AnchorRect = {
 
 // Conceal only the unstable first frames of the shared-layout projection.
 const CARET_REVEAL_DELAY_MS = 100;
+const INPUT_TEXT_REVEAL_DELAY_MS = 250;
 
 function isEditableTarget(target: EventTarget | null) {
 	if (!(target instanceof HTMLElement)) return false;
@@ -77,6 +78,7 @@ export function MorphingSearch({
 	const [query, setQuery] = useState("");
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [caretVisible, setCaretVisible] = useState(true);
+	const [inputTextVisible, setInputTextVisible] = useState(true);
 	const [mounted, setMounted] = useState(false);
 	const [anchorRect, setAnchorRect] = useState<AnchorRect>({
 		top: 16,
@@ -113,6 +115,7 @@ export function MorphingSearch({
 	const openSearch = useCallback(() => {
 		measureAnchor();
 		setCaretVisible(Boolean(reduce));
+		setInputTextVisible(Boolean(reduce));
 		previousFocusRef.current =
 			document.activeElement instanceof HTMLElement
 				? document.activeElement
@@ -179,7 +182,10 @@ export function MorphingSearch({
 	useEffect(() => {
 		if (open) {
 			const opening = !wasOpenRef.current;
-			if (opening) setCaretVisible(Boolean(reduce));
+			if (opening) {
+				setCaretVisible(Boolean(reduce));
+				setInputTextVisible(Boolean(reduce));
+			}
 			updateQuery("");
 			const frame = requestAnimationFrame(() => inputRef.current?.focus());
 			const caretTimer =
@@ -189,9 +195,17 @@ export function MorphingSearch({
 							CARET_REVEAL_DELAY_MS,
 						)
 					: undefined;
+			const inputTextTimer =
+				opening && !reduce
+					? window.setTimeout(
+							() => setInputTextVisible(true),
+							INPUT_TEXT_REVEAL_DELAY_MS,
+						)
+					: undefined;
 			return () => {
 				cancelAnimationFrame(frame);
 				if (caretTimer !== undefined) window.clearTimeout(caretTimer);
+				if (inputTextTimer !== undefined) window.clearTimeout(inputTextTimer);
 			};
 		}
 
@@ -369,20 +383,24 @@ export function MorphingSearch({
 													? `${uid}-option-${activeIndex}`
 													: undefined
 											}
-											className={cn(
-												"h-10 w-full bg-transparent text-sm text-foreground outline-none",
-												!caretVisible && "caret-transparent",
-											)}
+											style={{
+												color: inputTextVisible ? undefined : "transparent",
+												caretColor: caretVisible
+													? "var(--color-foreground)"
+													: "transparent",
+											}}
+											className="size-full bg-transparent text-sm text-foreground outline-none"
 										/>
 										<motion.span
 											layoutId={labelLayoutId}
 											aria-hidden="true"
-											className={cn(
-												"pointer-events-none absolute inset-y-0 left-0 flex max-w-full items-center truncate text-sm text-muted-foreground",
-												query && "opacity-0",
-											)}
+											className="pointer-events-none absolute inset-y-0 left-0 flex max-w-full items-center truncate text-sm text-muted-foreground"
 										>
-											{placeholder}
+											<span
+												style={{ visibility: query ? "hidden" : "visible" }}
+											>
+												{placeholder}
+											</span>
 										</motion.span>
 									</div>
 									<motion.kbd
