@@ -48,6 +48,9 @@ type AnchorRect = {
 	width: number;
 };
 
+// Conceal only the unstable first frames of the shared-layout projection.
+const CARET_REVEAL_DELAY_MS = 100;
+
 function isEditableTarget(target: EventTarget | null) {
 	if (!(target instanceof HTMLElement)) return false;
 	return (
@@ -73,6 +76,7 @@ export function MorphingSearch({
 	const [internalOpen, setInternalOpen] = useState(defaultOpen);
 	const [query, setQuery] = useState("");
 	const [activeIndex, setActiveIndex] = useState(0);
+	const [caretVisible, setCaretVisible] = useState(true);
 	const [mounted, setMounted] = useState(false);
 	const [anchorRect, setAnchorRect] = useState<AnchorRect>({
 		top: 16,
@@ -108,12 +112,13 @@ export function MorphingSearch({
 
 	const openSearch = useCallback(() => {
 		measureAnchor();
+		setCaretVisible(Boolean(reduce));
 		previousFocusRef.current =
 			document.activeElement instanceof HTMLElement
 				? document.activeElement
 				: null;
 		setOpen(true);
-	}, [measureAnchor, setOpen]);
+	}, [measureAnchor, reduce, setOpen]);
 
 	const updateQuery = useCallback(
 		(next: string) => {
@@ -173,9 +178,21 @@ export function MorphingSearch({
 
 	useEffect(() => {
 		if (open) {
+			const opening = !wasOpenRef.current;
+			if (opening) setCaretVisible(Boolean(reduce));
 			updateQuery("");
 			const frame = requestAnimationFrame(() => inputRef.current?.focus());
-			return () => cancelAnimationFrame(frame);
+			const caretTimer =
+				opening && !reduce
+					? window.setTimeout(
+							() => setCaretVisible(true),
+							CARET_REVEAL_DELAY_MS,
+						)
+					: undefined;
+			return () => {
+				cancelAnimationFrame(frame);
+				if (caretTimer !== undefined) window.clearTimeout(caretTimer);
+			};
 		}
 
 		if (wasOpenRef.current) {
@@ -188,7 +205,7 @@ export function MorphingSearch({
 			});
 			return () => cancelAnimationFrame(frame);
 		}
-	}, [open, updateQuery]);
+	}, [open, reduce, updateQuery]);
 
 	useEffect(() => {
 		wasOpenRef.current = open;
@@ -337,10 +354,7 @@ export function MorphingSearch({
 									<motion.span layoutId={iconLayoutId} className="shrink-0">
 										<Search className="size-4 text-muted-foreground" />
 									</motion.span>
-									<motion.div
-										layoutId={labelLayoutId}
-										className="min-w-0 flex-1"
-									>
+									<div className="relative flex h-10 min-w-0 flex-1 items-center">
 										<input
 											ref={inputRef}
 											value={query}
@@ -355,10 +369,22 @@ export function MorphingSearch({
 													? `${uid}-option-${activeIndex}`
 													: undefined
 											}
-											placeholder={placeholder}
-											className="h-10 w-full bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground"
+											className={cn(
+												"h-10 w-full bg-transparent text-sm text-foreground outline-none",
+												!caretVisible && "caret-transparent",
+											)}
 										/>
-									</motion.div>
+										<motion.span
+											layoutId={labelLayoutId}
+											aria-hidden="true"
+											className={cn(
+												"pointer-events-none absolute inset-y-0 left-0 flex max-w-full items-center truncate text-sm text-muted-foreground",
+												query && "opacity-0",
+											)}
+										>
+											{placeholder}
+										</motion.span>
+									</div>
 									<motion.kbd
 										layoutId={shortcutLayoutId}
 										className="flex h-7 shrink-0 items-center rounded-md border border-border px-2 text-xs text-muted-foreground"
@@ -476,17 +502,19 @@ export function MorphingSearch({
 						style={{
 							boxShadow: "inset 0 0 0 1px var(--search-trigger-stroke)",
 						}}
-						className="flex size-full items-center gap-2.5 rounded-xl bg-background/60 px-3.5 text-left backdrop-blur-md outline-none [--search-trigger-stroke:var(--color-border)] hover:[--search-trigger-stroke:var(--color-border-strong)] focus-visible:ring-2 focus-visible:ring-ring"
+						className="flex size-full cursor-text items-center gap-2.5 rounded-xl bg-background/60 px-3.5 text-left backdrop-blur-md outline-none [--search-trigger-stroke:var(--color-border)] hover:[--search-trigger-stroke:var(--color-border-strong)] focus-visible:ring-2 focus-visible:ring-ring"
 					>
 						<motion.span layoutId={iconLayoutId} className="shrink-0">
 							<Search className="size-4 text-muted-foreground" />
 						</motion.span>
-						<motion.span
-							layoutId={labelLayoutId}
-							className="min-w-0 flex-1 truncate text-sm text-muted-foreground"
-						>
-							{placeholder}
-						</motion.span>
+						<span className="flex h-10 min-w-0 flex-1 items-center truncate text-sm text-muted-foreground">
+							<motion.span
+								layoutId={labelLayoutId}
+								className="flex h-10 items-center truncate"
+							>
+								{placeholder}
+							</motion.span>
+						</span>
 						{shortcut ? (
 							<motion.kbd
 								layoutId={shortcutLayoutId}
