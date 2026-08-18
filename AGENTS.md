@@ -104,6 +104,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `swap` | `components/motion/swap.tsx` + `swap/` | Cross-chain swap widget with chain/token selectors and morphing views |
 | `dynamic-island` | `components/motion/dynamic-island.tsx` | iOS-style island pill that morphs between live activity views |
 | `command-palette` | `components/motion/command-palette.tsx` | ⌘K palette with fuzzy filter and spring-animated active row |
+| `morphing-search` | `components/motion/morphing-search.tsx` | Search field that morphs into a focus-managed results surface on click or plain-key shortcut, then returns to the same shell on close |
 | `expandable-action-bar` | `components/motion/expandable-action-bar.tsx` | Icon actions that expand into labeled controls on hover/focus |
 | `overflow-actions` | `components/motion/overflow-actions.tsx` | Connected pill rail that springs open to reveal extra controls |
 | `expandable-tabs` | `components/motion/expandable-tabs.tsx` | Icon tab bar where active tab expands to labeled pill with height-morphing panel |

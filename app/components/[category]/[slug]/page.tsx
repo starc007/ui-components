@@ -347,9 +347,8 @@ export default async function ComponentPage({
               .
             </p>
           </section>
-        ) : cat.slug !== "agents" ? (
-          <KeepInMind />
         ) : null}
+        {cat.slug === "blocks" ? <KeepInMind /> : null}
         <p className="mt-6 text-xs text-muted-foreground">
           Updated{" "}
           <time dateTime={dates.updatedAt}>
