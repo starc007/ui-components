@@ -6,7 +6,8 @@
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": false },
   "vars": {
-    "REGISTRY_URL": "https://beui.dev"
+    "REGISTRY_URL": "https://beui.dev",
+    "PRO_REGISTRY_URL": "https://pro.beui.dev"
   },
   "durable_objects": {
     "bindings": [{ "name": "BeUiMcp", "class_name": "BeUiMcp" }]

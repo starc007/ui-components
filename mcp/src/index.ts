@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { McpAgent } from "agents/mcp";
+import { createMcpHandler, McpAgent } from "agents/mcp";
 import { z } from "zod";
 import {
   getEntry,
@@ -9,10 +9,12 @@ import {
   type IndexComponent,
   type PackageManager,
 } from "./registry.js";
+import { createProServer } from "./pro-server.js";
 
 interface Env {
   BeUiMcp: DurableObjectNamespace;
   REGISTRY_URL?: string;
+  PRO_REGISTRY_URL?: string;
 }
 
 const json = (value: unknown) => ({
@@ -166,19 +168,56 @@ export class BeUiMcp extends McpAgent<Env, Record<string, never>, Record<string,
 
 const LANDING = `beUI MCP server
 
-Animated components for React and Next.js, available through a remote MCP server.
+Animated components and premium blocks for React and Next.js.
 
 Connect your MCP client to:
   https://mcp.beui.dev/mcp   (Streamable HTTP, recommended)
   https://mcp.beui.dev/sse   (SSE, legacy)
+  https://mcp.beui.dev/pro/mcp   (beUI Pro, bearer token required)
 
 Tools: list_components, search_components, get_component, get_install_command
 Docs:  https://beui.dev
 `;
 
+function getBearerAuthorization(request: Request) {
+  const authorization = request.headers.get("authorization")?.trim();
+  if (!authorization || !/^Bearer\s+\S+$/i.test(authorization)) return null;
+  return authorization;
+}
+
+function unauthorized() {
+  return new Response(
+    JSON.stringify({
+      error: "A beUI Pro bearer token is required.",
+    }),
+    {
+      status: 401,
+      headers: {
+        "cache-control": "private, no-store",
+        "content-type": "application/json; charset=utf-8",
+        "www-authenticate": 'Bearer realm="beUI Pro MCP"',
+      },
+    },
+  );
+}
+
 export default {
-  fetch(request: Request, env: Env, ctx: ExecutionContext) {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
     const url = new URL(request.url);
+
+    if (url.pathname === "/pro/mcp") {
+      const authorization = getBearerAuthorization(request);
+      if (!authorization) return unauthorized();
+
+      const server = createProServer(env, authorization);
+      const response = await createMcpHandler(server, { route: "/pro/mcp" })(
+        request,
+        env,
+        ctx,
+      );
+      response.headers.set("cache-control", "private, no-store");
+      return response;
+    }
 
     if (url.pathname.startsWith("/mcp")) {
       return BeUiMcp.serve("/mcp", { binding: "BeUiMcp" }).fetch(request, env, ctx);
