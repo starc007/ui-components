@@ -76,6 +76,13 @@ components before inventing new motion UI:
 npx skills add starc007/ui-components --skill beui
 ```
 
+beUI Pro customers can install the licensed block workflow from the same
+repository:
+
+```bash
+npx skills add starc007/ui-components --skill beui-pro
+```
+
 ## Run locally
 
 ```bash
