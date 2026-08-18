@@ -422,7 +422,12 @@ export function MorphingSearch({
 										width: panelWidth,
 									}}
 								>
-									<div className="flex h-12 items-center gap-2.5 border-b border-border px-3.5">
+									<div
+										className={cn(
+											"flex h-12 items-center gap-2.5 border-b border-border",
+											iconOnly ? "px-4" : "px-3.5",
+										)}
+									>
 										<span className="shrink-0">
 											<Search className="size-4 text-muted-foreground" />
 										</span>
