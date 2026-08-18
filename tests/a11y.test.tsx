@@ -711,8 +711,8 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
       />
     ),
   ],
-  [
-    "MorphingSearch open",
+	[
+		"MorphingSearch open",
     () => (
       <MorphingSearch
         defaultOpen
@@ -724,10 +724,26 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
           },
         ]}
       />
-    ),
-  ],
-  [
-    "Tooltip",
+		),
+	],
+	[
+		"MorphingSearch icon only",
+		() => (
+			<MorphingSearch
+				iconOnly
+				shortcut=""
+				items={[
+					{
+						id: "docs",
+						title: "Documentation",
+						description: "Read the component guide",
+					},
+				]}
+			/>
+		),
+	],
+	[
+		"Tooltip",
     () => (
       <Tooltip content="More info">
         <button type="button">Hover me</button>

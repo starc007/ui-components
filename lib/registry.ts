@@ -1502,7 +1502,7 @@ export const registry: CategoryEntry[] = [
         slug: "morphing-search",
         name: "Morphing Search",
         description:
-          "Search field that expands into a glass results surface from the same shell, whether opened by click or keyboard shortcut.",
+          "Search field or compact icon that morphs into a glass results surface, whether opened by click or keyboard shortcut.",
         file: "components/motion/morphing-search.tsx",
         badge: "new",
         launchedAt: "2026-08-18",

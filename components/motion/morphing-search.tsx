@@ -2,6 +2,7 @@
 
 import { type LucideIcon, Search } from "lucide-react";
 import {
+	AnimatePresence,
 	LayoutGroup,
 	motion,
 	type Transition,
@@ -17,8 +18,22 @@ import {
 	useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
+import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
+
+// Keeps the Wallet Card feel with a little more time to read the morph.
+const SEARCH_MORPH: Transition = {
+	type: "spring",
+	duration: 0.58,
+	bounce: 0.22,
+};
+
+// Keep the spring on the shell, but unfold complex clip-path values with the
+// same progressive tween as Morph Popover so the content never snaps ahead.
+const SEARCH_CLIP_TRANSITION: Transition = {
+	duration: 0.32,
+	ease: EASE_OUT,
+};
 
 export type MorphingSearchItem = {
 	id: string;
@@ -33,6 +48,8 @@ export interface MorphingSearchProps {
 	items: MorphingSearchItem[];
 	placeholder?: string;
 	shortcut?: string;
+	/** Render the closed trigger as a compact search icon. */
+	iconOnly?: boolean;
 	emptyMessage?: string;
 	open?: boolean;
 	defaultOpen?: boolean;
@@ -48,10 +65,6 @@ type AnchorRect = {
 	width: number;
 };
 
-// Conceal only the unstable first frames of the shared-layout projection.
-const CARET_REVEAL_DELAY_MS = 100;
-const INPUT_TEXT_REVEAL_DELAY_MS = 250;
-
 function isEditableTarget(target: EventTarget | null) {
 	if (!(target instanceof HTMLElement)) return false;
 	return (
@@ -66,6 +79,7 @@ export function MorphingSearch({
 	items,
 	placeholder = "Search",
 	shortcut = "f",
+	iconOnly = false,
 	emptyMessage = "No results found.",
 	open: controlledOpen,
 	defaultOpen = false,
@@ -77,9 +91,9 @@ export function MorphingSearch({
 	const [internalOpen, setInternalOpen] = useState(defaultOpen);
 	const [query, setQuery] = useState("");
 	const [activeIndex, setActiveIndex] = useState(0);
-	const [caretVisible, setCaretVisible] = useState(true);
-	const [inputTextVisible, setInputTextVisible] = useState(true);
 	const [mounted, setMounted] = useState(false);
+	const [backgroundScrollLocked, setBackgroundScrollLocked] =
+		useState(defaultOpen);
 	const [anchorRect, setAnchorRect] = useState<AnchorRect>({
 		top: 16,
 		left: 16,
@@ -97,6 +111,7 @@ export function MorphingSearch({
 	const previousFocusRef = useRef<HTMLElement | null>(null);
 	const wasOpenRef = useRef(open);
 	const transition: Transition = reduce ? { duration: 0 } : SPRING_LAYOUT;
+	const morphTransition: Transition = reduce ? { duration: 0 } : SEARCH_MORPH;
 
 	const setOpen = useCallback(
 		(next: boolean) => {
@@ -114,14 +129,13 @@ export function MorphingSearch({
 
 	const openSearch = useCallback(() => {
 		measureAnchor();
-		setCaretVisible(Boolean(reduce));
-		setInputTextVisible(Boolean(reduce));
+		setBackgroundScrollLocked(true);
 		previousFocusRef.current =
 			document.activeElement instanceof HTMLElement
 				? document.activeElement
 				: null;
 		setOpen(true);
-	}, [measureAnchor, reduce, setOpen]);
+	}, [measureAnchor, setOpen]);
 
 	const updateQuery = useCallback(
 		(next: string) => {
@@ -132,7 +146,16 @@ export function MorphingSearch({
 		[onQueryChange],
 	);
 
+	const closeSearch = useCallback(() => {
+		updateQuery("");
+		setOpen(false);
+	}, [setOpen, updateQuery]);
+
 	useEffect(() => setMounted(true), []);
+
+	useEffect(() => {
+		if (open) setBackgroundScrollLocked(true);
+	}, [open]);
 
 	useEffect(() => {
 		measureAnchor();
@@ -143,19 +166,49 @@ export function MorphingSearch({
 				: null;
 		if (anchor) observer?.observe(anchor);
 		window.addEventListener("resize", measureAnchor);
-		window.addEventListener("scroll", measureAnchor, { passive: true });
+		document.addEventListener("scroll", measureAnchor, true);
+		window.visualViewport?.addEventListener("resize", measureAnchor);
+		window.visualViewport?.addEventListener("scroll", measureAnchor);
 		return () => {
 			observer?.disconnect();
 			window.removeEventListener("resize", measureAnchor);
-			window.removeEventListener("scroll", measureAnchor);
+			document.removeEventListener("scroll", measureAnchor, true);
+			window.visualViewport?.removeEventListener("resize", measureAnchor);
+			window.visualViewport?.removeEventListener("scroll", measureAnchor);
 		};
 	}, [measureAnchor]);
+
+	useEffect(() => {
+		if (!backgroundScrollLocked) return;
+
+		const preventBackgroundWheel = (event: WheelEvent) => {
+			const target = event.target;
+			if (target instanceof Node && listRef.current?.contains(target)) return;
+			event.preventDefault();
+		};
+		const preventBackgroundTouch = (event: TouchEvent) => {
+			const target = event.target;
+			if (target instanceof Node && listRef.current?.contains(target)) return;
+			event.preventDefault();
+		};
+
+		document.addEventListener("wheel", preventBackgroundWheel, {
+			passive: false,
+		});
+		document.addEventListener("touchmove", preventBackgroundTouch, {
+			passive: false,
+		});
+		return () => {
+			document.removeEventListener("wheel", preventBackgroundWheel);
+			document.removeEventListener("touchmove", preventBackgroundTouch);
+		};
+	}, [backgroundScrollLocked]);
 
 	useEffect(() => {
 		const handleShortcut = (event: KeyboardEvent) => {
 			if (event.key === "Escape" && open) {
 				event.preventDefault();
-				setOpen(false);
+				closeSearch();
 				return;
 			}
 
@@ -177,36 +230,13 @@ export function MorphingSearch({
 
 		window.addEventListener("keydown", handleShortcut);
 		return () => window.removeEventListener("keydown", handleShortcut);
-	}, [open, openSearch, setOpen, shortcut]);
+	}, [closeSearch, open, openSearch, shortcut]);
 
 	useEffect(() => {
 		if (open) {
-			const opening = !wasOpenRef.current;
-			if (opening) {
-				setCaretVisible(Boolean(reduce));
-				setInputTextVisible(Boolean(reduce));
-			}
 			updateQuery("");
 			const frame = requestAnimationFrame(() => inputRef.current?.focus());
-			const caretTimer =
-				opening && !reduce
-					? window.setTimeout(
-							() => setCaretVisible(true),
-							CARET_REVEAL_DELAY_MS,
-						)
-					: undefined;
-			const inputTextTimer =
-				opening && !reduce
-					? window.setTimeout(
-							() => setInputTextVisible(true),
-							INPUT_TEXT_REVEAL_DELAY_MS,
-						)
-					: undefined;
-			return () => {
-				cancelAnimationFrame(frame);
-				if (caretTimer !== undefined) window.clearTimeout(caretTimer);
-				if (inputTextTimer !== undefined) window.clearTimeout(inputTextTimer);
-			};
+			return () => cancelAnimationFrame(frame);
 		}
 
 		if (wasOpenRef.current) {
@@ -219,24 +249,10 @@ export function MorphingSearch({
 			});
 			return () => cancelAnimationFrame(frame);
 		}
-	}, [open, reduce, updateQuery]);
+	}, [open, updateQuery]);
 
 	useEffect(() => {
 		wasOpenRef.current = open;
-	}, [open]);
-
-	useEffect(() => {
-		if (!open) return;
-		const root = document.documentElement;
-		const body = document.body;
-		const rootOverflow = root.style.overflow;
-		const bodyOverflow = body.style.overflow;
-		root.style.overflow = "hidden";
-		body.style.overflow = "hidden";
-		return () => {
-			root.style.overflow = rootOverflow;
-			body.style.overflow = bodyOverflow;
-		};
 	}, [open]);
 
 	const filteredItems = useMemo(() => {
@@ -267,9 +283,9 @@ export function MorphingSearch({
 		(item: MorphingSearchItem) => {
 			item.onSelect?.();
 			onSelect?.(item);
-			setOpen(false);
+			closeSearch();
 		},
-		[onSelect, setOpen],
+		[closeSearch, onSelect],
 	);
 
 	const handleDialogKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
@@ -315,9 +331,6 @@ export function MorphingSearch({
 	};
 
 	const shellLayoutId = `${uid}-shell`;
-	const iconLayoutId = `${uid}-icon`;
-	const labelLayoutId = `${uid}-label`;
-	const shortcutLayoutId = `${uid}-shortcut`;
 	const listboxId = `${uid}-results`;
 	const panelWidth = mounted
 		? Math.max(
@@ -328,176 +341,210 @@ export function MorphingSearch({
 	const resultsHeight = mounted
 		? Math.max(96, Math.min(288, window.innerHeight - anchorRect.top - 80))
 		: 288;
+	const collapsedContentClip = `inset(0px ${Math.max(
+		0,
+		panelWidth - anchorRect.width,
+	)}px ${resultsHeight}px 0px round 12px)`;
+	const expandedContentClip = "inset(0px 0px 0px 0px round 12px)";
 
 	const overlay = mounted
 		? createPortal(
 				<div
 					aria-hidden={!open}
 					inert={!open}
-					className={cn(
-						"fixed inset-0 z-50",
-						open ? "pointer-events-auto" : "pointer-events-none",
-					)}
+					className="pointer-events-none fixed inset-0 z-50"
 				>
-					{open ? (
-						<motion.div key="morphing-search-overlay" className="fixed inset-0">
-							<button
-								type="button"
-								aria-label="Close search"
-								className="absolute inset-0 cursor-default bg-transparent"
-								onClick={() => setOpen(false)}
-							/>
-
+					<AnimatePresence
+						initial={false}
+						mode="popLayout"
+						onExitComplete={() => setBackgroundScrollLocked(false)}
+					>
+						{open ? (
 							<motion.div
-								ref={dialogRef}
-								layoutId={shellLayoutId}
-								role="dialog"
-								aria-modal="true"
-								aria-label="Search"
-								onKeyDown={handleDialogKeyDown}
-								className="fixed z-10 overflow-hidden rounded-xl bg-background/90 backdrop-blur-xl"
-								style={{
-									top: anchorRect.top,
-									left: anchorRect.left,
-									width: panelWidth,
-									boxShadow: "inset 0 0 0 1px var(--color-border)",
-								}}
-								transition={{ layout: transition }}
+								key="morphing-search-overlay"
+								className="fixed inset-0"
 							>
-								<div className="flex h-12 items-center gap-2.5 border-b border-border px-3.5">
-									<motion.span layoutId={iconLayoutId} className="shrink-0">
-										<Search className="size-4 text-muted-foreground" />
-									</motion.span>
-									<div className="relative flex h-10 min-w-0 flex-1 items-center">
-										<input
-											ref={inputRef}
-											value={query}
-											onChange={(event) => updateQuery(event.target.value)}
-											role="combobox"
-											aria-label={placeholder}
-											aria-expanded="true"
-											aria-controls={listboxId}
-											aria-autocomplete="list"
-											aria-activedescendant={
-												filteredItems.length > 0
-													? `${uid}-option-${activeIndex}`
-													: undefined
-											}
-											style={{
-												color: inputTextVisible ? undefined : "transparent",
-												caretColor: caretVisible
-													? "var(--color-foreground)"
-													: "transparent",
-											}}
-											className="size-full bg-transparent text-sm text-foreground outline-none"
-										/>
-										<motion.span
-											layoutId={labelLayoutId}
-											aria-hidden="true"
-											className="pointer-events-none absolute inset-y-0 left-0 flex max-w-full items-center truncate text-sm text-muted-foreground"
-										>
-											<span
-												style={{ visibility: query ? "hidden" : "visible" }}
-											>
-												{placeholder}
-											</span>
-										</motion.span>
-									</div>
-									<motion.kbd
-										layoutId={shortcutLayoutId}
-										className="flex h-7 shrink-0 items-center rounded-md border border-border px-2 text-xs text-muted-foreground"
-									>
-										Esc
-									</motion.kbd>
-								</div>
+								<button
+									type="button"
+									aria-label="Close search"
+									className="pointer-events-auto absolute inset-0 cursor-default bg-transparent"
+									onClick={closeSearch}
+								/>
 
 								<motion.div
-									ref={listRef}
-									id={listboxId}
-									role="listbox"
-									aria-label="Search results"
-									transition={reduce ? { duration: 0 } : undefined}
-									variants={
-										reduce
-											? undefined
-											: {
-													initial: {
-														opacity: 0,
-														transform: "translateY(6px)",
-													},
-													open: {
-														opacity: 1,
-														transform: "translateY(0px)",
-														transition: {
-															duration: 0.16,
-															delay: 0.06,
-															ease: EASE_OUT,
-														},
-													},
-												}
-									}
+									layoutId={shellLayoutId}
+									aria-hidden="true"
+									className="fixed z-10 rounded-xl bg-background/90 backdrop-blur-xl"
+									style={{
+										top: anchorRect.top,
+										left: anchorRect.left,
+										width: panelWidth,
+										height: 48 + resultsHeight,
+										boxShadow: "inset 0 0 0 1px var(--color-border)",
+									}}
+									transition={morphTransition}
+								/>
+
+								<motion.div
+									ref={dialogRef}
+									role="dialog"
+									aria-modal="true"
+									aria-label="Search"
+									onKeyDown={handleDialogKeyDown}
 									initial={
 										reduce
-											? { opacity: 1, transform: "translateY(0px)" }
-											: "initial"
+											? false
+											: { opacity: 0, clipPath: collapsedContentClip }
 									}
-									animate={
+									animate={{ opacity: 1, clipPath: expandedContentClip }}
+									exit={{
+										opacity: 0,
+										clipPath: collapsedContentClip,
+										transition: reduce
+											? { duration: 0 }
+											: {
+													clipPath: SEARCH_CLIP_TRANSITION,
+													opacity: SEARCH_MORPH,
+												},
+									}}
+									transition={
 										reduce
-											? { opacity: 1, transform: "translateY(0px)" }
-											: "open"
+											? { duration: 0 }
+											: {
+													clipPath: SEARCH_CLIP_TRANSITION,
+													opacity: SEARCH_MORPH,
+												}
 									}
-									className="overflow-y-auto p-2"
-									style={{ maxHeight: resultsHeight }}
+									className="pointer-events-auto fixed z-20 overflow-hidden rounded-xl"
+									style={{
+										top: anchorRect.top,
+										left: anchorRect.left,
+										width: panelWidth,
+									}}
 								>
-									{filteredItems.length > 0 ? (
-										filteredItems.map((item, index) => {
-											const Icon = item.icon;
-											const active = index === activeIndex;
-											return (
-												<button
-													key={item.id}
-													id={`${uid}-option-${index}`}
-													type="button"
-													role="option"
-													aria-selected={active}
-													data-index={index}
-													onMouseMove={() => setActiveIndex(index)}
-													onFocus={() => setActiveIndex(index)}
-													onClick={() => selectItem(item)}
-													className="relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-												>
-													{active ? (
-														<motion.span
-															layoutId={`${uid}-active-result`}
-															className="absolute inset-0 rounded-lg bg-foreground/5"
-															transition={transition}
-														/>
-													) : null}
-													{Icon ? (
-														<Icon className="relative size-4 shrink-0 text-muted-foreground" />
-													) : null}
-													<span className="relative min-w-0">
-														<span className="block truncate text-sm font-medium text-foreground">
-															{item.title}
-														</span>
-														{item.description ? (
-															<span className="block truncate text-xs text-muted-foreground">
-																{item.description}
-															</span>
+									<div className="flex h-12 items-center gap-2.5 border-b border-border px-3.5">
+										<span className="shrink-0">
+											<Search className="size-4 text-muted-foreground" />
+										</span>
+										<div className="flex h-10 min-w-0 flex-1 items-center">
+											<input
+												ref={inputRef}
+												value={query}
+												onChange={(event) => updateQuery(event.target.value)}
+												role="combobox"
+												aria-label={placeholder}
+												aria-expanded="true"
+												aria-controls={listboxId}
+												aria-autocomplete="list"
+												aria-activedescendant={
+													filteredItems.length > 0
+														? `${uid}-option-${activeIndex}`
+														: undefined
+												}
+												placeholder={placeholder}
+												className="size-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+											/>
+										</div>
+										<kbd className="flex h-7 shrink-0 items-center rounded-md border border-border px-2 text-xs text-muted-foreground">
+											Esc
+										</kbd>
+									</div>
+
+									<motion.div
+										ref={listRef}
+										id={listboxId}
+										role="listbox"
+										aria-label="Search results"
+										transition={reduce ? { duration: 0 } : undefined}
+										variants={
+											reduce
+												? undefined
+												: {
+														closed: {
+															opacity: 0,
+															transform: "translateY(6px)",
+															transition: {
+																duration: 0.16,
+																delay: 0.18,
+																ease: EASE_OUT,
+															},
+														},
+														open: {
+															opacity: 1,
+															transform: "translateY(0px)",
+															transition: {
+																duration: 0.16,
+																ease: EASE_OUT,
+															},
+														},
+													}
+										}
+										initial={
+											reduce
+												? { opacity: 1, transform: "translateY(0px)" }
+												: "closed"
+										}
+										animate={
+											reduce
+												? { opacity: 1, transform: "translateY(0px)" }
+												: "open"
+										}
+										exit={reduce ? undefined : "closed"}
+										className="overscroll-contain overflow-y-auto p-2"
+										style={{
+											maxHeight: resultsHeight,
+										}}
+									>
+										{filteredItems.length > 0 ? (
+											filteredItems.map((item, index) => {
+												const Icon = item.icon;
+												const active = index === activeIndex;
+												return (
+													<button
+														key={item.id}
+														id={`${uid}-option-${index}`}
+														type="button"
+														role="option"
+														aria-selected={active}
+														data-index={index}
+														onMouseMove={() => setActiveIndex(index)}
+														onFocus={() => setActiveIndex(index)}
+														onClick={() => selectItem(item)}
+														className="relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+													>
+														{active ? (
+															<motion.span
+																layoutId={`${uid}-active-result`}
+																className="absolute inset-0 rounded-lg bg-foreground/5"
+																transition={transition}
+															/>
 														) : null}
-													</span>
-												</button>
-											);
-										})
-									) : (
-										<p className="px-3 py-8 text-center text-sm text-muted-foreground">
-											{emptyMessage}
-										</p>
-									)}
+														{Icon ? (
+															<Icon className="relative size-4 shrink-0 text-muted-foreground" />
+														) : null}
+														<span className="relative min-w-0">
+															<span className="block truncate text-sm font-medium text-foreground">
+																{item.title}
+															</span>
+															{item.description ? (
+																<span className="block truncate text-xs text-muted-foreground">
+																	{item.description}
+																</span>
+															) : null}
+														</span>
+													</button>
+												);
+											})
+										) : (
+											<p className="px-3 py-8 text-center text-sm text-muted-foreground">
+												{emptyMessage}
+											</p>
+										)}
+									</motion.div>
 								</motion.div>
 							</motion.div>
-						</motion.div>
-					) : null}
+						) : null}
+					</AnimatePresence>
 				</div>,
 				document.body,
 			)
@@ -505,7 +552,14 @@ export function MorphingSearch({
 
 	return (
 		<LayoutGroup id={uid}>
-			<div ref={anchorRef} className={cn("h-12 w-72 max-w-full", className)}>
+			<div
+				ref={anchorRef}
+				className={cn(
+					"relative",
+					iconOnly ? "size-12" : "h-12 w-72 max-w-full",
+					className,
+				)}
+			>
 				{!open ? (
 					<motion.button
 						ref={triggerRef}
@@ -514,35 +568,51 @@ export function MorphingSearch({
 						type="button"
 						aria-haspopup="dialog"
 						aria-expanded="false"
+						aria-label={placeholder}
 						onClick={openSearch}
-						whileTap={reduce ? undefined : { scale: 0.985 }}
-						transition={{ layout: transition, ...SPRING_PRESS }}
+						transition={morphTransition}
 						style={{
 							boxShadow: "inset 0 0 0 1px var(--search-trigger-stroke)",
 						}}
-						className="flex size-full cursor-text items-center gap-2.5 rounded-xl bg-background/60 px-3.5 text-left backdrop-blur-md outline-none [--search-trigger-stroke:var(--color-border)] hover:[--search-trigger-stroke:var(--color-border-strong)] focus-visible:ring-2 focus-visible:ring-ring"
-					>
-						<motion.span layoutId={iconLayoutId} className="shrink-0">
-							<Search className="size-4 text-muted-foreground" />
-						</motion.span>
-						<span className="flex h-10 min-w-0 flex-1 items-center truncate text-sm text-muted-foreground">
-							<motion.span
-								layoutId={labelLayoutId}
-								className="flex h-10 items-center truncate"
-							>
-								{placeholder}
-							</motion.span>
-						</span>
-						{shortcut ? (
-							<motion.kbd
-								layoutId={shortcutLayoutId}
-								className="flex h-7 min-w-7 shrink-0 items-center justify-center rounded-md border border-border px-2 text-xs text-muted-foreground"
-							>
-								{shortcut.toUpperCase()}
-							</motion.kbd>
-						) : null}
-					</motion.button>
+						className={cn(
+							"flex size-full items-center rounded-xl bg-background/60 text-left backdrop-blur-md outline-none [--search-trigger-stroke:var(--color-border)] hover:[--search-trigger-stroke:var(--color-border-strong)] focus-visible:ring-2 focus-visible:ring-ring",
+							iconOnly ? "cursor-pointer justify-center" : "cursor-text px-3.5",
+						)}
+					></motion.button>
 				) : null}
+				<motion.div
+					aria-hidden="true"
+					initial={false}
+					animate={{ opacity: open ? 0 : 1 }}
+					transition={
+						reduce
+							? { duration: 0 }
+							: {
+									duration: 0.1,
+									delay: open ? 0.1 : 0.12,
+									ease: EASE_OUT,
+								}
+					}
+					className={cn(
+						"pointer-events-none absolute inset-0 flex items-center",
+						backgroundScrollLocked && "z-[60]",
+						iconOnly ? "justify-center" : "gap-2.5 px-3.5",
+					)}
+				>
+					<Search className="size-4 shrink-0 text-muted-foreground" />
+					{iconOnly ? null : (
+						<>
+							<span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
+								{placeholder}
+							</span>
+							{shortcut ? (
+								<kbd className="flex h-7 min-w-7 shrink-0 items-center justify-center rounded-md border border-border px-2 text-xs text-muted-foreground">
+									{shortcut.toUpperCase()}
+								</kbd>
+							) : null}
+						</>
+					)}
+				</motion.div>
 			</div>
 			{overlay}
 		</LayoutGroup>

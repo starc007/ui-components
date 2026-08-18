@@ -46,8 +46,14 @@ const ITEMS: MorphingSearchItem[] = [
 
 export function MorphingSearchPreview() {
   return (
-    <div className="w-full max-w-xs">
+    <div className="flex w-full max-w-[22rem] items-center gap-3">
       <MorphingSearch items={ITEMS} placeholder="Find components" />
+      <MorphingSearch
+        items={ITEMS}
+        placeholder="Find components"
+        shortcut=""
+        iconOnly
+      />
     </div>
   );
 }
