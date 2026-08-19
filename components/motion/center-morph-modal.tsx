@@ -209,7 +209,6 @@ export function CenterMorphModalContent({
   const context = useCenterMorphModalContext("CenterMorphModalContent");
   const reduce = useReducedMotion() ?? false;
   const [mounted, setMounted] = useState(false);
-  const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => setMounted(true), []);
@@ -221,7 +220,7 @@ export function CenterMorphModalContent({
     document.body.style.overflow = "hidden";
 
     const focusFrame = requestAnimationFrame(() => {
-      const [firstFocusable] = getFocusableElements(overlayRef.current);
+      const [firstFocusable] = getFocusableElements(panelRef.current);
       (firstFocusable ?? panelRef.current)?.focus();
     });
 
@@ -233,7 +232,7 @@ export function CenterMorphModalContent({
       }
 
       if (event.key !== "Tab") return;
-      const focusable = getFocusableElements(overlayRef.current);
+      const focusable = getFocusableElements(panelRef.current);
       if (focusable.length === 0) {
         event.preventDefault();
         panelRef.current?.focus();
@@ -267,10 +266,7 @@ export function CenterMorphModalContent({
       {context.open ? (
         <PresencePointerGate>
           {(isPresent) => (
-            <div
-              ref={overlayRef}
-              className="pointer-events-none fixed inset-0 z-[100]"
-            >
+            <>
           <motion.button
             type="button"
             aria-label="Dismiss modal"
@@ -286,12 +282,16 @@ export function CenterMorphModalContent({
             }}
             onClick={() => context.setOpen(false)}
             className={cn(
-              "pointer-events-auto absolute inset-0 h-full w-full cursor-default bg-background/10 backdrop-blur-sm",
+              "pointer-events-auto fixed inset-0 z-[100] h-full w-full cursor-default bg-background/10 backdrop-blur-sm",
               backdropClassName,
             )}
           />
 
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-y-auto p-4 drop-shadow-2xl">
+          {/* `inset-4` rather than `inset-0 p-4`, which is the same content box.
+              A transparent fixed element that spans the viewport edges makes iOS
+              26 Safari sample the page for its edge colours on every committed
+              frame. Off the edges it is never asked. */}
+          <div className="pointer-events-none fixed inset-4 z-[100] flex items-center justify-center overflow-y-auto drop-shadow-2xl">
             {/* Drop-shadow reads the clipped child's alpha, so depth follows the
                 unfolding silhouette without introducing another panel layer. */}
             <div className="flex w-full flex-col items-center py-8">
@@ -365,7 +365,7 @@ export function CenterMorphModalContent({
               </motion.div>
             </div>
           </div>
-            </div>
+            </>
           )}
         </PresencePointerGate>
       ) : null}

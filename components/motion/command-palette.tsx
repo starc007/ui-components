@@ -51,6 +51,11 @@ function fuzzyMatch(needle: string, hay: string) {
 
 // Opened via a keyboard shortcut many times a day — entrance must read as
 // instant. Tight spring, even faster exit.
+// The exit plays on close, and the container must stay visible until it ends.
+// Both readers are below, so neither can drift from the other.
+const EXIT_DURATION = 0.12;
+const HIDE_DELAY_MS = EXIT_DURATION * 1000 + 80;
+
 const PANEL_SPRING = {
   type: "spring",
   stiffness: 560,
@@ -187,21 +192,29 @@ export function CommandPalette({
   // Always-mounted container; pointer events fully disabled when closed so clicks
   // pass through to the page. Portaled to <body> so ancestors with transforms,
   // filters, or fixed positioning can't trap the overlay in their stacking context.
+  //
+  // Hidden while closed, not just inert. A transparent fixed element that spans
+  // the viewport edges makes iOS 26 Safari sample the rendered page for its edge
+  // colours on every committed frame, through a blocking call into the GPU
+  // process. This container is mounted for the life of the app, so it would pay
+  // that cost forever. The delay lets the exit finish first, and a transition
+  // needs no timer to clean up.
   return createPortal(
     <div
       aria-hidden={!open}
       inert={!open}
       className={cn(
-        "fixed inset-0 z-[100]",
-        open ? "pointer-events-auto" : "pointer-events-none",
+        "fixed inset-0 z-[100] transition-[visibility]",
+        open ? "visible pointer-events-auto" : "invisible pointer-events-none",
       )}
+      style={{ transitionDelay: open ? "0ms" : `${HIDE_DELAY_MS}ms` }}
     >
       <motion.button
         type="button"
         aria-label="Close command palette"
         initial={false}
         animate={{ opacity: open ? 1 : 0 }}
-        transition={{ duration: open ? 0.18 : 0.12, ease: EASE_OUT }}
+        transition={{ duration: open ? 0.18 : EXIT_DURATION, ease: EASE_OUT }}
         onClick={() => setOpen(false)}
         className={cn(
           "absolute inset-0 bg-background/5 [backdrop-filter:blur(12px)_saturate(140%)] [-webkit-backdrop-filter:blur(12px)_saturate(140%)]",
@@ -224,7 +237,7 @@ export function CommandPalette({
               ? { duration: 0.1 }
               : open
                 ? PANEL_SPRING
-                : { duration: 0.12, ease: EASE_OUT }
+                : { duration: EXIT_DURATION, ease: EASE_OUT }
           }
           onKeyDown={onKeyDown}
           className={cn(
