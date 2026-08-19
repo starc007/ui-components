@@ -58,7 +58,7 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-08-02",
+    updatedAt: "2026-08-19",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
