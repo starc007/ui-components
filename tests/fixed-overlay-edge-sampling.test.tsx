@@ -588,6 +588,129 @@ describe("overlay show and hide", () => {
   });
 });
 
+// An overlay that unmounts under `AnimatePresence` is still in the document
+// for the length of its exit, and `open` has already flipped by then: anything
+// an overlay decides from `open` alone is decided while it is still the topmost
+// thing on the page. Interaction has to release from presence instead — the
+// moment closing starts, not when the animation ends — or a click aimed at the
+// page lands on a backdrop that is on its way out, and the exiting field is
+// still in the tab order.
+//
+// happy-dom never runs an exit to completion, so a closed overlay stays in the
+// document here. That is exactly the frame under test.
+function gateOf(element: HTMLElement) {
+  return {
+    inert: element.hasAttribute("inert"),
+    pointerEvents: element.style.pointerEvents,
+  };
+}
+
+const OPEN_GATE = { inert: false, pointerEvents: "auto" };
+const CLOSING_GATE = { inert: true, pointerEvents: "none" };
+
+describe("overlay interaction releases when closing starts", () => {
+  test("the command palette releases pointer events and focus on the close render", () => {
+    const { getByRole, rerender } = render(
+      <CommandPalette items={[{ id: "one", label: "Alpha", onSelect: () => {} }]} open />,
+    );
+
+    const backdrop = getByRole("button", { name: "Close command palette" });
+    const panel = getByRole("dialog");
+    const panelLayer = panel.parentElement as HTMLElement;
+    const input = getByRole("combobox");
+
+    // Open: interactive on the first frame, with nothing to undo before the
+    // focus effect runs.
+    expect(gateOf(backdrop)).toEqual(OPEN_GATE);
+    expect(gateOf(panel)).toEqual(OPEN_GATE);
+    expect(panelLayer.hasAttribute("inert")).toBe(false);
+    expect(input.closest("[inert]")).toBeNull();
+
+    rerender(
+      <CommandPalette
+        items={[{ id: "one", label: "Alpha", onSelect: () => {} }]}
+        open={false}
+      />,
+    );
+
+    // Same commit, no animation time passed: the chrome is still mounted and
+    // has already stopped taking input.
+    expect(backdrop.isConnected).toBe(true);
+    expect(panel.isConnected).toBe(true);
+    expect(gateOf(backdrop)).toEqual(CLOSING_GATE);
+    expect(gateOf(panel)).toEqual(CLOSING_GATE);
+    expect(panelLayer.hasAttribute("inert")).toBe(true);
+    // `inert` takes the whole subtree out of the tab order and out of the
+    // accessibility tree, so the exiting field cannot be tabbed into or read.
+    // The nearest gated ancestor is the panel — the layer above it is gated too.
+    expect(input.closest("[inert]")).toBe(panel);
+  });
+
+  test("the morphing modal releases pointer events and focus on the close render", () => {
+    const { getByRole, rerender } = render(
+      <MorphingModal viewId="options" onClose={() => {}}>
+        <button type="button">Connect wallet</button>
+      </MorphingModal>,
+    );
+
+    const backdrop = getByRole("button", { name: "Close modal" });
+    const action = getByRole("button", { name: "Connect wallet" });
+    const panel = action.closest("[class*='rounded-3xl']") as HTMLElement;
+    const panelLayer = panel.parentElement as HTMLElement;
+
+    expect(gateOf(backdrop)).toEqual(OPEN_GATE);
+    expect(gateOf(panel)).toEqual(OPEN_GATE);
+    expect(panelLayer.hasAttribute("inert")).toBe(false);
+    expect(action.closest("[inert]")).toBeNull();
+
+    rerender(
+      <MorphingModal viewId={null} onClose={() => {}}>
+        <button type="button">Connect wallet</button>
+      </MorphingModal>,
+    );
+
+    expect(backdrop.isConnected).toBe(true);
+    expect(panel.isConnected).toBe(true);
+    expect(gateOf(backdrop)).toEqual(CLOSING_GATE);
+    expect(gateOf(panel)).toEqual(CLOSING_GATE);
+    expect(panelLayer.hasAttribute("inert")).toBe(true);
+    expect(action.closest("[inert]")).toBe(panel);
+  });
+
+  test("the center morph modal releases pointer events and focus on the close render", () => {
+    const { getByRole } = render(
+      <CenterMorphModal>
+        <CenterMorphModalTrigger>
+          <button type="button">Open profile</button>
+        </CenterMorphModalTrigger>
+        <CenterMorphModalContent ariaLabel="Profile">
+          <p>Profile content</p>
+        </CenterMorphModalContent>
+      </CenterMorphModal>,
+    );
+
+    const trigger = getByRole("button", { name: "Open profile" });
+    fireEvent.click(trigger);
+
+    const backdrop = getByRole("button", { name: "Dismiss modal" });
+    const panel = getByRole("dialog");
+    const close = getByRole("button", { name: "Close modal" });
+
+    expect(gateOf(backdrop)).toEqual(OPEN_GATE);
+    expect(gateOf(panel)).toEqual(OPEN_GATE);
+    expect(close.closest("[inert]")).toBeNull();
+
+    fireEvent.click(trigger);
+
+    expect(backdrop.isConnected).toBe(true);
+    expect(gateOf(backdrop)).toEqual(CLOSING_GATE);
+    expect(gateOf(panel)).toEqual(CLOSING_GATE);
+    // The close control sits inside the panel, so the panel's own `inert`
+    // covers it — one gate per interactive layer, not one per control.
+    expect(close.closest("[inert]")).toBe(panel);
+  });
+});
+
 describe("overlay shapes", () => {
   test("the center morph modal keeps the colour on the edge-spanning layer", () => {
     const { getByRole } = render(
