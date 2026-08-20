@@ -42,6 +42,25 @@ afterEach(() => {
 // WebKit asks for the colour only when all of these hold, so breaking any one
 // of them removes the cost. The helper below states them as one rule, so the
 // test says what is true rather than which class happens to buy it.
+//
+// What a green sweep does and does not prove:
+//
+// - The rule is transcribed from WebKit's LocalFrameView.cpp. WebKit moves and
+//   the transcription can drift with it, so the sweep confirms the model, never
+//   the engine.
+// - The predicate reads Tailwind class shapes, not computed styles — happy-dom
+//   computes none — so it only sees the class vocabulary this codebase writes.
+//   It is blind to geometry spelled as arbitrary properties
+//   (`[position:fixed]`, `inset-[0px]`), to anything coming from a CSS file or
+//   a `style` prop, and to an `absolute inset-0` child of a fixed edge-spanning
+//   parent, which is the same layer geometrically but carries none of the
+//   classes that say so (modelling that needs the ancestor chain, and a
+//   per-element class check has none). Arbitrary *colours* are read:
+//   `bg-[#fff]` paints, `bg-[transparent]` does not.
+// - Only a literal zero alpha counts as no colour. WebKit actually skips
+//   anything below `nearlyTransparentAlphaThreshold`, but the exact value is an
+//   internal, and a scrim tuned just above zero is a bug this test should flag
+//   rather than excuse.
 
 // `bg-*` utilities that paint nothing: attachment, size, position, repeat,
 // clip, origin and blend mode all share the prefix with the colour utilities.
@@ -77,19 +96,14 @@ const TRANSPARENT_BG = new Set(["transparent", "inherit", "none", "[transparent]
 // (`bg-[rgb(0_0_0/0.5)]`) is left alone.
 const OPACITY_MODIFIER = /\/(?:\[([^\]]*)\]|([^/[\]]+))$/;
 
-/**
- * Whether one class is a `bg-*` utility that paints a colour WebKit can read.
- *
- * Alpha 0 counts as no colour. WebKit actually skips anything below
- * `nearlyTransparentAlphaThreshold`, but the exact value is an internal, and a
- * scrim tuned just above zero is a bug this test should flag rather than
- * excuse — so only a literal zero alpha is modelled here.
- */
+/** Whether one class is a `bg-*` utility that paints a colour WebKit can read. */
 function paintsBackground(cls: string): boolean {
   if (!cls.startsWith("bg-")) return false;
   const utility = cls.slice("bg-".length);
 
-  const modifier = utility.match(OPACITY_MODIFIER);
+  // `exec`, not `match`: its result types `index` as a number, so trimming the
+  // modifier off the base cannot silently fall back to the whole utility.
+  const modifier = OPACITY_MODIFIER.exec(utility);
   if (modifier && Number.parseFloat(modifier[1] ?? modifier[2] ?? "") === 0) {
     return false;
   }
@@ -106,10 +120,48 @@ function paintsBackground(cls: string): boolean {
 // (`[backdrop-filter:blur(12px)]`, `[-webkit-backdrop-filter:blur(12px)]`).
 const BACKDROP_FILTER = /(?:^|[\s:[])(?:-webkit-)?backdrop-/;
 
+// Utilities that size a box to the viewport on one axis. `h-full`/`w-full` are
+// deliberately absent: they are 100% of the containing block, which is the
+// viewport only while no ancestor establishes another one, so they say nothing
+// about coverage on their own.
+const VIEWPORT_HEIGHT = ["h-screen", "h-dvh", "h-lvh", "h-svh"];
+const VIEWPORT_WIDTH = ["w-screen", "w-dvw", "w-lvw", "w-svw"];
+
+/**
+ * Whether a fixed box covers the viewport, however that shape is spelled:
+ * `inset-0`, `inset-x-0 inset-y-0`, all four of `top/right/bottom/left-0`, or a
+ * viewport-sized dimension pinned to the corner (`h-dvh w-screen top-0 left-0`).
+ *
+ * Both axes have to span for real. Being at the corner is not coverage, so the
+ * library's zero-size grouping anchors (`fixed left-0 top-0 size-0`) are not
+ * layers, and neither is a bar pinned across one axis (`fixed inset-x-0 top-0`).
+ */
+function spansViewport(el: HTMLElement): boolean {
+  const has = (cls: string) => el.classList.contains(cls);
+  if (!has("fixed")) return false;
+
+  // An explicit zero size beats the insets that pin it, so a corner anchor
+  // stays a point no matter how it is pinned.
+  const spansX =
+    !has("size-0") &&
+    !has("w-0") &&
+    (has("inset-0") ||
+      has("inset-x-0") ||
+      (has("left-0") &&
+        (has("right-0") || VIEWPORT_WIDTH.some((cls) => has(cls)))));
+  const spansY =
+    !has("size-0") &&
+    !has("h-0") &&
+    (has("inset-0") ||
+      has("inset-y-0") ||
+      (has("top-0") &&
+        (has("bottom-0") || VIEWPORT_HEIGHT.some((cls) => has(cls)))));
+
+  return spansX && spansY;
+}
+
 /** Elements that would make WebKit sample the page for its edge colours. */
 function samplingLayers(root: ParentNode): HTMLElement[] {
-  const spansEdges = (el: HTMLElement) =>
-    el.classList.contains("fixed") && el.classList.contains("inset-0");
   const hidden = (el: HTMLElement) => el.classList.contains("invisible");
   const hasBackground = (el: HTMLElement) =>
     Array.from(el.classList).some(paintsBackground);
@@ -121,7 +173,7 @@ function samplingLayers(root: ParentNode): HTMLElement[] {
   // is childless and filters nothing behind it.
   return Array.from(root.querySelectorAll<HTMLElement>("*")).filter(
     (el) =>
-      spansEdges(el) &&
+      spansViewport(el) &&
       !hidden(el) &&
       !hasBackground(el) &&
       (hasChildren(el) || hasBackdropFilter(el)),
@@ -155,6 +207,45 @@ describe("samplingLayers", () => {
     const el = fixture("fixed inset-0 z-50", { children: 1 });
 
     expect(samplingLayers(document.body)).toContain(el);
+  });
+
+  test("flags the shapes that spell full coverage without `inset-0`", () => {
+    const axes = fixture("fixed inset-x-0 inset-y-0", { children: 1 });
+    const sides = fixture("fixed top-0 right-0 bottom-0 left-0", { children: 1 });
+    const sized = fixture("fixed h-dvh w-screen top-0 left-0", { children: 1 });
+
+    expect(samplingLayers(document.body)).toEqual([axes, sides, sized]);
+  });
+
+  test("skips a corner anchor, which is pinned but covers nothing", () => {
+    // The library's grouping anchors: `fixed` so their children resolve against
+    // the viewport, sized to nothing so they are under it on every side.
+    fixture("fixed left-0 top-0 size-0", { children: 1 });
+    fixture("fixed left-0 top-0 z-50 size-0", { children: 2 });
+    // An explicit zero size beats the insets that would otherwise span.
+    fixture("fixed inset-0 size-0", { children: 1 });
+    fixture("fixed inset-0 w-0", { children: 1 });
+    fixture("fixed inset-0 h-0", { children: 1 });
+
+    expect(samplingLayers(document.body)).toEqual([]);
+  });
+
+  test("skips a bar that spans one axis only", () => {
+    fixture("fixed inset-x-0 top-0 z-40", { children: 1 });
+    fixture("fixed inset-y-0 w-80", { children: 1 });
+    fixture("fixed inset-y-0 flex h-dvh w-(--sidebar-width-mobile)", {
+      children: 1,
+    });
+
+    expect(samplingLayers(document.body)).toEqual([]);
+  });
+
+  test("does not read `h-full`/`w-full` as viewport coverage", () => {
+    // Both are 100% of the containing block, which is the viewport only while
+    // no ancestor establishes another one — not enough to call it a span.
+    fixture("fixed top-0 left-0 h-full w-full", { children: 1 });
+
+    expect(samplingLayers(document.body)).toEqual([]);
   });
 
   test("flags `bg-transparent`, which names a colour but paints none", () => {
