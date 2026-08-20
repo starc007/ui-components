@@ -141,6 +141,7 @@ Before building a new component, check this list. If it exists, import it. If it
 - Biome a11y rules are strict: no redundant ARIA roles on divs/spans; use real elements (`<button>`) for interactive things. `DockItem` renders a `<button>` when given `onClick` and a plain div wrapper when children carry their own link/button — never nest interactive elements.
 - New component = source file + preview + `lib/registry.ts` entry in the same change. `bun run check:registry` must pass.
 - A `new` component's registry entry must set `launchedAt` to the ship date (`YYYY-MM-DD`). The landing "Recently launched" section sorts by it newest-first, so the just-added component leads.
+- A change to a component's public behavior or docs must bump `updatedAt` in `lib/component-dates.ts` to the ship date (`YYYY-MM-DD`) for every registry item that bundles a changed file, not just the one you were editing. A shared file usually ships in several entries, and the category slug is not the directory, so resolve the set from the entries' file lists rather than by path. Site-wide maintenance must not refresh every component's date.
 
 ## Commits
 
