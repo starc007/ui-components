@@ -199,15 +199,25 @@ export function CommandPalette({
   // process. This container is mounted for the life of the app, so it would pay
   // that cost forever. The delay lets the exit finish first, and a transition
   // needs no timer to clean up.
+  //
+  // The transition is one-directional on purpose: it only exists in the closed
+  // branch. `visibility` holds its start value for the whole delay, so a
+  // transition that also covered hidden → visible would keep the container
+  // computing as hidden on the first frame after opening — exactly when the
+  // effect above focuses the input from a rAF callback, and focus() on a hidden
+  // element is ignored. With no transition on the open branch, visibility is
+  // visible at the next style recalc, before any callback can observe it.
   return createPortal(
     <div
       aria-hidden={!open}
       inert={!open}
       className={cn(
-        "fixed inset-0 z-[100] transition-[visibility]",
-        open ? "visible pointer-events-auto" : "invisible pointer-events-none",
+        "fixed inset-0 z-[100]",
+        open
+          ? "visible pointer-events-auto"
+          : "invisible pointer-events-none transition-[visibility]",
       )}
-      style={{ transitionDelay: open ? "0ms" : `${HIDE_DELAY_MS}ms` }}
+      style={{ transitionDelay: open ? undefined : `${HIDE_DELAY_MS}ms` }}
     >
       <motion.button
         type="button"
