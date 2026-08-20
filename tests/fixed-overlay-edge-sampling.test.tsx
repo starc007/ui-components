@@ -350,38 +350,45 @@ describe("fixed full-viewport overlays", () => {
 });
 
 describe("overlay show and hide", () => {
-  test("the closed command palette hides itself, after the exit", () => {
-    const { getByRole } = render(<CommandPalette items={[]} />);
+  test("the closed command palette leaves no chrome behind", () => {
+    const { queryByRole } = render(<CommandPalette items={[]} />);
 
-    // It is mounted for the life of the app, so a colour would paint over the
-    // page. Hiding is the lever, held back until the exit animation has played.
-    const overlay = getByRole("button", {
-      name: "Close command palette",
-      hidden: true,
-    }).parentElement as HTMLElement;
-    expect(overlay.className).toContain("invisible");
-    expect(Number.parseFloat(overlay.style.transitionDelay)).toBeGreaterThan(0);
-  });
-
-  test("the open command palette carries no visibility transition", () => {
-    const { getByRole } = render(<CommandPalette items={[]} open />);
-
-    const overlay = getByRole("button", { name: "Close command palette" })
-      .parentElement as HTMLElement;
-    expect(overlay.className).toContain("visible");
-    expect(overlay.className).not.toContain("invisible");
-    // `visibility` holds its start value for the whole transition, so a
-    // transition covering hidden → visible would leave the container computing
-    // as hidden on the first frame after opening — the frame the palette
-    // focuses its input on. The property is only transitioned while closing.
-    expect(overlay.className).not.toContain("transition-[visibility]");
-    expect(overlay.style.transitionDelay).toBe("");
+    // Nothing to hide, because nothing is mounted: no dialog, no backdrop, and
+    // so no fixed layer for WebKit to sample the page behind.
+    expect(queryByRole("dialog", { hidden: true })).toBeNull();
+    expect(
+      queryByRole("button", { name: "Close command palette", hidden: true }),
+    ).toBeNull();
+    expect(samplingLayers(document.body)).toEqual([]);
   });
 
   test("the opening command palette focuses its search input", async () => {
     const { getByRole } = render(<CommandPalette items={[]} open />);
 
+    // The overlay only exists while open, so there is no visibility machinery
+    // for the focus to race: the input is in the document from the same commit
+    // that opened the palette, and focus() on it always lands.
+    expect(getByRole("dialog").className).not.toContain("invisible");
+
     // The focus runs from a requestAnimationFrame callback, so let one frame pass.
+    await act(
+      () =>
+        new Promise<void>((resolve) => {
+          requestAnimationFrame(() => resolve());
+        }),
+    );
+
+    expect(document.activeElement).toBe(getByRole("combobox"));
+  });
+
+  test("the uncontrolled command palette opens on its shortcut and focuses", async () => {
+    const { getByRole, queryByRole } = render(<CommandPalette items={[]} />);
+
+    act(() => {
+      fireEvent.keyDown(window, { key: "k", metaKey: true });
+    });
+    expect(queryByRole("dialog")).not.toBeNull();
+
     await act(
       () =>
         new Promise<void>((resolve) => {

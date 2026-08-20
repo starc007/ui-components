@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Search, type LucideIcon } from "lucide-react";
 import {
   type ReactNode,
@@ -51,11 +51,6 @@ function fuzzyMatch(needle: string, hay: string) {
 
 // Opened via a keyboard shortcut many times a day — entrance must read as
 // instant. Tight spring, even faster exit.
-// The exit plays on close, and the container must stay visible until it ends.
-// Both readers are below, so neither can drift from the other.
-const EXIT_DURATION = 0.12;
-const HIDE_DELAY_MS = EXIT_DURATION * 1000 + 80;
-
 const PANEL_SPRING = {
   type: "spring",
   stiffness: 560,
@@ -189,200 +184,177 @@ export function CommandPalette({
 
   if (!mounted) return null;
 
-  // Always-mounted container; pointer events fully disabled when closed so clicks
-  // pass through to the page. Portaled to <body> so ancestors with transforms,
-  // filters, or fixed positioning can't trap the overlay in their stacking context.
+  // Portaled to <body> so ancestors with transforms, filters, or fixed
+  // positioning can't trap the overlay in their stacking context, and mounted
+  // only while open. A transparent fixed element that spans the viewport edges
+  // makes iOS 26 Safari sample the rendered page for its edge colours on every
+  // committed frame, through a blocking call into the GPU process; a container
+  // kept mounted for the life of the app would pay that cost forever.
   //
-  // Hidden while closed, not just inert. A transparent fixed element that spans
-  // the viewport edges makes iOS 26 Safari sample the rendered page for its edge
-  // colours on every committed frame, through a blocking call into the GPU
-  // process. This container is mounted for the life of the app, so it would pay
-  // that cost forever. The delay lets the exit finish first, and a transition
-  // needs no timer to clean up.
-  //
-  // The transition is one-directional on purpose: it only exists in the closed
-  // branch. `visibility` holds its start value for the whole delay, so a
-  // transition that also covered hidden → visible would keep the container
-  // computing as hidden on the first frame after opening — exactly when the
-  // effect above focuses the input from a rAF callback, and focus() on a hidden
-  // element is ignored. With no transition on the open branch, visibility is
-  // visible at the next style recalc, before any callback can observe it.
-  //
-  // Hiding covers the closed state; while open the layers themselves have to
-  // stay off the rule. This container groups them for `inert`, `aria-hidden`
-  // and the z-index — it lays nothing out, because both children are `fixed`
-  // and resolve against the viewport on their own — so it carries no box at
-  // all, which puts it under the viewport on every measured side. The backdrop
-  // spans the edges but carries the scrim colour, so WebKit reads that colour
+  // While open the chrome is two siblings rather than one wrapper: the backdrop
+  // spans the edges and carries the scrim colour, so WebKit reads that colour
   // instead of the page, and the layer that positions the panel is inset off
-  // every edge with the same content box its padding used to give it.
+  // every edge.
   return createPortal(
-    <div
-      aria-hidden={!open}
-      inert={!open}
-      className={cn(
-        "fixed left-0 top-0 z-[100] size-0",
-        open
-          ? "visible pointer-events-auto"
-          : "invisible pointer-events-none transition-[visibility]",
-      )}
-      style={{ transitionDelay: open ? undefined : `${HIDE_DELAY_MS}ms` }}
-    >
-      <motion.button
-        type="button"
-        aria-label="Close command palette"
-        initial={false}
-        animate={{ opacity: open ? 1 : 0 }}
-        transition={{ duration: open ? 0.18 : EXIT_DURATION, ease: EASE_OUT }}
-        onClick={() => setOpen(false)}
-        className={cn(
-          "fixed inset-0 bg-background/5 [backdrop-filter:blur(12px)_saturate(140%)] [-webkit-backdrop-filter:blur(12px)_saturate(140%)]",
-          open ? "pointer-events-auto" : "pointer-events-none",
-        )}
-      />
-      <div className="pointer-events-none fixed inset-x-4 bottom-4 top-[18vh] flex items-start justify-center">
-        <motion.div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Command palette"
-          initial={false}
-          animate={{
-            opacity: open ? 1 : 0,
-            y: open || reduce ? 0 : -8,
-            scale: open || reduce ? 1 : 0.97,
-          }}
-          transition={
-            reduce
-              ? { duration: 0.1 }
-              : open
-                ? PANEL_SPRING
-                : { duration: EXIT_DURATION, ease: EASE_OUT }
-          }
-          onKeyDown={onKeyDown}
-          className={cn(
-            "w-full max-w-xl overflow-hidden rounded-2xl border border-border bg-card shadow-2xl will-change-transform",
-            open ? "pointer-events-auto" : "pointer-events-none",
-          )}
+    <AnimatePresence initial={false}>
+      {open ? (
+        <motion.button
+          key="backdrop"
+          type="button"
+          aria-label="Close command palette"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: { duration: 0.12, ease: EASE_OUT } }}
+          transition={{ duration: 0.18, ease: EASE_OUT }}
+          onClick={() => setOpen(false)}
+          className="pointer-events-auto fixed inset-0 z-[100] bg-background/5 [backdrop-filter:blur(12px)_saturate(140%)] [-webkit-backdrop-filter:blur(12px)_saturate(140%)]"
+        />
+      ) : null}
+
+      {open ? (
+        <div
+          key="panel-layer"
+          className="pointer-events-none fixed inset-x-4 bottom-4 top-[18vh] z-[100] flex items-start justify-center"
         >
-          <div className="flex items-center gap-3 border-b border-border px-4">
-            <Search className="h-4 w-4 text-muted-foreground" />
-            <input
-              ref={inputRef}
-              value={query}
-              onChange={(e) => updateQuery(e.target.value)}
-              placeholder={placeholder}
-              tabIndex={open ? 0 : -1}
-              role="combobox"
-              aria-expanded={open}
-              aria-controls={`${uid}-list`}
-              aria-activedescendant={
-                filtered.length > 0 ? `${uid}-opt-${active}` : undefined
-              }
-              aria-autocomplete="list"
-              className={cn(
-                "h-12 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none",
-                // The palette focuses this field the moment it opens, and iOS
-                // zooms the page in on a focused field under 16px: the fixed
-                // overlay is magnified off-center — clipped leading edge, half
-                // an icon column — and the zoom outlives the palette. 16px on
-                // touch keeps the page at scale 1; pointer devices keep 14px.
-                canTouch && "text-base",
-              )}
-            />
-            <kbd className="hidden rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground sm:inline-block">
-              ESC
-            </kbd>
-          </div>
-          <div
-            ref={listRef}
-            id={`${uid}-list`}
-            role="listbox"
-            aria-label="Commands"
-            className="max-h-[60vh] overflow-y-auto overscroll-contain p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Command palette"
+            initial={{
+              opacity: 0,
+              y: reduce ? 0 : -8,
+              scale: reduce ? 1 : 0.97,
+            }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{
+              opacity: 0,
+              y: reduce ? 0 : -8,
+              scale: reduce ? 1 : 0.97,
+              transition: { duration: 0.12, ease: EASE_OUT },
+            }}
+            transition={reduce ? { duration: 0.1 } : PANEL_SPRING}
+            onKeyDown={onKeyDown}
+            className="pointer-events-auto w-full max-w-xl overflow-hidden rounded-2xl border border-border bg-card shadow-2xl will-change-transform"
           >
-            {filtered.length === 0 ? (
-              <div className="p-8 text-center text-sm text-muted-foreground">
-                {emptyMessage}
-              </div>
-            ) : (
-              grouped.map(([group, list]) => (
-                <div key={group} className="mb-1 last:mb-0">
-                  <div
-                    aria-hidden
-                    className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
-                  >
-                    {group}
-                  </div>
-                  {list.map((it) => {
-                    const idx = cursor++;
-                    const isActive = idx === active;
-                    const Icon = it.icon;
-                    return (
-                      <button
-                        key={it.id}
-                        type="button"
-                        id={`${uid}-opt-${idx}`}
-                        role="option"
-                        aria-selected={isActive}
-                        data-index={idx}
-                        onMouseEnter={() => setActive(idx)}
-                        onClick={() => {
-                          it.onSelect();
-                          setOpen(false);
-                        }}
-                        tabIndex={open ? 0 : -1}
-                        className={cn(
-                          "relative isolate flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sm transition-colors",
-                          isActive
-                            ? "text-foreground"
-                            : "text-muted-foreground",
-                        )}
-                      >
-                        {isActive ? (
-                          <motion.span
-                            layoutId={`${uid}-active`}
-                            className="absolute inset-0 z-0 rounded-md bg-primary/[0.05]"
-                            transition={
-                              reduce
-                                ? { duration: 0 }
-                                : // Tracks rapid arrow-key navigation — keep it tighter
-                                  // than SPRING_LAYOUT so it never lags the active row.
-                                  {
-                                    type: "spring",
-                                    stiffness: 480,
-                                    damping: 38,
-                                  }
-                            }
-                          />
-                        ) : null}
-                        {Icon ? (
-                          <Icon className="relative z-10 h-4 w-4" />
-                        ) : hasIcons ? (
-                          <span className="relative z-10 h-4 w-4" />
-                        ) : null}
-                        <span className="relative z-10 flex-1 truncate">
-                          {it.label}
-                        </span>
-                        {it.badge ? (
-                          <span className="relative z-10 shrink-0">
-                            {it.badge}
-                          </span>
-                        ) : null}
-                        {it.hint ? (
-                          <kbd className="relative z-10 rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                            {it.hint}
-                          </kbd>
-                        ) : null}
-                      </button>
-                    );
-                  })}
+            <div className="flex items-center gap-3 border-b border-border px-4">
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <input
+                ref={inputRef}
+                value={query}
+                onChange={(e) => updateQuery(e.target.value)}
+                placeholder={placeholder}
+                role="combobox"
+                // The field only exists while the palette is open.
+                aria-expanded="true"
+                aria-controls={`${uid}-list`}
+                aria-activedescendant={
+                  filtered.length > 0 ? `${uid}-opt-${active}` : undefined
+                }
+                aria-autocomplete="list"
+                className={cn(
+                  "h-12 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none",
+                  // The palette focuses this field the moment it opens, and iOS
+                  // zooms the page in on a focused field under 16px: the fixed
+                  // overlay is magnified off-center — clipped leading edge, half
+                  // an icon column — and the zoom outlives the palette. 16px on
+                  // touch keeps the page at scale 1; pointer devices keep 14px.
+                  canTouch && "text-base",
+                )}
+              />
+              <kbd className="hidden rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground sm:inline-block">
+                ESC
+              </kbd>
+            </div>
+            <div
+              ref={listRef}
+              id={`${uid}-list`}
+              role="listbox"
+              aria-label="Commands"
+              className="max-h-[60vh] overflow-y-auto overscroll-contain p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {filtered.length === 0 ? (
+                <div className="p-8 text-center text-sm text-muted-foreground">
+                  {emptyMessage}
                 </div>
-              ))
-            )}
-          </div>
-        </motion.div>
-      </div>
-    </div>,
+              ) : (
+                grouped.map(([group, list]) => (
+                  <div key={group} className="mb-1 last:mb-0">
+                    <div
+                      aria-hidden
+                      className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+                    >
+                      {group}
+                    </div>
+                    {list.map((it) => {
+                      const idx = cursor++;
+                      const isActive = idx === active;
+                      const Icon = it.icon;
+                      return (
+                        <button
+                          key={it.id}
+                          type="button"
+                          id={`${uid}-opt-${idx}`}
+                          role="option"
+                          aria-selected={isActive}
+                          data-index={idx}
+                          onMouseEnter={() => setActive(idx)}
+                          onClick={() => {
+                            it.onSelect();
+                            setOpen(false);
+                          }}
+                          className={cn(
+                            "relative isolate flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sm transition-colors",
+                            isActive
+                              ? "text-foreground"
+                              : "text-muted-foreground",
+                          )}
+                        >
+                          {isActive ? (
+                            <motion.span
+                              layoutId={`${uid}-active`}
+                              className="absolute inset-0 z-0 rounded-md bg-primary/[0.05]"
+                              transition={
+                                reduce
+                                  ? { duration: 0 }
+                                  : // Tracks rapid arrow-key navigation — keep it tighter
+                                    // than SPRING_LAYOUT so it never lags the active row.
+                                    {
+                                      type: "spring",
+                                      stiffness: 480,
+                                      damping: 38,
+                                    }
+                              }
+                            />
+                          ) : null}
+                          {Icon ? (
+                            <Icon className="relative z-10 h-4 w-4" />
+                          ) : hasIcons ? (
+                            <span className="relative z-10 h-4 w-4" />
+                          ) : null}
+                          <span className="relative z-10 flex-1 truncate">
+                            {it.label}
+                          </span>
+                          {it.badge ? (
+                            <span className="relative z-10 shrink-0">
+                              {it.badge}
+                            </span>
+                          ) : null}
+                          {it.hint ? (
+                            <kbd className="relative z-10 rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                              {it.hint}
+                            </kbd>
+                          ) : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))
+              )}
+            </div>
+          </motion.div>
+        </div>
+      ) : null}
+    </AnimatePresence>,
     document.body,
   );
 }
