@@ -253,7 +253,7 @@ export function CenterMorphModalContent({
     <AnimatePresence>
       {context.open ? (
         <PresenceGate>
-          {({ gate }) => (
+          {({ isPresent, gate }) => (
             <>
               <motion.button
                 type="button"
@@ -275,11 +275,14 @@ export function CenterMorphModalContent({
                 )}
               />
 
-              {/* `inset-4` rather than `inset-0 p-4`, which is the same content box.
-                  A transparent fixed element that spans the viewport edges makes iOS
-                  26 Safari sample the page for its edge colours on every committed
-                  frame. Off the edges it is never asked. */}
-              <div className="pointer-events-none fixed inset-4 z-[100] flex items-center justify-center overflow-y-auto drop-shadow-2xl">
+              {/* `inset-4` rather than `inset-0 p-4`: same content box, but the
+                  layer stays off the viewport edges. It never takes pointer
+                  events, so it carries `inert` alone. See
+                  tests/fixed-overlay-edge-sampling.test.tsx. */}
+              <div
+                inert={!isPresent}
+                className="pointer-events-none fixed inset-4 z-[100] flex items-center justify-center overflow-y-auto drop-shadow-2xl"
+              >
                 {/* Drop-shadow reads the clipped child's alpha, so depth follows the
                     unfolding silhouette without introducing another panel layer. */}
                 <div className="flex w-full flex-col items-center py-8">

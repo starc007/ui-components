@@ -347,14 +347,11 @@ export function MorphingSearch({
 	)}px ${resultsHeight}px 0px round 12px)`;
 	const expandedContentClip = "inset(0px 0px 0px 0px round 12px)";
 
-	// Neither grouping layer carries a box. A transparent fixed element that
-	// spans the viewport edges makes iOS 26 Safari sample the rendered page for
-	// its edge colours on every committed frame, through a blocking call into
-	// the GPU process, and these two only exist to hold `inert`/`aria-hidden`,
-	// the z-index and the presence key — every child below is `fixed` and
-	// resolves against the viewport itself. Sized to nothing, they are under the
-	// viewport on every measured side. The click catcher still spans the edges,
-	// but it has no children and filters nothing, which WebKit skips outright.
+	// Neither grouping layer carries a box: they only hold `inert`/`aria-hidden`,
+	// the z-index and the presence key, and every child below is `fixed` and
+	// resolves against the viewport itself. The click catcher spans the viewport
+	// edges but has no children and filters nothing, so it is not a sampling
+	// layer either. See tests/fixed-overlay-edge-sampling.test.tsx.
 	const overlay = mounted
 		? createPortal(
 				<div

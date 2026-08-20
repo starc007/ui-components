@@ -200,22 +200,12 @@ export function CommandPalette({
 
   // Portaled to <body> so ancestors with transforms, filters, or fixed
   // positioning can't trap the overlay in their stacking context, and mounted
-  // only while open. A transparent fixed element that spans the viewport edges
-  // makes iOS 26 Safari sample the rendered page for its edge colours on every
-  // committed frame, through a blocking call into the GPU process; a container
-  // kept mounted for the life of the app would pay that cost forever.
-  //
-  // While open the chrome is two siblings rather than one wrapper: the backdrop
-  // spans the edges and carries the scrim colour, so WebKit reads that colour
-  // instead of the page, and the layer that positions the panel is inset off
-  // every edge.
-  //
-  // Both siblings hang off `PresenceGate`, which reads whether the subtree is
-  // still present. `open` alone cannot answer that: the chrome outlives it by
-  // the length of the exit, and for those frames it would keep intercepting
-  // clicks over the page and keep the field in the tab order. The gate releases
-  // interaction in the same commit that starts the exit, and only the visual
-  // exit runs on.
+  // only while open. The chrome is two fixed siblings rather than one wrapper:
+  // the backdrop spans the viewport edges but carries the scrim colour, and the
+  // layer positioning the panel is inset off every edge. Both hang off
+  // `PresenceGate`, so interaction releases in the same commit that starts the
+  // exit rather than when it ends — `open` is already false for those frames.
+  // See tests/fixed-overlay-edge-sampling.test.tsx.
   return createPortal(
     <AnimatePresence initial={false}>
       {open ? (

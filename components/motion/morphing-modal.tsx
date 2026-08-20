@@ -41,26 +41,13 @@ export function MorphingModal({
     };
   }, [open]);
 
-  // Mounted only while open. A transparent fixed element that spans the
-  // viewport edges makes iOS 26 Safari sample the rendered page for its edge
-  // colours on every committed frame, through a blocking call into the GPU
-  // process; an always-mounted wrapper would pay that cost for the life of the
-  // page, closed or not. Conditional mounting is also what the rest of the
-  // library's overlays do (bottom sheet, drawer, center-morph modal).
-  //
-  // While open the chrome is two siblings rather than one wrapper: the backdrop
-  // spans the edges and carries the scrim colour, so WebKit reads the colour
-  // instead of the page, and the layer that positions the panel sits inset off
-  // every edge, so it is smaller than the viewport on each measured side. Its
-  // content box is unchanged — `inset-4` replaces the wrapper's `px-4`, and the
-  // bottom placement's `pb-8` becomes `pb-4` on top of the 1rem inset.
-  //
-  // Both siblings hang off `PresenceGate`, which reads whether the subtree is
-  // still present. `open` alone cannot answer that: the chrome outlives it by
-  // the length of the exit, and for those frames it would keep swallowing
-  // clicks meant for the page and keep its controls in the tab order. The gate
-  // releases interaction in the same commit that starts the exit, and only the
-  // visual exit runs on.
+  // Mounted only while open, and while open the chrome is two fixed siblings
+  // rather than one wrapper: the backdrop spans the viewport edges but carries
+  // the scrim colour, and the layer positioning the panel sits inset off every
+  // edge (`inset-4`, with the bottom placement's `pb-4` on top of it). Both hang
+  // off `PresenceGate`, so interaction releases in the same commit that starts
+  // the exit rather than when it ends — `open` is already false for those
+  // frames. See tests/fixed-overlay-edge-sampling.test.tsx.
   return (
     <AnimatePresence initial={false}>
       {open ? (

@@ -372,14 +372,11 @@ function MobileSidebar({
 
   if (!mounted) return null;
 
-  // This container groups the sheet for hiding and the z-index; it lays nothing
-  // out, because both children are `fixed` and resolve against the viewport on
-  // their own. A transparent fixed element that spans the viewport edges makes
-  // iOS 26 Safari sample the rendered page for its edge colours on every
-  // committed frame, through a blocking call into the GPU process, so the
-  // container carries no box at all — under the viewport on every measured
-  // side. The scrim spans the edges but paints a colour WebKit can read, and
-  // the panel is inset off one side and paints its own surface.
+  // This container groups the sheet for hiding and the z-index and carries no
+  // box: both children are `fixed` and resolve against the viewport themselves.
+  // The scrim spans the viewport edges but paints a colour, and the panel is
+  // inset off one side and paints its own surface, so no layer here is a
+  // transparent edge-spanning one. See tests/fixed-overlay-edge-sampling.test.tsx.
   return createPortal(
     <div
       className={cn(

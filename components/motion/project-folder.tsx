@@ -191,42 +191,16 @@ export function ProjectFolder({
     onClick?.();
   };
 
-  // The chrome is two siblings: a backdrop that spans the viewport edges and
-  // carries the scrim colour, and a dialog inset off every edge that lays the
-  // panel out and scrolls it. A transparent fixed element that spans the
-  // viewport edges makes iOS 26 Safari sample the rendered page for its edge
-  // colours on every committed frame, through a blocking call into the GPU
-  // process, and this scroll box is transparent by design — the colour belongs
-  // to the backdrop, which spans the edges and has no children.
-  //
-  // The backdrop has to be a sibling of the scroll box rather than a child of
-  // it. WebKit resolves a `position: fixed` descendant of an accelerated
-  // overflow scroller against the scroller instead of the viewport, so on a
-  // phone — where this dialog is tall enough to scroll — a nested `inset-0`
-  // backdrop lands on the dialog's own box and leaves the 24px/32px the insets
-  // hold unscrimmed on every edge.
-  //
-  // The scroll box takes no pointer events and the panel inside it takes them
-  // back, so a press in the gutter around the panel reaches the backdrop and
-  // closes the overlay, the way it did while the backdrop was painted under the
-  // panel inside this box. Wheel scrolling works over the panel, which is what
-  // fills the box; the gutters no longer scroll it.
-  //
-  // The insets stand in for the padding the panel used to hold, and the panel's
-  // width cap drops by the same 3rem so that swap is exact on both axes:
-  //
-  // - horizontally, `max-w-5xl px-6` capped the *border* box at 64rem and gave a
-  //   61rem content box, so the cap has to be 61rem now that the box has no
-  //   padding. Insetting the container alone would not do it — above 64rem the
-  //   cap binds, not the container, so the content box would grow by the 3rem
-  //   the padding used to take. At 1280px the panel is 976px wide at x=152,
-  //   the same as before; below the cap the container width binds and the
-  //   narrowing insets carry the whole 3rem, again as before.
-  // - vertically, `inset-y-8` replaces `py-8`. Centred content lands in the same
-  //   place (both take 2rem off each end) and a top-aligned panel still starts
-  //   2rem down. The gap is now outside the scroll box rather than inside it, so
-  //   a list long enough to scroll gets a viewport 4rem shorter and a gap that
-  //   stays put instead of scrolling away with the content.
+  // The chrome is two siblings: a backdrop spanning the viewport edges that
+  // paints the scrim, and a transparent dialog inset off every edge that lays
+  // out and scrolls the panel. The backdrop cannot nest inside that scroll box —
+  // WebKit resolves a `position: fixed` descendant of an accelerated overflow
+  // scroller against the scroller, not the viewport, so the insets would go
+  // unscrimmed on a phone. The scroll box takes no pointer events and the panel
+  // takes them back, so gutter presses still close the overlay. Accepted: the
+  // 2rem inset sits outside the scroll box, so it stays put rather than
+  // scrolling away with the content.
+  // See tests/fixed-overlay-edge-sampling.test.tsx.
   const overlay = isExpanded || isClosing ? (
     <>
       <AnimatePresence initial={false}>
@@ -257,7 +231,8 @@ export function ProjectFolder({
         aria-hidden={isExpanded ? undefined : "true"}
         className="pointer-events-none fixed inset-x-6 inset-y-8 z-50 flex items-start justify-center overflow-y-auto sm:items-center"
       >
-        {/* 61rem: `max-w-5xl` (64rem) less the `px-6` this box used to carry. */}
+        {/* 61rem, not `max-w-5xl`: the cap is on a padding-free box, so it has to
+            be the 64rem border box less the 3rem the gutters take. */}
         <div
           className={cn(
             "pointer-events-auto relative z-10 w-full max-w-[61rem]",

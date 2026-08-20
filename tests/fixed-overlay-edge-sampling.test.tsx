@@ -709,6 +709,95 @@ describe("overlay interaction releases when closing starts", () => {
     // covers it — one gate per interactive layer, not one per control.
     expect(close.closest("[inert]")).toBe(panel);
   });
+
+  test("the drawer releases pointer events and focus on the close render", () => {
+    const { getByRole, rerender } = render(
+      <Drawer open onOpenChange={() => {}} ariaLabel="Settings">
+        <button type="button">Save</button>
+      </Drawer>,
+    );
+
+    const backdrop = getByRole("button", { name: "Close" });
+    const panel = getByRole("dialog");
+    const action = getByRole("button", { name: "Save" });
+
+    expect(gateOf(backdrop)).toEqual(OPEN_GATE);
+    expect(gateOf(panel)).toEqual(OPEN_GATE);
+    expect(action.closest("[inert]")).toBeNull();
+
+    rerender(
+      <Drawer open={false} onOpenChange={() => {}} ariaLabel="Settings">
+        <button type="button">Save</button>
+      </Drawer>,
+    );
+
+    expect(backdrop.isConnected).toBe(true);
+    expect(panel.isConnected).toBe(true);
+    expect(gateOf(backdrop)).toEqual(CLOSING_GATE);
+    expect(gateOf(panel)).toEqual(CLOSING_GATE);
+    // The backdrop keeps `tabIndex={0}` while dismissable, so `inert` is the
+    // only thing taking it back out of the tab order on the way out.
+    expect(action.closest("[inert]")).toBe(panel);
+  });
+
+  test("the bottom sheet releases pointer events and focus on the close render", () => {
+    const { getByRole, rerender } = render(
+      <BottomSheet open onOpenChange={() => {}} title="Filters">
+        <button type="button">Apply</button>
+      </BottomSheet>,
+    );
+
+    const backdrop = getByRole("button", { name: "Close bottom sheet" });
+    const sheet = getByRole("dialog");
+    const action = getByRole("button", { name: "Apply" });
+
+    expect(gateOf(backdrop)).toEqual(OPEN_GATE);
+    expect(gateOf(sheet)).toEqual(OPEN_GATE);
+    // The sheet's snap height rides on the same `style` prop as the gate, so
+    // the merge has to keep both.
+    expect(sheet.style.height).toBe("50vh");
+    expect(action.closest("[inert]")).toBeNull();
+
+    rerender(
+      <BottomSheet open={false} onOpenChange={() => {}} title="Filters">
+        <button type="button">Apply</button>
+      </BottomSheet>,
+    );
+
+    expect(backdrop.isConnected).toBe(true);
+    expect(sheet.isConnected).toBe(true);
+    expect(gateOf(backdrop)).toEqual(CLOSING_GATE);
+    expect(gateOf(sheet)).toEqual(CLOSING_GATE);
+    expect(sheet.style.height).toBe("50vh");
+    expect(action.closest("[inert]")).toBe(sheet);
+  });
+
+  test("the attachment image preview releases pointer events and focus on the close render", () => {
+    const { getAllByRole, getByRole } = render(
+      <AttachmentUpload defaultValue={[IMAGE_ITEM]} />,
+    );
+
+    fireEvent.click(getByRole("button", { name: "Preview screenshot.png" }));
+
+    // The scrim and the inset close control share a label; the scrim renders
+    // first, the control lives inside the dialog.
+    const [backdrop, close] = getAllByRole("button", {
+      name: "Close image preview",
+    });
+    const panel = getByRole("dialog");
+
+    expect(gateOf(backdrop)).toEqual(OPEN_GATE);
+    expect(gateOf(panel)).toEqual(OPEN_GATE);
+    expect(close.closest("[inert]")).toBeNull();
+
+    fireEvent.click(backdrop);
+
+    expect(backdrop.isConnected).toBe(true);
+    expect(panel.isConnected).toBe(true);
+    expect(gateOf(backdrop)).toEqual(CLOSING_GATE);
+    expect(gateOf(panel)).toEqual(CLOSING_GATE);
+    expect(close.closest("[inert]")).toBe(panel);
+  });
 });
 
 // The palette's rows render inside `PresenceGate`'s render prop, which is its
