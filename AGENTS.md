@@ -133,6 +133,7 @@ Before building a new component, check this list. If it exists, import it. If it
 - Gate decorative hover effects (magnetic pull, tilt) behind `useHoverCapable()` from `lib/hooks/use-hover-capable` — touch devices get sticky phantom hover otherwise.
 - Animate `transform` and `opacity` only; never layout properties. Keep blur ≤ 10px. Exits faster than entrances. UI animations under ~300ms; press feedback ~100-160ms.
 - Site CTAs use `PressLink` (`components/app/press-link.tsx`), which matches the library Button's `SPRING_PRESS` feel. Don't reach for the CSS `.press` utility on primary CTAs.
+- Overlays that hide while closed (transparent full-viewport fixed layers are costly on iOS Safari — see `tests/fixed-overlay-edge-sampling.test.tsx`) transition `visibility` on close only. Opening must be instant, or focus and measurement effects run against a still-hidden element; re-test open-path behaviour after touching show/hide plumbing.
 
 ## Code conventions
 
@@ -142,6 +143,7 @@ Before building a new component, check this list. If it exists, import it. If it
 - New component = source file + preview + `lib/registry.ts` entry in the same change. `bun run check:registry` must pass.
 - A `new` component's registry entry must set `launchedAt` to the ship date (`YYYY-MM-DD`). The landing "Recently launched" section sorts by it newest-first, so the just-added component leads.
 - A change to a component's public behavior or docs must bump `updatedAt` in `lib/component-dates.ts` to the ship date (`YYYY-MM-DD`) for every registry item that bundles a changed file, not just the one you were editing. A shared file usually ships in several entries, and the category slug is not the directory, so resolve the set from the entries' file lists rather than by path. Site-wide maintenance must not refresh every component's date.
+- A test helper that models an external rule must implement every clause its comment cites, and gets its own fixture tests. Don't infer semantics from class-name prefixes (`bg-*` includes non-painting utilities and `bg-transparent`).
 
 ## Commits
 
