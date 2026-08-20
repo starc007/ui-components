@@ -347,12 +347,17 @@ export function MorphingSearch({
 	)}px ${resultsHeight}px 0px round 12px)`;
 	const expandedContentClip = "inset(0px 0px 0px 0px round 12px)";
 
+	// Neither grouping layer carries a box: they only hold `inert`/`aria-hidden`,
+	// the z-index and the presence key, and every child below is `fixed` and
+	// resolves against the viewport itself. The click catcher spans the viewport
+	// edges but has no children and filters nothing, so it is not a sampling
+	// layer either. See tests/fixed-overlay-edge-sampling.test.tsx.
 	const overlay = mounted
 		? createPortal(
 				<div
 					aria-hidden={!open}
 					inert={!open}
-					className="pointer-events-none fixed inset-0 z-50"
+					className="pointer-events-none fixed left-0 top-0 z-50 size-0"
 				>
 					<AnimatePresence
 						initial={false}
@@ -362,12 +367,12 @@ export function MorphingSearch({
 						{open ? (
 							<motion.div
 								key="morphing-search-overlay"
-								className="fixed inset-0"
+								className="fixed left-0 top-0 size-0"
 							>
 								<button
 									type="button"
 									aria-label="Close search"
-									className="pointer-events-auto absolute inset-0 cursor-default bg-transparent"
+									className="pointer-events-auto fixed inset-0 cursor-default bg-transparent"
 									onClick={closeSearch}
 								/>
 

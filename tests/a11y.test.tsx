@@ -581,9 +581,12 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   [
-    "CommandPalette closed",
+    // Open: the palette mounts its chrome only while open, so a closed one has
+    // no markup to audit.
+    "CommandPalette open",
     () => (
       <CommandPalette
+        open
         items={[
           {
             id: "docs",

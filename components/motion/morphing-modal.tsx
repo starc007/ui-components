@@ -7,6 +7,7 @@ import {
 } from "motion/react";
 import { type ReactNode, useEffect } from "react";
 import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
+import { PresenceGate } from "@/lib/presence-gate";
 import { cn } from "@/lib/utils";
 
 export interface MorphingModalProps {
@@ -40,109 +41,120 @@ export function MorphingModal({
     };
   }, [open]);
 
+  // Mounted only while open, and while open the chrome is two fixed siblings
+  // rather than one wrapper: the backdrop spans the viewport edges but carries
+  // the scrim colour, and the layer positioning the panel sits inset off every
+  // edge (`inset-4`, with the bottom placement's `pb-4` on top of it). Both hang
+  // off `PresenceGate`, so interaction releases in the same commit that starts
+  // the exit rather than when it ends — `open` is already false for those
+  // frames. See tests/fixed-overlay-edge-sampling.test.tsx.
   return (
-    <div
-      aria-hidden={!open}
-      inert={!open}
-      className={cn(
-        "fixed inset-0 z-[80]",
-        open ? "pointer-events-auto" : "pointer-events-none",
-      )}
-    >
-      <motion.button
-        type="button"
-        aria-label="Close modal"
-        initial={false}
-        animate={{ opacity: open ? 1 : 0 }}
-        transition={{ duration: 0.2, ease: EASE_OUT }}
-        onClick={onClose}
-        className={cn(
-          "absolute inset-0 bg-background/5 [backdrop-filter:blur(14px)_saturate(140%)] [-webkit-backdrop-filter:blur(14px)_saturate(140%)]",
-          open ? "pointer-events-auto" : "pointer-events-none",
-        )}
-      />
+    <AnimatePresence initial={false}>
+      {open ? (
+        <PresenceGate key="backdrop">
+          {({ gate }) => (
+            <motion.button
+              type="button"
+              aria-label="Close modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: EASE_OUT }}
+              {...gate}
+              onClick={onClose}
+              className="pointer-events-auto fixed inset-0 z-[80] bg-background/5 [backdrop-filter:blur(14px)_saturate(140%)] [-webkit-backdrop-filter:blur(14px)_saturate(140%)]"
+            />
+          )}
+        </PresenceGate>
+      ) : null}
 
-      <div
-        className={cn(
-          "pointer-events-none absolute inset-0 flex justify-center px-4",
-          placement === "bottom" ? "items-end pb-8" : "items-center",
-        )}
-      >
-        <AnimatePresence initial={false}>
-          {open ? (
-            <motion.div
-              key="panel"
-              layout
-              initial={{ opacity: 0, y: enterY, scale: enterScale }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{
-                opacity: 0,
-                y: enterY,
-                scale: reduce ? 1 : 0.98,
-                transition: { duration: 0.18, ease: EASE_OUT },
-              }}
-              transition={SPRING_PANEL}
+      {open ? (
+        <PresenceGate key="panel-layer">
+          {({ isPresent, gate }) => (
+            // The layer itself never takes pointer events, so it carries
+            // `inert` alone rather than the gate's pointer-events value.
+            <div
+              inert={!isPresent}
               className={cn(
-                "pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-background shadow-2xl will-change-transform",
-                className,
+                "pointer-events-none fixed inset-4 z-[80] flex justify-center",
+                placement === "bottom" ? "items-end pb-4" : "items-center",
               )}
             >
-              <motion.div layout="position" className="p-5">
-                <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.div
-                    key={viewId}
-                    initial={
-                      reduce
-                        ? { opacity: 0 }
-                        : { opacity: 0, y: 8, filter: "blur(4px)" }
-                    }
-                    animate={
-                      reduce
-                        ? {
-                            opacity: 1,
-                            transition: {
-                              duration: 0.18,
-                              ease: EASE_OUT,
-                            },
-                          }
-                        : {
-                            opacity: 1,
-                            y: 0,
-                            filter: "blur(0px)",
-                            transition: {
-                              duration: 0.24,
-                              ease: EASE_OUT,
-                            },
-                          }
-                    }
-                    exit={
-                      reduce
-                        ? {
-                            opacity: 0,
-                            transition: {
-                              duration: 0.14,
-                              ease: EASE_OUT,
-                            },
-                          }
-                        : {
-                            opacity: 0,
-                            y: -8,
-                            filter: "blur(4px)",
-                            transition: {
-                              duration: 0.16,
-                              ease: EASE_OUT,
-                            },
-                          }
-                    }
-                  >
-                    {children}
-                  </motion.div>
-                </AnimatePresence>
+              <motion.div
+                key="panel"
+                layout
+                initial={{ opacity: 0, y: enterY, scale: enterScale }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{
+                  opacity: 0,
+                  y: enterY,
+                  scale: reduce ? 1 : 0.98,
+                  transition: { duration: 0.18, ease: EASE_OUT },
+                }}
+                transition={SPRING_PANEL}
+                {...gate}
+                className={cn(
+                  "pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-background shadow-2xl will-change-transform",
+                  className,
+                )}
+              >
+                <motion.div layout="position" className="p-5">
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.div
+                      key={viewId}
+                      initial={
+                        reduce
+                          ? { opacity: 0 }
+                          : { opacity: 0, y: 8, filter: "blur(4px)" }
+                      }
+                      animate={
+                        reduce
+                          ? {
+                              opacity: 1,
+                              transition: {
+                                duration: 0.18,
+                                ease: EASE_OUT,
+                              },
+                            }
+                          : {
+                              opacity: 1,
+                              y: 0,
+                              filter: "blur(0px)",
+                              transition: {
+                                duration: 0.24,
+                                ease: EASE_OUT,
+                              },
+                            }
+                      }
+                      exit={
+                        reduce
+                          ? {
+                              opacity: 0,
+                              transition: {
+                                duration: 0.14,
+                                ease: EASE_OUT,
+                              },
+                            }
+                          : {
+                              opacity: 0,
+                              y: -8,
+                              filter: "blur(4px)",
+                              transition: {
+                                duration: 0.16,
+                                ease: EASE_OUT,
+                              },
+                            }
+                      }
+                    >
+                      {children}
+                    </motion.div>
+                  </AnimatePresence>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </div>
-    </div>
+            </div>
+          )}
+        </PresenceGate>
+      ) : null}
+    </AnimatePresence>
   );
 }

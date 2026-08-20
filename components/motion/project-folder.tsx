@@ -191,18 +191,18 @@ export function ProjectFolder({
     onClick?.();
   };
 
+  // The chrome is two siblings: a backdrop spanning the viewport edges that
+  // paints the scrim, and a transparent dialog inset off every edge that lays
+  // out and scrolls the panel. The backdrop cannot nest inside that scroll box —
+  // WebKit resolves a `position: fixed` descendant of an accelerated overflow
+  // scroller against the scroller, not the viewport, so the insets would go
+  // unscrimmed on a phone. The scroll box takes no pointer events and the panel
+  // takes them back, so gutter presses still close the overlay. Accepted: the
+  // 2rem inset sits outside the scroll box, so it stays put rather than
+  // scrolling away with the content.
+  // See tests/fixed-overlay-edge-sampling.test.tsx.
   const overlay = isExpanded || isClosing ? (
-    <div
-      ref={dialogRef}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={dialogTitleId}
-      aria-hidden={isExpanded ? undefined : "true"}
-      className={cn(
-        "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto sm:items-center",
-        isClosing && "pointer-events-none",
-      )}
-    >
+    <>
       <AnimatePresence initial={false}>
         {isExpanded ? (
           <motion.button
@@ -215,57 +215,79 @@ export function ProjectFolder({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={reduce ? { duration: 0 } : { duration: 0.18 }}
-            className="absolute inset-0 cursor-default bg-background/80 backdrop-blur-xl"
+            className={cn(
+              "fixed inset-0 z-50 cursor-default bg-background/80 backdrop-blur-xl",
+              isClosing && "pointer-events-none",
+            )}
           />
         ) : null}
       </AnimatePresence>
 
-      <div className="relative z-10 w-full max-w-5xl px-6 py-8">
-        <AnimatePresence initial={false}>
-          {isExpanded ? (
-            <motion.div
-              key="project-files-header"
-              initial={{ opacity: 0, y: reduce ? 0 : 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: reduce ? 0 : -8 }}
-              transition={reduce ? { duration: 0 } : { duration: 0.18 }}
-              className="mb-6 flex items-center justify-between gap-4"
-            >
-              <div>
-                <h2 id={dialogTitleId} className="text-xl font-medium text-foreground">
-                  {title}
-                </h2>
-                <p className="mt-1 text-sm text-muted-foreground">{countText}</p>
-              </div>
-              <button
-                ref={closeButtonRef}
-                type="button"
-                onClick={closeOverlay}
-                aria-label={`Close ${title}`}
-                className="flex size-10 items-center justify-center rounded-full border border-foreground/10 bg-background/50 text-muted-foreground backdrop-blur-xl transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={dialogTitleId}
+        aria-hidden={isExpanded ? undefined : "true"}
+        className="pointer-events-none fixed inset-x-6 inset-y-8 z-50 flex items-start justify-center overflow-y-auto sm:items-center"
+      >
+        {/* 61rem, not `max-w-5xl`: the cap is on a padding-free box, so it has to
+            be the 64rem border box less the 3rem the gutters take. */}
+        <div
+          className={cn(
+            "pointer-events-auto relative z-10 w-full max-w-[61rem]",
+            isClosing && "pointer-events-none",
+          )}
+        >
+          <AnimatePresence initial={false}>
+            {isExpanded ? (
+              <motion.div
+                key="project-files-header"
+                initial={{ opacity: 0, y: reduce ? 0 : 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: reduce ? 0 : -8 }}
+                transition={reduce ? { duration: 0 } : { duration: 0.18 }}
+                className="mb-6 flex items-center justify-between gap-4"
               >
-                <X className="size-4" aria-hidden="true" />
-              </button>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-
-        <div className="grid grid-cols-2 place-items-center gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {isExpanded
-            ? previewItems.map((preview) => (
-                <motion.div
-                  key={preview.id}
-                  layoutId={`file-${preview.id}`}
-                  transition={transition}
-                  className="aspect-[3/4] w-full max-w-40 overflow-hidden rounded-xl border border-foreground/10 bg-background/50 backdrop-blur-xl"
+                <div>
+                  <h2
+                    id={dialogTitleId}
+                    className="text-xl font-medium text-foreground"
+                  >
+                    {title}
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">{countText}</p>
+                </div>
+                <button
+                  ref={closeButtonRef}
+                  type="button"
+                  onClick={closeOverlay}
+                  aria-label={`Close ${title}`}
+                  className="flex size-10 items-center justify-center rounded-full border border-foreground/10 bg-background/50 text-muted-foreground backdrop-blur-xl transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  {preview.content}
-                </motion.div>
-              ))
-            : null}
+                  <X className="size-4" aria-hidden="true" />
+                </button>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+
+          <div className="grid grid-cols-2 place-items-center gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {isExpanded
+              ? previewItems.map((preview) => (
+                  <motion.div
+                    key={preview.id}
+                    layoutId={`file-${preview.id}`}
+                    transition={transition}
+                    className="aspect-[3/4] w-full max-w-40 overflow-hidden rounded-xl border border-foreground/10 bg-background/50 backdrop-blur-xl"
+                  >
+                    {preview.content}
+                  </motion.div>
+                ))
+              : null}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   ) : null;
 
   return (
