@@ -191,13 +191,26 @@ export function ProjectFolder({
     onClick?.();
   };
 
-  // The dialog is inset off every edge and the backdrop under it is `fixed` in
-  // its own right, so the scroll box no longer has to span the viewport. A
-  // transparent fixed element that spans the viewport edges makes iOS 26 Safari
-  // sample the rendered page for its edge colours on every committed frame,
-  // through a blocking call into the GPU process, and this box is transparent
-  // by design — the colour belongs to the backdrop, which spans the edges,
-  // carries it, and has no children.
+  // The chrome is two siblings: a backdrop that spans the viewport edges and
+  // carries the scrim colour, and a dialog inset off every edge that lays the
+  // panel out and scrolls it. A transparent fixed element that spans the
+  // viewport edges makes iOS 26 Safari sample the rendered page for its edge
+  // colours on every committed frame, through a blocking call into the GPU
+  // process, and this scroll box is transparent by design — the colour belongs
+  // to the backdrop, which spans the edges and has no children.
+  //
+  // The backdrop has to be a sibling of the scroll box rather than a child of
+  // it. WebKit resolves a `position: fixed` descendant of an accelerated
+  // overflow scroller against the scroller instead of the viewport, so on a
+  // phone — where this dialog is tall enough to scroll — a nested `inset-0`
+  // backdrop lands on the dialog's own box and leaves the 24px/32px the insets
+  // hold unscrimmed on every edge.
+  //
+  // The scroll box takes no pointer events and the panel inside it takes them
+  // back, so a press in the gutter around the panel reaches the backdrop and
+  // closes the overlay, the way it did while the backdrop was painted under the
+  // panel inside this box. Wheel scrolling works over the panel, which is what
+  // fills the box; the gutters no longer scroll it.
   //
   // The insets stand in for the padding the panel used to hold, and the panel's
   // width cap drops by the same 3rem so that swap is exact on both axes:
@@ -215,17 +228,7 @@ export function ProjectFolder({
   //   a list long enough to scroll gets a viewport 4rem shorter and a gap that
   //   stays put instead of scrolling away with the content.
   const overlay = isExpanded || isClosing ? (
-    <div
-      ref={dialogRef}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={dialogTitleId}
-      aria-hidden={isExpanded ? undefined : "true"}
-      className={cn(
-        "fixed inset-x-6 inset-y-8 z-50 flex items-start justify-center overflow-y-auto sm:items-center",
-        isClosing && "pointer-events-none",
-      )}
-    >
+    <>
       <AnimatePresence initial={false}>
         {isExpanded ? (
           <motion.button
@@ -238,58 +241,78 @@ export function ProjectFolder({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={reduce ? { duration: 0 } : { duration: 0.18 }}
-            className="fixed inset-0 cursor-default bg-background/80 backdrop-blur-xl"
+            className={cn(
+              "fixed inset-0 z-50 cursor-default bg-background/80 backdrop-blur-xl",
+              isClosing && "pointer-events-none",
+            )}
           />
         ) : null}
       </AnimatePresence>
 
-      {/* 61rem: `max-w-5xl` (64rem) less the `px-6` this box used to carry. */}
-      <div className="relative z-10 w-full max-w-[61rem]">
-        <AnimatePresence initial={false}>
-          {isExpanded ? (
-            <motion.div
-              key="project-files-header"
-              initial={{ opacity: 0, y: reduce ? 0 : 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: reduce ? 0 : -8 }}
-              transition={reduce ? { duration: 0 } : { duration: 0.18 }}
-              className="mb-6 flex items-center justify-between gap-4"
-            >
-              <div>
-                <h2 id={dialogTitleId} className="text-xl font-medium text-foreground">
-                  {title}
-                </h2>
-                <p className="mt-1 text-sm text-muted-foreground">{countText}</p>
-              </div>
-              <button
-                ref={closeButtonRef}
-                type="button"
-                onClick={closeOverlay}
-                aria-label={`Close ${title}`}
-                className="flex size-10 items-center justify-center rounded-full border border-foreground/10 bg-background/50 text-muted-foreground backdrop-blur-xl transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={dialogTitleId}
+        aria-hidden={isExpanded ? undefined : "true"}
+        className="pointer-events-none fixed inset-x-6 inset-y-8 z-50 flex items-start justify-center overflow-y-auto sm:items-center"
+      >
+        {/* 61rem: `max-w-5xl` (64rem) less the `px-6` this box used to carry. */}
+        <div
+          className={cn(
+            "pointer-events-auto relative z-10 w-full max-w-[61rem]",
+            isClosing && "pointer-events-none",
+          )}
+        >
+          <AnimatePresence initial={false}>
+            {isExpanded ? (
+              <motion.div
+                key="project-files-header"
+                initial={{ opacity: 0, y: reduce ? 0 : 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: reduce ? 0 : -8 }}
+                transition={reduce ? { duration: 0 } : { duration: 0.18 }}
+                className="mb-6 flex items-center justify-between gap-4"
               >
-                <X className="size-4" aria-hidden="true" />
-              </button>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-
-        <div className="grid grid-cols-2 place-items-center gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {isExpanded
-            ? previewItems.map((preview) => (
-                <motion.div
-                  key={preview.id}
-                  layoutId={`file-${preview.id}`}
-                  transition={transition}
-                  className="aspect-[3/4] w-full max-w-40 overflow-hidden rounded-xl border border-foreground/10 bg-background/50 backdrop-blur-xl"
+                <div>
+                  <h2
+                    id={dialogTitleId}
+                    className="text-xl font-medium text-foreground"
+                  >
+                    {title}
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">{countText}</p>
+                </div>
+                <button
+                  ref={closeButtonRef}
+                  type="button"
+                  onClick={closeOverlay}
+                  aria-label={`Close ${title}`}
+                  className="flex size-10 items-center justify-center rounded-full border border-foreground/10 bg-background/50 text-muted-foreground backdrop-blur-xl transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  {preview.content}
-                </motion.div>
-              ))
-            : null}
+                  <X className="size-4" aria-hidden="true" />
+                </button>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+
+          <div className="grid grid-cols-2 place-items-center gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {isExpanded
+              ? previewItems.map((preview) => (
+                  <motion.div
+                    key={preview.id}
+                    layoutId={`file-${preview.id}`}
+                    transition={transition}
+                    className="aspect-[3/4] w-full max-w-40 overflow-hidden rounded-xl border border-foreground/10 bg-background/50 backdrop-blur-xl"
+                  >
+                    {preview.content}
+                  </motion.div>
+                ))
+              : null}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   ) : null;
 
   return (

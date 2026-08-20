@@ -7,7 +7,7 @@ import {
   type RenderResult,
   waitFor,
 } from "@testing-library/react";
-import type { ReactElement } from "react";
+import { StrictMode, type ReactElement } from "react";
 import {
   AnimatedSidebar,
   AnimatedSidebarContent,
@@ -711,6 +711,88 @@ describe("overlay interaction releases when closing starts", () => {
   });
 });
 
+// The palette's rows render inside `PresenceGate`'s render prop, which is its
+// own component: it renders after the palette's body has run, and it can run
+// again without the body running again. A row index counted while rendering
+// therefore keeps climbing — the ids drift off zero, no row matches `active`,
+// and `aria-activedescendant` names an element that does not exist.
+//
+// `StrictMode` is how that second pass is provoked here, and it is not a
+// contrivance: the docs site renders under it, which is where the regression
+// was seen. Any render of the subtree that the palette's body does not drive
+// does the same, so the index has to be derived rather than counted.
+describe("command palette row indices", () => {
+  const ITEMS = [
+    { id: "new", label: "New file", group: "Actions", onSelect: () => {} },
+    { id: "open", label: "Open file", group: "Actions", onSelect: () => {} },
+    { id: "docs", label: "Documentation", group: "Go to", onSelect: () => {} },
+    { id: "settings", label: "Settings", group: "Go to", onSelect: () => {} },
+  ];
+
+  test("numbers the rows from zero and marks the active one", () => {
+    const { getAllByRole, getByRole } = render(
+      <StrictMode>
+        <CommandPalette items={ITEMS} open />
+      </StrictMode>,
+    );
+
+    const options = getAllByRole("option");
+    expect(options).toHaveLength(ITEMS.length);
+    expect(options.map((option) => option.id.split("-opt-").at(-1))).toEqual([
+      "0",
+      "1",
+      "2",
+      "3",
+    ]);
+    expect(options.map((option) => option.dataset.index)).toEqual([
+      "0",
+      "1",
+      "2",
+      "3",
+    ]);
+
+    expect(options.map((option) => option.getAttribute("aria-selected"))).toEqual(
+      ["true", "false", "false", "false"],
+    );
+
+    // The highlight is the only painted thing that says which row is active.
+    expect(options[0].querySelector("[class*='bg-primary']")).not.toBeNull();
+
+    const activeId = getByRole("combobox").getAttribute("aria-activedescendant");
+    expect(activeId).toBe(options[0].id);
+    expect(document.getElementById(activeId as string)).toBe(options[0]);
+  });
+
+  test("keeps the numbering stable when the palette re-renders", () => {
+    const { getAllByRole, getByRole, rerender } = render(
+      <StrictMode>
+        <CommandPalette items={ITEMS} open />
+      </StrictMode>,
+    );
+
+    fireEvent.keyDown(getByRole("dialog"), { key: "ArrowDown" });
+    rerender(
+      <StrictMode>
+        <CommandPalette items={ITEMS} open />
+      </StrictMode>,
+    );
+
+    const options = getAllByRole("option");
+    expect(options.map((option) => option.id.split("-opt-").at(-1))).toEqual([
+      "0",
+      "1",
+      "2",
+      "3",
+    ]);
+    expect(options.map((option) => option.getAttribute("aria-selected"))).toEqual(
+      ["false", "true", "false", "false"],
+    );
+    expect(getByRole("combobox").getAttribute("aria-activedescendant")).toBe(
+      options[1].id,
+    );
+  });
+});
+
 describe("overlay shapes", () => {
   test("the center morph modal keeps the colour on the edge-spanning layer", () => {
     const { getByRole } = render(
@@ -730,6 +812,36 @@ describe("overlay shapes", () => {
     // centres the panel is inset off the edges instead.
     expect(getByRole("button", { name: "Dismiss modal" }).className).toContain(
       "fixed inset-0",
+    );
+  });
+
+  test("the project folder backdrop is a sibling of its scroll box", () => {
+    const { getByRole } = render(
+      <ProjectFolder title="Brand assets" count={3} defaultOpen defaultExpanded />,
+    );
+
+    const backdrop = getByRole("button", { name: "Close file overlay" });
+    const dialog = getByRole("dialog");
+
+    // The backdrop spans the edges and carries the scrim colour; the dialog is
+    // inset off them and scrolls the panel.
+    expect(backdrop.className).toContain("fixed inset-0");
+    expect(dialog.className).toContain("fixed inset-x-6 inset-y-8");
+    expect(dialog.className).toContain("overflow-y-auto");
+
+    // Not nested in it. WebKit resolves a `position: fixed` descendant of an
+    // accelerated overflow scroller against the scroller rather than the
+    // viewport, so a backdrop inside this box stops at the box on a phone —
+    // where the dialog is tall enough to scroll — and leaves the inset edges
+    // unscrimmed.
+    expect(dialog.contains(backdrop)).toBe(false);
+    expect(backdrop.nextElementSibling).toBe(dialog);
+
+    // The scroll box takes no pointer events, so a press in the gutter around
+    // the panel still reaches the backdrop and closes the overlay.
+    expect(dialog.className).toContain("pointer-events-none");
+    expect((dialog.firstElementChild as HTMLElement).className).toContain(
+      "pointer-events-auto",
     );
   });
 

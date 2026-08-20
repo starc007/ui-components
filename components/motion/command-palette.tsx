@@ -181,7 +181,20 @@ export function CommandPalette({
     el?.scrollIntoView({ block: "nearest" });
   }, [active, open]);
 
-  let cursor = 0;
+  // A row's index is its position in the flattened group order, derived once
+  // per change of `grouped` rather than counted while the rows render. The rows
+  // hang off `PresenceGate`'s render prop, which is its own component: a
+  // counter declared in this body would be incremented on the gate's render
+  // passes, after this body had already run, and would never be reset again —
+  // the ids, `aria-selected` and the highlight all drift with it.
+  const indexOfItem = useMemo(() => {
+    const indices = new Map<string, number>();
+    let next = 0;
+    for (const [, list] of grouped) {
+      for (const it of list) indices.set(it.id, next++);
+    }
+    return indices;
+  }, [grouped]);
 
   if (!mounted) return null;
 
@@ -306,7 +319,7 @@ export function CommandPalette({
                           {group}
                         </div>
                         {list.map((it) => {
-                          const idx = cursor++;
+                          const idx = indexOfItem.get(it.id) ?? 0;
                           const isActive = idx === active;
                           const Icon = it.icon;
                           return (
