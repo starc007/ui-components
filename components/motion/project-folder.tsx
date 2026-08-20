@@ -197,8 +197,23 @@ export function ProjectFolder({
   // sample the rendered page for its edge colours on every committed frame,
   // through a blocking call into the GPU process, and this box is transparent
   // by design — the colour belongs to the backdrop, which spans the edges,
-  // carries it, and has no children. The content box is unchanged: the insets
-  // replace the padding the panel used to hold.
+  // carries it, and has no children.
+  //
+  // The insets stand in for the padding the panel used to hold, and the panel's
+  // width cap drops by the same 3rem so that swap is exact on both axes:
+  //
+  // - horizontally, `max-w-5xl px-6` capped the *border* box at 64rem and gave a
+  //   61rem content box, so the cap has to be 61rem now that the box has no
+  //   padding. Insetting the container alone would not do it — above 64rem the
+  //   cap binds, not the container, so the content box would grow by the 3rem
+  //   the padding used to take. At 1280px the panel is 976px wide at x=152,
+  //   the same as before; below the cap the container width binds and the
+  //   narrowing insets carry the whole 3rem, again as before.
+  // - vertically, `inset-y-8` replaces `py-8`. Centred content lands in the same
+  //   place (both take 2rem off each end) and a top-aligned panel still starts
+  //   2rem down. The gap is now outside the scroll box rather than inside it, so
+  //   a list long enough to scroll gets a viewport 4rem shorter and a gap that
+  //   stays put instead of scrolling away with the content.
   const overlay = isExpanded || isClosing ? (
     <div
       ref={dialogRef}
@@ -228,7 +243,8 @@ export function ProjectFolder({
         ) : null}
       </AnimatePresence>
 
-      <div className="relative z-10 w-full max-w-5xl">
+      {/* 61rem: `max-w-5xl` (64rem) less the `px-6` this box used to carry. */}
+      <div className="relative z-10 w-full max-w-[61rem]">
         <AnimatePresence initial={false}>
           {isExpanded ? (
             <motion.div
