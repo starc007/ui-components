@@ -191,6 +191,14 @@ export function ProjectFolder({
     onClick?.();
   };
 
+  // The dialog is inset off every edge and the backdrop under it is `fixed` in
+  // its own right, so the scroll box no longer has to span the viewport. A
+  // transparent fixed element that spans the viewport edges makes iOS 26 Safari
+  // sample the rendered page for its edge colours on every committed frame,
+  // through a blocking call into the GPU process, and this box is transparent
+  // by design — the colour belongs to the backdrop, which spans the edges,
+  // carries it, and has no children. The content box is unchanged: the insets
+  // replace the padding the panel used to hold.
   const overlay = isExpanded || isClosing ? (
     <div
       ref={dialogRef}
@@ -199,7 +207,7 @@ export function ProjectFolder({
       aria-labelledby={dialogTitleId}
       aria-hidden={isExpanded ? undefined : "true"}
       className={cn(
-        "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto sm:items-center",
+        "fixed inset-x-6 inset-y-8 z-50 flex items-start justify-center overflow-y-auto sm:items-center",
         isClosing && "pointer-events-none",
       )}
     >
@@ -215,12 +223,12 @@ export function ProjectFolder({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={reduce ? { duration: 0 } : { duration: 0.18 }}
-            className="absolute inset-0 cursor-default bg-background/80 backdrop-blur-xl"
+            className="fixed inset-0 cursor-default bg-background/80 backdrop-blur-xl"
           />
         ) : null}
       </AnimatePresence>
 
-      <div className="relative z-10 w-full max-w-5xl px-6 py-8">
+      <div className="relative z-10 w-full max-w-5xl">
         <AnimatePresence initial={false}>
           {isExpanded ? (
             <motion.div

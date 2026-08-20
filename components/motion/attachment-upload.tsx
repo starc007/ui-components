@@ -391,12 +391,20 @@ function ImagePreviewDialog({
   const src = item ? imageSource(item) : undefined;
   const content =
     item && src ? (
-      <div className="pointer-events-none fixed inset-0 z-[10000]">
+      // The wrapper groups the dialog for the z-index and the presence exit; it
+      // lays nothing out, because both children are `fixed` and resolve against
+      // the viewport on their own, so it carries no box. A transparent fixed
+      // element that spans the viewport edges makes iOS 26 Safari sample the
+      // rendered page for its edge colours on every committed frame, through a
+      // blocking call into the GPU process. The scrim spans the edges and
+      // carries a colour WebKit can read; the layer that centres the image is
+      // inset off every edge with the content box its padding used to give it.
+      <div className="pointer-events-none fixed left-0 top-0 z-[10000] size-0">
         <motion.button
           type="button"
           aria-label="Close image preview"
           tabIndex={-1}
-          className="pointer-events-auto absolute inset-0 size-full cursor-default bg-black/45 backdrop-blur-xl"
+          className="pointer-events-auto fixed inset-0 size-full cursor-default bg-black/45 backdrop-blur-xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={reduce ? undefined : { opacity: 0 }}
@@ -404,7 +412,7 @@ function ImagePreviewDialog({
           onClick={onClose}
         />
 
-        <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-8">
+        <div className="fixed inset-4 flex items-center justify-center sm:inset-8">
           <motion.div
             role="dialog"
             aria-modal="true"

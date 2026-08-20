@@ -207,12 +207,21 @@ export function CommandPalette({
   // effect above focuses the input from a rAF callback, and focus() on a hidden
   // element is ignored. With no transition on the open branch, visibility is
   // visible at the next style recalc, before any callback can observe it.
+  //
+  // Hiding covers the closed state; while open the layers themselves have to
+  // stay off the rule. This container groups them for `inert`, `aria-hidden`
+  // and the z-index — it lays nothing out, because both children are `fixed`
+  // and resolve against the viewport on their own — so it carries no box at
+  // all, which puts it under the viewport on every measured side. The backdrop
+  // spans the edges but carries the scrim colour, so WebKit reads that colour
+  // instead of the page, and the layer that positions the panel is inset off
+  // every edge with the same content box its padding used to give it.
   return createPortal(
     <div
       aria-hidden={!open}
       inert={!open}
       className={cn(
-        "fixed inset-0 z-[100]",
+        "fixed left-0 top-0 z-[100] size-0",
         open
           ? "visible pointer-events-auto"
           : "invisible pointer-events-none transition-[visibility]",
@@ -227,11 +236,11 @@ export function CommandPalette({
         transition={{ duration: open ? 0.18 : EXIT_DURATION, ease: EASE_OUT }}
         onClick={() => setOpen(false)}
         className={cn(
-          "absolute inset-0 bg-background/5 [backdrop-filter:blur(12px)_saturate(140%)] [-webkit-backdrop-filter:blur(12px)_saturate(140%)]",
+          "fixed inset-0 bg-background/5 [backdrop-filter:blur(12px)_saturate(140%)] [-webkit-backdrop-filter:blur(12px)_saturate(140%)]",
           open ? "pointer-events-auto" : "pointer-events-none",
         )}
       />
-      <div className="pointer-events-none absolute inset-0 flex items-start justify-center p-4 pt-[18vh]">
+      <div className="pointer-events-none fixed inset-x-4 bottom-4 top-[18vh] flex items-start justify-center">
         <motion.div
           role="dialog"
           aria-modal="true"

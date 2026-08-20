@@ -1,19 +1,43 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { act, cleanup, fireEvent, render } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  type RenderResult,
+  waitFor,
+} from "@testing-library/react";
+import type { ReactElement } from "react";
+import {
+  AnimatedSidebar,
+  AnimatedSidebarContent,
+  AnimatedSidebarProvider,
+} from "@/components/motion/animated-sidebar";
+import { AttachmentUpload } from "@/components/motion/attachment-upload";
+import { BottomSheet } from "@/components/motion/bottom-sheet";
 import {
   CenterMorphModal,
   CenterMorphModalContent,
   CenterMorphModalTrigger,
 } from "@/components/motion/center-morph-modal";
 import { CommandPalette } from "@/components/motion/command-palette";
+import { Drawer } from "@/components/motion/drawer";
+import { MorphingModal } from "@/components/motion/morphing-modal";
+import { MorphingSearch } from "@/components/motion/morphing-search";
+import { ProjectFolder } from "@/components/motion/project-folder";
 import { TableMenu } from "@/components/motion/table/table-menu";
 
-afterEach(cleanup);
+const originalMatchMedia = window.matchMedia;
 
-// One defect, three components. A `position: fixed` element that is transparent
-// and spans the viewport edges makes iOS 26 Safari snapshot the page and read
-// the pixels back from the GPU process on every committed frame, to pick the
-// colour for the browser chrome. That read is synchronous.
+afterEach(() => {
+  cleanup();
+  window.matchMedia = originalMatchMedia;
+});
+
+// One defect, every overlay in the library. A `position: fixed` element that is
+// transparent and spans the viewport edges makes iOS 26 Safari snapshot the page
+// and read the pixels back from the GPU process on every committed frame, to
+// pick the colour for the browser chrome. That read is synchronous.
 //
 // WebKit asks for the colour only when all of these hold, so breaking any one
 // of them removes the cost. The helper below states them as one rule, so the
@@ -176,14 +200,161 @@ describe("samplingLayers", () => {
   });
 });
 
+/** Render this case with a mobile viewport, the way the sidebar sheet needs. */
+function withMobileViewport<T>(render: () => T): T {
+  window.matchMedia = (query: string) =>
+    ({
+      matches:
+        query.includes("prefers-reduced-motion") || query.includes("max-width"),
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    }) as MediaQueryList;
+  return render();
+}
+
+const IMAGE_ITEM = {
+  id: "shot",
+  name: "screenshot.png",
+  kind: "image" as const,
+  previewUrl: "blob:preview",
+  status: "complete" as const,
+};
+
+// Every overlay in the library that puts a `position: fixed` layer over the
+// page, in the state that layer exists in. Render thunks (not bare JSX) keep
+// these out of an iterable literal; the optional third entry drives a case that
+// only reaches its overlay through an interaction. Add a row here when you ship
+// an overlay, and a row for its closed state too when it stays mounted.
+const cases: Array<
+  [name: string, render: () => ReactElement, open?: (view: RenderResult) => void]
+> = [
+  ["CommandPalette closed", () => <CommandPalette items={[]} />],
+  ["CommandPalette open", () => <CommandPalette items={[]} open />],
+  [
+    "CenterMorphModal open",
+    () => (
+      <CenterMorphModal>
+        <CenterMorphModalTrigger>
+          <button type="button">Open profile</button>
+        </CenterMorphModalTrigger>
+        <CenterMorphModalContent ariaLabel="Profile">
+          <p>Profile content</p>
+        </CenterMorphModalContent>
+      </CenterMorphModal>
+    ),
+    ({ getByRole }) => fireEvent.click(getByRole("button", { name: "Open profile" })),
+  ],
+  [
+    "TableMenu open",
+    () => (
+      <TableMenu
+        ariaLabel="Row actions"
+        trigger={<span>Actions</span>}
+        items={[{ label: "Delete", onSelect: () => {} }]}
+      />
+    ),
+    ({ getByRole }) => fireEvent.click(getByRole("button", { name: "Row actions" })),
+  ],
+  [
+    "MorphingModal closed",
+    () => (
+      <MorphingModal viewId={null} onClose={() => {}}>
+        <p>Wallet options</p>
+      </MorphingModal>
+    ),
+  ],
+  [
+    "MorphingModal open",
+    () => (
+      <MorphingModal viewId="options" onClose={() => {}}>
+        <p>Wallet options</p>
+      </MorphingModal>
+    ),
+  ],
+  [
+    "BottomSheet open",
+    () => (
+      <BottomSheet open onOpenChange={() => {}} title="Quick actions">
+        <p>Sheet body</p>
+      </BottomSheet>
+    ),
+  ],
+  [
+    "Drawer open",
+    () => (
+      <Drawer open onOpenChange={() => {}} ariaLabel="Demo drawer">
+        <p>Drawer body</p>
+      </Drawer>
+    ),
+  ],
+  [
+    "MorphingSearch closed",
+    () => <MorphingSearch items={[{ id: "one", title: "Alpha" }]} />,
+  ],
+  [
+    "MorphingSearch open",
+    () => <MorphingSearch items={[{ id: "one", title: "Alpha" }]} defaultOpen />,
+  ],
+  [
+    "AnimatedSidebar mobile closed",
+    () =>
+      withMobileViewport(() => (
+        <AnimatedSidebarProvider>
+          <AnimatedSidebar ariaLabel="Workspace navigation">
+            <AnimatedSidebarContent>
+              <button type="button">Overview</button>
+            </AnimatedSidebarContent>
+          </AnimatedSidebar>
+        </AnimatedSidebarProvider>
+      )),
+  ],
+  [
+    "AnimatedSidebar mobile open",
+    () =>
+      withMobileViewport(() => (
+        <AnimatedSidebarProvider defaultOpenMobile>
+          <AnimatedSidebar ariaLabel="Workspace navigation">
+            <AnimatedSidebarContent>
+              <button type="button">Overview</button>
+            </AnimatedSidebarContent>
+          </AnimatedSidebar>
+        </AnimatedSidebarProvider>
+      )),
+  ],
+  [
+    "ProjectFolder overlay open",
+    () => <ProjectFolder title="Brand assets" count={3} defaultOpen defaultExpanded />,
+  ],
+  [
+    "AttachmentUpload image preview open",
+    () => <AttachmentUpload defaultValue={[IMAGE_ITEM]} />,
+    ({ getByRole }) =>
+      fireEvent.click(getByRole("button", { name: "Preview screenshot.png" })),
+  ],
+];
+
 describe("fixed full-viewport overlays", () => {
-  test("the closed command palette leaves no sampling layer behind", () => {
+  for (const [name, renderCase, openCase] of cases) {
+    test(`${name} leaves no sampling layer`, () => {
+      const view = render(renderCase());
+      openCase?.(view);
+
+      expect(classesOf(samplingLayers(document.body))).toEqual([]);
+    });
+  }
+});
+
+describe("overlay show and hide", () => {
+  test("the closed command palette hides itself, after the exit", () => {
     const { getByRole } = render(<CommandPalette items={[]} />);
 
     // It is mounted for the life of the app, so a colour would paint over the
     // page. Hiding is the lever, held back until the exit animation has played.
-    expect(classesOf(samplingLayers(document.body))).toEqual([]);
-
     const overlay = getByRole("button", {
       name: "Close command palette",
       hidden: true,
@@ -221,7 +392,106 @@ describe("fixed full-viewport overlays", () => {
     expect(document.activeElement).toBe(getByRole("combobox"));
   });
 
-  test("the open modal has no sampling layer", () => {
+  test("the mobile sidebar sheet is visible the moment it opens", () => {
+    const { getByRole, rerender } = render(
+      withMobileViewport(() => (
+        <AnimatedSidebarProvider openMobile={false}>
+          <AnimatedSidebar ariaLabel="Workspace navigation">
+            <AnimatedSidebarContent>
+              <button type="button">Overview</button>
+            </AnimatedSidebarContent>
+          </AnimatedSidebar>
+        </AnimatedSidebarProvider>
+      )),
+    );
+
+    // A closed sheet is `aria-hidden`, which leaves it without a name to query.
+    const sheet = getByRole("dialog", { hidden: true })
+      .parentElement as HTMLElement;
+    expect(sheet.className).toContain("invisible");
+
+    rerender(
+      <AnimatedSidebarProvider openMobile>
+        <AnimatedSidebar ariaLabel="Workspace navigation">
+          <AnimatedSidebarContent>
+            <button type="button">Overview</button>
+          </AnimatedSidebarContent>
+        </AnimatedSidebar>
+      </AnimatedSidebarProvider>,
+    );
+
+    // Shown in the same commit that starts the slide: the sheet focuses its
+    // first control from a rAF callback right after, and focus() on a hidden
+    // element is ignored.
+    expect(sheet.className).toContain("visible");
+    expect(sheet.className).not.toContain("invisible");
+  });
+
+  test("the closing mobile sidebar sheet stays visible through its exit", async () => {
+    const { getByRole, rerender } = render(
+      withMobileViewport(() => (
+        <AnimatedSidebarProvider openMobile>
+          <AnimatedSidebar ariaLabel="Workspace navigation">
+            <AnimatedSidebarContent>
+              <button type="button">Overview</button>
+            </AnimatedSidebarContent>
+          </AnimatedSidebar>
+        </AnimatedSidebarProvider>
+      )),
+    );
+
+    const sheet = getByRole("dialog", { name: "Workspace navigation" })
+      .parentElement as HTMLElement;
+
+    rerender(
+      <AnimatedSidebarProvider openMobile={false}>
+        <AnimatedSidebar ariaLabel="Workspace navigation">
+          <AnimatedSidebarContent>
+            <button type="button">Overview</button>
+          </AnimatedSidebarContent>
+        </AnimatedSidebar>
+      </AnimatedSidebarProvider>,
+    );
+
+    // Hiding waits for the panel's own exit to finish rather than a duration
+    // copied from the transition, so the slide and the backdrop fade are never
+    // cut off mid-animation.
+    expect(sheet.className).toContain("visible");
+    expect(sheet.className).not.toContain("invisible");
+
+    // And it does hide, once the slide settles — the sheet stays mounted for
+    // the life of the mobile viewport, so it cannot stay a live layer.
+    await waitFor(() => expect(sheet.className).toContain("invisible"));
+  });
+
+  test("the opening mobile sidebar sheet focuses its first control", async () => {
+    const { getByRole } = render(
+      withMobileViewport(() => (
+        <AnimatedSidebarProvider defaultOpenMobile>
+          <AnimatedSidebar ariaLabel="Workspace navigation">
+            <AnimatedSidebarContent>
+              <button type="button">Overview</button>
+            </AnimatedSidebarContent>
+          </AnimatedSidebar>
+        </AnimatedSidebarProvider>
+      )),
+    );
+
+    await act(
+      () =>
+        new Promise<void>((resolve) => {
+          requestAnimationFrame(() => resolve());
+        }),
+    );
+
+    expect(document.activeElement).toBe(
+      getByRole("button", { name: "Overview" }),
+    );
+  });
+});
+
+describe("overlay shapes", () => {
+  test("the center morph modal keeps the colour on the edge-spanning layer", () => {
     const { getByRole } = render(
       <CenterMorphModal>
         <CenterMorphModalTrigger>
@@ -237,7 +507,6 @@ describe("fixed full-viewport overlays", () => {
 
     // The backdrop spans the edges and carries the scrim colour. The layer that
     // centres the panel is inset off the edges instead.
-    expect(classesOf(samplingLayers(document.body))).toEqual([]);
     expect(getByRole("button", { name: "Dismiss modal" }).className).toContain(
       "fixed inset-0",
     );
@@ -261,6 +530,5 @@ describe("fixed full-viewport overlays", () => {
     const catcher = getByRole("menu").previousElementSibling as HTMLElement;
     expect(catcher.className).toContain("fixed inset-0");
     expect(catcher.childElementCount).toBe(0);
-    expect(classesOf(samplingLayers(document.body))).toEqual([]);
   });
 });

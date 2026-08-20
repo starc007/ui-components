@@ -141,90 +141,105 @@ export function BottomSheet({
   // sheet against that ancestor instead of the viewport.
   if (!mounted) return null;
 
+  // Two fixed siblings, no wrapper. A transparent fixed element that spans the
+  // viewport edges makes iOS 26 Safari sample the rendered page for its edge
+  // colours on every committed frame, through a blocking call into the GPU
+  // process. The scrim spans the edges but carries a colour, so WebKit reads
+  // that instead of the page. The sheet is pinned to the bottom, stops short of
+  // the top edge at every snap point the component ships, and paints an opaque
+  // surface either way — smaller than the viewport on the measured side, and
+  // carrying a colour even for a caller who snaps it to the full height.
+  //
+  // Geometry is unchanged: the wrapper was `fixed inset-0`, so its absolutely
+  // positioned children already resolved against the viewport rect. Fixed
+  // positioning resolves against the same rect, and the drag transform, the
+  // snap heights in vh and the measured offsetHeight all read the same.
   return createPortal(
     <AnimatePresence>
       {open ? (
-        <div className="pointer-events-none fixed inset-0 z-50">
-          <motion.button
-            type="button"
-            aria-label="Close bottom sheet"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={DRAWER}
-            onClick={() => onOpenChange(false)}
-            // A dim scrim with a light blur. backdrop-blur is GPU-expensive and
-            // re-rasterizes every frame the sheet drags over it; a small radius
-            // plus more opacity keeps the glass look without the jank.
-            className="pointer-events-auto absolute inset-0 bg-background/40 backdrop-blur-sm"
-          />
-          <motion.div
-            ref={sheetRef}
-            drag="y"
-            dragControls={dragControls}
-            dragListener={false}
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={{ top: 0.02, bottom: 0.4 }}
-            dragMomentum={false}
-            onDragEnd={onDragEnd}
-            initial={reduce ? { y: 0, opacity: 0 } : { y: "100%" }}
-            animate={reduce ? { y: 0, opacity: 1 } : { y: 0 }}
-            exit={reduce ? { y: 0, opacity: 0 } : { y: "100%" }}
-            transition={reduce ? { duration: 0.18, ease: EASE_DRAWER } : DRAWER}
-            onAnimationComplete={() => {
-              if (sheetRef.current)
-                heightRef.current = sheetRef.current.offsetHeight;
-            }}
-            style={heightStyle}
-            className={cn(
-              "pointer-events-auto absolute bottom-0 left-0 right-0 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-3xl will-change-transform",
-              "border border-border bg-background shadow-xl",
-              className,
-            )}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={title ? titleId : undefined}
-            aria-describedby={description ? descriptionId : undefined}
-            aria-label={title ? undefined : "Bottom sheet"}
-          >
-            <div className="flex flex-col items-center px-4 pb-2 pt-3">
-              {/* Drag only the pill so the title and description stay selectable. */}
-              <div
-                onPointerDown={(event) => dragControls.start(event)}
-                // A slow pull must not hand the gesture to iOS's callout,
-                // which would leave the sheet frozen mid-drag.
-                className={cn(
-                  "flex cursor-grab touch-none items-center justify-center py-1 active:cursor-grabbing",
-                  TOUCH_GESTURE_CONTENT_CLASS,
-                )}
-              >
-                <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" />
-              </div>
-              {title || description ? (
-                <div className="mt-2 w-full">
-                  {title ? (
-                    <h2
-                      id={titleId}
-                      className="text-base font-semibold text-foreground"
-                    >
-                      {title}
-                    </h2>
-                  ) : null}
-                  {description ? (
-                    <p
-                      id={descriptionId}
-                      className="mt-0.5 text-sm text-muted-foreground"
-                    >
-                      {description}
-                    </p>
-                  ) : null}
-                </div>
-              ) : null}
+        <motion.button
+          key="backdrop"
+          type="button"
+          aria-label="Close bottom sheet"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={DRAWER}
+          onClick={() => onOpenChange(false)}
+          // A dim scrim with a light blur. backdrop-blur is GPU-expensive and
+          // re-rasterizes every frame the sheet drags over it; a small radius
+          // plus more opacity keeps the glass look without the jank.
+          className="pointer-events-auto fixed inset-0 z-50 bg-background/40 backdrop-blur-sm"
+        />
+      ) : null}
+      {open ? (
+        <motion.div
+          key="sheet"
+          ref={sheetRef}
+          drag="y"
+          dragControls={dragControls}
+          dragListener={false}
+          dragConstraints={{ top: 0, bottom: 0 }}
+          dragElastic={{ top: 0.02, bottom: 0.4 }}
+          dragMomentum={false}
+          onDragEnd={onDragEnd}
+          initial={reduce ? { y: 0, opacity: 0 } : { y: "100%" }}
+          animate={reduce ? { y: 0, opacity: 1 } : { y: 0 }}
+          exit={reduce ? { y: 0, opacity: 0 } : { y: "100%" }}
+          transition={reduce ? { duration: 0.18, ease: EASE_DRAWER } : DRAWER}
+          onAnimationComplete={() => {
+            if (sheetRef.current)
+              heightRef.current = sheetRef.current.offsetHeight;
+          }}
+          style={heightStyle}
+          className={cn(
+            "pointer-events-auto fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-3xl will-change-transform",
+            "border border-border bg-background shadow-xl",
+            className,
+          )}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={title ? titleId : undefined}
+          aria-describedby={description ? descriptionId : undefined}
+          aria-label={title ? undefined : "Bottom sheet"}
+        >
+          <div className="flex flex-col items-center px-4 pb-2 pt-3">
+            {/* Drag only the pill so the title and description stay selectable. */}
+            <div
+              onPointerDown={(event) => dragControls.start(event)}
+              // A slow pull must not hand the gesture to iOS's callout,
+              // which would leave the sheet frozen mid-drag.
+              className={cn(
+                "flex cursor-grab touch-none items-center justify-center py-1 active:cursor-grabbing",
+                TOUCH_GESTURE_CONTENT_CLASS,
+              )}
+            >
+              <div className="h-1.5 w-10 rounded-full bg-muted-foreground/40" />
             </div>
-            {/* overscroll-contain stops boundary scrolls from chaining to the page. */}
-            <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-6">{children}</div>
-          </motion.div>
-        </div>
+            {title || description ? (
+              <div className="mt-2 w-full">
+                {title ? (
+                  <h2
+                    id={titleId}
+                    className="text-base font-semibold text-foreground"
+                  >
+                    {title}
+                  </h2>
+                ) : null}
+                {description ? (
+                  <p
+                    id={descriptionId}
+                    className="mt-0.5 text-sm text-muted-foreground"
+                  >
+                    {description}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+          {/* overscroll-contain stops boundary scrolls from chaining to the page. */}
+          <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-6">{children}</div>
+        </motion.div>
       ) : null}
     </AnimatePresence>,
     document.body,
