@@ -6,6 +6,12 @@ import {
   defaultWeek,
   type WeekAvailability,
 } from "@/components/motion/availability-scheduler";
+import {
+  buildOptions,
+  clampRange,
+  endOptions,
+  startOptions,
+} from "@/components/motion/availability-scheduler/types";
 
 function Scheduler({ initial }: { initial: WeekAvailability }) {
   const [value, setValue] = useState(initial);
@@ -72,5 +78,35 @@ describe("AvailabilityScheduler open panel", () => {
     fireEvent.click(monSwitch);
 
     expect(openFields(container)).toHaveLength(0);
+  });
+});
+
+const options = buildOptions(30);
+
+describe("availability scheduler ranges", () => {
+  test("rejects an overnight window like 7:00 PM to 1:00 AM", () => {
+    expect(clampRange("19:00", "01:00", 30)).toEqual({
+      start: "19:00",
+      end: "19:30",
+    });
+  });
+
+  test("keeps a same-day window", () => {
+    expect(clampRange("09:00", "17:00", 30)).toEqual({
+      start: "09:00",
+      end: "17:00",
+    });
+  });
+
+  test("end picker only lists times after start", () => {
+    const ends = endOptions(options, "19:00").map((o) => o.value);
+    expect(ends).not.toContain("01:00");
+    expect(ends[0]).toBe("19:30");
+  });
+
+  test("start picker only lists times before end", () => {
+    const starts = startOptions(options, "17:00").map((o) => o.value);
+    expect(starts).not.toContain("17:00");
+    expect(starts.at(-1)).toBe("16:30");
   });
 });
