@@ -1,5 +1,20 @@
 import type { Metadata } from "next";
+import { GuideShell } from "@/components/app/docs/guide-shell";
 import { MotionPatterns } from "./motion-patterns";
+
+const PAGE_NAV_ITEMS = [
+  {
+    id: "overview",
+    label: "Motion guides",
+    children: [
+      { id: "decision-framework", label: "Decision framework" },
+      { id: "motion-tokens", label: "Motion tokens" },
+      { id: "timing", label: "Timing" },
+      { id: "recipes", label: "Recipes" },
+      { id: "accessibility", label: "Accessibility" },
+    ],
+  },
+];
 
 export const metadata: Metadata = {
   title: "Motion Guides",
@@ -26,20 +41,22 @@ export const metadata: Metadata = {
 
 export default function MotionPatternsPage() {
   return (
-    <div className="w-full">
-      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-        beUI motion system
-      </p>
-      <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-        Motion that explains, not distracts.
-      </h1>
-      <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-        A practical guide to deciding when something should move, choosing the
-        right token, and shipping motion that stays fast, coherent, and
-        accessible.
-      </p>
+    <GuideShell navItems={PAGE_NAV_ITEMS}>
+      <header id="overview" className="scroll-mt-24">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Motion guide
+        </p>
+        <h1 className="mt-2 text-3xl font-medium tracking-tight text-foreground">
+          Motion that explains, not distracts
+        </h1>
+        <p className="mt-3 max-w-2xl text-muted-foreground">
+          A practical guide to deciding when something should move, choosing
+          the right token, and shipping motion that stays fast, coherent, and
+          accessible.
+        </p>
+      </header>
 
       <MotionPatterns />
-    </div>
+    </GuideShell>
   );
 }

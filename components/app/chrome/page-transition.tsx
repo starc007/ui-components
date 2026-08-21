@@ -2,15 +2,18 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
 
 export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const reduce = useReducedMotion();
-  // Component pages contain viewport-fixed navigation. Translating an ancestor
-  // makes fixed descendants anchor to that moving element during the transition.
-  const shouldTranslate = !reduce && !pathname.startsWith("/components/");
+  // Component and guide pages contain viewport-fixed navigation. Translating an
+  // ancestor makes fixed descendants anchor to that moving element during the
+  // transition instead of the viewport.
+  const hasViewportFixedContent =
+    pathname.startsWith("/components/") || pathname.startsWith("/docs/");
+  const shouldTranslate = !reduce && !hasViewportFixedContent;
   const ref = useRef<HTMLDivElement>(null);
   // Skip enter animation on first load so LCP element is visible immediately.
   // After mount, navigations animate normally.

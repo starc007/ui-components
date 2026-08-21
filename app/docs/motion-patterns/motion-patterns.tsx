@@ -4,28 +4,28 @@ import {
   Accessibility,
   Bell,
   CircleGauge,
+  type LucideIcon,
   MousePointer2,
   PanelTopOpen,
   RefreshCw,
   Rows3,
   Sparkles,
   Zap,
-  type LucideIcon,
 } from "lucide-react";
 import {
   AnimatePresence,
   motion,
-  useReducedMotion,
   type Transition,
+  useReducedMotion,
   type Variants,
 } from "motion/react";
-import { useId, useState, type ReactNode } from "react";
-import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { type ReactNode, useId, useState } from "react";
 import {
   EASE_IN_OUT,
   EASE_OUT,
   SPRING_PRESS,
 } from "@/lib/ease";
+import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
 
 type RecipeDemo = "press" | "icon" | "reveal" | "layout" | "swap";
@@ -239,6 +239,7 @@ export function MotionPatterns() {
   return (
     <div className="mt-12 space-y-20">
       <GuideSection
+        id="decision-framework"
         eyebrow="Decision framework"
         title="Four questions before motion"
         description="The best animation decision is often made before touching a duration or spring value."
@@ -267,6 +268,7 @@ export function MotionPatterns() {
       </GuideSection>
 
       <GuideSection
+        id="motion-tokens"
         eyebrow="Motion tokens"
         title="Use one language everywhere"
         description="beUI keeps deliberate motion in shared tokens. Choose by purpose so components feel related without moving identically."
@@ -275,6 +277,7 @@ export function MotionPatterns() {
       </GuideSection>
 
       <GuideSection
+        id="timing"
         eyebrow="Timing"
         title="Fast enough to feel immediate"
         description="Duration depends on size, distance, and frequency. These ranges are starting points, not targets to hit mechanically."
@@ -312,6 +315,7 @@ export function MotionPatterns() {
       </GuideSection>
 
       <GuideSection
+        id="recipes"
         eyebrow="Recipes"
         title="Patterns you can copy"
         description="Each recipe connects a purpose to a production token, a reduced-motion state, and a concrete failure mode."
@@ -324,6 +328,7 @@ export function MotionPatterns() {
       </GuideSection>
 
       <GuideSection
+        id="accessibility"
         eyebrow="Accessibility"
         title="Reduced motion is a designed state"
         description="Do not remove every transition. Keep feedback that helps comprehension and remove movement that can cause discomfort."
@@ -360,22 +365,24 @@ const visible = {
 }
 
 function GuideSection({
+  id,
   eyebrow,
   title,
   description,
   children,
 }: {
+  id: string;
   eyebrow: string;
   title: string;
   description: string;
   children: ReactNode;
 }) {
   return (
-    <section>
+    <section id={id} className="scroll-mt-24">
       <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
         {eyebrow}
       </p>
-      <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+      <h2 className="mt-2 text-xl font-medium tracking-tight text-foreground">
         {title}
       </h2>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">

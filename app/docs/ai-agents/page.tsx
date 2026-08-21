@@ -1,7 +1,24 @@
+import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { CodeBlock } from "@/components/app/docs/code-block";
+import { GuideShell } from "@/components/app/docs/guide-shell";
+
+const PAGE_NAV_ITEMS = [
+  {
+    id: "overview",
+    label: "Agent guide",
+    children: [
+      { id: "agent-skill", label: "Agent skill" },
+      { id: "mcp-server", label: "MCP server" },
+      { id: "endpoints", label: "Endpoints" },
+      { id: "agent-flow", label: "Agent flow" },
+      { id: "shadcn-flow", label: "shadcn flow" },
+      { id: "entry-shape", label: "Entry shape" },
+      { id: "generative-ui", label: "Generative UI" },
+    ],
+  },
+];
 
 export const metadata: Metadata = {
   title: "AI Agents",
@@ -118,21 +135,26 @@ const ENTRY_SHAPE = `{
 
 export default function AIAgentsPage() {
   return (
-    <>
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        Intro
-      </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-        For AI agents
-      </h1>
-      <p className="mt-3 text-muted-foreground">
-        beUI exposes a static, agent-friendly surface. Install the beUI skill,
-        connect the MCP server below, or hit the raw endpoints directly. Coding
-        agents (Claude, Codex, Cursor, Amp) can list components, fetch source
-        with all deps, and drop files into the user&apos;s project.
-      </p>
+    <GuideShell navItems={PAGE_NAV_ITEMS}>
+      <header id="overview" className="scroll-mt-24">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Agent guide
+        </p>
+        <h1 className="mt-2 text-3xl font-medium tracking-tight text-foreground">
+          For AI agents
+        </h1>
+        <p className="mt-3 max-w-2xl text-muted-foreground">
+          beUI exposes a static, agent-friendly surface. Install the beUI skill,
+          connect the MCP server below, or hit the raw endpoints directly. Coding
+          agents (Claude, Codex, Cursor, Amp) can list components, fetch source
+          with all deps, and drop files into the user&apos;s project.
+        </p>
+      </header>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="agent-skill"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Agent skill
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -149,7 +171,10 @@ export default function AIAgentsPage() {
         <CodeBlock code={SKILL_SNIPPET} lang="bash" filename="terminal" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="mcp-server"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         MCP server
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -189,7 +214,10 @@ export default function AIAgentsPage() {
         .
       </p>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="endpoints"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Endpoints
       </h2>
       <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
@@ -224,7 +252,10 @@ export default function AIAgentsPage() {
         ))}
       </ul>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="agent-flow"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Agent flow
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -235,7 +266,10 @@ export default function AIAgentsPage() {
         <CodeBlock code={FETCH_SNIPPET} lang="ts" filename="agent.ts" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="shadcn-flow"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         shadcn flow
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -247,7 +281,10 @@ export default function AIAgentsPage() {
         <CodeBlock code={SHADCN_SNIPPET} lang="bash" filename="terminal" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="entry-shape"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Entry shape
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -265,7 +302,10 @@ export default function AIAgentsPage() {
         <CodeBlock code={ENTRY_SHAPE} lang="json" filename="r/swap.json" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="generative-ui"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Generative UI
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -280,6 +320,6 @@ export default function AIAgentsPage() {
         to register a custom component library, generate its system prompt, and
         render interactive OpenUI Lang as it streams.
       </p>
-    </>
+    </GuideShell>
   );
 }

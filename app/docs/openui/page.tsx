@@ -1,8 +1,9 @@
+import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
+import { GuideShell } from "@/components/app/docs/guide-shell";
 import { breadcrumbJsonLd, docsArticleJsonLd } from "@/lib/seo";
 
 const PAGE_TITLE = "OpenUI integration guide";
@@ -10,6 +11,22 @@ const PAGE_DESCRIPTION =
   "Build an OpenUI React integration with beUI. Register animated components, generate the system prompt, stream OpenUI Lang, and render interactive UI.";
 const PAGE_PATH = "/docs/openui";
 const PAGE_IMAGE = "/api/og?page=openui&v=2";
+
+const PAGE_NAV_ITEMS = [
+  {
+    id: "overview",
+    label: "OpenUI guide",
+    children: [
+      { id: "install", label: "Install" },
+      { id: "register-components", label: "Register components" },
+      { id: "assemble-library", label: "Assemble the library" },
+      { id: "generate-prompt", label: "Generate the prompt" },
+      { id: "render-stream", label: "Render the stream" },
+      { id: "why-beui", label: "Why beUI fits" },
+      { id: "resources", label: "Resources" },
+    ],
+  },
+];
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -238,7 +255,7 @@ const RESOURCES: { label: string; url: string; desc: string }[] = [
 
 export default function OpenUIPage() {
   return (
-    <>
+    <GuideShell navItems={PAGE_NAV_ITEMS}>
       <JsonLd
         data={[
           breadcrumbJsonLd([
@@ -261,30 +278,35 @@ export default function OpenUIPage() {
           }),
         ]}
       />
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        Integration
-      </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-        Use beUI with OpenUI
-      </h1>
-      <p className="mt-3 text-muted-foreground">
-        <Link
-          href="https://www.openui.com"
-          target="_blank"
-          rel="noreferrer noopener"
-          className="text-foreground underline underline-offset-4 decoration-border hover:decoration-foreground"
-        >
-          OpenUI
-        </Link>{" "}
-        is a generative UI framework: instead of returning markdown, the model
-        emits an abstract UI tree (OpenUI Lang) and a React runtime maps every
-        node to a component <em>you</em> register. This OpenUI React integration
-        turns beUI into a custom OpenUI component library, so each generated
-        response uses real, animated components—and only the components you
-        allow.
-      </p>
+      <header id="overview" className="scroll-mt-24">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Integration guide
+        </p>
+        <h1 className="mt-2 text-3xl font-medium tracking-tight text-foreground">
+          Use beUI with OpenUI
+        </h1>
+        <p className="mt-3 max-w-2xl text-muted-foreground">
+          <Link
+            href="https://www.openui.com"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
+          >
+            OpenUI
+          </Link>{" "}
+          is a generative UI framework: instead of returning markdown, the model
+          emits an abstract UI tree (OpenUI Lang) and a React runtime maps every
+          node to a component <em>you</em> register. This OpenUI React integration
+          turns beUI into a custom OpenUI component library, so each generated
+          response uses real, animated components—and only the components you
+          allow.
+        </p>
+      </header>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="install"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Install
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -310,7 +332,10 @@ export default function OpenUIPage() {
         one below.
       </p>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="register-components"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Register components
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -341,7 +366,10 @@ export default function OpenUIPage() {
         <CodeBlock code={DEFINE_SNIPPET} lang="tsx" filename="lib/beui-library.tsx" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="assemble-library"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Assemble the library
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -362,7 +390,10 @@ export default function OpenUIPage() {
         <CodeBlock code={LIBRARY_SNIPPET} lang="tsx" filename="lib/beui-library.tsx" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="generate-prompt"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Generate the prompt
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -388,7 +419,10 @@ export default function OpenUIPage() {
         path, so the server bundle never imports your client components.
       </p>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="render-stream"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Render the stream
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -408,7 +442,10 @@ export default function OpenUIPage() {
         <CodeBlock code={RENDER_SNIPPET} lang="tsx" filename="generative-response.tsx" />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="why-beui"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Why beUI fits
       </h2>
       <p className="mt-2 text-muted-foreground">
@@ -418,7 +455,10 @@ export default function OpenUIPage() {
         model-generated UIs inherit the host app&apos;s theme without extra wiring.
       </p>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2
+        id="resources"
+        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+      >
         Resources
       </h2>
       <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
@@ -446,6 +486,6 @@ export default function OpenUIPage() {
         Other generative UI frameworks that consume shadcn registries can pull
         beUI the same way — more integration guides to come.
       </p>
-    </>
+    </GuideShell>
   );
 }
