@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { registry } from "@/lib/registry";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
+import { isComponentNew } from "@/lib/component-status";
 import { cn } from "@/lib/utils";
 
 const INTRO = [
@@ -29,8 +30,13 @@ const SIDEBAR_CATEGORIES = [...registry].sort(
     (SIDEBAR_CATEGORY_ORDER[b.slug] ?? Number.MAX_SAFE_INTEGER),
 );
 
-function moveFirstItemsToBottom<T>(items: T[], count: number) {
-  return [...items.slice(count), ...items.slice(0, count)];
+function moveNewItemsToTop<
+  T extends { badge?: "new"; launchedAt?: string },
+>(items: readonly T[], now: number) {
+  return [
+    ...items.filter((item) => isComponentNew(item, now)),
+    ...items.filter((item) => !isComponentNew(item, now)),
+  ];
 }
 
 function linkClass(active: boolean) {
@@ -45,6 +51,7 @@ function linkClass(active: boolean) {
 /** Nav list shared by the desktop sidebar and the mobile bottom sheet. */
 export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const now = Date.now();
 
   return (
     <nav className="flex flex-col gap-8">
@@ -95,7 +102,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             </span>
           </Link>
           <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
-            {moveFirstItemsToBottom(cat.components, 3).map((comp) => {
+            {moveNewItemsToTop(cat.components, now).map((comp) => {
               const href = `/components/${cat.slug}/${comp.slug}`;
               return (
                 <Link
