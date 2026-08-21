@@ -35,7 +35,7 @@ function moveFirstItemsToBottom<T>(items: T[], count: number) {
 
 function linkClass(active: boolean) {
   return cn(
-    "relative block rounded-lg px-3 py-1.5 text-sm transition-colors",
+    "relative block rounded-lg px-3 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
     active
       ? "text-foreground font-medium bg-foreground/[0.06]"
       : "text-muted-foreground hover:text-foreground",
@@ -87,7 +87,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           <Link
             href={`/components/${cat.slug}`}
             onClick={onNavigate}
-            className="mb-2 flex items-center gap-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
+            className="mb-2 flex items-center gap-2 rounded-md px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
           >
             {cat.name}
             <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground">

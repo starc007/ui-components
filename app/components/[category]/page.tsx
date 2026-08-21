@@ -12,8 +12,6 @@ const categoryContent = {
     heading: "Animated React components",
     description:
       "Explore free, open-source animated React components built with Motion and Tailwind CSS. Copy the TypeScript source into your app and customize every interaction.",
-    supportingText:
-      "Browse motion components for navigation, forms, text, feedback, overlays, and scroll experiences. Each one includes a live preview, install command, source code, API reference, and reduced-motion support.",
     allLabel: "All animated components",
   },
   blocks: {
@@ -21,8 +19,6 @@ const categoryContent = {
     heading: "Animated React UI blocks",
     description:
       "Explore product-ready animated React blocks built with Motion and Tailwind CSS. Copy complete interactions into your app and adapt the source to your product.",
-    supportingText:
-      "Browse composed interfaces for uploads, navigation, trading, scheduling, notifications, and more. Every block includes a live preview, install command, TypeScript source, and implementation details.",
     allLabel: "All animated blocks",
   },
   agents: {
@@ -30,8 +26,6 @@ const categoryContent = {
     heading: "Animated AI agent components",
     description:
       "Build clear, responsive AI experiences with open-source React components for agent reasoning, progress, tool activity, and conversation states.",
-    supportingText:
-      "Each agent component is designed for long-running, interruptible AI work and includes a live preview, shadcn install command, TypeScript source, API reference, and reduced-motion support.",
     allLabel: "All agent components",
   },
 } as const;
@@ -190,61 +184,41 @@ export default async function CategoryPage({
       >
         <span className="font-medium text-foreground">{cat.name}</span>
       </nav>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
+      <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
         {content.heading}
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">
         {content.description}
       </p>
-      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-        {content.supportingText}
-      </p>
 
       {agentGroups.length ? (
-        <>
-          <nav
-            aria-label="Agent component groups"
-            className="mt-8 flex flex-wrap gap-x-4 gap-y-2 border-y border-border py-4"
-          >
-            {agentGroups.map((group) => (
-              <a
-                key={group.id}
-                href={`#${group.id}`}
-                className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
-              >
-                {group.title.replace(" components", "")}
-              </a>
-            ))}
-          </nav>
-
-          <div className="mt-12 space-y-14">
-            {agentGroups.map((group) => (
-              <section key={group.id} id={group.id} className="scroll-mt-24">
-                <div className="max-w-2xl">
-                  <h2 className="text-xl font-semibold tracking-tight text-foreground">
-                    {group.title}
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    {group.description}
-                  </p>
-                </div>
-                <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                  {group.components.map((comp) => (
-                    <ComponentCard
-                      key={comp.slug}
-                      categorySlug={cat.slug}
-                      slug={comp.slug}
-                      name={comp.name}
-                      description={comp.description}
-                      badge={comp.badge}
-                      launchedAt={comp.launchedAt}
-                    />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        </>
+        <div className="mt-12 space-y-14">
+          {agentGroups.map((group) => (
+            <section key={group.id} id={group.id} className="scroll-mt-24">
+              <div className="max-w-2xl">
+                <h2 className="text-xl font-medium tracking-tight text-foreground">
+                  {group.title}
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  {group.description}
+                </p>
+              </div>
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {group.components.map((comp) => (
+                  <ComponentCard
+                    key={comp.slug}
+                    categorySlug={cat.slug}
+                    slug={comp.slug}
+                    name={comp.name}
+                    description={comp.description}
+                    badge={comp.badge}
+                    launchedAt={comp.launchedAt}
+                  />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
       ) : (
         <>
           {newComponents.length ? (
