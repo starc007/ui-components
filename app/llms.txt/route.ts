@@ -1,4 +1,5 @@
 import { buildIndex } from "@/lib/registry-server";
+import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
 
@@ -15,6 +16,12 @@ export async function GET() {
   lines.push(`- Component detail (JSON): ${idx.endpoints.detail}`);
   lines.push(`- Raw source (text/plain): ${idx.endpoints.raw}`);
   lines.push(`- Component Markdown: ${idx.endpoints.markdown}`);
+  lines.push("");
+  lines.push("## Guides");
+  lines.push("");
+  lines.push(`- [Motion Guides](${SITE_URL}/docs/motion-patterns.md): Purposeful motion, timing, easing, recipes, and reduced motion.`);
+  lines.push(`- [Agent Guide](${SITE_URL}/docs/ai-agents.md): Agent skill, MCP server, registry endpoints, and install flows.`);
+  lines.push(`- [OpenUI Guide](${SITE_URL}/docs/openui.md): Register beUI components and render streamed generative interfaces.`);
   lines.push("");
   lines.push("## Components");
   lines.push("");
