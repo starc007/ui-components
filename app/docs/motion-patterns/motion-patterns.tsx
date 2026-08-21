@@ -244,24 +244,26 @@ export function MotionPatterns() {
         title="Four questions before motion"
         description="The best animation decision is often made before touching a duration or spring value."
       >
-        <div className="grid gap-px overflow-hidden rounded-3xl border border-border bg-border sm:grid-cols-2">
+        <div className="divide-y divide-border border-y border-border">
           {decisions.map((decision) => (
-            <article key={decision.number} className="bg-background p-5 sm:p-6">
-              <div className="flex items-center justify-between gap-4">
-                <span className="font-mono text-[11px] text-muted-foreground">
-                  {decision.number}
-                </span>
-                <span className="size-1.5 rounded-full bg-foreground/20" />
-              </div>
-              <h3 className="mt-8 text-base font-semibold text-foreground">
+            <article
+              key={decision.number}
+              className="grid gap-3 py-5 sm:grid-cols-[3rem_10rem_minmax(0,1fr)] sm:gap-5 sm:py-6"
+            >
+              <span className="font-mono text-xs tabular-nums text-muted-foreground">
+                {decision.number}
+              </span>
+              <h3 className="text-sm font-medium text-foreground">
                 {decision.title}
               </h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                {decision.body}
-              </p>
-              <p className="mt-4 border-l border-border pl-3 text-xs leading-5 text-muted-foreground">
-                {decision.note}
-              </p>
+              <div>
+                <p className="text-sm leading-6 text-muted-foreground">
+                  {decision.body}
+                </p>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                  {decision.note}
+                </p>
+              </div>
             </article>
           ))}
         </div>
@@ -282,7 +284,7 @@ export function MotionPatterns() {
         title="Fast enough to feel immediate"
         description="Duration depends on size, distance, and frequency. These ranges are starting points, not targets to hit mechanically."
       >
-        <div className="overflow-hidden rounded-3xl border border-border">
+        <div className="border-y border-border">
           <div className="hidden grid-cols-[1fr_8rem_1.4fr] gap-4 border-b border-border bg-card px-5 py-3 font-mono text-[10px] uppercase tracking-wider text-muted-foreground sm:grid">
             <span>Interaction</span>
             <span>Range</span>
@@ -305,7 +307,7 @@ export function MotionPatterns() {
             </div>
           ))}
         </div>
-        <div className="mt-4 flex gap-3 rounded-2xl bg-card p-4">
+        <div className="mt-5 flex gap-3 border-l border-border py-1 pl-4">
           <Zap className="mt-0.5 size-4 shrink-0 text-foreground" aria-hidden="true" />
           <p className="text-sm leading-6 text-muted-foreground">
             Under 300ms is the default for interface motion. Longer motion belongs
@@ -320,7 +322,7 @@ export function MotionPatterns() {
         title="Patterns you can copy"
         description="Each recipe connects a purpose to a production token, a reduced-motion state, and a concrete failure mode."
       >
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="divide-y divide-border border-y border-border">
           {recipes.map((recipe) => (
             <RecipeCard key={recipe.title} recipe={recipe} />
           ))}
@@ -333,10 +335,10 @@ export function MotionPatterns() {
         title="Reduced motion is a designed state"
         description="Do not remove every transition. Keep feedback that helps comprehension and remove movement that can cause discomfort."
       >
-        <div className="grid overflow-hidden rounded-3xl border border-border lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="border-b border-border bg-card p-6 lg:border-b-0 lg:border-r">
+        <div className="grid border-y border-border lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="border-b border-border py-6 lg:border-r lg:border-b-0 lg:pr-8">
             <Accessibility className="size-5 text-foreground" aria-hidden="true" />
-            <h3 className="mt-8 text-lg font-semibold text-foreground">
+            <h3 className="mt-8 text-base font-medium text-foreground">
               Keep meaning. Remove travel.
             </h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
@@ -398,7 +400,7 @@ function EasingLab() {
   const reduce = useReducedMotion();
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-border">
+    <div className="overflow-hidden rounded-2xl border border-border">
       <div className="flex items-start justify-between gap-4 border-b border-border bg-card px-5 py-4">
         <div>
           <p className="text-sm font-medium text-foreground">Compare the curves</p>
@@ -512,36 +514,35 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
   const Icon = recipe.icon;
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-3xl border border-border bg-background">
-      <div className="p-5 sm:p-6">
-        <div className="flex items-start justify-between gap-4">
-          <span className="flex size-9 items-center justify-center rounded-full border border-border bg-card">
-            <Icon className="size-4 text-foreground" aria-hidden="true" />
-          </span>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-            {recipe.eyebrow}
-          </span>
+    <article className="py-8">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(18rem,1.2fr)] lg:items-stretch lg:gap-8">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-3">
+            <span className="flex size-8 items-center justify-center rounded-lg border border-border bg-card">
+              <Icon className="size-3.5 text-foreground" aria-hidden="true" />
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+              {recipe.eyebrow}
+            </span>
+          </div>
+          <h3 className="mt-5 text-lg font-medium text-foreground">
+            {recipe.title}
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            {recipe.description}
+          </p>
+          <div className="mt-6 grid gap-3 text-xs leading-5">
+            <Rule label="Purpose" value={recipe.purpose} />
+            <Rule label="Avoid" value={recipe.avoid} />
+          </div>
         </div>
-        <h3 className="mt-6 text-lg font-semibold text-foreground">
-          {recipe.title}
-        </h3>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          {recipe.description}
-        </p>
-      </div>
-
-      <div className="mx-3 rounded-2xl bg-card p-3">
-        <div className="flex min-h-36 items-center justify-center rounded-xl bg-background p-4">
+        <div className="flex min-h-48 items-center justify-center rounded-2xl border border-border bg-card/60 p-6">
           <RecipeDemoView demo={recipe.demo} />
         </div>
       </div>
-
-      <div className="grid gap-3 p-5 text-xs leading-5 sm:p-6">
-        <Rule label="Purpose" value={recipe.purpose} />
-        <Rule label="Avoid" value={recipe.avoid} />
+      <div className="mt-6">
+        <CodeRecipe code={recipe.code} />
       </div>
-
-      <CodeRecipe code={recipe.code} />
     </article>
   );
 }
@@ -564,15 +565,15 @@ function CodeRecipe({
 }) {
   if (alwaysOpen) {
     return (
-      <pre className="overflow-x-auto bg-background p-5 font-mono text-xs leading-6 text-foreground sm:p-6">
+      <pre className="overflow-x-auto bg-card/60 p-5 font-mono text-xs leading-6 text-foreground sm:p-6">
         <code>{code}</code>
       </pre>
     );
   }
 
   return (
-    <details className="group/code mt-auto border-t border-border">
-      <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-5 text-xs font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+    <details className="group/code border-t border-border">
+      <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 text-xs font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
         View recipe
         <span className="font-mono text-muted-foreground transition-transform group-open/code:rotate-45">
           +
@@ -600,7 +601,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
         type="button"
         whileTap={reduce ? undefined : { scale: 0.97 }}
         transition={SPRING_PRESS}
-        className="h-11 rounded-full bg-foreground px-5 text-sm font-medium text-background"
+        className="h-11 rounded-full bg-foreground px-5 text-sm font-medium text-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         Press me
       </motion.button>
@@ -615,7 +616,9 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
         type="button"
         onMouseEnter={() => setIconActive(true)}
         onMouseLeave={() => setIconActive(false)}
-        className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-medium text-foreground"
+        onFocus={() => setIconActive(true)}
+        onBlur={() => setIconActive(false)}
+        className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <motion.span
           animate={active ? { rotate: [0, 12, -8, 4, 0] } : { rotate: 0 }}
@@ -676,7 +679,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
           whileTap={reduce ? undefined : { scale: 0.97 }}
           transition={transition}
           style={{ borderRadius: 9999 }}
-          className="relative inline-flex h-11 items-center gap-2 overflow-hidden rounded-full border border-border bg-card p-1 pr-1 text-sm font-medium text-foreground"
+          className="relative inline-flex h-11 items-center gap-2 overflow-hidden rounded-full border border-border bg-card p-1 pr-1 text-sm font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <motion.span
             layout="position"
@@ -721,7 +724,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
               aria-controls={`${tabsId}-panel`}
               onClick={() => setTab(item)}
               className={cn(
-                "rounded-full px-3 py-1.5 text-xs transition-colors",
+                "min-h-10 rounded-full px-3 text-xs outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
                 selected
                   ? "bg-foreground text-background"
                   : "text-muted-foreground hover:text-foreground",
@@ -771,7 +774,7 @@ function ReplayButton({
       onClick={onClick}
       whileTap={reduce ? undefined : { scale: 0.97 }}
       transition={SPRING_PRESS}
-      className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-xs font-medium text-foreground"
+      className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-xs font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <RefreshCw className="size-3" aria-hidden="true" />
       Replay

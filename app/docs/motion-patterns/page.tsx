@@ -42,7 +42,10 @@ export const metadata: Metadata = {
 export default function MotionPatternsPage() {
   return (
     <GuideShell navItems={PAGE_NAV_ITEMS}>
-      <header id="overview" className="scroll-mt-24">
+      <header
+        id="overview"
+        className="scroll-mt-24 border-b border-border pb-10"
+      >
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Motion guide
         </p>
