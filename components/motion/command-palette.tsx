@@ -79,7 +79,7 @@ export function CommandPalette({
   );
 
   const [query, setQuery] = useState("");
-  const [active, setActive] = useState(0);
+  const [cursor, setCursor] = useState<string | null>(null);
   // Portal target only exists client-side; render nothing during SSR/hydration.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -88,7 +88,7 @@ export function CommandPalette({
   const canTouch = useTouchCapable();
   const updateQuery = useCallback((value: string) => {
     setQuery(value);
-    setActive(0);
+    setCursor(null);
   }, []);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -115,7 +115,7 @@ export function CommandPalette({
   useEffect(() => {
     if (open) {
       updateQuery("");
-      setActive(0);
+      setCursor(null);
       requestAnimationFrame(() => inputRef.current?.focus());
     }
   }, [open, updateQuery]);
@@ -156,16 +156,63 @@ export function CommandPalette({
     return Array.from(map.entries());
   }, [filtered]);
 
+  // Grouping reorders the list, so the rendered order is not the filtered
+  // order whenever two groups interleave. Everything that has to agree on
+  // "which row" — the highlight, the ids, Enter, the scroll — reads this one
+  // array, so they cannot drift apart.
+  const rows = useMemo(() => grouped.flatMap(([, list]) => list), [grouped]);
+
+  // A row's index is its position in that array, derived once per change of it
+  // rather than counted while the rows render. The rows hang off
+  // `PresenceGate`'s render prop, which is its own component: a counter
+  // declared in this body would be incremented on the gate's render passes,
+  // after this body had already run, and would never be reset again — the ids,
+  // `aria-selected` and the highlight all drift with it.
+  const indexOfItem = useMemo(
+    () => new Map(rows.map((it, index) => [it.id, index])),
+    [rows],
+  );
+
+  // Which row is highlighted is resolved during render, never in an effect: a
+  // passive effect lands after the browser paints, so a list whose items had
+  // just changed would be on screen with `aria-activedescendant` naming a row
+  // that is no longer in it, and a key pressed in that frame would commit the
+  // wrong row or nothing at all.
+  //
+  // The cursor holds the row's id, not its position. A position alone cannot
+  // tell a list that shrank from one that swapped its rows for a different set
+  // of the same length, and the second case is the one that silently hands
+  // Enter to a row the user never chose.
+  const cursorRow = cursor === null ? -1 : (indexOfItem.get(cursor) ?? -1);
+  const active = cursorRow < 0 ? 0 : cursorRow;
+  // Cleared rather than ignored, so results that come back cannot revive a
+  // highlight the user has stopped aiming at.
+  if (cursor !== null && cursorRow < 0) setCursor(null);
+
+  const moveActive = (direction: 1 | -1) => {
+    const last = rows.length - 1;
+    if (last < 0) return;
+    // Steps from the row the cursor really resolves to, inside the update, so
+    // that two keys landing in one batch move two rows rather than one.
+    setCursor((current) => {
+      const from = Math.max(
+        current === null ? -1 : (indexOfItem.get(current) ?? -1),
+        0,
+      );
+      return rows[Math.min(Math.max(from + direction, 0), last)].id;
+    });
+  };
+
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActive((a) => Math.min(filtered.length - 1, a + 1));
+      moveActive(1);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActive((a) => Math.max(0, a - 1));
+      moveActive(-1);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      const it = filtered[active];
+      const it = rows[active];
       if (it) {
         it.onSelect();
         setOpen(false);
@@ -180,21 +227,6 @@ export function CommandPalette({
     );
     el?.scrollIntoView({ block: "nearest" });
   }, [active, open]);
-
-  // A row's index is its position in the flattened group order, derived once
-  // per change of `grouped` rather than counted while the rows render. The rows
-  // hang off `PresenceGate`'s render prop, which is its own component: a
-  // counter declared in this body would be incremented on the gate's render
-  // passes, after this body had already run, and would never be reset again —
-  // the ids, `aria-selected` and the highlight all drift with it.
-  const indexOfItem = useMemo(() => {
-    const indices = new Map<string, number>();
-    let next = 0;
-    for (const [, list] of grouped) {
-      for (const it of list) indices.set(it.id, next++);
-    }
-    return indices;
-  }, [grouped]);
 
   if (!mounted) return null;
 
@@ -271,7 +303,7 @@ export function CommandPalette({
                     aria-expanded="true"
                     aria-controls={`${uid}-list`}
                     aria-activedescendant={
-                      filtered.length > 0 ? `${uid}-opt-${active}` : undefined
+                      rows.length > 0 ? `${uid}-opt-${active}` : undefined
                     }
                     aria-autocomplete="list"
                     className={cn(
@@ -320,7 +352,7 @@ export function CommandPalette({
                               role="option"
                               aria-selected={isActive}
                               data-index={idx}
-                              onMouseEnter={() => setActive(idx)}
+                              onMouseEnter={() => setCursor(it.id)}
                               onClick={() => {
                                 it.onSelect();
                                 setOpen(false);
