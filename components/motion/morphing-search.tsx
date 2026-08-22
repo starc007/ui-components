@@ -65,6 +65,22 @@ type AnchorRect = {
 	width: number;
 };
 
+/**
+ * Where the keyboard or the pointer last moved to, stamped with the row it was
+ * placed on so that a change in the results can be told from a change in
+ * position.
+ */
+type ActiveCursor = { index: number; id: string };
+
+/** The cursor's row index, or null once that row has moved or left the list. */
+function cursorRowOf(
+	cursor: ActiveCursor | null,
+	items: MorphingSearchItem[],
+): number | null {
+	if (cursor === null) return null;
+	return items[cursor.index]?.id === cursor.id ? cursor.index : null;
+}
+
 function isEditableTarget(target: EventTarget | null) {
 	if (!(target instanceof HTMLElement)) return false;
 	return (
@@ -90,7 +106,7 @@ export function MorphingSearch({
 }: MorphingSearchProps) {
 	const [internalOpen, setInternalOpen] = useState(defaultOpen);
 	const [query, setQuery] = useState("");
-	const [activeIndex, setActiveIndex] = useState(0);
+	const [cursor, setCursor] = useState<ActiveCursor | null>(null);
 	const [mounted, setMounted] = useState(false);
 	const [backgroundScrollLocked, setBackgroundScrollLocked] =
 		useState(defaultOpen);
@@ -140,7 +156,7 @@ export function MorphingSearch({
 	const updateQuery = useCallback(
 		(next: string) => {
 			setQuery(next);
-			setActiveIndex(0);
+			setCursor(null);
 			onQueryChange?.(next);
 		},
 		[onQueryChange],
@@ -267,10 +283,40 @@ export function MorphingSearch({
 		);
 	}, [items, query]);
 
-	useEffect(() => {
-		if (activeIndex < filteredItems.length) return;
-		setActiveIndex(Math.max(0, filteredItems.length - 1));
-	}, [activeIndex, filteredItems.length]);
+	// Which row is highlighted is resolved during render, never in an effect: a
+	// passive effect lands after the browser paints, so a list that had just
+	// changed would be on screen with `aria-activedescendant` naming a row that
+	// is no longer at that position, and Enter in that frame would commit the
+	// wrong row or nothing at all.
+	//
+	// The cursor carries the row it was placed on, not the position alone. A
+	// position alone cannot tell a list that shrank from one that swapped its
+	// rows for a different set of the same length, and the second case is the
+	// one that silently hands Enter to a row the user never chose.
+	//
+	// A cursor whose row has moved or gone returns the highlight to the first
+	// row rather than to the nearest surviving one. The row the user aimed at is
+	// gone either way, and the first row is where a new query already puts the
+	// highlight; any other row is one the user never chose.
+	const activeIndex = cursorRowOf(cursor, filteredItems) ?? 0;
+	// Cleared rather than ignored: React re-runs this render with the cursor
+	// already gone, so results that come back cannot revive a highlight the user
+	// has stopped aiming at.
+	if (cursor !== null && cursorRowOf(cursor, filteredItems) === null) {
+		setCursor(null);
+	}
+
+	// Steps from the row the cursor is really on, through a functional update, so
+	// that two keys landing in one batch move two rows rather than one.
+	const moveActive = (direction: 1 | -1) => {
+		const last = filteredItems.length - 1;
+		if (last < 0) return;
+		setCursor((current) => {
+			const from = cursorRowOf(current, filteredItems) ?? 0;
+			const next = Math.min(Math.max(from + direction, 0), last);
+			return { index: next, id: filteredItems[next].id };
+		});
+	};
 
 	useEffect(() => {
 		if (!open) return;
@@ -291,16 +337,13 @@ export function MorphingSearch({
 	const handleDialogKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
 		if (event.key === "ArrowDown") {
 			event.preventDefault();
-			if (filteredItems.length === 0) return;
-			setActiveIndex((current) =>
-				Math.min(current + 1, filteredItems.length - 1),
-			);
+			moveActive(1);
 			return;
 		}
 
 		if (event.key === "ArrowUp") {
 			event.preventDefault();
-			setActiveIndex((current) => Math.max(current - 1, 0));
+			moveActive(-1);
 			return;
 		}
 
@@ -517,8 +560,8 @@ export function MorphingSearch({
 														role="option"
 														aria-selected={active}
 														data-index={index}
-														onMouseMove={() => setActiveIndex(index)}
-														onFocus={() => setActiveIndex(index)}
+														onMouseMove={() => setCursor({ index, id: item.id })}
+														onFocus={() => setCursor({ index, id: item.id })}
 														onClick={() => selectItem(item)}
 														className="relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
 													>
