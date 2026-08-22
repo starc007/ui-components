@@ -58,7 +58,7 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-08-20",
+    updatedAt: "2026-08-22",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
@@ -74,7 +74,7 @@ const COMPONENT_DATES = {
   },
   "agents/ai-sidebar": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-08-20",
+    updatedAt: "2026-08-22",
   },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
