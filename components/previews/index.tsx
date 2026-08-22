@@ -387,6 +387,11 @@ export const previews: Record<string, ComponentType> = {
   "motion/button-magnetic": dynamic(() =>
     import("./motion/button-magnetic.preview").then((m) => m.ButtonMagneticPreview),
   ),
+  "motion/expandable-control": dynamic(() =>
+    import("./motion/expandable-control.preview").then(
+      (m) => m.ExpandableControlPreview,
+    ),
+  ),
   "motion/expanding-arrow-button": dynamic(() =>
     import("./motion/expanding-arrow-button.preview").then(
       (m) => m.ExpandingArrowButtonPreview,

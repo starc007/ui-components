@@ -7,6 +7,10 @@
 const COMPONENT_DATES = {
   "motion/tilt-card": { publishedAt: "2026-05-17", updatedAt: "2026-06-22" },
   "motion/button": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
+  "motion/expandable-control": {
+    publishedAt: "2026-08-22",
+    updatedAt: "2026-08-22",
+  },
   "motion/expanding-arrow-button": {
     publishedAt: "2026-07-16",
     updatedAt: "2026-07-16",
