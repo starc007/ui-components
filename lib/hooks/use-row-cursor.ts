@@ -22,10 +22,10 @@ function indexOfCursor(
  * The highlighted row of a list whose rows can change under it.
  *
  * Which row is highlighted is resolved during render, never in a passive
- * effect: an effect lands after the browser paints, so a list that had just
- * changed would be on screen with `aria-activedescendant` naming a row that is
- * no longer at that position, and a key pressed in that frame would commit the
- * wrong row or nothing at all.
+ * effect: a passive effect runs after the commit, so a list that had just
+ * changed would carry an `aria-activedescendant` naming a row that has left it,
+ * and a key pressed in that window would commit the wrong row or nothing at
+ * all.
  *
  * The cursor holds the row's id, not its position. A position alone cannot tell
  * a list that shrank from one that swapped its rows for a different set of the

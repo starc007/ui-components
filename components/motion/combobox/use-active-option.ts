@@ -5,9 +5,10 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 /**
  * Where the keyboard or the pointer last moved to, stamped with the query it
  * was placed under. Which option is *active* is resolved from this during
- * render, never in an effect: a passive effect lands after the browser paints,
- * so a list would be on screen with none of its options active, and the first
- * key would move from nowhere onto the row it was already about to highlight.
+ * render, never in an effect: a passive effect runs after the commit, so a list
+ * would briefly have none of its options active, and a key arriving in that
+ * window would move from nowhere onto the row it was already about to
+ * highlight.
  */
 type ActiveCursor = { value: string; query: string };
 
