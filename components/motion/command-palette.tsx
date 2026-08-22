@@ -13,6 +13,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
+import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { PresenceGate } from "@/lib/presence-gate";
 import { cn } from "@/lib/utils";
@@ -79,17 +80,12 @@ export function CommandPalette({
   );
 
   const [query, setQuery] = useState("");
-  const [cursor, setCursor] = useState<string | null>(null);
   // Portal target only exists client-side; render nothing during SSR/hydration.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const uid = useId();
   const reduce = useReducedMotion();
   const canTouch = useTouchCapable();
-  const updateQuery = useCallback((value: string) => {
-    setQuery(value);
-    setCursor(null);
-  }, []);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -111,14 +107,6 @@ export function CommandPalette({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, shortcut, setOpen]);
-
-  useEffect(() => {
-    if (open) {
-      updateQuery("");
-      setCursor(null);
-      requestAnimationFrame(() => inputRef.current?.focus());
-    }
-  }, [open, updateQuery]);
 
   useEffect(() => {
     if (!open) return;
@@ -162,46 +150,22 @@ export function CommandPalette({
   // array, so they cannot drift apart.
   const rows = useMemo(() => grouped.flatMap(([, list]) => list), [grouped]);
 
-  // A row's index is its position in that array, derived once per change of it
-  // rather than counted while the rows render. The rows hang off
-  // `PresenceGate`'s render prop, which is its own component: a counter
-  // declared in this body would be incremented on the gate's render passes,
-  // after this body had already run, and would never be reset again — the ids,
-  // `aria-selected` and the highlight all drift with it.
-  const indexOfItem = useMemo(
-    () => new Map(rows.map((it, index) => [it.id, index])),
-    [rows],
+  const { activeIndex: active, setCursor, moveActive } = useRowCursor(rows);
+
+  const updateQuery = useCallback(
+    (value: string) => {
+      setQuery(value);
+      setCursor(null);
+    },
+    [setCursor],
   );
 
-  // Which row is highlighted is resolved during render, never in an effect: a
-  // passive effect lands after the browser paints, so a list whose items had
-  // just changed would be on screen with `aria-activedescendant` naming a row
-  // that is no longer in it, and a key pressed in that frame would commit the
-  // wrong row or nothing at all.
-  //
-  // The cursor holds the row's id, not its position. A position alone cannot
-  // tell a list that shrank from one that swapped its rows for a different set
-  // of the same length, and the second case is the one that silently hands
-  // Enter to a row the user never chose.
-  const cursorRow = cursor === null ? -1 : (indexOfItem.get(cursor) ?? -1);
-  const active = cursorRow < 0 ? 0 : cursorRow;
-  // Cleared rather than ignored, so results that come back cannot revive a
-  // highlight the user has stopped aiming at.
-  if (cursor !== null && cursorRow < 0) setCursor(null);
-
-  const moveActive = (direction: 1 | -1) => {
-    const last = rows.length - 1;
-    if (last < 0) return;
-    // Steps from the row the cursor really resolves to, inside the update, so
-    // that two keys landing in one batch move two rows rather than one.
-    setCursor((current) => {
-      const from = Math.max(
-        current === null ? -1 : (indexOfItem.get(current) ?? -1),
-        0,
-      );
-      return rows[Math.min(Math.max(from + direction, 0), last)].id;
-    });
-  };
+  useEffect(() => {
+    if (open) {
+      updateQuery("");
+      requestAnimationFrame(() => inputRef.current?.focus());
+    }
+  }, [open, updateQuery]);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
@@ -327,7 +291,7 @@ export function CommandPalette({
                   aria-label="Commands"
                   className="max-h-[60vh] overflow-y-auto overscroll-contain p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
-                  {filtered.length === 0 ? (
+                  {rows.length === 0 ? (
                     <div className="p-8 text-center text-sm text-muted-foreground">
                       {emptyMessage}
                     </div>
@@ -341,7 +305,8 @@ export function CommandPalette({
                           {group}
                         </div>
                         {list.map((it) => {
-                          const idx = indexOfItem.get(it.id) ?? 0;
+                          // `rows` holds these very objects, in render order.
+                          const idx = rows.indexOf(it);
                           const isActive = idx === active;
                           const Icon = it.icon;
                           return (

@@ -19,6 +19,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
+import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { cn } from "@/lib/utils";
 
 // Keeps the Wallet Card feel with a little more time to read the morph.
@@ -65,19 +66,6 @@ type AnchorRect = {
 	width: number;
 };
 
-/**
- * Where the keyboard or the pointer last moved to, held as the row's id rather
- * than its position. A position alone cannot tell a list that shrank from one
- * that swapped its rows for a different set of the same length, and the second
- * case is the one that silently hands Enter to a row the user never chose.
- *
- * Returns the row's current index, or -1 once that row has left the list. A row
- * that merely moved keeps the highlight, because the user is still aiming at it.
- */
-function cursorRowOf(cursor: string | null, items: MorphingSearchItem[]) {
-	return cursor === null ? -1 : items.findIndex((item) => item.id === cursor);
-}
-
 function isEditableTarget(target: EventTarget | null) {
 	if (!(target instanceof HTMLElement)) return false;
 	return (
@@ -103,7 +91,6 @@ export function MorphingSearch({
 }: MorphingSearchProps) {
 	const [internalOpen, setInternalOpen] = useState(defaultOpen);
 	const [query, setQuery] = useState("");
-	const [cursor, setCursor] = useState<string | null>(null);
 	const [mounted, setMounted] = useState(false);
 	const [backgroundScrollLocked, setBackgroundScrollLocked] =
 		useState(defaultOpen);
@@ -150,13 +137,27 @@ export function MorphingSearch({
 		setOpen(true);
 	}, [measureAnchor, setOpen]);
 
+	const filteredItems = useMemo(() => {
+		const needle = query.trim().toLowerCase();
+		if (!needle) return items;
+
+		return items.filter((item) =>
+			[item.title, item.description ?? "", ...(item.keywords ?? [])]
+				.join(" ")
+				.toLowerCase()
+				.includes(needle),
+		);
+	}, [items, query]);
+
+	const { activeIndex, setCursor, moveActive } = useRowCursor(filteredItems);
+
 	const updateQuery = useCallback(
 		(next: string) => {
 			setQuery(next);
 			setCursor(null);
 			onQueryChange?.(next);
 		},
-		[onQueryChange],
+		[onQueryChange, setCursor],
 	);
 
 	const closeSearch = useCallback(() => {
@@ -267,46 +268,6 @@ export function MorphingSearch({
 	useEffect(() => {
 		wasOpenRef.current = open;
 	}, [open]);
-
-	const filteredItems = useMemo(() => {
-		const needle = query.trim().toLowerCase();
-		if (!needle) return items;
-
-		return items.filter((item) =>
-			[item.title, item.description ?? "", ...(item.keywords ?? [])]
-				.join(" ")
-				.toLowerCase()
-				.includes(needle),
-		);
-	}, [items, query]);
-
-	// Which row is highlighted is resolved during render, never in an effect: a
-	// passive effect lands after the browser paints, so a list that had just
-	// changed would be on screen with `aria-activedescendant` naming a row that
-	// is no longer at that position, and Enter in that frame would commit the
-	// wrong row or nothing at all.
-	//
-	// A cursor whose row has left the list returns the highlight to the first
-	// row rather than to the nearest surviving one. The row the user aimed at is
-	// gone, and the first row is where a new query already puts the highlight;
-	// any other row is one the user never chose.
-	const cursorRow = cursorRowOf(cursor, filteredItems);
-	const activeIndex = cursorRow < 0 ? 0 : cursorRow;
-	// Cleared rather than ignored: React re-runs this render with the cursor
-	// already gone, so results that come back cannot revive a highlight the user
-	// has stopped aiming at.
-	if (cursor !== null && cursorRow < 0) setCursor(null);
-
-	// Steps from the row the cursor is really on, through a functional update, so
-	// that two keys landing in one batch move two rows rather than one.
-	const moveActive = (direction: 1 | -1) => {
-		const last = filteredItems.length - 1;
-		if (last < 0) return;
-		setCursor((current) => {
-			const from = Math.max(cursorRowOf(current, filteredItems), 0);
-			return filteredItems[Math.min(Math.max(from + direction, 0), last)].id;
-		});
-	};
 
 	useEffect(() => {
 		if (!open) return;
