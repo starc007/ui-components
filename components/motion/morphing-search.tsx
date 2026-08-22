@@ -149,15 +149,16 @@ export function MorphingSearch({
 		);
 	}, [items, query]);
 
-	const { activeIndex, setCursor, moveActive } = useRowCursor(filteredItems);
+	const { activeIndex, moveTo, moveActive } = useRowCursor(filteredItems, query);
 
+	// The cursor is stamped with the query, so changing it drops the highlight
+	// without this having to say so.
 	const updateQuery = useCallback(
 		(next: string) => {
 			setQuery(next);
-			setCursor(null);
 			onQueryChange?.(next);
 		},
-		[onQueryChange, setCursor],
+		[onQueryChange],
 	);
 
 	const closeSearch = useCallback(() => {
@@ -249,6 +250,9 @@ export function MorphingSearch({
 	useEffect(() => {
 		if (open) {
 			updateQuery("");
+			// A deliberate reset, not a consequence of the query: reopening starts
+			// at the top even when the query was already empty.
+			moveTo(null);
 			const frame = requestAnimationFrame(() => inputRef.current?.focus());
 			return () => cancelAnimationFrame(frame);
 		}
@@ -263,7 +267,7 @@ export function MorphingSearch({
 			});
 			return () => cancelAnimationFrame(frame);
 		}
-	}, [open, updateQuery]);
+	}, [moveTo, open, updateQuery]);
 
 	useEffect(() => {
 		wasOpenRef.current = open;
@@ -511,8 +515,8 @@ export function MorphingSearch({
 														role="option"
 														aria-selected={active}
 														data-index={index}
-														onMouseMove={() => setCursor(item.id)}
-														onFocus={() => setCursor(item.id)}
+														onMouseMove={() => moveTo(item.id)}
+														onFocus={() => moveTo(item.id)}
 														onClick={() => selectItem(item)}
 														className="relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
 													>

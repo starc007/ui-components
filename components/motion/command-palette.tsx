@@ -150,22 +150,21 @@ export function CommandPalette({
   // array, so they cannot drift apart.
   const rows = useMemo(() => grouped.flatMap(([, list]) => list), [grouped]);
 
-  const { activeIndex: active, setCursor, moveActive } = useRowCursor(rows);
+  const { activeIndex: active, moveTo, moveActive } = useRowCursor(rows, query);
 
-  const updateQuery = useCallback(
-    (value: string) => {
-      setQuery(value);
-      setCursor(null);
-    },
-    [setCursor],
-  );
+  // The cursor is stamped with the query, so changing it drops the highlight
+  // without this having to say so.
+  const updateQuery = useCallback((value: string) => setQuery(value), []);
 
   useEffect(() => {
     if (open) {
       updateQuery("");
+      // A deliberate reset, not a consequence of the query: reopening starts at
+      // the top even when the query was already empty.
+      moveTo(null);
       requestAnimationFrame(() => inputRef.current?.focus());
     }
-  }, [open, updateQuery]);
+  }, [moveTo, open, updateQuery]);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
@@ -317,7 +316,7 @@ export function CommandPalette({
                               role="option"
                               aria-selected={isActive}
                               data-index={idx}
-                              onMouseEnter={() => setCursor(it.id)}
+                              onMouseEnter={() => moveTo(it.id)}
                               onClick={() => {
                                 it.onSelect();
                                 setOpen(false);
