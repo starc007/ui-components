@@ -56,6 +56,32 @@ export function buildOptions(step: number): TimeOption[] {
   return out;
 }
 
+/** Same-day ranges only: end must be after start. 7:00 PM → 1:00 AM is rejected. */
+export function clampRange(
+  start: string,
+  end: string,
+  step: number,
+): { start: string; end: string } {
+  const last = 24 * 60 - step;
+  let s = toMinutes(start);
+  let e = toMinutes(end);
+  s = Math.max(0, Math.min(s, last - step));
+  if (e <= s) e = s + step;
+  e = Math.min(Math.max(e, s + step), last);
+  if (e <= s) s = Math.max(0, e - step);
+  return { start: toValue(s), end: toValue(e) };
+}
+
+export function startOptions(options: TimeOption[], end: string) {
+  const endM = toMinutes(end);
+  return options.filter((o) => toMinutes(o.value) < endM);
+}
+
+export function endOptions(options: TimeOption[], start: string) {
+  const startM = toMinutes(start);
+  return options.filter((o) => toMinutes(o.value) > startM);
+}
+
 // Default: Mon–Fri 9–5, weekend off. Fixed ids so SSR and first client render
 // agree (new ranges get counter ids afterwards).
 export function defaultWeek(): WeekAvailability {

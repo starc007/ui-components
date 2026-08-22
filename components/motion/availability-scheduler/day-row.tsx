@@ -10,9 +10,12 @@ import { CopyMenu } from "./copy-menu";
 import { IconButton } from "./icon-button";
 import { TimeSelect } from "./time-select";
 import {
+  clampRange,
   type DayAvailability,
   type DayKey,
+  endOptions,
   panelKey,
+  startOptions,
   type TimeOption,
   type TimeRange,
   toMinutes,
@@ -76,10 +79,19 @@ export function DayRow({
     }
   };
 
+  const step =
+    options.length > 1
+      ? toMinutes(options[1].value) - toMinutes(options[0].value)
+      : 30;
+
   const updateRange = (id: string, patch: Partial<TimeRange>) => {
     onChange({
       ...state,
-      ranges: state.ranges.map((r) => (r.id === id ? { ...r, ...patch } : r)),
+      ranges: state.ranges.map((r) => {
+        if (r.id !== id) return r;
+        const next = { ...r, ...patch };
+        return { ...next, ...clampRange(next.start, next.end, step) };
+      }),
     });
   };
 
@@ -167,7 +179,7 @@ export function DayRow({
                 <div className="min-w-0 flex-1 sm:max-w-[132px]">
                   <TimeSelect
                     value={r.start}
-                    options={options}
+                    options={startOptions(options, r.end)}
                     onChange={(v) => updateRange(r.id, { start: v })}
                     open={openPanel === panelId(r.id, "start")}
                     onOpenChange={(open) =>
@@ -179,7 +191,7 @@ export function DayRow({
                 <div className="min-w-0 flex-1 sm:max-w-[132px]">
                   <TimeSelect
                     value={r.end}
-                    options={options}
+                    options={endOptions(options, r.start)}
                     onChange={(v) => updateRange(r.id, { end: v })}
                     open={openPanel === panelId(r.id, "end")}
                     onOpenChange={(open) =>
