@@ -4,6 +4,7 @@ import {
   fireEvent,
   render,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { axe } from "jest-axe";
 import {
@@ -18,7 +19,13 @@ import {
   ComboboxTrigger,
 } from "@/components/motion/combobox";
 
+import {
+  cleanupOutsideAct,
+  renderOutsideAct,
+} from "@/tests/support/render-outside-act";
+
 afterEach(cleanup);
+afterEach(cleanupOutsideAct);
 
 function ExampleCombobox({
   onValueChange,
@@ -48,6 +55,39 @@ function ExampleCombobox({
           <ComboboxItem value="vite" disabled>
             Vite
           </ComboboxItem>
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+  );
+}
+
+function AsyncCombobox({
+  query = "a",
+  results,
+  onValueChange,
+}: {
+  query?: string;
+  results: string[];
+  onValueChange?: (value: string) => void;
+}) {
+  return (
+    <Combobox
+      open
+      query={query}
+      onQueryChange={() => {}}
+      filter={() => true}
+      onValueChange={onValueChange}
+    >
+      <ComboboxTrigger>
+        <ComboboxInput aria-label="Search results" />
+      </ComboboxTrigger>
+      <ComboboxContent>
+        <ComboboxList ariaLabel="Results">
+          {results.map((result) => (
+            <ComboboxItem key={result} value={result}>
+              {result}
+            </ComboboxItem>
+          ))}
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
@@ -222,6 +262,103 @@ describe("Combobox", () => {
     });
   });
 
+  test("has no active option until the list has been opened", () => {
+    const { container, getByRole } = render(<ExampleCombobox />);
+
+    expect(container.ownerDocument.querySelector("[data-active]")).toBeNull();
+
+    fireEvent.focus(getByRole("combobox", { name: "Search frameworks" }));
+    expect(getByRole("option", { name: "Next.js" }).dataset.active).toBe("true");
+  });
+
+  test("keeps the highlight where it was through the closing animation", () => {
+    const { container, getByRole } = render(<ExampleCombobox />);
+    const activeOption = () =>
+      container.ownerDocument.querySelector("[data-active]");
+    const input = getByRole("combobox", { name: "Search frameworks" });
+
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: "r" } });
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(activeOption()?.textContent).toBe("Remix");
+
+    // The panel stays mounted and animates out, and closing clears the query,
+    // which repopulates the list underneath it. The highlight has to stay on
+    // the row it was on rather than glide onto another one mid-exit. The
+    // closing panel is aria-hidden, so this reads the DOM, not the a11y tree.
+    fireEvent.keyDown(input, { key: "Escape" });
+    expect(activeOption()?.textContent).toBe("Remix");
+    expect(input.hasAttribute("aria-activedescendant")).toBe(false);
+  });
+
+  test("never makes a disabled option active", () => {
+    const onValueChange = mock(() => {});
+    const { getByRole } = render(
+      <Combobox defaultValue="vite" onValueChange={onValueChange}>
+        <ComboboxTrigger>
+          <ComboboxInput aria-label="Search frameworks" />
+        </ComboboxTrigger>
+        <ComboboxContent>
+          <ComboboxList ariaLabel="Frameworks">
+            <ComboboxItem value="next">Next.js</ComboboxItem>
+            <ComboboxItem value="remix">Remix</ComboboxItem>
+            <ComboboxItem value="vite" disabled>
+              Vite
+            </ComboboxItem>
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>,
+    );
+
+    const input = getByRole("combobox", { name: "Search frameworks" });
+    fireEvent.focus(input);
+
+    // The selected option is disabled, so the first enabled one takes over.
+    expect(getByRole("option", { name: "Next.js" }).dataset.active).toBe("true");
+    expect(input.getAttribute("aria-activedescendant")).toBe(
+      getByRole("option", { name: "Next.js" }).id,
+    );
+
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(getByRole("option", { name: "Remix" }).dataset.active).toBe("true");
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(onValueChange).toHaveBeenCalledWith("remix");
+  });
+
+  test("drops a cursor placed under an earlier query", () => {
+    const { getByRole, rerender } = render(
+      <AsyncCombobox query="a" results={["alpha", "beta"]} />,
+    );
+    const input = getByRole("combobox", { name: "Search results" });
+
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(getByRole("option", { name: "beta" }).dataset.active).toBe("true");
+
+    rerender(<AsyncCombobox query="ab" results={["alpha", "beta"]} />);
+    expect(getByRole("option", { name: "alpha" }).dataset.active).toBe("true");
+
+    // Reverting the query must not revive the cursor it was placed under.
+    rerender(<AsyncCombobox query="a" results={["alpha", "beta"]} />);
+    expect(getByRole("option", { name: "alpha" }).dataset.active).toBe("true");
+    expect(getByRole("option", { name: "beta" }).dataset.active).toBeUndefined();
+  });
+
+  test("drops a cursor whose row left the result set", () => {
+    // A live search replaces results without the query string changing.
+    const { getByRole, rerender } = render(
+      <AsyncCombobox query="a" results={["alpha", "beta"]} />,
+    );
+    const input = getByRole("combobox", { name: "Search results" });
+
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(getByRole("option", { name: "beta" }).dataset.active).toBe("true");
+
+    rerender(<AsyncCombobox query="a" results={["gamma"]} />);
+    rerender(<AsyncCombobox query="a" results={["alpha", "beta"]} />);
+    expect(getByRole("option", { name: "alpha" }).dataset.active).toBe("true");
+    expect(getByRole("option", { name: "beta" }).dataset.active).toBeUndefined();
+  });
+
   test("has no accessibility violations while open", async () => {
     const { container, getByRole } = render(<ExampleCombobox />);
     fireEvent.focus(getByRole("combobox", { name: "Search frameworks" }));
@@ -238,5 +375,56 @@ describe("Combobox", () => {
       },
     });
     expect(results.violations).toEqual([]);
+  });
+});
+
+describe("Combobox async results", () => {
+  // A debounced search reveals its options in a commit of their own. These
+  // tests read that commit the way the browser would paint it, which is the
+  // window a real key press lands in. See tests/support/render-outside-act.tsx.
+  // The panel is portalled to the body, so options are scoped to the document
+  // while the input is scoped to the harness's own root.
+  const field = (container: HTMLElement) =>
+    within(container).getByRole("combobox");
+  const options = () => within(document.body).getAllByRole("option");
+
+  test("makes the first option active in the commit that reveals it", () => {
+    const view = renderOutsideAct(<AsyncCombobox results={[]} />);
+    view.commit(<AsyncCombobox results={["alpha", "beta"]} />);
+
+    const [first] = options();
+    expect(first.textContent).toBe("alpha");
+    expect(field(view.container).getAttribute("aria-activedescendant")).toBe(
+      first.id,
+    );
+    expect(first.dataset.active).toBe("true");
+  });
+
+  test("steps past the first option on the first key after they appear", () => {
+    const onValueChange = mock(() => {});
+    const view = renderOutsideAct(
+      <AsyncCombobox results={[]} onValueChange={onValueChange} />,
+    );
+    view.commit(
+      <AsyncCombobox
+        results={["alpha", "beta"]}
+        onValueChange={onValueChange}
+      />,
+    );
+
+    const input = field(view.container);
+    view.dispatch(
+      input,
+      new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
+    );
+    // A real key press gets a render between the two keys, and nothing a
+    // passive effect scheduled has settled in this window.
+    view.flushPendingWork();
+    view.dispatch(
+      input,
+      new KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+    );
+
+    expect(onValueChange).toHaveBeenCalledWith("beta");
   });
 });
