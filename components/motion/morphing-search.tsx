@@ -66,19 +66,16 @@ type AnchorRect = {
 };
 
 /**
- * Where the keyboard or the pointer last moved to, stamped with the row it was
- * placed on so that a change in the results can be told from a change in
- * position.
+ * Where the keyboard or the pointer last moved to, held as the row's id rather
+ * than its position. A position alone cannot tell a list that shrank from one
+ * that swapped its rows for a different set of the same length, and the second
+ * case is the one that silently hands Enter to a row the user never chose.
+ *
+ * Returns the row's current index, or -1 once that row has left the list. A row
+ * that merely moved keeps the highlight, because the user is still aiming at it.
  */
-type ActiveCursor = { index: number; id: string };
-
-/** The cursor's row index, or null once that row has moved or left the list. */
-function cursorRowOf(
-	cursor: ActiveCursor | null,
-	items: MorphingSearchItem[],
-): number | null {
-	if (cursor === null) return null;
-	return items[cursor.index]?.id === cursor.id ? cursor.index : null;
+function cursorRowOf(cursor: string | null, items: MorphingSearchItem[]) {
+	return cursor === null ? -1 : items.findIndex((item) => item.id === cursor);
 }
 
 function isEditableTarget(target: EventTarget | null) {
@@ -106,7 +103,7 @@ export function MorphingSearch({
 }: MorphingSearchProps) {
 	const [internalOpen, setInternalOpen] = useState(defaultOpen);
 	const [query, setQuery] = useState("");
-	const [cursor, setCursor] = useState<ActiveCursor | null>(null);
+	const [cursor, setCursor] = useState<string | null>(null);
 	const [mounted, setMounted] = useState(false);
 	const [backgroundScrollLocked, setBackgroundScrollLocked] =
 		useState(defaultOpen);
@@ -289,22 +286,16 @@ export function MorphingSearch({
 	// is no longer at that position, and Enter in that frame would commit the
 	// wrong row or nothing at all.
 	//
-	// The cursor carries the row it was placed on, not the position alone. A
-	// position alone cannot tell a list that shrank from one that swapped its
-	// rows for a different set of the same length, and the second case is the
-	// one that silently hands Enter to a row the user never chose.
-	//
-	// A cursor whose row has moved or gone returns the highlight to the first
+	// A cursor whose row has left the list returns the highlight to the first
 	// row rather than to the nearest surviving one. The row the user aimed at is
-	// gone either way, and the first row is where a new query already puts the
-	// highlight; any other row is one the user never chose.
-	const activeIndex = cursorRowOf(cursor, filteredItems) ?? 0;
+	// gone, and the first row is where a new query already puts the highlight;
+	// any other row is one the user never chose.
+	const cursorRow = cursorRowOf(cursor, filteredItems);
+	const activeIndex = cursorRow < 0 ? 0 : cursorRow;
 	// Cleared rather than ignored: React re-runs this render with the cursor
 	// already gone, so results that come back cannot revive a highlight the user
 	// has stopped aiming at.
-	if (cursor !== null && cursorRowOf(cursor, filteredItems) === null) {
-		setCursor(null);
-	}
+	if (cursor !== null && cursorRow < 0) setCursor(null);
 
 	// Steps from the row the cursor is really on, through a functional update, so
 	// that two keys landing in one batch move two rows rather than one.
@@ -312,9 +303,8 @@ export function MorphingSearch({
 		const last = filteredItems.length - 1;
 		if (last < 0) return;
 		setCursor((current) => {
-			const from = cursorRowOf(current, filteredItems) ?? 0;
-			const next = Math.min(Math.max(from + direction, 0), last);
-			return { index: next, id: filteredItems[next].id };
+			const from = Math.max(cursorRowOf(current, filteredItems), 0);
+			return filteredItems[Math.min(Math.max(from + direction, 0), last)].id;
 		});
 	};
 
@@ -560,8 +550,8 @@ export function MorphingSearch({
 														role="option"
 														aria-selected={active}
 														data-index={index}
-														onMouseMove={() => setCursor({ index, id: item.id })}
-														onFocus={() => setCursor({ index, id: item.id })}
+														onMouseMove={() => setCursor(item.id)}
+														onFocus={() => setCursor(item.id)}
 														onClick={() => selectItem(item)}
 														className="relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
 													>
