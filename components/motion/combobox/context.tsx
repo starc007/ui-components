@@ -15,6 +15,7 @@ import {
   useState,
 } from "react";
 import { cn } from "@/lib/utils";
+import { useActiveOption } from "./use-active-option";
 
 export type RegisteredItem = {
   value: string;
@@ -52,7 +53,13 @@ export type ComboboxContextValue = {
   select: (value: string) => void;
   query: string;
   setQuery: (query: string) => void;
+  /** The option the list is currently pointing at, resolved during render. */
   activeValue: string | null;
+  /**
+   * Records where the pointer or keyboard moved to. The recorded value is
+   * dropped when the query or the result set changes, so it does not always
+   * survive to the next `activeValue`.
+   */
   setActiveValue: (value: string | null) => void;
   moveActive: (direction: 1 | -1 | "first" | "last") => void;
   selectActive: () => void;
@@ -133,7 +140,6 @@ export function Combobox({
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [internalQuery, setInternalQuery] = useState(defaultQuery);
-  const [activeValue, setActiveValue] = useState<string | null>(null);
   const [items, setItems] = useState<Map<string, RegisteredItem>>(new Map());
 
   const valueControlled = controlledValue !== undefined;
@@ -193,12 +199,20 @@ export function Combobox({
     });
   }, []);
 
+  // The query the list filters by. Closing clears `query`, but the panel is
+  // still on screen for its exit, so it keeps filtering by the query it was
+  // open with rather than repopulating mid-collapse. The input already reads
+  // `query` only while open, so nothing the user can see reads the other one.
+  const [openQuery, setOpenQuery] = useState(query);
+  if (open && openQuery !== query) setOpenQuery(query);
+  const listQuery = open ? query : openQuery;
+
   const visibleItems = useMemo(
     () =>
       Array.from(items.values()).filter((item) =>
-        filter(item.value, query, [item.label, ...item.keywords]),
+        filter(item.value, listQuery, [item.label, ...item.keywords]),
       ),
-    [filter, items, query],
+    [filter, items, listQuery],
   );
   const enabledVisibleItems = useMemo(
     () => visibleItems.filter((item) => !item.disabled),
@@ -213,6 +227,13 @@ export function Combobox({
     [visibleItems],
   );
 
+  const { activeValue, setActiveValue, moveActive } = useActiveOption({
+    open,
+    query: listQuery,
+    value,
+    enabledItems: enabledVisibleItems,
+  });
+
   const select = useCallback(
     (next: string) => {
       if (items.get(next)?.disabled) return;
@@ -223,53 +244,16 @@ export function Combobox({
     [items, onValueChange, updateOpen, valueControlled],
   );
 
-  const moveActive = useCallback(
-    (direction: 1 | -1 | "first" | "last") => {
-      if (!enabledVisibleItems.length) {
-        setActiveValue(null);
-        return;
-      }
-      if (direction === "first") {
-        setActiveValue(enabledVisibleItems[0].value);
-        return;
-      }
-      if (direction === "last") {
-        setActiveValue(enabledVisibleItems.at(-1)?.value ?? null);
-        return;
-      }
-
-      const currentIndex = enabledVisibleItems.findIndex(
-        (item) => item.value === activeValue,
-      );
-      const nextIndex =
-        currentIndex < 0
-          ? direction === 1
-            ? 0
-            : enabledVisibleItems.length - 1
-          : (currentIndex + direction + enabledVisibleItems.length) %
-            enabledVisibleItems.length;
-      setActiveValue(enabledVisibleItems[nextIndex].value);
-    },
-    [activeValue, enabledVisibleItems],
-  );
-
   const selectActive = useCallback(() => {
     if (activeValue) select(activeValue);
   }, [activeValue, select]);
 
   useEffect(() => {
     if (!open) return;
-    const selectedVisible = value && visibleValues.has(value) ? value : null;
-    const activeVisible =
-      activeValue && visibleValues.has(activeValue) ? activeValue : null;
-    setActiveValue(
-      activeVisible ?? selectedVisible ?? enabledVisibleItems[0]?.value ?? null,
+    const frame = requestAnimationFrame(() =>
+      inputRef.current?.focus({ preventScroll: true }),
     );
-  }, [activeValue, enabledVisibleItems, open, value, visibleValues]);
-
-  useEffect(() => {
-    if (!open) return;
-    requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(frame);
   }, [open]);
 
   useEffect(() => {
@@ -326,7 +310,7 @@ export function Combobox({
       unregisterItem,
       labelFor: (itemValue) =>
         itemValue === undefined ? undefined : items.get(itemValue)?.label,
-      isVisible: (itemValue) => !query.trim() || visibleValues.has(itemValue),
+      isVisible: (itemValue) => !listQuery.trim() || visibleValues.has(itemValue),
       hasVisibleItems: (groupId) => visibleGroupIds.has(groupId),
       visibleCount: visibleItems.length,
       activeItemId: activeItem?.id,
@@ -346,6 +330,7 @@ export function Combobox({
       baseId,
       disabled,
       items,
+      listQuery,
       moveActive,
       open,
       query,
@@ -353,6 +338,7 @@ export function Combobox({
       registerItem,
       select,
       selectActive,
+      setActiveValue,
       unregisterItem,
       updateOpen,
       updateQuery,

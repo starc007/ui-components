@@ -13,12 +13,15 @@ import {
 	useCallback,
 	useEffect,
 	useId,
+	useLayoutEffect,
 	useMemo,
 	useRef,
 	useState,
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
+import { useOnOpen } from "@/lib/hooks/use-on-open";
+import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { cn } from "@/lib/utils";
 
 // Keeps the Wallet Card feel with a little more time to read the morph.
@@ -90,7 +93,6 @@ export function MorphingSearch({
 }: MorphingSearchProps) {
 	const [internalOpen, setInternalOpen] = useState(defaultOpen);
 	const [query, setQuery] = useState("");
-	const [activeIndex, setActiveIndex] = useState(0);
 	const [mounted, setMounted] = useState(false);
 	const [backgroundScrollLocked, setBackgroundScrollLocked] =
 		useState(defaultOpen);
@@ -137,10 +139,25 @@ export function MorphingSearch({
 		setOpen(true);
 	}, [measureAnchor, setOpen]);
 
+	const filteredItems = useMemo(() => {
+		const needle = query.trim().toLowerCase();
+		if (!needle) return items;
+
+		return items.filter((item) =>
+			[item.title, item.description ?? "", ...(item.keywords ?? [])]
+				.join(" ")
+				.toLowerCase()
+				.includes(needle),
+		);
+	}, [items, query]);
+
+	const { activeIndex, moveTo, moveActive } = useRowCursor(filteredItems, query);
+
+	// The cursor is stamped with the query, so changing it drops the highlight
+	// without this having to say so.
 	const updateQuery = useCallback(
 		(next: string) => {
 			setQuery(next);
-			setActiveIndex(0);
 			onQueryChange?.(next);
 		},
 		[onQueryChange],
@@ -232,9 +249,25 @@ export function MorphingSearch({
 		return () => window.removeEventListener("keydown", handleShortcut);
 	}, [closeSearch, open, openSearch, shortcut]);
 
+	// Only this component's own state. Telling the consumer the query changed is
+	// a side effect, so it waits for the effect below.
+	useOnOpen(open, () => {
+		setQuery("");
+		moveTo(null);
+	});
+
+	// Keyed to `open` alone. `onQueryChange` is read through a ref because an
+	// inline one changes identity on every keystroke, and this effect clearing
+	// the field on every keystroke is exactly what that costs. Written after
+	// commit for the reason `lib/hooks/use-row-cursor.ts` gives at length.
+	const notifyQuery = useRef(onQueryChange);
+	useLayoutEffect(() => {
+		notifyQuery.current = onQueryChange;
+	});
+
 	useEffect(() => {
 		if (open) {
-			updateQuery("");
+			notifyQuery.current?.("");
 			const frame = requestAnimationFrame(() => inputRef.current?.focus());
 			return () => cancelAnimationFrame(frame);
 		}
@@ -249,28 +282,11 @@ export function MorphingSearch({
 			});
 			return () => cancelAnimationFrame(frame);
 		}
-	}, [open, updateQuery]);
+	}, [open]);
 
 	useEffect(() => {
 		wasOpenRef.current = open;
 	}, [open]);
-
-	const filteredItems = useMemo(() => {
-		const needle = query.trim().toLowerCase();
-		if (!needle) return items;
-
-		return items.filter((item) =>
-			[item.title, item.description ?? "", ...(item.keywords ?? [])]
-				.join(" ")
-				.toLowerCase()
-				.includes(needle),
-		);
-	}, [items, query]);
-
-	useEffect(() => {
-		if (activeIndex < filteredItems.length) return;
-		setActiveIndex(Math.max(0, filteredItems.length - 1));
-	}, [activeIndex, filteredItems.length]);
 
 	useEffect(() => {
 		if (!open) return;
@@ -291,16 +307,13 @@ export function MorphingSearch({
 	const handleDialogKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
 		if (event.key === "ArrowDown") {
 			event.preventDefault();
-			if (filteredItems.length === 0) return;
-			setActiveIndex((current) =>
-				Math.min(current + 1, filteredItems.length - 1),
-			);
+			moveActive(1);
 			return;
 		}
 
 		if (event.key === "ArrowUp") {
 			event.preventDefault();
-			setActiveIndex((current) => Math.max(current - 1, 0));
+			moveActive(-1);
 			return;
 		}
 
@@ -517,8 +530,8 @@ export function MorphingSearch({
 														role="option"
 														aria-selected={active}
 														data-index={index}
-														onMouseMove={() => setActiveIndex(index)}
-														onFocus={() => setActiveIndex(index)}
+														onMouseMove={() => moveTo(item.id)}
+														onFocus={() => moveTo(item.id)}
 														onClick={() => selectItem(item)}
 														className="relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
 													>

@@ -20,7 +20,7 @@ const COMPONENT_DATES = {
   "motion/switch": { publishedAt: "2026-05-17", updatedAt: "2026-06-10" },
   "motion/input": { publishedAt: "2026-06-29", updatedAt: "2026-07-05" },
   "motion/select": { publishedAt: "2026-06-28", updatedAt: "2026-07-13" },
-  "motion/combobox": { publishedAt: "2026-08-11", updatedAt: "2026-08-11" },
+  "motion/combobox": { publishedAt: "2026-08-11", updatedAt: "2026-08-22" },
   "motion/checkbox": { publishedAt: "2026-06-23", updatedAt: "2026-07-01" },
   "motion/radio": { publishedAt: "2026-06-23", updatedAt: "2026-07-13" },
   "motion/bottom-sheet": { publishedAt: "2026-05-17", updatedAt: "2026-08-20" },
@@ -62,7 +62,7 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-08-20",
+    updatedAt: "2026-08-22",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
@@ -78,7 +78,7 @@ const COMPONENT_DATES = {
   },
   "agents/ai-sidebar": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-08-20",
+    updatedAt: "2026-08-22",
   },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
@@ -131,8 +131,8 @@ const COMPONENT_DATES = {
   "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-07-10" },
   "blocks/swap": { publishedAt: "2026-05-19", updatedAt: "2026-06-13" },
   "blocks/dynamic-island": { publishedAt: "2026-06-10", updatedAt: "2026-07-13" },
-  "blocks/command-palette": { publishedAt: "2026-05-17", updatedAt: "2026-08-20" },
-  "blocks/morphing-search": { publishedAt: "2026-08-18", updatedAt: "2026-08-20" },
+  "blocks/command-palette": { publishedAt: "2026-05-17", updatedAt: "2026-08-22" },
+  "blocks/morphing-search": { publishedAt: "2026-08-18", updatedAt: "2026-08-22" },
   "blocks/expandable-action-bar": { publishedAt: "2026-06-05", updatedAt: "2026-06-22" },
   "blocks/overflow-actions": { publishedAt: "2026-06-19", updatedAt: "2026-06-28" },
   "blocks/expandable-tabs": { publishedAt: "2026-06-14", updatedAt: "2026-06-28" },

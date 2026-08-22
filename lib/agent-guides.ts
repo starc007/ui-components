@@ -68,7 +68,7 @@ export const agentGuides = {
       {
         title: "Filter",
         description:
-          "Typing narrows registered options while arrow keys move the active descendant without moving DOM focus.",
+          "Typing narrows registered options while arrow keys move the active descendant without moving DOM focus, and a new query or result set returns the highlight to the selected or first available option.",
       },
       {
         title: "Select",
