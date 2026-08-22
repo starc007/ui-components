@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 /**
  * Where the keyboard or the pointer last moved to, stamped with the query it
@@ -73,24 +73,36 @@ export function useActiveOption({ open, ...options }: Options & { open: boolean 
   if (open && !opened) setOpened(true);
   const activeValue = opened ? derived : null;
 
-  const setActiveValue = useCallback(
-    (next: string | null) => {
-      setCursor(next === null ? null : { value: next, query });
-    },
-    [query],
-  );
+  // Both callbacks keep one identity for the life of the component, and read
+  // the list through a ref to do it. A caller will put them in a `useMemo` or
+  // an effect's dependencies — the exhaustive-deps rule makes it — and
+  // `enabledItems` is a fresh array on every render for any consumer passing an
+  // inline `filter`, so a callback keyed to it would be rebuilt every render.
+  // Written after commit rather than during render: a render React discards
+  // still runs the component body, and a handler reading this in that window
+  // would step against a list the committed tree does not have.
+  const latest = useRef({ open, query, value, enabledItems });
+  useLayoutEffect(() => {
+    latest.current = { open, query, value, enabledItems };
+  });
+
+  const setActiveValue = useCallback((next: string | null) => {
+    setCursor(
+      next === null ? null : { value: next, query: latest.current.query },
+    );
+  }, []);
 
   // Steps from the option the cursor really resolves to, inside the update, so
-  // that two keys landing in one batch move two rows rather than one. Reading
-  // the resolved value from the render closure instead would also make this
-  // callback change identity on every pointer move.
+  // that two keys landing in one batch move two rows rather than one.
   const moveActive = useCallback(
     (direction: 1 | -1 | "first" | "last") => {
+      const options = latest.current;
       // While closed the list is still filtering by the query it was open
       // with, so a step taken now would be measured against rows the next
       // render replaces. Opening is the caller's job; stepping waits for it.
-      if (!open) return;
-      const last = enabledItems.length - 1;
+      if (!options.open) return;
+      const rows = options.enabledItems;
+      const last = rows.length - 1;
       if (last < 0) {
         setCursor(null);
         return;
@@ -99,18 +111,18 @@ export function useActiveOption({ open, ...options }: Options & { open: boolean 
         // `resolveActive` always lands on a member of `enabledItems` once the
         // list is non-empty, which the early return above guarantees, so there
         // is always a row to step from.
-        const from = resolveActive(current, { query, value, enabledItems });
-        const at = enabledItems.findIndex((item) => item.value === from);
+        const from = resolveActive(current, options);
+        const at = rows.findIndex((item) => item.value === from);
         const index =
           direction === "first"
             ? 0
             : direction === "last"
               ? last
-              : (at + direction + enabledItems.length) % enabledItems.length;
-        return { value: enabledItems[index].value, query };
+              : (at + direction + rows.length) % rows.length;
+        return { value: rows[index].value, query: options.query };
       });
     },
-    [enabledItems, open, query, value],
+    [],
   );
 
   return { activeValue, setActiveValue, moveActive };

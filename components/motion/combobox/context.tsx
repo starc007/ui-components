@@ -250,7 +250,10 @@ export function Combobox({
 
   useEffect(() => {
     if (!open) return;
-    requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    const frame = requestAnimationFrame(() =>
+      inputRef.current?.focus({ preventScroll: true }),
+    );
+    return () => cancelAnimationFrame(frame);
   }, [open]);
 
   useEffect(() => {

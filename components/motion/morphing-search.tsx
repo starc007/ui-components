@@ -19,6 +19,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
+import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { cn } from "@/lib/utils";
 
@@ -247,22 +248,22 @@ export function MorphingSearch({
 		return () => window.removeEventListener("keydown", handleShortcut);
 	}, [closeSearch, open, openSearch, shortcut]);
 
-	// Opening starts a fresh session: empty query, highlight at the top. That is
-	// a resolution, not a side effect, so it happens during the render that
-	// opens rather than in an effect keyed to `updateQuery` — which changes
-	// identity whenever the consumer passes an inline `onQueryChange`, and would
-	// then wipe the field on the keystroke that fired it.
-	const [wasOpen, setWasOpen] = useState(open);
-	if (open !== wasOpen) {
-		setWasOpen(open);
-		if (open) {
-			updateQuery("");
-			moveTo(null);
-		}
-	}
+	// Only this component's own state. Telling the consumer the query changed is
+	// a side effect, so it waits for the effect below.
+	useOnOpen(open, () => {
+		setQuery("");
+		moveTo(null);
+	});
+
+	// Keyed to `open` alone. `onQueryChange` is read through a ref because an
+	// inline one changes identity on every keystroke, and this effect clearing
+	// the field on every keystroke is exactly what that costs.
+	const notifyQuery = useRef(onQueryChange);
+	notifyQuery.current = onQueryChange;
 
 	useEffect(() => {
 		if (open) {
+			notifyQuery.current?.("");
 			const frame = requestAnimationFrame(() => inputRef.current?.focus());
 			return () => cancelAnimationFrame(frame);
 		}

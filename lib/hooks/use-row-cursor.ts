@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 /**
  * Where the keyboard or the pointer last moved to: the row's id, stamped with
@@ -48,8 +48,14 @@ function indexOfCursor(
  */
 export function useRowCursor(rows: readonly { id: string }[], query: string) {
   const [cursor, setCursor] = useState<RowCursor | null>(null);
+  // Written after commit, not during render: a render React discards or has not
+  // finished still runs the component body, and an event handler that read this
+  // in that window would stamp the cursor with a query the committed tree does
+  // not have.
   const latest = useRef({ rows, query });
-  latest.current = { rows, query };
+  useLayoutEffect(() => {
+    latest.current = { rows, query };
+  });
 
   const cursorRow = indexOfCursor(rows, query, cursor);
   // Cleared rather than ignored: React re-runs this render with the cursor

@@ -13,6 +13,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
+import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { PresenceGate } from "@/lib/presence-gate";
@@ -152,20 +153,12 @@ export function CommandPalette({
 
   const { activeIndex: active, moveTo, moveActive } = useRowCursor(rows, query);
 
-  // Opening starts a fresh session: empty query, highlight at the top. That is
-  // a resolution, not a side effect, so it happens during the render that
-  // opens rather than in an effect after it — the same rule this component
-  // follows for the highlight itself. Clearing the query would drop the cursor
-  // on its own, but only if it had changed; `moveTo(null)` covers reopening on
-  // an already-empty query.
-  const [wasOpen, setWasOpen] = useState(open);
-  if (open !== wasOpen) {
-    setWasOpen(open);
-    if (open) {
-      setQuery("");
-      moveTo(null);
-    }
-  }
+  // Clearing the query would drop the cursor on its own, but only if it had
+  // changed; `moveTo(null)` covers reopening on an already-empty query.
+  useOnOpen(open, () => {
+    setQuery("");
+    moveTo(null);
+  });
 
   useEffect(() => {
     if (!open) return;

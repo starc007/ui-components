@@ -88,6 +88,34 @@ describe("MorphingSearch async results", () => {
     ).toBe("gam");
   });
 
+  test("does not call the consumer back while it is rendering", () => {
+    // `onQueryChange` is the consumer's, so firing it is a side effect and
+    // belongs in an effect. Called from the render that opens, it sets state on
+    // another component mid-render, which React rejects.
+    function Consumer() {
+      const [seen, setSeen] = useState("initial");
+      return (
+        <div>
+          <output data-testid="seen">{seen}</output>
+          <MorphingSearch items={FIVE} onQueryChange={(next) => setSeen(next)} />
+        </div>
+      );
+    }
+    const errors: unknown[] = [];
+    const realError = console.error;
+    console.error = (...args: unknown[]) => errors.push(args[0]);
+    try {
+      const { container } = render(<Consumer />);
+      fireEvent.click(within(container).getByRole("button"));
+      expect(errors).toEqual([]);
+      expect(
+        container.querySelector("[data-testid='seen']")?.textContent,
+      ).toBe("");
+    } finally {
+      console.error = realError;
+    }
+  });
+
   test("never points at a row that the new results no longer have", () => {
     const view = renderOutsideAct(<MorphingSearch items={FIVE} defaultOpen />);
     press(view, "ArrowDown", 3);
