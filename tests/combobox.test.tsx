@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, mock, test } from "bun:test";
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -327,7 +328,7 @@ describe("Combobox", () => {
     expect(openWith(true)).toEqual(["Next.js", "Remix"]);
   });
 
-  test("does not reopen itself when it closes inside the opening frame", () => {
+  test("does not reopen itself when it closes inside the opening frame", async () => {
     // Opening schedules a frame that focuses the input, and the input's own
     // focus handler opens the list. If the list closes before that frame runs,
     // the stray focus reopens it and drags focus off whatever the consumer
@@ -358,15 +359,15 @@ describe("Combobox", () => {
     rerender(<Controlled open={false} />);
     onOpenChange.mockClear();
 
-    return new Promise<void>((resolve) => {
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => {
-          expect(onOpenChange).not.toHaveBeenCalled();
-          expect(document.activeElement).toBe(outside);
-          resolve();
+    await act(
+      () =>
+        new Promise<void>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
         }),
-      );
-    });
+    );
+
+    expect(onOpenChange).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(outside);
   });
 
   test("never makes a disabled option active", () => {
