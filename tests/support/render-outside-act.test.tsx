@@ -1,5 +1,5 @@
 import { afterEach, expect, test } from "bun:test";
-import { cleanup, render } from "@testing-library/react";
+import { act, cleanup, render } from "@testing-library/react";
 import { useEffect, useState } from "react";
 import { cleanupOutsideAct, renderOutsideAct } from "./render-outside-act";
 
@@ -30,7 +30,7 @@ test("commit lands the commit but not what a passive effect schedules", async ()
   view.flushPendingWork();
   expect(probe(view.container)).toBe("committed");
 
-  await view.settle();
+  await act(async () => {});
   expect(probe(view.container)).toBe("settled");
 });
 

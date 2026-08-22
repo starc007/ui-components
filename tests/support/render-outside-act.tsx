@@ -62,7 +62,5 @@ export function renderOutsideAct(node: ReactNode) {
     /** Dispatch a real event, so React handles it the way the browser would. */
     dispatch: (target: EventTarget, event: Event) =>
       outsideAct(() => target.dispatchEvent(event)),
-    /** Settle everything, the way `act` would. */
-    settle: () => act(async () => {}),
   };
 }

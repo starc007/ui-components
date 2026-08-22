@@ -427,4 +427,25 @@ describe("Combobox async results", () => {
 
     expect(onValueChange).toHaveBeenCalledWith("beta");
   });
+
+  test("moves one option per key when two keys land in one batch", () => {
+    // Programmatic replay — a synthetic key sequence, an e2e driver, an `act`
+    // block — can put two keydowns in one batch. Each still has to count.
+    const view = renderOutsideAct(
+      <AsyncCombobox results={["alpha", "beta", "gamma", "delta"]} />,
+    );
+    const input = field(view.container);
+    for (let i = 0; i < 3; i += 1) {
+      view.dispatch(
+        input,
+        new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
+      );
+    }
+    view.flushPendingWork();
+
+    const active = input.getAttribute("aria-activedescendant");
+    expect(options().find((option) => option.id === active)?.textContent).toBe(
+      "delta",
+    );
+  });
 });
