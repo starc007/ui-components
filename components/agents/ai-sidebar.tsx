@@ -617,10 +617,16 @@ export function AISidebar({
     [expandedIds, renderedItems],
   );
 
-  useEffect(() => {
-    if (focusedId && flat.some((row) => row.item.id === focusedId)) return;
-    setFocusedId(flat[0]?.item.id ?? null);
-  }, [flat, focusedId]);
+  // Which row carries the roving tabindex is resolved during render, never in
+  // a passive effect: an effect lands after the browser paints, so the first
+  // commit — and, on a server-rendered page, the markup itself — would have no
+  // tabbable row and Tab would skip the whole tree. The same hole opens again
+  // whenever a collapse or a rolled-back move takes the focused row out of it.
+  const focusedRow =
+    focusedId !== null && flat.some((row) => row.item.id === focusedId)
+      ? focusedId
+      : (flat[0]?.item.id ?? null);
+  if (focusedId !== focusedRow) setFocusedId(focusedRow);
 
   useEffect(() => {
     if (!menuOpenId) return;
@@ -880,7 +886,7 @@ export function AISidebar({
             row={row}
             active={selectedId === row.item.id}
             expanded={expandedIds.has(row.item.id)}
-            focused={focusedId === row.item.id}
+            focused={focusedRow === row.item.id}
             draggingId={draggingId}
             dropTarget={dropTarget}
             menuOpen={menuOpenId === row.item.id}
