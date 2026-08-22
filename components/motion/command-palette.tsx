@@ -152,19 +152,26 @@ export function CommandPalette({
 
   const { activeIndex: active, moveTo, moveActive } = useRowCursor(rows, query);
 
-  // The cursor is stamped with the query, so changing it drops the highlight
-  // without this having to say so.
-  const updateQuery = useCallback((value: string) => setQuery(value), []);
+  // Opening starts a fresh session: empty query, highlight at the top. That is
+  // a resolution, not a side effect, so it happens during the render that
+  // opens rather than in an effect after it — the same rule this component
+  // follows for the highlight itself. Clearing the query would drop the cursor
+  // on its own, but only if it had changed; `moveTo(null)` covers reopening on
+  // an already-empty query.
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (open) {
+      setQuery("");
+      moveTo(null);
+    }
+  }
 
   useEffect(() => {
-    if (open) {
-      updateQuery("");
-      // A deliberate reset, not a consequence of the query: reopening starts at
-      // the top even when the query was already empty.
-      moveTo(null);
-      requestAnimationFrame(() => inputRef.current?.focus());
-    }
-  }, [moveTo, open, updateQuery]);
+    if (!open) return;
+    const frame = requestAnimationFrame(() => inputRef.current?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, [open]);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
@@ -259,7 +266,7 @@ export function CommandPalette({
                   <input
                     ref={inputRef}
                     value={query}
-                    onChange={(e) => updateQuery(e.target.value)}
+                    onChange={(e) => setQuery(e.target.value)}
                     placeholder={placeholder}
                     role="combobox"
                     // The field only exists while the palette is open.

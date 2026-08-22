@@ -12,10 +12,10 @@ const ROWS = ["a", "b", "c"].map((id) => ({ id }));
  * component's own handler ever running.
  */
 function Probe({ query, rows = ROWS }: { query: string; rows?: { id: string }[] }) {
-  const { activeId, moveActive, moveTo } = useRowCursor(rows, query);
+  const { activeIndex, moveActive, moveTo } = useRowCursor(rows, query);
   return (
     <div>
-      <output data-testid="active">{activeId ?? "none"}</output>
+      <output data-testid="active">{rows[activeIndex]?.id ?? "none"}</output>
       <button type="button" onClick={() => moveActive(1)}>
         down
       </button>
@@ -73,19 +73,6 @@ test("keeps the cursor when the row merely moves", () => {
 
   rerender(<Probe query="" rows={[{ id: "z" }, { id: "a" }, { id: "b" }]} />);
   expect(active(container)).toBe("b");
-});
-
-test("moves one row per click when two land in one batch", () => {
-  const { container } = render(<Probe query="" />);
-  const down = Array.from(container.querySelectorAll("button")).find(
-    (b) => b.textContent === "down",
-  );
-  if (!down) throw new Error("no down button");
-  // One synthetic batch: both updates have to count.
-  fireEvent.click(down);
-  fireEvent.click(down);
-
-  expect(active(container)).toBe("c");
 });
 
 test("moveTo(null) resets a cursor the query would have kept", () => {

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, mock, test } from "bun:test";
-import { cleanup, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, within } from "@testing-library/react";
 import {
   type CommandItem,
   CommandPalette,
@@ -46,6 +46,16 @@ describe("CommandPalette async results", () => {
       view.flushPendingWork();
     }
   };
+
+  test("keeps what the user types, and filters by it", () => {
+    render(<CommandPalette items={FOUR} open />);
+    const input = field() as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: "beta" } });
+
+    expect(input.value).toBe("beta");
+    expect(rows().map((row) => row.textContent)).toEqual(["beta"]);
+  });
 
   test("never points at a row the new results no longer have", () => {
     const view = renderOutsideAct(<CommandPalette items={FOUR} open />);

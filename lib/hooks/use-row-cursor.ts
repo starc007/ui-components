@@ -1,12 +1,22 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 /**
  * Where the keyboard or the pointer last moved to: the row's id, stamped with
  * the query it was placed under.
  */
 type RowCursor = { id: string; query: string };
+
+/** The cursor's row, or -1 once the query has moved on or the row has left. */
+function indexOfCursor(
+  rows: readonly { id: string }[],
+  query: string,
+  cursor: RowCursor | null,
+) {
+  if (cursor === null || cursor.query !== query) return -1;
+  return rows.findIndex((row) => row.id === cursor.id);
+}
 
 /**
  * The highlighted row of a list whose rows can change under it.
@@ -30,51 +40,41 @@ type RowCursor = { id: string; query: string };
  * caller whose query arrives as a prop and so never runs its own handler. Rows
  * that come back under a query that has moved on cannot revive it either.
  * `moveTo(null)` is for deliberate resets, such as reopening the list.
+ *
+ * Both callbacks keep one identity for the life of the component, and read the
+ * rows and the query through a ref to do it. A caller will put them in an
+ * effect's dependencies — the exhaustive-deps rule makes it — and a `moveTo`
+ * rebuilt on every keystroke would re-run that effect on every keystroke.
  */
 export function useRowCursor(rows: readonly { id: string }[], query: string) {
   const [cursor, setCursor] = useState<RowCursor | null>(null);
+  const latest = useRef({ rows, query });
+  latest.current = { rows, query };
 
-  const rowOf = (candidate: RowCursor | null) =>
-    candidate === null || candidate.query !== query
-      ? -1
-      : rows.findIndex((row) => row.id === candidate.id);
-
-  const cursorRow = rowOf(cursor);
+  const cursorRow = indexOfCursor(rows, query, cursor);
   // Cleared rather than ignored: React re-runs this render with the cursor
   // already gone, so rows that come back cannot revive a highlight the user has
   // stopped aiming at.
   if (cursor !== null && cursorRow < 0) setCursor(null);
-  const activeIndex = cursorRow < 0 ? 0 : cursorRow;
 
   const moveTo = useCallback(
-    (id: string | null) => setCursor(id === null ? null : { id, query }),
-    [query],
+    (id: string | null) =>
+      setCursor(id === null ? null : { id, query: latest.current.query }),
+    [],
   );
 
-  const moveActive = useCallback(
-    (direction: 1 | -1) => {
-      const last = rows.length - 1;
-      if (last < 0) return;
-      // Steps from the row the cursor is really on, inside the update, so that
-      // two keys landing in one batch move two rows rather than one. `rowOf` is
-      // inlined here because it is rebuilt every render, and depending on it
-      // would rebuild this callback with it.
-      setCursor((current) => {
-        const at =
-          current === null || current.query !== query
-            ? -1
-            : rows.findIndex((row) => row.id === current.id);
-        const next = Math.min(Math.max(Math.max(at, 0) + direction, 0), last);
-        return { id: rows[next].id, query };
-      });
-    },
-    [query, rows],
-  );
+  const moveActive = useCallback((direction: 1 | -1) => {
+    const { rows: live, query: liveQuery } = latest.current;
+    const last = live.length - 1;
+    if (last < 0) return;
+    // Steps from the row the cursor is really on, inside the update, so that
+    // two keys landing in one batch move two rows rather than one.
+    setCursor((current) => {
+      const at = Math.max(indexOfCursor(live, liveQuery, current), 0);
+      const next = Math.min(Math.max(at + direction, 0), last);
+      return { id: live[next].id, query: liveQuery };
+    });
+  }, []);
 
-  return {
-    activeIndex,
-    activeId: rows[activeIndex]?.id ?? null,
-    moveTo,
-    moveActive,
-  };
+  return { activeIndex: cursorRow < 0 ? 0 : cursorRow, moveTo, moveActive };
 }

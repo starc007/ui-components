@@ -247,12 +247,22 @@ export function MorphingSearch({
 		return () => window.removeEventListener("keydown", handleShortcut);
 	}, [closeSearch, open, openSearch, shortcut]);
 
-	useEffect(() => {
+	// Opening starts a fresh session: empty query, highlight at the top. That is
+	// a resolution, not a side effect, so it happens during the render that
+	// opens rather than in an effect keyed to `updateQuery` — which changes
+	// identity whenever the consumer passes an inline `onQueryChange`, and would
+	// then wipe the field on the keystroke that fired it.
+	const [wasOpen, setWasOpen] = useState(open);
+	if (open !== wasOpen) {
+		setWasOpen(open);
 		if (open) {
 			updateQuery("");
-			// A deliberate reset, not a consequence of the query: reopening starts
-			// at the top even when the query was already empty.
 			moveTo(null);
+		}
+	}
+
+	useEffect(() => {
+		if (open) {
 			const frame = requestAnimationFrame(() => inputRef.current?.focus());
 			return () => cancelAnimationFrame(frame);
 		}
@@ -267,7 +277,7 @@ export function MorphingSearch({
 			});
 			return () => cancelAnimationFrame(frame);
 		}
-	}, [moveTo, open, updateQuery]);
+	}, [open]);
 
 	useEffect(() => {
 		wasOpenRef.current = open;

@@ -86,6 +86,10 @@ export function useActiveOption({ open, ...options }: Options & { open: boolean 
   // callback change identity on every pointer move.
   const moveActive = useCallback(
     (direction: 1 | -1 | "first" | "last") => {
+      // While closed the list is still filtering by the query it was open
+      // with, so a step taken now would be measured against rows the next
+      // render replaces. Opening is the caller's job; stepping waits for it.
+      if (!open) return;
       const last = enabledItems.length - 1;
       if (last < 0) {
         setCursor(null);
@@ -106,7 +110,7 @@ export function useActiveOption({ open, ...options }: Options & { open: boolean 
         return { value: enabledItems[index].value, query };
       });
     },
-    [enabledItems, query, value],
+    [enabledItems, open, query, value],
   );
 
   return { activeValue, setActiveValue, moveActive };

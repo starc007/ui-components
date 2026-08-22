@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, mock, test } from "bun:test";
-import { cleanup, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, within } from "@testing-library/react";
+import { useState } from "react";
 import {
   MorphingSearch,
   type MorphingSearchItem,
@@ -48,6 +49,44 @@ describe("MorphingSearch async results", () => {
       view.flushPendingWork();
     }
   };
+
+  test("keeps what the user types, and filters by it", () => {
+    render(<MorphingSearch items={FIVE} defaultOpen />);
+    const input = field() as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: "gam" } });
+
+    expect(input.value).toBe("gam");
+    expect(rows().map((row) => row.textContent)).toEqual(["gamma"]);
+  });
+
+  test("keeps what the user types when the consumer tracks the query", () => {
+    // The common shape: an inline `onQueryChange` that sets parent state. Each
+    // keystroke re-renders the parent with a fresh callback, so anything keyed
+    // to that callback's identity must not reset the field.
+    function Consumer() {
+      const [seen, setSeen] = useState("");
+      return (
+        <div>
+          <output data-testid="seen">{seen}</output>
+          <MorphingSearch
+            items={FIVE}
+            defaultOpen
+            onQueryChange={(next) => setSeen(next)}
+          />
+        </div>
+      );
+    }
+    const { container } = render(<Consumer />);
+    const input = field() as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: "gam" } });
+
+    expect(input.value).toBe("gam");
+    expect(
+      container.querySelector("[data-testid='seen']")?.textContent,
+    ).toBe("gam");
+  });
 
   test("never points at a row that the new results no longer have", () => {
     const view = renderOutsideAct(<MorphingSearch items={FIVE} defaultOpen />);
