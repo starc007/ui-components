@@ -300,6 +300,33 @@ describe("Combobox", () => {
     expect(input.hasAttribute("aria-activedescendant")).toBe(false);
   });
 
+  test("opens onto the selection, whatever the last session left behind", () => {
+    // Opening is the whole action. Closing clears the query but the list keeps
+    // filtering by the one it was open with, so the rows this handler can see
+    // are still the last session's — a step taken here would be measured
+    // against that stale list, and the same keystroke would land on a
+    // different row depending on invisible state.
+    const openWith = (leaveAQuery: boolean) => {
+      const { container, getByRole, unmount } = render(<ExampleCombobox />);
+      const input = getByRole("combobox", { name: "Search frameworks" });
+      fireEvent.focus(input);
+      if (leaveAQuery) fireEvent.change(input, { target: { value: "r" } });
+      fireEvent.keyDown(input, { key: "Escape" });
+
+      fireEvent.keyDown(input, { key: "ArrowDown" });
+      const first = container.ownerDocument.querySelector("[data-active]")
+        ?.textContent;
+      fireEvent.keyDown(input, { key: "ArrowDown" });
+      const second = container.ownerDocument.querySelector("[data-active]")
+        ?.textContent;
+      unmount();
+      return [first, second];
+    };
+
+    expect(openWith(false)).toEqual(["Next.js", "Remix"]);
+    expect(openWith(true)).toEqual(["Next.js", "Remix"]);
+  });
+
   test("never makes a disabled option active", () => {
     const onValueChange = mock(() => {});
     const { getByRole } = render(

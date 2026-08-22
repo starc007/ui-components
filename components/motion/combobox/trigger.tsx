@@ -108,14 +108,18 @@ export function ComboboxInput({
     onKeyDown?.(event);
     if (event.defaultPrevented) return;
 
-    if (event.key === "ArrowDown") {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();
-      context.setOpen(true);
-      context.moveActive(1);
-    } else if (event.key === "ArrowUp") {
-      event.preventDefault();
-      context.setOpen(true);
-      context.moveActive(-1);
+      // Opening is the whole action. While closed the list is still filtering
+      // by the query the last session left, so a step taken here would be
+      // measured against rows the next render replaces — and stamped with a
+      // query it no longer has, which discards it. Open onto the selection,
+      // and let the next key step through the list the user can see.
+      if (!context.open) {
+        context.setOpen(true);
+        return;
+      }
+      context.moveActive(event.key === "ArrowDown" ? 1 : -1);
     } else if (event.key === "Home" && context.open) {
       event.preventDefault();
       context.moveActive("first");
