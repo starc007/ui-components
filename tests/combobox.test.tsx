@@ -327,6 +327,48 @@ describe("Combobox", () => {
     expect(openWith(true)).toEqual(["Next.js", "Remix"]);
   });
 
+  test("does not reopen itself when it closes inside the opening frame", () => {
+    // Opening schedules a frame that focuses the input, and the input's own
+    // focus handler opens the list. If the list closes before that frame runs,
+    // the stray focus reopens it and drags focus off whatever the consumer
+    // moved it to.
+    const onOpenChange = mock((_open: boolean) => {});
+    const Controlled = ({ open }: { open: boolean }) => (
+      <>
+        <button type="button">outside</button>
+        <Combobox open={open} onOpenChange={onOpenChange}>
+          <ComboboxTrigger>
+            <ComboboxInput aria-label="Search frameworks" />
+          </ComboboxTrigger>
+          <ComboboxContent>
+            <ComboboxList ariaLabel="Frameworks">
+              <ComboboxItem value="next">Next.js</ComboboxItem>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </>
+    );
+
+    const { getByRole, rerender } = render(<Controlled open={false} />);
+    const outside = getByRole("button", { name: "outside" });
+    outside.focus();
+
+    // Open and close again without letting the scheduled frame run.
+    rerender(<Controlled open />);
+    rerender(<Controlled open={false} />);
+    onOpenChange.mockClear();
+
+    return new Promise<void>((resolve) => {
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          expect(onOpenChange).not.toHaveBeenCalled();
+          expect(document.activeElement).toBe(outside);
+          resolve();
+        }),
+      );
+    });
+  });
+
   test("never makes a disabled option active", () => {
     const onValueChange = mock(() => {});
     const { getByRole } = render(

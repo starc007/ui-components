@@ -12,6 +12,7 @@ import {
 	type KeyboardEvent as ReactKeyboardEvent,
 	useCallback,
 	useEffect,
+	useLayoutEffect,
 	useId,
 	useMemo,
 	useRef,
@@ -257,9 +258,12 @@ export function MorphingSearch({
 
 	// Keyed to `open` alone. `onQueryChange` is read through a ref because an
 	// inline one changes identity on every keystroke, and this effect clearing
-	// the field on every keystroke is exactly what that costs.
+	// the field on every keystroke is exactly what that costs. Written after
+	// commit for the reason `lib/hooks/use-row-cursor.ts` gives at length.
 	const notifyQuery = useRef(onQueryChange);
-	notifyQuery.current = onQueryChange;
+	useLayoutEffect(() => {
+		notifyQuery.current = onQueryChange;
+	});
 
 	useEffect(() => {
 		if (open) {
