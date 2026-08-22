@@ -154,6 +154,22 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "expandable-control",
+        name: "Expandable Control",
+        description:
+          "Click-to-expand button and chip controls that reveal a label or trailing action through spring layout continuity.",
+        file: "components/motion/expandable-control.tsx",
+        badge: "new",
+        launchedAt: "2026-08-22",
+        keywords: [
+          "expandable button react",
+          "animated chip react",
+          "click to expand",
+          "layout animation button",
+          "reveal action control",
+        ],
+      },
+      {
         slug: "marquee",
         name: "Marquee",
         description: "Infinite horizontal or vertical scroll with pause-on-hover.",
