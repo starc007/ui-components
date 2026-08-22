@@ -282,11 +282,20 @@ describe("Combobox", () => {
     fireEvent.keyDown(input, { key: "ArrowDown" });
     expect(activeOption()?.textContent).toBe("Remix");
 
-    // The panel stays mounted and animates out, and closing clears the query,
-    // which repopulates the list underneath it. The highlight has to stay on
-    // the row it was on rather than glide onto another one mid-exit. The
+    // The panel stays mounted and animates out. Closing clears the query, so
+    // the list has to keep filtering by the query it was open with: neither
+    // the rows nor the highlight may change while the panel is on screen. The
     // closing panel is aria-hidden, so this reads the DOM, not the a11y tree.
+    const rowText = () =>
+      Array.from(
+        container.ownerDocument.querySelectorAll("[data-combobox-item]"),
+      ).map((row) => row.textContent);
+    const openRows = rowText();
+    // Non-vacuous: the query really is filtering rows out while open.
+    expect(openRows).not.toContain("Vite");
+
     fireEvent.keyDown(input, { key: "Escape" });
+    expect(rowText()).toEqual(openRows);
     expect(activeOption()?.textContent).toBe("Remix");
     expect(input.hasAttribute("aria-activedescendant")).toBe(false);
   });

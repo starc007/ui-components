@@ -199,12 +199,20 @@ export function Combobox({
     });
   }, []);
 
+  // The query the list filters by. Closing clears `query`, but the panel is
+  // still on screen for its exit, so it keeps filtering by the query it was
+  // open with rather than repopulating mid-collapse. The input already reads
+  // `query` only while open, so nothing the user can see reads the other one.
+  const [openQuery, setOpenQuery] = useState(query);
+  if (open && openQuery !== query) setOpenQuery(query);
+  const listQuery = open ? query : openQuery;
+
   const visibleItems = useMemo(
     () =>
       Array.from(items.values()).filter((item) =>
-        filter(item.value, query, [item.label, ...item.keywords]),
+        filter(item.value, listQuery, [item.label, ...item.keywords]),
       ),
-    [filter, items, query],
+    [filter, items, listQuery],
   );
   const enabledVisibleItems = useMemo(
     () => visibleItems.filter((item) => !item.disabled),
@@ -221,7 +229,7 @@ export function Combobox({
 
   const { activeValue, setActiveValue, moveActive } = useActiveOption({
     open,
-    query,
+    query: listQuery,
     value,
     enabledItems: enabledVisibleItems,
   });
@@ -299,7 +307,7 @@ export function Combobox({
       unregisterItem,
       labelFor: (itemValue) =>
         itemValue === undefined ? undefined : items.get(itemValue)?.label,
-      isVisible: (itemValue) => !query.trim() || visibleValues.has(itemValue),
+      isVisible: (itemValue) => !listQuery.trim() || visibleValues.has(itemValue),
       hasVisibleItems: (groupId) => visibleGroupIds.has(groupId),
       visibleCount: visibleItems.length,
       activeItemId: activeItem?.id,
@@ -319,6 +327,7 @@ export function Combobox({
       baseId,
       disabled,
       items,
+      listQuery,
       moveActive,
       open,
       query,

@@ -65,13 +65,13 @@ export function useActiveOption({ open, ...options }: Options & { open: boolean 
   if (cursor !== null && live === null) setCursor(null);
   const derived = live ?? fallbackActive(options);
 
-  // A closed list shows the last option it resolved while open: never anything
-  // before the first open, and a stable highlight through the exit animation.
-  // Closing clears the query, which would otherwise drop the cursor and glide
-  // the highlight onto another row while the panel is still on screen.
-  const [shown, setShown] = useState<string | null>(null);
-  if (open && shown !== derived) setShown(derived);
-  const activeValue = open ? derived : shown;
+  // Nothing is active until the list has been opened once. After that the
+  // resolution above is already stable across a close — the list keeps
+  // filtering by the query it was open with — so the highlight holds its row
+  // through the exit without being frozen separately.
+  const [opened, setOpened] = useState(open);
+  if (open && !opened) setOpened(true);
+  const activeValue = opened ? derived : null;
 
   const setActiveValue = useCallback(
     (next: string | null) => {
@@ -92,21 +92,17 @@ export function useActiveOption({ open, ...options }: Options & { open: boolean 
         return;
       }
       setCursor((current) => {
+        // `resolveActive` always lands on a member of `enabledItems` once the
+        // list is non-empty, which the early return above guarantees, so there
+        // is always a row to step from.
         const from = resolveActive(current, { query, value, enabledItems });
-        // A miss means there is no row to step from: the key arrived before the
-        // first open, or the frozen value's row has left the list while closed.
-        // Either way, enter the list at the end the key points to.
         const at = enabledItems.findIndex((item) => item.value === from);
         const index =
           direction === "first"
             ? 0
             : direction === "last"
               ? last
-              : at < 0
-                ? direction === 1
-                  ? 0
-                  : last
-                : (at + direction + enabledItems.length) % enabledItems.length;
+              : (at + direction + enabledItems.length) % enabledItems.length;
         return { value: enabledItems[index].value, query };
       });
     },
