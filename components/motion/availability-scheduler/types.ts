@@ -56,30 +56,80 @@ export function buildOptions(step: number): TimeOption[] {
   return out;
 }
 
-/** Same-day ranges only: end must be after start. 7:00 PM → 1:00 AM is rejected. */
+function snapToOption(mins: number, slots: number[]) {
+  let best = slots[0];
+  for (const slot of slots) {
+    if (Math.abs(slot - mins) < Math.abs(best - mins)) best = slot;
+  }
+  return best;
+}
+
+function withCurrentOption(
+  filtered: TimeOption[],
+  all: TimeOption[],
+  current?: string,
+) {
+  if (!current || filtered.some((o) => o.value === current)) return filtered;
+  const extra =
+    all.find((o) => o.value === current) ??
+    ({ value: current, label: label12(current) } satisfies TimeOption);
+  return [...filtered, extra].sort(
+    (a, b) => toMinutes(a.value) - toMinutes(b.value),
+  );
+}
+
+/**
+ * Same-day ranges only, snapped onto the generated option grid so `step`
+ * values that do not divide 1440 still produce picker-legal times.
+ */
 export function clampRange(
   start: string,
   end: string,
-  step: number,
+  options: TimeOption[],
 ): { start: string; end: string } {
-  const last = 24 * 60 - step;
-  let s = toMinutes(start);
-  let e = toMinutes(end);
-  s = Math.max(0, Math.min(s, last - step));
-  if (e <= s) e = s + step;
-  e = Math.min(Math.max(e, s + step), last);
-  if (e <= s) s = Math.max(0, e - step);
+  const slots = options.map((o) => toMinutes(o.value));
+  if (slots.length === 0) return { start, end };
+  if (slots.length === 1) {
+    return { start: options[0].value, end: options[0].value };
+  }
+
+  let s = snapToOption(toMinutes(start), slots);
+  let e = snapToOption(toMinutes(end), slots);
+
+  if (e <= s) {
+    const later = slots.find((slot) => slot > s);
+    if (later !== undefined) e = later;
+    else {
+      const earlier = [...slots].reverse().find((slot) => slot < s);
+      if (earlier !== undefined) s = earlier;
+    }
+  }
+
   return { start: toValue(s), end: toValue(e) };
 }
 
-export function startOptions(options: TimeOption[], end: string) {
-  const endM = toMinutes(end);
-  return options.filter((o) => toMinutes(o.value) < endM);
+export function startOptions(
+  options: TimeOption[],
+  end: string,
+  current?: string,
+) {
+  return withCurrentOption(
+    options.filter((o) => toMinutes(o.value) < toMinutes(end)),
+    options,
+    current,
+  );
 }
 
-export function endOptions(options: TimeOption[], start: string) {
-  const startM = toMinutes(start);
-  return options.filter((o) => toMinutes(o.value) > startM);
+export function endOptions(
+  options: TimeOption[],
+  start: string,
+  current?: string,
+) {
+  return withCurrentOption(
+    options.filter((o) => toMinutes(o.value) > toMinutes(start)),
+    options,
+    current,
+  );
 }
 
 // Default: Mon–Fri 9–5, weekend off. Fixed ids so SSR and first client render

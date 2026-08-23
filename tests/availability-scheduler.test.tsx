@@ -79,22 +79,46 @@ describe("AvailabilityScheduler open panel", () => {
 
     expect(openFields(container)).toHaveLength(0);
   });
+
+  test("shows a persisted overnight range instead of a blank Select", () => {
+    const overnight: WeekAvailability = {
+      ...defaultWeek(),
+      mon: {
+        enabled: true,
+        ranges: [{ id: "mon-0", start: "19:00", end: "01:00" }],
+      },
+    };
+    const { container } = render(
+      <AvailabilityScheduler value={overnight} onChange={() => {}} />,
+    );
+    const [monStart, monEnd] = fields(container);
+    expect(monStart.textContent).toContain("7:00 PM");
+    expect(monEnd.textContent).toContain("1:00 AM");
+  });
 });
 
 const options = buildOptions(30);
+const options50 = buildOptions(50);
 
 describe("availability scheduler ranges", () => {
   test("rejects an overnight window like 7:00 PM to 1:00 AM", () => {
-    expect(clampRange("19:00", "01:00", 30)).toEqual({
+    expect(clampRange("19:00", "01:00", options)).toEqual({
       start: "19:00",
       end: "19:30",
     });
   });
 
   test("keeps a same-day window", () => {
-    expect(clampRange("09:00", "17:00", 30)).toEqual({
+    expect(clampRange("09:00", "17:00", options)).toEqual({
       start: "09:00",
       end: "17:00",
+    });
+  });
+
+  test("snaps onto generated options when step does not divide the day", () => {
+    expect(clampRange("22:30", "23:20", options50)).toEqual({
+      start: "22:30",
+      end: "23:20",
     });
   });
 
@@ -108,5 +132,14 @@ describe("availability scheduler ranges", () => {
     const starts = startOptions(options, "17:00").map((o) => o.value);
     expect(starts).not.toContain("17:00");
     expect(starts.at(-1)).toBe("16:30");
+  });
+
+  test("keeps a persisted overnight range visible in both pickers", () => {
+    expect(
+      startOptions(options, "01:00", "19:00").map((o) => o.value),
+    ).toContain("19:00");
+    expect(
+      endOptions(options, "19:00", "01:00").map((o) => o.value),
+    ).toContain("01:00");
   });
 });

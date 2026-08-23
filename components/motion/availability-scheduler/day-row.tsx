@@ -79,18 +79,13 @@ export function DayRow({
     }
   };
 
-  const step =
-    options.length > 1
-      ? toMinutes(options[1].value) - toMinutes(options[0].value)
-      : 30;
-
   const updateRange = (id: string, patch: Partial<TimeRange>) => {
     onChange({
       ...state,
       ranges: state.ranges.map((r) => {
         if (r.id !== id) return r;
         const next = { ...r, ...patch };
-        return { ...next, ...clampRange(next.start, next.end, step) };
+        return { ...next, ...clampRange(next.start, next.end, options) };
       }),
     });
   };
@@ -179,7 +174,7 @@ export function DayRow({
                 <div className="min-w-0 flex-1 sm:max-w-[132px]">
                   <TimeSelect
                     value={r.start}
-                    options={startOptions(options, r.end)}
+                    options={startOptions(options, r.end, r.start)}
                     onChange={(v) => updateRange(r.id, { start: v })}
                     open={openPanel === panelId(r.id, "start")}
                     onOpenChange={(open) =>
@@ -191,7 +186,7 @@ export function DayRow({
                 <div className="min-w-0 flex-1 sm:max-w-[132px]">
                   <TimeSelect
                     value={r.end}
-                    options={endOptions(options, r.start)}
+                    options={endOptions(options, r.start, r.end)}
                     onChange={(v) => updateRange(r.id, { end: v })}
                     open={openPanel === panelId(r.id, "end")}
                     onOpenChange={(open) =>

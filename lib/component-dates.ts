@@ -124,7 +124,7 @@ const COMPONENT_DATES = {
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-07-14" },
   "blocks/project-folder": { publishedAt: "2026-08-15", updatedAt: "2026-08-20" },
   "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-07-27" },
-  "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-07-10" },
+  "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-08-23" },
   "blocks/swap": { publishedAt: "2026-05-19", updatedAt: "2026-06-13" },
   "blocks/dynamic-island": { publishedAt: "2026-06-10", updatedAt: "2026-07-13" },
   "blocks/command-palette": { publishedAt: "2026-05-17", updatedAt: "2026-08-20" },
