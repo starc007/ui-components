@@ -79,33 +79,44 @@ function withCurrentOption(
 }
 
 /**
- * Same-day ranges only, snapped onto the generated option grid so `step`
- * values that do not divide 1440 still produce picker-legal times.
+ * Same-day ranges only. A valid pair is left alone so an off-grid persisted
+ * end (17:00 with `step={720}`) is not rewritten. When the invariant fails,
+ * the just-selected endpoint stays and only the opposite side moves onto a
+ * neighboring generated option.
  */
 export function clampRange(
   start: string,
   end: string,
   options: TimeOption[],
+  changed: "start" | "end" = "start",
 ): { start: string; end: string } {
   const slots = options.map((o) => toMinutes(o.value));
   if (slots.length === 0) return { start, end };
-  if (slots.length === 1) {
-    return { start: options[0].value, end: options[0].value };
+
+  const startM = toMinutes(start);
+  const endM = toMinutes(end);
+  if (endM > startM) return { start, end };
+
+  const keepOrSnap = (value: string) => {
+    const mins = toMinutes(value);
+    return slots.includes(mins) ? mins : snapToOption(mins, slots);
+  };
+
+  if (changed === "end") {
+    const e = keepOrSnap(end);
+    const earlier = [...slots].reverse().find((slot) => slot < e);
+    return {
+      start: toValue(earlier ?? keepOrSnap(start)),
+      end: toValue(e),
+    };
   }
 
-  let s = snapToOption(toMinutes(start), slots);
-  let e = snapToOption(toMinutes(end), slots);
-
-  if (e <= s) {
-    const later = slots.find((slot) => slot > s);
-    if (later !== undefined) e = later;
-    else {
-      const earlier = [...slots].reverse().find((slot) => slot < s);
-      if (earlier !== undefined) s = earlier;
-    }
-  }
-
-  return { start: toValue(s), end: toValue(e) };
+  const s = keepOrSnap(start);
+  const later = slots.find((slot) => slot > s);
+  return {
+    start: toValue(s),
+    end: toValue(later ?? keepOrSnap(end)),
+  };
 }
 
 export function startOptions(

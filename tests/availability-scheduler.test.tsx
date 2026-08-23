@@ -80,6 +80,19 @@ describe("AvailabilityScheduler open panel", () => {
     expect(openFields(container)).toHaveLength(0);
   });
 
+  test("keeps a 12:00 PM start against a 5:00 PM end on a 12h step", () => {
+    const { container, getByRole } = render(
+      <Scheduler initial={defaultWeek()} />,
+    );
+    const [monStart, monEnd] = fields(container);
+
+    fireEvent.click(monStart);
+    fireEvent.click(getByRole("option", { name: "12:00 PM" }));
+
+    expect(monStart.textContent).toContain("12:00 PM");
+    expect(monEnd.textContent).toContain("5:00 PM");
+  });
+
   test("shows a persisted overnight range instead of a blank Select", () => {
     const overnight: WeekAvailability = {
       ...defaultWeek(),
@@ -119,6 +132,20 @@ describe("availability scheduler ranges", () => {
     expect(clampRange("22:30", "23:20", options50)).toEqual({
       start: "22:30",
       end: "23:20",
+    });
+  });
+
+  test("preserves a 12:00 start when the 17:00 end is off the 12h grid", () => {
+    expect(clampRange("12:00", "17:00", buildOptions(720), "start")).toEqual({
+      start: "12:00",
+      end: "17:00",
+    });
+  });
+
+  test("moves only the opposite end when the user picks an overnight end", () => {
+    expect(clampRange("19:00", "01:00", options, "end")).toEqual({
+      start: "00:30",
+      end: "01:00",
     });
   });
 

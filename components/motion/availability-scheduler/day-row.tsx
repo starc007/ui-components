@@ -80,12 +80,13 @@ export function DayRow({
   };
 
   const updateRange = (id: string, patch: Partial<TimeRange>) => {
+    const changed: "start" | "end" = patch.start !== undefined ? "start" : "end";
     onChange({
       ...state,
       ranges: state.ranges.map((r) => {
         if (r.id !== id) return r;
         const next = { ...r, ...patch };
-        return { ...next, ...clampRange(next.start, next.end, options) };
+        return { ...next, ...clampRange(next.start, next.end, options, changed) };
       }),
     });
   };
