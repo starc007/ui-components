@@ -105,6 +105,10 @@ export function clampRange(
   if (changed === "end") {
     const e = keepOrSnap(end);
     const earlier = [...slots].reverse().find((slot) => slot < e);
+    if (earlier === undefined && slots.length > 1) {
+      // Midnight cannot end a positive same-day range, so use the first pair.
+      return { start: toValue(slots[0]), end: toValue(slots[1]) };
+    }
     return {
       start: toValue(earlier ?? keepOrSnap(start)),
       end: toValue(e),
@@ -113,6 +117,13 @@ export function clampRange(
 
   const s = keepOrSnap(start);
   const later = slots.find((slot) => slot > s);
+  if (later === undefined && slots.length > 1) {
+    // The last slot cannot start a positive range, so use the final pair.
+    return {
+      start: toValue(slots[slots.length - 2]),
+      end: toValue(slots[slots.length - 1]),
+    };
+  }
   return {
     start: toValue(s),
     end: toValue(later ?? keepOrSnap(end)),
@@ -124,8 +135,14 @@ export function startOptions(
   end: string,
   current?: string,
 ) {
+  const filtered = options.filter(
+    (o) => toMinutes(o.value) < toMinutes(end),
+  );
+  // An invalid midnight end has no earlier option; expose midnight so choosing
+  // it can move the end forward through clampRange instead of trapping the row.
+  const recovery = filtered.length === 0 ? options.slice(0, 1) : filtered;
   return withCurrentOption(
-    options.filter((o) => toMinutes(o.value) < toMinutes(end)),
+    recovery,
     options,
     current,
   );
@@ -136,8 +153,14 @@ export function endOptions(
   start: string,
   current?: string,
 ) {
+  const filtered = options.filter(
+    (o) => toMinutes(o.value) > toMinutes(start),
+  );
+  // An invalid last-slot start has no later option; expose the last slot so
+  // choosing it can move the start backward through clampRange.
+  const recovery = filtered.length === 0 ? options.slice(-1) : filtered;
   return withCurrentOption(
-    options.filter((o) => toMinutes(o.value) > toMinutes(start)),
+    recovery,
     options,
     current,
   );

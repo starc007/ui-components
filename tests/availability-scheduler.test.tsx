@@ -13,11 +13,16 @@ import {
   startOptions,
 } from "@/components/motion/availability-scheduler/types";
 
-function Scheduler({ initial }: { initial: WeekAvailability }) {
+function Scheduler({
+  initial,
+  step = 720,
+}: {
+  initial: WeekAvailability;
+  step?: number;
+}) {
   const [value, setValue] = useState(initial);
-  // A 12h step keeps every panel to two options — these tests only care which
-  // panel is open, not what is in it.
-  return <AvailabilityScheduler value={value} onChange={setValue} step={720} />;
+  // A 12h step keeps panel-focused tests small; value tests can override it.
+  return <AvailabilityScheduler value={value} onChange={setValue} step={step} />;
 }
 
 /** Every time field, in row order: mon start, mon end, tue start, … */
@@ -108,6 +113,26 @@ describe("AvailabilityScheduler open panel", () => {
     expect(monStart.textContent).toContain("7:00 PM");
     expect(monEnd.textContent).toContain("1:00 AM");
   });
+
+  test("offers a valid recovery from a boundary overnight range", () => {
+    const boundary: WeekAvailability = {
+      ...defaultWeek(),
+      mon: {
+        enabled: true,
+        ranges: [{ id: "mon-0", start: "23:30", end: "00:00" }],
+      },
+    };
+    const { container, getByRole } = render(
+      <Scheduler initial={boundary} step={30} />,
+    );
+    const [monStart, monEnd] = fields(container);
+
+    fireEvent.click(monStart);
+    fireEvent.click(getByRole("option", { name: "12:00 AM" }));
+
+    expect(monStart.textContent).toContain("12:00 AM");
+    expect(monEnd.textContent).toContain("12:30 AM");
+  });
 });
 
 const options = buildOptions(30);
@@ -142,7 +167,7 @@ describe("availability scheduler ranges", () => {
     });
   });
 
-  test("moves only the opposite end when the user picks an overnight end", () => {
+  test("moves only the opposite start when the user picks an overnight end", () => {
     expect(clampRange("19:00", "01:00", options, "end")).toEqual({
       start: "00:30",
       end: "01:00",
@@ -168,5 +193,24 @@ describe("availability scheduler ranges", () => {
     expect(
       endOptions(options, "19:00", "01:00").map((o) => o.value),
     ).toContain("01:00");
+  });
+
+  test("offers boundary choices that recover a 23:30 to 00:00 range", () => {
+    expect(startOptions(options, "00:00", "23:30").map((o) => o.value)).toEqual([
+      "00:00",
+      "23:30",
+    ]);
+    expect(endOptions(options, "23:30", "00:00").map((o) => o.value)).toEqual([
+      "00:00",
+      "23:30",
+    ]);
+    expect(clampRange("00:00", "00:00", options, "start")).toEqual({
+      start: "00:00",
+      end: "00:30",
+    });
+    expect(clampRange("23:30", "23:30", options, "end")).toEqual({
+      start: "23:00",
+      end: "23:30",
+    });
   });
 });
