@@ -8,7 +8,7 @@ export function ProCard() {
       className="mt-8 rounded-2xl p-4 border border-border"
     >
       <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-success">
-        Birthday month sale · Lifetime access for $149 until August 23
+        Limited offer · Lifetime access for $179
       </p>
       <h2
         id="beui-pro-card-title"
