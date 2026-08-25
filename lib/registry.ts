@@ -68,8 +68,11 @@ export const registry: CategoryEntry[] = [
       {
         slug: "button",
         name: "Button",
-        description: "Spring-pressed Button plus StatefulButton (idle → loading → success / error) and MagneticButton.",
+        description:
+          "Spring-pressed Button plus StatefulButton, MagneticButton, and MetallicButton variants.",
         file: "components/motion/button/index.tsx",
+        badge: "new",
+        launchedAt: "2026-08-25",
         extraFiles: [
           "components/motion/button/base.tsx",
           "components/motion/button/stateful.tsx",

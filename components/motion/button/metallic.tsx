@@ -58,7 +58,7 @@ export const MetallicButton = forwardRef<
         onHoverEnd?.(event, info);
       }}
       className={cn(
-        "group relative isolate overflow-hidden border border-transparent bg-transparent text-foreground",
+        "group relative isolate overflow-hidden border-0 bg-transparent text-foreground",
         "hover:bg-transparent hover:text-foreground",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         "shadow-[0_8px_22px_rgba(0,0,0,0.16)]",
