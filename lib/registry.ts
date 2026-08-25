@@ -68,14 +68,30 @@ export const registry: CategoryEntry[] = [
       {
         slug: "button",
         name: "Button",
-        description: "Spring-pressed Button plus StatefulButton (idle → loading → success / error) and MagneticButton.",
+        description:
+          "Spring-pressed Button plus StatefulButton, MagneticButton, and MetallicButton variants.",
         file: "components/motion/button/index.tsx",
+        badge: "new",
+        launchedAt: "2026-08-25",
         extraFiles: [
           "components/motion/button/base.tsx",
           "components/motion/button/stateful.tsx",
           "components/motion/button/magnetic.tsx",
+          "components/motion/button/metallic.tsx",
         ],
         examples: [
+          {
+            slug: "metallic",
+            name: "Metallic Button",
+            description:
+              "A neutral button surface framed by a pronounced chrome rim with a straight traveling reflection.",
+            badge: "new",
+            launchedAt: "2026-08-25",
+            installSlug: "button-metallic",
+            file: "components/motion/button/metallic.tsx",
+            previewKey: "motion/button-metallic",
+            previewFile: "components/previews/motion/button-metallic.preview.tsx",
+          },
           {
             slug: "base",
             name: "Button",
