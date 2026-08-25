@@ -74,6 +74,7 @@ export const registry: CategoryEntry[] = [
           "components/motion/button/base.tsx",
           "components/motion/button/stateful.tsx",
           "components/motion/button/magnetic.tsx",
+          "components/motion/button/metallic.tsx",
         ],
         examples: [
           {
@@ -102,6 +103,16 @@ export const registry: CategoryEntry[] = [
             file: "components/motion/button/magnetic.tsx",
             previewKey: "motion/button-magnetic",
             previewFile: "components/previews/motion/button-magnetic.preview.tsx",
+          },
+          {
+            slug: "metallic",
+            name: "Metallic Button",
+            description:
+              "A neutral button surface framed by a pronounced chrome rim with a straight traveling reflection.",
+            installSlug: "button-metallic",
+            file: "components/motion/button/metallic.tsx",
+            previewKey: "motion/button-metallic",
+            previewFile: "components/previews/motion/button-metallic.preview.tsx",
           },
         ],
       },
