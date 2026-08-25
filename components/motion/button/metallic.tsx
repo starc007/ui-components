@@ -16,8 +16,9 @@ export interface MetallicButtonProps extends Omit<
 
 // The rim and highlight drift separately so the material stays quiet and reflective.
 const SILVER_DRIFT = {
-  duration: 2.8,
+  duration: 8,
   ease: EASE_IN_OUT,
+  repeat: Infinity,
 };
 
 const CHROME_SHIMMER = {
@@ -70,7 +71,7 @@ export const MetallicButton = forwardRef<
       <motion.span
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-[-18%] z-0 w-[136%] rounded-[inherit] bg-[linear-gradient(105deg,#111_0%,#737373_14%,#fafafa_26%,#525252_38%,#0a0a0a_50%,#a3a3a3_64%,#fff_75%,#404040_87%,#111_100%)]"
-        animate={still ? undefined : { x: hovered ? "13%" : "0%" }}
+        animate={still ? undefined : { x: ["0%", "13%", "0%"] }}
         transition={still ? undefined : SILVER_DRIFT}
       />
 

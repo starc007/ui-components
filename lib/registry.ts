@@ -81,6 +81,18 @@ export const registry: CategoryEntry[] = [
         ],
         examples: [
           {
+            slug: "metallic",
+            name: "Metallic Button",
+            description:
+              "A neutral button surface framed by a pronounced chrome rim with a straight traveling reflection.",
+            badge: "new",
+            launchedAt: "2026-08-25",
+            installSlug: "button-metallic",
+            file: "components/motion/button/metallic.tsx",
+            previewKey: "motion/button-metallic",
+            previewFile: "components/previews/motion/button-metallic.preview.tsx",
+          },
+          {
             slug: "base",
             name: "Button",
             description: "Press scale, hover lift, variants and sizes.",
@@ -106,16 +118,6 @@ export const registry: CategoryEntry[] = [
             file: "components/motion/button/magnetic.tsx",
             previewKey: "motion/button-magnetic",
             previewFile: "components/previews/motion/button-magnetic.preview.tsx",
-          },
-          {
-            slug: "metallic",
-            name: "Metallic Button",
-            description:
-              "A neutral button surface framed by a pronounced chrome rim with a straight traveling reflection.",
-            installSlug: "button-metallic",
-            file: "components/motion/button/metallic.tsx",
-            previewKey: "motion/button-metallic",
-            previewFile: "components/previews/motion/button-metallic.preview.tsx",
           },
         ],
       },
