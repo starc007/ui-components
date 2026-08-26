@@ -47,6 +47,11 @@ import {
 import { Checkbox } from "@/components/motion/checkbox";
 import { ChromaticTextReveal } from "@/components/motion/chromatic-text-reveal";
 import { CommandPalette } from "@/components/motion/command-palette";
+import {
+  FileTree,
+  FileTreeFile,
+  FileTreeFolder,
+} from "@/components/motion/file-tree";
 import { Input } from "@/components/motion/input";
 import {
   ROUNDS as KNOCKOUT_WHEEL_ROUNDS,
@@ -94,6 +99,18 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "FileTree",
+    () => (
+      <FileTree
+        defaultExpandedIds={["src"]}
+      >
+        <FileTreeFolder value="src" name="src">
+          <FileTreeFile value="index" name="index.ts" />
+        </FileTreeFolder>
+      </FileTree>
+    ),
+  ],
   [
     "MessageBubble collapsible",
     () => (

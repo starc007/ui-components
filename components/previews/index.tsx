@@ -341,6 +341,9 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.AnimatedSidebarPreview,
     ),
   ),
+  "motion/file-tree": dynamic(() =>
+    import("./motion/file-tree.preview").then((m) => m.FileTreePreview),
+  ),
   "motion/preview-rail": dynamic(() =>
     import("./motion/preview-rail.preview").then(
       (m) => m.PreviewRailPreview,
