@@ -60,3 +60,17 @@ test("reports controlled expansion and selection changes", () => {
   expect(expanded).toEqual([["src"]]);
   expect(selected).toEqual(["src"]);
 });
+
+test("uses one shared hover surface instead of a persistent selection", () => {
+  const { container, getByRole } = render(
+    <FileTree defaultValue="readme">{tree}</FileTree>,
+  );
+
+  expect(container.querySelector('[class*="bg-muted/70"]')).toBeNull();
+
+  fireEvent.mouseEnter(getByRole("treeitem", { name: "README.md" }));
+  expect(container.querySelectorAll('[class*="bg-muted/70"]')).toHaveLength(1);
+
+  fireEvent.mouseEnter(getByRole("treeitem", { name: "src" }));
+  expect(container.querySelectorAll('[class*="bg-muted/70"]')).toHaveLength(1);
+});

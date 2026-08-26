@@ -6,7 +6,6 @@ import {
   Children,
   Fragment,
   useCallback,
-  useId,
   isValidElement,
   useMemo,
   useRef,
@@ -14,6 +13,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
+import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -210,7 +210,6 @@ export function FileTree({
   classNames,
 }: FileTreeProps) {
   const reduce = useReducedMotion() ?? false;
-  const layoutId = useId();
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [internalExpandedIds, setInternalExpandedIds] = useState(
     defaultExpandedIds,
@@ -310,10 +309,13 @@ export function FileTree({
   );
 
   return (
-    <div
+    <SharedLayoutBg
       role="tree"
       aria-label={ariaLabel}
       aria-multiselectable="false"
+      inset={0}
+      pillClassName="rounded-xl bg-muted/70"
+      pillContainerClassName="inset-y-auto top-0 h-9"
       className={cn("min-w-0", className, classNames?.tree)}
     >
       {rows.map((row) => {
@@ -322,22 +324,9 @@ export function FileTree({
           const isSelected = selectedId === row.item.value;
 
           return (
-            <motion.button
+            <motion.div
               layout={reduce ? false : "position"}
               key={row.item.value}
-              ref={(node) => {
-                if (node) rowRefs.current.set(row.item.value, node);
-                else rowRefs.current.delete(row.item.value);
-              }}
-              type="button"
-              role="treeitem"
-              aria-level={row.depth + 1}
-              aria-posinset={row.position}
-              aria-setsize={row.setSize}
-              aria-selected={isSelected}
-              aria-expanded={isFolder ? isOpen : undefined}
-              aria-disabled={row.item.disabled || undefined}
-              tabIndex={focusedRow === row.item.value ? 0 : -1}
               initial={reduce ? false : { opacity: 0, y: -6 }}
               animate={{
                 opacity: row.item.disabled ? 0.42 : 1,
@@ -350,80 +339,90 @@ export function FileTree({
                     },
               }}
               transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
-              onFocus={() => setFocusedId(row.item.value)}
-              onKeyDown={(event) => handleKeyDown(event, row)}
-              onClick={() => {
-                if (row.item.disabled) return;
-                selectItem(row.item);
-                if (isFolder) toggleFolder(row.item.value);
-              }}
-              className={cn(
-                "group/file-tree relative flex h-9 w-full items-center gap-2 overflow-hidden rounded-lg pr-2 text-left text-sm text-muted-foreground outline-none",
-                "transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
-                "aria-disabled:cursor-not-allowed",
-                isSelected && "text-foreground",
-                classNames?.item,
-                row.item.className,
-              )}
-              style={{ paddingLeft: 8 + row.depth * indent }}
             >
-              {row.depth > 0 ? (
+              <button
+                ref={(node) => {
+                  if (node) rowRefs.current.set(row.item.value, node);
+                  else rowRefs.current.delete(row.item.value);
+                }}
+                type="button"
+                role="treeitem"
+                aria-level={row.depth + 1}
+                aria-posinset={row.position}
+                aria-setsize={row.setSize}
+                aria-selected={isSelected}
+                aria-expanded={isFolder ? isOpen : undefined}
+                aria-disabled={row.item.disabled || undefined}
+                tabIndex={focusedRow === row.item.value ? 0 : -1}
+                onFocus={() => setFocusedId(row.item.value)}
+                onKeyDown={(event) => handleKeyDown(event, row)}
+                onClick={() => {
+                  if (row.item.disabled) return;
+                  selectItem(row.item);
+                  if (isFolder) toggleFolder(row.item.value);
+                }}
+                className={cn(
+                  "group/file-tree relative flex h-9 w-full items-center gap-2 overflow-hidden rounded-lg pr-2 text-left text-sm text-muted-foreground outline-none",
+                  "transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                  "aria-disabled:cursor-not-allowed",
+                  classNames?.item,
+                  row.item.className,
+                )}
+                style={{ paddingLeft: 8 + row.depth * indent }}
+              >
+                {row.depth > 0 ? (
+                  <motion.span
+                    aria-hidden="true"
+                    initial={reduce ? false : { opacity: 0, scaleY: 0 }}
+                    animate={{ opacity: 1, scaleY: 1 }}
+                    exit={{ opacity: 0, scaleY: 0 }}
+                    transition={reduce ? { duration: 0 } : BRANCH_DRAW}
+                    className="absolute top-0 bottom-0 w-px origin-top bg-border/70"
+                    style={{ left: 16 + (row.depth - 1) * indent }}
+                  />
+                ) : null}
+
                 <motion.span
                   aria-hidden="true"
-                  initial={reduce ? false : { opacity: 0, scaleY: 0 }}
-                  animate={{ opacity: 1, scaleY: 1 }}
-                  exit={{ opacity: 0, scaleY: 0 }}
-                  transition={reduce ? { duration: 0 } : BRANCH_DRAW}
-                  className="absolute top-0 bottom-0 w-px origin-top bg-border/70"
-                  style={{ left: 16 + (row.depth - 1) * indent }}
-                />
-              ) : null}
+                  animate={{ rotate: isOpen ? 90 : 0 }}
+                  transition={reduce ? { duration: 0 } : SPRING_SWAP}
+                  className={cn(
+                    "relative z-10 grid size-4 shrink-0 place-items-center",
+                    !isFolder && "opacity-0",
+                  )}
+                >
+                  <ChevronRight className="size-3.5" />
+                </motion.span>
 
-              {isSelected ? (
-                <motion.span
-                  layoutId={`${layoutId}-selection`}
+                <span
                   aria-hidden="true"
-                  transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
-                  className="absolute inset-0 rounded-lg border border-border/70 bg-muted"
-                />
-              ) : null}
+                  className={cn(
+                    "relative z-10 grid size-4 shrink-0 place-items-center text-muted-foreground transition-colors group-hover/file-tree:text-foreground",
+                    isFolder && isOpen && "text-foreground",
+                    classNames?.icon,
+                  )}
+                >
+                  {row.item.icon ?? (
+                    <DefaultIcon
+                      item={row.item}
+                      open={isOpen}
+                      reduce={reduce}
+                    />
+                  )}
+                </span>
 
-              <motion.span
-                aria-hidden="true"
-                animate={{ rotate: isOpen ? 90 : 0 }}
-                transition={reduce ? { duration: 0 } : SPRING_SWAP}
-                className={cn(
-                  "relative z-10 grid size-4 shrink-0 place-items-center",
-                  !isFolder && "opacity-0",
-                )}
-              >
-                <ChevronRight className="size-3.5" />
-              </motion.span>
-
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "relative z-10 grid size-4 shrink-0 place-items-center text-muted-foreground transition-colors group-hover/file-tree:text-foreground",
-                  isFolder && isOpen && "text-foreground",
-                  classNames?.icon,
-                )}
-              >
-                {row.item.icon ?? (
-                  <DefaultIcon item={row.item} open={isOpen} reduce={reduce} />
-                )}
-              </span>
-
-              <span
-                className={cn(
-                  "relative z-10 min-w-0 flex-1 truncate",
-                  classNames?.label,
-                )}
-              >
-                {row.item.name}
-              </span>
-            </motion.button>
+                <span
+                  className={cn(
+                    "relative z-10 min-w-0 flex-1 truncate",
+                    classNames?.label,
+                  )}
+                >
+                  {row.item.name}
+                </span>
+              </button>
+            </motion.div>
           );
-      })}
-    </div>
+        })}
+    </SharedLayoutBg>
   );
 }
