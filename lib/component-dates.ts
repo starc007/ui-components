@@ -31,6 +31,7 @@ const COMPONENT_DATES = {
     publishedAt: "2026-07-29",
     updatedAt: "2026-08-20",
   },
+  "motion/file-tree": { publishedAt: "2026-08-27", updatedAt: "2026-08-27" },
   "motion/preview-rail": { publishedAt: "2026-07-11", updatedAt: "2026-07-11" },
   "motion/dock": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
   "motion/tooltip": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },

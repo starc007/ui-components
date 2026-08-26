@@ -347,6 +347,23 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "file-tree",
+        name: "File Tree",
+        description:
+          "Composable file and folder primitives with springing branches, a gliding selection, and complete keyboard navigation.",
+        file: "components/motion/file-tree.tsx",
+        badge: "new",
+        launchedAt: "2026-08-27",
+        keywords: [
+          "animated file tree react",
+          "file explorer component",
+          "folder tree",
+          "project tree",
+          "accessible tree view",
+          "react tree component",
+        ],
+      },
+      {
         slug: "preview-rail",
         name: "Preview Rail",
         description: "Codex app-inspired navigation rail with compact ticks that form a hover pyramid and reveal a floating destination preview.",
