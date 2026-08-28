@@ -18,7 +18,7 @@ const COMPONENT_DATES = {
   "motion/marquee": { publishedAt: "2026-05-17", updatedAt: "2026-07-04" },
   "motion/tabs": { publishedAt: "2026-05-17", updatedAt: "2026-07-13" },
   "motion/switch": { publishedAt: "2026-05-17", updatedAt: "2026-06-10" },
-  "motion/input": { publishedAt: "2026-06-29", updatedAt: "2026-07-05" },
+  "motion/input": { publishedAt: "2026-06-29", updatedAt: "2026-08-28" },
   "motion/select": { publishedAt: "2026-06-28", updatedAt: "2026-07-13" },
   "motion/combobox": { publishedAt: "2026-08-11", updatedAt: "2026-08-22" },
   "motion/checkbox": { publishedAt: "2026-06-23", updatedAt: "2026-07-01" },
@@ -63,7 +63,7 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-08-22",
+    updatedAt: "2026-08-28",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
@@ -83,7 +83,7 @@ const COMPONENT_DATES = {
   },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-02",
+    updatedAt: "2026-08-28",
   },
   "agents/code-block": {
     publishedAt: "2026-08-02",
@@ -143,7 +143,7 @@ const COMPONENT_DATES = {
   "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-06-21" },
   "blocks/wallet-card": { publishedAt: "2026-07-03", updatedAt: "2026-07-03" },
   "blocks/otp-input": { publishedAt: "2026-06-13", updatedAt: "2026-07-13" },
-  "blocks/signup-form": { publishedAt: "2026-08-08", updatedAt: "2026-08-08" },
+  "blocks/signup-form": { publishedAt: "2026-08-08", updatedAt: "2026-08-28" },
   "blocks/bloom-menu": { publishedAt: "2026-06-26", updatedAt: "2026-06-26" },
   "blocks/feedback-widget": { publishedAt: "2026-06-29", updatedAt: "2026-07-13" },
   "blocks/not-found": { publishedAt: "2026-06-21", updatedAt: "2026-06-21" },

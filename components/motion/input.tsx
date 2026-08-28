@@ -38,6 +38,8 @@ export interface InputProps extends Omit<
   onChange?: (value: string) => void;
   /** Truthy error triggers a shake, red border and (if a string) a message. */
   error?: string | boolean;
+  /** Reserve one message line so validation does not shift nearby content. */
+  reserveErrorLine?: boolean;
   success?: boolean;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
@@ -54,6 +56,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     onFocus,
     onBlur,
     error,
+    reserveErrorLine = false,
     success,
     leftIcon,
     rightIcon,
@@ -206,32 +209,34 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         ) : null}
       </div>
 
-      <AnimatePresence initial={false}>
-        {errorMessage ? (
-          <motion.p
-            id={`${id}-error`}
-            role="alert"
-            initial={
-              reduce
-                ? { opacity: 0 }
-                : { opacity: 0, y: -4, filter: "blur(4px)" }
-            }
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={
-              reduce
-                ? { opacity: 0 }
-                : { opacity: 0, y: -4, filter: "blur(4px)" }
-            }
-            transition={{ duration: 0.2 }}
-            className={cn(
-              "px-1 text-xs text-destructive",
-              classNames?.errorMessage,
-            )}
-          >
-            {errorMessage}
-          </motion.p>
-        ) : null}
-      </AnimatePresence>
+      <div className={reserveErrorLine ? "min-h-4" : "contents"}>
+        <AnimatePresence initial={false}>
+          {errorMessage ? (
+            <motion.p
+              id={`${id}-error`}
+              role="alert"
+              initial={
+                reduce
+                  ? { opacity: 0 }
+                  : { opacity: 0, y: -4, filter: "blur(4px)" }
+              }
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={
+                reduce
+                  ? { opacity: 0 }
+                  : { opacity: 0, y: -4, filter: "blur(4px)" }
+              }
+              transition={{ duration: 0.2 }}
+              className={cn(
+                "px-1 text-xs text-destructive",
+                classNames?.errorMessage,
+              )}
+            >
+              {errorMessage}
+            </motion.p>
+          ) : null}
+        </AnimatePresence>
+      </div>
     </div>
   );
 });
