@@ -289,6 +289,7 @@ export function SignUpForm({
           onChange={(next) => setValue("name", next)}
           onBlur={() => touch("name")}
           error={shownError("name")}
+          reserveErrorLine
           success={isValid("name")}
         />
 
@@ -304,6 +305,7 @@ export function SignUpForm({
           onChange={(next) => setValue("email", next)}
           onBlur={() => touch("email")}
           error={shownError("email")}
+          reserveErrorLine
           success={isValid("email")}
         />
 
@@ -330,6 +332,7 @@ export function SignUpForm({
             onChange={(next) => setValue("password", next)}
             onBlur={() => touch("password")}
             error={shownError("password")}
+            reserveErrorLine
           />
 
           <AnimatePresence initial={false}>
@@ -383,6 +386,7 @@ export function SignUpForm({
           onChange={(next) => setValue("confirmPassword", next)}
           onBlur={() => touch("confirmPassword")}
           error={shownError("confirmPassword")}
+          reserveErrorLine
           success={isValid("confirmPassword")}
         />
       </div>

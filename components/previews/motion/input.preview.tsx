@@ -23,6 +23,7 @@ export function InputPreview() {
         value={email}
         onChange={setEmail}
         error={emailError}
+        reserveErrorLine
       />
       <Input
         label="Password"
