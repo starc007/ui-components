@@ -62,4 +62,21 @@ describe("Input", () => {
 
     expect(onChange).toHaveBeenCalledWith("beUI");
   });
+
+  test("can reserve a stable validation message row", () => {
+    const { container, getByRole, rerender } = render(
+      <Input label="Email" reserveErrorLine />,
+    );
+    const root = container.firstElementChild;
+    const messageRow = root?.lastElementChild;
+
+    expect(messageRow?.classList).toContain("min-h-4");
+
+    rerender(
+      <Input label="Email" error="Enter a valid email address." reserveErrorLine />,
+    );
+
+    expect(root?.lastElementChild).toBe(messageRow);
+    expect(getByRole("alert").textContent).toBe("Enter a valid email address.");
+  });
 });

@@ -14,7 +14,7 @@ export function InputPreview() {
     email.length > 0 && !email.includes("@") ? "Enter a valid email address." : undefined;
 
   return (
-    <div className="flex w-full max-w-xs flex-col gap-5">
+    <div className="flex w-full max-w-xs flex-col gap-1">
       <Input
         label="Email"
         type="email"
@@ -23,6 +23,7 @@ export function InputPreview() {
         value={email}
         onChange={setEmail}
         error={emailError}
+        reserveErrorLine
       />
       <Input
         label="Password"
@@ -39,6 +40,7 @@ export function InputPreview() {
             {show ? <EyeOff /> : <Eye />}
           </button>
         }
+        reserveErrorLine
       />
       <Input
         label="Search"
@@ -46,6 +48,7 @@ export function InputPreview() {
         value={query}
         onChange={setQuery}
         success={query.length > 1}
+        reserveErrorLine
       />
     </div>
   );
