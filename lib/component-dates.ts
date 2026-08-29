@@ -21,6 +21,7 @@ const COMPONENT_DATES = {
   "motion/input": { publishedAt: "2026-06-29", updatedAt: "2026-08-28" },
   "motion/select": { publishedAt: "2026-06-28", updatedAt: "2026-07-13" },
   "motion/combobox": { publishedAt: "2026-08-11", updatedAt: "2026-08-22" },
+  "motion/multi-select": { publishedAt: "2026-08-29", updatedAt: "2026-08-29" },
   "motion/checkbox": { publishedAt: "2026-06-23", updatedAt: "2026-07-01" },
   "motion/radio": { publishedAt: "2026-06-23", updatedAt: "2026-07-13" },
   "motion/bottom-sheet": { publishedAt: "2026-05-17", updatedAt: "2026-08-20" },

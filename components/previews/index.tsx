@@ -298,6 +298,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/combobox": dynamic(() =>
     import("./motion/combobox.preview").then((m) => m.ComboboxPreview),
   ),
+  "motion/multi-select": dynamic(() =>
+    import("./motion/multi-select.preview").then((m) => m.MultiSelectPreview),
+  ),
   "motion/checkbox": dynamic(() =>
     import("./motion/checkbox.preview").then((m) => m.CheckboxPreview),
   ),
