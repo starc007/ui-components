@@ -8,7 +8,7 @@ import type {
   ReactNode,
   Ref,
 } from "react";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { mergeRefs, useMultiSelectContext } from "./context";
 
@@ -96,7 +96,7 @@ export function MultiSelectValue({
                   ? false
                   : {
                       opacity: 0,
-                      transform: "translateY(4px) scale(0.96)",
+                      transform: "translateY(6px) scale(0.92)",
                     }
               }
               animate={{
@@ -107,12 +107,16 @@ export function MultiSelectValue({
                 opacity: 0,
                 transform: context.reduce
                   ? "translateY(0px) scale(1)"
-                  : "translateY(-4px) scale(0.96)",
+                  : "translateY(-2px) scale(0.97)",
               }}
               transition={
                 context.reduce
                   ? { duration: 0 }
-                  : { duration: 0.16, ease: EASE_OUT }
+                  : {
+                      layout: SPRING_LAYOUT,
+                      opacity: { duration: 0.18, ease: EASE_OUT },
+                      transform: SPRING_SWAP,
+                    }
               }
               className={cn(
                 "inline-flex h-7 max-w-full items-center gap-1 rounded-lg bg-muted px-2 text-xs font-medium text-foreground",
