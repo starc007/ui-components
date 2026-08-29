@@ -73,45 +73,54 @@ export function MultiSelectValue({
   chipClassName,
 }: MultiSelectValueProps) {
   const context = useMultiSelectContext("MultiSelectValue");
-
-  if (context.values.length === 0 && !context.open) {
-    return (
-      <span className={cn("text-muted-foreground", className)}>
-        {placeholder}
-      </span>
-    );
-  }
+  const showPlaceholder = context.values.length === 0 && !context.open;
 
   return (
     <div className={cn("contents", className)}>
       <AnimatePresence initial={false} mode="popLayout">
+        {showPlaceholder ? (
+          <span key="multi-select-placeholder" className="text-muted-foreground">
+            {placeholder}
+          </span>
+        ) : null}
         {context.values.map((value) => {
           const label = context.labelFor(value);
           return (
             <motion.span
               layout={context.reduce ? false : "position"}
-              key={value}
-              initial={
-                context.reduce
-                  ? false
-                  : {
-                      opacity: 0,
-                      transform: "translateY(6px) scale(0.92)",
-                    }
-              }
+              key={`multi-select-value-${value}`}
+              initial={{
+                opacity: 0,
+                clipPath: "inset(0 0 0 0% round 0.5rem)",
+                transform: context.reduce
+                  ? "translateY(0px) scale(1)"
+                  : "translateY(6px) scale(0.92)",
+              }}
               animate={{
                 opacity: 1,
+                clipPath: "inset(0 0 0 0% round 0.5rem)",
                 transform: "translateY(0px) scale(1)",
               }}
               exit={{
-                opacity: 0,
-                transform: context.reduce
-                  ? "translateY(0px) scale(1)"
-                  : "translateY(-2px) scale(0.97)",
+                opacity: 1,
+                clipPath: context.reduce
+                  ? "inset(0 0 0 0% round 0.5rem)"
+                  : "inset(0 0 0 100% round 0.5rem)",
+                transform: "translateY(0px) scale(1)",
+                transition: {
+                  clipPath: context.reduce
+                    ? { duration: 0 }
+                    : { duration: 0.16, ease: EASE_OUT },
+                  transform: { duration: 0 },
+                },
               }}
               transition={
                 context.reduce
-                  ? { duration: 0 }
+                  ? {
+                      layout: { duration: 0 },
+                      opacity: { duration: 0.15, ease: EASE_OUT },
+                      transform: { duration: 0 },
+                    }
                   : {
                       layout: SPRING_LAYOUT,
                       opacity: { duration: 0.18, ease: EASE_OUT },
