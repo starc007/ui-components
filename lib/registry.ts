@@ -264,6 +264,29 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "multi-select",
+        name: "Multi Select",
+        description:
+          "Composable multi-select primitives with searchable options, removable animated tokens, and a morphing collision-aware panel.",
+        file: "components/motion/multi-select/index.tsx",
+        badge: "new",
+        launchedAt: "2026-08-29",
+        extraFiles: [
+          "components/motion/multi-select/context.tsx",
+          "components/motion/multi-select/trigger.tsx",
+          "components/motion/multi-select/content.tsx",
+          "components/motion/multi-select/list.tsx",
+        ],
+        keywords: [
+          "react multi select",
+          "animated multi select",
+          "searchable multi select",
+          "tag picker react",
+          "multiple combobox",
+          "composable listbox",
+        ],
+      },
+      {
         slug: "checkbox",
         name: "Checkbox",
         description:

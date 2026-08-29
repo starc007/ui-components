@@ -60,6 +60,15 @@ import {
 import { Marquee } from "@/components/motion/marquee";
 import { MorphingModal } from "@/components/motion/morphing-modal";
 import { MorphingSearch } from "@/components/motion/morphing-search";
+import {
+  MultiSelect,
+  MultiSelectContent,
+  MultiSelectInput,
+  MultiSelectItem,
+  MultiSelectList,
+  MultiSelectTrigger,
+  MultiSelectValue,
+} from "@/components/motion/multi-select";
 import { Parallax } from "@/components/motion/parallax";
 import {
   Popover,
@@ -99,6 +108,23 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "MultiSelect",
+    () => (
+      <MultiSelect defaultValue={["design"]}>
+        <MultiSelectTrigger>
+          <MultiSelectValue placeholder="Choose teams" />
+          <MultiSelectInput />
+        </MultiSelectTrigger>
+        <MultiSelectContent>
+          <MultiSelectList>
+            <MultiSelectItem value="design">Design</MultiSelectItem>
+            <MultiSelectItem value="engineering">Engineering</MultiSelectItem>
+          </MultiSelectList>
+        </MultiSelectContent>
+      </MultiSelect>
+    ),
+  ],
   [
     "FileTree",
     () => (
