@@ -403,6 +403,11 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.ExpandableControlPreview,
     ),
   ),
+  "motion/adaptive-stepper": dynamic(() =>
+    import("./motion/adaptive-stepper.preview").then(
+      (m) => m.AdaptiveStepperPreview,
+    ),
+  ),
   "motion/expanding-arrow-button": dynamic(() =>
     import("./motion/expanding-arrow-button.preview").then(
       (m) => m.ExpandingArrowButtonPreview,

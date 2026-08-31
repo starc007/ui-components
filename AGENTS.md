@@ -36,6 +36,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `tilt-card` | `components/motion/tilt-card.tsx` | 3D perspective tilt on hover with cursor-tracked glare |
 | `button` | `components/motion/button/` | Spring-pressed `Button` (optional `ripple` prop for a Material-style press ripple), `StatefulButton` (idle/loading/success/error), `MagneticButton` |
 | `expandable-control` | `components/motion/expandable-control.tsx` | Click-to-expand `ExpandableButton` and `ExpandableChip` controls that reveal a label or trailing action with layout continuity; controlled/uncontrolled, reduced-motion safe |
+| `adaptive-stepper` | `components/motion/adaptive-stepper.tsx` | Composable numeric stepper whose fixed footprint adapts at its bounds: the unavailable action exits while the value surface expands into its space; controlled/uncontrolled, keyboard focus handoff, reduced-motion safe |
 | `marquee` | `components/motion/marquee.tsx` | Infinite horizontal or vertical scroll, pause-on-hover |
 | `tabs` | `components/motion/tabs.tsx` | Pill, segment or underline tabs with spring layoutId indicator |
 | `switch` | `components/motion/switch.tsx` | Toggle with spring-driven thumb and press feedback |

@@ -27,6 +27,12 @@ import { StreamingResponse } from "@/components/agents/streaming-response";
 import { TodoList } from "@/components/agents/todo-list";
 import { ToolApproval } from "@/components/agents/tool-approval";
 import { ToolResult } from "@/components/agents/tool-result";
+import {
+  AdaptiveStepper,
+  AdaptiveStepperDecrement,
+  AdaptiveStepperIncrement,
+  AdaptiveStepperValue,
+} from "@/components/motion/adaptive-stepper";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import {
   AnimatedSidebar,
@@ -108,6 +114,16 @@ afterEach(cleanup);
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
 const cases: Array<[name: string, render: () => ReactElement]> = [
+  [
+    "AdaptiveStepper",
+    () => (
+      <AdaptiveStepper defaultValue={2} min={0} max={3} aria-label="Guests">
+        <AdaptiveStepperDecrement />
+        <AdaptiveStepperValue />
+        <AdaptiveStepperIncrement />
+      </AdaptiveStepper>
+    ),
+  ],
   [
     "MultiSelect",
     () => (

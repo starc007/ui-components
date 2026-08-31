@@ -186,6 +186,23 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "adaptive-stepper",
+        name: "Adaptive Stepper",
+        description:
+          "Composable numeric stepper whose fixed footprint adapts at its minimum and maximum while the value rolls between steps.",
+        file: "components/motion/adaptive-stepper.tsx",
+        badge: "new",
+        launchedAt: "2026-08-31",
+        keywords: [
+          "react number stepper",
+          "animated quantity selector",
+          "adaptive counter",
+          "increment decrement control",
+          "compound stepper component",
+          "number input animation",
+        ],
+      },
+      {
         slug: "marquee",
         name: "Marquee",
         description: "Infinite horizontal or vertical scroll with pause-on-hover.",
