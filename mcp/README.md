@@ -16,8 +16,15 @@ Streamable HTTP is recommended. An SSE endpoint (`/sse`) exists for legacy clien
 
 ## Connect to beUI Pro
 
-Paid users can connect to the authenticated Pro endpoint with the same license
-key they use as `BEUI_PRO_TOKEN`:
+Paid users can connect Claude and other OAuth-capable clients directly to:
+
+```
+https://mcp.beui.dev/pro/mcp
+```
+
+The client opens a beUI Pro authorization page where the customer enters the
+same license key they use as `BEUI_PRO_TOKEN`. Clients that support custom
+headers can continue to configure that key directly:
 
 ```json
 {
@@ -32,8 +39,11 @@ key they use as `BEUI_PRO_TOKEN`:
 }
 ```
 
-The Pro endpoint forwards the bearer header to the private registry for each
-tool call. It does not accept tokens as tool arguments, include them in tool
+The Pro endpoint supports OAuth 2.1 discovery, dynamic client registration,
+authorization-code flow with PKCE, rotating refresh tokens, and direct license
+key bearer authentication. OAuth grants keep the license key encrypted and
+forward it to the private registry only while serving authenticated tool calls.
+The server does not accept tokens as tool arguments, include them in tool
 results, or cache authenticated source responses.
 
 ## Tools
@@ -66,3 +76,5 @@ bun run deploy
 ```
 
 Requires `beui.dev` on Cloudflare. Wrangler provisions the `mcp.beui.dev` custom domain on first deploy (see `routes` in `wrangler.jsonc`). To point at a different registry, set the `REGISTRY_URL` var.
+
+OAuth also requires the `OAUTH_KV` namespace configured in `wrangler.jsonc`.

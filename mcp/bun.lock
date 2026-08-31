@@ -1,9 +1,11 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "beui-mcp",
       "dependencies": {
+        "@cloudflare/workers-oauth-provider": "0.10.3",
         "@modelcontextprotocol/sdk": "1.23.0",
         "agents": "^0.2.35",
         "ai": "^7.0.4",
@@ -44,6 +46,8 @@
     "@cloudflare/workerd-linux-arm64": ["@cloudflare/workerd-linux-arm64@1.20260625.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-LxxW7Qv60Xvv37+w6gUSDpYZziyqMy+cZWd9IvSA5ehVgKAxmzEaYPMiSZlxk32nbIWL9u/tfjXYCOKJ4Lo+XQ=="],
 
     "@cloudflare/workerd-windows-64": ["@cloudflare/workerd-windows-64@1.20260625.1", "", { "os": "win32", "cpu": "x64" }, "sha512-LH6iIX1HHaTwVKV5VokDxxUErXJzQoNZFRwVm7Vx/3fB/ApcTcRCUaMqcxI4as94jEUqg+pmX5czOndiveohow=="],
+
+    "@cloudflare/workers-oauth-provider": ["@cloudflare/workers-oauth-provider@0.10.3", "", {}, "sha512-25ufMONJir9PllqVpK4GwOOoSFgpYm3+bM6NBedj7ufMCIfNf5jk4OI0LPuTJBaJgLl2lGCLqFqEPJXcSuPopQ=="],
 
     "@cloudflare/workers-types": ["@cloudflare/workers-types@4.20260628.1", "", {}, "sha512-fMy5zBnNl/PxGqDzSOQb1TdqyR1sRT1Z7T4F8/cqtxpZ1w8VkejWi0qUH7GZE0I2gJyapdP0oW4pNZfxUbekmw=="],
 

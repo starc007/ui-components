@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@cloudflare/workers-oauth-provider": "0.10.3",
     "@modelcontextprotocol/sdk": "1.23.0",
     "agents": "^0.2.35",
     "ai": "^7.0.4",

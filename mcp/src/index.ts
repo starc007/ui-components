@@ -1,6 +1,16 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import OAuthProvider from "@cloudflare/workers-oauth-provider";
 import { createMcpHandler, McpAgent } from "agents/mcp";
+import { WorkerEntrypoint } from "cloudflare:workers";
 import { z } from "zod";
+import {
+  handleAuthorization,
+  type McpOAuthProps,
+  type OAuthEnv,
+  PRO_MCP_RESOURCE,
+  PRO_MCP_SCOPE,
+  resolveLicenseToken,
+} from "./oauth.js";
 import {
   getEntry,
   getIndex,
@@ -11,7 +21,7 @@ import {
 } from "./registry.js";
 import { createProServer } from "./pro-server.js";
 
-interface Env {
+interface Env extends OAuthEnv {
   BeUiMcp: DurableObjectNamespace;
   REGISTRY_URL?: string;
   PRO_REGISTRY_URL?: string;
@@ -179,45 +189,27 @@ Tools: list_components, search_components, get_component, get_install_command
 Docs:  https://beui.dev
 `;
 
-function getBearerAuthorization(request: Request) {
-  const authorization = request.headers.get("authorization")?.trim();
-  if (!authorization || !/^Bearer\s+\S+$/i.test(authorization)) return null;
-  return authorization;
+class ProMcpHandler extends WorkerEntrypoint<Env, McpOAuthProps> {
+  async fetch(request: Request) {
+    const server = createProServer(
+      this.env,
+      this.ctx.props.registryAuthorization,
+    );
+    const response = await createMcpHandler(server, { route: "/pro/mcp" })(
+      request,
+      this.env,
+      this.ctx,
+    );
+    response.headers.set("cache-control", "private, no-store");
+    return response;
+  }
 }
 
-function unauthorized() {
-  return new Response(
-    JSON.stringify({
-      error: "A beUI Pro bearer token is required.",
-    }),
-    {
-      status: 401,
-      headers: {
-        "cache-control": "private, no-store",
-        "content-type": "application/json; charset=utf-8",
-        "www-authenticate": 'Bearer realm="beUI Pro MCP"',
-      },
-    },
-  );
-}
-
-export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+const defaultHandler: ExportedHandler<Env> = {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    if (url.pathname === "/pro/mcp") {
-      const authorization = getBearerAuthorization(request);
-      if (!authorization) return unauthorized();
-
-      const server = createProServer(env, authorization);
-      const response = await createMcpHandler(server, { route: "/pro/mcp" })(
-        request,
-        env,
-        ctx,
-      );
-      response.headers.set("cache-control", "private, no-store");
-      return response;
-    }
+    if (url.pathname === "/authorize") return handleAuthorization(request, env);
 
     if (url.pathname.startsWith("/mcp")) {
       return BeUiMcp.serve("/mcp", { binding: "BeUiMcp" }).fetch(request, env, ctx);
@@ -232,3 +224,21 @@ export default {
     });
   },
 };
+
+export default new OAuthProvider<Env>({
+  apiRoute: "/pro/mcp",
+  apiHandler: ProMcpHandler,
+  defaultHandler,
+  authorizeEndpoint: "/authorize",
+  tokenEndpoint: "/token",
+  clientRegistrationEndpoint: "/register",
+  clientIdMetadataDocumentEnabled: true,
+  scopesSupported: [PRO_MCP_SCOPE],
+  resourceMetadata: {
+    resource: PRO_MCP_RESOURCE,
+    scopes_supported: [PRO_MCP_SCOPE],
+    bearer_methods_supported: ["header"],
+    resource_name: "beUI Pro MCP",
+  },
+  resolveExternalToken: resolveLicenseToken,
+});
