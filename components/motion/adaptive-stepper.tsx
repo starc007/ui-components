@@ -306,7 +306,7 @@ function StepperAction({
           }
           style={{ ...style, gridColumn: direction === -1 ? "1" : "3" }}
           className={cn(
-            "relative z-10 grid size-12 place-items-center rounded-2xl border border-border bg-background text-foreground shadow-sm outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+            "relative z-10 grid size-12 place-items-center rounded-full border border-border bg-background text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
             className,
           )}
           onClick={(event) => {
@@ -366,7 +366,7 @@ export function AdaptiveStepperValue({
       transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
       style={{ ...style, gridColumn }}
       className={cn(
-        "relative z-0 flex h-12 min-w-0 items-center justify-center overflow-hidden rounded-2xl border border-border bg-background px-4 text-lg font-semibold tabular-nums text-foreground shadow-sm",
+        "relative z-0 flex h-12 min-w-0 items-center justify-center overflow-hidden rounded-full border border-border bg-background px-4 text-lg font-semibold tabular-nums text-foreground",
         className,
       )}
     >
