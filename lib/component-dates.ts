@@ -13,7 +13,7 @@ const COMPONENT_DATES = {
   },
   "motion/adaptive-stepper": {
     publishedAt: "2026-08-31",
-    updatedAt: "2026-08-31",
+    updatedAt: "2026-09-01",
   },
   "motion/expanding-arrow-button": {
     publishedAt: "2026-07-16",

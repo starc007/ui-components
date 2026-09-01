@@ -20,15 +20,26 @@ import {
   useRef,
   useState,
 } from "react";
-import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
+import {
+  EASE_OUT,
+  SPRING_PRESS,
+} from "@/lib/ease";
+import {
+  Liquid,
+  LiquidItem,
+  type LiquidTransition,
+} from "@/components/motion/liquid";
 import { cn } from "@/lib/utils";
 
-type StepDirection = -1 | 0 | 1;
+// The deliberately elastic separation curve from the liquid email reference.
+const STEPPER_LIQUID_TRANSITION = {
+  duration: 600,
+  ease: [0.22, 1.3, 0.71, 1],
+} as const satisfies LiquidTransition;
 
 type AdaptiveStepperContextValue = {
   value: number;
   valueText: string;
-  direction: StepDirection;
   atMin: boolean;
   atMax: boolean;
   disabled: boolean;
@@ -133,17 +144,9 @@ export function AdaptiveStepper({
     lower,
     upper,
   );
-  const previousValueRef = useRef(currentValue);
   const currentValueRef = useRef(currentValue);
-  const direction: StepDirection =
-    currentValue === previousValueRef.current
-      ? 0
-      : currentValue > previousValueRef.current
-        ? 1
-        : -1;
 
   useLayoutEffect(() => {
-    previousValueRef.current = currentValue;
     currentValueRef.current = currentValue;
   }, [currentValue]);
 
@@ -187,7 +190,6 @@ export function AdaptiveStepper({
     () => ({
       value: currentValue,
       valueText,
-      direction,
       atMin: currentValue <= lower,
       atMax: currentValue >= upper,
       disabled,
@@ -200,7 +202,6 @@ export function AdaptiveStepper({
     [
       currentValue,
       decrement,
-      direction,
       disabled,
       increment,
       lower,
@@ -215,14 +216,21 @@ export function AdaptiveStepper({
       <fieldset
         disabled={disabled}
         className={cn(
-          "relative m-0 inline-grid h-12 w-[12.5rem] grid-cols-[3rem_5.5rem_3rem] items-stretch gap-2 border-0 p-0",
+          "relative isolate m-0 inline-block h-12 w-[13.5rem] border-0 p-0",
           className,
         )}
       >
         <legend id={labelId} className="sr-only">
           {ariaLabel}. Current value: {valueText}
         </legend>
-        {children}
+        <Liquid
+          blur={8}
+          contrast={22}
+          fill="var(--background)"
+          className="size-full"
+        >
+          {children}
+        </Liquid>
         {name ? <input type="hidden" name={name} value={currentValue} /> : null}
       </fieldset>
     </AdaptiveStepperContext.Provider>
@@ -243,6 +251,7 @@ function StepperAction({
   onClick,
   ref,
   style,
+  tabIndex,
   "aria-label": ariaLabel,
   ...props
 }: AdaptiveStepperActionProps & { direction: -1 | 1 }) {
@@ -253,78 +262,71 @@ function StepperAction({
   const label =
     ariaLabel ?? (direction === -1 ? "Decrease value" : "Increase value");
   const action = direction === -1 ? context.decrement : context.increment;
+  const x =
+    direction === -1
+      ? hidden
+        ? 32
+        : 0
+      : hidden
+        ? 136
+        : 168;
 
   return (
-    <AnimatePresence initial={false} mode="popLayout">
-      {!hidden ? (
-        <motion.button
-          {...props}
-          ref={mergeRefs(ref, actionRef)}
-          key={direction === -1 ? "decrement" : "increment"}
-          layout
-          type="button"
-          aria-label={label}
-          disabled={context.disabled}
-          initial={
-            context.reduce
-              ? { opacity: 0 }
-              : {
-                  opacity: 0,
-                  filter: "blur(6px)",
-                  transform: "scale(0.92)",
-                }
-          }
+    <LiquidItem
+      x={x}
+      y={0}
+      width={48}
+      height={48}
+      radius={24}
+      transition={STEPPER_LIQUID_TRANSITION}
+    >
+      <motion.button
+        {...props}
+        ref={mergeRefs(ref, actionRef)}
+        type="button"
+        aria-label={label}
+        aria-hidden={hidden || undefined}
+        tabIndex={hidden ? -1 : tabIndex}
+        disabled={context.disabled || hidden}
+        whileTap={
+          context.reduce || context.disabled || hidden
+            ? undefined
+            : { scale: 0.94 }
+        }
+        transition={context.reduce ? { duration: 0 } : SPRING_PRESS}
+        style={style}
+        className={cn(
+          "grid size-full place-items-center rounded-full border border-transparent bg-transparent bg-clip-padding text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none",
+          hidden && "hover:bg-transparent",
+          context.disabled && "opacity-50",
+          className,
+        )}
+        onClick={(event) => {
+          onClick?.(event);
+          if (!event.defaultPrevented) action(event.detail === 0);
+        }}
+      >
+        <motion.span
+          aria-hidden="true"
+          initial={{
+            opacity: hidden ? 0 : 1,
+            filter: hidden ? "blur(2px)" : "blur(0px)",
+          }}
           animate={{
-            opacity: 1,
-            filter: "blur(0px)",
-            transform: "scale(1)",
+            opacity: hidden ? 0 : 1,
+            filter: hidden ? "blur(2px)" : "blur(0px)",
           }}
-          exit={
-            context.reduce
-              ? { opacity: 0, transition: { duration: 0.12, ease: EASE_OUT } }
-              : {
-                  opacity: 0,
-                  filter: "blur(6px)",
-                  transform: "scale(0.92)",
-                  transition: { duration: 0.12, ease: EASE_OUT },
-                }
-          }
-          whileTap={
-            context.reduce || context.disabled
-              ? undefined
-              : { transform: "scale(0.94)" }
-          }
-          transition={
-            context.reduce
-              ? { duration: 0 }
-              : {
-                  layout: SPRING_LAYOUT,
-                  opacity: { duration: 0.16, ease: EASE_OUT },
-                  filter: { duration: 0.16, ease: EASE_OUT },
-                  transform: SPRING_PRESS,
-                }
-          }
-          style={{ ...style, gridColumn: direction === -1 ? "1" : "3" }}
-          className={cn(
-            "relative z-10 grid size-12 place-items-center rounded-full border border-border bg-background text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
-            className,
-          )}
-          onClick={(event) => {
-            onClick?.(event);
-            if (!event.defaultPrevented) action(event.detail === 0);
-          }}
+          transition={{ duration: context.reduce ? 0 : 0.15, ease: EASE_OUT }}
         >
-          <span aria-hidden="true">
-            {children ??
-              (direction === -1 ? (
-                <Minus className="size-5" strokeWidth={2.5} />
-              ) : (
-                <Plus className="size-5" strokeWidth={2.5} />
-              ))}
-          </span>
-        </motion.button>
-      ) : null}
-    </AnimatePresence>
+          {children ??
+            (direction === -1 ? (
+              <Minus className="size-5" strokeWidth={2.5} />
+            ) : (
+              <Plus className="size-5" strokeWidth={2.5} />
+            ))}
+        </motion.span>
+      </motion.button>
+    </LiquidItem>
   );
 }
 
@@ -344,68 +346,57 @@ export function AdaptiveStepperValue({
   ...props
 }: AdaptiveStepperValueProps) {
   const context = useAdaptiveStepperContext("AdaptiveStepperValue");
-  const gridColumn =
+  const geometry =
     context.atMin && context.atMax
-      ? "1 / 4"
+      ? { x: 0, width: 216 }
       : context.atMin
-        ? "1 / 3"
+        ? { x: 0, width: 152 }
         : context.atMax
-          ? "2 / 4"
-          : "2";
+          ? { x: 64, width: 152 }
+          : { x: 64, width: 88 };
   const displayValue =
     typeof children === "function" ? children(context.value) : children;
-  const enterFrom = context.direction >= 0 ? "65%" : "-65%";
-  const exitTo = context.direction >= 0 ? "-65%" : "65%";
+  const renderedValue = displayValue ?? context.value;
 
   return (
-    <motion.output
-      {...props}
-      layout
-      aria-live="polite"
-      aria-atomic="true"
-      transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
-      style={{ ...style, gridColumn }}
-      className={cn(
-        "relative z-0 flex h-12 min-w-0 items-center justify-center overflow-hidden rounded-full border border-border bg-background px-4 text-lg font-semibold tabular-nums text-foreground",
-        className,
-      )}
+    <LiquidItem
+      x={geometry.x}
+      y={0}
+      width={geometry.width}
+      height={48}
+      radius={24}
+      transition={STEPPER_LIQUID_TRANSITION}
     >
-      <span className="sr-only">{context.valueText}</span>
-      <span aria-hidden="true" className="relative grid place-items-center">
-        <AnimatePresence initial={false} mode="popLayout">
-          <motion.span
-            key={context.value}
-            initial={
-              context.reduce
-                ? { opacity: 0 }
-                : {
-                    opacity: 0,
-                    filter: "blur(4px)",
-                    transform: `translateY(${enterFrom})`,
-                  }
-            }
-            animate={{
-              opacity: 1,
-              filter: "blur(0px)",
-              transform: "translateY(0%)",
-            }}
-            exit={
-              context.reduce
-                ? { opacity: 0 }
-                : {
-                    opacity: 0,
-                    filter: "blur(4px)",
-                    transform: `translateY(${exitTo})`,
-                  }
-            }
-            transition={{ duration: 0.18, ease: EASE_OUT }}
-            className="col-start-1 row-start-1"
-          >
-            {displayValue ?? context.value}
-          </motion.span>
-        </AnimatePresence>
-      </span>
-    </motion.output>
+      <motion.output
+        {...props}
+        aria-live="polite"
+        aria-atomic="true"
+        style={style}
+        className={cn(
+          "flex size-full min-w-0 items-center justify-center overflow-hidden rounded-full border border-transparent bg-transparent bg-clip-padding px-4 text-lg font-semibold tabular-nums text-foreground",
+          className,
+        )}
+      >
+        <span className="sr-only">{context.valueText}</span>
+        <span aria-hidden="true" className="relative grid place-items-center">
+          <AnimatePresence initial={false} mode="popLayout">
+            <motion.span
+              key={context.value}
+              initial={{ opacity: 0, filter: "blur(2px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, filter: "blur(2px)" }}
+              transition={{
+                duration: context.reduce ? 0 : 0.15,
+                ease: EASE_OUT,
+              }}
+              className="col-start-1 row-start-1"
+            >
+              {renderedValue}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      </motion.output>
+    </LiquidItem>
   );
 }
 
