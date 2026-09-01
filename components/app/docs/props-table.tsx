@@ -17,7 +17,7 @@ export function PropsTable({ docs }: { docs: ComponentPropsDoc[] }) {
             {doc.props.map((prop) => (
               <div
                 key={prop.name}
-                className="grid grid-cols-1 gap-2 px-4 py-3 sm:grid-cols-[140px_minmax(0,1fr)_100px] sm:gap-4"
+                className="grid grid-cols-1 gap-2 px-4 py-3 sm:grid-cols-[140px_minmax(160px,0.75fr)_minmax(240px,2fr)] sm:gap-4"
               >
                 <code className="h-fit w-fit rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
                   {prop.name}
@@ -33,9 +33,8 @@ export function PropsTable({ docs }: { docs: ComponentPropsDoc[] }) {
                     </p>
                   ) : null}
                 </div>
-                {/* Grid items size to their min-content by default, so a long
-                    default value would push its chip out of the last track and
-                    paint over the type column. Let it wrap inside the track. */}
+                {/* Give verbose defaults the widest track and let them wrap
+                    without pushing into the type column. */}
                 <code className="h-fit w-fit min-w-0 wrap-anywhere rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground sm:justify-self-end">
                   {prop.defaultValue ?? "—"}
                 </code>
