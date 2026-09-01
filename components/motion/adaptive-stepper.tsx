@@ -37,9 +37,12 @@ const STEPPER_LIQUID_TRANSITION = {
   ease: [0.22, 1.3, 0.71, 1],
 } as const satisfies LiquidTransition;
 
+type StepDirection = -1 | 0 | 1;
+
 type AdaptiveStepperContextValue = {
   value: number;
   valueText: string;
+  direction: StepDirection;
   atMin: boolean;
   atMax: boolean;
   disabled: boolean;
@@ -144,9 +147,17 @@ export function AdaptiveStepper({
     lower,
     upper,
   );
+  const previousValueRef = useRef(currentValue);
   const currentValueRef = useRef(currentValue);
+  const direction: StepDirection =
+    currentValue === previousValueRef.current
+      ? 0
+      : currentValue > previousValueRef.current
+        ? 1
+        : -1;
 
   useLayoutEffect(() => {
+    previousValueRef.current = currentValue;
     currentValueRef.current = currentValue;
   }, [currentValue]);
 
@@ -190,6 +201,7 @@ export function AdaptiveStepper({
     () => ({
       value: currentValue,
       valueText,
+      direction,
       atMin: currentValue <= lower,
       atMax: currentValue >= upper,
       disabled,
@@ -202,6 +214,7 @@ export function AdaptiveStepper({
     [
       currentValue,
       decrement,
+      direction,
       disabled,
       increment,
       lower,
@@ -357,6 +370,11 @@ export function AdaptiveStepperValue({
   const displayValue =
     typeof children === "function" ? children(context.value) : children;
   const renderedValue = displayValue ?? context.value;
+  const canRoll =
+    typeof renderedValue === "number" || typeof renderedValue === "string";
+  const distance = context.reduce || !canRoll ? 0 : context.direction * 32;
+  const enterFrom = `translateY(${distance}%)`;
+  const exitTo = `translateY(${-distance}%)`;
 
   return (
     <LiquidItem
@@ -378,18 +396,37 @@ export function AdaptiveStepperValue({
         )}
       >
         <span className="sr-only">{context.valueText}</span>
-        <span aria-hidden="true" className="relative grid place-items-center">
+        <span
+          aria-hidden="true"
+          className="relative grid min-h-[1.1em] min-w-[1ch] place-items-center overflow-hidden leading-none"
+        >
           <AnimatePresence initial={false} mode="popLayout">
             <motion.span
               key={context.value}
-              initial={{ opacity: 0, filter: "blur(2px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, filter: "blur(2px)" }}
+              initial={{
+                opacity: context.reduce ? 1 : 0.35,
+                filter: context.reduce ? "blur(0px)" : "blur(2px)",
+                transform: enterFrom,
+              }}
+              animate={{
+                opacity: 1,
+                filter: "blur(0px)",
+                transform: "translateY(0%)",
+              }}
+              exit={{
+                opacity: context.reduce ? 1 : 0,
+                filter: context.reduce ? "blur(0px)" : "blur(2px)",
+                transform: exitTo,
+                transition: {
+                  duration: context.reduce ? 0 : 0.12,
+                  ease: EASE_OUT,
+                },
+              }}
               transition={{
-                duration: context.reduce ? 0 : 0.15,
+                duration: context.reduce ? 0 : 0.18,
                 ease: EASE_OUT,
               }}
-              className="col-start-1 row-start-1"
+              className="col-start-1 row-start-1 will-change-[transform,filter,opacity]"
             >
               {renderedValue}
             </motion.span>
