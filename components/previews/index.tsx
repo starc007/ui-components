@@ -257,6 +257,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/number-ticker": dynamic(() =>
     import("./motion/number-ticker.preview").then((m) => m.NumberTickerPreview),
   ),
+  "motion/digit-swap": dynamic(() =>
+    import("./motion/digit-swap.preview").then((m) => m.DigitSwapPreview),
+  ),
   "motion/animated-badge": dynamic(() =>
     import("./motion/animated-badge.preview").then((m) => m.AnimatedBadgePreview),
   ),

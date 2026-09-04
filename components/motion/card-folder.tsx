@@ -3,6 +3,7 @@
 import { EllipsisVertical, Eye, EyeOff } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { type ReactNode, useCallback, useState } from "react";
+import { DigitSwap } from "@/components/motion/digit-swap";
 import { SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
@@ -193,9 +194,14 @@ export function CardFolder({
                   <span className="text-[9px] font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
                     CVV
                   </span>
-                  <span className="text-xs font-medium text-foreground tabular-nums">
-                    {areDetailsVisible ? cvv : maskedCvv}
-                  </span>
+                  <DigitSwap
+                    value={areDetailsVisible ? cvv : maskedCvv}
+                    animationKey={
+                      areDetailsVisible ? "revealed" : "masked"
+                    }
+                    direction={areDetailsVisible ? "up" : "down"}
+                    className="text-xs font-medium text-foreground tabular-nums"
+                  />
                 </span>
               </span>
             </span>
@@ -203,18 +209,23 @@ export function CardFolder({
               <span className="truncate text-lg font-medium leading-tight text-foreground">
                 {title}
               </span>
-              <span className="truncate font-mono text-xs tracking-[0.08em] tabular-nums">
-                {areDetailsVisible ? (
-                  <span className="text-foreground">{revealedCardNumber}</span>
-                ) : (
-                  <>
-                    <span className="text-muted-foreground">
-                      •••• •••• ••••{" "}
-                    </span>
-                    <span className="text-foreground">{visibleLastFour}</span>
-                  </>
-                )}
-              </span>
+              <DigitSwap
+                value={
+                  areDetailsVisible
+                    ? revealedCardNumber
+                    : `•••• •••• •••• ${visibleLastFour}`
+                }
+                animationKey={areDetailsVisible ? "revealed" : "masked"}
+                direction={areDetailsVisible ? "up" : "down"}
+                suffixLength={4}
+                glyphClassName={
+                  areDetailsVisible
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+                }
+                suffixClassName="text-foreground"
+                className="truncate font-mono text-xs tracking-[0.08em] tabular-nums"
+              />
             </span>
           </span>
         </motion.span>

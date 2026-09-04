@@ -589,10 +589,26 @@ export const registry: CategoryEntry[] = [
       {
         slug: "number",
         name: "Number Animation",
-        description: "Animated number primitives for count-up values and rolling digit tickers.",
+        description:
+          "Animated number primitives for count-up values, rolling tickers, and fixed-slot digit swaps.",
         file: "components/motion/animated-number.tsx",
-        extraFiles: ["components/motion/number-ticker.tsx"],
+        extraFiles: [
+          "components/motion/number-ticker.tsx",
+          "components/motion/digit-swap.tsx",
+        ],
         examples: [
+          {
+            slug: "digit-swap",
+            name: "Digit Swap",
+            description:
+              "Fixed-slot digits and mask glyphs that roll on change with controllable direction, stagger, replay, and suffix emphasis.",
+            badge: "new",
+            launchedAt: "2026-09-04",
+            installSlug: "digit-swap",
+            file: "components/motion/digit-swap.tsx",
+            previewKey: "motion/digit-swap",
+            previewFile: "components/previews/motion/digit-swap.preview.tsx",
+          },
           {
             slug: "ticker",
             name: "Number Ticker",
