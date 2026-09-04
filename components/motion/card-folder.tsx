@@ -1,8 +1,15 @@
 "use client";
 
 import { EllipsisVertical, Eye, EyeOff } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { type ReactNode, useCallback, useState } from "react";
+import {
+  AnimatePresence,
+  animate,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useTransform,
+} from "motion/react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { DigitSwap } from "@/components/motion/digit-swap";
 import {
   EASE_IN_OUT,
@@ -10,13 +17,12 @@ import {
   SPRING_LAYOUT,
   SPRING_PRESS,
 } from "@/lib/ease";
-import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
 
 // The two purse layers collapse as one material surface after the card starts
 // moving, then reverse immediately so closing feels like the card is caught.
 const PURSE_MORPH_TRANSITION = {
-  duration: 0.24,
+  duration: 0.28,
   ease: EASE_IN_OUT,
 } as const;
 const PURSE_REDUCED_TRANSITION = {
@@ -71,7 +77,6 @@ export function CardFolder({
   cardClassName,
 }: CardFolderProps) {
   const reduce = useReducedMotion();
-  const canHover = useHoverCapable();
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [internalDetailsVisible, setInternalDetailsVisible] = useState(
     defaultDetailsVisible,
@@ -87,20 +92,32 @@ export function CardFolder({
     normalizedCardNumber.match(/.{1,4}/g)?.join(" ") ?? visibleLastFour;
   const maskedCvv = "•".repeat(Math.max(3, cvv.length));
   const defaultAriaLabel = `${isOpen ? "Close" : "Open"} ${title}, card ending in ${visibleLastFour}, expires ${expiry}`;
-  const frontPurseAnimation = reduce
-    ? { opacity: isOpen ? 0 : 1 }
-    : {
-        opacity: isOpen ? 0 : 1,
-        transform: isOpen
-          ? "translateY(24%) rotateX(-68deg) scaleX(0.96) scaleY(0.18)"
-          : "translateY(0%) rotateX(0deg) scaleX(1) scaleY(1)",
-      };
-  const purseTransition = reduce
-    ? PURSE_REDUCED_TRANSITION
-    : {
-        ...PURSE_MORPH_TRANSITION,
-        delay: isOpen ? 0.03 : 0,
-      };
+  const progress = useMotionValue(isOpen ? 1 : 0);
+  const cardTransform = useTransform(progress, (value) => {
+    const boundedProgress = Math.min(1, Math.max(0, value));
+    const lift = Math.sin(Math.PI * boundedProgress);
+    return `translateY(${-8 * lift}%) scale(${1 + 0.01 * lift})`;
+  });
+  const backTransform = useTransform(
+    progress,
+    [0, 1],
+    ["translateY(0%) scaleY(1)", "translateY(18%) scaleY(0.18)"],
+  );
+  const frontTransform = useTransform(
+    progress,
+    [0, 1],
+    ["translateY(0%) rotateX(0deg)", "translateY(18%) rotateX(-72deg)"],
+  );
+  const purseOpacity = useTransform(progress, [0, 0.76, 1], [1, 1, 0]);
+
+  useEffect(() => {
+    const controls = animate(
+      progress,
+      isOpen ? 1 : 0,
+      reduce ? { duration: 0 } : PURSE_MORPH_TRANSITION,
+    );
+    return () => controls.stop();
+  }, [isOpen, progress, reduce]);
 
   const setOpen = useCallback(
     (nextOpen: boolean) => {
@@ -146,23 +163,12 @@ export function CardFolder({
           data-slot="card-folder-back"
           aria-hidden="true"
           initial={false}
-          animate={
+          animate={reduce ? { opacity: isOpen ? 0 : 1 } : undefined}
+          transition={PURSE_REDUCED_TRANSITION}
+          style={
             reduce
-              ? { opacity: isOpen ? 0 : 1 }
-              : {
-                  opacity: isOpen ? 0 : 1,
-                  transform: isOpen
-                    ? "translateY(18%) scaleX(0.94) scaleY(0.16)"
-                    : "translateY(0%) scaleX(1) scaleY(1)",
-                }
-          }
-          transition={
-            reduce
-              ? PURSE_REDUCED_TRANSITION
-              : {
-                  ...PURSE_MORPH_TRANSITION,
-                  delay: isOpen ? 0.03 : 0,
-                }
+              ? undefined
+              : { opacity: purseOpacity, transform: backTransform }
           }
           className="absolute inset-x-0 bottom-0 top-[10%] rounded-2xl border border-foreground/10 bg-background [transform-origin:center_bottom]"
         />
@@ -170,20 +176,12 @@ export function CardFolder({
         <motion.span
           aria-hidden="true"
           initial={false}
-          animate={{
-            transform:
-              isOpen && !reduce
-                ? "translateY(-9%) scale(1.03)"
-                : "translateY(0%) scale(1)",
-          }}
-          whileHover={
-            canHover && !disabled && !isOpen && !reduce
-              ? { transform: "translateY(-3%) scale(1)" }
-              : undefined
+          animate={
+            reduce ? { transform: "translateY(0%) scale(1)" } : undefined
           }
-          transition={transition}
+          style={reduce ? undefined : { transform: cardTransform }}
           className={cn(
-            "absolute left-[4.7%] right-[4.7%] top-0 z-10 aspect-[1.586/1] overflow-hidden rounded-xl border border-foreground/10 bg-background [transform-origin:center_bottom]",
+            "absolute left-[4.7%] right-[4.7%] top-0 z-10 aspect-[1.586/1] overflow-hidden rounded-xl border border-foreground/10 bg-background [transform-origin:center_bottom] will-change-transform",
             cardClassName,
           )}
         >
@@ -195,8 +193,13 @@ export function CardFolder({
         aria-hidden={isOpen}
         inert={isOpen}
         initial={false}
-        animate={frontPurseAnimation}
-        transition={purseTransition}
+        animate={reduce ? { opacity: isOpen ? 0 : 1 } : undefined}
+        transition={PURSE_REDUCED_TRANSITION}
+        style={
+          reduce
+            ? undefined
+            : { opacity: purseOpacity, transform: frontTransform }
+        }
         className="pointer-events-none absolute inset-x-0 bottom-0 top-1/2 z-20 [backface-visibility:hidden] [transform-origin:center_bottom]"
       >
           <svg
