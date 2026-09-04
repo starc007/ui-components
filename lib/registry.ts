@@ -592,6 +592,8 @@ export const registry: CategoryEntry[] = [
         description:
           "Animated number primitives for count-up values, rolling tickers, and fixed-slot digit swaps.",
         file: "components/motion/animated-number.tsx",
+        badge: "new",
+        launchedAt: "2026-09-04",
         extraFiles: [
           "components/motion/number-ticker.tsx",
           "components/motion/digit-swap.tsx",

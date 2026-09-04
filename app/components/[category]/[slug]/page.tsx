@@ -135,7 +135,6 @@ export default async function ComponentPage({
   const cat = findCategory(category);
   const comp = findComponent(category, slug);
   if (!cat || !comp) notFound();
-  const hasMultipleVariants = (comp.examples?.length ?? 0) > 1;
   const hasVariantInstallCommands =
     comp.examples?.some((example) => example.installSlug) ?? false;
   const examplesShareSource =
@@ -237,7 +236,7 @@ export default async function ComponentPage({
               <h1 className="text-3xl font-medium tracking-tight text-foreground">
                 {comp.name}
               </h1>
-              {comp.badge === "new" && !hasMultipleVariants ? (
+              {comp.badge === "new" ? (
                 <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
               ) : null}
             </div>
