@@ -45,6 +45,7 @@ import { BloomMenu } from "@/components/motion/bloom-menu";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { BounceSidebar } from "@/components/motion/bounce-sidebar";
 import { Button } from "@/components/motion/button";
+import { CardFolder } from "@/components/motion/card-folder";
 import {
   CenterMorphModal,
   CenterMorphModalContent,
@@ -544,6 +545,19 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ["Button disabled", () => <Button disabled>Subscribe</Button>],
   ["Button ripple", () => <Button ripple>Subscribe</Button>],
   ["BloomMenu", () => <BloomMenu />],
+  [
+    "CardFolder",
+    () => (
+      <CardFolder
+        title="Studio card"
+        cardNumber="4242424242420806"
+        expiry="08/29"
+        cvv="123"
+        card={<span>Card artwork</span>}
+        onAction={() => {}}
+      />
+    ),
+  ],
   [
     "ProjectFolder",
     () => (

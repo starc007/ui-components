@@ -1,13 +1,13 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { registry } from "@/lib/registry";
-import { Hero } from "@/components/app/landing/hero";
-import { InstallCommand } from "@/components/app/docs/install-command";
-import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
+import Link from "next/link";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
+import { InstallCommand } from "@/components/app/docs/install-command";
+import { Hero } from "@/components/app/landing/hero";
+import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
 import { Testimonials } from "@/components/app/landing/testimonials";
 import { WorkCta } from "@/components/app/landing/work-cta";
 import { isComponentNew } from "@/lib/component-status";
+import { registry } from "@/lib/registry";
 
 const CURATED: { category: string; slug: string }[] = [
   { category: "motion", slug: "button" },
@@ -38,6 +38,7 @@ const CURATED: { category: string; slug: string }[] = [
 
 const GRID_CLASS =
   "grid grid-cols-1 gap-4 [grid-auto-rows:19rem] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
+const RECENTLY_LAUNCHED_FEATURED = "blocks/card-folder";
 
 function SectionHeader({
   eyebrow,
@@ -98,10 +99,19 @@ export default function Home() {
           };
         }),
     )
-    // Newest first: most recently launched components lead the section.
-    .sort((a, b) =>
-      (b.component.launchedAt ?? "").localeCompare(a.component.launchedAt ?? ""),
-    );
+    // Keep the featured launch first, then preserve newest-first ordering.
+    .sort((a, b) => {
+      const aFeatured =
+        `${a.category}/${a.component.slug}` === RECENTLY_LAUNCHED_FEATURED;
+      const bFeatured =
+        `${b.category}/${b.component.slug}` === RECENTLY_LAUNCHED_FEATURED;
+
+      if (aFeatured !== bFeatured) return aFeatured ? -1 : 1;
+
+      return (b.component.launchedAt ?? "").localeCompare(
+        a.component.launchedAt ?? "",
+      );
+    });
   const newComponentKeys = new Set(
     newComponents.map(
       ({ category, component }) => `${category}/${component.slug}`,

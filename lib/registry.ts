@@ -589,10 +589,28 @@ export const registry: CategoryEntry[] = [
       {
         slug: "number",
         name: "Number Animation",
-        description: "Animated number primitives for count-up values and rolling digit tickers.",
+        description:
+          "Animated number primitives for count-up values, rolling tickers, and fixed-slot digit swaps.",
         file: "components/motion/animated-number.tsx",
-        extraFiles: ["components/motion/number-ticker.tsx"],
+        badge: "new",
+        launchedAt: "2026-09-04",
+        extraFiles: [
+          "components/motion/number-ticker.tsx",
+          "components/motion/digit-swap.tsx",
+        ],
         examples: [
+          {
+            slug: "digit-swap",
+            name: "Digit Swap",
+            description:
+              "Fixed-slot digits and mask glyphs that roll on change with controllable direction, stagger, replay, and suffix emphasis.",
+            badge: "new",
+            launchedAt: "2026-09-04",
+            installSlug: "digit-swap",
+            file: "components/motion/digit-swap.tsx",
+            previewKey: "motion/digit-swap",
+            previewFile: "components/previews/motion/digit-swap.preview.tsx",
+          },
           {
             slug: "ticker",
             name: "Number Ticker",
@@ -1510,6 +1528,23 @@ export const registry: CategoryEntry[] = [
           "file preview component",
           "folder hover animation",
           "project card react",
+        ],
+      },
+      {
+        slug: "card-folder",
+        name: "Card Folder",
+        description:
+          "A landscape card tucked into a stitched purse pocket that lifts forward as the purse compresses into its bottom seam, with controlled open and card-detail visibility plus a separate overflow action.",
+        file: "components/motion/card-folder.tsx",
+        badge: "new",
+        launchedAt: "2026-09-04",
+        keywords: [
+          "react card folder",
+          "animated card sleeve",
+          "payment card component",
+          "credit card folder",
+          "interactive wallet card",
+          "card purse component",
         ],
       },
       {
