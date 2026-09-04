@@ -4,9 +4,25 @@ import { EllipsisVertical, Eye, EyeOff } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { type ReactNode, useCallback, useState } from "react";
 import { DigitSwap } from "@/components/motion/digit-swap";
-import { SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
+import {
+  EASE_IN_OUT,
+  EASE_OUT,
+  SPRING_LAYOUT,
+  SPRING_PRESS,
+} from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
+
+// The two purse layers collapse as one material surface after the card starts
+// moving, then reverse immediately so closing feels like the card is caught.
+const PURSE_MORPH_TRANSITION = {
+  duration: 0.24,
+  ease: EASE_IN_OUT,
+} as const;
+const PURSE_REDUCED_TRANSITION = {
+  duration: 0.16,
+  ease: EASE_OUT,
+} as const;
 
 export interface CardFolderProps {
   title: string;
@@ -31,8 +47,8 @@ export interface CardFolderProps {
 
 /**
  * A landscape card tucked into an animated folder sleeve. Pressing the folder
- * folds its front panel away and lifts the card into view; a separate privacy
- * control reveals its number and CVV without nesting controls in the folder.
+ * lifts the card forward while the purse compresses into its bottom seam; a
+ * separate privacy control reveals its number and CVV.
  */
 export function CardFolder({
   title,
@@ -71,6 +87,20 @@ export function CardFolder({
     normalizedCardNumber.match(/.{1,4}/g)?.join(" ") ?? visibleLastFour;
   const maskedCvv = "•".repeat(Math.max(3, cvv.length));
   const defaultAriaLabel = `${isOpen ? "Close" : "Open"} ${title}, card ending in ${visibleLastFour}, expires ${expiry}`;
+  const frontPurseAnimation = reduce
+    ? { opacity: isOpen ? 0 : 1 }
+    : {
+        opacity: isOpen ? 0 : 1,
+        transform: isOpen
+          ? "translateY(24%) rotateX(-68deg) scaleX(0.96) scaleY(0.18)"
+          : "translateY(0%) rotateX(0deg) scaleX(1) scaleY(1)",
+      };
+  const purseTransition = reduce
+    ? PURSE_REDUCED_TRANSITION
+    : {
+        ...PURSE_MORPH_TRANSITION,
+        delay: isOpen ? 0.03 : 0,
+      };
 
   const setOpen = useCallback(
     (nextOpen: boolean) => {
@@ -116,8 +146,24 @@ export function CardFolder({
           data-slot="card-folder-back"
           aria-hidden="true"
           initial={false}
-          animate={{ rotateX: isOpen && !reduce ? 12 : 0 }}
-          transition={transition}
+          animate={
+            reduce
+              ? { opacity: isOpen ? 0 : 1 }
+              : {
+                  opacity: isOpen ? 0 : 1,
+                  transform: isOpen
+                    ? "translateY(18%) scaleX(0.94) scaleY(0.16)"
+                    : "translateY(0%) scaleX(1) scaleY(1)",
+                }
+          }
+          transition={
+            reduce
+              ? PURSE_REDUCED_TRANSITION
+              : {
+                  ...PURSE_MORPH_TRANSITION,
+                  delay: isOpen ? 0.03 : 0,
+                }
+          }
           className="absolute inset-x-0 bottom-0 top-[10%] rounded-2xl border border-foreground/10 bg-background [transform-origin:center_bottom]"
         />
 
@@ -125,36 +171,34 @@ export function CardFolder({
           aria-hidden="true"
           initial={false}
           animate={{
-            y: isOpen && !reduce ? -14 : 0,
-            scale: isOpen && !reduce ? 1.015 : 1,
+            transform:
+              isOpen && !reduce
+                ? "translateY(-9%) scale(1.03)"
+                : "translateY(0%) scale(1)",
           }}
           whileHover={
-            canHover && !disabled && !isOpen && !reduce ? { y: -7 } : undefined
+            canHover && !disabled && !isOpen && !reduce
+              ? { transform: "translateY(-3%) scale(1)" }
+              : undefined
           }
           transition={transition}
           className={cn(
-            "absolute left-[4.7%] right-[4.7%] top-0 aspect-[1.586/1] overflow-hidden rounded-xl border border-foreground/10 bg-background [transform-origin:center_bottom]",
+            "absolute left-[4.7%] right-[4.7%] top-0 z-10 aspect-[1.586/1] overflow-hidden rounded-xl border border-foreground/10 bg-background [transform-origin:center_bottom]",
             cardClassName,
           )}
         >
           {card}
         </motion.span>
+      </motion.button>
 
-        <motion.span
-          aria-hidden="true"
-          initial={false}
-          animate={
-            reduce
-              ? { opacity: isOpen ? 0.12 : 1 }
-              : {
-                  y: isOpen ? 18 : 0,
-                  rotateX: isOpen ? -68 : 0,
-                  scaleY: isOpen ? 0.96 : 1,
-                }
-          }
-          transition={transition}
-          className="absolute inset-x-0 bottom-0 top-1/2 z-20 [backface-visibility:hidden] [transform-origin:center_bottom]"
-        >
+      <motion.span
+        aria-hidden={isOpen}
+        inert={isOpen}
+        initial={false}
+        animate={frontPurseAnimation}
+        transition={purseTransition}
+        className="pointer-events-none absolute inset-x-0 bottom-0 top-1/2 z-20 [backface-visibility:hidden] [transform-origin:center_bottom]"
+      >
           <svg
             aria-hidden="true"
             viewBox="0 0 384 110"
@@ -180,8 +224,57 @@ export function CardFolder({
           </svg>
 
           <span className="absolute inset-x-[5%] inset-y-0 z-10 flex min-w-0 flex-col justify-between py-4">
-            <span className="flex justify-end pt-2 pr-2">
-              <span className="flex shrink-0 items-end gap-3.5">
+            <span className="flex items-start justify-between pr-2">
+              <motion.button
+                key="card-details-visibility"
+                type="button"
+                disabled={disabled}
+                tabIndex={isOpen ? -1 : undefined}
+                aria-label={
+                  areDetailsVisible
+                    ? "Hide card details"
+                    : "Show card details"
+                }
+                aria-pressed={areDetailsVisible}
+                onClick={toggleDetails}
+                whileTap={reduce || disabled ? undefined : { scale: 0.96 }}
+                transition={reduce ? { duration: 0.12 } : SPRING_PRESS}
+                className={cn(
+                  "z-30 flex size-10 shrink-0 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                  isOpen ? "pointer-events-none" : "pointer-events-auto",
+                )}
+              >
+                <AnimatePresence initial={false} mode="popLayout">
+                  <motion.span
+                    key={areDetailsVisible ? "hide" : "show"}
+                    initial={
+                      reduce
+                        ? { opacity: 0 }
+                        : { opacity: 0, scale: 0.25, filter: "blur(4px)" }
+                    }
+                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                    exit={
+                      reduce
+                        ? { opacity: 0 }
+                        : { opacity: 0, scale: 0.25, filter: "blur(4px)" }
+                    }
+                    transition={
+                      reduce
+                        ? { duration: 0.12 }
+                        : { type: "spring", duration: 0.3, bounce: 0 }
+                    }
+                    className="flex items-center justify-center"
+                  >
+                    {areDetailsVisible ? (
+                      <EyeOff className="size-4" aria-hidden="true" />
+                    ) : (
+                      <Eye className="size-4" aria-hidden="true" />
+                    )}
+                  </motion.span>
+                </AnimatePresence>
+              </motion.button>
+
+              <span className="flex shrink-0 items-end gap-3.5 pt-2">
                 <span className="flex flex-col gap-0.5">
                   <span className="text-[9px] font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
                     Expiry
@@ -228,63 +321,7 @@ export function CardFolder({
               />
             </span>
           </span>
-        </motion.span>
-      </motion.button>
-
-      {!isOpen ? (
-        <motion.button
-          key="card-details-visibility"
-          type="button"
-          disabled={disabled}
-          aria-label={
-            areDetailsVisible ? "Hide card details" : "Show card details"
-          }
-          aria-pressed={areDetailsVisible}
-          onClick={toggleDetails}
-          initial={
-            reduce
-              ? { opacity: 0 }
-              : { opacity: 0, scale: 0.25, filter: "blur(4px)" }
-          }
-          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-          whileTap={reduce || disabled ? undefined : { scale: 0.96 }}
-          transition={
-            reduce
-              ? { duration: 0.12 }
-              : { type: "spring", duration: 0.3, bounce: 0 }
-          }
-          className="absolute left-[2.6%] top-[65%] z-30 flex size-10 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <AnimatePresence initial={false} mode="popLayout">
-            <motion.span
-              key={areDetailsVisible ? "hide" : "show"}
-              initial={
-                reduce
-                  ? { opacity: 0 }
-                  : { opacity: 0, scale: 0.25, filter: "blur(4px)" }
-              }
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-              exit={
-                reduce
-                  ? { opacity: 0 }
-                  : { opacity: 0, scale: 0.25, filter: "blur(4px)" }
-              }
-              transition={
-                reduce
-                  ? { duration: 0.12 }
-                  : { type: "spring", duration: 0.3, bounce: 0 }
-              }
-              className="flex items-center justify-center"
-            >
-              {areDetailsVisible ? (
-                <EyeOff className="size-4" aria-hidden="true" />
-              ) : (
-                <Eye className="size-4" aria-hidden="true" />
-              )}
-            </motion.span>
-          </AnimatePresence>
-        </motion.button>
-      ) : null}
+      </motion.span>
 
       {onAction ? (
         <motion.button
