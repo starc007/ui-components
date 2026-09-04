@@ -1516,7 +1516,7 @@ export const registry: CategoryEntry[] = [
         slug: "card-folder",
         name: "Card Folder",
         description:
-          "A landscape card tucked into a rounded folder sleeve that opens on press and lifts the complete card into view, with controlled state and a separate overflow action.",
+          "A landscape card tucked into a stitched purse pocket that folds open on press and lifts the complete card into view, with controlled open and card-detail visibility plus a separate overflow action.",
         file: "components/motion/card-folder.tsx",
         badge: "new",
         launchedAt: "2026-09-04",
@@ -1526,6 +1526,7 @@ export const registry: CategoryEntry[] = [
           "payment card component",
           "credit card folder",
           "interactive wallet card",
+          "card purse component",
         ],
       },
       {

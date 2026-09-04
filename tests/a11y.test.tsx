@@ -550,7 +550,9 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     () => (
       <CardFolder
         title="Studio card"
-        description="Auto-matching funds"
+        cardNumber="4242424242420806"
+        expiry="08/29"
+        cvv="123"
         card={<span>Card artwork</span>}
         onAction={() => {}}
       />
