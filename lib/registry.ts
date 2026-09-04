@@ -1513,6 +1513,22 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "card-folder",
+        name: "Card Folder",
+        description:
+          "A landscape card tucked into a rounded folder sleeve that opens on press and lifts the complete card into view, with controlled state and a separate overflow action.",
+        file: "components/motion/card-folder.tsx",
+        badge: "new",
+        launchedAt: "2026-09-04",
+        keywords: [
+          "react card folder",
+          "animated card sleeve",
+          "payment card component",
+          "credit card folder",
+          "interactive wallet card",
+        ],
+      },
+      {
         slug: "knockout-bracket",
         name: "Fixtures",
         description: "Animated tournament fixtures in two styles: a knockout bracket that pages through rounds, and a wheel that wraps the same tree around the champion. Both read the same array of rounds, so one dataset draws either.",

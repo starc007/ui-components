@@ -143,6 +143,9 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.ProjectFolderPreview,
     ),
   ),
+  "blocks/card-folder": dynamic(() =>
+    import("./blocks/card-folder.preview").then((m) => m.CardFolderPreview),
+  ),
   "blocks/knockout-bracket": dynamic(() =>
     import("./blocks/knockout-bracket.preview").then(
       (m) => m.KnockoutBracketPreview,
