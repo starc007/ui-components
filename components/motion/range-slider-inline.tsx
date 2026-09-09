@@ -89,8 +89,6 @@ export function InlineSlider({
     readoutWidth: 24,
   });
   const [dragging, setDragging] = useState(false);
-  // Programmatic focus can retain :focus-visible during a pointer gesture.
-  const [pointerFocused, setPointerFocused] = useState(false);
   const dragFrame = useRef<number | null>(null);
   const pendingDragValue = useRef<number | null>(null);
   const gesture = useRef<{
@@ -244,7 +242,6 @@ export function InlineSlider({
         const rect = event.currentTarget.getBoundingClientRect();
         if (!rect.width) return;
         event.preventDefault();
-        setPointerFocused(true);
         const pointerX = event.clientX - rect.left;
         const thumbX = handleX.get();
         // Grabbing the thumb preserves the exact grab point. A track click
@@ -275,7 +272,6 @@ export function InlineSlider({
       onLostPointerCapture={endGesture}
       className={cn(
         "relative h-10 w-full touch-none select-none overflow-hidden rounded-lg bg-muted",
-        !pointerFocused && "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring/40",
         TOUCH_GESTURE_CLASS,
         options.disabled
           ? "pointer-events-none opacity-50"
@@ -327,10 +323,8 @@ export function InlineSlider({
       <button
         type="button"
         {...sliderProps}
-        onBlur={() => setPointerFocused(false)}
         onKeyDown={(event) => {
           if (options.disabled) return;
-          setPointerFocused(false);
           const next = {
             ArrowRight: stops.find((stop) => stop.value > current)?.value ?? max,
             ArrowUp: stops.find((stop) => stop.value > current)?.value ?? max,
@@ -346,10 +340,7 @@ export function InlineSlider({
             commit(next);
           }
         }}
-        className={cn(
-          "absolute inset-0 cursor-inherit touch-none rounded-lg border border-transparent outline-none transition-colors duration-200",
-          !pointerFocused && "focus-visible:border-foreground/40",
-        )}
+        className="absolute inset-0 cursor-inherit touch-none rounded-lg border-0 outline-none"
       />
     </div>
   );
