@@ -778,17 +778,30 @@ export const registry: CategoryEntry[] = [
         description: "Slider with tick dots and a vertical-bar thumb that bounces as it lands on each step. Drag or keyboard, reduced-motion safe.",
         file: "components/motion/range-slider.tsx",
         badge: "new",
-        launchedAt: "2026-07-31",
+        launchedAt: "2026-09-09",
         keywords: [
           "slider",
           "range slider",
           "range input",
           "stepped slider",
+          "inline slider",
           "ticks",
           "volume slider",
           "ruler picker",
         ],
         examples: [
+          {
+            slug: "inline",
+            name: "Inline Slider",
+            description:
+              "An inset fill and inline label and value. Ten evenly spaced stops span the track; markers under text stay hidden but remain interactive, and the thumb parts around either label as it passes.",
+            installSlug: "range-slider-inline",
+            badge: "new",
+            launchedAt: "2026-09-09",
+            file: "components/motion/range-slider-inline.tsx",
+            previewKey: "motion/range-slider-inline",
+            previewFile: "components/previews/motion/range-slider-inline.preview.tsx",
+          },
           {
             slug: "stepped",
             name: "Range Slider",

@@ -85,6 +85,7 @@ The live registry is the source of truth. Use the table below only to resolve co
 | Rolling digits | `number-ticker` | `animated-number` |
 | Count-up on view | `animated-number` | `number-ticker` |
 | Tick-dot slider | `range-slider` | other `range-slider-*` |
+| Inline label slider | `range-slider-inline` | `range-slider` |
 | Liquid fill slider | `range-slider-fluid` | `range-slider` |
 | Equalizer slider | `range-slider-wave` | `range-slider` |
 | Tilting value bubble slider | `range-slider-bubble` | `range-slider` |

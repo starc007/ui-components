@@ -42,7 +42,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `switch` | `components/motion/switch.tsx` | Toggle with spring-driven thumb and press feedback |
 | `select` | `components/motion/select.tsx`, `select-morph.tsx` | Composable select primitives (`Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`); panel bouncily unfolds out of the trigger and separates (position-aware). `MorphSelect` (`select-morph.tsx`) is a shared-layout variant where the trigger grows into the panel and back |
 | `combobox` | `components/motion/combobox.tsx` | Composable searchable selection primitives whose input is the trigger; the measured list springs open from the field and detaches without page reflow, with stable collision-aware placement through exit, grouped filtering, keyboard navigation that is live as soon as the list appears, a spring-gliding active row and controlled/uncontrolled state |
-| `range-slider` | `components/motion/range-slider.tsx`, `range-slider-fluid.tsx`, `range-slider-wave.tsx`, `range-slider-bubble.tsx`, `range-slider-ruler.tsx` | Five slider designs, one per `examples` entry with its own `installSlug`. `RangeSlider` (base) has tick dots and a vertical-bar thumb that bounces onto each step. `FluidSlider` has no thumb: the fill runs behind a rounded liquid cap and the label flips color under it. `WaveSlider` is equalizer bars that peak around the handle. `BubbleSlider` pops a value bubble that tilts and squashes with drag velocity. `RulerSlider` scrolls the scale under a fixed needle with drag momentum. All share value/step/drag/keyboard plumbing from `lib/hooks/use-slider.ts`; controlled/uncontrolled, reduced-motion safe |
+| `range-slider` | `components/motion/range-slider.tsx`, `range-slider-inline.tsx`, `range-slider-fluid.tsx`, `range-slider-wave.tsx`, `range-slider-bubble.tsx`, `range-slider-ruler.tsx` | Six slider designs, one per `examples` entry with its own `installSlug`. `RangeSlider` (base) has tick dots and a vertical-bar thumb that bounces onto each step. `InlineSlider` keeps its label and value inside the track, hides dots beneath either label, and snaps to ten evenly spaced stops. `FluidSlider` has no thumb: the fill runs behind a rounded liquid cap and the label flips color under it. `WaveSlider` is equalizer bars that peak around the handle. `BubbleSlider` pops a value bubble that tilts and squashes with drag velocity. `RulerSlider` scrolls the scale under a fixed needle with drag momentum. All share value/step/drag/keyboard plumbing from `lib/hooks/use-slider.ts`; controlled/uncontrolled, reduced-motion safe |
 | `wheel-picker` | `components/motion/wheel-picker.tsx` | iOS-style picker wheel (`WheelPicker`): a 3D drum on custom momentum physics (velocity-projected coast, spring-back settle) with a crisp clipped center band; drag, wheel and keyboard, optional synthesized tick sound per row crossed (`sound` prop, default off), composes side by side for date/time pickers, controlled/uncontrolled, reduced-motion safe |
 | `bottom-sheet` | `components/motion/bottom-sheet.tsx` | Draggable bottom sheet with snap points, inertia and glass surface |
 | `pull-to-refresh` | `components/motion/pull-to-refresh.tsx` | Native-feeling refresh container with touch and mouse pull resistance, threshold feedback and async refresh handling |
@@ -158,3 +158,13 @@ Before building a new component, check this list. If it exists, import it. If it
 ## Commits
 
 Conventional lowercase prefixes (`feat:`, `fix:`, `refactor:`, `docs:`), imperative subject. No AI attribution or Co-Authored-By lines.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

@@ -6,6 +6,7 @@ import { type SliderOptions, snapSliderValue } from "@/lib/hooks/use-slider";
 import { RangeSlider } from "@/components/motion/range-slider";
 import { BubbleSlider } from "@/components/motion/range-slider-bubble";
 import { FluidSlider } from "@/components/motion/range-slider-fluid";
+import { InlineSlider } from "@/components/motion/range-slider-inline";
 import { RulerSlider } from "@/components/motion/range-slider-ruler";
 import { WaveSlider } from "@/components/motion/range-slider-wave";
 
@@ -30,7 +31,7 @@ function stubTrackRect(element: Element, left = 0, width = 200) {
     ({ left, width, right: left + width, top: 0, bottom: 40, height: 40, x: left, y: 0 }) as DOMRect;
 }
 
-// The four track-style variants share every value path through useSlider, so
+// The track-style variants share every value path through useSlider, so
 // they run the same suite; the ruler drives its scale differently and has its own.
 const variants: Array<{ name: string; render: (props?: SliderOptions) => ReactElement }> = [
   { name: "RangeSlider", render: (props) => <RangeSlider aria-label="Level" {...props} /> },
@@ -205,6 +206,41 @@ describe("RangeSlider", () => {
     );
     // the tick dots are the only spans the slider renders
     expect(container.querySelectorAll("span")).toHaveLength(4);
+  });
+});
+
+describe("InlineSlider", () => {
+  test("keeps the inline readout visible after pointer release and blur", () => {
+    const { getByRole, getAllByText, queryByRole } = render(
+      <InlineSlider label="Size" defaultValue={48} min={8} max={128} aria-label="Size" />,
+    );
+    const slider = getByRole("slider");
+    const track = slider.parentElement as HTMLElement;
+    stubTrackRect(track);
+    fireEvent.pointerDown(track, { clientX: 100, pointerId: 1 });
+    fireEvent.pointerUp(track, { clientX: 100, pointerId: 1 });
+    fireEvent.pointerLeave(track);
+    fireEvent.blur(slider);
+
+    expect(slider.getAttribute("aria-valuenow")).toBe("48");
+    expect(getAllByText("48")).toHaveLength(1);
+    expect(getAllByText("Size")).toHaveLength(1);
+    expect(queryByRole("textbox")).toBeNull();
+  });
+
+  test("keeps fractional display and accessible formatting consistent", () => {
+    const { getByRole, getAllByText } = render(
+      <InlineSlider defaultValue={72.5} step={0.5} format={(value) => `${value}%`} label="Opacity" />,
+    );
+    expect(getByRole("slider", { name: "Opacity" }).getAttribute("aria-valuetext")).toBe("72.5%");
+    expect(getAllByText("72.5%")).toHaveLength(1);
+  });
+
+  test("lets callers supply a spoken unit separately from the display", () => {
+    const { getByRole } = render(
+      <InlineSlider label="Size" defaultValue={48} formatValueText={(value) => `${value} pixels`} />,
+    );
+    expect(getByRole("slider").getAttribute("aria-valuetext")).toBe("48 pixels");
   });
 });
 

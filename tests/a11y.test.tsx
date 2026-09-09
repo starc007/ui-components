@@ -89,6 +89,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
 import { RangeSlider } from "@/components/motion/range-slider";
 import { BubbleSlider } from "@/components/motion/range-slider-bubble";
 import { FluidSlider } from "@/components/motion/range-slider-fluid";
+import { InlineSlider } from "@/components/motion/range-slider-inline";
 import { RulerSlider } from "@/components/motion/range-slider-ruler";
 import { WaveSlider } from "@/components/motion/range-slider-wave";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
@@ -715,6 +716,7 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
   ],
   ["ScrollTo", () => <ScrollTo to="#top">Back to top</ScrollTo>],
   ["RangeSlider", () => <RangeSlider defaultValue={40} aria-label="Volume" />],
+  ["InlineSlider", () => <InlineSlider defaultValue={48} label="Icon size" />],
   [
     "FluidSlider",
     () => <FluidSlider defaultValue={35} label="Brightness" aria-label="Brightness" />,
