@@ -2,13 +2,12 @@
 
 import {
   motion,
-  useMotionTemplate,
   useMotionValue,
   useReducedMotion,
   useSpring,
   useTransform,
 } from "motion/react";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 import { SPRING_GLIDE } from "@/lib/ease";
 import { type SliderOptions, useSlider } from "@/lib/hooks/use-slider";
@@ -27,6 +26,19 @@ export interface RangeSliderProps extends SliderOptions {
 export function RangeSlider({ showTicks = true, className, ...options }: RangeSliderProps) {
   const reduce = useReducedMotion();
   const { percent, dragging, min, max, step, trackProps, sliderProps } = useSlider(options);
+  const [trackWidth, setTrackWidth] = useState(292);
+  useLayoutEffect(() => {
+    const track = trackProps.ref.current;
+    if (!track) return;
+    const measure = () => {
+      const width = track.getBoundingClientRect().width;
+      if (width > 0) setTrackWidth(width);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [trackProps.ref]);
 
   // Spring-smoothed position drives both the thumb and the fill.
   const target = useMotionValue(percent);
@@ -35,10 +47,13 @@ export function RangeSlider({ showTicks = true, className, ...options }: RangeSl
   }, [percent, target]);
   const smooth = useSpring(target, SPRING_GLIDE);
   const pos = reduce ? target : smooth;
-  const left = useMotionTemplate`${pos}%`;
-  // Self-offset the thumb from 0% (flush left) to -100% (flush right) of its
-  // own width so it stays fully inside the track at both ends — no clip, no gap.
-  const thumbX = useTransform(pos, (p) => `${-p}%`);
+  const thumbX = useTransform(pos, (p) => 8 + Math.max(0, trackWidth - 20) * p / 100);
+  // Match InlineSlider: the 4px handle starts 8px inside the track, and
+  // the rounded fill extends 8px past its left edge. Translate a full-size
+  // fill inside the 2px inset clip so its corner never stretches.
+  const fillX = useTransform(pos, (p) => p >= 100
+    ? "0%"
+    : `calc(${p - 100}% + ${14 - 0.16 * p}px)`);
 
   // Floor rather than round, so a range the step does not divide (0 to 10 by 4)
   // stops its dots at the last whole step instead of drawing one past max.
@@ -62,12 +77,12 @@ export function RangeSlider({ showTicks = true, className, ...options }: RangeSl
         className,
       )}
     >
-      {/* fill — runs from the left edge to the thumb, consistent tone */}
-      <motion.div className="absolute inset-y-0 left-0 bg-foreground/15" style={{ width: left }} />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-[2px] inset-y-0 overflow-hidden rounded-lg">
+        <motion.div className="absolute inset-0 rounded-lg bg-foreground/15" style={{ x: fillX }} />
+      </div>
 
-      {/* Ticks, inset by half the thumb's width. That inset is the span the
-          thumb's own centre travels, so a dot sits where the thumb lands. */}
-      <div className="pointer-events-none absolute inset-x-[3px] inset-y-0">
+      {/* Tick centres follow the same inset path as the handle centre. */}
+      <div className="pointer-events-none absolute inset-x-[10px] inset-y-0">
         {ticks.map((t) => {
           const tp = ((t - min) / (max - min)) * 100;
           return (
@@ -80,13 +95,13 @@ export function RangeSlider({ showTicks = true, className, ...options }: RangeSl
         })}
       </div>
 
-      {/* vertical bar thumb — contained at both ends via thumbX */}
+      {/* Keep the handle inside the rounded progress fill at both ends. */}
       <motion.div
         {...sliderProps}
         animate={reduce ? undefined : { scaleY: dragging ? 1.35 : 1 }}
         transition={SPRING_BOUNCY}
-        className="absolute top-1/2 h-5 w-1.5 rounded-sm bg-foreground shadow-sm outline-none ring-inset ring-foreground/30 focus-visible:ring-4"
-        style={{ left, x: thumbX, y: "-50%" }}
+        className="absolute left-0 top-1/2 h-6 w-1 rounded-full bg-foreground outline-none ring-inset ring-foreground/30 focus-visible:ring-4"
+        style={{ x: thumbX, y: "-50%" }}
       />
     </div>
   );
