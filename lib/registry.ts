@@ -1736,8 +1736,31 @@ export const registry: CategoryEntry[] = [
       {
         slug: "prediction-market",
         name: "Prediction Market",
-        description: "Prediction market trade ticket with buy/sell modes, outcome prices, rolling amount entry, quick add chips and trade states.",
+        description: "Animated market listing cards with outcome selection, probabilities and bookmarks, plus a trade ticket with buy/sell modes and rolling amount entry.",
         file: "components/motion/prediction-market.tsx",
+        extraFiles: ["components/motion/prediction-market-card.tsx"],
+        examples: [
+          {
+            slug: "market-cards",
+            name: "Market Cards",
+            description: "Market listings with binary or match outcomes, animated probabilities, selection feedback and bookmarks. Select an outcome without placing an order; use Update odds to preview price changes.",
+            badge: "new",
+            launchedAt: "2026-09-10",
+            installSlug: "prediction-market-card",
+            file: "components/motion/prediction-market-card.tsx",
+            previewKey: "blocks/prediction-market-card",
+            previewFile: "components/previews/blocks/prediction-market-card.preview.tsx",
+          },
+          {
+            slug: "trade-ticket",
+            name: "Trade Ticket",
+            description: "Buy and sell outcomes with rolling amount entry, quick add chips and trade states.",
+            installSlug: "prediction-market",
+            file: "components/motion/prediction-market.tsx",
+            previewKey: "blocks/prediction-market",
+            previewFile: "components/previews/blocks/prediction-market.preview.tsx",
+          },
+        ],
       },
       {
         slug: "wallet-card",
