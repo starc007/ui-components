@@ -129,7 +129,7 @@ export function PredictionMarketCard({
 
 			<div className="mx-2 mb-2 flex flex-1 flex-col rounded-3xl bg-background px-4 py-3">
 				<div className="flex flex-1 flex-col justify-center gap-3">
-					{outcomes.map((outcome) => (
+					{outcomes.map((outcome, index) => (
 						<div key={outcome.id} className="space-y-1">
 							<div className="flex min-h-10 items-center gap-2">
 								{outcome.icon && (
@@ -159,6 +159,7 @@ export function PredictionMarketCard({
 									</button>
 								</Tooltip>
 								<MarketOddsButton
+									positive={index % 2 === 0}
 									outcome={outcome}
 									onClick={() =>
 										onOutcomeClick?.({ outcomeId: outcome.id, side: "yes" })
@@ -257,22 +258,16 @@ export function PredictionMarketCard({
 }
 
 function MarketOddsButton({
+	positive,
 	outcome,
 	onClick,
 }: {
 	outcome: PredictionMarketCardOutcome;
+	positive: boolean;
 	onClick: () => void;
 }) {
 	const reduce = useReducedMotion();
 	const cents = Math.round(probability(outcome.probability) * 100);
-	const [change, setChange] = useState({ cents, direction: 0, revision: 0 });
-	if (change.cents !== cents) {
-		setChange({
-			cents,
-			direction: cents > change.cents ? 1 : -1,
-			revision: change.revision + 1,
-		});
-	}
 	return (
 		<motion.button
 			type="button"
@@ -280,21 +275,14 @@ function MarketOddsButton({
 			onClick={onClick}
 			whileTap={reduce ? undefined : { scale: 0.96 }}
 			transition={SPRING_PRESS}
-			className="relative flex min-h-10 min-w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-background px-3 text-sm font-semibold text-foreground shadow-[0_3px_0_var(--color-border)] transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-		>
-			{change.revision > 0 && (
-				<motion.span
-					key={change.revision}
-					aria-hidden
-					initial={{ opacity: 0.24 }}
-					animate={{ opacity: 0 }}
-					transition={{ duration: 0.6, ease: EASE_OUT }}
-					className={cn(
-						"pointer-events-none absolute inset-0",
-						change.direction > 0 ? "bg-emerald-500" : "bg-rose-500",
-					)}
-				/>
+			className={cn(
+				"relative flex min-h-10 min-w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-background px-3 text-sm font-semibold text-foreground shadow-[0_3px_0] transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+				positive &&
+					"shadow-emerald-500/20 border-emerald-500/25 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-400",
+				!positive &&
+					"shadow-rose-500/20 border-rose-500/25 bg-rose-500/10 text-rose-700 hover:bg-rose-500/15 dark:text-rose-400",
 			)}
+		>
 			<NumberTicker
 				value={cents}
 				startOnView={false}
