@@ -6,7 +6,8 @@ import { type ReactNode, useId, useState } from "react";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "./tooltip";
-import { NumberTicker } from "./number-ticker";
+import { ActionSwapText } from "./action-swap";
+import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 
 export interface PredictionMarketCardOutcome {
 	id: string;
@@ -268,11 +269,23 @@ function MarketOddsButton({
 }) {
 	const reduce = useReducedMotion();
 	const cents = Math.round(probability(outcome.probability) * 100);
+	const canHover = useHoverCapable();
+	const [hovered, setHovered] = useState(false);
+	const [focused, setFocused] = useState(false);
+	const showAction = (canHover && hovered) || focused;
 	return (
 		<motion.button
 			type="button"
 			aria-label={`Trade ${outcome.label} at ${cents}%`}
 			onClick={onClick}
+			onPointerEnter={(event) => {
+				if (event.pointerType !== "touch") setHovered(true);
+			}}
+			onPointerLeave={() => setHovered(false)}
+			onFocus={(event) =>
+				setFocused(event.currentTarget.matches(":focus-visible"))
+			}
+			onBlur={() => setFocused(false)}
 			whileTap={reduce ? undefined : { scale: 0.96 }}
 			transition={SPRING_PRESS}
 			className={cn(
@@ -283,13 +296,12 @@ function MarketOddsButton({
 					"shadow-rose-500/20 border-rose-500/25 bg-rose-500/10 text-rose-700 hover:bg-rose-500/15 dark:text-rose-400",
 			)}
 		>
-			<NumberTicker
-				value={cents}
-				startOnView={false}
-				duration={0.25}
-				stagger={0}
-				suffix="%"
-			/>
+			<ActionSwapText
+				value={showAction ? "action" : String(cents)}
+				animation="roll"
+			>
+				{showAction ? (positive ? "Yes" : "No") : `${cents}%`}
+			</ActionSwapText>
 		</motion.button>
 	);
 }

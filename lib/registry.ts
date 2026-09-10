@@ -1743,7 +1743,7 @@ export const registry: CategoryEntry[] = [
           {
             slug: "market-cards",
             name: "Market Cards",
-            description: "Compact market listings with consistent outcome rows, animated odds CTAs, payout multipliers and bookmarks. Odds CTAs use green/red backgrounds from the first render. Use Update odds to preview animated price changes.",
+            description: "Compact market listings with consistent outcome rows, animated odds CTAs, payout multipliers and bookmarks. Odds CTAs use green/red backgrounds and roll into Yes/No labels on hover or keyboard focus. Use Update odds to preview animated price changes.",
             badge: "new",
             launchedAt: "2026-09-10",
             installSlug: "prediction-market-card",
