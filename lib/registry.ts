@@ -1736,14 +1736,14 @@ export const registry: CategoryEntry[] = [
       {
         slug: "prediction-market",
         name: "Prediction Market",
-        description: "Animated market listing cards with outcome selection, probabilities and bookmarks, plus a trade ticket with buy/sell modes and rolling amount entry.",
+        description: "Animated market listing cards with outcome CTAs, probabilities and bookmarks, plus a trade ticket with buy/sell modes and rolling amount entry.",
         file: "components/motion/prediction-market.tsx",
         extraFiles: ["components/motion/prediction-market-card.tsx"],
         examples: [
           {
             slug: "market-cards",
             name: "Market Cards",
-            description: "Market listings with binary or match outcomes, animated probabilities, selection feedback and bookmarks. Select an outcome without placing an order; use Update odds to preview price changes.",
+            description: "Compact market listings with consistent outcome rows, animated odds CTAs, payout multipliers and bookmarks. Connect onOutcomeClick to your trade flow; use Update odds to preview price changes.",
             badge: "new",
             launchedAt: "2026-09-10",
             installSlug: "prediction-market-card",

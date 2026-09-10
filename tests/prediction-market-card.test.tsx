@@ -12,71 +12,59 @@ const outcomes = [
 	{ id: "b", label: "Westfield", probability: 0.4 },
 ];
 
-test("selection stays exclusive across outcomes and sides; bookmarks toggle independently", () => {
+test("outcome CTAs do not toggle; bookmarks toggle independently", () => {
 	const { getByRole } = render(
 		<PredictionMarketCard title="Final" volume="$10K" outcomes={outcomes} />,
 	);
-	const yes = getByRole("button", { name: "Northside: Yes" });
-	const no = getByRole("button", { name: "Westfield: No" });
+	const yes = getByRole("button", { name: "Northside: Trade" });
+	const no = getByRole("button", { name: "Westfield: Trade" });
 	fireEvent.click(yes);
-	expect(yes.getAttribute("aria-pressed")).toBe("true");
+	expect(yes.getAttribute("aria-pressed")).toBeNull();
 	fireEvent.click(no);
-	expect(no.getAttribute("aria-pressed")).toBe("true");
-	expect(yes.getAttribute("aria-pressed")).toBe("false");
+	expect(no.getAttribute("aria-pressed")).toBeNull();
+	expect(yes.getAttribute("aria-pressed")).toBeNull();
 	const bookmark = getByRole("button", { name: "Bookmark Final" });
 	fireEvent.click(bookmark);
 	expect(bookmark.getAttribute("aria-pressed")).toBe("true");
 	fireEvent.click(bookmark);
 	expect(bookmark.getAttribute("aria-pressed")).toBe("false");
-	expect(no.getAttribute("aria-pressed")).toBe("true");
+	expect(no.getAttribute("aria-pressed")).toBeNull();
 });
 
-test("controlled selection and bookmark wait for the consumer to accept changes", () => {
+test("outcome CTAs emit actions; controlled bookmarks wait for the consumer", () => {
 	const selections: PredictionMarketCardSelection[] = [];
 	const bookmarks: boolean[] = [];
 	const props = {
 		title: "Final",
 		volume: "$10K",
 		outcomes,
-		onValueChange: (next: PredictionMarketCardSelection) =>
+		onOutcomeClick: (next: PredictionMarketCardSelection) =>
 			selections.push(next),
 		onBookmarkChange: (next: boolean) => bookmarks.push(next),
 	};
 	const { getByRole, rerender } = render(
-		<PredictionMarketCard
-			{...props}
-			variant="choices"
-			value={null}
-			bookmarked={false}
-		/>,
+		<PredictionMarketCard {...props} bookmarked={false} />,
 	);
-	fireEvent.click(getByRole("button", { name: "Northside: Northside" }));
+	fireEvent.click(getByRole("button", { name: "Northside: Trade" }));
 	fireEvent.click(getByRole("button", { name: "Bookmark Final" }));
 	expect(selections).toEqual([{ outcomeId: "a", side: "yes" }]);
 	expect(bookmarks).toEqual([true]);
 	expect(
-		getByRole("button", { name: "Northside: Northside" }).getAttribute(
+		getByRole("button", { name: "Northside: Trade" }).getAttribute(
 			"aria-pressed",
 		),
-	).toBe("false");
+	).toBeNull();
 	expect(
 		getByRole("button", { name: "Bookmark Final" }).getAttribute(
 			"aria-pressed",
 		),
 	).toBe("false");
-	rerender(
-		<PredictionMarketCard
-			{...props}
-			variant="choices"
-			value={selections[0]}
-			bookmarked
-		/>,
-	);
+	rerender(<PredictionMarketCard {...props} bookmarked />);
 	expect(
-		getByRole("button", { name: "Northside: Northside" }).getAttribute(
+		getByRole("button", { name: "Northside: Trade" }).getAttribute(
 			"aria-pressed",
 		),
-	).toBe("true");
+	).toBeNull();
 	expect(
 		getByRole("button", { name: "Bookmark Final" }).getAttribute(
 			"aria-pressed",

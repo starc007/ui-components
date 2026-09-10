@@ -1,6 +1,5 @@
 "use client";
 
-import { Landmark, Trophy } from "lucide-react";
 import { useState } from "react";
 import { PredictionMarketCard } from "@/components/motion/prediction-market-card";
 import { Button } from "@/components/motion/button";
@@ -14,7 +13,7 @@ export function PredictionMarketCardPreview() {
 				<div>
 					<p className="text-sm font-medium">On the radar</p>
 					<p className="mt-1 text-xs text-muted-foreground">
-						Demo markets · select an outcome or save a card
+						Demo markets · explore the odds or save a card
 					</p>
 				</div>
 				<Button
@@ -25,12 +24,21 @@ export function PredictionMarketCardPreview() {
 					Update odds
 				</Button>
 			</div>
-			<div className="grid gap-4 @min-[640px]:grid-cols-2">
+			<div className="grid auto-rows-fr gap-4 @min-[640px]:grid-cols-2">
 				<PredictionMarketCard
 					title="Who takes the championship?"
 					category="Tennis · Tournament winner"
-					icon={<Trophy className="size-5" />}
+					icon={
+						<img
+							src="https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=160&h=160&q=85"
+							alt=""
+							width={48}
+							height={48}
+							className="size-full object-cover"
+						/>
+					}
 					volume="$2.4M"
+					volumeHistory={[12, 18, 15, 26, 20, 32, 29, 38, 34, 48, 43, 58]}
 					status="Finals · Sunday"
 					outcomes={[
 						{
@@ -47,10 +55,18 @@ export function PredictionMarketCardPreview() {
 				/>
 				<PredictionMarketCard
 					title="Northside vs. Westfield"
-					category="Football · Match winner"
-					icon={<Trophy className="size-5" />}
-					variant="choices"
+					category="Football"
+					icon={
+						<img
+							src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=160&h=160&q=85"
+							alt=""
+							width={48}
+							height={48}
+							className="size-full object-cover"
+						/>
+					}
 					volume="$458K"
+					volumeHistory={[8, 12, 10, 19, 15, 28, 23, 34, 30, 40, 36, 45]}
 					status="Live · 64′"
 					live
 					outcomes={[
@@ -58,22 +74,31 @@ export function PredictionMarketCardPreview() {
 							id: "north",
 							label: "Northside",
 							probability: updated ? 0.64 : 0.56,
+							color: "#60a5fa",
 						},
-						{ id: "draw", label: "Draw", probability: updated ? 0.22 : 0.24 },
 						{
 							id: "west",
 							label: "Westfield",
-							probability: updated ? 0.14 : 0.2,
+							probability: updated ? 0.36 : 0.44,
+							color: "#fb7185",
 						},
 					]}
 				/>
 				<PredictionMarketCard
 					title="Where will rates land this year?"
 					category="Economics · Year-end forecast"
-					icon={<Landmark className="size-5" />}
+					icon={
+						<img
+							src="https://images.unsplash.com/photo-1569025690938-a00729c9e1f9?auto=format&fit=crop&w=160&h=160&q=85"
+							alt=""
+							width={48}
+							height={48}
+							className="size-full object-cover"
+						/>
+					}
 					volume="$347K"
+					volumeHistory={[15, 11, 17, 14, 24, 21, 30, 25, 32, 29, 39, 42]}
 					status="Dec 31"
-					className="@min-[640px]:col-span-2"
 					outcomes={[
 						{
 							id: "below",
