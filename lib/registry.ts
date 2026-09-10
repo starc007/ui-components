@@ -1739,6 +1739,8 @@ export const registry: CategoryEntry[] = [
         description: "Animated market listing cards with outcome CTAs, probabilities and bookmarks, plus a trade ticket with buy/sell modes and rolling amount entry.",
         file: "components/motion/prediction-market.tsx",
         extraFiles: ["components/motion/prediction-market-card.tsx"],
+        badge: "new",
+        launchedAt: "2026-09-10",
         examples: [
           {
             slug: "market-cards",
