@@ -197,6 +197,11 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.AttachmentUploadPreview,
     ),
   ),
+  "blocks/prediction-market-card": dynamic(() =>
+    import("./blocks/prediction-market-card.preview").then(
+      (m) => m.PredictionMarketCardPreview,
+    ),
+  ),
   "blocks/prediction-market": dynamic(() =>
     import("./blocks/prediction-market.preview").then(
       (m) => m.PredictionMarketPreview,
