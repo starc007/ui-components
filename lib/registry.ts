@@ -1743,12 +1743,13 @@ export const registry: CategoryEntry[] = [
           {
             slug: "market-cards",
             name: "Market Cards",
-            description: "Compact market listings with consistent outcome rows, animated odds CTAs, payout multipliers and bookmarks. Connect onOutcomeClick to your trade flow; use Update odds to preview price changes.",
+            description: "Compact market listings with consistent outcome rows, animated odds CTAs, payout multipliers and bookmarks. Use Update odds to preview directional price feedback.",
             badge: "new",
             launchedAt: "2026-09-10",
             installSlug: "prediction-market-card",
             file: "components/motion/prediction-market-card.tsx",
             previewKey: "blocks/prediction-market-card",
+            usageFile: "components/previews/blocks/prediction-market-card.usage.tsx",
             previewFile: "components/previews/blocks/prediction-market-card.preview.tsx",
           },
           {

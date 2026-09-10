@@ -16,8 +16,8 @@ test("outcome CTAs do not toggle; bookmarks toggle independently", () => {
 	const { getByRole } = render(
 		<PredictionMarketCard title="Final" volume="$10K" outcomes={outcomes} />,
 	);
-	const yes = getByRole("button", { name: "Northside: Trade" });
-	const no = getByRole("button", { name: "Westfield: Trade" });
+	const yes = getByRole("button", { name: "Trade Northside at 60%" });
+	const no = getByRole("button", { name: "Trade Westfield at 40%" });
 	fireEvent.click(yes);
 	expect(yes.getAttribute("aria-pressed")).toBeNull();
 	fireEvent.click(no);
@@ -45,12 +45,12 @@ test("outcome CTAs emit actions; controlled bookmarks wait for the consumer", ()
 	const { getByRole, rerender } = render(
 		<PredictionMarketCard {...props} bookmarked={false} />,
 	);
-	fireEvent.click(getByRole("button", { name: "Northside: Trade" }));
+	fireEvent.click(getByRole("button", { name: "Trade Northside at 60%" }));
 	fireEvent.click(getByRole("button", { name: "Bookmark Final" }));
 	expect(selections).toEqual([{ outcomeId: "a", side: "yes" }]);
 	expect(bookmarks).toEqual([true]);
 	expect(
-		getByRole("button", { name: "Northside: Trade" }).getAttribute(
+		getByRole("button", { name: "Trade Northside at 60%" }).getAttribute(
 			"aria-pressed",
 		),
 	).toBeNull();
@@ -61,7 +61,7 @@ test("outcome CTAs emit actions; controlled bookmarks wait for the consumer", ()
 	).toBe("false");
 	rerender(<PredictionMarketCard {...props} bookmarked />);
 	expect(
-		getByRole("button", { name: "Northside: Trade" }).getAttribute(
+		getByRole("button", { name: "Trade Northside at 60%" }).getAttribute(
 			"aria-pressed",
 		),
 	).toBeNull();
@@ -70,4 +70,26 @@ test("outcome CTAs emit actions; controlled bookmarks wait for the consumer", ()
 			"aria-pressed",
 		),
 	).toBe("true");
+});
+
+test("market titles are plain text and odds labels track updated prices", () => {
+	const { getByRole, rerender } = render(
+		<PredictionMarketCard
+			title="Final"
+			volume="$10K"
+			outcomes={outcomes}
+		/>,
+	);
+	expect(getByRole("heading", { name: "Final" }).querySelector("a, button")).toBeNull();
+	rerender(
+		<PredictionMarketCard
+			title="Final"
+			volume="$10K"
+			outcomes={[{ ...outcomes[0], probability: 0.65 }]}
+		/>,
+	);
+	expect(getByRole("button", { name: "Trade Northside at 65%" })).toBeTruthy();
+	expect(
+		getByRole("button", { name: "Potential payout for Northside" }),
+	).toBeTruthy();
 });
