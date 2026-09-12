@@ -1,3 +1,4 @@
+import { categoryPath, componentPath } from "@/lib/component-paths";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -41,7 +42,7 @@ export const dynamic = "force-static";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return registry.flatMap((c) =>
+  return registry.filter((c) => c.slug !== "charts").flatMap((c) =>
     c.components.map((comp) => ({ category: c.slug, slug: comp.slug })),
   );
 }
@@ -68,7 +69,7 @@ export async function generateMetadata({
 
   const title = comp.guide?.seo.title ?? `${comp.name} · React motion component`;
   const ogTitle = `${title} · beUI`;
-  const pageUrl = `/components/${cat.slug}/${comp.slug}`;
+  const pageUrl = componentPath(cat.slug, comp.slug);
   const imageUrl = `/api/og?component=${comp.slug}`;
   const keywords = componentKeywords(cat, comp);
   const metaDescription = componentMetaDescription(comp);
@@ -211,8 +212,8 @@ export default async function ComponentPage({
           data={[
             breadcrumbJsonLd([
               { name: "beUI", path: "/" },
-              { name: cat.name, path: `/components/${cat.slug}` },
-              { name: comp.name, path: `/components/${cat.slug}/${comp.slug}` },
+              { name: cat.name, path: categoryPath(cat.slug) },
+              { name: comp.name, path: componentPath(cat.slug, comp.slug) },
             ]),
             componentJsonLd(cat, comp),
           ]}
@@ -223,7 +224,7 @@ export default async function ComponentPage({
             className="flex items-center gap-1.5 text-sm"
           >
             <Link
-              href={`/components/${cat.slug}`}
+              href={categoryPath(cat.slug)}
               className="text-muted-foreground transition-colors hover:text-foreground"
             >
               {cat.name}
@@ -242,7 +243,7 @@ export default async function ComponentPage({
             </div>
             <CopyPage
               pageUrl={pageUrlFor(cat.slug, comp.slug)}
-              markdownPath={`/components/${cat.slug}/${comp.slug}.md`}
+              markdownPath={`${componentPath(cat.slug, comp.slug)}.md`}
               componentName={comp.name}
             />
           </div>

@@ -262,16 +262,16 @@ export const previews: Record<string, ComponentType> = {
   "motion/number-ticker": dynamic(() =>
     import("./motion/number-ticker.preview").then((m) => m.NumberTickerPreview),
   ),
-  "motion/heat-calendar": dynamic(() =>
-    import("./motion/heat-calendar.preview").then((m) => m.HeatCalendarPreview),
+  "charts/heat-calendar": dynamic(() =>
+    import("./charts/heat-calendar.preview").then((m) => m.HeatCalendarPreview),
   ),
-  "motion/returns-calendar": dynamic(() =>
-    import("./motion/returns-calendar.preview").then(
+  "charts/returns-calendar": dynamic(() =>
+    import("./charts/returns-calendar.preview").then(
       (m) => m.ReturnsCalendarPreview,
     ),
   ),
-  "motion/price-target-fan": dynamic(() =>
-    import("./motion/price-target-fan.preview").then(
+  "charts/price-target-fan": dynamic(() =>
+    import("./charts/price-target-fan.preview").then(
       (m) => m.PriceTargetFanPreview,
     ),
   ),

@@ -62,9 +62,9 @@ const COMPONENT_DATES = {
   "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-07-13" },
   "motion/cylinder-carousel": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
-  "motion/heat-calendar": { publishedAt: "2026-09-11", updatedAt: "2026-09-11" },
-  "motion/returns-calendar": { publishedAt: "2026-09-11", updatedAt: "2026-09-11" },
-  "motion/price-target-fan": { publishedAt: "2026-09-11", updatedAt: "2026-09-11" },
+  "charts/heat-calendar": { publishedAt: "2026-09-11", updatedAt: "2026-09-12" },
+  "charts/returns-calendar": { publishedAt: "2026-09-11", updatedAt: "2026-09-12" },
+  "charts/price-target-fan": { publishedAt: "2026-09-11", updatedAt: "2026-09-12" },
   "agents/loading-states": {
     publishedAt: "2026-07-30",
     updatedAt: "2026-08-19",

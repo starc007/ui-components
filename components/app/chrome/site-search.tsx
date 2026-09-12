@@ -1,5 +1,7 @@
 "use client";
 
+import { componentPath } from "@/lib/component-paths";
+
 import { CircleDashed, FileText, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -39,7 +41,7 @@ export function SiteSearch({ className }: { className?: string }) {
             comp.badge === "new" ? (
               <NewBadge launchedAt={comp.launchedAt} />
             ) : undefined,
-          onSelect: () => router.push(`/components/${cat.slug}/${comp.slug}`),
+          onSelect: () => router.push(componentPath(cat.slug, comp.slug)),
         })),
       ),
       ...PAGES.map((page) => ({

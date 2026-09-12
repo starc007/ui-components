@@ -77,6 +77,18 @@ export function MobileNav() {
               Agents
             </Link>
             <Link
+              href="/charts"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                pathname.startsWith("/charts")
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Charts
+            </Link>
+            <Link
               href="/playground"
               onClick={() => setOpen(false)}
               className={cn(

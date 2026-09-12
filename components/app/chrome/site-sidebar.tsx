@@ -1,5 +1,7 @@
 "use client";
 
+import { categoryPath, componentPath } from "@/lib/component-paths";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { registry } from "@/lib/registry";
@@ -24,7 +26,7 @@ const SIDEBAR_CATEGORY_ORDER: Record<string, number> = {
   blocks: 2,
 };
 
-const SIDEBAR_CATEGORIES = [...registry].sort(
+const SIDEBAR_CATEGORIES = registry.filter((category) => category.slug !== "charts").sort(
   (a, b) =>
     (SIDEBAR_CATEGORY_ORDER[a.slug] ?? Number.MAX_SAFE_INTEGER) -
     (SIDEBAR_CATEGORY_ORDER[b.slug] ?? Number.MAX_SAFE_INTEGER),
@@ -92,7 +94,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
       {SIDEBAR_CATEGORIES.map((cat) => (
         <div key={cat.slug}>
           <Link
-            href={`/components/${cat.slug}`}
+            href={categoryPath(cat.slug)}
             onClick={onNavigate}
             className="mb-2 flex items-center gap-2 rounded-md px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
           >
@@ -103,7 +105,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           </Link>
           <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
             {moveNewItemsToTop(cat.components, now).map((comp) => {
-              const href = `/components/${cat.slug}/${comp.slug}`;
+              const href = componentPath(cat.slug, comp.slug);
               return (
                 <Link
                   key={comp.slug}

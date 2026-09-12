@@ -1,3 +1,4 @@
+import { categoryPath, componentPath } from "@/lib/component-paths";
 import type { JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { componentDates } from "@/lib/component-dates";
 import {
@@ -188,7 +189,7 @@ export function componentJsonLd(
   cat: CategoryEntry,
   comp: ComponentEntry,
 ): JsonLdSchema {
-  const url = abs(`/components/${cat.slug}/${comp.slug}`);
+  const url = abs(componentPath(cat.slug, comp.slug));
   const dates = componentDates(cat.slug, comp.slug);
   return {
     "@context": "https://schema.org",
@@ -225,7 +226,7 @@ export function componentJsonLd(
 
 /** Category landing page: CollectionPage listing its components. */
 export function categoryJsonLd(cat: CategoryEntry): JsonLdSchema {
-  const url = abs(`/components/${cat.slug}`);
+  const url = abs(categoryPath(cat.slug));
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -241,7 +242,7 @@ export function categoryJsonLd(cat: CategoryEntry): JsonLdSchema {
         "@type": "ListItem",
         position: i + 1,
         name: comp.name,
-        url: abs(`/components/${cat.slug}/${comp.slug}`),
+        url: abs(componentPath(cat.slug, comp.slug)),
       })),
     },
   };

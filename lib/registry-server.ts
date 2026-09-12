@@ -272,8 +272,8 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
     source_url: `${SITE_URL}/r/${slug}/raw`,
     detail_url: `${SITE_URL}/r/${slug}`,
     raw_url: `${SITE_URL}/r/${slug}/raw`,
-    page_url: `${SITE_URL}/components/${categorySlug}/${comp.pageSlug}`,
-    markdown_url: `${SITE_URL}/components/${categorySlug}/${comp.pageSlug}.md`,
+    page_url: pageUrlFor(categorySlug, comp.pageSlug),
+    markdown_url: `${pageUrlFor(categorySlug, comp.pageSlug)}.md`,
     published_at: dates.publishedAt,
     updated_at: dates.updatedAt,
     dependencies: Array.from(new Set([...componentGraph.external, ...(previewGraph?.external ?? [])])).sort(),
@@ -390,8 +390,8 @@ export async function buildIndex() {
         updated_at: dates.updatedAt,
         detail_url: `${SITE_URL}/r/${c.slug}`,
         raw_url: `${SITE_URL}/r/${c.slug}/raw`,
-        page_url: `${SITE_URL}/components/${c.category.slug}/${c.slug}`,
-        markdown_url: `${SITE_URL}/components/${c.category.slug}/${c.slug}.md`,
+        page_url: pageUrlFor(c.category.slug, c.slug),
+        markdown_url: `${pageUrlFor(c.category.slug, c.slug)}.md`,
       };
     }),
   };

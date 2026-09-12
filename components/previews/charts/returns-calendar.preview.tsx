@@ -1,6 +1,6 @@
 "use client";
 
-import { ReturnsCalendar } from "@/components/motion/returns-calendar";
+import { ReturnsCalendar } from "@/components/charts/returns-calendar";
 
 export function ReturnsCalendarPreview() {
   return <ReturnsCalendar />;

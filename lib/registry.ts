@@ -971,12 +971,20 @@ export const registry: CategoryEntry[] = [
           "loading indicator",
         ],
       },
+    ],
+  },
+  {
+    slug: "charts",
+    name: "Charts",
+    description:
+      "Animated React charts for activity, returns, and price targets, built with Motion and Tailwind CSS as customizable copy-paste source.",
+    components: [
       {
         slug: "heat-calendar",
         name: "Heat Calendar",
         description:
           "Weeks of activity as a single-hue grid with month labels. Cells spring in on a diagonal wave; hovering one lifts it and its neighbours and glides a tooltip with its date and count, a click pins it, a second click totals the span between, and the legend filters by level.",
-        file: "components/motion/heat-calendar.tsx",
+        file: "components/charts/heat-calendar.tsx",
         badge: "new",
         launchedAt: "2026-09-11",
         credit: {
@@ -997,7 +1005,7 @@ export const registry: CategoryEntry[] = [
         name: "Returns Calendar",
         description:
           "Monthly returns as a years by months grid, tinted up or down by magnitude, with a compounded year column. Hovering a month glides a tooltip and dims everything unrelated, a year total replays its row, and a click anchors a span that compounds as you hover, locks on a second click.",
-        file: "components/motion/returns-calendar.tsx",
+        file: "components/charts/returns-calendar.tsx",
         badge: "new",
         launchedAt: "2026-09-11",
         credit: {
@@ -1018,7 +1026,7 @@ export const registry: CategoryEntry[] = [
         name: "Price Target Fan",
         description:
           "A year of price history draws to now, then three projections fan out to the high, mean and low targets. Scrubbing or hovering a target glides a value card beside the point.",
-        file: "components/motion/price-target-fan.tsx",
+        file: "components/charts/price-target-fan.tsx",
         badge: "new",
         launchedAt: "2026-09-11",
         credit: {

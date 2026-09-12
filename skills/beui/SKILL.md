@@ -144,3 +144,5 @@ The live registry is the source of truth. Use the table below only to resolve co
 ## In this repo
 
 When contributing to beUI itself, follow `AGENTS.md`. A new public component needs source, preview, registry entry, and a passing `bun run check:registry`. Never rename existing `/r/{name}.json` slugs.
+
+Chart components (`heat-calendar`, `returns-calendar`, `price-target-fan`) live under `/charts` in the docs. Their `@beui` install slugs are unchanged.
