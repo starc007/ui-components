@@ -332,18 +332,30 @@ export default async function ComponentPage({
         {comp.credit ? (
           <section className="mt-12 border-t border-border pt-8">
             <h2 className="text-sm font-semibold text-foreground">Built by</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Fixtures was created by{" "}
-              <Link
+            <p className="mt-2 flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
+              <span>{comp.name} was created by</span>
+              <span className="inline-flex items-center">
+                <Link
                 href={comp.credit.url}
                 target="_blank"
                 rel="noreferrer noopener"
-                aria-label={`${comp.credit.name} on X`}
-                className="font-medium text-foreground underline-offset-2 hover:underline"
+                className="inline-flex items-center gap-2 font-medium text-foreground underline-offset-2 hover:underline"
               >
+                {comp.credit.avatar ? (
+                  // biome-ignore lint/performance/noImgElement: external contributor avatar, not worth a next/image remotePatterns entry
+                  <img
+                    src={comp.credit.avatar}
+                    alt=""
+                    width={28}
+                    height={28}
+                    loading="lazy"
+                    className="size-7 shrink-0 rounded-full border border-border object-cover"
+                  />
+                ) : null}
                 {comp.credit.name}
               </Link>
-              .
+                .
+              </span>
             </p>
           </section>
         ) : null}

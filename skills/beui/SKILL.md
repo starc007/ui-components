@@ -111,6 +111,9 @@ The live registry is the source of truth. Use the table below only to resolve co
 | Cylinder carousel | `cylinder-carousel` | `marquee` |
 | Logo or text marquee | `marquee` | `cylinder-carousel` |
 | Data table | `table` | HTML table from scratch |
+| Activity heatmap, contribution graph | `heat-calendar` | custom grid |
+| Monthly returns grid | `returns-calendar` | `heat-calendar` |
+| Analyst price target chart, forecast fan | `price-target-fan` | custom svg chart |
 | Editable table | `table-editable` | `table` |
 | Async table | `table-async` | `table` |
 | Tournament bracket | `knockout-bracket` | `knockout-wheel` |

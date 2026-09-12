@@ -28,6 +28,8 @@ export type ComponentEntry = {
   credit?: {
     name: string;
     url: string;
+    /** Optional avatar shown before the name. */
+    avatar?: string;
   };
   badge?: "new";
   /** ISO date the component shipped. Drives newest-first order in the landing
@@ -967,6 +969,69 @@ export const registry: CategoryEntry[] = [
           "dot matrix loader",
           "dithering loader",
           "loading indicator",
+        ],
+      },
+      {
+        slug: "heat-calendar",
+        name: "Heat Calendar",
+        description:
+          "Weeks of activity as a single-hue grid with month labels. Cells spring in on a diagonal wave; hovering one lifts it and its neighbours and glides a tooltip with its date and count, a click pins it, a second click totals the span between, and the legend filters by level.",
+        file: "components/motion/heat-calendar.tsx",
+        badge: "new",
+        launchedAt: "2026-09-11",
+        credit: {
+          name: "Savva",
+          url: "https://ssych.com",
+          avatar: "https://github.com/savvasicevs.png?size=112",
+        },
+        keywords: [
+          "heatmap react",
+          "activity calendar",
+          "contribution graph",
+          "github contribution chart",
+          "heat map component",
+        ],
+      },
+      {
+        slug: "returns-calendar",
+        name: "Returns Calendar",
+        description:
+          "Monthly returns as a years by months grid, tinted up or down by magnitude, with a compounded year column. Hovering a month glides a tooltip and dims everything unrelated, a year total replays its row, and a click anchors a span that compounds as you hover, locks on a second click.",
+        file: "components/motion/returns-calendar.tsx",
+        badge: "new",
+        launchedAt: "2026-09-11",
+        credit: {
+          name: "Savva",
+          url: "https://ssych.com",
+          avatar: "https://github.com/savvasicevs.png?size=112",
+        },
+        keywords: [
+          "monthly returns heatmap",
+          "returns calendar",
+          "performance grid",
+          "portfolio returns chart",
+          "finance heatmap react",
+        ],
+      },
+      {
+        slug: "price-target-fan",
+        name: "Price Target Fan",
+        description:
+          "A year of price history draws to now, then three projections fan out to the high, mean and low targets. Scrubbing or hovering a target glides a value card beside the point.",
+        file: "components/motion/price-target-fan.tsx",
+        badge: "new",
+        launchedAt: "2026-09-11",
+        credit: {
+          name: "Savva",
+          url: "https://ssych.com",
+          avatar: "https://github.com/savvasicevs.png?size=112",
+        },
+        keywords: [
+          "price target chart",
+          "analyst targets",
+          "forecast fan chart",
+          "svg line chart react",
+          "stock projection chart",
         ],
       },
     ],

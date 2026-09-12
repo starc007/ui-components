@@ -58,6 +58,9 @@ Before building a new component, check this list. If it exists, import it. If it
 | `center-morph-modal` | `components/motion/center-morph-modal.tsx` | Composable modal whose full-size surface unfolds from its exact center toward every edge, then folds back the same way with an inset close control |
 | `chromatic-text-reveal` | `components/motion/chromatic-text-reveal.tsx` | Fixed sentence prefix with a cycling final word revealed by a chromatic sweep |
 | `text-reveal` | `components/motion/text-reveal.tsx` | Word or character reveal with spring slide-up and blur |
+| `heat-calendar` | `components/motion/heat-calendar.tsx` | Weeks of activity as a single-hue grid with month labels; cells spring in on a diagonal wave, hover ripples the neighbours and glides a date + count tooltip, click pins a cell and a second click totals the span between, legend filters by level; reduced-motion safe |
+| `returns-calendar` | `components/motion/returns-calendar.tsx` | Monthly returns as a years × months grid tinted up/down by magnitude with a compounded year column; hover glides a tooltip and dims unrelated cells, a year total replays its row, click anchors a span that compounds live and locks on a second click; reduced-motion safe |
+| `price-target-fan` | `components/motion/price-target-fan.tsx` | SVG price history that draws to now, then dashed projections fan to high/mean/low targets; scrub or hover glides a value card on a spring, live ring on the now dot; reduced-motion safe |
 | `text-shimmer` | `components/motion/text-shimmer.tsx` | Gradient sweep across text for loading or emphasis |
 | `text-cascade` | `components/motion/text-cascade.tsx` | Letter-by-letter slot roll for standalone text |
 | `text-scramble` | `components/motion/text-scramble.tsx` | Controlled character scramble that resolves changed text while exposing a stable accessible value |
