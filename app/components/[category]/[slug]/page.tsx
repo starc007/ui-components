@@ -205,6 +205,9 @@ export default async function ComponentPage({
       : []),
   ];
 
+  const creditUrl = comp.credit ? new URL(comp.credit.url) : null;
+  creditUrl?.searchParams.set("ref", "beui");
+
   return (
     <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_16rem] xl:gap-10 2xl:gap-14">
       <div className="min-w-0">
@@ -333,31 +336,14 @@ export default async function ComponentPage({
         {comp.credit ? (
           <section className="mt-12 border-t border-border pt-8">
             <h2 className="text-sm font-semibold text-foreground">Built by</h2>
-            <p className="mt-2 flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
-              <span>{comp.name} was created by</span>
-              <span className="inline-flex items-center">
-                <Link
-                href={comp.credit.url}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="inline-flex items-center gap-2 font-medium text-foreground underline-offset-2 hover:underline"
-              >
-                {comp.credit.avatar ? (
-                  // biome-ignore lint/performance/noImgElement: external contributor avatar, not worth a next/image remotePatterns entry
-                  <img
-                    src={comp.credit.avatar}
-                    alt=""
-                    width={28}
-                    height={28}
-                    loading="lazy"
-                    className="size-7 shrink-0 rounded-full border border-border object-cover"
-                  />
-                ) : null}
-                {comp.credit.name}
-              </Link>
-                .
-              </span>
-            </p>
+            <Link
+              href={creditUrl!.toString()}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-foreground"
+            >
+              <span className="underline underline-offset-2">{comp.credit.name}</span>
+            </Link>
           </section>
         ) : null}
         {cat.slug === "blocks" ? <KeepInMind /> : null}
