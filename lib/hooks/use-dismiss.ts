@@ -83,7 +83,7 @@ function consumeActivation(source: Event) {
 export function useDismiss(
   open: boolean,
   onDismiss: () => void,
-  ref: RefObject<HTMLElement | null> | null,
+  ref: RefObject<HTMLElement | SVGElement | null> | null,
   {
     behavior = "pass-through",
     escape: dismissOnEscape = true,

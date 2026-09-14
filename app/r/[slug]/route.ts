@@ -1,3 +1,4 @@
+import { componentPath } from "@/lib/component-paths";
 import { NextResponse } from "next/server";
 import { buildComponentMarkdown } from "@/lib/component-markdown";
 import { allRegistryTargets, allShadcnTargets, buildEntry, buildShadcnItem, findCategoryBySlug, findRegistryTarget } from "@/lib/registry-server";
@@ -39,7 +40,7 @@ export async function GET(
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "GET, OPTIONS",
         "x-robots-tag": "noindex",
-        link: `<${target.pageSlug === componentSlug ? `/components/${cat.slug}/${componentSlug}` : `/components/${cat.slug}/${target.pageSlug}`}>; rel="canonical"; type="text/html"`,
+        link: `<${componentPath(cat.slug, target.pageSlug)}>; rel="canonical"; type="text/html"`,
       },
     });
   }
@@ -64,7 +65,7 @@ export async function GET(
       "cache-control": "public, max-age=300, s-maxage=3600",
       "access-control-allow-origin": "*",
       "access-control-allow-methods": "GET, OPTIONS",
-      "link": `</r/${slug}/raw>; rel="alternate"; type="text/plain", </components/${cat.slug}/${componentSlug}.md>; rel="alternate"; type="text/markdown", </llms.txt>; rel="describedby"; type="text/plain"`,
+      "link": `</r/${slug}/raw>; rel="alternate"; type="text/plain", <${componentPath(cat.slug, componentSlug)}.md>; rel="alternate"; type="text/markdown", </llms.txt>; rel="describedby"; type="text/plain"`,
     },
   });
 }

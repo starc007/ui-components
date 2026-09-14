@@ -1,3 +1,4 @@
+import { categoryPath, componentPath } from "@/lib/component-paths";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -41,7 +42,7 @@ export const dynamic = "force-static";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return registry.flatMap((c) =>
+  return registry.filter((c) => c.slug !== "charts").flatMap((c) =>
     c.components.map((comp) => ({ category: c.slug, slug: comp.slug })),
   );
 }
@@ -68,7 +69,7 @@ export async function generateMetadata({
 
   const title = comp.guide?.seo.title ?? `${comp.name} · React motion component`;
   const ogTitle = `${title} · beUI`;
-  const pageUrl = `/components/${cat.slug}/${comp.slug}`;
+  const pageUrl = componentPath(cat.slug, comp.slug);
   const imageUrl = `/api/og?component=${comp.slug}`;
   const keywords = componentKeywords(cat, comp);
   const metaDescription = componentMetaDescription(comp);
@@ -204,6 +205,9 @@ export default async function ComponentPage({
       : []),
   ];
 
+  const creditUrl = comp.credit ? new URL(comp.credit.url) : null;
+  creditUrl?.searchParams.set("ref", "beui");
+
   return (
     <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_16rem] xl:gap-10 2xl:gap-14">
       <div className="min-w-0">
@@ -211,8 +215,8 @@ export default async function ComponentPage({
           data={[
             breadcrumbJsonLd([
               { name: "beUI", path: "/" },
-              { name: cat.name, path: `/components/${cat.slug}` },
-              { name: comp.name, path: `/components/${cat.slug}/${comp.slug}` },
+              { name: cat.name, path: categoryPath(cat.slug) },
+              { name: comp.name, path: componentPath(cat.slug, comp.slug) },
             ]),
             componentJsonLd(cat, comp),
           ]}
@@ -223,7 +227,7 @@ export default async function ComponentPage({
             className="flex items-center gap-1.5 text-sm"
           >
             <Link
-              href={`/components/${cat.slug}`}
+              href={categoryPath(cat.slug)}
               className="text-muted-foreground transition-colors hover:text-foreground"
             >
               {cat.name}
@@ -242,7 +246,7 @@ export default async function ComponentPage({
             </div>
             <CopyPage
               pageUrl={pageUrlFor(cat.slug, comp.slug)}
-              markdownPath={`/components/${cat.slug}/${comp.slug}.md`}
+              markdownPath={`${componentPath(cat.slug, comp.slug)}.md`}
               componentName={comp.name}
             />
           </div>
@@ -331,20 +335,15 @@ export default async function ComponentPage({
 
         {comp.credit ? (
           <section className="mt-12 border-t border-border pt-8">
-            <h2 className="text-sm font-semibold text-foreground">Built by</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Fixtures was created by{" "}
-              <Link
-                href={comp.credit.url}
-                target="_blank"
-                rel="noreferrer noopener"
-                aria-label={`${comp.credit.name} on X`}
-                className="font-medium text-foreground underline-offset-2 hover:underline"
-              >
-                {comp.credit.name}
-              </Link>
-              .
-            </p>
+            <h2 className="text-sm font-semibold text-foreground">Contributed by</h2>
+            <Link
+              href={creditUrl!.toString()}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-foreground"
+            >
+              <span className="underline underline-offset-2">{comp.credit.name}</span>
+            </Link>
           </section>
         ) : null}
         {cat.slug === "blocks" ? <KeepInMind /> : null}

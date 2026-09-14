@@ -17,10 +17,10 @@ Prefer `typecheck` + `lint` for quick verification. Do not start the dev server 
 
 ## Layout
 
-- `components/motion/` and `components/agents/` — the library. One file per component; multi-file widgets get a folder (`swap/`, `button/`, `loading-states/`).
+- `components/motion/`, `components/charts/`, and `components/agents/` — the library. One file per component; multi-file widgets get a folder (`swap/`, `button/`, `loading-states/`).
 - `components/previews/` — demo per component, registered in `components/previews/index.tsx`. Previews ship through the registry too. When an interactive preview uses internal demo helpers, set the registry entry's `usageFile` to a separate public composition so the Usage tab stays copyable.
 - `components/app/` — site chrome (header, hero, dock, code blocks). Not part of the library.
-- `lib/registry.ts` — component catalog (slugs, files, examples). Three categories: `motion` (display name "Components", primitives), `agents` (AI and agent interface primitives), and `blocks` (composed widgets: swap, dynamic island, command palette, expandable action bar). Blocks emit `registry:block` shadcn items. Preview files live under `components/previews/<category>/`. `lib/registry-server.ts` builds registry items by following each file's `@/` and relative imports and bundling everything it finds. Internal imports are therefore safe and encouraged; a component that imports `@/lib/ease` ships `lib/ease.ts` with it.
+- `lib/registry.ts` — component catalog (slugs, files, examples). Four categories: `motion` (display name "Components", primitives), `agents` (AI and agent interface primitives), `charts` (data visualizations at `/charts`, with detail pages at `/charts/<slug>`), and `blocks` (composed widgets: swap, dynamic island, command palette, expandable action bar). Blocks emit `registry:block` shadcn items. Preview files live under `components/previews/<category>/`. `lib/registry-server.ts` builds registry items by following each file's `@/` and relative imports and bundling everything it finds. Internal imports are therefore safe and encouraged; a component that imports `@/lib/ease` ships `lib/ease.ts` with it.
 - `app/r/*` — registry endpoints (shadcn items, raw source, index). beUI is listed in shadcn's official registry directory as the `@beui` namespace with URL template `https://beui.dev/r/{name}.json` — that path shape and existing install slugs are public contract; never break or rename them.
 - `lib/ease.ts` — all motion tokens.
 - `scripts/check-registry.ts` — validates the catalog.
@@ -73,6 +73,14 @@ Before building a new component, check this list. If it exists, import it. If it
 | `bouncy-accordion` | `components/motion/bouncy-accordion.tsx` | Single-open accordion with weighted spring layout and icon rows |
 | `magnetic` | `components/motion/magnetic.tsx` | Cursor-attracted magnetic pull wrapper |
 | `scroll-animation` | `components/motion/smooth-scroll.tsx`, `scroll-progress.tsx`, `parallax.tsx`, `scroll-to.tsx`, `scroll-reveal.tsx` | Scroll-driven motion group (variants install as `@beui/smooth-scroll`, `@beui/scroll-progress`, `@beui/parallax`, `@beui/scroll-to`, `@beui/scroll-reveal`). **Smooth Scroll**: Lenis provider (`root` page / `root={false}` contained) + `useSmoothScroll` hook (offset/progress/velocity, `scrollTo`), reduced-motion native. **Scroll Progress**: bar or ring reading `useSmoothScroll().progress`. **Parallax**: drifts children at a speed factor across the viewport, either axis. **Scroll To**: button that smooth-scrolls to a target via the provider. **Scroll Reveal**: spring slide + blur reveal on viewport enter |
+
+### Charts (`charts` category — data visualizations)
+
+| slug | file | what it does |
+|---|---|---|
+| `heat-calendar` | `components/charts/heat-calendar.tsx` + `heat-calendar/` | Composable `HeatCalendar` root with `HeatCalendarGrid`, `HeatCalendarLegend`, `HeatCalendarTooltip`, and `useHeatCalendar`; accepts real intensities and controlled/uncontrolled range selection, uses UTC dates; cells spring in on a diagonal wave, hover ripples the neighbours and shows the shared Tooltip with date + count, click pins a cell and a second click totals the span between, legend filters by level; reduced-motion safe |
+| `returns-calendar` | `components/charts/returns-calendar.tsx` + `returns-calendar/` | Composable `ReturnsCalendar` root with `ReturnsCalendarGrid`, `ReturnsCalendarTooltip`, and `useReturnsCalendar`; consumer-supplied years/returns and controlled/uncontrolled selections; hover shows the shared Tooltip and dims unrelated cells, a year total replays its row, click anchors a span that compounds live and locks on a second click; reduced-motion safe |
+| `price-target-fan` | `components/charts/price-target-fan.tsx` + `price-target-fan/` | Composable `PriceTargetFan` with Header, Plot, Svg, Axes, History, Targets, Now, Cursor, Tooltip parts and `usePriceTargetFan`; requires current price and targets, accepts real dated history (no generated data), controlled/uncontrolled active readout; scrub or hover shows the shared Tooltip at the data point, live ring on the now dot; reduced-motion safe |
 
 ### AI Agents (`agents` category — agent interface primitives)
 

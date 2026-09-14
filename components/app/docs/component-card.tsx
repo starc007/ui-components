@@ -1,3 +1,4 @@
+import { componentPath } from "@/lib/component-paths";
 import Link from "next/link";
 import { NewBadge } from "@/components/app/docs/new-badge";
 
@@ -18,7 +19,7 @@ export function ComponentCard({
 }) {
   return (
     <Link
-      href={`/components/${categorySlug}/${slug}`}
+      href={componentPath(categorySlug, slug)}
       className="group/card relative flex h-40 flex-col overflow-hidden rounded-3xl bg-card transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <div className="flex shrink-0 items-center justify-between gap-3 px-4 py-3">
