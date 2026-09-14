@@ -10,6 +10,8 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
+  type RefObject,
   useRef,
   useState,
 } from "react";
@@ -24,7 +26,12 @@ type Side = "top" | "right" | "bottom" | "left";
 
 export interface TooltipProps {
   content: ReactNode;
-  children: ReactElement;
+  children?: ReactElement;
+  /** Existing trigger for controlled integrations such as chart cells. */
+  anchorRef?: RefObject<HTMLElement | null>;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  id?: string;
   side?: Side;
   /** Delay before showing (ms). Default 120. */
   delay?: number;
@@ -63,12 +70,26 @@ export function Tooltip({
   delay = 120,
   className,
   wrapperClassName,
+  anchorRef: externalAnchorRef,
+  open: controlledOpen,
+  onOpenChange,
+  id: providedId,
 }: TooltipProps) {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (controlledOpen === undefined) setInternalOpen(next);
+      onOpenChange?.(next);
+    },
+    [controlledOpen, onOpenChange],
+  );
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
-  const id = useId();
+  const generatedId = useId();
+  const id = providedId ?? generatedId;
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const anchorRef = useRef<HTMLSpanElement>(null);
+  const wrapperRef = useRef<HTMLSpanElement>(null);
+  const anchorRef = externalAnchorRef ?? wrapperRef;
   const hover = useHoverGesture();
 
   // Anchor point in viewport coords, on the edge of the trigger facing `side`.
@@ -87,7 +108,11 @@ export function Tooltip({
       right: { top: cy, left: r.right + GAP },
     };
     setCoords(point[side]);
-  }, [side]);
+  }, [side, anchorRef]);
+
+  useLayoutEffect(() => {
+    if (open) place();
+  }, [open, place]);
 
   const show = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
@@ -99,7 +124,7 @@ export function Tooltip({
       },
       warm ? 0 : delay,
     );
-  }, [delay, place]);
+  }, [delay, place, setOpen]);
 
   const hide = useCallback(() => {
     if (timer.current) {
@@ -108,7 +133,7 @@ export function Tooltip({
     }
     if (open) lastHiddenAt = Date.now();
     setOpen(false);
-  }, [open]);
+  }, [open, setOpen]);
 
   // A finger never hovers, and Safari does not focus a button on tap either, so
   // the label is only reachable if the tap itself opens the tooltip. A click
@@ -127,7 +152,7 @@ export function Tooltip({
     if (timer.current) clearTimeout(timer.current);
     place();
     setOpen(true);
-  }, [hide, place, tap]);
+  }, [hide, place, tap, setOpen]);
 
   // ...and closed again by the next tap that lands somewhere else. The label
   // covers nothing interactive, so that tap passes through to what it hit.
@@ -146,7 +171,14 @@ export function Tooltip({
     };
   }, [open, place]);
 
-  if (!isValidElement(children)) return children;
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
+
+  if (!externalAnchorRef && !isValidElement(children)) return children;
 
   // The label describes the trigger, so it has to name the trigger itself.
   // Everything else the tooltip needs is read off the anchor below instead of
@@ -156,49 +188,47 @@ export function Tooltip({
   // ThemeToggle does — then runs the tooltip's instead of its own. Composing
   // with `props.onClick` cannot save it either, because a component element's
   // props hold nothing the component does internally.
-  const trigger = cloneElement(children as ReactElement<Record<string, unknown>>, {
-    "aria-describedby": id,
-  });
+  const trigger = isValidElement(children)
+    ? cloneElement(children as ReactElement<Record<string, unknown>>, {
+        "aria-describedby": id,
+      })
+    : null;
 
   return (
     <>
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: the anchor is not a
-          control — it observes the trigger it wraps. Every event listed reaches
-          it on its own (pointerdown/click/keydown/pointercancel bubble, focus
-          and blur arrive as focusin/focusout, and enter/leave are derived from
-          pointerover/pointerout along a path the anchor is on), so the trigger
-          keeps every handler it came with. */}
-      <span
-        ref={anchorRef}
-        className={cn("relative inline-flex align-middle", wrapperClassName)}
-        // Pointer events, not the mouse pair: a tap fires compatibility
-        // mouseenter/mouseleave that carry no pointerType, which raced the tap
-        // path into opening and closing the same label.
-        onPointerEnter={(event: PointerEvent) => {
-          if (hover.enter(event)) show();
-        }}
-        onPointerLeave={(event: PointerEvent) => {
-          if (hover.leave(event)) hide();
-        }}
-        onFocus={show}
-        onBlur={hide}
-        onPointerDown={(event: PointerEvent) => tap.start(event, open)}
-        // A gesture the platform took away sends no click, and a key press
-        // starts an activation that never had a pointer behind it. Either way
-        // the record has to go, or the next click reads a finger that has long
-        // since lifted.
-        onPointerCancel={tap.drop}
-        onKeyDown={tap.drop}
-        onClick={toggleOnTap}
-      >
-        {trigger}
-      </span>
+      {!externalAnchorRef ? (
+        // biome-ignore lint/a11y/noStaticElementInteractions: This wrapper observes bubbling trigger events without replacing the control's handlers.
+        <span
+          ref={wrapperRef}
+          className={cn("relative inline-flex align-middle", wrapperClassName)}
+          // Pointer events, not the mouse pair: a tap fires compatibility
+          // mouseenter/mouseleave that carry no pointerType, which raced the tap
+          // path into opening and closing the same label.
+          onPointerEnter={(event: PointerEvent) => {
+            if (hover.enter(event)) show();
+          }}
+          onPointerLeave={(event: PointerEvent) => {
+            if (hover.leave(event)) hide();
+          }}
+          onFocus={show}
+          onBlur={hide}
+          onPointerDown={(event: PointerEvent) => tap.start(event, open)}
+          // A gesture the platform took away sends no click, and a key press
+          // starts an activation that never had a pointer behind it. Either way
+          // the record has to go, or the next click reads a finger that has long
+          // since lifted.
+          onPointerCancel={tap.drop}
+          onKeyDown={tap.drop}
+          onClick={toggleOnTap}
+        >
+          {trigger}
+        </span>
+      ) : null}
       {typeof document !== "undefined"
         ? createPortal(
             <AnimatePresence>
               {open && coords ? (
                 <span
-                  aria-hidden
                   className="pointer-events-none fixed z-[9999]"
                   style={{
                     top: coords.top,

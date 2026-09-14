@@ -274,7 +274,11 @@ test("chart installs include composable parts and the shared tooltip surface", a
     const item = await buildShadcnItem("charts", slug);
     expect(item?.name).toBe(slug);
     expect(item?.files.some((file) => file.path === "components/motion/tooltip-surface.tsx")).toBe(true);
-    expect(item?.files.some((file) => file.path === "components/charts/shared/chart-tooltip.tsx")).toBe(true);
+    const tooltipFile =
+      slug === "returns-calendar"
+        ? "components/motion/tooltip.tsx"
+        : "components/charts/shared/chart-tooltip.tsx";
+    expect(item?.files.some((file) => file.path === tooltipFile)).toBe(true);
   }
 });
 
@@ -325,4 +329,26 @@ test("a removed price history sample does not regain stale active state when res
     </PriceTargetFan>,
   );
   expect(getByText("inactive")).toBeTruthy();
+});
+
+test("ReturnsCalendar uses our portaled Tooltip anchored above the active cell", () => {
+  const { container, getByRole } = render(<ReturnsCalendar years={[2024]} returns={[[10]]} />);
+  const cell = getByRole("button", { name: "2024 +10.0% for the year" });
+  cell.getBoundingClientRect = () => ({
+    left: 200,
+    right: 240,
+    top: 100,
+    bottom: 130,
+    width: 40,
+    height: 30,
+    x: 200,
+    y: 100,
+    toJSON() {},
+  });
+  fireEvent.focus(cell);
+  const tooltip = getByRole("tooltip");
+  expect(container.contains(tooltip)).toBe(false);
+  expect(cell.getAttribute("aria-describedby")).toBe(tooltip.id);
+  expect(tooltip.parentElement?.style.top).toBe("92px");
+  expect(tooltip.parentElement?.style.left).toBe("220px");
 });
