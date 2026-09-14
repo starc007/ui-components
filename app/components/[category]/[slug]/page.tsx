@@ -335,7 +335,7 @@ export default async function ComponentPage({
 
         {comp.credit ? (
           <section className="mt-12 border-t border-border pt-8">
-            <h2 className="text-sm font-semibold text-foreground">Built by</h2>
+            <h2 className="text-sm font-semibold text-foreground">Contributed by</h2>
             <Link
               href={creditUrl!.toString()}
               target="_blank"
