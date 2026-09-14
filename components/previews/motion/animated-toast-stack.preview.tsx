@@ -21,6 +21,12 @@ const POSITIONS: ToastPosition[] = [
 
 const EXAMPLES: Array<ToastInput & { label: string }> = [
   {
+    label: "Title only",
+    status: "success",
+    title: "Saved",
+    duration: 0,
+  },
+  {
     label: "Promise",
     status: "loading",
     title: "Publishing component",

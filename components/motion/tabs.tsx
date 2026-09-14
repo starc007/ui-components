@@ -30,12 +30,12 @@ function useTabs() {
   return ctx;
 }
 
-// Weighty spring for the active-tab indicator: a touch of overshoot so it
-// settles with life instead of snapping.
+// Settle without overshoot: a scrollable tab list would turn even a small
+// overshoot into a transient scrollbar and layout shift.
 const transition: Transition = {
   type: "spring",
   stiffness: 170,
-  damping: 24,
+  damping: 30,
   mass: 1.2,
 };
 
