@@ -7,11 +7,11 @@ import {
   type PointerEvent,
   type ReactElement,
   type ReactNode,
+  type RefObject,
   useCallback,
   useEffect,
   useId,
   useLayoutEffect,
-  type RefObject,
   useRef,
   useState,
 } from "react";
@@ -28,7 +28,9 @@ export interface TooltipProps {
   content: ReactNode;
   children?: ReactElement;
   /** Existing trigger for controlled integrations such as chart cells. */
-  anchorRef?: RefObject<HTMLElement | null>;
+  anchorRef?: RefObject<HTMLElement | SVGElement | null>;
+  /** Point within the anchor, as fractions of its rendered width and height. */
+  anchorPoint?: { x: number; y: number };
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   id?: string;
@@ -71,6 +73,7 @@ export function Tooltip({
   className,
   wrapperClassName,
   anchorRef: externalAnchorRef,
+  anchorPoint,
   open: controlledOpen,
   onOpenChange,
   id: providedId,
@@ -91,6 +94,7 @@ export function Tooltip({
   const wrapperRef = useRef<HTMLSpanElement>(null);
   const anchorRef = externalAnchorRef ?? wrapperRef;
   const hover = useHoverGesture();
+  const surfaceRef = useRef<HTMLSpanElement>(null);
 
   // Anchor point in viewport coords, on the edge of the trigger facing `side`.
   // Position:fixed means these viewport coords place the tooltip directly, so
@@ -99,20 +103,33 @@ export function Tooltip({
     const el = anchorRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
-    const cx = r.left + r.width / 2;
-    const cy = r.top + r.height / 2;
+    const cx = r.left + r.width * (anchorPoint?.x ?? 0.5);
+    const cy = r.top + r.height * (anchorPoint?.y ?? 0.5);
     const point: Record<Side, { top: number; left: number }> = {
-      top: { top: r.top - GAP, left: cx },
-      bottom: { top: r.bottom + GAP, left: cx },
-      left: { top: cy, left: r.left - GAP },
-      right: { top: cy, left: r.right + GAP },
+      top: { top: (anchorPoint ? cy : r.top) - GAP, left: cx },
+      bottom: { top: (anchorPoint ? cy : r.bottom) + GAP, left: cx },
+      left: { top: cy, left: (anchorPoint ? cx : r.left) - GAP },
+      right: { top: cy, left: (anchorPoint ? cx : r.right) + GAP },
     };
-    setCoords(point[side]);
-  }, [side, anchorRef]);
+    const next = point[side];
+    const width = surfaceRef.current?.offsetWidth ?? 0;
+    const height = surfaceRef.current?.offsetHeight ?? 0;
+    const dx = side === "left" ? width : side === "right" ? 0 : width / 2;
+    const dy = side === "top" ? height : side === "bottom" ? 0 : height / 2;
+    next.left = Math.max(GAP + dx, Math.min(next.left, window.innerWidth - GAP - width + dx));
+    next.top = Math.max(GAP + dy, Math.min(next.top, window.innerHeight - GAP - height + dy));
+    setCoords(previous => previous?.top === next.top && previous.left === next.left ? previous : next);
+  }, [side, anchorRef, anchorPoint]);
 
+  const positioned = coords !== null;
   useLayoutEffect(() => {
-    if (open) place();
-  }, [open, place]);
+    if (!open) return;
+    place();
+    const observer = new ResizeObserver(place);
+    if (anchorRef.current) observer.observe(anchorRef.current);
+    if (positioned && surfaceRef.current) observer.observe(surfaceRef.current);
+    return () => observer.disconnect();
+  }, [open, place, anchorRef, positioned]);
 
   const show = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
@@ -237,9 +254,10 @@ export function Tooltip({
                   }}
                 >
                   <TooltipSurface
+                    ref={surfaceRef}
                     id={id}
                     side={side}
-                    style={{ transformOrigin: transformOrigin[side] }}
+                    style={{ transformOrigin: transformOrigin[side], maxWidth: "calc(100vw - 16px)", whiteSpace: "normal" }}
                     className={className}
                   >
                     {content}

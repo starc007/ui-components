@@ -1,31 +1,31 @@
 import { afterEach, expect, test } from "bun:test";
-import { cleanup, fireEvent, render, waitFor, act } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
 import {
   HeatCalendar,
   HeatCalendarGrid,
   HeatCalendarLegend,
-  HeatCalendarTooltip,
   type HeatCalendarSelection,
+  HeatCalendarTooltip,
 } from "@/components/charts/heat-calendar";
 import {
-  ReturnsCalendar,
-  ReturnsCalendarGrid,
-  ReturnsCalendarTooltip,
-  type ReturnsCalendarSelection,
-} from "@/components/charts/returns-calendar";
-import {
+  type PriceTarget,
   PriceTargetFan,
+  type PriceTargetFanActive,
   PriceTargetFanHeader,
+  PriceTargetFanHistory,
   PriceTargetFanPlot,
   PriceTargetFanSvg,
-  PriceTargetFanHistory,
   PriceTargetFanTargets,
   PriceTargetFanTooltip,
   usePriceTargetFan,
-  type PriceTargetFanActive,
-  type PriceTarget,
 } from "@/components/charts/price-target-fan";
+import {
+  ReturnsCalendar,
+  ReturnsCalendarGrid,
+  type ReturnsCalendarSelection,
+  ReturnsCalendarTooltip,
+} from "@/components/charts/returns-calendar";
 import { Tooltip } from "@/components/motion/tooltip";
 import { buildShadcnItem } from "@/lib/registry-server";
 
@@ -224,6 +224,7 @@ test("PriceTargetFan rejects invalid and unordered history rather than fabricati
 
 test("a price tooltip converts viewBox units and repositions when its container resizes", async () => {
   const Original = globalThis.ResizeObserver;
+  const viewportWidth = Object.getOwnPropertyDescriptor(window, "innerWidth");
   const callbacks: ResizeObserverCallback[] = [];
   globalThis.ResizeObserver = class {
     constructor(callback: ResizeObserverCallback) {
@@ -238,10 +239,8 @@ test("a price tooltip converts viewBox units and repositions when its container 
     const svg = container.querySelector("svg");
     if (!svg) throw new Error("Missing price chart SVG");
     let width = 320;
-    Object.defineProperties(svg, {
-      clientWidth: { get: () => width },
-      clientHeight: { get: () => (width * 236) / 520 },
-    });
+    Object.defineProperty(window, "innerWidth", { configurable: true, get: () => width });
+    svg.getBoundingClientRect = () => ({ left: 0, right: width, top: 200, bottom: 200 + width * 236 / 520, width, height: width * 236 / 520, x: 0, y: 200, toJSON() {} });
     fireEvent.focus(getByRole("button", { name: "High target $232.00, 9 analysts" }));
     const tip = getByRole("tooltip", { hidden: true });
     Object.defineProperties(tip, { offsetWidth: { get: () => 148 }, offsetHeight: { get: () => 110 } });
@@ -250,12 +249,13 @@ test("a price tooltip converts viewBox units and repositions when its container 
         for (const callback of callbacks) callback([], {} as ResizeObserver);
       });
     resize();
-    await waitFor(() => expect(tip.style.transform).toContain("translateX(172px)"));
+    await waitFor(() => expect(tip.parentElement?.style.left).toBe("238px"));
     width = 240;
     resize();
-    await waitFor(() => expect(tip.style.transform).toContain("translateX(92px)"));
+    await waitFor(() => expect(tip.parentElement?.style.left).toBe("158px"));
   } finally {
     globalThis.ResizeObserver = Original;
+    if (viewportWidth) Object.defineProperty(window, "innerWidth", viewportWidth);
   }
 });
 
@@ -274,11 +274,8 @@ test("chart installs include composable parts and the shared tooltip surface", a
     const item = await buildShadcnItem("charts", slug);
     expect(item?.name).toBe(slug);
     expect(item?.files.some((file) => file.path === "components/motion/tooltip-surface.tsx")).toBe(true);
-    const tooltipFile =
-      slug === "returns-calendar"
-        ? "components/motion/tooltip.tsx"
-        : "components/charts/shared/chart-tooltip.tsx";
-    expect(item?.files.some((file) => file.path === tooltipFile)).toBe(true);
+    expect(item?.files.some((file) => file.path === "components/motion/tooltip.tsx")).toBe(true);
+    expect(item?.files.some((file) => file.path.includes("chart-tooltip"))).toBe(false);
   }
 });
 
