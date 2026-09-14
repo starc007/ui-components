@@ -54,6 +54,13 @@ function linkClass(active: boolean) {
 export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const now = Date.now();
+  const isCharts = pathname === "/charts" || pathname.startsWith("/charts/");
+  const categories = isCharts
+    ? registry.filter((category) => category.slug === "charts")
+    : SIDEBAR_CATEGORIES;
+  const intro = isCharts
+    ? [{ slug: "home", name: "Home", href: "/charts" }]
+    : INTRO;
 
   return (
     <nav className="flex flex-col gap-8">
@@ -62,7 +69,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           Intro
         </p>
         <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
-          {INTRO.map((item) => (
+          {intro.map((item) => (
             <Link
               key={item.slug}
               href={item.href}
@@ -74,24 +81,26 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           ))}
         </SharedLayoutBg>
       </div>
-      <div>
-        <p className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Guides
-        </p>
-        <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
-          {PATTERNS.map((item) => (
-            <Link
-              key={item.slug}
-              href={item.href}
-              onClick={onNavigate}
-              className={linkClass(pathname === item.href)}
-            >
-              {item.name}
-            </Link>
-          ))}
-        </SharedLayoutBg>
-      </div>
-      {SIDEBAR_CATEGORIES.map((cat) => (
+      {!isCharts ? (
+        <div>
+          <p className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Guides
+          </p>
+          <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
+            {PATTERNS.map((item) => (
+              <Link
+                key={item.slug}
+                href={item.href}
+                onClick={onNavigate}
+                className={linkClass(pathname === item.href)}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </SharedLayoutBg>
+        </div>
+      ) : null}
+      {categories.map((cat) => (
         <div key={cat.slug}>
           <Link
             href={categoryPath(cat.slug)}

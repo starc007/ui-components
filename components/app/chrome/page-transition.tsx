@@ -12,7 +12,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
   // ancestor makes fixed descendants anchor to that moving element during the
   // transition instead of the viewport.
   const hasViewportFixedContent =
-    pathname.startsWith("/components/") || pathname.startsWith("/docs/");
+    pathname.startsWith("/components/") || pathname.startsWith("/docs/") || pathname.startsWith("/charts");
   const shouldTranslate = !reduce && !hasViewportFixedContent;
   const ref = useRef<HTMLDivElement>(null);
   // Skip enter animation on first load so LCP element is visible immediately.

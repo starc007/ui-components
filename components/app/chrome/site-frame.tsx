@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { SiteSidebar } from "@/components/app/chrome/site-sidebar";
 import { PageTransition } from "@/components/app/chrome/page-transition";
 
-const SIDEBAR_PATHS = ["/components", "/docs"];
+const SIDEBAR_PATHS = ["/components", "/docs", "/charts"];
 
 export function SiteFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();

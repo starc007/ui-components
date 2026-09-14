@@ -250,24 +250,26 @@ export default async function CategoryPage({
             </section>
           ) : null}
 
-          <section className="mt-10">
-            <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
-              {content.allLabel}
-            </h2>
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {components.map((comp) => (
-                <ComponentCard
-                  key={comp.slug}
-                  categorySlug={cat.slug}
-                  slug={comp.slug}
-                  name={comp.name}
-                  description={comp.description}
-                  badge={comp.badge}
-                  launchedAt={comp.launchedAt}
-                />
-              ))}
-            </div>
-          </section>
+          {components.length ? (
+            <section className="mt-10">
+              <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
+                {content.allLabel}
+              </h2>
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {components.map((comp) => (
+                  <ComponentCard
+                    key={comp.slug}
+                    categorySlug={cat.slug}
+                    slug={comp.slug}
+                    name={comp.name}
+                    description={comp.description}
+                    badge={comp.badge}
+                    launchedAt={comp.launchedAt}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : null}
         </>
       )}
     </div>

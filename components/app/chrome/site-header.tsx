@@ -36,7 +36,7 @@ export function SiteHeader({
   const isBlocks = pathname.startsWith("/components/blocks");
   const isAgents = pathname.startsWith("/components/agents");
   const isDocsShell =
-    pathname.startsWith("/components") || pathname.startsWith("/docs");
+    pathname.startsWith("/components") || pathname.startsWith("/docs") || pathname.startsWith("/charts");
   const isCharts = pathname.startsWith("/charts");
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
