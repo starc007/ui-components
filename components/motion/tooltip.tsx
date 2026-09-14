@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  type Variants,
-} from "motion/react";
+import { AnimatePresence } from "motion/react";
 import {
   cloneElement,
   isValidElement,
@@ -15,12 +10,11 @@ import {
   useCallback,
   useEffect,
   useId,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { EASE_OUT } from "@/lib/ease";
+import { TooltipSurface } from "@/components/motion/tooltip-surface";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
@@ -57,57 +51,6 @@ const transformOrigin: Record<Side, string> = {
   right: "left center",
 };
 
-// Offset is in the direction *away* from the trigger — content originates near
-// the trigger and rises into resting position.
-const offsetFrom: Record<Side, { x?: number; y?: number }> = {
-  top: { y: 8 },
-  bottom: { y: -8 },
-  left: { x: 8 },
-  right: { x: -8 },
-};
-
-function buildVariants(side: Side): Variants {
-  const o = offsetFrom[side];
-  return {
-    initial: {
-      opacity: 0,
-      scale: 0.9,
-      filter: "blur(5px)",
-      x: o.x ?? 0,
-      y: o.y ?? 0,
-    },
-    animate: {
-      opacity: 1,
-      scale: 1,
-      filter: "blur(0px)",
-      x: 0,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 380,
-        damping: 30,
-        mass: 0.7,
-        opacity: { duration: 0.14, ease: EASE_OUT },
-        filter: { duration: 0.18, ease: EASE_OUT },
-      },
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.94,
-      filter: "blur(3px)",
-      x: (o.x ?? 0) * 0.6,
-      y: (o.y ?? 0) * 0.6,
-      transition: { duration: 0.12, ease: EASE_OUT },
-    },
-  };
-}
-
-const REDUCED_VARIANTS: Variants = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1, transition: { duration: 0.14, ease: EASE_OUT } },
-  exit: { opacity: 0, transition: { duration: 0.1, ease: EASE_OUT } },
-};
-
 // Once any tooltip has just closed, neighbouring tooltips open without the
 // initial delay — moving along a toolbar feels instant after the first one.
 const WARM_WINDOW_MS = 300;
@@ -122,14 +65,11 @@ export function Tooltip({
   wrapperClassName,
 }: TooltipProps) {
   const [open, setOpen] = useState(false);
-  const [coords, setCoords] = useState<{ top: number; left: number } | null>(
-    null,
-  );
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
   const id = useId();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const anchorRef = useRef<HTMLSpanElement>(null);
   const hover = useHoverGesture();
-  const reduce = useReducedMotion();
 
   // Anchor point in viewport coords, on the edge of the trigger facing `side`.
   // Position:fixed means these viewport coords place the tooltip directly, so
@@ -206,11 +146,6 @@ export function Tooltip({
     };
   }, [open, place]);
 
-  const variants = useMemo(
-    () => (reduce ? REDUCED_VARIANTS : buildVariants(side)),
-    [reduce, side],
-  );
-
   if (!isValidElement(children)) return children;
 
   // The label describes the trigger, so it has to name the trigger itself.
@@ -271,21 +206,14 @@ export function Tooltip({
                     transform: anchorTransform[side],
                   }}
                 >
-                  <motion.span
+                  <TooltipSurface
                     id={id}
-                    role="tooltip"
-                    variants={variants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
+                    side={side}
                     style={{ transformOrigin: transformOrigin[side] }}
-                    className={cn(
-                      "block whitespace-nowrap rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-medium text-foreground shadow-lg",
-                      className,
-                    )}
+                    className={className}
                   >
                     {content}
-                  </motion.span>
+                  </TooltipSurface>
                 </span>
               ) : null}
             </AnimatePresence>,

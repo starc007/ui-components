@@ -78,9 +78,9 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
-| `heat-calendar` | `components/charts/heat-calendar.tsx` | Weeks of activity as a single-hue grid with month labels; cells spring in on a diagonal wave, hover ripples the neighbours and glides a date + count tooltip, click pins a cell and a second click totals the span between, legend filters by level; reduced-motion safe |
-| `returns-calendar` | `components/charts/returns-calendar.tsx` | Monthly returns as a years × months grid tinted up/down by magnitude with a compounded year column; hover glides a tooltip and dims unrelated cells, a year total replays its row, click anchors a span that compounds live and locks on a second click; reduced-motion safe |
-| `price-target-fan` | `components/charts/price-target-fan.tsx` | SVG price history that draws to now, then dashed projections fan to high/mean/low targets; scrub or hover glides a value card on a spring, live ring on the now dot; reduced-motion safe |
+| `heat-calendar` | `components/charts/heat-calendar.tsx` | Composable `HeatCalendar` root with `HeatCalendarGrid`, `HeatCalendarLegend`, `HeatCalendarTooltip`, and `useHeatCalendar`; accepts real intensities and controlled/uncontrolled range selection, uses UTC dates; cells spring in on a diagonal wave, hover ripples the neighbours and glides a date + count tooltip, click pins a cell and a second click totals the span between, legend filters by level; reduced-motion safe |
+| `returns-calendar` | `components/charts/returns-calendar.tsx` | Composable `ReturnsCalendar` root with `ReturnsCalendarGrid`, `ReturnsCalendarTooltip`, and `useReturnsCalendar`; consumer-supplied years/returns and controlled/uncontrolled selections; hover glides a tooltip and dims unrelated cells, a year total replays its row, click anchors a span that compounds live and locks on a second click; reduced-motion safe |
+| `price-target-fan` | `components/charts/price-target-fan.tsx` | Composable `PriceTargetFan` with Header, Plot, Svg, Axes, History, Targets, Now, Cursor, Tooltip parts and `usePriceTargetFan`; requires current price and targets, accepts real dated history (no generated data), controlled/uncontrolled active readout; scrub or hover glides a value card on a spring, live ring on the now dot; reduced-motion safe |
 
 ### AI Agents (`agents` category — agent interface primitives)
 

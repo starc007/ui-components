@@ -146,3 +146,7 @@ The live registry is the source of truth. Use the table below only to resolve co
 When contributing to beUI itself, follow `AGENTS.md`. A new public component needs source, preview, registry entry, and a passing `bun run check:registry`. Never rename existing `/r/{name}.json` slugs.
 
 Chart components (`heat-calendar`, `returns-calendar`, `price-target-fan`) live under `/charts` in the docs. Their `@beui` install slugs are unchanged.
+
+Compose charts from their root and exported parts. `HeatCalendar` provides `HeatCalendarGrid`, `HeatCalendarLegend`, and `HeatCalendarTooltip`; `ReturnsCalendar` provides `ReturnsCalendarGrid` and `ReturnsCalendarTooltip`. Put each calendar tooltip inside its grid. Both accept `selection`, `defaultSelection`, and `onSelectionChange`.
+
+`PriceTargetFan` provides Header, Plot, Svg, Axes, History, Targets, Now, Cursor, and Tooltip parts (prefix each with `PriceTargetFan`). Put SVG parts inside Svg and put Tooltip beside Svg inside Plot. Pass `current`, `targets`, and an optional chronological `history` of `{ date: ISOString, price }`; omitted history renders no historical series. Use `active`, `defaultActive`, and `onActiveChange` to control the readout. Each chart exports a `use...` hook for custom descendant content; tooltip children may be a render function. Sample data belongs in the consuming app, not the chart implementation. `HeatCalendar.endDate` uses the UTC calendar date.
