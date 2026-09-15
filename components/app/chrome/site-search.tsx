@@ -1,7 +1,5 @@
 "use client";
 
-import { componentPath } from "@/lib/component-paths";
-
 import { CircleDashed, FileText, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -11,9 +9,13 @@ import {
   type CommandItem,
 } from "@/components/motion/command-palette";
 import { NewBadge } from "@/components/app/docs/new-badge";
-import { registry } from "@/lib/registry";
+import { componentSearchEntries } from "@/lib/site-search";
 
 const PAGES = [
+  { slug: "home", name: "Home", href: "/" },
+  { slug: "playground", name: "Playground", href: "/playground" },
+  { slug: "sponsors", name: "Sponsors", href: "/sponsors" },
+  { slug: "theme", name: "Theme setup", href: "/docs/theme" },
   { slug: "ai-agents", name: "AI Agents", href: "/docs/ai-agents" },
   {
     slug: "motion-patterns",
@@ -30,20 +32,12 @@ export function SiteSearch({ className }: { className?: string }) {
 
   const items = useMemo<CommandItem[]>(
     () => [
-      ...registry.flatMap((cat) =>
-        cat.components.map((comp) => ({
-          id: `${cat.slug}-${comp.slug}`,
-          label: comp.name,
-          group: cat.name,
-          keywords: [comp.slug, cat.name],
-          icon: CircleDashed,
-          badge:
-            comp.badge === "new" ? (
-              <NewBadge launchedAt={comp.launchedAt} />
-            ) : undefined,
-          onSelect: () => router.push(componentPath(cat.slug, comp.slug)),
-        })),
-      ),
+      ...componentSearchEntries.map((entry) => ({
+        ...entry,
+        icon: CircleDashed,
+        badge: entry.badge === "new" ? <NewBadge launchedAt={entry.launchedAt} /> : undefined,
+        onSelect: () => router.push(entry.href),
+      })),
       ...PAGES.map((page) => ({
         id: page.slug,
         label: page.name,

@@ -133,6 +133,13 @@ export default function Home() {
         <Hero />
       </section>
 
+      <section className="mx-auto max-w-2xl px-4 pb-12">
+        <p className="mb-5 text-center text-sm text-muted-foreground">
+          Built on Framer Motion. Distributed via shadcn.
+        </p>
+        <InstallCommand />
+      </section>
+
       <section
         aria-labelledby="landing-sponsors"
         className="mx-auto flex max-w-2xl flex-col items-center gap-4 px-4 pb-16"
@@ -167,13 +174,6 @@ export default function Home() {
             Tracwell
           </span>
         </Link>
-      </section>
-
-      <section className="mx-auto max-w-2xl px-4 pb-24">
-        <p className="mb-5 text-center text-sm text-muted-foreground">
-          Built on Framer Motion. Distributed via shadcn.
-        </p>
-        <InstallCommand />
       </section>
 
       {newComponents.length ? (

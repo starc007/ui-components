@@ -141,7 +141,7 @@ const COMPONENT_DATES = {
   "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-09-14" },
   "blocks/swap": { publishedAt: "2026-05-19", updatedAt: "2026-06-13" },
   "blocks/dynamic-island": { publishedAt: "2026-06-10", updatedAt: "2026-07-13" },
-  "blocks/command-palette": { publishedAt: "2026-05-17", updatedAt: "2026-08-22" },
+  "blocks/command-palette": { publishedAt: "2026-05-17", updatedAt: "2026-09-15" },
   "blocks/morphing-search": { publishedAt: "2026-08-18", updatedAt: "2026-08-22" },
   "blocks/expandable-action-bar": { publishedAt: "2026-06-05", updatedAt: "2026-09-14" },
   "blocks/overflow-actions": { publishedAt: "2026-06-19", updatedAt: "2026-06-28" },
