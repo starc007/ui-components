@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title">
+  <title id="title">Tracwell</title>
+  <g transform="translate(0 7)">
+    <path d="M12 75c-5 0-8-5-5-10l19-35c3-6 10-8 16-5s8 10 5 16L29 72c-1 2-4 3-7 3H12Z" fill="#2359B8"/>
+    <path d="M43 75c-5 0-8-5-5-10L67 12c3-6 10-8 16-5s8 10 5 16L60 72c-1 2-4 3-7 3H43Z" fill="#357DFF"/>
+    <circle cx="82" cy="67" r="9" fill="#F2CFA7"/>
+  </g>
+</svg>

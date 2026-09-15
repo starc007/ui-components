@@ -140,6 +140,16 @@ export function SiteFooter() {
               </li>
               <li>
                 <Link
+                  href="https://tracwell.app"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Tracwell
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/components/motion"
                   className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
