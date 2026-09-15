@@ -1,5 +1,8 @@
 "use client";
 
+import { ThreeColumnLayout } from "@/components/app/chrome/three-column-layout";
+import { RightSidebar } from "@/components/app/chrome/right-sidebar";
+
 import { RotateCw } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/motion/button";
@@ -19,14 +22,14 @@ import { PLAYGROUND_ITEMS, PLAYGROUND_SOON } from "./items";
 /** Plain-English decode of the current code — the teaching layer. */
 function ExplainPanel({ points }: { points: ExplainPoint[] }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-5">
+    <div className="rounded-2xl border border-border p-5">
       <span className="text-[11px] font-medium uppercase tracking-wider text-foreground">
         How it works
       </span>
       <ul className="mt-3 flex flex-col gap-3.5">
         {points.map((p) => (
           <li key={p.code}>
-            <code className="inline-block rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground">
+            <code className="inline-block rounded px-1.5 py-0.5 font-mono text-xs text-foreground">
               {p.code}
             </code>
             <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
@@ -119,36 +122,9 @@ export function Playground() {
   const Preview = active.Preview;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-24 pt-10 md:pt-12">
-      <header className="mb-8">
-        <h1 className="font-display text-3xl font-semibold text-foreground md:text-4xl">
-          Playground
-        </h1>
-        <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-          Learn motion by playing. Tweak a property, watch it run, read what the
-          code is doing line by line, then copy it.
-        </p>
-      </header>
-
-      {/* mobile type switcher */}
-      <div className="mb-6 md:hidden">
-        <Select value={active.slug} onValueChange={select}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {PLAYGROUND_ITEMS.map((it) => (
-              <SelectItem key={it.slug} value={it.slug}>
-                {it.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="grid gap-8 md:grid-cols-[180px_1fr]">
-        {/* sidebar */}
-        <nav className="hidden self-start md:sticky md:top-20 md:block">
+    <ThreeColumnLayout
+      leftSidebar={
+        <nav aria-label="Motion types">
           <ul className="flex flex-col gap-0.5">
             {PLAYGROUND_ITEMS.map((it) => (
               <li key={it.slug}>
@@ -180,7 +156,36 @@ export function Playground() {
             ))}
           </ul>
         </nav>
+      }
+      rightSidebar={<RightSidebar />}
+    >
+      <header className="mb-8">
+        <h1 className="font-display text-3xl font-semibold text-foreground md:text-4xl">
+          Playground
+        </h1>
+        <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+          Learn motion by playing. Tweak a property, watch it run, read what the
+          code is doing line by line, then copy it.
+        </p>
+      </header>
 
+      {/* mobile type switcher */}
+      <div className="mb-6 md:hidden">
+        <Select value={active.slug} onValueChange={select}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {PLAYGROUND_ITEMS.map((it) => (
+              <SelectItem key={it.slug} value={it.slug}>
+                {it.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
         {/* main */}
         <div className="min-w-0">
           {/* vocab: define the type for first-timers */}
@@ -193,11 +198,10 @@ export function Playground() {
             </p>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
-            {/* left column: preview, then code stacked at the same width.
-                min-w-0 lets the code panel scroll instead of widening the grid */}
+          <div className="flex flex-col gap-6">
+            {/* Preview uses the full content width. */}
             <div className="flex min-w-0 flex-col gap-6">
-              <div className="flex flex-col rounded-2xl border border-border bg-card">
+              <div className="flex flex-col rounded-2xl border border-border">
                 <div className="flex items-center justify-between border-b border-border px-5 py-3">
                   <span className="text-sm font-medium text-foreground">
                     Preview
@@ -217,12 +221,11 @@ export function Playground() {
                 </div>
               </div>
 
-              <CodePanel code={active.toCode(values)} />
             </div>
 
-            {/* right column: controls, then the plain-English decode */}
+            {/* Controls, generated code, then the plain-English explanation. */}
             <div className="flex min-w-0 flex-col gap-6">
-              <div className="rounded-2xl border border-border bg-card p-5">
+              <div className="rounded-2xl border border-border p-5">
                 <PresetSection presets={active.presets} onApply={applyPreset} />
                 <div className="mt-5 border-t border-border pt-5">
                   <Controls
@@ -233,11 +236,12 @@ export function Playground() {
                 </div>
               </div>
 
+              <CodePanel code={active.toCode(values)} />
               <ExplainPanel points={active.explain(values)} />
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </ThreeColumnLayout>
   );
 }

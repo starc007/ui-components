@@ -35,8 +35,6 @@ export function SiteHeader({
   const isComponents = pathname.startsWith("/components/motion");
   const isBlocks = pathname.startsWith("/components/blocks");
   const isAgents = pathname.startsWith("/components/agents");
-  const isDocsShell =
-    pathname.startsWith("/components") || pathname.startsWith("/docs") || pathname.startsWith("/charts");
   const isCharts = pathname.startsWith("/charts");
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
@@ -59,14 +57,7 @@ export function SiteHeader({
           : "border-b border-transparent bg-transparent",
       )}
     >
-      <div
-        className={cn(
-          "relative flex h-14 items-center justify-between gap-4",
-          isDocsShell
-            ? "w-full px-4 md:px-6 xl:px-8"
-            : "mx-auto max-w-7xl px-4",
-        )}
-      >
+      <div className="relative flex h-14 w-full items-center justify-between gap-4 px-4 md:px-6 xl:px-8">
         <div className="flex items-center gap-4">
           <MobileNav />
           <Link
