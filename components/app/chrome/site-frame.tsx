@@ -18,13 +18,11 @@ export function SiteFrame({ children }: { children: ReactNode }) {
   }
 
   return (
-    <PageTransition>
-      <ThreeColumnLayout
-        leftSidebar={<SiteSidebar />}
-        rightSidebar={<RightSidebar />}
-      >
-        {children}
-      </ThreeColumnLayout>
-    </PageTransition>
+    <ThreeColumnLayout
+      leftSidebar={<SiteSidebar />}
+      rightSidebar={<RightSidebar />}
+    >
+      <PageTransition>{children}</PageTransition>
+    </ThreeColumnLayout>
   );
 }
