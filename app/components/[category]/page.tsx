@@ -211,7 +211,7 @@ export default async function CategoryPage({
                   {group.description}
                 </p>
               </div>
-              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {group.components.map((comp) => (
                   <ComponentCard
                     key={comp.slug}
@@ -234,7 +234,7 @@ export default async function CategoryPage({
               <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
                 New
               </h2>
-              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {newComponents.map((comp) => (
                   <ComponentCard
                     key={comp.slug}
@@ -255,7 +255,7 @@ export default async function CategoryPage({
               <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
                 {content.allLabel}
               </h2>
-              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {components.map((comp) => (
                   <ComponentCard
                     key={comp.slug}

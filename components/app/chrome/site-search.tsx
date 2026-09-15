@@ -63,7 +63,7 @@ export function SiteSearch({ className }: { className?: string }) {
         aria-label="Search components"
         onClick={() => setOpen(true)}
         className={cn(
-          "flex h-9 w-full items-center gap-2 rounded-full border border-border bg-card px-3 text-sm text-muted-foreground transition-colors hover:border-(--color-border-strong) hover:text-foreground",
+          "flex h-9 w-full items-center gap-2 rounded-full border border-border bg-transparent px-3 text-sm text-muted-foreground transition-colors hover:border-(--color-border-strong) hover:text-foreground",
           className,
         )}
       >

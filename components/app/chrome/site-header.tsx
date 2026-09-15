@@ -153,7 +153,7 @@ export function SiteHeader({
             // Between md and lg the field is back to its icon, so its label and
             // shortcut hint have to go with it — left in, they overflow the
             // 36px button and paint over the controls beside it.
-            <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 md:w-9 md:justify-center md:px-0 md:max-lg:[&>kbd]:hidden md:max-lg:[&>span]:hidden lg:w-56 lg:justify-start lg:px-3" />
+            <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 md:w-9 md:justify-center md:px-0 md:max-lg:[&>kbd]:hidden md:max-lg:[&>span]:hidden lg:w-44 lg:justify-start lg:px-3" />
           )}
           <Tooltip content="Customize" side="bottom">
             <button
