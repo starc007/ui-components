@@ -140,7 +140,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 
 export function SiteSidebar() {
   return (
-    <aside className="fixed top-14 hidden h-[calc(100vh-3.5rem)] w-60 overflow-x-visible overflow-y-auto scrollbar-hide py-6 pr-4 md:block">
+    <aside aria-label="Site navigation">
       <SidebarNav />
     </aside>
   );

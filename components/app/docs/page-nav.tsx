@@ -3,6 +3,7 @@
 import { useReducedMotion } from "motion/react";
 import { type MouseEvent, useEffect, useRef, useState } from "react";
 import { ProCard } from "@/components/app/docs/pro-card";
+import { SponsorCard } from "@/components/app/docs/sponsor-card";
 import { cn } from "@/lib/utils";
 
 export type PageNavItem = {
@@ -18,6 +19,7 @@ export function PageNav({ items }: { items: PageNavItem[] }) {
   const scrollSettleTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
+    if (!items.length) return;
     let frame = 0;
     const flatItems = items.flatMap((item) => [item, ...(item.children ?? [])]);
 
@@ -143,31 +145,34 @@ export function PageNav({ items }: { items: PageNavItem[] }) {
   };
 
   return (
-    <aside aria-label="On this page" className="hidden min-w-0 xl:block">
-      <div className="fixed top-24 right-8 z-10 max-h-[calc(100vh-8rem)] w-64 overflow-y-auto scrollbar-hide">
-        <p className="mb-1 text-xs font-medium text-muted-foreground">
-          On this page
-        </p>
-        <nav>
-          <ul className="flex flex-col">
-            {items.map((item) => {
-              return (
-                <li key={item.id}>
-                  {navLink(item)}
-                  {item.children?.length ? (
-                    <ul>
-                      {item.children.map((child) => (
-                        <li key={child.id}>{navLink(child, true)}</li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-        <ProCard />
-      </div>
-    </aside>
+    <>
+      {items.length ? (
+        <>
+          <p className="mb-1 text-xs font-medium text-muted-foreground">
+            On this page
+          </p>
+          <nav className="mb-8">
+            <ul className="flex flex-col">
+              {items.map((item) => {
+                return (
+                  <li key={item.id}>
+                    {navLink(item)}
+                    {item.children?.length ? (
+                      <ul>
+                        {item.children.map((child) => (
+                          <li key={child.id}>{navLink(child, true)}</li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        </>
+      ) : null}
+      <ProCard />
+      <SponsorCard />
+    </>
   );
 }

@@ -13,6 +13,8 @@ import { CodeBlock } from "@/components/app/docs/code-block";
 import { InstallBlock } from "@/components/app/docs/install-block";
 import { KeepInMind } from "@/components/app/docs/keep-in-mind";
 import { PageNav, type PageNavItem } from "@/components/app/docs/page-nav";
+import { SiteSidebar } from "@/components/app/chrome/site-sidebar";
+import { ThreeColumnLayout } from "@/components/app/chrome/three-column-layout";
 import { PropsTable } from "@/components/app/docs/props-table";
 import {
   Tabs,
@@ -209,7 +211,10 @@ export default async function ComponentPage({
   creditUrl?.searchParams.set("ref", "beui");
 
   return (
-    <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_16rem] xl:gap-10 2xl:gap-14">
+    <ThreeColumnLayout
+      leftSidebar={<SiteSidebar />}
+      rightSidebar={<PageNav items={pageNavItems} />}
+    >
       <div className="min-w-0">
         <JsonLd
           data={[
@@ -357,8 +362,7 @@ export default async function ComponentPage({
           </time>
         </p>
       </div>
-      <PageNav items={pageNavItems} />
-    </div>
+    </ThreeColumnLayout>
   );
 }
 
