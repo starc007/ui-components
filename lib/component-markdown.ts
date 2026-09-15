@@ -1,6 +1,6 @@
 import { componentDates } from "@/lib/component-dates";
 import { getComponentProps } from "@/lib/props-extractor";
-import { findComponent, type ComponentExample } from "@/lib/registry";
+import { findCategory, findComponent, type ComponentExample } from "@/lib/registry";
 import { buildEntry } from "@/lib/registry-server";
 import { pageUrlFor } from "@/lib/signature";
 import { readOptionalSourceFile } from "@/lib/source-files";
@@ -76,11 +76,7 @@ export async function buildComponentMarkdown(
     `title: ${JSON.stringify(component.name)}`,
     `description: ${JSON.stringify(component.description)}`,
     `category: ${JSON.stringify(
-      categorySlug === "blocks"
-        ? "Blocks"
-        : categorySlug === "agents"
-          ? "AI Agents"
-          : "Components",
+      findCategory(categorySlug)?.name ?? "Components",
     )}`,
     `publishedAt: ${JSON.stringify(dates.publishedAt)}`,
     `updatedAt: ${JSON.stringify(dates.updatedAt)}`,

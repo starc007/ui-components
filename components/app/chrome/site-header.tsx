@@ -36,7 +36,8 @@ export function SiteHeader({
   const isBlocks = pathname.startsWith("/components/blocks");
   const isAgents = pathname.startsWith("/components/agents");
   const isDocsShell =
-    pathname.startsWith("/components") || pathname.startsWith("/docs");
+    pathname.startsWith("/components") || pathname.startsWith("/docs") || pathname.startsWith("/charts");
+  const isCharts = pathname.startsWith("/charts");
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
   const isHome = pathname === "/";
@@ -115,6 +116,17 @@ export function SiteHeader({
               )}
             >
               Agents
+            </Link>
+            <Link
+              href="/charts"
+              className={cn(
+                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                isCharts
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Charts
             </Link>
             <Link
               href="/playground"

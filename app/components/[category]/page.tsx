@@ -1,3 +1,4 @@
+import { categoryPath } from "@/lib/component-paths";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { findCategory, registry } from "@/lib/registry";
@@ -20,6 +21,13 @@ const categoryContent = {
     description:
       "Explore product-ready animated React blocks built with Motion and Tailwind CSS. Copy complete interactions into your app and adapt the source to your product.",
     allLabel: "All animated blocks",
+  },
+  charts: {
+    title: "Animated React Charts — Heatmaps and Price Targets",
+    heading: "Animated React charts",
+    description:
+      "Explore interactive activity heatmaps, monthly returns, and price target charts. Copy the React source and customize it for your data.",
+    allLabel: "All charts",
   },
   agents: {
     title: "AI Agent Components — Animated React AI Interfaces",
@@ -69,7 +77,7 @@ const AGENT_CATEGORY_GROUPS = [
 ] as const;
 
 export function generateStaticParams() {
-  return registry.map((c) => ({ category: c.slug }));
+  return registry.filter((c) => c.slug !== "charts").map((c) => ({ category: c.slug }));
 }
 
 export async function generateMetadata({
@@ -86,7 +94,7 @@ export async function generateMetadata({
     categoryContent.motion;
   const title = content.title;
   const ogTitle = `${title} · beUI`;
-  const pageUrl = `/components/${cat.slug}`;
+  const pageUrl = categoryPath(cat.slug);
   const imageUrl = `/api/og?category=${cat.slug}`;
   const componentNames = cat.components.map((comp) => comp.name);
 
@@ -173,7 +181,7 @@ export default async function CategoryPage({
         data={[
           breadcrumbJsonLd([
             { name: "beUI", path: "/" },
-            { name: cat.name, path: `/components/${cat.slug}` },
+            { name: cat.name, path: categoryPath(cat.slug) },
           ]),
           categoryJsonLd(cat),
         ]}
@@ -242,24 +250,26 @@ export default async function CategoryPage({
             </section>
           ) : null}
 
-          <section className="mt-10">
-            <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
-              {content.allLabel}
-            </h2>
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {components.map((comp) => (
-                <ComponentCard
-                  key={comp.slug}
-                  categorySlug={cat.slug}
-                  slug={comp.slug}
-                  name={comp.name}
-                  description={comp.description}
-                  badge={comp.badge}
-                  launchedAt={comp.launchedAt}
-                />
-              ))}
-            </div>
-          </section>
+          {components.length ? (
+            <section className="mt-10">
+              <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
+                {content.allLabel}
+              </h2>
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {components.map((comp) => (
+                  <ComponentCard
+                    key={comp.slug}
+                    categorySlug={cat.slug}
+                    slug={comp.slug}
+                    name={comp.name}
+                    description={comp.description}
+                    badge={comp.badge}
+                    launchedAt={comp.launchedAt}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : null}
         </>
       )}
     </div>

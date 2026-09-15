@@ -1,5 +1,7 @@
 "use client";
 
+import { componentPath } from "@/lib/component-paths";
+
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { useInView } from "motion/react";
@@ -51,7 +53,7 @@ export function LandingComponentCard({
       onBlur={() => setHover(false)}
     >
       <Link
-        href={`/components/${category}/${component.slug}`}
+        href={componentPath(category, component.slug)}
         prefetch={false}
         aria-label={`View ${component.name}`}
         className="absolute inset-0 z-20 rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"

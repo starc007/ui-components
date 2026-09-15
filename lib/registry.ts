@@ -28,6 +28,8 @@ export type ComponentEntry = {
   credit?: {
     name: string;
     url: string;
+    /** Optional avatar shown before the name. */
+    avatar?: string;
   };
   badge?: "new";
   /** ISO date the component shipped. Drives newest-first order in the landing
@@ -967,6 +969,77 @@ export const registry: CategoryEntry[] = [
           "dot matrix loader",
           "dithering loader",
           "loading indicator",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "charts",
+    name: "Charts",
+    description:
+      "Animated React charts for activity, returns, and price targets, built with Motion and Tailwind CSS as customizable copy-paste source.",
+    components: [
+      {
+        slug: "heat-calendar",
+        name: "Heat Calendar",
+        description:
+          "Composable activity calendar with Grid, Legend, and Tooltip parts, controlled range selection, and UTC calendar dates. Supply weekly intensities to visualize activity and total a selected span.",
+        file: "components/charts/heat-calendar.tsx",
+        badge: "new",
+        launchedAt: "2026-09-11",
+        credit: {
+          name: "Savva",
+          url: "https://ssych.com",
+          avatar: "https://github.com/savvasicevs.png?size=112",
+        },
+        keywords: [
+          "heatmap react",
+          "activity calendar",
+          "contribution graph",
+          "github contribution chart",
+          "heat map component",
+        ],
+      },
+      {
+        slug: "returns-calendar",
+        name: "Returns Calendar",
+        description:
+          "Composable monthly returns calendar with Grid and Tooltip parts, controlled month or year selections, and compounded totals. Supply your own years and monthly percentages.",
+        file: "components/charts/returns-calendar.tsx",
+        badge: "new",
+        launchedAt: "2026-09-11",
+        credit: {
+          name: "Savva",
+          url: "https://ssych.com",
+          avatar: "https://github.com/savvasicevs.png?size=112",
+        },
+        keywords: [
+          "monthly returns heatmap",
+          "returns calendar",
+          "performance grid",
+          "portfolio returns chart",
+          "finance heatmap react",
+        ],
+      },
+      {
+        slug: "price-target-fan",
+        name: "Price Target Fan",
+        description:
+          "Composable price target chart with Header, Plot, SVG, Axes, History, Targets, Now, Cursor, and Tooltip parts. Supply dated price history and targets; scrub with a pointer or keyboard and customize the active readout.",
+        file: "components/charts/price-target-fan.tsx",
+        badge: "new",
+        launchedAt: "2026-09-11",
+        credit: {
+          name: "Savva",
+          url: "https://ssych.com",
+          avatar: "https://github.com/savvasicevs.png?size=112",
+        },
+        keywords: [
+          "price target chart",
+          "analyst targets",
+          "forecast fan chart",
+          "svg line chart react",
+          "stock projection chart",
         ],
       },
     ],

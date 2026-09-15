@@ -1,3 +1,4 @@
+import { categoryPath, componentPath } from "@/lib/component-paths";
 import type { MetadataRoute } from "next";
 import { allComponents, registry } from "@/lib/registry";
 import { componentDates } from "@/lib/component-dates";
@@ -24,7 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       .sort()
       .at(-1);
     return {
-      url: `${SITE}/components/${category.slug}`,
+      url: `${SITE}${categoryPath(category.slug)}`,
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -34,7 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Component detail pages are the primary content. Machine endpoints
   // (/r/* JSON and raw text) are intentionally excluded from search.
   const componentPages: MetadataRoute.Sitemap = components.map((c) => ({
-    url: `${SITE}/components/${c.category.slug}/${c.slug}`,
+    url: `${SITE}${componentPath(c.category.slug, c.slug)}`,
     lastModified: componentDates(c.category.slug, c.slug).updatedAt,
     changeFrequency: "weekly",
     priority: 0.7,

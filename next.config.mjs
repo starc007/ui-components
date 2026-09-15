@@ -1,3 +1,5 @@
+const CHART_COMPONENTS = ["heat-calendar", "returns-calendar", "price-target-fan"];
+
 // Block source files still live under components/motion. Keep inferred and
 // historical motion-category URLs pointed at their public block docs pages.
 const BLOCK_COMPONENTS = [
@@ -94,6 +96,7 @@ const nextConfig = {
   },
   async rewrites() {
     return [
+      { source: "/charts/:slug.md", destination: "/r/:slug.md?category=charts" },
       {
         source: "/components/:category/:slug.md",
         destination: "/r/:slug.md?category=:category",
@@ -102,6 +105,15 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      { source: "/components/charts", destination: "/charts", permanent: true },
+      { source: "/components/charts/:path+", destination: "/charts/:path+", permanent: true },
+      ...CHART_COMPONENTS.flatMap((slug) =>
+        ["", ".md"].map((extension) => ({
+          source: `/components/motion/${slug}${extension}`,
+          destination: `/charts/${slug}${extension}`,
+          permanent: true,
+        })),
+      ),
       ...BLOCK_COMPONENTS.map((slug) => ({
         source: `/components/motion/${slug}`,
         destination: `/components/blocks/${slug}`,
@@ -125,17 +137,26 @@ const nextConfig = {
     ];
   },
   outputFileTracingIncludes: {
+    "/charts/*": [
+      "./components/charts/**/*",
+      "./components/motion/**/*",
+      "./components/previews/charts/**/*",
+      "./lib/**/*",
+    ],
     "/components/*": [
       "./components/motion/**/*",
+      "./components/charts/**/*",
       "./components/previews/**/*",
     ],
     "/r/*": [
       "./components/motion/**/*",
+      "./components/charts/**/*",
       "./components/previews/**/*",
       "./lib/**/*",
     ],
     "/*": [
       "./components/motion/**/*",
+      "./components/charts/**/*",
       "./lib/**/*",
     ],
   },
