@@ -6,19 +6,6 @@ import { MotionPatterns } from "./motion-patterns";
 
 const PAGE_PATH = "/docs/motion-patterns";
 
-const PAGE_NAV_ITEMS = [
-  {
-    id: "overview",
-    label: "Motion guides",
-    children: [
-      { id: "decision-framework", label: "Decision framework" },
-      { id: "motion-tokens", label: "Motion tokens" },
-      { id: "timing", label: "Timing" },
-      { id: "recipes", label: "Recipes" },
-      { id: "accessibility", label: "Accessibility" },
-    ],
-  },
-];
 
 export const metadata: Metadata = {
   title: "Motion Guides",
@@ -46,7 +33,7 @@ export const metadata: Metadata = {
 
 export default function MotionPatternsPage() {
   return (
-    <GuideShell navItems={PAGE_NAV_ITEMS}>
+    <GuideShell>
       <header
         id="overview"
         className="scroll-mt-24 border-b border-border pb-10"

@@ -25,7 +25,7 @@ export function ThreeColumnLayout({
         </div>
       </div>
       <div className="min-w-0 py-8">{children}</div>
-      <aside aria-label="Page navigation and sponsors" className="hidden min-w-0 xl:block">
+      <aside aria-label="Sponsors and resources" className="hidden min-w-0 xl:block">
         <div className="fixed top-24 right-8 z-10 max-h-[calc(100dvh-8rem)] w-(--right-sidebar-width) overflow-y-auto pb-1 scrollbar-hide">
           {rightSidebar}
         </div>

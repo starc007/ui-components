@@ -14,21 +14,6 @@ const PAGE_DESCRIPTION =
 const PAGE_PATH = "/docs/openui";
 const PAGE_IMAGE = "/api/og?page=openui&v=2";
 
-const PAGE_NAV_ITEMS = [
-  {
-    id: "overview",
-    label: "OpenUI guide",
-    children: [
-      { id: "install", label: "Install" },
-      { id: "register-components", label: "Register components" },
-      { id: "assemble-library", label: "Assemble the library" },
-      { id: "generate-prompt", label: "Generate the prompt" },
-      { id: "render-stream", label: "Render the stream" },
-      { id: "why-beui", label: "Why beUI fits" },
-      { id: "resources", label: "Resources" },
-    ],
-  },
-];
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -260,7 +245,7 @@ const RESOURCES: { label: string; url: string; desc: string }[] = [
 
 export default function OpenUIPage() {
   return (
-    <GuideShell navItems={PAGE_NAV_ITEMS}>
+    <GuideShell>
       <JsonLd
         data={[
           breadcrumbJsonLd([

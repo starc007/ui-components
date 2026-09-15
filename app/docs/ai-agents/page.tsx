@@ -8,21 +8,6 @@ import { SITE_URL } from "@/lib/site";
 
 const PAGE_PATH = "/docs/ai-agents";
 
-const PAGE_NAV_ITEMS = [
-  {
-    id: "overview",
-    label: "Agent guide",
-    children: [
-      { id: "agent-skill", label: "Agent skill" },
-      { id: "mcp-server", label: "MCP server" },
-      { id: "endpoints", label: "Endpoints" },
-      { id: "agent-flow", label: "Agent flow" },
-      { id: "shadcn-flow", label: "shadcn flow" },
-      { id: "entry-shape", label: "Entry shape" },
-      { id: "generative-ui", label: "Generative UI" },
-    ],
-  },
-];
 
 export const metadata: Metadata = {
   title: "AI Agents",
@@ -142,7 +127,7 @@ const ENTRY_SHAPE = `{
 
 export default function AIAgentsPage() {
   return (
-    <GuideShell navItems={PAGE_NAV_ITEMS}>
+    <GuideShell>
       <header id="overview" className="scroll-mt-24">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Agent guide

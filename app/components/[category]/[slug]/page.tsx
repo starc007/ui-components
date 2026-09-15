@@ -12,9 +12,6 @@ import {
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { InstallBlock } from "@/components/app/docs/install-block";
 import { KeepInMind } from "@/components/app/docs/keep-in-mind";
-import { PageNav, type PageNavItem } from "@/components/app/docs/page-nav";
-import { SiteSidebar } from "@/components/app/chrome/site-sidebar";
-import { ThreeColumnLayout } from "@/components/app/chrome/three-column-layout";
 import { PropsTable } from "@/components/app/docs/props-table";
 import {
   Tabs,
@@ -148,221 +145,157 @@ export default async function ComponentPage({
   const dates = componentDates(cat.slug, comp.slug);
   const related = relatedComponents(cat.slug, comp.slug, 3);
   const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
-  const variantNavItems: PageNavItem[] =
-    comp.examples?.map((example, index) => ({
-      id: example.slug,
-      label: example.name,
-      children: [
-        { id: `${example.slug}-preview`, label: "Preview" },
-        ...(example.installSlug
-          ? [{ id: `${example.slug}-install`, label: "Install" }]
-          : []),
-        ...(shouldShowExampleApi(index) && getComponentProps(example.file).length
-          ? [
-              {
-                id: `${example.slug}-api-reference`,
-                label: "API Reference",
-              },
-            ]
-          : []),
-      ],
-    })) ?? [];
-  const pageNavItems: PageNavItem[] = [
-    ...(variantNavItems.length
-      ? [
-          ...variantNavItems,
-          ...(!hasVariantInstallCommands
-            ? [{ id: "install", label: "Install" }]
-            : []),
-          ...(comp.guide
-            ? [
-                { id: "composition", label: "Composition" },
-                { id: "behavior", label: "How it works" },
-              ]
-            : []),
-        ]
-      : [
-          {
-            id: "overview",
-            label: comp.name,
-            children: [
-              { id: "preview", label: "Preview" },
-              ...(!hasVariantInstallCommands
-                ? [{ id: "install", label: "Install" }]
-                : []),
-              ...(propsDocs.length
-                ? [{ id: "api-reference", label: "API Reference" }]
-                : []),
-              ...(comp.guide
-                ? [
-                    { id: "composition", label: "Composition" },
-                    { id: "behavior", label: "How it works" },
-                  ]
-                : []),
-            ],
-          },
-        ]),
-    ...(related.length
-      ? [{ id: "related-components", label: "Related components" }]
-      : []),
-  ];
-
   const creditUrl = comp.credit ? new URL(comp.credit.url) : null;
   creditUrl?.searchParams.set("ref", "beui");
 
   return (
-    <ThreeColumnLayout
-      leftSidebar={<SiteSidebar />}
-      rightSidebar={<PageNav items={pageNavItems} />}
-    >
-      <div className="min-w-0">
-        <JsonLd
-          data={[
-            breadcrumbJsonLd([
-              { name: "beUI", path: "/" },
-              { name: cat.name, path: categoryPath(cat.slug) },
-              { name: comp.name, path: componentPath(cat.slug, comp.slug) },
-            ]),
-            componentJsonLd(cat, comp),
-          ]}
-        />
-        <div id="overview" className="scroll-mt-24">
-          <nav
-            aria-label="Breadcrumb"
-            className="flex items-center gap-1.5 text-sm"
+    <div className="min-w-0">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "beUI", path: "/" },
+            { name: cat.name, path: categoryPath(cat.slug) },
+            { name: comp.name, path: componentPath(cat.slug, comp.slug) },
+          ]),
+          componentJsonLd(cat, comp),
+        ]}
+      />
+      <div id="overview" className="scroll-mt-24">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-1.5 text-sm"
+        >
+          <Link
+            href={categoryPath(cat.slug)}
+            className="text-muted-foreground transition-colors hover:text-foreground"
           >
-            <Link
-              href={categoryPath(cat.slug)}
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {cat.name}
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="font-medium text-foreground">{comp.name}</span>
-          </nav>
-          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-medium tracking-tight text-foreground">
-                {comp.name}
-              </h1>
-              {comp.badge === "new" ? (
-                <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
-              ) : null}
-            </div>
-            <CopyPage
-              pageUrl={pageUrlFor(cat.slug, comp.slug)}
-              markdownPath={`${componentPath(cat.slug, comp.slug)}.md`}
-              componentName={comp.name}
-            />
+            {cat.name}
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="font-medium text-foreground">{comp.name}</span>
+        </nav>
+        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-medium tracking-tight text-foreground">
+              {comp.name}
+            </h1>
+            {comp.badge === "new" ? (
+              <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
+            ) : null}
           </div>
-          <p className="mt-2 max-w-2xl text-muted-foreground">
-            {comp.description}
-          </p>
+          <CopyPage
+            pageUrl={pageUrlFor(cat.slug, comp.slug)}
+            markdownPath={`${componentPath(cat.slug, comp.slug)}.md`}
+            componentName={comp.name}
+          />
         </div>
+        <p className="mt-2 max-w-2xl text-muted-foreground">
+          {comp.description}
+        </p>
+      </div>
 
-        {comp.examples?.length ? (
-          <div className="mt-10 flex flex-col gap-12">
-            {comp.examples.map((ex, index) => (
-              <ExampleBlock
-                key={ex.slug}
-                category={cat.slug}
-                pageSlug={comp.slug}
-                example={ex}
-                showApiReference={shouldShowExampleApi(index)}
+      {comp.examples?.length ? (
+        <div className="mt-10 flex flex-col gap-12">
+          {comp.examples.map((ex, index) => (
+            <ExampleBlock
+              key={ex.slug}
+              category={cat.slug}
+              pageSlug={comp.slug}
+              example={ex}
+              showApiReference={shouldShowExampleApi(index)}
+            />
+          ))}
+        </div>
+      ) : (
+        <DefaultTabs
+          category={category}
+          slug={slug}
+          file={comp.file}
+          usageFile={comp.usageFile}
+        />
+      )}
+
+      {!hasVariantInstallCommands ? (
+        <section
+          id="install"
+          className="mt-12 scroll-mt-24 border-t border-border pt-8"
+        >
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold text-foreground">Install</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Add it with the shadcn CLI, or copy the source manually.
+            </p>
+            <div className="mt-3">
+              <InstallBlock category={cat.slug} slug={comp.slug} />
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {propsDocs.length ? (
+        <section
+          id="api-reference"
+          className="mt-12 scroll-mt-24 border-t border-border pt-8"
+        >
+          <h2 className="text-sm font-semibold text-foreground">
+            API Reference
+          </h2>
+          <div className="mt-4">
+            <PropsTable docs={propsDocs} />
+          </div>
+        </section>
+      ) : null}
+
+      {comp.guide ? <ComponentGuide guide={comp.guide} /> : null}
+
+      {related.length ? (
+        <section
+          id="related-components"
+          className="mt-12 scroll-mt-24 border-t border-border pt-8"
+        >
+          <h2 className="text-sm font-semibold text-foreground">
+            Related components
+          </h2>
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((rel) => (
+              <ComponentCard
+                key={`${rel.category}/${rel.slug}`}
+                categorySlug={rel.category}
+                slug={rel.slug}
+                name={rel.name}
+                description={rel.description}
+                badge={rel.badge}
+                launchedAt={rel.launchedAt}
               />
             ))}
           </div>
-        ) : (
-          <DefaultTabs
-            category={category}
-            slug={slug}
-            file={comp.file}
-            usageFile={comp.usageFile}
-          />
-        )}
+        </section>
+      ) : null}
 
-        {!hasVariantInstallCommands ? (
-          <section
-            id="install"
-            className="mt-12 scroll-mt-24 border-t border-border pt-8"
+      {comp.credit ? (
+        <section className="mt-12 border-t border-border pt-8">
+          <h2 className="text-sm font-semibold text-foreground">Contributed by</h2>
+          <Link
+            href={creditUrl!.toString()}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-foreground"
           >
-            <div className="min-w-0">
-              <h2 className="text-sm font-semibold text-foreground">Install</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Add it with the shadcn CLI, or copy the source manually.
-              </p>
-              <div className="mt-3">
-                <InstallBlock category={cat.slug} slug={comp.slug} />
-              </div>
-            </div>
-          </section>
-        ) : null}
-
-        {propsDocs.length ? (
-          <section
-            id="api-reference"
-            className="mt-12 scroll-mt-24 border-t border-border pt-8"
-          >
-            <h2 className="text-sm font-semibold text-foreground">
-              API Reference
-            </h2>
-            <div className="mt-4">
-              <PropsTable docs={propsDocs} />
-            </div>
-          </section>
-        ) : null}
-
-        {comp.guide ? <ComponentGuide guide={comp.guide} /> : null}
-
-        {related.length ? (
-          <section
-            id="related-components"
-            className="mt-12 scroll-mt-24 border-t border-border pt-8"
-          >
-            <h2 className="text-sm font-semibold text-foreground">
-              Related components
-            </h2>
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {related.map((rel) => (
-                <ComponentCard
-                  key={`${rel.category}/${rel.slug}`}
-                  categorySlug={rel.category}
-                  slug={rel.slug}
-                  name={rel.name}
-                  description={rel.description}
-                  badge={rel.badge}
-                  launchedAt={rel.launchedAt}
-                />
-              ))}
-            </div>
-          </section>
-        ) : null}
-
-        {comp.credit ? (
-          <section className="mt-12 border-t border-border pt-8">
-            <h2 className="text-sm font-semibold text-foreground">Contributed by</h2>
-            <Link
-              href={creditUrl!.toString()}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-foreground"
-            >
-              <span className="underline underline-offset-2">{comp.credit.name}</span>
-            </Link>
-          </section>
-        ) : null}
-        {cat.slug === "blocks" ? <KeepInMind /> : null}
-        <p className="mt-6 text-xs text-muted-foreground">
-          Updated{" "}
-          <time dateTime={dates.updatedAt}>
-            {new Intl.DateTimeFormat("en", {
-              dateStyle: "medium",
-              timeZone: "UTC",
-            }).format(new Date(`${dates.updatedAt}T00:00:00Z`))}
-          </time>
-        </p>
-      </div>
-    </ThreeColumnLayout>
+            <span className="underline underline-offset-2">{comp.credit.name}</span>
+          </Link>
+        </section>
+      ) : null}
+      {cat.slug === "blocks" ? <KeepInMind /> : null}
+      <p className="mt-6 text-xs text-muted-foreground">
+        Updated{" "}
+        <time dateTime={dates.updatedAt}>
+          {new Intl.DateTimeFormat("en", {
+            dateStyle: "medium",
+            timeZone: "UTC",
+          }).format(new Date(`${dates.updatedAt}T00:00:00Z`))}
+        </time>
+      </p>
+    </div>
   );
 }
 
