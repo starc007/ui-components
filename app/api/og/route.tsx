@@ -18,7 +18,7 @@ const PAGE_CARDS = {
   },
 } as const;
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);

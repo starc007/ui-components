@@ -25,3 +25,6 @@ jobs:
 
       - name: Accessibility tests
         run: bun test
+
+      - name: Validate Cloudflare registry snapshot
+        run: bun run check:cloudflare

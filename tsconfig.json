@@ -37,6 +37,8 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
+    ".open-next",
+    ".wrangler",
     "examples/shadcn-vite-install",
     "mcp",
     "node_modules"

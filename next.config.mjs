@@ -1,3 +1,10 @@
+import path from "node:path";
+
+const cloudflareAliases = process.env.BEUI_CLOUDFLARE === "1" ? {
+  "@/lib/source-reader": "./.cloudflare/source-reader.ts",
+  "@/lib/props-extractor": "./.cloudflare/props-extractor.ts",
+} : {};
+
 const CHART_COMPONENTS = ["heat-calendar", "returns-calendar", "price-target-fan"];
 
 // Block source files still live under components/motion. Keep inferred and
@@ -86,6 +93,13 @@ const LEGACY_COMPONENT_REDIRECTS = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  turbopack: { resolveAlias: cloudflareAliases },
+  webpack(config) {
+    for (const [name, file] of Object.entries(cloudflareAliases)) {
+      config.resolve.alias[name] = path.resolve(file);
+    }
+    return config;
+  },
   images: {
     remotePatterns: [
       {
