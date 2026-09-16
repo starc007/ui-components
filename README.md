@@ -99,7 +99,7 @@ The separate MCP Worker in `mcp/` keeps its own deployment configuration.
 
 In the Cloudflare dashboard, enable R2 and create the `beui-next-cache` bucket
 before the first deployment. No local Wrangler login or deployment is required. The
-root Worker is named `beui`; if you rename it in `wrangler.jsonc`, also change
+root Worker is named `ui-components`; if you rename it in `wrangler.jsonc`, also change
 the `WORKER_SELF_REFERENCE` service name. R2 stores prerendered pages and fetch
 cache entries, and the Durable Object queue handles timed revalidation (including
 the GitHub star count). The `IMAGES` binding enables Next.js image optimization.
@@ -109,10 +109,19 @@ application → Import a repository**, select Workers, and use the repository ro
 
 | Setting | Value |
 | --- | --- |
-| Worker name | `beui` |
+| Worker name | `ui-components` |
 | Build command | `bun run build:cloudflare` |
 | Deploy command | `bunx opennextjs-cloudflare deploy` |
-| Non-production branch deploy command | `bunx opennextjs-cloudflare upload` |
+| Non-production branch deploy command (after the first production deployment) | `bunx opennextjs-cloudflare upload` |
+
+The first deployment must run `bunx opennextjs-cloudflare deploy` from the
+configured production branch to apply the Durable Object migration. Version
+uploads cannot create the Durable Object namespace: `wrangler versions upload`
+and `opennextjs-cloudflare upload` fail while that migration is pending. After
+the production deployment succeeds, non-production branch uploads can run.
+Future Durable Object migrations also need a production deployment first.
+Keep preview branches on `upload`; switching them to `deploy` would publish
+their code to the live Worker.
 
 Use the OpenNext deploy/upload commands so the prerender cache is populated;
 plain `wrangler deploy` does not perform that step. Cloudflare runs these commands

@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "beui",
+  "name": "ui-components",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-09-16",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -9,7 +9,7 @@
     "binding": "ASSETS"
   },
   "services": [
-    { "binding": "WORKER_SELF_REFERENCE", "service": "beui" }
+    { "binding": "WORKER_SELF_REFERENCE", "service": "ui-components" }
   ],
   "r2_buckets": [
     { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "beui-next-cache" }
