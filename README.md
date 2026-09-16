@@ -4,7 +4,7 @@
   </a>
 </p>
 
-<h1 align="center">beUI v2</h1>
+<h1 align="center">beUI - Motion Component Library</h1>
 
 <p align="center">
   Animated components for React and Next.js. Copy the source, own the code.
@@ -31,7 +31,7 @@
 
 ## What is beUI?
 
-beUI is a small component library for product interfaces.
+beUI is a motion component library for product interfaces.
 
 Each component includes a live preview, usage example, source code, and a shadcn install command. The components are meant to live in your app, not behind a package.
 
