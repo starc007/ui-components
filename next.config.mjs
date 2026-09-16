@@ -150,6 +150,11 @@ const nextConfig = {
       },
     ];
   },
+  // The MCP server is deployed independently from mcp/wrangler.jsonc.
+  // Keep its source and dependencies out of the site's standalone/OpenNext output.
+  outputFileTracingExcludes: {
+    "/*": ["./mcp/**/*"],
+  },
   outputFileTracingIncludes: {
     "/charts/*": [
       "./components/charts/**/*",
