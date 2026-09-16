@@ -1,5 +1,7 @@
-import { promises as fs } from "node:fs";
 import path from "node:path";
+import { readOptionalSourceFile } from "@/lib/source-reader";
+
+export { readSourceFile, readOptionalSourceFile } from "@/lib/source-reader";
 
 const SOURCE_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx", ".css"] as const;
 
@@ -10,26 +12,6 @@ export type SourceFile = {
 
 function toProjectRelative(filePath: string) {
   return filePath.split(path.sep).join("/");
-}
-
-function sourcePath(rel: string) {
-  return path.join(process.cwd(), rel);
-}
-
-export async function readSourceFile(rel: string) {
-  try {
-    return await fs.readFile(sourcePath(rel), "utf8");
-  } catch (error) {
-    throw new Error(`Missing source file: ${rel}`, { cause: error });
-  }
-}
-
-export async function readOptionalSourceFile(rel: string) {
-  try {
-    return await fs.readFile(sourcePath(rel), "utf8");
-  } catch {
-    return null;
-  }
 }
 
 export async function resolveSourceImport(spec: string, fromFile?: string): Promise<SourceFile | null> {

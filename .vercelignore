@@ -1,3 +1,0 @@
-# The MCP server is a separate Cloudflare Worker, deployed via wrangler.
-# Keep it out of the Vercel (Next.js) build.
-mcp

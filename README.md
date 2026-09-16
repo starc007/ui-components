@@ -4,7 +4,7 @@
   </a>
 </p>
 
-<h1 align="center">beUI v2</h1>
+<h1 align="center">beUI - Motion Component Library</h1>
 
 <p align="center">
   Animated components for React and Next.js. Copy the source, own the code.
@@ -31,7 +31,7 @@
 
 ## What is beUI?
 
-beUI is a small component library for product interfaces.
+beUI is a motion component library for product interfaces.
 
 Each component includes a live preview, usage example, source code, and a shadcn install command. The components are meant to live in your app, not behind a package.
 
@@ -92,6 +92,67 @@ bun run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Deploy to Cloudflare Workers
+
+The docs site uses [OpenNext](https://opennext.js.org/cloudflare) on Workers.
+The separate MCP Worker in `mcp/` keeps its own deployment configuration.
+
+In the Cloudflare dashboard, enable R2 and create the `beui-next-cache` bucket
+before the first deployment. No local Wrangler login or deployment is required. The
+root Worker is named `ui-components`; if you rename it in `wrangler.jsonc`, also change
+the `WORKER_SELF_REFERENCE` service name. R2 stores prerendered pages and fetch
+cache entries, and the Durable Object queue handles timed revalidation (including
+the GitHub star count). The `IMAGES` binding enables Next.js image optimization.
+
+Connect this GitHub repository through **Workers & Pages → Create
+application → Import a repository**, select Workers, and use the repository root:
+
+| Setting | Value |
+| --- | --- |
+| Worker name | `ui-components` |
+| Build command | `bun run build:cloudflare` |
+| Deploy command | `bunx opennextjs-cloudflare deploy` |
+| Non-production branch deploy command (after the first production deployment) | `bunx opennextjs-cloudflare upload` |
+
+The first deployment must run `bunx opennextjs-cloudflare deploy` from the
+configured production branch to apply the Durable Object migration. Version
+uploads cannot create the Durable Object namespace: `wrangler versions upload`
+and `opennextjs-cloudflare upload` fail while that migration is pending. After
+the production deployment succeeds, non-production branch uploads can run.
+Future Durable Object migrations also need a production deployment first.
+Keep preview branches on `upload`; switching them to `deploy` would publish
+their code to the live Worker.
+
+Use the OpenNext deploy/upload commands so the prerender cache is populated;
+plain `wrangler deploy` does not perform that step. Cloudflare runs these commands
+automatically for connected Git deployments. Set `BUN_VERSION` to `1.3.14` in the build settings
+and use Node.js 22 or newer.
+
+Configure these build variables as needed, then rebuild when they change:
+
+- `NEXT_PUBLIC_SITE_URL`: canonical site URL; defaults to `https://beui.dev`.
+- `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`: optional Google Analytics measurement ID.
+- `SPONSOR_EVM_ADDRESS`, `SPONSOR_SOL_ADDRESS`: optional sponsor payment addresses.
+- `DODO_SPONSOR_DIAMOND_SUBSCRIPTION_URL`, `DODO_SPONSOR_PLATINUM_SUBSCRIPTION_URL`,
+  `DODO_SPONSOR_SILVER_SUBSCRIPTION_URL`: sponsor checkout links. The corresponding
+  `DODO_SPONSOR_*_URL` variables remain supported as fallbacks.
+
+These values are rendered into public pages. Tracwell analytics remains enabled;
+the Vercel Analytics and Speed Insights integrations have been removed.
+
+The dashboard still needs the build script: `bun run build:cloudflare` generates a public source/API documentation snapshot
+in `.cloudflare/`, builds Next.js, and writes the Worker to `.open-next/`. This
+keeps registry source reads and TypeScript prop extraction out of the Worker
+runtime. Both directories are generated and ignored by Git. Normal `bun run dev`
+continues reading live source files. Registry URLs, redirects, and Markdown
+rewrites keep their existing paths.
+
+To test in the Workers runtime locally, run `bun run preview:cloudflare`.
+After verifying the deployed `workers.dev` URL, add `beui.dev` under the Worker's
+**Settings → Domains & Routes → Custom domain**. Check a component page,
+`/r/button.json`, `/r/button/raw`, `/components/motion/button.md`, and `/api/og`
+before directing production traffic to it.
+
 ## Checks
 
 ```bash
@@ -99,6 +160,10 @@ bun run check
 ```
 
 This runs TypeScript, Biome lint, and registry source validation.
+
+`bun run check:cloudflare` also validates every registry item and component
+Markdown page against the generated snapshot from outside the repository,
+rejecting filesystem dependencies. It does not run a Next.js build or server.
 
 ## Contributing
 

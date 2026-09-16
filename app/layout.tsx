@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@/components/app/analytics/google-analytics";
@@ -142,8 +140,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </main>
             <SiteDock />
             <PreferencesPanel />
-            {process.env.NODE_ENV === "production" && <Analytics />}
-            {process.env.NODE_ENV === "production" && <SpeedInsights />}
             <GoogleAnalytics measurementId={googleAnalyticsId} />
           </PreferencesProvider>
         </ThemeProvider>
