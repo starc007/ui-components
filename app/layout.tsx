@@ -10,7 +10,6 @@ import { SiteDock } from "@/components/app/chrome/site-dock";
 import { SiteFrame } from "@/components/app/chrome/site-frame";
 import { KeyboardShortcuts } from "@/components/app/chrome/keyboard-shortcuts";
 import { JsonLd } from "@/components/app/analytics/json-ld";
-import { getGithubStarCount } from "@/lib/github";
 import {
   AUTHOR,
   SITE_DESCRIPTION,
@@ -103,8 +102,7 @@ export const viewport: Viewport = {
   ],
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const githubStarCount = await getGithubStarCount();
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
   return (
@@ -134,7 +132,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ThemeProvider>
           <PreferencesProvider>
             <KeyboardShortcuts />
-            <SiteHeader githubStarCount={githubStarCount} />
+            <SiteHeader />
             <main className="pt-14 pb-32">
               <SiteFrame>{children}</SiteFrame>
             </main>

@@ -97,12 +97,20 @@ Open [http://localhost:3000](http://localhost:3000).
 The docs site uses [OpenNext](https://opennext.js.org/cloudflare) on Workers.
 The separate MCP Worker in `mcp/` keeps its own deployment configuration.
 
-In the Cloudflare dashboard, enable R2 and create the `beui-next-cache` bucket
-before the first deployment. No local Wrangler login or deployment is required. The
-root Worker is named `ui-components`; if you rename it in `wrangler.jsonc`, also change
-the `WORKER_SELF_REFERENCE` service name. R2 stores prerendered pages and fetch
-cache entries, and the Durable Object queue handles timed revalidation (including
-the GitHub star count). The `IMAGES` binding enables Next.js image optimization.
+The root Worker is named `ui-components`. Prerendered pages use OpenNext's
+read-only Workers Static Assets cache: **no R2 bucket or revalidation queue is
+required**. The `IMAGES` binding enables Next.js image optimization.
+
+The header loads `/api/github-stars` once after mounting. The endpoint caches
+successful counts for one hour and unavailable results for five minutes using
+the Workers Cache API (shared within each data center, not globally replicated).
+It does not use Next.js ISR or poll in the browser. Documentation updates ship
+with a new build rather than hourly page regeneration.
+
+Keep cache interception disabled until the Next.js segment-prefetch issue in
+[OpenNext #1212](https://github.com/opennextjs/opennextjs-aws/issues/1212) is resolved.
+Server-side syntax highlighting uses Shiki's JavaScript engine because Workers
+cannot compile its default Oniguruma WebAssembly at runtime.
 
 Connect this GitHub repository through **Workers & Pages → Create
 application → Import a repository**, select Workers, and use the repository root:
@@ -114,18 +122,15 @@ application → Import a repository**, select Workers, and use the repository ro
 | Deploy command | `bunx opennextjs-cloudflare deploy` |
 | Non-production branch deploy command (after the first production deployment) | `bunx opennextjs-cloudflare upload` |
 
-The first deployment must run `bunx opennextjs-cloudflare deploy` from the
-configured production branch to apply the Durable Object migration. Version
-uploads cannot create the Durable Object namespace: `wrangler versions upload`
-and `opennextjs-cloudflare upload` fail while that migration is pending. After
-the production deployment succeeds, non-production branch uploads can run.
-Future Durable Object migrations also need a production deployment first.
-Keep preview branches on `upload`; switching them to `deploy` would publish
-their code to the live Worker.
+The historical `v1` Durable Object migration is retained for the existing
+Worker, but the application no longer binds or queues work to it. The old R2
+bucket and Durable Object data are not deleted by this change; retire them
+separately after verifying the new deployment. A fresh Worker with this historical
+migration still needs an initial production `deploy` before version uploads.
+Keep preview branches on `upload`; `deploy` publishes to the live Worker.
 
-Use the OpenNext deploy/upload commands so the prerender cache is populated;
-plain `wrangler deploy` does not perform that step. Cloudflare runs these commands
-automatically for connected Git deployments. Set `BUN_VERSION` to `1.3.14` in the build settings
+Use the OpenNext deploy/upload commands to package the prerendered assets.
+Cloudflare runs these commands automatically for connected Git deployments. Set `BUN_VERSION` to `1.3.14` in the build settings
 and use Node.js 22 or newer.
 
 Configure these build variables as needed, then rebuild when they change:

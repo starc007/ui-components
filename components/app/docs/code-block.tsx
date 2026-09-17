@@ -1,4 +1,4 @@
-import { codeToHtml } from "shiki";
+import { codeToHtml } from "@/lib/docs-highlighter";
 import {
   transformerNotationHighlight,
   transformerNotationDiff,

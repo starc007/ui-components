@@ -5,7 +5,7 @@ import { useMotionValueEvent, useScroll } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GithubIcon } from "@/components/app/icons";
 import { MobileNav } from "@/components/app/chrome/mobile-nav";
 import { usePreferences } from "@/components/app/preferences/preferences-provider";
@@ -23,11 +23,21 @@ function formatStarCount(count: number) {
   return String(count);
 }
 
-export function SiteHeader({
-  githubStarCount,
-}: {
-  githubStarCount: number | null;
-}) {
+export function SiteHeader() {
+  const [githubStarCount, setGithubStarCount] = useState<number | null>(null);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/github-stars", { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) return;
+        const data = await response.json();
+        if (Number.isSafeInteger(data.count) && data.count >= 0) {
+          setGithubStarCount(data.count);
+        }
+      })
+      .catch(() => { /* The GitHub link remains usable when the count is unavailable. */ });
+    return () => controller.abort();
+  }, []);
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const { setPanelOpen } = usePreferences();
