@@ -92,72 +92,6 @@ bun run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Deploy to Cloudflare Workers
-
-The docs site uses [OpenNext](https://opennext.js.org/cloudflare) on Workers.
-The separate MCP Worker in `mcp/` keeps its own deployment configuration.
-
-The root Worker is named `ui-components`. Prerendered pages use OpenNext's
-read-only Workers Static Assets cache: **no R2 bucket or revalidation queue is
-required**. The `IMAGES` binding enables Next.js image optimization.
-
-The header loads `/api/github-stars` once after mounting. The endpoint caches
-successful counts for one hour and unavailable results for five minutes using
-the Workers Cache API (shared within each data center, not globally replicated).
-It does not use Next.js ISR or poll in the browser. Documentation updates ship
-with a new build rather than hourly page regeneration.
-
-Keep cache interception disabled until the Next.js segment-prefetch issue in
-[OpenNext #1212](https://github.com/opennextjs/opennextjs-aws/issues/1212) is resolved.
-Server-side syntax highlighting uses Shiki's JavaScript engine because Workers
-cannot compile its default Oniguruma WebAssembly at runtime.
-
-Connect this GitHub repository through **Workers & Pages → Create
-application → Import a repository**, select Workers, and use the repository root:
-
-| Setting | Value |
-| --- | --- |
-| Worker name | `ui-components` |
-| Build command | `bun run build:cloudflare` |
-| Deploy command | `bunx opennextjs-cloudflare deploy` |
-| Non-production branch deploy command (after the first production deployment) | `bunx opennextjs-cloudflare upload` |
-
-The historical `v1` Durable Object migration is retained for the existing
-Worker, but the application no longer binds or queues work to it. The old R2
-bucket and Durable Object data are not deleted by this change; retire them
-separately after verifying the new deployment. A fresh Worker with this historical
-migration still needs an initial production `deploy` before version uploads.
-Keep preview branches on `upload`; `deploy` publishes to the live Worker.
-
-Use the OpenNext deploy/upload commands to package the prerendered assets.
-Cloudflare runs these commands automatically for connected Git deployments. Set `BUN_VERSION` to `1.3.14` in the build settings
-and use Node.js 22 or newer.
-
-Configure these build variables as needed, then rebuild when they change:
-
-- `NEXT_PUBLIC_SITE_URL`: canonical site URL; defaults to `https://beui.dev`.
-- `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`: optional Google Analytics measurement ID.
-- `SPONSOR_EVM_ADDRESS`, `SPONSOR_SOL_ADDRESS`: optional sponsor payment addresses.
-- `DODO_SPONSOR_DIAMOND_SUBSCRIPTION_URL`, `DODO_SPONSOR_PLATINUM_SUBSCRIPTION_URL`,
-  `DODO_SPONSOR_SILVER_SUBSCRIPTION_URL`: sponsor checkout links. The corresponding
-  `DODO_SPONSOR_*_URL` variables remain supported as fallbacks.
-
-These values are rendered into public pages. Tracwell analytics remains enabled;
-the Vercel Analytics and Speed Insights integrations have been removed.
-
-The dashboard still needs the build script: `bun run build:cloudflare` generates a public source/API documentation snapshot
-in `.cloudflare/`, builds Next.js, and writes the Worker to `.open-next/`. This
-keeps registry source reads and TypeScript prop extraction out of the Worker
-runtime. Both directories are generated and ignored by Git. Normal `bun run dev`
-continues reading live source files. Registry URLs, redirects, and Markdown
-rewrites keep their existing paths.
-
-To test in the Workers runtime locally, run `bun run preview:cloudflare`.
-After verifying the deployed `workers.dev` URL, add `beui.dev` under the Worker's
-**Settings → Domains & Routes → Custom domain**. Check a component page,
-`/r/button.json`, `/r/button/raw`, `/components/motion/button.md`, and `/api/og`
-before directing production traffic to it.
-
 ## Checks
 
 ```bash
@@ -165,10 +99,6 @@ bun run check
 ```
 
 This runs TypeScript, Biome lint, and registry source validation.
-
-`bun run check:cloudflare` also validates every registry item and component
-Markdown page against the generated snapshot from outside the repository,
-rejecting filesystem dependencies. It does not run a Next.js build or server.
 
 ## Contributing
 
