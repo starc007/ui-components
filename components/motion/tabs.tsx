@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { motion, MotionConfig, useReducedMotion, type Transition } from "motion/react";
+import { cancelFrame, frame, motion, MotionConfig, useReducedMotion, type Transition } from "motion/react";
 import {
   createContext,
   useCallback,
@@ -35,10 +35,11 @@ function useTabs() {
 
 // Settle without overshoot: a scrollable tab list would turn even a small
 // overshoot into a transient scrollbar and layout shift.
+// Scale stiffness and damping together for a quicker glide with the same feel.
 const transition: Transition = {
   type: "spring",
-  stiffness: 170,
-  damping: 30,
+  stiffness: 245,
+  damping: 36,
   mass: 1.2,
 };
 
@@ -171,6 +172,45 @@ export function TabsList({
     reveal(listRef.current?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]') ?? null);
   }, [children, value, edges.overflow, measure, reveal]);
 
+  useLayoutEffect(() => {
+    if (variant === "underline") return;
+    const list = listRef.current;
+    if (!list) return;
+    void children;
+    const labels = Array.from(list.querySelectorAll<HTMLElement>("[data-tabs-label]"));
+    const indicator = list.querySelector<HTMLElement>("[data-tabs-indicator]");
+    const target = list.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
+    if (!indicator || !target || target.dataset.tabsValue !== value) {
+      for (const label of labels) label.style.clipPath = "inset(0 100% 0 0)";
+      return;
+    }
+    let frames = 0;
+    let stillFrames = 0;
+    let previous: { left: number; right: number } | undefined;
+    const syncClips = () => {
+      const pill = (reduce ? target : indicator).getBoundingClientRect();
+      // Read ALL geometry before writing ANY masks. A loop per tab interleaved
+      // reads and writes, forcing the browser to flush styles repeatedly.
+      const clips = labels.map((label) => {
+        const bounds = label.getBoundingClientRect();
+        const left = Math.max(0, Math.min(bounds.width, pill.left - bounds.left));
+        const right = Math.max(0, Math.min(bounds.width, bounds.right - pill.right));
+        return left + right >= bounds.width ? "inset(0 100% 0 0)" : `inset(0 ${right}px 0 ${left}px)`;
+      });
+      labels.forEach((label, index) => {
+        if (label.style.clipPath !== clips[index]) label.style.clipPath = clips[index];
+      });
+      frames += 1;
+      stillFrames = previous && Math.abs(pill.left - previous.left) < 0.01 && Math.abs(pill.right - previous.right) < 0.01 ? stillFrames + 1 : 0;
+      previous = { left: pill.left, right: pill.right };
+      if (reduce || (frames > 2 && stillFrames >= 2)) cancelFrame(syncClips);
+    };
+    // One shared pass after Motion paints the projected pill keeps every label
+    // in sync, including labels crossed during a long or interrupted glide.
+    frame.postRender(syncClips, true);
+    return () => cancelFrame(syncClips);
+  }, [value, children, variant, reduce]);
+
   const scroll = (direction: number) => {
     const viewport = viewportRef.current;
     if (viewport) viewport.scrollBy({ left: direction * viewport.clientWidth * 0.8, behavior: reduce ? "instant" : "smooth" });
@@ -229,6 +269,8 @@ export function TabsTrigger({
 }) {
   const { value: current, setValue, layoutId, variant } = useTabs();
   const active = current === value;
+  // React owns the initial mask only; TabsList synchronizes subsequent masks.
+  const [initialClip] = useState(() => active ? "inset(0)" : "inset(0 100% 0 0)");
 
   if (variant === "underline") {
     return (
@@ -247,9 +289,9 @@ export function TabsTrigger({
         {active ? (
         <motion.span
           layoutId={layoutId}
-          layout="position"
+          layout
           className={cn(
-            "absolute -bottom-px left-0 right-0 h-px bg-primary",
+            "absolute bottom-0 left-0 right-0 h-px bg-primary",
             indicatorClassName,
           )}
         />
@@ -264,8 +306,9 @@ export function TabsTrigger({
     <div className="relative shrink-0">
       {active ? (
         <motion.span
+          data-tabs-indicator=""
           layoutId={layoutId}
-          layout="position"
+          layout
           style={{ borderRadius: variant === "pill" ? 9999 : 8 }}
           className={cn(
             "absolute inset-0 bg-primary",
@@ -278,18 +321,25 @@ export function TabsTrigger({
         type="button"
         role="tab"
         aria-selected={active}
+        data-tabs-value={value}
         onClick={() => setValue(value)}
         className={cn(
           "relative z-10 inline-flex items-center justify-center whitespace-nowrap bg-transparent px-3.5 py-1.5 text-sm font-medium outline-none",
-          "transition-colors",
-          active
-            ? "text-primary-foreground"
-            : "text-muted-foreground hover:text-foreground",
+          "text-muted-foreground hover:text-foreground",
           radius,
           className,
         )}
       >
         {children}
+        <span
+          data-tabs-label=""
+          aria-hidden="true"
+          inert
+          className="pointer-events-none absolute inset-0 inline-flex items-center justify-center text-primary-foreground [gap:inherit] [padding:inherit]"
+          style={{ clipPath: initialClip }}
+        >
+          {children}
+        </span>
       </button>
     </div>
   );
