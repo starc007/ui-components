@@ -71,7 +71,7 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-14",
+    updatedAt: "2026-09-18",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
@@ -91,7 +91,7 @@ const COMPONENT_DATES = {
   },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-28",
+    updatedAt: "2026-09-18",
   },
   "agents/code-block": {
     publishedAt: "2026-08-02",
