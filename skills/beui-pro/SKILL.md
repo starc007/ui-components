@@ -1,28 +1,40 @@
 ---
 name: beui-pro
-description: Choose, inspect, install, and compose licensed beUI Pro premium React blocks from the authenticated shadcn registry. Use when building or improving landing pages with beUI Pro, installing @beui-pro items, selecting premium heroes, features, pricing, social proof, CTAs, navigation, footers, or other page sections, or adapting installed Pro source inside a React or Next.js project.
+description: Choose, inspect, install, and compose licensed beUI Pro premium React blocks through authenticated MCP or the shadcn registry. Use when building or improving landing pages with beUI Pro, installing @beui-pro items, selecting premium heroes, features, pricing, social proof, CTAs, navigation, footers, or other page sections, or adapting installed Pro source inside a React or Next.js project.
 ---
 
 # beUI Pro
 
-Use the customer's licensed beUI Pro registry as the source of truth. Discover current items at runtime, install only the blocks the project needs, then compose and adapt the generated source.
+Use the customer's live licensed beUI Pro catalog as the source of truth. Discover current items at runtime, install only the blocks the project needs, then compose and adapt the source.
+
+## Choose an access path
+
+Follow the current [agent access documentation](https://pro.beui.dev/components/agents) for connection instructions.
+
+- **MCP:** Use an existing authenticated connection to `https://mcp.beui.dev/pro/mcp`. OAuth-capable clients open beUI's approval page, where the user enters their license key. Clients with custom headers can also use bearer authentication. A working MCP connection does not require a separate token in the agent's shell.
+- **Direct registry or shadcn CLI:** Follow the [installation documentation](https://pro.beui.dev/components/installation). This path requires `BEUI_PRO_TOKEN` in the command environment and private registry configuration for namespaced CLI commands.
+
+Prefer an available authenticated MCP connection. Do not replace it with token setup just because the shell has no token.
 
 ## Protect access
 
-- Require `BEUI_PRO_TOKEN` in the environment before accessing the registry.
+- Require `BEUI_PRO_TOKEN` only for direct registry requests or CLI installs, not for authenticated MCP calls.
 - Never print, paste, commit, or write the token into source files.
-- Never accept a token copied into the user's prompt when an environment variable can be used.
-- Stop and ask the user to configure their token when it is unavailable. Do not replace a requested Pro block with an approximation.
+- Never accept a token copied into the user's prompt. For OAuth, the user enters the key only on beUI's approval page.
+- If MCP authentication is missing or expired, use the client's native authentication flow. Never extract its stored OAuth credentials for shell commands.
+- If using the direct registry path and the token is unavailable, ask the user to configure it. Do not replace a requested Pro block with an approximation.
 - If the live catalog cannot be fetched, do not present remembered, documented, or locally inferred slugs as the current catalog.
-- Treat `401` as a missing, invalid, or expired token. Treat `404` as a stale or incorrect install slug and refresh the catalog.
+- On `401`, restore authentication for the chosen path. Treat `404` as a stale or incorrect install slug and refresh the catalog.
 
-Check access without revealing the value:
+For direct registry access only, check token presence without revealing its value:
 
 ```bash
 test -n "$BEUI_PRO_TOKEN" && echo "beUI Pro token is configured"
 ```
 
-## Configure the registries
+## Configure the registries (direct CLI only)
+
+Skip private registry setup when installing source returned by MCP.
 
 Inspect the project's existing `components.json` before editing it. Preserve its aliases and settings. Ensure both namespaces exist because Pro blocks can depend on public beUI primitives:
 
@@ -58,7 +70,9 @@ Prefer a coherent page composition over selecting blocks independently.
 
 ### 2. Fetch the live catalog
 
-Fetch the authenticated registry every time instead of relying on remembered slugs:
+**MCP:** Use `list_components` or `search_components` on the Pro connection. Choose an exact slug from the live response. Use the client's current tool schemas.
+
+**Direct registry:** Fetch the authenticated registry instead of relying on remembered slugs:
 
 ```bash
 curl -fsS \
@@ -92,11 +106,13 @@ Map the page brief to the smallest useful set of sections. A typical landing pag
 
 Do not install the whole catalog unless the user explicitly requests it. Avoid combining blocks with conflicting visual directions. Preserve the strongest aesthetic of each selected block while aligning shared typography, spacing, and theme tokens across the page.
 
-Only entries returned by `/r/registry.json` are shadcn-installable. Full standalone templates use a separate purchase and download entitlement; do not fabricate an `@beui-pro` template command.
+The Pro MCP catalog exposes the installable items from `/r/registry.json`. For full standalone templates, follow the template's documented entitlement and download flow; do not fabricate an `@beui-pro` template command.
 
 ### 4. Inspect before installing
 
-Inspect each selected item so the agent understands its files, dependencies, props, and named exports:
+**MCP:** Call `get_component` with the selected slug. Inspect its complete source files, targets, package dependencies, registry dependencies, props, and named exports.
+
+**Direct registry:** Inspect each selected item through the CLI:
 
 ```bash
 npx shadcn@latest view @beui-pro/<slug>
@@ -109,11 +125,21 @@ pnpm dlx shadcn@latest view @beui-pro/<slug>
 bunx --bun shadcn@latest view @beui-pro/<slug>
 ```
 
-Re-fetch the live catalog if inspection returns `404`. Resolve authentication or registry configuration if it returns `401`; do not bypass the private registry.
+Re-fetch the live catalog if inspection returns `404`. Restore authentication for the chosen access path if it returns `401`.
 
 ### 5. Install the selected source
 
-Install through the configured namespace:
+**MCP:** Install the complete source returned by `get_component`:
+
+- Map returned files to the project's paths and aliases. Keep all writes within the project.
+- Compare existing files before applying changes. Preserve shared helpers and local modifications.
+- Install missing package dependencies with the project's package manager.
+- Resolve registry dependencies: fetch licensed Pro dependencies through MCP and obtain public dependencies through their public MCP or registry. Include transitive dependencies.
+- If source or dependency metadata is incomplete, retrieve the missing data before continuing. Do not reconstruct a requested component from memory.
+
+The `install` and `requiredRegistries` fields, and `get_install_command`, describe the separate shadcn CLI path. They do not make private registry setup a prerequisite for using the returned source. MCP OAuth does not authenticate a separately launched shadcn process.
+
+**Direct registry:** Install through the configured namespace:
 
 ```bash
 npx shadcn@latest add @beui-pro/<slug>
@@ -146,4 +172,4 @@ Report which Pro slugs were installed and which files were adapted.
 - For “build a landing page,” select a complete but restrained section sequence, install each exact slug, and compose it in the existing route.
 - For “add a pricing section,” search pricing entries, inspect the closest variants, install one, and connect the real plans.
 - For “use beUI Pro components,” inspect the current UI first and prefer relevant Pro blocks over custom replacements.
-- For “show me what Pro has,” fetch the live registry and summarize matching items without exposing source or the token.
+- For “show me what Pro has,” use the live MCP or registry catalog and summarize matching items without exposing source or the token.

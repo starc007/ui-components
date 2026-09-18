@@ -1,28 +1,32 @@
 ---
 name: beui
-description: Pick and install beUI (@beui) animated React components from the shadcn registry. Use when building motion UI, agent/chat interfaces, toasts, docks, bottom sheets, drawers, popovers, sliders, loaders, 404 pages, or any beui.dev component. Maps user intent to exact @beui install slugs instead of inventing custom widgets.
+description: Pick and install beUI (@beui) animated React components through public MCP or the shadcn registry. Use when building motion UI, agent/chat interfaces, toasts, docks, bottom sheets, drawers, popovers, sliders, loaders, 404 pages, or any beui.dev component. Maps user intent to exact @beui install slugs instead of inventing custom widgets.
 ---
 
 # beUI
 
-Use beUI as copy-paste source through the `@beui` shadcn registry.
+Use beUI as copy-paste source through its public MCP or the `@beui` shadcn registry.
+
+See the [AI agents guide](https://beui.dev/docs/ai-agents) for current connection instructions and endpoints.
+The public MCP at `https://mcp.beui.dev/mcp` needs no license key or Pro authentication.
+For licensed components, use the separate `beui-pro` skill and Pro connection.
 
 ## Workflow
 
-1. Fetch the live registry before choosing a component:
+1. Discover current components with the public MCP's `list_components` or `search_components` when connected. Otherwise, fetch the live registry:
 
 ```bash
 curl -fsS https://beui.dev/r/registry.json
 ```
 
-2. Pick the closest install slug from `items[].name`.
-3. Inspect before installing:
+2. For CLI installation, pick the closest install slug from `items[].name` in the live registry. Public MCP catalog slugs can name documentation pages with multiple installable variants. Do not assume every page slug is an install slug.
+3. Inspect the selected component with MCP `get_component`, or inspect an installable item through the CLI:
 
 ```bash
 npx shadcn@latest view @beui/<slug>
 ```
 
-4. Install with the user's package runner:
+4. Install the complete files returned by MCP using the project's paths and aliases, then install the listed package dependencies. Preserve existing helpers and local modifications. Alternatively, install a verified registry slug with the user's package runner:
 
 ```bash
 npx shadcn@latest add @beui/<slug>
@@ -32,7 +36,7 @@ pnpm dlx shadcn@latest add @beui/<slug>
 bunx --bun shadcn@latest add @beui/<slug>
 ```
 
-5. Read the files that were added, then compose with the named exports. There is no `beui` runtime package.
+5. Read the files that were added, then compose with the named exports. There is no `beui` runtime package. Validate any CLI command returned by MCP against the live install slugs before running it.
 
 The live registry is the source of truth. Use the table below only to resolve common lookalikes.
 
