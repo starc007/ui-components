@@ -17,6 +17,15 @@ export function TabsPreview() {
           <TabsContent value="settings" className="text-sm text-muted-foreground">Preferences.</TabsContent>
         </Tabs>
       </Section>
+      <Section title="Overflow">
+        <Tabs defaultValue="Overview" className="w-full max-w-xs">
+          <TabsList>
+            {["Overview", "Activity", "Analytics", "Members", "Billing", "Settings"].map((label) => (
+              <TabsTrigger key={label} value={label}>{label}</TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </Section>
       <Section title="Segment">
         <Tabs defaultValue="day" variant="segment">
           <TabsList>
