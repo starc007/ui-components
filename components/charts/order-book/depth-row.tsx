@@ -23,7 +23,7 @@ export function OrderBookDepthRow({
   formatSize: (value: number) => string;
   reduce: boolean;
 }) {
-  const opacity = useMotionValue(0);
+  const highlight = useMotionValue(0);
   const previousSize = useRef(row.size);
   const entered = useRef(false);
   useEffect(() => {
@@ -31,25 +31,28 @@ export function OrderBookDepthRow({
   }, []);
 
   useEffect(() => {
-    if (previousSize.current === row.size) {
-      opacity.set(0);
+    const changed = previousSize.current !== row.size;
+    previousSize.current = row.size;
+    if (!changed || reduce) {
+      highlight.set(0);
       return;
     }
-    previousSize.current = row.size;
-    // Retarget an interrupted pulse from its current opacity, without remounting text.
+
+    // A soft full-row tint identifies changed quantities. Retarget from
+    // the current opacity when another snapshot interrupts the fade.
     let fade: ReturnType<typeof animate> | undefined;
-    const rise = animate(opacity, reduce ? 0.06 : 0.14, {
-      duration: 0.06,
+    const rise = animate(highlight, 0.1, {
+      duration: 0.08,
       ease: EASE_OUT,
       onComplete: () => {
-        fade = animate(opacity, 0, { duration: 0.22, ease: EASE_OUT });
+        fade = animate(highlight, 0, { duration: 0.2, ease: EASE_OUT });
       },
     });
     return () => {
       rise.stop();
       fade?.stop();
     };
-  }, [row.size, opacity, reduce]);
+  }, [row.size, reduce, highlight]);
 
   return (
     <motion.tr
@@ -81,14 +84,15 @@ export function OrderBookDepthRow({
             className="absolute inset-0 origin-right overflow-hidden rounded-sm"
           >
             <div className="absolute inset-0 bg-current opacity-[0.12]" />
-            <div className="absolute inset-y-0 left-0 w-px bg-current opacity-30" />
           </motion.div>
-          <motion.div style={{ opacity }} className="absolute inset-0 bg-current" />
+          <motion.div style={{ opacity: highlight }} className="absolute inset-0 bg-current" />
           <div className="absolute inset-0 bg-current opacity-0 transition-opacity duration-150 group-hover:opacity-[0.05]" />
         </div>
         <span className="relative">{formatPrice(row.price)}</span>
       </td>
-      <td className="relative px-4 py-0 text-right text-foreground">{formatSize(row.size)}</td>
+      <td className="relative px-4 py-0 text-right text-foreground">
+        {formatSize(row.size)}
+      </td>
       <td className="relative px-4 py-0 text-right text-muted-foreground">
         {formatSize(row.total)}
       </td>
