@@ -977,8 +977,19 @@ export const registry: CategoryEntry[] = [
     slug: "charts",
     name: "Charts",
     description:
-      "Animated React charts for activity, returns, and price targets, built with Motion and Tailwind CSS as customizable copy-paste source.",
+      "Animated React charts for activity, returns, price targets, and order books, built with Motion and Tailwind CSS as customizable copy-paste source.",
     components: [
+      {
+        slug: "order-book",
+        name: "Order Book",
+        description:
+          "Composable order book with animated cumulative depth, bid and ask ladders, a spread readout, and visible-depth balance. Supply price/size snapshots; bars ease between updates while prices stay readable. Compose Header, Side, Spread, and Balance parts with custom price and size formatting.",
+        file: "components/charts/order-book.tsx",
+        usageFile: "components/previews/charts/order-book.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-09-19",
+        keywords: ["order book", "market depth", "bid ask", "trading chart react", "depth ladder"],
+      },
       {
         slug: "heat-calendar",
         name: "Heat Calendar",
