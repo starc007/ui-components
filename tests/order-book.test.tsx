@@ -105,5 +105,20 @@ test("order book registry bundles its model and shared motion tokens", async () 
   const paths = item?.files?.map((file) => file.path) ?? [];
   expect(paths).toContain("components/charts/order-book.tsx");
   expect(paths).toContain("components/charts/order-book/model.ts");
+  expect(paths).toContain("components/charts/order-book/depth-row.tsx");
   expect(paths).toContain("lib/ease.ts");
+});
+
+
+test("quantity updates preserve the mounted cells and price row", () => {
+  const { getByRole, rerender } = render(<OrderBook bids={[{ price: 99, size: 10 }]} asks={[]} />);
+  const table = getByRole("table", { name: "Bids · buy orders" });
+  const cells = within(table).getAllByRole("cell");
+  const priceRow = cells[0].parentElement;
+  rerender(<OrderBook bids={[{ price: 99, size: 12 }]} asks={[]} />);
+  const updated = within(table).getAllByRole("cell");
+  expect(updated[0].parentElement).toBe(priceRow);
+  expect(updated[1]).toBe(cells[1]);
+  expect(updated[1].textContent).toBe("12");
+  expect(updated[2].textContent).toBe("12");
 });

@@ -2,7 +2,8 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { createContext, useContext, type ReactNode } from "react";
-import { EASE_OUT } from "@/lib/ease";
+import { SPRING_PANEL } from "@/lib/ease";
+import { OrderBookDepthRow } from "./order-book/depth-row";
 import { cn } from "@/lib/utils";
 import { buildOrderBook } from "./order-book/model";
 
@@ -138,37 +139,17 @@ export function OrderBookSide({ side, className }: { side: "bid" | "ask"; classN
             </td>
           </tr>
         ) : (
-          rows.map((row) => (
-            <tr key={row.price} className={cn("group", color)}>
-              <td className="relative h-8 px-4 py-0">
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute left-1 inset-y-px w-[calc(300%-8px)] overflow-hidden rounded-sm"
-                >
-                  <motion.div
-                    initial={false}
-                    animate={{ transform: `scaleX(${maxTotal ? row.total / maxTotal : 0})` }}
-                    transition={reduce ? { duration: 0 } : { duration: 0.24, ease: EASE_OUT }}
-                    className="absolute inset-0 origin-right bg-current opacity-[0.12]"
-                  />
-                  <div className="absolute inset-0 bg-current opacity-0 transition-opacity duration-150 group-hover:opacity-[0.05]" />
-                </div>
-                <span className="relative">{formatPrice(row.price)}</span>
-              </td>
-              <td className="relative px-4 py-0 text-right text-foreground">
-                <motion.span
-                  key={row.size}
-                  initial={{ opacity: 0.5 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.18, ease: EASE_OUT }}
-                >
-                  {formatSize(row.size)}
-                </motion.span>
-              </td>
-              <td className="relative px-4 py-0 text-right text-muted-foreground">
-                {formatSize(row.total)}
-              </td>
-            </tr>
+          rows.map((row, index) => (
+            <OrderBookDepthRow
+              key={row.price}
+              row={row}
+              fraction={maxTotal ? row.total / maxTotal : 0}
+              entranceIndex={side === "ask" ? rows.length - 1 - index : index}
+              color={color}
+              formatPrice={formatPrice}
+              formatSize={formatSize}
+              reduce={!!reduce}
+            />
           ))
         )}
       </tbody>
@@ -220,7 +201,7 @@ export function OrderBookBalance({ className }: { className?: string }) {
         <motion.div
           initial={false}
           animate={{ transform: `scaleX(${ratio})` }}
-          transition={reduce ? { duration: 0 } : { duration: 0.24, ease: EASE_OUT }}
+          transition={reduce ? { duration: 0 } : SPRING_PANEL}
           className="absolute inset-0 origin-left bg-emerald-500/60"
         />
       </div>

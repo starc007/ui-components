@@ -983,7 +983,7 @@ export const registry: CategoryEntry[] = [
         slug: "order-book",
         name: "Order Book",
         description:
-          "Composable order book with animated cumulative depth, bid and ask ladders, a spread readout, and visible-depth balance. Supply price/size snapshots; bars ease between updates while prices stay readable. Compose Header, Side, Spread, and Balance parts with custom price and size formatting.",
+          "Animated order book with bid and ask depth, spread, and volume balance.",
         file: "components/charts/order-book.tsx",
         usageFile: "components/previews/charts/order-book.usage.tsx",
         badge: "new",

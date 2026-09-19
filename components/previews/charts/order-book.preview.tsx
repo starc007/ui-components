@@ -15,13 +15,18 @@ const askSizes = [284, 574, 363, 278, 1800, 2200, 1100, 1200, 782];
 const bidSizes = [194, 543, 314, 592, 715, 744, 789, 735, 1100];
 function snapshot(tick: number) {
   const side = (sizes: number[], direction: number) =>
-    sizes.map((size, index) => ({
-      price: Number((245.85 + direction * (index + 1) * 0.15).toFixed(2)),
-      size:
-        tick === 0
-          ? size
-          : Math.round(size * (1 + Math.sin(tick * 1.3 + index * 2.1 + direction) * 0.24)),
-    }));
+    sizes.map((size, index) => {
+      // Update one third of the levels per beat; unchanged quotes keep their identity.
+      const phase = (index + (direction === 1 ? 1 : 0)) % 3;
+      const lastUpdate = tick - ((tick + phase) % 3);
+      return {
+        price: Number((245.85 + direction * (index + 1) * 0.15).toFixed(2)),
+        size:
+          lastUpdate <= 0
+            ? size
+            : Math.round(size * (1 + Math.sin(lastUpdate * 1.3 + index * 2.1 + direction) * 0.32)),
+      };
+    });
   return { asks: side(askSizes, 1), bids: side(bidSizes, -1) };
 }
 
@@ -32,7 +37,7 @@ export function OrderBookPreview() {
     if (!playing) return;
     const timer = window.setInterval(() => {
       if (!document.hidden) setTick((value) => value + 1);
-    }, 1600);
+    }, 950);
     return () => window.clearInterval(timer);
   }, [playing]);
   const book = snapshot(tick);
