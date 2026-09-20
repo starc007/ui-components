@@ -10,7 +10,7 @@ export function BumpChart({ children, className, ...props }: BumpChartProps) {
   const model = useBumpChartModel(props);
   return (
     <BumpChartContext.Provider value={model}>
-      <section aria-label={model.label} className={cn("w-full max-w-[600px] space-y-5", className)}>
+      <section aria-label={model.label} className={cn("w-full space-y-5", className)}>
         {children === undefined ? (
           <>
             <BumpChartPlot />
