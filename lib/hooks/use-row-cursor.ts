@@ -78,7 +78,9 @@ export function useRowCursor(rows: readonly { id: string }[], query: string) {
     setCursor((current) => {
       const at = Math.max(indexOfCursor(live, liveQuery, current), 0);
       const next = Math.min(Math.max(at + direction, 0), last);
-      return { id: live[next].id, query: liveQuery };
+      const target = live[next];
+      if (!target) return current;
+      return { id: target.id, query: liveQuery };
     });
   }, []);
 

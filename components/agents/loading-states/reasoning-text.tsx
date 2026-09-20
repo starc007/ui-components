@@ -163,7 +163,7 @@ export function ReasoningText({
   const [index, setIndex] = useState(0);
   const statusId = useId();
   const safePhrases = phrases.length > 0 ? phrases : DEFAULT_PHRASES;
-  const phrase = safePhrases[index % safePhrases.length];
+  const phrase = safePhrases[index % safePhrases.length] ?? safePhrases[0] ?? "";
   const longestPhrase = safePhrases.reduce((longest, current) =>
     current.length > longest.length ? current : longest,
   );
