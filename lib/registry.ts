@@ -980,6 +980,15 @@ export const registry: CategoryEntry[] = [
       "Animated React charts for activity, returns, price targets, and order books, built with Motion and Tailwind CSS as customizable copy-paste source.",
     components: [
       {
+        slug: "bump-chart",
+        name: "Bump Chart",
+        description: "Animated rankings over time with curved paths, numbered dots, and series highlighting.",
+        file: "components/charts/bump-chart.tsx",
+        badge: "new",
+        launchedAt: "2026-09-20",
+        keywords: ["bump chart", "ranking chart", "leaderboard", "rank history", "rankings over time"],
+      },
+      {
         slug: "order-book",
         name: "Order Book",
         description:
