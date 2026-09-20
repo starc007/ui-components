@@ -1,3 +1,4 @@
+import { FunnelChart } from "@/components/charts/funnel-chart";
 import { afterEach, describe, expect, test } from "bun:test";
 import {
   act,
@@ -978,5 +979,16 @@ test("LiquidityHeatmap tooltip opens and exits without a sampling layer", async 
   await waitFor(() => expect(getByRole("tooltip")).toBeTruthy());
   expect(classesOf(samplingLayers(document.body))).toEqual([]);
   fireEvent.blur(cell);
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
+});
+
+
+test("FunnelChart tooltip opens and exits without a sampling layer", async () => {
+  const { getByRole } = render(<FunnelChart stages={[{ id: "a", label: "Visited", value: 100 }]} />);
+  const stage = getByRole("button", { name: "Visited: 100 people, 100.0% of starting total" });
+  fireEvent.focus(stage);
+  await waitFor(() => expect(getByRole("tooltip")).toBeTruthy());
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
+  fireEvent.blur(stage);
   expect(classesOf(samplingLayers(document.body))).toEqual([]);
 });

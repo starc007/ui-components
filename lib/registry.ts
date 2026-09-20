@@ -980,6 +980,16 @@ export const registry: CategoryEntry[] = [
       "Animated React charts for activity, returns, price targets, and order books, built with Motion and Tailwind CSS as customizable copy-paste source.",
     components: [
       {
+        slug: "funnel-chart",
+        name: "Funnel Chart",
+        description: "Vertical and horizontal funnels with curved stages and animated number tooltips.",
+        file: "components/charts/funnel-chart.tsx",
+        usageFile: "components/previews/charts/funnel-chart.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-09-20",
+        keywords: ["funnel chart", "conversion funnel", "drop off", "sales funnel"],
+      },
+      {
         slug: "liquidity-heatmap",
         name: "Liquidity Heatmap",
         description: "Animated liquidity bands across price and time, with a price trace and depth tooltips.",
