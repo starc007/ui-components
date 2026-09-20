@@ -62,6 +62,7 @@ const COMPONENT_DATES = {
   "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-09-11" },
   "motion/cylinder-carousel": { publishedAt: "2026-07-04", updatedAt: "2026-09-11" },
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
+  "charts/liquidity-heatmap": { publishedAt: "2026-09-20", updatedAt: "2026-09-20" },
   "charts/bump-chart": { publishedAt: "2026-09-20", updatedAt: "2026-09-20" },
   "charts/order-book": { publishedAt: "2026-09-19", updatedAt: "2026-09-19" },
   "charts/heat-calendar": { publishedAt: "2026-09-11", updatedAt: "2026-09-14" },

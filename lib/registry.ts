@@ -980,6 +980,16 @@ export const registry: CategoryEntry[] = [
       "Animated React charts for activity, returns, price targets, and order books, built with Motion and Tailwind CSS as customizable copy-paste source.",
     components: [
       {
+        slug: "liquidity-heatmap",
+        name: "Liquidity Heatmap",
+        description: "Animated liquidity bands across price and time, with a price trace and depth tooltips.",
+        file: "components/charts/liquidity-heatmap.tsx",
+        usageFile: "components/previews/charts/liquidity-heatmap.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-09-20",
+        keywords: ["liquidity heatmap", "market depth", "order book heatmap", "liquidity chart"],
+      },
+      {
         slug: "bump-chart",
         name: "Bump Chart",
         description: "Animated rankings with curved paths, interactive rank dots, and tooltips.",
