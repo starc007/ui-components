@@ -1,3 +1,4 @@
+import { FunnelChart } from "@/components/charts/funnel-chart";
 import { afterEach, describe, expect, test } from "bun:test";
 import {
   act,
@@ -8,6 +9,8 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { StrictMode, type ReactElement } from "react";
+import { LiquidityHeatmap } from "@/components/charts/liquidity-heatmap";
+import { BumpChart } from "@/components/charts/bump-chart";
 import {
   AnimatedSidebar,
   AnimatedSidebarContent,
@@ -953,4 +956,39 @@ describe("overlay shapes", () => {
     expect(catcher.className).toContain("fixed inset-0");
     expect(catcher.childElementCount).toBe(0);
   });
+});
+
+
+test("BumpChart tooltip opens and exits without a sampling layer", async () => {
+  const { getByRole } = render(<BumpChart periods={["Jan"]} series={[{ id: "a", name: "Alpha", ranks: [1] }]} />);
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
+  const dot = getByRole("button", { name: "Alpha, Jan: rank 1" });
+  fireEvent.focus(dot);
+  await waitFor(() => expect(getByRole("tooltip")).toBeTruthy());
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
+  fireEvent.blur(dot);
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
+});
+
+
+test("LiquidityHeatmap tooltip opens and exits without a sampling layer", async () => {
+  const { getByRole } = render(<LiquidityHeatmap snapshots={[{ id: "a", label: "10:00", levels: [{ price: 100, size: 2 }] }]} />);
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
+  const cell = getByRole("button", { name: "10:00, 100: 2 units" });
+  fireEvent.focus(cell);
+  await waitFor(() => expect(getByRole("tooltip")).toBeTruthy());
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
+  fireEvent.blur(cell);
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
+});
+
+
+test("FunnelChart tooltip opens and exits without a sampling layer", async () => {
+  const { getByRole } = render(<FunnelChart stages={[{ id: "a", label: "Visited", value: 100 }]} />);
+  const stage = getByRole("button", { name: "Visited: 100 people, 100.0% of starting total" });
+  fireEvent.focus(stage);
+  await waitFor(() => expect(getByRole("tooltip")).toBeTruthy());
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
+  fireEvent.blur(stage);
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
 });
