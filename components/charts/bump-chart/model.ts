@@ -7,7 +7,7 @@ export interface BumpSeries {
 }
 
 export const BUMP_COLORS = ["#8b5cf6", "#0d9488", "#f59e0b", "#3b82f6", "#f43f5e", "#a3a33a"];
-export const PLOT = { width: 560, left: 32, right: 24, top: 28, bottom: 36, rowHeight: 44 };
+export const PLOT = { width: 560, left: 32, right: 100, top: 28, bottom: 36, rowHeight: 44 };
 
 export function buildBumpChart(series: readonly BumpSeries[], periodCount: number) {
   const seen = new Set<string>();

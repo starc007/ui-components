@@ -1,17 +1,22 @@
 "use client";
 
-import { useId } from "react";
-import { motion } from "motion/react";
-import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { useBumpChart } from "./context";
-import { bumpPath, PLOT } from "./model";
+import { PLOT } from "./model";
 import { BumpChartPoint } from "./point";
+import { BumpChartSeriesPath } from "./series";
+import { pointKey, useBumpGeometry } from "./use-geometry";
 
 export function BumpChartPlot({ className }: { className?: string }) {
-  const { rows, ranks, height, x, y, periods, label, highlighted, setHovered, canHover, reduce } =
-    useBumpChart();
-  const id = useId();
+  const { rows, ranks, height, x, y, periods, label, reduce } = useBumpChart();
+  const positions = useBumpGeometry(
+    rows.flatMap((row) =>
+      row.ranks.flatMap((rank, index) =>
+        rank == null ? [] : [{ key: pointKey(row.id, periods[index]), x: x(index), y: y(rank) }],
+      ),
+    ),
+    !!reduce,
+  );
   if (!periods.length || !ranks.length)
     return (
       <div className={cn("py-16 text-center text-sm text-muted-foreground", className)}>
@@ -64,65 +69,16 @@ export function BumpChartPlot({ className }: { className?: string }) {
               {period}
             </text>
           ))}
-          {rows.map((row, index) => {
-            const clip = `${id}-series-${index}`;
-            const dimmed = highlighted !== null && highlighted !== row.id;
-            return (
-              <motion.g
-                key={row.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: dimmed ? 0.22 : 1 }}
-                transition={{ duration: 0.18, ease: EASE_OUT }}
-                onPointerEnter={() => {
-                  if (canHover) setHovered(row.id);
-                }}
-                onPointerLeave={() => setHovered(null)}
-              >
-                <defs>
-                  <clipPath id={clip}>
-                    <motion.rect
-                      x="0"
-                      y="0"
-                      width={PLOT.width}
-                      height={height}
-                      initial={reduce ? false : { transform: "scaleX(0)" }}
-                      animate={{ transform: "scaleX(1)" }}
-                      transition={{
-                        duration: 0.28,
-                        delay: Math.min(index, 4) * 0.025,
-                        ease: EASE_OUT,
-                      }}
-                    />
-                  </clipPath>
-                </defs>
-                <g clipPath={`url(#${clip})`}>
-                  <path
-                    d={bumpPath(row.ranks, x, y)}
-                    stroke={row.color}
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                  <motion.path
-                    d={bumpPath(row.ranks, x, y)}
-                    stroke={row.color}
-                    strokeWidth="5"
-                    fill="none"
-                    initial={false}
-                    animate={{ opacity: highlighted === row.id ? 0.16 : 0 }}
-                    transition={{ duration: 0.18, ease: EASE_OUT }}
-                  />
-                  <path
-                    d={bumpPath(row.ranks, x, y)}
-                    stroke="transparent"
-                    strokeWidth="16"
-                    fill="none"
-                  />
-                </g>
-              </motion.g>
-            );
-          })}
+          {rows.map((row, index) => (
+            <BumpChartSeriesPath
+              key={row.id}
+              row={row}
+              index={index}
+              positions={periods.map((period) => positions.get(pointKey(row.id, period)) ?? null)}
+            />
+          ))}
         </svg>
-        <div className="pointer-events-none absolute inset-0">
+        <div className="pointer-events-none absolute inset-0 overflow-clip">
           {rows.map((row, seriesIndex) =>
             row.ranks.map((rank, point) =>
               rank == null ? null : (
@@ -131,6 +87,7 @@ export function BumpChartPlot({ className }: { className?: string }) {
                   seriesId={row.id}
                   period={periods[point]}
                   seriesIndex={seriesIndex}
+                  position={positions.get(pointKey(row.id, periods[point]))}
                 />
               ),
             ),

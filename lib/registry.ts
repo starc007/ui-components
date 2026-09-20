@@ -984,6 +984,7 @@ export const registry: CategoryEntry[] = [
         name: "Bump Chart",
         description: "Animated rankings with curved paths, interactive rank dots, and tooltips.",
         file: "components/charts/bump-chart.tsx",
+        usageFile: "components/previews/charts/bump-chart.usage.tsx",
         badge: "new",
         launchedAt: "2026-09-20",
         keywords: ["bump chart", "ranking chart", "leaderboard", "rank history", "rankings over time"],
