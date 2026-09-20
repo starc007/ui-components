@@ -1017,7 +1017,7 @@ export const registry: CategoryEntry[] = [
         file: "components/charts/order-book.tsx",
         usageFile: "components/previews/charts/order-book.usage.tsx",
         badge: "new",
-        launchedAt: "2026-09-19",
+        launchedAt: "2026-09-20",
         keywords: ["order book", "market depth", "bid ask", "trading chart react", "depth ladder"],
       },
       {
