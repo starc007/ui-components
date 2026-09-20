@@ -1,5 +1,5 @@
 import { afterEach, expect, test } from "bun:test";
-import { cleanup, fireEvent, render } from "@testing-library/react";
+import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { BumpChart, BumpChartLegend, useBumpChart } from "@/components/charts/bump-chart";
 import { buildBumpChart, bumpPath } from "@/components/charts/bump-chart/model";
 import { buildShadcnItem } from "@/lib/registry-server";
@@ -100,6 +100,26 @@ test("the registry includes all chart parts and its public preview", async () =>
     "components/charts/bump-chart/model.ts",
     "components/charts/bump-chart/plot.tsx",
     "components/charts/bump-chart/legend.tsx",
+    "components/charts/bump-chart/point.tsx",
+    "components/motion/tooltip.tsx",
   ])
     expect(paths).toContain(path);
+});
+
+
+test("rank dots expose focused tooltips with previous-period changes", async () => {
+  const { getByRole } = render(<BumpChart series={series} periods={periods} />);
+  const dot = getByRole("button", { name: "Alpha, Feb: rank 2" });
+  fireEvent.focus(dot);
+  await waitFor(() => expect(getByRole("tooltip").textContent).toContain("Up 1 place"));
+  expect(getByRole("tooltip").textContent).toContain("Previously #3 in Jan");
+  expect(dot.getAttribute("aria-describedby")).toBe(getByRole("tooltip").id);
+  fireEvent.click(dot);
+  expect(getByRole("button", { name: "Highlight Alpha" }).getAttribute("aria-pressed")).toBe("true");
+});
+
+test("first-period tooltips do not invent a previous rank", async () => {
+  const { getByRole } = render(<BumpChart series={series} periods={periods} />);
+  fireEvent.focus(getByRole("button", { name: "Alpha, Jan: rank 3" }));
+  await waitFor(() => expect(getByRole("tooltip").textContent).toContain("No previous rank"));
 });

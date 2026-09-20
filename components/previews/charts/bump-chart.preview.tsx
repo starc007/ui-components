@@ -35,7 +35,7 @@ export function BumpChartPreview() {
         <BumpChartLegend />
       </BumpChart>
       <p className="text-center text-[11px] text-muted-foreground">
-        Hover to follow a product · Select to pin
+        Inspect a dot for details · Select to pin a product
       </p>
     </div>
   );

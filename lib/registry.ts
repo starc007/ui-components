@@ -982,7 +982,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "bump-chart",
         name: "Bump Chart",
-        description: "Animated rankings over time with curved paths, numbered dots, and series highlighting.",
+        description: "Animated rankings with curved paths, interactive rank dots, and tooltips.",
         file: "components/charts/bump-chart.tsx",
         badge: "new",
         launchedAt: "2026-09-20",

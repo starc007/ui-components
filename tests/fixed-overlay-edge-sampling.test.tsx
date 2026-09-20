@@ -8,6 +8,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { StrictMode, type ReactElement } from "react";
+import { BumpChart } from "@/components/charts/bump-chart";
 import {
   AnimatedSidebar,
   AnimatedSidebarContent,
@@ -953,4 +954,16 @@ describe("overlay shapes", () => {
     expect(catcher.className).toContain("fixed inset-0");
     expect(catcher.childElementCount).toBe(0);
   });
+});
+
+
+test("BumpChart tooltip opens and exits without a sampling layer", async () => {
+  const { getByRole } = render(<BumpChart periods={["Jan"]} series={[{ id: "a", name: "Alpha", ranks: [1] }]} />);
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
+  const dot = getByRole("button", { name: "Alpha, Jan: rank 1" });
+  fireEvent.focus(dot);
+  await waitFor(() => expect(getByRole("tooltip")).toBeTruthy());
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
+  fireEvent.blur(dot);
+  expect(classesOf(samplingLayers(document.body))).toEqual([]);
 });
