@@ -70,7 +70,7 @@ export function InstallCommand({
                 key={p}
                 value={p}
                 indicatorClassName="bg-background border border-border shadow-none"
-                className="h-7 px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground aria-[selected=true]:text-foreground"
+                className="h-7 px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
               >
                 {p}
               </TabsTrigger>
