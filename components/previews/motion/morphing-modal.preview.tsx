@@ -13,14 +13,23 @@ export function MorphingModalPreview() {
     <div className="flex flex-col items-center gap-3">
       <button
         type="button"
-        onClick={() => setView("options")}
+        // WebKit never focuses a clicked button; claim focus so the modal
+        // hands it back here when it closes.
+        onClick={(event) => {
+          event.currentTarget.focus({ preventScroll: true });
+          setView("options");
+        }}
         className="inline-flex h-10 items-center rounded-full border border-border bg-card px-5 text-sm font-medium text-foreground press hover:border-(--color-border-strong)"
       >
         Open wallet options
       </button>
       <p className="text-xs text-muted-foreground">Click a row. The modal morphs height to match new content.</p>
 
-      <MorphingModal viewId={view} onClose={() => setView(null)}>
+      <MorphingModal
+        viewId={view}
+        onClose={() => setView(null)}
+        ariaLabel="Wallet options"
+      >
         {view === "options" ? (
           <Options
             onPrivateKey={() => setView("private-key")}
