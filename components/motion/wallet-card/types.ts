@@ -9,6 +9,11 @@ export type WalletAccount = {
 
 export interface WalletCardProps {
   accounts: WalletAccount[];
+  /**
+   * BCP 47 tag for balance formatting. Fixed rather than the runtime locale so
+   * server and client render the same text. Default "en-US".
+   */
+  locale?: string;
   accountId?: string;
   defaultAccountId?: string;
   onAccountChange?: (id: string) => void;

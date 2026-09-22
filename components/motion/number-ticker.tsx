@@ -21,7 +21,11 @@ export interface NumberTickerProps {
   blur?: boolean;
   className?: string;
   digitClassName?: string;
-  /** Insert locale group separators (commas). Server-component safe. */
+  /**
+   * Insert en-US group separators (commas). Pinned to en-US rather than the
+   * runtime locale, so server and client render the same text. Server-component
+   * safe.
+   */
   locale?: boolean;
   /** Custom formatter. Client-only — server components must use `locale` instead. */
   format?: (value: number) => string;
@@ -57,7 +61,7 @@ export function NumberTicker({
     const formatted = format
       ? format(rounded)
       : locale
-        ? rounded.toLocaleString()
+        ? rounded.toLocaleString("en-US")
         : rounded.toString();
     return pad ? formatted.padStart(pad, "0") : formatted;
   }, [value, pad, format, locale]);

@@ -20,6 +20,11 @@ export interface MultiChainSwapProps {
   tokens?: Token[];
   defaultFromId?: string;
   defaultToId?: string;
+  /**
+   * BCP 47 tag for amounts. Fixed rather than the runtime locale so server
+   * and client render the same text. Default "en-US".
+   */
+  locale?: string;
   className?: string;
 }
 
@@ -28,6 +33,7 @@ export function MultiChainSwap({
   tokens = TOKENS,
   defaultFromId = "eth-eth",
   defaultToId = "sol-sol",
+  locale = "en-US",
   className,
 }: MultiChainSwapProps) {
   const reduce = useReducedMotion();
@@ -109,6 +115,7 @@ export function MultiChainSwap({
           chain={fromChain}
           amount={amount}
           onAmount={setAmount}
+          locale={locale}
           editable
           quoting={false}
           onOpenPicker={() => setPicking("from")}
@@ -120,7 +127,8 @@ export function MultiChainSwap({
           side="to"
           token={to}
           chain={toChain}
-          amount={toAmount > 0 ? formatAmount(toAmount) : ""}
+          amount={toAmount > 0 ? formatAmount(toAmount, locale) : ""}
+          locale={locale}
           editable={false}
           quoting={quoting}
           onOpenPicker={() => setPicking("to")}
@@ -134,6 +142,7 @@ export function MultiChainSwap({
           slippage={0.5}
           eta="≈ 24s"
           quoting={quoting}
+          locale={locale}
         />
 
         <DestinationRow
@@ -164,6 +173,7 @@ export function MultiChainSwap({
         onPick={pickToken}
         onClose={() => setPicking(null)}
         reduce={!!reduce}
+        locale={locale}
       />
     </div>
   );
