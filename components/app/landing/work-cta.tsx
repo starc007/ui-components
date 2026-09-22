@@ -14,11 +14,7 @@ export function WorkCta() {
       <div className="relative isolate overflow-hidden rounded-3xl px-6 py-16 text-center sm:py-20">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 opacity-60 dark:opacity-30"
-          style={{
-            background:
-              "radial-gradient(ellipse at 0% 100%, color-mix(in oklab, var(--muted) 90%, transparent), transparent 60%), radial-gradient(ellipse at 100% 0%, color-mix(in oklab, var(--muted) 70%, transparent), transparent 60%)",
-          }}
+          className={`${styles.ctaAtmosphere} pointer-events-none absolute inset-0 -z-10 opacity-80 dark:opacity-25`}
         />
         <div className="mx-auto max-w-xl">
           <span className="mx-auto grid size-12 place-items-center rounded-full border border-border bg-background text-foreground">

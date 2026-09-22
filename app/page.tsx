@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { GettingStarted } from "@/components/app/landing/getting-started";
-import { LibraryIntro } from "@/components/app/landing/library-intro";
 import { Hero } from "@/components/app/landing/hero";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
 import { Testimonials } from "@/components/app/landing/testimonials";
@@ -167,7 +166,7 @@ export default function Home() {
         </Link>
       </section>
 
-      <LibraryIntro />
+      <GettingStarted />
 
       {newComponents.length ? (
         <section className="mx-auto max-w-7xl px-4 pb-16 sm:pb-20">
@@ -201,8 +200,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      <GettingStarted />
 
       <Testimonials />
 

@@ -1,3 +1,21 @@
+.ctaAtmosphere {
+  background:
+    radial-gradient(ellipse at 50% 24%, var(--background) 12%, transparent 66%),
+    radial-gradient(ellipse at 76% 115%, #f6d9bf 0%, transparent 54%),
+    radial-gradient(ellipse at 12% 106%, #b8dbea 0%, transparent 58%),
+    radial-gradient(ellipse at 100% 30%, #e0e9f3 0%, transparent 52%);
+  mask-image: linear-gradient(to bottom, transparent, #000 24%, #000 88%, transparent);
+}
+
+.ctaAtmosphere::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  opacity: 0.12;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23000' filter='url(%23grain)' opacity='.6' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+}
+
 .primaryLink,
 .secondaryLink {
   display: inline-flex;

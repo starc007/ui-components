@@ -170,7 +170,7 @@ export function SiteHeader() {
               type="button"
               onClick={() => setPanelOpen(true)}
               aria-label="Customize theme"
-              className="hidden h-9 w-9 items-center justify-center rounded-2xl border border-border bg-card/20 text-muted-foreground transition-colors hover:text-foreground sm:flex"
+              className="hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-card/20 text-muted-foreground transition-colors hover:text-foreground sm:flex"
             >
               <SwatchBook className="h-4 w-4" />
             </button>
