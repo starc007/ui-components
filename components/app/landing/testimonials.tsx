@@ -9,7 +9,7 @@ export function Testimonials() {
   const rowTwo = TESTIMONIALS.slice(mid);
 
   return (
-    <section aria-labelledby="landing-testimonials" className="py-4 sm:py-8">
+    <section aria-labelledby="landing-testimonials" className="pt-24 pb-4 sm:pt-32 sm:pb-8">
       <div className="mx-auto mb-10 max-w-2xl px-4 text-center">
         <p className="text-sm text-muted-foreground">Testimonials</p>
         <h2
