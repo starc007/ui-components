@@ -152,7 +152,7 @@ const COMPONENT_DATES = {
   "blocks/expandable-tabs": { publishedAt: "2026-06-14", updatedAt: "2026-06-28" },
   "blocks/morphing-tabs": { publishedAt: "2026-08-06", updatedAt: "2026-08-06" },
   "blocks/swipeable-list": { publishedAt: "2026-06-15", updatedAt: "2026-06-28" },
-  "blocks/file-upload": { publishedAt: "2026-06-18", updatedAt: "2026-09-14" },
+  "blocks/file-upload": { publishedAt: "2026-06-18", updatedAt: "2026-09-23" },
   "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-09-22" },
   "blocks/wallet-card": { publishedAt: "2026-07-03", updatedAt: "2026-09-22" },
   "blocks/otp-input": { publishedAt: "2026-06-13", updatedAt: "2026-07-13" },
