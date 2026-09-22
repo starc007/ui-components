@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Search, X } from "lucide-react";
 import { SPRING_PANEL } from "@/lib/ease";
+import { useFocusReturn } from "@/lib/hooks/use-focus-return";
 import { cn } from "@/lib/utils";
 import { EASE } from "./constants";
 import { ChainChip, TokenDot } from "./token-badges";
@@ -32,14 +33,18 @@ export function TokenPicker({
   const [chainFilter, setChainFilter] = useState("all");
   const [q, setQ] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const backdropRef = useRef<HTMLButtonElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
     setQ("");
-    requestAnimationFrame(() =>
+    const frame = requestAnimationFrame(() =>
       inputRef.current?.focus({ preventScroll: true }),
     );
+    return () => cancelAnimationFrame(frame);
   }, [open]);
+  useFocusReturn(open, [backdropRef, sheetRef]);
 
   useEffect(() => {
     if (!open) return;
@@ -77,6 +82,7 @@ export function TokenPicker({
         <>
           <motion.button
             key="backdrop"
+            ref={backdropRef}
             type="button"
             aria-label="Close"
             onClick={onClose}
@@ -89,6 +95,7 @@ export function TokenPicker({
 
           <motion.div
             key="sheet"
+            ref={sheetRef}
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: "100%" }}
             animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: "100%" }}
