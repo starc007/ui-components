@@ -27,7 +27,7 @@ export function FlipButton({
         whileTap={reduce ? undefined : { scale: 0.9 }}
         animate={reduce ? undefined : { rotate: rotation }}
         transition={{ type: "spring", stiffness: 380, damping: 26, mass: 0.6 }}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[3px] border-card bg-primary/10 text-foreground backdrop-blur"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[3px] border-card bg-muted text-foreground backdrop-blur"
       >
         <ArrowDownUp className="h-3.5 w-3.5" />
       </motion.button>
@@ -68,7 +68,7 @@ export function ActionButton({
       className={cn(
         "mt-3 inline-flex h-12 w-full items-center justify-center rounded-2xl text-sm font-semibold transition-colors",
         disabled
-          ? "cursor-not-allowed bg-primary/10 text-muted-foreground"
+          ? "cursor-not-allowed bg-muted text-muted-foreground"
           : "bg-primary text-primary-foreground hover:bg-primary/90",
       )}
     >

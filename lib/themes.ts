@@ -14,8 +14,8 @@ export type ColorTheme =
 type Vars = Record<string, string>;
 type Theme = { name: string; swatch: string; light: Vars; dark: Vars };
 
-// Full neutral token set. Colored themes start here and override the brand
-// tokens, so every theme exports a complete, drop-in palette.
+// Default beUI palette. Alternate themes override the brand tokens while
+// keeping neutral surfaces and a complete, drop-in palette.
 const BASE_LIGHT: Vars = {
   "--background": "oklch(99% 0 0)",
   "--foreground": "oklch(15% 0 0)",
@@ -23,8 +23,8 @@ const BASE_LIGHT: Vars = {
   "--card-foreground": "oklch(15% 0 0)",
   "--popover": "oklch(97% 0 0)",
   "--popover-foreground": "oklch(15% 0 0)",
-  "--primary": "oklch(15% 0 0)",
-  "--primary-foreground": "oklch(99% 0 0)",
+  "--primary": "#0285f7",
+  "--primary-foreground": "#ffffff",
   "--secondary": "oklch(97% 0 0)",
   "--secondary-foreground": "oklch(15% 0 0)",
   "--muted": "oklch(97% 0 0)",
@@ -44,8 +44,8 @@ const BASE_DARK: Vars = {
   "--card-foreground": "oklch(96% 0 0)",
   "--popover": "#1c1c1c",
   "--popover-foreground": "oklch(96% 0 0)",
-  "--primary": "oklch(96% 0 0)",
-  "--primary-foreground": "#151515",
+  "--primary": "#0285f7",
+  "--primary-foreground": "#ffffff",
   "--secondary": "#1c1c1c",
   "--secondary-foreground": "oklch(96% 0 0)",
   "--muted": "#1c1c1c",
@@ -89,8 +89,8 @@ function brand(opts: {
 
 export const THEMES: Record<ColorTheme, Theme> = {
   default: {
-    name: "Mono",
-    swatch: "oklch(40% 0 0)",
+    name: "beUI",
+    swatch: "#0285f7",
     light: BASE_LIGHT,
     dark: BASE_DARK,
   },

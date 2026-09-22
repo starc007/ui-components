@@ -9,12 +9,13 @@ export function Testimonials() {
   const rowTwo = TESTIMONIALS.slice(mid);
 
   return (
-    <section className="pb-16">
-      <div className="mx-auto mb-8 max-w-7xl border-t border-border px-4 pt-14">
-        <p className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground">
-          Testimonials
-        </p>
-        <h2 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-tight text-foreground md:text-4xl">
+    <section aria-labelledby="landing-testimonials" className="pt-24 pb-4 sm:pt-32 sm:pb-8">
+      <div className="mx-auto mb-10 max-w-2xl px-4 text-center">
+        <p className="text-sm text-muted-foreground">Testimonials</p>
+        <h2
+          id="landing-testimonials"
+          className="mt-4 font-display text-3xl font-medium leading-tight tracking-tight text-foreground md:text-4xl"
+        >
           Loved by builders
         </h2>
       </div>

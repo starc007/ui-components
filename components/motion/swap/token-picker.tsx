@@ -101,7 +101,7 @@ export function TokenPicker({
             aria-label={`Select ${side === "from" ? "from" : "to"} token`}
           >
             <div className="flex justify-center pb-1 pt-2.5">
-              <span className="h-1 w-9 rounded-full bg-primary/15" />
+              <span className="h-1 w-9 rounded-full bg-muted" />
             </div>
 
             <div className="flex items-center gap-2 border-b border-border px-4 pb-3">
@@ -117,7 +117,7 @@ export function TokenPicker({
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -186,8 +186,8 @@ export function TokenPicker({
                         className={cn(
                           "flex w-full items-center justify-between rounded-xl px-2 py-2 text-left transition-colors active:scale-[0.97]",
                           active
-                            ? "bg-primary/5"
-                            : "hover:bg-primary/[0.04]",
+                            ? "bg-muted/60"
+                            : "hover:bg-muted/60",
                         )}
                       >
                         <span className="flex min-w-0 items-center gap-2.5">

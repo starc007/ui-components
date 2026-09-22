@@ -323,7 +323,7 @@ async function ExampleBlock({
     <section id={example.slug} className="scroll-mt-24">
       <div className="mb-4 flex items-baseline justify-between gap-3">
         <div className="flex items-center gap-2">
-          <h2 className="text-xl font-semibold tracking-tight text-foreground">
+          <h2 className="text-xl font-medium tracking-tight text-foreground">
             {example.name}
           </h2>
           {example.badge === "new" ? (
@@ -342,9 +342,27 @@ async function ExampleBlock({
       <div id={`${example.slug}-preview`} className="scroll-mt-24">
         <Tabs defaultValue="preview" variant="pill">
           <TabsList>
-            <TabsTrigger value="preview">Preview</TabsTrigger>
-            <TabsTrigger value="usage">Usage</TabsTrigger>
-            <TabsTrigger value="source">Code</TabsTrigger>
+            <TabsTrigger
+              value="preview"
+              indicatorClassName="bg-background"
+              className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+            >
+              Preview
+            </TabsTrigger>
+            <TabsTrigger
+              value="usage"
+              indicatorClassName="bg-background"
+              className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+            >
+              Usage
+            </TabsTrigger>
+            <TabsTrigger
+              value="source"
+              indicatorClassName="bg-background"
+              className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+            >
+              Code
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="preview" className="mt-4">
             <div className="flex min-h-[260px] items-center justify-center py-10">
@@ -418,9 +436,27 @@ async function DefaultTabs({
       <h2 className="sr-only">Preview</h2>
       <Tabs defaultValue="preview" variant="pill">
         <TabsList>
-          <TabsTrigger value="preview">Preview</TabsTrigger>
-          <TabsTrigger value="usage">Usage</TabsTrigger>
-          <TabsTrigger value="source">Code</TabsTrigger>
+          <TabsTrigger
+            value="preview"
+            indicatorClassName="bg-background"
+            className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+          >
+            Preview
+          </TabsTrigger>
+          <TabsTrigger
+            value="usage"
+            indicatorClassName="bg-background"
+            className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+          >
+            Usage
+          </TabsTrigger>
+          <TabsTrigger
+            value="source"
+            indicatorClassName="bg-background"
+            className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+          >
+            Code
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="preview" className="mt-4">
           <div className="flex min-h-[320px] items-center justify-center py-10">

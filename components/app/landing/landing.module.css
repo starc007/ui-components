@@ -1,0 +1,69 @@
+.proCard {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--background), var(--background)) padding-box,
+    linear-gradient(135deg, var(--success), var(--warning), var(--accent), var(--violet), var(--success), var(--warning), var(--accent), var(--violet)) border-box;
+}
+
+.ctaAtmosphere {
+  background:
+    radial-gradient(ellipse at 50% 24%, var(--background) 12%, transparent 66%),
+    radial-gradient(ellipse at 76% 115%, #f6d9bf 0%, transparent 54%),
+    radial-gradient(ellipse at 12% 106%, #b8dbea 0%, transparent 58%),
+    radial-gradient(ellipse at 100% 30%, #e0e9f3 0%, transparent 52%);
+  mask-image: linear-gradient(to bottom, transparent, #000 24%, #000 88%, transparent);
+}
+
+.ctaAtmosphere::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  opacity: 0.12;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23000' filter='url(%23grain)' opacity='.6' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+}
+
+.primaryLink,
+.secondaryLink {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.625rem 1.125rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  transition:
+    background-color 150ms,
+    border-color 150ms;
+}
+
+.primaryLink {
+  border: 1px solid transparent;
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.secondaryLink {
+  border: 1px solid var(--border-strong);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.primaryLink:focus-visible,
+.secondaryLink:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+}
+
+@media (hover: hover) {
+  .primaryLink:hover {
+    background: color-mix(in oklab, var(--primary) 90%, transparent);
+  }
+
+  .secondaryLink:hover {
+    background: var(--card);
+  }
+}

@@ -65,7 +65,7 @@ export function DockItem({
     <motion.span
       layoutId={pillLayoutId}
       transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
-      className="absolute inset-0.5 -z-10 rounded-xl bg-primary/5"
+      className="absolute inset-0.5 -z-10 rounded-xl bg-muted/60"
     />
   ) : null;
   const sharedStyle = { width: size, height: size };
