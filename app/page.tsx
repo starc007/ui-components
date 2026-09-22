@@ -46,12 +46,10 @@ function SectionHeader({
   eyebrow,
   title,
   href,
-  description,
 }: {
   eyebrow: string;
   title: string;
   href?: string;
-  description: string;
 }) {
   return (
     <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -60,16 +58,13 @@ function SectionHeader({
         <h2 className="mt-3 font-display text-3xl font-medium leading-tight tracking-tight text-foreground md:text-4xl">
           {title}
         </h2>
-        <p className="mt-3 max-w-xl text-pretty text-sm leading-6 text-muted-foreground">
-          {description}
-        </p>
       </div>
       {href ? (
         <Link
           href={href}
           className="group inline-flex items-center self-start text-sm font-medium text-muted-foreground transition-colors hover:text-foreground md:self-auto"
         >
-          Explore the collection
+          Browse animated React components
           <ArrowRight aria-hidden="true" className="ml-1.5 size-3.5" />
         </Link>
       ) : null}
@@ -176,11 +171,7 @@ export default function Home() {
 
       {newComponents.length ? (
         <section className="mx-auto max-w-7xl px-4 pb-16 sm:pb-20">
-          <SectionHeader
-            eyebrow="Fresh from the workbench"
-            title="Recently launched"
-            description="The latest additions. Ready to explore, install, and make your own."
-          />
+          <SectionHeader eyebrow="New" title="Recently launched" />
           <div className={GRID_CLASS}>
             {newComponents.map(({ category, component, previewKey }) => (
               <LandingComponentCard
@@ -196,9 +187,8 @@ export default function Home() {
 
       <section className="mx-auto max-w-7xl px-4 pb-4">
         <SectionHeader
-          eyebrow="The collection"
-          title="Little details. A different feel."
-          description="Buttons that respond. Panels that unfold. Everyday components with motion already considered."
+          eyebrow="Components"
+          title="Motion primitives"
           href="/components/motion"
         />
         <div className={GRID_CLASS}>

@@ -27,7 +27,7 @@ const LINKS = [
   { href: "/docs/ai-agents", label: "For coding agents" },
   { href: "/docs/theme", label: "Theming" },
   { href: "/docs/motion-patterns", label: "Motion patterns" },
-  { href: "/sponsors", label: "Sponsor beUI" },
+  { href: "/sponsors", label: "Sponsor" },
   { href: "/llms.txt", label: "llms.txt" },
   {
     href: "https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=footer",
@@ -63,8 +63,8 @@ export function SiteFooter() {
             </span>
           </Link>
           <p className="mt-4 text-muted-foreground text-sm leading-6">
-            Free motion components, blocks, agent interfaces, and charts for
-            React — delivered as source through the shadcn registry.
+            Animated components for React and Next.js. Copy-paste via the shadcn
+            registry.
           </p>
           <p className="mt-4 text-muted-foreground text-sm">
             Created by <span className="text-foreground">Saurabh</span>

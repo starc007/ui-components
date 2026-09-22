@@ -11,16 +11,13 @@ export function Testimonials() {
   return (
     <section aria-labelledby="landing-testimonials" className="py-4 sm:py-8">
       <div className="mx-auto mb-10 max-w-2xl px-4 text-center">
-        <p className="text-sm text-muted-foreground">From the community</p>
+        <p className="text-sm text-muted-foreground">Testimonials</p>
         <h2
           id="landing-testimonials"
           className="mt-4 font-display text-3xl font-medium leading-tight tracking-tight text-foreground md:text-4xl"
         >
-          A little love from fellow builders.
+          Loved by builders
         </h2>
-        <p className="mt-4 text-sm leading-6 text-muted-foreground">
-          Kind words from people exploring and building with beUI.
-        </p>
       </div>
 
       <div className="flex flex-col gap-4">
