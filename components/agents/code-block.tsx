@@ -17,6 +17,7 @@ import {
   useAgentCodeTokens,
 } from "@/components/agents/agent-code";
 import { SPRING_PRESS } from "@/lib/ease";
+import { useScrollRegionTabStop } from "@/lib/hooks/use-scroll-region-tab-stop";
 import { cn } from "@/lib/utils";
 
 export type CodeBlockStatus = "streaming" | "complete";
@@ -50,6 +51,7 @@ export function CodeBlock({
 }: CodeBlockProps) {
   const reduce = useReducedMotion() ?? false;
   const viewportRef = useRef<HTMLDivElement>(null);
+  const tabStop = useScrollRegionTabStop(viewportRef);
   const copyTimer = useRef<number | undefined>(undefined);
   const [copied, setCopied] = useState(false);
   const streaming = status === "streaming";
@@ -159,7 +161,8 @@ export function CodeBlock({
         ref={viewportRef}
         role={streaming ? "log" : undefined}
         aria-live={streaming ? "polite" : undefined}
-        className="scrollbar-hide overflow-auto border-t border-foreground/[0.06] py-2"
+        tabIndex={tabStop}
+        className="scrollbar-hide overflow-auto border-t border-foreground/[0.06] py-2 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
         style={{ maxHeight }}
       >
         <pre className="m-0 min-w-max font-mono text-xs leading-5 text-foreground/85">

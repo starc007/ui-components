@@ -14,6 +14,7 @@ import {
   PreviewRail,
   type PreviewRailItem,
 } from "@/components/motion/preview-rail";
+import { useScrollRegionTabStop } from "@/lib/hooks/use-scroll-region-tab-stop";
 import { cn } from "@/lib/utils";
 
 const PREVIEW_TITLE_LENGTH = 56;
@@ -125,6 +126,7 @@ export function MessageScroller({
 }: MessageScrollerProps) {
   const reduce = useReducedMotion() ?? false;
   const viewportRef = useRef<HTMLElement>(null);
+  const tabStop = useScrollRegionTabStop(viewportRef);
   const contentRef = useRef<HTMLDivElement>(null);
   const followingRef = useRef(followOutput);
   const programmaticScrollRef = useRef(false);
@@ -409,6 +411,7 @@ export function MessageScroller({
     <section
       ref={setViewportRef}
       aria-label={label}
+      tabIndex={tabStop}
       {...restViewportProps}
       onScroll={(event) => {
         handleScroll();

@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
+import { useScrollRegionTabStop } from "@/lib/hooks/use-scroll-region-tab-stop";
 import { cn } from "@/lib/utils";
 
 export type InfiniteMasonryKey = string | number | bigint;
@@ -180,6 +181,7 @@ export function InfiniteMasonry<T>({
 }: InfiniteMasonryProps<T>) {
   const reduceMotion = useReducedMotion();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const tabStop = useScrollRegionTabStop(scrollRef);
   const contentRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef(onLoadMore);
   const loadPendingRef = useRef(false);
@@ -266,8 +268,9 @@ export function InfiniteMasonry<T>({
       ref={scrollRef}
       aria-label={ariaLabel}
       aria-busy={loading}
+      tabIndex={tabStop}
       className={cn(
-        "w-full contain-[layout_paint] overflow-y-auto overscroll-none rounded-3xl border border-border bg-background p-3 [overflow-anchor:none] [scrollbar-gutter:stable]",
+        "w-full contain-[layout_paint] overflow-y-auto overscroll-none rounded-3xl border border-border bg-background p-3 outline-none [overflow-anchor:none] [scrollbar-gutter:stable] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
         className,
       )}
     >

@@ -1,7 +1,7 @@
 "use client";
 
 import type Lenis from "lenis";
-import { ReactLenis, useLenis } from "lenis/react";
+import { type LenisRef, ReactLenis, useLenis } from "lenis/react";
 import { type MotionValue, useMotionValue, useReducedMotion } from "motion/react";
 import {
   createContext,
@@ -11,7 +11,10 @@ import {
   useEffect,
   useMemo,
   useRef,
+  type RefObject,
 } from "react";
+import { useScrollRegionTabStop } from "@/lib/hooks/use-scroll-region-tab-stop";
+import { cn } from "@/lib/utils";
 
 // Lenis' own expo-out curve — the canonical smooth-scroll easing. Kept as a
 // named local fn (not a lib/ease token) because tokens are bezier control
@@ -163,6 +166,22 @@ export function SmoothScroll({
   const velocity = useMotionValue(0);
   const lenisRef = useRef<Lenis | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const lenisHandleRef = useRef<LenisRef>(null);
+  // ReactLenis exposes its wrapper element through its handle, not a DOM ref.
+  const lenisWrapperRef = useMemo<RefObject<HTMLElement | null>>(
+    () => ({
+      get current() {
+        return lenisHandleRef.current?.wrapper ?? null;
+      },
+    }),
+    [],
+  );
+  // A contained scroller is a scroll region. The page-level root scrolls as
+  // the window does and renders no wrapper of its own.
+  const tabStop = useScrollRegionTabStop(
+    reduce ? containerRef : lenisWrapperRef,
+    !root,
+  );
 
   const nativeSource = useCallback(
     (): ScrollSource | null => (root ? window : containerRef.current),
@@ -200,7 +219,14 @@ export function SmoothScroll({
   if (reduce) {
     return (
       <SmoothScrollContext.Provider value={api}>
-        <div ref={containerRef} className={className}>
+        <div
+          ref={containerRef}
+          tabIndex={tabStop}
+          className={cn(
+            "outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+            className,
+          )}
+        >
           {children}
         </div>
       </SmoothScrollContext.Provider>
@@ -210,8 +236,13 @@ export function SmoothScroll({
   return (
     <SmoothScrollContext.Provider value={api}>
       <ReactLenis
+        ref={lenisHandleRef}
         root={root}
-        className={className}
+        tabIndex={tabStop}
+        className={cn(
+          "outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+          className,
+        )}
         options={{
           lerp,
           duration,

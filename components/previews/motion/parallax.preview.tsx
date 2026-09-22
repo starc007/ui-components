@@ -13,7 +13,9 @@ export function ParallaxPreview() {
   return (
     <div
       ref={containerRef}
-      className="relative h-[600px] w-full max-w-2xl overflow-y-auto scrollbar-hide rounded-2xl border border-border bg-card"
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: a scroll region needs a tab stop, or keyboard users cannot scroll it (axe scrollable-region-focusable)
+      tabIndex={0}
+      className="relative h-[600px] w-full max-w-2xl overflow-y-auto scrollbar-hide rounded-2xl border border-border bg-card outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
     >
       <div className="flex h-80 items-center justify-center text-sm text-muted-foreground">
         Scroll down ↓

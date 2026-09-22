@@ -23,6 +23,7 @@ import {
   SPRING_PANEL,
   SPRING_SWAP,
 } from "@/lib/ease";
+import { useScrollRegionTabStop } from "@/lib/hooks/use-scroll-region-tab-stop";
 import { capturePointer, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
@@ -225,6 +226,7 @@ export function PullToRefresh({
   indicatorClassName,
 }: PullToRefreshProps) {
   const rootRef = useRef<HTMLElement>(null);
+  const tabStop = useScrollRegionTabStop(rootRef);
   const gestureRef = useRef<Gesture>({ ...EMPTY_GESTURE });
   const animationRef = useRef<{ stop: () => void } | null>(null);
   const statusRef = useRef<PullToRefreshStatus>("idle");
@@ -449,6 +451,7 @@ export function PullToRefresh({
       aria-busy={isRefreshing}
       data-state={status}
       data-disabled={disabled || undefined}
+      tabIndex={tabStop}
       onPointerDown={startPointerPull}
       onPointerMove={movePointerPull}
       onPointerUp={(event) => {
@@ -458,7 +461,7 @@ export function PullToRefresh({
         if (gestureRef.current.pointerId === event.pointerId) finishPull();
       }}
       className={cn(
-        "relative w-full overflow-y-auto overscroll-contain bg-background",
+        "relative w-full overflow-y-auto overscroll-contain bg-background outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
         // No `touch-none` here — this element is the scroller, and the pull
         // only takes over once the content is already at the top. The callout
         // has to be off from the first frame though: iOS decides on it while

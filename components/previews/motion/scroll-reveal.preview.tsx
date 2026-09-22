@@ -14,7 +14,9 @@ export function ScrollRevealPreview() {
   return (
     <div
       ref={containerRef}
-      className="h-80 w-full max-w-lg overflow-y-auto scrollbar-hide rounded-2xl border border-border bg-card"
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: a scroll region needs a tab stop, or keyboard users cannot scroll it (axe scrollable-region-focusable)
+      tabIndex={0}
+      className="h-80 w-full max-w-lg overflow-y-auto scrollbar-hide rounded-2xl border border-border bg-card outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
     >
       <div className="flex flex-col gap-16 p-6">
         <div className="text-center text-sm text-muted-foreground">
