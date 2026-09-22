@@ -1,3 +1,10 @@
+.proCard {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--background), var(--background)) padding-box,
+    linear-gradient(135deg, var(--success), var(--warning), var(--accent), var(--violet), var(--success), var(--warning), var(--accent), var(--violet)) border-box;
+}
+
 .ctaAtmosphere {
   background:
     radial-gradient(ellipse at 50% 24%, var(--background) 12%, transparent 66%),

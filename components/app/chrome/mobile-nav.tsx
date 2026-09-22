@@ -21,7 +21,7 @@ export function MobileNav() {
   }, [pathname]);
 
   return (
-    <div className="md:hidden">
+    <div className="xl:hidden">
       <Button
         variant="ghost"
         size="icon"

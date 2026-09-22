@@ -1,28 +1,41 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
+
+const THEMES = [
+  { value: "light", label: "Light theme", icon: Sun },
+  { value: "dark", label: "Dark theme", icon: Moon },
+  { value: "system", label: "System theme", icon: Monitor },
+] as const;
 
 export function ThemeToggle({ className }: { className?: string }) {
-  const { setTheme, resolvedTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  const isDark = mounted && resolvedTheme === "dark";
-
   return (
-    <button
-      type="button"
-      aria-label="Toggle theme"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={cn(
-        "inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-muted-foreground hover:text-foreground hover:border-(--color-border-strong) transition-colors",
-        className,
-      )}
+    <Tabs
+      value={mounted ? (theme ?? "dark") : "dark"}
+      onValueChange={setTheme}
+      variant="pill"
+      className={className}
     >
-      {mounted ? (isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />) : <div className="h-4 w-4" />}
-    </button>
+      <TabsList className="gap-0">
+        {THEMES.map(({ value, label, icon: Icon }) => (
+          <TabsTrigger
+            key={value}
+            value={value}
+            indicatorClassName="bg-background"
+            className="size-7 p-0 aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground sm:size-8"
+          >
+            <Icon aria-hidden="true" className="size-4" />
+            <span className="sr-only">{label}</span>
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
   );
 }

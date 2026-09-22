@@ -12,6 +12,7 @@ import { usePreferences } from "@/components/app/preferences/preferences-provide
 import { PressLink } from "@/components/app/press-link";
 import { RainbowCta } from "@/components/app/rainbow-cta";
 import { SiteSearch } from "@/components/app/chrome/site-search";
+import { ThemeToggle } from "@/components/app/chrome/theme-toggle";
 import { Tooltip } from "@/components/motion/tooltip";
 import { cn } from "@/lib/utils";
 
@@ -48,7 +49,6 @@ export function SiteHeader() {
   const isCharts = pathname.startsWith("/charts");
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
-  const isHome = pathname === "/";
   const formattedStarCount =
     typeof githubStarCount === "number"
       ? formatStarCount(githubStarCount)
@@ -84,7 +84,7 @@ export function SiteHeader() {
             />
             <span>beUI</span>
           </Link>
-          <nav className="hidden items-center gap-0.5 md:flex">
+          <nav className="hidden items-center gap-0.5 xl:flex">
             <Link
               href="/components/motion"
               className={cn(
@@ -155,22 +155,14 @@ export function SiteHeader() {
         </div>
 
         <nav className="flex items-center gap-2">
-          {/* The primary nav appears at md, so the header row is tightest
-              between md and lg: the search falls back to its icon there.
-              Customize is already icon-sized and is the only way into theme
-              preferences, so it stays — the mobile sheet has no entry for it. */}
-          {isHome ? null : (
-            // Between md and lg the field is back to its icon, so its label and
-            // shortcut hint have to go with it — left in, they overflow the
-            // 36px button and paint over the controls beside it.
-            <SiteSearch className="w-9 justify-center px-0 sm:w-44 sm:justify-start sm:px-3 md:w-9 md:justify-center md:px-0 md:max-lg:[&>kbd]:hidden md:max-lg:[&>span]:hidden lg:w-44 lg:justify-start lg:px-3" />
-          )}
+          <SiteSearch className="w-9 shrink-0 justify-center px-0 [&>span]:hidden [&>kbd]:hidden" />
+          <ThemeToggle />
           <Tooltip content="Customize" side="bottom">
             <button
               type="button"
               onClick={() => setPanelOpen(true)}
               aria-label="Customize theme"
-              className="hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-card/20 text-muted-foreground transition-colors hover:text-foreground sm:flex"
+              className="hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-card/20 text-muted-foreground transition-colors hover:text-foreground lg:flex"
             >
               <SwatchBook className="h-4 w-4" />
             </button>
@@ -179,7 +171,7 @@ export function SiteHeader() {
             href="https://github.com/starc007/ui-components"
             target="_blank"
             rel="noreferrer noopener"
-            className="group inline-flex items-center gap-1.5 rounded-2xl border border-border bg-card/20 px-3 py-2 text-xs font-medium text-foreground hover:border-(--color-border-strong)"
+            className="group hidden items-center gap-1.5 rounded-full lg:inline-flex border border-border bg-card/20 px-3 py-2 text-xs font-medium text-foreground hover:border-(--color-border-strong)"
             aria-label={
               formattedStarCount
                 ? `Star on GitHub, ${formattedStarCount} stars`
@@ -197,7 +189,7 @@ export function SiteHeader() {
             target="_blank"
             rel="noreferrer noopener"
             shape="pill"
-            className="min-h-9 text-xs"
+            className="hidden min-h-9 text-xs sm:inline-flex"
             innerClassName="whitespace-nowrap bg-foreground px-3 text-background sm:px-3.5"
           >
             Get Pro

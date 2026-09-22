@@ -2,6 +2,8 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
+import { FreeAndPro } from "@/components/app/landing/free-and-pro";
+import { LandingFaq } from "@/components/app/landing/faq";
 import { GettingStarted } from "@/components/app/landing/getting-started";
 import { Hero } from "@/components/app/landing/hero";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
@@ -202,6 +204,10 @@ export default function Home() {
       </section>
 
       <Testimonials />
+
+      <FreeAndPro />
+
+      <LandingFaq />
 
       <WorkCta />
 
