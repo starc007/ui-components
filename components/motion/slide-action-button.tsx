@@ -128,7 +128,7 @@ export function SlideActionButton({
     <div
       ref={trackRef}
       className={cn(
-        "relative h-16 w-72 overflow-hidden rounded-[22px] bg-primary/10 p-1",
+        "relative h-16 w-72 overflow-hidden rounded-[22px] bg-muted p-1",
         "ring-1 ring-primary/10",
         // The track only carries the label — the slide starts on the thumb,
         // which suppresses selection for the whole gesture on its own.

@@ -44,7 +44,7 @@
     --accent-foreground: var(--accent-fg);
     --destructive: var(--danger);
     --input: var(--border);
-    --ring: var(--primary);
+    --ring: var(--border-strong);
 }
 
 /* Dark mode — beUI Current. Semantic tokens follow the base via var(). */

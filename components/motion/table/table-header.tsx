@@ -324,7 +324,7 @@ export function TableHeader<T>({
                   onPointerMove={onResizeMove}
                   onPointerUp={onResizeEnd}
                   className={cn(
-                    "absolute top-0 right-0 h-full w-1.5 cursor-col-resize touch-none bg-transparent transition-colors hover:bg-primary/40",
+                    "absolute top-0 right-0 h-full w-1.5 cursor-col-resize touch-none bg-transparent transition-colors hover:bg-muted",
                     // Same for the resize drag: the handle drives it end to end.
                     TOUCH_GESTURE_CLASS,
                   )}

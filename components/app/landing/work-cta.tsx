@@ -17,7 +17,7 @@ export function WorkCta() {
           className="pointer-events-none absolute inset-0 -z-10 opacity-60 dark:opacity-30"
           style={{
             background:
-              "radial-gradient(ellipse at 0% 100%, color-mix(in oklab, var(--primary) 19%, transparent), transparent 60%), radial-gradient(ellipse at 100% 0%, color-mix(in oklab, var(--primary) 12%, transparent), transparent 60%)",
+              "radial-gradient(ellipse at 0% 100%, color-mix(in oklab, var(--muted) 90%, transparent), transparent 60%), radial-gradient(ellipse at 100% 0%, color-mix(in oklab, var(--muted) 70%, transparent), transparent 60%)",
           }}
         />
         <div className="mx-auto max-w-xl">

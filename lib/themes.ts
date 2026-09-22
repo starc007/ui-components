@@ -34,7 +34,7 @@ const BASE_LIGHT: Vars = {
   "--destructive": "oklch(62% 0.22 25)",
   "--border": "oklch(15% 0 0 / 0.06)",
   "--input": "oklch(15% 0 0 / 0.06)",
-  "--ring": "var(--primary)",
+  "--ring": "oklch(15% 0 0 / 0.12)",
 };
 
 const BASE_DARK: Vars = {
@@ -55,7 +55,7 @@ const BASE_DARK: Vars = {
   "--destructive": "oklch(62% 0.22 25)",
   "--border": "rgb(255 255 255 / 0.05)",
   "--input": "rgb(255 255 255 / 0.05)",
-  "--ring": "var(--primary)",
+  "--ring": "rgb(255 255 255 / 0.1)",
 };
 
 /** Build a colored theme: neutral surfaces + a hue-tinted brand ramp. */

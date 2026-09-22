@@ -104,7 +104,7 @@ export function Field({
           <button
             type="button"
             onClick={() => onAmount?.(String(token.balance))}
-            className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+            className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground hover:bg-muted/60 hover:text-foreground"
           >
             Max
           </button>

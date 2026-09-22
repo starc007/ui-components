@@ -21,7 +21,7 @@ export function ChainChip({
         "inline-flex h-9 shrink-0 items-center justify-center rounded-xl border transition-colors active:scale-[0.97] transition-transform",
         chain ? "w-9" : "px-3",
         active
-          ? "border-primary/20 bg-primary/5 text-foreground"
+          ? "border-primary/20 bg-muted/60 text-foreground"
           : "border-border/60 bg-background/40 text-foreground hover:border-border",
       )}
       title={chain?.name ?? label}

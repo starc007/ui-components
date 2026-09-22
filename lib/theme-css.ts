@@ -41,7 +41,7 @@ export const THEME_CSS = `@custom-variant dark (&:where(.dark, .dark *));
     --accent-foreground: var(--accent-fg);
     --destructive: var(--danger);
     --input: var(--border);
-    --ring: var(--primary);
+    --ring: var(--border-strong);
 }
 
 .dark {

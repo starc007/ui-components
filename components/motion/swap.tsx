@@ -96,7 +96,7 @@ export function MultiChainSwap({
         <button
           type="button"
           aria-label="Settings"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-transform hover:bg-primary/5 hover:text-foreground active:scale-[0.97]"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-transform hover:bg-muted/60 hover:text-foreground active:scale-[0.97]"
         >
           <Settings className="h-4 w-4" />
         </button>

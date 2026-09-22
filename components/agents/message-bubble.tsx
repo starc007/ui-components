@@ -173,7 +173,7 @@ function bubbleSurfaceClass(
     align === "end" ? "origin-bottom-right" : "origin-bottom-left",
     variant === "solid" && "bg-foreground",
     variant === "soft" && "bg-muted",
-    variant === "tint" && "bg-primary/10",
+    variant === "tint" && "bg-muted",
     variant === "outline" && "border border-border/70 bg-background",
     variant === "danger" && "bg-destructive/10",
   );

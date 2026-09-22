@@ -106,7 +106,7 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
                       layoutId={`shared-bg-${uid}`}
                       transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
                       className={cn(
-                        "pointer-events-none h-full w-full rounded-2xl bg-primary/[0.06]",
+                        "pointer-events-none h-full w-full rounded-2xl bg-muted/80",
                         pillClassName,
                       )}
                     />

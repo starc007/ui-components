@@ -314,7 +314,7 @@ export function CommandPalette({
                               {isActive ? (
                                 <motion.span
                                   layoutId={`${uid}-active`}
-                                  className="absolute inset-0 z-0 rounded-md bg-primary/[0.05]"
+                                  className="absolute inset-0 z-0 rounded-md bg-muted/60"
                                   transition={
                                     reduce
                                       ? { duration: 0 }

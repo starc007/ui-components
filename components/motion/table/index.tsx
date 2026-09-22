@@ -357,7 +357,7 @@ export function Table<T>({
                       onPointerLeave={hasRowMenu ? deactivateRow : undefined}
                       className={cn(
                         "border-border/60 border-b transition-colors",
-                        "data-[selected=true]:bg-primary/5",
+                        "data-[selected=true]:bg-muted/60",
                         "hover:bg-muted/50",
                       )}
                     >
