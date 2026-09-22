@@ -694,6 +694,18 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   [
+    "MorphingModal open",
+    () => (
+      <MorphingModal
+        viewId="options"
+        onClose={() => {}}
+        ariaLabel="Wallet options"
+      >
+        <button type="button">Modal action</button>
+      </MorphingModal>
+    ),
+  ],
+  [
     "SmoothScroll",
     () => (
       <SmoothScroll>
