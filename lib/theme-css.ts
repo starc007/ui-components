@@ -32,8 +32,8 @@ export const THEME_CSS = `@custom-variant dark (&:where(.dark, .dark *));
     --card-foreground: var(--foreground);
     --popover: var(--card);
     --popover-foreground: var(--foreground);
-    --primary: var(--foreground);
-    --primary-foreground: var(--background);
+    --primary: #0285f7;
+    --primary-foreground: #ffffff;
     --secondary: var(--card);
     --secondary-foreground: var(--foreground);
     --muted: var(--card);
@@ -41,7 +41,7 @@ export const THEME_CSS = `@custom-variant dark (&:where(.dark, .dark *));
     --accent-foreground: var(--accent-fg);
     --destructive: var(--danger);
     --input: var(--border);
-    --ring: var(--border-strong);
+    --ring: var(--primary);
 }
 
 .dark {

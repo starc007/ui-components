@@ -24,7 +24,7 @@ export function HeroEyebrow({ count }: { count: number }) {
         href="https://github.com/starc007/ui-components"
         target="_blank"
         rel="noreferrer noopener"
-        className="inline-flex min-h-10 items-center gap-2.5 rounded-full border border-border bg-background px-4 py-2 text-xs text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0285f7]"
+        className="inline-flex min-h-10 items-center gap-2.5 rounded-full border border-border bg-background px-4 py-2 text-xs text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
       >
         <GithubIcon className="size-4 shrink-0 text-muted-foreground" />
         <span>

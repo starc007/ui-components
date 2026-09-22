@@ -20,10 +20,22 @@ export function InstallTabs({
   manual: ReactNode;
 }) {
   return (
-    <Tabs defaultValue="cli" variant="segment">
+    <Tabs defaultValue="cli" variant="pill">
       <TabsList>
-        <TabsTrigger value="cli">CLI</TabsTrigger>
-        <TabsTrigger value="manual">Manual</TabsTrigger>
+        <TabsTrigger
+          value="cli"
+          indicatorClassName="bg-background"
+          className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+        >
+          CLI
+        </TabsTrigger>
+        <TabsTrigger
+          value="manual"
+          indicatorClassName="bg-background"
+          className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+        >
+          Manual
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="cli" className="mt-4">
         {cli}

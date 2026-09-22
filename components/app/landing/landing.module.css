@@ -15,11 +15,10 @@
     border-color 150ms;
 }
 
-/* Pro's blue hue, deepened for readable white button labels in both themes. */
 .primaryLink {
   border: 1px solid transparent;
-  background: #0071d9;
-  color: #fff;
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .secondaryLink {
@@ -30,13 +29,13 @@
 
 .primaryLink:focus-visible,
 .secondaryLink:focus-visible {
-  outline: 2px solid #0285f7;
+  outline: 2px solid var(--ring);
   outline-offset: 4px;
 }
 
 @media (hover: hover) {
   .primaryLink:hover {
-    background: #0063bf;
+    background: color-mix(in oklab, var(--primary) 90%, transparent);
   }
 
   .secondaryLink:hover {
