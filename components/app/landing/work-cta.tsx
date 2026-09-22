@@ -1,43 +1,63 @@
 import { ArrowUpRight, Mail } from "lucide-react";
 import { PressLink } from "@/components/app/press-link";
+import styles from "./landing.module.css";
 
 const CAL_URL = "https://cal.com/saurra3h/30min";
 const EMAIL = "saurabh10102@gmail.com";
 
 export function WorkCta() {
   return (
-    <section className="px-4 py-24 md:py-36">
-      <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
-        <p className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground">
-          Work with me
-        </p>
-
-        <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground md:text-5xl md:leading-[1.1]">
-          Need components built for your product?
-        </h2>
-        <p className="mt-5 max-w-md text-base leading-7 text-muted-foreground">
-          Custom motion components and frontend systems, built to spec. Book a
-          call or drop a line, whichever's easier.
-        </p>
-
-        <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-          <PressLink
-            href={CAL_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="group inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+    <section
+      aria-labelledby="landing-contact"
+      className="mx-auto max-w-7xl px-4 py-16 sm:py-24"
+    >
+      <div className="relative isolate overflow-hidden rounded-3xl border border-border px-6 py-16 text-center sm:py-20">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-60 dark:opacity-30"
+          style={{
+            background:
+              "radial-gradient(ellipse at 0% 100%, #0285f730, transparent 60%), radial-gradient(ellipse at 100% 0%, #38bdf830, transparent 60%)",
+          }}
+        />
+        <div className="mx-auto max-w-xl">
+          <span className="mx-auto grid size-12 place-items-center rounded-full border border-border bg-background text-foreground">
+            <Mail aria-hidden="true" className="size-5" strokeWidth={1.5} />
+          </span>
+          <p className="mt-6 text-sm text-muted-foreground">
+            A direct line to the maker
+          </p>
+          <h2
+            id="landing-contact"
+            className="mt-4 text-balance font-display text-3xl font-medium tracking-tight text-foreground sm:text-4xl"
           >
-            Book a call
-            <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </PressLink>
-
-          <PressLink
-            href={`mailto:${EMAIL}`}
-            className="group inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:border-border-strong hover:bg-muted"
-          >
-            <Mail className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5" />
-            Email me
-          </PressLink>
+            Something a little more you?
+          </h2>
+          <p className="mx-auto mt-5 max-w-md text-pretty text-sm leading-7 text-muted-foreground">
+            Need a custom component or a hand bringing your product to life?
+            Tell me what you’re building.
+          </p>
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+            <PressLink
+              href={CAL_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+              className={styles.primaryLink}
+            >
+              Book a call
+              <ArrowUpRight aria-hidden="true" className="size-4" />
+            </PressLink>
+            <PressLink
+              href={`mailto:${EMAIL}`}
+              className={styles.secondaryLink}
+            >
+              Email me
+              <Mail aria-hidden="true" className="size-4" />
+            </PressLink>
+          </div>
+          <p className="mt-7 text-xs text-muted-foreground">
+            Saurabh, maker of beUI
+          </p>
         </div>
       </div>
     </section>

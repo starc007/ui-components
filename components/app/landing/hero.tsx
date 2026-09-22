@@ -1,80 +1,54 @@
-"use client";
-
-import { motion } from "motion/react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { EASE_OUT } from "@/lib/ease";
 import { PressLink } from "@/components/app/press-link";
-import { RainbowCta } from "@/components/app/rainbow-cta";
-import { TextReveal } from "@/components/motion/text-reveal";
 import { INSTALLABLE_COUNT } from "@/lib/registry";
-
-const HEADLINE = ["Animated components", "for React and Next.js"];
-const HEADLINE_WORDS = HEADLINE.reduce((n, l) => n + l.split(" ").length, 0);
-const STAGGER = 0.09;
-const START = 0.12;
+import styles from "./landing.module.css";
 
 export function Hero() {
-  const headlineEnd = START + HEADLINE_WORDS * STAGGER;
-  const subDelay = headlineEnd + 0.05;
-  const ctaDelay = subDelay + 0.25;
-
   return (
-    <div className="mx-auto max-w-7xl text-center">
-      <motion.div
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, ease: EASE_OUT, delay: 0.05 }}
-        className="flex justify-center"
+    <div className="mx-auto max-w-3xl text-center">
+      <a
+        href="https://github.com/starc007/ui-components"
+        target="_blank"
+        rel="noreferrer noopener"
+        className="inline-flex items-center gap-2.5 rounded-full border border-border px-3.5 py-2 text-xs text-muted-foreground transition-colors hover:border-border-strong hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
       >
-        <PressLink
-          href="https://github.com/starc007/ui-components"
-          target="_blank"
-          rel="noreferrer noopener"
-          className="group mb-7 inline-flex min-h-9 items-center gap-2 rounded-full border border-border bg-card px-3 text-xs font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-        >
-          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          {INSTALLABLE_COUNT} components · Tailwind 4 + React 19
-          <ArrowUpRight className="h-3 w-3 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </PressLink>
-      </motion.div>
+        <span
+          aria-hidden="true"
+          className="size-1.5 rounded-full bg-[#0285f7]"
+        />
+        Free & open source
+        <span aria-hidden="true" className="h-3 w-px bg-border-strong" />
+        <span>{INSTALLABLE_COUNT} components</span>
+        <ArrowUpRight aria-hidden="true" className="size-3.5" />
+      </a>
 
-      <TextReveal
-        as="h1"
-        text={HEADLINE}
-        delay={START}
-        stagger={STAGGER}
-        className="mx-auto font-display text-5xl font-semibold leading-[0.92] tracking-tight text-foreground sm:text-6xl md:text-7xl"
-      />
-
-      <p className="mx-auto mt-6 max-w-md text-pretty text-base leading-7 text-muted-foreground">
-        Copy-paste React components built with Motion and Tailwind CSS. Free,
-        open source, and fully customizable.
+      <h1 className="mt-7 text-balance font-display text-[clamp(2.75rem,6.5vw,5rem)] font-medium leading-[1.04] tracking-[-0.055em] text-foreground">
+        Make your interface
+        <br />
+        feel alive.
+      </h1>
+      <p className="mx-auto mt-6 max-w-lg text-pretty text-sm leading-7 text-muted-foreground sm:text-base">
+        Animated React components for the details people notice. Copy the
+        source, make it yours, and bring a little more feel to your next build.
       </p>
-
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: EASE_OUT, delay: ctaDelay }}
-        className="mt-8 flex flex-wrap items-center justify-center gap-3"
-      >
-        <RainbowCta
+      <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+        <PressLink href="/components/motion" className={styles.primaryLink}>
+          Explore components
+          <ArrowRight aria-hidden="true" className="size-4" />
+        </PressLink>
+        <PressLink
           href="https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=hero"
           target="_blank"
           rel="noreferrer noopener"
-          shape="pill"
-          innerClassName="px-4"
+          className={styles.secondaryLink}
         >
           Explore Pro
-          <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </RainbowCta>
-        <PressLink
-          href="/components/motion"
-          className="group inline-flex min-h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          Browse components
-          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          <ArrowUpRight aria-hidden="true" className="size-4" />
         </PressLink>
-      </motion.div>
+      </div>
+      <p className="mt-6 text-xs text-muted-foreground">
+        React · Next.js · Tailwind CSS · Motion
+      </p>
     </div>
   );
 }

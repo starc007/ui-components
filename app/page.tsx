@@ -2,7 +2,8 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
-import { InstallCommand } from "@/components/app/docs/install-command";
+import { GettingStarted } from "@/components/app/landing/getting-started";
+import { LibraryIntro } from "@/components/app/landing/library-intro";
 import { Hero } from "@/components/app/landing/hero";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
 import { Testimonials } from "@/components/app/landing/testimonials";
@@ -45,28 +46,31 @@ function SectionHeader({
   eyebrow,
   title,
   href,
+  description,
 }: {
   eyebrow: string;
   title: string;
   href?: string;
+  description: string;
 }) {
   return (
     <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div>
-        <p className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground">
-          {eyebrow}
-        </p>
-        <h2 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-tight text-foreground md:text-4xl">
+        <p className="text-sm text-muted-foreground">{eyebrow}</p>
+        <h2 className="mt-3 font-display text-3xl font-medium leading-tight tracking-tight text-foreground md:text-4xl">
           {title}
         </h2>
+        <p className="mt-3 max-w-xl text-pretty text-sm leading-6 text-muted-foreground">
+          {description}
+        </p>
       </div>
       {href ? (
         <Link
           href={href}
           className="group inline-flex items-center self-start text-sm font-medium text-muted-foreground transition-colors hover:text-foreground md:self-auto"
         >
-          Browse animated React components
-          <ArrowRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          Explore the collection
+          <ArrowRight aria-hidden="true" className="ml-1.5 size-3.5" />
         </Link>
       ) : null}
     </div>
@@ -92,8 +96,7 @@ export default function Home() {
               ? {
                   ...component,
                   name: newVariant.name,
-                  description:
-                    newVariant.description ?? component.description,
+                  description: newVariant.description ?? component.description,
                   launchedAt: newVariant.launchedAt,
                 }
               : component,
@@ -129,20 +132,13 @@ export default function Home() {
 
   return (
     <div className="relative">
-      <section className="relative isolate overflow-hidden px-4 pb-20 pt-20 md:pt-28">
+      <section className="px-4 pb-12 pt-20 sm:pb-14 sm:pt-28">
         <Hero />
-      </section>
-
-      <section className="mx-auto max-w-2xl px-4 pb-12">
-        <p className="mb-5 text-center text-sm text-muted-foreground">
-          Built on Framer Motion. Distributed via shadcn.
-        </p>
-        <InstallCommand />
       </section>
 
       <section
         aria-labelledby="landing-sponsors"
-        className="mx-auto flex max-w-2xl flex-col items-center gap-4 px-4 pb-16"
+        className="mx-auto flex max-w-2xl flex-wrap items-center justify-center gap-x-5 gap-y-2 px-4 pb-12 sm:pb-16"
       >
         <h2
           id="landing-sponsors"
@@ -159,26 +155,32 @@ export default function Home() {
           <Image
             src="/sponsors/tracwell-icon-light.svg"
             alt=""
-            width={36}
-            height={36}
-            className="size-9 dark:hidden"
+            width={28}
+            height={28}
+            className="size-7 dark:hidden"
           />
           <Image
             src="/sponsors/tracwell-icon-dark.svg"
             alt=""
-            width={36}
-            height={36}
-            className="hidden size-9 dark:block"
+            width={28}
+            height={28}
+            className="hidden size-7 dark:block"
           />
-          <span className="font-display text-2xl font-semibold tracking-tight">
+          <span className="font-display text-xl font-semibold tracking-tight">
             Tracwell
           </span>
         </Link>
       </section>
 
+      <LibraryIntro />
+
       {newComponents.length ? (
-        <section className="mx-auto max-w-7xl border-t border-border px-4 pb-16 pt-14">
-          <SectionHeader eyebrow="New" title="Recently launched" />
+        <section className="mx-auto max-w-7xl px-4 pb-16 sm:pb-20">
+          <SectionHeader
+            eyebrow="Fresh from the workbench"
+            title="Recently launched"
+            description="The latest additions. Ready to explore, install, and make your own."
+          />
           <div className={GRID_CLASS}>
             {newComponents.map(({ category, component, previewKey }) => (
               <LandingComponentCard
@@ -192,10 +194,11 @@ export default function Home() {
         </section>
       ) : null}
 
-      <section className="mx-auto max-w-7xl border-t border-border px-4 pb-16 pt-14">
+      <section className="mx-auto max-w-7xl px-4 pb-4">
         <SectionHeader
-          eyebrow="Components"
-          title="Motion primitives"
+          eyebrow="The collection"
+          title="Little details. A different feel."
+          description="Buttons that respond. Panels that unfold. Everyday components with motion already considered."
           href="/components/motion"
         />
         <div className={GRID_CLASS}>
@@ -208,6 +211,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <GettingStarted />
 
       <Testimonials />
 

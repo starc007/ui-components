@@ -1,0 +1,45 @@
+.primaryLink,
+.secondaryLink {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.625rem 1.125rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  transition:
+    background-color 150ms,
+    border-color 150ms;
+}
+
+/* Pro's blue hue, deepened for readable white button labels in both themes. */
+.primaryLink {
+  border: 1px solid transparent;
+  background: #0071d9;
+  color: #fff;
+}
+
+.secondaryLink {
+  border: 1px solid var(--border-strong);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.primaryLink:focus-visible,
+.secondaryLink:focus-visible {
+  outline: 2px solid #0285f7;
+  outline-offset: 4px;
+}
+
+@media (hover: hover) {
+  .primaryLink:hover {
+    background: #0063bf;
+  }
+
+  .secondaryLink:hover {
+    background: var(--card);
+  }
+}
