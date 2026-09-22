@@ -20,6 +20,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useFocusReturn } from "@/lib/hooks/use-focus-return";
 import { cn } from "@/lib/utils";
 
 // Shared-layout morph: trigger box grows into the panel and back, one surface.
@@ -139,6 +140,12 @@ export function MorphSelect({
       window.removeEventListener("pointerdown", onPointer);
     };
   }, [open]);
+
+  // Picking an option unmounts the focused option button, so hand focus back
+  // on close. The trigger unmounts while the panel is open (it morphs into the
+  // surface), so the element captured on open is usually gone by then: fall
+  // back to the remounted trigger by id.
+  useFocusReturn(open, [rootRef], `${baseId}-trigger`);
 
   const ctx = useMemo<MorphContextValue>(
     () => ({

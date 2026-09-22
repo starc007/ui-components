@@ -23,7 +23,7 @@ const COMPONENT_DATES = {
   "motion/tabs": { publishedAt: "2026-05-17", updatedAt: "2026-09-18" },
   "motion/switch": { publishedAt: "2026-05-17", updatedAt: "2026-06-10" },
   "motion/input": { publishedAt: "2026-06-29", updatedAt: "2026-08-28" },
-  "motion/select": { publishedAt: "2026-06-28", updatedAt: "2026-07-13" },
+  "motion/select": { publishedAt: "2026-06-28", updatedAt: "2026-09-23" },
   "motion/combobox": { publishedAt: "2026-08-11", updatedAt: "2026-08-22" },
   "motion/multi-select": { publishedAt: "2026-08-29", updatedAt: "2026-08-29" },
   "motion/checkbox": { publishedAt: "2026-06-23", updatedAt: "2026-07-01" },
@@ -75,19 +75,19 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-22",
+    updatedAt: "2026-09-23",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-22",
+    updatedAt: "2026-09-23",
   },
   "agents/message": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-22",
+    updatedAt: "2026-09-23",
   },
   "agents/message-scroller": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-22",
+    updatedAt: "2026-09-23",
   },
   "agents/ai-sidebar": {
     publishedAt: "2026-08-02",
@@ -107,7 +107,7 @@ const COMPONENT_DATES = {
   },
   "agents/prompt-input": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-22",
+    updatedAt: "2026-09-23",
   },
   "agents/tool-result": {
     publishedAt: "2026-08-01",
@@ -142,7 +142,7 @@ const COMPONENT_DATES = {
   "blocks/project-folder": { publishedAt: "2026-08-15", updatedAt: "2026-08-20" },
   "blocks/card-folder": { publishedAt: "2026-09-04", updatedAt: "2026-09-04" },
   "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-09-14" },
-  "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-09-14" },
+  "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-09-23" },
   "blocks/swap": { publishedAt: "2026-05-19", updatedAt: "2026-09-22" },
   "blocks/dynamic-island": { publishedAt: "2026-06-10", updatedAt: "2026-09-22" },
   "blocks/command-palette": { publishedAt: "2026-05-17", updatedAt: "2026-09-23" },
