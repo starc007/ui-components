@@ -40,7 +40,7 @@ export function NumberPreview() {
               <NumberTicker
                 value={value}
                 className="text-3xl font-semibold tracking-tight text-foreground tabular-nums"
-                format={(number) => number.toLocaleString()}
+                locale
               />
             </div>
           ) : (

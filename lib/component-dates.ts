@@ -58,7 +58,7 @@ const COMPONENT_DATES = {
   "motion/scroll-animation": { publishedAt: "2026-06-24", updatedAt: "2026-06-28" },
   "motion/range-slider": { publishedAt: "2026-06-24", updatedAt: "2026-09-09" },
   "motion/wheel-picker": { publishedAt: "2026-07-09", updatedAt: "2026-07-09" },
-  "motion/table": { publishedAt: "2026-07-01", updatedAt: "2026-09-22" },
+  "motion/table": { publishedAt: "2026-07-01", updatedAt: "2026-09-23" },
   "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-09-11" },
   "motion/cylinder-carousel": { publishedAt: "2026-07-04", updatedAt: "2026-09-11" },
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },

@@ -16,7 +16,7 @@ export function NumberTickerPreview() {
         value={value}
         prefix=""
         className="text-4xl font-semibold tracking-tight text-foreground tabular-nums"
-        format={(n) => n.toLocaleString()}
+        locale
       />
       <p className="text-xs text-muted-foreground">live · updates every 2.5s</p>
     </div>
