@@ -116,7 +116,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             defer
             src="https://collect.tracwell.app/script.js"
             data-project-key="tw_live_b83ebcb2a50b4e3b82f65ca32c086623"
-            data-collection-mode="private"
+            data-collection-mode="product"
             data-consent="granted"
             data-respect-do-not-track="true"
           />

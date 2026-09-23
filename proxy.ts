@@ -1,4 +1,5 @@
 import { type NextFetchEvent, type NextRequest, NextResponse } from "next/server";
+import { trackAiCrawler } from "tracwell/server";
 
 /**
  * Registry installs happen via the shadcn CLI fetching `/r/{slug}.json`. That
@@ -7,20 +8,33 @@ import { type NextFetchEvent, type NextRequest, NextResponse } from "next/server
  * static assets, so we tag installs here and report them to GA4 server-side
  * via the Measurement Protocol, keeping the route on the CDN.
  */
-export const config = { matcher: "/r/:path*" };
-
-const GA_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
-const GA_SECRET = process.env.GA_API_SECRET;
+export const config = {
+  matcher: ["/((?!api(?:/|$)|_next/|favicon.ico$).*)"],
+};
 
 export function proxy(req: NextRequest, event: NextFetchEvent) {
   const pass = NextResponse.next();
 
+  const serverKey = process.env.TRACWELL_SERVER_KEY;
+  if (serverKey) {
+    event.waitUntil(
+      trackAiCrawler(req, { serverKey }).then((result) => {
+        if (result.status === "failed") {
+          console.warn("Tracwell crawler tracking failed:", result.code);
+        }
+      }),
+    );
+  }
+
+  const GA_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+  const GA_SECRET = process.env.GA_API_SECRET;
   const { pathname } = req.nextUrl;
   // Only the shadcn item endpoints (`/r/<slug>.json`) are real installs.
   // Skip the catalog and the raw-source / non-json sub-paths.
   if (
     !GA_ID ||
     !GA_SECRET ||
+    !pathname.startsWith("/r/") ||
     !pathname.endsWith(".json") ||
     pathname === "/r/registry.json"
   ) {
@@ -30,17 +44,17 @@ export function proxy(req: NextRequest, event: NextFetchEvent) {
   const slug = pathname.slice("/r/".length, -".json".length);
   const ua = req.headers.get("user-agent") ?? "";
 
-  event.waitUntil(reportInstall(slug, ua, req));
+  event.waitUntil(reportInstall(slug, ua, req, GA_ID, GA_SECRET));
   return pass;
 }
 
-async function reportInstall(slug: string, ua: string, req: NextRequest) {
+async function reportInstall(slug: string, ua: string, req: NextRequest, measurementId: string, apiSecret: string) {
   try {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "";
     const clientId = await stableId(`${ip}|${ua}`);
 
     await fetch(
-      `https://www.google-analytics.com/mp/collect?measurement_id=${GA_ID}&api_secret=${GA_SECRET}`,
+      `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`,
       {
         method: "POST",
         body: JSON.stringify({

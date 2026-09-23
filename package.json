@@ -53,7 +53,8 @@
     "react-tweet": "^3.3.1",
     "react-use-measure": "^2.1.7",
     "shiki": "^4.2.0",
-    "tailwind-merge": "^3.6.0"
+    "tailwind-merge": "^3.6.0",
+    "tracwell": "0.3.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
