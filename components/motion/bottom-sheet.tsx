@@ -10,6 +10,7 @@ import {
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { EASE_DRAWER } from "@/lib/ease";
+import { useFocusReturn } from "@/lib/hooks/use-focus-return";
 import { PresenceGate } from "@/lib/presence-gate";
 import { TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
@@ -48,6 +49,7 @@ export function BottomSheet({
   const [mounted, setMounted] = useState(false);
   const dragControls = useDragControls();
   const sheetRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
   const heightRef = useRef(0);
   const uid = useId();
@@ -102,6 +104,18 @@ export function BottomSheet({
     };
   }, [open, onOpenChange]);
 
+  // A modal dialog takes focus on open and hands it back on close. Their own
+  // effects: the lock above re-runs when `onOpenChange` changes identity, and
+  // focus must not bounce with it.
+  useEffect(() => {
+    if (!open) return;
+    const frame = requestAnimationFrame(() => {
+      sheetRef.current?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [open]);
+  useFocusReturn(open, [sheetRef, backdropRef]);
+
   const onDragEnd = (_: unknown, info: PanInfo) => {
     const velocity = info.velocity.y;
     const offset = info.offset.y;
@@ -154,6 +168,7 @@ export function BottomSheet({
         <PresenceGate key="backdrop">
           {({ gate }) => (
             <motion.button
+              ref={backdropRef}
               type="button"
               aria-label="Close bottom sheet"
               initial={{ opacity: 0 }}
@@ -199,6 +214,7 @@ export function BottomSheet({
               )}
               role="dialog"
               aria-modal="true"
+              tabIndex={-1}
               aria-labelledby={title ? titleId : undefined}
               aria-describedby={description ? descriptionId : undefined}
               aria-label={title ? undefined : "Bottom sheet"}

@@ -326,8 +326,13 @@ function ImageThumbnail({
       <motion.button
         type="button"
         aria-label={`Preview ${item.name}`}
+        // Keep focus on the thumbnail: the preview overlay hands focus back to
+        // whatever was focused when it opened, and a blurred trigger sends
+        // that hand-back to <body>. WebKit never focuses a clicked button, so
+        // the thumbnail claims focus itself or there is nothing to hand back.
+        // The mouse ring is already suppressed by focus-visible.
         onClick={(event) => {
-          event.currentTarget.blur();
+          event.currentTarget.focus({ preventScroll: true });
           onPreview(item);
         }}
         whileTap={reduce ? undefined : { scale: 0.94 }}

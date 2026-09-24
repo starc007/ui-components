@@ -83,7 +83,13 @@ export function Field({
 
         <button
           type="button"
-          onClick={onOpenPicker}
+          // WebKit never focuses a clicked button, so the trigger claims focus
+          // itself: the picker hands focus back to whatever held it on open,
+          // and with nothing captured that hand-back lands on <body>.
+          onClick={(event) => {
+            event.currentTarget.focus({ preventScroll: true });
+            onOpenPicker();
+          }}
           className="group inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card pl-1 pr-2.5 text-sm font-semibold text-foreground transition-transform hover:border-border active:scale-[0.97]"
         >
           <TokenDot token={token} chain={chain} />

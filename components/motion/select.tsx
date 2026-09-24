@@ -20,6 +20,7 @@ import {
   useState,
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { useFocusReturn } from "@/lib/hooks/use-focus-return";
 import { cn } from "@/lib/utils";
 
 const INSTANT_TRANSITION: Transition = { duration: 0 };
@@ -154,6 +155,11 @@ export function Select({
       window.removeEventListener("pointerdown", onPointer);
     };
   }, [open, setOpen]);
+
+  // Picking an option unmounts the focused option button, so hand focus back
+  // on close. A click in WebKit leaves nothing captured on open, so fall back
+  // to the trigger, which is where the panel came from.
+  useFocusReturn(open, [rootRef], `${baseId}-trigger`);
 
   const ctx = useMemo<SelectContextValue>(
     () => ({

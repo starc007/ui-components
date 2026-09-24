@@ -13,6 +13,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
+import { useFocusReturn } from "@/lib/hooks/use-focus-return";
 import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
@@ -78,6 +79,8 @@ export function CommandPalette({
   const canTouch = useTouchCapable();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLButtonElement>(null);
+  const panelLayerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -148,6 +151,7 @@ export function CommandPalette({
     const frame = requestAnimationFrame(() => inputRef.current?.focus());
     return () => cancelAnimationFrame(frame);
   }, [open]);
+  useFocusReturn(open, [backdropRef, panelLayerRef]);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
@@ -190,6 +194,7 @@ export function CommandPalette({
         <PresenceGate key="backdrop">
           {({ gate }) => (
             <motion.button
+              ref={backdropRef}
               type="button"
               aria-label="Close command palette"
               initial={{ opacity: 0 }}
@@ -213,6 +218,7 @@ export function CommandPalette({
             // The layer itself never takes pointer events, so it carries
             // `inert` alone rather than the gate's pointer-events value.
             <div
+              ref={panelLayerRef}
               inert={!isPresent}
               className="pointer-events-none fixed inset-x-4 bottom-4 top-[18vh] z-[100] flex items-start justify-center"
             >
