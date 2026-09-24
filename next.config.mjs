@@ -119,6 +119,7 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      { source: "/pro", destination: "https://pro.beui.dev", permanent: true },
       { source: "/components/charts", destination: "/charts", permanent: true },
       { source: "/components/charts/:path+", destination: "/charts/:path+", permanent: true },
       ...CHART_COMPONENTS.flatMap((slug) =>
