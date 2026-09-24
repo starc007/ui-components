@@ -23,7 +23,7 @@
         "react-use-measure": "^2.1.7",
         "shiki": "^4.2.0",
         "tailwind-merge": "^3.6.0",
-        "tracwell": "0.3.1",
+        "tracwell": "0.4.0",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.4.16",
@@ -1060,7 +1060,7 @@
 
     "tr46": ["tr46@0.0.3", "", {}, "sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw=="],
 
-    "tracwell": ["tracwell@0.3.1", "", {}, "sha512-6/m0sgrKuTO7ZaUSRcJ2jDGftxubKE5dodoQIdkH+lk2jH+0P3HmK4pOKNm0vH8L16V4MjwZzOQ2dPB0EBch/g=="],
+    "tracwell": ["tracwell@0.4.0", "", {}, "sha512-xKmQJxbc3K4/VKHBRjAFfXIhKwF6Q5LU4MNk/FNFfI2ctd5K/YhnOaAbTUD8otnpt+Q7hXFL1GwD2cc04wZeFA=="],
 
     "trim-lines": ["trim-lines@3.0.1", "", {}, "sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg=="],
 
