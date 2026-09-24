@@ -14,6 +14,7 @@ export function Field({
   chain,
   amount,
   onAmount,
+  locale,
   editable,
   quoting,
   onOpenPicker,
@@ -23,6 +24,7 @@ export function Field({
   chain: Chain;
   amount: string;
   onAmount?: (v: string) => void;
+  locale: string;
   editable: boolean;
   quoting: boolean;
   onOpenPicker: () => void;
@@ -77,7 +79,7 @@ export function Field({
             </div>
           )}
           <p className="mt-1 text-[11px] text-muted-foreground tabular-nums">
-            ≈ ${formatAmount(usdValue, 2)}
+            ≈ ${formatAmount(usdValue, locale, 2)}
           </p>
         </div>
 
@@ -96,7 +98,7 @@ export function Field({
         <span className="inline-flex items-center gap-1">
           <Wallet className="h-3 w-3" />
           <span className="tabular-nums">
-            {token.balance ? formatAmount(token.balance) : "0.00"}
+            {token.balance ? formatAmount(token.balance, locale) : "0.00"}
           </span>
           <span>· {chain.name}</span>
         </span>

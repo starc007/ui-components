@@ -10,6 +10,7 @@ export function QuoteRow({
   slippage,
   eta,
   quoting,
+  locale,
 }: {
   from: Token;
   to: Token;
@@ -18,6 +19,7 @@ export function QuoteRow({
   slippage: number;
   eta: string;
   quoting: boolean;
+  locale: string;
 }) {
   return (
     <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 rounded-xl border border-border/50 bg-background/40 px-3.5 py-2.5 text-[11px]">
@@ -27,7 +29,7 @@ export function QuoteRow({
           <Loader2 className="ml-auto inline h-3 w-3 animate-spin text-muted-foreground" />
         ) : (
           <>
-            1 {from.symbol} ≈ {formatAmount(rate)} {to.symbol}
+            1 {from.symbol} ≈ {formatAmount(rate, locale)} {to.symbol}
           </>
         )}
       </span>

@@ -19,6 +19,7 @@ export function TokenPicker({
   onPick,
   onClose,
   reduce,
+  locale,
 }: {
   open: boolean;
   side: TokenSide | null;
@@ -28,6 +29,7 @@ export function TokenPicker({
   onPick: (id: string) => void;
   onClose: () => void;
   reduce: boolean;
+  locale: string;
 }) {
   const [chainFilter, setChainFilter] = useState("all");
   const [q, setQ] = useState("");
@@ -203,7 +205,7 @@ export function TokenPicker({
                         </span>
                         <span className="shrink-0 text-right text-[11px] tabular-nums text-muted-foreground">
                           {t.address ??
-                            (t.balance ? formatAmount(t.balance) : "")}
+                            (t.balance ? formatAmount(t.balance, locale) : "")}
                         </span>
                       </button>
                     </li>
