@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { EASE_OUT } from "@/lib/ease";
 import {
   cloneElement,
   isValidElement,
@@ -78,6 +79,7 @@ export function Tooltip({
   onOpenChange,
   id: providedId,
 }: TooltipProps) {
+  const reduce = useReducedMotion();
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlledOpen ?? internalOpen;
   const setOpen = useCallback(
@@ -95,6 +97,9 @@ export function Tooltip({
   const anchorRef = externalAnchorRef ?? wrapperRef;
   const hover = useHoverGesture();
   const surfaceRef = useRef<HTMLSpanElement>(null);
+  const pointX = anchorPoint?.x;
+  const pointY = anchorPoint?.y;
+  const hasPoint = anchorPoint !== undefined;
 
   // Anchor point in viewport coords, on the edge of the trigger facing `side`.
   // Position:fixed means these viewport coords place the tooltip directly, so
@@ -103,13 +108,13 @@ export function Tooltip({
     const el = anchorRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
-    const cx = r.left + r.width * (anchorPoint?.x ?? 0.5);
-    const cy = r.top + r.height * (anchorPoint?.y ?? 0.5);
+    const cx = r.left + r.width * (pointX ?? 0.5);
+    const cy = r.top + r.height * (pointY ?? 0.5);
     const point: Record<Side, { top: number; left: number }> = {
-      top: { top: (anchorPoint ? cy : r.top) - GAP, left: cx },
-      bottom: { top: (anchorPoint ? cy : r.bottom) + GAP, left: cx },
-      left: { top: cy, left: (anchorPoint ? cx : r.left) - GAP },
-      right: { top: cy, left: (anchorPoint ? cx : r.right) + GAP },
+      top: { top: (hasPoint ? cy : r.top) - GAP, left: cx },
+      bottom: { top: (hasPoint ? cy : r.bottom) + GAP, left: cx },
+      left: { top: cy, left: (hasPoint ? cx : r.left) - GAP },
+      right: { top: cy, left: (hasPoint ? cx : r.right) + GAP },
     };
     const next = point[side];
     const width = surfaceRef.current?.offsetWidth ?? 0;
@@ -119,7 +124,7 @@ export function Tooltip({
     next.left = Math.max(GAP + dx, Math.min(next.left, window.innerWidth - GAP - width + dx));
     next.top = Math.max(GAP + dy, Math.min(next.top, window.innerHeight - GAP - height + dy));
     setCoords(previous => previous?.top === next.top && previous.left === next.left ? previous : next);
-  }, [side, anchorRef, anchorPoint]);
+  }, [side, anchorRef, pointX, pointY, hasPoint]);
 
   const positioned = coords !== null;
   useLayoutEffect(() => {
@@ -245,24 +250,23 @@ export function Tooltip({
         ? createPortal(
             <AnimatePresence>
               {open && coords ? (
-                <span
-                  className="pointer-events-none fixed z-[9999]"
-                  style={{
-                    top: coords.top,
-                    left: coords.left,
-                    transform: anchorTransform[side],
-                  }}
+                <motion.span
+                  key="tooltip"
+                  className="pointer-events-none fixed left-0 top-0 z-[9999]"
+                  initial={false}
+                  animate={{ transform: `translate3d(${coords.left}px, ${coords.top}px, 0) ${anchorTransform[side]}` }}
+                  transition={reduce ? { duration: 0 } : { duration: 0.16, ease: EASE_OUT }}
                 >
                   <TooltipSurface
                     ref={surfaceRef}
                     id={id}
                     side={side}
                     style={{ transformOrigin: transformOrigin[side], maxWidth: "calc(100vw - 16px)", whiteSpace: "normal" }}
-                    className={className}
+                    className={cn("overflow-hidden", className)}
                   >
                     {content}
                   </TooltipSurface>
-                </span>
+                </motion.span>
               ) : null}
             </AnimatePresence>,
             document.body,

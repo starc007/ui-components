@@ -146,7 +146,7 @@ export function CompositionChartPlot({ className }: { className?: string }) {
         id={tooltipId}
         anchorRef={anchorRef}
         anchorPoint={{ x: (index + 0.5) / columns.length, y: 0.3 }}
-        side={index < columns.length / 2 ? "right" : "left"}
+        side="top"
         open={tooltipOpen}
         onOpenChange={setTooltipOpen}
         className="max-w-[calc(100vw-1rem)]"
