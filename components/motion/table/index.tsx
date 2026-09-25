@@ -4,6 +4,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
+import { useScrollRegionTabStop } from "@/lib/hooks/use-scroll-region-tab-stop";
 import { cn } from "@/lib/utils";
 import { EditableCell } from "./editable-cell";
 import { RowHandle } from "./row-handle";
@@ -101,6 +102,7 @@ export function Table<T>({
 }: TableProps<T>) {
   const reduce = useReducedMotion();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const tabStop = useScrollRegionTabStop(scrollRef);
   const thRefs: HeaderCellRefs = useRef<
     Record<string, HTMLTableCellElement | null>
   >({});
@@ -260,7 +262,8 @@ export function Table<T>({
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="overflow-auto"
+        tabIndex={tabStop}
+        className="overflow-auto outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
         style={{ height }}
       >
         <table

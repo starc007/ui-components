@@ -20,7 +20,12 @@ export function ScrollProgressPreview() {
       <div className="absolute right-3 top-3 z-10 rounded-full bg-background/70 p-1 backdrop-blur">
         <ScrollProgress variant="circle" progress={scrollYProgress} size={36} />
       </div>
-      <div ref={ref} className="h-64 overflow-y-auto scrollbar-hide">
+      <div
+        ref={ref}
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: a scroll region needs a tab stop, or keyboard users cannot scroll it (axe scrollable-region-focusable)
+        tabIndex={0}
+        className="h-64 overflow-y-auto scrollbar-hide outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+      >
         <div className="space-y-3 p-4">
           {SECTIONS.map((n) => (
             <div

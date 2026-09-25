@@ -18,6 +18,7 @@ import {
   SPRING_LAYOUT,
   SPRING_SWAP,
 } from "@/lib/ease";
+import { useScrollRegionTabStop } from "@/lib/hooks/use-scroll-region-tab-stop";
 import { cn } from "@/lib/utils";
 import { ActivityRow } from "./activity-row";
 import type {
@@ -138,6 +139,7 @@ export function AgentActivity({
   const contentId = `${baseId}-content`;
   const contentRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const tabStop = useScrollRegionTabStop(viewportRef);
   const previousStatus = useRef(status);
   const [contentHeight, setContentHeight] = useState(0);
   const [currentOpen, setOpen] = useControllableOpen({
@@ -242,8 +244,9 @@ export function AgentActivity({
       >
         <div
           ref={viewportRef}
+          tabIndex={tabStop}
           className={cn(
-            "scrollbar-hide pr-1",
+            "scrollbar-hide pr-1 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
             capped && expanded && !working ? "overflow-y-auto" : "overflow-y-hidden",
           )}
           style={{ height: viewportHeight, maskImage, WebkitMaskImage: maskImage }}

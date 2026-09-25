@@ -29,7 +29,7 @@ const COMPONENT_DATES = {
   "motion/checkbox": { publishedAt: "2026-06-23", updatedAt: "2026-07-01" },
   "motion/radio": { publishedAt: "2026-06-23", updatedAt: "2026-07-13" },
   "motion/bottom-sheet": { publishedAt: "2026-05-17", updatedAt: "2026-08-20" },
-  "motion/pull-to-refresh": { publishedAt: "2026-07-17", updatedAt: "2026-07-17" },
+  "motion/pull-to-refresh": { publishedAt: "2026-07-17", updatedAt: "2026-09-23" },
   "motion/shared-layout-bg": { publishedAt: "2026-05-17", updatedAt: "2026-09-22" },
   "motion/bounce-sidebar": { publishedAt: "2026-07-22", updatedAt: "2026-07-22" },
   "motion/animated-sidebar": {
@@ -55,10 +55,10 @@ const COMPONENT_DATES = {
   "motion/theme-toggle": { publishedAt: "2026-06-15", updatedAt: "2026-09-22" },
   "motion/bouncy-accordion": { publishedAt: "2026-06-16", updatedAt: "2026-07-13" },
   "motion/drawer": { publishedAt: "2026-06-22", updatedAt: "2026-08-20" },
-  "motion/scroll-animation": { publishedAt: "2026-06-24", updatedAt: "2026-06-28" },
+  "motion/scroll-animation": { publishedAt: "2026-06-24", updatedAt: "2026-09-23" },
   "motion/range-slider": { publishedAt: "2026-06-24", updatedAt: "2026-09-09" },
   "motion/wheel-picker": { publishedAt: "2026-07-09", updatedAt: "2026-07-09" },
-  "motion/table": { publishedAt: "2026-07-01", updatedAt: "2026-09-22" },
+  "motion/table": { publishedAt: "2026-07-01", updatedAt: "2026-09-23" },
   "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-09-11" },
   "motion/cylinder-carousel": { publishedAt: "2026-07-04", updatedAt: "2026-09-11" },
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
@@ -76,19 +76,19 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-22",
+    updatedAt: "2026-09-23",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-22",
+    updatedAt: "2026-09-23",
   },
   "agents/message": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-22",
+    updatedAt: "2026-09-23",
   },
   "agents/message-scroller": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-22",
+    updatedAt: "2026-09-23",
   },
   "agents/ai-sidebar": {
     publishedAt: "2026-08-02",
@@ -100,7 +100,7 @@ const COMPONENT_DATES = {
   },
   "agents/code-block": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-08-02",
+    updatedAt: "2026-09-23",
   },
   "agents/todo-list": {
     publishedAt: "2026-08-02",
@@ -136,9 +136,9 @@ const COMPONENT_DATES = {
   },
   "agents/agent-activity": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-19",
+    updatedAt: "2026-09-23",
   },
-  "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-07-15" },
+  "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-09-23" },
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-09-22" },
   "blocks/project-folder": { publishedAt: "2026-08-15", updatedAt: "2026-08-20" },
   "blocks/card-folder": { publishedAt: "2026-09-04", updatedAt: "2026-09-04" },

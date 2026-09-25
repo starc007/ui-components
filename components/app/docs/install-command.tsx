@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CopyButton } from "@/components/app/docs/copy-button";
 import { ActionSwapCascadeText } from "@/components/motion/action-swap-cascade";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
+import { useScrollRegionTabStop } from "@/lib/hooks/use-scroll-region-tab-stop";
 import { registry } from "@/lib/registry";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +40,9 @@ export function InstallCommand({
 }) {
   const [pm, setPm] = useState<PM>("bun");
   const [nameIndex, setNameIndex] = useState(0);
+  const commandRef = useRef<HTMLDivElement>(null);
+  // The command only overflows on narrow screens; it takes a tab stop then.
+  const tabStop = useScrollRegionTabStop(commandRef);
 
   useEffect(() => {
     if (slug) return;
@@ -86,7 +90,11 @@ export function InstallCommand({
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div
+        ref={commandRef}
+        tabIndex={tabStop}
+        className="overflow-x-auto outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+      >
         <div className="min-w-max px-5 py-4 font-mono text-[13px] whitespace-nowrap">
           <span className="select-none text-[#6e7781] dark:text-[#8b949e]">{"$ "}</span>
           <span className="text-[#1f6feb] dark:text-[#ffa657]">
