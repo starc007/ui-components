@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useId, useRef, useState, type PointerEvent } from "react";
 import { Tooltip } from "@/components/motion/tooltip";
 import { CompositionTooltipContent } from "./tooltip-content";
 import { motion } from "motion/react";
@@ -14,7 +14,14 @@ export function CompositionChartPlot({ className }: { className?: string }) {
     useCompositionChart();
   const anchorRef = useRef<HTMLDivElement>(null);
   const tooltipId = useId();
+  const pointerDriven = useRef(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
+  const inspectPointer = (event: PointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    if (!bounds.width || !bounds.height || !columns.length) return;
+    const x = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
+    select(columns[Math.min(columns.length - 1, Math.floor(x * columns.length))].id);
+  };
   if (!columns.length || !rows.length)
     return (
       <p
@@ -39,18 +46,28 @@ export function CompositionChartPlot({ className }: { className?: string }) {
         ref={anchorRef}
         onPointerLeave={() => setTooltipOpen(false)}
         className="relative h-64 has-focus-visible:outline-2 has-focus-visible:outline-offset-4 has-focus-visible:outline-ring sm:h-80"
-        onPointerMove={(event) => {
-          if (!canHover || event.pointerType === "touch") return;
-          const bounds = event.currentTarget.getBoundingClientRect();
-          const next = Math.min(
-            columns.length - 1,
-            Math.max(
-              0,
-              Math.floor(((event.clientX - bounds.left) / bounds.width) * columns.length),
-            ),
-          );
-          select(columns[next].id);
+        onPointerEnter={(event) => {
+          if (event.pointerType !== "touch" && !event.buttons) {
+            inspectPointer(event);
+            setTooltipOpen(true);
+          }
+        }}
+        onPointerDown={(event) => {
+          pointerDriven.current = true;
+          inspectPointer(event);
           setTooltipOpen(true);
+        }}
+        onPointerUp={() => {
+          pointerDriven.current = false;
+        }}
+        onPointerCancel={() => {
+          pointerDriven.current = false;
+          setTooltipOpen(false);
+        }}
+        onPointerMove={(event) => {
+          if (event.pointerType === "touch" ? event.buttons === 1 : canHover) {
+            inspectPointer(event);
+          }
         }}
       >
         <svg
@@ -130,12 +147,19 @@ export function CompositionChartPlot({ className }: { className?: string }) {
           aria-valuetext={column?.id}
           aria-describedby={tooltipOpen ? tooltipId : undefined}
           onFocus={() => setTooltipOpen(true)}
-          onBlur={() => setTooltipOpen(false)}
+          onBlur={() => {
+            pointerDriven.current = false;
+            setTooltipOpen(false);
+          }}
           onPointerDown={() => setTooltipOpen(true)}
           onKeyDown={(event) => {
+            pointerDriven.current = false;
             if (event.key === "Escape") setTooltipOpen(false);
           }}
           onChange={(event) => {
+            // The range thumb and equal-width chart columns round differently.
+            // Pointer selection has one source; native changes are for keyboard/AT.
+            if (pointerDriven.current) return;
             select(columns[Number(event.target.value)].id);
             setTooltipOpen(true);
           }}
@@ -145,6 +169,7 @@ export function CompositionChartPlot({ className }: { className?: string }) {
       <Tooltip
         id={tooltipId}
         anchorRef={anchorRef}
+        followCursor
         anchorPoint={{ x: (index + 0.5) / columns.length, y: 0.3 }}
         side="top"
         open={tooltipOpen}

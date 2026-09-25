@@ -157,6 +157,9 @@ test("registry ships the composition parts and no illustrative dataset", async (
   expect(paths.some((path) => path.endsWith("composition-chart/model.ts"))).toBe(true);
   expect(paths.some((path) => path.endsWith("composition-chart/plot.tsx"))).toBe(true);
   expect(item?.dependencies).toContain("motion");
+  expect(item?.dependencies).toContain("@floating-ui/dom");
+  expect(paths.some((path) => path.endsWith("tooltip/use-position.ts"))).toBe(true);
+  expect(paths.some((path) => path.endsWith("motion/number-ticker.tsx"))).toBe(true);
   expect(paths.some((path) => path.endsWith("composition-chart.preview.tsx"))).toBe(false);
 });
 
@@ -194,4 +197,22 @@ test("tooltip reports missing data rather than invented shares", async () => {
   const tooltip = await screen.findByRole("tooltip");
   expect(tooltip.textContent).toContain("No complete data for this period.");
   expect(tooltip.textContent).not.toContain("0.0%");
+});
+
+
+test("pointer selection cannot be overwritten by native range rounding", () => {
+  const screen = render(<CompositionChart series={series} periods={periods} />);
+  const slider = screen.getByRole("slider");
+  const plot = slider.parentElement as HTMLElement;
+  plot.getBoundingClientRect = () => ({
+    left: 0, right: 300, top: 0, bottom: 200,
+    width: 300, height: 200, x: 0, y: 0, toJSON() {},
+  });
+  fireEvent.pointerDown(slider, { pointerType: "mouse", buttons: 1, clientX: 20, clientY: 100 });
+  expect(slider.getAttribute("aria-valuetext")).toBe("Jan");
+  fireEvent.change(slider, { target: { value: "1" } });
+  expect(slider.getAttribute("aria-valuetext")).toBe("Jan");
+  fireEvent.pointerUp(slider, { pointerType: "mouse", buttons: 0 });
+  fireEvent.change(slider, { target: { value: "2" } });
+  expect(slider.getAttribute("aria-valuetext")).toBe("Mar");
 });

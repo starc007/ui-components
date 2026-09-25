@@ -1,7 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { EASE_OUT } from "@/lib/ease";
+import { AnimatePresence } from "motion/react";
+import { PresenceGate } from "@/lib/presence-gate";
+import { useTooltipPosition } from "./tooltip/use-position";
 import {
   cloneElement,
   isValidElement,
@@ -12,7 +13,6 @@ import {
   useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -32,6 +32,8 @@ export interface TooltipProps {
   anchorRef?: RefObject<HTMLElement | SVGElement | null>;
   /** Point within the anchor, as fractions of its rendered width and height. */
   anchorPoint?: { x: number; y: number };
+  /** Follow real pointer coordinates; keyboard focus still uses the anchor. */
+  followCursor?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   id?: string;
@@ -42,24 +44,6 @@ export interface TooltipProps {
   /** Classes for the outer wrapper span. Use to fix baseline / fill parent. */
   wrapperClassName?: string;
 }
-
-// Gap between trigger and tooltip, in px.
-const GAP = 8;
-
-// Centering transform for the fixed-positioned anchor point, per side.
-const anchorTransform: Record<Side, string> = {
-  top: "translate(-50%, -100%)",
-  bottom: "translate(-50%, 0)",
-  left: "translate(-100%, -50%)",
-  right: "translate(0, -50%)",
-};
-
-const transformOrigin: Record<Side, string> = {
-  top: "center bottom",
-  bottom: "center top",
-  left: "right center",
-  right: "left center",
-};
 
 // Once any tooltip has just closed, neighbouring tooltips open without the
 // initial delay — moving along a toolbar feels instant after the first one.
@@ -75,11 +59,11 @@ export function Tooltip({
   wrapperClassName,
   anchorRef: externalAnchorRef,
   anchorPoint,
+  followCursor = false,
   open: controlledOpen,
   onOpenChange,
   id: providedId,
 }: TooltipProps) {
-  const reduce = useReducedMotion();
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlledOpen ?? internalOpen;
   const setOpen = useCallback(
@@ -89,64 +73,26 @@ export function Tooltip({
     },
     [controlledOpen, onOpenChange],
   );
-  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
   const generatedId = useId();
   const id = providedId ?? generatedId;
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapperRef = useRef<HTMLSpanElement>(null);
   const anchorRef = externalAnchorRef ?? wrapperRef;
   const hover = useHoverGesture();
-  const surfaceRef = useRef<HTMLSpanElement>(null);
-  const pointX = anchorPoint?.x;
-  const pointY = anchorPoint?.y;
-  const hasPoint = anchorPoint !== undefined;
-
-  // Anchor point in viewport coords, on the edge of the trigger facing `side`.
-  // Position:fixed means these viewport coords place the tooltip directly, so
-  // it escapes every ancestor's stacking context and overflow.
-  const place = useCallback(() => {
-    const el = anchorRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const cx = r.left + r.width * (pointX ?? 0.5);
-    const cy = r.top + r.height * (pointY ?? 0.5);
-    const point: Record<Side, { top: number; left: number }> = {
-      top: { top: (hasPoint ? cy : r.top) - GAP, left: cx },
-      bottom: { top: (hasPoint ? cy : r.bottom) + GAP, left: cx },
-      left: { top: cy, left: (hasPoint ? cx : r.left) - GAP },
-      right: { top: cy, left: (hasPoint ? cx : r.right) + GAP },
-    };
-    const next = point[side];
-    const width = surfaceRef.current?.offsetWidth ?? 0;
-    const height = surfaceRef.current?.offsetHeight ?? 0;
-    const dx = side === "left" ? width : side === "right" ? 0 : width / 2;
-    const dy = side === "top" ? height : side === "bottom" ? 0 : height / 2;
-    next.left = Math.max(GAP + dx, Math.min(next.left, window.innerWidth - GAP - width + dx));
-    next.top = Math.max(GAP + dy, Math.min(next.top, window.innerHeight - GAP - height + dy));
-    setCoords(previous => previous?.top === next.top && previous.left === next.left ? previous : next);
-  }, [side, anchorRef, pointX, pointY, hasPoint]);
-
-  const positioned = coords !== null;
-  useLayoutEffect(() => {
-    if (!open) return;
-    place();
-    const observer = new ResizeObserver(place);
-    if (anchorRef.current) observer.observe(anchorRef.current);
-    if (positioned && surfaceRef.current) observer.observe(surfaceRef.current);
-    return () => observer.disconnect();
-  }, [open, place, anchorRef, positioned]);
+  const floatingRef = useRef<HTMLSpanElement>(null);
+  const focused = useRef(false);
 
   const show = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
+    if (open) return;
     const warm = Date.now() - lastHiddenAt < WARM_WINDOW_MS;
     timer.current = setTimeout(
       () => {
-        place();
         setOpen(true);
       },
       warm ? 0 : delay,
     );
-  }, [delay, place, setOpen]);
+  }, [delay, setOpen, open]);
 
   const hide = useCallback(() => {
     if (timer.current) {
@@ -156,6 +102,18 @@ export function Tooltip({
     if (open) lastHiddenAt = Date.now();
     setOpen(false);
   }, [open, setOpen]);
+
+  const leave = useCallback(() => {
+    if (focused.current) return;
+    if (timer.current) clearTimeout(timer.current);
+    // Bridge the small physical gap to a stationary, readable tooltip.
+    if (followCursor) hide();
+    else timer.current = setTimeout(hide, 100);
+  }, [followCursor, hide]);
+  const insideTooltip = useCallback(
+    (target: Element) => Boolean(floatingRef.current?.contains(target)),
+    [],
+  );
 
   // A finger never hovers, and Safari does not focus a button on tap either, so
   // the label is only reachable if the tap itself opens the tooltip. A click
@@ -172,26 +130,22 @@ export function Tooltip({
       return;
     }
     if (timer.current) clearTimeout(timer.current);
-    place();
     setOpen(true);
-  }, [hide, place, tap, setOpen]);
+  }, [hide, tap, setOpen]);
 
   // ...and closed again by the next tap that lands somewhere else. The label
   // covers nothing interactive, so that tap passes through to what it hit.
-  useDismiss(open, hide, anchorRef);
+  useDismiss(open, hide, anchorRef, { ignore: insideTooltip });
 
-  // Keep the tooltip pinned to the trigger while it's open and the page scrolls
-  // or resizes (fixed coords are viewport-relative).
-  useEffect(() => {
-    if (!open) return;
-    const onMove = () => place();
-    window.addEventListener("scroll", onMove, true);
-    window.addEventListener("resize", onMove);
-    return () => {
-      window.removeEventListener("scroll", onMove, true);
-      window.removeEventListener("resize", onMove);
-    };
-  }, [open, place]);
+  useTooltipPosition({
+    open,
+    anchorRef,
+    floatingRef,
+    anchorPoint,
+    followCursor,
+    side,
+    onDismiss: hide,
+  });
 
   useEffect(
     () => () => {
@@ -212,7 +166,10 @@ export function Tooltip({
   // props hold nothing the component does internally.
   const trigger = isValidElement(children)
     ? cloneElement(children as ReactElement<Record<string, unknown>>, {
-        "aria-describedby": id,
+        "aria-describedby":
+          [(children.props as Record<string, unknown>)["aria-describedby"], open ? id : undefined]
+            .filter(Boolean)
+            .join(" ") || undefined,
       })
     : null;
 
@@ -230,17 +187,26 @@ export function Tooltip({
             if (hover.enter(event)) show();
           }}
           onPointerLeave={(event: PointerEvent) => {
-            if (hover.leave(event)) hide();
+            if (hover.leave(event)) leave();
           }}
-          onFocus={show}
-          onBlur={hide}
+          onFocus={() => {
+            focused.current = true;
+            show();
+          }}
+          onBlur={() => {
+            focused.current = false;
+            hide();
+          }}
           onPointerDown={(event: PointerEvent) => tap.start(event, open)}
           // A gesture the platform took away sends no click, and a key press
           // starts an activation that never had a pointer behind it. Either way
           // the record has to go, or the next click reads a finger that has long
           // since lifted.
           onPointerCancel={tap.drop}
-          onKeyDown={tap.drop}
+          onKeyDown={(event) => {
+            tap.drop();
+            if (event.key === "Escape") hide();
+          }}
           onClick={toggleOnTap}
         >
           {trigger}
@@ -249,24 +215,35 @@ export function Tooltip({
       {typeof document !== "undefined"
         ? createPortal(
             <AnimatePresence>
-              {open && coords ? (
-                <motion.span
-                  key="tooltip"
-                  className="pointer-events-none fixed left-0 top-0 z-[9999]"
-                  initial={false}
-                  animate={{ transform: `translate3d(${coords.left}px, ${coords.top}px, 0) ${anchorTransform[side]}` }}
-                  transition={reduce ? { duration: 0 } : { duration: 0.16, ease: EASE_OUT }}
-                >
-                  <TooltipSurface
-                    ref={surfaceRef}
-                    id={id}
-                    side={side}
-                    style={{ transformOrigin: transformOrigin[side], maxWidth: "calc(100vw - 16px)", whiteSpace: "normal" }}
-                    className={cn("overflow-hidden", className)}
-                  >
-                    {content}
-                  </TooltipSurface>
-                </motion.span>
+              {open ? (
+                <PresenceGate key="tooltip">
+                  {({ isPresent }) => (
+                    <span
+                      ref={floatingRef}
+                      inert={!isPresent}
+                      aria-hidden={!isPresent || undefined}
+                      className="pointer-events-none fixed left-0 top-0 z-[9999] w-max"
+                      style={{ visibility: "hidden", maxWidth: "calc(100vw - 16px)" }}
+                    >
+                      <TooltipSurface
+                        id={id}
+                        side={side}
+                        onPointerEnter={() => {
+                          if (timer.current) clearTimeout(timer.current);
+                        }}
+                        onPointerLeave={leave}
+                        style={{
+                          maxWidth: "calc(100vw - 16px)",
+                          whiteSpace: "normal",
+                          pointerEvents: isPresent && !followCursor ? "auto" : "none",
+                        }}
+                        className={cn("overflow-hidden", className)}
+                      >
+                        {content}
+                      </TooltipSurface>
+                    </span>
+                  )}
+                </PresenceGate>
               ) : null}
             </AnimatePresence>,
             document.body,

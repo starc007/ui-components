@@ -225,6 +225,9 @@ test("PriceTargetFan rejects invalid and unordered history rather than fabricati
 test("a price tooltip converts viewBox units and repositions when its container resizes", async () => {
   const Original = globalThis.ResizeObserver;
   const viewportWidth = Object.getOwnPropertyDescriptor(window, "innerWidth");
+  const root = document.documentElement;
+  const clientWidth = Object.getOwnPropertyDescriptor(root, "clientWidth");
+  const clientHeight = Object.getOwnPropertyDescriptor(root, "clientHeight");
   const callbacks: ResizeObserverCallback[] = [];
   globalThis.ResizeObserver = class {
     constructor(callback: ResizeObserverCallback) {
@@ -240,22 +243,25 @@ test("a price tooltip converts viewBox units and repositions when its container 
     if (!svg) throw new Error("Missing price chart SVG");
     let width = 320;
     Object.defineProperty(window, "innerWidth", { configurable: true, get: () => width });
+    Object.defineProperties(root, { clientWidth: { configurable: true, get: () => width }, clientHeight: { configurable: true, value: 800 } });
     svg.getBoundingClientRect = () => ({ left: 0, right: width, top: 200, bottom: 200 + width * 236 / 520, width, height: width * 236 / 520, x: 0, y: 200, toJSON() {} });
     fireEvent.focus(getByRole("button", { name: "High target $232.00, 9 analysts" }));
     const tip = getByRole("tooltip", { hidden: true });
-    Object.defineProperties(tip, { offsetWidth: { get: () => 148 }, offsetHeight: { get: () => 110 } });
+    Object.defineProperties(tip.parentElement, { offsetWidth: { get: () => 148 }, offsetHeight: { get: () => 110 } });
     const resize = () =>
       act(() => {
         for (const callback of callbacks) callback([], {} as ResizeObserver);
       });
     resize();
-    await waitFor(() => expect(tip.parentElement?.style.left).toBe("238px"));
+    await waitFor(() => expect(tip.parentElement?.style.transform).toMatch(/^translate3d\(164px,/));
     width = 240;
     resize();
-    await waitFor(() => expect(tip.parentElement?.style.left).toBe("158px"));
+    await waitFor(() => expect(tip.parentElement?.style.transform).toMatch(/^translate3d\(84px,/));
   } finally {
     globalThis.ResizeObserver = Original;
     if (viewportWidth) Object.defineProperty(window, "innerWidth", viewportWidth);
+    if (clientWidth) Object.defineProperty(root, "clientWidth", clientWidth); else Reflect.deleteProperty(root, "clientWidth");
+    if (clientHeight) Object.defineProperty(root, "clientHeight", clientHeight); else Reflect.deleteProperty(root, "clientHeight");
   }
 });
 
@@ -328,24 +334,31 @@ test("a removed price history sample does not regain stale active state when res
   expect(getByText("inactive")).toBeTruthy();
 });
 
-test("ReturnsCalendar uses our portaled Tooltip anchored above the active cell", () => {
-  const { container, getByRole } = render(<ReturnsCalendar years={[2024]} returns={[[10]]} />);
-  const cell = getByRole("button", { name: "2024 +10.0% for the year" });
-  cell.getBoundingClientRect = () => ({
-    left: 200,
-    right: 240,
-    top: 100,
-    bottom: 130,
-    width: 40,
-    height: 30,
-    x: 200,
-    y: 100,
-    toJSON() {},
+test("ReturnsCalendar uses our portaled Tooltip anchored above the active cell", async () => {
+  const root = document.documentElement;
+  const width = Object.getOwnPropertyDescriptor(root, "clientWidth");
+  const height = Object.getOwnPropertyDescriptor(root, "clientHeight");
+  Object.defineProperties(root, {
+    clientWidth: { configurable: true, value: 1024 },
+    clientHeight: { configurable: true, value: 768 },
   });
-  fireEvent.focus(cell);
-  const tooltip = getByRole("tooltip");
-  expect(container.contains(tooltip)).toBe(false);
-  expect(cell.getAttribute("aria-describedby")).toBe(tooltip.id);
-  expect(tooltip.parentElement?.style.top).toBe("92px");
-  expect(tooltip.parentElement?.style.left).toBe("220px");
+  try {
+    const { container, getByRole } = render(<ReturnsCalendar years={[2024]} returns={[[10]]} />);
+    const cell = getByRole("button", { name: "2024 +10.0% for the year" });
+    cell.getBoundingClientRect = () => ({
+      left: 200, right: 240, top: 100, bottom: 130,
+      width: 40, height: 30, x: 200, y: 100, toJSON() {},
+    });
+    fireEvent.focus(cell);
+    const tooltip = getByRole("tooltip", { hidden: true });
+    Object.defineProperties(tooltip.parentElement, {
+      offsetWidth: { get: () => 100 }, offsetHeight: { get: () => 30 },
+    });
+    expect(container.contains(tooltip)).toBe(false);
+    expect(cell.getAttribute("aria-describedby")).toBe(tooltip.id);
+    await waitFor(() => expect(tooltip.parentElement?.style.transform).toBe("translate3d(170px, 62px, 0)"));
+  } finally {
+    if (width) Object.defineProperty(root, "clientWidth", width); else Reflect.deleteProperty(root, "clientWidth");
+    if (height) Object.defineProperty(root, "clientHeight", height); else Reflect.deleteProperty(root, "clientHeight");
+  }
 });

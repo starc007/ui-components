@@ -1,5 +1,6 @@
 "use client";
 
+import { NumberTicker } from "@/components/motion/number-ticker";
 import { cn } from "@/lib/utils";
 import { useCompositionChart } from "./context";
 
@@ -21,10 +22,25 @@ export function CompositionTooltipContent({ className }: { className?: string })
               <span className="min-w-0 flex-1 truncate">{row.name}</span>
               <span className="max-w-28 shrink-0 truncate text-muted-foreground tabular-nums"
                 title={formatValue(row.value ?? 0)}>
-                {formatValue(row.value ?? 0)}
+                <NumberTicker
+                  value={row.value ?? 0}
+                  // Keep the consumer's exact formatting, including fractional values and units.
+                  format={() => formatValue(row.value ?? 0)}
+                  startOnView={false}
+                  duration={0.2}
+                  stagger={0}
+                  className="whitespace-pre"
+                />
               </span>
               <span className="w-12 shrink-0 text-right font-mono tabular-nums">
-                {row.share.toFixed(1)}%
+                <NumberTicker
+                  value={row.share}
+                  format={() => row.share.toFixed(1)}
+                  suffix="%"
+                  startOnView={false}
+                  duration={0.2}
+                  stagger={0}
+                />
               </span>
             </span>
           ))}
