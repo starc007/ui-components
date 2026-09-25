@@ -96,9 +96,10 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```bash
 bun run check
+bun test
 ```
 
-This runs TypeScript, Biome lint, and registry source validation.
+`bun run check` runs TypeScript, Biome lint, and registry source validation. `bun test` runs the accessibility-only test suite. See [CONTRIBUTING.md](./CONTRIBUTING.md#testing-policy) for the testing policy.
 
 ## Contributing
 

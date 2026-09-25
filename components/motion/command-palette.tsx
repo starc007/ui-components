@@ -183,7 +183,6 @@ export function CommandPalette({
   // layer positioning the panel is inset off every edge. Both hang off
   // `PresenceGate`, so interaction releases in the same commit that starts the
   // exit rather than when it ends — `open` is already false for those frames.
-  // See tests/fixed-overlay-edge-sampling.test.tsx.
   return createPortal(
     <AnimatePresence initial={false}>
       {open ? (

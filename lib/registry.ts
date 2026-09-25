@@ -435,7 +435,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "tooltip",
         name: "Tooltip",
-        description: "Hover or focus tooltip with blur enter/exit and spring spawn.",
+        description: "Hover or focus tooltip with a subtle scale and fade, collision-aware placement, and optional cursor tracking.",
         file: "components/motion/tooltip.tsx",
       },
       {
@@ -979,6 +979,16 @@ export const registry: CategoryEntry[] = [
     description:
       "Animated React charts for activity, returns, price targets, and order books, built with Motion and Tailwind CSS as customizable copy-paste source.",
     components: [
+      {
+        slug: "composition-chart",
+        name: "Composition Chart",
+        description: "Stacked bar and area shares with period tooltips and a compact interactive legend.",
+        file: "components/charts/composition-chart.tsx",
+        usageFile: "components/previews/charts/composition-chart.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-09-25",
+        keywords: ["stacked bar chart", "stacked area chart", "composition", "market share", "percentage chart"],
+      },
       {
         slug: "funnel-chart",
         name: "Funnel Chart",

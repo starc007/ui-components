@@ -36,6 +36,7 @@
     "check": "bun run typecheck && bun run lint && bun run check:registry"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.8.0",
     "@opennextjs/cloudflare": "1.20.6",
     "@paper-design/shaders-react": "^0.0.76",
     "@shikijs/transformers": "^4.2.0",

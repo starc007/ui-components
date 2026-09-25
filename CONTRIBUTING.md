@@ -9,9 +9,18 @@ Run the project checks:
 ```bash
 bun install
 bun run check
+bun test
 ```
 
-`bun run check` typechecks the app and verifies every registry component can publish its source files.
+`bun run check` runs TypeScript, Biome lint, and registry source validation. `bun test` runs the accessibility suite.
+
+## Testing policy
+
+The automated test suite is accessibility-only. Add or update audits in `tests/a11y.test.tsx` or focused `tests/*.a11y.test.tsx` files using the shared `tests/setup.ts`. Cover meaningful accessible states, including open overlays where relevant, without duplicating existing cases.
+
+Do not add general unit, interaction, calculation, snapshot, styling, or animation-timing tests unless a maintainer explicitly requests them. Typechecking, linting, and registry validation remain required.
+
+Check changed interactions and visual behavior in the browser: keyboard navigation and focus, touch where applicable, responsive layouts, reduced motion, and enter/exit animations. Axe checks do not prove complete accessibility or visual quality. Include the checks you performed and any unverified behavior in your PR description.
 
 ## Motion Conventions
 

@@ -10,10 +10,18 @@ bun run dev             # local site
 bun run typecheck       # tsc --noEmit
 bun run lint            # biome
 bun run check:registry  # every registry component can publish its files
-bun run check           # all three — run before committing
+bun run check           # typecheck, lint, and registry validation
+bun test                # accessibility tests only
 ```
 
 Prefer `typecheck` + `lint` for quick verification. Do not start the dev server or run `bun run build` unless explicitly asked.
+
+## Testing policy
+
+- Keep the automated test suite accessibility-only. Do not add or restore general unit, interaction, calculation, snapshot, styling, or animation-timing tests unless the user explicitly requests them.
+- Keep accessibility audits in `tests/a11y.test.tsx` or focused `tests/*.a11y.test.tsx` files, using `tests/setup.ts`. Add coverage for meaningful accessible states, including open overlays where relevant; avoid duplicate cases.
+- Run `bun run check` and `bun test` before committing. TypeScript, lint, and registry validation remain required and are separate from the accessibility suite.
+- Verify changed interactions and visual behavior in the browser, including keyboard/focus behavior, touch where applicable, responsive layout, and reduced motion. Automated axe checks do not establish animation quality or complete accessibility. Report what was checked and any verification limits; the dev-server restriction above still applies.
 
 ## Layout
 
@@ -51,7 +59,7 @@ Before building a new component, check this list. If it exists, import it. If it
 | `animated-sidebar` | `components/motion/animated-sidebar.tsx` | Shadcn-style application sidebar with provider-managed desktop/mobile state, icon or off-canvas collapse, morphing nested-menu primitives, animated content inset, toggle rail, keyboard shortcut and a focus-managed mobile sheet |
 | `preview-rail` | `components/motion/preview-rail.tsx` | Vertical or horizontal link/button navigation ticks that form a pyramid around the hovered item with an optionally positioned gliding preview card |
 | `dock` | `components/motion/dock.tsx` | macOS-style dock with grouped actions and gliding active pill |
-| `tooltip` | `components/motion/tooltip.tsx` | Hover/focus tooltip with blur enter/exit and spring spawn |
+| `tooltip` | `components/motion/tooltip.tsx` | Hover/focus tooltip with Floating UI collision-aware positioning, direct frame-coalesced cursor tracking via `followCursor`, scale-and-fade entry/exit and hoverable static content; placement is immediate and the surface animates as one piece |
 | `context-menu` | `components/motion/context-menu.tsx` | Composable right-click/long-press menu with a pointer-origin clip morph, a spring-gliding active row, checkbox/radio choices, keyboard navigation and typeahead |
 | `popover` | `components/motion/popover.tsx`, `popover-morph.tsx` | Composable popover, two variants. **Gooey** (`Popover`, `PopoverTrigger`, `PopoverContent`, install `@beui/popover`): panel oozes out of the trigger via an SVG goo filter (liquid neck that stretches/pinches) with crisp content fading in on top. **Morph** (`MorphPopover`, `MorphPopoverTrigger`, `MorphPopoverContent`, install `@beui/popover-morph`): panel laid out full size but clipped to the corner nearest the trigger, then unclips as one piece with a drop-shadow that hugs the shape; side/align aware. Both render through a body portal so they escape clipping and stacking contexts; click trigger, controlled/uncontrolled |
 | `morphing-modal` | `components/motion/morphing-modal.tsx` | Panel that morphs height across inner views with blur cross-fade |
@@ -78,6 +86,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
+| `composition-chart` | `components/charts/composition-chart.tsx` + `composition-chart/` | Composable normalized stacked bar/area chart with Plot, compact stable-order Legend and useCompositionChart; bar and area views share one preview and usage API; consumer-supplied values/colors, controlled/uncontrolled period inspection, hover and an invisible native keyboard/touch slider over the plot, series pinning, shared tooltips with NumberTicker-animated exact values and shares, missing-period gaps and reduced-motion-safe bar transitions |
 | `bump-chart` | `components/charts/bump-chart.tsx` + `bump-chart/` | Composable ranking chart with Plot, Legend, and useBumpChart; synchronized spring transitions for curves, dots, and end labels; interactive rank dots with shared tooltips, gap-aware data, controlled/uncontrolled series pinning, hover/focus isolation, accessible exact-rank table, and reduced-motion-safe reveal |
 | `funnel-chart` | `components/charts/funnel-chart.tsx` + `funnel-chart/` | Composable FunnelChart with Plot, Summary and useFunnelChart; connected curved segments morph on updates in vertical or horizontal directions, conversion and drop-off tooltips use NumberTicker, supports custom units/formatting and reduced motion |
 | `liquidity-heatmap` | `components/charts/liquidity-heatmap.tsx` + `liquidity-heatmap/` | Snapshot-driven price/time liquidity bands with Plot, Legend and useLiquidityHeatmap; animated intensity, optional price trace, shared tooltips, keyboard inspection, custom units and formatting; simulated data lives in preview |
@@ -147,9 +156,9 @@ Before building a new component, check this list. If it exists, import it. If it
 - Gate decorative hover effects (magnetic pull, tilt) behind `useHoverCapable()` from `lib/hooks/use-hover-capable` — touch devices get sticky phantom hover otherwise.
 - Animate `transform` and `opacity` only; never layout properties. Keep blur ≤ 10px. Exits faster than entrances. UI animations under ~300ms; press feedback ~100-160ms.
 - Site CTAs use `PressLink` (`components/app/press-link.tsx`), which matches the library Button's `SPRING_PRESS` feel. Don't reach for the CSS `.press` utility on primary CTAs.
-- Unmount overlays while closed: wrap the chrome in `AnimatePresence`. A transparent full-viewport fixed layer is costly on iOS Safari (see `tests/fixed-overlay-edge-sampling.test.tsx`). If an overlay must stay mounted, hide it on the close path only. Flip the hidden state from the exit animation's completion callback, not from a duration constant. Open instantly: focus and measurement effects fail against a hidden element. Re-test the open path after you change show/hide code.
+- Unmount overlays while closed: wrap the chrome in `AnimatePresence`. A transparent full-viewport fixed layer is costly on iOS Safari. If an overlay must stay mounted, hide it on the close path only. Flip the hidden state from the exit animation's completion callback, not from a duration constant. Open instantly: focus and measurement effects fail against a hidden element. Re-test the open path after you change show/hide code.
 - Gate overlay interaction on presence, not on `open`. During the exit, `open` is already false but the chrome is still the topmost element on the page. Spread the `gate` from `PresenceGate` (`lib/presence-gate.tsx`) onto every layer that takes pointer events. The gate removes pointer events, focus order, and accessibility exposure (through `inert`) in the same commit that starts the exit; the visual exit continues. Put `inert={!isPresent}` alone on a wrapper that never takes pointer events. An always-mounted overlay gates on its own open state instead; that state flips on the same render.
-- Every `position: fixed` overlay layer must paint a colour, or have no children, or stay off the viewport edges. The sweep test checks every overlay in each state; add a row for each new overlay, and copy the layer shapes from an existing overlay rather than inventing new ones. When you move padding between layers, keep the panel's content box unchanged at every viewport. Render the backdrop and the dialog as separate top-level layers; never put the backdrop inside the dialog's scroll container (iOS Safari positions `fixed` elements against an ancestor scroller, so a nested backdrop stops covering the viewport).
+- Every `position: fixed` overlay layer must paint a colour, or have no children, or stay off the viewport edges. Check every overlay in each state in the browser, and copy the layer shapes from an existing overlay rather than inventing new ones. When you move padding between layers, keep the panel's content box unchanged at every viewport. Render the backdrop and the dialog as separate top-level layers; never put the backdrop inside the dialog's scroll container (iOS Safari positions `fixed` elements against an ancestor scroller, so a nested backdrop stops covering the viewport).
 
 ## Code conventions
 
@@ -165,7 +174,6 @@ Before building a new component, check this list. If it exists, import it. If it
 - New component = source file + preview + `lib/registry.ts` entry in the same change. `bun run check:registry` must pass.
 - A `new` component's registry entry must set `launchedAt` to the ship date (`YYYY-MM-DD`). The landing "Recently launched" section sorts by it newest-first, so the just-added component leads.
 - A change to a component's public behavior or docs must bump `updatedAt` in `lib/component-dates.ts` to the ship date (`YYYY-MM-DD`) for every registry item that bundles a changed file, not just the one you were editing. A shared file usually ships in several entries, and the category slug is not the directory, so resolve the set from the entries' file lists rather than by path. Site-wide maintenance must not refresh every component's date.
-- A test helper that models an external rule must implement every clause its comment cites. Give the helper its own fixture tests. Do not infer semantics from class-name prefixes: `bg-*` includes non-painting utilities and `bg-transparent`.
 
 ## Commits
 

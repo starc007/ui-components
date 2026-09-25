@@ -277,8 +277,7 @@ export function CenterMorphModalContent({
 
               {/* `inset-4` rather than `inset-0 p-4`: same content box, but the
                   layer stays off the viewport edges. It never takes pointer
-                  events, so it carries `inert` alone. See
-                  tests/fixed-overlay-edge-sampling.test.tsx. */}
+                  events, so it carries `inert` alone. */}
               <div
                 inert={!isPresent}
                 className="pointer-events-none fixed inset-4 z-[100] flex items-center justify-center overflow-y-auto drop-shadow-2xl"

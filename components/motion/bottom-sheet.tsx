@@ -146,8 +146,7 @@ export function BottomSheet({
   // carries a colour, and the sheet is pinned to the bottom, stops short of the
   // top edge at every snap point the component ships, and paints an opaque
   // surface either way. Both hang off `PresenceGate`, so interaction releases in
-  // the same commit that starts the exit rather than when it ends. See
-  // tests/fixed-overlay-edge-sampling.test.tsx.
+  // the same commit that starts the exit rather than when it ends.
   return createPortal(
     <AnimatePresence>
       {open ? (

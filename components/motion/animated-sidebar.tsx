@@ -376,7 +376,7 @@ function MobileSidebar({
   // box: both children are `fixed` and resolve against the viewport themselves.
   // The scrim spans the viewport edges but paints a colour, and the panel is
   // inset off one side and paints its own surface, so no layer here is a
-  // transparent edge-spanning one. See tests/fixed-overlay-edge-sampling.test.tsx.
+  // transparent edge-spanning one.
   return createPortal(
     <div
       className={cn(
