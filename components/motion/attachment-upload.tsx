@@ -396,7 +396,7 @@ function ImagePreviewDialog({
       // against the viewport themselves. The scrim spans the viewport edges but
       // paints a colour, and the layer that centres the image is inset off every
       // edge. `PresenceGate` releases interaction in the same commit that starts
-      // the exit. See tests/fixed-overlay-edge-sampling.test.tsx.
+      // the exit.
       <PresenceGate>
         {({ isPresent, gate }) => (
           <div

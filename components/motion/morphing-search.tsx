@@ -364,7 +364,7 @@ export function MorphingSearch({
 	// the z-index and the presence key, and every child below is `fixed` and
 	// resolves against the viewport itself. The click catcher spans the viewport
 	// edges but has no children and filters nothing, so it is not a sampling
-	// layer either. See tests/fixed-overlay-edge-sampling.test.tsx.
+	// layer either.
 	const overlay = mounted
 		? createPortal(
 				<div

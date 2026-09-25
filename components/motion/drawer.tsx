@@ -52,7 +52,7 @@ export function Drawer({
   // paints the scrim, and the panel is inset off one side and paints its own
   // surface, so neither is a transparent edge-spanning layer. Both hang off
   // `PresenceGate`, so interaction releases in the same commit that starts the
-  // exit rather than when it ends. See tests/fixed-overlay-edge-sampling.test.tsx.
+  // exit rather than when it ends.
   return (
     <AnimatePresence>
       {open ? (

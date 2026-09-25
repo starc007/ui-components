@@ -200,7 +200,7 @@ export function ProjectFolder({
   // takes them back, so gutter presses still close the overlay. Accepted: the
   // 2rem inset sits outside the scroll box, so it stays put rather than
   // scrolling away with the content.
-  // See tests/fixed-overlay-edge-sampling.test.tsx.
+  //
   const overlay = isExpanded || isClosing ? (
     <>
       <AnimatePresence initial={false}>
