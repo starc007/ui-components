@@ -78,6 +78,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
+| `composition-chart` | `components/charts/composition-chart.tsx` + `composition-chart/` | Composable normalized stacked bar/area chart with Plot, ranked Legend and useCompositionChart; consumer-supplied values/colors, controlled/uncontrolled period inspection, hover and an invisible native keyboard/touch slider over the plot, series pinning, missing-period gaps and reduced-motion-safe bar transitions |
 | `bump-chart` | `components/charts/bump-chart.tsx` + `bump-chart/` | Composable ranking chart with Plot, Legend, and useBumpChart; synchronized spring transitions for curves, dots, and end labels; interactive rank dots with shared tooltips, gap-aware data, controlled/uncontrolled series pinning, hover/focus isolation, accessible exact-rank table, and reduced-motion-safe reveal |
 | `funnel-chart` | `components/charts/funnel-chart.tsx` + `funnel-chart/` | Composable FunnelChart with Plot, Summary and useFunnelChart; connected curved segments morph on updates in vertical or horizontal directions, conversion and drop-off tooltips use NumberTicker, supports custom units/formatting and reduced motion |
 | `liquidity-heatmap` | `components/charts/liquidity-heatmap.tsx` + `liquidity-heatmap/` | Snapshot-driven price/time liquidity bands with Plot, Legend and useLiquidityHeatmap; animated intensity, optional price trace, shared tooltips, keyboard inspection, custom units and formatting; simulated data lives in preview |
