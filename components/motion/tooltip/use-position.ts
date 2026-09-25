@@ -23,6 +23,8 @@ export function useTooltipPosition({
   followCursor,
   side,
   onDismiss,
+  onPosition,
+  pointer,
 }: {
   open: boolean;
   anchorRef: RefObject<HTMLElement | SVGElement | null>;
@@ -31,13 +33,14 @@ export function useTooltipPosition({
   followCursor: boolean;
   side: TooltipSide;
   onDismiss: () => void;
+  onPosition: () => void;
+  pointer: ReturnType<typeof useTooltipPointer>;
 }) {
-  const cursor = useRef<TooltipPoint | null>(null);
+  const { cursor, onMove } = pointer;
   const cursorSide = useRef<Placement | null>(null);
   useLayoutEffect(() => {
     cursorSide.current = open ? side : null;
   }, [open, side]);
-  const pointerFocus = useRef(false);
   const frame = useRef<number | null>(null);
   const version = useRef(0);
   const update = useRef<() => void>(() => {});
@@ -50,49 +53,14 @@ export function useTooltipPosition({
       update.current();
     });
   }, []);
+  useLayoutEffect(() => {
+    onMove.current = schedule;
+    return () => {
+      onMove.current = null;
+    };
+  }, [onMove, schedule]);
   const pointX = anchorPoint?.x;
   const pointY = anchorPoint?.y;
-
-  useLayoutEffect(() => {
-    const anchor = anchorRef.current;
-    if (!anchor || !followCursor) return;
-    const point = (event: PointerEvent) => {
-      if (event.type === "pointermove" && event.pointerType === "touch" && !event.buttons) return;
-      cursor.current = { x: event.clientX, y: event.clientY };
-      if (event.type === "pointerdown") pointerFocus.current = true;
-      schedule();
-    };
-    const keyboard = () => {
-      cursor.current = null;
-      pointerFocus.current = false;
-      schedule();
-    };
-    const focus = () => {
-      if (!pointerFocus.current) cursor.current = null;
-      pointerFocus.current = false;
-      schedule();
-    };
-    const leave = () => {
-      cursor.current = null;
-    };
-    anchor.addEventListener("pointerenter", point as EventListener, { passive: true });
-    anchor.addEventListener("pointermove", point as EventListener, { passive: true });
-    anchor.addEventListener("pointerdown", point as EventListener, { passive: true });
-    anchor.addEventListener("pointerleave", leave);
-    anchor.addEventListener("pointercancel", leave);
-    anchor.addEventListener("keydown", keyboard);
-    anchor.addEventListener("focusin", focus);
-    return () => {
-      cursor.current = null;
-      anchor.removeEventListener("pointerenter", point as EventListener);
-      anchor.removeEventListener("pointermove", point as EventListener);
-      anchor.removeEventListener("pointerdown", point as EventListener);
-      anchor.removeEventListener("pointerleave", leave);
-      anchor.removeEventListener("pointercancel", leave);
-      anchor.removeEventListener("keydown", keyboard);
-      anchor.removeEventListener("focusin", focus);
-    };
-  }, [anchorRef, followCursor, schedule]);
 
   // Latest committed inputs are read without recreating observers for every period/content update.
   useLayoutEffect(() => {
@@ -126,12 +94,34 @@ export function useTooltipPosition({
         else cursorSide.current = null;
         const dpr = window.devicePixelRatio || 1;
         floating.style.transform = `translate3d(${Math.round(x * dpr) / dpr}px, ${Math.round(y * dpr) / dpr}px, 0)`;
+        const origin = {
+          top: "center bottom",
+          bottom: "center top",
+          left: "right center",
+          right: "left center",
+        };
+        floating.style.setProperty(
+          "--tooltip-origin",
+          origin[placement.split("-")[0] as TooltipSide],
+        );
         floating.style.visibility = "visible";
         floating.dataset.placement = placement;
+        onPosition();
       });
     };
     if (open) schedule();
-  }, [open, anchorRef, floatingRef, followCursor, pointX, pointY, side, schedule]);
+  }, [
+    open,
+    anchorRef,
+    floatingRef,
+    followCursor,
+    pointX,
+    pointY,
+    side,
+    schedule,
+    onPosition,
+    cursor,
+  ]);
 
   useLayoutEffect(() => {
     const anchor = anchorRef.current;
@@ -150,7 +140,7 @@ export function useTooltipPosition({
       if (frame.current !== null) cancelAnimationFrame(frame.current);
       frame.current = null;
     };
-  }, [open, anchorRef, floatingRef, followCursor, onDismiss, schedule]);
+  }, [open, anchorRef, floatingRef, followCursor, onDismiss, schedule, cursor]);
 
   useLayoutEffect(
     () => () => {
@@ -159,4 +149,56 @@ export function useTooltipPosition({
     },
     [],
   );
+}
+
+/** Pointer lifetime belongs to the trigger, including the opening delay. */
+export function useTooltipPointer(
+  anchorRef: RefObject<HTMLElement | SVGElement | null>,
+  followCursor: boolean,
+) {
+  const cursor = useRef<TooltipPoint | null>(null);
+  const onMove = useRef<(() => void) | null>(null);
+  const pointerFocus = useRef(false);
+  useLayoutEffect(() => {
+    const anchor = anchorRef.current;
+    if (!anchor || !followCursor) return;
+    const point = (event: PointerEvent) => {
+      if (event.type === "pointermove" && event.pointerType === "touch" && !event.buttons) return;
+      cursor.current = { x: event.clientX, y: event.clientY };
+      if (event.type === "pointerdown") pointerFocus.current = true;
+      onMove.current?.();
+    };
+    const keyboard = () => {
+      cursor.current = null;
+      pointerFocus.current = false;
+      onMove.current?.();
+    };
+    const focus = () => {
+      if (!pointerFocus.current) cursor.current = null;
+      pointerFocus.current = false;
+      onMove.current?.();
+    };
+    const leave = () => {
+      cursor.current = null;
+    };
+    anchor.addEventListener("pointerenter", point as EventListener, { passive: true });
+    anchor.addEventListener("pointermove", point as EventListener, { passive: true });
+    anchor.addEventListener("pointerdown", point as EventListener, { passive: true });
+    anchor.addEventListener("pointerleave", leave);
+    anchor.addEventListener("pointercancel", leave);
+    anchor.addEventListener("keydown", keyboard);
+    anchor.addEventListener("focusin", focus);
+    return () => {
+      cursor.current = null;
+      anchor.removeEventListener("pointerenter", point as EventListener);
+      anchor.removeEventListener("pointermove", point as EventListener);
+      anchor.removeEventListener("pointerdown", point as EventListener);
+      anchor.removeEventListener("pointerleave", leave);
+      anchor.removeEventListener("pointercancel", leave);
+      anchor.removeEventListener("keydown", keyboard);
+      anchor.removeEventListener("focusin", focus);
+    };
+  }, [anchorRef, followCursor]);
+
+  return { cursor, onMove };
 }

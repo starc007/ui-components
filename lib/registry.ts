@@ -435,7 +435,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "tooltip",
         name: "Tooltip",
-        description: "Hover or focus tooltip with blur enter/exit and spring spawn.",
+        description: "Hover or focus tooltip with a subtle scale and fade, collision-aware placement, and optional cursor tracking.",
         file: "components/motion/tooltip.tsx",
       },
       {

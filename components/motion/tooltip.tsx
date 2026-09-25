@@ -1,8 +1,8 @@
 "use client";
 
 import { AnimatePresence } from "motion/react";
-import { PresenceGate } from "@/lib/presence-gate";
-import { useTooltipPosition } from "./tooltip/use-position";
+import { TooltipPositioner } from "./tooltip/positioner";
+import { useTooltipPointer } from "./tooltip/use-position";
 import {
   cloneElement,
   isValidElement,
@@ -79,19 +79,21 @@ export function Tooltip({
   const wrapperRef = useRef<HTMLSpanElement>(null);
   const anchorRef = externalAnchorRef ?? wrapperRef;
   const hover = useHoverGesture();
-  const floatingRef = useRef<HTMLSpanElement>(null);
+  const floatingRef = useRef<HTMLSpanElement | null>(null);
+  const pointer = useTooltipPointer(anchorRef, followCursor);
   const focused = useRef(false);
 
   const show = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
     if (open) return;
     const warm = Date.now() - lastHiddenAt < WARM_WINDOW_MS;
-    timer.current = setTimeout(
-      () => {
-        setOpen(true);
-      },
-      warm ? 0 : delay,
-    );
+    if (warm) {
+      setOpen(true);
+      return;
+    }
+    timer.current = setTimeout(() => {
+      setOpen(true);
+    }, delay);
   }, [delay, setOpen, open]);
 
   const hide = useCallback(() => {
@@ -136,16 +138,6 @@ export function Tooltip({
   // ...and closed again by the next tap that lands somewhere else. The label
   // covers nothing interactive, so that tap passes through to what it hit.
   useDismiss(open, hide, anchorRef, { ignore: insideTooltip });
-
-  useTooltipPosition({
-    open,
-    anchorRef,
-    floatingRef,
-    anchorPoint,
-    followCursor,
-    side,
-    onDismiss: hide,
-  });
 
   useEffect(
     () => () => {
@@ -216,34 +208,36 @@ export function Tooltip({
         ? createPortal(
             <AnimatePresence>
               {open ? (
-                <PresenceGate key="tooltip">
-                  {({ isPresent }) => (
-                    <span
-                      ref={floatingRef}
-                      inert={!isPresent}
-                      aria-hidden={!isPresent || undefined}
-                      className="pointer-events-none fixed left-0 top-0 z-[9999] w-max"
-                      style={{ visibility: "hidden", maxWidth: "calc(100vw - 16px)" }}
+                <TooltipPositioner
+                  key="tooltip"
+                  anchorRef={anchorRef}
+                  floatingRef={floatingRef}
+                  anchorPoint={anchorPoint}
+                  followCursor={followCursor}
+                  side={side}
+                  onDismiss={hide}
+                  pointer={pointer}
+                >
+                  {(positioned, isPresent) => (
+                    <TooltipSurface
+                      id={id}
+                      ready={positioned}
+                      side={side}
+                      onPointerEnter={() => {
+                        if (timer.current) clearTimeout(timer.current);
+                      }}
+                      onPointerLeave={leave}
+                      style={{
+                        maxWidth: "calc(100vw - 16px)",
+                        whiteSpace: "normal",
+                        pointerEvents: isPresent && !followCursor ? "auto" : "none",
+                      }}
+                      className={cn("overflow-hidden", className)}
                     >
-                      <TooltipSurface
-                        id={id}
-                        side={side}
-                        onPointerEnter={() => {
-                          if (timer.current) clearTimeout(timer.current);
-                        }}
-                        onPointerLeave={leave}
-                        style={{
-                          maxWidth: "calc(100vw - 16px)",
-                          whiteSpace: "normal",
-                          pointerEvents: isPresent && !followCursor ? "auto" : "none",
-                        }}
-                        className={cn("overflow-hidden", className)}
-                      >
-                        {content}
-                      </TooltipSurface>
-                    </span>
+                      {content}
+                    </TooltipSurface>
                   )}
-                </PresenceGate>
+                </TooltipPositioner>
               ) : null}
             </AnimatePresence>,
             document.body,
