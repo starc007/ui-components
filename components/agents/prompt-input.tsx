@@ -155,7 +155,10 @@ export function PromptInput({
       event.defaultPrevented ||
       event.key !== "Enter" ||
       event.shiftKey ||
-      event.nativeEvent.isComposing
+      event.nativeEvent.isComposing ||
+      // Safari ends the composition before the Enter that commits it, so
+      // only the 229 key code marks that Enter as part of the composition.
+      event.nativeEvent.keyCode === 229
     ) {
       return;
     }

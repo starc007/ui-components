@@ -76,7 +76,7 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-22",
+    updatedAt: "2026-09-25",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
@@ -108,7 +108,7 @@ const COMPONENT_DATES = {
   },
   "agents/prompt-input": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-22",
+    updatedAt: "2026-09-25",
   },
   "agents/tool-result": {
     publishedAt: "2026-08-01",
