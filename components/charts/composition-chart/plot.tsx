@@ -23,7 +23,7 @@ export function CompositionChartPlot({ className }: { className?: string }) {
   return (
     <div className={cn("min-w-0 space-y-3", className)}>
       <div className="flex justify-between text-[11px] text-muted-foreground">
-        <span>Share of total</span>
+        <span>{column?.id}{column?.valid ? "" : " · No data"}</span>
         <span className="font-mono">100%</span>
       </div>
       <div

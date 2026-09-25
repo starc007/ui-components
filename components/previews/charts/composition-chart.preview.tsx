@@ -24,13 +24,25 @@ const series = [
   ),
 }));
 
-export function CompositionChartPreview() {
+function CompositionPreview({ view }: { view: "bar" | "area" }) {
   return (
     <CompositionChart
+      view={view}
       series={series}
       periods={periods}
       label="Illustrative acquisition channel shares"
       formatValue={(value) => `${value.toLocaleString("en")} visits`}
     />
+  );
+}
+
+export function CompositionChartPreview() {
+  return (
+    <div className="w-full space-y-10">
+      <CompositionPreview view="bar" />
+      <div className="border-t border-border pt-10">
+        <CompositionPreview view="area" />
+      </div>
+    </div>
   );
 }

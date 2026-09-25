@@ -11,12 +11,15 @@ import {
 export function CompositionChartExample({
   series,
   periods,
+  view = "bar",
 }: {
   series: readonly CompositionChartSeries[];
   periods: readonly string[];
+  /** The same component supports both views. */
+  view?: "bar" | "area";
 }) {
   return (
-    <CompositionChart series={series} periods={periods} view="bar" label="Channel share over time">
+    <CompositionChart series={series} periods={periods} view={view} label="Channel share over time">
       <div className="grid gap-4">
         <CompositionChartPlot />
         <CompositionChartLegend />

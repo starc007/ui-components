@@ -65,13 +65,13 @@ test("duplicate identities keep the first observation and series", () => {
   expect(model.columns[1].segments[0].value).toBe(70);
 });
 
-test("direct chart inspection updates the ranked legend", () => {
+test("direct chart inspection updates shares without reordering the legend", () => {
   const screen = render(<CompositionChart series={series} periods={periods} />);
   const slider = screen.getByRole("slider", { name: "Inspect period" });
   expect(slider.getAttribute("aria-valuetext")).toBe("Mar");
   fireEvent.change(slider, { target: { value: "1" } });
   expect(slider.getAttribute("aria-valuetext")).toBe("Feb");
-  expect(screen.getAllByRole("button")[0].textContent).toContain("Direct");
+  expect(screen.getAllByRole("button")[0].textContent).toContain("Search");
   expect(screen.getByRole("button", { name: "Highlight Direct" }).textContent).toContain("75.0%");
   expect(screen.container.querySelector("table")).toBeNull();
   expect(screen.queryByText("View data")).toBeNull();
@@ -139,7 +139,7 @@ test("empty input and a single zero sample remain usable", () => {
   expect(screen.getByText("No composition data")).toBeTruthy();
   screen.rerender(<CompositionChart series={[{ ...series[0], values: [0] }]} periods={["Now"]} />);
   expect(screen.getByRole("slider").hasAttribute("disabled")).toBe(true);
-  expect(screen.getByText("No data")).toBeTruthy();
+  expect(screen.getByText("Now · No data")).toBeTruthy();
 });
 
 test("chart supports both representations", () => {
