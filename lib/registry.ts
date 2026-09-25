@@ -982,7 +982,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "composition-chart",
         name: "Composition Chart",
-        description: "Stacked bar and area shares with direct period inspection and a compact interactive legend.",
+        description: "Stacked bar and area shares with period tooltips and a compact interactive legend.",
         file: "components/charts/composition-chart.tsx",
         usageFile: "components/previews/charts/composition-chart.usage.tsx",
         badge: "new",

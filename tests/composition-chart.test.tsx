@@ -138,7 +138,8 @@ test("empty input and a single zero sample remain usable", () => {
   const screen = render(<CompositionChart series={[]} periods={[]} />);
   expect(screen.getByText("No composition data")).toBeTruthy();
   screen.rerender(<CompositionChart series={[{ ...series[0], values: [0] }]} periods={["Now"]} />);
-  expect(screen.getByRole("slider").hasAttribute("disabled")).toBe(true);
+  expect(screen.getByRole("slider").getAttribute("max")).toBe("0");
+  expect(screen.getByRole("slider").hasAttribute("disabled")).toBe(false);
   expect(screen.getByText("Now · No data")).toBeTruthy();
 });
 
@@ -157,4 +158,40 @@ test("registry ships the composition parts and no illustrative dataset", async (
   expect(paths.some((path) => path.endsWith("composition-chart/plot.tsx"))).toBe(true);
   expect(item?.dependencies).toContain("motion");
   expect(paths.some((path) => path.endsWith("composition-chart.preview.tsx"))).toBe(false);
+});
+
+test("both views expose period values on focus, update, and dismiss with Escape", async () => {
+  for (const view of ["bar", "area"] as const) {
+    const screen = render(
+      <CompositionChart
+        series={series}
+        periods={periods}
+        view={view}
+        formatValue={(value) => `${value} visits`}
+      />,
+    );
+    const slider = screen.getByRole("slider");
+    fireEvent.focus(slider);
+    const tooltip = await screen.findByRole("tooltip");
+    expect(slider.getAttribute("aria-describedby")).toBe(tooltip.id);
+    expect(tooltip.textContent).toContain("Mar");
+    expect(tooltip.textContent).toContain("70 visits");
+    fireEvent.change(slider, { target: { value: "1" } });
+    expect(tooltip.textContent).toContain("Feb");
+    expect(tooltip.textContent).toContain("75.0%");
+    fireEvent.keyDown(slider, { key: "Escape" });
+    expect(slider.hasAttribute("aria-describedby")).toBe(false);
+    // The shared Tooltip owns its animated exit; the chart releases its description immediately.
+    cleanup();
+  }
+});
+
+test("tooltip reports missing data rather than invented shares", async () => {
+  const screen = render(
+    <CompositionChart series={[{ ...series[0], values: [null, null] }]} periods={["Jan", "Feb"]} />,
+  );
+  fireEvent.focus(screen.getByRole("slider"));
+  const tooltip = await screen.findByRole("tooltip");
+  expect(tooltip.textContent).toContain("No complete data for this period.");
+  expect(tooltip.textContent).not.toContain("0.0%");
 });
