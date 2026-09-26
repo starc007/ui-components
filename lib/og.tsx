@@ -3,10 +3,6 @@ import { SITE_URL } from "@/lib/site";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
-const FG = "#17151f";
-const MUTED = "rgba(23,21,31,0.66)";
-const LOGO_SRC = `${SITE_URL}/beui-mark.png`;
-
 type OgOptions = {
   title?: string;
   description?: string;
@@ -14,174 +10,30 @@ type OgOptions = {
   command?: string;
   backgroundSrc?: string;
   logoSrc?: string;
+  homepage?: boolean;
 };
 
-function titleSize(title: string) {
-  if (title.length <= 12) return 108;
-  if (title.length <= 22) return 94;
-  if (title.length <= 34) return 82;
-  return 70;
-}
-
-// Shared Satori-safe OG canvas for the homepage and dynamic social cards.
-// The shader is exported to a static image so edge rendering stays deterministic.
+// Keep text live so registry pages share the artwork without baking in titles.
 export function ogImage({
-  title = "Animated components for React and Next.js",
-  description = "Free, open-source motion components with the source included.",
+  title = "beui",
+  description = "Animated components. Ready to make yours.",
   label = "Motion components",
-  command = "npx shadcn add @beui/...",
-  backgroundSrc = `${SITE_URL}/og/dither-wave.png`,
-  logoSrc = LOGO_SRC,
+  command,
+  backgroundSrc = `${SITE_URL}/og/component-gallery.png`,
+  logoSrc = `${SITE_URL}/beui-mark.png`,
+  homepage = true,
 }: OgOptions = {}): ReactElement {
   return (
-    <div
-      style={{
-        height: "100%",
-        width: "100%",
-        boxSizing: "border-box",
-        position: "relative",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        color: FG,
-        fontFamily: "Geist",
-        background: "#f3f0eb",
-      }}
-    >
-      {/* biome-ignore lint/performance/noImgElement: Satori OG render, not the DOM. */}
-      <img
-        src={backgroundSrc}
-        width={OG_SIZE.width}
-        height={OG_SIZE.height}
-        alt=""
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: OG_SIZE.width,
-          height: OG_SIZE.height,
-          objectFit: "cover",
-        }}
-      />
-
-      {/* Keep the safe-area padding on this wrapper. Satori offsets absolute
-          children when padding lives on their positioned parent. */}
-      <div
-        style={{
-          position: "relative",
-          height: "100%",
-          width: "100%",
-          boxSizing: "border-box",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "54px 62px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            {/* biome-ignore lint/performance/noImgElement: Satori OG render, not the DOM. */}
-            <img
-              src={logoSrc}
-              width={48}
-              height={48}
-              style={{ borderRadius: 13 }}
-              alt=""
-            />
-            <span
-              style={{
-                display: "flex",
-                fontFamily: "Geist",
-                fontSize: 28,
-                fontWeight: 500,
-                letterSpacing: "-0.04em",
-              }}
-            >
-              beui
-            </span>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              padding: "10px 16px",
-              borderRadius: 999,
-              border: "1px solid rgba(23,21,31,0.14)",
-              background: "rgba(255,255,255,0.3)",
-              fontFamily: "Geist Mono",
-              fontSize: 15,
-              fontWeight: 500,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-            }}
-          >
-            {label}
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 20,
-            maxWidth: 1000,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              fontFamily: "Geist",
-              fontSize: titleSize(title),
-              fontWeight: 500,
-              letterSpacing: "-0.072em",
-              lineHeight: 0.9,
-            }}
-          >
-            {title}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              maxWidth: 780,
-              fontSize: 25,
-              lineHeight: 1.28,
-              color: MUTED,
-            }}
-          >
-            {description}
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <span style={{ display: "flex", fontSize: 20 }}>
-            React · Next.js · Tailwind
-          </span>
-          <span
-            style={{
-              display: "flex",
-              padding: "13px 19px",
-              borderRadius: 999,
-              background: FG,
-              color: "#fffdf8",
-              fontFamily: "Geist Mono",
-              fontSize: command.length > 40 ? 13 : 16,
-              fontWeight: 500,
-            }}
-          >
-            {command}
-          </span>
-        </div>
+    <div style={{ width: "100%", height: "100%", display: "flex", position: "relative", overflow: "hidden", background: "#f7f7f9", color: "#101116", fontFamily: "Manrope" }}>
+      {/* biome-ignore lint/performance/noImgElement: Satori renders this static artwork into the OG PNG. */}
+      <img src={backgroundSrc} alt="" width={1200} height={630} style={{ position: "absolute", inset: 0, width: 1200, height: 630, objectFit: "cover" }} />
+      {/* biome-ignore lint/performance/noImgElement: Satori renders the brand asset into the OG PNG. */}
+      <img src={logoSrc} alt="" width={52} height={52} style={{ position: "absolute", left: 72, top: 56, borderRadius: 14 }} />
+      <div style={{ position: "absolute", left: 72, bottom: 76, width: 580, display: "flex", flexDirection: "column", gap: homepage ? 14 : 18 }}>
+        {!homepage && <div style={{ display: "flex", fontSize: 19, color: "#636777" }}>beui / {label}</div>}
+        <div style={{ display: "flex", fontSize: homepage ? 76 : title.length > 28 ? 46 : 58, fontWeight: 500, letterSpacing: "-0.05em", lineHeight: 1.08 }}>{title}</div>
+        <div style={{ display: "flex", fontSize: homepage ? 25 : 23, lineHeight: 1.4, letterSpacing: "-0.025em", color: homepage ? "#171820" : "#636777" }}>{description}</div>
+        {!homepage && command && <div style={{ display: "flex", fontSize: 15, color: "#636777", marginTop: 6 }}>{command}</div>}
       </div>
     </div>
   );

@@ -35,16 +35,17 @@ export async function GET(request: Request) {
     pageSlug && pageSlug in PAGE_CARDS
       ? PAGE_CARDS[pageSlug as keyof typeof PAGE_CARDS]
       : undefined;
+  const homepage = !component && !category && !page;
   const title =
     component?.name ??
     category?.name ??
     page?.title ??
-    "Animated components for React and Next.js";
+    "beui";
   const description = clampText(
     component?.description ??
       category?.description ??
       page?.description ??
-      "Free, open-source React components built with Motion and Tailwind CSS.",
+      "Animated components. Ready to make yours.",
     OG_DESCRIPTION_LIMIT,
   );
   const label = component
@@ -62,7 +63,7 @@ export async function GET(request: Request) {
   ]);
 
   return new ImageResponse(
-    ogImage({ title, description, label, command, ...assets }),
+    ogImage({ title, description, label, command, homepage, ...assets }),
     { ...OG_SIZE, fonts },
   );
 }
