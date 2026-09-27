@@ -62,6 +62,14 @@ export const registry: CategoryEntry[] = [
       "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
+        slug: "color-selector",
+        name: "Animated Color Selector",
+        description: "Composable color swatches with a spring-gliding selection ring, press feedback, native radio keyboard navigation, and controlled or uncontrolled state.",
+        file: "components/motion/color-selector.tsx",
+        badge: "new",
+        launchedAt: "2026-09-27",
+      },
+      {
         slug: "breadcrumb",
         name: "Animated Breadcrumb",
         description:
