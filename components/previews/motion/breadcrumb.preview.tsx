@@ -11,10 +11,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/motion/breadcrumb";
 
-const PATH = ["Workspace", "Projects", "Website", "Components"];
+const PATH = ["Workspace", "Projects", "Website", "Design system", "Components", "Navigation", "Breadcrumb"];
 
 export function BreadcrumbPreview() {
-  const [depth, setDepth] = useState(2);
+  const [depth, setDepth] = useState(5);
   const currentRef = useRef<HTMLSpanElement>(null);
   const restoreFocus = useRef<number | null>(null);
 
@@ -27,8 +27,8 @@ export function BreadcrumbPreview() {
 
   return (
     <div className="w-full max-w-lg space-y-8 px-4">
-      <Breadcrumb>
-        <BreadcrumbList>
+      <Breadcrumb className="min-h-[4.25rem] sm:min-h-8">
+        <BreadcrumbList maxItems={3}>
           {PATH.slice(0, depth + 1).map((label, index) => (
             <BreadcrumbItem key={label}>
               {index > 0 && <BreadcrumbSeparator />}
@@ -55,7 +55,7 @@ export function BreadcrumbPreview() {
           ))}
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="border-t border-border/60 pt-5">
+      <div className="min-h-20 border-t border-border/60 pt-5">
         {depth < PATH.length - 1 ? (
           <button
             type="button"
@@ -70,7 +70,7 @@ export function BreadcrumbPreview() {
             <ArrowUpRight aria-hidden="true" className="size-3.5 text-muted-foreground" />
           </button>
         ) : (
-          <p className="py-3 text-center text-sm text-muted-foreground">You’re in Components. Choose a parent to go back.</p>
+          <p className="py-3 text-center text-sm text-muted-foreground">Choose a parent path to go back.</p>
         )}
       </div>
     </div>

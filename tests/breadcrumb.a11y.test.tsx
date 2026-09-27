@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { cleanup, render } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { axe } from "jest-axe";
 import {
   Breadcrumb,
@@ -50,4 +50,30 @@ describe("Breadcrumb accessibility", () => {
     expect(queryByRole("link")).toBeNull();
     expect((await axe(container)).violations).toEqual([]);
   });
+});
+
+
+test("collapsed ancestors are keyboard accessible and Escape returns to the ellipsis", async () => {
+  const { getByRole, queryByRole } = render(
+    <Breadcrumb>
+      <BreadcrumbList maxItems={3}>
+        {["Home", "Projects", "Website", "Components", "Navigation"].map((label, index) => (
+          <BreadcrumbItem key={label}>
+            {index > 0 && <BreadcrumbSeparator />}
+            {index === 4 ? <BreadcrumbPage>{label}</BreadcrumbPage> : <BreadcrumbLink href={`/${label.toLowerCase()}`}>{label}</BreadcrumbLink>}
+          </BreadcrumbItem>
+        ))}
+      </BreadcrumbList>
+    </Breadcrumb>,
+  );
+  expect(queryByRole("link", { name: "Projects" })).toBeNull();
+  const trigger = getByRole("button", { name: "Show hidden paths" });
+  act(() => trigger.focus());
+  fireEvent.keyDown(trigger, { key: "ArrowDown" });
+  await waitFor(() => expect(getByRole("dialog", { name: "Show hidden paths" })).toBeTruthy());
+  await waitFor(() => expect(document.activeElement).toBe(getByRole("link", { name: "Projects" })));
+  expect((await axe(document.body, { rules: { region: { enabled: false } } })).violations).toEqual([]);
+  fireEvent.keyDown(document.activeElement ?? window, { key: "Escape" });
+  expect(document.activeElement).toBe(trigger);
+  expect(trigger.getAttribute("aria-expanded")).toBe("false");
 });

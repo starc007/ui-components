@@ -65,7 +65,7 @@ export const registry: CategoryEntry[] = [
         slug: "breadcrumb",
         name: "Breadcrumb",
         description:
-          "Composable breadcrumb navigation with spring layout transitions, animated path segments, custom separators, and router-link support. Keep route keys stable and place each separator inside its following item.",
+          "Composable breadcrumb navigation with soft path transitions, a hoverable overflow dropdown for long trails, custom separators, and router-link support.",
         file: "components/motion/breadcrumb.tsx",
         badge: "new",
         launchedAt: "2026-09-27",
