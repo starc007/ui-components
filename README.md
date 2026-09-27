@@ -120,9 +120,3 @@ Read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a PR.
 ## Author
 
 Saurabh Chauhan · [@saurra3h](https://x.com/saurra3h)
-
-### Social preview images
-
-`/api/og` renders a 1200 × 630 PNG using the component-gallery artwork and locally hosted Manrope fonts. The homepage uses the beui wordmark and tagline; `?component=<slug>`, `?category=<slug>`, and `?page=openui` render titles, descriptions, labels, and install commands from the existing catalog. The gallery is static artwork; the small top-left brand mark and dynamic text are composed with Satori.
-
-Artwork: `public/og/component-gallery.png` (generated design, with branding text removed for dynamic rendering). Font license: `public/og/fonts/Manrope-OFL.txt`. Composition and font loading live in `lib/og.tsx` and `lib/og-fonts.ts`.
