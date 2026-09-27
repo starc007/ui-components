@@ -63,7 +63,7 @@ export const registry: CategoryEntry[] = [
     components: [
       {
         slug: "breadcrumb",
-        name: "Breadcrumb",
+        name: "Animated Breadcrumb",
         description:
           "Composable breadcrumb navigation with soft path transitions, a hoverable overflow dropdown for long trails, custom separators, and router-link support.",
         file: "components/motion/breadcrumb.tsx",
