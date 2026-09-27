@@ -62,6 +62,15 @@ export const registry: CategoryEntry[] = [
       "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
+        slug: "breadcrumb",
+        name: "Breadcrumb",
+        description:
+          "Composable breadcrumb navigation with spring layout transitions, animated path segments, custom separators, and router-link support. Keep route keys stable and place each separator inside its following item.",
+        file: "components/motion/breadcrumb.tsx",
+        badge: "new",
+        launchedAt: "2026-09-27",
+      },
+      {
         slug: "tilt-card",
         name: "Tilt Card",
         description: "3D perspective tilt on hover with cursor-tracked glare.",
