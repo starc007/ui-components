@@ -5,6 +5,8 @@
  * maintenance should not refresh every component's public update date.
  */
 const COMPONENT_DATES = {
+  "motion/color-selector": { publishedAt: "2026-09-27", updatedAt: "2026-09-27" },
+  "motion/breadcrumb": { publishedAt: "2026-09-27", updatedAt: "2026-09-27" },
   "motion/tilt-card": { publishedAt: "2026-05-17", updatedAt: "2026-06-22" },
   "motion/button": { publishedAt: "2026-05-17", updatedAt: "2026-09-22" },
   "motion/expandable-control": {
