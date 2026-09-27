@@ -78,18 +78,41 @@ export const BreadcrumbItem = forwardRef<HTMLLIElement, BreadcrumbItemProps>(
   function BreadcrumbItem({ className, style, children, ...props }, ref) {
     const reduce = useReducedMotion();
     const present = useIsPresent();
+    const itemRef = useRef<HTMLLIElement>(null);
+    useLayoutEffect(() => {
+      const item = itemRef.current;
+      if (!item || !present) return;
+      const measure = () => {
+        // popLayout snapshots offsetWidth (integer pixels). Retain the exact
+        // width so a fractional-pixel loss cannot wrap the final character.
+        item.style.setProperty("--breadcrumb-exit-width", `${item.getBoundingClientRect().width}px`);
+      };
+      measure();
+      const observer = new ResizeObserver(measure);
+      observer.observe(item);
+      return () => observer.disconnect();
+    }, [present]);
+    const hidden = { opacity: 0, y: reduce ? 0 : 6 };
     return (
       <motion.li
-        ref={ref}
+        ref={(node) => {
+          itemRef.current = node;
+          if (typeof ref === "function") return ref(node);
+          if (ref) ref.current = node;
+        }}
         layout={reduce ? false : "position"}
-        initial={{ opacity: 0, y: reduce ? 0 : 6 }}
+        initial={hidden}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 0, transition: { duration: 0.12, ease: EASE_OUT } }}
+        exit={hidden}
         transition={{ duration: 0.2, ease: EASE_OUT, layout: SPRING_LAYOUT }}
         {...props}
         inert={!present}
         aria-hidden={!present || undefined}
-        style={{ ...style, pointerEvents: present ? style?.pointerEvents : "none" }}
+        style={{
+          ...style,
+          minWidth: present ? style?.minWidth : "var(--breadcrumb-exit-width)",
+          pointerEvents: present ? style?.pointerEvents : "none",
+        }}
         className={cn("relative inline-flex min-w-0 max-w-full items-center gap-1", className)}
       >
         {children}

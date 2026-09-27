@@ -41,7 +41,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
-| `breadcrumb` | `components/motion/breadcrumb.tsx` | Composable breadcrumb navigation with configurable middle-path collapsing, a hover/click/keyboard overflow dropdown, stationary fade exits, router-link render support, custom separators, and reduced-motion safety |
+| `breadcrumb` | `components/motion/breadcrumb.tsx` | Composable breadcrumb navigation with configurable middle-path collapsing, a hover/click/keyboard overflow dropdown, matching slide-and-fade entrances and exits, router-link render support, custom separators, and reduced-motion safety |
 | `tilt-card` | `components/motion/tilt-card.tsx` | 3D perspective tilt on hover with cursor-tracked glare |
 | `button` | `components/motion/button/` | Spring-pressed `Button` (optional `ripple` prop for a Material-style press ripple), `StatefulButton` (idle/loading/success/error), `MagneticButton` |
 | `expandable-control` | `components/motion/expandable-control.tsx` | Click-to-expand `ExpandableButton` and `ExpandableChip` controls that reveal a label or trailing action with layout continuity; controlled/uncontrolled, reduced-motion safe |
