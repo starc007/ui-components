@@ -33,17 +33,24 @@ const LINKS = [
     href: "https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=footer",
     label: "beUI Pro",
   },
-  { href: "https://usemarkd.app", label: "Markd" },
+];
+
+const PRODUCTS = [
   {
     href: "https://tracwell.app/?utm_source=beui&utm_medium=referral&utm_campaign=sponsorship&utm_content=landing_footer",
     label: "Tracwell",
   },
+  {
+    href: "https://pulsemac.app/?utm_source=beui&utm_medium=referral&utm_campaign=pulse_launch&utm_content=footer",
+    label: "Pulse",
+  },
+  { href: "https://usemarkd.app", label: "Markd" },
 ];
 
 export function SiteFooter() {
   return (
     <footer className="relative isolate overflow-hidden border-border/60 border-t">
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-x-8 gap-y-12 px-4 pt-16 pb-48 sm:pb-64 sm:grid-cols-2 md:grid-cols-[1.4fr_repeat(5,1fr)]">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-x-6 gap-y-12 px-4 pt-16 pb-48 sm:pb-64 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.4fr_repeat(6,minmax(0,1fr))]">
         {/* Brand. */}
         <div className="max-w-xs">
           <Link
@@ -163,6 +170,27 @@ export function SiteFooter() {
                 </li>
               );
             })}
+          </ul>
+        </nav>
+
+        <nav aria-label="Also by us">
+          <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
+            Also by us
+          </p>
+          <ul className="mt-4 space-y-2.5">
+            {PRODUCTS.map((item) => (
+              <li key={item.href}>
+                <Link
+                  prefetch={false}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-muted-foreground text-sm transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
       </div>
