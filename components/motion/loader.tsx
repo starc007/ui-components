@@ -227,7 +227,7 @@ const MORPH_PATHS = [
 
 // Each shape appears twice in a row so it fully forms and HOLDS before the
 // next morph. Even keyframe spacing then alternates hold / morph segments.
-const MORPH_SEQ = [...MORPH_PATHS.flatMap((p) => [p, p]), MORPH_PATHS[0]];
+const MORPH_SEQ = [...MORPH_PATHS.flatMap((p) => [p, p]), MORPH_PATHS[0] ?? ""];
 // Rotation and scale only change across the morph segments, staying put on the
 // holds, so a settled shape sits still.
 const MORPH_ROT = [0, 0, 72, 72, 144, 144, 216, 216, 288, 288, 360];
