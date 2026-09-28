@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { GithubIcon } from "@/components/app/icons";
 import { MobileNav } from "@/components/app/chrome/mobile-nav";
+import { PulseStrip } from "@/components/app/chrome/pulse-strip";
 import { usePreferences } from "@/components/app/preferences/preferences-provider";
 import { PressLink } from "@/components/app/press-link";
 import { RainbowCta } from "@/components/app/rainbow-cta";
@@ -67,6 +68,7 @@ export function SiteHeader() {
           : "border-b border-transparent bg-transparent",
       )}
     >
+      {pathname === "/" ? <PulseStrip /> : null}
       <div className="relative flex h-14 w-full items-center justify-between gap-4 px-4 md:px-6 xl:px-8">
         <div className="flex items-center gap-4">
           <MobileNav />
