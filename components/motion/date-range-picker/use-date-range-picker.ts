@@ -29,7 +29,7 @@ export function useDateRangePickerController({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
-  closeOnSelect = true,
+  closeOnSelect = false,
 }: DateRangePickerProps) {
   const [today] = useState(() => {
     const now = new Date();

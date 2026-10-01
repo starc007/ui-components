@@ -31,6 +31,6 @@ export interface DateRangePickerProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Close an open popover after a complete range or preset. Default true. */
+  /** Close an open popover after a complete range or preset. Default false. */
   closeOnSelect?: boolean;
 }

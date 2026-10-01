@@ -7,7 +7,12 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { AnimatePresence, motion, useIsPresent } from "motion/react";
+import {
+  AnimatePresence,
+  type HTMLMotionProps,
+  motion,
+  useIsPresent,
+} from "motion/react";
 import {
   type ComponentPropsWithRef,
   type ComponentPropsWithoutRef,
@@ -18,7 +23,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
+import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import {
   MorphPopover,
@@ -716,7 +721,7 @@ export function DateRangePickerPreset({
 }
 
 export interface DateRangePickerTriggerProps
-  extends ComponentPropsWithRef<"button"> {
+  extends HTMLMotionProps<"button"> {
   placeholder?: string;
 }
 export function DateRangePickerTrigger({
@@ -748,9 +753,12 @@ export function DateRangePickerTrigger({
     : placeholder;
   return (
     <MorphPopoverTrigger>
-      <button
+      <motion.button
         {...props}
         ref={mergedRef}
+        layout={!ctx.reduce}
+        transition={{ layout: SPRING_LAYOUT }}
+        style={{ borderRadius: 12, ...props.style }}
         type="button"
         disabled={disabled || ctx.disabled}
         aria-label={props["aria-label"] ?? `${ctx.label}: ${summary}`}
@@ -759,25 +767,42 @@ export function DateRangePickerTrigger({
           className,
         )}
       >
-        {children ?? (
+        {children != null ? (
+          <motion.span
+            layout={ctx.reduce ? false : "position"}
+            transition={{ layout: SPRING_LAYOUT }}
+            className="inline-flex min-w-0 items-center gap-2"
+          >
+            {children}
+          </motion.span>
+        ) : (
           <>
-            <CalendarDays
-              size={15}
+            <motion.span
+              layout={ctx.reduce ? false : "position"}
+              transition={{ layout: SPRING_LAYOUT }}
               className="shrink-0 text-muted-foreground"
               aria-hidden="true"
-            />
-            <span className="min-w-0 truncate tabular-nums">{summary}</span>
-            <ChevronDown
-              size={13}
-              className={cn(
-                "shrink-0 text-muted-foreground",
-                ctx.open && "rotate-180",
-              )}
+            >
+              <CalendarDays size={15} />
+            </motion.span>
+            <motion.span
+              layout={ctx.reduce ? false : "position"}
+              transition={{ layout: SPRING_LAYOUT }}
+              className="min-w-0 truncate tabular-nums"
+            >
+              {summary}
+            </motion.span>
+            <motion.span
+              layout={ctx.reduce ? false : "position"}
+              transition={{ layout: SPRING_LAYOUT }}
+              className="shrink-0 text-muted-foreground"
               aria-hidden="true"
-            />
+            >
+              <ChevronDown size={13} className={cn(ctx.open && "rotate-180")} />
+            </motion.span>
           </>
         )}
-      </button>
+      </motion.button>
     </MorphPopoverTrigger>
   );
 }

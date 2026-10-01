@@ -1,5 +1,5 @@
 import { afterEach, expect, test } from "bun:test";
-import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { StrictMode, useState } from "react";
 import {
@@ -44,6 +44,7 @@ function ControlledRangeComposition() {
       onOpenChange={setOpen}
       defaultMonth="2026-09-01"
       max="2026-10-01"
+      closeOnSelect
     >
       <DateRangePickerTrigger aria-label="Choose reporting dates">
         Reporting dates
@@ -117,6 +118,17 @@ test("date range dropdown labels its dialog, focuses the calendar and returns fo
   );
   expect(dialog.contains(document.activeElement)).toBe(true);
   expect((await axe(dialog)).violations).toEqual([]);
+  const start = getByRole("button", { name: "Monday, October 5, 2026" });
+  act(() => start.focus());
+  fireEvent.keyDown(start, { key: "Enter" });
+  const end = getByRole("button", { name: "Wednesday, October 7, 2026" });
+  act(() => end.focus());
+  fireEvent.keyDown(end, { key: "Enter" });
+  expect(trigger.getAttribute("aria-expanded")).toBe("true");
+  expect(document.activeElement).toBe(end);
+  expect(end.closest('[role="gridcell"]')?.getAttribute("aria-selected")).toBe(
+    "true",
+  );
   fireEvent.click(getByRole("button", { name: "Choose year" }));
   const year = getByRole("button", { name: "2026", pressed: true });
   expect(document.activeElement).toBe(year);

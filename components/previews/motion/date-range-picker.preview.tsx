@@ -9,8 +9,6 @@ import {
   DateRangePickerFooter,
   DateRangePickerGrid,
   DateRangePickerHeader,
-  DateRangePickerPreset,
-  DateRangePickerPresets,
   DateRangePickerSelection,
   DateRangePickerTrigger,
 } from "@/components/motion/date-range-picker";
@@ -26,7 +24,6 @@ export function DateRangePickerPreview() {
     return {
       today: date(0),
       weekStart: date(6),
-      monthStart: date(29),
     };
   });
   return (
@@ -46,16 +43,6 @@ export function DateRangePickerPreview() {
               <DateRangePickerSelection />
               <DateRangePickerClear />
             </div>
-            <DateRangePickerPresets>
-              <DateRangePickerPreset
-                label="Last 7 days"
-                value={{ from: period.weekStart, to: period.today }}
-              />
-              <DateRangePickerPreset
-                label="Last 30 days"
-                value={{ from: period.monthStart, to: period.today }}
-              />
-            </DateRangePickerPresets>
           </DateRangePickerFooter>
         </DateRangePickerCalendar>
       </DateRangePickerContent>
