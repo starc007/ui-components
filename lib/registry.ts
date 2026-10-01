@@ -62,6 +62,30 @@ export const registry: CategoryEntry[] = [
       "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
+        slug: "sortable-stack",
+        name: "Sortable Stack",
+        description: "Reorderable rows with spring layout, dedicated drag handles, keyboard moves, accessible position announcements, and undo. Supports controlled or uncontrolled items.",
+        file: "components/motion/sortable-stack.tsx",
+        badge: "new",
+        launchedAt: "2026-10-01",
+      },
+      {
+        slug: "morphing-lightbox",
+        name: "Morphing Lightbox",
+        description: "A thumbnail-connected image viewer with shared-layout transitions, swipe and keyboard navigation, zoom and pan, focus containment, and controlled or uncontrolled selection.",
+        file: "components/motion/morphing-lightbox.tsx",
+        badge: "new",
+        launchedAt: "2026-10-01",
+      },
+      {
+        slug: "date-range-picker",
+        name: "Date Range Picker",
+        description: "A date-only range calendar with connected selection bands, directional month transitions, presets, unavailable dates, full keyboard navigation, and controlled or uncontrolled selection.",
+        file: "components/motion/date-range-picker.tsx",
+        badge: "new",
+        launchedAt: "2026-10-01",
+      },
+      {
         slug: "color-selector",
         name: "Animated Color Selector",
         description: "Composable color swatches with a spring-gliding selection ring, press feedback, native radio keyboard navigation, and controlled or uncontrolled state.",
