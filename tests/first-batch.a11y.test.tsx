@@ -1,15 +1,102 @@
 import { afterEach, expect, test } from "bun:test";
 import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { axe } from "jest-axe";
-import { StrictMode } from "react";
+import { StrictMode, useState } from "react";
 import {
+  type DateRange,
   DateRangePicker,
+  DateRangePickerCalendar,
+  DateRangePickerContent,
   DateRangePickerDropdown,
+  DateRangePickerFooter,
+  DateRangePickerGrid,
+  DateRangePickerHeader,
+  DateRangePickerPreset,
+  DateRangePickerPresets,
+  DateRangePickerTrigger,
+  useDateRangePicker,
 } from "@/components/motion/date-range-picker";
 import { MorphingLightbox } from "@/components/motion/morphing-lightbox";
 import { SortableStack } from "@/components/motion/sortable-stack";
 
 afterEach(cleanup);
+
+function CustomRangeControls() {
+  const { clear, disabled, value } = useDateRangePicker();
+  return (
+    <button type="button" onClick={clear} disabled={disabled || !value}>
+      Reset selection
+    </button>
+  );
+}
+
+function ControlledRangeComposition() {
+  const [value, setValue] = useState<DateRange | null>({
+    from: "2026-09-14",
+    to: "2026-09-17",
+  });
+  const [open, setOpen] = useState(false);
+  return (
+    <DateRangePicker
+      value={value}
+      onValueChange={setValue}
+      open={open}
+      onOpenChange={setOpen}
+      defaultMonth="2026-09-01"
+      max="2026-10-01"
+    >
+      <DateRangePickerTrigger aria-label="Choose reporting dates">
+        Reporting dates
+      </DateRangePickerTrigger>
+      <DateRangePickerContent>
+        <DateRangePickerCalendar>
+          <DateRangePickerHeader />
+          <DateRangePickerGrid />
+          <DateRangePickerFooter>
+            <CustomRangeControls />
+            <DateRangePickerPresets>
+              <DateRangePickerPreset
+                label="Previous week"
+                value={{ from: "2026-09-01", to: "2026-09-07" }}
+              />
+              <DateRangePickerPreset
+                label="Future week"
+                value={{ from: "2026-10-02", to: "2026-10-08" }}
+              />
+            </DateRangePickerPresets>
+          </DateRangePickerFooter>
+        </DateRangePickerCalendar>
+      </DateRangePickerContent>
+    </DateRangePicker>
+  );
+}
+
+test("composed controlled picker names custom controls, exposes disabled presets and restores focus in StrictMode", async () => {
+  const { getByRole } = render(
+    <StrictMode>
+      <ControlledRangeComposition />
+    </StrictMode>,
+  );
+  const trigger = getByRole("button", { name: "Choose reporting dates" });
+  fireEvent.click(trigger);
+  const dialog = await waitFor(() =>
+    getByRole("dialog", { name: "Choose reporting dates" }),
+  );
+  expect(dialog.contains(document.activeElement)).toBe(true);
+  expect(
+    (getByRole("button", { name: "Future week" }) as HTMLButtonElement)
+      .disabled,
+  ).toBe(true);
+  const reset = getByRole("button", { name: "Reset selection" });
+  reset.focus();
+  fireEvent.click(reset);
+  expect(dialog.contains(document.activeElement)).toBe(true);
+  expect((reset as HTMLButtonElement).disabled).toBe(true);
+  expect((await axe(dialog)).violations).toEqual([]);
+  fireEvent.click(getByRole("button", { name: "Previous week" }));
+  expect(trigger.getAttribute("aria-expanded")).toBe("false");
+  expect(document.activeElement).toBe(trigger);
+});
 
 test("date range dropdown labels its dialog, focuses the calendar and returns focus after nested Escape", async () => {
   const { container, getByRole } = render(
@@ -41,6 +128,14 @@ test("date range dropdown labels its dialog, focuses the calendar and returns fo
   fireEvent.keyDown(yearTrigger, { key: "Escape" });
   expect(document.activeElement).toBe(trigger);
   expect(trigger.getAttribute("aria-expanded")).toBe("false");
+  fireEvent.click(trigger);
+  await waitFor(() => {
+    expect(
+      getByRole("dialog", { name: /^Reporting period:/ }).contains(
+        document.activeElement,
+      ),
+    ).toBe(true);
+  });
 });
 
 test("sortable stack names the list and its keyboard handles", async () => {

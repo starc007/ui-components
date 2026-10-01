@@ -1,7 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { DateRangePickerDropdown } from "@/components/motion/date-range-picker";
+import {
+  DateRangePicker,
+  DateRangePickerCalendar,
+  DateRangePickerClear,
+  DateRangePickerContent,
+  DateRangePickerFooter,
+  DateRangePickerGrid,
+  DateRangePickerHeader,
+  DateRangePickerPreset,
+  DateRangePickerPresets,
+  DateRangePickerSelection,
+  DateRangePickerTrigger,
+} from "@/components/motion/date-range-picker";
 
 export function DateRangePickerPreview() {
   const [period] = useState(() => {
@@ -18,21 +30,35 @@ export function DateRangePickerPreview() {
     };
   });
   return (
-    <DateRangePickerDropdown
+    <DateRangePicker
       label="Reporting period"
       defaultMonth={period.today}
       defaultValue={{ from: period.weekStart, to: period.today }}
       max={period.today}
-      presets={[
-        {
-          label: "Last 7 days",
-          value: { from: period.weekStart, to: period.today },
-        },
-        {
-          label: "Last 30 days",
-          value: { from: period.monthStart, to: period.today },
-        },
-      ]}
-    />
+    >
+      <DateRangePickerTrigger />
+      <DateRangePickerContent>
+        <DateRangePickerCalendar className="w-full rounded-none border-0">
+          <DateRangePickerHeader />
+          <DateRangePickerGrid />
+          <DateRangePickerFooter>
+            <div className="flex items-center justify-between gap-2">
+              <DateRangePickerSelection />
+              <DateRangePickerClear />
+            </div>
+            <DateRangePickerPresets>
+              <DateRangePickerPreset
+                label="Last 7 days"
+                value={{ from: period.weekStart, to: period.today }}
+              />
+              <DateRangePickerPreset
+                label="Last 30 days"
+                value={{ from: period.monthStart, to: period.today }}
+              />
+            </DateRangePickerPresets>
+          </DateRangePickerFooter>
+        </DateRangePickerCalendar>
+      </DateRangePickerContent>
+    </DateRangePicker>
   );
 }
