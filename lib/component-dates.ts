@@ -6,7 +6,7 @@
  */
 const COMPONENT_DATES = {
   "motion/color-selector": { publishedAt: "2026-09-27", updatedAt: "2026-09-27" },
-  "motion/breadcrumb": { publishedAt: "2026-09-27", updatedAt: "2026-09-27" },
+  "motion/breadcrumb": { publishedAt: "2026-09-27", updatedAt: "2026-10-01" },
   "motion/tilt-card": { publishedAt: "2026-05-17", updatedAt: "2026-06-22" },
   "motion/button": { publishedAt: "2026-05-17", updatedAt: "2026-09-22" },
   "motion/expandable-control": {
@@ -43,7 +43,7 @@ const COMPONENT_DATES = {
   "motion/dock": { publishedAt: "2026-05-17", updatedAt: "2026-09-22" },
   "motion/tooltip": { publishedAt: "2026-05-17", updatedAt: "2026-09-25" },
   "motion/context-menu": { publishedAt: "2026-07-27", updatedAt: "2026-07-27" },
-  "motion/popover": { publishedAt: "2026-07-07", updatedAt: "2026-09-26" },
+  "motion/popover": { publishedAt: "2026-07-07", updatedAt: "2026-10-01" },
   "motion/morphing-modal": { publishedAt: "2026-05-17", updatedAt: "2026-08-20" },
   "motion/center-morph-modal": {
     publishedAt: "2026-07-21",
@@ -78,23 +78,23 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-26",
+    updatedAt: "2026-10-01",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-26",
+    updatedAt: "2026-10-01",
   },
   "agents/message": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-26",
+    updatedAt: "2026-10-01",
   },
   "agents/message-scroller": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-26",
+    updatedAt: "2026-10-01",
   },
   "agents/ai-sidebar": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-26",
+    updatedAt: "2026-10-01",
   },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
@@ -110,7 +110,7 @@ const COMPONENT_DATES = {
   },
   "agents/prompt-input": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-09-26",
+    updatedAt: "2026-10-01",
   },
   "agents/tool-result": {
     publishedAt: "2026-08-01",
@@ -145,7 +145,7 @@ const COMPONENT_DATES = {
   "blocks/project-folder": { publishedAt: "2026-08-15", updatedAt: "2026-08-20" },
   "blocks/card-folder": { publishedAt: "2026-09-04", updatedAt: "2026-09-04" },
   "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-09-25" },
-  "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-09-26" },
+  "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-10-01" },
   "blocks/swap": { publishedAt: "2026-05-19", updatedAt: "2026-09-22" },
   "blocks/dynamic-island": { publishedAt: "2026-06-10", updatedAt: "2026-09-22" },
   "blocks/command-palette": { publishedAt: "2026-05-17", updatedAt: "2026-09-22" },
