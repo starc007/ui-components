@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight, Minus, Plus, X } from "lucide-react";
 import {
   type HTMLMotionProps,
+  type Variants,
   AnimatePresence,
   LayoutGroup,
   motion,
@@ -22,7 +23,12 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
+import {
+  EASE_DRAWER,
+  EASE_OUT,
+  SPRING_LAYOUT,
+  SPRING_PRESS,
+} from "@/lib/ease";
 import { useModalScope } from "@/lib/hooks/use-modal-scope";
 import { PresenceGate } from "@/lib/presence-gate";
 import { cn } from "@/lib/utils";
@@ -49,6 +55,38 @@ export interface MorphingLightboxProps {
   /** Compose gallery and viewer parts instead of the default layout. */
   children?: ReactNode;
 }
+
+type ImageSwap = { direction: -1 | 1; reduce: boolean };
+// Paging needs a definite arrival; an overdamped panel spring creeps through
+// the last few pixels before snapping to its rest threshold.
+const IMAGE_SLIDE_TRANSITION = {
+  type: "tween",
+  duration: 0.28,
+  ease: EASE_DRAWER,
+} as const;
+// Use Motion's x channel so the final slide position is painted in the same
+// frame as its animation. A native transform animation can briefly expose its
+// initial inline transform when it releases ownership at completion.
+const imageSwapVariants: Variants = {
+  enter: ({ direction, reduce }: ImageSwap) => ({
+    opacity: reduce ? 0 : 1,
+    x: `${reduce ? 0 : direction * 100}%`,
+  }),
+  visible: ({ reduce }: ImageSwap) => ({
+    opacity: 1,
+    x: "0%",
+    transition: reduce
+      ? { duration: 0.1, ease: EASE_OUT }
+      : IMAGE_SLIDE_TRANSITION,
+  }),
+  exit: ({ direction, reduce }: ImageSwap) => ({
+    opacity: reduce ? 0 : 1,
+    x: `${reduce ? 0 : direction * -100}%`,
+    transition: reduce
+      ? { duration: 0.1, ease: EASE_OUT }
+      : IMAGE_SLIDE_TRANSITION,
+  }),
+};
 
 const controlClass =
   "inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-30";
@@ -356,7 +394,7 @@ export function ImageViewerContent({
   children,
 }: ImageViewerContentProps) {
   const context = useViewerContext("ImageViewerContent");
-  const { image, label, groupId, reduce, select, move } = context;
+  const { image, index, label, groupId, reduce, select, move } = context;
   const [mounted, setMounted] = useState(false);
   const portal = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLDivElement>(null);
@@ -466,6 +504,7 @@ export function ImageViewerContent({
                     </div>
                     <LightboxFrame
                       image={image}
+                      index={index}
                       layoutId={reduce ? undefined : `${groupId}-${image.id}`}
                       reduce={reduce}
                       onSwipe={move}
@@ -498,11 +537,13 @@ export function ImageViewerContent({
 
 function LightboxFrame({
   image,
+  index,
   layoutId,
   reduce,
   onSwipe,
 }: {
   image: LightboxImage;
+  index: number;
   layoutId?: string;
   reduce: boolean;
   onSwipe: (direction: -1 | 1) => void;
@@ -510,11 +551,20 @@ function LightboxFrame({
   const [zoom, setZoom] = useState(false);
   const [failed, setFailed] = useState(false);
   const session = `${image.id}-${image.src}`;
-  const [previousSession, setPreviousSession] = useState(session);
-  // Keep the frame mounted across images so shared-layout presence registrations
-  // stay attached to one node; reset only the current image's local state.
-  if (previousSession !== session) {
-    setPreviousSession(session);
+  const [selection, setSelection] = useState<{
+    session: string;
+    index: number;
+    direction: -1 | 1;
+  }>({ session, index, direction: 1 });
+  const changed = selection.session !== session;
+  const direction = changed
+    ? index < selection.index
+      ? -1
+      : 1
+    : selection.direction;
+  // Keep the shared-layout frame mounted; only the image layer changes identity.
+  if (changed) {
+    setSelection({ session, index, direction });
     setZoom(false);
     setFailed(false);
   }
@@ -574,54 +624,82 @@ function LightboxFrame({
             width: `min(100%, calc((100dvh - 160px) * ${image.width / image.height}))`,
           }}
         >
-          {/* biome-ignore lint/performance/noImgElement: Copy-paste registry images must work outside Next.js. */}
-          <motion.img
-            src={image.src}
-            alt={image.alt}
-            width={image.width}
-            height={image.height}
-            draggable={false}
-            onError={() => setFailed(true)}
-            // Keep Motion's drag/layout registration mounted across zoom changes.
-            drag
-            dragListener={zoom}
-            dragConstraints={{
-              left: -pan.x,
-              right: pan.x,
-              top: -pan.y,
-              bottom: pan.y,
-            }}
-            dragElastic={0.08}
-            dragMomentum={false}
-            animate={{
-              scale: zoom && present ? 2 : 1,
-              ...(!present ? { x: 0, y: 0 } : {}),
-            }}
-            transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
-            onPointerDown={(event) => {
-              if (!zoom && event.isPrimary)
-                swipe.current = { x: event.clientX, y: event.clientY };
-            }}
-            onPointerUp={(event) => {
-              const start = swipe.current;
-              swipe.current = null;
-              if (!start || zoom) return;
-              const dx = event.clientX - start.x;
-              const dy = event.clientY - start.y;
-              if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5)
-                onSwipe(dx < 0 ? 1 : -1);
-            }}
-            onPointerCancel={() => {
-              swipe.current = null;
-            }}
-            className="block max-h-full w-full select-none object-contain"
-            style={{
-              x,
-              y,
-              touchAction: zoom ? "none" : "pan-y",
-              cursor: zoom ? "grab" : undefined,
-            }}
-          />
+          <div className={cn("absolute inset-0", !zoom && "overflow-hidden")}>
+            <AnimatePresence initial={false} custom={{ direction, reduce }}>
+              <PresenceGate key={session}>
+                {({ isPresent: slidePresent, gate }) => (
+                  <motion.div
+                    {...gate}
+                    custom={{ direction, reduce }}
+                    variants={imageSwapVariants}
+                    initial="enter"
+                    animate="visible"
+                    exit="exit"
+                    className="absolute inset-0"
+                  >
+                    {/* biome-ignore lint/performance/noImgElement: Copy-paste registry images must work outside Next.js. */}
+                    <motion.img
+                      src={image.src}
+                      alt={image.alt}
+                      width={image.width}
+                      height={image.height}
+                      draggable={false}
+                      onError={() => {
+                        if (slidePresent && present) setFailed(true);
+                      }}
+                      // Keep Motion's drag/layout registration mounted across zoom changes.
+                      drag
+                      dragListener={zoom}
+                      dragConstraints={{
+                        left: -pan.x,
+                        right: pan.x,
+                        top: -pan.y,
+                        bottom: pan.y,
+                      }}
+                      dragElastic={0.08}
+                      dragMomentum={false}
+                      animate={{
+                        scale: zoom && present ? 2 : 1,
+                        ...(!present ? { x: 0, y: 0 } : {}),
+                      }}
+                      transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
+                      onPointerDown={(event) => {
+                        // Swiping the image keeps keyboard focus on the controls.
+                        event.preventDefault();
+                        if (!zoom && event.isPrimary)
+                          swipe.current = {
+                            x: event.clientX,
+                            y: event.clientY,
+                          };
+                      }}
+                      onPointerUp={(event) => {
+                        const start = swipe.current;
+                        swipe.current = null;
+                        if (!start || zoom) return;
+                        const dx = event.clientX - start.x;
+                        const dy = event.clientY - start.y;
+                        if (
+                          Math.abs(dx) > 50 &&
+                          Math.abs(dx) > Math.abs(dy) * 1.5
+                        )
+                          onSwipe(dx < 0 ? 1 : -1);
+                      }}
+                      onPointerCancel={() => {
+                        swipe.current = null;
+                      }}
+                      className="block h-full w-full select-none object-contain"
+                      style={{
+                        x,
+                        y,
+                        touchAction: zoom ? "none" : "pan-y",
+                        cursor: zoom ? "grab" : undefined,
+                      }}
+                    />
+                  </motion.div>
+                )}
+              </PresenceGate>
+            </AnimatePresence>
+          </div>
           {failed && (
             <p
               role="status"

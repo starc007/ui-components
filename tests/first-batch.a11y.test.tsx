@@ -5,6 +5,7 @@ import {
   fireEvent,
   render,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { StrictMode, useState } from "react";
@@ -324,9 +325,22 @@ test("lightbox thumbnails expose dialog actions and image alternatives", async (
 test("composed image viewer labels its custom controls, contains focus and restores its trigger in StrictMode", async () => {
   const { container, getByRole } = render(
     <StrictMode>
-      <ImageViewer images={images} label="Photographs">
+      <ImageViewer
+        images={[
+          ...images,
+          {
+            id: "two",
+            src: "https://example.com/lake.jpg",
+            alt: "Lake at dawn",
+            width: 800,
+            height: 600,
+          },
+        ]}
+        label="Photographs"
+      >
         <ImageViewerGallery>
           <ImageViewerThumbnail imageId="one" />
+          <ImageViewerThumbnail imageId="two" />
         </ImageViewerGallery>
         <ImageViewerContent
           header={
@@ -339,7 +353,7 @@ test("composed image viewer labels its custom controls, contains focus and resto
           }
         >
           <ImageViewerPrevious />
-          <ImageViewerCaption>Mountain at dusk</ImageViewerCaption>
+          <ImageViewerCaption className="text-left" />
           <ImageViewerNext />
         </ImageViewerContent>
       </ImageViewer>
@@ -355,6 +369,9 @@ test("composed image viewer labels its custom controls, contains focus and resto
   expect(dialog.contains(document.activeElement)).toBe(true);
   expect(container.inert).toBe(true);
   expect(getByRole("button", { name: "Close photograph" })).toBeTruthy();
+  expect((await axe(dialog)).violations).toEqual([]);
+  fireEvent.click(getByRole("button", { name: "Next image" }));
+  expect(within(dialog).getByRole("img", { name: "Lake at dawn" })).toBeTruthy();
   expect((await axe(dialog)).violations).toEqual([]);
   fireEvent.click(getByRole("button", { name: "Close photograph" }));
   await waitFor(() => expect(document.activeElement).toBe(trigger));
