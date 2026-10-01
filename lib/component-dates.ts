@@ -43,7 +43,7 @@ const COMPONENT_DATES = {
   "motion/dock": { publishedAt: "2026-05-17", updatedAt: "2026-09-22" },
   "motion/tooltip": { publishedAt: "2026-05-17", updatedAt: "2026-09-25" },
   "motion/context-menu": { publishedAt: "2026-07-27", updatedAt: "2026-07-27" },
-  "motion/popover": { publishedAt: "2026-07-07", updatedAt: "2026-09-26" },
+  "motion/popover": { publishedAt: "2026-07-07", updatedAt: "2026-10-01" },
   "motion/morphing-modal": { publishedAt: "2026-05-17", updatedAt: "2026-08-20" },
   "motion/center-morph-modal": {
     publishedAt: "2026-07-21",
