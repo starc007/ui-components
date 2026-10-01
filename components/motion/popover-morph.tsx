@@ -15,10 +15,12 @@ import {
   type ReactElement,
   type ReactNode,
   type Ref,
+  type RefObject,
   useCallback,
   useContext,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -41,6 +43,8 @@ type MorphContextValue = {
   triggerRef: React.MutableRefObject<HTMLElement | null>;
   registerTrigger: (node: HTMLElement | null) => void;
   contentRef: React.MutableRefObject<HTMLDivElement | null>;
+  /** Set when the trigger was activated by keyboard rather than a pointer. */
+  focusOnOpenRef: React.MutableRefObject<boolean>;
 };
 
 const MorphContext = createContext<MorphContextValue | null>(null);
@@ -77,6 +81,7 @@ export function MorphPopover({
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
   const [trigger, setTrigger] = useState<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const focusOnOpenRef = useRef(false);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const controlled = controlledOpen !== undefined;
   const open = controlled ? controlledOpen : internalOpen;
@@ -149,6 +154,7 @@ export function MorphPopover({
       triggerRef: anchorRef,
       registerTrigger: setTrigger,
       contentRef,
+      focusOnOpenRef,
     }),
     [open, setOpen, toggle, baseId, anchorRef],
   );
@@ -197,6 +203,10 @@ export function MorphPopoverTrigger({ children }: MorphPopoverTriggerProps) {
     ref: mergedRef,
     onClick: (e: unknown) => {
       childOnClick?.(e);
+      // Enter and Space fire a click with `detail` 0; a pointer click counts
+      // at least 1. Only a keyboard open moves focus into the panel.
+      ctx.focusOnOpenRef.current =
+        !ctx.open && (e as { detail?: number } | undefined)?.detail === 0;
       ctx.toggle();
     },
     "aria-haspopup": "dialog",
@@ -222,6 +232,15 @@ function clipAt(side: Side, align: Align, radius: number, inset: number) {
 // clip-path so it cannot snap when the spring resolves its final distance.
 const MORPH_CLIP_TRANSITION = { duration: 0.32, ease: EASE_OUT } as const;
 
+const FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "[tabindex]:not([tabindex='-1'])",
+].join(",");
+
 export interface MorphPopoverContentProps {
   children: ReactNode;
   side?: Side;
@@ -230,6 +249,12 @@ export interface MorphPopoverContentProps {
   sideOffset?: number;
   /** Panel corner radius, in px. Default 16. */
   radius?: number;
+  /**
+   * Element to focus when the trigger opens the panel by keyboard. Defaults
+   * to the first focusable element in the panel, or the panel itself. A
+   * pointer open does not move focus.
+   */
+  initialFocus?: RefObject<HTMLElement | null>;
   className?: string;
 }
 
@@ -254,6 +279,7 @@ function MorphPopoverSurface({
   align = "end",
   sideOffset = 8,
   radius = 16,
+  initialFocus,
   className,
 }: MorphPopoverContentProps) {
   const ctx = useMorphContext("MorphPopoverContent");
@@ -315,6 +341,39 @@ function MorphPopoverSurface({
     return () => animation.stop();
   }, [opacity, ready, isPresent, reduce, safeToRemove]);
 
+  // The wrapper stays `visibility: hidden` until the first measurement, and
+  // focus() inside a hidden subtree is silently ignored. So move focus in the
+  // commit that makes the panel visible, not when it mounts. A CSS transition
+  // on `visibility` can still hold the panel hidden for a moment after that
+  // commit (a reduced-motion reset that gives every element a short
+  // transition-duration does), so a missed focus waits for that transition
+  // to end, unless focus has moved elsewhere in the meantime.
+  const { contentRef, focusOnOpenRef } = ctx;
+  useLayoutEffect(() => {
+    if (!ready || !isPresent || !focusOnOpenRef.current) return;
+    focusOnOpenRef.current = false;
+    const panel = contentRef.current;
+    const wrapper = panel?.parentElement;
+    const target =
+      initialFocus?.current ??
+      panel?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR) ??
+      panel;
+    if (!target || !wrapper) return;
+    const from = document.activeElement;
+    target.focus({ preventScroll: true });
+    if (document.activeElement === target) return;
+    const retry = (event: TransitionEvent) => {
+      if (event.propertyName !== "visibility") return;
+      if (document.activeElement === from) {
+        target.focus({ preventScroll: true });
+      }
+      if (document.activeElement !== from) stop();
+    };
+    const stop = () => wrapper.removeEventListener("transitionend", retry);
+    wrapper.addEventListener("transitionend", retry);
+    return stop;
+  }, [ready, isPresent, initialFocus, contentRef, focusOnOpenRef]);
+
   return (
     <motion.div
       data-morph-popover-portal=""
@@ -340,10 +399,11 @@ function MorphPopoverSurface({
         id={ctx.contentId}
         role="dialog"
         aria-labelledby={ctx.triggerId}
+        tabIndex={-1}
         variants={clip}
         style={{ borderRadius: radius }}
         className={cn(
-          "overflow-hidden border border-border bg-background",
+          "overflow-hidden border border-border bg-background outline-none",
           className,
         )}
       >
