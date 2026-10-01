@@ -1,7 +1,14 @@
 "use client";
 
 import { Circle, FileText, Layers, Palette, Rocket } from "lucide-react";
-import { SortableStack } from "@/components/motion/sortable-stack";
+import {
+  SortableList,
+  SortableListGroup,
+  SortableListItem,
+  SortableListHandle,
+  SortableListItemContent,
+  SortableListUndo,
+} from "@/components/motion/sortable-list";
 
 const tasks = [
   {
@@ -34,7 +41,7 @@ const tasks = [
   },
 ];
 
-export function SortableStackPreview() {
+export function SortableListPreview() {
   return (
     <div className="w-full max-w-md">
       <div className="mb-5 flex items-end justify-between gap-4 px-1">
@@ -50,30 +57,47 @@ export function SortableStackPreview() {
           04 tasks
         </span>
       </div>
-      <SortableStack
+      <SortableList
         defaultItems={tasks}
         label="Studio priorities"
         getItemLabel={(item) => item.title}
-        renderItem={(item, index) => (
-          <div className="flex items-center gap-3">
-            <span
-              className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${item.color}`}
-            >
-              <item.icon size={18} aria-hidden="true" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium">{item.title}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                {item.detail}
-              </p>
-            </div>
-            <span className="text-[10px] tabular-nums text-muted-foreground">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <Circle size={14} className="text-border" aria-hidden="true" />
-          </div>
+      >
+        {(items) => (
+          <>
+            <SortableListGroup>
+              {items.map((item, index) => (
+                <SortableListItem key={item.id} id={item.id}>
+                  <SortableListHandle />
+                  <SortableListItemContent>
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${item.color}`}
+                      >
+                        <item.icon size={18} aria-hidden="true" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium">{item.title}</p>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {item.detail}
+                        </p>
+                      </div>
+                      <span className="text-[10px] tabular-nums text-muted-foreground">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <Circle
+                        size={14}
+                        className="text-border"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </SortableListItemContent>
+                </SortableListItem>
+              ))}
+            </SortableListGroup>
+            <SortableListUndo />
+          </>
         )}
-      />
+      </SortableList>
     </div>
   );
 }

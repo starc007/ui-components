@@ -63,9 +63,10 @@ export const registry: CategoryEntry[] = [
     components: [
       {
         slug: "sortable-stack",
-        name: "Sortable Stack",
-        description: "Reorderable rows with spring layout, dedicated drag handles, keyboard moves, accessible position announcements, and undo. Supports controlled or uncontrolled items.",
-        file: "components/motion/sortable-stack.tsx",
+        name: "Sortable List",
+        description: "Composable sortable list with group, item, drag handle, content and undo parts, plus a shared state hook. Spring layout, keyboard reordering, accessible position announcements, and controlled or uncontrolled items.",
+        file: "components/motion/sortable-list.tsx",
+        extraFiles: ["components/motion/sortable-stack.tsx"],
         badge: "new",
         launchedAt: "2026-10-01",
       },

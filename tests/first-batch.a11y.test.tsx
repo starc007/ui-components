@@ -1,5 +1,11 @@
 import { afterEach, expect, test } from "bun:test";
-import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  waitFor,
+} from "@testing-library/react";
 import { axe } from "jest-axe";
 import { StrictMode, useState } from "react";
 import {
@@ -17,7 +23,15 @@ import {
   useDateRangePicker,
 } from "@/components/motion/date-range-picker";
 import { MorphingLightbox } from "@/components/motion/morphing-lightbox";
-import { SortableStack } from "@/components/motion/sortable-stack";
+import {
+  SortableList,
+  SortableListGroup,
+  SortableListHandle,
+  SortableListItem,
+  SortableListItemContent,
+  SortableListUndo,
+  useSortableList,
+} from "@/components/motion/sortable-list";
 
 afterEach(cleanup);
 
@@ -150,9 +164,96 @@ test("date range dropdown labels its dialog, focuses the calendar and returns fo
   });
 });
 
-test("sortable stack names the list and its keyboard handles", async () => {
+function CustomListUndo() {
+  const { undo, canUndo, disabled } = useSortableList();
+  return (
+    <button type="button" onClick={undo} disabled={disabled || !canUndo}>
+      Restore order
+    </button>
+  );
+}
+
+function ControlledSortableComposition({
+  disabled = false,
+}: {
+  disabled?: boolean;
+}) {
+  const [items, setItems] = useState([
+    { id: "design", name: "Design" },
+    { id: "build", name: "Build" },
+  ]);
+  return (
+    <SortableList
+      items={items}
+      onItemsChange={setItems}
+      getItemLabel={(item) => item.name}
+      label="Project tasks"
+      disabled={disabled}
+    >
+      {(ordered) => (
+        <>
+          <SortableListGroup>
+            {ordered.map((item) => (
+              <SortableListItem key={item.id} id={item.id}>
+                <SortableListItemContent>
+                  <a href={`#${item.id}`}>{item.name}</a>
+                </SortableListItemContent>
+                <SortableListHandle>Move {item.name}</SortableListHandle>
+              </SortableListItem>
+            ))}
+          </SortableListGroup>
+          <SortableListUndo>Undo move</SortableListUndo>
+          <CustomListUndo />
+        </>
+      )}
+    </SortableList>
+  );
+}
+
+test("composed controlled sortable list retains handle focus and announces keyboard moves and undo", async () => {
   const { container, getByRole } = render(
-    <SortableStack
+    <StrictMode>
+      <ControlledSortableComposition />
+    </StrictMode>,
+  );
+  const group = getByRole("list", { name: "Project tasks" });
+  const handle = getByRole("button", { name: "Reorder Design" });
+  act(() => handle.focus());
+  fireEvent.keyDown(handle, { key: "ArrowDown" });
+  expect(document.activeElement).toBe(handle);
+  expect(handle.closest("li")?.getAttribute("aria-posinset")).toBe("2");
+  expect(getByRole("status").textContent).toBe(
+    "Design moved to position 2 of 2.",
+  );
+  expect(group.querySelectorAll("button").length).toBe(2);
+  expect((await axe(container)).violations).toEqual([]);
+  const undo = getByRole("button", { name: "Restore order" });
+  act(() => undo.focus());
+  fireEvent.click(undo);
+  expect(document.activeElement).toBe(handle);
+  expect(handle.closest("li")?.getAttribute("aria-posinset")).toBe("1");
+  expect(getByRole("status").textContent).toBe("Previous order restored.");
+});
+
+test("disabled composed sortable list disables custom handles and undo controls", async () => {
+  const { container, getByRole } = render(
+    <ControlledSortableComposition disabled />,
+  );
+  for (const name of [
+    "Reorder Design",
+    "Reorder Build",
+    "Undo move",
+    "Restore order",
+  ])
+    expect((getByRole("button", { name }) as HTMLButtonElement).disabled).toBe(
+      true,
+    );
+  expect((await axe(container)).violations).toEqual([]);
+});
+
+test("sortable list names the list and its keyboard handles", async () => {
+  const { container, getByRole } = render(
+    <SortableList
       label="Priorities"
       defaultItems={[
         { id: "one", name: "Design" },
@@ -171,9 +272,9 @@ test("sortable stack names the list and its keyboard handles", async () => {
   expect((await axe(container)).violations).toEqual([]);
 });
 
-test("disabled sortable stack removes handle actions", async () => {
+test("disabled sortable list removes handle actions", async () => {
   const { container, getByRole } = render(
-    <SortableStack
+    <SortableList
       disabled
       defaultItems={[{ id: "one", name: "Design" }]}
       getItemLabel={(item) => item.name}

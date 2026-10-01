@@ -5,7 +5,7 @@ import type { ComponentType } from "react";
 // Lazy chunks keep a page's JS limited to the previews it actually renders.
 export const previews: Record<string, ComponentType> = {
   "motion/sortable-stack": dynamic(() =>
-    import("./motion/sortable-stack.preview").then((m) => m.SortableStackPreview),
+    import("./motion/sortable-stack.preview").then((m) => m.SortableListPreview),
   ),
   "motion/morphing-lightbox": dynamic(() =>
     import("./motion/morphing-lightbox.preview").then((m) => m.MorphingLightboxPreview),
