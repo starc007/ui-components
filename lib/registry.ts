@@ -71,12 +71,23 @@ export const registry: CategoryEntry[] = [
         launchedAt: "2026-10-01",
       },
       {
-        slug: "morphing-lightbox",
-        name: "Morphing Lightbox",
-        description: "A thumbnail-connected image viewer with shared-layout transitions, swipe and keyboard navigation, zoom and pan, focus containment, and controlled or uncontrolled selection.",
+        slug: "image-viewer",
+        name: "Image Viewer",
+        description: "A composable React image viewer for galleries and attachment previews, with animated lightbox variants, custom thumbnails and controls, swipe and keyboard navigation, zoom and pan, accessible focus management, and controlled or uncontrolled selection.",
         file: "components/motion/morphing-lightbox.tsx",
         badge: "new",
         launchedAt: "2026-10-01",
+        examples: [
+          {
+            slug: "morphing",
+            name: "Morphing",
+            description: "A thumbnail-connected image viewer with composable gallery, thumbnail, content, caption and navigation parts, plus a shared state hook. Expand into the full-size image and return to the thumbnail on close, with swipe navigation, zoom and pan.",
+            installSlug: "morphing-lightbox",
+            file: "components/motion/morphing-lightbox.tsx",
+            previewKey: "motion/morphing-lightbox",
+            previewFile: "components/previews/motion/morphing-lightbox.preview.tsx",
+          },
+        ],
       },
       {
         slug: "date-range-picker",

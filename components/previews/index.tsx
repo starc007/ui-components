@@ -10,6 +10,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/morphing-lightbox": dynamic(() =>
     import("./motion/morphing-lightbox.preview").then((m) => m.MorphingLightboxPreview),
   ),
+  "motion/image-viewer": dynamic(() =>
+    import("./motion/morphing-lightbox.preview").then((m) => m.MorphingLightboxPreview),
+  ),
   "motion/date-range-picker": dynamic(() =>
     import("./motion/date-range-picker.preview").then((m) => m.DateRangePickerPreview),
   ),

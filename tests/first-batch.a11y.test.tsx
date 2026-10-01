@@ -22,7 +22,18 @@ import {
   DateRangePickerTrigger,
   useDateRangePicker,
 } from "@/components/motion/date-range-picker";
-import { MorphingLightbox } from "@/components/motion/morphing-lightbox";
+import {
+  MorphingLightbox,
+  ImageViewer,
+  ImageViewerGallery,
+  ImageViewerThumbnail,
+  ImageViewerContent,
+  ImageViewerCounter,
+  ImageViewerClose,
+  ImageViewerCaption,
+  ImageViewerPrevious,
+  ImageViewerNext,
+} from "@/components/motion/morphing-lightbox";
 import {
   SortableList,
   SortableListGroup,
@@ -310,10 +321,28 @@ test("lightbox thumbnails expose dialog actions and image alternatives", async (
   expect((await axe(container)).violations).toEqual([]);
 });
 
-test("open lightbox contains focus and restores its trigger in StrictMode", async () => {
+test("composed image viewer labels its custom controls, contains focus and restores its trigger in StrictMode", async () => {
   const { container, getByRole } = render(
     <StrictMode>
-      <MorphingLightbox images={images} label="Photographs" />
+      <ImageViewer images={images} label="Photographs">
+        <ImageViewerGallery>
+          <ImageViewerThumbnail imageId="one" />
+        </ImageViewerGallery>
+        <ImageViewerContent
+          header={
+            <>
+              <ImageViewerCounter />
+              <ImageViewerClose aria-label="Close photograph">
+                Done
+              </ImageViewerClose>
+            </>
+          }
+        >
+          <ImageViewerPrevious />
+          <ImageViewerCaption>Mountain at dusk</ImageViewerCaption>
+          <ImageViewerNext />
+        </ImageViewerContent>
+      </ImageViewer>
     </StrictMode>,
   );
   const trigger = getByRole("button", { name: "Open Mountain at dusk" });
@@ -325,9 +354,9 @@ test("open lightbox contains focus and restores its trigger in StrictMode", asyn
   expect(dialog.getAttribute("aria-modal")).toBe("true");
   expect(dialog.contains(document.activeElement)).toBe(true);
   expect(container.inert).toBe(true);
-  expect(getByRole("button", { name: "Close viewer" })).toBeTruthy();
+  expect(getByRole("button", { name: "Close photograph" })).toBeTruthy();
   expect((await axe(dialog)).violations).toEqual([]);
-  fireEvent.click(getByRole("button", { name: "Close viewer" }));
+  fireEvent.click(getByRole("button", { name: "Close photograph" }));
   await waitFor(() => expect(document.activeElement).toBe(trigger));
   expect(container.inert).toBe(false);
 });

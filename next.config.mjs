@@ -30,6 +30,10 @@ const BLOCK_COMPONENTS = [
 // Old variant and source-file URLs surfaced by crawlers before the catalog was
 // consolidated. Send them to the component page that owns the implementation.
 const LEGACY_COMPONENT_REDIRECTS = [
+  ["/components/motion/morphing-lightbox", "/components/motion/image-viewer"],
+  ["/components/motion/morphing-lightbox.md", "/components/motion/image-viewer.md"],
+  ["/components/motion/lightbox", "/components/motion/image-viewer"],
+  ["/components/motion/lightbox.md", "/components/motion/image-viewer.md"],
   ["/components/motion/base", "/components/motion/button"],
   ["/components/motion/button-base", "/components/motion/button"],
   ["/components/motion/stateful", "/components/motion/button"],

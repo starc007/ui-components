@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Minus, Plus, X } from "lucide-react";
 import {
+  type HTMLMotionProps,
   AnimatePresence,
   LayoutGroup,
   motion,
@@ -10,7 +11,10 @@ import {
   useReducedMotion,
 } from "motion/react";
 import {
+  type ComponentPropsWithRef,
   type ReactNode,
+  createContext,
+  useContext,
   useEffect,
   useId,
   useLayoutEffect,
@@ -42,13 +46,56 @@ export interface MorphingLightboxProps {
   className?: string;
   thumbnailClassName?: string;
   renderCaption?: (image: LightboxImage) => ReactNode;
+  /** Compose gallery and viewer parts instead of the default layout. */
+  children?: ReactNode;
 }
 
 const controlClass =
   "inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-30";
 
-/** An image gallery with a focus-managed, thumbnail-connected viewer. */
-export function MorphingLightbox({
+export type ImageViewerImage = LightboxImage;
+export type ImageViewerProps = MorphingLightboxProps;
+
+type ViewerContextValue = {
+  images: LightboxImage[];
+  value: string | null;
+  image: LightboxImage | undefined;
+  index: number;
+  label: string;
+  groupId: string;
+  reduce: boolean;
+  renderCaption?: (image: LightboxImage) => ReactNode;
+  select: (id: string | null) => void;
+  move: (direction: -1 | 1) => void;
+};
+const ViewerContext = createContext<ViewerContextValue | null>(null);
+
+function useViewerContext(part: string) {
+  const context = useContext(ViewerContext);
+  if (!context) throw new Error(`${part} must be used within ImageViewer.`);
+  return context;
+}
+
+/** Shared selection and navigation for custom gallery and viewer controls. */
+export function useImageViewer() {
+  const { images, value, image, index, select, move } =
+    useViewerContext("useImageViewer");
+  return {
+    images,
+    value,
+    image,
+    index,
+    hasPrevious: index > 0,
+    hasNext: index >= 0 && index < images.length - 1,
+    select,
+    close: () => select(null),
+    previous: () => move(-1),
+    next: () => move(1),
+  };
+}
+
+/** A composable image gallery with a focus-managed, thumbnail-connected viewer. */
+export function ImageViewer({
   images,
   value: controlledValue,
   defaultValue = null,
@@ -57,18 +104,16 @@ export function MorphingLightbox({
   className,
   thumbnailClassName,
   renderCaption,
-}: MorphingLightboxProps) {
+  children,
+}: ImageViewerProps) {
   const [internalValue, setInternalValue] = useState(defaultValue);
   const value = controlledValue === undefined ? internalValue : controlledValue;
   const index = images.findIndex((image) => image.id === value);
   const image = images[index];
-  const [mounted, setMounted] = useState(false);
   const groupId = useId();
   const reduce = useReducedMotion() ?? false;
-  const portal = useRef<HTMLDivElement>(null);
-  const panel = useRef<HTMLDivElement>(null);
   if (new Set(images.map((item) => item.id)).size !== images.length)
-    throw new Error("MorphingLightbox requires unique image ids.");
+    throw new Error("ImageViewer requires unique image ids.");
   if (
     images.some(
       (item) =>
@@ -78,7 +123,7 @@ export function MorphingLightbox({
         item.height <= 0,
     )
   )
-    throw new Error("MorphingLightbox requires positive image dimensions.");
+    throw new Error("ImageViewer requires positive image dimensions.");
   const select = (id: string | null) => {
     if (controlledValue === undefined) setInternalValue(id);
     onValueChange?.(id);
@@ -86,6 +131,235 @@ export function MorphingLightbox({
   // Drop removed identities instead of letting a re-added image reopen a session.
   if (controlledValue === undefined && internalValue !== null && index < 0)
     setInternalValue(null);
+  const move = (direction: -1 | 1) => {
+    const next = images[index + direction];
+    if (image && next) select(next.id);
+  };
+  return (
+    <ViewerContext.Provider
+      value={{
+        images,
+        value,
+        image,
+        index,
+        label,
+        groupId,
+        reduce,
+        renderCaption,
+        select,
+        move,
+      }}
+    >
+      <LayoutGroup id={groupId}>
+        {children === undefined ? (
+          <>
+            <ImageViewerGallery className={className}>
+              {images.map((item) => (
+                <ImageViewerThumbnail
+                  key={item.id}
+                  imageId={item.id}
+                  className={thumbnailClassName}
+                />
+              ))}
+            </ImageViewerGallery>
+            <ImageViewerContent />
+          </>
+        ) : (
+          children
+        )}
+      </LayoutGroup>
+    </ViewerContext.Provider>
+  );
+}
+
+/** Generic name; the original export remains compatible with existing installs. */
+export { ImageViewer as MorphingLightbox };
+
+export function ImageViewerGallery({
+  className,
+  ...props
+}: ComponentPropsWithRef<"section">) {
+  const { label } = useViewerContext("ImageViewerGallery");
+  return (
+    <section
+      aria-label={label}
+      {...props}
+      className={cn("grid w-full grid-cols-2 gap-3 sm:grid-cols-3", className)}
+    />
+  );
+}
+
+export interface ImageViewerThumbnailProps
+  extends Omit<HTMLMotionProps<"button">, "children"> {
+  imageId: string;
+  imageClassName?: string;
+  children?: ReactNode;
+}
+
+/** The image keeps its shared-layout identity when the trigger is customised. */
+export function ImageViewerThumbnail({
+  imageId,
+  className,
+  imageClassName,
+  children,
+  onClick,
+  disabled,
+  ...props
+}: ImageViewerThumbnailProps) {
+  const { images, value, groupId, reduce, select } = useViewerContext(
+    "ImageViewerThumbnail",
+  );
+  const image = images.find((item) => item.id === imageId);
+  if (!image)
+    throw new Error(`ImageViewerThumbnail: unknown image id "${imageId}".`);
+  return (
+    <motion.button
+      type="button"
+      aria-label={`Open ${image.alt}`}
+      whileTap={reduce ? undefined : { scale: 0.98 }}
+      transition={SPRING_PRESS}
+      {...props}
+      disabled={disabled}
+      aria-haspopup="dialog"
+      aria-expanded={image.id === value}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented && !disabled) select(image.id);
+      }}
+      className={cn(
+        "relative overflow-hidden rounded-2xl bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        className,
+      )}
+    >
+      {/* biome-ignore lint/performance/noImgElement: Copy-paste registry images must work outside Next.js. */}
+      <motion.img
+        layoutId={reduce ? undefined : `${groupId}-${image.id}`}
+        src={image.src}
+        alt={image.alt}
+        width={image.width}
+        height={image.height}
+        loading="lazy"
+        draggable={false}
+        transition={SPRING_LAYOUT}
+        className={cn("block h-auto w-full", imageClassName)}
+      />
+      {children}
+    </motion.button>
+  );
+}
+
+export function ImageViewerCounter({
+  className,
+  ...props
+}: ComponentPropsWithRef<"span">) {
+  const { index, images } = useViewerContext("ImageViewerCounter");
+  return (
+    <span
+      aria-live="polite"
+      {...props}
+      className={cn("text-xs tabular-nums", className)}
+    >
+      {index + 1} / {images.length}
+    </span>
+  );
+}
+
+export function ImageViewerCaption({
+  className,
+  children,
+  ...props
+}: ComponentPropsWithRef<"div">) {
+  const { image, renderCaption } = useViewerContext("ImageViewerCaption");
+  return (
+    <div
+      aria-live="polite"
+      {...props}
+      data-lightbox-content=""
+      className={cn("min-w-0 text-center text-sm", className)}
+    >
+      {children ??
+        (image &&
+          (renderCaption
+            ? renderCaption(image)
+            : (image.caption ?? image.alt)))}
+    </div>
+  );
+}
+
+type ViewerButtonProps = ComponentPropsWithRef<"button">;
+function ViewerButton({
+  action,
+  className,
+  children,
+  disabled,
+  onClick,
+  ...props
+}: ViewerButtonProps & { action: "close" | "previous" | "next" }) {
+  const { index, images, select, move } = useViewerContext(
+    "ImageViewer controls",
+  );
+  const unavailable =
+    action === "previous"
+      ? index <= 0
+      : action === "next"
+        ? index < 0 || index >= images.length - 1
+        : false;
+  const Icon =
+    action === "close" ? X : action === "previous" ? ChevronLeft : ChevronRight;
+  return (
+    <button
+      type="button"
+      aria-label={
+        action === "close"
+          ? "Close viewer"
+          : action === "previous"
+            ? "Previous image"
+            : "Next image"
+      }
+      {...props}
+      disabled={disabled || unavailable}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) {
+          if (action === "close") select(null);
+          else move(action === "previous" ? -1 : 1);
+        }
+      }}
+      className={cn(controlClass, className)}
+    >
+      {children ?? <Icon size={18} aria-hidden="true" />}
+    </button>
+  );
+}
+export function ImageViewerClose(props: ViewerButtonProps) {
+  return <ViewerButton {...props} action="close" />;
+}
+export function ImageViewerPrevious(props: ViewerButtonProps) {
+  return <ViewerButton {...props} action="previous" />;
+}
+export function ImageViewerNext(props: ViewerButtonProps) {
+  return <ViewerButton {...props} action="next" />;
+}
+
+export interface ImageViewerContentProps {
+  className?: string;
+  /** Custom header; defaults to the counter and close control. */
+  header?: ReactNode;
+  /** Custom footer; defaults to navigation and the image caption. */
+  children?: ReactNode;
+}
+
+/** Owns the portal, focus scope, swipe/zoom frame and exit interaction gate. */
+export function ImageViewerContent({
+  className,
+  header,
+  children,
+}: ImageViewerContentProps) {
+  const context = useViewerContext("ImageViewerContent");
+  const { image, label, groupId, reduce, select, move } = context;
+  const [mounted, setMounted] = useState(false);
+  const portal = useRef<HTMLDivElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -101,183 +375,124 @@ export function MorphingLightbox({
       !panel.current.contains(focused) ||
       (focused instanceof HTMLButtonElement && focused.disabled)
     ) {
-      panel.current
-        .querySelector<HTMLButtonElement>("button:not(:disabled)")
-        ?.focus({ preventScroll: true });
+      (
+        panel.current.querySelector<HTMLButtonElement>(
+          "button:not(:disabled)",
+        ) ?? panel.current
+      ).focus({ preventScroll: true });
     }
   }, [mounted, selectedId]);
-  const move = (direction: -1 | 1) => {
-    const next = images[index + direction];
-    if (next) select(next.id);
-  };
-
-  return (
-    <LayoutGroup id={groupId}>
-      <section
-        className={cn(
-          "grid w-full grid-cols-2 gap-3 sm:grid-cols-3",
-          className,
-        )}
-        aria-label={label}
-      >
-        {images.map((item) => (
-          <motion.button
-            key={item.id}
-            type="button"
-            aria-label={`Open ${item.alt}`}
-            aria-haspopup="dialog"
-            aria-expanded={item.id === value && index >= 0}
-            whileTap={reduce ? undefined : { scale: 0.98 }}
-            transition={SPRING_PRESS}
-            onClick={() => select(item.id)}
-            className={cn(
-              "relative overflow-hidden rounded-2xl bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-              thumbnailClassName,
+  if (!mounted) return null;
+  return createPortal(
+    <div ref={portal}>
+      <AnimatePresence>
+        {image && (
+          <PresenceGate>
+            {({ isPresent, gate }) => (
+              <ViewerContext.Provider value={context}>
+                <motion.button
+                  {...gate}
+                  type="button"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  onClick={() => select(null)}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: reduce ? 0.1 : 0.18, ease: EASE_OUT }}
+                  className="fixed inset-0 z-[100] h-full w-full cursor-default bg-black/90"
+                />
+                <div
+                  inert={!isPresent}
+                  className="pointer-events-none fixed inset-3 z-[101] sm:inset-6"
+                >
+                  <div
+                    {...gate}
+                    ref={panel}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={label}
+                    tabIndex={-1}
+                    className={cn(
+                      "flex h-full flex-col outline-none",
+                      className,
+                    )}
+                    onPointerDownCapture={(event) => {
+                      const target = event.target;
+                      if (
+                        target instanceof Element &&
+                        !target.closest(
+                          "button, a, input, select, textarea, [data-lightbox-content]",
+                        )
+                      ) {
+                        event.preventDefault();
+                        select(null);
+                      }
+                    }}
+                    onKeyDown={(event) => {
+                      if (
+                        (event.target instanceof Element &&
+                          event.target.closest(
+                            'input, textarea, select, [contenteditable="true"]',
+                          )) ||
+                        event.defaultPrevented ||
+                        event.altKey ||
+                        event.ctrlKey ||
+                        event.metaKey ||
+                        event.shiftKey
+                      )
+                        return;
+                      if (
+                        event.key === "ArrowLeft" ||
+                        event.key === "ArrowRight"
+                      ) {
+                        event.preventDefault();
+                        move(event.key === "ArrowLeft" ? -1 : 1);
+                      }
+                    }}
+                  >
+                    <div
+                      data-lightbox-content=""
+                      className="flex items-center justify-between gap-3 pb-3 text-white"
+                    >
+                      {header === undefined ? (
+                        <>
+                          <ImageViewerCounter />
+                          <ImageViewerClose />
+                        </>
+                      ) : (
+                        header
+                      )}
+                    </div>
+                    <LightboxFrame
+                      image={image}
+                      layoutId={reduce ? undefined : `${groupId}-${image.id}`}
+                      reduce={reduce}
+                      onSwipe={move}
+                    />
+                    <div
+                      data-lightbox-content=""
+                      className="flex items-center justify-between gap-3 pt-3 text-white"
+                    >
+                      {children === undefined ? (
+                        <>
+                          <ImageViewerPrevious />
+                          <ImageViewerCaption />
+                          <ImageViewerNext />
+                        </>
+                      ) : (
+                        children
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </ViewerContext.Provider>
             )}
-          >
-            {/* biome-ignore lint/performance/noImgElement: Copy-paste registry images must work outside Next.js. */}
-            <motion.img
-              layoutId={reduce ? undefined : `${groupId}-${item.id}`}
-              src={item.src}
-              alt={item.alt}
-              width={item.width}
-              height={item.height}
-              loading="lazy"
-              draggable={false}
-              transition={SPRING_LAYOUT}
-              className="block h-auto w-full"
-            />
-          </motion.button>
-        ))}
-      </section>
-      {mounted &&
-        createPortal(
-          <div ref={portal}>
-            <AnimatePresence>
-              {image && (
-                <PresenceGate>
-                  {({ isPresent, gate }) => (
-                    <>
-                      <motion.button
-                        {...gate}
-                        type="button"
-                        tabIndex={-1}
-                        aria-hidden="true"
-                        onClick={() => select(null)}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{
-                          duration: reduce ? 0.1 : 0.18,
-                          ease: EASE_OUT,
-                        }}
-                        className="fixed inset-0 z-[100] h-full w-full cursor-default bg-black/90"
-                      />
-                      <div
-                        inert={!isPresent}
-                        className="pointer-events-none fixed inset-3 z-[101] sm:inset-6"
-                      >
-                        <div
-                          {...gate}
-                          ref={panel}
-                          role="dialog"
-                          aria-modal="true"
-                          aria-label={label}
-                          tabIndex={-1}
-                          className="flex h-full flex-col outline-none"
-                          onPointerDownCapture={(event) => {
-                            const target = event.target;
-                            if (
-                              target instanceof Element &&
-                              !target.closest("button, [data-lightbox-content]")
-                            ) {
-                              event.preventDefault();
-                              select(null);
-                            }
-                          }}
-                          onKeyDown={(event) => {
-                            if (
-                              event.altKey ||
-                              event.ctrlKey ||
-                              event.metaKey ||
-                              event.shiftKey
-                            )
-                              return;
-                            if (event.key === "ArrowLeft") {
-                              event.preventDefault();
-                              move(-1);
-                            }
-                            if (event.key === "ArrowRight") {
-                              event.preventDefault();
-                              move(1);
-                            }
-                          }}
-                        >
-                          <div className="flex items-center justify-between gap-3 pb-3 text-white">
-                            <span
-                              className="text-xs tabular-nums"
-                              aria-live="polite"
-                            >
-                              {index + 1} / {images.length}
-                            </span>
-                            <button
-                              type="button"
-                              aria-label="Close viewer"
-                              onClick={() => select(null)}
-                              className={controlClass}
-                            >
-                              <X size={18} aria-hidden="true" />
-                            </button>
-                          </div>
-                          <LightboxFrame
-                            key={`${image.id}-${image.src}`}
-                            image={image}
-                            layoutId={
-                              reduce ? undefined : `${groupId}-${image.id}`
-                            }
-                            reduce={reduce}
-                            onSwipe={move}
-                          />
-                          <div className="flex items-center justify-between gap-3 pt-3 text-white">
-                            <button
-                              type="button"
-                              aria-label="Previous image"
-                              disabled={index === 0}
-                              onClick={() => move(-1)}
-                              className={controlClass}
-                            >
-                              <ChevronLeft size={18} aria-hidden="true" />
-                            </button>
-                            <div
-                              data-lightbox-content=""
-                              className="min-w-0 text-center text-sm"
-                              aria-live="polite"
-                            >
-                              {renderCaption
-                                ? renderCaption(image)
-                                : (image.caption ?? image.alt)}
-                            </div>
-                            <button
-                              type="button"
-                              aria-label="Next image"
-                              disabled={index === images.length - 1}
-                              onClick={() => move(1)}
-                              className={controlClass}
-                            >
-                              <ChevronRight size={18} aria-hidden="true" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </PresenceGate>
-              )}
-            </AnimatePresence>
-          </div>,
-          document.body,
+          </PresenceGate>
         )}
-    </LayoutGroup>
+      </AnimatePresence>
+    </div>,
+    document.body,
   );
 }
 
@@ -293,6 +508,17 @@ function LightboxFrame({
   onSwipe: (direction: -1 | 1) => void;
 }) {
   const [zoom, setZoom] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const session = `${image.id}-${image.src}`;
+  const [previousSession, setPreviousSession] = useState(session);
+  // Keep the frame mounted across images so shared-layout presence registrations
+  // stay attached to one node; reset only the current image's local state.
+  if (previousSession !== session) {
+    setPreviousSession(session);
+    setZoom(false);
+    setFailed(false);
+  }
+  const swipe = useRef<{ x: number; y: number } | null>(null);
   const present = useIsPresent();
   const bounds = useRef<HTMLDivElement>(null);
   const imageBox = useRef<HTMLDivElement>(null);
@@ -300,6 +526,14 @@ function LightboxFrame({
   const y = useMotionValue(0);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const panHelp = useId();
+  const positionSession = useRef(session);
+  useLayoutEffect(() => {
+    if (positionSession.current === session) return;
+    positionSession.current = session;
+    x.set(0);
+    y.set(0);
+    swipe.current = null;
+  }, [session, x, y]);
   useLayoutEffect(() => {
     const measure = () => {
       if (!bounds.current || !imageBox.current) return;
@@ -323,8 +557,6 @@ function LightboxFrame({
     if (imageBox.current) observer.observe(imageBox.current);
     return () => observer.disconnect();
   }, [x, y]);
-  const swipe = useRef<{ x: number; y: number } | null>(null);
-  const [failed, setFailed] = useState(false);
   return (
     <div className="relative flex min-h-0 flex-1 items-center justify-center">
       <div
@@ -350,7 +582,9 @@ function LightboxFrame({
             height={image.height}
             draggable={false}
             onError={() => setFailed(true)}
-            drag={zoom}
+            // Keep Motion's drag/layout registration mounted across zoom changes.
+            drag
+            dragListener={zoom}
             dragConstraints={{
               left: -pan.x,
               right: pan.x,

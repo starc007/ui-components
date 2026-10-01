@@ -7,6 +7,7 @@
 const COMPONENT_DATES = {
   "motion/sortable-stack": { publishedAt: "2026-10-01", updatedAt: "2026-10-01" },
   "motion/morphing-lightbox": { publishedAt: "2026-10-01", updatedAt: "2026-10-01" },
+  "motion/image-viewer": { publishedAt: "2026-10-01", updatedAt: "2026-10-01" },
   "motion/date-range-picker": { publishedAt: "2026-10-01", updatedAt: "2026-10-01" },
   "motion/color-selector": { publishedAt: "2026-09-27", updatedAt: "2026-09-27" },
   "motion/breadcrumb": { publishedAt: "2026-09-27", updatedAt: "2026-10-01" },

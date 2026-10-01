@@ -1,6 +1,16 @@
 "use client";
 
-import { MorphingLightbox } from "@/components/motion/morphing-lightbox";
+import {
+  ImageViewer,
+  ImageViewerGallery,
+  ImageViewerThumbnail,
+  ImageViewerContent,
+  ImageViewerCounter,
+  ImageViewerClose,
+  ImageViewerPrevious,
+  ImageViewerCaption,
+  ImageViewerNext,
+} from "@/components/motion/morphing-lightbox";
 
 const images = [
   {
@@ -43,11 +53,25 @@ export function MorphingLightboxPreview() {
         </div>
         <span className="text-xs text-muted-foreground">3 photographs</span>
       </div>
-      <MorphingLightbox
-        images={images}
-        label="Collected photographs"
-        className="grid-cols-3 gap-2 sm:gap-3"
-      />
+      <ImageViewer images={images} label="Collected photographs">
+        <ImageViewerGallery className="grid-cols-3 gap-2 sm:gap-3">
+          {images.map((image) => (
+            <ImageViewerThumbnail key={image.id} imageId={image.id} />
+          ))}
+        </ImageViewerGallery>
+        <ImageViewerContent
+          header={
+            <>
+              <ImageViewerCounter />
+              <ImageViewerClose />
+            </>
+          }
+        >
+          <ImageViewerPrevious />
+          <ImageViewerCaption />
+          <ImageViewerNext />
+        </ImageViewerContent>
+      </ImageViewer>
       <p className="mt-4 text-xs text-muted-foreground">
         Open a photograph. Swipe or use the arrows to explore.
       </p>
