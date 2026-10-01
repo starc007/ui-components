@@ -1,6 +1,12 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import {
   AnimatePresence,
   motion,
@@ -16,7 +22,13 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
+import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
+import {
+  MorphPopover,
+  MorphPopoverContent,
+  MorphPopoverTrigger,
+} from "@/components/motion/popover-morph";
 
 /** Calendar dates, independent of a browser's timezone: YYYY-MM-DD. */
 export interface DateRange {
@@ -39,6 +51,10 @@ export interface DateRangePickerProps {
   locale?: string;
   label?: string;
   disabled?: boolean;
+  /** Move focus to the active date on mount, for use inside a popover. */
+  autoFocus?: boolean;
+  /** Show the start/end summary above the calendar. Default true. */
+  showSummary?: boolean;
   className?: string;
 }
 
@@ -86,7 +102,7 @@ const monthVariants = {
 };
 
 const iconClass =
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-30";
+  "inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-30";
 
 /** A standalone calendar that also composes inside the library's popovers. */
 export function DateRangePicker({
@@ -101,6 +117,8 @@ export function DateRangePicker({
   locale = "en-US",
   label = "Choose a date range",
   disabled = false,
+  autoFocus = false,
+  showSummary = true,
   className,
 }: DateRangePickerProps) {
   const [today] = useState(() => {
@@ -126,21 +144,42 @@ export function DateRangePicker({
     defaultMonth ??
     value?.from ??
     (min && today < min ? min : max && today > max ? max : today);
-  const [month, setMonth] = useState(() => monthOf(initial));
+  const [requestedMonth, setMonth] = useState(() => monthOf(initial));
+  const month =
+    min && requestedMonth < monthOf(min)
+      ? monthOf(min)
+      : max && requestedMonth > monthOf(max)
+        ? monthOf(max)
+        : requestedMonth;
+  if (requestedMonth !== month) setMonth(month);
   const [cursor, setCursor] = useState<string | null>(
     () => value?.from ?? initial,
   );
   const [preview, setPreview] = useState<string | null>(null);
   const [direction, setDirection] = useState(1);
   const [announcement, setAnnouncement] = useState("");
+  const [view, setView] = useState<"days" | "months" | "years">("days");
+  const [requestedYearPage, setYearPage] = useState(
+    () => Math.floor(Number(initial.slice(0, 4)) / 12) * 12,
+  );
+  const [focusChoices, setFocusChoices] = useState(false);
+  const monthTrigger = useRef<HTMLButtonElement>(null);
+  const yearTrigger = useRef<HTMLButtonElement>(null);
+  const returnToTrigger = useRef<"months" | "years" | null>(null);
   const grid = useRef<HTMLTableElement>(null);
-  const pendingFocus = useRef(false);
+  const pendingFocus = useRef(autoFocus);
   const heading = useId();
   const help = useId();
+  const choicesId = useId();
   const reduce = useReducedMotion() ?? false;
+  const canHover = useHoverCapable();
   const monthFormat = new Intl.DateTimeFormat(locale, {
     month: "long",
     year: "numeric",
+    timeZone: "UTC",
+  });
+  const monthNameFormat = new Intl.DateTimeFormat(locale, {
+    month: "long",
     timeZone: "UTC",
   });
   const dateFormat = new Intl.DateTimeFormat(locale, {
@@ -176,7 +215,10 @@ export function DateRangePicker({
         if (unavailable(iso(time))) return false;
     return true;
   };
-  const daysInMonth = new Date(parse(shiftMonth(month, 1)) - DAY).getUTCDate();
+  const lastDay = new Date(parse(month));
+  lastDay.setUTCMonth(lastDay.getUTCMonth() + 1);
+  lastDay.setUTCDate(0);
+  const daysInMonth = lastDay.getUTCDate();
   const dates = Array.from({ length: daysInMonth }, (_, index) =>
     iso(parse(month) + index * DAY),
   );
@@ -197,6 +239,13 @@ export function DateRangePicker({
     latest.current = { month, active };
   });
   useLayoutEffect(() => {
+    if (returnToTrigger.current) {
+      const target = returnToTrigger.current;
+      returnToTrigger.current = null;
+      (target === "months" ? monthTrigger : yearTrigger).current?.focus({
+        preventScroll: true,
+      });
+    }
     if (!pendingFocus.current) return;
     pendingFocus.current = false;
     const button = grid.current?.querySelector<HTMLButtonElement>(
@@ -303,66 +352,258 @@ export function DateRangePicker({
     ...Array<string | null>(leading).fill(null),
     ...dates,
   ];
-  while (cells.length % 7) cells.push(null);
-  const weeks = Array.from({ length: cells.length / 7 }, (_, index) =>
-    cells.slice(index * 7, index * 7 + 7),
+  // Six rows keep the surface stable while changing months or browsing years.
+  while (cells.length < 42) cells.push(null);
+  const weeks = Array.from({ length: cells.length / 7 }, (_, index) => ({
+    start: iso(parse(month) + (index * 7 - leading) * DAY),
+    dates: cells.slice(index * 7, index * 7 + 7),
+  }));
+  const year = Number(month.slice(0, 4));
+  const monthIndex = Number(month.slice(5, 7)) - 1;
+  const minYear = min ? Number(min.slice(0, 4)) : 0;
+  const maxYear = max ? Number(max.slice(0, 4)) : 9999;
+  const firstYearPage = minYear;
+  // Backfill the final page so it still has twelve years when the bounds allow it.
+  const lastYearPage = Math.max(minYear, maxYear - 11);
+  const yearPage = Math.min(
+    lastYearPage,
+    Math.max(firstYearPage, requestedYearPage),
   );
+  if (requestedYearPage !== yearPage) setYearPage(yearPage);
+  const yearPageEnd = Math.min(yearPage + 11, maxYear);
   const previousDisabled =
     disabled ||
-    Boolean(min && shiftMonth(month, -1).slice(0, 7) < min.slice(0, 7));
+    (view === "years"
+      ? yearPage <= firstYearPage
+      : view === "months"
+        ? year <= minYear
+        : (year === 0 && monthIndex === 0) ||
+          Boolean(min && monthOf(shiftMonth(month, -1)) < monthOf(min)));
   const nextDisabled =
     disabled ||
-    Boolean(max && shiftMonth(month, 1).slice(0, 7) > max.slice(0, 7));
+    (view === "years"
+      ? yearPage >= lastYearPage
+      : view === "months"
+        ? year >= maxYear
+        : (year === 9999 && monthIndex === 11) ||
+          Boolean(max && monthOf(shiftMonth(month, 1)) > monthOf(max)));
+  const closeChoices = () => {
+    returnToTrigger.current = view === "years" ? "years" : "months";
+    setView("days");
+  };
+  const openChoices = (next: "months" | "years") => {
+    if (view === next) {
+      closeChoices();
+      return;
+    }
+    setPreview(null);
+    setFocusChoices(true);
+    if (next === "years")
+      setYearPage(
+        Math.min(
+          lastYearPage,
+          Math.max(
+            firstYearPage,
+            minYear + Math.floor((year - minYear) / 12) * 12,
+          ),
+        ),
+      );
+    setView(next);
+  };
+  const goToMonth = (next: string) => {
+    const clamped =
+      min && next < monthOf(min)
+        ? monthOf(min)
+        : max && next > monthOf(max)
+          ? monthOf(max)
+          : next;
+    setDirection(clamped >= month ? 1 : -1);
+    setMonth(clamped);
+    setCursor(clamped);
+    setPreview(null);
+    closeChoices();
+  };
+  const page = (step: -1 | 1) => {
+    setFocusChoices(false);
+    if (view === "years") {
+      setDirection(step);
+      const next = Math.min(
+        lastYearPage,
+        Math.max(firstYearPage, yearPage + step * 12),
+      );
+      if (next === firstYearPage || next === lastYearPage)
+        returnToTrigger.current = "years";
+      setYearPage((current) =>
+        Math.min(lastYearPage, Math.max(firstYearPage, current + step * 12)),
+      );
+    } else if (view === "months") {
+      const next = shiftMonth(month, step * 12);
+      const clamped =
+        min && next < monthOf(min)
+          ? monthOf(min)
+          : max && next > monthOf(max)
+            ? monthOf(max)
+            : monthOf(next);
+      setDirection(step);
+      setMonth(clamped);
+      setCursor(clamped);
+      if (
+        Number(clamped.slice(0, 4)) === minYear ||
+        Number(clamped.slice(0, 4)) === maxYear
+      )
+        returnToTrigger.current = "months";
+    } else {
+      const next = monthOf(shiftMonth(latest.current.active ?? month, step));
+      if (next === (min && monthOf(min)) || next === (max && monthOf(max)))
+        returnToTrigger.current = "months";
+      navigate(step);
+    }
+  };
+  const choices =
+    view === "months"
+      ? Array.from({ length: 12 }, (_, index) => {
+          const date = `${String(year).padStart(4, "0")}-${String(index + 1).padStart(2, "0")}-01`;
+          return {
+            id: date,
+            label: monthNameFormat.format(parse(date)),
+            disabled:
+              disabled ||
+              Boolean(min && date < monthOf(min)) ||
+              Boolean(max && date > monthOf(max)),
+          };
+        })
+      : Array.from(
+          { length: Math.max(0, yearPageEnd - yearPage + 1) },
+          (_, index) => {
+            const choiceYear = yearPage + index;
+            return {
+              id: String(choiceYear),
+              label: String(choiceYear),
+              disabled:
+                disabled || choiceYear < minYear || choiceYear > maxYear,
+            };
+          },
+        );
+  const dayCount = value?.to
+    ? Math.round((parse(value.to) - parse(value.from)) / DAY) + 1
+    : null;
 
   return (
     <section
       aria-label={label}
       className={cn(
-        "w-full max-w-sm rounded-3xl border border-border bg-background p-5",
+        "w-full max-w-80 rounded-2xl border border-border bg-background p-3.5",
         className,
       )}
     >
-      {presets.length > 0 && (
-        <div className="mb-4 flex flex-wrap gap-1.5">
-          {presets.map((preset) => (
-            <button
-              key={preset.label}
-              type="button"
-              disabled={!rangeAvailable(preset.value)}
-              className="rounded-full border border-border px-3 py-1.5 text-xs transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40"
-              onClick={() => {
-                change(preset.value);
-                setDirection(preset.value.from >= month ? 1 : -1);
-                setMonth(monthOf(preset.value.from));
-                setCursor(preset.value.from);
-                setAnnouncement(`${preset.label} selected.`);
-              }}
+      {showSummary && (
+        <div className="mb-2.5 grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
+          <div className="min-w-0">
+            <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              Start date
+            </p>
+            <p className="text-[13px] font-medium tabular-nums">
+              {value ? shortFormat.format(parse(value.from)) : "Select date"}
+            </p>
+          </div>
+          <ArrowRight
+            size={14}
+            className="text-muted-foreground/60"
+            aria-hidden="true"
+          />
+          <div className="min-w-0">
+            <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              End date
+            </p>
+            <p
+              className={cn(
+                "text-[13px] font-medium tabular-nums",
+                !value?.to && "text-muted-foreground",
+              )}
             >
-              {preset.label}
-            </button>
-          ))}
+              {value?.to ? shortFormat.format(parse(value.to)) : "Select date"}
+            </p>
+          </div>
         </div>
       )}
-      <div className="mb-4 flex items-center justify-between gap-2">
-        <h3 id={heading} aria-live="polite" className="text-sm font-medium">
-          {monthFormat.format(parse(month))}
-        </h3>
-        <div className="flex gap-1">
+      <h3 id={heading} aria-live="polite" className="sr-only">
+        {monthFormat.format(parse(month))}
+      </h3>
+      <div className="mb-2 flex items-center justify-between gap-1">
+        <div className="flex min-w-0 items-center gap-0.5">
+          <button
+            ref={monthTrigger}
+            type="button"
+            aria-label="Choose month"
+            aria-expanded={view === "months"}
+            aria-controls={view === "months" ? choicesId : undefined}
+            disabled={disabled}
+            onClick={() => openChoices("months")}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] font-semibold transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
+              view === "years" && "hidden",
+            )}
+          >
+            {monthNameFormat.format(parse(month))}
+            <ChevronDown
+              size={12}
+              aria-hidden="true"
+              className={cn(
+                "text-muted-foreground",
+                view === "months" && "rotate-180",
+              )}
+            />
+          </button>
+          <button
+            ref={yearTrigger}
+            type="button"
+            aria-label="Choose year"
+            aria-expanded={view === "years"}
+            aria-controls={view === "years" ? choicesId : undefined}
+            disabled={disabled}
+            onClick={() => openChoices("years")}
+            className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] font-medium tabular-nums text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40"
+          >
+            {view === "years" ? `${yearPage}–${yearPageEnd}` : year}
+            <ChevronDown
+              size={12}
+              aria-hidden="true"
+              className={cn(view === "years" && "rotate-180")}
+            />
+          </button>
+        </div>
+        <div className="flex shrink-0 gap-0.5">
           <button
             type="button"
-            aria-label="Previous month"
+            aria-label={
+              view === "years"
+                ? "Previous years"
+                : view === "months"
+                  ? "Previous year"
+                  : "Previous month"
+            }
             disabled={previousDisabled}
             className={iconClass}
-            onClick={() => navigate(-1)}
+            onClick={() => page(-1)}
           >
             <ChevronLeft size={16} aria-hidden="true" />
           </button>
           <button
             type="button"
-            aria-label="Next month"
+            aria-label={
+              view === "years"
+                ? "Next years"
+                : view === "months"
+                  ? "Next year"
+                  : "Next month"
+            }
             disabled={nextDisabled}
-            className={iconClass}
-            onClick={() => navigate(1)}
+            hidden={view === "years" && nextDisabled}
+            className={cn(
+              iconClass,
+              view === "years" && nextDisabled && "hidden",
+            )}
+            onClick={() => page(1)}
           >
             <ChevronRight size={16} aria-hidden="true" />
           </button>
@@ -375,7 +616,11 @@ export function DateRangePicker({
           custom={{ direction, reduce }}
         >
           <motion.div
-            key={month}
+            key={
+              view === "days"
+                ? month
+                : `${view}-${view === "years" ? yearPage : year}`
+            }
             custom={{ direction, reduce }}
             variants={monthVariants}
             initial="enter"
@@ -384,170 +629,256 @@ export function DateRangePicker({
             transition={{ duration: reduce ? 0.1 : 0.18, ease: EASE_OUT }}
           >
             <CalendarPresence>
-              <table
-                ref={(node) => {
-                  if (node) {
-                    grid.current = node;
-                    return () => {
-                      if (grid.current === node) grid.current = null;
-                    };
+              {view !== "days" ? (
+                <CalendarChoices
+                  id={choicesId}
+                  label={
+                    view === "months"
+                      ? `Choose a month in ${year}`
+                      : `Choose a year from ${yearPage} to ${yearPageEnd}`
                   }
-                }}
-                // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: WAI calendar grids retain native table structure with an interactive grid role.
-                role="grid"
-                aria-labelledby={heading}
-                aria-describedby={help}
-                tabIndex={active === null ? 0 : undefined}
-                className="w-full table-fixed border-separate border-spacing-y-1"
-              >
-                <thead>
-                  <tr>
-                    {Array.from({ length: 7 }, (_, index) => {
-                      const day = new Intl.DateTimeFormat(locale, {
-                        weekday: "long",
-                        timeZone: "UTC",
-                      }).format(Date.UTC(2026, 0, 4 + index));
-                      return (
-                        <th
-                          key={day}
-                          scope="col"
-                          abbr={day}
-                          className="pb-2 text-center text-[11px] font-normal text-muted-foreground"
-                        >
-                          {new Intl.DateTimeFormat(locale, {
-                            weekday: "short",
-                            timeZone: "UTC",
-                          }).format(Date.UTC(2026, 0, 4 + index))}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                </thead>
-                <tbody>
-                  {weeks.map((week) => (
-                    <tr key={week.find((date) => date !== null)}>
-                      {week.map((date, dayIndex) => {
-                        const inRange = Boolean(
-                          date &&
-                            shownRange &&
-                            date >= shownRange.from &&
-                            date <= (shownRange.to ?? shownRange.from),
-                        );
-                        const endpoint = Boolean(
-                          date &&
-                            shownRange &&
-                            (date === shownRange.from ||
-                              date === shownRange.to),
-                        );
+                  choices={choices}
+                  selected={view === "months" ? month : String(year)}
+                  focusOnMount={focusChoices}
+                  reduce={reduce}
+                  onClose={closeChoices}
+                  onSelect={(id) =>
+                    goToMonth(
+                      view === "months"
+                        ? id
+                        : `${id.padStart(4, "0")}-${month.slice(5, 7)}-01`,
+                    )
+                  }
+                />
+              ) : (
+                <table
+                  ref={(node) => {
+                    if (node) {
+                      grid.current = node;
+                      return () => {
+                        if (grid.current === node) grid.current = null;
+                      };
+                    }
+                  }}
+                  // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: WAI calendar grids retain native table structure with an interactive grid role.
+                  role="grid"
+                  aria-labelledby={heading}
+                  aria-describedby={help}
+                  tabIndex={active === null ? 0 : undefined}
+                  className="w-full table-fixed select-none border-separate border-spacing-x-0 border-spacing-y-1"
+                >
+                  <thead>
+                    <tr>
+                      {Array.from({ length: 7 }, (_, index) => {
+                        const day = new Intl.DateTimeFormat(locale, {
+                          weekday: "long",
+                          timeZone: "UTC",
+                        }).format(Date.UTC(2026, 0, 4 + index));
                         return (
-                          // biome-ignore lint/a11y/useFocusableInteractive: Calendar cells delegate focus to the contained day button.
-                          <td
-                            // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: Gridcell selection semantics belong on the native table cell.
-                            role="gridcell"
-                            key={date ?? `empty-${dayIndex}`}
-                            aria-selected={
-                              date
-                                ? Boolean(
-                                    value &&
-                                      date >= value.from &&
-                                      date <= (value.to ?? value.from),
-                                  )
-                                : undefined
-                            }
-                            className={cn(
-                              "relative p-0 text-center",
-                              inRange &&
-                                (dayIndex === 0 || date === shownRange?.from) &&
-                                "rounded-l-full",
-                              inRange &&
-                                (dayIndex === 6 ||
-                                  date === shownRange?.to ||
-                                  !shownRange?.to) &&
-                                "rounded-r-full",
-                            )}
+                          <th
+                            key={day}
+                            scope="col"
+                            abbr={day}
+                            className="h-6 pb-1.5 text-center text-[11px] font-medium text-muted-foreground"
                           >
-                            {date && (
-                              <motion.span
-                                aria-hidden="true"
-                                className="pointer-events-none absolute inset-0 rounded-[inherit] bg-foreground/[0.06]"
-                                initial={false}
-                                animate={{ opacity: inRange ? 1 : 0 }}
-                                transition={{ duration: 0.12, ease: EASE_OUT }}
-                              />
-                            )}
-                            {date && (
-                              <motion.button
-                                type="button"
-                                disabled={unavailable(date)}
-                                aria-label={dateFormat.format(parse(date))}
-                                aria-current={
-                                  date === today ? "date" : undefined
-                                }
-                                tabIndex={date === active ? 0 : -1}
-                                whileTap={reduce ? undefined : { scale: 0.9 }}
-                                transition={SPRING_PRESS}
-                                onClick={() => select(date)}
-                                onFocus={() => {
-                                  setCursor(date);
-                                  if (value && !value.to) setPreview(date);
-                                }}
-                                onPointerEnter={(event) => {
-                                  if (
-                                    event.pointerType !== "touch" &&
-                                    value &&
-                                    !value.to
-                                  )
-                                    setPreview(date);
-                                }}
-                                onKeyDown={(event) => onKey(event, date)}
-                                className={cn(
-                                  "relative mx-auto flex h-9 w-full max-w-9 items-center justify-center rounded-full text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-25",
-                                  endpoint
-                                    ? "bg-foreground text-background"
-                                    : "hover:bg-muted",
-                                  date === today &&
-                                    !endpoint &&
-                                    "font-semibold underline underline-offset-4",
-                                )}
-                              >
-                                {new Date(parse(date)).getUTCDate()}
-                              </motion.button>
-                            )}
-                          </td>
+                            {new Intl.DateTimeFormat(locale, {
+                              weekday: "short",
+                              timeZone: "UTC",
+                            }).format(Date.UTC(2026, 0, 4 + index))}
+                          </th>
                         );
                       })}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {weeks.map(({ start, dates: week }) => (
+                      <tr key={start}>
+                        {week.map((date, dayIndex) => {
+                          const inRange = Boolean(
+                            date &&
+                              shownRange &&
+                              date >= shownRange.from &&
+                              date <= (shownRange.to ?? shownRange.from),
+                          );
+                          const endpoint = Boolean(
+                            date &&
+                              value &&
+                              (date === value.from || date === value.to),
+                          );
+                          return (
+                            // biome-ignore lint/a11y/useFocusableInteractive: Calendar cells delegate focus to the contained day button.
+                            <td
+                              // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: Gridcell selection semantics belong on the native table cell.
+                              role="gridcell"
+                              key={date ?? `empty-${dayIndex}`}
+                              aria-selected={
+                                date
+                                  ? Boolean(
+                                      value &&
+                                        date >= value.from &&
+                                        date <= (value.to ?? value.from),
+                                    )
+                                  : undefined
+                              }
+                              onPointerEnter={(event) => {
+                                if (
+                                  canHover &&
+                                  event.pointerType !== "touch" &&
+                                  date &&
+                                  !unavailable(date) &&
+                                  value &&
+                                  !value.to
+                                )
+                                  setPreview(date);
+                              }}
+                              className={cn(
+                                "relative h-8 p-0 text-center",
+                                inRange &&
+                                  (dayIndex === 0 ||
+                                    date === shownRange?.from) &&
+                                  "rounded-l-full",
+                                inRange &&
+                                  (dayIndex === 6 ||
+                                    date === shownRange?.to ||
+                                    !shownRange?.to) &&
+                                  "rounded-r-full",
+                              )}
+                            >
+                              {date && (
+                                <span
+                                  aria-hidden="true"
+                                  // Range scrubbing follows immediately: independent cell
+                                  // fades leave stale highlights behind a moving pointer.
+                                  className={cn(
+                                    "pointer-events-none absolute inset-y-0 rounded-[inherit] bg-foreground/[0.08]",
+                                    inRange ? "opacity-100" : "opacity-0",
+                                  )}
+                                  style={{
+                                    left:
+                                      endpoint &&
+                                      (date === shownRange?.from ||
+                                        !week[dayIndex - 1])
+                                        ? "50%"
+                                        : 0,
+                                    right:
+                                      endpoint &&
+                                      (date ===
+                                        (shownRange?.to ?? shownRange?.from) ||
+                                        !week[dayIndex + 1])
+                                        ? "50%"
+                                        : 0,
+                                  }}
+                                />
+                              )}
+                              {date && (
+                                <motion.button
+                                  type="button"
+                                  disabled={unavailable(date)}
+                                  aria-label={dateFormat.format(parse(date))}
+                                  aria-current={
+                                    date === today ? "date" : undefined
+                                  }
+                                  tabIndex={date === active ? 0 : -1}
+                                  whileTap={reduce ? undefined : { scale: 0.9 }}
+                                  transition={SPRING_PRESS}
+                                  onClick={() => select(date)}
+                                  onFocus={() => {
+                                    setCursor(date);
+                                    if (value && !value.to) setPreview(date);
+                                  }}
+                                  onKeyDown={(event) => onKey(event, date)}
+                                  className={cn(
+                                    "relative mx-auto flex h-8 w-full max-w-8 items-center justify-center rounded-full text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-30",
+                                    endpoint
+                                      ? "bg-foreground font-medium text-background"
+                                      : canHover &&
+                                          !unavailable(date) &&
+                                          !inRange &&
+                                          "hover:bg-muted",
+                                    date === today &&
+                                      !endpoint &&
+                                      "font-semibold after:absolute after:bottom-1 after:size-0.75 after:rounded-full after:bg-current",
+                                  )}
+                                >
+                                  {new Date(parse(date)).getUTCDate()}
+                                </motion.button>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </CalendarPresence>
           </motion.div>
         </AnimatePresence>
       </div>
-      <div className="mt-4 flex min-h-10 items-center justify-between gap-2 border-t border-border pt-4">
-        <span className="text-xs text-muted-foreground">
-          {value
-            ? `${shortFormat.format(parse(value.from))}${value.to ? ` – ${shortFormat.format(parse(value.to))}` : " – Choose end date"}`
-            : "Select a start and end date"}
-        </span>
-        <button
-          type="button"
-          aria-label="Clear date range"
-          disabled={disabled || !value}
-          className={iconClass}
-          onClick={() => {
-            pendingFocus.current = true;
-            change(null);
-            setAnnouncement("Date range cleared.");
-          }}
-        >
-          <X size={14} aria-hidden="true" />
-        </button>
+      <div className="mt-2.5 border-t border-border pt-2.5">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs text-muted-foreground">
+            {dayCount
+              ? `${dayCount} ${dayCount === 1 ? "day" : "days"} selected`
+              : value
+                ? "Choose an end date"
+                : "Choose a start date"}
+          </p>
+          <button
+            type="button"
+            aria-label="Clear date range"
+            disabled={disabled || !value}
+            className="rounded-md px-1.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-30"
+            onClick={() => {
+              if (view === "days") pendingFocus.current = true;
+              else returnToTrigger.current = view;
+              change(null);
+              setAnnouncement("Date range cleared.");
+            }}
+          >
+            Clear
+          </button>
+        </div>
+        {presets.length > 0 && (
+          <div className="mt-2.5 flex flex-wrap justify-center gap-1.5">
+            {presets.map((preset) => {
+              const selected =
+                value?.from === preset.value.from &&
+                value?.to === preset.value.to;
+              return (
+                <button
+                  key={preset.label}
+                  type="button"
+                  aria-pressed={selected}
+                  disabled={!rangeAvailable(preset.value)}
+                  className={cn(
+                    "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
+                    selected
+                      ? "bg-foreground text-background"
+                      : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground",
+                  )}
+                  onClick={() => {
+                    if (view !== "days") closeChoices();
+                    change(preset.value);
+                    setDirection(preset.value.from >= month ? 1 : -1);
+                    setMonth(monthOf(preset.value.from));
+                    setCursor(preset.value.from);
+                    setAnnouncement(`${preset.label} selected.`);
+                  }}
+                >
+                  {preset.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
       <p id={help} className="sr-only">
         Use arrow keys to navigate dates, Home and End for the week, Page Up and
         Page Down for months, Shift with Page Up or Page Down for years. Enter
-        or Space selects a date.
+        or Space selects a date. Use the month and year buttons to jump
+        directly. In the month or year choices, use arrow keys to move and
+        Escape to return.
       </p>
       <span role="status" className="sr-only">
         {announcement}
@@ -556,8 +887,234 @@ export function DateRangePicker({
   );
 }
 
+export interface DateRangePickerDropdownProps extends DateRangePickerProps {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  placeholder?: string;
+  triggerClassName?: string;
+  calendarClassName?: string;
+}
+
+/** A compact range trigger composed with the library's morphing popover. */
+export function DateRangePickerDropdown({
+  value: controlledValue,
+  defaultValue = null,
+  onValueChange,
+  open: controlledOpen,
+  defaultOpen = false,
+  onOpenChange,
+  placeholder = "Select dates",
+  label = "Choose a date range",
+  locale = "en-US",
+  disabled = false,
+  className,
+  triggerClassName,
+  calendarClassName,
+  autoFocus = true,
+  ...calendarProps
+}: DateRangePickerDropdownProps) {
+  const [internalValue, setInternalValue] = useState(defaultValue);
+  const value = controlledValue === undefined ? internalValue : controlledValue;
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
+  const open = controlledOpen === undefined ? internalOpen : controlledOpen;
+  const trigger = useRef<HTMLButtonElement>(null);
+  const format = new Intl.DateTimeFormat(locale, {
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+  const formatWithYear = new Intl.DateTimeFormat(locale, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+  const sameYear = value?.to && value.from.slice(0, 4) === value.to.slice(0, 4);
+  const summary = value
+    ? `${(sameYear ? format : formatWithYear).format(parse(value.from))} – ${value.to ? formatWithYear.format(parse(value.to)) : "Select end"}`
+    : placeholder;
+  const setOpen = (next: boolean) => {
+    if (controlledOpen === undefined) setInternalOpen(next);
+    onOpenChange?.(next);
+  };
+  return (
+    <MorphPopover
+      open={open}
+      onOpenChange={setOpen}
+      className={cn("max-w-full", className)}
+    >
+      <MorphPopoverTrigger>
+        <button
+          ref={trigger}
+          type="button"
+          disabled={disabled}
+          aria-label={`${label}: ${summary}`}
+          className={cn(
+            "inline-flex h-9 w-fit max-w-full items-center gap-2 rounded-xl border border-border bg-background px-3 text-[13px] font-medium text-foreground transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
+            triggerClassName,
+          )}
+        >
+          <CalendarDays
+            size={15}
+            className="shrink-0 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <span className="min-w-0 truncate tabular-nums">{summary}</span>
+          <ChevronDown
+            size={13}
+            className={cn(
+              "shrink-0 text-muted-foreground",
+              open && "rotate-180",
+            )}
+            aria-hidden="true"
+          />
+        </button>
+      </MorphPopoverTrigger>
+      <MorphPopoverContent
+        align="start"
+        radius={16}
+        shadow={false}
+        onOpenAutoFocus={(content) => {
+          if (!autoFocus) return;
+          const target =
+            content.querySelector<HTMLElement>(
+              '[role="grid"] button[tabindex="0"]',
+            ) ?? content.querySelector<HTMLElement>('[role="grid"]');
+          target?.focus({ preventScroll: true });
+        }}
+        className="w-80 max-w-[calc(100vw-1.5rem)]"
+      >
+        <DateRangePicker
+          {...calendarProps}
+          defaultMonth={calendarProps.defaultMonth ?? value?.from}
+          label={label}
+          locale={locale}
+          disabled={disabled}
+          autoFocus={autoFocus}
+          showSummary={calendarProps.showSummary ?? false}
+          value={value}
+          onValueChange={(next) => {
+            if (controlledValue === undefined) setInternalValue(next);
+            onValueChange?.(next);
+            if (next?.to) {
+              setOpen(false);
+              trigger.current?.focus({ preventScroll: true });
+            }
+          }}
+          className={cn("max-w-none rounded-none border-0", calendarClassName)}
+        />
+      </MorphPopoverContent>
+    </MorphPopover>
+  );
+}
+
 // The departing month's grid must leave the tab order as soon as exit begins.
 function CalendarPresence({ children }: { children: ReactNode }) {
   const present = useIsPresent();
   return <div inert={!present}>{children}</div>;
+}
+
+function CalendarChoices({
+  id,
+  label,
+  choices,
+  selected,
+  focusOnMount,
+  reduce,
+  onClose,
+  onSelect,
+}: {
+  id: string;
+  label: string;
+  choices: { id: string; label: string; disabled: boolean }[];
+  selected: string;
+  focusOnMount: boolean;
+  reduce: boolean;
+  onClose: () => void;
+  onSelect: (id: string) => void;
+}) {
+  const enabled = choices.filter((choice) => !choice.disabled);
+  const [cursor, setCursor] = useState<string | null>(selected);
+  const active =
+    enabled.find((choice) => choice.id === cursor)?.id ??
+    enabled.find((choice) => choice.id === selected)?.id ??
+    enabled[0]?.id;
+  if (cursor !== null && cursor !== active) setCursor(active ?? null);
+  const root = useRef<HTMLFieldSetElement>(null);
+  useLayoutEffect(() => {
+    if (focusOnMount)
+      root.current
+        ?.querySelector<HTMLButtonElement>('button[tabindex="0"]')
+        ?.focus({ preventScroll: true });
+  }, [focusOnMount]);
+  const onKey = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    const buttons = Array.from(
+      root.current?.querySelectorAll<HTMLButtonElement>("button") ?? [],
+    );
+    const index = buttons.indexOf(event.currentTarget);
+    const offset =
+      event.key === "ArrowLeft"
+        ? -1
+        : event.key === "ArrowRight"
+          ? 1
+          : event.key === "ArrowUp"
+            ? -3
+            : event.key === "ArrowDown"
+              ? 3
+              : null;
+    let target =
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? buttons.length - 1
+          : offset === null
+            ? null
+            : index + offset;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      onClose();
+      return;
+    }
+    if (target === null) return;
+    event.preventDefault();
+    const step =
+      offset === null ? (event.key === "Home" ? 1 : -1) : Math.sign(offset);
+    while (target >= 0 && target < buttons.length && buttons[target].disabled)
+      target += step;
+    buttons[target]?.focus({ preventScroll: true });
+  };
+  return (
+    <fieldset
+      ref={root}
+      id={id}
+      aria-label={label}
+      className="grid min-h-[15.25rem] grid-cols-3 content-start gap-2 border-0 p-0 pt-1"
+    >
+      {choices.map((choice) => (
+        <motion.button
+          key={choice.id}
+          type="button"
+          disabled={choice.disabled}
+          aria-pressed={choice.id === selected}
+          tabIndex={choice.id === active ? 0 : -1}
+          onFocus={() => setCursor(choice.id)}
+          onKeyDown={onKey}
+          onClick={() => onSelect(choice.id)}
+          whileTap={reduce ? undefined : { scale: 0.96 }}
+          transition={SPRING_PRESS}
+          className={cn(
+            "flex h-13 items-center justify-center rounded-xl px-1 text-[13px] tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-25",
+            choice.id === selected
+              ? "bg-foreground font-medium text-background"
+              : "bg-muted/40 hover:bg-muted",
+          )}
+        >
+          {choice.label}
+        </motion.button>
+      ))}
+    </fieldset>
+  );
 }

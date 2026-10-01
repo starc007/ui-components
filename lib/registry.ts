@@ -80,7 +80,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "date-range-picker",
         name: "Date Range Picker",
-        description: "A date-only range calendar with connected selection bands, directional month transitions, presets, unavailable dates, full keyboard navigation, and controlled or uncontrolled selection.",
+        description: "A compact date range calendar and morphing dropdown with a selection trigger, direct month and year grids, presets, unavailable dates, and full keyboard navigation. Controlled or uncontrolled.",
         file: "components/motion/date-range-picker.tsx",
         badge: "new",
         launchedAt: "2026-10-01",

@@ -1,22 +1,37 @@
 "use client";
 
-import { DateRangePicker } from "@/components/motion/date-range-picker";
+import { useState } from "react";
+import { DateRangePickerDropdown } from "@/components/motion/date-range-picker";
 
 export function DateRangePickerPreview() {
+  const [period] = useState(() => {
+    const now = new Date();
+    const date = (daysAgo: number) => {
+      const day = new Date(now);
+      day.setDate(day.getDate() - daysAgo);
+      return `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
+    };
+    return {
+      today: date(0),
+      weekStart: date(6),
+      monthStart: date(29),
+    };
+  });
   return (
-    <DateRangePicker
+    <DateRangePickerDropdown
       label="Reporting period"
-      defaultMonth="2026-10-01"
-      defaultValue={{ from: "2026-10-05", to: "2026-10-12" }}
-      min="2026-01-01"
-      max="2027-12-31"
-      isDateDisabled={(date) => date === "2026-10-20"}
+      defaultMonth={period.today}
+      defaultValue={{ from: period.weekStart, to: period.today }}
+      max={period.today}
       presets={[
         {
-          label: "First week",
-          value: { from: "2026-10-01", to: "2026-10-07" },
+          label: "Last 7 days",
+          value: { from: period.weekStart, to: period.today },
         },
-        { label: "Two weeks", value: { from: "2026-10-01", to: "2026-10-14" } },
+        {
+          label: "Last 30 days",
+          value: { from: period.monthStart, to: period.today },
+        },
       ]}
     />
   );
