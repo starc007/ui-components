@@ -62,6 +62,42 @@ export const registry: CategoryEntry[] = [
       "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
+        slug: "sortable-stack",
+        name: "Sortable List",
+        description: "Composable sortable list with group, item, drag handle, content and undo parts, plus a shared state hook. Spring layout, keyboard reordering, accessible position announcements, and controlled or uncontrolled items.",
+        file: "components/motion/sortable-list.tsx",
+        extraFiles: ["components/motion/sortable-stack.tsx"],
+        badge: "new",
+        launchedAt: "2026-10-02",
+      },
+      {
+        slug: "image-viewer",
+        name: "Image Viewer",
+        description: "A composable React image viewer for galleries and attachment previews, with animated lightbox variants, custom thumbnails and controls, swipe and keyboard navigation, zoom and pan, accessible focus management, and controlled or uncontrolled selection.",
+        file: "components/motion/morphing-lightbox.tsx",
+        badge: "new",
+        launchedAt: "2026-10-02",
+        examples: [
+          {
+            slug: "morphing",
+            name: "Morphing",
+            description: "A thumbnail-connected image viewer with composable gallery, thumbnail, content, caption and navigation parts, plus a shared state hook. Expand into the full-size image and return to the thumbnail on close, with swipe navigation, zoom and pan.",
+            installSlug: "morphing-lightbox",
+            file: "components/motion/morphing-lightbox.tsx",
+            previewKey: "motion/morphing-lightbox",
+            previewFile: "components/previews/motion/morphing-lightbox.preview.tsx",
+          },
+        ],
+      },
+      {
+        slug: "date-range-picker",
+        name: "Date Range Picker",
+        description: "Composable date range picker with root, trigger, popover content, calendar, header, grid, summary, footer, clear and preset parts, plus a shared state hook. Compact inline and dropdown compositions, direct month and year selection, and full keyboard navigation.",
+        file: "components/motion/date-range-picker.tsx",
+        badge: "new",
+        launchedAt: "2026-10-02",
+      },
+      {
         slug: "color-selector",
         name: "Animated Color Selector",
         description: "Composable color swatches with a spring-gliding selection ring, press feedback, native radio keyboard navigation, and controlled or uncontrolled state.",

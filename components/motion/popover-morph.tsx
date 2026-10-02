@@ -230,6 +230,10 @@ export interface MorphPopoverContentProps {
   sideOffset?: number;
   /** Panel corner radius, in px. Default 16. */
   radius?: number;
+  /** Draw the surface shadow. Default true. */
+  shadow?: boolean;
+  /** Runs after the portalled surface is positioned and visible. */
+  onOpenAutoFocus?: (content: HTMLDivElement) => void;
   className?: string;
 }
 
@@ -254,6 +258,8 @@ function MorphPopoverSurface({
   align = "end",
   sideOffset = 8,
   radius = 16,
+  shadow = true,
+  onOpenAutoFocus,
   className,
 }: MorphPopoverContentProps) {
   const ctx = useMorphContext("MorphPopoverContent");
@@ -265,15 +271,54 @@ function MorphPopoverSurface({
     isPresent,
   );
 
-  const left = layout
+  const preferredLeft = layout
     ? align === "end"
       ? layout.trigger.left + layout.trigger.width - layout.content.width
       : layout.trigger.left
     : 0;
+  // Keep larger compositions, such as calendars, inside the viewport. Prefer
+  // the requested side, then use the roomier side when it cannot fit there.
+  const gutter = 12;
+  const below = layout
+    ? Math.max(
+        0,
+        window.innerHeight -
+          layout.trigger.top -
+          layout.trigger.height -
+          sideOffset -
+          gutter,
+      )
+    : 0;
+  const above = layout
+    ? Math.max(0, layout.trigger.top - sideOffset - gutter)
+    : 0;
+  const requestedSpace = side === "bottom" ? below : above;
+  const otherSpace = side === "bottom" ? above : below;
+  const resolvedSide =
+    layout &&
+    layout.content.height > requestedSpace &&
+    otherSpace > requestedSpace
+      ? side === "bottom"
+        ? "top"
+        : "bottom"
+      : side;
+  const availableHeight = resolvedSide === "bottom" ? below : above;
+  const left = layout
+    ? Math.max(
+        gutter,
+        Math.min(
+          preferredLeft,
+          window.innerWidth - layout.content.width - gutter,
+        ),
+      )
+    : 0;
   const top = layout
-    ? side === "bottom"
+    ? resolvedSide === "bottom"
       ? layout.trigger.top + layout.trigger.height + sideOffset
-      : layout.trigger.top - layout.content.height - sideOffset
+      : Math.max(
+          gutter,
+          layout.trigger.top - layout.content.height - sideOffset,
+        )
     : 0;
 
   // Both directions travel between the exact same hidden/show states. Exit
@@ -288,11 +333,11 @@ function MorphPopoverSurface({
     ? undefined
     : {
         hidden: {
-          clipPath: clipAt(side, align, radius, 92),
+          clipPath: clipAt(resolvedSide, align, radius, 92),
           transition: MORPH_CLIP_TRANSITION,
         },
         show: {
-          clipPath: clipAt(side, align, radius, 0),
+          clipPath: clipAt(resolvedSide, align, radius, 0),
           transition: MORPH_CLIP_TRANSITION,
         },
       };
@@ -301,6 +346,18 @@ function MorphPopoverSurface({
   // for a frame when it finishes, before Motion writes the final value.
   const opacity = useMotionValue(0);
   const ready = layout !== null;
+  const focusedOnOpen = useRef(false);
+  useEffect(() => {
+    if (
+      !ready ||
+      !isPresent ||
+      focusedOnOpen.current ||
+      !ctx.contentRef.current
+    )
+      return;
+    focusedOnOpen.current = true;
+    onOpenAutoFocus?.(ctx.contentRef.current);
+  }, [ready, isPresent, ctx.contentRef, onOpenAutoFocus]);
   useEffect(() => {
     if (!ready) {
       if (!isPresent) safeToRemove?.();
@@ -331,9 +388,12 @@ function MorphPopoverSurface({
         opacity,
         pointerEvents: isPresent ? "auto" : "none",
         visibility: layout ? "visible" : "hidden",
-        transformOrigin: originFor(side, align),
+        transformOrigin: originFor(resolvedSide, align),
       }}
-      className="fixed z-[9999] [filter:drop-shadow(0_10px_18px_rgba(0,0,0,0.14))]"
+      className={cn(
+        "fixed z-[9999]",
+        shadow && "[filter:drop-shadow(0_10px_18px_rgba(0,0,0,0.14))]",
+      )}
     >
       <motion.div
         ref={ctx.contentRef}
@@ -341,7 +401,11 @@ function MorphPopoverSurface({
         role="dialog"
         aria-labelledby={ctx.triggerId}
         variants={clip}
-        style={{ borderRadius: radius }}
+        style={{
+          borderRadius: radius,
+          maxHeight: layout ? availableHeight : undefined,
+          overflowY: "auto",
+        }}
         className={cn(
           "overflow-hidden border border-border bg-background",
           className,

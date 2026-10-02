@@ -127,7 +127,7 @@ export default function Home() {
   );
 
   return (
-    <div className="relative pt-11">
+    <div className="relative">
       <section className="px-4 pb-12 pt-20 sm:pb-14 sm:pt-28">
         <Hero />
       </section>
