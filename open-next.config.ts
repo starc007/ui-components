@@ -3,9 +3,9 @@ import staticAssetsIncrementalCache from "@opennextjs/cloudflare/overrides/incre
 
 const config = defineCloudflareConfig({
   incrementalCache: staticAssetsIncrementalCache,
-  // Let Next.js handle segment prefetches to avoid repeated full-page RSC responses.
-  // https://github.com/opennextjs/opennextjs-aws/issues/1212
-  enableCacheInterception: false,
+  // Serve prerendered pages without loading NextServer. OpenNext >= 1.20.7
+  // includes the Next.js 16 segment-prefetch fix required for this fast path.
+  enableCacheInterception: true,
 });
 
 // Always refresh the public source snapshot, including builds invoked directly

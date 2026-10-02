@@ -73,6 +73,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             <Link
               key={item.slug}
               href={item.href}
+              prefetch={false}
               onClick={onNavigate}
               className={linkClass(pathname === item.href)}
             >
@@ -91,6 +92,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               <Link
                 key={item.slug}
                 href={item.href}
+                prefetch={false}
                 onClick={onNavigate}
                 className={linkClass(pathname === item.href)}
               >
@@ -104,6 +106,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
         <div key={cat.slug}>
           <Link
             href={categoryPath(cat.slug)}
+            prefetch={false}
             onClick={onNavigate}
             className="mb-2 flex items-center gap-2 rounded-md px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
           >
@@ -119,6 +122,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                 <Link
                   key={comp.slug}
                   href={href}
+                  prefetch={false}
                   onClick={onNavigate}
                   className={linkClass(pathname === href)}
                 >
