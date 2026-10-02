@@ -5,10 +5,10 @@
  * maintenance should not refresh every component's public update date.
  */
 const COMPONENT_DATES = {
-  "motion/sortable-stack": { publishedAt: "2026-10-01", updatedAt: "2026-10-01" },
-  "motion/morphing-lightbox": { publishedAt: "2026-10-01", updatedAt: "2026-10-01" },
-  "motion/image-viewer": { publishedAt: "2026-10-01", updatedAt: "2026-10-01" },
-  "motion/date-range-picker": { publishedAt: "2026-10-01", updatedAt: "2026-10-01" },
+  "motion/sortable-stack": { publishedAt: "2026-10-02", updatedAt: "2026-10-02" },
+  "motion/morphing-lightbox": { publishedAt: "2026-10-02", updatedAt: "2026-10-02" },
+  "motion/image-viewer": { publishedAt: "2026-10-02", updatedAt: "2026-10-02" },
+  "motion/date-range-picker": { publishedAt: "2026-10-02", updatedAt: "2026-10-02" },
   "motion/color-selector": { publishedAt: "2026-09-27", updatedAt: "2026-09-27" },
   "motion/breadcrumb": { publishedAt: "2026-09-27", updatedAt: "2026-10-01" },
   "motion/tilt-card": { publishedAt: "2026-05-17", updatedAt: "2026-06-22" },

@@ -68,7 +68,7 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/sortable-list.tsx",
         extraFiles: ["components/motion/sortable-stack.tsx"],
         badge: "new",
-        launchedAt: "2026-10-01",
+        launchedAt: "2026-10-02",
       },
       {
         slug: "image-viewer",
@@ -76,7 +76,7 @@ export const registry: CategoryEntry[] = [
         description: "A composable React image viewer for galleries and attachment previews, with animated lightbox variants, custom thumbnails and controls, swipe and keyboard navigation, zoom and pan, accessible focus management, and controlled or uncontrolled selection.",
         file: "components/motion/morphing-lightbox.tsx",
         badge: "new",
-        launchedAt: "2026-10-01",
+        launchedAt: "2026-10-02",
         examples: [
           {
             slug: "morphing",
@@ -95,7 +95,7 @@ export const registry: CategoryEntry[] = [
         description: "Composable date range picker with root, trigger, popover content, calendar, header, grid, summary, footer, clear and preset parts, plus a shared state hook. Compact inline and dropdown compositions, direct month and year selection, and full keyboard navigation.",
         file: "components/motion/date-range-picker.tsx",
         badge: "new",
-        launchedAt: "2026-10-01",
+        launchedAt: "2026-10-02",
       },
       {
         slug: "color-selector",
