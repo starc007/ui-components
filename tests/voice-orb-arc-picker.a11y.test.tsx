@@ -18,6 +18,7 @@ test("arc picker names its choices and exposes one selected tab stop immediately
       options={OPTIONS}
       defaultValue="bright"
       aria-label="Voice tone"
+      side="left"
     />,
   );
   const selected = getByRole("radio", { name: "Bright" });
@@ -33,6 +34,35 @@ test("arc picker names its choices and exposes one selected tab stop immediately
   const quiet = getByRole("radio", { name: "Quiet" });
   expect(document.activeElement).toBe(quiet);
   expect(quiet.getAttribute("aria-checked")).toBe("true");
+  expect((await axe(container)).violations).toEqual([]);
+});
+
+test("horizontal sides expose their axis and keep the selected radio focused when the side changes", async () => {
+  const { container, getByRole, rerender } = render(
+    <ArcPicker
+      options={OPTIONS}
+      defaultValue="bright"
+      side="top"
+      aria-label="Voice tone"
+    />,
+  );
+  expect(getByRole("radiogroup").getAttribute("aria-orientation")).toBe(
+    "horizontal",
+  );
+  expect(container.textContent).toContain("Drag horizontally");
+  getByRole("radio", { name: "Bright" }).focus();
+  fireEvent.keyDown(document.activeElement as HTMLElement, {
+    key: "ArrowLeft",
+  });
+  const selected = getByRole("radio", { name: "Quiet" });
+  expect(document.activeElement).toBe(selected);
+  expect(selected.getAttribute("aria-checked")).toBe("true");
+  expect((await axe(container)).violations).toEqual([]);
+  rerender(
+    <ArcPicker options={OPTIONS} side="bottom" aria-label="Voice tone" />,
+  );
+  expect(document.activeElement).toBe(selected);
+  expect(selected.tabIndex).toBe(0);
   expect((await axe(container)).violations).toEqual([]);
 });
 

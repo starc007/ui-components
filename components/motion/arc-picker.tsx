@@ -29,6 +29,8 @@ export type ArcPickerOption = {
   disabled?: boolean;
 };
 
+export type ArcPickerSide = "top" | "bottom" | "left" | "right";
+
 export type ArcPickerProps = Omit<
   ComponentProps<"div">,
   "children" | "defaultValue" | "onChange"
@@ -37,8 +39,11 @@ export type ArcPickerProps = Omit<
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  /** The side the arc bows toward. Top and bottom scroll horizontally. */
+  side?: ArcPickerSide;
   /** Radius in pixels. Larger radii make a gentler curve. */
   radius?: number;
+  /** Minimum spacing along the arc. Horizontal sides also make room for label widths. */
   itemHeight?: number;
   visibleCount?: number;
   disabled?: boolean;
@@ -59,6 +64,7 @@ function ArcOption({
   radius,
   itemHeight,
   visibleCount,
+  side,
   selected,
   disabled,
   setRef,
@@ -70,16 +76,23 @@ function ArcOption({
   radius: number;
   itemHeight: number;
   visibleCount: number;
+  side: ArcPickerSide;
   selected: boolean;
   disabled: boolean;
   setRef: (element: HTMLButtonElement | null) => void;
   onSelect: () => void;
 }) {
+  const horizontal = side === "top" || side === "bottom";
   const transform = useTransform(position, (at) => {
     const angle = clamp(((index - at) * itemHeight) / radius, -1.5, 1.5);
-    const x = radius * (Math.cos(angle) - 1);
-    const y = radius * Math.sin(angle);
-    return `translate3d(${x}px, ${y}px, 0) rotate(${(angle * 180) / Math.PI}deg) translateY(-50%)`;
+    const bend = radius * (1 - Math.cos(angle));
+    const along = radius * Math.sin(angle);
+    const x = horizontal ? along : side === "left" ? bend : -bend;
+    const y = horizontal ? (side === "top" ? bend : -bend) : along;
+    const rotation =
+      ((side === "left" || side === "bottom" ? -angle : angle) * 180) / Math.PI;
+    const anchor = horizontal ? "-50%" : side === "left" ? "-100%" : "0%";
+    return `translate3d(${x}px, ${y}px, 0) translate(${anchor}, -50%) rotate(${rotation}deg)`;
   });
   const opacity = useTransform(position, (at) => {
     const distance = Math.abs(index - at);
@@ -107,10 +120,24 @@ function ArcOption({
         if (!event.defaultPrevented) onSelect();
       }}
       className={cn(
-        "absolute top-1/2 left-[42%] origin-left rounded-md px-2 py-1 text-left text-2xl font-light whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-35",
+        "absolute rounded-md px-2 py-1 text-2xl font-light whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-35",
+        horizontal && "overflow-hidden text-ellipsis text-center",
+        !horizontal && (side === "left" ? "text-right" : "text-left"),
         selected ? "text-primary" : "text-muted-foreground",
       )}
-      style={{ transform, opacity, pointerEvents }}
+      style={{
+        top: horizontal ? (side === "top" ? 36 : "calc(100% - 36px)") : "50%",
+        left: horizontal ? "50%" : side === "left" ? "58%" : "42%",
+        transformOrigin: horizontal
+          ? "center"
+          : side === "left"
+            ? "right center"
+            : "left center",
+        maxWidth: horizontal ? "calc(100% - 2rem)" : undefined,
+        transform,
+        opacity,
+        pointerEvents,
+      }}
     >
       {option.label}
     </motion.button>
@@ -123,6 +150,7 @@ export function ArcPicker({
   value,
   defaultValue,
   onValueChange,
+  side = "right",
   radius = 280,
   itemHeight = 48,
   visibleCount = 7,
@@ -144,6 +172,7 @@ export function ArcPicker({
   ...props
 }: ArcPickerProps) {
   const reducedMotion = useReducedMotion();
+  const horizontal = side === "top" || side === "bottom";
   const instructionsId = useId();
   const root = useRef<HTMLDivElement>(null);
   const buttons = useRef(new Map<string, HTMLButtonElement>());
@@ -170,6 +199,32 @@ export function ArcPicker({
     3,
     Number.isFinite(visibleCount) ? Math.floor(visibleCount) : 7,
   );
+  const [measurements, setMeasurements] = useState({ width: 0, labelWidth: 0 });
+  const labelsKey = JSON.stringify(options.map((option) => option.label));
+  const spacing = horizontal
+    ? Math.max(rowHeight, measurements.labelWidth + 16)
+    : rowHeight;
+  const curveRadius = horizontal
+    ? Math.max(safeRadius, spacing * 2)
+    : safeRadius;
+  const shownCount = horizontal
+    ? Math.min(
+        count,
+        Math.max(1, (measurements.width || count * spacing) / spacing),
+      )
+    : count;
+  const horizontalHeight = Math.ceil(
+    Math.max(
+      rowHeight * 2,
+      curveRadius *
+        (1 -
+          Math.cos(
+            Math.min(1.35, (shownCount * spacing) / (2 * curveRadius)),
+          )) +
+        rowHeight +
+        24,
+    ),
+  );
   const position = useMotionValue(selectedIndex);
   const animation = useRef<AnimationPlaybackControls | null>(null);
   const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -178,9 +233,9 @@ export function ArcPicker({
   const instant = useRef(false);
   const drag = useRef<{
     id: number;
-    y: number;
+    coordinate: number;
     position: number;
-    lastY: number;
+    lastCoordinate: number;
     time: number;
     velocity: number;
     moved: boolean;
@@ -199,6 +254,8 @@ export function ArcPicker({
     disabled,
     reducedMotion,
     rowHeight,
+    spacing,
+    horizontal,
     onValueChange,
   });
   useLayoutEffect(() => {
@@ -210,10 +267,39 @@ export function ArcPicker({
       disabled,
       reducedMotion,
       rowHeight,
+      spacing,
+      horizontal,
       onValueChange,
     };
     request.current = selectedValue;
   });
+
+  useLayoutEffect(() => {
+    if (!horizontal) return;
+    // Observe untransformed sizes: animated bounds would change the spacing
+    // every frame. Font loading and responsive text sizes still trigger this.
+    void optionsKey;
+    void labelsKey;
+    const element = root.current;
+    if (!element) return;
+    const measure = () => {
+      const width = element.clientWidth;
+      const labelWidth = Math.max(
+        0,
+        ...Array.from(buttons.current.values(), (button) => button.offsetWidth),
+      );
+      setMeasurements((previous) =>
+        previous.width === width && previous.labelWidth === labelWidth
+          ? previous
+          : { width, labelWidth },
+      );
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    for (const button of buttons.current.values()) observer.observe(button);
+    measure();
+    return () => observer.disconnect();
+  }, [horizontal, optionsKey, labelsKey]);
 
   const stop = useCallback(() => {
     animation.current?.stop();
@@ -233,6 +319,9 @@ export function ArcPicker({
   );
 
   useLayoutEffect(() => {
+    // Changing sides or measured spacing ends a gesture on its old axis.
+    void side;
+    void spacing;
     stop();
     drag.current = null;
     if (previousOptions.current !== optionsKey) {
@@ -250,7 +339,16 @@ export function ArcPicker({
     if (focusWithin.current && selectedValue !== undefined && !disabled) {
       buttons.current.get(selectedValue)?.focus({ preventScroll: true });
     }
-  }, [selectedValue, optionsKey, disabled, reducedMotion, settle, stop]);
+  }, [
+    selectedValue,
+    optionsKey,
+    side,
+    spacing,
+    disabled,
+    reducedMotion,
+    settle,
+    stop,
+  ]);
 
   const select = useCallback(
     (index: number, keyboard = false) => {
@@ -310,13 +408,16 @@ export function ArcPicker({
         !current.options.some((option) => !option.disabled)
       )
         return;
-      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      const useX = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+      if (!current.horizontal && useX) return;
       const delta =
-        event.deltaY *
+        (current.horizontal && useX ? event.deltaX : event.deltaY) *
         (event.deltaMode === 1
           ? 16
           : event.deltaMode === 2
-            ? element.clientHeight
+            ? current.horizontal
+              ? element.clientWidth
+              : element.clientHeight
             : 1);
       if (!delta) return;
       const last = current.options.length - 1;
@@ -337,7 +438,7 @@ export function ArcPicker({
           enabled[clamp(at + Math.sign(delta), 0, enabled.length - 1)];
         if (next) select(next.index, true);
       } else {
-        position.set(clamp(from + delta / current.rowHeight, 0, last));
+        position.set(clamp(from + delta / current.spacing, 0, last));
         wheelTimer.current = setTimeout(
           () => select(nearestEnabled(position.get())),
           WHEEL_SETTLE_MS,
@@ -420,17 +521,18 @@ export function ArcPicker({
       aria-label={label}
       aria-describedby={[describedBy, instructionsId].filter(Boolean).join(" ")}
       aria-disabled={disabled || undefined}
+      aria-orientation={horizontal ? "horizontal" : "vertical"}
       data-slot="arc-picker"
+      data-side={side}
       className={cn(
         "relative w-full min-w-0 cursor-grab select-none overflow-hidden active:cursor-grabbing",
         disabled && "cursor-default opacity-50",
         className,
       )}
       style={{
-        touchAction: "pan-x pinch-zoom",
-        height: count * rowHeight,
-        maskImage:
-          "linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)",
+        touchAction: horizontal ? "pan-y pinch-zoom" : "pan-x pinch-zoom",
+        height: horizontal ? horizontalHeight : count * rowHeight,
+        maskImage: `linear-gradient(to ${horizontal ? "right" : "bottom"}, transparent, black 12%, black 88%, transparent)`,
         ...style,
       }}
       onKeyDown={keyboard}
@@ -455,11 +557,12 @@ export function ArcPicker({
           return;
         stop();
         suppressClick.current = false;
+        const coordinate = horizontal ? event.clientX : event.clientY;
         drag.current = {
           id: event.pointerId,
-          y: event.clientY,
+          coordinate,
           position: position.get(),
-          lastY: event.clientY,
+          lastCoordinate: coordinate,
           time: performance.now(),
           velocity: 0,
           moved: false,
@@ -474,7 +577,8 @@ export function ArcPicker({
           current.id !== event.pointerId
         )
           return;
-        const delta = event.clientY - current.y;
+        const coordinate = horizontal ? event.clientX : event.clientY;
+        const delta = coordinate - current.coordinate;
         if (!current.moved && Math.abs(delta) < 6) return;
         current.moved = true;
         root.current?.setPointerCapture(event.pointerId);
@@ -482,11 +586,13 @@ export function ArcPicker({
         const elapsed = Math.max(8, now - current.time);
         current.velocity =
           current.velocity * 0.35 +
-          ((current.lastY - event.clientY) / rowHeight / elapsed) * 1000 * 0.65;
-        current.lastY = event.clientY;
+          ((current.lastCoordinate - coordinate) / spacing / elapsed) *
+            1000 *
+            0.65;
+        current.lastCoordinate = coordinate;
         current.time = now;
         const next = clamp(
-          current.position - delta / rowHeight,
+          current.position - delta / spacing,
           0,
           Math.max(0, options.length - 1),
         );
@@ -514,8 +620,8 @@ export function ArcPicker({
       }}
     >
       <span id={instructionsId} className="sr-only">
-        Drag vertically or scroll to choose. Use arrow keys to move, Home and
-        End to jump.
+        Drag {horizontal ? "horizontally" : "vertically"} or scroll to choose.
+        Use arrow keys to move, Home and End to jump.
       </span>
       {name && (
         <input
@@ -531,9 +637,10 @@ export function ArcPicker({
           option={option}
           index={index}
           position={position}
-          radius={safeRadius}
-          itemHeight={rowHeight}
-          visibleCount={count}
+          radius={curveRadius}
+          itemHeight={spacing}
+          visibleCount={shownCount}
+          side={side}
           selected={option.value === selectedValue}
           disabled={disabled}
           setRef={(element) => {

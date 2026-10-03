@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ArcPicker } from "@/components/motion/arc-picker";
+import { ArcPicker, type ArcPickerSide } from "@/components/motion/arc-picker";
+import { Button } from "@/components/motion/button";
+
+const SIDES = ["top", "bottom", "left", "right"] as const;
 
 const OPTIONS = [
   { value: "dawn", label: "Dawn" },
@@ -17,21 +20,41 @@ const OPTIONS = [
 
 export function ArcPickerPreview() {
   const [value, setValue] = useState("golden-hour");
+  const [side, setSide] = useState<ArcPickerSide>("right");
 
   return (
-    <div className="w-full max-w-md py-5">
-      <p className="px-6 text-xs text-muted-foreground">Find your moment</p>
-      <ArcPicker
-        options={OPTIONS}
-        value={value}
-        onValueChange={setValue}
-        aria-label="Time of day"
-        radius={260}
-        visibleCount={7}
-        itemHeight={48}
-      />
-      <p className="px-6 text-xs text-muted-foreground">
-        Drag, scroll or use the arrow keys.
+    <div className="w-full max-w-xl py-5">
+      <fieldset className="flex flex-wrap items-center justify-center gap-1 px-4">
+        <legend className="sr-only">Curve side</legend>
+        {SIDES.map((direction) => (
+          <Button
+            key={direction}
+            size="sm"
+            variant={side === direction ? "secondary" : "ghost"}
+            aria-pressed={side === direction}
+            onClick={() => setSide(direction)}
+            className="capitalize"
+          >
+            {direction}
+          </Button>
+        ))}
+      </fieldset>
+      <div className="flex min-h-88 items-center">
+        <ArcPicker
+          options={OPTIONS}
+          value={value}
+          onValueChange={setValue}
+          aria-label="Time of day"
+          side={side}
+          radius={260}
+          visibleCount={7}
+          itemHeight={48}
+        />
+      </div>
+      <p className="px-6 text-center text-xs text-muted-foreground">
+        Drag{" "}
+        {side === "top" || side === "bottom" ? "horizontally" : "vertically"},
+        scroll or use the arrow keys.
       </p>
     </div>
   );
