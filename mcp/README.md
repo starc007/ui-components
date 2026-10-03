@@ -83,13 +83,9 @@ Requires `beui.dev` on Cloudflare. Wrangler provisions the `mcp.beui.dev` custom
 
 OAuth also requires the `OAUTH_KV` namespace configured in `wrangler.jsonc`.
 
-## Retiring the old session storage
+## Historical session storage
 
-`BeUiMcp` remains exported with its migration history only to preserve the old
-namespace until its separate cleanup. The Worker no longer has a Durable Object
-binding, and no public route creates Durable Objects. Existing storage continues to be billed
-until the namespace is removed.
-
-After verifying the stateless deployment, retire the namespace with a separate
-Durable Object delete migration. That permanently deletes its session databases;
-it does not affect the Pro OAuth KV namespace.
+The old `BeUiMcp` Durable Object namespace was retired by the
+`v2-retire-session-storage` delete migration. Public MCP requests do not use
+Durable Objects. Pro authentication continues to use the separate `OAUTH_KV`
+namespace.

@@ -1,6 +1,6 @@
 import OAuthProvider from "@cloudflare/workers-oauth-provider";
 import { createMcpHandler } from "agents/mcp";
-import { DurableObject, WorkerEntrypoint } from "cloudflare:workers";
+import { WorkerEntrypoint } from "cloudflare:workers";
 import {
   handleAuthorization,
   type McpOAuthProps,
@@ -16,10 +16,6 @@ interface Env extends OAuthEnv {
   REGISTRY_URL?: string;
   PRO_REGISTRY_URL?: string;
 }
-
-// Keep the existing namespace intact until its separate storage cleanup.
-// Public MCP requests never instantiate this class.
-export class BeUiMcp extends DurableObject<Env> {}
 
 const LANDING = `beUI MCP server
 

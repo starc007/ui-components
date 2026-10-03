@@ -16,7 +16,10 @@
       "id": "5d5d2ca8bdd84c36b6b2ad1fa3d738af"
     }
   ],
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BeUiMcp"] }],
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["BeUiMcp"] },
+    { "tag": "v2-retire-session-storage", "deleted_classes": ["BeUiMcp"] }
+  ],
   // Custom domain. Requires beui.dev's zone on Cloudflare; wrangler provisions
   // the mcp.beui.dev DNS record on deploy.
   "routes": [{ "pattern": "mcp.beui.dev", "custom_domain": true }]
