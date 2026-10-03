@@ -7,15 +7,28 @@ import { Button } from "@/components/motion/button";
 const SIDES = ["top", "bottom", "left", "right"] as const;
 
 const OPTIONS = [
+  { value: "first-light", label: "First light" },
   { value: "dawn", label: "Dawn" },
+  { value: "daybreak", label: "Daybreak" },
+  { value: "sunrise", label: "Sunrise" },
+  { value: "early-morning", label: "Early morning" },
   { value: "morning", label: "Morning" },
+  { value: "late-morning", label: "Late morning" },
   { value: "midday", label: "Midday" },
+  { value: "noon", label: "Noon" },
   { value: "afternoon", label: "Afternoon" },
   { value: "golden-hour", label: "Golden hour" },
+  { value: "sunset", label: "Sunset" },
+  { value: "blue-hour", label: "Blue hour" },
   { value: "dusk", label: "Dusk" },
+  { value: "twilight", label: "Twilight" },
   { value: "evening", label: "Evening" },
+  { value: "nightfall", label: "Nightfall" },
   { value: "night", label: "Night" },
+  { value: "late-night", label: "Late night" },
   { value: "midnight", label: "Midnight" },
+  { value: "deep-night", label: "Deep night" },
+  { value: "starlight", label: "Starlight" },
 ];
 
 export function ArcPickerPreview() {
@@ -39,7 +52,7 @@ export function ArcPickerPreview() {
           </Button>
         ))}
       </fieldset>
-      <div className="flex min-h-88 items-center">
+      <div className="my-8 flex min-h-108 items-center sm:my-10">
         <ArcPicker
           options={OPTIONS}
           value={value}
@@ -47,7 +60,7 @@ export function ArcPickerPreview() {
           aria-label="Time of day"
           side={side}
           radius={260}
-          visibleCount={7}
+          visibleCount={9}
           itemHeight={48}
         />
       </div>
