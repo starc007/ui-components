@@ -64,7 +64,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "arc-picker",
         name: "Arc Picker",
-        description: "Radial text picker with top, bottom, left or right curves, rotating labels, axis-aware drag momentum, wheel scrolling and immediate keyboard selection. Supports disabled choices, controlled or uncontrolled values, form submission and reduced motion.",
+        description: "Radial text picker with top, bottom, left or right curves, live selection on each scroll step and brackets that open slightly with motion. Supports drag momentum, wheel and keyboard input, disabled choices, controlled or uncontrolled values, forms and reduced motion.",
         file: "components/motion/arc-picker.tsx",
         badge: "new",
         launchedAt: "2026-10-04",

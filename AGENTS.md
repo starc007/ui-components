@@ -41,7 +41,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
-| `arc-picker` | `components/motion/arc-picker.tsx` | Radial text picker with top/bottom/left/right curves, rotating labels, axis-aware drag momentum, wheel and immediate keyboard selection, disabled choices, controlled/uncontrolled values and reduced-motion support |
+| `arc-picker` | `components/motion/arc-picker.tsx` | Radial text picker with top/bottom/left/right curves, live selection as labels cross center, expanding selection brackets, drag momentum, wheel and immediate keyboard selection, disabled choices, controlled/uncontrolled values and reduced-motion support |
 | `color-selector` | `components/motion/color-selector.tsx` | Composable native radio color swatches with a gliding selection ring, press feedback, labels, controlled/uncontrolled state, and reduced-motion support |
 | `breadcrumb` | `components/motion/breadcrumb.tsx` | Composable breadcrumb navigation with configurable middle-path collapsing, a hover/click/keyboard overflow dropdown, matching slide-and-fade entrances and exits, router-link render support, custom separators, and reduced-motion safety |
 | `tilt-card` | `components/motion/tilt-card.tsx` | 3D perspective tilt on hover with cursor-tracked glare |

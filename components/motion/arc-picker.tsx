@@ -7,6 +7,7 @@ import {
   type MotionValue,
   useMotionValue,
   useReducedMotion,
+  useSpring,
   useTransform,
 } from "motion/react";
 import {
@@ -20,7 +21,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { SPRING_LAYOUT } from "@/lib/ease";
+import { SPRING_GLIDE, SPRING_LAYOUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type ArcPickerOption = {
@@ -38,6 +39,7 @@ export type ArcPickerProps = Omit<
   options: readonly ArcPickerOption[];
   value?: string;
   defaultValue?: string;
+  /** Called for each enabled choice crossed during scrolling, dragging and momentum. */
   onValueChange?: (value: string) => void;
   /** The side the arc bows toward. Top and bottom scroll horizontally. */
   side?: ArcPickerSide;
@@ -54,6 +56,11 @@ export type ArcPickerProps = Omit<
 // before the shared layout spring settles it, without a long free-running loop.
 const COAST_SECONDS = 0.18;
 const WHEEL_SETTLE_MS = 120;
+// Reserve room for the glyphs and their small outward movement without
+// animating padding or changing any label's measured width.
+const BRACKET_SPACE = 24;
+const BRACKET_GAP = 4;
+const BRACKET_EXPANSION = 6;
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
@@ -61,6 +68,8 @@ function ArcOption({
   option,
   index,
   position,
+  expansion,
+  verticalAnchor,
   radius,
   itemHeight,
   visibleCount,
@@ -73,6 +82,8 @@ function ArcOption({
   option: ArcPickerOption;
   index: number;
   position: MotionValue<number>;
+  expansion: MotionValue<number>;
+  verticalAnchor: number | string;
   radius: number;
   itemHeight: number;
   visibleCount: number;
@@ -83,6 +94,16 @@ function ArcOption({
   onSelect: () => void;
 }) {
   const horizontal = side === "top" || side === "bottom";
+  const leadingBracket = useTransform(
+    expansion,
+    (amount) =>
+      `translate3d(${-BRACKET_GAP - amount * BRACKET_EXPANSION}px, -50%, 0)`,
+  );
+  const trailingBracket = useTransform(
+    expansion,
+    (amount) =>
+      `translate3d(${BRACKET_GAP + amount * BRACKET_EXPANSION}px, -50%, 0)`,
+  );
   const transform = useTransform(position, (at) => {
     const angle = clamp(((index - at) * itemHeight) / radius, -1.5, 1.5);
     const bend = radius * (1 - Math.cos(angle));
@@ -121,25 +142,48 @@ function ArcOption({
       }}
       className={cn(
         "absolute rounded-md px-2 py-1 text-2xl font-light whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-35",
-        horizontal && "overflow-hidden text-ellipsis text-center",
+        horizontal && "text-center",
         !horizontal && (side === "left" ? "text-right" : "text-left"),
         selected ? "text-primary" : "text-muted-foreground",
       )}
       style={{
         top: horizontal ? (side === "top" ? 36 : "calc(100% - 36px)") : "50%",
-        left: horizontal ? "50%" : side === "left" ? "58%" : "42%",
+        left: horizontal ? "50%" : verticalAnchor,
         transformOrigin: horizontal
           ? "center"
           : side === "left"
             ? "right center"
             : "left center",
-        maxWidth: horizontal ? "calc(100% - 2rem)" : undefined,
+        maxWidth: horizontal ? "calc(100% - 4rem)" : "calc(100% - 3rem)",
         transform,
         opacity,
         pointerEvents,
       }}
     >
-      {option.label}
+      <motion.span
+        aria-hidden="true"
+        data-slot="arc-picker-bracket"
+        data-edge="leading"
+        className="pointer-events-none absolute top-1/2 right-full"
+        style={{ transform: leadingBracket, opacity: selected ? 0.85 : 0 }}
+      >
+        [
+      </motion.span>
+      <span
+        data-slot="arc-picker-label"
+        className="block overflow-hidden text-ellipsis"
+      >
+        {option.label}
+      </span>
+      <motion.span
+        aria-hidden="true"
+        data-slot="arc-picker-bracket"
+        data-edge="trailing"
+        className="pointer-events-none absolute top-1/2 left-full"
+        style={{ transform: trailingBracket, opacity: selected ? 0.85 : 0 }}
+      >
+        ]
+      </motion.span>
     </motion.button>
   );
 }
@@ -202,8 +246,22 @@ export function ArcPicker({
   const [measurements, setMeasurements] = useState({ width: 0, labelWidth: 0 });
   const labelsKey = JSON.stringify(options.map((option) => option.label));
   const spacing = horizontal
-    ? Math.max(rowHeight, measurements.labelWidth + 16)
+    ? Math.max(rowHeight, measurements.labelWidth + BRACKET_SPACE * 2)
     : rowHeight;
+  const verticalInset = Math.max(
+    BRACKET_SPACE,
+    Math.min(
+      measurements.width * 0.42,
+      measurements.width - measurements.labelWidth - BRACKET_SPACE,
+    ),
+  );
+  const verticalAnchor = measurements.width
+    ? side === "left"
+      ? measurements.width - verticalInset
+      : verticalInset
+    : side === "left"
+      ? "58%"
+      : "42%";
   const curveRadius = horizontal
     ? Math.max(safeRadius, spacing * 2)
     : safeRadius;
@@ -226,10 +284,13 @@ export function ArcPicker({
     ),
   );
   const position = useMotionValue(selectedIndex);
+  const activity = useMotionValue(0);
+  const expansion = useSpring(activity, SPRING_GLIDE);
   const animation = useRef<AnimationPlaybackControls | null>(null);
   const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reconcileFrame = useRef(0);
   const request = useRef(selectedValue);
+  const tracking = useRef(false);
   const instant = useRef(false);
   const drag = useRef<{
     id: number;
@@ -245,7 +306,14 @@ export function ArcPicker({
   const optionsKey = JSON.stringify(
     options.map((option) => [option.value, !!option.disabled]),
   );
-  const previousOptions = useRef(optionsKey);
+  const configuration = JSON.stringify([
+    optionsKey,
+    side,
+    spacing,
+    disabled,
+    !!reducedMotion,
+  ]);
+  const previousConfiguration = useRef(configuration);
   const latest = useRef({
     options,
     selectedIndex,
@@ -253,7 +321,6 @@ export function ArcPicker({
     controlled,
     disabled,
     reducedMotion,
-    rowHeight,
     spacing,
     horizontal,
     onValueChange,
@@ -266,16 +333,13 @@ export function ArcPicker({
       controlled,
       disabled,
       reducedMotion,
-      rowHeight,
       spacing,
       horizontal,
       onValueChange,
     };
-    request.current = selectedValue;
   });
 
   useLayoutEffect(() => {
-    if (!horizontal) return;
     // Observe untransformed sizes: animated bounds would change the spacing
     // every frame. Font loading and responsive text sizes still trigger this.
     void optionsKey;
@@ -299,7 +363,7 @@ export function ArcPicker({
     for (const button of buttons.current.values()) observer.observe(button);
     measure();
     return () => observer.disconnect();
-  }, [horizontal, optionsKey, labelsKey]);
+  }, [optionsKey, labelsKey]);
 
   const stop = useCallback(() => {
     animation.current?.stop();
@@ -307,48 +371,99 @@ export function ArcPicker({
     if (wheelTimer.current) clearTimeout(wheelTimer.current);
     wheelTimer.current = null;
     cancelAnimationFrame(reconcileFrame.current);
-  }, []);
+    tracking.current = false;
+    activity.set(0);
+    if (latest.current.reducedMotion) expansion.jump(0);
+    const pointer = drag.current;
+    drag.current = null;
+    if (pointer && root.current?.hasPointerCapture(pointer.id))
+      root.current.releasePointerCapture(pointer.id);
+  }, [activity, expansion]);
 
   const settle = useCallback(
     (index: number, immediate = false) => {
       animation.current?.stop();
-      if (immediate || latest.current.reducedMotion) position.jump(index);
-      else animation.current = animate(position, index, SPRING_LAYOUT);
+      const complete = () => {
+        tracking.current = false;
+        animation.current = null;
+        activity.set(0);
+      };
+      if (immediate || latest.current.reducedMotion) {
+        position.jump(index);
+        complete();
+      } else
+        animation.current = animate(position, index, {
+          ...SPRING_LAYOUT,
+          onComplete: complete,
+        });
     },
-    [position],
+    [activity, position],
   );
 
   useLayoutEffect(() => {
-    // Changing sides or measured spacing ends a gesture on its old axis.
-    void side;
-    void spacing;
-    stop();
-    drag.current = null;
-    if (previousOptions.current !== optionsKey) {
-      previousOptions.current = optionsKey;
+    const changed = previousConfiguration.current !== configuration;
+    previousConfiguration.current = configuration;
+    // An accepted live selection must not cancel the gesture or snap its
+    // floating position. External changes still own the control immediately.
+    if (changed || !tracking.current || selectedValue !== request.current) {
+      stop();
+      request.current = selectedValue;
+      settle(selectedIndex, instant.current || disabled || !!reducedMotion);
+    }
+    if (changed) {
       suppressClick.current = false;
     }
-    const index = Math.max(
-      0,
-      latest.current.options.findIndex(
-        (option) => option.value === selectedValue,
-      ),
-    );
-    settle(index, instant.current || disabled || !!reducedMotion);
     instant.current = false;
     if (focusWithin.current && selectedValue !== undefined && !disabled) {
       buttons.current.get(selectedValue)?.focus({ preventScroll: true });
     }
   }, [
     selectedValue,
-    optionsKey,
-    side,
-    spacing,
+    selectedIndex,
+    configuration,
     disabled,
     reducedMotion,
     settle,
     stop,
   ]);
+
+  const publish = useCallback(
+    (index: number, keyboard = false) => {
+      const current = latest.current;
+      const option = current.options[index];
+      if (!option || option.disabled || current.disabled) return;
+      if (option.value === request.current) return;
+      request.current = option.value;
+      if (!current.controlled) setInternalValue(option.value);
+      current.onValueChange?.(option.value);
+      if (!current.controlled) return;
+      cancelAnimationFrame(reconcileFrame.current);
+      // Give React a full frame to commit the consumer's update before checking
+      // for rejection. A same-frame RAF can run before that commit and cancel
+      // an accepted gesture, especially when a detent is crossed inside a RAF.
+      reconcileFrame.current = requestAnimationFrame(() => {
+        reconcileFrame.current = requestAnimationFrame(() => {
+          if (
+            request.current !== option.value ||
+            latest.current.selectedValue === option.value
+          )
+            return;
+          stop();
+          request.current = latest.current.selectedValue;
+          settle(latest.current.selectedIndex, keyboard);
+          if (
+            (keyboard || focusWithin.current) &&
+            latest.current.selectedValue !== undefined
+          ) {
+            buttons.current
+              .get(latest.current.selectedValue)
+              ?.focus({ preventScroll: true });
+          }
+        });
+      });
+    },
+    [settle, stop],
+  );
 
   const select = useCallback(
     (index: number, keyboard = false) => {
@@ -356,33 +471,14 @@ export function ArcPicker({
       const option = current.options[index];
       if (!option || option.disabled || current.disabled) return;
       stop();
-      const previousRequest = request.current;
-      request.current = option.value;
       instant.current = keyboard;
-      if (!current.controlled) setInternalValue(option.value);
-      if (option.value !== previousRequest)
-        current.onValueChange?.(option.value);
-      if (keyboard) {
-        position.jump(index);
+      if (keyboard) expansion.jump(0);
+      publish(index, keyboard);
+      settle(index, keyboard);
+      if (keyboard)
         buttons.current.get(option.value)?.focus({ preventScroll: true });
-      }
-      // Reconcile even if a controlled consumer rejects this request, or the
-      // release lands on the already-selected row and causes no React render.
-      reconcileFrame.current = requestAnimationFrame(() => {
-        request.current = latest.current.selectedValue;
-        settle(latest.current.selectedIndex, keyboard);
-        if (
-          keyboard &&
-          latest.current.selectedValue !== option.value &&
-          latest.current.selectedValue !== undefined
-        ) {
-          buttons.current
-            .get(latest.current.selectedValue)
-            ?.focus({ preventScroll: true });
-        }
-      });
     },
-    [position, settle, stop],
+    [expansion, publish, settle, stop],
   );
 
   const nearestEnabled = useCallback((at: number) => {
@@ -397,6 +493,30 @@ export function ArcPicker({
     return nearest;
   }, []);
 
+  useEffect(
+    () =>
+      position.on("change", (at) => {
+        if (!tracking.current || latest.current.disabled) return;
+        const next = nearestEnabled(at);
+        if (next < 0) return;
+        const previous = latest.current.options.findIndex(
+          (option) => option.value === request.current,
+        );
+        // A large frame delta may cross several detents. Notify each enabled
+        // choice in order; never wait for the wheel-idle timer or pointer release.
+        const step = next > previous ? 1 : -1;
+        if (previous < 0 || previous === next) publish(next);
+        else
+          for (
+            let index = previous + step;
+            step > 0 ? index <= next : index >= next;
+            index += step
+          )
+            publish(index);
+      }),
+    [nearestEnabled, position, publish],
+  );
+
   useEffect(() => {
     const element = root.current;
     if (!element) return;
@@ -405,6 +525,7 @@ export function ArcPicker({
       if (
         current.disabled ||
         event.ctrlKey ||
+        drag.current?.moved ||
         !current.options.some((option) => !option.disabled)
       )
         return;
@@ -420,17 +541,18 @@ export function ArcPicker({
               : element.clientHeight
             : 1);
       if (!delta) return;
-      const last = current.options.length - 1;
+      const enabled = current.options
+        .map((option, index) => ({ option, index }))
+        .filter(({ option }) => !option.disabled);
+      const first = enabled[0]?.index ?? 0;
+      const last = enabled[enabled.length - 1]?.index ?? first;
       const from = position.get();
       // At an end, release wheel events back to the page's own scroll.
-      if ((from <= 0 && delta < 0) || (from >= last && delta > 0)) return;
+      if ((from <= first && delta < 0) || (from >= last && delta > 0)) return;
       event.preventDefault();
       animation.current?.stop();
       if (wheelTimer.current) clearTimeout(wheelTimer.current);
       if (current.reducedMotion) {
-        const enabled = current.options
-          .map((option, index) => ({ option, index }))
-          .filter(({ option }) => !option.disabled);
         const at = enabled.findIndex(
           ({ option }) => option.value === request.current,
         );
@@ -438,11 +560,17 @@ export function ArcPicker({
           enabled[clamp(at + Math.sign(delta), 0, enabled.length - 1)];
         if (next) select(next.index, true);
       } else {
-        position.set(clamp(from + delta / current.spacing, 0, last));
-        wheelTimer.current = setTimeout(
-          () => select(nearestEnabled(position.get())),
-          WHEEL_SETTLE_MS,
-        );
+        instant.current = false;
+        tracking.current = true;
+        activity.set(1);
+        const next = clamp(from + delta / current.spacing, first, last);
+        // Follow the input directly. An extra spring here would delay the
+        // first detent until after a short wheel gesture had already ended.
+        position.set(next);
+        wheelTimer.current = setTimeout(() => {
+          wheelTimer.current = null;
+          settle(nearestEnabled(next));
+        }, WHEEL_SETTLE_MS);
       }
     };
     element.addEventListener("wheel", wheel, { passive: false });
@@ -450,7 +578,7 @@ export function ArcPicker({
       element.removeEventListener("wheel", wheel);
       stop();
     };
-  }, [nearestEnabled, position, select, stop]);
+  }, [activity, nearestEnabled, position, select, settle, stop]);
 
   const keyboard = (event: KeyboardEvent<HTMLDivElement>) => {
     onKeyDown?.(event);
@@ -501,11 +629,14 @@ export function ArcPicker({
       root.current.releasePointerCapture(event.pointerId);
     if (!current.moved) return;
     suppressClick.current = true;
-    if (cancelled) settle(latest.current.selectedIndex);
-    else {
+    if (cancelled) {
+      tracking.current = false;
+      activity.set(0);
+      settle(latest.current.selectedIndex);
+    } else {
       const velocity =
         performance.now() - current.time > 100 ? 0 : current.velocity;
-      select(
+      settle(
         nearestEnabled(
           position.get() + (reducedMotion ? 0 : velocity * COAST_SECONDS),
         ),
@@ -581,6 +712,9 @@ export function ArcPicker({
         const delta = coordinate - current.coordinate;
         if (!current.moved && Math.abs(delta) < 6) return;
         current.moved = true;
+        tracking.current = true;
+        instant.current = false;
+        activity.set(reducedMotion ? 0 : 1);
         root.current?.setPointerCapture(event.pointerId);
         const now = performance.now();
         const elapsed = Math.max(8, now - current.time);
@@ -637,6 +771,8 @@ export function ArcPicker({
           option={option}
           index={index}
           position={position}
+          expansion={expansion}
+          verticalAnchor={verticalAnchor}
           radius={curveRadius}
           itemHeight={spacing}
           visibleCount={shownCount}

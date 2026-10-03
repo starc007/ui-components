@@ -22,6 +22,11 @@ test("arc picker names its choices and exposes one selected tab stop immediately
     />,
   );
   const selected = getByRole("radio", { name: "Bright" });
+  expect(
+    selected.querySelectorAll(
+      '[data-slot="arc-picker-bracket"][aria-hidden="true"]',
+    ).length,
+  ).toBe(2);
   expect(selected.getAttribute("aria-checked")).toBe("true");
   expect(selected.tabIndex).toBe(0);
   expect(getByRole("radio", { name: "Quiet" }).tabIndex).toBe(-1);
