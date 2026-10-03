@@ -2,7 +2,9 @@
 
 Remote [MCP](https://modelcontextprotocol.io) server for the beUI component registries, running on a Cloudflare Worker. It lets AI agents discover, inspect, and install both free beUI components and licensed beUI Pro blocks.
 
-It owns no data — it reads the live `beui.dev/r/*` registry endpoints at runtime (edge-cached), so new components appear without redeploying the worker.
+The free tools read the live `beui.dev/r/*` registry endpoints at runtime
+(edge-cached), so new components appear without redeploying the worker. Each
+request gets a fresh MCP server, with no persistent MCP session state.
 
 ## Connect
 
@@ -12,7 +14,9 @@ Add to your MCP client (Claude Desktop, Cursor, etc.):
 https://mcp.beui.dev/mcp
 ```
 
-Streamable HTTP is recommended. An SSE endpoint (`/sse`) exists for legacy clients.
+Use Streamable HTTP. The legacy `/sse` endpoint and its message routes have been
+removed and return `410`. Clients configured for SSE must switch their transport
+to Streamable HTTP and use `/mcp`. Standalone GET streams at `/mcp` return `405`.
 
 ## Connect to beUI Pro
 
@@ -78,3 +82,14 @@ bun run deploy
 Requires `beui.dev` on Cloudflare. Wrangler provisions the `mcp.beui.dev` custom domain on first deploy (see `routes` in `wrangler.jsonc`). To point at a different registry, set the `REGISTRY_URL` var.
 
 OAuth also requires the `OAUTH_KV` namespace configured in `wrangler.jsonc`.
+
+## Retiring the old session storage
+
+`BeUiMcp` remains exported with its migration history only to preserve the old
+namespace until its separate cleanup. The Worker no longer has a Durable Object
+binding, and no public route creates Durable Objects. Existing storage continues to be billed
+until the namespace is removed.
+
+After verifying the stateless deployment, retire the namespace with a separate
+Durable Object delete migration. That permanently deletes its session databases;
+it does not affect the Pro OAuth KV namespace.

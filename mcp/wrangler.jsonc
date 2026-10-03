@@ -16,9 +16,6 @@
       "id": "5d5d2ca8bdd84c36b6b2ad1fa3d738af"
     }
   ],
-  "durable_objects": {
-    "bindings": [{ "name": "BeUiMcp", "class_name": "BeUiMcp" }]
-  },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BeUiMcp"] }],
   // Custom domain. Requires beui.dev's zone on Cloudflare; wrangler provisions
   // the mcp.beui.dev DNS record on deploy.
