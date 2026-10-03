@@ -62,7 +62,7 @@ export function VoiceOrb({
   const transform = useTransform(
     smooth,
     (value) =>
-      `translate3d(0, ${-value * 3}px, 0) scale(${1 + value * 0.025}, ${1 - value * 0.014})`,
+      `translate3d(0, ${-value * 2}px, 0) scale(${1 + value * 0.04}, ${1 - value * 0.018})`,
   );
   const latest = useRef({
     activity,
@@ -103,6 +103,11 @@ export function VoiceOrb({
     });
   }, [activity, target]);
 
+  useEffect(
+    () => smooth.on("change", () => renderer.current?.requestDraw()),
+    [smooth],
+  );
+
   useEffect(() => {
     const element = canvas.current;
     if (!element) return;
@@ -117,11 +122,6 @@ export function VoiceOrb({
         element,
         () => {
           const current = latest.current;
-          let activityLevel = level(
-            isMotionValue(current.activity)
-              ? current.activity.get()
-              : current.activity,
-          );
           if (current.analyser && current.active && !current.reducedMotion) {
             if (
               audioSource !== current.analyser ||
@@ -136,13 +136,14 @@ export function VoiceOrb({
               current.analyser.getByteTimeDomainData(sample);
               let sum = 0;
               for (const byte of sample) sum += ((byte - 128) / 128) ** 2;
-              activityLevel = level(Math.sqrt(sum / sample.length) * 3);
-              target.set(activityLevel);
+              target.set(level(Math.sqrt(sum / sample.length) * 3));
             }
           }
           return {
             activity:
-              current.active && !current.reducedMotion ? activityLevel : 0,
+              current.active && !current.reducedMotion
+                ? level(smooth.get())
+                : 0,
             colors: current.colors,
             speed: Number.isFinite(current.speed)
               ? Math.max(0, current.speed)
@@ -162,7 +163,7 @@ export function VoiceOrb({
       renderer.current?.dispose();
       renderer.current = null;
     };
-  }, [target]);
+  }, [smooth, target]);
 
   return (
     <div

@@ -1166,7 +1166,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "voice-orb",
         name: "Voice Orb",
-        description: "Liquid voice visualization with a glossy, grainy shader surface, custom pigments and subtle activity response. Accepts a normalized level, MotionValue or caller-owned audio analyser, pauses offscreen and supports reduced motion.",
+        description: "Breathing liquid voice visualization with flowing highlights, custom pigments and a soft, voice-reactive silhouette. Accepts a normalized level, MotionValue or caller-owned audio analyser, pauses offscreen and supports reduced motion.",
         file: "components/agents/voice-orb.tsx",
         badge: "new",
         launchedAt: "2026-10-04",
