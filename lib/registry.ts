@@ -62,6 +62,15 @@ export const registry: CategoryEntry[] = [
       "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
+        slug: "arc-picker",
+        name: "Arc Picker",
+        description: "Radial text picker with top, bottom, left or right curves, smooth wheel movement and live selection on each scroll step. One persistent bracket frame grows and squeezes around each label. Supports drag momentum, keyboard input, disabled choices, controlled or uncontrolled values, forms and reduced motion.",
+        file: "components/motion/arc-picker.tsx",
+        badge: "new",
+        launchedAt: "2026-10-04",
+        keywords: ["radial picker", "arc picker", "curved text scroller", "semicircle picker", "momentum selection"],
+      },
+      {
         slug: "sortable-stack",
         name: "Sortable List",
         description: "Composable sortable list with group, item, drag handle, content and undo parts, plus a shared state hook. Spring layout, keyboard reordering, accessible position announcements, and controlled or uncontrolled items.",
@@ -1154,6 +1163,15 @@ export const registry: CategoryEntry[] = [
     description:
       "Animated React components for agent reasoning, progress, tool activity, and conversational AI interfaces.",
     components: [
+      {
+        slug: "voice-orb",
+        name: "Voice Orb",
+        description: "Breathing liquid voice visualization with flowing highlights, custom pigments and a soft, voice-reactive silhouette. Accepts a normalized level, MotionValue or caller-owned audio analyser, pauses offscreen and supports reduced motion.",
+        file: "components/agents/voice-orb.tsx",
+        badge: "new",
+        launchedAt: "2026-10-04",
+        keywords: ["voice orb", "audio visualization", "liquid orb", "voice activity", "webgl sphere"],
+      },
       {
         slug: "message-bubble",
         name: "Message Bubble",
