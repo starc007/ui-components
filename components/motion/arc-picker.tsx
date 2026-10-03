@@ -613,7 +613,6 @@ export function ArcPicker({
       // At an end, release wheel events back to the page's own scroll.
       if ((from <= first && delta < 0) || (from >= last && delta > 0)) return;
       event.preventDefault();
-      animation.current?.stop();
       if (wheelTimer.current) clearTimeout(wheelTimer.current);
       if (current.reducedMotion) {
         const at = enabled.findIndex(
@@ -623,14 +622,19 @@ export function ArcPicker({
           enabled[clamp(at + Math.sign(delta), 0, enabled.length - 1)];
         if (next) select(next.index, true);
       } else {
+        if (wheelTarget.current === null) {
+          animation.current?.stop();
+          animation.current = null;
+        }
         instant.current = false;
         tracking.current = true;
         activity.set(1);
         const next = clamp(from + delta / current.spacing, first, last);
-        // Accumulate input separately so retargeting the glide cannot lose
-        // wheel deltas between frames. Selection still follows the visible arc.
+        // Wheel deltas already contain trackpad momentum. Follow them directly;
+        // useTransform coalesces visual writes to one per frame. A spring here
+        // lags behind frequent input and can feel stuck until scrolling stops.
         wheelTarget.current = next;
-        animation.current = animate(position, next, SPRING_GLIDE);
+        position.set(next);
         wheelTimer.current = setTimeout(() => {
           wheelTimer.current = null;
           wheelTarget.current = null;
