@@ -5,6 +5,8 @@
  * maintenance should not refresh every component's public update date.
  */
 const COMPONENT_DATES = {
+  "motion/arc-picker": { publishedAt: "2026-10-04", updatedAt: "2026-10-04" },
+  "agents/voice-orb": { publishedAt: "2026-10-04", updatedAt: "2026-10-04" },
   "motion/sortable-stack": { publishedAt: "2026-10-02", updatedAt: "2026-10-02" },
   "motion/morphing-lightbox": { publishedAt: "2026-10-02", updatedAt: "2026-10-02" },
   "motion/image-viewer": { publishedAt: "2026-10-02", updatedAt: "2026-10-02" },

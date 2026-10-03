@@ -41,6 +41,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
+| `arc-picker` | `components/motion/arc-picker.tsx` | Radial text picker with rotating arc labels, drag momentum, wheel and immediate keyboard selection, disabled choices, controlled/uncontrolled values and reduced-motion support |
 | `color-selector` | `components/motion/color-selector.tsx` | Composable native radio color swatches with a gliding selection ring, press feedback, labels, controlled/uncontrolled state, and reduced-motion support |
 | `breadcrumb` | `components/motion/breadcrumb.tsx` | Composable breadcrumb navigation with configurable middle-path collapsing, a hover/click/keyboard overflow dropdown, matching slide-and-fade entrances and exits, router-link render support, custom separators, and reduced-motion safety |
 | `tilt-card` | `components/motion/tilt-card.tsx` | 3D perspective tilt on hover with cursor-tracked glare |
@@ -101,6 +102,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
+| `voice-orb` | `components/agents/voice-orb.tsx` + `voice-orb/` | Grainy liquid shader sphere with custom pigments and voice activity response from a level, MotionValue or caller-owned audio analyser; pauses offscreen, supports reduced motion and surfaces renderer errors |
 | `chat-app` | `components/agents/chat-app.tsx` | Composable agent workspace shell (`ChatApp`) backed by the animated sidebar provider; its complete usage example combines navigation, messages, streaming, planning, approvals, tool results, code, diffs, generated media, sources, and prompt input |
 | `ai-sidebar` | `components/agents/ai-sidebar.tsx` | Collapsible AI workspace sidebar (`AISidebar`) for folders, projects, files, and bookmarks with full-row drag and keyboard moves, optimistic rollback, inline rename, persistent menu hover, open-folder icons, and overflow-only marquee labels |
 | `message-bubble` | `components/agents/message-bubble.tsx` | Focused conversational surface (`MessageBubble`) with six visual treatments, independent alignment, an opt-in mount-only surface pop, compact grouping, polymorphic links/buttons, and `MessageBubbleCollapsible` for long responses; streaming geometry updates immediately |
