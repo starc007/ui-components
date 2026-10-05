@@ -5,6 +5,9 @@
  * maintenance should not refresh every component's public update date.
  */
 const COMPONENT_DATES = {
+  "motion/alert": { publishedAt: "2026-10-05", updatedAt: "2026-10-05" },
+  "motion/collapsible": { publishedAt: "2026-10-05", updatedAt: "2026-10-05" },
+  "motion/aspect-ratio": { publishedAt: "2026-10-05", updatedAt: "2026-10-05" },
   "motion/arc-picker": { publishedAt: "2026-10-04", updatedAt: "2026-10-04" },
   "agents/voice-orb": { publishedAt: "2026-10-04", updatedAt: "2026-10-04" },
   "motion/sortable-stack": { publishedAt: "2026-10-02", updatedAt: "2026-10-02" },
@@ -28,7 +31,7 @@ const COMPONENT_DATES = {
     updatedAt: "2026-09-22",
   },
   "motion/marquee": { publishedAt: "2026-05-17", updatedAt: "2026-07-04" },
-  "motion/tabs": { publishedAt: "2026-05-17", updatedAt: "2026-09-18" },
+  "motion/tabs": { publishedAt: "2026-05-17", updatedAt: "2026-10-05" },
   "motion/switch": { publishedAt: "2026-05-17", updatedAt: "2026-06-10" },
   "motion/input": { publishedAt: "2026-06-29", updatedAt: "2026-08-28" },
   "motion/select": { publishedAt: "2026-06-28", updatedAt: "2026-07-13" },
@@ -67,8 +70,8 @@ const COMPONENT_DATES = {
   "motion/range-slider": { publishedAt: "2026-06-24", updatedAt: "2026-09-09" },
   "motion/wheel-picker": { publishedAt: "2026-07-09", updatedAt: "2026-07-09" },
   "motion/table": { publishedAt: "2026-07-01", updatedAt: "2026-09-22" },
-  "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-09-11" },
-  "motion/cylinder-carousel": { publishedAt: "2026-07-04", updatedAt: "2026-09-11" },
+  "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-10-05" },
+  "motion/cylinder-carousel": { publishedAt: "2026-07-04", updatedAt: "2026-10-05" },
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
   "charts/composition-chart": { publishedAt: "2026-09-25", updatedAt: "2026-09-25" },
   "charts/funnel-chart": { publishedAt: "2026-09-20", updatedAt: "2026-09-25" },
@@ -162,7 +165,7 @@ const COMPONENT_DATES = {
   "blocks/morphing-tabs": { publishedAt: "2026-08-06", updatedAt: "2026-08-06" },
   "blocks/swipeable-list": { publishedAt: "2026-06-15", updatedAt: "2026-06-28" },
   "blocks/file-upload": { publishedAt: "2026-06-18", updatedAt: "2026-09-25" },
-  "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-09-25" },
+  "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-10-05" },
   "blocks/wallet-card": { publishedAt: "2026-07-03", updatedAt: "2026-09-22" },
   "blocks/otp-input": { publishedAt: "2026-06-13", updatedAt: "2026-07-13" },
   "blocks/signup-form": { publishedAt: "2026-08-08", updatedAt: "2026-09-22" },

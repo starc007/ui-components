@@ -151,7 +151,7 @@ export function SidebarCategoryTabs({
     <motion.section
       layoutRoot
       aria-label="Filter navigation by category"
-      className="bg-background pb-4"
+      className="bg-background pb-3"
       onKeyDown={(event) => {
         if (!(event.target instanceof HTMLButtonElement) || event.target.getAttribute("role") !== "tab") return;
         const tabs = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
@@ -206,7 +206,7 @@ function moveNewItemsToTop<
 
 function linkClass(active: boolean) {
   return cn(
-    "relative block rounded-lg px-3 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+    "relative block rounded-lg px-2.5 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:py-1",
     active
       ? "text-foreground font-medium bg-foreground/[0.06]"
       : "text-muted-foreground hover:text-foreground",
@@ -239,7 +239,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     : INTRO;
 
   return (
-    <nav aria-label="Browse components" className="flex flex-col gap-8">
+    <nav aria-label="Browse components" className="flex flex-col gap-6">
       {!isCharts ? (
         <div className="sticky -top-6 z-20 -mt-6 -mb-4 bg-background pt-6">
           <SidebarCategoryTabs
@@ -257,10 +257,10 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
       <div
         id={panelId}
         {...(isCharts ? {} : { role: "tabpanel", "aria-labelledby": `${tabsId}-${categoryFilter}` })}
-        className="flex flex-col gap-8"
+        className="flex flex-col gap-6"
       >
         <div hidden={!isCharts && categoryFilter !== "all"}>
-          <p className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Intro
           </p>
           <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
@@ -279,7 +279,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
         </div>
         {!isCharts ? (
           <div hidden={categoryFilter !== "all"}>
-            <p className="mb-2 block px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Guides
             </p>
             <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
@@ -303,7 +303,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               href={categoryPath(cat.slug)}
               prefetch={false}
               onClick={onNavigate}
-              className="mb-2 flex items-center gap-2 rounded-md px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+              className="mb-1.5 flex items-center gap-2 rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
             >
               {cat.name}
               <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground">

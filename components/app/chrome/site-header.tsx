@@ -14,6 +14,7 @@ import { RainbowCta } from "@/components/app/rainbow-cta";
 import { SiteSearch } from "@/components/app/chrome/site-search";
 import { ThemeToggle } from "@/components/app/chrome/theme-toggle";
 import { Tooltip } from "@/components/motion/tooltip";
+import { hasSiteSidebar } from "@/lib/component-paths";
 import { cn } from "@/lib/utils";
 
 function formatStarCount(count: number) {
@@ -43,6 +44,7 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const { setPanelOpen } = usePreferences();
   const pathname = usePathname();
+  const sidebarPage = hasSiteSidebar(pathname);
   const isComponents = pathname.startsWith("/components/motion");
   const isBlocks = pathname.startsWith("/components/blocks");
   const isAgents = pathname.startsWith("/components/agents");
@@ -84,11 +86,12 @@ export function SiteHeader() {
             />
             <span>beUI</span>
           </Link>
-          <nav className="hidden items-center gap-0.5 xl:flex">
+          <nav className={cn("hidden items-center gap-0.5", sidebarPage ? "md:flex" : "xl:flex")}>
             <Link
               href="/components/motion"
               className={cn(
                 "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                isCharts ? "inline-flex" : "hidden xl:inline-flex",
                 isComponents
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -99,7 +102,7 @@ export function SiteHeader() {
             <Link
               href="/components/blocks"
               className={cn(
-                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                "hidden rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3 xl:inline-flex",
                 isBlocks
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -110,7 +113,7 @@ export function SiteHeader() {
             <Link
               href="/components/agents"
               className={cn(
-                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                "hidden rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3 xl:inline-flex",
                 isAgents
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -122,6 +125,7 @@ export function SiteHeader() {
               href="/charts"
               className={cn(
                 "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                isCharts ? "hidden xl:inline-flex" : "inline-flex",
                 isCharts
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
