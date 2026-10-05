@@ -62,6 +62,15 @@ export const registry: CategoryEntry[] = [
       "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
+        slug: "collapsible",
+        name: "Animated Collapsible",
+        description: "Expandable content with a smooth reveal.",
+        file: "components/motion/collapsible.tsx",
+        badge: "new",
+        launchedAt: "2026-10-05",
+        keywords: ["collapsible", "disclosure", "expandable content", "animated collapse"],
+      },
+      {
         slug: "aspect-ratio",
         name: "Aspect Ratio",
         description: "Responsive media with smooth aspect ratio transitions.",
