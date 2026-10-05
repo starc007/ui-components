@@ -66,6 +66,7 @@ export const registry: CategoryEntry[] = [
         name: "Animated Collapsible",
         description: "Expandable content with a smooth reveal.",
         file: "components/motion/collapsible.tsx",
+        usageFile: "components/previews/motion/collapsible.usage.tsx",
         badge: "new",
         launchedAt: "2026-10-05",
         keywords: ["collapsible", "disclosure", "expandable content", "animated collapse"],

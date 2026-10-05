@@ -41,7 +41,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | slug | file | what it does |
 |---|---|---|
-| `collapsible` | `components/motion/collapsible.tsx` | Composable disclosure with `CollapsibleTrigger`, `CollapsibleContent` and `CollapsibleIndicator`; spring layout reveal, persistent content, controlled/uncontrolled state, disabled controls, focus handoff and reduced-motion support |
+| `collapsible` | `components/motion/collapsible.tsx` | Composable disclosure with trigger, content, optional indicator and `useCollapsible` state/actions; custom button rendering, independent surface/content layouts, spring reveal, persistent content, controlled/uncontrolled state, disabled controls, focus handoff and reduced-motion support |
 | `aspect-ratio` | `components/motion/aspect-ratio.tsx` | Responsive `AspectRatio` frame and `AspectRatioImage` with synchronized spring layout morphs, uniform image scaling and cover cropping; any positive ratio, refs, custom content, animation opt-out and reduced-motion support |
 | `arc-picker` | `components/motion/arc-picker.tsx` | Radial text picker with top/bottom/left/right curves, live selection as labels cross center, one persistent bracket frame that morphs to each label, smooth wheel movement, drag momentum and immediate keyboard selection, disabled choices, controlled/uncontrolled values and reduced-motion support |
 | `color-selector` | `components/motion/color-selector.tsx` | Composable native radio color swatches with a gliding selection ring, press feedback, labels, controlled/uncontrolled state, and reduced-motion support |
