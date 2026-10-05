@@ -11,6 +11,7 @@ import { registry } from "@/lib/registry";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import { ExpandableButton } from "@/components/motion/expandable-control";
+import { Tooltip } from "@/components/motion/tooltip";
 import { isComponentNew } from "@/lib/component-status";
 import { cn } from "@/lib/utils";
 
@@ -54,6 +55,8 @@ export function SidebarCategoryTabs({
   id: string;
   panelId: string;
 }) {
+  const [tooltip, setTooltip] = useState<string | null>(null);
+
   return (
     <section
       aria-label="Filter navigation by category"
@@ -82,28 +85,45 @@ export function SidebarCategoryTabs({
           layoutRoot
           role="tablist"
           aria-label="Component categories"
-          className="flex min-h-8 items-center gap-1"
+          className="flex min-h-9 items-center justify-between gap-0.5 rounded-full bg-muted p-0.5"
         >
           {CATEGORY_FILTERS.map(({ value: filterValue, label, icon: Icon }) => (
-            <ExpandableButton
+            <Tooltip
               key={filterValue}
-              id={`${id}-${filterValue}`}
-              role="tab"
-              aria-selected={value === filterValue}
-              aria-controls={panelId}
-              tabIndex={value === filterValue ? 0 : -1}
-              expanded={value === filterValue}
-              label={label}
-              icon={<Icon aria-hidden="true" className="size-4" />}
-              title={value === filterValue ? undefined : label}
-              onClick={() => onValueChange(filterValue)}
-              className={cn(
-                "h-8 min-w-8 border-0 p-0 text-xs focus-visible:ring-foreground/40 [&>span:first-child]:size-8 [&>span:nth-child(2)]:pr-2",
-                value === filterValue
-                  ? "bg-foreground/[0.07] text-foreground"
-                  : "text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
-              )}
-            />
+              content={label}
+              side="bottom"
+              open={value !== filterValue && tooltip === filterValue}
+              onOpenChange={(open) => {
+                setTooltip((current) =>
+                  open && value !== filterValue
+                    ? filterValue
+                    : current === filterValue
+                      ? null
+                      : current,
+                );
+              }}
+            >
+              <ExpandableButton
+                id={`${id}-${filterValue}`}
+                role="tab"
+                aria-selected={value === filterValue}
+                aria-controls={panelId}
+                tabIndex={value === filterValue ? 0 : -1}
+                expanded={value === filterValue}
+                label={label}
+                icon={<Icon aria-hidden="true" className="size-4" />}
+                onClick={() => {
+                  setTooltip(null);
+                  onValueChange(filterValue);
+                }}
+                className={cn(
+                  "h-8 min-w-8 border-0 p-0 text-xs focus-visible:ring-foreground/40 [&>span:first-child]:size-8 [&>span:nth-child(2)]:pr-2",
+                  value === filterValue
+                    ? "bg-background text-foreground"
+                    : "text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
+                )}
+              />
+            </Tooltip>
           ))}
         </motion.div>
       </LayoutGroup>

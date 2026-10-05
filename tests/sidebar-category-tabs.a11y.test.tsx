@@ -1,5 +1,5 @@
 import { afterEach, expect, test } from "bun:test";
-import { act, cleanup, fireEvent, render } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { useState } from "react";
 import { SidebarCategoryTabs } from "@/components/app/chrome/site-sidebar";
@@ -48,4 +48,18 @@ test("arrow and boundary keys move category selection and focus together", async
   await act(async () => { fireEvent.keyDown(blocks, { key: "Home" }); });
   expect(document.activeElement).toBe(all);
   expect(all.getAttribute("aria-selected")).toBe("true");
+});
+
+test("inactive icon tabs expose a tooltip description that clears on selection", async () => {
+  const { container, getByRole, queryByRole } = render(<CategoryTabs />);
+  const agents = getByRole("tab", { name: "Agents" });
+  await act(async () => { agents.focus(); });
+  await waitFor(() => expect(getByRole("tooltip").textContent).toBe("Agents"));
+  expect(agents.getAttribute("aria-describedby")).toBe(getByRole("tooltip").id);
+  expect((await axe(container)).violations).toEqual([]);
+  expect((await axe(getByRole("tooltip"))).violations).toEqual([]);
+  await act(async () => { fireEvent.click(agents); });
+  expect(agents.getAttribute("aria-selected")).toBe("true");
+  expect(agents.getAttribute("aria-describedby")).toBeNull();
+  await waitFor(() => expect(queryByRole("tooltip")).toBeNull());
 });
