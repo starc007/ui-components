@@ -5,14 +5,15 @@ import { categoryPath, componentPath } from "@/lib/component-paths";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Blocks, Bot, LayoutGrid, Shapes } from "lucide-react";
-import { LayoutGroup, motion } from "motion/react";
-import { useId, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
 import { registry } from "@/lib/registry";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
-import { ExpandableButton } from "@/components/motion/expandable-control";
+import { Button } from "@/components/motion/button";
 import { Tooltip } from "@/components/motion/tooltip";
 import { isComponentNew } from "@/lib/component-status";
+import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 const INTRO = [
@@ -44,6 +45,95 @@ const CATEGORY_FILTERS = [
   { value: "blocks", label: "Blocks", icon: Blocks },
 ] as const;
 
+function SidebarCategoryTab({
+  filter: { value: filterValue, label, icon: Icon },
+  value,
+  onValueChange,
+  id,
+  panelId,
+}: {
+  filter: (typeof CATEGORY_FILTERS)[number];
+  value: string;
+  onValueChange: (value: string) => void;
+  id: string;
+  panelId: string;
+}) {
+  const reduce = useReducedMotion();
+  const active = value === filterValue;
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const activeRef = useRef(active);
+  useLayoutEffect(() => { activeRef.current = active; }, [active]);
+  // Focus can schedule a tooltip before the click selects this tab. Ignore
+  // that delayed request once its label is visible, without rerendering the rail.
+  const onTooltipOpenChange = useCallback((open: boolean) => {
+    if (open && activeRef.current) return;
+    setTooltipOpen(open);
+  }, []);
+
+  return (
+    <Tooltip
+      content={label}
+      side="bottom"
+      open={!active && tooltipOpen}
+      onOpenChange={onTooltipOpenChange}
+      wrapperClassName="shrink-0"
+    >
+      <Button
+        id={`${id}-${filterValue}`}
+        variant="ghost"
+        size="sm"
+        role="tab"
+        aria-label={label}
+        aria-selected={active}
+        aria-controls={panelId}
+        tabIndex={active ? 0 : -1}
+        layout
+        layoutDependency={value}
+        transition={{ layout: reduce ? { duration: 0 } : SPRING_LAYOUT, scale: SPRING_PRESS }}
+        whileHover={undefined}
+        whileTap={reduce ? undefined : { scale: 0.97 }}
+        style={{ borderRadius: 9999 }}
+        onClick={() => {
+          setTooltipOpen(false);
+          onValueChange(filterValue);
+        }}
+        className={cn(
+          "relative h-8 min-w-8 justify-start gap-0 overflow-hidden border-0 p-0 text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground/40",
+          active
+            ? "bg-background text-foreground hover:bg-background"
+            : "text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
+        )}
+      >
+        <motion.span
+          layout="position"
+          layoutDependency={value}
+          transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
+          className="grid size-8 shrink-0 place-items-center"
+          aria-hidden="true"
+        >
+          <Icon className="size-4" />
+        </motion.span>
+        {/* Keep the label mounted so an interrupted exit cannot remove a reselected label. */}
+        <motion.span
+          layout="position"
+          layoutDependency={value}
+          aria-hidden="true"
+          initial={false}
+          animate={{ opacity: active ? 1 : 0, filter: reduce || active ? "blur(0px)" : "blur(4px)" }}
+          transition={{
+            layout: reduce ? { duration: 0 } : SPRING_LAYOUT,
+            opacity: { duration: active ? 0.18 : 0.1, ease: EASE_OUT },
+            filter: { duration: active ? 0.18 : 0.1, ease: EASE_OUT },
+          }}
+          className={cn("inline-flex shrink-0 overflow-hidden whitespace-nowrap", active ? "w-auto pr-2" : "w-0")}
+        >
+          {label}
+        </motion.span>
+      </Button>
+    </Tooltip>
+  );
+}
+
 export function SidebarCategoryTabs({
   value,
   onValueChange,
@@ -55,10 +145,11 @@ export function SidebarCategoryTabs({
   id: string;
   panelId: string;
 }) {
-  const [tooltip, setTooltip] = useState<string | null>(null);
+  const reduce = useReducedMotion();
 
   return (
-    <section
+    <motion.section
+      layoutRoot
       aria-label="Filter navigation by category"
       className="bg-background pb-4"
       onKeyDown={(event) => {
@@ -80,54 +171,27 @@ export function SidebarCategoryTabs({
         target.click();
       }}
     >
-      <LayoutGroup id={id}>
-        <motion.div
-          layoutRoot
-          role="tablist"
-          aria-label="Component categories"
-          className="flex min-h-9 items-center justify-between gap-0.5 rounded-full bg-muted p-0.5"
-        >
-          {CATEGORY_FILTERS.map(({ value: filterValue, label, icon: Icon }) => (
-            <Tooltip
-              key={filterValue}
-              content={label}
-              side="bottom"
-              open={value !== filterValue && tooltip === filterValue}
-              onOpenChange={(open) => {
-                setTooltip((current) =>
-                  open && value !== filterValue
-                    ? filterValue
-                    : current === filterValue
-                      ? null
-                      : current,
-                );
-              }}
-            >
-              <ExpandableButton
-                id={`${id}-${filterValue}`}
-                role="tab"
-                aria-selected={value === filterValue}
-                aria-controls={panelId}
-                tabIndex={value === filterValue ? 0 : -1}
-                expanded={value === filterValue}
-                label={label}
-                icon={<Icon aria-hidden="true" className="size-4" />}
-                onClick={() => {
-                  setTooltip(null);
-                  onValueChange(filterValue);
-                }}
-                className={cn(
-                  "h-8 min-w-8 border-0 p-0 text-xs focus-visible:ring-foreground/40 [&>span:first-child]:size-8 [&>span:nth-child(2)]:pr-2",
-                  value === filterValue
-                    ? "bg-background text-foreground"
-                    : "text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
-                )}
-              />
-            </Tooltip>
-          ))}
-        </motion.div>
-      </LayoutGroup>
-    </section>
+      <motion.div
+        layout
+        layoutDependency={value}
+        transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
+        style={{ borderRadius: 9999 }}
+        role="tablist"
+        aria-label="Component categories"
+        className="inline-flex min-h-9 items-center gap-1 rounded-full bg-muted p-0.5"
+      >
+        {CATEGORY_FILTERS.map((filter) => (
+          <SidebarCategoryTab
+            key={filter.value}
+            filter={filter}
+            value={value}
+            onValueChange={onValueChange}
+            id={id}
+            panelId={panelId}
+          />
+        ))}
+      </motion.div>
+    </motion.section>
   );
 }
 
