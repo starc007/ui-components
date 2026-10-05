@@ -40,11 +40,11 @@ export function useAlert(): AlertState {
 }
 
 const VARIANT_CLASS: Record<AlertVariant, string> = {
-  default: "border-border bg-background text-foreground",
-  info: "border-primary/20 bg-primary/5 text-primary",
-  success: "border-emerald-500/25 bg-emerald-500/5 text-emerald-700 dark:text-emerald-400",
-  warning: "border-amber-500/25 bg-amber-500/5 text-amber-800 dark:text-amber-300",
-  destructive: "border-destructive/25 bg-destructive/5 text-destructive",
+  default: "bg-background text-foreground",
+  info: "bg-primary/5 text-primary",
+  success: "bg-emerald-500/5 text-emerald-700 dark:text-emerald-400",
+  warning: "bg-amber-500/5 text-amber-800 dark:text-amber-300",
+  destructive: "bg-destructive/5 text-destructive",
 };
 
 const VARIANT_ICON = {
@@ -144,7 +144,7 @@ export function Alert({
                 layout={!reduce}
                 transition={{ opacity: { duration: 0.18, ease: EASE_OUT }, transform: { duration: 0.2, ease: EASE_OUT }, layout: SPRING_LAYOUT }}
                 style={{ ...style, ...gate.style, originY: 0, transitionTimingFunction: EASE_OUT_CSS }}
-                className={cn("relative w-full rounded-xl border p-4 text-sm transition-colors duration-200", VARIANT_CLASS[variant], className)}
+                className={cn("relative w-full rounded-xl p-4 text-sm transition-colors duration-200", VARIANT_CLASS[variant], className)}
               >
                 <motion.div
                   layout={reduce ? false : "position"}
