@@ -7,12 +7,14 @@ import { useEffect, useState } from "react";
 import { SidebarNav } from "@/components/app/chrome/site-sidebar";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { Button } from "@/components/motion/button";
+import { hasSiteSidebar } from "@/lib/component-paths";
 import { cn } from "@/lib/utils";
 
 /** Mobile nav: a header hamburger that opens the sidebar list in beUI's own bottom sheet. */
 export function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const sidebarPage = hasSiteSidebar(pathname);
 
   // Covers navigation that doesn't go through a sheet link (back/forward).
   // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger — close the sheet on any route change.
@@ -20,8 +22,19 @@ export function MobileNav() {
     setOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!open) return;
+    const desktop = window.matchMedia(sidebarPage ? "(min-width: 768px)" : "(min-width: 1280px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    closeOnDesktop();
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, [open, sidebarPage]);
+
   return (
-    <div className="xl:hidden">
+    <div className={sidebarPage ? "md:hidden" : "xl:hidden"}>
       <Button
         variant="ghost"
         size="icon"

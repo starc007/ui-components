@@ -6,12 +6,11 @@ import { SiteSidebar } from "@/components/app/chrome/site-sidebar";
 import { PageTransition } from "@/components/app/chrome/page-transition";
 import { ThreeColumnLayout } from "@/components/app/chrome/three-column-layout";
 import { RightSidebar } from "@/components/app/chrome/right-sidebar";
-
-const SIDEBAR_PATHS = ["/components", "/docs", "/charts"];
+import { hasSiteSidebar } from "@/lib/component-paths";
 
 export function SiteFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const showSidebar = SIDEBAR_PATHS.some((p) => pathname.startsWith(p));
+  const showSidebar = hasSiteSidebar(pathname);
 
   if (!showSidebar) {
     return <PageTransition>{children}</PageTransition>;
