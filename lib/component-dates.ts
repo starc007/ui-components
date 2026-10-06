@@ -5,6 +5,7 @@
  * maintenance should not refresh every component's public update date.
  */
 const COMPONENT_DATES = {
+  "charts/status-bar": { publishedAt: "2026-10-07", updatedAt: "2026-10-07" },
   "motion/alert": { publishedAt: "2026-10-05", updatedAt: "2026-10-05" },
   "motion/collapsible": { publishedAt: "2026-10-05", updatedAt: "2026-10-05" },
   "motion/aspect-ratio": { publishedAt: "2026-10-05", updatedAt: "2026-10-05" },

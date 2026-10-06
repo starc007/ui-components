@@ -1072,6 +1072,16 @@ export const registry: CategoryEntry[] = [
       "Animated React charts for activity, returns, price targets, and order books, built with Motion and Tailwind CSS as customizable copy-paste source.",
     components: [
       {
+        slug: "status-bar",
+        name: "Status Bar",
+        description: "Animated status history with rounded bars and period tooltips.",
+        file: "components/charts/status-bar.tsx",
+        usageFile: "components/previews/charts/status-bar.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-10-07",
+        keywords: ["status bars", "uptime chart", "status history", "service status", "status timeline"],
+      },
+      {
         slug: "composition-chart",
         name: "Composition Chart",
         description: "Stacked bar and area shares with period tooltips and a compact interactive legend.",
