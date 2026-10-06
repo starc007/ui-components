@@ -1072,6 +1072,16 @@ export const registry: CategoryEntry[] = [
       "Animated React charts for activity, returns, price targets, and order books, built with Motion and Tailwind CSS as customizable copy-paste source.",
     components: [
       {
+        slug: "volume-profile",
+        name: "Volume Profile",
+        description: "Animated volume by price, with point of control and value area highlights.",
+        file: "components/charts/volume-profile.tsx",
+        usageFile: "components/previews/charts/volume-profile.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-10-07",
+        keywords: ["volume profile", "volume by price", "point of control", "value area", "trading chart"],
+      },
+      {
         slug: "status-bar",
         name: "Status Bar",
         description: "Animated status history with rounded bars and period tooltips.",

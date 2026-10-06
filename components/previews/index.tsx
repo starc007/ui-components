@@ -295,6 +295,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/number-ticker": dynamic(() =>
     import("./motion/number-ticker.preview").then((m) => m.NumberTickerPreview),
   ),
+  "charts/volume-profile": dynamic(() =>
+    import("./charts/volume-profile.preview").then((m) => m.VolumeProfilePreview),
+  ),
   "charts/status-bar": dynamic(() =>
     import("./charts/status-bar.preview").then((m) => m.StatusBarPreview),
   ),
