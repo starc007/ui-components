@@ -1,5 +1,5 @@
 import { afterEach, expect, test } from "bun:test";
-import { act, cleanup, render, waitFor } from "@testing-library/react";
+import { act, cleanup, render, waitFor, within } from "@testing-library/react";
 import { axe } from "jest-axe";
 import {
   VolumeProfile,
@@ -66,6 +66,38 @@ test("composed controlled inspection links a focused price level to its custom t
   expect(getByRole("tooltip").textContent).toContain("60 contracts");
   // Tooltip is portaled outside this consumer's landmark; page landmarks are
   // the docs shell's responsibility, rather than part of this component audit.
+  await act(async () =>
+    expect(
+      (await axe(document.body, { rules: { region: { enabled: false } } })).violations,
+    ).toEqual([]),
+  );
+});
+
+test("animated tooltip numbers expose exact fractional prices and volume to screen readers", async () => {
+  const { getByRole } = render(
+    <main>
+      <VolumeProfile
+        data={[
+          { id: "first", priceLow: 1.25, priceHigh: 1.5, volume: 0.125 },
+          { id: "second", priceLow: 1.5, priceHigh: 1.75, volume: 1.875 },
+        ]}
+        activeId="second"
+        unit="contracts"
+        formatPrice={(price) => `$${price.toFixed(2)}`}
+        formatVolume={(volume) => volume.toFixed(3)}
+      />
+    </main>,
+  );
+  const slider = getByRole("slider");
+  await act(async () => slider.focus());
+  await waitFor(() => expect(getByRole("tooltip")).toBeTruthy());
+  const tooltip = getByRole("tooltip");
+  expect(slider.getAttribute("aria-describedby")).toBe(tooltip.id);
+  expect(slider.getAttribute("aria-valuetext")).toContain("$1.50 to $1.75. 1.875 contracts");
+  expect(within(tooltip).getByText("$1.50")).toBeTruthy();
+  expect(within(tooltip).getByText("$1.75")).toBeTruthy();
+  expect(within(tooltip).getByText("1.875")).toBeTruthy();
+  expect(within(tooltip).getByText("93.8%")).toBeTruthy();
   await act(async () =>
     expect(
       (await axe(document.body, { rules: { region: { enabled: false } } })).violations,
