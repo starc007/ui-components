@@ -1072,6 +1072,22 @@ export const registry: CategoryEntry[] = [
       "Animated React charts for activity, returns, price targets, and order books, built with Motion and Tailwind CSS as customizable copy-paste source.",
     components: [
       {
+        slug: "treemap",
+        name: "Treemap",
+        description: "Proportional tiles that morph with your data, with value and share tooltips.",
+        file: "components/charts/treemap.tsx",
+        usageFile: "components/previews/charts/treemap.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-10-07",
+        keywords: [
+          "treemap",
+          "tree map chart",
+          "hierarchical chart",
+          "portfolio allocation",
+          "proportional tiles",
+        ],
+      },
+      {
         slug: "volume-profile",
         name: "Volume Profile",
         description: "Animated volume by price, with point of control and value area highlights.",
