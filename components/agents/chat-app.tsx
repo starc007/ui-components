@@ -51,6 +51,7 @@ function ShellFit({ minWidth }: { minWidth: number }) {
     const shell = markerRef.current?.parentElement;
     if (!shell) return;
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const narrow = entry.contentRect.width < minWidth;
       if (narrowRef.current === narrow) return;
       const first = narrowRef.current === null;
