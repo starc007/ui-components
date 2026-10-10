@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  motion,
   type MotionStyle,
+  motion,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -45,10 +45,9 @@ export function Parallax({
   const { scrollYProgress } = useScroll({
     target: ref,
     container,
+    // A container ref defined higher in the tree may attach after this hook
+    // runs; useScroll waits for it rather than falling back to the page.
     offset: ["start end", "end start"],
-    // Run after paint so a container ref defined higher in the tree is hydrated;
-    // otherwise framer falls back to the document and only the page scroll works.
-    layoutEffect: false,
   });
 
   // progress 0→1 as the element crosses the viewport; map to a symmetric drift.

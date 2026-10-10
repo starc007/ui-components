@@ -70,7 +70,11 @@ function TweenPreview({
       transition={
         reduce
           ? { duration: 0 }
-          : { duration: num(values, "duration", 0.6), ease: curve }
+          : {
+              duration: num(values, "duration", 0.6),
+              // The curve editor always stores four control values.
+              ease: curve as [number, number, number, number],
+            }
       }
     />
   );
