@@ -1109,23 +1109,23 @@ export interface ColorPickerContentProps extends Omit<ComponentPropsWithRef<"div
 /** Minimum gap between the panel and the viewport edge, in px. */
 const VIEWPORT_GUTTER = 8;
 
-const PANEL = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.035, delayChildren: 0.1 } },
-  exit: {},
-};
+// Each layer owns its enter and exit values instead of inheriting them from
+// the panel. Reopening during the close cancels the exit per element, and an
+// element only returns to its enter state if that state is its own.
+const PANEL_DELAY = 0.1;
+const PANEL_STAGGER = 0.035;
 
 const PANEL_ITEM = {
-  hidden: { opacity: 0, y: -6, filter: "blur(4px)" },
-  show: { opacity: 1, y: 0, filter: "blur(0px)" },
-  exit: { opacity: 0, transition: { duration: 0.1 } },
+  initial: { opacity: 0, y: -6, filter: "blur(4px)" },
+  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
 };
 
 const PANEL_ITEM_REDUCED = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1 },
-  exit: { opacity: 0, transition: { duration: 0.1 } },
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
 };
+
+const PANEL_ITEM_EXIT = { opacity: 0, transition: { duration: 0.1 } };
 
 /**
  * Panel opened by ColorPickerTrigger, laid out under it. A ColorPickerArea
@@ -1178,7 +1178,10 @@ export function ColorPickerContent({ align = "start", className, children, ...pr
     <AnimatePresence>
       {open && (
         <PresenceGate>
-          {({ gate }) => (
+          {({ gate }) => {
+            // Counted per render, for stagger delays only; keys come from Children.map.
+            let row = 0;
+            return (
             <motion.div
               {...(props as React.ComponentProps<typeof motion.div>)}
               {...gate}
@@ -1186,10 +1189,6 @@ export function ColorPickerContent({ align = "start", className, children, ...pr
               id={`${id}-content`}
               role="dialog"
               aria-label={props["aria-label"] ?? "Color picker"}
-              initial="hidden"
-              animate="show"
-              exit="exit"
-              variants={PANEL}
               className={cn(
                 "absolute top-full z-50 mt-2 flex w-72 flex-col gap-3 p-3",
                 align === "end" ? "right-0" : "left-0",
@@ -1200,22 +1199,32 @@ export function ColorPickerContent({ align = "start", className, children, ...pr
               <motion.div
                 aria-hidden="true"
                 className="absolute inset-0 -z-10 rounded-2xl border border-border bg-background shadow-[0_12px_32px_-8px_rgb(0_0_0/0.25)]"
-                variants={{ hidden: { opacity: 0 }, show: { opacity: 1 }, exit: { opacity: 0 } }}
-                transition={{ duration: 0.16, ease: EASE_OUT }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.16, ease: EASE_OUT, delay: PANEL_DELAY }}
               />
               <MorphContext.Provider value>
                 {/* Children.map keys each wrapper from its child, stable across the exit render. */}
                 {Children.map(children, (child) => {
                   if (isValidElement(child) && child.type === ColorPickerArea) return child;
+                  row += 1;
+                  const item = reduce ? PANEL_ITEM_REDUCED : PANEL_ITEM;
                   return (
-                    <motion.div variants={reduce ? PANEL_ITEM_REDUCED : PANEL_ITEM} transition={SPRING_LAYOUT}>
+                    <motion.div
+                      initial={item.initial}
+                      animate={item.animate}
+                      exit={PANEL_ITEM_EXIT}
+                      transition={{ ...SPRING_LAYOUT, delay: PANEL_DELAY + row * PANEL_STAGGER }}
+                    >
                       {child}
                     </motion.div>
                   );
                 })}
               </MorphContext.Provider>
             </motion.div>
-          )}
+            );
+          }}
         </PresenceGate>
       )}
     </AnimatePresence>
