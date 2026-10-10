@@ -137,6 +137,15 @@ export const registry: CategoryEntry[] = [
         launchedAt: "2026-10-02",
       },
       {
+        slug: "card",
+        name: "Card",
+        description: "Composable card with header, title, description, action, content and footer parts. Outlined or muted surfaces, standard or compact spacing, and an opt-in selectable state with press feedback that composes with Checkbox, Radio and Button.",
+        file: "components/motion/card.tsx",
+        badge: "new",
+        launchedAt: "2026-10-10",
+        keywords: ["card", "react card component", "selectable card", "settings card", "summary card"],
+      },
+      {
         slug: "color-picker",
         name: "Color Picker",
         description: "Composable color picker whose trigger chip morphs into the saturation and brightness area. A loupe lifts off each thumb while you drag. Includes hue and opacity sliders, hex, RGB and HSL fields, an eye dropper, presets, full keyboard control, and a controlled or uncontrolled value.",
