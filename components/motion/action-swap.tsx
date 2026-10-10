@@ -1,8 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion, type HTMLMotionProps, type Variants } from "motion/react";
-import { useState } from "react";
+import { AnimatePresence, type HTMLMotionProps, motion, useReducedMotion, type Variants } from "motion/react";
 import type { ReactNode } from "react";
+import { useState } from "react";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -218,6 +218,11 @@ export function ActionSwapText({
                   key={i}
                   custom={i * CASCADE_STAGGER}
                   variants={CASCADE_LETTER_VARIANTS}
+                  // Own states: a label that swaps away and straight back
+                  // re-enters mid-exit, and only owned targets are restored.
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
                   className="inline-block whitespace-pre will-change-[opacity,filter,transform]"
                 >
                   {char}
