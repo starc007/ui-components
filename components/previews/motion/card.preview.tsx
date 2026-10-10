@@ -77,7 +77,8 @@ export function CardPreview() {
         </Card>
       </div>
 
-      <Card>
+      <div className="flex flex-col gap-4">
+        <Card>
         <CardHeader>
           <CardTitle as="h3">Review order</CardTitle>
           <CardDescription>Check the details before you confirm.</CardDescription>
@@ -104,6 +105,31 @@ export function CardPreview() {
           <Button size="sm">Confirm order</Button>
         </CardFooter>
       </Card>
+
+        <Card className="overflow-hidden pt-0">
+          {/* biome-ignore lint/performance/noImgElement: plain img keeps the copy-paste preview portable (no next/image host config). */}
+          <img
+            src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=720&q=80"
+            alt="Bright open-plan studio with long desks and plants"
+            width={720}
+            height={405}
+            loading="lazy"
+            className="aspect-video w-full object-cover"
+          />
+          <CardHeader>
+            <CardTitle as="h3">Studio, Lisbon</CardTitle>
+            <CardDescription>Desks for 12 people, booked for the March offsite.</CardDescription>
+          </CardHeader>
+          <CardFooter className="justify-between">
+            <span className="text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">€1,840</span> · 3 days
+            </span>
+            <Button variant="secondary" size="sm">
+              View booking
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }

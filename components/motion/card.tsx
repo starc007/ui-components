@@ -129,10 +129,15 @@ export type CardActionProps = ComponentPropsWithRef<"div">;
 /** Sits beside the title and description inside CardHeader. */
 export function CardAction({ className, ...props }: CardActionProps) {
   return (
+    // Flex, not block: an inline-flex control (Checkbox, Radio) would
+    // otherwise sit on a text baseline that moves when its mark appears.
     <div
       {...props}
       data-slot="card-action"
-      className={cn("col-start-2 row-span-2 row-start-1 self-start justify-self-end", className)}
+      className={cn(
+        "col-start-2 row-span-2 row-start-1 flex items-center self-start justify-self-end",
+        className,
+      )}
     />
   );
 }
