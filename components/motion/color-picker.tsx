@@ -1008,6 +1008,54 @@ export interface ColorPickerTriggerProps extends Omit<ComponentPropsWithRef<"but
   children?: ReactNode;
 }
 
+/**
+ * The hex beside the chip. Its width springs to the text instead of snapping,
+ * so the trigger never jumps when the hex gains or drops its alpha pair. Width
+ * is a layout property, but this is one small inline box with nothing laid out
+ * after it inside the button, and a transform cannot resize the border.
+ */
+function TriggerLabel({ hex }: { hex: string }) {
+  const reduce = useReducedMotion();
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [width, setWidth] = useState<number | null>(null);
+  useLayoutEffect(() => {
+    const text = textRef.current;
+    if (!text) return;
+    setWidth(text.offsetWidth);
+    const observer = new ResizeObserver(() => setWidth(text.offsetWidth));
+    observer.observe(text);
+    return () => observer.disconnect();
+  }, []);
+  const alpha = hex.slice(7);
+
+  return (
+    <motion.span
+      className="relative inline-flex overflow-hidden"
+      initial={false}
+      animate={{ width: width ?? "auto" }}
+      transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
+    >
+      <span ref={textRef} className="relative inline-flex shrink-0 whitespace-nowrap font-mono uppercase tabular-nums">
+        {hex.slice(0, 7)}
+        <AnimatePresence mode="popLayout" initial={false}>
+          {alpha && (
+            <motion.span
+              key="alpha"
+              className="text-muted-foreground"
+              initial={{ opacity: 0, x: reduce ? 0 : -4, filter: reduce ? "blur(0px)" : "blur(3px)" }}
+              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, filter: reduce ? "blur(0px)" : "blur(3px)", transition: { duration: 0.12 } }}
+              transition={SPRING_LAYOUT}
+            >
+              {alpha}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </span>
+    </motion.span>
+  );
+}
+
 /** Opens ColorPickerContent. Its color chip is the surface that grows into the area. */
 export function ColorPickerTrigger({ className, children, onClick, ...props }: ColorPickerTriggerProps) {
   const { id, hex, open, setOpen, triggerRef, disabled } = usePickerContext("ColorPickerTrigger");
@@ -1048,7 +1096,7 @@ export function ColorPickerTrigger({ className, children, onClick, ...props }: C
           </motion.span>
         )}
       </span>
-      {children ?? <span className="font-mono uppercase tabular-nums">{hex}</span>}
+      {children ?? <TriggerLabel hex={hex} />}
     </button>
   );
 }
