@@ -7,12 +7,14 @@ import {
   ColorPickerAlpha,
   ColorPickerArea,
   ColorPickerChannels,
+  ColorPickerContent,
   ColorPickerEyeDropper,
   ColorPickerHexInput,
   ColorPickerHue,
   ColorPickerPreset,
   ColorPickerPresets,
   ColorPickerSwatch,
+  ColorPickerTrigger,
 } from "@/components/motion/color-picker";
 import { SPRING_SWAP } from "@/lib/ease";
 
@@ -37,43 +39,46 @@ export function ColorPickerPreview() {
   const next = FORMATS[(FORMATS.indexOf(format) + 1) % FORMATS.length];
 
   return (
-    <div className="w-72 rounded-2xl border border-border bg-background p-3 shadow-sm">
+    <div className="flex min-h-[460px] w-full justify-center pt-2">
       <ColorPicker aria-label="Brand color" value={color} onValueChange={setColor}>
-        <ColorPickerArea />
-        <div className="flex items-center gap-3">
-          <ColorPickerEyeDropper />
-          <div className="flex flex-1 flex-col gap-3">
-            <ColorPickerHue />
-            <ColorPickerAlpha />
+        <ColorPickerTrigger />
+        <ColorPickerContent aria-label="Brand color">
+          <ColorPickerArea />
+          <div className="flex items-center gap-3">
+            <ColorPickerEyeDropper />
+            <div className="flex flex-1 flex-col gap-3">
+              <ColorPickerHue />
+              <ColorPickerAlpha />
+            </div>
           </div>
-        </div>
-        <div className="flex items-start gap-1.5">
-          <button
-            type="button"
-            onClick={() => setFormat(next)}
-            aria-label={`Format ${format.toUpperCase()}, switch to ${next.toUpperCase()}`}
-            className="relative inline-flex h-9 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-background text-xs font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.span
-                key={format}
-                initial={{ opacity: 0, y: reduce ? 0 : 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: reduce ? 0 : -10 }}
-                transition={SPRING_SWAP}
-              >
-                {format.toUpperCase()}
-              </motion.span>
-            </AnimatePresence>
-          </button>
-          {format === "hex" ? <ColorPickerHexInput /> : <ColorPickerChannels format={format} />}
-          {format === "hex" && <ColorPickerSwatch />}
-        </div>
-        <ColorPickerPresets aria-label="Presets" className="justify-between px-0.5 pt-1">
-          {PRESETS.map((preset) => (
-            <ColorPickerPreset key={preset.value} value={preset.value} label={preset.label} />
-          ))}
-        </ColorPickerPresets>
+          <div className="flex items-start gap-1.5">
+            <button
+              type="button"
+              onClick={() => setFormat(next)}
+              aria-label={`Format ${format.toUpperCase()}, switch to ${next.toUpperCase()}`}
+              className="relative inline-flex h-9 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-background text-xs font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  key={format}
+                  initial={{ opacity: 0, y: reduce ? 0 : 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: reduce ? 0 : -10 }}
+                  transition={SPRING_SWAP}
+                >
+                  {format.toUpperCase()}
+                </motion.span>
+              </AnimatePresence>
+            </button>
+            {format === "hex" ? <ColorPickerHexInput /> : <ColorPickerChannels format={format} />}
+            {format === "hex" && <ColorPickerSwatch />}
+          </div>
+          <ColorPickerPresets aria-label="Presets" className="justify-between px-0.5 pt-1">
+            {PRESETS.map((preset) => (
+              <ColorPickerPreset key={preset.value} value={preset.value} label={preset.label} />
+            ))}
+          </ColorPickerPresets>
+        </ColorPickerContent>
       </ColorPicker>
     </div>
   );

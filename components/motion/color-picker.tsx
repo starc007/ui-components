@@ -2,20 +2,26 @@
 
 import { Pipette } from "lucide-react";
 import {
+  AnimatePresence,
   LayoutGroup,
   type MotionValue,
   motion,
+  type Transition,
   useAnimate,
   useReducedMotion,
   useSpring,
   useTransform,
+  useVelocity,
 } from "motion/react";
 import {
+  Children,
   type ComponentPropsWithRef,
   createContext,
+  isValidElement,
   type KeyboardEvent,
   type PointerEvent,
   type ReactNode,
+  type RefObject,
   useContext,
   useEffect,
   useId,
@@ -23,7 +29,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { SPRING_GLIDE, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
+import { EASE_OUT, SPRING_GLIDE, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { PresenceGate } from "@/lib/presence-gate";
 import { capturePointer, releasePointer, TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
@@ -119,6 +127,9 @@ type ColorPickerContextValue = {
   disabled: boolean;
   update: (next: Hsva) => void;
   commit: () => void;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  triggerRef: RefObject<HTMLButtonElement | null>;
 };
 
 const ColorPickerContext = createContext<ColorPickerContextValue | null>(null);
@@ -161,6 +172,10 @@ export interface ColorPickerProps
   alpha?: boolean;
   /** Submits the hex value with a form under this name. */
   name?: string;
+  /** Controlled open state for ColorPickerTrigger + ColorPickerContent. */
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 /** Give it an aria-label, or a legend through children. */
@@ -172,12 +187,23 @@ export function ColorPicker({
   alpha = true,
   disabled = false,
   name,
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
   form,
   className,
   children,
   ...props
 }: ColorPickerProps) {
   const id = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [openInternal, setOpenInternal] = useState(defaultOpen);
+  const open = openProp ?? openInternal;
+  const setOpen = (next: boolean) => {
+    if (next === open) return;
+    if (openProp === undefined) setOpenInternal(next);
+    onOpenChange?.(next);
+  };
   const controlled = value !== undefined;
   const incoming = controlled ? value : defaultValue;
   const [state, setState] = useState(() => ({
@@ -219,14 +245,29 @@ export function ColorPicker({
 
   return (
     <ColorPickerContext.Provider
-      value={{ id, hsva, rgba, hex, alpha, disabled, update, commit: () => onValueCommit?.(hexRef.current) }}
+      value={{
+        id,
+        hsva,
+        rgba,
+        hex,
+        alpha,
+        disabled,
+        update,
+        commit: () => onValueCommit?.(hexRef.current),
+        open,
+        setOpen,
+        triggerRef,
+      }}
     >
       <fieldset
         {...props}
         disabled={disabled}
         form={form}
         className={cn(
-          "flex w-full min-w-0 max-w-72 flex-col gap-3 border-0 p-0",
+          "relative flex w-full min-w-0 max-w-72 flex-col gap-3 border-0 p-0",
+          // Holding a trigger, the root is just the trigger's box, so the panel
+          // anchors under it even inside a stretching flex or grid parent.
+          "has-[>[data-color-picker-trigger]]:w-fit has-[>[data-color-picker-trigger]]:self-start",
           disabled && "opacity-50",
           className,
         )}
@@ -249,7 +290,7 @@ function useGlide(target: number) {
     if (reduce) spring.jump(target);
     else spring.set(target);
   }, [reduce, spring, target]);
-  return useTransform(spring, (n) => `${n}%`);
+  return { spring, offset: useTransform(spring, (n) => `${n}%`) };
 }
 
 function useDrag(
@@ -329,22 +370,39 @@ function keyStep(event: KeyboardEvent, big: number): { axis: "x" | "y"; delta: n
 const CHECKERBOARD =
   "repeating-conic-gradient(#d4d4d8 0% 25%, #fafafa 0% 50%) 0 0 / 8px 8px";
 
+// The loupe lifts with a visible overshoot so it reads as picked up, unlike
+// the critically damped glide the thumb itself rides on.
+const LOUPE_LIFT: Transition = { type: "spring", stiffness: 520, damping: 24, mass: 0.6 };
+const LOUPE_DROP: Transition = { duration: 0.12, ease: EASE_OUT };
+// Glide velocity in %/s mapped to a pendulum swing, so the loupe trails the drag.
+const LOUPE_TILT_INPUT = [-400, 400];
+const LOUPE_TILT_DEGREES = [16, -16];
+
 function Thumb({
   thumbRef,
   dragging,
   color,
+  glide,
   x,
   y,
   className,
   ...props
 }: ComponentPropsWithRef<"div"> & {
-  thumbRef: React.RefObject<HTMLDivElement | null>;
+  thumbRef: RefObject<HTMLDivElement | null>;
   dragging: boolean;
   color: string;
+  /** Horizontal glide spring, read for the loupe's tilt. */
+  glide: MotionValue<number>;
   x: MotionValue<string>;
   y?: MotionValue<string>;
 }) {
   const reduce = useReducedMotion();
+  const velocity = useVelocity(glide);
+  const tilt = useSpring(
+    useTransform(velocity, LOUPE_TILT_INPUT, LOUPE_TILT_DEGREES, { clamp: true }),
+    SPRING_PRESS,
+  );
+  const lifted = dragging && !reduce;
   return (
     <motion.div className="pointer-events-none absolute inset-0" style={{ x, y }}>
       <div
@@ -359,11 +417,31 @@ function Thumb({
       >
         <motion.span
           aria-hidden="true"
-          animate={{ scale: dragging && !reduce ? 1.2 : 1 }}
+          animate={{ scale: lifted ? 0.78 : 1 }}
           transition={SPRING_PRESS}
           className="block size-full rounded-full border-[3px] border-white shadow-[0_0_0_1px_rgb(0_0_0/0.12),0_2px_6px_rgb(0_0_0/0.25)]"
           style={{ backgroundColor: color }}
         />
+        <AnimatePresence>
+          {lifted && (
+            <motion.span
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-[calc(100%+12px)] left-1/2 z-10 -ml-5 block size-10"
+              style={{ rotate: tilt, originX: 0.5, originY: 1.3 }}
+              initial={{ opacity: 0, scale: 0.3, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0, transition: LOUPE_LIFT }}
+              exit={{ opacity: 0, scale: 0.3, y: 16, transition: LOUPE_DROP }}
+            >
+              {/* A square with one sharp corner, turned so the point aims at the thumb. */}
+              <span
+                className="absolute inset-0 -rotate-45 overflow-hidden rounded-[50%_50%_50%_0] border-[3px] border-white shadow-[0_0_0_1px_rgb(0_0_0/0.1),0_6px_16px_rgb(0_0_0/0.28)]"
+                style={{ background: CHECKERBOARD }}
+              >
+                <span className="absolute inset-0" style={{ background: color }} />
+              </span>
+            </motion.span>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );
@@ -378,8 +456,18 @@ export interface ColorPickerAreaProps extends Omit<ComponentPropsWithRef<"div">,
   label?: string;
 }
 
+// One surface: the trigger chip grows into the area and shrinks back into it.
+const MORPH: Transition = { type: "spring", duration: 0.5, bounce: 0.2 };
+const AREA_RADIUS = 12;
+const CHIP_RADIUS = 6;
+
+/** True inside ColorPickerContent, where the area morphs out of the trigger chip. */
+const MorphContext = createContext(false);
+
 export function ColorPickerArea({ label = "Saturation and brightness", className, style, ...props }: ColorPickerAreaProps) {
-  const { hsva, rgba, disabled, update, commit } = usePickerContext("ColorPickerArea");
+  const { id, hsva, rgba, hex, disabled, update, commit, open } = usePickerContext("ColorPickerArea");
+  const morph = useContext(MorphContext);
+  const reduce = useReducedMotion();
   const { railRef, thumbRef, dragging, handlers } = useDrag(
     (x, y) => update({ ...hsva, s: x * 100, v: (1 - y) * 100 }),
     commit,
@@ -389,52 +477,80 @@ export function ColorPickerArea({ label = "Saturation and brightness", className
   const y = useGlide(100 - hsva.v);
   const s = Math.round(hsva.s);
   const v = Math.round(hsva.v);
+  const morphing = morph && !reduce;
+  const rgb = `rgb(${rgba.r} ${rgba.g} ${rgba.b})`;
 
   return (
-    <div
-      {...props}
+    <motion.div
+      {...(props as React.ComponentProps<typeof motion.div>)}
       {...handlers}
       ref={railRef}
+      layoutId={morphing ? `${id}-chip` : undefined}
+      // Measure only when open flips: every drag frame would otherwise force a
+      // layout read, and the close render must snapshot so the chip can morph
+      // back from here and the exit can finish.
+      layoutDependency={open}
+      transition={MORPH}
       className={cn(
-        "relative h-40 w-full touch-none rounded-xl",
+        "relative h-40 w-full touch-none",
         TOUCH_GESTURE_CLASS,
         disabled ? "cursor-not-allowed" : "cursor-crosshair",
         className,
       )}
       style={{
         ...style,
+        borderRadius: AREA_RADIUS,
         background: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, hsl(${hsva.h} 100% 50%))`,
       }}
     >
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-black/10 ring-inset" />
-      <Thumb
-        thumbRef={thumbRef}
-        dragging={dragging}
-        color={`rgb(${rgba.r} ${rgba.g} ${rgba.b})`}
-        x={x}
-        y={y}
-        role="slider"
-        tabIndex={disabled ? -1 : 0}
-        aria-label={label}
-        aria-roledescription="2D slider"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={s}
-        aria-valuetext={`Saturation ${s}%, brightness ${v}%`}
-        aria-disabled={disabled || undefined}
-        onKeyDown={(event) => {
-          if (disabled) return;
-          const step = keyStep(event, 10);
-          if (!step) return;
-          event.preventDefault();
-          if (step === "min") update({ ...hsva, s: 0 });
-          else if (step === "max") update({ ...hsva, s: 100 });
-          else if (step.axis === "x") update({ ...hsva, s: hsva.s + step.delta });
-          else update({ ...hsva, v: hsva.v + step.delta });
-          commit();
-        }}
-      />
-    </div>
+      {/* Arriving from the chip, the solid color dissolves to reveal the spectrum behind it. */}
+      {morphing && (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-[inherit]"
+          style={{ backgroundColor: hex }}
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 0.4, ease: EASE_OUT, delay: 0.06 }}
+        />
+      )}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-black/10 ring-inset" />
+      <motion.div
+        className="absolute inset-0"
+        initial={morphing ? { opacity: 0 } : false}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2, delay: 0.22 }}
+      >
+        <Thumb
+          thumbRef={thumbRef}
+          dragging={dragging}
+          color={rgb}
+          glide={x.spring}
+          x={x.offset}
+          y={y.offset}
+          role="slider"
+          tabIndex={disabled ? -1 : 0}
+          aria-label={label}
+          aria-roledescription="2D slider"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={s}
+          aria-valuetext={`Saturation ${s}%, brightness ${v}%`}
+          aria-disabled={disabled || undefined}
+          onKeyDown={(event) => {
+            if (disabled) return;
+            const step = keyStep(event, 10);
+            if (!step) return;
+            event.preventDefault();
+            if (step === "min") update({ ...hsva, s: 0 });
+            else if (step === "max") update({ ...hsva, s: 100 });
+            else if (step.axis === "x") update({ ...hsva, s: hsva.s + step.delta });
+            else update({ ...hsva, v: hsva.v + step.delta });
+            commit();
+          }}
+        />
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -484,7 +600,8 @@ function ChannelSlider({
           thumbRef={thumbRef}
           dragging={dragging}
           color={thumbColor}
-          x={x}
+          glide={x.spring}
+          x={x.offset}
           role="slider"
           tabIndex={disabled ? -1 : 0}
           aria-label={label}
@@ -879,5 +996,180 @@ export function ColorPickerPreset({ value, label, className, onClick, ...props }
         />
       </span>
     </motion.button>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Popover: trigger chip morphs into the area
+// ---------------------------------------------------------------------------
+
+export interface ColorPickerTriggerProps extends Omit<ComponentPropsWithRef<"button">, "type"> {
+  /** Replaces the hex label beside the chip. */
+  children?: ReactNode;
+}
+
+/** Opens ColorPickerContent. Its color chip is the surface that grows into the area. */
+export function ColorPickerTrigger({ className, children, onClick, ...props }: ColorPickerTriggerProps) {
+  const { id, hex, open, setOpen, triggerRef, disabled } = usePickerContext("ColorPickerTrigger");
+  const reduce = useReducedMotion();
+  return (
+    <button
+      {...props}
+      ref={triggerRef}
+      type="button"
+      data-color-picker-trigger=""
+      disabled={disabled}
+      aria-haspopup="dialog"
+      aria-expanded={open}
+      aria-controls={open ? `${id}-content` : undefined}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) setOpen(!open);
+      }}
+      className={cn(
+        "inline-flex h-10 w-fit items-center gap-2.5 rounded-xl border border-border bg-background pr-3.5 pl-2.5 text-sm text-foreground outline-none transition-colors hover:border-foreground/20 focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed",
+        className,
+      )}
+    >
+      <span aria-hidden="true" className="relative size-6 shrink-0">
+        {/* The chip's empty socket while it is out being the area. */}
+        <span className="absolute inset-0 rounded-md border border-dashed border-foreground/20" />
+        {!open && (
+          <motion.span
+            layoutId={reduce ? undefined : `${id}-chip`}
+            transition={MORPH}
+            className="absolute inset-0 overflow-hidden"
+            style={{ borderRadius: CHIP_RADIUS, background: CHECKERBOARD }}
+          >
+            <span
+              className="absolute inset-0 shadow-[inset_0_0_0_1px_rgb(0_0_0/0.1)]"
+              style={{ backgroundColor: hex, borderRadius: CHIP_RADIUS }}
+            />
+          </motion.span>
+        )}
+      </span>
+      {children ?? <span className="font-mono uppercase tabular-nums">{hex}</span>}
+    </button>
+  );
+}
+
+export interface ColorPickerContentProps extends Omit<ComponentPropsWithRef<"div">, "role"> {
+  /** Edge of the trigger the panel lines up with. Default "start". */
+  align?: "start" | "end";
+}
+
+/** Minimum gap between the panel and the viewport edge, in px. */
+const VIEWPORT_GUTTER = 8;
+
+const PANEL = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.035, delayChildren: 0.1 } },
+  exit: {},
+};
+
+const PANEL_ITEM = {
+  hidden: { opacity: 0, y: -6, filter: "blur(4px)" },
+  show: { opacity: 1, y: 0, filter: "blur(0px)" },
+  exit: { opacity: 0, transition: { duration: 0.1 } },
+};
+
+const PANEL_ITEM_REDUCED = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1 },
+  exit: { opacity: 0, transition: { duration: 0.1 } },
+};
+
+/**
+ * Panel opened by ColorPickerTrigger, laid out under it. A ColorPickerArea
+ * placed directly inside grows out of the trigger chip; the other children
+ * stagger in behind it. Closes on outside press and Escape.
+ */
+export function ColorPickerContent({ align = "start", className, children, ...props }: ColorPickerContentProps) {
+  const { id, open, setOpen, triggerRef } = usePickerContext("ColorPickerContent");
+  const reduce = useReducedMotion() ?? false;
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Keep the panel on screen horizontally. Written before paint, and before
+  // motion measures the area, so the chip morphs to where the panel really is.
+  useLayoutEffect(() => {
+    const panel = panelRef.current;
+    if (!open || !panel) return;
+    panel.style.marginLeft = "0px";
+    const rect = panel.getBoundingClientRect();
+    const max = document.documentElement.clientWidth - VIEWPORT_GUTTER;
+    let shift = 0;
+    if (rect.right > max) shift = max - rect.right;
+    if (rect.left + shift < VIEWPORT_GUTTER) shift = VIEWPORT_GUTTER - rect.left;
+    panel.style.marginLeft = `${shift}px`;
+  }, [open]);
+  useDismiss(open, () => setOpen(false), panelRef, {
+    ignore: (target) => Boolean(triggerRef.current?.contains(target)),
+  });
+
+  // Hand focus in on open, and back to the trigger when it closes from inside.
+  // Skipped on mount, so a picker that starts open does not steal page focus.
+  const wasOpen = useRef(open);
+  useEffect(() => {
+    if (wasOpen.current === open) return;
+    wasOpen.current = open;
+    if (open) {
+      panelRef.current
+        ?.querySelector<HTMLElement>(
+          '[role="slider"]:not([aria-disabled]), input:not(:disabled), button:not(:disabled)',
+        )
+        ?.focus({ preventScroll: true });
+      return;
+    }
+    const active = document.activeElement;
+    if (!active || active === document.body || panelRef.current?.contains(active)) {
+      triggerRef.current?.focus({ preventScroll: true });
+    }
+  }, [open, triggerRef]);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <PresenceGate>
+          {({ gate }) => (
+            <motion.div
+              {...(props as React.ComponentProps<typeof motion.div>)}
+              {...gate}
+              ref={panelRef}
+              id={`${id}-content`}
+              role="dialog"
+              aria-label={props["aria-label"] ?? "Color picker"}
+              initial="hidden"
+              animate="show"
+              exit="exit"
+              variants={PANEL}
+              className={cn(
+                "absolute top-full z-50 mt-2 flex w-72 flex-col gap-3 p-3",
+                align === "end" ? "right-0" : "left-0",
+                className,
+              )}
+            >
+              {/* The surface fades on its own layer so the morphing area is never faded with it. */}
+              <motion.div
+                aria-hidden="true"
+                className="absolute inset-0 -z-10 rounded-2xl border border-border bg-background shadow-[0_12px_32px_-8px_rgb(0_0_0/0.25)]"
+                variants={{ hidden: { opacity: 0 }, show: { opacity: 1 }, exit: { opacity: 0 } }}
+                transition={{ duration: 0.16, ease: EASE_OUT }}
+              />
+              <MorphContext.Provider value>
+                {/* Children.map keys each wrapper from its child, stable across the exit render. */}
+                {Children.map(children, (child) => {
+                  if (isValidElement(child) && child.type === ColorPickerArea) return child;
+                  return (
+                    <motion.div variants={reduce ? PANEL_ITEM_REDUCED : PANEL_ITEM} transition={SPRING_LAYOUT}>
+                      {child}
+                    </motion.div>
+                  );
+                })}
+              </MorphContext.Provider>
+            </motion.div>
+          )}
+        </PresenceGate>
+      )}
+    </AnimatePresence>
   );
 }

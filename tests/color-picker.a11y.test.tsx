@@ -6,11 +6,13 @@ import {
   ColorPickerAlpha,
   ColorPickerArea,
   ColorPickerChannels,
+  ColorPickerContent,
   ColorPickerHexInput,
   ColorPickerHue,
   ColorPickerPreset,
   ColorPickerPresets,
   ColorPickerSwatch,
+  ColorPickerTrigger,
 } from "@/components/motion/color-picker";
 
 afterEach(cleanup);
@@ -51,5 +53,23 @@ test("opaque disabled picker with HSL channels removes opacity and disables cont
   expect(queryByRole("slider", { name: "Opacity" })).toBeNull();
   expect(getByRole("slider", { name: "Hue" }).getAttribute("aria-disabled")).toBe("true");
   expect((getByRole("textbox", { name: "Lightness" }) as HTMLInputElement).disabled).toBe(true);
+  expect((await axe(container)).violations).toEqual([]);
+});
+
+test("popover picker links its trigger to an open labelled dialog", async () => {
+  const { container, getByRole } = render(
+    <ColorPicker aria-label="Brand color" defaultValue="#3478f6" defaultOpen>
+      <ColorPickerTrigger />
+      <ColorPickerContent aria-label="Brand color">
+        <ColorPickerArea />
+        <ColorPickerHue />
+        <ColorPickerHexInput />
+      </ColorPickerContent>
+    </ColorPicker>,
+  );
+  const trigger = getByRole("button", { expanded: true });
+  const dialog = getByRole("dialog", { name: "Brand color" });
+  expect(trigger.getAttribute("aria-controls")).toBe(dialog.id);
+  expect(getByRole("slider", { name: "Saturation and brightness" })).toBeTruthy();
   expect((await axe(container)).violations).toEqual([]);
 });
