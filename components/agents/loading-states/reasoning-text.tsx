@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useId, useState, type ReactNode } from "react";
+import { type ReactNode, useEffect, useId, useState } from "react";
 import { Loader } from "@/components/motion/loader";
 import { TextScramble } from "@/components/motion/text-scramble";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
@@ -78,6 +78,11 @@ function CascadePhrase({
             // biome-ignore lint/suspicious/noArrayIndexKey: position is the stable cascade slot identity.
             key={characterIndex}
             custom={characterIndex * CASCADE_STAGGER}
+            // Own states: a phrase that cycles back re-enters mid-exit, and
+            // only owned targets are restored.
+            initial="initial"
+            animate="animate"
+            exit="exit"
             variants={{
               initial: { opacity: 0, y: "100%" },
               animate: (delay: number) => ({
