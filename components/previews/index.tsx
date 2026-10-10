@@ -31,6 +31,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/date-range-picker": dynamic(() =>
     import("./motion/date-range-picker.preview").then((m) => m.DateRangePickerPreview),
   ),
+  "motion/color-picker": dynamic(() =>
+    import("./motion/color-picker.preview").then((m) => m.ColorPickerPreview),
+  ),
   "motion/color-selector": dynamic(() =>
     import("./motion/color-selector.preview").then((m) => m.ColorSelectorPreview),
   ),

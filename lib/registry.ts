@@ -137,6 +137,15 @@ export const registry: CategoryEntry[] = [
         launchedAt: "2026-10-02",
       },
       {
+        slug: "color-picker",
+        name: "Color Picker",
+        description: "Composable color picker whose trigger chip morphs into the saturation and brightness area. A loupe lifts off each thumb while you drag. Includes hue and opacity sliders, hex, RGB and HSL fields, an eye dropper, presets, full keyboard control, and a controlled or uncontrolled value.",
+        file: "components/motion/color-picker.tsx",
+        badge: "new",
+        launchedAt: "2026-10-10",
+        keywords: ["color picker", "rgb color picker", "hex color input", "hsl picker", "eyedropper"],
+      },
+      {
         slug: "color-selector",
         name: "Animated Color Selector",
         description: "Composable color swatches with a spring-gliding selection ring, press feedback, native radio keyboard navigation, and controlled or uncontrolled state.",
