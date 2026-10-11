@@ -646,7 +646,8 @@ export function MorphingSearchChips({
                     className={cn(
                       "flex h-9 shrink-0 items-center gap-1 rounded-full ps-3 pe-1 text-sm text-foreground transition-[background-color,box-shadow] duration-150",
                       marked === chip
-                        ? "bg-foreground/[0.12] ring-2 ring-foreground/40"
+                        ? // Inset: the chip fills its scrolling row, which clips anything drawn outside it.
+                        "bg-foreground/[0.12] ring-2 ring-inset ring-foreground/40"
                         : "bg-foreground/[0.07]",
                     )}
                   >
