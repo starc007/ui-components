@@ -19,7 +19,7 @@ const COMPONENT_DATES = {
   "motion/morphing-lightbox": { publishedAt: "2026-10-02", updatedAt: "2026-10-02" },
   "motion/image-viewer": { publishedAt: "2026-10-02", updatedAt: "2026-10-02" },
   "motion/date-range-picker": { publishedAt: "2026-10-02", updatedAt: "2026-10-10" },
-  "motion/color-selector": { publishedAt: "2026-09-27", updatedAt: "2026-09-27" },
+  "motion/color-selector": { publishedAt: "2026-09-27", updatedAt: "2026-10-11" },
   "motion/breadcrumb": { publishedAt: "2026-09-27", updatedAt: "2026-10-10" },
   "motion/tilt-card": { publishedAt: "2026-05-17", updatedAt: "2026-06-22" },
   "motion/button": { publishedAt: "2026-05-17", updatedAt: "2026-10-10" },

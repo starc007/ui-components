@@ -1,9 +1,19 @@
 "use client";
 
-import { LayoutGroup, motion, useReducedMotion } from "motion/react";
-import { createContext, useContext, useId, useState, type ComponentPropsWithRef } from "react";
+import { arc, LayoutGroup, motion, type Transition, useReducedMotion } from "motion/react";
+import { type ComponentPropsWithRef, createContext, useContext, useId, useState } from "react";
 import { SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
+
+// The selection ring hops to the next swatch over a low arc instead of
+// sliding. arc() bends with distance (apex at half of strength x distance):
+// ~6px to a neighbour, under 40px across a row of eight. Automatic direction
+// puts a horizontal bulge below the row; a negative strength mirrors it above
+// in both directions of travel.
+const SELECTION_HOP: Transition = {
+  ...SPRING_LAYOUT,
+  layout: { ...SPRING_LAYOUT, path: arc({ strength: -0.2 }) },
+};
 
 type ColorSelectorContextValue = {
   value: string;
@@ -124,7 +134,7 @@ export function ColorSelectorItem({ value, color, label, disabled = false, class
           <motion.span
             layoutId={reduce ? undefined : "color-selection"}
             initial={false}
-            transition={SPRING_LAYOUT}
+            transition={SELECTION_HOP}
             className="pointer-events-none absolute -inset-1 rounded-full border-2"
             style={{ borderColor: `color-mix(in srgb, ${color} 65%, transparent)` }}
           />
