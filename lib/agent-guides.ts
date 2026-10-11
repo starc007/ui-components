@@ -1265,7 +1265,7 @@ export const agentGuides = {
       {
         title: "Use real destinations",
         description:
-          "Source labels, hosts, and favicons derive from the supplied URLs rather than a fixed catalog of known websites.",
+          "Source labels, hosts, and favicons derive from the supplied URLs rather than a fixed catalog of known websites. Non-web sources such as documents or records can pass their own icon instead.",
       },
       {
         title: "Disclose the collection",
