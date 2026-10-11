@@ -100,11 +100,11 @@ const COMPONENT_DATES = {
   },
   "agents/message": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-10-10",
+    updatedAt: "2026-10-11",
   },
   "agents/message-scroller": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-10-10",
+    updatedAt: "2026-10-11",
   },
   "agents/ai-sidebar": {
     publishedAt: "2026-08-02",
