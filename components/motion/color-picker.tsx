@@ -3,6 +3,7 @@
 import { Pipette } from "lucide-react";
 import {
   AnimatePresence,
+  arc,
   LayoutGroup,
   type MotionValue,
   motion,
@@ -930,6 +931,16 @@ export function ColorPickerEyeDropper({
 // Presets
 // ---------------------------------------------------------------------------
 
+// The selection ring hops between swatches over a low arc instead of sliding.
+// arc() bends with distance (the apex sits at half of strength x distance), so
+// a neighbour gets a ~5px hop and a jump across the row clears the fields above.
+// Automatic direction always puts a horizontal bulge below the row; a negative
+// strength mirrors it above, in both directions of travel.
+const PRESET_HOP: Transition = {
+  ...SPRING_LAYOUT,
+  layout: { ...SPRING_LAYOUT, path: arc({ strength: -0.3 }) },
+};
+
 export type ColorPickerPresetsProps = ComponentPropsWithRef<"div">;
 
 export function ColorPickerPresets({ className, children, ...props }: ColorPickerPresetsProps) {
@@ -981,7 +992,7 @@ export function ColorPickerPreset({ value, label, className, onClick, ...props }
           aria-hidden="true"
           layoutId={reduce ? undefined : "color-picker-preset"}
           initial={false}
-          transition={SPRING_LAYOUT}
+          transition={PRESET_HOP}
           className="pointer-events-none absolute -inset-[3px] rounded-full border-2 border-foreground/70"
         />
       )}

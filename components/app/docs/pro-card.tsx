@@ -25,7 +25,7 @@ export function ProCard() {
           Winter Arc sale
         </h2>
         <p className="mt-2 text-sm leading-5 text-muted-foreground">
-          260+ blocks and premium motion components for React and Next.js.
+          292+ blocks and premium motion components for React and Next.js.
         </p>
         <p className="mt-3 flex flex-wrap items-center gap-x-2 text-xs leading-5 text-muted-foreground">
           <span className="font-medium text-foreground">$149 lifetime access</span>

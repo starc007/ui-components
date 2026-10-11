@@ -1,6 +1,6 @@
 "use client";
 
-import { animate, motion, useMotionValue, useReducedMotion } from "motion/react";
+import { arc, useAnimate, useReducedMotion } from "motion/react";
 import {
   type ReactNode,
   useCallback,
@@ -43,14 +43,11 @@ const BOUNCE_SPRING = {
   mass: 0.3,
 } as const;
 
-function quadraticBezier(start: number, control: number, end: number, progress: number) {
-  const remaining = 1 - progress;
-  return (
-    remaining * remaining * start +
-    2 * remaining * progress * control +
-    progress * progress * end
-  );
-}
+// The dot hops sideways, away from the labels. arc() bends proportionally to
+// the distance travelled, so cap it: adjacent rows get a ~5px hop and a long
+// jump peaks near 20px instead of swinging out of the sidebar.
+const ARC_MAX_STRENGTH = 0.26;
+const ARC_MAX_BULGE = 40;
 
 export function BounceSidebar({
   items,
@@ -77,22 +74,27 @@ export function BounceSidebar({
   const selectedValueRef = useRef(selectedValue);
   const previousIndexRef = useRef(selectedIndex);
   const hasPositionRef = useRef(false);
-  const animationRef = useRef<ReturnType<typeof animate> | null>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+  const dotYRef = useRef(0);
+  const [dot, animateDot] = useAnimate<HTMLSpanElement>();
   selectedValueRef.current = selectedValue;
+
+  const placeDot = useCallback(
+    (destinationY: number) => {
+      if (!dot.current) return;
+      animateDot(dot.current, { x: 0, y: destinationY }, { duration: 0 });
+      dotYRef.current = destinationY;
+      hasPositionRef.current = true;
+    },
+    [animateDot, dot],
+  );
 
   const snapIndicator = useCallback(() => {
     const selectedItem = itemRefs.current.get(selectedValueRef.current);
     if (!selectedItem) return;
-
-    animationRef.current?.stop();
-    x.set(0);
-    y.set(
+    placeDot(
       selectedItem.offsetTop + (selectedItem.offsetHeight - DOT_SIZE) / 2,
     );
-    hasPositionRef.current = true;
-  }, [x, y]);
+  }, [placeDot]);
 
   const positionIndicator = useCallback(
     (shouldAnimate: boolean) => {
@@ -102,44 +104,37 @@ export function BounceSidebar({
       const destinationY =
         selectedItem.offsetTop + (selectedItem.offsetHeight - DOT_SIZE) / 2;
 
-      animationRef.current?.stop();
-
-      if (!hasPositionRef.current || reduce || !shouldAnimate) {
-        x.set(0);
-        y.set(destinationY);
-        hasPositionRef.current = true;
+      if (!hasPositionRef.current || reduce || !shouldAnimate || !dot.current) {
+        placeDot(destinationY);
         previousIndexRef.current = selectedIndex;
         return;
       }
 
-      const startY = y.get();
-      const distance = destinationY - startY;
+      const distance = destinationY - dotYRef.current;
       const travel = Math.abs(distance);
       const longJumpProgress = Math.min(1, Math.max(0, (travel - 48) / 120));
-      const controlX = -Math.min(40, Math.max(8, travel * 0.25));
-      const midpointY = (startY + destinationY) / 2;
-      const controlY =
-        destinationY + (midpointY - destinationY) * longJumpProgress;
+      dotYRef.current = destinationY;
 
-      animationRef.current = animate(0, 1, {
-        ...BOUNCE_SPRING,
-        stiffness:
-          BOUNCE_SPRING.stiffness - 60 * longJumpProgress,
-        damping: BOUNCE_SPRING.damping + longJumpProgress,
-        mass: BOUNCE_SPRING.mass + 0.15 * longJumpProgress,
-        onUpdate: (progress) => {
-          x.set(quadraticBezier(0, controlX, 0, progress));
-          y.set(quadraticBezier(startY, controlY, destinationY, progress));
+      animateDot(
+        dot.current,
+        { x: 0, y: destinationY },
+        {
+          ...BOUNCE_SPRING,
+          stiffness: BOUNCE_SPRING.stiffness - 60 * longJumpProgress,
+          damping: BOUNCE_SPRING.damping + longJumpProgress,
+          mass: BOUNCE_SPRING.mass + 0.15 * longJumpProgress,
+          path: arc({
+            strength: Math.min(ARC_MAX_STRENGTH, ARC_MAX_BULGE / travel),
+            // Relative to the direction of travel, so both directions
+            // bulge to the screen left, away from the labels.
+            direction: distance > 0 ? "ccw" : "cw",
+          }),
         },
-        onComplete: () => {
-          x.set(0);
-          y.set(destinationY);
-        },
-      });
+      );
 
       previousIndexRef.current = selectedIndex;
     },
-    [reduce, selectedIndex, selectedValue, x, y],
+    [animateDot, dot, placeDot, reduce, selectedIndex, selectedValue],
   );
 
   useLayoutEffect(() => {
@@ -156,13 +151,6 @@ export function BounceSidebar({
     observer.observe(list);
     return () => observer.disconnect();
   }, [snapIndicator]);
-
-  useLayoutEffect(
-    () => () => {
-      animationRef.current?.stop();
-    },
-    [],
-  );
 
   const selectItem = (id: string) => {
     if (value === undefined) setInternalValue(id);
@@ -181,8 +169,8 @@ export function BounceSidebar({
             role="presentation"
             className="pointer-events-none absolute inset-0"
           >
-            <motion.span
-              style={{ x, y }}
+            <span
+              ref={dot}
               className={cn(
                 "absolute top-0 left-3 h-1.5 w-1.5 rounded-full bg-primary",
                 indicatorClassName,
