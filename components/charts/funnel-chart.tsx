@@ -110,7 +110,6 @@ export function FunnelChartPlot({ className }: { className?: string }) {
             {rows.map((stage, index) => (
               <li key={stage.id} className="min-h-0 min-w-0">
                 <Tooltip
-                  wrapperClassName="block h-full w-full"
                   content={
                     <span className="flex flex-col gap-1.5 text-xs">
                       <span className="text-muted-foreground">{stage.label}</span>

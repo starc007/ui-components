@@ -146,13 +146,12 @@ export function PredictionMarketCard({
 								</span>
 								<Tooltip
 									content="Potential payout per $1 if this outcome wins, including your stake. Before fees; based on the displayed price."
-									wrapperClassName="shrink-0"
 									className="w-44 whitespace-normal text-center leading-relaxed"
 								>
 									<button
 										type="button"
 										aria-label={`Potential payout for ${outcome.label}`}
-										className="rounded-md py-2 text-sm tabular-nums text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring"
+										className="shrink-0 rounded-md py-2 text-sm tabular-nums text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring"
 									>
 										{probability(outcome.probability) > 0
 											? `${(1 / probability(outcome.probability)).toFixed(1)}×`

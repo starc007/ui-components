@@ -581,8 +581,26 @@ export const registry: CategoryEntry[] = [
       {
         slug: "tooltip",
         name: "Tooltip",
-        description: "Hover or focus tooltip with a subtle scale and fade, collision-aware placement, and optional cursor tracking.",
+        description: "Composable hover, focus and tap tooltip with a subtle scale and fade, collision-aware side and alignment, an optional arrow, a pointer corridor onto hoverable content, one label at a time, keyboard-only focus reveal and optional cursor tracking.",
         file: "components/motion/tooltip.tsx",
+        examples: [
+          {
+            slug: "default",
+            name: "Tooltip",
+            description: "One-line shorthand: pass `content` and wrap the trigger element. Four sides with an arrow.",
+            file: "components/motion/tooltip.tsx",
+            previewKey: "motion/tooltip",
+            previewFile: "components/previews/motion/tooltip.preview.tsx",
+          },
+          {
+            slug: "toolbar",
+            name: "Toolbar",
+            description: "Composable parts under a shared provider. Icon-only buttons take their accessible name from the tooltip, later labels skip the delay, and a disabled control shows none.",
+            file: "components/motion/tooltip.tsx",
+            previewKey: "motion/tooltip-toolbar",
+            previewFile: "components/previews/motion/tooltip-toolbar.preview.tsx",
+          },
+        ],
       },
       {
         slug: "context-menu",

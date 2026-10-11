@@ -76,7 +76,6 @@ function SidebarCategoryTab({
       side="bottom"
       open={!active && tooltipOpen}
       onOpenChange={onTooltipOpenChange}
-      wrapperClassName="shrink-0"
     >
       <Button
         id={`${id}-${filterValue}`}
@@ -98,7 +97,7 @@ function SidebarCategoryTab({
           onValueChange(filterValue);
         }}
         className={cn(
-          "relative h-8 min-w-8 justify-start gap-0 overflow-hidden border-0 p-0 text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground/40",
+          "relative h-8 min-w-8 shrink-0 justify-start gap-0 overflow-hidden border-0 p-0 text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground/40",
           active
             ? "bg-background text-foreground hover:bg-background"
             : "text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",

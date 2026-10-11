@@ -451,6 +451,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/tooltip": dynamic(() =>
     import("./motion/tooltip.preview").then((m) => m.TooltipPreview),
   ),
+  "motion/tooltip-toolbar": dynamic(() =>
+    import("./motion/tooltip-toolbar.preview").then((m) => m.TooltipToolbarPreview),
+  ),
   "motion/context-menu": dynamic(() =>
     import("./motion/context-menu.preview").then((m) => m.ContextMenuPreview),
   ),
