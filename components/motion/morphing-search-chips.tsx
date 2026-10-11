@@ -209,8 +209,12 @@ export function MorphingSearchChips({
           transition={layout}
           style={{ borderRadius: SURFACE_RADIUS }}
           className={cn(
-            "pointer-events-auto relative flex min-w-0 flex-col overflow-hidden border border-border bg-background/85 shadow-lg backdrop-blur-xl",
-            open ? "w-full shadow-xl" : "w-fit max-w-full",
+            // Glass: a thin tint of the page colour over a saturated blur, a hairline
+            // edge, a top highlight and a soft drop. Written inline so the install
+            // carries it without the site's stylesheet.
+            "pointer-events-auto relative flex min-w-0 flex-col overflow-hidden border border-foreground/[0.08] bg-background/55 backdrop-blur-[20px] backdrop-saturate-[1.6]",
+            "shadow-[inset_0_1px_0_0_rgb(255_255_255/0.06),0_24px_60px_-24px_rgb(0_0_0/0.45)]",
+            open ? "w-full" : "w-fit max-w-full",
           )}
         >
           <AnimatePresence initial={false} mode="popLayout">
