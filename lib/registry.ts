@@ -1976,7 +1976,7 @@ export const registry: CategoryEntry[] = [
           "Search field or compact icon that morphs into a glass results surface, whether opened by click or keyboard shortcut.",
         file: "components/motion/morphing-search.tsx",
         badge: "new",
-        launchedAt: "2026-08-18",
+        launchedAt: "2026-10-11",
         examples: [
           {
             slug: "chips",
