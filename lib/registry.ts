@@ -1977,6 +1977,30 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/morphing-search.tsx",
         badge: "new",
         launchedAt: "2026-08-18",
+        examples: [
+          {
+            slug: "chips",
+            name: "Chip Search",
+            description:
+              "Docked search bar that springs wider on focus and unfolds a recent-searches panel out of its own edge. Terms become removable chips, the bar grows with them, and suggestions filter as you type.",
+            badge: "new",
+            launchedAt: "2026-10-11",
+            installSlug: "morphing-search-chips",
+            file: "components/motion/morphing-search-chips.tsx",
+            previewKey: "blocks/morphing-search-chips",
+            previewFile: "components/previews/blocks/morphing-search-chips.preview.tsx",
+          },
+          {
+            slug: "overlay",
+            name: "Morphing Search",
+            description:
+              "Search field or compact icon that morphs into a glass results surface, whether opened by click or keyboard shortcut.",
+            installSlug: "morphing-search",
+            file: "components/motion/morphing-search.tsx",
+            previewKey: "blocks/morphing-search",
+            previewFile: "components/previews/blocks/morphing-search.preview.tsx",
+          },
+        ],
         keywords: [
           "morphing search react",
           "animated search component",

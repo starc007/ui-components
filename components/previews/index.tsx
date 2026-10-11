@@ -207,6 +207,9 @@ export const previews: Record<string, ComponentType> = {
       (m) => m.MorphingSearchPreview,
     ),
   ),
+  "blocks/morphing-search-chips": dynamic(() =>
+    import("./blocks/morphing-search-chips.preview").then((m) => m.MorphingSearchChipsPreview),
+  ),
   "blocks/feedback-widget": dynamic(() =>
     import("./blocks/feedback-widget.preview").then((m) => m.FeedbackWidgetPreview),
   ),
