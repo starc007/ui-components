@@ -1982,7 +1982,7 @@ export const registry: CategoryEntry[] = [
             slug: "chips",
             name: "Chip Search",
             description:
-              "Docked search bar that grows up and out into its own results surface on focus, with recent searches above the field. Terms become removable chips, the bar widens with them, and suggestions filter as you type.",
+              "Docked search bar that springs wider on focus and unfolds a recent-searches panel out of its own edge. Terms become removable chips, the bar grows with them, and suggestions filter as you type.",
             badge: "new",
             launchedAt: "2026-10-11",
             installSlug: "morphing-search-chips",

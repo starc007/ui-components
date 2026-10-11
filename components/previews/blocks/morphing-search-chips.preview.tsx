@@ -1,6 +1,5 @@
 "use client";
 
-import { Palette, SlidersHorizontal } from "lucide-react";
 import { MorphingSearchChips } from "@/components/motion/morphing-search-chips";
 
 const tiles = [
@@ -11,9 +10,6 @@ const tiles = [
   "from-violet-400/40 to-fuchsia-300/30",
   "from-teal-300/40 to-sky-300/30",
 ];
-
-const actionClass =
-  "grid size-10 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring";
 
 export function MorphingSearchChipsPreview() {
   return (
@@ -29,6 +25,8 @@ export function MorphingSearchChipsPreview() {
         label="Search inspiration"
         defaultChips={["onboarding"]}
         defaultRecents={["dashboards", "empty states", "pricing pages"]}
+        storageKey="beui:morphing-search-chips:recents"
+        maxChips={4}
         suggestions={[
           "dashboards",
           "data tables",
@@ -39,16 +37,6 @@ export function MorphingSearchChipsPreview() {
           "settings",
           "sign in",
         ]}
-        actions={
-          <>
-            <button type="button" aria-label="Filter by color" className={actionClass}>
-              <Palette aria-hidden="true" className="size-5" />
-            </button>
-            <button type="button" aria-label="More filters" className={actionClass}>
-              <SlidersHorizontal aria-hidden="true" className="size-5" />
-            </button>
-          </>
-        }
       />
     </div>
   );
