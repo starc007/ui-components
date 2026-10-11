@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { type ComponentPropsWithRef, createContext, useContext } from "react";
+import { type ComponentPropsWithRef, createContext, useContext, useEffect, useState } from "react";
 import { SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -27,9 +27,9 @@ const INSET_CLASS: Record<CardSize, string> = {
 };
 
 /**
- * Spread onto the one control that owns a selectable card (a Checkbox or
- * RadioGroupItem root) to stretch its hit area over the whole card. Any other
- * interactive element inside that card needs `relative z-10` to stay on top.
+ * Spread onto the one control that owns a card (a Checkbox or RadioGroupItem
+ * root, or a link or button) to stretch its hit area over the whole card. Any
+ * other interactive element inside that card needs `relative z-10` to stay on top.
  */
 export const CARD_TARGET_CLASS = "after:absolute after:inset-0";
 
@@ -38,7 +38,11 @@ export interface CardProps extends ComponentPropsWithRef<"div"> {
   variant?: CardVariant;
   /** Spacing for every part. Default "default". */
   size?: CardSize;
-  /** Hover and press feedback, for a card that is one target as a whole. */
+  /**
+   * Hover and press feedback, for a card that is one target as a whole. Visual
+   * only: the card never takes focus, so put the control that owns it inside
+   * and stretch it with `CARD_TARGET_CLASS`.
+   */
   interactive?: boolean;
   /** Marks a selectable card as chosen. Visual only; the control inside carries the state. */
   selected?: boolean;
@@ -51,18 +55,37 @@ export function Card({
   selected = false,
   className,
   children,
+  onPointerDown,
   ...props
 }: CardProps) {
   const reduce = useReducedMotion();
+  // Press state is tracked by hand: whileTap would make motion give the card
+  // tabIndex 0, an unnamed tab stop ahead of the control that owns the card.
+  const [pressed, setPressed] = useState(false);
+
+  useEffect(() => {
+    if (!pressed) return;
+    const release = () => setPressed(false);
+    window.addEventListener("pointerup", release);
+    window.addEventListener("pointercancel", release);
+    return () => {
+      window.removeEventListener("pointerup", release);
+      window.removeEventListener("pointercancel", release);
+    };
+  }, [pressed]);
+
   return (
     <CardSizeContext.Provider value={size}>
       <motion.div
-        // whileTap would make the card itself a tab stop; the control inside owns focus.
-        tabIndex={interactive ? -1 : undefined}
         {...(props as React.ComponentProps<typeof motion.div>)}
+        onPointerDown={(event) => {
+          onPointerDown?.(event);
+          if (interactive && event.isPrimary && event.button === 0) setPressed(true);
+        }}
         data-slot="card"
         data-selected={selected || undefined}
-        whileTap={interactive && !reduce ? { scale: 0.985 } : undefined}
+        initial={false}
+        animate={interactive ? { scale: pressed && !reduce ? 0.985 : 1 } : undefined}
         transition={SPRING_PRESS}
         className={cn(
           "relative flex flex-col rounded-2xl border text-card-foreground",
