@@ -423,6 +423,24 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/checkbox.tsx",
         badge: "new",
         launchedAt: "2026-06-23",
+        examples: [
+          {
+            slug: "default",
+            name: "Checkbox",
+            description: "Draw-on checkmark, spring press feedback and indeterminate state.",
+            file: "components/motion/checkbox.tsx",
+            previewKey: "motion/checkbox",
+            previewFile: "components/previews/motion/checkbox.preview.tsx",
+          },
+          {
+            slug: "description",
+            name: "With Description",
+            description: "Optional supporting text under each label, exposed to assistive technology as the description.",
+            file: "components/motion/checkbox.tsx",
+            previewKey: "motion/checkbox-description",
+            previewFile: "components/previews/motion/checkbox-description.preview.tsx",
+          },
+        ],
       },
       {
         slug: "radio",
@@ -432,6 +450,24 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/radio.tsx",
         badge: "new",
         launchedAt: "2026-06-23",
+        examples: [
+          {
+            slug: "default",
+            name: "Radio Group",
+            description: "Gliding indicator dot with spring press feedback.",
+            file: "components/motion/radio.tsx",
+            previewKey: "motion/radio",
+            previewFile: "components/previews/motion/radio.preview.tsx",
+          },
+          {
+            slug: "description",
+            name: "With Description",
+            description: "Optional supporting text under each option label, exposed to assistive technology as the description.",
+            file: "components/motion/radio.tsx",
+            previewKey: "motion/radio-description",
+            previewFile: "components/previews/motion/radio-description.preview.tsx",
+          },
+        ],
       },
       {
         slug: "bottom-sheet",

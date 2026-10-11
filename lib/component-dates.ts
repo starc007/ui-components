@@ -5,7 +5,7 @@
  * maintenance should not refresh every component's public update date.
  */
 const COMPONENT_DATES = {
-  "motion/card": { publishedAt: "2026-10-10", updatedAt: "2026-10-10" },
+  "motion/card": { publishedAt: "2026-10-10", updatedAt: "2026-10-11" },
   "motion/color-picker": { publishedAt: "2026-10-10", updatedAt: "2026-10-10" },
   "charts/treemap": { publishedAt: "2026-10-07", updatedAt: "2026-10-07" },
   "charts/volume-profile": { publishedAt: "2026-10-07", updatedAt: "2026-10-07" },
@@ -42,8 +42,8 @@ const COMPONENT_DATES = {
   "motion/select": { publishedAt: "2026-06-28", updatedAt: "2026-07-13" },
   "motion/combobox": { publishedAt: "2026-08-11", updatedAt: "2026-08-22" },
   "motion/multi-select": { publishedAt: "2026-08-29", updatedAt: "2026-08-29" },
-  "motion/checkbox": { publishedAt: "2026-06-23", updatedAt: "2026-07-01" },
-  "motion/radio": { publishedAt: "2026-06-23", updatedAt: "2026-07-13" },
+  "motion/checkbox": { publishedAt: "2026-06-23", updatedAt: "2026-10-11" },
+  "motion/radio": { publishedAt: "2026-06-23", updatedAt: "2026-10-11" },
   "motion/bottom-sheet": { publishedAt: "2026-05-17", updatedAt: "2026-08-20" },
   "motion/pull-to-refresh": { publishedAt: "2026-07-17", updatedAt: "2026-07-17" },
   "motion/shared-layout-bg": { publishedAt: "2026-05-17", updatedAt: "2026-09-22" },
@@ -74,7 +74,7 @@ const COMPONENT_DATES = {
   "motion/scroll-animation": { publishedAt: "2026-06-24", updatedAt: "2026-06-28" },
   "motion/range-slider": { publishedAt: "2026-06-24", updatedAt: "2026-09-09" },
   "motion/wheel-picker": { publishedAt: "2026-07-09", updatedAt: "2026-07-09" },
-  "motion/table": { publishedAt: "2026-07-01", updatedAt: "2026-09-22" },
+  "motion/table": { publishedAt: "2026-07-01", updatedAt: "2026-10-11" },
   "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-10-05" },
   "motion/cylinder-carousel": { publishedAt: "2026-07-04", updatedAt: "2026-10-05" },
   "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-07-13" },
@@ -92,7 +92,7 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-10-10",
+    updatedAt: "2026-10-11",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
@@ -112,7 +112,7 @@ const COMPONENT_DATES = {
   },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-10-10",
+    updatedAt: "2026-10-11",
   },
   "agents/code-block": {
     publishedAt: "2026-08-02",
@@ -159,7 +159,7 @@ const COMPONENT_DATES = {
   "blocks/project-folder": { publishedAt: "2026-08-15", updatedAt: "2026-08-20" },
   "blocks/card-folder": { publishedAt: "2026-09-04", updatedAt: "2026-09-04" },
   "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-09-25" },
-  "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-10-10" },
+  "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-10-11" },
   "blocks/swap": { publishedAt: "2026-05-19", updatedAt: "2026-09-22" },
   "blocks/dynamic-island": { publishedAt: "2026-06-10", updatedAt: "2026-10-10" },
   "blocks/command-palette": { publishedAt: "2026-05-17", updatedAt: "2026-10-10" },
@@ -173,7 +173,7 @@ const COMPONENT_DATES = {
   "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-10-10" },
   "blocks/wallet-card": { publishedAt: "2026-07-03", updatedAt: "2026-10-10" },
   "blocks/otp-input": { publishedAt: "2026-06-13", updatedAt: "2026-07-13" },
-  "blocks/signup-form": { publishedAt: "2026-08-08", updatedAt: "2026-10-10" },
+  "blocks/signup-form": { publishedAt: "2026-08-08", updatedAt: "2026-10-11" },
   "blocks/bloom-menu": { publishedAt: "2026-06-26", updatedAt: "2026-06-26" },
   "blocks/feedback-widget": { publishedAt: "2026-06-29", updatedAt: "2026-10-10" },
   "blocks/not-found": { publishedAt: "2026-06-21", updatedAt: "2026-09-22" },

@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { act, cleanup, render } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { axe } from "jest-axe";
 import type { ReactElement } from "react";
 
 import { AgentActivity } from "@/components/agents/agent-activity";
-import { ApprovalCard } from "@/components/agents/approval-card";
+import { ApprovalCard, type ApprovalCardQuestion } from "@/components/agents/approval-card";
 import { Citation, Citations } from "@/components/agents/citations";
 import { CodeBlock } from "@/components/agents/code-block";
 import { FileDiff } from "@/components/agents/file-diff";
@@ -115,6 +115,25 @@ afterEach(cleanup);
 // Each entry renders a component in a representative state and asserts axe finds
 // no violations. Add a row here when you ship a new interactive component.
 // Render thunks (not bare JSX) keep these out of an iterable literal.
+const DESCRIBED_SINGLE = {
+  id: "run",
+  title: "When should this task run?",
+  options: [
+    { value: "once", label: "Run once", description: "Runs a single time now." },
+    { value: "schedule", label: "Run on a schedule" },
+  ],
+} satisfies ApprovalCardQuestion;
+
+const DESCRIBED_MULTIPLE = {
+  id: "notify",
+  title: "Who should be notified?",
+  multiple: true,
+  options: [
+    { value: "owner", label: "Owner", description: "The person who created the task." },
+    { value: "team", label: "Team" },
+  ],
+} satisfies ApprovalCardQuestion;
+
 const cases: Array<[name: string, render: () => ReactElement]> = [
   [
     "AdaptiveStepper",
@@ -285,6 +304,14 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
         onSubmit={() => {}}
       />
     ),
+  ],
+  [
+    "ApprovalCard single-choice descriptions",
+    () => <ApprovalCard questions={[DESCRIBED_SINGLE]} onSubmit={() => {}} />,
+  ],
+  [
+    "ApprovalCard multiple-choice descriptions",
+    () => <ApprovalCard questions={[DESCRIBED_MULTIPLE]} onSubmit={() => {}} />,
   ],
   [
     "ApprovalCard review",
@@ -857,6 +884,22 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
 ];
 
 describe("accessibility", () => {
+  for (const [question, role] of [
+    [DESCRIBED_SINGLE, "radio"],
+    [DESCRIBED_MULTIPLE, "checkbox"],
+  ] as const) {
+    test(`ApprovalCard ${role} option keeps its description out of the name`, () => {
+      render(<ApprovalCard questions={[question]} onSubmit={() => {}} />);
+      const option = screen.getByRole(role, { name: question.options[0].label });
+      const descriptionId = option.getAttribute("aria-describedby");
+      expect(descriptionId && document.getElementById(descriptionId)?.textContent).toBe(
+        question.options[0].description,
+      );
+      const plain = screen.getByRole(role, { name: question.options[1].label });
+      expect(plain.hasAttribute("aria-describedby")).toBe(false);
+    });
+  }
+
   for (const [name, renderCase] of cases) {
     test(`${name} has no axe violations`, async () => {
       render(<main>{renderCase()}</main>);
