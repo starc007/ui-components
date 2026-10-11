@@ -6,7 +6,7 @@
  */
 const COMPONENT_DATES = {
   "motion/card": { publishedAt: "2026-10-10", updatedAt: "2026-10-11" },
-  "motion/color-picker": { publishedAt: "2026-10-10", updatedAt: "2026-10-10" },
+  "motion/color-picker": { publishedAt: "2026-10-10", updatedAt: "2026-10-11" },
   "charts/treemap": { publishedAt: "2026-10-07", updatedAt: "2026-10-11" },
   "charts/volume-profile": { publishedAt: "2026-10-07", updatedAt: "2026-10-11" },
   "charts/status-bar": { publishedAt: "2026-10-07", updatedAt: "2026-10-11" },
@@ -47,7 +47,7 @@ const COMPONENT_DATES = {
   "motion/bottom-sheet": { publishedAt: "2026-05-17", updatedAt: "2026-08-20" },
   "motion/pull-to-refresh": { publishedAt: "2026-07-17", updatedAt: "2026-07-17" },
   "motion/shared-layout-bg": { publishedAt: "2026-05-17", updatedAt: "2026-09-22" },
-  "motion/bounce-sidebar": { publishedAt: "2026-07-22", updatedAt: "2026-07-22" },
+  "motion/bounce-sidebar": { publishedAt: "2026-07-22", updatedAt: "2026-10-11" },
   "motion/animated-sidebar": {
     publishedAt: "2026-07-29",
     updatedAt: "2026-09-22",
