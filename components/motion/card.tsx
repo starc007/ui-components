@@ -57,6 +57,8 @@ export function Card({
   return (
     <CardSizeContext.Provider value={size}>
       <motion.div
+        // whileTap would make the card itself a tab stop; the control inside owns focus.
+        tabIndex={interactive ? -1 : undefined}
         {...(props as React.ComponentProps<typeof motion.div>)}
         data-slot="card"
         data-selected={selected || undefined}
