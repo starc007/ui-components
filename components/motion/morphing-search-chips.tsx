@@ -293,6 +293,22 @@ export function MorphingSearchChips({
   // A fresh session each time the panel opens: the highlight starts at the top.
   useOnOpen(open, () => moveTo(null));
 
+  // The tallest the panel has been since it opened. Typing can grow the card but
+  // never shrink it; each new session starts from its own content again.
+  const [panelFloor, setPanelFloor] = useState(0);
+  useOnOpen(panelOpen, () => setPanelFloor(0));
+  const rowsObserver = useRef<ResizeObserver | null>(null);
+  const measureRows = useCallback((node: HTMLDivElement | null) => {
+    rowsObserver.current?.disconnect();
+    rowsObserver.current = null;
+    if (!node) return;
+    // The wrapper's p-2 adds 16px around the rows.
+    const read = () => setPanelFloor((floor) => Math.max(floor, node.offsetHeight + 16));
+    read();
+    rowsObserver.current = new ResizeObserver(read);
+    rowsObserver.current.observe(node);
+  }, []);
+
   // "auto" picks a side as the panel opens and keeps it until it closes.
   useLayoutEffect(() => {
     if (!panelOpen) return;
@@ -589,9 +605,12 @@ export function MorphingSearchChips({
                   animate={{ opacity: 1, y: 0, transition: reduce ? { duration: 0.15 } : CONTENT_IN }}
                   exit={{ opacity: 0, transition: CONTENT_OUT }}
                   ref={measurePanel}
+                  // Never shorter than this session's tallest list, so narrowing a
+                  // search leaves empty glass instead of pulling the card down.
+                  style={{ minHeight: panelFloor || undefined }}
                   className="relative p-2"
                 >
-                  {panel}
+                  <div ref={measureRows}>{panel}</div>
                 </motion.div>
               </div>
             )}
