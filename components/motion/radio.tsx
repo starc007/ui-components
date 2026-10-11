@@ -84,6 +84,8 @@ export function RadioGroup({
 export interface RadioGroupItemProps {
   value: string;
   label?: string;
+  /** Supporting text under the label, announced as the description rather than the name. */
+  description?: string;
   disabled?: boolean;
   className?: string;
   id?: string;
@@ -92,6 +94,7 @@ export interface RadioGroupItemProps {
 export function RadioGroupItem({
   value,
   label,
+  description,
   disabled,
   className,
   id: idProp,
@@ -101,12 +104,16 @@ export function RadioGroupItem({
   const id = idProp ?? autoId;
   const reduce = useReducedMotion();
   const selected = groupValue === value;
+  const descriptionId = description ? `${id}-description` : undefined;
+  // The wrapping <label> would fold the description into the name, so name from the label text alone.
+  const labelId = description && label ? `${id}-label` : undefined;
 
   return (
     <label
       htmlFor={id}
       className={cn(
-        "inline-flex items-center gap-3",
+        "inline-flex gap-3",
+        description ? "items-start" : "items-center",
         disabled ? "cursor-not-allowed" : "cursor-pointer",
         className,
       )}
@@ -116,6 +123,8 @@ export function RadioGroupItem({
         type="button"
         role="radio"
         aria-checked={selected}
+        aria-labelledby={labelId}
+        aria-describedby={descriptionId}
         disabled={disabled}
         onClick={() => !disabled && setValue(value)}
         whileTap={reduce || disabled ? undefined : { scale: 0.92 }}
@@ -138,9 +147,22 @@ export function RadioGroupItem({
           />
         ) : null}
       </motion.button>
-      {label ? (
-        <span className={cn("select-none text-sm text-foreground", disabled && "opacity-60")}>
-          {label}
+      {label || description ? (
+        <span className={cn("flex min-w-0 flex-col gap-0.5 select-none", disabled && "opacity-60")}>
+          {label ? (
+            <span
+              id={labelId}
+              // Geist sits low in a 20px line; a 16px line lifts the text onto the control.
+              className={cn("text-sm text-foreground", description && "leading-4")}
+            >
+              {label}
+            </span>
+          ) : null}
+          {description ? (
+            <span id={descriptionId} className="text-xs text-muted-foreground">
+              {description}
+            </span>
+          ) : null}
         </span>
       ) : null}
     </label>

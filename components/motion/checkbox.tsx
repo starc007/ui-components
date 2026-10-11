@@ -14,6 +14,8 @@ export interface CheckboxProps {
   disabled?: boolean;
   indeterminate?: boolean;
   label?: string;
+  /** Supporting text under the label, announced as the description rather than the name. */
+  description?: string;
   className?: string;
   id?: string;
   "aria-label"?: string;
@@ -27,6 +29,7 @@ export function Checkbox({
   disabled,
   indeterminate,
   label,
+  description,
   className,
   id: idProp,
   "aria-label": ariaLabel,
@@ -37,12 +40,18 @@ export function Checkbox({
   const reduce = useReducedMotion();
   const showMark = checked || indeterminate;
   const path = indeterminate ? INDETERMINATE_PATH : CHECK_PATH;
+  const descriptionId = description ? `${id}-description` : undefined;
+  // The wrapping <label> would fold the description into the name, so name from the label text alone.
+  const labelId = description && label && !ariaLabel ? `${id}-label` : undefined;
+  const describedBy =
+    [ariaDescribedBy, descriptionId].filter(Boolean).join(" ") || undefined;
 
   return (
     <label
       htmlFor={id}
       className={cn(
-        "inline-flex items-center gap-3",
+        "inline-flex gap-3",
+        description ? "items-start" : "items-center",
         disabled ? "cursor-not-allowed" : "cursor-pointer",
         className,
       )}
@@ -53,7 +62,8 @@ export function Checkbox({
         role="checkbox"
         aria-checked={indeterminate ? "mixed" : checked}
         aria-label={ariaLabel}
-        aria-describedby={ariaDescribedBy}
+        aria-labelledby={labelId}
+        aria-describedby={describedBy}
         disabled={disabled}
         onClick={() => !disabled && onCheckedChange(!checked)}
         whileTap={reduce || disabled ? undefined : { scale: 0.92 }}
@@ -113,9 +123,22 @@ export function Checkbox({
           ) : null}
         </AnimatePresence>
       </motion.button>
-      {label ? (
-        <span className={cn("select-none text-sm text-foreground", disabled && "opacity-60")}>
-          {label}
+      {label || description ? (
+        <span className={cn("flex min-w-0 flex-col gap-0.5 select-none", disabled && "opacity-60")}>
+          {label ? (
+            <span
+              id={labelId}
+              // Geist sits low in a 20px line; a 16px line lifts the text onto the control.
+              className={cn("text-sm text-foreground", description && "leading-4")}
+            >
+              {label}
+            </span>
+          ) : null}
+          {description ? (
+            <span id={descriptionId} className="text-xs text-muted-foreground">
+              {description}
+            </span>
+          ) : null}
         </span>
       ) : null}
     </label>

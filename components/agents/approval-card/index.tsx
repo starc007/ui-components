@@ -101,6 +101,7 @@ function QuestionOptions({
                 checked={answer.selected.includes(option.value)}
                 disabled={disabled || option.disabled}
                 label={option.label}
+                description={option.description}
                 onCheckedChange={(checked) =>
                   onChange({
                     ...answer,
@@ -127,6 +128,7 @@ function QuestionOptions({
                 key={option.value}
                 value={option.value}
                 label={option.label}
+                description={option.description}
                 disabled={disabled || option.disabled}
                 className="min-h-9 rounded-lg px-1.5 py-1"
               />

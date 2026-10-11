@@ -14,9 +14,21 @@ const QUESTIONS: ApprovalCardQuestion[] = [
     id: "scope",
     title: "How focused should the first release be?",
     options: [
-      { value: "focused", label: "A focused starter set" },
-      { value: "broad", label: "A broader collection" },
-      { value: "flagship", label: "One flagship experience" },
+      {
+        value: "focused",
+        label: "A focused starter set",
+        description: "Ship a few polished pieces first.",
+      },
+      {
+        value: "broad",
+        label: "A broader collection",
+        description: "Cover more ground with lighter depth.",
+      },
+      {
+        value: "flagship",
+        label: "One flagship experience",
+        description: "Pour everything into a single showcase.",
+      },
     ],
     allowCustom: true,
     customPlaceholder: "Describe another scope…",

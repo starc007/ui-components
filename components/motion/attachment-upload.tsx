@@ -307,7 +307,6 @@ function ImageThumbnail({
     <Tooltip
       side="top"
       delay={160}
-      wrapperClassName="shrink-0"
       className="rounded-xl p-1 shadow-xl"
       content={
         <span className="block w-32">

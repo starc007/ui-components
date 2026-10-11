@@ -391,8 +391,14 @@ export const previews: Record<string, ComponentType> = {
   "motion/checkbox": dynamic(() =>
     import("./motion/checkbox.preview").then((m) => m.CheckboxPreview),
   ),
+  "motion/checkbox-description": dynamic(() =>
+    import("./motion/checkbox-description.preview").then((m) => m.CheckboxDescriptionPreview),
+  ),
   "motion/radio": dynamic(() =>
     import("./motion/radio.preview").then((m) => m.RadioPreview),
+  ),
+  "motion/radio-description": dynamic(() =>
+    import("./motion/radio-description.preview").then((m) => m.RadioDescriptionPreview),
   ),
   "blocks/otp-input": dynamic(() =>
     import("./blocks/otp-input.preview").then((m) => m.OTPInputPreview),
@@ -444,6 +450,9 @@ export const previews: Record<string, ComponentType> = {
   ),
   "motion/tooltip": dynamic(() =>
     import("./motion/tooltip.preview").then((m) => m.TooltipPreview),
+  ),
+  "motion/tooltip-toolbar": dynamic(() =>
+    import("./motion/tooltip-toolbar.preview").then((m) => m.TooltipToolbarPreview),
   ),
   "motion/context-menu": dynamic(() =>
     import("./motion/context-menu.preview").then((m) => m.ContextMenuPreview),

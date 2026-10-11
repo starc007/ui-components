@@ -423,6 +423,24 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/checkbox.tsx",
         badge: "new",
         launchedAt: "2026-06-23",
+        examples: [
+          {
+            slug: "default",
+            name: "Checkbox",
+            description: "Draw-on checkmark, spring press feedback and indeterminate state.",
+            file: "components/motion/checkbox.tsx",
+            previewKey: "motion/checkbox",
+            previewFile: "components/previews/motion/checkbox.preview.tsx",
+          },
+          {
+            slug: "description",
+            name: "With Description",
+            description: "Optional supporting text under each label, exposed to assistive technology as the description.",
+            file: "components/motion/checkbox.tsx",
+            previewKey: "motion/checkbox-description",
+            previewFile: "components/previews/motion/checkbox-description.preview.tsx",
+          },
+        ],
       },
       {
         slug: "radio",
@@ -432,6 +450,24 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/radio.tsx",
         badge: "new",
         launchedAt: "2026-06-23",
+        examples: [
+          {
+            slug: "default",
+            name: "Radio Group",
+            description: "Gliding indicator dot with spring press feedback.",
+            file: "components/motion/radio.tsx",
+            previewKey: "motion/radio",
+            previewFile: "components/previews/motion/radio.preview.tsx",
+          },
+          {
+            slug: "description",
+            name: "With Description",
+            description: "Optional supporting text under each option label, exposed to assistive technology as the description.",
+            file: "components/motion/radio.tsx",
+            previewKey: "motion/radio-description",
+            previewFile: "components/previews/motion/radio-description.preview.tsx",
+          },
+        ],
       },
       {
         slug: "bottom-sheet",
@@ -545,8 +581,26 @@ export const registry: CategoryEntry[] = [
       {
         slug: "tooltip",
         name: "Tooltip",
-        description: "Hover or focus tooltip with a subtle scale and fade, collision-aware placement, and optional cursor tracking.",
+        description: "Composable hover, focus and tap tooltip with a subtle scale and fade, collision-aware side and alignment, an optional arrow, a pointer corridor onto hoverable content, one label at a time, keyboard-only focus reveal and optional cursor tracking.",
         file: "components/motion/tooltip.tsx",
+        examples: [
+          {
+            slug: "default",
+            name: "Tooltip",
+            description: "One-line shorthand: pass `content` and wrap the trigger element. Four sides with an arrow.",
+            file: "components/motion/tooltip.tsx",
+            previewKey: "motion/tooltip",
+            previewFile: "components/previews/motion/tooltip.preview.tsx",
+          },
+          {
+            slug: "toolbar",
+            name: "Toolbar",
+            description: "Composable parts under a shared provider. Icon-only buttons take their accessible name from the tooltip, later labels skip the delay, and a disabled control shows none.",
+            file: "components/motion/tooltip.tsx",
+            previewKey: "motion/tooltip-toolbar",
+            previewFile: "components/previews/motion/tooltip-toolbar.preview.tsx",
+          },
+        ],
       },
       {
         slug: "context-menu",
