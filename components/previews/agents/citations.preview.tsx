@@ -1,6 +1,6 @@
 "use client";
 
-import { RotateCcw } from "lucide-react";
+import { FileText, RotateCcw } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import {
@@ -23,10 +23,10 @@ const CITATION_ITEMS: CitationItem[] = [
     url: "https://www.w3.org/WAI/ARIA/apg/",
   },
   {
-    id: "react",
-    title: "React documentation",
-    domain: "react.dev",
-    url: "https://react.dev/learn",
+    id: "guidelines",
+    title: "Motion guidelines",
+    domain: "Design handbook · PDF",
+    icon: <FileText />,
   },
 ];
 
@@ -48,7 +48,14 @@ function CitationsDemo() {
         Use layout-aware motion for newly appended results{" "}
         <Citation citationId="motion" index={1} idPrefix="preview-source" /> and preserve accessible
         disclosure behavior <Citation citationId="wai" index={2} idPrefix="preview-source" /> as the list
-        grows.
+        grows, keeping exits shorter than entrances{" "}
+        <Citation
+          citationId="guidelines"
+          index={3}
+          idPrefix="preview-source"
+          label="Citation 3: Motion guidelines"
+        />
+        .
       </p>
       <Citations
         idPrefix="preview-source"

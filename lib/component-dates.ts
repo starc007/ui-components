@@ -96,15 +96,15 @@ const COMPONENT_DATES = {
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-10-10",
+    updatedAt: "2026-10-11",
   },
   "agents/message": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-10-10",
+    updatedAt: "2026-10-11",
   },
   "agents/message-scroller": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-10-10",
+    updatedAt: "2026-10-11",
   },
   "agents/ai-sidebar": {
     publishedAt: "2026-08-02",
@@ -136,7 +136,7 @@ const COMPONENT_DATES = {
   },
   "agents/streaming-response": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-02",
+    updatedAt: "2026-10-11",
   },
   "agents/image-generation": {
     publishedAt: "2026-08-02",
@@ -148,7 +148,7 @@ const COMPONENT_DATES = {
   },
   "agents/citations": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-08-02",
+    updatedAt: "2026-10-11",
   },
   "agents/agent-activity": {
     publishedAt: "2026-08-01",

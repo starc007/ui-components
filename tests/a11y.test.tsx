@@ -415,6 +415,32 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   [
+    "Citations with custom icons and marker labels",
+    () => (
+      <div>
+        A reported figure{" "}
+        <Citation
+          citationId="report"
+          index={1}
+          idPrefix="test-report"
+          label="Source 1: Q3 revenue report"
+        />
+        <Citations
+          idPrefix="test-report"
+          defaultOpen
+          citations={[
+            {
+              id: "report",
+              title: "Q3 revenue report",
+              domain: "Finance · PDF",
+              icon: <span>R</span>,
+            },
+          ]}
+        />
+      </div>
+    ),
+  ],
+  [
     "AgentActivity text complete",
     () => (
       <AgentActivity
