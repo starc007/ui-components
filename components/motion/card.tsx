@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
-import { type ComponentPropsWithRef, createContext, useContext } from "react";
+import { animate, isDragActive, motion, useMotionValue, useReducedMotion } from "motion/react";
+import { type ComponentPropsWithRef, createContext, useContext, useEffect, useRef } from "react";
 import { SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -27,9 +27,9 @@ const INSET_CLASS: Record<CardSize, string> = {
 };
 
 /**
- * Spread onto the one control that owns a selectable card (a Checkbox or
- * RadioGroupItem root) to stretch its hit area over the whole card. Any other
- * interactive element inside that card needs `relative z-10` to stay on top.
+ * Spread onto the one control that owns a card (a Checkbox or RadioGroupItem
+ * root, or a link or button) to stretch its hit area over the whole card. Any
+ * other interactive element inside that card needs `relative z-10` to stay on top.
  */
 export const CARD_TARGET_CLASS = "after:absolute after:inset-0";
 
@@ -38,7 +38,11 @@ export interface CardProps extends ComponentPropsWithRef<"div"> {
   variant?: CardVariant;
   /** Spacing for every part. Default "default". */
   size?: CardSize;
-  /** Hover and press feedback, for a card that is one target as a whole. */
+  /**
+   * Hover and press feedback, for a card that is one target as a whole. Visual
+   * only: the card never takes focus, so put the control that owns it inside
+   * and stretch it with `CARD_TARGET_CLASS`.
+   */
   interactive?: boolean;
   /** Marks a selectable card as chosen. Visual only; the control inside carries the state. */
   selected?: boolean;
@@ -51,17 +55,61 @@ export function Card({
   selected = false,
   className,
   children,
+  style,
+  onPointerDown,
   ...props
 }: CardProps) {
   const reduce = useReducedMotion();
+  // The press is driven by hand: whileTap would make motion give the card
+  // tabIndex 0, an unnamed tab stop ahead of the control that owns the card.
+  const scale = useMotionValue(1);
+  const releaseRef = useRef<(() => void) | null>(null);
+
+  // Turning `interactive` off or unmounting mid-press settles the card.
+  useEffect(() => {
+    if (!interactive) return;
+    return () => releaseRef.current?.();
+  }, [interactive]);
+
+  const press = (event: React.PointerEvent<HTMLDivElement>) => {
+    onPointerDown?.(event);
+    if (!interactive || reduce || releaseRef.current) return;
+    if (!event.isPrimary || event.button !== 0 || isDragActive()) return;
+
+    // Capture phase, as motion's own press does, so a descendant that stops
+    // pointerup propagation cannot leave the card pressed.
+    const options = { capture: true };
+    const release = () => {
+      window.removeEventListener("pointerup", release, options);
+      window.removeEventListener("pointercancel", release, options);
+      window.removeEventListener("pointermove", releaseOnDrag);
+      releaseRef.current = null;
+      animate(scale, 1, SPRING_PRESS);
+    };
+    // A drag that starts from the card (a sheet or swipeable row around it)
+    // takes over the gesture, so the press ends there. Bubble phase: motion's
+    // pan session sets the drag lock in its own window pointermove, registered
+    // before this one, so the move that starts the drag already reads it.
+    const releaseOnDrag = () => {
+      if (isDragActive()) release();
+    };
+    window.addEventListener("pointerup", release, options);
+    window.addEventListener("pointercancel", release, options);
+    window.addEventListener("pointermove", releaseOnDrag);
+    releaseRef.current = release;
+    animate(scale, 0.985, SPRING_PRESS);
+  };
+
   return (
     <CardSizeContext.Provider value={size}>
       <motion.div
         {...(props as React.ComponentProps<typeof motion.div>)}
+        onPointerDown={press}
+        // Only an interactive card carries the scale, so a plain one keeps
+        // any transform the caller gives it.
+        style={interactive ? { ...style, scale } : style}
         data-slot="card"
         data-selected={selected || undefined}
-        whileTap={interactive && !reduce ? { scale: 0.985 } : undefined}
-        transition={SPRING_PRESS}
         className={cn(
           "relative flex flex-col rounded-2xl border text-card-foreground",
           "transition-[border-color,box-shadow,background-color] duration-200",
