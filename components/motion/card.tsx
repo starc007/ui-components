@@ -82,18 +82,20 @@ export function Card({
     const release = () => {
       window.removeEventListener("pointerup", release, options);
       window.removeEventListener("pointercancel", release, options);
-      window.removeEventListener("pointermove", releaseOnDrag, options);
+      window.removeEventListener("pointermove", releaseOnDrag);
       releaseRef.current = null;
       animate(scale, 1, SPRING_PRESS);
     };
     // A drag that starts from the card (a sheet or swipeable row around it)
-    // takes over the gesture, so the press ends there.
+    // takes over the gesture, so the press ends there. Bubble phase: motion's
+    // pan session sets the drag lock in its own window pointermove, registered
+    // before this one, so the move that starts the drag already reads it.
     const releaseOnDrag = () => {
       if (isDragActive()) release();
     };
     window.addEventListener("pointerup", release, options);
     window.addEventListener("pointercancel", release, options);
-    window.addEventListener("pointermove", releaseOnDrag, options);
+    window.addEventListener("pointermove", releaseOnDrag);
     releaseRef.current = release;
     animate(scale, 0.985, SPRING_PRESS);
   };
@@ -103,7 +105,9 @@ export function Card({
       <motion.div
         {...(props as React.ComponentProps<typeof motion.div>)}
         onPointerDown={press}
-        style={{ ...style, scale }}
+        // Only an interactive card carries the scale, so a plain one keeps
+        // any transform the caller gives it.
+        style={interactive ? { ...style, scale } : style}
         data-slot="card"
         data-selected={selected || undefined}
         className={cn(
