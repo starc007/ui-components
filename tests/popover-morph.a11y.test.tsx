@@ -75,3 +75,22 @@ test("MorphPopover focuses its initialFocus target when opened by keyboard", asy
   fireEvent.click(trigger, { detail: 0 });
   await waitFor(() => expect(document.activeElement).toBe(getByRole("button", { name: "Beta" })));
 });
+
+test("MorphPopover skips candidates that cannot take focus when opened by keyboard", async () => {
+  const { getByRole } = render(
+    <StrictMode>
+      <MorphPopover>
+        <MorphPopoverTrigger><button type="button">Filters</button></MorphPopoverTrigger>
+        <MorphPopoverContent>
+          <input type="hidden" name="filter" value="all" />
+          <button type="button" disabled tabIndex={0}>Reset</button>
+          <button type="button">Apply</button>
+        </MorphPopoverContent>
+      </MorphPopover>
+    </StrictMode>,
+  );
+  const trigger = getByRole("button", { name: "Filters" });
+  act(() => trigger.focus());
+  fireEvent.click(trigger, { detail: 0 });
+  await waitFor(() => expect(document.activeElement).toBe(getByRole("button", { name: "Apply" })));
+});

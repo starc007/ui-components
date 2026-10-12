@@ -234,7 +234,7 @@ function clipAt(side: Side, align: Align, radius: number, inset: number) {
 const FOCUSABLE_SELECTOR = [
   "a[href]",
   "button:not([disabled])",
-  "input:not([disabled])",
+  "input:not([disabled]):not([type='hidden'])",
   "select:not([disabled])",
   "textarea:not([disabled])",
   "[tabindex]:not([tabindex='-1'])",
@@ -250,12 +250,15 @@ export interface MorphPopoverContentProps {
   radius?: number;
   /** Draw the surface shadow. Default true. */
   shadow?: boolean;
-  /** Runs after the portalled surface is positioned and visible. */
+  /**
+   * Runs after the portalled surface is positioned and visible. Passing it
+   * hands focus to the caller: the panel then moves no focus on its own.
+   */
   onOpenAutoFocus?: (content: HTMLDivElement) => void;
   /**
    * Element to focus when the trigger opens the panel by keyboard. Defaults
    * to the first focusable element in the panel, or the panel itself. A
-   * pointer open does not move focus.
+   * pointer open does not move focus. Ignored with `onOpenAutoFocus`.
    */
   initialFocus?: RefObject<HTMLElement | null>;
   className?: string;
@@ -403,35 +406,60 @@ function MorphPopoverSurface({
   // The wrapper stays `visibility: hidden` until the first measurement, and
   // focus() inside a hidden subtree is silently ignored. So move focus in the
   // commit that makes the panel visible, not when it mounts. A CSS transition
-  // on `visibility` can still hold the panel hidden for a moment after that
-  // commit (a reduced-motion reset that gives every element a short
-  // transition-duration does), so a missed focus waits for that transition
-  // to end, unless focus has moved elsewhere in the meantime.
+  // on `visibility` can still hold the controls hidden for a moment after
+  // that commit (a reduced-motion reset that gives every element a short
+  // transition-duration does), so while focus rests on the panel or has not
+  // moved, each such transition that ends tries the candidates again, until
+  // the user presses a key or pointer.
   const { contentRef, focusOnOpenRef } = ctx;
+  const callerFocuses = onOpenAutoFocus !== undefined;
   useLayoutEffect(() => {
     if (!ready || !isPresent || !focusOnOpenRef.current) return;
     focusOnOpenRef.current = false;
+    if (callerFocuses) return;
     const panel = contentRef.current;
     const wrapper = panel?.parentElement;
-    const target =
-      initialFocus?.current ??
-      panel?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR) ??
-      panel;
-    if (!target || !wrapper) return;
+    if (!panel || !wrapper) return;
     const from = document.activeElement;
-    target.focus({ preventScroll: true });
-    if (document.activeElement === target) return;
+    const unmoved = () =>
+      document.activeElement === from || document.activeElement === panel;
+    // The selector also matches elements focus() refuses: a hidden input, a
+    // disabled button that carries a tabindex, anything under display: none.
+    // Keep the first candidate that takes focus, else hold it on the panel.
+    const focusFirst = () => {
+      const candidates = [
+        initialFocus?.current,
+        ...panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+      ];
+      for (const candidate of candidates) {
+        candidate?.focus({ preventScroll: true });
+        if (!unmoved()) return true;
+      }
+      panel.focus({ preventScroll: true });
+      return false;
+    };
+    if (focusFirst()) return;
     const retry = (event: TransitionEvent) => {
       if (event.propertyName !== "visibility") return;
-      if (document.activeElement === from) {
-        target.focus({ preventScroll: true });
-      }
-      if (document.activeElement !== from) stop();
+      if (!unmoved() || focusFirst()) stop();
     };
-    const stop = () => wrapper.removeEventListener("transitionend", retry);
+    const stop = () => {
+      wrapper.removeEventListener("transitionend", retry);
+      document.removeEventListener("keydown", stop, true);
+      document.removeEventListener("pointerdown", stop, true);
+    };
     wrapper.addEventListener("transitionend", retry);
+    document.addEventListener("keydown", stop, true);
+    document.addEventListener("pointerdown", stop, true);
     return stop;
-  }, [ready, isPresent, initialFocus, contentRef, focusOnOpenRef]);
+  }, [
+    ready,
+    isPresent,
+    callerFocuses,
+    initialFocus,
+    contentRef,
+    focusOnOpenRef,
+  ]);
 
   return (
     <motion.div
