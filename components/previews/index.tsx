@@ -328,6 +328,9 @@ export const previews: Record<string, ComponentType> = {
   "charts/candlestick-chart": dynamic(() =>
     import("./charts/candlestick-chart.preview").then((m) => m.CandlestickChartPreview),
   ),
+  "charts/donut-chart": dynamic(() =>
+    import("./charts/donut-chart.preview").then((m) => m.DonutChartPreview),
+  ),
   "charts/order-book": dynamic(() =>
     import("./charts/order-book.preview").then((m) => m.OrderBookPreview),
   ),
