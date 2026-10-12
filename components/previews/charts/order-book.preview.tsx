@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   OrderBook,
   OrderBookBalance,
+  OrderBookDepthSummary,
   OrderBookHeader,
   OrderBookSide,
   OrderBookSpread,
@@ -32,6 +33,7 @@ function snapshot(tick: number) {
 
 export function OrderBookPreview() {
   const [playing, setPlaying] = useState(true);
+  const [selected, setSelected] = useState<number | null>(null);
   const [tick, setTick] = useState(0);
   useEffect(() => {
     if (!playing) return;
@@ -71,13 +73,20 @@ export function OrderBookPreview() {
         baseSymbol="SOL"
         quoteSymbol="USD"
         label="Simulated SOL / USD order book"
+        onLevelSelect={(level) => setSelected(level.price)}
       >
         <OrderBookHeader />
         <OrderBookSide side="ask" />
         <OrderBookSpread />
         <OrderBookSide side="bid" />
+        <OrderBookDepthSummary />
         <OrderBookBalance />
       </OrderBook>
+      <p aria-live="polite" className="px-1 text-xs text-muted-foreground">
+        {selected === null
+          ? "Click a price to use it, for example in an order ticket."
+          : `Selected ${selected.toFixed(2)} USD`}
+      </p>
     </div>
   );
 }

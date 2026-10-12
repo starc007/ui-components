@@ -1,13 +1,25 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { createContext, useContext, type ReactNode } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { SPRING_PANEL } from "@/lib/ease";
-import { OrderBookDepthRow } from "./order-book/depth-row";
 import { cn } from "@/lib/utils";
-import { buildOrderBook } from "./order-book/model";
+import { OrderBookDepthRow } from "./order-book/depth-row";
+import { buildOrderBook, type DepthLevel, summarizeDepth } from "./order-book/model";
 
 export type OrderBookLevel = { price: number; size: number };
+export type { DepthLevel as OrderBookDepthLevel, DepthSummary as OrderBookDepthSummaryData } from "./order-book/model";
+
+/** A level identified by its side and price, so it survives snapshot updates. */
+export type OrderBookActiveLevel = { side: "bid" | "ask"; price: number } | null;
 
 export interface OrderBookProps {
   /** Snapshot of buy levels. Equal prices are combined; invalid and zero sizes are omitted. */
@@ -23,6 +35,15 @@ export interface OrderBookProps {
   quoteSymbol?: string;
   formatPrice?: (value: number) => string;
   formatSize?: (value: number) => string;
+  /**
+   * The level whose depth is inspected: it and every better level on its side
+   * are highlighted, and `OrderBookDepthSummary` totals them. Controlled.
+   */
+  activeLevel?: OrderBookActiveLevel;
+  defaultActiveLevel?: OrderBookActiveLevel;
+  onActiveLevelChange?: (level: OrderBookActiveLevel) => void;
+  /** Makes each price a button, for example to fill an order ticket. */
+  onLevelSelect?: (level: DepthLevel, side: "bid" | "ask") => void;
   children?: ReactNode;
   className?: string;
 }
@@ -47,10 +68,42 @@ function useOrderBookModel({
   quoteSymbol = "USD",
   formatPrice = defaultPrice,
   formatSize = defaultSize,
+  activeLevel,
+  defaultActiveLevel = null,
+  onActiveLevelChange,
+  onLevelSelect,
 }: OrderBookProps) {
   const book = buildOrderBook(bids, asks, levels);
+  const [internalActive, setInternalActive] = useState(defaultActiveLevel);
+  const rawActive = activeLevel === undefined ? internalActive : activeLevel;
+  // Resolve the inspected level during render by price; a level that left the
+  // book clears the inspection instead of pointing at a different row.
+  const activeIndex = rawActive
+    ? (rawActive.side === "bid" ? book.bids : book.asks).findIndex(
+        (level) => level.price === rawActive.price,
+      )
+    : -1;
+  const active =
+    rawActive && activeIndex >= 0 ? { side: rawActive.side, index: activeIndex } : null;
+
+  // Stable setter: it reads the latest controlled flag and callback from refs.
+  const latest = useRef({ controlled: activeLevel !== undefined, onActiveLevelChange });
+  useLayoutEffect(() => {
+    latest.current = { controlled: activeLevel !== undefined, onActiveLevelChange };
+  });
+  const setActiveLevel = useCallback((level: OrderBookActiveLevel) => {
+    if (!latest.current.controlled) setInternalActive(level);
+    latest.current.onActiveLevelChange?.(level);
+  }, []);
+
   return {
     ...book,
+    active,
+    summary: active
+      ? summarizeDepth((active.side === "bid" ? book.bids : book.asks).slice(0, active.index + 1), active.side)
+      : null,
+    setActiveLevel,
+    onLevelSelect,
     price:
       lastPrice != null && Number.isFinite(lastPrice) && lastPrice > 0 ? lastPrice : book.midpoint,
     baseSymbol,
@@ -114,8 +167,19 @@ export function OrderBookHeader({ className }: { className?: string }) {
 }
 
 export function OrderBookSide({ side, className }: { side: "bid" | "ask"; className?: string }) {
-  const { bids, asks, maxTotal, formatPrice, formatSize, reduce, baseSymbol, quoteSymbol } =
-    useOrderBook();
+  const {
+    bids,
+    asks,
+    maxTotal,
+    formatPrice,
+    formatSize,
+    reduce,
+    baseSymbol,
+    quoteSymbol,
+    active,
+    setActiveLevel,
+    onLevelSelect,
+  } = useOrderBook();
   const rows = side === "ask" ? [...asks].reverse() : bids;
   const color =
     side === "ask" ? "text-rose-600 dark:text-rose-400" : "text-emerald-700 dark:text-emerald-400";
@@ -131,7 +195,7 @@ export function OrderBookSide({ side, className }: { side: "bid" | "ask"; classN
           <th scope="col">Cumulative total {baseSymbol}</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody onPointerLeave={() => setActiveLevel(null)}>
         {rows.length === 0 ? (
           <tr>
             <td colSpan={3} className="px-4 py-6 text-center text-muted-foreground">
@@ -139,10 +203,17 @@ export function OrderBookSide({ side, className }: { side: "bid" | "ask"; classN
             </td>
           </tr>
         ) : (
-          rows.map((row, index) => (
+          rows.map((row, index) => {
+            const depthIndex = side === "ask" ? rows.length - 1 - index : index;
+            return (
             <OrderBookDepthRow
               key={row.price}
               row={row}
+              inRange={active?.side === side && depthIndex <= active.index}
+              onInspect={(inspect) =>
+                setActiveLevel(inspect ? { side, price: row.price } : null)
+              }
+              onSelect={onLevelSelect ? () => onLevelSelect(row, side) : undefined}
               fraction={maxTotal ? row.total / maxTotal : 0}
               entranceIndex={side === "ask" ? rows.length - 1 - index : index}
               color={color}
@@ -150,7 +221,8 @@ export function OrderBookSide({ side, className }: { side: "bid" | "ask"; classN
               formatSize={formatSize}
               reduce={!!reduce}
             />
-          ))
+            );
+          })
         )}
       </tbody>
     </table>
@@ -206,5 +278,52 @@ export function OrderBookBalance({ className }: { className?: string }) {
         />
       </div>
     </div>
+  );
+}
+
+/**
+ * Totals the inspected levels: the hovered or focused level and every better
+ * level on its side, as the cost of filling an order up to that price.
+ */
+export function OrderBookDepthSummary({
+  placeholder = "Hover a level to see the cost of filling up to it",
+  children,
+  className,
+}: {
+  placeholder?: ReactNode;
+  /** Custom readout for the inspected levels. */
+  children?: (summary: NonNullable<ReturnType<typeof useOrderBook>["summary"]>) => ReactNode;
+  className?: string;
+}) {
+  const { summary, formatPrice, formatSize, baseSymbol, quoteSymbol } = useOrderBook();
+  return (
+    <p
+      aria-live="polite"
+      className={cn(
+        "flex min-h-10 flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-border px-4 py-2 text-muted-foreground",
+        className,
+      )}
+    >
+      {!summary ? (
+        <span className="font-sans">{placeholder}</span>
+      ) : children ? (
+        children(summary)
+      ) : (
+        <>
+          <span>
+            Avg <span className="text-foreground">{formatPrice(summary.averagePrice)}</span>
+          </span>
+          <span>
+            <span className="text-foreground">
+              {formatSize(summary.size)}
+              {baseSymbol && ` ${baseSymbol}`}
+            </span>
+            {" · "}
+            {formatPrice(summary.quote)}
+            {quoteSymbol && ` ${quoteSymbol}`}
+          </span>
+        </>
+      )}
+    </p>
   );
 }

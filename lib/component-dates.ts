@@ -5,6 +5,7 @@
  * maintenance should not refresh every component's public update date.
  */
 const COMPONENT_DATES = {
+  "charts/candlestick-chart": { publishedAt: "2026-10-12", updatedAt: "2026-10-12" },
   "motion/card": { publishedAt: "2026-10-10", updatedAt: "2026-10-12" },
   "motion/color-picker": { publishedAt: "2026-10-10", updatedAt: "2026-10-11" },
   "charts/treemap": { publishedAt: "2026-10-07", updatedAt: "2026-10-12" },
@@ -82,7 +83,7 @@ const COMPONENT_DATES = {
   "charts/funnel-chart": { publishedAt: "2026-09-20", updatedAt: "2026-10-12" },
   "charts/liquidity-heatmap": { publishedAt: "2026-09-20", updatedAt: "2026-10-12" },
   "charts/bump-chart": { publishedAt: "2026-09-20", updatedAt: "2026-10-11" },
-  "charts/order-book": { publishedAt: "2026-09-19", updatedAt: "2026-10-10" },
+  "charts/order-book": { publishedAt: "2026-09-19", updatedAt: "2026-10-12" },
   "charts/heat-calendar": { publishedAt: "2026-09-11", updatedAt: "2026-10-12" },
   "charts/returns-calendar": { publishedAt: "2026-09-11", updatedAt: "2026-10-12" },
   "charts/price-target-fan": { publishedAt: "2026-09-11", updatedAt: "2026-10-12" },
