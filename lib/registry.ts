@@ -1170,6 +1170,16 @@ export const registry: CategoryEntry[] = [
         keywords: ["candlestick chart", "ohlc chart", "trading chart", "price chart", "crypto chart"],
       },
       {
+        slug: "donut-chart",
+        name: "Donut Chart",
+        description: "Rounded share segments with a linked center readout and legend.",
+        file: "components/charts/donut-chart.tsx",
+        usageFile: "components/previews/charts/donut-chart.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-10-12",
+        keywords: ["donut chart", "pie chart", "share chart", "allocation chart", "breakdown chart"],
+      },
+      {
         slug: "volume-profile",
         name: "Volume Profile",
         description: "Animated volume by price, with point of control and value area highlights.",
