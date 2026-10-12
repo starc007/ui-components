@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
-import { type ComponentPropsWithRef, createContext, useContext, useEffect, useState } from "react";
+import { animate, isDragActive, motion, useMotionValue, useReducedMotion } from "motion/react";
+import { type ComponentPropsWithRef, createContext, useContext, useEffect, useRef } from "react";
 import { SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -55,38 +55,57 @@ export function Card({
   selected = false,
   className,
   children,
+  style,
   onPointerDown,
   ...props
 }: CardProps) {
   const reduce = useReducedMotion();
-  // Press state is tracked by hand: whileTap would make motion give the card
+  // The press is driven by hand: whileTap would make motion give the card
   // tabIndex 0, an unnamed tab stop ahead of the control that owns the card.
-  const [pressed, setPressed] = useState(false);
+  const scale = useMotionValue(1);
+  const releaseRef = useRef<(() => void) | null>(null);
 
+  // Turning `interactive` off or unmounting mid-press settles the card.
   useEffect(() => {
-    if (!pressed) return;
-    const release = () => setPressed(false);
-    window.addEventListener("pointerup", release);
-    window.addEventListener("pointercancel", release);
-    return () => {
-      window.removeEventListener("pointerup", release);
-      window.removeEventListener("pointercancel", release);
+    if (!interactive) return;
+    return () => releaseRef.current?.();
+  }, [interactive]);
+
+  const press = (event: React.PointerEvent<HTMLDivElement>) => {
+    onPointerDown?.(event);
+    if (!interactive || reduce || releaseRef.current) return;
+    if (!event.isPrimary || event.button !== 0 || isDragActive()) return;
+
+    // Capture phase, as motion's own press does, so a descendant that stops
+    // pointerup propagation cannot leave the card pressed.
+    const options = { capture: true };
+    const release = () => {
+      window.removeEventListener("pointerup", release, options);
+      window.removeEventListener("pointercancel", release, options);
+      window.removeEventListener("pointermove", releaseOnDrag, options);
+      releaseRef.current = null;
+      animate(scale, 1, SPRING_PRESS);
     };
-  }, [pressed]);
+    // A drag that starts from the card (a sheet or swipeable row around it)
+    // takes over the gesture, so the press ends there.
+    const releaseOnDrag = () => {
+      if (isDragActive()) release();
+    };
+    window.addEventListener("pointerup", release, options);
+    window.addEventListener("pointercancel", release, options);
+    window.addEventListener("pointermove", releaseOnDrag, options);
+    releaseRef.current = release;
+    animate(scale, 0.985, SPRING_PRESS);
+  };
 
   return (
     <CardSizeContext.Provider value={size}>
       <motion.div
         {...(props as React.ComponentProps<typeof motion.div>)}
-        onPointerDown={(event) => {
-          onPointerDown?.(event);
-          if (interactive && event.isPrimary && event.button === 0) setPressed(true);
-        }}
+        onPointerDown={press}
+        style={{ ...style, scale }}
         data-slot="card"
         data-selected={selected || undefined}
-        initial={false}
-        animate={interactive ? { scale: pressed && !reduce ? 0.985 : 1 } : undefined}
-        transition={SPRING_PRESS}
         className={cn(
           "relative flex flex-col rounded-2xl border text-card-foreground",
           "transition-[border-color,box-shadow,background-color] duration-200",
