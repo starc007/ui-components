@@ -349,7 +349,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "select",
         name: "Select",
-        description: "Composable select primitives whose panel bouncily unfolds out of the trigger and separates, plus a Morph variant where the trigger grows into the panel via shared layout.",
+        description: "Composable select primitives whose panel unfolds out of the trigger on one spring and pulls away into its own pill, plus a Morph variant where the trigger grows into the panel via shared layout.",
         file: "components/motion/select.tsx",
         badge: "new",
         launchedAt: "2026-06-28",
