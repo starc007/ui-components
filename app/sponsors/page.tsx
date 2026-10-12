@@ -53,6 +53,32 @@ const PLAN_STYLES = {
   { card: string; icon: string; Icon: LucideIcon }
 >;
 
+// Updated by hand from the Tracwell dashboard.
+const TRAFFIC_UPDATED_AT = "Oct 12, 2026";
+const TRAFFIC_STATS = [
+  { period: "Last 30 days", visitors: 50_696, pageViews: 867_232 },
+  { period: "Last 90 days", visitors: 150_109, pageViews: 2_198_130 },
+];
+
+const compactNumber = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
+function TrafficStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-2xl border border-border bg-background px-4 py-4">
+      <dt className="text-sm text-muted-foreground">{label}</dt>
+      <dd
+        className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-foreground"
+        title={value.toLocaleString("en-US")}
+      >
+        {compactNumber.format(value)}
+      </dd>
+    </div>
+  );
+}
+
 function truncateAddress(address: string) {
   return address.length > 14
     ? `${address.slice(0, 6)}...${address.slice(-6)}`
@@ -261,6 +287,36 @@ export default async function SponsorsPage({
           </PressLink>
         </div>
       </div>
+
+      <section aria-labelledby="traffic-stats" className="mt-12">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2
+            id="traffic-stats"
+            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+          >
+            Audience
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Analytics by Tracwell, updated {TRAFFIC_UPDATED_AT}
+          </p>
+        </div>
+        <div className="mt-3 grid gap-4 md:grid-cols-2">
+          {TRAFFIC_STATS.map((stat) => (
+            <div
+              key={stat.period}
+              className="rounded-3xl border border-border bg-card p-2"
+            >
+              <h3 className="px-3 pb-2 pt-2 text-sm font-medium text-foreground">
+                {stat.period}
+              </h3>
+              <dl className="grid grid-cols-2 gap-2">
+                <TrafficStat label="Visitors" value={stat.visitors} />
+                <TrafficStat label="Page views" value={stat.pageViews} />
+              </dl>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section aria-labelledby="current-sponsors" className="mt-12">
         <h2
