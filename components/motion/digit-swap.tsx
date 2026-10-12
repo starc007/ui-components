@@ -48,7 +48,15 @@ const GLYPH_VARIANTS = {
   }),
 };
 
-/** Fixed-slot digits and mask glyphs that roll when their value changes. */
+/**
+ * Fixed-slot digits and mask glyphs that roll when their value changes.
+ *
+ * Each slot holds an invisible in-flow copy of its character, so the slot has
+ * a real text baseline (it lines up with neighbouring text) and punctuation
+ * keeps its natural width. Digits use a fixed 1ch slot so rolls never jitter.
+ * Slots clip with `clip-path`, which, unlike `overflow: hidden`, leaves the
+ * baseline alone.
+ */
 export function DigitSwap({
   value,
   animationKey,
@@ -74,10 +82,10 @@ export function DigitSwap({
     <span
       data-slot="digit-swap"
       data-direction={direction}
-      className={cn("inline-flex items-center whitespace-nowrap", className)}
+      className={cn("inline-flex items-baseline whitespace-nowrap", className)}
     >
       <span className="sr-only">{text}</span>
-      <span aria-hidden="true" className="inline-flex items-center">
+      <span aria-hidden="true" className="inline-flex items-baseline">
         {glyphs.map(({ character, id, position }) => {
           if (character === " ") {
             return <span key={id} className="inline-block w-[0.7ch]" />;
@@ -92,8 +100,12 @@ export function DigitSwap({
             <span
               key={id}
               data-slot="digit-swap-glyph"
-              className="relative inline-block h-[1.1em] w-[1ch] shrink-0 overflow-hidden align-bottom"
+              className={cn(
+                "relative inline-block h-[1.1em] shrink-0 leading-[1.1em] [clip-path:inset(0)]",
+                /\d/.test(character) && "w-[1ch] text-center",
+              )}
             >
+              <span className="invisible">{character}</span>
               <AnimatePresence initial={false} custom={motionContext}>
                 <motion.span
                   key={glyphKey}
