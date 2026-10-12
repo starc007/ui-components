@@ -7,6 +7,7 @@ import {
   useMotionValue,
   usePresence,
   useReducedMotion,
+  useTransform,
 } from "motion/react";
 import {
   cloneElement,
@@ -19,6 +20,7 @@ import {
   useContext,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -26,6 +28,7 @@ import {
 import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
 import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
+import { useMorphSurface } from "@/lib/hooks/use-morph-surface";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -62,9 +65,10 @@ export interface MorphPopoverProps {
 }
 
 /**
- * A popover whose panel morphs open from the trigger corner: it's laid out at
- * full size but clipped to the corner nearest the trigger, then unclips as one
- * piece. Closes on outside pointer / Escape. Controlled or uncontrolled.
+ * A popover whose panel grows out of the trigger: the surface starts as the
+ * trigger's box and springs to the panel's, trimming the content inside as it
+ * goes, then retraces the path on close. Closes on outside pointer / Escape.
+ * Controlled or uncontrolled.
  */
 export function MorphPopover({
   children,
@@ -205,22 +209,13 @@ export function MorphPopoverTrigger({ children }: MorphPopoverTriggerProps) {
   });
 }
 
-const originFor = (side: Side, align: Align) =>
-  `${side === "bottom" ? "top" : "bottom"} ${align === "end" ? "right" : "left"}`;
-
-// A clip that hides everything but the corner nearest the trigger, so the
-// panel appears to grow out of it. inset(top right bottom left).
-function clipAt(side: Side, align: Align, radius: number, inset: number) {
-  const top = side === "bottom" ? "0%" : `${inset}%`;
-  const bottom = side === "bottom" ? `${inset}%` : "0%";
-  const right = align === "end" ? "0%" : `${inset}%`;
-  const left = align === "end" ? `${inset}%` : "0%";
-  return `inset(${top} ${right} ${bottom} ${left} round ${radius}px)`;
-}
-
-// Preserve the original spring character on the wrapper, but tween the complex
-// clip-path so it cannot snap when the spring resolves its final distance.
-const MORPH_CLIP_TRANSITION = { duration: 0.32, ease: EASE_OUT } as const;
+// Exits are faster than entrances: the surface retracts on a short ease rather
+// than the spring that brought it out.
+const MORPH_EXIT = { duration: 0.2, ease: EASE_OUT } as const;
+// The surface emerges from a thin lip at the trigger's near edge, not from the
+// trigger's whole box: the trigger stays visible, and the panel still reads as
+// growing out of it.
+const LIP = 8;
 
 export interface MorphPopoverContentProps {
   children: ReactNode;
@@ -321,30 +316,36 @@ function MorphPopoverSurface({
         )
     : 0;
 
-  // Both directions travel between the exact same hidden/show states. Exit
-  // targets "hidden" directly instead of introducing separate choreography.
-  const wrap = reduce
-    ? undefined
-    : {
-        hidden: { scale: 0.96, transition: SPRING_PANEL },
-        show: { scale: 1, transition: SPRING_PANEL },
-      };
-  const clip = reduce
-    ? undefined
-    : {
-        hidden: {
-          clipPath: clipAt(resolvedSide, align, radius, 92),
-          transition: MORPH_CLIP_TRANSITION,
-        },
-        show: {
-          clipPath: clipAt(resolvedSide, align, radius, 0),
-          transition: MORPH_CLIP_TRANSITION,
-        },
-      };
-  // Animate the value directly so opacity stays in the inline style throughout
-  // the entrance. A native opacity animation can expose the initial inline 0
-  // for a frame when it finishes, before Motion writes the final value.
-  const opacity = useMotionValue(0);
+  // One progress value drives the whole morph: the surface's transform, its
+  // corner correction and both fades read from it, so nothing settles early.
+  const progress = useMotionValue(0);
+  const morph = useMorphSurface(
+    progress,
+    layout
+      ? {
+          left: layout.trigger.left,
+          top:
+            resolvedSide === "bottom"
+              ? layout.trigger.top + layout.trigger.height
+              : layout.trigger.top - LIP,
+          width: layout.trigger.width,
+          height: LIP,
+        }
+      : null,
+    layout
+      ? { left, top, width: layout.content.width, height: layout.content.height }
+      : null,
+    radius,
+  );
+  // The surface materialises over its first frames rather than popping in as
+  // a sliver; the content follows from the point its counter-scale is exact
+  // (the surface at a quarter of its box), so it never shows distorted and
+  // the panel reads as a panel while it is still arriving.
+  const surfaceOpacity = useTransform(progress, [0, 0.15], [0, 1]);
+  const contentOpacity = useTransform(progress, [0.25, 0.6], [0, 1]);
+  // Reduced motion has no travel, so a short fade carries the whole entrance
+  // and exit on its own.
+  const fade = useMotionValue(reduce ? 0 : 1);
   const ready = layout !== null;
   const focusedOnOpen = useRef(false);
   useEffect(() => {
@@ -358,66 +359,87 @@ function MorphPopoverSurface({
     focusedOnOpen.current = true;
     onOpenAutoFocus?.(ctx.contentRef.current);
   }, [ready, isPresent, ctx.contentRef, onOpenAutoFocus]);
+  // `safeToRemove` is a new function on every render: AnimatePresence
+  // rebuilds its context each time its parent renders. Read it through a ref
+  // so a render during the exit (a consumer's state change, a list streaming
+  // in) does not restart the exit from where it got to — restarted every
+  // render, it would close in ever smaller steps and never report completion,
+  // leaving an inert, invisible panel mounted for good.
+  const safeToRemoveRef = useRef(safeToRemove);
+  useLayoutEffect(() => {
+    safeToRemoveRef.current = safeToRemove;
+  });
   useEffect(() => {
     if (!ready) {
-      if (!isPresent) safeToRemove?.();
+      if (!isPresent) safeToRemoveRef.current?.();
       return;
     }
-    const animation = animate(opacity, isPresent ? 1 : 0, {
-      ...(reduce ? { duration: 0.12 } : SPRING_PANEL),
-      onComplete: () => {
-        if (!isPresent) safeToRemove?.();
-      },
+    const settle = () => {
+      if (!isPresent) safeToRemoveRef.current?.();
+    };
+    if (reduce) {
+      progress.jump(1);
+      const animation = animate(fade, isPresent ? 1 : 0, {
+        duration: 0.12,
+        onComplete: settle,
+      });
+      return () => animation.stop();
+    }
+    const animation = animate(progress, isPresent ? 1 : 0, {
+      ...(isPresent ? SPRING_PANEL : MORPH_EXIT),
+      onComplete: settle,
     });
     return () => animation.stop();
-  }, [opacity, ready, isPresent, reduce, safeToRemove]);
+  }, [fade, progress, ready, isPresent, reduce]);
 
   return (
     <motion.div
       data-morph-popover-portal=""
       inert={!isPresent}
-      // Wrapper carries the shadow as a drop-shadow filter, which hugs the
-      // clipped shape below (box-shadow would just get clipped away).
-      variants={wrap}
-      initial="hidden"
-      animate={layout ? "show" : "hidden"}
-      exit="hidden"
       style={{
         left,
         top,
-        opacity,
+        opacity: fade,
         pointerEvents: isPresent ? "auto" : "none",
         visibility: layout ? "visible" : "hidden",
-        transformOrigin: originFor(resolvedSide, align),
       }}
-      className={cn(
-        "fixed z-[9999]",
-        shadow && "[filter:drop-shadow(0_10px_18px_rgba(0,0,0,0.14))]",
-      )}
+      className="fixed z-[9999]"
     >
+      {/* The surface is laid out at its final box and transformed from the
+          trigger's; its overflow clip trims the content, which takes the
+          inverse scale so it keeps its size and travels with the surface. */}
       <motion.div
         ref={ctx.contentRef}
         id={ctx.contentId}
         role="dialog"
         aria-labelledby={ctx.triggerId}
-        // Own states rather than inherited ones: reopening during the close
-        // cancels the exit per element, and only an element that owns its
-        // target returns to it. Inherited, the clip stayed at its hidden corner.
-        variants={clip}
-        initial="hidden"
-        animate={layout ? "show" : "hidden"}
-        exit="hidden"
         style={{
-          borderRadius: radius,
-          maxHeight: layout ? availableHeight : undefined,
-          overflowY: "auto",
+          x: morph.x,
+          y: morph.y,
+          scaleX: morph.scaleX,
+          scaleY: morph.scaleY,
+          borderRadius: morph.borderRadius,
+          opacity: surfaceOpacity,
+          transformOrigin: "0 0",
         }}
         className={cn(
           "overflow-hidden border border-border bg-background",
-          className,
+          shadow && "shadow-[0_10px_18px_rgba(0,0,0,0.14)]",
         )}
       >
-        {children}
+        <motion.div
+          style={{
+            scaleX: morph.contentScaleX,
+            scaleY: morph.contentScaleY,
+            opacity: contentOpacity,
+            transformOrigin: "0 0",
+            maxHeight: layout ? availableHeight : undefined,
+            overflowY: "auto",
+          }}
+          className={className}
+        >
+          {children}
+        </motion.div>
       </motion.div>
     </motion.div>
   );

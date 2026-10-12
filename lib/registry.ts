@@ -623,7 +623,7 @@ export const registry: CategoryEntry[] = [
         slug: "popover",
         name: "Popover",
         description:
-          "Gooey popover whose panel oozes out of the trigger through an SVG goo filter — a liquid neck that stretches and pinches — with crisp content fading in on top, plus a Morph variant that clip-morphs open from the trigger corner. Click or hover trigger, controlled or uncontrolled.",
+          "Gooey popover whose panel oozes out of the trigger through an SVG goo filter — a liquid neck that stretches and pinches — with crisp content fading in on top, plus a Morph variant whose panel surface grows out of the trigger's edge on one spring. Click or hover trigger, controlled or uncontrolled.",
         file: "components/motion/popover.tsx",
         badge: "new",
         launchedAt: "2026-07-07",
@@ -652,7 +652,7 @@ export const registry: CategoryEntry[] = [
             slug: "morph",
             name: "Morph Popover",
             description:
-              "Composable MorphPopover, MorphPopoverTrigger, MorphPopoverContent; the panel is laid out full size but clipped to the corner nearest the trigger, then unclips as one piece — a single-surface morph with a drop-shadow that hugs the shape. Side/align aware, controlled or uncontrolled.",
+              "Composable MorphPopover, MorphPopoverTrigger, MorphPopoverContent; the panel surface grows out of the trigger's edge on one spring, trimming its content as it goes, and retraces the path on close — a transform-only morph with corner correction and a shadow that scales with the surface. Side/align aware, controlled or uncontrolled.",
             installSlug: "popover-morph",
             file: "components/motion/popover-morph.tsx",
             previewKey: "motion/popover-morph",
