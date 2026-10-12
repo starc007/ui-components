@@ -67,7 +67,7 @@ const COMPONENT_DATES = {
   },
   "motion/text-animation": { publishedAt: "2026-05-17", updatedAt: "2026-10-10" },
   "motion/number": { publishedAt: "2026-05-17", updatedAt: "2026-10-12" },
-  "motion/animated-badge": { publishedAt: "2026-06-05", updatedAt: "2026-09-22" },
+  "motion/animated-badge": { publishedAt: "2026-06-05", updatedAt: "2026-10-13" },
   "motion/action-swap": { publishedAt: "2026-06-10", updatedAt: "2026-10-10" },
   "motion/animated-toast-stack": { publishedAt: "2026-06-05", updatedAt: "2026-09-22" },
   "motion/theme-toggle": { publishedAt: "2026-06-15", updatedAt: "2026-10-10" },
