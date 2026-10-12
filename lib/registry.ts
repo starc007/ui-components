@@ -1160,6 +1160,16 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "candlestick-chart",
+        name: "Candlestick Chart",
+        description: "Live OHLC candles with volume, a last-price line, and a crosshair readout.",
+        file: "components/charts/candlestick-chart.tsx",
+        usageFile: "components/previews/charts/candlestick-chart.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-10-12",
+        keywords: ["candlestick chart", "ohlc chart", "trading chart", "price chart", "crypto chart"],
+      },
+      {
         slug: "volume-profile",
         name: "Volume Profile",
         description: "Animated volume by price, with point of control and value area highlights.",

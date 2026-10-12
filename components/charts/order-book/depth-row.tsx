@@ -14,6 +14,9 @@ export function OrderBookDepthRow({
   formatPrice,
   formatSize,
   reduce,
+  inRange = false,
+  onInspect,
+  onSelect,
 }: {
   row: DepthLevel;
   fraction: number;
@@ -22,6 +25,12 @@ export function OrderBookDepthRow({
   formatPrice: (value: number) => string;
   formatSize: (value: number) => string;
   reduce: boolean;
+  /** True when this level is inside the inspected depth range. */
+  inRange?: boolean;
+  /** Called with true when the row is hovered or its price focused, false on blur. */
+  onInspect?: (inspect: boolean) => void;
+  /** Renders the price as a button. */
+  onSelect?: () => void;
 }) {
   const highlight = useMotionValue(0);
   const previousSize = useRef(row.size);
@@ -63,6 +72,7 @@ export function OrderBookDepthRow({
         ease: EASE_OUT,
         delay: reduce || entered.current ? 0 : Math.min(entranceIndex, 8) * 0.025,
       }}
+      onPointerEnter={onInspect ? () => onInspect(true) : undefined}
       className={cn("group", color)}
     >
       <td className="relative h-8 px-4 py-0">
@@ -86,9 +96,26 @@ export function OrderBookDepthRow({
             <div className="absolute inset-0 bg-current opacity-[0.12]" />
           </motion.div>
           <motion.div style={{ opacity: highlight }} className="absolute inset-0 bg-current" />
-          <div className="absolute inset-0 bg-current opacity-0 transition-opacity duration-150 group-hover:opacity-[0.05]" />
+          <div
+            className={cn(
+              "absolute inset-0 bg-current transition-opacity duration-150",
+              inRange ? "opacity-[0.08]" : "opacity-0 group-hover:opacity-[0.05]",
+            )}
+          />
         </div>
-        <span className="relative">{formatPrice(row.price)}</span>
+        {onSelect ? (
+          <button
+            type="button"
+            onClick={onSelect}
+            onFocus={() => onInspect?.(true)}
+            onBlur={() => onInspect?.(false)}
+            className="relative rounded-sm outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {formatPrice(row.price)}
+          </button>
+        ) : (
+          <span className="relative">{formatPrice(row.price)}</span>
+        )}
       </td>
       <td className="relative px-4 py-0 text-right text-foreground">
         {formatSize(row.size)}
