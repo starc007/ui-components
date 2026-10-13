@@ -26,11 +26,10 @@ import {
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
-// One progress value drives the whole unfold: the surface, the gap, every
-// corner and the chevron read the same curve. Rows use a short,
-// shared reveal so long lists have no late entries. A little bounce makes the
-// unfold a bounce rather than a slide; the panel spring would settle on a
-// long creep here, which reads as late.
+// One progress value drives the surface, gap, corners and chevron. This short
+// spring suits the full reveal distance; each reader clamps its small internal
+// overshoot, so all visible endpoints settle together. Rows share a short
+// reveal so long lists have no late entries.
 const UNFOLD_SPRING = {
   type: "spring",
   visualDuration: 0.2,
@@ -45,10 +44,6 @@ const GAP = 8;
 const LIP = 8;
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
-const LIST_VARIANTS: Variants = {
-  hidden: {},
-  show: {},
-};
 const ITEM_VARIANTS: Variants = {
   // A shared short reveal keeps late rows in long, scrolled lists ready with
   // the surface. Per-index staggering can delay visible rows by over a second.
@@ -389,7 +384,7 @@ export function SelectContent({ className, children }: SelectContentProps) {
       aria-hidden={!open}
       inert={!open}
       style={{
-        visibility: present ? "visible" : "hidden",
+        visibility: present ? undefined : "hidden",
         maxHeight: present ? undefined : 0,
         borderWidth: present ? undefined : 0,
         y,
@@ -409,7 +404,6 @@ export function SelectContent({ className, children }: SelectContentProps) {
       )}
     >
       <motion.div
-        variants={reduce ? undefined : LIST_VARIANTS}
         initial={false}
         animate={open ? "show" : "hidden"}
         className="p-1"
