@@ -132,9 +132,9 @@ export function AnimatedBadge({
   // layout animation still paints one transformed frame.
   const slotLayout = reduce ? false : ("position" as const);
   const Icon = ICONS[status];
-  // `0` is a real label; `false` and "" from conditional callers are not and
+  // `0` is a real label; booleans and "" from conditional callers are not and
   // must not reserve the gap and an empty slot.
-  const hasLabel = children != null && children !== false && children !== "";
+  const hasLabel = children != null && typeof children !== "boolean" && children !== "";
   const resolvedContentKey =
     contentKey ??
     (typeof children === "string" || typeof children === "number"
@@ -145,9 +145,7 @@ export function AnimatedBadge({
     <motion.span
       layout={!reduce}
       transition={SPRING_LAYOUT}
-      // The radius lives in style so the layout animation can correct it
-      // while the pill scales; a caller's style merges over it.
-      style={{ borderRadius: 9999, ...style }}
+      style={style}
       className={cn(
         "relative inline-flex shrink-0 items-center overflow-hidden whitespace-nowrap rounded-full border font-medium tabular-nums",
         "transition-colors duration-300",
@@ -186,7 +184,7 @@ export function AnimatedBadge({
               initial={reduce ? false : "initial"}
               animate={reduce ? REST : "animate"}
               exit={reduce ? REST_EXIT : "exit"}
-              className="col-start-1 row-start-1 inline-flex items-center justify-center will-change-[opacity,filter,transform]"
+              className="col-start-1 row-start-1 inline-flex items-center justify-center"
             >
               {status === "loading" && !reduce && !icon ? (
                 <motion.span
@@ -210,7 +208,7 @@ export function AnimatedBadge({
           layout={slotLayout}
           transition={SPRING_LAYOUT}
           className="relative z-10 inline-flex"
-          style={{ clipPath: "inset(0 -999px)", WebkitClipPath: "inset(0 -999px)" }}
+          style={{ clipPath: "inset(0 -999px)" }}
         >
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span
@@ -220,7 +218,7 @@ export function AnimatedBadge({
               initial={reduce ? false : "initial"}
               animate={reduce ? REST : "animate"}
               exit={reduce ? REST_EXIT : "exit"}
-              className="inline-block will-change-[opacity,filter,transform]"
+              className="inline-block"
             >
               {children}
             </motion.span>
