@@ -357,7 +357,7 @@ export const registry: CategoryEntry[] = [
           {
             slug: "default",
             name: "Select",
-            description: "Composable primitives (Select, SelectTrigger, SelectValue, SelectContent, SelectItem); the panel pinches off the trigger and separates, with staggered items. Position-aware (opens upward when needed).",
+            description: "Composable primitives (Select, SelectTrigger, SelectValue, SelectContent, SelectItem); the panel pinches off the trigger and separates, with a short, shared row reveal. Position-aware (opens upward when needed).",
             installSlug: "select",
             file: "components/motion/select.tsx",
             previewKey: "motion/select",

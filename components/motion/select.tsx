@@ -26,15 +26,15 @@ import {
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
-// One progress value drives the whole unfold: the panel surface, the list
-// inside it, the gap, every corner and the chevron read the same curve, so
-// nothing can arrive on a timeline of its own. A little bounce makes the
+// One progress value drives the whole unfold: the surface, the gap, every
+// corner and the chevron read the same curve. Rows use a short,
+// shared reveal so long lists have no late entries. A little bounce makes the
 // unfold a bounce rather than a slide; the panel spring would settle on a
 // long creep here, which reads as late.
 const UNFOLD_SPRING = {
   type: "spring",
-  visualDuration: 0.4,
-  bounce: 0.25,
+  visualDuration: 0.2,
+  bounce: 0.12,
 } as const;
 // Exits are faster than entrances: the panel folds back on a short ease.
 const UNFOLD_EXIT = { duration: 0.2, ease: EASE_OUT } as const;
@@ -43,20 +43,17 @@ const RADIUS = 12;
 const GAP = 8;
 // The surface starts as a thin lip flush against the trigger's edge.
 const LIP = 8;
-const MIN_SCALE = 0.01;
-// The list's counter-scale stops here: a surface under a quarter of its size
-// shows no legible rows anyway, and the cap keeps the list's raster from
-// ballooning while the surface is a sliver.
-const CONTENT_MAX_SCALE = 4;
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 const LIST_VARIANTS: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.03, delayChildren: 0.04 } },
+  show: {},
 };
 const ITEM_VARIANTS: Variants = {
-  hidden: { opacity: 0, y: -4 },
-  show: { opacity: 1, y: 0 },
+  // A shared short reveal keeps late rows in long, scrolled lists ready with
+  // the surface. Per-index staggering can delay visible rows by over a second.
+  hidden: { opacity: 0, y: -4, transition: { duration: 0.08, ease: EASE_OUT } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.12, ease: EASE_OUT } },
 };
 
 type Placement = "bottom" | "top";
@@ -123,7 +120,6 @@ export function Select({
   const reduce = useReducedMotion() ?? false;
   const baseId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
-  const progress = useMotionValue(defaultOpen ? 1 : 0);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [internal, setInternal] = useState(defaultValue);
   const [labels, setLabels] = useState<Map<string, string>>(new Map());
@@ -133,6 +129,7 @@ export function Select({
   const current = controlled ? value : internal;
   const openControlled = openProp !== undefined;
   const open = openControlled ? openProp : internalOpen;
+  const progress = useMotionValue(open ? 1 : 0);
 
   const setOpen = useCallback(
     (next: boolean) => {
@@ -245,10 +242,10 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
   const nearRadius = useTransform(
     ctx.progress,
     [0, 0.2, 0.4, 1],
-    ctx.reduce ? [RADIUS, RADIUS, RADIUS, RADIUS] : [RADIUS, 0, 0, RADIUS],
+    [RADIUS, 0, 0, RADIUS],
   );
   const rotate = useTransform(ctx.progress, (p) =>
-    ctx.reduce ? (ctx.open ? 180 : 0) : p * 180,
+    ctx.reduce ? (ctx.open ? 180 : 0) : Math.min(1, Math.max(0, p)) * 180,
   );
   return (
     <motion.button
@@ -260,10 +257,10 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
       aria-controls={ctx.listId}
       onClick={() => ctx.setOpen(!ctx.open)}
       style={{
-        borderTopLeftRadius: isTop ? nearRadius : RADIUS,
-        borderTopRightRadius: isTop ? nearRadius : RADIUS,
-        borderBottomLeftRadius: isTop ? RADIUS : nearRadius,
-        borderBottomRightRadius: isTop ? RADIUS : nearRadius,
+        borderTopLeftRadius: ctx.reduce || !isTop ? RADIUS : nearRadius,
+        borderTopRightRadius: ctx.reduce || !isTop ? RADIUS : nearRadius,
+        borderBottomLeftRadius: ctx.reduce || isTop ? RADIUS : nearRadius,
+        borderBottomRightRadius: ctx.reduce || isTop ? RADIUS : nearRadius,
       }}
       className={cn(
         "relative z-10 flex w-full items-center justify-between gap-2 border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors",
@@ -312,11 +309,10 @@ export function SelectContent({ className, children }: SelectContentProps) {
   const [height, setHeight] = useState(0);
   const { open, progress, reduce, setPlacement } = ctx;
 
-  // The panel stays mounted while closed so each item's label registration
-  // persists, but it is laid out at its full height, so it leaves the layout
-  // (display none) once the exit has finished and comes back in the render
-  // that opens it. The exit starts in the render that closes, not an effect
-  // after it, so no frame paints the panel gone before it has folded.
+  // Keep descendants laid out while hidden: display:none resets nested
+  // scrollers in Chromium. Collapse only the hidden outer footprint after
+  // exit so it cannot extend page scrolling. Opening restores the full box
+  // before measurement or focus; neither layout change is animated.
   const [exiting, setExiting] = useState(false);
   const [wasOpen, setWasOpen] = useState(open);
   if (open !== wasOpen) {
@@ -353,37 +349,33 @@ export function SelectContent({ className, children }: SelectContentProps) {
 
   const isTop = ctx.placement === "top";
 
-  // The panel is laid out at its open box, a gap away from the trigger, and
-  // transformed from a lip flush against the trigger's edge: it unfolds while
-  // attached, then pulls away over the last stretch as the gap and the near
-  // corners open together. The list takes the inverse scale, so it keeps its
-  // size while the surface's overflow clip trims it — the same correction a
-  // layout animation applies, driven here by one value. Everything written
-  // per frame is a transform or a radius; no layout property moves.
+  // Reveal a full-size panel from its near edge. No ancestor scales the list,
+  // so rows, borders and shadow keep their natural thickness. The clip and
+  // corner writes can paint; only the gap uses a transform. All read one
+  // progress value, with no animated layout properties.
   const ready = height > 0 && !reduce;
-  const fromScaleY = ready ? LIP / height : 1;
-  const fromY = ready ? (isTop ? height + GAP - LIP : -GAP) : 0;
+  const fromY = ready ? (isTop ? GAP : -GAP) : 0;
   const detach = useTransform(progress, [0.4, 1], [0, 1]);
   const y = useTransform(detach, (d) => lerp(fromY, 0, d));
-  const scaleY = useTransform(progress, (p) =>
-    Math.max(MIN_SCALE, lerp(fromScaleY, 1, p)),
-  );
-  const contentScaleY = useTransform(scaleY, (s) =>
-    Math.min(CONTENT_MAX_SCALE, 1 / s),
-  );
   const nearRadius = useTransform(detach, (d) => (ready ? RADIUS * d : RADIUS));
-  const borderRadius = useTransform(
-    [scaleY, nearRadius],
-    ([s, near]: number[]) => {
-      const far = `${RADIUS}px`;
-      const farV = `${RADIUS / s}px`;
-      const nearH = `${near}px`;
-      const nearV = `${near / s}px`;
-      return isTop
-        ? `${far} ${far} ${nearH} ${nearH} / ${farV} ${farV} ${nearV} ${nearV}`
-        : `${nearH} ${nearH} ${far} ${far} / ${nearV} ${nearV} ${farV} ${farV}`;
-    },
+  const borderRadius = useTransform(nearRadius, (near) =>
+    isTop
+      ? `${RADIUS}px ${RADIUS}px ${near}px ${near}px`
+      : `${near}px ${near}px ${RADIUS}px ${RADIUS}px`,
   );
+  const clipPath = useTransform([progress, nearRadius], ([p, near]: number[]) => {
+    if (!ready) return "none";
+    // Clamp overshoot so the clip never extends into the trigger or exposes
+    // overflowing children. At rest remove it so the native shadow is whole.
+    const reveal = Math.min(1, Math.max(0, p));
+    if (reveal === 1) return "none";
+    const hidden = Math.max(0, (height - LIP) * (1 - reveal));
+    const inset = isTop ? `${hidden}px 0 0 0` : `0 0 ${hidden}px 0`;
+    const corners = isTop
+      ? `${RADIUS}px ${RADIUS}px ${near}px ${near}px`
+      : `${near}px ${near}px ${RADIUS}px ${RADIUS}px`;
+    return `inset(${inset} round ${corners})`;
+  });
   // The surface materialises over its first frames rather than popping in as
   // a lip; with reduced motion the fade is the whole entrance.
   const opacity = useTransform(progress, reduce ? [0, 1] : [0, 0.12], [0, 1]);
@@ -397,19 +389,22 @@ export function SelectContent({ className, children }: SelectContentProps) {
       aria-hidden={!open}
       inert={!open}
       style={{
-        display: present ? undefined : "none",
+        visibility: present ? "visible" : "hidden",
+        maxHeight: present ? undefined : 0,
+        borderWidth: present ? undefined : 0,
         y,
-        scaleY,
+        clipPath,
         borderRadius,
         opacity,
-        transformOrigin: "0 0",
         pointerEvents: open ? "auto" : "none",
+        marginTop: isTop ? 0 : GAP,
+        marginBottom: isTop ? GAP : 0,
       }}
       // flush against the trigger, then separates into its own rounded pill;
       // sits above or below depending on available space
       className={cn(
         "absolute left-0 right-0 z-20 overflow-hidden border border-border bg-background shadow-lg",
-        isTop ? "bottom-full mb-2" : "top-full mt-2",
+        isTop ? "bottom-full" : "top-full",
         className,
       )}
     >
@@ -417,7 +412,6 @@ export function SelectContent({ className, children }: SelectContentProps) {
         variants={reduce ? undefined : LIST_VARIANTS}
         initial={false}
         animate={open ? "show" : "hidden"}
-        style={{ scaleY: contentScaleY, transformOrigin: "0 0" }}
         className="p-1"
       >
         {children}
@@ -449,7 +443,7 @@ export function SelectItem({
   }, [ctx.register, ctx.unregister, value, label]);
 
   return (
-    <motion.li variants={ctx.reduce ? undefined : ITEM_VARIANTS}>
+    <motion.div variants={ctx.reduce ? undefined : ITEM_VARIANTS}>
       <button
         type="button"
         role="option"
@@ -468,6 +462,6 @@ export function SelectItem({
         {children}
         {selected ? <Check className="h-3.5 w-3.5 shrink-0" /> : null}
       </button>
-    </motion.li>
+    </motion.div>
   );
 }
