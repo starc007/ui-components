@@ -27,8 +27,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
-import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
-import { useMorphSurface } from "@/lib/hooks/use-morph-surface";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -65,9 +64,9 @@ export interface MorphPopoverProps {
 }
 
 /**
- * A popover whose panel grows out of the trigger: the surface starts as the
- * trigger's box and springs to the panel's, trimming the content inside as it
- * goes, then retraces the path on close. Closes on outside pointer / Escape.
+ * A popover whose full-size panel reveals from the corner nearest the trigger
+ * on one spring, then retraces the same clip on close. Content and surface
+ * edges keep their size throughout. Closes on outside pointer / Escape.
  * Controlled or uncontrolled.
  */
 export function MorphPopover({
@@ -209,13 +208,19 @@ export function MorphPopoverTrigger({ children }: MorphPopoverTriggerProps) {
   });
 }
 
-// Exits are faster than entrances: the surface retracts on a short ease rather
-// than the spring that brought it out.
+// Full-distance clip travel needs a shorter curve than SPRING_PANEL's slow
+// overdamped tail. A non-bouncing spring reaches its rest within 260 ms.
+const MORPH_ENTER = { type: "spring", duration: 0.26, bounce: 0 } as const;
 const MORPH_EXIT = { duration: 0.2, ease: EASE_OUT } as const;
-// The surface emerges from a thin lip at the trigger's near edge, not from the
-// trigger's whole box: the trigger stays visible, and the panel still reads as
-// growing out of it.
-const LIP = 8;
+
+// Keep the panel and content at their final size. An inset clip reveals the
+// nearest corner without scaling borders, shadows or keyboard-focus geometry.
+// A full-size clip keeps content at its final coordinates without box-to-box
+// scale correction. One progress value keeps clip and opacity synchronized;
+// clip-path and the shadow may paint, so this is not a compositor-only morph.
+function clipAt(side: Side, align: Align, radius: number, inset: number) {
+  return `inset(${side === "top" ? inset : 0}% ${align === "start" ? inset : 0}% ${side === "bottom" ? inset : 0}% ${align === "end" ? inset : 0}% round ${radius}px)`;
+}
 
 export interface MorphPopoverContentProps {
   children: ReactNode;
@@ -316,33 +321,11 @@ function MorphPopoverSurface({
         )
     : 0;
 
-  // One progress value drives the whole morph: the surface's transform, its
-  // corner correction and both fades read from it, so nothing settles early.
   const progress = useMotionValue(0);
-  const morph = useMorphSurface(
-    progress,
-    layout
-      ? {
-          left: layout.trigger.left,
-          top:
-            resolvedSide === "bottom"
-              ? layout.trigger.top + layout.trigger.height
-              : layout.trigger.top - LIP,
-          width: layout.trigger.width,
-          height: LIP,
-        }
-      : null,
-    layout
-      ? { left, top, width: layout.content.width, height: layout.content.height }
-      : null,
-    radius,
+  const clipPath = useTransform(progress, (p) =>
+    clipAt(resolvedSide, align, radius, 92 * (1 - p)),
   );
-  // The surface materialises over its first frames rather than popping in as
-  // a sliver; the content follows from the point its counter-scale is exact
-  // (the surface at a quarter of its box), so it never shows distorted and
-  // the panel reads as a panel while it is still arriving.
   const surfaceOpacity = useTransform(progress, [0, 0.15], [0, 1]);
-  const contentOpacity = useTransform(progress, [0.25, 0.6], [0, 1]);
   // Reduced motion has no travel, so a short fade carries the whole entrance
   // and exit on its own.
   const fade = useMotionValue(reduce ? 0 : 1);
@@ -386,7 +369,7 @@ function MorphPopoverSurface({
       return () => animation.stop();
     }
     const animation = animate(progress, isPresent ? 1 : 0, {
-      ...(isPresent ? SPRING_PANEL : MORPH_EXIT),
+      ...(isPresent ? MORPH_ENTER : MORPH_EXIT),
       onComplete: settle,
     });
     return () => animation.stop();
@@ -399,47 +382,35 @@ function MorphPopoverSurface({
       style={{
         left,
         top,
-        opacity: fade,
+        opacity: reduce ? fade : surfaceOpacity,
         pointerEvents: isPresent ? "auto" : "none",
         visibility: layout ? "visible" : "hidden",
       }}
-      className="fixed z-[9999]"
+      // A drop-shadow follows the clipped surface; box-shadow would be cut
+      // off by its own clip. Caller surface classes retain their old target.
+      className={cn(
+        "fixed z-[9999]",
+        shadow && "[filter:drop-shadow(0_10px_18px_rgba(0,0,0,0.14))]",
+      )}
     >
-      {/* The surface is laid out at its final box and transformed from the
-          trigger's; its overflow clip trims the content, which takes the
-          inverse scale so it keeps its size and travels with the surface. */}
       <motion.div
         ref={ctx.contentRef}
         id={ctx.contentId}
         role="dialog"
         aria-labelledby={ctx.triggerId}
         style={{
-          x: morph.x,
-          y: morph.y,
-          scaleX: morph.scaleX,
-          scaleY: morph.scaleY,
-          borderRadius: morph.borderRadius,
-          opacity: surfaceOpacity,
-          transformOrigin: "0 0",
+          clipPath: reduce ? undefined : clipPath,
+          borderRadius: radius,
+          maxHeight: layout ? availableHeight : undefined,
+          overflowX: "hidden",
+          overflowY: "auto",
         }}
         className={cn(
           "overflow-hidden border border-border bg-background",
-          shadow && "shadow-[0_10px_18px_rgba(0,0,0,0.14)]",
+          className,
         )}
       >
-        <motion.div
-          style={{
-            scaleX: morph.contentScaleX,
-            scaleY: morph.contentScaleY,
-            opacity: contentOpacity,
-            transformOrigin: "0 0",
-            maxHeight: layout ? availableHeight : undefined,
-            overflowY: "auto",
-          }}
-          className={className}
-        >
-          {children}
-        </motion.div>
+        {children}
       </motion.div>
     </motion.div>
   );
