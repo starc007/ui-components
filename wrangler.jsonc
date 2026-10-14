@@ -12,5 +12,14 @@
     { "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] }
   ],
   "images": { "binding": "IMAGES" },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Read at request time by app/sponsors/page.tsx. Build-time dashboard
+  // variables never reach the runtime, so these live here. All public.
+  "vars": {
+    "DODO_SPONSOR_DIAMOND_SUBSCRIPTION_URL": "https://checkout.dodopayments.com/buy/pdt_0NjfWc1mYtqayFzorIQKM?quantity=1&redirect_url=https://beui.dev%2Fsponsors%3Fsuccess%3Dtrue",
+    "DODO_SPONSOR_PLATINUM_SUBSCRIPTION_URL": "https://checkout.dodopayments.com/buy/pdt_0NjfXJY6XGFquMvEKPm1C?quantity=1&redirect_url=https://beui.dev%2Fsponsors%3Fsuccess%3Dtrue",
+    "DODO_SPONSOR_SILVER_SUBSCRIPTION_URL": "https://checkout.dodopayments.com/buy/pdt_0NjfXT8ydYuSDEYAFAtMK?quantity=1&redirect_url=https://beui.dev%2Fsponsors%3Fsuccess%3Dtrue",
+    "SPONSOR_EVM_ADDRESS": "0xD740387440012782E6D760b86B21b17b8d1166B5",
+    "SPONSOR_SOL_ADDRESS": "A8ideoypKq2XNdKdFiGxheRmrWvPrEPxj14GDkehCAj6"
+  }
 }

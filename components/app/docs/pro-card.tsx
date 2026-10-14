@@ -22,14 +22,13 @@ export function ProCard() {
           id="beui-pro-card-title"
           className="text-lg font-semibold leading-tight tracking-tight text-foreground"
         >
-          Winter Arc sale
+          Limited Offer
         </h2>
         <p className="mt-2 text-sm leading-5 text-muted-foreground">
-          292+ blocks and premium motion components for React and Next.js.
+          300+ blocks and premium motion components for React and Next.js.
         </p>
         <p className="mt-3 flex flex-wrap items-center gap-x-2 text-xs leading-5 text-muted-foreground">
-          <span className="font-medium text-foreground">$149 lifetime access</span>
-          <span>· Limited offer</span>
+          <span className="font-medium text-foreground">$179 lifetime access</span>
         </p>
       </div>
       <RainbowCta

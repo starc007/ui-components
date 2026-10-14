@@ -23,9 +23,9 @@ const OPTIONS = [
     eyebrow: "Go further with Pro",
     title: "Start with more built for you.",
     description:
-      "220+ premium blocks to build your next product faster. Get the complete collection with Lifetime, including full templates and animated illustrations.",
+      "300+ premium blocks to build your next product faster. Get the complete collection with Lifetime, including full templates and animated illustrations.",
     features: [
-      "220+ premium blocks and animated components",
+      "300+ premium blocks and animated components",
       "Full landing-page templates · Lifetime",
       "Animated illustrations · Lifetime",
       "Agent Skill, MCP access, and one-command installs",

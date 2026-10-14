@@ -325,6 +325,12 @@ export const previews: Record<string, ComponentType> = {
   "charts/bump-chart": dynamic(() =>
     import("./charts/bump-chart.preview").then((m) => m.BumpChartPreview),
   ),
+  "charts/candlestick-chart": dynamic(() =>
+    import("./charts/candlestick-chart.preview").then((m) => m.CandlestickChartPreview),
+  ),
+  "charts/donut-chart": dynamic(() =>
+    import("./charts/donut-chart.preview").then((m) => m.DonutChartPreview),
+  ),
   "charts/order-book": dynamic(() =>
     import("./charts/order-book.preview").then((m) => m.OrderBookPreview),
   ),

@@ -581,11 +581,14 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
   // matches the page, but shows as hairlines over any dimmed backdrop below
   // the layer. Hide it once the close has settled, and show it again in the
   // render that opens.
-  const [closedAtRest, setClosedAtRest] = useState(!open);
+  const [closedAtRest, setClosedAtRest] = useState(
+    () => !open && progress.get() === 0,
+  );
   if (open && closedAtRest) setClosedAtRest(false);
-  useMotionValueEvent(progress, "animationComplete", () => {
+  const handleAnimationComplete = useCallback(() => {
     if (!open && progress.get() === 0) setClosedAtRest(true);
-  });
+  }, [open, progress]);
+  useMotionValueEvent(progress, "animationComplete", handleAnimationComplete);
 
   const hoverHandlers =
     triggerMode === "hover"
