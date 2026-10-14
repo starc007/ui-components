@@ -46,11 +46,9 @@ export interface BouncyAccordionProps {
   classNames?: BouncyAccordionClassNames;
 }
 
-// Every projected box in the accordion — the rows sliding apart, the card
-// growing, the content clip and its scale-corrected text — moves on one spring
-// per state change, so the card's bottom edge and the next row's top edge never
-// separate mid-bounce. Expanding is a touch slower and bouncier than
-// collapsing.
+// Rows, cards and scale-corrected text share a transition so their edges
+// stay joined. A close or switch uses the faster non-overshooting spring;
+// opening from all-closed keeps the weighted bounce.
 const EXPAND_TRANSITION: Transition = {
   type: "spring",
   duration: 0.58,
@@ -60,7 +58,7 @@ const EXPAND_TRANSITION: Transition = {
 const COLLAPSE_TRANSITION: Transition = {
   type: "spring",
   duration: 0.46,
-  bounce: 0.26,
+  bounce: 0,
 };
 
 const DESCRIPTION_TRANSITION: Transition = {
@@ -85,7 +83,7 @@ function useControllableAccordionValue({
 }) {
   const [internalValue, setInternalValue] = useState(defaultValue ?? null);
   const isControlled = value !== undefined;
-  const currentValue = value ?? internalValue;
+  const currentValue = isControlled ? value : internalValue;
 
   const setValue = useCallback(
     (next: string | null) => {
@@ -111,6 +109,7 @@ function BouncyAccordionRow({
   triggerId,
   reduce,
   layoutTransition,
+  layoutDependency,
   classNames,
   onToggle,
 }: {
@@ -123,6 +122,7 @@ function BouncyAccordionRow({
   triggerId: string;
   reduce: boolean | null;
   layoutTransition: Transition;
+  layoutDependency: string | null;
   classNames?: BouncyAccordionClassNames;
   onToggle: () => void;
 }) {
@@ -150,6 +150,7 @@ function BouncyAccordionRow({
   return (
     <motion.div
       layout={reduce ? false : "position"}
+      layoutDependency={layoutDependency}
       initial={false}
       style={{ marginTop: separatedFromPrevious ? 12 : 0 }}
       transition={{ layout: layoutTransition }}
@@ -157,6 +158,7 @@ function BouncyAccordionRow({
       <motion.div
         data-state={open ? "open" : "closed"}
         layout={!reduce}
+        layoutDependency={layoutDependency}
         initial={false}
         animate={{
           borderTopLeftRadius: startsGroup ? 28 : 0,
@@ -180,6 +182,7 @@ function BouncyAccordionRow({
           aria-controls={contentId}
           onClick={onToggle}
           layout={reduce ? false : "position"}
+          layoutDependency={layoutDependency}
           transition={{ layout: layoutTransition }}
           style={{ originY: 0 }}
           className={cn(
@@ -220,33 +223,21 @@ function BouncyAccordionRow({
           </motion.span>
         </motion.button>
 
-        <motion.div
+        <section
           id={contentId}
-          role="region"
           aria-labelledby={triggerId}
           aria-hidden={!open}
           inert={!open}
-          initial={false}
-          layout={!reduce}
-          transition={{ layout: layoutTransition }}
-          // The clip's height changes once per toggle; layout projection
-          // animates it as a transform. A one-pixel closed box keeps that
-          // projection continuous at zero, and its pixel is taken back from
-          // the card so closed rows keep their height.
-          style={{
-            height: open && item.description ? contentHeight || "auto" : 1,
-            marginBottom: open && item.description ? 0 : -1,
-            originY: 0,
-          }}
-          className={cn("overflow-hidden", classNames?.content)}
+          style={{ height: open && item.description ? contentHeight || "auto" : 0 }}
+          className={cn(classNames?.content)}
         >
           <motion.div
             ref={contentRef}
-            // Its own layout node, so projection scale-corrects it against
-            // the clip's scale and the text stays sharp instead of stretching.
-            // Position-only: a description that changes while open snaps to
-            // its new size and the clip reveals it, rather than scaling to it.
+            // The card clips this full-size layout node. Correcting only the
+            // card scale avoids a one-pixel clip and its extreme text scale.
+            // Size changes outside a toggle snap to their natural geometry.
             layout={reduce ? false : "position"}
+            layoutDependency={layoutDependency}
             initial={false}
             animate={{ opacity: open ? 1 : 0 }}
             transition={{
@@ -265,7 +256,7 @@ function BouncyAccordionRow({
               {item.description}
             </div>
           </motion.div>
-        </motion.div>
+        </section>
       </motion.div>
     </motion.div>
   );
@@ -288,8 +279,14 @@ export function BouncyAccordion({
     onValueChange,
   });
   const activeIndex = items.findIndex((item) => item.id === activeValue);
+  const previousValue = useRef(activeValue);
   const layoutTransition =
-    activeValue === null ? COLLAPSE_TRANSITION : EXPAND_TRANSITION;
+    activeValue === null || previousValue.current !== null
+      ? COLLAPSE_TRANSITION
+      : EXPAND_TRANSITION;
+  useLayoutEffect(() => {
+    previousValue.current = activeValue;
+  }, [activeValue]);
 
   const toggleItem = useCallback(
     (id: string) => {
@@ -329,6 +326,7 @@ export function BouncyAccordion({
             triggerId={triggerId}
             reduce={reduce}
             layoutTransition={layoutTransition}
+            layoutDependency={activeValue}
             classNames={classNames}
             onToggle={() => toggleItem(item.id)}
           />
