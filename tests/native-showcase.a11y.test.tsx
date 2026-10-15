@@ -1,6 +1,7 @@
 import { afterEach, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { axe } from "jest-axe";
+import { NativeUnavailable } from "@/components/app/docs/native/native-unavailable";
 import { PlatformTabs } from "@/components/app/docs/native/platform-tabs";
 import { QrCode } from "@/components/app/docs/native/qr-code";
 
@@ -54,4 +55,21 @@ test("the Expo Go QR code is an image named for what scanning does", async () =>
   );
   expect(getByRole("img", { name: "QR code that opens Select in Expo Go" })).toBeTruthy();
   expect((await axe(container)).violations).toEqual([]);
+});
+
+test("a web-only component's native tab offers a way back to the web docs", async () => {
+  document.documentElement.dataset.platform = "native";
+  const { container, getByRole } = render(
+    <NativeUnavailable
+      title="Marquee isn't on React Native yet"
+      description="This one is web only for now."
+    />,
+  );
+  expect(getByRole("heading", { name: "Marquee isn't on React Native yet" })).toBeTruthy();
+  expect((await axe(container)).violations).toEqual([]);
+  await act(async () => {
+    fireEvent.click(getByRole("button", { name: "Show the web version" }));
+  });
+  expect(document.documentElement.dataset.platform).toBeUndefined();
+  expect(localStorage.getItem("beui:platform")).toBe("web");
 });

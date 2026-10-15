@@ -8,6 +8,8 @@ import { Blocks, Bot, LayoutGrid, Shapes } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
 import { registry } from "@/lib/registry";
+import { usePlatform } from "@/components/app/docs/native/platform-switch";
+import nativeSlugs from "@/lib/native/slugs.json";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import { Button } from "@/components/motion/button";
@@ -37,6 +39,14 @@ const SIDEBAR_CATEGORIES = registry.filter((category) => category.slug !== "char
     (SIDEBAR_CATEGORY_ORDER[a.slug] ?? Number.MAX_SAFE_INTEGER) -
     (SIDEBAR_CATEGORY_ORDER[b.slug] ?? Number.MAX_SAFE_INTEGER),
 );
+
+const NATIVE = new Set<string>(nativeSlugs);
+
+// With React Native picked, the list keeps only components that have a native
+// version. Hiding is CSS on <html data-platform>, set before paint, so a
+// reader who chose React Native never sees the web list first.
+const WEB_ONLY = "[html[data-platform=native]_&]:hidden";
+const NATIVE_ONLY = "hidden [html[data-platform=native]_&]:inline-flex";
 
 const CATEGORY_FILTERS = [
   { value: "all", label: "All", icon: LayoutGrid },
@@ -138,11 +148,14 @@ export function SidebarCategoryTabs({
   onValueChange,
   id,
   panelId,
+  exclude = [],
 }: {
   value: string;
   onValueChange: (value: string) => void;
   id: string;
   panelId: string;
+  /** Category filters to leave out, such as ones with nothing to show. */
+  exclude?: readonly string[];
 }) {
   const reduce = useReducedMotion();
 
@@ -179,7 +192,7 @@ export function SidebarCategoryTabs({
         aria-label="Component categories"
         className="inline-flex min-h-9 items-center gap-1 rounded-full bg-muted p-0.5"
       >
-        {CATEGORY_FILTERS.map((filter) => (
+        {CATEGORY_FILTERS.filter((filter) => !exclude.includes(filter.value)).map((filter) => (
           <SidebarCategoryTab
             key={filter.value}
             filter={filter}
@@ -227,9 +240,15 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   if (filter.routeCategory !== routeCategory) {
     setFilter({ routeCategory, value: filter.value === "all" ? "all" : (routeCategory ?? "all") });
   }
-  const categoryFilter = filter.value;
-  const now = Date.now();
   const isCharts = pathname === "/charts" || pathname.startsWith("/charts/");
+  const native = usePlatform() === "native" && !isCharts;
+  // Categories with no native components drop out of the React Native list.
+  const nativeEmpty = SIDEBAR_CATEGORIES.filter(
+    (category) => !category.components.some((comp) => NATIVE.has(comp.slug)),
+  ).map((category) => category.slug);
+  const categoryFilter =
+    native && nativeEmpty.includes(filter.value) ? "all" : filter.value;
+  const now = Date.now();
   const categories = isCharts
     ? registry.filter((category) => category.slug === "charts")
     : SIDEBAR_CATEGORIES;
@@ -246,6 +265,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             panelId={panelId}
             value={categoryFilter}
             onValueChange={(value) => setFilter({ routeCategory, value })}
+            exclude={native ? nativeEmpty : []}
           />
           <span
             aria-hidden="true"
@@ -297,7 +317,11 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           </div>
         ) : null}
         {categories.map((cat) => (
-          <div key={cat.slug} hidden={!isCharts && categoryFilter !== "all" && categoryFilter !== cat.slug}>
+          <div
+            key={cat.slug}
+            hidden={!isCharts && categoryFilter !== "all" && categoryFilter !== cat.slug}
+            className={cn(!isCharts && nativeEmpty.includes(cat.slug) && WEB_ONLY)}
+          >
             <Link
               href={categoryPath(cat.slug)}
               prefetch={false}
@@ -305,9 +329,19 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               className="mb-1.5 flex items-center gap-2 rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
             >
               {cat.name}
-              <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground">
+              <span
+                className={cn(
+                  "inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground",
+                  !isCharts && WEB_ONLY,
+                )}
+              >
                 {cat.components.length}
               </span>
+              {!isCharts ? (
+                <span className={cn(NATIVE_ONLY, "h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground")}>
+                  {cat.components.filter((comp) => NATIVE.has(comp.slug)).length}
+                </span>
+              ) : null}
             </Link>
             <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
               {moveNewItemsToTop(cat.components, now).map((comp) => {
@@ -319,12 +353,18 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                     prefetch={false}
                     aria-current={pathname === href ? "page" : undefined}
                     onClick={onNavigate}
-                    className={linkClass(pathname === href)}
+                    className={cn(
+                      linkClass(pathname === href),
+                      !isCharts && !NATIVE.has(comp.slug) && WEB_ONLY,
+                    )}
                   >
                     <span className="flex items-center justify-between gap-2">
                       <span className="truncate">{comp.name}</span>
+                      {/* New marks web launches, so it stays out of the native list. */}
                       {comp.badge === "new" ? (
-                        <NewBadge launchedAt={comp.launchedAt} />
+                        <span className={cn(!isCharts && WEB_ONLY)}>
+                          <NewBadge launchedAt={comp.launchedAt} />
+                        </span>
                       ) : null}
                     </span>
                   </Link>

@@ -31,6 +31,7 @@ import { getComponentProps } from "@/lib/props-extractor";
 import { componentDates } from "@/lib/component-dates";
 import { findNativeComponent } from "@/lib/native";
 import { NativePanel } from "@/components/app/docs/native/native-panel";
+import { NativeUnavailable } from "@/components/app/docs/native/native-unavailable";
 import { PlatformTabs } from "@/components/app/docs/native/platform-tabs";
 import {
   breadcrumbJsonLd,
@@ -254,14 +255,19 @@ export default async function ComponentPage({
         </p>
       </div>
 
-      {nativeComponent ? (
-        <PlatformTabs
-          web={webContent}
-          native={<NativePanel component={nativeComponent} />}
-        />
-      ) : (
-        webContent
-      )}
+      <PlatformTabs
+        web={webContent}
+        native={
+          nativeComponent ? (
+            <NativePanel component={nativeComponent} />
+          ) : (
+            <NativeUnavailable
+              title={`${comp.name} isn't on React Native yet`}
+              description="The sidebar lists every component with a React Native version. This one is web only for now."
+            />
+          )
+        }
+      />
 
       {comp.guide ? <ComponentGuide guide={comp.guide} /> : null}
 

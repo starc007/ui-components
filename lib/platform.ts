@@ -13,3 +13,8 @@ export const PLATFORM_EVENT = "beui:platform";
  * the web docs flash first.
  */
 export const PLATFORM_SCRIPT = `(function(){try{var p=new URLSearchParams(location.search).get("${PLATFORM_PARAM}");if(p!=="web"&&p!=="native")p=localStorage.getItem("${PLATFORM_STORAGE_KEY}");if(p==="native")document.documentElement.dataset.platform="native"}catch(e){}})()`;
+
+/** Hides an element while React Native is picked. */
+export const WEB_ONLY = "[html[data-platform=native]_&]:hidden";
+/** Shows an element only while React Native is picked. */
+export const NATIVE_ONLY = "hidden [html[data-platform=native]_&]:block";

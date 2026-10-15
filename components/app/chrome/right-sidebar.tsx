@@ -4,23 +4,18 @@ import { usePathname } from "next/navigation";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { ProCard } from "@/components/app/docs/pro-card";
 import { SponsorCard } from "@/components/app/docs/sponsor-card";
-import nativeSlugs from "@/lib/native/slugs.json";
 
-const NATIVE = new Set<string>(nativeSlugs);
-
-/** The component slug of a /components/<category>/<slug> page. */
-function componentSlug(pathname: string) {
-  const match = /^\/components\/[^/]+\/([^/]+)\/?$/.exec(pathname);
-  return match?.[1] ?? null;
-}
+/** Component and category pages: /components/<category>[/<slug>]. */
+const COMPONENTS_PAGE = /^\/components\/[^/]+(\/[^/]+)?\/?$/;
 
 export function RightSidebar() {
-  const slug = componentSlug(usePathname());
-  const hasNative = slug !== null && NATIVE.has(slug);
+  // Every component and category page offers the switch, so a reader who
+  // chose React Native can always get back to the web docs.
+  const isComponentPage = COMPONENTS_PAGE.test(usePathname());
 
   return (
     <>
-      {hasNative ? <PlatformSwitch layout="block" className="mb-4" /> : null}
+      {isComponentPage ? <PlatformSwitch layout="block" className="mb-4" /> : null}
       <ProCard />
       <SponsorCard />
     </>

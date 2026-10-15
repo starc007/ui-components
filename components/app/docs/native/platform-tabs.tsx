@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
+import { NATIVE_ONLY, WEB_ONLY } from "@/lib/platform";
 
 /**
  * Web and React Native versions of one component. Both panels render on the
@@ -19,8 +20,8 @@ export function PlatformTabs({
       <div className="mt-6 xl:hidden">
         <PlatformSwitch />
       </div>
-      <div className="[html[data-platform=native]_&]:hidden">{web}</div>
-      <div className="hidden [html[data-platform=native]_&]:block">{native}</div>
+      <div className={WEB_ONLY}>{web}</div>
+      <div className={NATIVE_ONLY}>{native}</div>
     </>
   );
 }

@@ -29,7 +29,8 @@ export function usePlatform() {
   return useSyncExternalStore(subscribe, readPlatform, serverPlatform);
 }
 
-function choose(value: string) {
+/** Switches every component page to a platform and remembers the choice. */
+export function choosePlatform(value: string) {
   if (value !== "web" && value !== "native") return;
   const data = document.documentElement.dataset;
   if (value === "native") data.platform = "native";
@@ -61,7 +62,7 @@ export function PlatformSwitch({
   const block = layout === "block";
 
   return (
-    <Tabs value={platform} onValueChange={choose} variant="segment">
+    <Tabs value={platform} onValueChange={choosePlatform} variant="segment">
       <TabsList
         aria-label="Platform"
         className={cn(block && "grid w-full grid-cols-2", className)}
