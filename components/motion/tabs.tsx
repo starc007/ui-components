@@ -209,7 +209,22 @@ export function TabsList({
     // One shared pass after Motion paints the projected pill keeps every label
     // in sync, including labels crossed during a long or interrupted glide.
     frame.postRender(syncClips, true);
-    return () => cancelFrame(syncClips);
+    // A list measured while hidden (display: none, a closed panel, a
+    // breakpoint) gets every mask closed. Sync again once it has a size, or
+    // the selected label stays invisible until the value changes.
+    const resync = () => {
+      frames = 0;
+      stillFrames = 0;
+      previous = undefined;
+      cancelFrame(syncClips);
+      frame.postRender(syncClips, true);
+    };
+    const observer = new ResizeObserver(resync);
+    observer.observe(list);
+    return () => {
+      observer.disconnect();
+      cancelFrame(syncClips);
+    };
   }, [value, children, variant, reduce]);
 
   const scroll = (direction: number) => {
