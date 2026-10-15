@@ -32,6 +32,7 @@ Prefer `typecheck` + `lint` for quick verification. Do not start the dev server 
 - `app/r/*` — registry endpoints (shadcn items, raw source, index). beUI is listed in shadcn's official registry directory as the `@beui` namespace with URL template `https://beui.dev/r/{name}.json` — that path shape and existing install slugs are public contract; never break or rename them.
 - `lib/ease.ts` — all motion tokens.
 - `scripts/check-registry.ts` — validates the catalog.
+- `lib/native/catalog.json` — beUI Native (React Native) components and source, synced from the `beui-native` repo by `bun scripts/sync-native.ts` (never edit by hand). The same script uploads the showcase clips and posters to the `beui-native` R2 bucket, served from `media.beui.dev` with content-hashed names; don't add clips to `public/`. Component pages with a native version get a Web/React Native switch (`components/app/docs/native/`); the choice lives on `<html data-platform>`, set before paint by `lib/platform.ts`. Agents read `/native/r` and `/native/r/{slug}` (`lib/native-registry.ts`), the `llms.txt` native section, and the MCP `list_native_components` and `get_native_component` tools.
 
 ## Component catalog
 

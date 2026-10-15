@@ -29,6 +29,9 @@ import { pageUrlFor, withSignature } from "@/lib/signature";
 import { readSourceFile } from "@/lib/source-files";
 import { getComponentProps } from "@/lib/props-extractor";
 import { componentDates } from "@/lib/component-dates";
+import { findNativeComponent } from "@/lib/native";
+import { NativePanel } from "@/components/app/docs/native/native-panel";
+import { PlatformTabs } from "@/components/app/docs/native/platform-tabs";
 import {
   breadcrumbJsonLd,
   componentJsonLd,
@@ -148,52 +151,9 @@ export default async function ComponentPage({
   const creditUrl = comp.credit ? new URL(comp.credit.url) : null;
   creditUrl?.searchParams.set("ref", "beui");
 
-  return (
-    <div className="min-w-0">
-      <JsonLd
-        data={[
-          breadcrumbJsonLd([
-            { name: "beUI", path: "/" },
-            { name: cat.name, path: categoryPath(cat.slug) },
-            { name: comp.name, path: componentPath(cat.slug, comp.slug) },
-          ]),
-          componentJsonLd(cat, comp),
-        ]}
-      />
-      <div id="overview" className="scroll-mt-24">
-        <nav
-          aria-label="Breadcrumb"
-          className="flex items-center gap-1.5 text-sm"
-        >
-          <Link
-            href={categoryPath(cat.slug)}
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            {cat.name}
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="font-medium text-foreground">{comp.name}</span>
-        </nav>
-        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-medium tracking-tight text-foreground">
-              {comp.name}
-            </h1>
-            {comp.badge === "new" ? (
-              <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
-            ) : null}
-          </div>
-          <CopyPage
-            pageUrl={pageUrlFor(cat.slug, comp.slug)}
-            markdownPath={`${componentPath(cat.slug, comp.slug)}.md`}
-            componentName={comp.name}
-          />
-        </div>
-        <p className="mt-2 max-w-2xl text-muted-foreground">
-          {comp.description}
-        </p>
-      </div>
-
+  const nativeComponent = findNativeComponent(comp.slug);
+  const webContent = (
+    <>
       {comp.examples?.length ? (
         <div className="mt-10 flex flex-col gap-12">
           {comp.examples.map((ex, index) => (
@@ -245,6 +205,63 @@ export default async function ComponentPage({
           </div>
         </section>
       ) : null}
+    </>
+  );
+
+  return (
+    <div className="min-w-0">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "beUI", path: "/" },
+            { name: cat.name, path: categoryPath(cat.slug) },
+            { name: comp.name, path: componentPath(cat.slug, comp.slug) },
+          ]),
+          componentJsonLd(cat, comp),
+        ]}
+      />
+      <div id="overview" className="scroll-mt-24">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-1.5 text-sm"
+        >
+          <Link
+            href={categoryPath(cat.slug)}
+            className="text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {cat.name}
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="font-medium text-foreground">{comp.name}</span>
+        </nav>
+        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-medium tracking-tight text-foreground">
+              {comp.name}
+            </h1>
+            {comp.badge === "new" ? (
+              <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
+            ) : null}
+          </div>
+          <CopyPage
+            pageUrl={pageUrlFor(cat.slug, comp.slug)}
+            markdownPath={`${componentPath(cat.slug, comp.slug)}.md`}
+            componentName={comp.name}
+          />
+        </div>
+        <p className="mt-2 max-w-2xl text-muted-foreground">
+          {comp.description}
+        </p>
+      </div>
+
+      {nativeComponent ? (
+        <PlatformTabs
+          web={webContent}
+          native={<NativePanel component={nativeComponent} />}
+        />
+      ) : (
+        webContent
+      )}
 
       {comp.guide ? <ComponentGuide guide={comp.guide} /> : null}
 

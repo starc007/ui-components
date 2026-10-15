@@ -124,7 +124,7 @@ Manual configuration:
 }
 \`\`\`
 
-Available tools: \`list_components\`, \`search_components\`, \`get_component\`, and \`get_install_command\`.
+Available tools: \`list_components\`, \`search_components\`, \`get_component\`, and \`get_install_command\`. For React Native apps, \`list_native_components\` and \`get_native_component\` return beUI Native components with every file to copy.
 
 ## Endpoints
 
@@ -137,6 +137,8 @@ Available tools: \`list_components\`, \`search_components\`, \`get_component\`, 
 | \`/r/{slug}.json\` | shadcn install item with inline file content |
 | \`/r/{slug}/raw\` | Copy-ready plain-text source |
 | \`/components/{category}/{slug}.md\` | Component documentation as Markdown |
+| \`/native/r\` | JSON catalogue of beUI Native (React Native) components |
+| \`/native/r/{slug}\` | Native component detail with install commands and every file |
 
 ## Agent flow
 

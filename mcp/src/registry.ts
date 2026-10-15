@@ -92,3 +92,43 @@ export const PACKAGE_MANAGERS = Object.keys(PM_PREFIX) as PackageManager[];
 export function installCommand(slug: string, pm: PackageManager) {
   return `${PM_PREFIX[pm]} shadcn add @beui/${slug}`;
 }
+
+// beUI Native, the React Native companion library, served from /native/r.
+
+export type NativeIndexComponent = {
+  slug: string;
+  name: string;
+  description: string;
+  group: string;
+  detail_url: string;
+  page_url: string | null;
+  expo_go_url: string;
+};
+
+export type NativeIndex = {
+  name: string;
+  description: string;
+  version: string;
+  repository: string;
+  expo_go: { sdk: number; url: string; qr: string };
+  setup: string[];
+  components: NativeIndexComponent[];
+};
+
+export type NativeEntry = NativeIndexComponent & {
+  source_url: string;
+  libraries: string[];
+  install: string[];
+  setup: string[];
+  files: { path: string; type: "component" | "shared" | "theme"; content: string }[];
+};
+
+export function getNativeIndex(env: { REGISTRY_URL?: string }) {
+  return fetchJson<NativeIndex>(`${base(env)}/native/r`);
+}
+
+export function getNativeEntry(env: { REGISTRY_URL?: string }, slug: string) {
+  return fetchJson<NativeEntry>(
+    `${base(env)}/native/r/${encodeURIComponent(slug)}`,
+  );
+}

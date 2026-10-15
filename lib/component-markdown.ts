@@ -4,6 +4,8 @@ import { findCategory, findComponent, type ComponentExample } from "@/lib/regist
 import { buildEntry } from "@/lib/registry-server";
 import { pageUrlFor } from "@/lib/signature";
 import { readOptionalSourceFile } from "@/lib/source-files";
+import { native } from "@/lib/native";
+import { buildNativeEntry } from "@/lib/native-registry";
 
 function escapeTableCell(value: string) {
   return value.replace(/\|/g, "\\|").replace(/\s+/g, " ").trim();
@@ -132,6 +134,24 @@ export async function buildComponentMarkdown(
     : [component.file];
   const apiLines = apiFiles.flatMap((file) => apiReference(file));
   if (apiLines.length) lines.push("## API Reference", "", ...apiLines);
+
+  const nativeEntry = buildNativeEntry(component.slug);
+  if (nativeEntry) {
+    lines.push(
+      "## React Native",
+      "",
+      `A React Native version ships in ${native.name}. The detail JSON has every file to copy.`,
+      "",
+      "```bash",
+      ...nativeEntry.install,
+      "```",
+      "",
+      `- Native detail: ${nativeEntry.detail_url}`,
+      `- Try it in Expo Go: ${nativeEntry.expo_go_url}`,
+      `- GitHub: ${nativeEntry.source_url}`,
+      "",
+    );
+  }
 
   lines.push(
     "## Source",

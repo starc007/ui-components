@@ -25,7 +25,8 @@ Connect your MCP client to:
   https://mcp.beui.dev/mcp   (stateless Streamable HTTP)
   https://mcp.beui.dev/pro/mcp   (beUI Pro, bearer token required)
 
-Tools: list_components, search_components, get_component, get_install_command
+Tools: list_components, search_components, get_component, get_install_command,
+       list_native_components, get_native_component
 Docs:  https://beui.dev
 `;
 

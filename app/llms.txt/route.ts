@@ -1,4 +1,5 @@
 import { buildIndex } from "@/lib/registry-server";
+import { buildNativeIndex } from "@/lib/native-registry";
 import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -28,6 +29,22 @@ export async function GET() {
   for (const c of idx.components) {
     lines.push(`- [${c.name}](${c.markdown_url}): ${c.description}`);
   }
+  lines.push("");
+  const nativeIndex = buildNativeIndex();
+  lines.push("## React Native (beUI Native)");
+  lines.push("");
+  lines.push(`> ${nativeIndex.description}`);
+  lines.push("");
+  lines.push(`- Native index (JSON): ${nativeIndex.endpoints.index}`);
+  lines.push(`- Native detail (JSON, every file with contents): ${nativeIndex.endpoints.detail}`);
+  lines.push(`- Showcase in Expo Go (SDK ${nativeIndex.expo_go.sdk}): ${nativeIndex.expo_go.url}`);
+  lines.push(`- Source: ${nativeIndex.repository}`);
+  lines.push("");
+  for (const c of nativeIndex.components) {
+    lines.push(`- [${c.name}](${c.detail_url}): ${c.description}`);
+  }
+  lines.push("");
+  lines.push("To add a native component: fetch its detail JSON, run its `install` commands, then copy every file in `files` to its `path`, keeping the folder layout. Add the `theme` file once per app.");
   lines.push("");
   lines.push("## Usage for agents");
   lines.push("");
