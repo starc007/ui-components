@@ -7,7 +7,8 @@ import { useEffect, useState } from "react";
 import { SidebarNav } from "@/components/app/chrome/site-sidebar";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { Button } from "@/components/motion/button";
-import { hasSiteSidebar } from "@/lib/component-paths";
+import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
+import { hasPlatformSwitch, hasSiteSidebar } from "@/lib/component-paths";
 import { cn } from "@/lib/utils";
 
 /** Mobile nav: a header hamburger that opens the sidebar list in beUI's own bottom sheet. */
@@ -52,6 +53,8 @@ export function MobileNav() {
         snapPoints={[0.85]}
       >
         <div className="flex flex-col gap-5 pt-2">
+          {/* The list below follows the platform, so pick it here too. */}
+          {hasPlatformSwitch(pathname) ? <PlatformSwitch layout="block" /> : null}
           <nav className="flex flex-wrap gap-1">
             <Link
               href="/components/motion"

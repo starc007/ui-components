@@ -4,14 +4,12 @@ import { usePathname } from "next/navigation";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { ProCard } from "@/components/app/docs/pro-card";
 import { SponsorCard } from "@/components/app/docs/sponsor-card";
-
-/** Component and category pages: /components/<category>[/<slug>]. */
-const COMPONENTS_PAGE = /^\/components\/[^/]+(\/[^/]+)?\/?$/;
+import { hasPlatformSwitch } from "@/lib/component-paths";
 
 export function RightSidebar() {
   // Every component and category page offers the switch, so a reader who
   // chose React Native can always get back to the web docs.
-  const isComponentPage = COMPONENTS_PAGE.test(usePathname());
+  const isComponentPage = hasPlatformSwitch(usePathname());
 
   return (
     <>

@@ -11,3 +11,8 @@ export function componentPath(category: string, slug: string) {
 export function hasSiteSidebar(pathname: string) {
   return ["/components", "/docs", "/charts"].some((path) => pathname.startsWith(path));
 }
+
+/** Component and category pages, which offer the Web/React Native switch. */
+export function hasPlatformSwitch(pathname: string) {
+  return /^\/components\/[^/]+(\/[^/]+)?\/?$/.test(pathname);
+}
