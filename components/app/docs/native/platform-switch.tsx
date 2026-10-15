@@ -1,7 +1,7 @@
 "use client";
 
 import { Globe, Smartphone } from "lucide-react";
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import {
   PLATFORM_EVENT as EVENT,
@@ -60,9 +60,20 @@ export function PlatformSwitch({
 }) {
   const platform = usePlatform();
   const block = layout === "block";
+  // Hydration renders the server's "web" and then the reader's choice in the
+  // same instant, which leaves Tabs' selected-label clip unsynced. Mounting
+  // once more after hydration starts it on the right value; later switches
+  // still glide.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
 
   return (
-    <Tabs value={platform} onValueChange={choosePlatform} variant="segment">
+    <Tabs
+      key={hydrated ? "client" : "server"}
+      value={platform}
+      onValueChange={choosePlatform}
+      variant="segment"
+    >
       <TabsList
         aria-label="Platform"
         className={cn(block && "grid w-full grid-cols-2", className)}

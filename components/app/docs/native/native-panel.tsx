@@ -1,6 +1,6 @@
-import { ArrowUpRight, Smartphone } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { CodeBlock } from "@/components/app/docs/code-block";
-import { NativeClip } from "@/components/app/docs/native/native-clip";
+import { NativePreview } from "@/components/app/docs/native/native-preview";
 import { QrCode } from "@/components/app/docs/native/qr-code";
 import {
   native,
@@ -58,64 +58,39 @@ export function NativePanel({ component }: { component: NativeComponent }) {
 
   return (
     <div className="mt-8 flex flex-col gap-12">
-      <section
-        id="native-preview"
-        className="grid scroll-mt-24 grid-cols-1 items-center gap-8 sm:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] sm:gap-12"
-      >
+      <section id="native-preview" className="scroll-mt-24">
         <h2 className="sr-only">Preview</h2>
-        <NativeClip
+        <NativePreview
           clips={component.clips}
           title={component.title}
-          className="mx-auto max-w-[15rem]"
+          expoGo={component.expoGo}
+          sdk={native.expoGo.sdk}
+          qr={
+            <QrCode
+              value={component.expoGo}
+              label={`QR code that opens ${component.title} in Expo Go`}
+              className="w-full"
+            />
+          }
         />
-        <div className="flex flex-col gap-5">
-          <div>
-            <p className="text-sm font-semibold text-foreground">
-              Try it on your phone
-            </p>
-            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-              Scan with your camera to open {component.title} in the beUI
-              Native showcase. You need{" "}
-              <a
-                href="https://expo.dev/go"
-                target="_blank"
-                rel="noreferrer noopener"
-                className={external}
-              >
-                Expo Go
-              </a>{" "}
-              for SDK {native.expoGo.sdk}.
-            </p>
-          </div>
-          <QrCode
-            value={component.expoGo}
-            label={`QR code that opens ${component.title} in Expo Go`}
-            className="h-40 w-40"
-          />
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-            {/* Opens Expo Go when the page is read on the phone itself. */}
-            <a href={component.expoGo} className={external}>
-              <Smartphone className="h-3.5 w-3.5" />
-              Open in Expo Go
-            </a>
-            <a
-              href={component.repository}
-              target="_blank"
-              rel="noreferrer noopener"
-              className={external}
-            >
-              Source on GitHub
-              <ArrowUpRight className="h-3 w-3" />
-            </a>
-          </div>
-        </div>
       </section>
 
       <section
         id="native-install"
         className="scroll-mt-24 border-t border-border pt-8"
       >
-        <h2 className="text-sm font-semibold text-foreground">Install</h2>
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className="text-sm font-semibold text-foreground">Install</h2>
+          <a
+            href={component.repository}
+            target="_blank"
+            rel="noreferrer noopener"
+            className={external}
+          >
+            Source on GitHub
+            <ArrowUpRight className="h-3 w-3" />
+          </a>
+        </div>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
           Copy the files into your app and keep their folder layout, since the
           component imports the shared files by relative path. It works in Expo
