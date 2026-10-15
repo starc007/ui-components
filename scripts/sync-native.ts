@@ -1,5 +1,5 @@
 // Copies beUI Native into the site: its component manifest and source go to
-// lib/native/catalog.json, and its showcase clips and posters go to the
+// lib/native/catalog.json (slugs alone to lib/native/slugs.json), and its showcase clips and posters go to the
 // beui-native R2 bucket, served from media.beui.dev.
 //
 //   bun scripts/sync-native.ts [path-to-beui-native]
@@ -151,6 +151,12 @@ const catalog = {
 };
 
 writeFileSync(CATALOG, `${JSON.stringify(catalog, null, 2)}\n`);
+// Client code, like the sidebar's platform switch, only needs to know which
+// pages have a native version, not the whole catalog.
+writeFileSync(
+  path.join(path.dirname(CATALOG), "slugs.json"),
+  `${JSON.stringify(components.map((component) => component.slug))}\n`,
+);
 console.log(
   `Synced ${components.length} native components to lib/native/catalog.json.`,
 );
