@@ -323,7 +323,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "tabs",
         name: "Tabs",
-        description: "Pill, segment or underline tabs with a spring layoutId indicator.",
+        description: "Pill, segment or underline tabs with a spring layoutId indicator and optional icons.",
         file: "components/motion/tabs.tsx",
       },
       {

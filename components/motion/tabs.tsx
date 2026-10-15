@@ -15,16 +15,19 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from "react";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 type Variant = "pill" | "underline" | "segment";
+/** Whether trigger icons show on every tab or only on the selected one. */
+type IconDisplay = "always" | "selected";
 
 type Ctx = {
   value: string;
   setValue: (v: string) => void;
   layoutId: string;
   variant: Variant;
+  icons: IconDisplay;
 };
 
 const TabsCtx = createContext<Ctx | null>(null);
@@ -50,6 +53,7 @@ export function Tabs({
   value,
   onValueChange,
   variant = "pill",
+  icons = "always",
   children,
   className,
 }: {
@@ -57,6 +61,11 @@ export function Tabs({
   value?: string;
   onValueChange?: (v: string) => void;
   variant?: Variant;
+  /**
+   * With "selected", a trigger's icon springs open only on the selected tab
+   * and folds away when another is chosen. Defaults to "always".
+   */
+  icons?: IconDisplay;
   children: ReactNode;
   className?: string;
 }) {
@@ -73,8 +82,8 @@ export function Tabs({
     [controlled, onValueChange],
   );
   const contextValue = useMemo(
-    () => ({ value: current, setValue, layoutId, variant }),
-    [current, layoutId, setValue, variant],
+    () => ({ value: current, setValue, layoutId, variant, icons }),
+    [current, icons, layoutId, setValue, variant],
   );
   return (
     <MotionConfig transition={reduce ? { duration: 0 } : transition}>
@@ -272,8 +281,41 @@ export function TabsList({
   );
 }
 
+/**
+ * A trigger's icon before its label. Shown on every tab, or with
+ * `icons="selected"` springing open on the selected tab only.
+ */
+function TriggerIcon({ icon, active }: { icon: ReactNode; active: boolean }) {
+  const { icons } = useTabs();
+  const reduce = useReducedMotion();
+  if (icons === "always") {
+    return (
+      <span aria-hidden="true" className="mr-1.5 inline-flex shrink-0 items-center">
+        {icon}
+      </span>
+    );
+  }
+  return (
+    <motion.span
+      aria-hidden="true"
+      initial={false}
+      animate={{
+        width: active ? "auto" : 0,
+        marginRight: active ? 6 : 0,
+        opacity: active ? 1 : 0,
+        scale: active ? 1 : 0.6,
+      }}
+      transition={reduce ? { duration: 0 } : SPRING_SWAP}
+      className="inline-flex shrink-0 items-center justify-center overflow-hidden"
+    >
+      {icon}
+    </motion.span>
+  );
+}
+
 export function TabsTrigger({
   value,
+  icon,
   children,
   className,
   indicatorClassName,
@@ -281,10 +323,20 @@ export function TabsTrigger({
   ...props
 }: {
   value: string;
+  /** An icon before the label, such as a Lucide icon element. */
+  icon?: ReactNode;
   indicatorClassName?: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value">) {
   const { value: current, setValue, layoutId, variant } = useTabs();
   const active = current === value;
+  const content = icon ? (
+    <>
+      <TriggerIcon icon={icon} active={active} />
+      {children}
+    </>
+  ) : (
+    children
+  );
   // React owns the initial mask only; TabsList synchronizes subsequent masks.
   const [initialClip] = useState(() => active ? "inset(0)" : "inset(0 100% 0 0)");
 
@@ -305,7 +357,7 @@ export function TabsTrigger({
           className,
         )}
       >
-        {children}
+        {content}
         {active ? (
         <motion.span
           layoutId={layoutId}
@@ -354,7 +406,7 @@ export function TabsTrigger({
           className,
         )}
       >
-        {children}
+        {content}
         <span
           data-tabs-label=""
           aria-hidden="true"
@@ -362,7 +414,7 @@ export function TabsTrigger({
           className="pointer-events-none absolute inset-0 inline-flex items-center justify-center text-primary-foreground [gap:inherit] [padding:inherit]"
           style={{ clipPath: initialClip }}
         >
-          {children}
+          {content}
         </span>
       </button>
     </div>

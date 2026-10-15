@@ -45,11 +45,12 @@ export function choosePlatform(value: string) {
   window.dispatchEvent(new Event(EVENT));
 }
 
-const trigger = "w-full justify-center gap-1.5";
+const trigger = "w-full justify-center";
 
 /**
  * Picks whether component pages show the web or the React Native docs. The
- * `block` layout fills its container, for the sidebar.
+ * `block` layout fills its container, for the sidebar. Only the selected
+ * platform carries its icon.
  */
 export function PlatformSwitch({
   layout = "inline",
@@ -61,17 +62,28 @@ export function PlatformSwitch({
   const platform = usePlatform();
   const block = layout === "block";
   return (
-    <Tabs value={platform} onValueChange={choosePlatform} variant="segment">
+    <Tabs
+      value={platform}
+      onValueChange={choosePlatform}
+      variant="segment"
+      icons="selected"
+    >
       <TabsList
         aria-label="Platform"
         className={cn(block && "grid w-full grid-cols-2", className)}
       >
-        <TabsTrigger value="web" className={cn(block && trigger)}>
-          <Globe aria-hidden="true" className="size-3.5 shrink-0" />
+        <TabsTrigger
+          value="web"
+          icon={<Globe className="size-3.5" />}
+          className={cn(block && trigger)}
+        >
           Web
         </TabsTrigger>
-        <TabsTrigger value="native" className={cn(block && trigger)}>
-          <Smartphone aria-hidden="true" className="size-3.5 shrink-0" />
+        <TabsTrigger
+          value="native"
+          icon={<Smartphone className="size-3.5" />}
+          className={cn(block && trigger)}
+        >
           React Native
         </TabsTrigger>
       </TabsList>
