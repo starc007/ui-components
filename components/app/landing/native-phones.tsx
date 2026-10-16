@@ -56,7 +56,7 @@ export function NativePhones({ phones }: { phones: NativePhone[] }) {
       <button
         type="button"
         onClick={() => setPaused((value) => !value)}
-        className="absolute top-0 right-4 z-10 inline-flex h-8 items-center gap-1.5 rounded-full border border-border bg-background/80 px-3 text-xs font-medium text-muted-foreground outline-none backdrop-blur transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring sm:right-10 lg:right-14"
+        className="absolute top-0 right-4 z-10 inline-flex h-8 items-center gap-1.5 rounded-full border border-border bg-background/80 px-3 text-xs font-medium text-muted-foreground outline-none backdrop-blur transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
       >
         {paused ? (
           <Play aria-hidden="true" className="size-3.5" />

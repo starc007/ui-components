@@ -1,6 +1,5 @@
 import { ArrowRight, Smartphone } from "lucide-react";
 import { InstallCommand } from "@/components/app/docs/install-command";
-import { QrCode } from "@/components/app/docs/native/qr-code";
 import {
   NativeLink,
   type NativePhone,
@@ -61,11 +60,12 @@ export function NativeShowcase() {
   return (
     <section
       aria-labelledby="landing-native"
-      className="mx-auto max-w-7xl px-4 pb-16 sm:pb-20"
+      className="pb-16 sm:pb-20"
     >
-      <div className="relative isolate overflow-hidden rounded-[2rem] border border-border bg-card">
+      {/* A full-width band; its content keeps the page's column. */}
+      <div className="relative isolate overflow-hidden bg-card">
         <Waves />
-        <div className="grid gap-10 px-6 pt-10 sm:px-10 sm:pt-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-16 lg:px-14 lg:pt-14">
+        <div className="mx-auto max-w-7xl px-4 pt-12 sm:pt-16 lg:pt-20">
           <div className="max-w-xl">
             <p className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground">
               <Smartphone aria-hidden="true" className="size-3.5" />
@@ -93,7 +93,7 @@ export function NativeShowcase() {
                   className="size-4 transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none"
                 />
               </NativeLink>
-              {/* Read on a phone, a QR code can't be scanned; open it instead. */}
+              {/* Expo Go links only open on a phone, so desktops don't get one. */}
               <a
                 href={native.expoGo.url}
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground underline decoration-foreground/30 underline-offset-4 lg:hidden"
@@ -108,27 +108,10 @@ export function NativeShowcase() {
               className="mt-7"
             />
           </div>
-          <div className="hidden w-56 self-start rounded-3xl border border-border bg-background p-5 text-center lg:block">
-            <QrCode
-              value={native.expoGo.url}
-              label="QR code that opens the beUI Native showcase in Expo Go"
-              className="p-2.5"
-            />
-            <p className="mt-4 text-sm text-muted-foreground">
-              Scan to try every component on your phone in{" "}
-              <a
-                href="https://expo.dev/go"
-                target="_blank"
-                rel="noreferrer noopener"
-                className="text-foreground underline underline-offset-4"
-              >
-                Expo Go
-              </a>
-              .
-            </p>
-          </div>
         </div>
-        <NativePhones phones={phones} />
+        <div className="mx-auto max-w-7xl">
+          <NativePhones phones={phones} />
+        </div>
       </div>
     </section>
   );
