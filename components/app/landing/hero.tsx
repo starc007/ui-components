@@ -1,5 +1,6 @@
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { PressLink } from "@/components/app/press-link";
+import summary from "@/lib/native/summary.json";
 import { INSTALLABLE_COUNT } from "@/lib/registry";
 import { HeroEyebrow } from "./hero-eyebrow";
 import styles from "./landing.module.css";
@@ -13,7 +14,7 @@ const reactNative =
 export function Hero() {
   return (
     <div className="mx-auto max-w-3xl text-center">
-      <HeroEyebrow count={INSTALLABLE_COUNT} />
+      <HeroEyebrow count={INSTALLABLE_COUNT} nativeCount={summary.variants} />
 
       <h1 className="mt-5 text-balance text-5xl font-medium tracking-tight md:text-6xl">
         Animated components
