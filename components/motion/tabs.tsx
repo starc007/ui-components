@@ -448,14 +448,19 @@ export function TabsTrigger({
 
   return (
     <div className={cn("shrink-0", !tracked && "relative")}>
+      {/* Distinct keys: reused across the swap, the CSS pill's leftover
+          `transform: none` would hide the tracked pill's offset until the
+          next value change. */}
       {active && tracked ? (
         <motion.span
+          key="tracked"
           data-tabs-indicator=""
           style={{ ...track, borderRadius: variant === "pill" ? 9999 : 8 }}
           className={cn("absolute top-0 left-0 bg-primary", radius, indicatorClassName)}
         />
       ) : active ? (
         <motion.span
+          key="layout"
           data-tabs-indicator=""
           layoutId={layoutId}
           layout
