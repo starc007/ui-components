@@ -38,8 +38,10 @@ import {
   componentJsonLd,
   componentKeywords,
   componentMetaDescription,
+  type RelatedComponent,
   relatedComponents,
 } from "@/lib/seo";
+import { NATIVE_ONLY, WEB_ONLY } from "@/lib/platform";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
@@ -130,6 +132,35 @@ async function loadSource(file: string) {
   return readSourceFile(file);
 }
 
+/** Related components for one platform; the page shows the picked one. */
+function RelatedSection({
+  related,
+  className,
+}: {
+  related: RelatedComponent[];
+  className: string;
+}) {
+  if (related.length === 0) return null;
+  return (
+    <section className={`mt-12 scroll-mt-24 border-t border-border pt-8 ${className}`}>
+      <h2 className="text-sm font-semibold text-foreground">Related components</h2>
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {related.map((rel) => (
+          <ComponentCard
+            key={`${rel.category}/${rel.slug}`}
+            categorySlug={rel.category}
+            slug={rel.slug}
+            name={rel.name}
+            description={rel.description}
+            badge={rel.badge}
+            launchedAt={rel.launchedAt}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default async function ComponentPage({
   params,
 }: {
@@ -148,6 +179,15 @@ export default async function ComponentPage({
     !examplesShareSource || index === (comp.examples?.length ?? 0) - 1;
   const dates = componentDates(cat.slug, comp.slug);
   const related = relatedComponents(cat.slug, comp.slug, 3);
+  // With React Native picked, suggest only components that have a native
+  // version, described as they are on native.
+  const nativeRelated = relatedComponents(cat.slug, comp.slug, 3, (other) =>
+    Boolean(findNativeComponent(other)),
+  ).map((rel) => ({
+    ...rel,
+    description: findNativeComponent(rel.slug)?.description ?? rel.description,
+    badge: undefined,
+  }));
   const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
   const creditUrl = comp.credit ? new URL(comp.credit.url) : null;
   creditUrl?.searchParams.set("ref", "beui");
@@ -271,29 +311,8 @@ export default async function ComponentPage({
 
       {comp.guide ? <ComponentGuide guide={comp.guide} /> : null}
 
-      {related.length ? (
-        <section
-          id="related-components"
-          className="mt-12 scroll-mt-24 border-t border-border pt-8"
-        >
-          <h2 className="text-sm font-semibold text-foreground">
-            Related components
-          </h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {related.map((rel) => (
-              <ComponentCard
-                key={`${rel.category}/${rel.slug}`}
-                categorySlug={rel.category}
-                slug={rel.slug}
-                name={rel.name}
-                description={rel.description}
-                badge={rel.badge}
-                launchedAt={rel.launchedAt}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <RelatedSection related={related} className={WEB_ONLY} />
+      <RelatedSection related={nativeRelated} className={NATIVE_ONLY} />
 
       {comp.credit ? (
         <section className="mt-12 border-t border-border pt-8">

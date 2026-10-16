@@ -337,6 +337,8 @@ export function relatedComponents(
   categorySlug: string,
   slug: string,
   limit = 4,
+  // Narrows the candidates, such as to components with a React Native version.
+  include: (slug: string) => boolean = () => true,
 ): RelatedComponent[] {
   const cat = registry.find((c) => c.slug === categorySlug);
   const components = cat?.components ?? [];
@@ -352,14 +354,14 @@ export function relatedComponents(
           ? index
           : (index - currentIndex + siblingCount) % siblingCount,
     }))
-    .filter(({ component }) => component.slug !== slug)
+    .filter(({ component }) => component.slug !== slug && include(component.slug))
     .sort((a, b) => b.score - a.score || a.distance - b.distance)
     .map(({ component }) => toRelated(categorySlug, component));
 
   if (siblings.length >= limit) return siblings.slice(0, limit);
 
   const rest = allComponents()
-    .filter((c) => c.category.slug !== categorySlug)
+    .filter((c) => c.category.slug !== categorySlug && include(c.slug))
     .map((c) => toRelated(c.category.slug, c));
 
   return [...siblings, ...rest].slice(0, limit);
