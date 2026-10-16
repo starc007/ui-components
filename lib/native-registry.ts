@@ -1,13 +1,12 @@
 // JSON for the beUI Native endpoints at /native/r, read by agents and the MCP
 // server. Kept apart from /r, whose shape is the public shadcn contract.
-import { componentPath } from "@/lib/component-paths";
+import { nativeComponentPath } from "@/lib/component-paths";
 import {
   findNativeComponent,
   native,
   nativeInstallCommands,
   type NativeComponent,
 } from "@/lib/native";
-import { registry } from "@/lib/registry";
 import { SITE_URL } from "@/lib/site";
 
 export const NATIVE_HEADERS = {
@@ -24,15 +23,8 @@ const SETUP = [
   "Works in Expo and in bare React Native. Every component honors the system Reduce Motion setting.",
 ];
 
-/** The web page for a native component, opened on its React Native tab. */
-function pageUrl(slug: string) {
-  const category = registry.find(
-    (cat) => cat.slug !== "charts" && cat.components.some((c) => c.slug === slug),
-  );
-  return category
-    ? `${SITE_URL}${componentPath(category.slug, slug)}?platform=native`
-    : null;
-}
+/** A native component's page on beui.dev. */
+const pageUrl = (slug: string) => `${SITE_URL}${nativeComponentPath(slug)}`;
 
 const detailUrl = (slug: string) => `${SITE_URL}/native/r/${slug}`;
 

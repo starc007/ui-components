@@ -66,8 +66,11 @@ const FAQS = [
         <code className="rounded bg-muted px-1 py-0.5 text-xs">
           npx beui-native add button
         </code>
-        . Every component page has a React Native tab with a QR code to try it
-        in Expo Go first.
+        . Every{" "}
+        <Link className="underline underline-offset-4" href="/react-native">
+          React Native component
+        </Link>{" "}
+        page has a QR code to try it in Expo Go first.
       </>
     ),
   },

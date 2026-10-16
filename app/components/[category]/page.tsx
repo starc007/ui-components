@@ -6,11 +6,7 @@ import { ComponentCard } from "@/components/app/docs/component-card";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { isComponentNew } from "@/lib/component-status";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
-import { NativeUnavailable } from "@/components/app/docs/native/native-unavailable";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
-import { findNativeComponent } from "@/lib/native";
-import { NATIVE_ONLY, WEB_ONLY } from "@/lib/platform";
-import { cn } from "@/lib/utils";
 
 const categoryContent = {
   motion: {
@@ -43,19 +39,6 @@ const categoryContent = {
   },
 } as const;
 
-// Shown instead of the web copy while React Native is picked.
-const nativeContent: Record<string, { heading: string; description: string }> = {
-  motion: {
-    heading: "Animated React Native components",
-    description:
-      "Built for touch with Reanimated, Gesture Handler and Uniwind. Copy the source into your Expo or React Native app, or try each one on your phone in Expo Go.",
-  },
-  blocks: {
-    heading: "Animated React Native blocks",
-    description:
-      "Composed mobile interactions built with Reanimated, Gesture Handler and Uniwind. Copy the source into your Expo or React Native app.",
-  },
-};
 
 const AGENT_CATEGORY_GROUPS = [
   {
@@ -183,11 +166,7 @@ export default async function CategoryPage({
   const components = cat.components.filter(
     (comp) => !isComponentNew(comp, now),
   );
-  const native = nativeContent[cat.slug];
-  const nativeComponents = cat.components.flatMap((comp) => {
-    const nativeComponent = findNativeComponent(comp.slug);
-    return nativeComponent ? [{ comp, nativeComponent }] : [];
-  });
+
   const agentGroups =
     cat.slug === "agents"
       ? AGENT_CATEGORY_GROUPS.map((group) => ({
@@ -217,46 +196,16 @@ export default async function CategoryPage({
         <span className="font-medium text-foreground">{cat.name}</span>
       </nav>
       <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
-        <span className={cn(native && WEB_ONLY)}>{content.heading}</span>
-        {native ? <span className={NATIVE_ONLY}>{native.heading}</span> : null}
+        {content.heading}
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">
-        <span className={cn(native && WEB_ONLY)}>{content.description}</span>
-        {native ? (
-          <span className={NATIVE_ONLY}>{native.description}</span>
-        ) : null}
+        {content.description}
       </p>
       <div className="mt-6 xl:hidden">
         <PlatformSwitch />
       </div>
 
-      <div className={NATIVE_ONLY}>
-        {nativeComponents.length ? (
-          <section className="mt-10">
-            <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
-              React Native
-            </h2>
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {nativeComponents.map(({ comp, nativeComponent }) => (
-                <ComponentCard
-                  key={comp.slug}
-                  categorySlug={cat.slug}
-                  slug={comp.slug}
-                  name={comp.name}
-                  description={nativeComponent.description}
-                />
-              ))}
-            </div>
-          </section>
-        ) : (
-          <NativeUnavailable
-            title={`${cat.name} aren't on React Native yet`}
-            description="Switch to the web version to browse them, or pick another category for React Native components."
-          />
-        )}
-      </div>
-
-      <div className={WEB_ONLY}>
+      <div>
         {agentGroups.length ? (
           <div className="mt-12 space-y-14">
             {agentGroups.map((group) => (

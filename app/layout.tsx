@@ -18,7 +18,6 @@ import {
 } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
-import { PLATFORM_SCRIPT } from "@/lib/platform";
 
 const sans = Geist({
   subsets: ["latin"],
@@ -122,7 +121,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             data-respect-do-not-track="true"
           />
         )}
-        <script dangerouslySetInnerHTML={{ __html: PLATFORM_SCRIPT }} />
         <link rel="icon" type="image/png" href="/beui-mark.png" />
         <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt" />
         <link rel="alternate" type="application/json" title="Component registry" href="/r" />

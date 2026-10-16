@@ -36,13 +36,14 @@ export async function GET() {
   lines.push("");
   lines.push(`> ${nativeIndex.description}`);
   lines.push("");
+  lines.push(`- All native components: ${SITE_URL}/react-native`);
   lines.push(`- Native index (JSON): ${nativeIndex.endpoints.index}`);
   lines.push(`- Native detail (JSON, every file with contents): ${nativeIndex.endpoints.detail}`);
   lines.push(`- Showcase in Expo Go (SDK ${nativeIndex.expo_go.sdk}): ${nativeIndex.expo_go.url}`);
   lines.push(`- Source: ${nativeIndex.repository}`);
   lines.push("");
   for (const c of nativeIndex.components) {
-    lines.push(`- [${c.name}](${c.detail_url}): ${c.description}`);
+    lines.push(`- [${c.name}](${c.page_url}): ${c.description} JSON: ${c.detail_url}`);
   }
   lines.push("");
   lines.push("To add a native component, run `npx beui-native add <slug>` from the app's root. To do it by hand: fetch its detail JSON, run its `install` commands, then copy every file in `files` to its `path`, keeping the folder layout. Add the `theme` file once per app.");

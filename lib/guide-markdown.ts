@@ -344,7 +344,7 @@ Run the beUI Native CLI from the app's root. It copies the component and the sha
 ${CLI_SNIPPET}
 \`\`\`
 
-To copy by hand instead, each component lists its libraries, its files and the shared files it needs, on its beUI page under React Native and at \`${SITE_URL}/native/r/{slug}\`. Keep the folder layout, since components import shared files by relative path. Tabs, for example:
+To copy by hand instead, each component lists its libraries, its files and the shared files it needs, on its page at \`${SITE_URL}/react-native/{slug}\` and at \`${SITE_URL}/native/r/{slug}\`. Keep the folder layout, since components import shared files by relative path. Tabs, for example:
 
 \`\`\`text
 ${LAYOUT_TREE}
@@ -362,7 +362,7 @@ ${SOURCE_SNIPPET}
 
 ## Try before you copy
 
-Every component page has a QR code that opens it in Expo Go (SDK ${native.expoGo.sdk}). Agents can fetch components from ${SITE_URL}/native/r or the beUI MCP server. Every component follows the system Reduce Motion setting and takes a \`disableAnimation\` prop. Source: ${native.repository}`,
+Every React Native component page (${SITE_URL}/react-native) has a QR code that opens it in Expo Go (SDK ${native.expoGo.sdk}). Agents can fetch components from ${SITE_URL}/native/r or the beUI MCP server. Every component follows the system Reduce Motion setting and takes a \`disableAnimation\` prop. Source: ${native.repository}`,
   },
 } as const;
 

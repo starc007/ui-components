@@ -240,10 +240,13 @@ export default function NativeSetupPage() {
           <CodeBlock code={CLI_SNIPPET} lang="bash" filename="terminal" />
         </div>
         <Prose>
-          To copy files by hand instead, open the component, switch to React
-          Native, and use the Manual steps. Either way, keep the folder layout,
-          since components import shared files by relative path. Tabs ends up
-          like this:
+          To copy files by hand instead, open the component from the{" "}
+          <Link href="/react-native" className={link}>
+            React Native components
+          </Link>{" "}
+          and use its Manual steps. Either way, keep the folder layout, since
+          components import shared files by relative path. Tabs ends up like
+          this:
         </Prose>
         <div className="mt-4">
           <CodeBlock code={LAYOUT_TREE} lang="text" filename="your app" />
@@ -264,7 +267,11 @@ export default function NativeSetupPage() {
 
       <Section id="try-first" title="Try before you copy">
         <Prose>
-          Every component page has a QR code that opens it in{" "}
+          Every{" "}
+          <Link href="/react-native" className={link}>
+            React Native component
+          </Link>{" "}
+          page has a QR code that opens it in{" "}
           <a href="https://expo.dev/go" target="_blank" rel="noreferrer noopener" className={link}>
             Expo Go
           </a>{" "}

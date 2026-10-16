@@ -1,27 +1,18 @@
 import { ArrowRight, Smartphone } from "lucide-react";
+import Link from "next/link";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import {
-  NativeLink,
   type NativePhone,
   NativePhones,
 } from "@/components/app/landing/native-phones";
-import { componentPath } from "@/lib/component-paths";
+import { nativeComponentPath } from "@/lib/component-paths";
 import { native } from "@/lib/native";
 import nativeSlugs from "@/lib/native/slugs.json";
 import summary from "@/lib/native/summary.json";
-import { registry } from "@/lib/registry";
 
 // Components whose clips show the most in a few seconds. Narrow screens show
 // the first two, tablets three.
 const FEATURED = ["tabs", "color-picker", "alert", "swipeable-list"];
-
-/** The web page a native component shares, opened on React Native. */
-function pageFor(slug: string) {
-  const category = registry.find(
-    (cat) => cat.slug !== "charts" && cat.components.some((c) => c.slug === slug),
-  );
-  return category ? componentPath(category.slug, slug) : "/components/motion";
-}
 
 /** The pastel waves of the announcement strip, still, behind the panel. */
 function Waves() {
@@ -53,7 +44,7 @@ export function NativeShowcase() {
   const phones: NativePhone[] = FEATURED.flatMap((slug) => {
     const component = native.components.find((c) => c.slug === slug);
     return component
-      ? [{ slug, title: component.title, href: pageFor(slug), clips: component.clips }]
+      ? [{ slug, title: component.title, href: nativeComponentPath(slug), clips: component.clips }]
       : [];
   });
 
@@ -83,8 +74,8 @@ export function NativeShowcase() {
               designed for fingers.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
-              <NativeLink
-                href="/components/motion"
+              <Link
+                href="/react-native"
                 className="group inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
               >
                 Browse components
@@ -92,7 +83,7 @@ export function NativeShowcase() {
                   aria-hidden="true"
                   className="size-4 transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none"
                 />
-              </NativeLink>
+              </Link>
               {/* Expo Go links only open on a phone, so desktops don't get one. */}
               <a
                 href={native.expoGo.url}

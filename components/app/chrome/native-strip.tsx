@@ -6,7 +6,6 @@ import { useReducedMotion } from "motion/react";
 import { useId } from "react";
 import { ButtonLink } from "@/components/motion/button";
 import summary from "@/lib/native/summary.json";
-import { PLATFORM_STORAGE_KEY } from "@/lib/platform";
 import styles from "./native-strip.module.css";
 
 /**
@@ -72,14 +71,7 @@ export function NativeStrip() {
         theme="auto"
       >
         <ButtonLink
-          href="/components/motion?platform=native"
-          // ?platform= picks React Native for this load; storing it keeps
-          // later pages on React Native too.
-          onClick={() => {
-            try {
-              localStorage.setItem(PLATFORM_STORAGE_KEY, "native");
-            } catch {}
-          }}
+          href="/react-native"
           variant="outline"
           size="sm"
           className="h-7 gap-1.5 rounded-full bg-background px-2.5 text-xs text-foreground hover:bg-background/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"

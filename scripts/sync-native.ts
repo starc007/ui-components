@@ -1,6 +1,7 @@
 // Copies beUI Native into the site: its component manifest and source go to
-// lib/native/catalog.json (slugs alone to lib/native/slugs.json, counts to
-// lib/native/summary.json), and its showcase clips and posters go to the
+// lib/native/catalog.json (slugs to lib/native/slugs.json, sidebar entries to
+// lib/native/nav.json, counts to lib/native/summary.json), and its showcase
+// clips and posters go to the
 // beui-native R2 bucket, served from media.beui.dev.
 //
 //   bun scripts/sync-native.ts [path-to-beui-native]
@@ -157,6 +158,13 @@ writeFileSync(CATALOG, `${JSON.stringify(catalog, null, 2)}\n`);
 writeFileSync(
   path.join(path.dirname(CATALOG), "slugs.json"),
   `${JSON.stringify(components.map((component) => component.slug))}\n`,
+);
+// The sidebar lists native components by group on /react-native pages.
+writeFileSync(
+  path.join(path.dirname(CATALOG), "nav.json"),
+  `${JSON.stringify(
+    components.map(({ slug, title, group }) => ({ slug, title, group })),
+  )}\n`,
 );
 // The site announcement counts every variant, like the web's install count.
 writeFileSync(

@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { after } from "next/server";
 import { getOgAssets } from "@/lib/og-assets";
 import { getOgFonts } from "@/lib/og-fonts";
+import { findNativeComponent } from "@/lib/native";
 import { allComponents, findCategory } from "@/lib/registry";
 import { OG_SIZE, ogImage } from "@/lib/og";
 import { clampText } from "@/lib/seo";
@@ -25,6 +26,13 @@ const PAGE_CARDS = {
     label: "React Native",
     command: "beui.dev/docs/native-setup",
   },
+  "react-native": {
+    title: "Animated React Native components",
+    description:
+      "Built for touch with Reanimated, Gesture Handler and Uniwind. Copy the source into any Expo or React Native app.",
+    label: "React Native",
+    command: "npx beui-native add ...",
+  },
 } as const;
 
 export const runtime = "nodejs";
@@ -35,6 +43,7 @@ export async function GET(request: Request) {
   const componentSlug = searchParams.get("component");
   const categorySlug = searchParams.get("category");
   const pageSlug = searchParams.get("page");
+  const nativeComponent = findNativeComponent(searchParams.get("native") ?? "");
   const component = componentSlug
     ? allComponents().find((item) => item.slug === componentSlug)
     : undefined;
@@ -48,7 +57,8 @@ export async function GET(request: Request) {
   // Cache the resolved card, not arbitrary query strings. Unknown slugs and
   // tracking parameters must not cause another render of the same image.
   const cacheUrl = new URL("/api/og", requestUrl.origin);
-  if (component) cacheUrl.searchParams.set("component", component.slug);
+  if (nativeComponent) cacheUrl.searchParams.set("native", nativeComponent.slug);
+  else if (component) cacheUrl.searchParams.set("component", component.slug);
   else if (category) cacheUrl.searchParams.set("category", category.slug);
   if (page && pageSlug) cacheUrl.searchParams.set("page", pageSlug);
   const cacheKey = new Request(cacheUrl);
@@ -64,25 +74,31 @@ export async function GET(request: Request) {
     }
   }
 
-  const homepage = !component && !category && !page;
+  const homepage = !nativeComponent && !component && !category && !page;
   const title =
+    nativeComponent?.title ??
     component?.name ??
     category?.name ??
     page?.title ??
     "beui";
   const description = clampText(
-    component?.description ??
+    nativeComponent?.description ??
+      component?.description ??
       category?.description ??
       page?.description ??
       "Animated components. Ready to make yours.",
     OG_DESCRIPTION_LIMIT,
   );
-  const label = component
+  const label = nativeComponent
+    ? "React Native"
+    : component
     ? "Component"
     : category
       ? category.name
       : page?.label ?? "Motion components";
-  const command = component
+  const command = nativeComponent
+    ? `npx beui-native add ${nativeComponent.slug}`
+    : component
     ? `npx shadcn add @beui/${component.slug}`
     : page?.command ?? "npx shadcn add @beui/...";
   const origin = requestUrl.origin;

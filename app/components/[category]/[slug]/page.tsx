@@ -1,8 +1,12 @@
-import { categoryPath, componentPath } from "@/lib/component-paths";
+import {
+  categoryPath,
+  componentPath,
+  nativeComponentPath,
+} from "@/lib/component-paths";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronRight, Smartphone } from "lucide-react";
 import {
   findCategory,
   findComponent,
@@ -30,18 +34,15 @@ import { readSourceFile } from "@/lib/source-files";
 import { getComponentProps } from "@/lib/props-extractor";
 import { componentDates } from "@/lib/component-dates";
 import { findNativeComponent } from "@/lib/native";
-import { NativePanel } from "@/components/app/docs/native/native-panel";
-import { NativeUnavailable } from "@/components/app/docs/native/native-unavailable";
-import { PlatformTabs } from "@/components/app/docs/native/platform-tabs";
+import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
+import { RelatedSection } from "@/components/app/docs/related-section";
 import {
   breadcrumbJsonLd,
   componentJsonLd,
   componentKeywords,
   componentMetaDescription,
-  type RelatedComponent,
   relatedComponents,
 } from "@/lib/seo";
-import { NATIVE_ONLY, WEB_ONLY } from "@/lib/platform";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
@@ -132,35 +133,6 @@ async function loadSource(file: string) {
   return readSourceFile(file);
 }
 
-/** Related components for one platform; the page shows the picked one. */
-function RelatedSection({
-  related,
-  className,
-}: {
-  related: RelatedComponent[];
-  className: string;
-}) {
-  if (related.length === 0) return null;
-  return (
-    <section className={`mt-12 scroll-mt-24 border-t border-border pt-8 ${className}`}>
-      <h2 className="text-sm font-semibold text-foreground">Related components</h2>
-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {related.map((rel) => (
-          <ComponentCard
-            key={`${rel.category}/${rel.slug}`}
-            categorySlug={rel.category}
-            slug={rel.slug}
-            name={rel.name}
-            description={rel.description}
-            badge={rel.badge}
-            launchedAt={rel.launchedAt}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export default async function ComponentPage({
   params,
 }: {
@@ -179,15 +151,6 @@ export default async function ComponentPage({
     !examplesShareSource || index === (comp.examples?.length ?? 0) - 1;
   const dates = componentDates(cat.slug, comp.slug);
   const related = relatedComponents(cat.slug, comp.slug, 3);
-  // With React Native picked, suggest only components that have a native
-  // version, described as they are on native.
-  const nativeRelated = relatedComponents(cat.slug, comp.slug, 3, (other) =>
-    Boolean(findNativeComponent(other)),
-  ).map((rel) => ({
-    ...rel,
-    description: findNativeComponent(rel.slug)?.description ?? rel.description,
-    badge: undefined,
-  }));
   const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
   const creditUrl = comp.credit ? new URL(comp.credit.url) : null;
   creditUrl?.searchParams.set("ref", "beui");
@@ -295,24 +258,31 @@ export default async function ComponentPage({
         </p>
       </div>
 
-      <PlatformTabs
-        web={webContent}
-        native={
-          nativeComponent ? (
-            <NativePanel component={nativeComponent} />
-          ) : (
-            <NativeUnavailable
-              title={`${comp.name} isn't on React Native yet`}
-              description="The sidebar lists every component with a React Native version. This one is web only for now."
-            />
-          )
-        }
-      />
+      {/* Wide screens pick the platform from the right sidebar. */}
+      <div className="mt-6 xl:hidden">
+        <PlatformSwitch />
+      </div>
+      {webContent}
 
       {comp.guide ? <ComponentGuide guide={comp.guide} /> : null}
 
-      <RelatedSection related={related} className={WEB_ONLY} />
-      <RelatedSection related={nativeRelated} className={NATIVE_ONLY} />
+      {nativeComponent ? (
+        <Link
+          href={nativeComponentPath(comp.slug)}
+          className="group mt-12 flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-sm outline-none transition-colors hover:border-(--color-border-strong) focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <Smartphone aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+          <span className="min-w-0 flex-1">
+            <span className="font-medium text-foreground">Also on React Native.</span>{" "}
+            <span className="text-muted-foreground">{nativeComponent.description}</span>
+          </span>
+          <ArrowRight
+            aria-hidden="true"
+            className="size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none"
+          />
+        </Link>
+      ) : null}
+      <RelatedSection related={related} />
 
       {comp.credit ? (
         <section className="mt-12 border-t border-border pt-8">

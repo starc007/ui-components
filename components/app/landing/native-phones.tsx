@@ -5,13 +5,11 @@ import { useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import {
-  type ComponentProps,
   useCallback,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { choosePlatform } from "@/components/app/docs/native/platform-switch";
 import type { NativeClip, NativeTheme } from "@/lib/native";
 import { cn } from "@/lib/utils";
 
@@ -21,22 +19,6 @@ export type NativePhone = {
   href: string;
   clips: Record<NativeTheme, NativeClip | null>;
 };
-
-/**
- * A link into the React Native docs. A client-side navigation doesn't rerun
- * the platform script, so it picks React Native before leaving.
- */
-export function NativeLink({ onClick, ...props }: ComponentProps<typeof Link>) {
-  return (
-    <Link
-      {...props}
-      onClick={(event) => {
-        choosePlatform("native", { syncUrl: false });
-        onClick?.(event);
-      }}
-    />
-  );
-}
 
 /**
  * Phones looping recorded clips of native components. Each plays only while
@@ -78,7 +60,7 @@ export function NativePhones({ phones }: { phones: NativePhone[] }) {
               index >= 3 && "hidden lg:block",
             )}
           >
-            <NativeLink
+            <Link
               href={phone.href}
               className="group flex flex-col items-center gap-3 outline-none"
             >
@@ -90,7 +72,7 @@ export function NativePhones({ phones }: { phones: NativePhone[] }) {
                 />
               </span>
               <PhoneClip phone={phone} paused={paused} />
-            </NativeLink>
+            </Link>
           </li>
         ))}
       </ul>

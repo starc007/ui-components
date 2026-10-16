@@ -1,6 +1,12 @@
 "use client";
 
-import { categoryPath, componentPath } from "@/lib/component-paths";
+import {
+  categoryPath,
+  componentPath,
+  isNativePath,
+  NATIVE_PATH,
+  nativeComponentPath,
+} from "@/lib/component-paths";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,8 +14,7 @@ import { Blocks, Bot, LayoutGrid, Shapes } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
 import { registry } from "@/lib/registry";
-import { usePlatform } from "@/components/app/docs/native/platform-switch";
-import nativeSlugs from "@/lib/native/slugs.json";
+import nativeNav from "@/lib/native/nav.json";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import { Button } from "@/components/motion/button";
@@ -41,13 +46,22 @@ const SIDEBAR_CATEGORIES = registry.filter((category) => category.slug !== "char
     (SIDEBAR_CATEGORY_ORDER[b.slug] ?? Number.MAX_SAFE_INTEGER),
 );
 
-const NATIVE = new Set<string>(nativeSlugs);
+// Native components in catalog order, grouped as the native showcase groups
+// them, for the sidebar on /react-native pages.
+const NATIVE_GROUPS = nativeNav.reduce<{ name: string; items: typeof nativeNav }[]>(
+  (groups, item) => {
+    const group = groups.find((entry) => entry.name === item.group);
+    if (group) group.items.push(item);
+    else groups.push({ name: item.group, items: [item] });
+    return groups;
+  },
+  [],
+);
 
-// With React Native picked, the list keeps only components that have a native
-// version. Hiding is CSS on <html data-platform>, set before paint, so a
-// reader who chose React Native never sees the web list first.
-const WEB_ONLY = "[html[data-platform=native]_&]:hidden";
-const NATIVE_ONLY = "hidden [html[data-platform=native]_&]:inline-flex";
+const NATIVE_INTRO = [
+  { slug: "native-home", name: "Overview", href: NATIVE_PATH },
+  { slug: "native-setup", name: "Setup", href: "/docs/native-setup" },
+];
 
 const CATEGORY_FILTERS = [
   { value: "all", label: "All", icon: LayoutGrid },
@@ -149,14 +163,11 @@ export function SidebarCategoryTabs({
   onValueChange,
   id,
   panelId,
-  exclude = [],
 }: {
   value: string;
   onValueChange: (value: string) => void;
   id: string;
   panelId: string;
-  /** Category filters to leave out, such as ones with nothing to show. */
-  exclude?: readonly string[];
 }) {
   const reduce = useReducedMotion();
 
@@ -193,7 +204,7 @@ export function SidebarCategoryTabs({
         aria-label="Component categories"
         className="inline-flex min-h-9 items-center gap-1 rounded-full bg-muted p-0.5"
       >
-        {CATEGORY_FILTERS.filter((filter) => !exclude.includes(filter.value)).map((filter) => (
+        {CATEGORY_FILTERS.map((filter) => (
           <SidebarCategoryTab
             key={filter.value}
             filter={filter}
@@ -217,6 +228,12 @@ function moveNewItemsToTop<
   ];
 }
 
+const COUNT_CLASS =
+  "inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground";
+
+const GROUP_LABEL =
+  "mb-1.5 flex items-center gap-2 rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground";
+
 function linkClass(active: boolean) {
   return cn(
     "relative block rounded-lg px-2.5 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:py-1",
@@ -226,9 +243,80 @@ function linkClass(active: boolean) {
   );
 }
 
+/** The React Native pages' list: overview, setup, then components by group. */
+function NativeSidebarNav({
+  pathname,
+  onNavigate,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+}) {
+  return (
+    <nav aria-label="Browse React Native components" className="flex flex-col gap-6">
+      <div>
+        <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          React Native
+        </p>
+        <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
+          {NATIVE_INTRO.map((item) => (
+            <Link
+              key={item.slug}
+              href={item.href}
+              prefetch={false}
+              aria-current={pathname === item.href ? "page" : undefined}
+              onClick={onNavigate}
+              className={linkClass(pathname === item.href)}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </SharedLayoutBg>
+      </div>
+      {NATIVE_GROUPS.map((group) => (
+        <div key={group.name}>
+          <p className={GROUP_LABEL}>
+            {group.name}
+            <span className={COUNT_CLASS}>{group.items.length}</span>
+          </p>
+          <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
+            {group.items.map((item) => {
+              const href = nativeComponentPath(item.slug);
+              return (
+                <Link
+                  key={item.slug}
+                  href={href}
+                  prefetch={false}
+                  aria-current={pathname === href ? "page" : undefined}
+                  onClick={onNavigate}
+                  className={linkClass(pathname === href)}
+                >
+                  <span className="truncate">{item.title}</span>
+                </Link>
+              );
+            })}
+          </SharedLayoutBg>
+        </div>
+      ))}
+    </nav>
+  );
+}
+
 /** Nav list shared by the desktop sidebar and the mobile bottom sheet. */
 export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  if (isNativePath(pathname)) {
+    return <NativeSidebarNav pathname={pathname} onNavigate={onNavigate} />;
+  }
+  return <WebSidebarNav pathname={pathname} onNavigate={onNavigate} />;
+}
+
+function WebSidebarNav({
+  pathname,
+  onNavigate,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+}) {
   const tabsId = useId();
   const panelId = useId();
   const routeCategory = SIDEBAR_CATEGORIES.find((category) => {
@@ -242,13 +330,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     setFilter({ routeCategory, value: filter.value === "all" ? "all" : (routeCategory ?? "all") });
   }
   const isCharts = pathname === "/charts" || pathname.startsWith("/charts/");
-  const native = usePlatform() === "native" && !isCharts;
-  // Categories with no native components drop out of the React Native list.
-  const nativeEmpty = SIDEBAR_CATEGORIES.filter(
-    (category) => !category.components.some((comp) => NATIVE.has(comp.slug)),
-  ).map((category) => category.slug);
-  const categoryFilter =
-    native && nativeEmpty.includes(filter.value) ? "all" : filter.value;
+  const categoryFilter = filter.value;
   const now = Date.now();
   const categories = isCharts
     ? registry.filter((category) => category.slug === "charts")
@@ -266,7 +348,6 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             panelId={panelId}
             value={categoryFilter}
             onValueChange={(value) => setFilter({ routeCategory, value })}
-            exclude={native ? nativeEmpty : []}
           />
           <span
             aria-hidden="true"
@@ -321,7 +402,6 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           <div
             key={cat.slug}
             hidden={!isCharts && categoryFilter !== "all" && categoryFilter !== cat.slug}
-            className={cn(!isCharts && nativeEmpty.includes(cat.slug) && WEB_ONLY)}
           >
             <Link
               href={categoryPath(cat.slug)}
@@ -330,19 +410,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               className="mb-1.5 flex items-center gap-2 rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
             >
               {cat.name}
-              <span
-                className={cn(
-                  "inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground",
-                  !isCharts && WEB_ONLY,
-                )}
-              >
-                {cat.components.length}
-              </span>
-              {!isCharts ? (
-                <span className={cn(NATIVE_ONLY, "h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground")}>
-                  {cat.components.filter((comp) => NATIVE.has(comp.slug)).length}
-                </span>
-              ) : null}
+              <span className={COUNT_CLASS}>{cat.components.length}</span>
             </Link>
             <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
               {moveNewItemsToTop(cat.components, now).map((comp) => {
@@ -354,18 +422,12 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                     prefetch={false}
                     aria-current={pathname === href ? "page" : undefined}
                     onClick={onNavigate}
-                    className={cn(
-                      linkClass(pathname === href),
-                      !isCharts && !NATIVE.has(comp.slug) && WEB_ONLY,
-                    )}
+                    className={linkClass(pathname === href)}
                   >
                     <span className="flex items-center justify-between gap-2">
                       <span className="truncate">{comp.name}</span>
-                      {/* New marks web launches, so it stays out of the native list. */}
                       {comp.badge === "new" ? (
-                        <span className={cn(!isCharts && WEB_ONLY)}>
-                          <NewBadge launchedAt={comp.launchedAt} />
-                        </span>
+                        <NewBadge launchedAt={comp.launchedAt} />
                       ) : null}
                     </span>
                   </Link>

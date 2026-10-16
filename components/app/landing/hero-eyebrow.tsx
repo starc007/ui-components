@@ -3,18 +3,19 @@
 import { BorderBeam } from "border-beam";
 import { useReducedMotion } from "motion/react";
 import Link from "next/link";
-import { choosePlatform } from "@/components/app/docs/native/platform-switch";
 import { GithubIcon } from "@/components/app/icons";
 
 const LIBRARIES = [
   {
     platform: "web",
+    href: "/components/motion",
     label: "React",
     repo: "https://github.com/starc007/ui-components",
     repoName: "beUI",
   },
   {
     platform: "native",
+    href: "/react-native",
     label: "React Native",
     repo: "https://github.com/starc007/beui-native",
     repoName: "beUI Native",
@@ -66,10 +67,7 @@ export function HeroEyebrow({
               <GithubIcon className="size-4" />
             </a>
             <Link
-              href="/components/motion"
-              // A client-side navigation doesn't rerun the platform script,
-              // so pick the platform here; the list then filters to it.
-              onClick={() => choosePlatform(library.platform, { syncUrl: false })}
+              href={library.href}
               className={`-ml-1 inline-flex min-h-9 items-center rounded-full py-2 pr-3.5 pl-1.5 text-foreground transition-colors ${focus}`}
             >
               {/* One text run: flex would drop the space between items. */}
