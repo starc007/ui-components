@@ -1,6 +1,7 @@
 import { native } from "@/lib/native";
 import {
   BABEL_SNIPPET,
+  CSS_TYPES_SNIPPET,
   GLOBAL_CSS_SNIPPET,
   INSTALL_SNIPPET,
   LAYOUT_SNIPPET,
@@ -310,7 +311,11 @@ In a bare React Native app, the default config comes from \`@react-native/metro-
 ${METRO_BARE_SNIPPET}
 \`\`\`
 
-Uniwind writes the class name types to \`dtsFile\` when Metro starts.
+Uniwind writes the class name types to \`dtsFile\` when Metro starts. If TypeScript can't find the \`global.css\` import, declare CSS files in \`src/env.d.ts\`:
+
+\`\`\`ts
+${CSS_TYPES_SNIPPET}
+\`\`\`
 
 ## 3. Add the theme tokens
 

@@ -8,6 +8,7 @@ import { GuideShell } from "@/components/app/docs/guide-shell";
 import { native } from "@/lib/native";
 import {
   BABEL_SNIPPET,
+  CSS_TYPES_SNIPPET,
   GLOBAL_CSS_SNIPPET,
   INSTALL_SNIPPET,
   LAYOUT_SNIPPET,
@@ -181,8 +182,12 @@ export default function NativeSetupPage() {
         </div>
         <Note>
           Uniwind writes the class name types to <Code>dtsFile</Code> when Metro
-          starts, so start it once before checking types.
+          starts, so start it once before checking types. If TypeScript then
+          can&apos;t find the <Code>global.css</Code> import, declare CSS files:
         </Note>
+        <div className="mt-4">
+          <CodeBlock code={CSS_TYPES_SNIPPET} lang="ts" filename="src/env.d.ts" />
+        </div>
       </Section>
 
       <Section id="theme" title="3. Add the theme tokens">

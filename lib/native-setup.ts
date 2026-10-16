@@ -46,6 +46,8 @@ module.exports = withUniwindConfig(config, {
   dtsFile: "./src/uniwind-types.d.ts",
 });`;
 
+export const CSS_TYPES_SNIPPET = `declare module "*.css";`;
+
 export const LAYOUT_SNIPPET = `import "../global.css";
 
 import { Stack } from "expo-router";
