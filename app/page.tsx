@@ -7,6 +7,7 @@ import { LandingFaq } from "@/components/app/landing/faq";
 import { GettingStarted } from "@/components/app/landing/getting-started";
 import { Hero } from "@/components/app/landing/hero";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
+import { NativeShowcase } from "@/components/app/landing/native-showcase";
 import { Testimonials } from "@/components/app/landing/testimonials";
 import { WorkCta } from "@/components/app/landing/work-cta";
 import { isComponentNew } from "@/lib/component-status";
@@ -185,6 +186,8 @@ export default function Home() {
           </div>
         </section>
       ) : null}
+
+      <NativeShowcase />
 
       <section className="mx-auto max-w-7xl px-4 pb-4">
         <SectionHeader

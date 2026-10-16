@@ -43,10 +43,13 @@ const COMPONENT_SLUGS = registry.flatMap((cat) =>
 export function InstallCommand({
   className,
   slug,
+  slugs = COMPONENT_SLUGS,
   tool = "shadcn",
 }: {
   className?: string;
   slug?: string;
+  /** Names to cycle through when no `slug` is given. */
+  slugs?: readonly string[];
   tool?: keyof typeof TOOLS;
 }) {
   const { name, prefix, runners } = TOOLS[tool];
@@ -56,12 +59,12 @@ export function InstallCommand({
   useEffect(() => {
     if (slug) return;
     const id = setInterval(() => {
-      setNameIndex((i) => (i + 1) % COMPONENT_SLUGS.length);
+      setNameIndex((i) => (i + 1) % slugs.length);
     }, CYCLE_MS);
     return () => clearInterval(id);
-  }, [slug]);
+  }, [slug, slugs]);
 
-  const currentSlug = slug ?? COMPONENT_SLUGS[nameIndex];
+  const currentSlug = slug ?? slugs[nameIndex % slugs.length];
   const runner = runners[pm].split(" ");
   const copyValue = `${runners[pm]} ${name} add ${prefix}${currentSlug}`;
 

@@ -41,7 +41,11 @@ function useHydrated() {
 }
 
 /** Switches every component page to a platform and remembers the choice. */
-export function choosePlatform(value: string) {
+export function choosePlatform(
+  value: string,
+  // Off when a link is about to navigate away: the current URL needn't change.
+  { syncUrl = true }: { syncUrl?: boolean } = {},
+) {
   if (value !== "web" && value !== "native") return;
   const data = document.documentElement.dataset;
   if (value === "native") data.platform = "native";
@@ -49,10 +53,12 @@ export function choosePlatform(value: string) {
   try {
     localStorage.setItem(STORAGE_KEY, value);
   } catch {}
-  const url = new URL(window.location.href);
-  if (value === "native") url.searchParams.set(PARAM, value);
-  else url.searchParams.delete(PARAM);
-  window.history.replaceState(window.history.state, "", url);
+  if (syncUrl) {
+    const url = new URL(window.location.href);
+    if (value === "native") url.searchParams.set(PARAM, value);
+    else url.searchParams.delete(PARAM);
+    window.history.replaceState(window.history.state, "", url);
+  }
   window.dispatchEvent(new Event(EVENT));
 }
 
