@@ -67,3 +67,46 @@
     background: var(--card);
   }
 }
+
+/* Highlighter strokes behind the hero's platform names, in the CTA glow's
+   powder blue and peach. They sweep in left to right once, React first.
+   The hero sets --mark-bg and --mark-fg with Tailwind, so its dark: variant
+   applies; unlayered module values would always win over it. */
+.mark {
+  /* How much of the line the stroke covers. Centered, it leaves equal room
+     above the capitals and below the baseline: the glyphs' center matches
+     the line box's, which also reserves descender space. */
+  --mark-h: 72%;
+  padding: 0 0.12em;
+  margin: 0 -0.02em;
+  border-radius: 0.14em;
+  white-space: nowrap;
+  color: var(--mark-fg);
+  background-color: transparent;
+  background-image: linear-gradient(var(--mark-bg), var(--mark-bg));
+  background-repeat: no-repeat;
+  background-position: 0 50%;
+  background-size: 100% var(--mark-h);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  animation: mark-sweep 650ms cubic-bezier(0.22, 1, 0.36, 1) 250ms both;
+}
+
+.markNative {
+  animation-delay: 420ms;
+}
+
+@keyframes mark-sweep {
+  from {
+    background-size: 0% var(--mark-h);
+  }
+  to {
+    background-size: 100% var(--mark-h);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark {
+    animation: none;
+  }
+}
