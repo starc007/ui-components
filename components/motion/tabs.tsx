@@ -30,6 +30,9 @@ type Ctx = {
   icons: IconDisplay;
   /** The pill's box in the list, for tabs whose width changes as they're selected. */
   track: Track;
+  /** Whether the tracked pill has been measured; until then CSS places it. */
+  placed: boolean;
+  setPlaced: (placed: boolean) => void;
 };
 
 type Track = Record<"x" | "y" | "width" | "height", MotionValue<number>>;
@@ -90,9 +93,10 @@ export function Tabs({
   const width = useSpring(0, transition);
   const height = useSpring(0, transition);
   const track = useMemo(() => ({ x, y, width, height }), [x, y, width, height]);
+  const [placed, setPlaced] = useState(false);
   const contextValue = useMemo(
-    () => ({ value: current, setValue, layoutId, variant, icons, track }),
-    [current, icons, layoutId, setValue, variant, track],
+    () => ({ value: current, setValue, layoutId, variant, icons, track, placed, setPlaced }),
+    [current, icons, layoutId, setValue, variant, track, placed],
   );
   return (
     <MotionConfig transition={reduce ? { duration: 0 } : transition}>
@@ -123,7 +127,7 @@ export function TabsList({
 }: {
   wrapperClassName?: string;
 } & HTMLAttributes<HTMLDivElement>) {
-  const { variant, value, icons, track } = useTabs();
+  const { variant, value, icons, track, placed, setPlaced } = useTabs();
   const reduce = useReducedMotion();
   const tracked = icons === "selected" && variant !== "underline";
   const rootRef = useRef<HTMLDivElement>(null);
@@ -231,18 +235,22 @@ export function TabsList({
         if (instant) track[key].jump(box[key]);
         else track[key].set(box[key]);
       }
+      // Hand over from the CSS pill once there's a real box, before paint.
+      if (box.width > 0) setPlaced(true);
     };
     place();
     const observer = new ResizeObserver(place);
     for (const tab of list.querySelectorAll('[role="tab"]')) if (tab.parentElement) observer.observe(tab.parentElement);
     return () => observer.disconnect();
-  }, [tracked, value, children, reduce, track]);
+  }, [tracked, value, children, reduce, track, setPlaced]);
 
   useLayoutEffect(() => {
     if (variant === "underline") return;
     const list = listRef.current;
     if (!list) return;
     void children;
+    // `placed` swaps the indicator element, so measure the new one.
+    void placed;
     const labels = Array.from(list.querySelectorAll<HTMLElement>("[data-tabs-label]"));
     const indicator = list.querySelector<HTMLElement>("[data-tabs-indicator]");
     const target = list.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
@@ -290,7 +298,7 @@ export function TabsList({
       observer.disconnect();
       cancelFrame(syncClips);
     };
-  }, [value, children, variant, reduce]);
+  }, [value, children, variant, reduce, placed]);
 
   const scroll = (direction: number) => {
     const viewport = viewportRef.current;
@@ -387,7 +395,7 @@ export function TabsTrigger({
   icon?: ReactNode;
   indicatorClassName?: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value">) {
-  const { value: current, setValue, layoutId, variant, icons, track } = useTabs();
+  const { value: current, setValue, layoutId, variant, icons, track, placed } = useTabs();
   const active = current === value;
   const content = icon ? (
     <>
@@ -434,8 +442,9 @@ export function TabsTrigger({
 
   const radius = variant === "pill" ? "rounded-full" : "rounded-md";
   // Tracked pills are placed in the list, so this wrapper must not be their
-  // containing block.
-  const tracked = icons === "selected";
+  // containing block. Server HTML can't measure, so until the first
+  // measurement the pill fills the selected tab with CSS, like the others.
+  const tracked = icons === "selected" && placed;
 
   return (
     <div className={cn("shrink-0", !tracked && "relative")}>

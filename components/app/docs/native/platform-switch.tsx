@@ -29,6 +29,17 @@ export function usePlatform() {
   return useSyncExternalStore(subscribe, readPlatform, serverPlatform);
 }
 
+const subscribeNever = () => () => {};
+
+/** False while hydrating server HTML, true for every render after. */
+function useHydrated() {
+  return useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
+}
+
 /** Switches every component page to a platform and remembers the choice. */
 export function choosePlatform(value: string) {
   if (value !== "web" && value !== "native") return;
@@ -60,9 +71,16 @@ export function PlatformSwitch({
   className?: string;
 }) {
   const platform = usePlatform();
+  const hydrated = useHydrated();
   const block = layout === "block";
   return (
+    // The server can't know the reader's platform, so its HTML picks Web.
+    // Until hydration, a reader on React Native gets the switch hidden (its
+    // space kept) instead of the wrong tab. After it, the switch remounts on
+    // the right tab, so the pill lands there instead of gliding across.
     <Tabs
+      key={hydrated ? "client" : "server"}
+      className={cn(!hydrated && "[html[data-platform=native]_&]:invisible")}
       value={platform}
       onValueChange={choosePlatform}
       variant="pill"
