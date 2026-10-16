@@ -32,12 +32,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/button?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/button-light.7860e0699d.mp4",
-          "poster": "https://media.beui.dev/clips/button-light.7860e0699d.jpg"
+          "video": "https://media.beui.dev/clips/button-light.e15527bf65.mp4",
+          "poster": "https://media.beui.dev/clips/button-light.e15527bf65.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/button-dark.eed14b49b2.mp4",
-          "poster": "https://media.beui.dev/clips/button-dark.eed14b49b2.jpg"
+          "video": "https://media.beui.dev/clips/button-dark.90b5962b6d.mp4",
+          "poster": "https://media.beui.dev/clips/button-dark.90b5962b6d.jpg"
         }
       },
       "files": [
@@ -106,12 +106,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/expandable-control?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/expandable-control-light.5f317760ed.mp4",
-          "poster": "https://media.beui.dev/clips/expandable-control-light.5f317760ed.jpg"
+          "video": "https://media.beui.dev/clips/expandable-control-light.88fd29ee6e.mp4",
+          "poster": "https://media.beui.dev/clips/expandable-control-light.88fd29ee6e.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/expandable-control-dark.a5d11022d2.mp4",
-          "poster": "https://media.beui.dev/clips/expandable-control-dark.a5d11022d2.jpg"
+          "video": "https://media.beui.dev/clips/expandable-control-dark.bdab5055ce.mp4",
+          "poster": "https://media.beui.dev/clips/expandable-control-dark.bdab5055ce.jpg"
         }
       },
       "files": [
@@ -160,12 +160,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/card?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/card-light.7d8b0e3fa0.mp4",
-          "poster": "https://media.beui.dev/clips/card-light.7d8b0e3fa0.jpg"
+          "video": "https://media.beui.dev/clips/card-light.aa11232064.mp4",
+          "poster": "https://media.beui.dev/clips/card-light.aa11232064.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/card-dark.f094f69f0e.mp4",
-          "poster": "https://media.beui.dev/clips/card-dark.f094f69f0e.jpg"
+          "video": "https://media.beui.dev/clips/card-dark.ac37270ed3.mp4",
+          "poster": "https://media.beui.dev/clips/card-dark.ac37270ed3.jpg"
         }
       },
       "files": [
@@ -206,12 +206,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/input?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/input-light.00f2d31a09.mp4",
-          "poster": "https://media.beui.dev/clips/input-light.00f2d31a09.jpg"
+          "video": "https://media.beui.dev/clips/input-light.c1a96c5fcf.mp4",
+          "poster": "https://media.beui.dev/clips/input-light.c1a96c5fcf.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/input-dark.57bb463a47.mp4",
-          "poster": "https://media.beui.dev/clips/input-dark.57bb463a47.jpg"
+          "video": "https://media.beui.dev/clips/input-dark.f27050f22b.mp4",
+          "poster": "https://media.beui.dev/clips/input-dark.f27050f22b.jpg"
         }
       },
       "files": [
@@ -268,12 +268,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/otp-input?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/otp-input-light.382086746c.mp4",
-          "poster": "https://media.beui.dev/clips/otp-input-light.382086746c.jpg"
+          "video": "https://media.beui.dev/clips/otp-input-light.95af48c382.mp4",
+          "poster": "https://media.beui.dev/clips/otp-input-light.95af48c382.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/otp-input-dark.5dc71ec28f.mp4",
-          "poster": "https://media.beui.dev/clips/otp-input-dark.5dc71ec28f.jpg"
+          "video": "https://media.beui.dev/clips/otp-input-dark.a0d66ff95f.mp4",
+          "poster": "https://media.beui.dev/clips/otp-input-dark.a0d66ff95f.jpg"
         }
       },
       "files": [
@@ -327,12 +327,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/select?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/select-light.d8a3636d53.mp4",
-          "poster": "https://media.beui.dev/clips/select-light.d8a3636d53.jpg"
+          "video": "https://media.beui.dev/clips/select-light.6ffd368149.mp4",
+          "poster": "https://media.beui.dev/clips/select-light.6ffd368149.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/select-dark.65f93caa57.mp4",
-          "poster": "https://media.beui.dev/clips/select-dark.65f93caa57.jpg"
+          "video": "https://media.beui.dev/clips/select-dark.245b96253b.mp4",
+          "poster": "https://media.beui.dev/clips/select-dark.245b96253b.jpg"
         }
       },
       "files": [
@@ -378,12 +378,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/multi-select?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/multi-select-light.bd07cbbd3d.mp4",
-          "poster": "https://media.beui.dev/clips/multi-select-light.bd07cbbd3d.jpg"
+          "video": "https://media.beui.dev/clips/multi-select-light.f85f33cbe4.mp4",
+          "poster": "https://media.beui.dev/clips/multi-select-light.f85f33cbe4.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/multi-select-dark.445fa0fb72.mp4",
-          "poster": "https://media.beui.dev/clips/multi-select-dark.445fa0fb72.jpg"
+          "video": "https://media.beui.dev/clips/multi-select-dark.920f3df237.mp4",
+          "poster": "https://media.beui.dev/clips/multi-select-dark.920f3df237.jpg"
         }
       },
       "files": [
@@ -438,12 +438,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/color-picker?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/color-picker-light.8a0ff2646e.mp4",
-          "poster": "https://media.beui.dev/clips/color-picker-light.8a0ff2646e.jpg"
+          "video": "https://media.beui.dev/clips/color-picker-light.30675dbd04.mp4",
+          "poster": "https://media.beui.dev/clips/color-picker-light.30675dbd04.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/color-picker-dark.d92f3bec80.mp4",
-          "poster": "https://media.beui.dev/clips/color-picker-dark.d92f3bec80.jpg"
+          "video": "https://media.beui.dev/clips/color-picker-dark.14d23a1a36.mp4",
+          "poster": "https://media.beui.dev/clips/color-picker-dark.14d23a1a36.jpg"
         }
       },
       "files": [
@@ -508,12 +508,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/checkbox?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/checkbox-light.ef933b8104.mp4",
-          "poster": "https://media.beui.dev/clips/checkbox-light.ef933b8104.jpg"
+          "video": "https://media.beui.dev/clips/checkbox-light.fc4fb13b83.mp4",
+          "poster": "https://media.beui.dev/clips/checkbox-light.fc4fb13b83.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/checkbox-dark.3421da8a72.mp4",
-          "poster": "https://media.beui.dev/clips/checkbox-dark.3421da8a72.jpg"
+          "video": "https://media.beui.dev/clips/checkbox-dark.96dea27417.mp4",
+          "poster": "https://media.beui.dev/clips/checkbox-dark.96dea27417.jpg"
         }
       },
       "files": [
@@ -562,12 +562,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/radio?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/radio-light.83a4b9ce56.mp4",
-          "poster": "https://media.beui.dev/clips/radio-light.83a4b9ce56.jpg"
+          "video": "https://media.beui.dev/clips/radio-light.71d2371ade.mp4",
+          "poster": "https://media.beui.dev/clips/radio-light.71d2371ade.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/radio-dark.909654f8ea.mp4",
-          "poster": "https://media.beui.dev/clips/radio-dark.909654f8ea.jpg"
+          "video": "https://media.beui.dev/clips/radio-dark.88ae737e56.mp4",
+          "poster": "https://media.beui.dev/clips/radio-dark.88ae737e56.jpg"
         }
       },
       "files": [
@@ -609,12 +609,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/range-slider?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/range-slider-light.3b258e6e00.mp4",
-          "poster": "https://media.beui.dev/clips/range-slider-light.3b258e6e00.jpg"
+          "video": "https://media.beui.dev/clips/range-slider-light.da0024393e.mp4",
+          "poster": "https://media.beui.dev/clips/range-slider-light.da0024393e.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/range-slider-dark.4895a15af0.mp4",
-          "poster": "https://media.beui.dev/clips/range-slider-dark.4895a15af0.jpg"
+          "video": "https://media.beui.dev/clips/range-slider-dark.4434794b97.mp4",
+          "poster": "https://media.beui.dev/clips/range-slider-dark.4434794b97.jpg"
         }
       },
       "files": [
@@ -655,12 +655,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/switch?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/switch-light.25dbf42b8c.mp4",
-          "poster": "https://media.beui.dev/clips/switch-light.25dbf42b8c.jpg"
+          "video": "https://media.beui.dev/clips/switch-light.f02eb6d2bc.mp4",
+          "poster": "https://media.beui.dev/clips/switch-light.f02eb6d2bc.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/switch-dark.cd8a047aed.mp4",
-          "poster": "https://media.beui.dev/clips/switch-dark.cd8a047aed.jpg"
+          "video": "https://media.beui.dev/clips/switch-dark.deb95e71bb.mp4",
+          "poster": "https://media.beui.dev/clips/switch-dark.deb95e71bb.jpg"
         }
       },
       "files": [
@@ -697,12 +697,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/bouncy-accordion?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/bouncy-accordion-light.d89c207fed.mp4",
-          "poster": "https://media.beui.dev/clips/bouncy-accordion-light.d89c207fed.jpg"
+          "video": "https://media.beui.dev/clips/bouncy-accordion-light.f9e3d9bb98.mp4",
+          "poster": "https://media.beui.dev/clips/bouncy-accordion-light.f9e3d9bb98.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/bouncy-accordion-dark.38e25d1159.mp4",
-          "poster": "https://media.beui.dev/clips/bouncy-accordion-dark.38e25d1159.jpg"
+          "video": "https://media.beui.dev/clips/bouncy-accordion-dark.96068cb938.mp4",
+          "poster": "https://media.beui.dev/clips/bouncy-accordion-dark.96068cb938.jpg"
         }
       },
       "files": [
@@ -751,12 +751,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/tabs?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/tabs-light.3e805a1181.mp4",
-          "poster": "https://media.beui.dev/clips/tabs-light.3e805a1181.jpg"
+          "video": "https://media.beui.dev/clips/tabs-light.1fe8d4ec03.mp4",
+          "poster": "https://media.beui.dev/clips/tabs-light.1fe8d4ec03.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/tabs-dark.e03e3373fd.mp4",
-          "poster": "https://media.beui.dev/clips/tabs-dark.e03e3373fd.jpg"
+          "video": "https://media.beui.dev/clips/tabs-dark.5e73461926.mp4",
+          "poster": "https://media.beui.dev/clips/tabs-dark.5e73461926.jpg"
         }
       },
       "files": [
@@ -803,12 +803,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/swipeable-list?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/swipeable-list-light.1fa0c6e01d.mp4",
-          "poster": "https://media.beui.dev/clips/swipeable-list-light.1fa0c6e01d.jpg"
+          "video": "https://media.beui.dev/clips/swipeable-list-light.70546afcf5.mp4",
+          "poster": "https://media.beui.dev/clips/swipeable-list-light.70546afcf5.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/swipeable-list-dark.f281cf52f3.mp4",
-          "poster": "https://media.beui.dev/clips/swipeable-list-dark.f281cf52f3.jpg"
+          "video": "https://media.beui.dev/clips/swipeable-list-dark.93379a92fd.mp4",
+          "poster": "https://media.beui.dev/clips/swipeable-list-dark.93379a92fd.jpg"
         }
       },
       "files": [
@@ -852,12 +852,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/number?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/number-light.aea8df17ce.mp4",
-          "poster": "https://media.beui.dev/clips/number-light.aea8df17ce.jpg"
+          "video": "https://media.beui.dev/clips/number-light.0d3e671377.mp4",
+          "poster": "https://media.beui.dev/clips/number-light.0d3e671377.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/number-dark.5af7ac566a.mp4",
-          "poster": "https://media.beui.dev/clips/number-dark.5af7ac566a.jpg"
+          "video": "https://media.beui.dev/clips/number-dark.ba4aa7834a.mp4",
+          "poster": "https://media.beui.dev/clips/number-dark.ba4aa7834a.jpg"
         }
       },
       "files": [
@@ -906,12 +906,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/text-animation?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/text-animation-light.19c1b702f6.mp4",
-          "poster": "https://media.beui.dev/clips/text-animation-light.19c1b702f6.jpg"
+          "video": "https://media.beui.dev/clips/text-animation-light.c49f6c8c07.mp4",
+          "poster": "https://media.beui.dev/clips/text-animation-light.c49f6c8c07.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/text-animation-dark.58b8220a73.mp4",
-          "poster": "https://media.beui.dev/clips/text-animation-dark.58b8220a73.jpg"
+          "video": "https://media.beui.dev/clips/text-animation-dark.3fe1cc92a0.mp4",
+          "poster": "https://media.beui.dev/clips/text-animation-dark.3fe1cc92a0.jpg"
         }
       },
       "files": [
@@ -981,12 +981,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/alert?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/alert-light.3d281a8dc7.mp4",
-          "poster": "https://media.beui.dev/clips/alert-light.3d281a8dc7.jpg"
+          "video": "https://media.beui.dev/clips/alert-light.ff37d25947.mp4",
+          "poster": "https://media.beui.dev/clips/alert-light.ff37d25947.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/alert-dark.cc2b48f04b.mp4",
-          "poster": "https://media.beui.dev/clips/alert-dark.cc2b48f04b.jpg"
+          "video": "https://media.beui.dev/clips/alert-dark.9d416affc2.mp4",
+          "poster": "https://media.beui.dev/clips/alert-dark.9d416affc2.jpg"
         }
       },
       "files": [
@@ -1032,12 +1032,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/animated-badge?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/animated-badge-light.bd04d11fab.mp4",
-          "poster": "https://media.beui.dev/clips/animated-badge-light.bd04d11fab.jpg"
+          "video": "https://media.beui.dev/clips/animated-badge-light.5f3d2bcc3d.mp4",
+          "poster": "https://media.beui.dev/clips/animated-badge-light.5f3d2bcc3d.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/animated-badge-dark.4626634c15.mp4",
-          "poster": "https://media.beui.dev/clips/animated-badge-dark.4626634c15.jpg"
+          "video": "https://media.beui.dev/clips/animated-badge-dark.b1159371a0.mp4",
+          "poster": "https://media.beui.dev/clips/animated-badge-dark.b1159371a0.jpg"
         }
       },
       "files": [
@@ -1086,12 +1086,12 @@
       "expoGo": "exp://u.expo.dev/93a3a95c-6dc2-4adb-b57c-efbecf859f25/--/loader?runtime-version=exposdk%3A57.0.0&channel-name=production",
       "clips": {
         "light": {
-          "video": "https://media.beui.dev/clips/loader-light.f39223cd91.mp4",
-          "poster": "https://media.beui.dev/clips/loader-light.f39223cd91.jpg"
+          "video": "https://media.beui.dev/clips/loader-light.3ef7425757.mp4",
+          "poster": "https://media.beui.dev/clips/loader-light.3ef7425757.jpg"
         },
         "dark": {
-          "video": "https://media.beui.dev/clips/loader-dark.ee35ce78e9.mp4",
-          "poster": "https://media.beui.dev/clips/loader-dark.ee35ce78e9.jpg"
+          "video": "https://media.beui.dev/clips/loader-dark.325ac6423f.mp4",
+          "poster": "https://media.beui.dev/clips/loader-dark.325ac6423f.jpg"
         }
       },
       "files": [
