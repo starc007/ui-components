@@ -17,7 +17,17 @@ const PM_COMMANDS = {
 type PM = keyof typeof PM_COMMANDS;
 const PMS = Object.keys(PM_COMMANDS) as PM[];
 
-const REGISTRY_NAMESPACE = "@beui";
+// The web components install through shadcn from the @beui registry. The
+// native ones use beUI Native's own CLI, which runs on Node, so Bun runs it
+// without --bun.
+const TOOLS = {
+  shadcn: { name: "shadcn", prefix: "@beui/", runners: PM_COMMANDS },
+  "beui-native": {
+    name: "beui-native",
+    prefix: "",
+    runners: { ...PM_COMMANDS, bun: "bunx" },
+  },
+} as const;
 const CYCLE_MS = 1800;
 
 const COMPONENT_SLUGS = registry.flatMap((cat) =>
@@ -33,10 +43,13 @@ const COMPONENT_SLUGS = registry.flatMap((cat) =>
 export function InstallCommand({
   className,
   slug,
+  tool = "shadcn",
 }: {
   className?: string;
   slug?: string;
+  tool?: keyof typeof TOOLS;
 }) {
+  const { name, prefix, runners } = TOOLS[tool];
   const [pm, setPm] = useState<PM>("bun");
   const [nameIndex, setNameIndex] = useState(0);
 
@@ -49,7 +62,8 @@ export function InstallCommand({
   }, [slug]);
 
   const currentSlug = slug ?? COMPONENT_SLUGS[nameIndex];
-  const copyValue = `${PM_COMMANDS[pm]} shadcn add ${REGISTRY_NAMESPACE}/${currentSlug}`;
+  const runner = runners[pm].split(" ");
+  const copyValue = `${runners[pm]} ${name} add ${prefix}${currentSlug}`;
 
   return (
     <div
@@ -90,16 +104,16 @@ export function InstallCommand({
         <div className="min-w-max px-5 py-4 font-mono text-[13px] whitespace-nowrap">
           <span className="select-none text-[#6e7781] dark:text-[#8b949e]">{"$ "}</span>
           <span className="text-[#1f6feb] dark:text-[#ffa657]">
-            {PM_COMMANDS[pm].split(" ")[0]}
+            {runner[0]}
           </span>
-          {PM_COMMANDS[pm].split(" ")[1] && (
+          {runner[1] && (
             <span className="text-[#6f42c1] dark:text-[#d2a8ff]">
-              {" "}{PM_COMMANDS[pm].split(" ")[1]}
+              {" "}{runner[1]}
             </span>
           )}
-          <span className="text-[#24292f] dark:text-[#e6edf3]">{" shadcn "}</span>
+          <span className="text-[#24292f] dark:text-[#e6edf3]">{` ${name} `}</span>
           <span className="text-[#0550ae] dark:text-[#79c0ff]">add</span>
-          <span className="text-[#24292f]/70 dark:text-[#e6edf3]/60">{" "}{REGISTRY_NAMESPACE}/</span>
+          <span className="text-[#24292f]/70 dark:text-[#e6edf3]/60">{" "}{prefix}</span>
           <ActionSwapCascadeText
             value={currentSlug}
             className="font-medium text-[#0a3069] dark:text-[#a5d6ff]"

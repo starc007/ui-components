@@ -1,6 +1,7 @@
 import { native } from "@/lib/native";
 import {
   BABEL_SNIPPET,
+  CLI_SNIPPET,
   CSS_TYPES_SNIPPET,
   GLOBAL_CSS_SNIPPET,
   INSTALL_SNIPPET,
@@ -337,7 +338,13 @@ In a bare app, do the same in \`App.tsx\`. For forms, also wrap the app in \`Key
 
 ## 5. Add a component
 
-Each component lists its libraries, its files and the shared files it needs, on its beUI page under React Native and at \`${SITE_URL}/native/r/{slug}\`. Copy them keeping the folder layout, since components import shared files by relative path. Tabs, for example:
+Run the beUI Native CLI from the app's root. It copies the component and the shared files it needs into \`src/\` and installs any missing libraries:
+
+\`\`\`bash
+${CLI_SNIPPET}
+\`\`\`
+
+To copy by hand instead, each component lists its libraries, its files and the shared files it needs, on its beUI page under React Native and at \`${SITE_URL}/native/r/{slug}\`. Keep the folder layout, since components import shared files by relative path. Tabs, for example:
 
 \`\`\`text
 ${LAYOUT_TREE}

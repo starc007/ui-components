@@ -45,7 +45,7 @@ export async function GET() {
     lines.push(`- [${c.name}](${c.detail_url}): ${c.description}`);
   }
   lines.push("");
-  lines.push("To add a native component: fetch its detail JSON, run its `install` commands, then copy every file in `files` to its `path`, keeping the folder layout. Add the `theme` file once per app.");
+  lines.push("To add a native component, run `npx beui-native add <slug>` from the app's root. To do it by hand: fetch its detail JSON, run its `install` commands, then copy every file in `files` to its `path`, keeping the folder layout. Add the `theme` file once per app.");
   lines.push("");
   lines.push("## Usage for agents");
   lines.push("");

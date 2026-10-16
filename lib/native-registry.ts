@@ -17,6 +17,7 @@ export const NATIVE_HEADERS = {
 };
 
 const SETUP = [
+  "Quickest: run `npx beui-native add <slug>` from the app's root. It writes the files below and installs the libraries.",
   "Copy the files into the app and keep their folder layout: components import the shared files by relative path.",
   "Add the theme tokens once, imported after Tailwind and Uniwind in the CSS file Uniwind reads.",
   "Wrap the app in GestureHandlerRootView if it uses react-native-gesture-handler and isn't already.",

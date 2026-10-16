@@ -8,6 +8,7 @@ import { GuideShell } from "@/components/app/docs/guide-shell";
 import { native } from "@/lib/native";
 import {
   BABEL_SNIPPET,
+  CLI_SNIPPET,
   CSS_TYPES_SNIPPET,
   GLOBAL_CSS_SNIPPET,
   INSTALL_SNIPPET,
@@ -231,10 +232,18 @@ export default function NativeSetupPage() {
 
       <Section id="add-component" title="5. Add a component">
         <Prose>
-          Open any component, switch to React Native, and follow its Install
-          steps: install its libraries, then copy its files and the shared files
-          it lists. Keep the folder layout, since components import shared files
-          by relative path. Tabs, for example, ends up like this:
+          Run the beUI Native CLI from your app&apos;s root. It copies the
+          component and the shared files it needs into <Code>src/</Code> and
+          installs any libraries you don&apos;t have yet.
+        </Prose>
+        <div className="mt-4">
+          <CodeBlock code={CLI_SNIPPET} lang="bash" filename="terminal" />
+        </div>
+        <Prose>
+          To copy files by hand instead, open the component, switch to React
+          Native, and use the Manual steps. Either way, keep the folder layout,
+          since components import shared files by relative path. Tabs ends up
+          like this:
         </Prose>
         <div className="mt-4">
           <CodeBlock code={LAYOUT_TREE} lang="text" filename="your app" />

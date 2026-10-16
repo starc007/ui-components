@@ -68,6 +68,8 @@ export const SOURCE_SNIPPET = `@import "tailwindcss";
 /* This file is in app/, so the components in src/ need an explicit source. */
 @source "../src";`;
 
+export const CLI_SNIPPET = "npx beui-native add tabs";
+
 export const LAYOUT_TREE = `global.css
 metro.config.js
 src/
