@@ -11,10 +11,10 @@ import { SITE_URL } from "@/lib/site";
 
 export const SITE = SITE_URL;
 export const SITE_NAME = "beUI";
-export const SITE_TITLE = "Animated Components for React and Next.js";
-export const SITE_TAGLINE = "Animated components for React and Next.js";
+export const SITE_TITLE = "Animated Components for React, Next.js and React Native";
+export const SITE_TAGLINE = "Animated components for React, Next.js and React Native";
 export const SITE_DESCRIPTION =
-  "Free, open-source animated components for React and Next.js, built with Motion and Tailwind CSS. Copy the source or install with the shadcn CLI.";
+  "Free, open-source animated components for React, Next.js and React Native, built with Motion, Tailwind CSS and Reanimated. Copy the source or install via CLI.";
 export const AUTHOR = "Saurabh";
 
 const abs = (path: string) => (path.startsWith("http") ? path : `${SITE}${path}`);

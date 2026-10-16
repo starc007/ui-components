@@ -70,8 +70,8 @@ export function SiteFooter() {
             </span>
           </Link>
           <p className="mt-4 text-muted-foreground text-sm leading-6">
-            Animated components for React and Next.js. Copy-paste via the shadcn
-            registry.
+            Animated components for React, Next.js and React Native. Copy the
+            source or install with a CLI.
           </p>
           <p className="mt-4 text-muted-foreground text-sm">
             Created by <span className="text-foreground">Saurabh</span>
