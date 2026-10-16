@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cancelFrame, frame, motion, MotionConfig, useReducedMotion, type Transition } from "motion/react";
+import { cancelFrame, frame, motion, MotionConfig, useReducedMotion, useSpring, type MotionValue, type Transition } from "motion/react";
 import {
   createContext,
   useCallback,
@@ -28,7 +28,11 @@ type Ctx = {
   layoutId: string;
   variant: Variant;
   icons: IconDisplay;
+  /** The pill's box in the list, for tabs whose width changes as they're selected. */
+  track: Track;
 };
+
+type Track = Record<"x" | "y" | "width" | "height", MotionValue<number>>;
 
 const TabsCtx = createContext<Ctx | null>(null);
 
@@ -81,9 +85,14 @@ export function Tabs({
     },
     [controlled, onValueChange],
   );
+  const x = useSpring(0, transition);
+  const y = useSpring(0, transition);
+  const width = useSpring(0, transition);
+  const height = useSpring(0, transition);
+  const track = useMemo(() => ({ x, y, width, height }), [x, y, width, height]);
   const contextValue = useMemo(
-    () => ({ value: current, setValue, layoutId, variant, icons }),
-    [current, icons, layoutId, setValue, variant],
+    () => ({ value: current, setValue, layoutId, variant, icons, track }),
+    [current, icons, layoutId, setValue, variant, track],
   );
   return (
     <MotionConfig transition={reduce ? { duration: 0 } : transition}>
@@ -114,8 +123,9 @@ export function TabsList({
 }: {
   wrapperClassName?: string;
 } & HTMLAttributes<HTMLDivElement>) {
-  const { variant, value } = useTabs();
+  const { variant, value, icons, track } = useTabs();
   const reduce = useReducedMotion();
+  const tracked = icons === "selected" && variant !== "underline";
   const rootRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -181,6 +191,52 @@ export function TabsList({
     measure();
     reveal(listRef.current?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]') ?? null);
   }, [children, value, edges.overflow, measure, reveal]);
+
+  useLayoutEffect(() => {
+    // With icons="selected" the chosen tab grows as its icon opens and the
+    // last one shrinks. A layout animation measures the tabs mid-change, so
+    // the pill would squeeze and catch up. Instead the pill springs straight
+    // to where the selected tab will settle, with every icon open or closed.
+    if (!tracked) return;
+    const list = listRef.current;
+    if (!list) return;
+    void children;
+    const place = () => {
+      const tabs = Array.from(list.querySelectorAll<HTMLElement>('[role="tab"]'));
+      const target = tabs.find((tab) => tab.dataset.tabsValue === value)?.parentElement;
+      if (!target) return;
+      // Measure the settled layout: open the selected icon and fold the rest
+      // for one synchronous read, then hand the styles back to Motion before
+      // anything paints. Exact in any layout, from flex rows to grids.
+      const icons = Array.from(list.querySelectorAll<HTMLElement>('[role="tab"] > [data-tabs-icon]'));
+      const saved = icons.map((icon) => [icon.style.width, icon.style.marginRight]);
+      for (const icon of icons) {
+        const open = icon.parentElement?.parentElement === target;
+        icon.style.width = open ? "auto" : "0px";
+        icon.style.marginRight = open ? `${ICON_GAP}px` : "0px";
+      }
+      const box = {
+        x: target.offsetLeft,
+        y: target.offsetTop,
+        // Fractional: a rounded width leaves the pill a hair off its tab.
+        width: target.getBoundingClientRect().width,
+        height: target.offsetHeight,
+      };
+      icons.forEach((icon, index) => {
+        [icon.style.width, icon.style.marginRight] = saved[index];
+      });
+      // A first measurement, or one after the list was hidden, lands in place.
+      const instant = reduce || track.width.get() === 0;
+      for (const key of ["x", "y", "width", "height"] as const) {
+        if (instant) track[key].jump(box[key]);
+        else track[key].set(box[key]);
+      }
+    };
+    place();
+    const observer = new ResizeObserver(place);
+    for (const tab of list.querySelectorAll('[role="tab"]')) if (tab.parentElement) observer.observe(tab.parentElement);
+    return () => observer.disconnect();
+  }, [tracked, value, children, reduce, track]);
 
   useLayoutEffect(() => {
     if (variant === "underline") return;
@@ -262,7 +318,7 @@ export function TabsList({
           if (event.target instanceof HTMLElement && event.target.getAttribute("role") === "tab") reveal(event.target);
         }}
       >
-        <div {...props} ref={listRef} role="tablist" className={cn(listClasses[variant], "w-max", className)}>
+        <div {...props} ref={listRef} role="tablist" className={cn(listClasses[variant], "w-max", tracked && "relative", className)}>
           {children}
         </div>
       </motion.div>
@@ -281,6 +337,9 @@ export function TabsList({
   );
 }
 
+/** Space between a selected-only icon and its label, in pixels. */
+const ICON_GAP = 6;
+
 /**
  * A trigger's icon before its label. Shown on every tab, or with
  * `icons="selected"` springing open on the selected tab only.
@@ -298,10 +357,11 @@ function TriggerIcon({ icon, active }: { icon: ReactNode; active: boolean }) {
   return (
     <motion.span
       aria-hidden="true"
+      data-tabs-icon=""
       initial={false}
       animate={{
         width: active ? "auto" : 0,
-        marginRight: active ? 6 : 0,
+        marginRight: active ? ICON_GAP : 0,
         opacity: active ? 1 : 0,
         scale: active ? 1 : 0.6,
       }}
@@ -327,7 +387,7 @@ export function TabsTrigger({
   icon?: ReactNode;
   indicatorClassName?: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value">) {
-  const { value: current, setValue, layoutId, variant } = useTabs();
+  const { value: current, setValue, layoutId, variant, icons, track } = useTabs();
   const active = current === value;
   const content = icon ? (
     <>
@@ -373,10 +433,19 @@ export function TabsTrigger({
   }
 
   const radius = variant === "pill" ? "rounded-full" : "rounded-md";
+  // Tracked pills are placed in the list, so this wrapper must not be their
+  // containing block.
+  const tracked = icons === "selected";
 
   return (
-    <div className="relative shrink-0">
-      {active ? (
+    <div className={cn("shrink-0", !tracked && "relative")}>
+      {active && tracked ? (
+        <motion.span
+          data-tabs-indicator=""
+          style={{ ...track, borderRadius: variant === "pill" ? 9999 : 8 }}
+          className={cn("absolute top-0 left-0 bg-primary", radius, indicatorClassName)}
+        />
+      ) : active ? (
         <motion.span
           data-tabs-indicator=""
           layoutId={layoutId}

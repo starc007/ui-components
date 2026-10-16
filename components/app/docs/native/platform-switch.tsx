@@ -65,7 +65,7 @@ export function PlatformSwitch({
     <Tabs
       value={platform}
       onValueChange={choosePlatform}
-      variant="segment"
+      variant="pill"
       icons="selected"
     >
       <TabsList
