@@ -1,4 +1,3 @@
-import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { PressLink } from "@/components/app/press-link";
 import summary from "@/lib/native/summary.json";
 import { INSTALLABLE_COUNT } from "@/lib/registry";
@@ -30,18 +29,17 @@ export function Hero() {
         customizable.
       </p>
       <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-        <PressLink href="/components/motion" className={styles.primaryLink}>
-          Browse components
-          <ArrowRight aria-hidden="true" className="size-4" />
-        </PressLink>
         <PressLink
           href="https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=hero"
           target="_blank"
           rel="noreferrer noopener"
-          className={styles.secondaryLink}
+          className={styles.primaryLink}
         >
           Explore Pro
-          <ArrowUpRight aria-hidden="true" className="size-4" />
+          <span className="sr-only"> (opens in a new tab)</span>
+        </PressLink>
+        <PressLink href="/components/motion" className={styles.secondaryLink}>
+          Browse components
         </PressLink>
       </div>
     </div>
