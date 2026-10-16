@@ -1,0 +1,28 @@
+.wave {
+  position: absolute;
+  bottom: 0;
+  width: 200%;
+  height: 100%;
+  animation: native-wave-drift 24s linear infinite;
+}
+
+.waveBack {
+  bottom: -15%;
+  animation-duration: 32s;
+  animation-direction: reverse;
+}
+
+@keyframes native-wave-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave {
+    animation: none;
+  }
+}

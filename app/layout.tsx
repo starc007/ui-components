@@ -134,7 +134,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <PreferencesProvider>
             <KeyboardShortcuts />
             <SiteHeader />
-            <main className="pt-14">
+            <main className="pt-[calc(3.5rem+var(--announcement-h))]">
               <SiteFrame>{children}</SiteFrame>
             </main>
             <PreferencesPanel />
