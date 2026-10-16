@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { NativePreview } from "@/components/app/docs/native/native-preview";
 import { QrCode } from "@/components/app/docs/native/qr-code";
@@ -94,7 +95,14 @@ export function NativePanel({ component }: { component: NativeComponent }) {
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
           Copy the files into your app and keep their folder layout, since the
           component imports the shared files by relative path. It works in Expo
-          and in bare React Native.
+          and in bare React Native. New to beUI Native?{" "}
+          <Link
+            href="/docs/native-setup"
+            className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
+          >
+            Set up your app first
+          </Link>
+          .
         </p>
         <div className="mt-6 flex flex-col gap-8">
           {commands.length > 0 ? (

@@ -1,3 +1,16 @@
+import { native } from "@/lib/native";
+import {
+  BABEL_SNIPPET,
+  GLOBAL_CSS_SNIPPET,
+  INSTALL_SNIPPET,
+  LAYOUT_SNIPPET,
+  LAYOUT_TREE,
+  METRO_BARE_SNIPPET,
+  METRO_EXPO_SNIPPET,
+  NATIVE_VERSIONS,
+  SOURCE_SNIPPET,
+  USAGE_SNIPPET,
+} from "@/lib/native-setup";
 import { SITE_URL } from "@/lib/site";
 
 const guides = {
@@ -252,6 +265,92 @@ beUI components own their files and ship through a shadcn-compatible registry. G
 - [OpenUI](https://www.openui.com)
 - [Defining components](https://www.openui.com/docs/openui-lang/defining-components)
 - [shadcn chat example](https://www.openui.com/docs/openui-lang/examples/shadcn-chat)`,
+  },
+  "native-setup": {
+    title: "Set up beUI Native",
+    description:
+      "One-time setup for beUI Native: install Reanimated, Gesture Handler and Uniwind, configure Metro, add the theme tokens, then copy in any component.",
+    body: `beUI Native components are plain source you copy into your app. Do this setup once per app; after that, adding a component is copying its files. It works in Expo and in bare React Native.
+
+## Requirements
+
+| Library | Tested with |
+| --- | --- |
+${NATIVE_VERSIONS.map((row) => `| [${row.library}](${row.url}) | ${row.version} |`).join("\n")}
+
+## 1. Install the libraries
+
+\`\`\`bash
+${INSTALL_SNIPPET}
+\`\`\`
+
+Expo's Babel preset already includes the Worklets plugin that Reanimated 4 needs. In a bare React Native app, add it to \`babel.config.js\`:
+
+\`\`\`js
+${BABEL_SNIPPET}
+\`\`\`
+
+## 2. Set up Uniwind
+
+Create \`global.css\` in the project root:
+
+\`\`\`css
+${GLOBAL_CSS_SNIPPET}
+\`\`\`
+
+Point Metro at it. \`withUniwindConfig\` must be the outermost wrapper, and \`cssEntryFile\` must be a relative path.
+
+\`\`\`js
+${METRO_EXPO_SNIPPET}
+\`\`\`
+
+In a bare React Native app, the default config comes from \`@react-native/metro-config\`:
+
+\`\`\`js
+${METRO_BARE_SNIPPET}
+\`\`\`
+
+Uniwind writes the class name types to \`dtsFile\` when Metro starts.
+
+## 3. Add the theme tokens
+
+Components use semantic colors defined for light and dark mode. Save this as \`${native.theme.path}\` and change the values to match your brand:
+
+\`\`\`css
+${native.theme.content.trim()}
+\`\`\`
+
+## 4. Wrap your app
+
+Import \`global.css\` from the root component, not from the file that registers the app. Wrap the app in \`GestureHandlerRootView\`. With Expo Router:
+
+\`\`\`tsx
+${LAYOUT_SNIPPET}
+\`\`\`
+
+In a bare app, do the same in \`App.tsx\`. For forms, also wrap the app in \`KeyboardProvider\` from [react-native-keyboard-controller](https://docs.expo.dev/versions/v57.0.0/sdk/keyboard-controller/).
+
+## 5. Add a component
+
+Each component lists its libraries, its files and the shared files it needs, on its beUI page under React Native and at \`${SITE_URL}/native/r/{slug}\`. Copy them keeping the folder layout, since components import shared files by relative path. Tabs, for example:
+
+\`\`\`text
+${LAYOUT_TREE}
+\`\`\`
+
+\`\`\`tsx
+${USAGE_SNIPPET}
+\`\`\`
+
+Tailwind finds class names under the folder that holds \`global.css\`. If it lives elsewhere, like \`app/\`, add an \`@source\` for the components:
+
+\`\`\`css
+${SOURCE_SNIPPET}
+\`\`\`
+
+## Try before you copy
+
+Every component page has a QR code that opens it in Expo Go (SDK ${native.expoGo.sdk}). Agents can fetch components from ${SITE_URL}/native/r or the beUI MCP server. Every component follows the system Reduce Motion setting and takes a \`disableAnimation\` prop. Source: ${native.repository}`,
   },
 } as const;
 

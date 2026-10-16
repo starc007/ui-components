@@ -26,6 +26,7 @@ const PATTERNS = [
   { slug: "motion-patterns", name: "Motion Guides", href: "/docs/motion-patterns" },
   { slug: "ai-agents", name: "Agent Guide", href: "/docs/ai-agents" },
   { slug: "openui", name: "OpenUI", href: "/docs/openui" },
+  { slug: "native-setup", name: "React Native Setup", href: "/docs/native-setup" },
 ];
 
 const SIDEBAR_CATEGORY_ORDER: Record<string, number> = {

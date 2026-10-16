@@ -23,6 +23,7 @@ const PAGES = [
     href: "/docs/motion-patterns",
   },
   { slug: "openui", name: "OpenUI", href: "/docs/openui" },
+  { slug: "native-setup", name: "React Native Setup", href: "/docs/native-setup" },
 ];
 
 /** Site search trigger backed by the library's own command palette. */

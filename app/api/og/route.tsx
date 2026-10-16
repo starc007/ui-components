@@ -18,6 +18,13 @@ const PAGE_CARDS = {
     label: "Integration guide",
     command: "beui.dev/docs/openui",
   },
+  "native-setup": {
+    title: "beUI Native setup",
+    description:
+      "Install Reanimated, Gesture Handler and Uniwind, add the theme tokens, then copy in any component.",
+    label: "React Native",
+    command: "beui.dev/docs/native-setup",
+  },
 } as const;
 
 export const runtime = "nodejs";
