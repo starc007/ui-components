@@ -16,6 +16,7 @@ import {
   type ReactElement,
   type ReactNode,
   type Ref,
+  type RefObject,
   useCallback,
   useContext,
   useEffect,
@@ -43,6 +44,8 @@ type MorphContextValue = {
   triggerRef: React.MutableRefObject<HTMLElement | null>;
   registerTrigger: (node: HTMLElement | null) => void;
   contentRef: React.MutableRefObject<HTMLDivElement | null>;
+  /** Set when the trigger was activated by keyboard rather than a pointer. */
+  focusOnOpenRef: React.MutableRefObject<boolean>;
 };
 
 const MorphContext = createContext<MorphContextValue | null>(null);
@@ -80,6 +83,7 @@ export function MorphPopover({
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
   const [trigger, setTrigger] = useState<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const focusOnOpenRef = useRef(false);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const controlled = controlledOpen !== undefined;
   const open = controlled ? controlledOpen : internalOpen;
@@ -152,6 +156,7 @@ export function MorphPopover({
       triggerRef: anchorRef,
       registerTrigger: setTrigger,
       contentRef,
+      focusOnOpenRef,
     }),
     [open, setOpen, toggle, baseId, anchorRef],
   );
@@ -200,6 +205,10 @@ export function MorphPopoverTrigger({ children }: MorphPopoverTriggerProps) {
     ref: mergedRef,
     onClick: (e: unknown) => {
       childOnClick?.(e);
+      // Enter and Space fire a click with `detail` 0; a pointer click counts
+      // at least 1. Only a keyboard open moves focus into the panel.
+      ctx.focusOnOpenRef.current =
+        !ctx.open && (e as { detail?: number } | undefined)?.detail === 0;
       ctx.toggle();
     },
     "aria-haspopup": "dialog",
@@ -222,6 +231,15 @@ function clipAt(side: Side, align: Align, radius: number, inset: number) {
   return `inset(${side === "top" ? inset : 0}% ${align === "start" ? inset : 0}% ${side === "bottom" ? inset : 0}% ${align === "end" ? inset : 0}% round ${radius}px)`;
 }
 
+const FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled]):not([type='hidden'])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "[tabindex]:not([tabindex='-1'])",
+].join(",");
+
 export interface MorphPopoverContentProps {
   children: ReactNode;
   side?: Side;
@@ -232,8 +250,17 @@ export interface MorphPopoverContentProps {
   radius?: number;
   /** Draw the surface shadow. Default true. */
   shadow?: boolean;
-  /** Runs after the portalled surface is positioned and visible. */
+  /**
+   * Runs after the portalled surface is positioned and visible. Passing it
+   * hands focus to the caller: the panel then moves no focus on its own.
+   */
   onOpenAutoFocus?: (content: HTMLDivElement) => void;
+  /**
+   * Element to focus when the trigger opens the panel by keyboard. Defaults
+   * to the first focusable element in the panel, or the panel itself. A
+   * pointer open does not move focus. Ignored with `onOpenAutoFocus`.
+   */
+  initialFocus?: RefObject<HTMLElement | null>;
   className?: string;
 }
 
@@ -260,6 +287,7 @@ function MorphPopoverSurface({
   radius = 16,
   shadow = true,
   onOpenAutoFocus,
+  initialFocus,
   className,
 }: MorphPopoverContentProps) {
   const ctx = useMorphContext("MorphPopoverContent");
@@ -375,6 +403,64 @@ function MorphPopoverSurface({
     return () => animation.stop();
   }, [fade, progress, ready, isPresent, reduce]);
 
+  // The wrapper stays `visibility: hidden` until the first measurement, and
+  // focus() inside a hidden subtree is silently ignored. So move focus in the
+  // commit that makes the panel visible, not when it mounts. A CSS transition
+  // on `visibility` can still hold the controls hidden for a moment after
+  // that commit (a reduced-motion reset that gives every element a short
+  // transition-duration does), so while focus rests on the panel or has not
+  // moved, each such transition that ends tries the candidates again, until
+  // the user presses a key or pointer.
+  const { contentRef, focusOnOpenRef } = ctx;
+  const callerFocuses = onOpenAutoFocus !== undefined;
+  useLayoutEffect(() => {
+    if (!ready || !isPresent || !focusOnOpenRef.current) return;
+    focusOnOpenRef.current = false;
+    if (callerFocuses) return;
+    const panel = contentRef.current;
+    const wrapper = panel?.parentElement;
+    if (!panel || !wrapper) return;
+    const from = document.activeElement;
+    const unmoved = () =>
+      document.activeElement === from || document.activeElement === panel;
+    // The selector also matches elements focus() refuses: a hidden input, a
+    // disabled button that carries a tabindex, anything under display: none.
+    // Keep the first candidate that takes focus, else hold it on the panel.
+    const focusFirst = () => {
+      const candidates = [
+        initialFocus?.current,
+        ...panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+      ];
+      for (const candidate of candidates) {
+        candidate?.focus({ preventScroll: true });
+        if (!unmoved()) return true;
+      }
+      panel.focus({ preventScroll: true });
+      return false;
+    };
+    if (focusFirst()) return;
+    const retry = (event: TransitionEvent) => {
+      if (event.propertyName !== "visibility") return;
+      if (!unmoved() || focusFirst()) stop();
+    };
+    const stop = () => {
+      wrapper.removeEventListener("transitionend", retry);
+      document.removeEventListener("keydown", stop, true);
+      document.removeEventListener("pointerdown", stop, true);
+    };
+    wrapper.addEventListener("transitionend", retry);
+    document.addEventListener("keydown", stop, true);
+    document.addEventListener("pointerdown", stop, true);
+    return stop;
+  }, [
+    ready,
+    isPresent,
+    callerFocuses,
+    initialFocus,
+    contentRef,
+    focusOnOpenRef,
+  ]);
+
   return (
     <motion.div
       data-morph-popover-portal=""
@@ -398,6 +484,7 @@ function MorphPopoverSurface({
         id={ctx.contentId}
         role="dialog"
         aria-labelledby={ctx.triggerId}
+        tabIndex={-1}
         style={{
           clipPath: reduce ? undefined : clipPath,
           borderRadius: radius,
@@ -406,7 +493,7 @@ function MorphPopoverSurface({
           overflowY: "auto",
         }}
         className={cn(
-          "overflow-hidden border border-border bg-background",
+          "overflow-hidden border border-border bg-background outline-none",
           className,
         )}
       >
