@@ -234,6 +234,38 @@ const COUNT_CLASS =
 const GROUP_LABEL =
   "mb-1.5 flex items-center gap-2 rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground";
 
+// Clearance for the sticky category tabs at the top of the desktop sidebar.
+const STICKY_CLEARANCE = 64;
+
+/**
+ * Keep the current page's link in view when the list mounts or the route
+ * changes. A fresh load, a reload or the phone sheet opening would otherwise
+ * start the list at the top, far from the reader's place. A visible link is
+ * left alone, so clicking an item never moves the list.
+ */
+function useRevealActiveLink(pathname: string) {
+  const ref = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const nav = ref.current;
+    if (!nav) return;
+    const link = Array.from(nav.querySelectorAll("a")).find(
+      (anchor) => anchor.getAttribute("href") === pathname,
+    );
+    // A link inside a filtered-out group has no boxes to reveal.
+    if (!link || link.getClientRects().length === 0) return;
+    let scroller = nav.parentElement;
+    while (scroller && !/auto|scroll/.test(getComputedStyle(scroller).overflowY)) {
+      scroller = scroller.parentElement;
+    }
+    if (!scroller) return;
+    const view = scroller.getBoundingClientRect();
+    const item = link.getBoundingClientRect();
+    if (item.top >= view.top + STICKY_CLEARANCE && item.bottom <= view.bottom) return;
+    scroller.scrollTop += item.top - view.top - (view.height - item.height) / 2;
+  }, [pathname]);
+  return ref;
+}
+
 function linkClass(active: boolean) {
   return cn(
     "relative block rounded-lg px-2.5 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:py-1",
@@ -251,8 +283,10 @@ function NativeSidebarNav({
   pathname: string;
   onNavigate?: () => void;
 }) {
+  const navRef = useRevealActiveLink(pathname);
+
   return (
-    <nav aria-label="Browse React Native components" className="flex flex-col gap-6">
+    <nav ref={navRef} aria-label="Browse React Native components" className="flex flex-col gap-6">
       <div>
         <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           React Native
@@ -319,6 +353,7 @@ function WebSidebarNav({
 }) {
   const tabsId = useId();
   const panelId = useId();
+  const navRef = useRevealActiveLink(pathname);
   const routeCategory = SIDEBAR_CATEGORIES.find((category) => {
     const path = categoryPath(category.slug);
     return pathname === path || pathname.startsWith(`${path}/`);
@@ -340,7 +375,7 @@ function WebSidebarNav({
     : INTRO;
 
   return (
-    <nav aria-label="Browse components" className="flex flex-col gap-6">
+    <nav ref={navRef} aria-label="Browse components" className="flex flex-col gap-6">
       {!isCharts ? (
         <div className="sticky -top-6 z-20 -mt-6 -mb-4 bg-background pt-6">
           <SidebarCategoryTabs
