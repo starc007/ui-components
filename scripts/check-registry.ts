@@ -2,6 +2,7 @@ import { allComponents } from "../lib/registry";
 import { componentAbout } from "../lib/component-about";
 import { componentDates } from "../lib/component-dates";
 import { componentSeo, SEO_DESCRIPTION_MAX, SEO_TITLE_MAX } from "../lib/component-seo";
+import { seoPages } from "../lib/seo-pages";
 import { allShadcnTargets, buildEntry, buildShadcnItem } from "../lib/registry-server";
 import { readSourceFile } from "../lib/source-files";
 
@@ -88,6 +89,31 @@ for (const component of allComponents()) {
 const componentSlugs = new Set(allComponents().map((component) => component.slug));
 for (const slug of [...Object.keys(componentSeo), ...Object.keys(componentAbout)]) {
   if (!componentSlugs.has(slug)) errors.push(`SEO or About entry "${slug}" has no component`);
+}
+
+// Alternatives and guides pages: search copy limits, real component links,
+// unique slugs and enough substance to stand on their own.
+for (const kind of ["alternatives", "guides"] as const) {
+  const seen = new Set<string>();
+  for (const page of seoPages(kind)) {
+    const label = `/${kind}/${page.slug}`;
+    if (seen.has(page.slug)) errors.push(`${label}: duplicate slug`);
+    seen.add(page.slug);
+    if (page.title.length > SEO_TITLE_MAX) {
+      errors.push(`${label}: title is ${page.title.length} chars (max ${SEO_TITLE_MAX})`);
+    }
+    if (page.description.length > SEO_DESCRIPTION_MAX) {
+      errors.push(
+        `${label}: description is ${page.description.length} chars (max ${SEO_DESCRIPTION_MAX})`,
+      );
+    }
+    if (page.sections.length < 3) errors.push(`${label}: needs at least 3 sections`);
+    if (page.faq.length < 3) errors.push(`${label}: needs at least 3 FAQ items`);
+    if (/\u2014/.test(JSON.stringify(page))) errors.push(`${label}: contains an em dash`);
+    for (const slug of page.components) {
+      if (!componentSlugs.has(slug)) errors.push(`${label}: unknown component "${slug}"`);
+    }
+  }
 }
 
 for (const [slug, labels] of slugLabels) {

@@ -8,6 +8,7 @@ import type { MetadataRoute } from "next";
 import { allComponents, registry } from "@/lib/registry";
 import { componentDates } from "@/lib/component-dates";
 import { native } from "@/lib/native";
+import { seoPagePath, seoPages } from "@/lib/seo-pages";
 import { SITE_URL as SITE } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -60,5 +61,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ];
 
-  return [...staticPages, ...categoryPages, ...componentPages, ...nativePages];
+  // Comparison and tutorial pages. Nothing on the site links to them, so the
+  // sitemap is how crawlers find them.
+  const landingPages: MetadataRoute.Sitemap = (["alternatives", "guides"] as const).flatMap(
+    (kind) =>
+      seoPages(kind).map((page) => ({
+        url: `${SITE}${seoPagePath(kind, page.slug)}`,
+        lastModified: page.updatedAt,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      })),
+  );
+
+  return [...staticPages, ...categoryPages, ...componentPages, ...nativePages, ...landingPages];
 }

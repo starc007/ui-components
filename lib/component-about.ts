@@ -233,7 +233,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A product launch page needs a distinctive animated background that still loads fast.",
     ],
     accessibility:
-      "The shader is decorative and draws on a canvas behind your content. With reduced motion enabled, animated variants freeze by setting their speed to zero, so the background stays visible but still. Keep text on top of the shader at a readable contrast.",
+      "The shader is decorative and draws on a canvas behind your content. With reduced motion enabled, a variant whose speed you set is frozen at zero, so pass speed explicitly to make sure the background stays still for those users. Keep text on top of the shader at a readable contrast.",
     faq: [
       {
         question: "How do I add a shader background in React?",

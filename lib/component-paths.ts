@@ -21,7 +21,9 @@ export function isNativePath(pathname: string) {
 /** Pages whose catalog navigation is visible from the md breakpoint. */
 export function hasSiteSidebar(pathname: string) {
   return (
-    ["/components", "/docs", "/charts"].some((path) => pathname.startsWith(path)) ||
+    ["/components", "/docs", "/charts", "/guides", "/alternatives"].some((path) =>
+      pathname.startsWith(path),
+    ) ||
     isNativePath(pathname)
   );
 }

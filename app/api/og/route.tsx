@@ -6,6 +6,7 @@ import { findNativeComponent } from "@/lib/native";
 import { allComponents, findCategory } from "@/lib/registry";
 import { OG_SIZE, ogImage } from "@/lib/og";
 import { clampText } from "@/lib/seo";
+import { findSeoPage } from "@/lib/seo-pages";
 
 // The card art has room for roughly this much body text before it overflows.
 const OG_DESCRIPTION_LIMIT = 120;
@@ -49,10 +50,20 @@ export async function GET(request: Request) {
     : undefined;
   const category =
     component?.category ?? (categorySlug ? findCategory(categorySlug) : undefined);
+  const guide = findSeoPage("guides", searchParams.get("guide") ?? "");
+  const alternative = findSeoPage("alternatives", searchParams.get("alternative") ?? "");
+  const landing = guide ?? alternative;
   const page =
     pageSlug && Object.hasOwn(PAGE_CARDS, pageSlug)
       ? PAGE_CARDS[pageSlug as keyof typeof PAGE_CARDS]
-      : undefined;
+      : landing
+        ? {
+            title: landing.heading,
+            description: landing.description,
+            label: guide ? "Guide" : "Comparison",
+            command: guide ? `beui.dev/guides/${landing.slug}` : `beui.dev/alternatives/${landing.slug}`,
+          }
+        : undefined;
 
   // Cache the resolved card, not arbitrary query strings. Unknown slugs and
   // tracking parameters must not cause another render of the same image.
@@ -61,6 +72,8 @@ export async function GET(request: Request) {
   else if (component) cacheUrl.searchParams.set("component", component.slug);
   else if (category) cacheUrl.searchParams.set("category", category.slug);
   if (page && pageSlug) cacheUrl.searchParams.set("page", pageSlug);
+  else if (guide) cacheUrl.searchParams.set("guide", guide.slug);
+  else if (alternative) cacheUrl.searchParams.set("alternative", alternative.slug);
   const cacheKey = new Request(cacheUrl);
   const cache = typeof caches !== "undefined"
     ? (caches as CacheStorage & { default?: Cache }).default
