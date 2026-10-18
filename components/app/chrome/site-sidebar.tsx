@@ -284,6 +284,7 @@ function NativeSidebarNav({
   onNavigate?: () => void;
 }) {
   const navRef = useRevealActiveLink(pathname);
+  const now = Date.now();
 
   return (
     <nav ref={navRef} aria-label="Browse React Native components" className="flex flex-col gap-6">
@@ -313,7 +314,13 @@ function NativeSidebarNav({
             <span className={COUNT_CLASS}>{group.items.length}</span>
           </p>
           <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
-            {group.items.map((item) => {
+            {moveNewItemsToTop(
+              group.items.map((item) => ({
+                ...item,
+                badge: "launchedAt" in item ? ("new" as const) : undefined,
+              })),
+              now,
+            ).map((item) => {
               const href = nativeComponentPath(item.slug);
               return (
                 <Link
@@ -324,7 +331,12 @@ function NativeSidebarNav({
                   onClick={onNavigate}
                   className={linkClass(pathname === href)}
                 >
-                  <span className="truncate">{item.title}</span>
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="truncate">{item.title}</span>
+                    {item.badge === "new" ? (
+                      <NewBadge launchedAt={item.launchedAt} />
+                    ) : null}
+                  </span>
                 </Link>
               );
             })}

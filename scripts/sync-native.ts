@@ -39,6 +39,8 @@ type ManifestComponent = {
   description: string;
   group: string;
   variants: number;
+  /** When it reached beui.dev; the site marks it New for a week. */
+  launchedAt?: string;
   readme: string;
   source: string;
   files: string[];
@@ -128,6 +130,7 @@ const components = (manifest.components as ManifestComponent[]).map(
       description: component.description,
       group: component.group,
       variants: component.variants,
+      launchedAt: component.launchedAt,
       repository: component.source,
       libraries: component.libraries,
       expoGo: component.expoGo,
@@ -163,7 +166,12 @@ writeFileSync(
 writeFileSync(
   path.join(path.dirname(CATALOG), "nav.json"),
   `${JSON.stringify(
-    components.map(({ slug, title, group }) => ({ slug, title, group })),
+    components.map(({ slug, title, group, launchedAt }) => ({
+      slug,
+      title,
+      group,
+      ...(launchedAt ? { launchedAt } : {}),
+    })),
   )}\n`,
 );
 // The site announcement counts every variant, like the web's install count.

@@ -150,6 +150,7 @@
       "description": "A pull-down menu with submenus you can slide a finger through.",
       "group": "Actions",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/menu",
       "libraries": [
         "react",
@@ -1184,6 +1185,7 @@
       "description": "Rows that rise out of their corner, with avatars and typing dots.",
       "group": "AI agents",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/message",
       "libraries": [
         "react",
@@ -1249,6 +1251,7 @@
       "description": "Six surfaces that pop from their corner, and a show more.",
       "group": "AI agents",
       "variants": 2,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/message-bubble",
       "libraries": [
         "react",
@@ -1306,6 +1309,7 @@
       "description": "Follows new output and lets go when you scroll up.",
       "group": "AI agents",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/message-scroller",
       "libraries": [
         "react",
@@ -1369,6 +1373,7 @@
       "description": "A chat composer with attachments, voice and stop.",
       "group": "AI agents",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/prompt-input",
       "libraries": [
         "react",
@@ -1438,6 +1443,7 @@
       "description": "A reply that streams in, then settles with actions.",
       "group": "AI agents",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/streaming-response",
       "libraries": [
         "react",
@@ -1506,6 +1512,7 @@
       "description": "Shimmers, cycling reasoning text and a progress timer.",
       "group": "AI agents",
       "variants": 3,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/loading-states",
       "libraries": [
         "react",
@@ -1580,6 +1587,7 @@
       "description": "Steps, searches and tool calls in one live log.",
       "group": "AI agents",
       "variants": 5,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/agent-activity",
       "libraries": [
         "react",
@@ -1664,6 +1672,7 @@
       "description": "A plan whose marks morph as tasks finish.",
       "group": "AI agents",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/todo-list",
       "libraries": [
         "react",
@@ -1732,6 +1741,7 @@
       "description": "Hold to let an agent run a tool.",
       "group": "AI agents",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/tool-approval",
       "libraries": [
         "react",
@@ -1804,6 +1814,7 @@
       "description": "Swipeable questions, or a review to approve.",
       "group": "AI agents",
       "variants": 2,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/approval-card",
       "libraries": [
         "react",
@@ -1905,6 +1916,7 @@
       "description": "Output that streams in, then folds into a result.",
       "group": "AI agents",
       "variants": 2,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/tool-result",
       "libraries": [
         "react",
@@ -1977,6 +1989,7 @@
       "description": "Tap a number and its source springs up.",
       "group": "AI agents",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/citations",
       "libraries": [
         "react",
@@ -2037,6 +2050,7 @@
       "description": "Streaming code with fixed line numbers and wrap.",
       "group": "AI agents",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/code-block",
       "libraries": [
         "prism-react-renderer",
@@ -2097,6 +2111,7 @@
       "description": "Changes with live counts and folded context.",
       "group": "AI agents",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/file-diff",
       "libraries": [
         "prism-react-renderer",
@@ -2166,6 +2181,7 @@
       "description": "A dot field you can steer while the image forms.",
       "group": "AI agents",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/image-generation",
       "libraries": [
         "@shopify/react-native-skia",
@@ -2232,6 +2248,7 @@
       "description": "A liquid sphere that moves with your voice.",
       "group": "AI agents",
       "variants": 1,
+      "launchedAt": "2026-10-18",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/voice-orb",
       "libraries": [
         "@shopify/react-native-skia",
