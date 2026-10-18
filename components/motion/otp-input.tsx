@@ -70,6 +70,16 @@ export function OTPInput({
   );
   const [focused, setFocused] = useState(false);
   const [active, setActive] = useState(0);
+  // The native input holds no value, so screen readers cannot echo what was
+  // typed. This polite region speaks each change instead; the alternating
+  // trailing space makes a repeated phrase count as new text.
+  const [announcement, setAnnouncement] = useState("");
+  const announce = (text: string) =>
+    setAnnouncement((previous) =>
+      previous === text ? `${text}\u00a0` : text,
+    );
+  const spokenSlot = (char: string) =>
+    char ? (mask ? "Filled" : char) : "Empty";
 
   const joined = slots.join("");
   const joinedRef = useRef(joined);
@@ -88,6 +98,16 @@ export function OTPInput({
 
   const commit = (next: string[]) => {
     const wasComplete = slots.every((c) => c !== "");
+    const changed = next.flatMap((c, i) => (c !== slots[i] ? [i] : []));
+    const progress = `${next.filter(Boolean).length} of ${length} digits entered.`;
+    if (changed.length === 1) {
+      const char = next[changed[0]];
+      announce(
+        char ? `${mask ? "Digit" : char}. ${progress}` : `Deleted. ${progress}`,
+      );
+    } else if (changed.length > 1) {
+      announce(progress);
+    }
     setSlots(next);
     const str = next.join("");
     onChange?.(str);
@@ -147,18 +167,23 @@ export function OTPInput({
     } else if (k === "Delete") {
       e.preventDefault();
       clearSlot(active);
-    } else if (k === "ArrowLeft") {
+    } else if (
+      k === "ArrowLeft" ||
+      k === "ArrowRight" ||
+      k === "Home" ||
+      k === "End"
+    ) {
       e.preventDefault();
-      setActive((a) => Math.max(a - 1, 0));
-    } else if (k === "ArrowRight") {
-      e.preventDefault();
-      setActive((a) => Math.min(a + 1, length - 1));
-    } else if (k === "Home") {
-      e.preventDefault();
-      setActive(0);
-    } else if (k === "End") {
-      e.preventDefault();
-      setActive(length - 1);
+      const to =
+        k === "ArrowLeft"
+          ? Math.max(active - 1, 0)
+          : k === "ArrowRight"
+            ? Math.min(active + 1, length - 1)
+            : k === "Home"
+              ? 0
+              : length - 1;
+      setActive(to);
+      announce(`${spokenSlot(slots[to] ?? "")}, digit ${to + 1} of ${length}.`);
     }
   };
 
@@ -362,6 +387,10 @@ export function OTPInput({
           ) : null}
         </AnimatePresence>
       </fieldset>
+
+      <span aria-live="polite" aria-atomic="true" className="sr-only">
+        {announcement}
+      </span>
 
       {message ? (
         <p

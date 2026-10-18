@@ -10,6 +10,7 @@ import {
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { EASE_DRAWER } from "@/lib/ease";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 import { PresenceGate } from "@/lib/presence-gate";
 import { TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
@@ -62,6 +63,13 @@ export function BottomSheet({
     if (open) setSnap(defaultSnap);
   }, [open, defaultSnap]);
 
+  // Focus moves into the sheet on open, Tab stays inside it, and focus returns
+  // to the opener on close. `mounted` gates it because the sheet only exists
+  // once the portal can render.
+  useFocusTrap(open && mounted, sheetRef, {
+    onEscape: () => onOpenChange(false),
+  });
+
   // Lock background scroll while open. overflow:hidden alone is ignored by
   // iOS Safari — boundary scrolls inside the sheet chain to the page, which
   // scrolls underneath and ends up somewhere else on close. position:fixed
@@ -83,16 +91,7 @@ export function BottomSheet({
     body.style.right = "0";
     body.style.overflow = "hidden";
 
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onOpenChange(false);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-
     return () => {
-      window.removeEventListener("keydown", onKey);
       body.style.position = prev.position;
       body.style.top = prev.top;
       body.style.left = prev.left;
@@ -100,7 +99,7 @@ export function BottomSheet({
       body.style.overflow = prev.overflow;
       window.scrollTo(0, scrollY);
     };
-  }, [open, onOpenChange]);
+  }, [open]);
 
   const onDragEnd = (_: unknown, info: PanInfo) => {
     const velocity = info.velocity.y;
@@ -155,6 +154,9 @@ export function BottomSheet({
             <motion.button
               type="button"
               aria-label="Close bottom sheet"
+              // Outside the sheet, so the focus trap never lands on it; it is
+              // a pointer target, and Escape closes from the keyboard.
+              tabIndex={-1}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -192,12 +194,13 @@ export function BottomSheet({
               {...gate}
               style={{ ...heightStyle, ...gate.style }}
               className={cn(
-                "pointer-events-auto fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-3xl will-change-transform",
+                "pointer-events-auto fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-3xl outline-none will-change-transform",
                 "border border-border bg-background shadow-xl",
                 className,
               )}
               role="dialog"
               aria-modal="true"
+              tabIndex={-1}
               aria-labelledby={title ? titleId : undefined}
               aria-describedby={description ? descriptionId : undefined}
               aria-label={title ? undefined : "Bottom sheet"}

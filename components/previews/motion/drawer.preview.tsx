@@ -40,6 +40,13 @@ export function DrawerPreview() {
         <p className="text-sm text-muted-foreground">
           Slides in from the {side}. Press Esc or click outside to close.
         </p>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="mt-auto inline-flex h-10 items-center justify-center rounded-full border border-border bg-card px-5 text-sm font-medium text-foreground transition-colors hover:bg-card/70"
+        >
+          Close
+        </button>
       </Drawer>
     </div>
   );
