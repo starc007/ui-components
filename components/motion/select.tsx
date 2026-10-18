@@ -24,6 +24,7 @@ import {
   useState,
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { type ListboxRow, useListbox } from "@/lib/hooks/use-listbox";
 import { cn } from "@/lib/utils";
 
 // One progress value drives the surface, gap, corners and chevron. This short
@@ -58,9 +59,12 @@ interface SelectContextValue {
   open: boolean;
   setOpen: (open: boolean) => void;
   select: (value: string) => void;
-  register: (value: string, label: string) => void;
+  register: (value: string, label: string, disabled: boolean) => void;
   unregister: (value: string) => void;
   labelFor: (value: string | undefined) => string | undefined;
+  rows: ListboxRow[];
+  /** Closes the panel; focus inside it returns to the trigger. */
+  close: () => void;
   reduce: boolean;
   progress: MotionValue<number>;
   triggerId: string;
@@ -71,6 +75,8 @@ interface SelectContextValue {
 }
 
 const SelectContext = createContext<SelectContextValue | null>(null);
+// The option keyboard focus is on, resolved during render by the content.
+const ActiveOptionContext = createContext<string | undefined>(undefined);
 
 function useSelectContext(component: string) {
   const ctx = useContext(SelectContext);
@@ -117,7 +123,9 @@ export function Select({
   const rootRef = useRef<HTMLDivElement>(null);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [internal, setInternal] = useState(defaultValue);
-  const [labels, setLabels] = useState<Map<string, string>>(new Map());
+  const [labels, setLabels] = useState<
+    Map<string, { label: string; disabled: boolean }>
+  >(new Map());
   const [placement, setPlacement] = useState<Placement>("bottom");
 
   const controlled = value !== undefined;
@@ -134,17 +142,33 @@ export function Select({
     [onOpenChange, openControlled],
   );
 
+  // The panel turns inert as it closes, which would drop focus held inside it
+  // on the page body. Hand it back to the trigger before that happens.
+  const close = useCallback(() => {
+    const trigger = document.getElementById(`${baseId}-trigger`);
+    if (
+      rootRef.current?.contains(document.activeElement) &&
+      document.activeElement !== trigger
+    )
+      trigger?.focus();
+    setOpen(false);
+  }, [baseId, setOpen]);
+
   const select = useCallback(
     (next: string) => {
       if (!controlled) setInternal(next);
       onValueChange?.(next);
-      setOpen(false);
+      close();
     },
-    [controlled, onValueChange, setOpen],
+    [controlled, onValueChange, close],
   );
 
-  const register = useCallback((v: string, label: string) => {
-    setLabels((m) => (m.get(v) === label ? m : new Map(m).set(v, label)));
+  const register = useCallback((v: string, label: string, disabled: boolean) => {
+    setLabels((m) => {
+      const entry = m.get(v);
+      if (entry?.label === label && entry.disabled === disabled) return m;
+      return new Map(m).set(v, { label, disabled });
+    });
   }, []);
   const unregister = useCallback((v: string) => {
     setLabels((m) => {
@@ -168,7 +192,7 @@ export function Select({
   // close on outside pointer / escape
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     const onPointer = (e: PointerEvent) => {
       if (rootRef.current && !rootRef.current.contains(e.target as Node))
         setOpen(false);
@@ -179,7 +203,17 @@ export function Select({
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointerdown", onPointer);
     };
-  }, [open, setOpen]);
+  }, [open, setOpen, close]);
+
+  const rows = useMemo(
+    () =>
+      Array.from(labels, ([id, entry]) => ({
+        id,
+        label: entry.label,
+        disabled: entry.disabled,
+      })),
+    [labels],
+  );
 
   const ctx = useMemo<SelectContextValue>(
     () => ({
@@ -189,7 +223,9 @@ export function Select({
       select,
       register,
       unregister,
-      labelFor: (v) => (v === undefined ? undefined : labels.get(v)),
+      labelFor: (v) => (v === undefined ? undefined : labels.get(v)?.label),
+      rows,
+      close,
       reduce,
       progress,
       triggerId: `${baseId}-trigger`,
@@ -206,6 +242,8 @@ export function Select({
       register,
       unregister,
       labels,
+      rows,
+      close,
       reduce,
       progress,
       baseId,
@@ -251,6 +289,15 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
       aria-expanded={ctx.open}
       aria-controls={ctx.listId}
       onClick={() => ctx.setOpen(!ctx.open)}
+      onKeyDown={(event) => {
+        if (
+          !ctx.open &&
+          (event.key === "ArrowDown" || event.key === "ArrowUp")
+        ) {
+          event.preventDefault();
+          ctx.setOpen(true);
+        }
+      }}
       style={{
         borderTopLeftRadius: ctx.reduce || !isTop ? RADIUS : nearRadius,
         borderTopRightRadius: ctx.reduce || !isTop ? RADIUS : nearRadius,
@@ -303,6 +350,12 @@ export function SelectContent({ className, children }: SelectContentProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
   const { open, progress, reduce, setPlacement } = ctx;
+  const { activeId, onKeyDown } = useListbox({
+    open,
+    rows: ctx.rows,
+    selected: ctx.value,
+    list: panelRef,
+  });
 
   // Keep descendants laid out while hidden: display:none resets nested
   // scrollers in Chromium. Collapse only the hidden outer footprint after
@@ -383,6 +436,12 @@ export function SelectContent({ className, children }: SelectContentProps) {
       aria-labelledby={ctx.triggerId}
       aria-hidden={!open}
       inert={!open}
+      onKeyDown={(event) => {
+        // Tab leaves the list from the trigger, so focus moves on to the
+        // control after the select rather than into the closing panel.
+        if (event.key === "Tab") ctx.close();
+        else onKeyDown(event);
+      }}
       style={{
         visibility: present ? undefined : "hidden",
         maxHeight: present ? undefined : 0,
@@ -403,13 +462,15 @@ export function SelectContent({ className, children }: SelectContentProps) {
         className,
       )}
     >
-      <motion.div
-        initial={false}
-        animate={open ? "show" : "hidden"}
-        className="p-1"
-      >
-        {children}
-      </motion.div>
+      <ActiveOptionContext.Provider value={activeId}>
+        <motion.div
+          initial={false}
+          animate={open ? "show" : "hidden"}
+          className="p-1"
+        >
+          {children}
+        </motion.div>
+      </ActiveOptionContext.Provider>
     </motion.div>
   );
 }
@@ -428,13 +489,14 @@ export function SelectItem({
   children,
 }: SelectItemProps) {
   const ctx = useSelectContext("SelectItem");
+  const activeId = useContext(ActiveOptionContext);
   const selected = ctx.value === value;
   const label = typeof children === "string" ? children : value;
 
   useLayoutEffect(() => {
-    ctx.register(value, label);
-    return () => ctx.unregister(value);
-  }, [ctx.register, ctx.unregister, value, label]);
+    ctx.register(value, label, disabled);
+  }, [ctx.register, value, label, disabled]);
+  useLayoutEffect(() => () => ctx.unregister(value), [ctx.unregister, value]);
 
   return (
     <motion.div variants={ctx.reduce ? undefined : ITEM_VARIANTS}>
@@ -443,6 +505,9 @@ export function SelectItem({
         role="option"
         aria-selected={selected}
         disabled={disabled}
+        // One tab stop: the active option, which focus follows while open.
+        tabIndex={activeId === value ? 0 : -1}
+        data-listbox-id={value}
         onClick={() => ctx.select(value)}
         className={cn(
           "flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-1.5 text-left text-sm outline-none transition-colors",

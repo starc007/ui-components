@@ -13,6 +13,7 @@ import {
   useState,
   type ButtonHTMLAttributes,
   type HTMLAttributes,
+  type KeyboardEvent,
   type ReactNode,
 } from "react";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
@@ -33,6 +34,20 @@ type Ctx = {
   /** Whether the tracked pill has been measured; until then CSS places it. */
   placed: boolean;
   setPlaced: (placed: boolean) => void;
+  /**
+   * The one tab Tab reaches: the selected tab, or the first enabled one when
+   * nothing enabled is selected. `null` until the triggers have registered,
+   * when every enabled tab stays reachable.
+   */
+  tabStop: string | null;
+  registerTab: (value: string, disabled: boolean) => void;
+  unregisterTab: (value: string) => void;
+  /** Values with a mounted panel, so triggers only point at panels that exist. */
+  panels: ReadonlySet<string>;
+  registerPanel: (value: string) => void;
+  unregisterPanel: (value: string) => void;
+  tabId: (value: string) => string;
+  panelId: (value: string) => string;
 };
 
 type Track = Record<"x" | "y" | "width" | "height", MotionValue<number>>;
@@ -94,9 +109,60 @@ export function Tabs({
   const height = useSpring(0, transition);
   const track = useMemo(() => ({ x, y, width, height }), [x, y, width, height]);
   const [placed, setPlaced] = useState(false);
+  const [tabs, setTabs] = useState<Map<string, boolean>>(new Map());
+  const registerTab = useCallback((tab: string, disabled: boolean) => {
+    setTabs((map) => (map.get(tab) === disabled ? map : new Map(map).set(tab, disabled)));
+  }, []);
+  const unregisterTab = useCallback((tab: string) => {
+    setTabs((map) => {
+      if (!map.has(tab)) return map;
+      const next = new Map(map);
+      next.delete(tab);
+      return next;
+    });
+  }, []);
+  const [panels, setPanels] = useState<ReadonlySet<string>>(new Set());
+  const registerPanel = useCallback((panel: string) => {
+    setPanels((set) => (set.has(panel) ? set : new Set(set).add(panel)));
+  }, []);
+  const unregisterPanel = useCallback((panel: string) => {
+    setPanels((set) => {
+      if (!set.has(panel)) return set;
+      const next = new Set(set);
+      next.delete(panel);
+      return next;
+    });
+  }, []);
+  // Resolved during render so the list has exactly one tab stop in the same
+  // commit that changes the selection or the tabs.
+  let tabStop: string | null = null;
+  if (tabs.size > 0) {
+    const enabled = Array.from(tabs).filter(([, disabled]) => !disabled);
+    tabStop = enabled.some(([tab]) => tab === current) ? current : (enabled[0]?.[0] ?? "");
+  }
+  const baseId = useId();
+  const tabId = useCallback((tab: string) => `${baseId}-tab-${tab.replace(/[^\w-]/g, "_")}`, [baseId]);
+  const panelId = useCallback((tab: string) => `${baseId}-panel-${tab.replace(/[^\w-]/g, "_")}`, [baseId]);
   const contextValue = useMemo(
-    () => ({ value: current, setValue, layoutId, variant, icons, track, placed, setPlaced }),
-    [current, icons, layoutId, setValue, variant, track, placed],
+    () => ({
+      value: current,
+      setValue,
+      layoutId,
+      variant,
+      icons,
+      track,
+      placed,
+      setPlaced,
+      tabStop,
+      registerTab,
+      unregisterTab,
+      panels,
+      registerPanel,
+      unregisterPanel,
+      tabId,
+      panelId,
+    }),
+    [current, icons, layoutId, setValue, variant, track, placed, tabStop, registerTab, unregisterTab, panels, registerPanel, unregisterPanel, tabId, panelId],
   );
   return (
     <MotionConfig transition={reduce ? { duration: 0 } : transition}>
@@ -123,6 +189,7 @@ export function TabsList({
   children,
   className,
   wrapperClassName,
+  onKeyDown,
   ...props
 }: {
   wrapperClassName?: string;
@@ -300,6 +367,37 @@ export function TabsList({
     };
   }, [value, children, variant, reduce, placed]);
 
+  // Arrow keys move along the list and select as focus arrives, wrapping at
+  // the ends; Home and End jump to the first and last enabled tab.
+  const onListKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(event);
+    if (event.defaultPrevented) return;
+    const list = listRef.current;
+    if (!list || !(event.target instanceof HTMLElement)) return;
+    const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]')).filter(
+      (tab) => !tab.disabled && tab.closest('[role="tablist"]') === list,
+    );
+    const at = tabs.indexOf(event.target as HTMLButtonElement);
+    if (at < 0) return;
+    const rtl = getComputedStyle(list).direction === "rtl";
+    const forward = rtl ? "ArrowLeft" : "ArrowRight";
+    const back = rtl ? "ArrowRight" : "ArrowLeft";
+    const next =
+      event.key === forward
+        ? tabs[(at + 1) % tabs.length]
+        : event.key === back
+          ? tabs[(at - 1 + tabs.length) % tabs.length]
+          : event.key === "Home"
+            ? tabs[0]
+            : event.key === "End"
+              ? tabs[tabs.length - 1]
+              : null;
+    if (!next) return;
+    event.preventDefault();
+    next.focus();
+    next.click();
+  };
+
   const scroll = (direction: number) => {
     const viewport = viewportRef.current;
     if (viewport) viewport.scrollBy({ left: direction * viewport.clientWidth * 0.8, behavior: reduce ? "instant" : "smooth" });
@@ -326,7 +424,7 @@ export function TabsList({
           if (event.target instanceof HTMLElement && event.target.getAttribute("role") === "tab") reveal(event.target);
         }}
       >
-        <div {...props} ref={listRef} role="tablist" className={cn(listClasses[variant], "w-max", tracked && "relative", className)}>
+        <div {...props} ref={listRef} role="tablist" onKeyDown={onListKeyDown} className={cn(listClasses[variant], "w-max", tracked && "relative", className)}>
           {children}
         </div>
       </motion.div>
@@ -395,8 +493,32 @@ export function TabsTrigger({
   icon?: ReactNode;
   indicatorClassName?: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value">) {
-  const { value: current, setValue, layoutId, variant, icons, track, placed } = useTabs();
+  const {
+    value: current,
+    setValue,
+    layoutId,
+    variant,
+    icons,
+    track,
+    placed,
+    tabStop,
+    registerTab,
+    unregisterTab,
+    panels,
+    tabId,
+    panelId,
+  } = useTabs();
   const active = current === value;
+  const disabled = Boolean(props.disabled);
+  useLayoutEffect(() => {
+    registerTab(value, disabled);
+  }, [registerTab, value, disabled]);
+  useLayoutEffect(() => () => unregisterTab(value), [unregisterTab, value]);
+  const a11y = {
+    id: tabId(value),
+    "aria-controls": panels.has(value) ? panelId(value) : undefined,
+    tabIndex: !disabled && (tabStop === null || tabStop === value) ? 0 : -1,
+  };
   const content = icon ? (
     <>
       <TriggerIcon icon={icon} active={active} />
@@ -411,6 +533,8 @@ export function TabsTrigger({
   if (variant === "underline") {
     return (
       <button
+        // Consumer ids and wiring win, e.g. several tabs sharing one panel.
+        {...a11y}
         {...props}
         type="button"
         role="tab"
@@ -473,6 +597,8 @@ export function TabsTrigger({
         />
       ) : null}
       <button
+        // Consumer ids and wiring win, e.g. several tabs sharing one panel.
+        {...a11y}
         {...props}
         type="button"
         role="tab"
@@ -505,26 +631,38 @@ export function TabsTrigger({
 }
 
 export function TabsContent({ value, children, className }: { value: string; children: ReactNode; className?: string }) {
-  const { value: current } = useTabs();
+  const { value: current, registerPanel, unregisterPanel, tabId, panelId } = useTabs();
   const reduce = useReducedMotion();
   const active = current === value;
+  useLayoutEffect(() => {
+    registerPanel(value);
+    return () => unregisterPanel(value);
+  }, [registerPanel, unregisterPanel, value]);
+  const a11y = {
+    id: panelId(value),
+    role: "tabpanel",
+    "aria-labelledby": tabId(value),
+  } as const;
   // Inactive panels stay mounted but hidden, so their content (e.g. source
   // code) is present in the server-rendered HTML for crawlers and assistive
   // tech, instead of being dropped from the DOM.
   if (!active) {
     return (
-      <div hidden className={className}>
+      <div {...a11y} hidden className={className}>
         {children}
       </div>
     );
   }
   return (
     <motion.div
+      {...a11y}
+      // Reachable with Tab so a panel without controls can still be read.
+      tabIndex={0}
       key={value}
       initial={{ opacity: 0, y: reduce ? 0 : 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.18, ease: EASE_OUT }}
-      className={cn("mt-4", className)}
+      className={cn("mt-4 outline-none focus-visible:ring-2 focus-visible:ring-ring/40 rounded-md", className)}
     >
       {children}
     </motion.div>
