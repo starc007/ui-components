@@ -146,7 +146,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A toolbar needs a compact segmented control with icons.",
     ],
     accessibility:
-      "Triggers render inside a tablist with the tab role and expose their selected state, so screen readers announce which tab is active. The sliding indicator and scroll fades are decorative and hidden from assistive technology. With reduced motion enabled, panels switch without their slide.",
+      "Triggers render inside a tablist with the tab role and expose their selected state, and each panel has the tabpanel role labelled by its tab. Arrow keys move between enabled tabs (mirrored in right-to-left layouts), and Home and End jump to the first and last. The sliding indicator and scroll fades are decorative and hidden from assistive technology. With reduced motion enabled, panels switch without their slide.",
     faq: [
       {
         question: "How do I make animated tabs in React with Framer Motion?",
@@ -233,7 +233,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A product launch page needs a distinctive animated background that still loads fast.",
     ],
     accessibility:
-      "The shader is decorative and draws on a canvas behind your content. With reduced motion enabled, a variant whose speed you set is frozen at zero, so pass speed explicitly to make sure the background stays still for those users. Keep text on top of the shader at a readable contrast.",
+      "The shader is decorative and draws on a canvas behind your content. With reduced motion enabled, every animated variant is frozen with its speed at zero, so the background stays visible but still. Keep text on top of the shader at a readable contrast.",
     faq: [
       {
         question: "How do I add a shader background in React?",
@@ -813,7 +813,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A product page or card wants a select that grows into its menu instead of opening a separate floating panel.",
     ],
     accessibility:
-      "The trigger advertises a listbox popup with aria-haspopup, aria-expanded and aria-controls, and the panel has the listbox role labelled by the trigger. Each option is a button with the option role and an aria-selected state, so options are reachable with Tab. Escape or a click outside closes the menu, and the closed panel is inert and hidden from assistive technology. With reduced motion enabled, the panel fades in without unfolding and its corners stay fixed.",
+      "The trigger advertises a listbox popup with aria-haspopup, aria-expanded and aria-controls, and the panel has the listbox role labelled by the trigger. Each option has the option role and an aria-selected state. Arrow Up and Arrow Down move between enabled options, Home and End jump to the ends, and typing a letter jumps to a matching option. Escape or a click outside closes the menu and returns focus to the trigger, and the closed panel is inert and hidden from assistive technology. With reduced motion enabled, the panel fades in without unfolding and its corners stay fixed.",
     faq: [
       {
         question: "How do I make a custom animated select in React?",
@@ -929,7 +929,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A preferences panel picks a single mode, such as light, dark or system theme.",
     ],
     accessibility:
-      "The group has the radiogroup role and each option is a button with the radio role and aria-checked, so screen readers announce which option is selected. Each option is a Tab stop and Space or Enter selects it. Descriptions are announced as descriptions rather than as part of the option name. With reduced motion enabled, the dot moves to the new option without gliding and the press effect is removed.",
+      "The group has the radiogroup role and each option is a button with the radio role and aria-checked, so screen readers announce which option is selected. The group is a single Tab stop: arrow keys move between options and select them, and Space or Enter selects the focused one. Pass aria-label or aria-labelledby to name the group. Descriptions are announced as descriptions rather than as part of the option name. With reduced motion enabled, the dot moves to the new option without gliding and the press effect is removed.",
     faq: [
       {
         question: "How do I make an animated radio group in React?",
@@ -958,7 +958,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A responsive site needs a phone-friendly alternative to a centered modal for forms or settings.",
     ],
     accessibility:
-      "The sheet is rendered in a portal with the dialog role and aria-modal, labelled by its title and described by its description when you pass them. Escape closes it, the scrim is a button labelled \"Close bottom sheet\", and page scroll is locked while it is open. Only the handle starts a drag, so the title and description stay selectable. With reduced motion enabled, the sheet fades in and out instead of sliding.",
+      "The sheet is rendered in a portal with the dialog role and aria-modal, labelled by its title and described by its description when you pass them. Opening it moves focus into the sheet and keeps Tab inside, and closing returns focus to the element that opened it. Escape closes it, the scrim is a button labelled \"Close bottom sheet\", and page scroll is locked while it is open. Only the handle starts a drag, so the title and description stay selectable. With reduced motion enabled, the sheet fades in and out instead of sliding.",
     faq: [
       {
         question: "How do I make a draggable bottom sheet in React?",
@@ -1016,7 +1016,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A table of contents or command list needs a polished hover effect without wiring layout IDs by hand.",
     ],
     accessibility:
-      "The highlight is purely visual and ignores pointer events, so each child keeps its own role, focus behavior and accessible name. Set as to ul when the children are list items so the list semantics stay correct. The pill follows mouse hover only and does not track keyboard focus, so keep visible focus styles on the items. With reduced motion enabled, the pill jumps between items and fades without blur.",
+      "The highlight is purely visual and ignores pointer events, so each child keeps its own role, focus behavior and accessible name. Set as to ul when the children are list items so the list semantics stay correct. The pill follows keyboard focus as well as mouse hover, so it marks the focused item too. With reduced motion enabled, the pill jumps between items and fades without blur.",
     faq: [
       {
         question: "How do I make a hover background that slides between items in React?",
@@ -1248,7 +1248,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A mobile-style action sheet needs to grow from a short confirmation to a longer form.",
     ],
     accessibility:
-      "The backdrop is a button labelled \"Close modal\", and page scroll is locked while the modal is open. As the modal starts to close, its layers stop taking pointer events and become inert immediately, so the exiting panel cannot be clicked or focused. With reduced motion enabled, the panel enters and exits without its slide and scale, and views change with a plain fade instead of the blur and slide.",
+      "The panel is a modal dialog named by its current view's first heading, or by ariaLabel. Focus moves into it on open, Tab stays inside, Escape closes it, and focus returns to the element that opened it. The backdrop is a button labelled \"Close modal\", and page scroll is locked while the modal is open. As the modal starts to close, its layers stop taking pointer events and become inert immediately, so the exiting panel cannot be clicked or focused. With reduced motion enabled, the panel enters and exits without its slide and scale, and views change with a plain fade instead of the blur and slide.",
     faq: [
       {
         question: "How do I make a modal that animates its height in React?",
@@ -1480,7 +1480,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A dashboard opens record details or an edit form next to a table.",
     ],
     accessibility:
-      "The panel has the dialog role with aria-modal and takes an ariaLabel for its accessible name. Escape closes it, page scroll is locked while it is open, and the backdrop is a button labeled Close that stays in the tab order while dismissable is true. With reduced motion enabled, the panel fades in and out instead of sliding.",
+      "The panel has the dialog role with aria-modal and takes an ariaLabel for its accessible name. Opening it moves focus inside and keeps Tab there, and closing returns focus to the element that opened it. Escape and the backdrop close it only while dismissable is true, and page scroll is locked while it is open. With reduced motion enabled, the panel fades in and out instead of sliding.",
     faq: [
       {
         question: "How do I make a slide-out drawer in React?",
@@ -2872,7 +2872,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A chat or contacts list should reveal call, mute or block actions with a swipe like a native app.",
     ],
     accessibility:
-      "Actions are real buttons, each with an accessible label taken from its label. While a row is closed, its action rail is inert and hidden from assistive technology, so focus only reaches the actions of an open row. Rows can also be opened from code through the value prop. Vertical page scrolling keeps working through the rows because they only claim horizontal swipes. With reduced motion enabled, rows jump to their open or closed position without the spring.",
+      "Actions are real buttons, each with an accessible label taken from its label. Each row has a toggle button, named \"Actions for\" plus the row title, that appears when it receives keyboard focus: Arrow Left and Arrow Right open the matching side the way a swipe would, Enter or Space opens the trailing actions, and Escape closes the row. While a row is closed, its action rail is inert and hidden from assistive technology. Rows can also be opened from code through the value prop. Vertical page scrolling keeps working through the rows because they only claim horizontal swipes. With reduced motion enabled, rows jump to their open or closed position without the spring.",
     faq: [
       {
         question: "How do I make swipe to delete list items in React?",
@@ -2988,7 +2988,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A payment or account change needs a confirmation code before it continues.",
     ],
     accessibility:
-      "One real input with inputMode numeric and autoComplete one-time-code sits over the slots, so mobile keyboards show digits and SMS codes can autofill. It has an aria-label (\"One-time passcode\" by default) and sets aria-invalid when status is error. Digits fill the active slot, Backspace and Delete clear, Arrow Left, Arrow Right, Home and End move between slots, and hint, error and success messages are announced through a polite live region. With reduced motion enabled, the shake is skipped and states change with fades only.",
+      "One real input with inputMode numeric and autoComplete one-time-code sits over the slots, so mobile keyboards show digits and SMS codes can autofill. It has an aria-label (\"One-time passcode\" by default) and sets aria-invalid when status is error. Digits fill the active slot, Backspace and Delete clear, Arrow Left, Arrow Right, Home and End move between slots, and each change is announced through a polite live region (masked codes say \"Filled\" instead of the digit), along with hint, error and success messages. With reduced motion enabled, the shake is skipped and states change with fades only.",
     faq: [
       {
         question: "How do I make an OTP input in React?",
@@ -3046,7 +3046,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A landing page or demo wants a playful menu reveal that showcases motion.",
     ],
     accessibility:
-      "The trigger is a button with aria-haspopup and aria-expanded, every option is a button with its visible label, and the open panel has a close button labelled \"Close menu\". Escape or a click outside closes the menu. With reduced motion enabled, the morph shortens to a quick transition, the iris reveal is skipped, and options fade in together without scaling or blur.",
+      "The trigger is a button with aria-haspopup and aria-expanded, and the open panel is a labelled menu whose options have the menuitem role. Focus moves into the menu on open, arrow keys move across the grid, Home and End jump to the first and last option, and Escape or a click outside closes it and returns focus to the trigger. With reduced motion enabled, the morph shortens to a quick transition, the iris reveal is skipped, and options fade in together without scaling or blur.",
     faq: [
       {
         question: "How do I make a button that morphs into a menu in React?",
@@ -3075,7 +3075,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "An internal tool needs a quick channel for staff to report problems.",
     ],
     accessibility:
-      "The corner trigger is a button named by the title prop with aria-haspopup set to dialog. The message field takes focus once the popup has opened, Escape or a click outside closes it except while a message is sending, and a failed send is shown in an element with the alert role. With reduced motion enabled, the panel content fades in and out without sliding, scaling or blurring, and the field is focused right away.",
+      "The corner trigger is a button named by the title prop with aria-haspopup set to dialog, and the message field is labelled by the popup title. The field takes focus once the popup has opened, Escape or a click outside closes it except while a message is sending, and a failed send is shown in an element with the alert role. With reduced motion enabled, the panel content fades in and out without sliding, scaling or blurring, and the field is focused right away.",
     faq: [
       {
         question: "How do I add a feedback button to a React app?",

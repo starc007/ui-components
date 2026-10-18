@@ -69,7 +69,7 @@ export const guidePages: SeoPage[] = [
       {
         "heading": "Accessibility and reduced motion for animated tabs",
         "paragraphs": [
-          "Each beUI trigger is a native button with role tab and aria-selected, so it is focusable and clickable with the keyboard by default. Inactive TabsContent panels stay in the DOM with the hidden attribute, which keeps their text in server-rendered HTML without exposing it to screen readers. The component does not add arrow-key roving focus or tabpanel and aria-controls wiring, so if you need the full WAI-ARIA tabs keyboard pattern, add it in your copy of the file.",
+          "Each beUI trigger is a native button with role tab and aria-selected, so it is focusable and clickable with the keyboard by default. Inactive TabsContent panels stay in the DOM with the hidden attribute, which keeps their text in server-rendered HTML without exposing it to screen readers. Arrow keys move between enabled tabs and Home and End jump to the ends, and each tab points at its panel with aria-controls while the panel has the tabpanel role labelled by its tab, which covers the WAI-ARIA tabs pattern.",
           "When the user has reduced motion enabled, Tabs sets its transitions to zero duration through MotionConfig: the indicator jumps to the new tab instead of sliding, and panels fade in without the small vertical offset. In your own from-scratch version, you can get similar behavior by wrapping the app in MotionConfig with reducedMotion=\"user\", or by reading useReducedMotion and swapping the transition."
         ]
       }
@@ -250,7 +250,7 @@ export const guidePages: SeoPage[] = [
       {
         "heading": "Reduced motion for shader backgrounds",
         "paragraphs": [
-          "ShaderBackground reads useReducedMotion from Framer Motion and sets speed to 0 when the user prefers reduced motion, so the gradient freezes on a still frame instead of disappearing. This only applies when you pass speed yourself, because the component freezes the prop only if it is present. Shader defaults can animate, so always set speed explicitly on animated variants.",
+          "ShaderBackground reads useReducedMotion from Framer Motion and sets speed to 0 when the user prefers reduced motion, so the gradient freezes on a still frame instead of disappearing. This applies to every animated variant, whether or not you pass speed yourself.",
           "Freezing keeps the visual design intact for everyone while removing continuous movement, which can be uncomfortable for people with vestibular disorders."
         ]
       }
@@ -266,7 +266,7 @@ export const guidePages: SeoPage[] = [
       },
       {
         "question": "Does the shader background respect prefers-reduced-motion?",
-        "answer": "Yes, when you pass a speed prop. The component sets speed to 0 for users who prefer reduced motion, which freezes the shader on a still frame."
+        "answer": "Yes. The component sets speed to 0 on every animated variant for users who prefer reduced motion, which freezes the shader on a still frame."
       },
       {
         "question": "Why is my shader background on top of my text?",
