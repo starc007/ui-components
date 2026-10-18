@@ -65,12 +65,12 @@ const COMPONENT_DATES = {
     publishedAt: "2026-07-21",
     updatedAt: "2026-08-20",
   },
-  "motion/text-animation": { publishedAt: "2026-05-17", updatedAt: "2026-10-10" },
+  "motion/text-animation": { publishedAt: "2026-05-17", updatedAt: "2026-10-18" },
   "motion/number": { publishedAt: "2026-05-17", updatedAt: "2026-10-12" },
   "motion/animated-badge": { publishedAt: "2026-06-05", updatedAt: "2026-10-13" },
-  "motion/action-swap": { publishedAt: "2026-06-10", updatedAt: "2026-10-10" },
+  "motion/action-swap": { publishedAt: "2026-06-10", updatedAt: "2026-10-18" },
   "motion/animated-toast-stack": { publishedAt: "2026-06-05", updatedAt: "2026-09-22" },
-  "motion/theme-toggle": { publishedAt: "2026-06-15", updatedAt: "2026-10-10" },
+  "motion/theme-toggle": { publishedAt: "2026-06-15", updatedAt: "2026-10-18" },
   "motion/bouncy-accordion": { publishedAt: "2026-06-16", updatedAt: "2026-10-14" },
   "motion/drawer": { publishedAt: "2026-06-22", updatedAt: "2026-08-20" },
   "motion/scroll-animation": { publishedAt: "2026-06-24", updatedAt: "2026-06-28" },
@@ -94,7 +94,7 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-10-14",
+    updatedAt: "2026-10-18",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
@@ -114,7 +114,7 @@ const COMPONENT_DATES = {
   },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-10-11",
+    updatedAt: "2026-10-18",
   },
   "agents/code-block": {
     publishedAt: "2026-08-02",
@@ -122,7 +122,7 @@ const COMPONENT_DATES = {
   },
   "agents/todo-list": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-10-10",
+    updatedAt: "2026-10-18",
   },
   "agents/prompt-input": {
     publishedAt: "2026-08-02",
@@ -130,11 +130,11 @@ const COMPONENT_DATES = {
   },
   "agents/tool-result": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-10-10",
+    updatedAt: "2026-10-18",
   },
   "agents/file-diff": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-10-10",
+    updatedAt: "2026-10-18",
   },
   "agents/streaming-response": {
     publishedAt: "2026-08-01",
@@ -157,7 +157,7 @@ const COMPONENT_DATES = {
     updatedAt: "2026-08-19",
   },
   "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-07-15" },
-  "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-10-10" },
+  "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-10-18" },
   "blocks/project-folder": { publishedAt: "2026-08-15", updatedAt: "2026-08-20" },
   "blocks/card-folder": { publishedAt: "2026-09-04", updatedAt: "2026-10-12" },
   "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-10-11" },
@@ -172,8 +172,8 @@ const COMPONENT_DATES = {
   "blocks/morphing-tabs": { publishedAt: "2026-08-06", updatedAt: "2026-08-06" },
   "blocks/swipeable-list": { publishedAt: "2026-06-15", updatedAt: "2026-06-28" },
   "blocks/file-upload": { publishedAt: "2026-06-18", updatedAt: "2026-10-11" },
-  "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-10-16" },
-  "blocks/wallet-card": { publishedAt: "2026-07-03", updatedAt: "2026-10-10" },
+  "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-10-18" },
+  "blocks/wallet-card": { publishedAt: "2026-07-03", updatedAt: "2026-10-18" },
   "blocks/otp-input": { publishedAt: "2026-06-13", updatedAt: "2026-07-13" },
   "blocks/signup-form": { publishedAt: "2026-08-08", updatedAt: "2026-10-11" },
   "blocks/bloom-menu": { publishedAt: "2026-06-26", updatedAt: "2026-06-26" },
