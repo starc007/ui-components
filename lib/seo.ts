@@ -1,6 +1,8 @@
 import { categoryPath, componentPath } from "@/lib/component-paths";
 import type { JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { componentDates } from "@/lib/component-dates";
+import type { ComponentFaq } from "@/lib/component-about";
+import { componentSeo } from "@/lib/component-seo";
 import {
   type CategoryEntry,
   type ComponentEntry,
@@ -71,9 +73,19 @@ export function componentKeywords(
  * description; only the SERP/social snippet carries the tail.
  */
 export function componentMetaDescription(comp: ComponentEntry): string {
-  if (comp.guide?.seo.description) return comp.guide.seo.description;
+  const seo = componentSeo[comp.slug]?.description ?? comp.guide?.seo.description;
+  if (seo) return seo;
 
   return `${comp.description} Free, open-source React and Next.js motion component. Copy-paste the source or install with shadcn.`;
+}
+
+/** Search title for a component page, before the site-wide " · beUI" suffix. */
+export function componentSeoTitle(comp: ComponentEntry): string {
+  return (
+    componentSeo[comp.slug]?.title ??
+    comp.guide?.seo.title ??
+    `Animated ${comp.name} for React`
+  );
 }
 
 /** Trim text to `limit` chars on a word boundary — for fixed-size surfaces
@@ -195,9 +207,9 @@ export function componentJsonLd(
     "@context": "https://schema.org",
     "@type": "TechArticle",
     "@id": `${url}#article`,
-    headline: comp.guide?.seo.title ?? `${comp.name} · React motion component`,
+    headline: componentSeoTitle(comp),
     name: comp.name,
-    description: comp.guide?.seo.description ?? comp.description,
+    description: componentMetaDescription(comp),
     url,
     image: abs(`/api/og?component=${comp.slug}`),
     inLanguage: "en",
@@ -221,6 +233,20 @@ export function componentJsonLd(
       runtimePlatform: "React",
       codeSampleType: "full (compile ready)",
     },
+  };
+}
+
+/** FAQPage for the questions in a component's About section. */
+export function faqJsonLd(path: string, faq: ComponentFaq[]): JsonLdSchema {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${abs(path)}#faq`,
+    mainEntity: faq.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
   };
 }
 

@@ -25,6 +25,7 @@ import {
 } from "@/components/motion/tabs";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { ComponentCard } from "@/components/app/docs/component-card";
+import { ComponentAbout } from "@/components/app/docs/component-about";
 import { ComponentGuide } from "@/components/app/docs/component-guide";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { JsonLd } from "@/components/app/analytics/json-ld";
@@ -32,6 +33,7 @@ import { getPreview, previews } from "@/components/previews";
 import { pageUrlFor, withSignature } from "@/lib/signature";
 import { readSourceFile } from "@/lib/source-files";
 import { getComponentProps } from "@/lib/props-extractor";
+import { componentAbout } from "@/lib/component-about";
 import { componentDates } from "@/lib/component-dates";
 import { findNativeComponent } from "@/lib/native";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
@@ -41,6 +43,8 @@ import {
   componentJsonLd,
   componentKeywords,
   componentMetaDescription,
+  componentSeoTitle,
+  faqJsonLd,
   relatedComponents,
 } from "@/lib/seo";
 
@@ -73,7 +77,7 @@ export async function generateMetadata({
     ? `/${installSlugs[0]}.json`
     : `/${comp.slug}.json`;
 
-  const title = comp.guide?.seo.title ?? `${comp.name} · React motion component`;
+  const title = componentSeoTitle(comp);
   const ogTitle = `${title} · beUI`;
   const pageUrl = componentPath(cat.slug, comp.slug);
   const imageUrl = `/api/og?component=${comp.slug}`;
@@ -156,6 +160,7 @@ export default async function ComponentPage({
   creditUrl?.searchParams.set("ref", "beui");
 
   const nativeComponent = findNativeComponent(comp.slug);
+  const about = componentAbout[comp.slug];
   const webContent = (
     <>
       {comp.examples?.length ? (
@@ -222,6 +227,9 @@ export default async function ComponentPage({
             { name: comp.name, path: componentPath(cat.slug, comp.slug) },
           ]),
           componentJsonLd(cat, comp),
+          ...(about
+            ? [faqJsonLd(componentPath(cat.slug, comp.slug), about.faq)]
+            : []),
         ]}
       />
       <div id="overview" className="scroll-mt-24">
@@ -283,6 +291,7 @@ export default async function ComponentPage({
         </Link>
       ) : null}
       <RelatedSection related={related} />
+      {about ? <ComponentAbout name={comp.name} about={about} /> : null}
 
       {comp.credit ? (
         <section className="mt-12 border-t border-border pt-8">

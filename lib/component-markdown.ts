@@ -1,3 +1,4 @@
+import { componentAbout } from "@/lib/component-about";
 import { componentDates } from "@/lib/component-dates";
 import { getComponentProps } from "@/lib/props-extractor";
 import { findCategory, findComponent, type ComponentExample } from "@/lib/registry";
@@ -134,6 +135,27 @@ export async function buildComponentMarkdown(
     : [component.file];
   const apiLines = apiFiles.flatMap((file) => apiReference(file));
   if (apiLines.length) lines.push("## API Reference", "", ...apiLines);
+
+  const about = componentAbout[component.slug];
+  if (about) {
+    lines.push(
+      `## About ${component.name}`,
+      "",
+      about.overview,
+      "",
+      "### When to use it",
+      "",
+      ...about.useWhen.map((item) => `- ${item}`),
+      "",
+      "### Accessibility",
+      "",
+      about.accessibility,
+      "",
+      "### FAQ",
+      "",
+      ...about.faq.flatMap((item) => [`**${item.question}**`, "", item.answer, ""]),
+    );
+  }
 
   const nativeEntry = buildNativeEntry(component.slug);
   if (nativeEntry) {

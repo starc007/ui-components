@@ -1,5 +1,7 @@
 import { allComponents } from "../lib/registry";
+import { componentAbout } from "../lib/component-about";
 import { componentDates } from "../lib/component-dates";
+import { componentSeo, SEO_DESCRIPTION_MAX, SEO_TITLE_MAX } from "../lib/component-seo";
 import { allShadcnTargets, buildEntry, buildShadcnItem } from "../lib/registry-server";
 import { readSourceFile } from "../lib/source-files";
 
@@ -53,6 +55,39 @@ for (const target of allShadcnTargets()) {
   } catch (error) {
     errors.push(`${label}: ${(error as Error).message}`);
   }
+}
+
+// Every component page needs About notes plus a search title and description
+// within the limits search results display, all written without em dashes.
+for (const component of allComponents()) {
+  const label = `${component.category.slug}/${component.slug}`;
+  const about = componentAbout[component.slug];
+  if (!about) {
+    errors.push(`${label}: missing entry in lib/component-about.ts`);
+  } else if (/\u2014/.test(JSON.stringify(about))) {
+    errors.push(`${label}: About copy contains an em dash`);
+  }
+  const seo = componentSeo[component.slug];
+  if (!seo) {
+    errors.push(`${label}: missing entry in lib/component-seo.ts`);
+    continue;
+  }
+  if (seo.title.length > SEO_TITLE_MAX) {
+    errors.push(`${label}: SEO title is ${seo.title.length} chars (max ${SEO_TITLE_MAX})`);
+  }
+  if (seo.description.length > SEO_DESCRIPTION_MAX) {
+    errors.push(
+      `${label}: SEO description is ${seo.description.length} chars (max ${SEO_DESCRIPTION_MAX})`,
+    );
+  }
+  if (/\u2014/.test(seo.title + seo.description)) {
+    errors.push(`${label}: SEO copy contains an em dash`);
+  }
+}
+
+const componentSlugs = new Set(allComponents().map((component) => component.slug));
+for (const slug of [...Object.keys(componentSeo), ...Object.keys(componentAbout)]) {
+  if (!componentSlugs.has(slug)) errors.push(`SEO or About entry "${slug}" has no component`);
 }
 
 for (const [slug, labels] of slugLabels) {
