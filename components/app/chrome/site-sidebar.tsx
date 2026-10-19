@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 
 const INTRO = [
   { slug: "home", name: "Home", href: "/components/motion" },
+  { slug: "changelog", name: "Changelog", href: "/changelog" },
 ];
 
 const PATTERNS = [

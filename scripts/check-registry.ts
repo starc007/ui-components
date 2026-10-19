@@ -3,6 +3,7 @@ import { componentAbout } from "../lib/component-about";
 import { componentDates } from "../lib/component-dates";
 import { componentSeo, SEO_DESCRIPTION_MAX, SEO_TITLE_MAX } from "../lib/component-seo";
 import { seoPages } from "../lib/seo-pages";
+import { changelogEntries } from "../lib/changelog";
 import { allShadcnTargets, buildEntry, buildShadcnItem } from "../lib/registry-server";
 import { readSourceFile } from "../lib/source-files";
 
@@ -115,6 +116,35 @@ for (const kind of ["alternatives", "guides"] as const) {
     }
   }
 }
+
+// Changelog: Monday-dated weeks, newest first, each item tied to a real
+// component when it names one.
+changelogEntries.forEach((entry, index) => {
+  const label = `changelog ${entry.date}`;
+  const day = new Date(`${entry.date}T00:00:00Z`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.date) || Number.isNaN(day.getTime())) {
+    errors.push(`${label}: date must be YYYY-MM-DD`);
+  } else if (day.getUTCDay() !== 1) {
+    errors.push(`${label}: date must be the Monday that starts the week`);
+  }
+  const previous = changelogEntries[index - 1];
+  if (previous && previous.date <= entry.date) {
+    errors.push(`${label}: entries must be newest first with one per week`);
+  }
+  if (entry.items.length === 0) errors.push(`${label}: has no items`);
+  if (new Set(entry.items.map((item) => item.text)).size !== entry.items.length) {
+    errors.push(`${label}: duplicate item text`);
+  }
+  if (/\u2014/.test(JSON.stringify(entry))) errors.push(`${label}: contains an em dash`);
+  for (const item of entry.items) {
+    if (item.component && !componentSlugs.has(item.component)) {
+      errors.push(`${label}: unknown component "${item.component}"`);
+    }
+    if (item.href && !item.href.startsWith("/")) {
+      errors.push(`${label}: href must be a site path, got "${item.href}"`);
+    }
+  }
+});
 
 for (const [slug, labels] of slugLabels) {
   if (labels.length > 1) {

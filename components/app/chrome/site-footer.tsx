@@ -23,6 +23,7 @@ const COLUMNS = [
 const LINKS = [
   { href: "/components/motion", label: "Browse all" },
   { href: "/playground", label: "Playground" },
+  { href: "/changelog", label: "Changelog" },
   { href: "https://github.com/starc007/ui-components", label: "GitHub" },
   { href: "/docs/ai-agents", label: "For coding agents" },
   { href: "/docs/theme", label: "Theming" },
