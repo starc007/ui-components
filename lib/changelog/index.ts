@@ -5,6 +5,8 @@ import type { ChangelogItem } from "@/lib/changelog/types";
 
 export const CHANGELOG_PATH = "/changelog";
 export const CHANGELOG_FEED_PATH = "/changelog/rss.xml";
+export const CHANGELOG_DESCRIPTION =
+  "Every week of beUI: new animated React and React Native components, improvements, and accessibility and motion fixes.";
 
 export { changelogEntries };
 

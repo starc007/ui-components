@@ -1,13 +1,13 @@
 import { afterEach, expect, test } from "bun:test";
 import { cleanup, render } from "@testing-library/react";
 import { axe } from "jest-axe";
-import ChangelogPage from "@/app/changelog/page";
+import { ChangelogContent } from "@/components/app/changelog/changelog-content";
 import { changelogEntries } from "@/lib/changelog";
 
 afterEach(cleanup);
 
 test("changelog lists dated weeks under one heading outline with named item links", async () => {
-  const { container, getAllByRole, getByRole } = render(<ChangelogPage />);
+  const { container, getAllByRole, getByRole } = render(<ChangelogContent />);
 
   expect(getAllByRole("heading", { level: 1 })).toHaveLength(1);
   expect(getAllByRole("heading", { level: 2 })).toHaveLength(changelogEntries.length);
