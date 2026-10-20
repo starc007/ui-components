@@ -48,13 +48,12 @@ const SIDE_DIM = 0.45;
 // far layer behind the cards.
 const YEAR_PARALLAX = 0.5;
 
+// Gap above the year numerals, as a fraction of their font size.
+const YEAR_INSET = 0.33;
+
 // Cards sit below the stage middle, leaving the top band to the year
 // numerals and the apex the cables fan out from.
-const CARD_CENTER = 0.6;
-
-// How far the neighbours tuck under the focused card, as a fraction of its
-// width.
-const TUCK = 0.06;
+const CARD_CENTER = 0.66;
 
 // Minor ruler ticks per event step.
 const TICKS_PER_STEP = 6;
@@ -114,8 +113,8 @@ function clamp(value: number, min: number, max: number) {
 }
 
 /** Card center relative to the stage center. Over the first step a card
- * travels `near`, which tucks the neighbours under the focused card's edges;
- * past it the smaller cards sit one even `step` apart. */
+ * travels `near`, which leaves the same gap beside the bigger focused card
+ * as between the smaller cards further out, one `step` apart. */
 function cardX(o: number, { step, near }: Geometry) {
   const a = Math.abs(o);
   return Math.sign(o) * (a <= 1 ? a * near : near + (a - 1) * step);
@@ -163,8 +162,8 @@ function TimelineCard({
   // Home and End can focus a card that is still far away.
   const x = useTransform(offset, (o) => cardX(o, geometry));
   const scale = useTransform(offset, cardScale);
-  // Nearer the center paints on top, so the neighbours tuck under the focused
-  // card rather than over it.
+  // Nearer the center paints on top, so a card arriving at the center slides
+  // over the one leaving mid-drag.
   const zIndex = useTransform(offset, (o) => 100 - Math.round(Math.abs(o) * 10));
   const veilOpacity = useTransform(
     offset,
@@ -305,8 +304,10 @@ function YearMark({
   return (
     <motion.div
       aria-hidden="true"
-      className="absolute top-0 left-1/2"
-      style={{ x }}
+      className="absolute left-1/2"
+      // Inset from the top so the numeral sits under the cables' apex, with
+      // air above it.
+      style={{ x, top: fontSize * YEAR_INSET }}
     >
       <span
         className="block -translate-x-1/2 font-medium text-foreground/[0.06] leading-none tracking-tighter tabular-nums"
@@ -376,8 +377,8 @@ export function Timeline({
   value,
   defaultValue,
   onValueChange,
-  itemWidth = 480,
-  height = 560,
+  itemWidth = 400,
+  height = 640,
   years = true,
   ruler = true,
   cables = true,
@@ -412,15 +413,17 @@ export function Timeline({
   }, []);
 
   const stageWidth = width || 800;
-  // Half the stage at most, so a good part of each tucked neighbour stays in
-  // view beside the focused card; phones give the card more of the width and
-  // keep a sliver of each neighbour.
-  const cardWidth = Math.min(itemWidth, stageWidth * (stageWidth < 640 ? 0.7 : 0.5));
-  const gap = clamp(cardWidth * 0.22, 32, 72);
+  // Two fifths of the stage at most, so each neighbour shows in full or
+  // nearly beside the focused card; phones give the card more of the width
+  // and keep a sliver of each neighbour.
+  const cardWidth = Math.min(itemWidth, stageWidth * (stageWidth < 640 ? 0.62 : 0.4));
+  // One gap everywhere: between the focused card and its neighbours, and
+  // between every pair of smaller cards further out.
+  const gap = clamp(cardWidth * 0.14, 24, 56);
   const geometry: Geometry = {
     step: cardWidth * SIDE_SCALE + gap,
     cardWidth,
-    near: (cardWidth * (1 + SIDE_SCALE)) / 2 - cardWidth * TUCK,
+    near: (cardWidth * (1 + SIDE_SCALE)) / 2 + gap,
     halfWidth: stageWidth / 2,
   };
   const { step } = geometry;
@@ -684,7 +687,7 @@ export function Timeline({
       {cables ? (
         <svg
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 size-full stroke-foreground/20 [mask-image:linear-gradient(to_bottom,transparent,black_25%)]"
+          className="pointer-events-none absolute inset-0 size-full stroke-foreground/20 [mask-image:linear-gradient(to_bottom,transparent,black_6%)]"
           fill="none"
           strokeWidth={1}
         >
@@ -703,7 +706,7 @@ export function Timeline({
           from, bright down to the focused card and faint below it. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-linear-to-b from-transparent via-foreground/80 via-20% to-foreground/10"
+        className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-linear-to-b from-transparent via-foreground/80 via-6% to-foreground/10"
       />
       {ruler && count > 0 ? (
         <Ruler
