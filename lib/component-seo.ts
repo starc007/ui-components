@@ -15,6 +15,11 @@ export const SEO_DESCRIPTION_MAX = 165;
 
 export const componentSeo: Record<string, ComponentSeo> = {
   // Components
+  timeline: {
+    title: "Animated Horizontal Timeline Component for React",
+    description:
+      "React timeline whose centered event grows while neighbours dim, with tick dividers, parallax year numerals, drag momentum and keyboard control. Free, shadcn install.",
+  },
   alert: {
     title: "Animated Alert Component for React and Tailwind",
     description:

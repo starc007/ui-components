@@ -1587,6 +1587,35 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  timeline: {
+    overview:
+      "Timeline is an animated horizontal React timeline for dated events, built with Framer Motion and Tailwind CSS. The event at the center of the track is shown at full size while its neighbours shrink and dim, a group of ticks sits in each gap between cards and each year's numeral drifts past on a slower parallax layer. Drag the track with momentum, swipe a trackpad sideways, click a card or use the arrow keys, and the nearest event springs to the center.",
+    useWhen: [
+      "A product or company page tells its story as a run of dated milestones, releases or launches.",
+      "A changelog or release history wants a browsable visual summary above the full notes.",
+      "A portfolio or case study walks through a project's phases with a screenshot for each step.",
+    ],
+    accessibility:
+      "The timeline is a labelled region and each event is a native button named by its date and title, with media left outside the button so it stays readable. The events keep one roving tab stop on the centered event, marked with aria-current, and Arrow Left, Arrow Right, Home and End move focus and the track together. Vertical wheel and touch scrolling stay with the page. With reduced motion enabled, the glide spring is skipped and the track jumps straight to the chosen event.",
+    faq: [
+      {
+        question: "How do I build a horizontal timeline in React?",
+        answer:
+          "Install the component and pass an events array to Timeline. Each event needs an id, a date and a title, and can carry media for the card and a meta line such as a reaction count or tag.",
+      },
+      {
+        question: "How do I know which event is centered?",
+        answer:
+          "Pass onValueChange to receive the centered event's id as the track moves, and defaultValue to pick the starting event. Pass value to control it from your own state.",
+      },
+      {
+        question: "Can I change how dates and years are shown?",
+        answer:
+          "Yes. formatDate formats the label above each card and formatYear formats the large background numeral. Dates are read in UTC, so an ISO date string shows the same day everywhere. Set years={false}, ruler={false} or cables={false} to hide any of the background layers.",
+      },
+    ],
+  },
+
   treemap: {
     overview:
       "Treemap is an animated React treemap chart for hierarchical or flat data. Each tile's area matches its value, nested groups are tiled with an order-preserving binary layout, and tiles spring to their new sizes with Framer Motion when the data changes. Hovering or focusing a tile opens a cursor-following tooltip with the value and share of total, and you can compose Plot, Tooltip and Legend parts or render custom tile content, colors and formatting.",
