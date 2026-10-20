@@ -51,9 +51,9 @@ const YEAR_PARALLAX = 0.5;
 // Gap above the year numerals, as a fraction of their font size.
 const YEAR_INSET = 0.33;
 
-// Cards sit below the stage middle, leaving the top band to the year
-// numerals and the apex the cables fan out from.
-const CARD_CENTER = 0.66;
+// Cards sit on the stage middle, between two equal bands: the top one holds
+// the year numerals, and each holds the apex one fan of cables leaves from.
+const CARD_CENTER = 0.5;
 
 // Each gap between cards holds a group of ticks: GAP_TICKS lines spread over
 // GAP_TICK_SPAN of the gap, the middle one taller and brighter. Heights are
@@ -91,7 +91,7 @@ export interface TimelineProps {
   years?: boolean;
   /** A group of ticks in each gap between cards. */
   ruler?: boolean;
-  /** Lines fanning from the top center down to each card. */
+  /** Lines fanning from the top and bottom center to the cards near the center. */
   cables?: boolean;
   formatDate?: (date: Date) => string;
   formatYear?: (date: Date) => string;
@@ -252,10 +252,10 @@ const CABLE_HOLD = 1;
 const CABLE_FADE = 1.6;
 
 /**
- * Two lines from the apex at the top center down to one card. Each ends at the
- * card's vertical center, behind the opaque surface, so the visible part stops
- * exactly where it meets the card's top edge and reads as attached there,
- * with no measuring of the card.
+ * Lines from the apexes at the top and bottom center to one card's near
+ * corners. Each ends at the card's vertical center, behind the opaque
+ * surface, so the visible part stops exactly where it meets the card's top or
+ * bottom edge and reads as attached there, with no measuring of the card.
  */
 function Cables({
   scroll,
@@ -287,6 +287,8 @@ function Cables({
     <motion.g style={{ opacity }}>
       <motion.line x1={halfWidth} y1={0} x2={left} y2={y} />
       <motion.line x1={halfWidth} y1={0} x2={right} y2={y} />
+      <motion.line x1={halfWidth} y1={height} x2={left} y2={y} />
+      <motion.line x1={halfWidth} y1={height} x2={right} y2={y} />
     </motion.g>
   );
 }
@@ -378,7 +380,7 @@ export function Timeline({
   defaultValue,
   onValueChange,
   itemWidth = 340,
-  height = 520,
+  height = 600,
   years = true,
   ruler = true,
   cables = true,
@@ -681,14 +683,14 @@ export function Timeline({
               position={mark.position}
               step={step}
               label={mark.label}
-              fontSize={height * 0.26}
+              fontSize={height * 0.2}
             />
           ))
         : null}
       {cables ? (
         <svg
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 size-full stroke-foreground/[0.14] [mask-image:linear-gradient(to_bottom,transparent,black_6%)]"
+          className="pointer-events-none absolute inset-0 size-full stroke-foreground/[0.14] [mask-image:linear-gradient(to_bottom,transparent,black_6%,black_94%,transparent)]"
           fill="none"
           strokeWidth={1}
         >
@@ -704,10 +706,14 @@ export function Timeline({
         </svg>
       ) : null}
       {/* The playhead: drawn over the cables so it reads as the line they hang
-          from, bright down to the focused card and faint below it. */}
+          from, bright from end to end and fading only at the stage edges. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-linear-to-b from-transparent via-foreground/80 via-6% to-foreground/10"
+        className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 text-foreground/80"
+        style={{
+          backgroundImage:
+            "linear-gradient(to bottom, transparent, currentColor 6%, currentColor 94%, transparent)",
+        }}
       />
       {ruler
         ? events.slice(0, -1).map((event, i) => (
