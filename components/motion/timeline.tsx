@@ -38,9 +38,13 @@ const DRAG_THRESHOLD = 4;
 // Past either end the track follows the pointer at this fraction.
 const RUBBER_BAND = 0.3;
 
-// Neighbours rest at this scale and opacity; the focused event at 1.
+// Neighbours rest at this scale, with their label faded to SIDE_OPACITY and
+// their surface veiled by SIDE_DIM; the focused event sits at full strength.
+// The surface is dimmed by an opaque veil rather than opacity, so the card
+// stays solid and the ruler never shows through it.
 const SIDE_SCALE = 0.78;
 const SIDE_OPACITY = 0.45;
+const SIDE_DIM = 0.55;
 
 // Year numerals drift at this fraction of the track speed, so they read as a
 // far layer behind the cards.
@@ -147,9 +151,13 @@ function TimelineCard({
     offset,
     (o) => 1 - (1 - SIDE_SCALE) * Math.min(Math.abs(o), 1),
   );
-  const opacity = useTransform(
+  const labelOpacity = useTransform(
     offset,
     (o) => 1 - (1 - SIDE_OPACITY) * Math.min(Math.abs(o), 1),
+  );
+  const veilOpacity = useTransform(
+    offset,
+    (o) => SIDE_DIM * Math.min(Math.abs(o), 1),
   );
   const visibility = useTransform(x, (px) =>
     Math.abs(px) > halfWidth + cardWidth ? "hidden" : "visible",
@@ -163,14 +171,13 @@ function TimelineCard({
       style={{
         x,
         scale,
-        opacity,
         visibility,
         width: cardWidth,
         marginLeft: -cardWidth / 2,
       }}
     >
       <div className="relative flex -translate-y-1/2 flex-col gap-3">
-        <div className="px-1">
+        <motion.div className="px-1" style={{ opacity: labelOpacity }}>
           <p
             id={`${id}-date`}
             className="text-muted-foreground text-sm tabular-nums"
@@ -183,8 +190,8 @@ function TimelineCard({
           >
             {event.title}
           </h3>
-        </div>
-        <div className="rounded-[28px] border border-border/60 bg-muted/50 p-2 shadow-sm">
+        </motion.div>
+        <div className="relative overflow-hidden rounded-[28px] border border-border bg-card p-2 shadow-sm">
           <div className="aspect-[4/3] overflow-hidden rounded-[20px] bg-background">
             {event.media}
           </div>
@@ -193,6 +200,11 @@ function TimelineCard({
               {event.meta}
             </div>
           ) : null}
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-background"
+            style={{ opacity: veilOpacity }}
+          />
         </div>
         {/* Stretched over the whole card so the media stays valid content
             outside the button and remains readable on its own. */}
