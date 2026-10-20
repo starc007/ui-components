@@ -28,6 +28,11 @@ import { ComponentCard } from "@/components/app/docs/component-card";
 import { ComponentAbout } from "@/components/app/docs/component-about";
 import { ComponentGuide } from "@/components/app/docs/component-guide";
 import { CopyPage } from "@/components/app/docs/copy-page";
+import {
+  PreviewExpand,
+  PreviewExpandStage,
+  PreviewExpandToggle,
+} from "@/components/app/docs/preview-fullscreen";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { getPreview, previews } from "@/components/previews";
 import { pageUrlFor, withSignature } from "@/lib/signature";
@@ -361,7 +366,9 @@ async function ExampleBlock({
         </p>
       ) : null}
       <div id={`${example.slug}-preview`} className="scroll-mt-24">
+        <PreviewExpand stageId={`${example.slug}-stage`}>
         <Tabs defaultValue="preview" variant="pill">
+          <div className="flex items-center justify-between gap-3">
           <TabsList>
             <TabsTrigger
               value="preview"
@@ -385,10 +392,12 @@ async function ExampleBlock({
               Code
             </TabsTrigger>
           </TabsList>
+            <PreviewExpandToggle />
+          </div>
           <TabsContent value="preview" className="mt-4">
-            <div className="flex min-h-[260px] items-center justify-center py-10">
+            <PreviewExpandStage className="flex min-h-[260px] items-center justify-center py-10">
               {Preview ? <Preview /> : null}
-            </div>
+            </PreviewExpandStage>
           </TabsContent>
           <TabsContent value="usage" className="mt-4">
             <CodeBlock code={usage} filename={usageFile} />
@@ -404,6 +413,7 @@ async function ExampleBlock({
             />
           </TabsContent>
         </Tabs>
+        </PreviewExpand>
       </div>
       {installSlug ? (
         <div
@@ -455,7 +465,9 @@ async function DefaultTabs({
   return (
     <section id="preview" className="mt-8 scroll-mt-24">
       <h2 className="sr-only">Preview</h2>
+      <PreviewExpand stageId="preview-stage">
       <Tabs defaultValue="preview" variant="pill">
+        <div className="flex items-center justify-between gap-3">
         <TabsList>
           <TabsTrigger
             value="preview"
@@ -479,10 +491,12 @@ async function DefaultTabs({
             Code
           </TabsTrigger>
         </TabsList>
+          <PreviewExpandToggle />
+        </div>
         <TabsContent value="preview" className="mt-4">
-          <div className="flex min-h-[320px] items-center justify-center py-10">
+          <PreviewExpandStage className="flex min-h-[320px] items-center justify-center py-10">
             {Preview ? <Preview /> : null}
-          </div>
+          </PreviewExpandStage>
         </TabsContent>
         <TabsContent value="usage" className="mt-4">
           <CodeBlock code={usage} filename={resolvedUsageFile} />
@@ -494,6 +508,7 @@ async function DefaultTabs({
           />
         </TabsContent>
       </Tabs>
+      </PreviewExpand>
     </section>
   );
 }
