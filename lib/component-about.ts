@@ -1611,7 +1611,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       {
         question: "Can I change how dates and years are shown?",
         answer:
-          "Yes. formatDate formats the label above each card and formatYear formats the large background numeral. Dates are read in UTC, so an ISO date string shows the same day everywhere. Set years={false} or ruler={false} to hide either background layer.",
+          "Yes. formatDate formats the label above each card and formatYear formats the large background numeral. Dates are read in UTC, so an ISO date string shows the same day everywhere. Set years={false}, ruler={false} or cables={false} to hide any of the background layers.",
       },
     ],
   },

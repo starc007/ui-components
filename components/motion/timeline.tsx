@@ -38,17 +38,19 @@ const DRAG_THRESHOLD = 4;
 // Past either end the track follows the pointer at this fraction.
 const RUBBER_BAND = 0.3;
 
-// Neighbours rest at this scale, with their label faded to SIDE_OPACITY and
-// their surface veiled by SIDE_DIM; the focused event sits at full strength.
-// The surface is dimmed by an opaque veil rather than opacity, so the card
-// stays solid and the ruler never shows through it.
+// Neighbours rest at this scale, veiled by SIDE_DIM; the focused event sits
+// at full strength. The card is dimmed by a veil in the stage colour rather
+// than by opacity, so it stays solid and nothing behind shows through it.
 const SIDE_SCALE = 0.78;
-const SIDE_OPACITY = 0.45;
 const SIDE_DIM = 0.55;
 
 // Year numerals drift at this fraction of the track speed, so they read as a
 // far layer behind the cards.
 const YEAR_PARALLAX = 0.5;
+
+// Cards sit below the stage middle, leaving the top band to the year
+// numerals and the apex the cables fan out from.
+const CARD_CENTER = 0.58;
 
 // Minor ruler ticks per event step.
 const TICKS_PER_STEP = 6;
@@ -81,6 +83,8 @@ export interface TimelineProps {
   years?: boolean;
   /** Ruler ticks running behind the cards. */
   ruler?: boolean;
+  /** Lines fanning from the top center down to each card. */
+  cables?: boolean;
   formatDate?: (date: Date) => string;
   formatYear?: (date: Date) => string;
   "aria-label"?: string;
@@ -103,6 +107,17 @@ function defaultFormatDate(date: Date) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
+}
+
+/** Card center relative to the stage center: a linear track plus a spread
+ * that ramps in over the first step, so a card leaving the center makes room
+ * for the full-size one without the gaps between smaller cards growing. */
+function cardX(o: number, { step, spread }: Geometry) {
+  return o * step + Math.sign(o) * spread * Math.min(Math.abs(o), 1);
+}
+
+function cardScale(o: number) {
+  return 1 - (1 - SIDE_SCALE) * Math.min(Math.abs(o), 1);
 }
 
 type Geometry = {
@@ -138,68 +153,60 @@ function TimelineCard({
   buttonRef: (node: HTMLButtonElement | null) => void;
 }) {
   const id = useId();
-  const { step, cardWidth, spread, halfWidth } = geometry;
+  const { cardWidth } = geometry;
   const offset = useTransform(scroll, (s) => index - s);
-  // Linear track plus a spread that ramps in over the first step, so a card
-  // leaving the center makes room for the full-size one without the gaps
-  // between the smaller cards growing.
-  const x = useTransform(
-    offset,
-    (o) => o * step + Math.sign(o) * spread * Math.min(Math.abs(o), 1),
-  );
-  const scale = useTransform(
-    offset,
-    (o) => 1 - (1 - SIDE_SCALE) * Math.min(Math.abs(o), 1),
-  );
-  const labelOpacity = useTransform(
-    offset,
-    (o) => 1 - (1 - SIDE_OPACITY) * Math.min(Math.abs(o), 1),
-  );
+  // Off-stage cards stay visible to the browser (the stage clips them), so
+  // Home and End can focus a card that is still far away.
+  const x = useTransform(offset, (o) => cardX(o, geometry));
+  const scale = useTransform(offset, cardScale);
   const veilOpacity = useTransform(
     offset,
     (o) => SIDE_DIM * Math.min(Math.abs(o), 1),
-  );
-  const visibility = useTransform(x, (px) =>
-    Math.abs(px) > halfWidth + cardWidth ? "hidden" : "visible",
   );
 
   return (
     <motion.li
       data-slot="timeline-event"
       data-active={active || undefined}
-      className="absolute top-1/2 left-1/2"
+      className="absolute left-1/2"
       style={{
+        top: `${CARD_CENTER * 100}%`,
         x,
         scale,
-        visibility,
         width: cardWidth,
         marginLeft: -cardWidth / 2,
       }}
     >
-      <div className="relative flex -translate-y-1/2 flex-col gap-3">
-        <motion.div className="px-1" style={{ opacity: labelOpacity }}>
-          <p
-            id={`${id}-date`}
-            className="text-muted-foreground text-sm tabular-nums"
-          >
-            {dateLabel}
-          </p>
-          <h3
-            id={`${id}-title`}
-            className="truncate font-medium text-foreground text-lg tracking-tight"
-          >
-            {event.title}
-          </h3>
-        </motion.div>
-        <div className="relative overflow-hidden rounded-[28px] border border-border bg-card p-2 shadow-sm">
-          <div className="aspect-[4/3] overflow-hidden rounded-[20px] bg-background">
-            {event.media}
+      {/* One solid surface holds the label, media and meta, so the cables
+          and ruler stop at its edge instead of showing through any part. */}
+      <div className="relative -translate-y-1/2">
+        <div className="relative overflow-hidden rounded-[28px] border border-border bg-card">
+          <div className="px-4 pt-4 pb-3">
+            <p
+              id={`${id}-date`}
+              className="text-muted-foreground text-sm tabular-nums"
+            >
+              {dateLabel}
+            </p>
+            <h3
+              id={`${id}-title`}
+              className="truncate font-medium text-foreground text-lg tracking-tight"
+            >
+              {event.title}
+            </h3>
+          </div>
+          <div className="px-2">
+            <div className="aspect-[4/3] overflow-hidden rounded-[20px] border border-border bg-background">
+              {event.media}
+            </div>
           </div>
           {event.meta ? (
-            <div className="flex items-center gap-1.5 px-3 pt-3 pb-1.5 text-muted-foreground text-sm tabular-nums">
+            <div className="flex items-center gap-1.5 px-4 py-3 text-muted-foreground text-sm tabular-nums">
               {event.meta}
             </div>
-          ) : null}
+          ) : (
+            <div className="h-2" />
+          )}
           <motion.div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 bg-background"
@@ -216,13 +223,56 @@ function TimelineCard({
           aria-labelledby={`${id}-date ${id}-title`}
           onClick={() => onSelect(index)}
           onKeyDown={(e) => onKeyDown(e, index)}
-          className={cn(
-            "absolute inset-0 cursor-pointer rounded-[28px] outline-none",
-            "focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-4 focus-visible:ring-offset-background",
-          )}
+          className="absolute inset-0 cursor-pointer rounded-[28px] outline-none focus-visible:ring-2 focus-visible:ring-foreground"
         />
       </div>
     </motion.li>
+  );
+}
+
+// Cables reach this far across a card's half-width, so they meet its top edge
+// just inside the corners.
+const CABLE_REACH = 0.8;
+// Cables fade out over this many events from the center.
+const CABLE_FADE = 3;
+
+/**
+ * Two lines from the apex at the top center down to one card. Each ends at the
+ * card's vertical center, behind the opaque surface, so the visible part stops
+ * exactly where it meets the card's top edge and reads as attached there,
+ * with no measuring of the card.
+ */
+function Cables({
+  scroll,
+  index,
+  geometry,
+  height,
+}: {
+  scroll: MotionValue<number>;
+  index: number;
+  geometry: Geometry;
+  height: number;
+}) {
+  const { halfWidth, cardWidth } = geometry;
+  const offset = useTransform(scroll, (s) => index - s);
+  const reach = (o: number) => (cardWidth / 2) * cardScale(o) * CABLE_REACH;
+  const left = useTransform(
+    offset,
+    (o) => halfWidth + cardX(o, geometry) - reach(o),
+  );
+  const right = useTransform(
+    offset,
+    (o) => halfWidth + cardX(o, geometry) + reach(o),
+  );
+  const opacity = useTransform(offset, (o) =>
+    Math.max(0, 1 - Math.abs(o) / CABLE_FADE),
+  );
+  const y = height * CARD_CENTER;
+  return (
+    <motion.g style={{ opacity }}>
+      <motion.line x1={halfWidth} y1={0} x2={left} y2={y} />
+      <motion.line x1={halfWidth} y1={0} x2={right} y2={y} />
+    </motion.g>
   );
 }
 
@@ -244,7 +294,7 @@ function YearMark({
   return (
     <motion.div
       aria-hidden="true"
-      className="absolute top-[6%] left-1/2"
+      className="absolute top-0 left-1/2"
       style={{ x }}
     >
       <span
@@ -281,8 +331,13 @@ function Ruler({
       className="pointer-events-none absolute inset-0 text-foreground/20 [mask-image:linear-gradient(to_right,transparent,black_20%,black_80%,transparent)]"
     >
       <motion.div
-        className="absolute top-1/2"
-        style={{ x, left: `calc(50% - ${pad}px)`, width: (count - 1) * step + pad * 2 }}
+        className="absolute"
+        style={{
+          x,
+          top: `${CARD_CENTER * 100}%`,
+          left: `calc(50% - ${pad}px)`,
+          width: (count - 1) * step + pad * 2,
+        }}
       >
         <div
           className="absolute h-6 w-full -translate-y-1/2"
@@ -311,9 +366,10 @@ export function Timeline({
   defaultValue,
   onValueChange,
   itemWidth = 320,
-  height = 480,
+  height = 520,
   years = true,
   ruler = true,
+  cables = true,
   formatDate = defaultFormatDate,
   formatYear = defaultFormatYear,
   "aria-label": ariaLabel = "Timeline",
@@ -333,9 +389,12 @@ export function Timeline({
 
   const stageRef = useRef<HTMLElement>(null);
   const [width, setWidth] = useState(0);
-  useEffect(() => {
+  // Layout effect with an immediate read, so the first paint already uses the
+  // real width instead of the fallback.
+  useLayoutEffect(() => {
     const el = stageRef.current;
     if (!el) return;
+    setWidth(el.clientWidth);
     const ro = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
     ro.observe(el);
     return () => ro.disconnect();
@@ -372,16 +431,22 @@ export function Timeline({
     onValueChange?.(event.id);
   }, []);
 
-  // Focus follows the event nearest the center as the track moves.
+  // While a glide runs the target is already committed, so the track passing
+  // over the events in between must not hand focus back to them.
+  const glidingRef = useRef(false);
+
+  // Under a drag or wheel, focus follows the event nearest the center.
   useEffect(
     () =>
       scroll.on("change", (v) => {
+        if (glidingRef.current) return;
         commit(clamp(Math.round(v), 0, latest.current.last));
       }),
     [scroll, commit],
   );
 
   const stopGlide = useCallback(() => {
+    glidingRef.current = false;
     glideRef.current?.stop();
     glideRef.current = null;
   }, []);
@@ -389,21 +454,24 @@ export function Timeline({
   const glideTo = useCallback(
     (to: number, velocity = scroll.getVelocity()) => {
       stopGlide();
+      commit(to);
       if (reduce) {
         scroll.set(to);
         return;
       }
+      glidingRef.current = true;
       glideRef.current = animate(scroll, to, {
         type: "spring",
         ...GLIDE_SPRING,
         velocity,
         restDelta: 0.001,
         onComplete: () => {
+          glidingRef.current = false;
           glideRef.current = null;
         },
       });
     },
-    [scroll, stopGlide, reduce],
+    [scroll, stopGlide, commit, reduce],
   );
 
   const settle = useCallback(
@@ -419,7 +487,7 @@ export function Timeline({
   // Follow a value changed from outside (controlled), or a list that shrank.
   const draggingRef = useRef(false);
   useEffect(() => {
-    if (draggingRef.current || glideRef.current) return;
+    if (draggingRef.current || glidingRef.current) return;
     if (clamp(Math.round(scroll.get()), 0, last) === activeIndex) return;
     glideTo(activeIndex);
   }, [activeIndex, last, scroll, glideTo]);
@@ -427,11 +495,10 @@ export function Timeline({
   const select = useCallback(
     (index: number, focus = false) => {
       const target = clamp(index, 0, latest.current.last);
-      commit(target);
       glideTo(target);
       if (focus) buttonsRef.current[target]?.focus({ preventScroll: true });
     },
-    [commit, glideTo],
+    [glideTo],
   );
 
   const onKeyDown = useCallback(
@@ -576,6 +643,9 @@ export function Timeline({
       onPointerCancel={onPointerUp}
       className={cn(
         // clip-path rather than overflow: it also clips composited layers.
+        // The whole stage fades at its edges together, so a card never turns
+        // see-through over the cables behind it.
+        "[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]",
         "relative w-full cursor-grab touch-pan-y overscroll-x-contain [clip-path:inset(0)] active:cursor-grabbing",
         TOUCH_GESTURE_CLASS,
         className,
@@ -593,7 +663,7 @@ export function Timeline({
               position={mark.position}
               step={step}
               label={mark.label}
-              fontSize={height * 0.42}
+              fontSize={height * 0.34}
             />
           ))
         : null}
@@ -601,6 +671,24 @@ export function Timeline({
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-foreground/25 to-transparent"
       />
+      {cables ? (
+        <svg
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 size-full stroke-foreground/20 [mask-image:linear-gradient(to_bottom,transparent,black_25%)]"
+          fill="none"
+          strokeWidth={1}
+        >
+          {events.map((event, i) => (
+            <Cables
+              key={event.id}
+              scroll={scroll}
+              index={i}
+              geometry={geometry}
+              height={height}
+            />
+          ))}
+        </svg>
+      ) : null}
       {ruler && count > 0 ? (
         <Ruler
           scroll={scroll}
@@ -609,7 +697,7 @@ export function Timeline({
           halfWidth={geometry.halfWidth}
         />
       ) : null}
-      <ul className="absolute inset-0 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+      <ul className="absolute inset-0">
         {events.map((event, i) => (
           <TimelineCard
             key={event.id}
