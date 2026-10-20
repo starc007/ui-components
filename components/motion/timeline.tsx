@@ -55,8 +55,13 @@ const YEAR_INSET = 0.33;
 // numerals and the apex the cables fan out from.
 const CARD_CENTER = 0.66;
 
-// Minor ruler ticks per event step.
-const TICKS_PER_STEP = 6;
+// Each gap between cards holds a group of ticks: GAP_TICKS lines spread over
+// GAP_TICK_SPAN of the gap, the middle one taller and brighter. Heights are
+// fractions of the card width so the group scales with the cards.
+const GAP_TICKS = 5;
+const GAP_TICK_SPAN = 0.7;
+const TICK_SHORT = 0.13;
+const TICK_TALL = 0.2;
 
 export type TimelineEvent = {
   /** Stable identity, used for `value` and React keys. */
@@ -84,7 +89,7 @@ export interface TimelineProps {
   height?: number;
   /** Large year numerals drifting behind the cards. */
   years?: boolean;
-  /** Ruler ticks running behind the cards. */
+  /** A group of ticks in each gap between cards. */
   ruler?: boolean;
   /** Lines fanning from the top center down to each card. */
   cables?: boolean;
@@ -187,28 +192,28 @@ function TimelineCard({
       {/* One solid surface holds the label, media and meta, so the cables
           and ruler stop at its edge instead of showing through any part. */}
       <div className="relative -translate-y-1/2">
-        <div className="relative overflow-hidden rounded-[28px] border border-border bg-card">
-          <div className="px-4 pt-4 pb-3">
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-card">
+          <div className="px-3.5 pt-3 pb-2">
             <p
               id={`${id}-date`}
-              className="text-muted-foreground text-sm tabular-nums"
+              className="text-muted-foreground text-xs tabular-nums"
             >
               {dateLabel}
             </p>
             <h3
               id={`${id}-title`}
-              className="truncate font-medium text-foreground text-lg tracking-tight"
+              className="truncate font-medium text-base text-foreground tracking-tight"
             >
               {event.title}
             </h3>
           </div>
           <div className="px-2">
-            <div className="aspect-[16/10] overflow-hidden rounded-[20px] border border-border bg-background">
+            <div className="aspect-[16/10] overflow-hidden rounded-2xl border border-border bg-background">
               {event.media}
             </div>
           </div>
           {event.meta ? (
-            <div className="flex items-center gap-1.5 px-4 py-3.5 text-base text-muted-foreground tabular-nums">
+            <div className="flex items-center gap-1.5 px-3.5 py-2.5 text-muted-foreground text-sm tabular-nums">
               {event.meta}
             </div>
           ) : (
@@ -230,7 +235,7 @@ function TimelineCard({
           aria-labelledby={`${id}-date ${id}-title`}
           onClick={() => onSelect(index)}
           onKeyDown={(e) => onKeyDown(e, index)}
-          className="absolute inset-0 cursor-pointer rounded-[28px] outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+          className="absolute inset-0 cursor-pointer rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-foreground"
         />
       </div>
     </motion.li>
@@ -319,56 +324,51 @@ function YearMark({
   );
 }
 
-function Ruler({
+/**
+ * The tick group in the gap after card `index`. It sits midway between that
+ * card's right edge and the next card's left edge; the gap keeps one width
+ * while the cards move (see `cardX`), so the group only translates.
+ */
+function GapTicks({
   scroll,
-  step,
-  count,
-  halfWidth,
+  index,
+  geometry,
+  gap,
 }: {
   scroll: MotionValue<number>;
-  step: number;
-  count: number;
-  halfWidth: number;
+  index: number;
+  geometry: Geometry;
+  gap: number;
 }) {
-  // One strip translated as a whole; ticks are background gradients, so the
-  // ruler costs one composited layer however long the timeline is. Its local
-  // zero is event 0's center, padded a full stage width on both sides.
-  const pad = halfWidth * 2;
-  const x = useTransform(scroll, (s) => -s * step);
-  const origin = pad + step / 2;
-  const tick = "linear-gradient(to right, currentColor 1px, transparent 1px)";
+  const { cardWidth } = geometry;
+  const x = useTransform(scroll, (s) => {
+    const o = index - s;
+    const right = cardX(o, geometry) + (cardWidth * cardScale(o)) / 2;
+    const left = cardX(o + 1, geometry) - (cardWidth * cardScale(o + 1)) / 2;
+    return (right + left) / 2;
+  });
+  const spacing = (gap * GAP_TICK_SPAN) / (GAP_TICKS - 1);
+  const middle = (GAP_TICKS - 1) / 2;
   return (
-    <div
+    <motion.div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 text-foreground/20 [mask-image:linear-gradient(to_right,transparent,black_20%,black_80%,transparent)]"
+      className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center"
+      style={{ x, top: `${CARD_CENTER * 100}%`, gap: spacing - 1 }}
     >
-      <motion.div
-        className="absolute"
-        style={{
-          x,
-          top: `${CARD_CENTER * 100}%`,
-          left: `calc(50% - ${pad}px)`,
-          width: (count - 1) * step + pad * 2,
-        }}
-      >
-        <div
-          className="absolute h-6 w-full -translate-y-1/2"
+      {Array.from({ length: GAP_TICKS }, (_, i) => (
+        <span
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed decorative ticks
+          key={i}
+          className={cn(
+            "block w-px rounded-full",
+            i === middle ? "bg-foreground/45" : "bg-foreground/25",
+          )}
           style={{
-            backgroundImage: tick,
-            backgroundSize: `${step / TICKS_PER_STEP}px 100%`,
-            backgroundPosition: `${origin}px 0`,
+            height: cardWidth * (i === middle ? TICK_TALL : TICK_SHORT),
           }}
         />
-        <div
-          className="absolute h-20 w-full -translate-y-1/2 opacity-80"
-          style={{
-            backgroundImage: tick,
-            backgroundSize: `${step}px 100%`,
-            backgroundPosition: `${origin}px 0`,
-          }}
-        />
-      </motion.div>
-    </div>
+      ))}
+    </motion.div>
   );
 }
 
@@ -377,8 +377,8 @@ export function Timeline({
   value,
   defaultValue,
   onValueChange,
-  itemWidth = 400,
-  height = 640,
+  itemWidth = 340,
+  height = 520,
   years = true,
   ruler = true,
   cables = true,
@@ -413,13 +413,14 @@ export function Timeline({
   }, []);
 
   const stageWidth = width || 800;
-  // Two fifths of the stage at most, so each neighbour shows in full or
+  // About a third of the stage at most, so each neighbour shows in full or
   // nearly beside the focused card; phones give the card more of the width
   // and keep a sliver of each neighbour.
-  const cardWidth = Math.min(itemWidth, stageWidth * (stageWidth < 640 ? 0.62 : 0.4));
+  const cardWidth = Math.min(itemWidth, stageWidth * (stageWidth < 640 ? 0.58 : 0.36));
   // One gap everywhere: between the focused card and its neighbours, and
   // between every pair of smaller cards further out.
-  const gap = clamp(cardWidth * 0.14, 24, 56);
+  // Wide enough to hold the tick group between cards.
+  const gap = clamp(cardWidth * 0.22, 40, 72);
   const geometry: Geometry = {
     step: cardWidth * SIDE_SCALE + gap,
     cardWidth,
@@ -680,14 +681,14 @@ export function Timeline({
               position={mark.position}
               step={step}
               label={mark.label}
-              fontSize={height * 0.3}
+              fontSize={height * 0.26}
             />
           ))
         : null}
       {cables ? (
         <svg
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 size-full stroke-foreground/20 [mask-image:linear-gradient(to_bottom,transparent,black_6%)]"
+          className="pointer-events-none absolute inset-0 size-full stroke-foreground/[0.14] [mask-image:linear-gradient(to_bottom,transparent,black_6%)]"
           fill="none"
           strokeWidth={1}
         >
@@ -708,14 +709,17 @@ export function Timeline({
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-linear-to-b from-transparent via-foreground/80 via-6% to-foreground/10"
       />
-      {ruler && count > 0 ? (
-        <Ruler
-          scroll={scroll}
-          step={step}
-          count={count}
-          halfWidth={geometry.halfWidth}
-        />
-      ) : null}
+      {ruler
+        ? events.slice(0, -1).map((event, i) => (
+            <GapTicks
+              key={event.id}
+              scroll={scroll}
+              index={i}
+              geometry={geometry}
+              gap={gap}
+            />
+          ))
+        : null}
       <ul className="absolute inset-0">
         {events.map((event, i) => (
           <TimelineCard

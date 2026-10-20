@@ -65,7 +65,7 @@ export const registry: CategoryEntry[] = [
         slug: "timeline",
         name: "Timeline",
         description:
-          "A horizontal timeline of dated events. The event at the center grows to full size while its neighbours shrink and dim, ruler ticks run behind the cards and each year's numeral drifts past on a slower parallax layer. Drag with momentum, swipe the trackpad, click a card or use the arrow keys.",
+          "A horizontal timeline of dated events. The event at the center grows to full size while its neighbours shrink and dim, a group of ticks sits in each gap between cards and each year's numeral drifts past on a slower parallax layer. Drag with momentum, swipe the trackpad, click a card or use the arrow keys.",
         file: "components/motion/timeline.tsx",
         badge: "new",
         launchedAt: "2026-10-20",

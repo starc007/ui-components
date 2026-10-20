@@ -1589,7 +1589,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   timeline: {
     overview:
-      "Timeline is an animated horizontal React timeline for dated events, built with Framer Motion and Tailwind CSS. The event at the center of the track is shown at full size while its neighbours shrink and dim, ruler ticks run behind the cards and each year's numeral drifts past on a slower parallax layer. Drag the track with momentum, swipe a trackpad sideways, click a card or use the arrow keys, and the nearest event springs to the center.",
+      "Timeline is an animated horizontal React timeline for dated events, built with Framer Motion and Tailwind CSS. The event at the center of the track is shown at full size while its neighbours shrink and dim, a group of ticks sits in each gap between cards and each year's numeral drifts past on a slower parallax layer. Drag the track with momentum, swipe a trackpad sideways, click a card or use the arrow keys, and the nearest event springs to the center.",
     useWhen: [
       "A product or company page tells its story as a run of dated milestones, releases or launches.",
       "A changelog or release history wants a browsable visual summary above the full notes.",

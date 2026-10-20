@@ -12,7 +12,7 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
-        "text": "Timeline lays dated events along a draggable track: the centered event grows while its neighbours dim, with ruler ticks and year numerals drifting behind.",
+        "text": "Timeline lays dated events along a draggable track: the centered event grows while its neighbours dim, with tick dividers between cards and year numerals drifting behind.",
         "component": "timeline"
       },
       {

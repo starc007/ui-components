@@ -18,7 +18,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   timeline: {
     title: "Animated Horizontal Timeline Component for React",
     description:
-      "React timeline whose centered event grows while neighbours dim, with ruler ticks, parallax year numerals, drag momentum and keyboard control. Free, shadcn install.",
+      "React timeline whose centered event grows while neighbours dim, with tick dividers, parallax year numerals, drag momentum and keyboard control. Free, shadcn install.",
   },
   alert: {
     title: "Animated Alert Component for React and Tailwind",
