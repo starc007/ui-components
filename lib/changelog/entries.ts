@@ -12,6 +12,11 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
+        "text": "Timeline lays dated events along a draggable track: the centered event grows while its neighbours dim, with ruler ticks and year numerals drifting behind.",
+        "component": "timeline"
+      },
+      {
+        "type": "new",
         "text": "This changelog lists each week's new components, improvements and fixes, with an RSS feed to follow along."
       }
     ]

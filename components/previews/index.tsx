@@ -13,6 +13,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/aspect-ratio": dynamic(() =>
     import("./motion/aspect-ratio.preview").then((m) => m.AspectRatioPreview),
   ),
+  "motion/timeline": dynamic(() =>
+    import("./motion/timeline.preview").then((m) => m.TimelinePreview),
+  ),
   "motion/arc-picker": dynamic(() =>
     import("./motion/arc-picker.preview").then((m) => m.ArcPickerPreview),
   ),

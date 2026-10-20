@@ -62,6 +62,16 @@ export const registry: CategoryEntry[] = [
       "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
+        slug: "timeline",
+        name: "Timeline",
+        description:
+          "A horizontal timeline of dated events. The event at the center grows to full size while its neighbours shrink and dim, ruler ticks run behind the cards and each year's numeral drifts past on a slower parallax layer. Drag with momentum, swipe the trackpad, click a card or use the arrow keys.",
+        file: "components/motion/timeline.tsx",
+        badge: "new",
+        launchedAt: "2026-10-20",
+        keywords: ["timeline", "react timeline", "horizontal timeline", "milestone timeline", "release history", "changelog timeline"],
+      },
+      {
         slug: "alert",
         name: "Animated Alert",
         description: "Composable feedback with smooth transitions.",
