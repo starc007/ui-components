@@ -6,7 +6,7 @@ import { Timeline, type TimelineEvent } from "@/components/motion/timeline";
 function Likes({ count }: { count: string }) {
   return (
     <>
-      <Heart aria-hidden="true" className="size-4" />
+      <Heart aria-hidden="true" className="size-5" />
       <span>{count}</span>
     </>
   );

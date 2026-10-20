@@ -41,8 +41,8 @@ const RUBBER_BAND = 0.3;
 // Neighbours rest at this scale, veiled by SIDE_DIM; the focused event sits
 // at full strength. The card is dimmed by a veil in the stage colour rather
 // than by opacity, so it stays solid and nothing behind shows through it.
-const SIDE_SCALE = 0.78;
-const SIDE_DIM = 0.55;
+const SIDE_SCALE = 0.72;
+const SIDE_DIM = 0.45;
 
 // Year numerals drift at this fraction of the track speed, so they read as a
 // far layer behind the cards.
@@ -50,7 +50,11 @@ const YEAR_PARALLAX = 0.5;
 
 // Cards sit below the stage middle, leaving the top band to the year
 // numerals and the apex the cables fan out from.
-const CARD_CENTER = 0.58;
+const CARD_CENTER = 0.6;
+
+// How far the neighbours tuck under the focused card, as a fraction of its
+// width.
+const TUCK = 0.06;
 
 // Minor ruler ticks per event step.
 const TICKS_PER_STEP = 6;
@@ -109,11 +113,12 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
-/** Card center relative to the stage center: a linear track plus a spread
- * that ramps in over the first step, so a card leaving the center makes room
- * for the full-size one without the gaps between smaller cards growing. */
-function cardX(o: number, { step, spread }: Geometry) {
-  return o * step + Math.sign(o) * spread * Math.min(Math.abs(o), 1);
+/** Card center relative to the stage center. Over the first step a card
+ * travels `near`, which tucks the neighbours under the focused card's edges;
+ * past it the smaller cards sit one even `step` apart. */
+function cardX(o: number, { step, near }: Geometry) {
+  const a = Math.abs(o);
+  return Math.sign(o) * (a <= 1 ? a * near : near + (a - 1) * step);
 }
 
 function cardScale(o: number) {
@@ -125,9 +130,8 @@ type Geometry = {
   step: number;
   /** Card width at full size. */
   cardWidth: number;
-  /** Push given to every non-focused card so all visual gaps match while the
-   * focused card is bigger than its neighbours. */
-  spread: number;
+  /** Distance from the focused card's center to a neighbour's. */
+  near: number;
   halfWidth: number;
 };
 
@@ -159,6 +163,9 @@ function TimelineCard({
   // Home and End can focus a card that is still far away.
   const x = useTransform(offset, (o) => cardX(o, geometry));
   const scale = useTransform(offset, cardScale);
+  // Nearer the center paints on top, so the neighbours tuck under the focused
+  // card rather than over it.
+  const zIndex = useTransform(offset, (o) => 100 - Math.round(Math.abs(o) * 10));
   const veilOpacity = useTransform(
     offset,
     (o) => SIDE_DIM * Math.min(Math.abs(o), 1),
@@ -173,6 +180,7 @@ function TimelineCard({
         top: `${CARD_CENTER * 100}%`,
         x,
         scale,
+        zIndex,
         width: cardWidth,
         marginLeft: -cardWidth / 2,
       }}
@@ -196,12 +204,12 @@ function TimelineCard({
             </h3>
           </div>
           <div className="px-2">
-            <div className="aspect-[4/3] overflow-hidden rounded-[20px] border border-border bg-background">
+            <div className="aspect-[16/10] overflow-hidden rounded-[20px] border border-border bg-background">
               {event.media}
             </div>
           </div>
           {event.meta ? (
-            <div className="flex items-center gap-1.5 px-4 py-3 text-muted-foreground text-sm tabular-nums">
+            <div className="flex items-center gap-1.5 px-4 py-3.5 text-base text-muted-foreground tabular-nums">
               {event.meta}
             </div>
           ) : (
@@ -233,8 +241,11 @@ function TimelineCard({
 // Cables reach this far across a card's half-width, so they meet its top edge
 // just inside the corners.
 const CABLE_REACH = 0.8;
-// Cables fade out over this many events from the center.
-const CABLE_FADE = 3;
+// Only the centered card and its two neighbours carry cables: full strength
+// out to CABLE_HOLD events from the center, gone by CABLE_FADE, so the fan
+// stays at six lines however many events there are.
+const CABLE_HOLD = 1;
+const CABLE_FADE = 1.6;
 
 /**
  * Two lines from the apex at the top center down to one card. Each ends at the
@@ -265,7 +276,7 @@ function Cables({
     (o) => halfWidth + cardX(o, geometry) + reach(o),
   );
   const opacity = useTransform(offset, (o) =>
-    Math.max(0, 1 - Math.abs(o) / CABLE_FADE),
+    clamp((CABLE_FADE - Math.abs(o)) / (CABLE_FADE - CABLE_HOLD), 0, 1),
   );
   const y = height * CARD_CENTER;
   return (
@@ -365,8 +376,8 @@ export function Timeline({
   value,
   defaultValue,
   onValueChange,
-  itemWidth = 320,
-  height = 520,
+  itemWidth = 480,
+  height = 560,
   years = true,
   ruler = true,
   cables = true,
@@ -401,12 +412,15 @@ export function Timeline({
   }, []);
 
   const stageWidth = width || 800;
-  const cardWidth = Math.min(itemWidth, stageWidth * 0.62);
+  // Half the stage at most, so a good part of each tucked neighbour stays in
+  // view beside the focused card; phones give the card more of the width and
+  // keep a sliver of each neighbour.
+  const cardWidth = Math.min(itemWidth, stageWidth * (stageWidth < 640 ? 0.7 : 0.5));
   const gap = clamp(cardWidth * 0.22, 32, 72);
   const geometry: Geometry = {
     step: cardWidth * SIDE_SCALE + gap,
     cardWidth,
-    spread: (cardWidth * (1 - SIDE_SCALE)) / 2,
+    near: (cardWidth * (1 + SIDE_SCALE)) / 2 - cardWidth * TUCK,
     halfWidth: stageWidth / 2,
   };
   const { step } = geometry;
@@ -645,7 +659,7 @@ export function Timeline({
         // clip-path rather than overflow: it also clips composited layers.
         // The whole stage fades at its edges together, so a card never turns
         // see-through over the cables behind it.
-        "[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]",
+        "[mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]",
         "relative w-full cursor-grab touch-pan-y overscroll-x-contain [clip-path:inset(0)] active:cursor-grabbing",
         TOUCH_GESTURE_CLASS,
         className,
@@ -663,14 +677,10 @@ export function Timeline({
               position={mark.position}
               step={step}
               label={mark.label}
-              fontSize={height * 0.34}
+              fontSize={height * 0.3}
             />
           ))
         : null}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-foreground/25 to-transparent"
-      />
       {cables ? (
         <svg
           aria-hidden="true"
@@ -689,6 +699,12 @@ export function Timeline({
           ))}
         </svg>
       ) : null}
+      {/* The playhead: drawn over the cables so it reads as the line they hang
+          from, bright down to the focused card and faint below it. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-linear-to-b from-transparent via-foreground/80 via-20% to-foreground/10"
+      />
       {ruler && count > 0 ? (
         <Ruler
           scroll={scroll}
