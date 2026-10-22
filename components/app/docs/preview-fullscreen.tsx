@@ -122,7 +122,9 @@ export function PreviewExpandStage({
     root.style.overflow = "hidden";
     exitRef.current?.focus({ preventScroll: true });
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setExpanded(false);
+      // A demo that used Escape itself (closing its own tooltip or menu)
+      // keeps the preview open.
+      if (e.key === "Escape" && !e.defaultPrevented) setExpanded(false);
     };
     document.addEventListener("keydown", onKey);
     const toggle = toggleRef.current;

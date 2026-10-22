@@ -1674,6 +1674,35 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  "sankey-chart": {
+    overview:
+      "Sankey Chart is an animated React Sankey diagram for weighted flows between stages, built with Framer Motion and Tailwind CSS. You pass nodes and links between their ids; the chart places nodes in columns by how far they sit from a source, sizes each one to its value and arranges every column to keep bands short and uncrossed. Links draw in from left to right when the chart scrolls into view and spring to new positions when the data changes, and hovering or focusing a node or flow highlights everything it connects.",
+    useWhen: [
+      "A finance page shows how revenue breaks down into costs, expenses and profit.",
+      "A product dashboard follows users from signup sources through activation to plans.",
+      "An energy, budget or supply report shows where an amount comes from and where it goes.",
+    ],
+    accessibility:
+      "The chart is a labelled region, and each node is a native button named by its label, value and in and out totals, with one roving tab stop. Arrow Up and Arrow Down move within a column, Arrow Left and Arrow Right jump to the nearest node in the next column, Home and End reach the first and last node, and Escape closes the tooltip. A focused node's tooltip lists its largest incoming and outgoing flows, and a visually hidden table lists every flow with its exact value and share of its source. Every node keeps a pointer target at least 24px tall, and thin flows keep an 8px hover target. If a focused node leaves the data, focus moves to the remaining tab stop. With reduced motion enabled, flows appear in place and update without the draw-in or spring.",
+    faq: [
+      {
+        question: "How do I make a Sankey diagram in React?",
+        answer:
+          "Install the component and pass nodes, each with an id and label, and links with a source id, a target id and a positive value. Columns, node sizes and band positions are computed from the links.",
+      },
+      {
+        question: "What happens with loops or bad links?",
+        answer:
+          "Links to unknown nodes, zero or negative values, links from a node to itself and links that would close a loop are left out, so the chart always draws a left-to-right flow, and the first listed direction of a loop is kept. Repeated node ids keep the first node, and unnamed links between the same two nodes are added together into one band. In development, the chart logs what it left out.",
+      },
+      {
+        question: "Can I control what is highlighted?",
+        answer:
+          "Yes. Pass activeId with a node id, or a link id that defaults to source:target, and onActiveChange to follow hover and focus. Use defaultActiveId to start with something highlighted.",
+      },
+    ],
+  },
+
   "donut-chart": {
     overview:
       "Donut Chart is an animated React donut chart with round-capped segments separated by even gaps over a muted track. The ring sweeps in with Framer Motion when it scrolls into view, the focused segment pops outward while the others fade, and a center readout rolls between the total and the focused segment's value. A linked legend lists each segment with its share bar, and the center, legend and ring share one focus state.",
