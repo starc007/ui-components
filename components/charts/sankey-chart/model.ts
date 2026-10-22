@@ -61,53 +61,97 @@ const ITERATIONS = 6;
 
 export const linkId = (link: SankeyLink) => link.id ?? `${link.source}:${link.target}`;
 
+export type SankeyData = {
+  nodes: SankeyNode[];
+  links: SankeyLink[];
+  /** Links left out, by reason, for the development warning. */
+  dropped: { invalid: SankeyLink[]; cycle: SankeyLink[] };
+};
+
 /**
- * Drops links that are invalid or would close a cycle. A link closes a cycle
- * when its target is still on the depth-first path that reached its source, so
- * the first-listed direction of a loop is the one that survives.
+ * Cleans consumer data once per change, not per resize:
+ * - repeated node ids keep the first node;
+ * - links to unknown nodes, self links and non-positive or non-finite values
+ *   are dropped;
+ * - unnamed links between the same pair are summed into one band, while a
+ *   repeated explicit id keeps the first link;
+ * - a link closing a cycle is dropped: one whose target is still on the
+ *   depth-first path that reached its source, so the first-listed direction
+ *   of a loop survives.
  */
-function acyclicLinks(nodes: readonly SankeyNode[], links: readonly SankeyLink[]) {
-  const known = new Set(nodes.map((node) => node.id));
-  const seen = new Set<string>();
-  const valid = links.filter((link) => {
-    const id = linkId(link);
+export function cleanSankey(
+  nodes: readonly SankeyNode[],
+  links: readonly SankeyLink[],
+): SankeyData {
+  const byId = new Map<string, SankeyNode>();
+  for (const node of nodes) if (!byId.has(node.id)) byId.set(node.id, node);
+  const unique = [...byId.values()];
+
+  const invalid: SankeyLink[] = [];
+  const merged = new Map<string, SankeyLink>();
+  for (const link of links) {
     const ok =
-      known.has(link.source) &&
-      known.has(link.target) &&
+      byId.has(link.source) &&
+      byId.has(link.target) &&
       link.source !== link.target &&
       Number.isFinite(link.value) &&
-      link.value > 0 &&
-      !seen.has(id);
-    seen.add(id);
-    return ok;
-  });
+      link.value > 0;
+    if (!ok) {
+      invalid.push(link);
+      continue;
+    }
+    const id = linkId(link);
+    const existing = merged.get(id);
+    if (!existing) merged.set(id, { ...link, id });
+    else if (link.id === undefined && existing.source === link.source && existing.target === link.target)
+      existing.value += link.value;
+    else invalid.push(link);
+  }
+  const valid = [...merged.values()];
+
   const outgoing = new Map<string, SankeyLink[]>();
   for (const link of valid) {
     outgoing.set(link.source, [...(outgoing.get(link.source) ?? []), link]);
   }
   const state = new Map<string, "open" | "done">();
   const back = new Set<SankeyLink>();
-  const visit = (id: string) => {
-    state.set(id, "open");
-    for (const link of outgoing.get(id) ?? []) {
-      const next = state.get(link.target);
-      if (next === "open") back.add(link);
-      else if (next === undefined) visit(link.target);
+  // Iterative depth-first search, so a very long chain cannot overflow the stack.
+  for (const root of unique) {
+    if (state.has(root.id)) continue;
+    const stack: { id: string; next: number }[] = [{ id: root.id, next: 0 }];
+    state.set(root.id, "open");
+    while (stack.length) {
+      const frame = stack[stack.length - 1];
+      const edges = outgoing.get(frame.id) ?? [];
+      if (frame.next >= edges.length) {
+        state.set(frame.id, "done");
+        stack.pop();
+        continue;
+      }
+      const link = edges[frame.next++];
+      const seen = state.get(link.target);
+      if (seen === "open") back.add(link);
+      else if (seen === undefined) {
+        state.set(link.target, "open");
+        stack.push({ id: link.target, next: 0 });
+      }
     }
-    state.set(id, "done");
+  }
+  return {
+    nodes: unique,
+    links: valid.filter((link) => !back.has(link)),
+    dropped: { invalid, cycle: valid.filter((link) => back.has(link)) },
   };
-  for (const node of nodes) if (!state.has(node.id)) visit(node.id);
-  return valid.filter((link) => !back.has(link));
 }
 
 /**
  * Lays nodes out in columns by their longest path from a source, with sinks
  * pushed to the last column, then sizes them to their value and relaxes each
- * column toward its neighbours to shorten and uncross the links.
+ * column toward its neighbours to shorten the links. Each column keeps the
+ * order the nodes were given in, so order them to avoid crossings.
  */
 export function layoutSankey(
-  nodes: readonly SankeyNode[],
-  links: readonly SankeyLink[],
+  { nodes, links: kept }: SankeyData,
   {
     width,
     height,
@@ -122,7 +166,6 @@ export function layoutSankey(
     colors: readonly string[];
   },
 ) {
-  const kept = acyclicLinks(nodes, links);
   const inValue = new Map<string, number>();
   const outValue = new Map<string, number>();
   for (const link of kept) {
@@ -149,7 +192,7 @@ export function layoutSankey(
 
   const linked = nodes.filter((node) => inValue.has(node.id) || outValue.has(node.id));
   if (!linked.length || width <= 0 || height <= 0) {
-    return { nodes: [] as PlacedNode[], links: [] as PlacedLink[], columns: 0 };
+    return { nodes: [] as PlacedNode[], links: [] as PlacedLink[], columns: 0, step: 0 };
   }
   const maxDepth = Math.max(0, ...linked.map((node) => depth.get(node.id) ?? 0));
   const columns = maxDepth + 1;
@@ -211,8 +254,10 @@ export function layoutSankey(
     }
   }
 
+  // Columns keep the order nodes were given in, so the same data in a new
+  // period morphs in place instead of swapping nodes past each other.
+  // Relaxation only moves a node within the room its neighbours leave.
   const resolve = (column: PlacedNode[]) => {
-    column.sort((a, b) => a.y0 - b.y0);
     let y = 0;
     for (const node of column) {
       const dy = y - node.y0;
@@ -308,6 +353,6 @@ export function layoutSankey(
   });
 
   // Reading order for keyboard focus: column by column, top to bottom.
-  const ordered = byColumn.flatMap((column) => [...column].sort((a, b) => a.y0 - b.y0));
-  return { nodes: ordered, links: result, columns };
+  const ordered = byColumn.flat();
+  return { nodes: ordered, links: result, columns, step };
 }

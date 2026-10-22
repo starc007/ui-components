@@ -6,6 +6,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useId,
   useLayoutEffect,
   useMemo,
@@ -15,8 +16,8 @@ import {
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import {
+  cleanSankey,
   layoutSankey,
-  linkId,
   type PlacedLink,
   type PlacedNode,
   SANKEY_COLORS,
@@ -61,17 +62,38 @@ export function useSankeyModel({
   defaultActiveId = null,
   onActiveChange,
 }: SankeyChartProps) {
+  const data = useMemo(() => cleanSankey(nodes, links), [nodes, links]);
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    const { invalid, cycle } = data.dropped;
+    if (invalid.length || cycle.length)
+      console.warn(
+        `SankeyChart left out ${invalid.length} invalid and ${cycle.length} loop-closing link(s).`,
+        { invalid, cycle },
+      );
+  }, [data]);
+
   const [size, setSize] = useState({ width: 640, height: 320 });
+  // A resize re-lays the chart at once; only a data change springs. The
+  // render that commits a new size carries `resized`, so its transitions are
+  // instant; the follow-up render has the same targets and starts nothing.
+  const sizeKey = `${size.width}x${size.height}`;
+  const [settledSize, setSettledSize] = useState(sizeKey);
+  const resized = settledSize !== sizeKey;
+  useLayoutEffect(() => {
+    if (resized) setSettledSize(sizeKey);
+  }, [resized, sizeKey]);
+
   const layout = useMemo(
     () =>
-      layoutSankey(nodes, links, {
+      layoutSankey(data, {
         width: size.width,
         height: size.height,
         nodeWidth,
         nodePadding,
         colors,
       }),
-    [nodes, links, size, nodeWidth, nodePadding, colors],
+    [data, size, nodeWidth, nodePadding, colors],
   );
   const cursor = useRowCursor(layout.nodes, "");
 
@@ -105,31 +127,32 @@ export function useSankeyModel({
     else buttons.current.delete(id);
   }, []);
 
-  // Every valid flow, for the exact-data table, independent of the layout.
-  const known = new Map(nodes.map((n) => [n.id, n.label]));
-  const flows = layout.links.length
-    ? layout.links.map((l) => ({
-        id: l.id,
-        source: l.source.label,
-        target: l.target.label,
-        value: l.value,
-        share: l.share,
-      }))
-    : links
-        .filter(
-          (l) => known.has(l.source) && known.has(l.target) && Number.isFinite(l.value) && l.value > 0,
-        )
-        .map((l) => ({
-          id: linkId(l),
-          source: known.get(l.source) ?? l.source,
-          target: known.get(l.target) ?? l.target,
-          value: l.value,
-          share: 0,
-        }));
+  // Every drawable flow for the exact-data table, with shares from the
+  // cleaned data so the table does not wait on a measured size.
+  const totals = new Map<string, number>();
+  for (const l of data.links) {
+    totals.set(l.source, (totals.get(l.source) ?? 0) + l.value);
+  }
+  const incoming = new Map<string, number>();
+  for (const l of data.links) incoming.set(l.target, (incoming.get(l.target) ?? 0) + l.value);
+  const labels = new Map(data.nodes.map((n) => [n.id, n.label]));
+  const flows = data.links.map((l) => {
+    const sourceValue = Math.max(totals.get(l.source) ?? 0, incoming.get(l.source) ?? 0);
+    return {
+      id: l.id ?? `${l.source}:${l.target}`,
+      source: labels.get(l.source) ?? l.source,
+      target: labels.get(l.target) ?? l.target,
+      value: l.value,
+      share: sourceValue ? l.value / sourceValue : 0,
+    };
+  });
+  const empty = !data.links.length ? (nodes.length ? "No flows to show" : "No sankey data") : null;
 
   return {
     ...layout,
     flows,
+    empty,
+    resized,
     size,
     setSize,
     nodeWidth,

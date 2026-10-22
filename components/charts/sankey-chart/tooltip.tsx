@@ -7,6 +7,9 @@ import { Tooltip } from "@/components/motion/tooltip";
 import { cn } from "@/lib/utils";
 import { type SankeyActive, useSankeyChart } from "./context";
 
+// Flows listed per direction in a node's tooltip.
+const MAX_FLOWS = 4;
+
 export interface SankeyChartTooltipProps {
   className?: string;
   side?: "top" | "right" | "bottom" | "left";
@@ -27,14 +30,23 @@ function Ticker({ value, format }: { value: number; format: (value: number) => s
 }
 
 export function SankeyChartTooltip({ className, side = "top", children }: SankeyChartTooltipProps) {
-  const { active, nodes, size, plotRef, tooltipId, tooltipOpen, setTooltipOpen, formatValue } =
-    useSankeyChart();
+  const {
+    active,
+    nodes,
+    links,
+    size,
+    plotRef,
+    tooltipId,
+    tooltipOpen,
+    setTooltipOpen,
+    formatValue,
+  } = useSankeyChart();
   if (!nodes.length) return null;
-  // Anchors keyboard focus to the node's center or the flow's midpoint; the
-  // pointer takes over while it moves.
+  // Anchors keyboard focus to the top of the node, so the tooltip clears its
+  // label, or to the flow's midpoint; the pointer takes over while it moves.
   const point =
     active?.type === "node"
-      ? { x: (active.node.x0 + active.node.x1) / 2, y: (active.node.y0 + active.node.y1) / 2 }
+      ? { x: (active.node.x0 + active.node.x1) / 2, y: active.node.y0 }
       : active?.type === "link"
         ? { x: (active.link.x0 + active.link.x1) / 2, y: (active.link.y0 + active.link.y1) / 2 }
         : { x: size.width / 2, y: size.height / 2 };
@@ -75,6 +87,37 @@ export function SankeyChartTooltip({ className, side = "top", children }: Sankey
                         {formatValue(active.node.outValue)}
                       </span>
                     ) : null}
+                    {(["in", "out"] as const).map((direction) => {
+                      // A node's largest flows that way; the table has the rest.
+                      const own = links
+                        .filter((l) =>
+                          direction === "in" ? l.target === active.node : l.source === active.node,
+                        )
+                        .sort((a, b) => b.value - a.value);
+                      if (!own.length) return null;
+                      return (
+                        <span key={direction} className="flex flex-col gap-0.5">
+                          <span className="text-muted-foreground">
+                            {direction === "in" ? "From" : "To"}
+                          </span>
+                          {own.slice(0, MAX_FLOWS).map((l) => (
+                            <span key={l.id} className="flex items-center justify-between gap-3">
+                              <span className="truncate">
+                                {direction === "in" ? l.source.label : l.target.label}
+                              </span>
+                              <span className="shrink-0 font-mono text-muted-foreground tabular-nums">
+                                {formatValue(l.value)}
+                              </span>
+                            </span>
+                          ))}
+                          {own.length > MAX_FLOWS ? (
+                            <span className="text-muted-foreground">
+                              {own.length - MAX_FLOWS} more
+                            </span>
+                          ) : null}
+                        </span>
+                      );
+                    })}
                     {active.node.description ? (
                       <span className="text-muted-foreground">{active.node.description}</span>
                     ) : null}

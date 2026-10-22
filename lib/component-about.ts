@@ -1683,7 +1683,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "An energy, budget or supply report shows where an amount comes from and where it goes.",
     ],
     accessibility:
-      "The chart is a labelled region, and each node is a native button named by its label, value and in and out totals, with one roving tab stop. Arrow Up and Arrow Down move within a column, Arrow Left and Arrow Right jump to the nearest node in the next column, Home and End reach the first and last node, and Escape closes the tooltip. A visually hidden table lists every flow with its exact value and share of its source. With reduced motion enabled, flows appear in place and update without the draw-in or spring.",
+      "The chart is a labelled region, and each node is a native button named by its label, value and in and out totals, with one roving tab stop. Arrow Up and Arrow Down move within a column, Arrow Left and Arrow Right jump to the nearest node in the next column, Home and End reach the first and last node, and Escape closes the tooltip. A focused node's tooltip lists its largest incoming and outgoing flows, and a visually hidden table lists every flow with its exact value and share of its source. Every node keeps a pointer target at least 24px tall, and thin flows keep an 8px hover target. If a focused node leaves the data, focus moves to the remaining tab stop. With reduced motion enabled, flows appear in place and update without the draw-in or spring.",
     faq: [
       {
         question: "How do I make a Sankey diagram in React?",
@@ -1693,7 +1693,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       {
         question: "What happens with loops or bad links?",
         answer:
-          "Links to unknown nodes, zero or negative values, links from a node to itself and links that would close a loop are left out, so the chart always draws a left-to-right flow. The first listed direction of a loop is kept.",
+          "Links to unknown nodes, zero or negative values, links from a node to itself and links that would close a loop are left out, so the chart always draws a left-to-right flow, and the first listed direction of a loop is kept. Repeated node ids keep the first node, and unnamed links between the same two nodes are added together into one band. In development, the chart logs what it left out.",
       },
       {
         question: "Can I control what is highlighted?",

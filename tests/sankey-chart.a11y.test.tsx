@@ -21,7 +21,9 @@ const nodes: SankeyNode[] = [
 
 const links: SankeyLink[] = [
   { source: "ads", target: "signup", value: 30 },
-  { source: "search", target: "signup", value: 70 },
+  // Two unnamed links between one pair are summed into a single 70 band.
+  { source: "search", target: "signup", value: 50 },
+  { source: "search", target: "signup", value: 20 },
   { source: "signup", target: "paid", value: 40 },
   { source: "signup", target: "free", value: 60 },
   // Closes a loop, so it is left out of the chart and the table.
@@ -35,6 +37,8 @@ test("sankey chart names its nodes, lists exact flows and keeps one tab stop", a
   expect(getByRole("region", { name: "Signup flow" })).toBeTruthy();
   const table = getByRole("table", { name: "Signup flow data" });
   expect(table.textContent).toContain("Search to Signup");
+  expect(table.textContent).toContain("70");
+  expect(table.querySelectorAll("tbody tr")).toHaveLength(4);
   expect(table.textContent).toContain("60.0%");
   expect(table.textContent).not.toContain("Paid to Ads");
   const buttons = getAllByRole("button");
@@ -62,4 +66,39 @@ test("arrow keys move focus across columns and focus opens the described tooltip
   await waitFor(() => expect(getByRole("tooltip")).toBeTruthy());
   expect(signup.getAttribute("aria-describedby")).toBe(getByRole("tooltip").id);
   expect((await axe(container)).violations).toEqual([]);
+});
+
+test("data with nothing to draw names the chart and explains why", async () => {
+  const { container, getByRole, getByText, rerender } = render(
+    <SankeyChart
+      nodes={nodes}
+      links={[{ source: "ads", target: "ads", value: 5 }]}
+      label="Signup flow"
+    />,
+  );
+  expect(getByRole("region", { name: "Signup flow" })).toBeTruthy();
+  expect(getByText("No flows to show")).toBeTruthy();
+  expect((await axe(container)).violations).toEqual([]);
+  rerender(<SankeyChart nodes={[]} links={[]} label="Signup flow" />);
+  expect(getByText("No sankey data")).toBeTruthy();
+  expect((await axe(container)).violations).toEqual([]);
+});
+
+test("removing the focused node hands focus to the remaining tab stop", async () => {
+  const { getByRole, rerender } = render(
+    <SankeyChart nodes={nodes} links={links} label="Signup flow" />,
+  );
+  const paid = getByRole("button", { name: /^Paid/ });
+  await act(async () => paid.focus());
+  rerender(
+    <SankeyChart
+      nodes={nodes.filter((node) => node.id !== "paid")}
+      links={links.filter((link) => link.target !== "paid")}
+      label="Signup flow"
+    />,
+  );
+  const focused = document.activeElement as HTMLElement;
+  expect(focused.tagName).toBe("BUTTON");
+  expect(focused.tabIndex).toBe(0);
+  expect(focused.getAttribute("aria-label")).not.toMatch(/^Paid/);
 });
