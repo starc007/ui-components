@@ -1154,6 +1154,16 @@ export const registry: CategoryEntry[] = [
       "Animated React charts for activity, returns, price targets, and order books, built with Motion and Tailwind CSS as customizable copy-paste source.",
     components: [
       {
+        slug: "sankey-chart",
+        name: "Sankey Chart",
+        description: "Weighted flows between stages that draw in and morph with your data.",
+        file: "components/charts/sankey-chart.tsx",
+        usageFile: "components/previews/charts/sankey-chart.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-10-22",
+        keywords: ["sankey chart", "sankey diagram", "flow chart", "income statement chart", "alluvial chart"],
+      },
+      {
         slug: "treemap",
         name: "Treemap",
         description: "Proportional tiles that morph with your data, with value and share tooltips.",

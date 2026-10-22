@@ -12,6 +12,11 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
+        "text": "Sankey Chart shows weighted flows between stages: bands draw in from left to right, morph when the data changes, and light up with everything a node or flow connects.",
+        "component": "sankey-chart"
+      },
+      {
+        "type": "new",
         "text": "Timeline lays dated events along a draggable track: the centered event grows while its neighbours dim, with tick dividers between cards and year numerals drifting behind.",
         "component": "timeline"
       },

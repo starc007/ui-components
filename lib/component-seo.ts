@@ -287,6 +287,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
   },
 
   // Charts
+  "sankey-chart": {
+    title: "Animated React Sankey Chart Component",
+    description:
+      "React Sankey diagram with flows that draw in and morph on new data, linked node and flow highlights, tooltips and keyboard access. Free source, shadcn install.",
+  },
   treemap: {
     title: "Animated React Treemap Chart Component",
     description:
