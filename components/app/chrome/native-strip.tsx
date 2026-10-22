@@ -5,13 +5,18 @@ import { ArrowRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useId } from "react";
 import { ButtonLink } from "@/components/motion/button";
-import summary from "@/lib/native/summary.json";
 import styles from "./native-strip.module.css";
 
+// beUI Pro for mobile presale. The price is set by hand in the Pro repo; update
+// it here when the presale tier changes.
+const PRESALE_PRICE = "$99";
+const PRESALE_URL =
+  "https://pro.beui.dev/mobile?utm_source=beui&utm_medium=referral&utm_campaign=mobile_presale&utm_content=strip";
+
 /**
- * Site-wide announcement for beUI Native, above the header. Its height is
- * --announcement-h, which the page and sidebars add to the header offset.
- * The count includes variants, like the hero's.
+ * Site-wide announcement above the header: beUI Native is free, and points to
+ * the beUI Pro for mobile presale. Its height is --announcement-h, which the
+ * page and sidebars add to the header offset.
  */
 export function NativeStrip() {
   const waveGradientId = useId();
@@ -19,15 +24,15 @@ export function NativeStrip() {
 
   return (
     <aside
-      aria-label="beUI Native announcement"
-      className="relative isolate flex h-(--announcement-h) items-center justify-center gap-x-2 border-b border-border bg-background px-3 text-xs text-muted-foreground sm:gap-x-3"
+      aria-label="beUI Pro for mobile presale"
+      className="relative isolate flex h-(--announcement-h) items-center justify-center gap-x-2 border-b border-transparent bg-primary px-3 text-sm text-primary-foreground/80 sm:gap-x-3"
     >
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <svg
           aria-hidden="true"
           viewBox="0 0 1440 80"
           preserveAspectRatio="none"
-          className={`${styles.wave} opacity-35 dark:opacity-10`}
+          className={`${styles.wave} opacity-15`}
         >
           <defs>
             <linearGradient id={waveGradientId} gradientUnits="userSpaceOnUse" x1="0" x2="720" spreadMethod="repeat">
@@ -45,20 +50,27 @@ export function NativeStrip() {
           aria-hidden="true"
           viewBox="0 0 1440 80"
           preserveAspectRatio="none"
-          className={`${styles.wave} ${styles.waveBack} opacity-20 dark:opacity-5`}
+          className={`${styles.wave} ${styles.waveBack} opacity-10`}
         >
           <path fill={`url(#${waveGradientId})`} d="M0 30 Q180 70 360 30 T720 30 Q900 70 1080 30 T1440 30 V80 H0Z" />
         </svg>
       </div>
       <p className="truncate">
-        <span className="text-foreground">beUI Native</span> is here
+        <a
+          href="/react-native"
+          className="text-primary-foreground underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-foreground"
+        >
+          beUI Native
+        </a>{" "}
+        is free
         <span className="hidden sm:inline">
           {" — "}
-          <strong className="font-medium text-foreground">
-            {summary.variants} components
+          <strong className="font-medium text-primary-foreground">
+            Pro mobile blocks and screens
           </strong>{" "}
-          for React Native, built for touch
+          are in presale from {PRESALE_PRICE}
         </span>
+        <span className="sm:hidden"> · Pro presale</span>
       </p>
       <BorderBeam
         active={!reduceMotion}
@@ -71,12 +83,12 @@ export function NativeStrip() {
         theme="auto"
       >
         <ButtonLink
-          href="/react-native"
+          href={PRESALE_URL}
           variant="outline"
           size="sm"
-          className="h-7 gap-1.5 rounded-full bg-background px-2.5 text-xs text-foreground hover:bg-background/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="h-7 gap-1 rounded-full bg-background px-2.5 text-xs text-foreground hover:bg-background/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-foreground"
         >
-          Explore<span className="sr-only"> beUI Native</span>
+          Reserve<span className="sr-only"> beUI Pro for mobile</span>
           <ArrowRight aria-hidden className="size-3 shrink-0" />
         </ButtonLink>
       </BorderBeam>
