@@ -460,10 +460,10 @@ function MobileSidebar({
           const last = focusable[focusable.length - 1];
           if (event.shiftKey && document.activeElement === first) {
             event.preventDefault();
-            last.focus();
+            last?.focus();
           } else if (!event.shiftKey && document.activeElement === last) {
             event.preventDefault();
-            first.focus();
+            first?.focus();
           }
         }}
         className={cn(
