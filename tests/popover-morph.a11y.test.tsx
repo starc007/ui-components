@@ -1,7 +1,7 @@
 import { afterEach, expect, test } from "bun:test";
 import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { axe } from "jest-axe";
-import { StrictMode, useRef } from "react";
+import { StrictMode, useRef, useState } from "react";
 import { MorphPopover, MorphPopoverContent, MorphPopoverTrigger } from "@/components/motion/popover-morph";
 
 afterEach(cleanup);
@@ -24,6 +24,12 @@ test("MorphPopover labels its open dialog and restores keyboard focus in StrictM
   expect(document.activeElement).toBe(trigger);
   expect(trigger.getAttribute("aria-expanded")).toBe("false");
 });
+
+// Enter on a button fires its keydown, then a click whose detail is 0.
+function pressEnter(element: HTMLElement) {
+  fireEvent.keyDown(element, { key: "Enter" });
+  fireEvent.click(element, { detail: 0 });
+}
 
 function Switcher() {
   const selected = useRef<HTMLButtonElement>(null);
@@ -54,8 +60,7 @@ function renderOptions() {
 
 test("MorphPopover moves focus into the panel when opened by keyboard", async () => {
   const { getByRole, trigger } = renderOptions();
-  // Enter and Space activate a button with a click whose detail is 0.
-  fireEvent.click(trigger, { detail: 0 });
+  pressEnter(trigger);
   await waitFor(() => expect(document.activeElement).toBe(getByRole("button", { name: "Edit" })));
   fireEvent.keyDown(document.activeElement ?? window, { key: "Escape" });
   expect(document.activeElement).toBe(trigger);
@@ -72,7 +77,7 @@ test("MorphPopover focuses its initialFocus target when opened by keyboard", asy
   const { getByRole } = render(<StrictMode><Switcher /></StrictMode>);
   const trigger = getByRole("button", { name: "Project" });
   act(() => trigger.focus());
-  fireEvent.click(trigger, { detail: 0 });
+  pressEnter(trigger);
   await waitFor(() => expect(document.activeElement).toBe(getByRole("button", { name: "Beta" })));
 });
 
@@ -91,6 +96,31 @@ test("MorphPopover skips candidates that cannot take focus when opened by keyboa
   );
   const trigger = getByRole("button", { name: "Filters" });
   act(() => trigger.focus());
-  fireEvent.click(trigger, { detail: 0 });
+  pressEnter(trigger);
   await waitFor(() => expect(document.activeElement).toBe(getByRole("button", { name: "Apply" })));
+});
+
+test("MorphPopover does not carry a declined keyboard open over to a later open", async () => {
+  function Declined() {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <MorphPopover open={open}>
+          <MorphPopoverTrigger><button type="button">Share</button></MorphPopoverTrigger>
+          <MorphPopoverContent><button type="button">Copy link</button></MorphPopoverContent>
+        </MorphPopover>
+        <button type="button" onClick={() => setOpen(true)}>Open share</button>
+      </>
+    );
+  }
+  const { getByRole } = render(<StrictMode><Declined /></StrictMode>);
+  const trigger = getByRole("button", { name: "Share" });
+  act(() => trigger.focus());
+  pressEnter(trigger);
+  const opener = getByRole("button", { name: "Open share" });
+  act(() => opener.focus());
+  fireEvent.pointerDown(opener);
+  fireEvent.click(opener, { detail: 1 });
+  await waitFor(() => expect(getByRole("dialog", { name: "Share" })).toBeTruthy());
+  expect(document.activeElement).toBe(opener);
 });

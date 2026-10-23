@@ -29,6 +29,7 @@ import {
 import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
 import { EASE_OUT } from "@/lib/ease";
+import { FOCUSABLE_SELECTOR } from "@/lib/focusable";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -44,8 +45,10 @@ type MorphContextValue = {
   triggerRef: React.MutableRefObject<HTMLElement | null>;
   registerTrigger: (node: HTMLElement | null) => void;
   contentRef: React.MutableRefObject<HTMLDivElement | null>;
-  /** Set when the trigger was activated by keyboard rather than a pointer. */
-  focusOnOpenRef: React.MutableRefObject<boolean>;
+  /** Arms or disarms moving focus into the panel as it next appears. */
+  armFocusOnOpen: (armed: boolean) => void;
+  /** Reads and disarms the flag set by `armFocusOnOpen`. */
+  takeFocusOnOpen: () => boolean;
 };
 
 const MorphContext = createContext<MorphContextValue | null>(null);
@@ -83,7 +86,6 @@ export function MorphPopover({
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
   const [trigger, setTrigger] = useState<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const focusOnOpenRef = useRef(false);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const controlled = controlledOpen !== undefined;
   const open = controlled ? controlledOpen : internalOpen;
@@ -96,6 +98,33 @@ export function MorphPopover({
     [controlled, onOpenChange],
   );
   const toggle = useCallback(() => setOpen(!open), [setOpen, open]);
+
+  // A keyboard open arms focus for the panel to take as it appears. Any later
+  // key or pointer press disarms it, so an open the parent declined cannot
+  // leave it armed for a later open that nobody asked to focus.
+  const focusOnOpenRef = useRef(false);
+  const disarmRef = useRef<AbortController | null>(null);
+  const armFocusOnOpen = useCallback((armed: boolean) => {
+    disarmRef.current?.abort();
+    disarmRef.current = null;
+    focusOnOpenRef.current = armed;
+    if (!armed) return;
+    const controller = new AbortController();
+    const disarm = () => {
+      focusOnOpenRef.current = false;
+      controller.abort();
+    };
+    const options = { capture: true, signal: controller.signal };
+    document.addEventListener("keydown", disarm, options);
+    document.addEventListener("pointerdown", disarm, options);
+    disarmRef.current = controller;
+  }, []);
+  const takeFocusOnOpen = useCallback(() => {
+    const armed = focusOnOpenRef.current;
+    armFocusOnOpen(false);
+    return armed;
+  }, [armFocusOnOpen]);
+  useEffect(() => () => disarmRef.current?.abort(), []);
 
   // A trigger normally registers itself through MorphPopoverTrigger. It can't
   // when something else already clones the element — a Tooltip wrapping the
@@ -156,9 +185,10 @@ export function MorphPopover({
       triggerRef: anchorRef,
       registerTrigger: setTrigger,
       contentRef,
-      focusOnOpenRef,
+      armFocusOnOpen,
+      takeFocusOnOpen,
     }),
-    [open, setOpen, toggle, baseId, anchorRef],
+    [open, setOpen, toggle, baseId, anchorRef, armFocusOnOpen, takeFocusOnOpen],
   );
 
   return (
@@ -191,6 +221,15 @@ export function MorphPopoverTrigger({ children }: MorphPopoverTriggerProps) {
   const childOnClick = child?.props?.onClick as
     | ((e: unknown) => void)
     | undefined;
+  const childOnKeyDown = child?.props?.onKeyDown as
+    | ((e: unknown) => void)
+    | undefined;
+  const childOnPointerDown = child?.props?.onPointerDown as
+    | ((e: unknown) => void)
+    | undefined;
+  // Set by an Enter or Space keydown on the trigger, cleared by a pointer
+  // press, read by the click that follows.
+  const keyboardRef = useRef(false);
   const childRef = (child?.props as { ref?: Ref<HTMLElement> } | undefined)
     ?.ref;
   // Register once per actual ref change, not once per open-state render.
@@ -203,12 +242,26 @@ export function MorphPopoverTrigger({ children }: MorphPopoverTriggerProps) {
   return cloneElement(child, {
     id: ctx.triggerId,
     ref: mergedRef,
+    onKeyDown: (e: unknown) => {
+      childOnKeyDown?.(e);
+      const key = (e as { key?: string } | undefined)?.key;
+      keyboardRef.current = key === "Enter" || key === " ";
+    },
+    onPointerDown: (e: unknown) => {
+      childOnPointerDown?.(e);
+      keyboardRef.current = false;
+    },
     onClick: (e: unknown) => {
       childOnClick?.(e);
-      // Enter and Space fire a click with `detail` 0; a pointer click counts
-      // at least 1. Only a keyboard open moves focus into the panel.
-      ctx.focusOnOpenRef.current =
-        !ctx.open && (e as { detail?: number } | undefined)?.detail === 0;
+      // Enter and Space reach here as a click with `detail` 0 after their
+      // keydown on this element. A pointer click counts at least 1, and a
+      // scripted click() has no keydown before it. Only a keyboard open
+      // moves focus into the panel.
+      const keyboard =
+        keyboardRef.current &&
+        (e as { detail?: number } | undefined)?.detail === 0;
+      keyboardRef.current = false;
+      ctx.armFocusOnOpen(!ctx.open && keyboard);
       ctx.toggle();
     },
     "aria-haspopup": "dialog",
@@ -230,15 +283,6 @@ const MORPH_EXIT = { duration: 0.2, ease: EASE_OUT } as const;
 function clipAt(side: Side, align: Align, radius: number, inset: number) {
   return `inset(${side === "top" ? inset : 0}% ${align === "start" ? inset : 0}% ${side === "bottom" ? inset : 0}% ${align === "end" ? inset : 0}% round ${radius}px)`;
 }
-
-const FOCUSABLE_SELECTOR = [
-  "a[href]",
-  "button:not([disabled])",
-  "input:not([disabled]):not([type='hidden'])",
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  "[tabindex]:not([tabindex='-1'])",
-].join(",");
 
 export interface MorphPopoverContentProps {
   children: ReactNode;
@@ -410,13 +454,19 @@ function MorphPopoverSurface({
   // that commit (a reduced-motion reset that gives every element a short
   // transition-duration does), so while focus rests on the panel or has not
   // moved, each such transition that ends tries the candidates again, until
-  // the user presses a key or pointer.
-  const { contentRef, focusOnOpenRef } = ctx;
-  const callerFocuses = onOpenAutoFocus !== undefined;
+  // the user presses a key or pointer. The effect runs once per open, so it
+  // reads the caller's props through refs: a new ref or callback passed
+  // mid-open must not tear down a pending retry.
+  const initialFocusRef = useRef(initialFocus);
+  const callerFocusesRef = useRef(onOpenAutoFocus !== undefined);
   useLayoutEffect(() => {
-    if (!ready || !isPresent || !focusOnOpenRef.current) return;
-    focusOnOpenRef.current = false;
-    if (callerFocuses) return;
+    initialFocusRef.current = initialFocus;
+    callerFocusesRef.current = onOpenAutoFocus !== undefined;
+  });
+  const { contentRef, takeFocusOnOpen } = ctx;
+  useLayoutEffect(() => {
+    if (!ready || !isPresent) return;
+    if (!takeFocusOnOpen() || callerFocusesRef.current) return;
     const panel = contentRef.current;
     const wrapper = panel?.parentElement;
     if (!panel || !wrapper) return;
@@ -428,12 +478,17 @@ function MorphPopoverSurface({
     // Keep the first candidate that takes focus, else hold it on the panel.
     const focusFirst = () => {
       const candidates = [
-        initialFocus?.current,
+        initialFocusRef.current?.current,
         ...panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
       ];
       for (const candidate of candidates) {
-        candidate?.focus({ preventScroll: true });
-        if (!unmoved()) return true;
+        if (!candidate) continue;
+        candidate.focus({ preventScroll: true });
+        if (unmoved()) continue;
+        // preventScroll keeps the page still, but it also stops the panel's
+        // own scroll area from bringing a row below the fold into view.
+        candidate.scrollIntoView?.({ block: "nearest" });
+        return true;
       }
       panel.focus({ preventScroll: true });
       return false;
@@ -452,14 +507,7 @@ function MorphPopoverSurface({
     document.addEventListener("keydown", stop, true);
     document.addEventListener("pointerdown", stop, true);
     return stop;
-  }, [
-    ready,
-    isPresent,
-    callerFocuses,
-    initialFocus,
-    contentRef,
-    focusOnOpenRef,
-  ]);
+  }, [ready, isPresent, contentRef, takeFocusOnOpen]);
 
   return (
     <motion.div
@@ -493,7 +541,9 @@ function MorphPopoverSurface({
           overflowY: "auto",
         }}
         className={cn(
-          "overflow-hidden border border-border bg-background outline-none",
+          // The panel holds focus when nothing inside it can. An inset ring
+          // stays inside the clip that would cut off an outline.
+          "overflow-hidden border border-border bg-background outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
           className,
         )}
       >

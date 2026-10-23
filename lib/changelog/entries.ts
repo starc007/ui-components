@@ -23,6 +23,11 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         "type": "new",
         "text": "This changelog lists each week's new components, improvements and fixes, with an RSS feed to follow along."
+      },
+      {
+        "type": "fixed",
+        "text": "Morph Popover moves focus into the panel when you open it with Enter or Space, so keyboard users land on its first control instead of tabbing through the page. A new initialFocus prop picks a different target.",
+        "component": "popover"
       }
     ]
   },
