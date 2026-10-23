@@ -119,8 +119,8 @@ test("MorphPopover does not carry a declined keyboard open over to a later open"
   pressEnter(trigger);
   const opener = getByRole("button", { name: "Open share" });
   act(() => opener.focus());
-  fireEvent.pointerDown(opener);
-  fireEvent.click(opener, { detail: 1 });
+  // The later open comes from another control, through the keyboard too.
+  pressEnter(opener);
   await waitFor(() => expect(getByRole("dialog", { name: "Share" })).toBeTruthy());
   expect(document.activeElement).toBe(opener);
 });
