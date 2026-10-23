@@ -1,9 +1,8 @@
 "use client";
 
 import { type RefObject, useEffect, useLayoutEffect, useRef } from "react";
+import { FOCUSABLE_SELECTOR } from "@/lib/focusable";
 
-const FOCUSABLE =
-  'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
 const inertOwners = new Map<
   HTMLElement,
   { count: number; previous: boolean }
@@ -47,7 +46,7 @@ export function useModalScope(
     }
     const focusables = () =>
       Array.from(
-        panel.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [],
+        panel.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR) ?? [],
       ).filter(
         (element) => element.tabIndex >= 0 && !element.closest("[inert]"),
       );
