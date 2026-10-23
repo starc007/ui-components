@@ -6,6 +6,7 @@ import { ComponentCard } from "@/components/app/docs/component-card";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { isComponentNew } from "@/lib/component-status";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
+import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 
 const categoryContent = {
   motion: {
@@ -37,6 +38,7 @@ const categoryContent = {
     allLabel: "All agent components",
   },
 } as const;
+
 
 const AGENT_CATEGORY_GROUPS = [
   {
@@ -164,6 +166,7 @@ export default async function CategoryPage({
   const components = cat.components.filter(
     (comp) => !isComponentNew(comp, now),
   );
+
   const agentGroups =
     cat.slug === "agents"
       ? AGENT_CATEGORY_GROUPS.map((group) => ({
@@ -198,80 +201,85 @@ export default async function CategoryPage({
       <p className="mt-2 max-w-2xl text-muted-foreground">
         {content.description}
       </p>
+      <div className="mt-6 xl:hidden">
+        <PlatformSwitch />
+      </div>
 
-      {agentGroups.length ? (
-        <div className="mt-12 space-y-14">
-          {agentGroups.map((group) => (
-            <section key={group.id} id={group.id} className="scroll-mt-24">
-              <div className="max-w-2xl">
-                <h2 className="text-xl font-medium tracking-tight text-foreground">
-                  {group.title}
+      <div>
+        {agentGroups.length ? (
+          <div className="mt-12 space-y-14">
+            {agentGroups.map((group) => (
+              <section key={group.id} id={group.id} className="scroll-mt-24">
+                <div className="max-w-2xl">
+                  <h2 className="text-xl font-medium tracking-tight text-foreground">
+                    {group.title}
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {group.description}
+                  </p>
+                </div>
+                <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {group.components.map((comp) => (
+                    <ComponentCard
+                      key={comp.slug}
+                      categorySlug={cat.slug}
+                      slug={comp.slug}
+                      name={comp.name}
+                      description={comp.description}
+                      badge={comp.badge}
+                      launchedAt={comp.launchedAt}
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <>
+            {newComponents.length ? (
+              <section className="mt-10">
+                <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
+                  New
                 </h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  {group.description}
-                </p>
-              </div>
-              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {group.components.map((comp) => (
-                  <ComponentCard
-                    key={comp.slug}
-                    categorySlug={cat.slug}
-                    slug={comp.slug}
-                    name={comp.name}
-                    description={comp.description}
-                    badge={comp.badge}
-                    launchedAt={comp.launchedAt}
-                  />
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      ) : (
-        <>
-          {newComponents.length ? (
-            <section className="mt-10">
-              <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
-                New
-              </h2>
-              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {newComponents.map((comp) => (
-                  <ComponentCard
-                    key={comp.slug}
-                    categorySlug={cat.slug}
-                    slug={comp.slug}
-                    name={comp.name}
-                    description={comp.description}
-                    badge={comp.badge}
-                    launchedAt={comp.launchedAt}
-                  />
-                ))}
-              </div>
-            </section>
-          ) : null}
+                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {newComponents.map((comp) => (
+                    <ComponentCard
+                      key={comp.slug}
+                      categorySlug={cat.slug}
+                      slug={comp.slug}
+                      name={comp.name}
+                      description={comp.description}
+                      badge={comp.badge}
+                      launchedAt={comp.launchedAt}
+                    />
+                  ))}
+                </div>
+              </section>
+            ) : null}
 
-          {components.length ? (
-            <section className="mt-10">
-              <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
-                {content.allLabel}
-              </h2>
-              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {components.map((comp) => (
-                  <ComponentCard
-                    key={comp.slug}
-                    categorySlug={cat.slug}
-                    slug={comp.slug}
-                    name={comp.name}
-                    description={comp.description}
-                    badge={comp.badge}
-                    launchedAt={comp.launchedAt}
-                  />
-                ))}
-              </div>
-            </section>
-          ) : null}
-        </>
-      )}
+            {components.length ? (
+              <section className="mt-10">
+                <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
+                  {content.allLabel}
+                </h2>
+                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {components.map((comp) => (
+                    <ComponentCard
+                      key={comp.slug}
+                      categorySlug={cat.slug}
+                      slug={comp.slug}
+                      name={comp.name}
+                      description={comp.description}
+                      badge={comp.badge}
+                      launchedAt={comp.launchedAt}
+                    />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+          </>
+        )}
+      </div>
     </div>
   );
 }

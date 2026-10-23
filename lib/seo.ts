@@ -1,6 +1,8 @@
 import { categoryPath, componentPath } from "@/lib/component-paths";
 import type { JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { componentDates } from "@/lib/component-dates";
+import type { ComponentFaq } from "@/lib/component-about";
+import { componentSeo } from "@/lib/component-seo";
 import {
   type CategoryEntry,
   type ComponentEntry,
@@ -11,10 +13,10 @@ import { SITE_URL } from "@/lib/site";
 
 export const SITE = SITE_URL;
 export const SITE_NAME = "beUI";
-export const SITE_TITLE = "Animated Components for React and Next.js";
-export const SITE_TAGLINE = "Animated components for React and Next.js";
+export const SITE_TITLE = "Animated Components for React, Next.js and React Native";
+export const SITE_TAGLINE = "Animated components for React, Next.js and React Native";
 export const SITE_DESCRIPTION =
-  "Free, open-source animated components for React and Next.js, built with Motion and Tailwind CSS. Copy the source or install with the shadcn CLI.";
+  "Free, open-source animated components for React, Next.js and React Native, built with Motion, Tailwind CSS and Reanimated. Copy the source or install via CLI.";
 export const AUTHOR = "Saurabh";
 
 const abs = (path: string) => (path.startsWith("http") ? path : `${SITE}${path}`);
@@ -71,9 +73,19 @@ export function componentKeywords(
  * description; only the SERP/social snippet carries the tail.
  */
 export function componentMetaDescription(comp: ComponentEntry): string {
-  if (comp.guide?.seo.description) return comp.guide.seo.description;
+  const seo = componentSeo[comp.slug]?.description ?? comp.guide?.seo.description;
+  if (seo) return seo;
 
   return `${comp.description} Free, open-source React and Next.js motion component. Copy-paste the source or install with shadcn.`;
+}
+
+/** Search title for a component page, before the site-wide " · beUI" suffix. */
+export function componentSeoTitle(comp: ComponentEntry): string {
+  return (
+    componentSeo[comp.slug]?.title ??
+    comp.guide?.seo.title ??
+    `Animated ${comp.name} for React`
+  );
 }
 
 /** Trim text to `limit` chars on a word boundary — for fixed-size surfaces
@@ -195,9 +207,9 @@ export function componentJsonLd(
     "@context": "https://schema.org",
     "@type": "TechArticle",
     "@id": `${url}#article`,
-    headline: comp.guide?.seo.title ?? `${comp.name} · React motion component`,
+    headline: componentSeoTitle(comp),
     name: comp.name,
-    description: comp.guide?.seo.description ?? comp.description,
+    description: componentMetaDescription(comp),
     url,
     image: abs(`/api/og?component=${comp.slug}`),
     inLanguage: "en",
@@ -221,6 +233,20 @@ export function componentJsonLd(
       runtimePlatform: "React",
       codeSampleType: "full (compile ready)",
     },
+  };
+}
+
+/** FAQPage for the questions in a component's About section. */
+export function faqJsonLd(path: string, faq: ComponentFaq[]): JsonLdSchema {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${abs(path)}#faq`,
+    mainEntity: faq.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
   };
 }
 
@@ -337,6 +363,8 @@ export function relatedComponents(
   categorySlug: string,
   slug: string,
   limit = 4,
+  // Narrows the candidates, such as to components with a React Native version.
+  include: (slug: string) => boolean = () => true,
 ): RelatedComponent[] {
   const cat = registry.find((c) => c.slug === categorySlug);
   const components = cat?.components ?? [];
@@ -352,14 +380,14 @@ export function relatedComponents(
           ? index
           : (index - currentIndex + siblingCount) % siblingCount,
     }))
-    .filter(({ component }) => component.slug !== slug)
+    .filter(({ component }) => component.slug !== slug && include(component.slug))
     .sort((a, b) => b.score - a.score || a.distance - b.distance)
     .map(({ component }) => toRelated(categorySlug, component));
 
   if (siblings.length >= limit) return siblings.slice(0, limit);
 
   const rest = allComponents()
-    .filter((c) => c.category.slug !== categorySlug)
+    .filter((c) => c.category.slug !== categorySlug && include(c.slug))
     .map((c) => toRelated(c.category.slug, c));
 
   return [...siblings, ...rest].slice(0, limit);

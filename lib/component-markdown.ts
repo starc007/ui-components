@@ -1,9 +1,12 @@
+import { componentAbout } from "@/lib/component-about";
 import { componentDates } from "@/lib/component-dates";
 import { getComponentProps } from "@/lib/props-extractor";
 import { findCategory, findComponent, type ComponentExample } from "@/lib/registry";
 import { buildEntry } from "@/lib/registry-server";
 import { pageUrlFor } from "@/lib/signature";
 import { readOptionalSourceFile } from "@/lib/source-files";
+import { native } from "@/lib/native";
+import { buildNativeEntry } from "@/lib/native-registry";
 
 function escapeTableCell(value: string) {
   return value.replace(/\|/g, "\\|").replace(/\s+/g, " ").trim();
@@ -132,6 +135,45 @@ export async function buildComponentMarkdown(
     : [component.file];
   const apiLines = apiFiles.flatMap((file) => apiReference(file));
   if (apiLines.length) lines.push("## API Reference", "", ...apiLines);
+
+  const about = componentAbout[component.slug];
+  if (about) {
+    lines.push(
+      `## About ${component.name}`,
+      "",
+      about.overview,
+      "",
+      "### When to use it",
+      "",
+      ...about.useWhen.map((item) => `- ${item}`),
+      "",
+      "### Accessibility",
+      "",
+      about.accessibility,
+      "",
+      "### FAQ",
+      "",
+      ...about.faq.flatMap((item) => [`**${item.question}**`, "", item.answer, ""]),
+    );
+  }
+
+  const nativeEntry = buildNativeEntry(component.slug);
+  if (nativeEntry) {
+    lines.push(
+      "## React Native",
+      "",
+      `A React Native version ships in ${native.name}. The detail JSON has every file to copy.`,
+      "",
+      "```bash",
+      ...nativeEntry.install,
+      "```",
+      "",
+      `- Native detail: ${nativeEntry.detail_url}`,
+      `- Try it in Expo Go: ${nativeEntry.expo_go_url}`,
+      `- GitHub: ${nativeEntry.source_url}`,
+      "",
+    );
+  }
 
   lines.push(
     "## Source",

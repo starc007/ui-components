@@ -13,6 +13,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/aspect-ratio": dynamic(() =>
     import("./motion/aspect-ratio.preview").then((m) => m.AspectRatioPreview),
   ),
+  "motion/timeline": dynamic(() =>
+    import("./motion/timeline.preview").then((m) => m.TimelinePreview),
+  ),
   "motion/arc-picker": dynamic(() =>
     import("./motion/arc-picker.preview").then((m) => m.ArcPickerPreview),
   ),
@@ -327,6 +330,9 @@ export const previews: Record<string, ComponentType> = {
   ),
   "charts/candlestick-chart": dynamic(() =>
     import("./charts/candlestick-chart.preview").then((m) => m.CandlestickChartPreview),
+  ),
+  "charts/sankey-chart": dynamic(() =>
+    import("./charts/sankey-chart.preview").then((m) => m.SankeyChartPreview),
   ),
   "charts/donut-chart": dynamic(() =>
     import("./charts/donut-chart.preview").then((m) => m.DonutChartPreview),

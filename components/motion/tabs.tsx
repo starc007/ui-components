@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cancelFrame, frame, motion, MotionConfig, useReducedMotion, type Transition } from "motion/react";
+import { cancelFrame, frame, motion, MotionConfig, useReducedMotion, useSpring, type MotionValue, type Transition } from "motion/react";
 import {
   createContext,
   useCallback,
@@ -13,19 +13,44 @@ import {
   useState,
   type ButtonHTMLAttributes,
   type HTMLAttributes,
+  type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 type Variant = "pill" | "underline" | "segment";
+/** Whether trigger icons show on every tab or only on the selected one. */
+type IconDisplay = "always" | "selected";
 
 type Ctx = {
   value: string;
   setValue: (v: string) => void;
   layoutId: string;
   variant: Variant;
+  icons: IconDisplay;
+  /** The pill's box in the list, for tabs whose width changes as they're selected. */
+  track: Track;
+  /** Whether the tracked pill has been measured; until then CSS places it. */
+  placed: boolean;
+  setPlaced: (placed: boolean) => void;
+  /**
+   * The one tab Tab reaches: the selected tab, or the first enabled one when
+   * nothing enabled is selected. `null` until the triggers have registered,
+   * when every enabled tab stays reachable.
+   */
+  tabStop: string | null;
+  registerTab: (value: string, disabled: boolean) => void;
+  unregisterTab: (value: string) => void;
+  /** Values with a mounted panel, so triggers only point at panels that exist. */
+  panels: ReadonlySet<string>;
+  registerPanel: (value: string) => void;
+  unregisterPanel: (value: string) => void;
+  tabId: (value: string) => string;
+  panelId: (value: string) => string;
 };
+
+type Track = Record<"x" | "y" | "width" | "height", MotionValue<number>>;
 
 const TabsCtx = createContext<Ctx | null>(null);
 
@@ -50,6 +75,7 @@ export function Tabs({
   value,
   onValueChange,
   variant = "pill",
+  icons = "always",
   children,
   className,
 }: {
@@ -57,6 +83,11 @@ export function Tabs({
   value?: string;
   onValueChange?: (v: string) => void;
   variant?: Variant;
+  /**
+   * With "selected", a trigger's icon springs open only on the selected tab
+   * and folds away when another is chosen. Defaults to "always".
+   */
+  icons?: IconDisplay;
   children: ReactNode;
   className?: string;
 }) {
@@ -72,9 +103,66 @@ export function Tabs({
     },
     [controlled, onValueChange],
   );
+  const x = useSpring(0, transition);
+  const y = useSpring(0, transition);
+  const width = useSpring(0, transition);
+  const height = useSpring(0, transition);
+  const track = useMemo(() => ({ x, y, width, height }), [x, y, width, height]);
+  const [placed, setPlaced] = useState(false);
+  const [tabs, setTabs] = useState<Map<string, boolean>>(new Map());
+  const registerTab = useCallback((tab: string, disabled: boolean) => {
+    setTabs((map) => (map.get(tab) === disabled ? map : new Map(map).set(tab, disabled)));
+  }, []);
+  const unregisterTab = useCallback((tab: string) => {
+    setTabs((map) => {
+      if (!map.has(tab)) return map;
+      const next = new Map(map);
+      next.delete(tab);
+      return next;
+    });
+  }, []);
+  const [panels, setPanels] = useState<ReadonlySet<string>>(new Set());
+  const registerPanel = useCallback((panel: string) => {
+    setPanels((set) => (set.has(panel) ? set : new Set(set).add(panel)));
+  }, []);
+  const unregisterPanel = useCallback((panel: string) => {
+    setPanels((set) => {
+      if (!set.has(panel)) return set;
+      const next = new Set(set);
+      next.delete(panel);
+      return next;
+    });
+  }, []);
+  // Resolved during render so the list has exactly one tab stop in the same
+  // commit that changes the selection or the tabs.
+  let tabStop: string | null = null;
+  if (tabs.size > 0) {
+    const enabled = Array.from(tabs).filter(([, disabled]) => !disabled);
+    tabStop = enabled.some(([tab]) => tab === current) ? current : (enabled[0]?.[0] ?? "");
+  }
+  const baseId = useId();
+  const tabId = useCallback((tab: string) => `${baseId}-tab-${tab.replace(/[^\w-]/g, "_")}`, [baseId]);
+  const panelId = useCallback((tab: string) => `${baseId}-panel-${tab.replace(/[^\w-]/g, "_")}`, [baseId]);
   const contextValue = useMemo(
-    () => ({ value: current, setValue, layoutId, variant }),
-    [current, layoutId, setValue, variant],
+    () => ({
+      value: current,
+      setValue,
+      layoutId,
+      variant,
+      icons,
+      track,
+      placed,
+      setPlaced,
+      tabStop,
+      registerTab,
+      unregisterTab,
+      panels,
+      registerPanel,
+      unregisterPanel,
+      tabId,
+      panelId,
+    }),
+    [current, icons, layoutId, setValue, variant, track, placed, tabStop, registerTab, unregisterTab, panels, registerPanel, unregisterPanel, tabId, panelId],
   );
   return (
     <MotionConfig transition={reduce ? { duration: 0 } : transition}>
@@ -101,12 +189,14 @@ export function TabsList({
   children,
   className,
   wrapperClassName,
+  onKeyDown,
   ...props
 }: {
   wrapperClassName?: string;
 } & HTMLAttributes<HTMLDivElement>) {
-  const { variant, value } = useTabs();
+  const { variant, value, icons, track, placed, setPlaced } = useTabs();
   const reduce = useReducedMotion();
+  const tracked = icons === "selected" && variant !== "underline";
   const rootRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -174,10 +264,60 @@ export function TabsList({
   }, [children, value, edges.overflow, measure, reveal]);
 
   useLayoutEffect(() => {
+    // With icons="selected" the chosen tab grows as its icon opens and the
+    // last one shrinks. A layout animation measures the tabs mid-change, so
+    // the pill would squeeze and catch up. Instead the pill springs straight
+    // to where the selected tab will settle, with every icon open or closed.
+    if (!tracked) return;
+    const list = listRef.current;
+    if (!list) return;
+    void children;
+    const place = () => {
+      const tabs = Array.from(list.querySelectorAll<HTMLElement>('[role="tab"]'));
+      const target = tabs.find((tab) => tab.dataset.tabsValue === value)?.parentElement;
+      if (!target) return;
+      // Measure the settled layout: open the selected icon and fold the rest
+      // for one synchronous read, then hand the styles back to Motion before
+      // anything paints. Exact in any layout, from flex rows to grids.
+      const icons = Array.from(list.querySelectorAll<HTMLElement>('[role="tab"] > [data-tabs-icon]'));
+      const saved = icons.map((icon) => [icon.style.width, icon.style.marginRight]);
+      for (const icon of icons) {
+        const open = icon.parentElement?.parentElement === target;
+        icon.style.width = open ? "auto" : "0px";
+        icon.style.marginRight = open ? `${ICON_GAP}px` : "0px";
+      }
+      const box = {
+        x: target.offsetLeft,
+        y: target.offsetTop,
+        // Fractional: a rounded width leaves the pill a hair off its tab.
+        width: target.getBoundingClientRect().width,
+        height: target.offsetHeight,
+      };
+      icons.forEach((icon, index) => {
+        [icon.style.width, icon.style.marginRight] = saved[index];
+      });
+      // A first measurement, or one after the list was hidden, lands in place.
+      const instant = reduce || track.width.get() === 0;
+      for (const key of ["x", "y", "width", "height"] as const) {
+        if (instant) track[key].jump(box[key]);
+        else track[key].set(box[key]);
+      }
+      // Hand over from the CSS pill once there's a real box, before paint.
+      if (box.width > 0) setPlaced(true);
+    };
+    place();
+    const observer = new ResizeObserver(place);
+    for (const tab of list.querySelectorAll('[role="tab"]')) if (tab.parentElement) observer.observe(tab.parentElement);
+    return () => observer.disconnect();
+  }, [tracked, value, children, reduce, track, setPlaced]);
+
+  useLayoutEffect(() => {
     if (variant === "underline") return;
     const list = listRef.current;
     if (!list) return;
     void children;
+    // `placed` swaps the indicator element, so measure the new one.
+    void placed;
     const labels = Array.from(list.querySelectorAll<HTMLElement>("[data-tabs-label]"));
     const indicator = list.querySelector<HTMLElement>("[data-tabs-indicator]");
     const target = list.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
@@ -209,8 +349,54 @@ export function TabsList({
     // One shared pass after Motion paints the projected pill keeps every label
     // in sync, including labels crossed during a long or interrupted glide.
     frame.postRender(syncClips, true);
-    return () => cancelFrame(syncClips);
-  }, [value, children, variant, reduce]);
+    // A list measured while hidden (display: none, a closed panel, a
+    // breakpoint) gets every mask closed. Sync again once it has a size, or
+    // the selected label stays invisible until the value changes.
+    const resync = () => {
+      frames = 0;
+      stillFrames = 0;
+      previous = undefined;
+      cancelFrame(syncClips);
+      frame.postRender(syncClips, true);
+    };
+    const observer = new ResizeObserver(resync);
+    observer.observe(list);
+    return () => {
+      observer.disconnect();
+      cancelFrame(syncClips);
+    };
+  }, [value, children, variant, reduce, placed]);
+
+  // Arrow keys move along the list and select as focus arrives, wrapping at
+  // the ends; Home and End jump to the first and last enabled tab.
+  const onListKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(event);
+    if (event.defaultPrevented) return;
+    const list = listRef.current;
+    if (!list || !(event.target instanceof HTMLElement)) return;
+    const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]')).filter(
+      (tab) => !tab.disabled && tab.closest('[role="tablist"]') === list,
+    );
+    const at = tabs.indexOf(event.target as HTMLButtonElement);
+    if (at < 0) return;
+    const rtl = getComputedStyle(list).direction === "rtl";
+    const forward = rtl ? "ArrowLeft" : "ArrowRight";
+    const back = rtl ? "ArrowRight" : "ArrowLeft";
+    const next =
+      event.key === forward
+        ? tabs[(at + 1) % tabs.length]
+        : event.key === back
+          ? tabs[(at - 1 + tabs.length) % tabs.length]
+          : event.key === "Home"
+            ? tabs[0]
+            : event.key === "End"
+              ? tabs[tabs.length - 1]
+              : null;
+    if (!next) return;
+    event.preventDefault();
+    next.focus();
+    next.click();
+  };
 
   const scroll = (direction: number) => {
     const viewport = viewportRef.current;
@@ -238,7 +424,7 @@ export function TabsList({
           if (event.target instanceof HTMLElement && event.target.getAttribute("role") === "tab") reveal(event.target);
         }}
       >
-        <div {...props} ref={listRef} role="tablist" className={cn(listClasses[variant], "w-max", className)}>
+        <div {...props} ref={listRef} role="tablist" onKeyDown={onListKeyDown} className={cn(listClasses[variant], "w-max", tracked && "relative", className)}>
           {children}
         </div>
       </motion.div>
@@ -257,8 +443,45 @@ export function TabsList({
   );
 }
 
+/** Space between a selected-only icon and its label, in pixels. */
+const ICON_GAP = 6;
+
+/**
+ * A trigger's icon before its label. Shown on every tab, or with
+ * `icons="selected"` springing open on the selected tab only.
+ */
+function TriggerIcon({ icon, active }: { icon: ReactNode; active: boolean }) {
+  const { icons } = useTabs();
+  const reduce = useReducedMotion();
+  if (icons === "always") {
+    return (
+      <span aria-hidden="true" className="mr-1.5 inline-flex shrink-0 items-center">
+        {icon}
+      </span>
+    );
+  }
+  return (
+    <motion.span
+      aria-hidden="true"
+      data-tabs-icon=""
+      initial={false}
+      animate={{
+        width: active ? "auto" : 0,
+        marginRight: active ? ICON_GAP : 0,
+        opacity: active ? 1 : 0,
+        scale: active ? 1 : 0.6,
+      }}
+      transition={reduce ? { duration: 0 } : SPRING_SWAP}
+      className="inline-flex shrink-0 items-center justify-center overflow-hidden"
+    >
+      {icon}
+    </motion.span>
+  );
+}
+
 export function TabsTrigger({
   value,
+  icon,
   children,
   className,
   indicatorClassName,
@@ -266,16 +489,52 @@ export function TabsTrigger({
   ...props
 }: {
   value: string;
+  /** An icon before the label, such as a Lucide icon element. */
+  icon?: ReactNode;
   indicatorClassName?: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value">) {
-  const { value: current, setValue, layoutId, variant } = useTabs();
+  const {
+    value: current,
+    setValue,
+    layoutId,
+    variant,
+    icons,
+    track,
+    placed,
+    tabStop,
+    registerTab,
+    unregisterTab,
+    panels,
+    tabId,
+    panelId,
+  } = useTabs();
   const active = current === value;
+  const disabled = Boolean(props.disabled);
+  useLayoutEffect(() => {
+    registerTab(value, disabled);
+  }, [registerTab, value, disabled]);
+  useLayoutEffect(() => () => unregisterTab(value), [unregisterTab, value]);
+  const a11y = {
+    id: tabId(value),
+    "aria-controls": panels.has(value) ? panelId(value) : undefined,
+    tabIndex: !disabled && (tabStop === null || tabStop === value) ? 0 : -1,
+  };
+  const content = icon ? (
+    <>
+      <TriggerIcon icon={icon} active={active} />
+      {children}
+    </>
+  ) : (
+    children
+  );
   // React owns the initial mask only; TabsList synchronizes subsequent masks.
   const [initialClip] = useState(() => active ? "inset(0)" : "inset(0 100% 0 0)");
 
   if (variant === "underline") {
     return (
       <button
+        // Consumer ids and wiring win, e.g. several tabs sharing one panel.
+        {...a11y}
         {...props}
         type="button"
         role="tab"
@@ -290,7 +549,7 @@ export function TabsTrigger({
           className,
         )}
       >
-        {children}
+        {content}
         {active ? (
         <motion.span
           layoutId={layoutId}
@@ -306,11 +565,26 @@ export function TabsTrigger({
   }
 
   const radius = variant === "pill" ? "rounded-full" : "rounded-md";
+  // Tracked pills are placed in the list, so this wrapper must not be their
+  // containing block. Server HTML can't measure, so until the first
+  // measurement the pill fills the selected tab with CSS, like the others.
+  const tracked = icons === "selected" && placed;
 
   return (
-    <div className="relative shrink-0">
-      {active ? (
+    <div className={cn("shrink-0", !tracked && "relative")}>
+      {/* Distinct keys: reused across the swap, the CSS pill's leftover
+          `transform: none` would hide the tracked pill's offset until the
+          next value change. */}
+      {active && tracked ? (
         <motion.span
+          key="tracked"
+          data-tabs-indicator=""
+          style={{ ...track, borderRadius: variant === "pill" ? 9999 : 8 }}
+          className={cn("absolute top-0 left-0 bg-primary", radius, indicatorClassName)}
+        />
+      ) : active ? (
+        <motion.span
+          key="layout"
           data-tabs-indicator=""
           layoutId={layoutId}
           layout
@@ -323,6 +597,8 @@ export function TabsTrigger({
         />
       ) : null}
       <button
+        // Consumer ids and wiring win, e.g. several tabs sharing one panel.
+        {...a11y}
         {...props}
         type="button"
         role="tab"
@@ -339,7 +615,7 @@ export function TabsTrigger({
           className,
         )}
       >
-        {children}
+        {content}
         <span
           data-tabs-label=""
           aria-hidden="true"
@@ -347,7 +623,7 @@ export function TabsTrigger({
           className="pointer-events-none absolute inset-0 inline-flex items-center justify-center text-primary-foreground [gap:inherit] [padding:inherit]"
           style={{ clipPath: initialClip }}
         >
-          {children}
+          {content}
         </span>
       </button>
     </div>
@@ -355,26 +631,38 @@ export function TabsTrigger({
 }
 
 export function TabsContent({ value, children, className }: { value: string; children: ReactNode; className?: string }) {
-  const { value: current } = useTabs();
+  const { value: current, registerPanel, unregisterPanel, tabId, panelId } = useTabs();
   const reduce = useReducedMotion();
   const active = current === value;
+  useLayoutEffect(() => {
+    registerPanel(value);
+    return () => unregisterPanel(value);
+  }, [registerPanel, unregisterPanel, value]);
+  const a11y = {
+    id: panelId(value),
+    role: "tabpanel",
+    "aria-labelledby": tabId(value),
+  } as const;
   // Inactive panels stay mounted but hidden, so their content (e.g. source
   // code) is present in the server-rendered HTML for crawlers and assistive
   // tech, instead of being dropped from the DOM.
   if (!active) {
     return (
-      <div hidden className={className}>
+      <div {...a11y} hidden className={className}>
         {children}
       </div>
     );
   }
   return (
     <motion.div
+      {...a11y}
+      // Reachable with Tab so a panel without controls can still be read.
+      tabIndex={0}
       key={value}
       initial={{ opacity: 0, y: reduce ? 0 : 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.18, ease: EASE_OUT }}
-      className={cn("mt-4", className)}
+      className={cn("mt-4 outline-none focus-visible:ring-2 focus-visible:ring-ring/40 rounded-md", className)}
     >
       {children}
     </motion.div>

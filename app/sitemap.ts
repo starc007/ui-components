@@ -1,7 +1,15 @@
-import { categoryPath, componentPath } from "@/lib/component-paths";
+import {
+  categoryPath,
+  componentPath,
+  NATIVE_PATH,
+  nativeComponentPath,
+} from "@/lib/component-paths";
 import type { MetadataRoute } from "next";
 import { allComponents, registry } from "@/lib/registry";
 import { componentDates } from "@/lib/component-dates";
+import { native } from "@/lib/native";
+import { seoPagePath, seoPages } from "@/lib/seo-pages";
+import { changelogEntries } from "@/lib/changelog";
 import { SITE_URL as SITE } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -15,7 +23,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/docs/ai-agents`, lastModified: "2026-07-04", changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE}/docs/motion-patterns`, lastModified: "2026-07-09", changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE}/docs/openui`, lastModified: "2026-08-13", changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE}/docs/native-setup`, lastModified: "2026-10-16", changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE}/docs/theme`, lastModified: "2026-07-04", changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE}/changelog`, lastModified: changelogEntries[0]?.date, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE}/llms.txt`, lastModified: newestComponentDate, changeFrequency: "weekly", priority: 0.5 },
   ];
 
@@ -41,5 +51,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...categoryPages, ...componentPages];
+  // beUI Native's own pages, at /react-native.
+  const nativeLaunch = "2026-10-16";
+  const nativePages: MetadataRoute.Sitemap = [
+    { url: `${SITE}${NATIVE_PATH}`, lastModified: nativeLaunch, changeFrequency: "weekly", priority: 0.8 },
+    ...native.components.map((component) => ({
+      url: `${SITE}${nativeComponentPath(component.slug)}`,
+      lastModified: nativeLaunch,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+  ];
+
+  // Comparison and tutorial pages. Nothing on the site links to them, so the
+  // sitemap is how crawlers find them.
+  const landingPages: MetadataRoute.Sitemap = (["alternatives", "guides"] as const).flatMap(
+    (kind) =>
+      seoPages(kind).map((page) => ({
+        url: `${SITE}${seoPagePath(kind, page.slug)}`,
+        lastModified: page.updatedAt,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      })),
+  );
+
+  return [...staticPages, ...categoryPages, ...componentPages, ...nativePages, ...landingPages];
 }

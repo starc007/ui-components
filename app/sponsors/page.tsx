@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { ArrowRight, ArrowUpRight, Check, CircleCheck, Gem, Medal, Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -81,24 +82,47 @@ const PLAN_STYLES = {
 
 type SponsorTone = keyof typeof PLAN_STYLES;
 
-function TracwellSponsorCard() {
+type DiamondSponsor = {
+  name: string;
+  tagline: string;
+  domain: string;
+  /** Icon basename in /public/sponsors, with -light and -dark variants. */
+  icon: string;
+};
+
+const DIAMOND_SPONSORS: DiamondSponsor[] = [
+  {
+    name: "Tracwell",
+    tagline: "Turn visitor insights into growth",
+    domain: "tracwell.app",
+    icon: "tracwell-icon",
+  },
+  {
+    name: "Illos",
+    tagline: "Animated illustrations for product sites",
+    domain: "illos.dev",
+    icon: "illos-icon",
+  },
+];
+
+function DiamondSponsorCard({ name, tagline, domain, icon }: DiamondSponsor) {
   return (
     <Link
-      href="https://tracwell.app/?utm_source=beui&utm_medium=referral&utm_campaign=sponsorship&utm_content=diamond_sponsor"
+      href={`https://${domain}/?utm_source=beui&utm_medium=referral&utm_campaign=sponsorship&utm_content=diamond_sponsor`}
       target="_blank"
       rel="noreferrer noopener"
       className="block h-full min-w-0 rounded-3xl border border-border bg-background p-2 transition-colors hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
     >
       <div className="flex min-h-40 items-center justify-center gap-3 rounded-2xl border border-border bg-linear-to-t from-accent/10 to-card px-4 py-6">
         <Image
-          src="/sponsors/tracwell-icon-light.svg"
+          src={`/sponsors/${icon}-light.svg`}
           alt=""
           width={56}
           height={56}
           className="size-14 shrink-0 dark:hidden"
         />
         <Image
-          src="/sponsors/tracwell-icon-dark.svg"
+          src={`/sponsors/${icon}-dark.svg`}
           alt=""
           width={56}
           height={56}
@@ -106,17 +130,15 @@ function TracwellSponsorCard() {
         />
         <div>
           <h3 className="font-display text-2xl font-semibold tracking-tight text-foreground">
-            Tracwell
+            {name}
           </h3>
           <p className="mt-1 max-w-44 text-xs leading-relaxed text-muted-foreground">
-            Turn visitor insights into growth
+            {tagline}
           </p>
         </div>
       </div>
       <div className="flex items-center justify-between gap-4 px-3 py-4">
-        <span className="text-sm font-medium text-foreground">
-          tracwell.app
-        </span>
+        <span className="text-sm font-medium text-foreground">{domain}</span>
         <ArrowRight aria-hidden="true" className="size-5 shrink-0 text-muted-foreground" />
       </div>
     </Link>
@@ -125,7 +147,10 @@ function TracwellSponsorCard() {
 
 // Filled slots per tier. Adding a sponsor here closes one open slot.
 const CURRENT_SPONSORS: Record<SponsorTone, { id: string; card: ReactNode }[]> = {
-  diamond: [{ id: "tracwell", card: <TracwellSponsorCard /> }],
+  diamond: DIAMOND_SPONSORS.map((sponsor) => ({
+    id: sponsor.domain,
+    card: <DiamondSponsorCard {...sponsor} />,
+  })),
   platinum: [],
   silver: [],
 };
@@ -400,119 +425,122 @@ export default async function SponsorsPage({
   ];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16">
-      {checkoutSucceeded ? (
-        <div className="mx-auto mb-8 flex max-w-xl gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
-          <CircleCheck className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-          <div>
-            <p className="text-sm font-semibold text-emerald-950 dark:text-emerald-100">
-              Sponsorship checkout complete
-            </p>
-            <p className="mt-1 text-sm leading-relaxed text-emerald-900/75 dark:text-emerald-100/75">
-              Thanks for sponsoring beUI. I’ll follow up for logo assets and
-              placement details.
-            </p>
+    <>
+      <div className="mx-auto max-w-7xl px-4 py-16">
+        {checkoutSucceeded ? (
+          <div className="mx-auto mb-8 flex max-w-xl gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
+            <CircleCheck className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <div>
+              <p className="text-sm font-semibold text-emerald-950 dark:text-emerald-100">
+                Sponsorship checkout complete
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-emerald-900/75 dark:text-emerald-100/75">
+                Thanks for sponsoring beUI. I’ll follow up for logo assets and
+                placement details.
+              </p>
+            </div>
+          </div>
+        ) : null}
+        <div className="max-w-2xl">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Sponsors
+          </p>
+          <h1 className="mt-2 text-4xl font-semibold tracking-tight text-foreground">
+            Support beUI
+          </h1>
+          <p className="mt-3 text-muted-foreground">
+            beUI is free and open source. Sponsor a monthly stage to reach
+            developers actively browsing motion components, blocks, and registry
+            installs.
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <PressLink
+              href={GITHUB_SPONSORS_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="group inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:border-border-strong"
+            >
+              Sponsor on GitHub
+              <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </PressLink>
           </div>
         </div>
-      ) : null}
-      <div className="max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Sponsors
-        </p>
-        <h1 className="mt-2 text-4xl font-semibold tracking-tight text-foreground">
-          Support beUI
-        </h1>
-        <p className="mt-3 text-muted-foreground">
-          beUI is free and open source. Sponsor a monthly stage to reach
-          developers actively browsing motion components, blocks, and registry
-          installs.
-        </p>
 
-        <div className="mt-8 flex flex-wrap gap-3">
-          <PressLink
-            href={GITHUB_SPONSORS_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="group inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:border-border-strong"
-          >
-            Sponsor on GitHub
-            <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </PressLink>
-        </div>
-      </div>
-
-      <section aria-labelledby="traffic-stats" className="mt-12">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2
-            id="traffic-stats"
-            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-          >
-            Audience
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            Analytics by Tracwell, updated {TRAFFIC_UPDATED_AT}
-          </p>
-        </div>
-        <div className="mt-3 grid gap-4 md:grid-cols-2">
-          {TRAFFIC_STATS.map((stat) => (
-            <div
-              key={stat.period}
-              className="rounded-3xl border border-border bg-card p-2"
+        <section aria-labelledby="traffic-stats" className="mt-12">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2
+              id="traffic-stats"
+              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
             >
-              <h3 className="px-3 pb-2 pt-2 text-sm font-medium text-foreground">
-                {stat.period}
-              </h3>
-              <dl className="grid grid-cols-2 gap-2">
-                <TrafficStat label="Visitors" value={stat.visitors} />
-                <TrafficStat label="Page views" value={stat.pageViews} />
-              </dl>
-            </div>
-          ))}
-        </div>
-      </section>
+              Audience
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Analytics by Tracwell, updated {TRAFFIC_UPDATED_AT}
+            </p>
+          </div>
+          <div className="mt-3 grid gap-4 md:grid-cols-2">
+            {TRAFFIC_STATS.map((stat) => (
+              <div
+                key={stat.period}
+                className="rounded-3xl border border-border bg-card p-2"
+              >
+                <h3 className="px-3 pb-2 pt-2 text-sm font-medium text-foreground">
+                  {stat.period}
+                </h3>
+                <dl className="grid grid-cols-2 gap-2">
+                  <TrafficStat label="Visitors" value={stat.visitors} />
+                  <TrafficStat label="Page views" value={stat.pageViews} />
+                </dl>
+              </div>
+            ))}
+          </div>
+        </section>
 
-      <div className="mt-12 space-y-10">
-        {sponsorPlans
-          .filter((plan) => plan.tone === "diamond")
-          .map((plan) => (
-            <SponsorTier key={plan.name} {...plan} />
-          ))}
-        {/* Platinum and Silver share a row; the 3:2 split keeps each
-            Platinum slot wider than a Silver one. */}
-        <div className="grid gap-10 md:grid-cols-[3fr_2fr] md:gap-4">
+        <div className="mt-12 space-y-10">
           {sponsorPlans
-            .filter((plan) => plan.tone !== "diamond")
+            .filter((plan) => plan.tone === "diamond")
             .map((plan) => (
               <SponsorTier key={plan.name} {...plan} />
             ))}
-        </div>
-      </div>
-
-      <section
-        id="sponsor-plans"
-        aria-label="Sponsor plans"
-        className="mt-12 scroll-mt-24"
-      >
-        <div className="grid gap-4 md:grid-cols-3">
-          {sponsorPlans.map((plan) => (
-            <SponsorPlanCard key={plan.name} {...plan} />
-          ))}
-        </div>
-      </section>
-
-      {evmAddress || solAddress ? (
-        <div className="mt-14">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Crypto
-          </p>
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
-            {evmAddress ? <AddressRow label="EVM" address={evmAddress} /> : null}
-            {solAddress ? (
-              <AddressRow label="Solana" address={solAddress} />
-            ) : null}
+          {/* Platinum and Silver share a row; the 3:2 split keeps each
+              Platinum slot wider than a Silver one. */}
+          <div className="grid gap-10 md:grid-cols-[3fr_2fr] md:gap-4">
+            {sponsorPlans
+              .filter((plan) => plan.tone !== "diamond")
+              .map((plan) => (
+                <SponsorTier key={plan.name} {...plan} />
+              ))}
           </div>
         </div>
-      ) : null}
-    </div>
+
+        <section
+          id="sponsor-plans"
+          aria-label="Sponsor plans"
+          className="mt-12 scroll-mt-24"
+        >
+          <div className="grid gap-4 md:grid-cols-3">
+            {sponsorPlans.map((plan) => (
+              <SponsorPlanCard key={plan.name} {...plan} />
+            ))}
+          </div>
+        </section>
+
+        {evmAddress || solAddress ? (
+          <div className="mt-14">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Crypto
+            </p>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {evmAddress ? <AddressRow label="EVM" address={evmAddress} /> : null}
+              {solAddress ? (
+                <AddressRow label="Solana" address={solAddress} />
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+      </div>
+      <SiteFooter />
+    </>
   );
 }

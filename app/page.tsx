@@ -7,6 +7,7 @@ import { LandingFaq } from "@/components/app/landing/faq";
 import { GettingStarted } from "@/components/app/landing/getting-started";
 import { Hero } from "@/components/app/landing/hero";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
+import { NativeShowcase } from "@/components/app/landing/native-showcase";
 import { Testimonials } from "@/components/app/landing/testimonials";
 import { WorkCta } from "@/components/app/landing/work-cta";
 import { isComponentNew } from "@/lib/component-status";
@@ -72,6 +73,13 @@ function SectionHeader({
     </div>
   );
 }
+
+// Diamond sponsors shown below the hero. Icons live in /public/sponsors with
+// -light and -dark variants.
+const LANDING_SPONSORS = [
+  { name: "Tracwell", domain: "tracwell.app", icon: "tracwell-icon" },
+  { name: "Illos", domain: "illos.dev", icon: "illos-icon" },
+];
 
 export default function Home() {
   const newComponents = registry
@@ -142,30 +150,33 @@ export default function Home() {
         >
           Sponsored by
         </h2>
-        <Link
-          href="https://tracwell.app/?utm_source=beui&utm_medium=referral&utm_campaign=sponsorship&utm_content=landing_hero"
-          target="_blank"
-          rel="noreferrer noopener"
-          className="inline-flex items-center gap-2.5 rounded-xl px-3 py-2 text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-        >
-          <Image
-            src="/sponsors/tracwell-icon-light.svg"
-            alt=""
-            width={28}
-            height={28}
-            className="size-7 dark:hidden"
-          />
-          <Image
-            src="/sponsors/tracwell-icon-dark.svg"
-            alt=""
-            width={28}
-            height={28}
-            className="hidden size-7 dark:block"
-          />
-          <span className="font-display text-xl font-semibold tracking-tight">
-            Tracwell
-          </span>
-        </Link>
+        {LANDING_SPONSORS.map((sponsor) => (
+          <Link
+            key={sponsor.domain}
+            href={`https://${sponsor.domain}/?utm_source=beui&utm_medium=referral&utm_campaign=sponsorship&utm_content=landing_hero`}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex items-center gap-2.5 rounded-xl px-3 py-2 text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+          >
+            <Image
+              src={`/sponsors/${sponsor.icon}-light.svg`}
+              alt=""
+              width={28}
+              height={28}
+              className="size-7 dark:hidden"
+            />
+            <Image
+              src={`/sponsors/${sponsor.icon}-dark.svg`}
+              alt=""
+              width={28}
+              height={28}
+              className="hidden size-7 dark:block"
+            />
+            <span className="font-display text-xl font-semibold tracking-tight">
+              {sponsor.name}
+            </span>
+          </Link>
+        ))}
       </section>
 
       <GettingStarted />
@@ -185,6 +196,8 @@ export default function Home() {
           </div>
         </section>
       ) : null}
+
+      <NativeShowcase />
 
       <section className="mx-auto max-w-7xl px-4 pb-4">
         <SectionHeader

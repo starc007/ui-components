@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleDashed, FileText, Search } from "lucide-react";
+import { CircleDashed, FileText, Search, Smartphone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,8 @@ import {
   type CommandItem,
 } from "@/components/motion/command-palette";
 import { NewBadge } from "@/components/app/docs/new-badge";
+import { nativeComponentPath } from "@/lib/component-paths";
+import nativeNav from "@/lib/native/nav.json";
 import { componentSearchEntries } from "@/lib/site-search";
 
 const PAGES = [
@@ -23,6 +25,8 @@ const PAGES = [
     href: "/docs/motion-patterns",
   },
   { slug: "openui", name: "OpenUI", href: "/docs/openui" },
+  { slug: "native-setup", name: "React Native Setup", href: "/docs/native-setup" },
+  { slug: "react-native", name: "React Native components", href: "/react-native" },
 ];
 
 /** Site search trigger backed by the library's own command palette. */
@@ -37,6 +41,14 @@ export function SiteSearch({ className }: { className?: string }) {
         icon: CircleDashed,
         badge: entry.badge === "new" ? <NewBadge launchedAt={entry.launchedAt} /> : undefined,
         onSelect: () => router.push(entry.href),
+      })),
+      ...nativeNav.map((item) => ({
+        id: `native-${item.slug}`,
+        label: item.title,
+        group: "React Native",
+        keywords: [item.slug, "react native", "native", "expo", "mobile"],
+        icon: Smartphone,
+        onSelect: () => router.push(nativeComponentPath(item.slug)),
       })),
       ...PAGES.map((page) => ({
         id: page.slug,

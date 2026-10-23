@@ -23,6 +23,7 @@ const COLUMNS = [
 const LINKS = [
   { href: "/components/motion", label: "Browse all" },
   { href: "/playground", label: "Playground" },
+  { href: "/changelog", label: "Changelog" },
   { href: "https://github.com/starc007/ui-components", label: "GitHub" },
   { href: "/docs/ai-agents", label: "For coding agents" },
   { href: "/docs/theme", label: "Theming" },
@@ -70,8 +71,8 @@ export function SiteFooter() {
             </span>
           </Link>
           <p className="mt-4 text-muted-foreground text-sm leading-6">
-            Animated components for React and Next.js. Copy-paste via the shadcn
-            registry.
+            Animated components for React, Next.js and React Native. Copy the
+            source or install with a CLI.
           </p>
           <p className="mt-4 text-muted-foreground text-sm">
             Created by <span className="text-foreground">Saurabh</span>

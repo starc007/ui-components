@@ -12,12 +12,14 @@ import {
   cloneElement,
   forwardRef,
   type HTMLAttributes,
+  type FocusEvent,
   isValidElement,
   type MouseEvent,
   type ReactElement,
   type ReactNode,
   type Ref,
   useId,
+  useRef,
   useState,
 } from "react";
 import { SPRING_LAYOUT } from "@/lib/ease";
@@ -56,6 +58,7 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
       as = "div",
       className,
       onMouseLeave,
+      onBlur,
       pillClassName,
       pillContainerClassName,
       inset = 20,
@@ -66,6 +69,9 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
   const [activeId, setActiveId] = useState<string | null>(null);
   const uid = useId();
   const reduce = useReducedMotion();
+  // Focus leaving the list only clears the pill when the pointer is not
+  // still resting on an item.
+  const hovering = useRef(false);
 
     const renderedChildren = Children.toArray(children)
       .filter(isValidElement)
@@ -73,6 +79,7 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
         const el = child as ReactElement<{
           className?: string;
           onMouseEnter?: () => void;
+          onFocus?: (event: FocusEvent<HTMLElement>) => void;
           children?: ReactNode;
         }>;
         const childKey = el.key ? String(el.key) : `item-${index}`;
@@ -83,6 +90,13 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
             className: cn("relative", el.props.className),
             onMouseEnter: () => {
               el.props.onMouseEnter?.();
+              hovering.current = true;
+              setActiveId(childKey);
+            },
+            // Focus bubbles in React, so a link or button anywhere inside the
+            // item brings the pill to it for keyboard users too.
+            onFocus: (event: FocusEvent<HTMLElement>) => {
+              el.props.onFocus?.(event);
               setActiveId(childKey);
             },
           },
@@ -120,8 +134,21 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
       });
 
     const handleMouseLeave = (event: MouseEvent<HTMLElement>) => {
-      setActiveId(null);
+      hovering.current = false;
+      // Keep the pill on a focused item so keyboard position stays visible.
+      if (!event.currentTarget.contains(document.activeElement))
+        setActiveId(null);
       onMouseLeave?.(event);
+    };
+
+    const handleBlur = (event: FocusEvent<HTMLElement>) => {
+      const next = event.relatedTarget;
+      if (
+        !hovering.current &&
+        !(next instanceof Node && event.currentTarget.contains(next))
+      )
+        setActiveId(null);
+      onBlur?.(event);
     };
 
     // layoutRoot scopes the pill's layout projection to this list, so fixed or
@@ -132,6 +159,7 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
         ref={forwardedRef as Ref<HTMLUListElement>}
         layoutRoot
         onMouseLeave={handleMouseLeave}
+        onBlur={handleBlur}
         className={cn("flex w-full flex-col", className)}
       >
         {renderedChildren}
@@ -142,6 +170,7 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
         ref={forwardedRef as Ref<HTMLDivElement>}
         layoutRoot
         onMouseLeave={handleMouseLeave}
+        onBlur={handleBlur}
         className={cn("flex w-full flex-col", className)}
       >
         {renderedChildren}

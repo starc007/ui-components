@@ -1,5 +1,6 @@
 "use client";
 
+import { BarChart3, Bell, Home } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 
 export function TabsPreview() {
@@ -32,6 +33,15 @@ export function TabsPreview() {
             <TabsTrigger value="day">Day</TabsTrigger>
             <TabsTrigger value="week">Week</TabsTrigger>
             <TabsTrigger value="month">Month</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </Section>
+      <Section title="Icon on selected">
+        <Tabs defaultValue="home" variant="pill" icons="selected">
+          <TabsList>
+            <TabsTrigger value="home" icon={<Home className="size-3.5" />}>Home</TabsTrigger>
+            <TabsTrigger value="stats" icon={<BarChart3 className="size-3.5" />}>Stats</TabsTrigger>
+            <TabsTrigger value="alerts" icon={<Bell className="size-3.5" />}>Alerts</TabsTrigger>
           </TabsList>
         </Tabs>
       </Section>

@@ -3,6 +3,8 @@ import { z } from "zod";
 import {
   getEntry,
   getIndex,
+  getNativeEntry,
+  getNativeIndex,
   installCommand,
   PACKAGE_MANAGERS,
   type IndexComponent,
@@ -151,6 +153,78 @@ export function createFreeServer(env: FreeEnv) {
         command: installCommand(slug, pm),
         all: PACKAGE_MANAGERS.map((p) => ({ packageManager: p, command: installCommand(slug, p) })),
       });
+    },
+  );
+
+  server.registerTool(
+    "list_native_components",
+    {
+      description:
+        "List beUI Native components: the React Native versions of beUI components, for Expo and bare React Native apps (Reanimated, Gesture Handler, Uniwind). Optionally filter by a keyword. Includes one-time setup notes and an Expo Go link to try them.",
+      inputSchema: {
+        query: z
+          .string()
+          .optional()
+          .describe("Keyword to filter by name, slug, description or group, e.g. 'select' or 'forms'."),
+      },
+    },
+    async ({ query }) => {
+      try {
+        const index = await getNativeIndex(env);
+        const q = query?.toLowerCase().trim();
+        const components = q
+          ? index.components.filter((c) =>
+              [c.slug, c.name, c.description, c.group].some((field) =>
+                field.toLowerCase().includes(q),
+              ),
+            )
+          : index.components;
+        return json({
+          name: index.name,
+          repository: index.repository,
+          expo_go: index.expo_go,
+          setup: index.setup,
+          cli: "npx beui-native add <slug>",
+          components: components.map((c) => ({
+            slug: c.slug,
+            name: c.name,
+            group: c.group,
+            description: c.description,
+          })),
+        });
+      } catch (e) {
+        return error(`Failed to list native components: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    "get_native_component",
+    {
+      description:
+        "Get a beUI Native (React Native) component by slug. Prefer `cli`: run it from the app's root to copy the component and its shared files and install missing libraries. Also returns the install commands, setup notes, and every file with paths and contents, for copying by hand. Keep the folder layout when copying; files import each other by relative path.",
+      inputSchema: {
+        slug: z.string().describe("Component slug, e.g. 'select' (from list_native_components)."),
+      },
+    },
+    async ({ slug }) => {
+      try {
+        const entry = await getNativeEntry(env, slug);
+        return json({
+          slug: entry.slug,
+          name: entry.name,
+          description: entry.description,
+          page_url: entry.page_url,
+          expo_go_url: entry.expo_go_url,
+          // Copies the files and installs missing libraries in one step.
+          cli: `npx beui-native add ${entry.slug}`,
+          install: entry.install,
+          setup: entry.setup,
+          files: entry.files,
+        });
+      } catch (e) {
+        return error(`Could not load native component "${slug}": ${(e as Error).message}`);
+      }
     },
   );
 

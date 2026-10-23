@@ -58,6 +58,10 @@ results, or cache authenticated source responses.
 | `search_components` | `query` | best-matching components |
 | `get_component` | `slug` | description, dependencies, all source files, install command |
 | `get_install_command` | `slug`, `packageManager?` | shadcn CLI command per package manager |
+| `list_native_components` | `query?` | beUI Native (React Native) components, setup notes and the Expo Go showcase link |
+| `get_native_component` | `slug` | install commands, setup notes and every file to copy (component, shared helpers, theme) |
+
+The native tools read `beui.dev/native/r` and `beui.dev/native/r/{slug}`.
 
 The Pro endpoint exposes the same four tool names against the installable
 `@beui-pro` catalog. `get_component` returns the licensed source files, while

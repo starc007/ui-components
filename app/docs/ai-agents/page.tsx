@@ -210,7 +210,15 @@ export default function AIAgentsPage() {
         <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
           get_install_command
         </code>
-        .
+        . For React Native apps,{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+          list_native_components
+        </code>{" "}
+        and{" "}
+        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+          get_native_component
+        </code>{" "}
+        return beUI Native components with every file to copy.
       </p>
 
       <h2

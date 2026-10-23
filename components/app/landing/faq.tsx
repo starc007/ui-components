@@ -52,6 +52,29 @@ const FAQS = [
     ),
   },
   {
+    id: "react-native",
+    title: "Does beUI work with React Native?",
+    description: (
+      <>
+        Yes. beUI Native brings beUI&apos;s components to Expo and bare React
+        Native apps, built with Reanimated, Gesture Handler, and Uniwind.
+        After the{" "}
+        <Link className="underline underline-offset-4" href="/docs/native-setup">
+          one-time setup
+        </Link>
+        , add one with{" "}
+        <code className="rounded bg-muted px-1 py-0.5 text-xs">
+          npx beui-native add button
+        </code>
+        . Every{" "}
+        <Link className="underline underline-offset-4" href="/react-native">
+          React Native component
+        </Link>{" "}
+        page has a QR code to try it in Expo Go first.
+      </>
+    ),
+  },
+  {
     id: "customize",
     title: "Can I change the design and animations?",
     description:

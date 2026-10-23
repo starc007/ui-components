@@ -3,9 +3,11 @@
 import { motion, MotionConfig, useReducedMotion } from "motion/react";
 import {
   createContext,
+  type KeyboardEvent,
   useCallback,
   useContext,
   useId,
+  useLayoutEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -17,6 +19,14 @@ type RadioCtx = {
   value: string;
   setValue: (value: string) => void;
   layoutId: string;
+  /**
+   * The one option Tab reaches: the selected option, or the first enabled one
+   * when nothing enabled is selected. `null` until the options have
+   * registered, when every enabled option stays reachable.
+   */
+  tabStop: string | null;
+  register: (value: string, disabled: boolean) => void;
+  unregister: (value: string) => void;
 };
 
 const RadioCtx = createContext<RadioCtx | null>(null);
@@ -36,6 +46,10 @@ export interface RadioGroupProps {
   children: ReactNode;
   className?: string;
   orientation?: "vertical" | "horizontal";
+  /** Accessible name for the group when no visible label names it. */
+  "aria-label"?: string;
+  /** Id of a visible element that names the group. */
+  "aria-labelledby"?: string;
 }
 
 export function RadioGroup({
@@ -45,6 +59,8 @@ export function RadioGroup({
   children,
   className,
   orientation = "vertical",
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
 }: RadioGroupProps) {
   const [internal, setInternal] = useState(defaultValue);
   const layoutId = useId();
@@ -58,9 +74,32 @@ export function RadioGroup({
     },
     [controlled, onValueChange],
   );
+  const [options, setOptions] = useState<Map<string, boolean>>(new Map());
+  const register = useCallback((option: string, disabled: boolean) => {
+    setOptions((map) =>
+      map.get(option) === disabled ? map : new Map(map).set(option, disabled),
+    );
+  }, []);
+  const unregister = useCallback((option: string) => {
+    setOptions((map) => {
+      if (!map.has(option)) return map;
+      const next = new Map(map);
+      next.delete(option);
+      return next;
+    });
+  }, []);
+  // Resolved during render so the group has exactly one tab stop in the same
+  // commit that changes the selection or the options.
+  let tabStop: string | null = null;
+  if (options.size > 0) {
+    const enabled = Array.from(options).filter(([, disabled]) => !disabled);
+    tabStop = enabled.some(([option]) => option === current)
+      ? current
+      : (enabled[0]?.[0] ?? "");
+  }
   const contextValue = useMemo(
-    () => ({ value: current, setValue, layoutId }),
-    [current, layoutId, setValue],
+    () => ({ value: current, setValue, layoutId, tabStop, register, unregister }),
+    [current, layoutId, setValue, tabStop, register, unregister],
   );
 
   return (
@@ -68,6 +107,8 @@ export function RadioGroup({
       <RadioCtx.Provider value={contextValue}>
         <div
           role="radiogroup"
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
           className={cn(
             "flex gap-3",
             orientation === "vertical" ? "flex-col" : "flex-row flex-wrap",
@@ -99,7 +140,14 @@ export function RadioGroupItem({
   className,
   id: idProp,
 }: RadioGroupItemProps) {
-  const { value: groupValue, setValue, layoutId } = useRadioGroup();
+  const {
+    value: groupValue,
+    setValue,
+    layoutId,
+    tabStop,
+    register,
+    unregister,
+  } = useRadioGroup();
   const autoId = useId();
   const id = idProp ?? autoId;
   const reduce = useReducedMotion();
@@ -107,6 +155,40 @@ export function RadioGroupItem({
   const descriptionId = description ? `${id}-description` : undefined;
   // The wrapping <label> would fold the description into the name, so name from the label text alone.
   const labelId = description && label ? `${id}-label` : undefined;
+
+  useLayoutEffect(() => {
+    register(value, Boolean(disabled));
+  }, [register, value, disabled]);
+  useLayoutEffect(() => () => unregister(value), [unregister, value]);
+
+  const reachable =
+    !disabled && (tabStop === null ? true : tabStop === value);
+
+  // Arrow keys move to the next enabled option in the group, wrapping at the
+  // ends, and select it as focus arrives, like native radio buttons.
+  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    const step =
+      event.key === "ArrowDown" || event.key === "ArrowRight"
+        ? 1
+        : event.key === "ArrowUp" || event.key === "ArrowLeft"
+          ? -1
+          : 0;
+    if (!step) return;
+    const group = event.currentTarget.closest('[role="radiogroup"]');
+    const radios = Array.from(
+      group?.querySelectorAll<HTMLButtonElement>('[role="radio"]') ?? [],
+    ).filter(
+      (radio) =>
+        !radio.disabled &&
+        radio.closest('[role="radiogroup"]') === group,
+    );
+    const at = radios.indexOf(event.currentTarget);
+    if (at < 0 || radios.length < 2) return;
+    event.preventDefault();
+    const next = radios[(at + step + radios.length) % radios.length];
+    next.focus();
+    next.click();
+  };
 
   return (
     <label
@@ -126,7 +208,9 @@ export function RadioGroupItem({
         aria-labelledby={labelId}
         aria-describedby={descriptionId}
         disabled={disabled}
+        tabIndex={reachable ? 0 : -1}
         onClick={() => !disabled && setValue(value)}
+        onKeyDown={onKeyDown}
         whileTap={reduce || disabled ? undefined : { scale: 0.92 }}
         transition={SPRING_PRESS}
         data-state={selected ? "checked" : "unchecked"}

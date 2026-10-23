@@ -1,6 +1,12 @@
 "use client";
 
-import { categoryPath, componentPath } from "@/lib/component-paths";
+import {
+  categoryPath,
+  componentPath,
+  isNativePath,
+  NATIVE_PATH,
+  nativeComponentPath,
+} from "@/lib/component-paths";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,6 +14,7 @@ import { Blocks, Bot, LayoutGrid, Shapes } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
 import { registry } from "@/lib/registry";
+import nativeNav from "@/lib/native/nav.json";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import { Button } from "@/components/motion/button";
@@ -18,12 +25,14 @@ import { cn } from "@/lib/utils";
 
 const INTRO = [
   { slug: "home", name: "Home", href: "/components/motion" },
+  { slug: "changelog", name: "Changelog", href: "/changelog" },
 ];
 
 const PATTERNS = [
   { slug: "motion-patterns", name: "Motion Guides", href: "/docs/motion-patterns" },
   { slug: "ai-agents", name: "Agent Guide", href: "/docs/ai-agents" },
   { slug: "openui", name: "OpenUI", href: "/docs/openui" },
+  { slug: "native-setup", name: "React Native Setup", href: "/docs/native-setup" },
 ];
 
 const SIDEBAR_CATEGORY_ORDER: Record<string, number> = {
@@ -37,6 +46,23 @@ const SIDEBAR_CATEGORIES = registry.filter((category) => category.slug !== "char
     (SIDEBAR_CATEGORY_ORDER[a.slug] ?? Number.MAX_SAFE_INTEGER) -
     (SIDEBAR_CATEGORY_ORDER[b.slug] ?? Number.MAX_SAFE_INTEGER),
 );
+
+// Native components in catalog order, grouped as the native showcase groups
+// them, for the sidebar on /react-native pages.
+const NATIVE_GROUPS = nativeNav.reduce<{ name: string; items: typeof nativeNav }[]>(
+  (groups, item) => {
+    const group = groups.find((entry) => entry.name === item.group);
+    if (group) group.items.push(item);
+    else groups.push({ name: item.group, items: [item] });
+    return groups;
+  },
+  [],
+);
+
+const NATIVE_INTRO = [
+  { slug: "native-home", name: "Overview", href: NATIVE_PATH },
+  { slug: "native-setup", name: "Setup", href: "/docs/native-setup" },
+];
 
 const CATEGORY_FILTERS = [
   { value: "all", label: "All", icon: LayoutGrid },
@@ -203,6 +229,44 @@ function moveNewItemsToTop<
   ];
 }
 
+const COUNT_CLASS =
+  "inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground";
+
+const GROUP_LABEL =
+  "mb-1.5 flex items-center gap-2 rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground";
+
+// Clearance for the sticky category tabs at the top of the desktop sidebar.
+const STICKY_CLEARANCE = 64;
+
+/**
+ * Keep the current page's link in view when the list mounts or the route
+ * changes. A fresh load, a reload or the phone sheet opening would otherwise
+ * start the list at the top, far from the reader's place. A visible link is
+ * left alone, so clicking an item never moves the list.
+ */
+function useRevealActiveLink(pathname: string) {
+  const ref = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const nav = ref.current;
+    if (!nav) return;
+    const link = Array.from(nav.querySelectorAll("a")).find(
+      (anchor) => anchor.getAttribute("href") === pathname,
+    );
+    // A link inside a filtered-out group has no boxes to reveal.
+    if (!link || link.getClientRects().length === 0) return;
+    let scroller = nav.parentElement;
+    while (scroller && !/auto|scroll/.test(getComputedStyle(scroller).overflowY)) {
+      scroller = scroller.parentElement;
+    }
+    if (!scroller) return;
+    const view = scroller.getBoundingClientRect();
+    const item = link.getBoundingClientRect();
+    if (item.top >= view.top + STICKY_CLEARANCE && item.bottom <= view.bottom) return;
+    scroller.scrollTop += item.top - view.top - (view.height - item.height) / 2;
+  }, [pathname]);
+  return ref;
+}
+
 function linkClass(active: boolean) {
   return cn(
     "relative block rounded-lg px-2.5 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:py-1",
@@ -212,11 +276,97 @@ function linkClass(active: boolean) {
   );
 }
 
+/** The React Native pages' list: overview, setup, then components by group. */
+function NativeSidebarNav({
+  pathname,
+  onNavigate,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+}) {
+  const navRef = useRevealActiveLink(pathname);
+  const now = Date.now();
+
+  return (
+    <nav ref={navRef} aria-label="Browse React Native components" className="flex flex-col gap-6">
+      <div>
+        <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          React Native
+        </p>
+        <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
+          {NATIVE_INTRO.map((item) => (
+            <Link
+              key={item.slug}
+              href={item.href}
+              prefetch={false}
+              aria-current={pathname === item.href ? "page" : undefined}
+              onClick={onNavigate}
+              className={linkClass(pathname === item.href)}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </SharedLayoutBg>
+      </div>
+      {NATIVE_GROUPS.map((group) => (
+        <div key={group.name}>
+          <p className={GROUP_LABEL}>
+            {group.name}
+            <span className={COUNT_CLASS}>{group.items.length}</span>
+          </p>
+          <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
+            {moveNewItemsToTop(
+              group.items.map((item) => ({
+                ...item,
+                badge: "launchedAt" in item ? ("new" as const) : undefined,
+              })),
+              now,
+            ).map((item) => {
+              const href = nativeComponentPath(item.slug);
+              return (
+                <Link
+                  key={item.slug}
+                  href={href}
+                  prefetch={false}
+                  aria-current={pathname === href ? "page" : undefined}
+                  onClick={onNavigate}
+                  className={linkClass(pathname === href)}
+                >
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="truncate">{item.title}</span>
+                    {item.badge === "new" ? (
+                      <NewBadge launchedAt={item.launchedAt} />
+                    ) : null}
+                  </span>
+                </Link>
+              );
+            })}
+          </SharedLayoutBg>
+        </div>
+      ))}
+    </nav>
+  );
+}
+
 /** Nav list shared by the desktop sidebar and the mobile bottom sheet. */
 export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  if (isNativePath(pathname)) {
+    return <NativeSidebarNav pathname={pathname} onNavigate={onNavigate} />;
+  }
+  return <WebSidebarNav pathname={pathname} onNavigate={onNavigate} />;
+}
+
+function WebSidebarNav({
+  pathname,
+  onNavigate,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+}) {
   const tabsId = useId();
   const panelId = useId();
+  const navRef = useRevealActiveLink(pathname);
   const routeCategory = SIDEBAR_CATEGORIES.find((category) => {
     const path = categoryPath(category.slug);
     return pathname === path || pathname.startsWith(`${path}/`);
@@ -227,9 +377,9 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   if (filter.routeCategory !== routeCategory) {
     setFilter({ routeCategory, value: filter.value === "all" ? "all" : (routeCategory ?? "all") });
   }
+  const isCharts = pathname === "/charts" || pathname.startsWith("/charts/");
   const categoryFilter = filter.value;
   const now = Date.now();
-  const isCharts = pathname === "/charts" || pathname.startsWith("/charts/");
   const categories = isCharts
     ? registry.filter((category) => category.slug === "charts")
     : SIDEBAR_CATEGORIES;
@@ -238,7 +388,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     : INTRO;
 
   return (
-    <nav aria-label="Browse components" className="flex flex-col gap-6">
+    <nav ref={navRef} aria-label="Browse components" className="flex flex-col gap-6">
       {!isCharts ? (
         <div className="sticky -top-6 z-20 -mt-6 -mb-4 bg-background pt-6">
           <SidebarCategoryTabs
@@ -297,7 +447,10 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           </div>
         ) : null}
         {categories.map((cat) => (
-          <div key={cat.slug} hidden={!isCharts && categoryFilter !== "all" && categoryFilter !== cat.slug}>
+          <div
+            key={cat.slug}
+            hidden={!isCharts && categoryFilter !== "all" && categoryFilter !== cat.slug}
+          >
             <Link
               href={categoryPath(cat.slug)}
               prefetch={false}
@@ -305,9 +458,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               className="mb-1.5 flex items-center gap-2 rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
             >
               {cat.name}
-              <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground">
-                {cat.components.length}
-              </span>
+              <span className={COUNT_CLASS}>{cat.components.length}</span>
             </Link>
             <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
               {moveNewItemsToTop(cat.components, now).map((comp) => {

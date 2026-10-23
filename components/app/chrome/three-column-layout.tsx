@@ -20,13 +20,13 @@ export function ThreeColumnLayout({
       )}
     >
       <div className="hidden min-w-0 md:block">
-        <div className="fixed top-14 bottom-0 w-(--left-sidebar-width) overflow-y-auto py-6 pr-4 scrollbar-hide">
+        <div className="fixed top-[calc(3.5rem+var(--announcement-h))] bottom-0 w-(--left-sidebar-width) overflow-y-auto py-6 pr-4 scrollbar-hide">
           {leftSidebar}
         </div>
       </div>
       <div className="min-w-0 py-8">{children}</div>
       <aside aria-label="Sponsors and resources" className="hidden min-w-0 xl:block">
-        <div className="fixed top-24 right-8 z-10 max-h-[calc(100dvh-8rem)] w-(--right-sidebar-width) overflow-y-auto pb-1 scrollbar-hide">
+        <div className="fixed top-[calc(6rem+var(--announcement-h))] right-8 z-10 max-h-[calc(100dvh-8rem-var(--announcement-h))] w-(--right-sidebar-width) overflow-y-auto pb-1 scrollbar-hide">
           {rightSidebar}
         </div>
       </aside>

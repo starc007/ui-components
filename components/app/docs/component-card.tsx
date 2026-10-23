@@ -9,9 +9,12 @@ export function ComponentCard({
   description,
   badge,
   launchedAt,
+  href,
 }: {
   categorySlug: string;
   slug: string;
+  /** Overrides the web component page, as for React Native pages. */
+  href?: string;
   name: string;
   description: string;
   badge?: "new";
@@ -19,7 +22,7 @@ export function ComponentCard({
 }) {
   return (
     <Link
-      href={componentPath(categorySlug, slug)}
+      href={href ?? componentPath(categorySlug, slug)}
       className="group/card relative flex h-40 flex-col overflow-hidden rounded-3xl bg-card transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] contain-[paint] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <div className="flex shrink-0 items-center justify-between gap-3 px-4 py-3">

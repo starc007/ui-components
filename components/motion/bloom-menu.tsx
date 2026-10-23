@@ -11,8 +11,19 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { type ComponentType, useEffect, useId, useRef, useState } from "react";
+import {
+  type ComponentType,
+  type KeyboardEvent,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { useOnOpen } from "@/lib/hooks/use-on-open";
+import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { cn } from "@/lib/utils";
 
 type MenuItem = { label: string; icon: ComponentType<{ className?: string }> };
@@ -48,12 +59,65 @@ export function BloomMenu({
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
   const layoutId = useId();
+  const menuId = useId();
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const itemRefs = useRef(new Map<string, HTMLButtonElement>());
+  // Set when the menu closes holding focus: the trigger is unmounted while
+  // open, so focus can only go back once it has mounted again.
+  const restoreFocus = useRef(false);
+
+  // The roving tab stop, resolved during render. Opening starts on the first
+  // item; arrow keys walk the grid from there.
+  const rows = useMemo(
+    () => items.map((item) => ({ id: item.label })),
+    [items],
+  );
+  const { activeIndex, moveTo } = useRowCursor(rows, "");
+  useOnOpen(open, () => moveTo(null));
+  const activeId = rows[activeIndex]?.id;
+
+  const close = useCallback((returnFocus: boolean) => {
+    if (returnFocus && ref.current?.contains(document.activeElement))
+      restoreFocus.current = true;
+    setOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      if (activeId !== undefined)
+        itemRefs.current.get(activeId)?.focus({ preventScroll: true });
+      return;
+    }
+    if (!restoreFocus.current) return;
+    restoreFocus.current = false;
+    triggerRef.current?.focus();
+  }, [open, activeId]);
+
+  const COLS = 3;
+  const onGridKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const last = rows.length - 1;
+    const step: Record<string, number> = {
+      ArrowRight: 1,
+      ArrowLeft: -1,
+      ArrowDown: COLS,
+      ArrowUp: -COLS,
+    };
+    let next: number | null = null;
+    if (event.key in step) {
+      const target = activeIndex + step[event.key];
+      next = target < 0 || target > last ? activeIndex : target;
+    } else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = last;
+    if (next === null) return;
+    event.preventDefault();
+    moveTo(rows[next].id);
+  };
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") close(true);
     };
     const onPointer = (e: PointerEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node))
@@ -65,7 +129,7 @@ export function BloomMenu({
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointerdown", onPointer);
     };
-  }, [open]);
+  }, [open, close]);
 
   const morph = reduce ? { duration: 0.15 } : SPRING_FOLDER;
 
@@ -90,6 +154,12 @@ export function BloomMenu({
               key="panel"
               layoutId={layoutId}
               transition={morph}
+              // Focus leaving the open menu closes it, as a click outside does.
+              onBlur={(event) => {
+                const next = event.relatedTarget;
+                if (next instanceof Node && !ref.current?.contains(next))
+                  close(false);
+              }}
               style={{ borderRadius: 16 }}
               className="w-[min(86vw,420px)] overflow-hidden border border-border bg-card"
             >
@@ -103,14 +173,17 @@ export function BloomMenu({
               >
                 {/* header */}
                 <div className="flex items-center justify-between border-b border-border px-4 py-3">
-                  <span className="text-sm font-medium text-muted-foreground">
+                  <span
+                    id={`${menuId}-label`}
+                    className="text-sm font-medium text-muted-foreground"
+                  >
                     Create
                   </span>
                   <button
                     type="button"
-                    onClick={() => setOpen(false)}
+                    onClick={() => close(true)}
                     aria-label="Close menu"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
+                    className="rounded-sm text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -130,6 +203,10 @@ export function BloomMenu({
                     duration: 0.45,
                     ease: EASE_OUT,
                   }}
+                  id={menuId}
+                  role="menu"
+                  aria-labelledby={`${menuId}-label`}
+                  onKeyDown={onGridKeyDown}
                   className="grid grid-cols-3"
                 >
                   {items.map((item, i) => {
@@ -147,16 +224,23 @@ export function BloomMenu({
                     return (
                       <button
                         key={item.label}
+                        ref={(node) => {
+                          if (node) itemRefs.current.set(item.label, node);
+                          else itemRefs.current.delete(item.label);
+                        }}
                         type="button"
+                        role="menuitem"
+                        tabIndex={item.label === activeId ? 0 : -1}
+                        onFocus={() => moveTo(item.label)}
                         onClick={() => {
                           onSelect?.(item.label);
-                          setOpen(false);
+                          close(true);
                         }}
                       // Static cell with hairline borders (no animated fill) so
                       // the grid lines never flicker as items stagger in. Only the
                       // inner content animates.
                       className={cn(
-                        "flex items-center justify-center px-3 py-6 text-muted-foreground transition-colors hover:text-foreground",
+                        "flex items-center justify-center px-3 py-6 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:bg-muted/60 focus-visible:text-foreground",
                         i % 3 !== 2 && "border-r border-border",
                         i < 3 && "border-b border-border",
                       )}
@@ -188,6 +272,7 @@ export function BloomMenu({
           ) : (
             <motion.button
               key="trigger"
+              ref={triggerRef}
               type="button"
               layoutId={layoutId}
               transition={morph}
@@ -195,8 +280,14 @@ export function BloomMenu({
               onClick={() => setOpen(true)}
               aria-haspopup="menu"
               aria-expanded={open}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                  event.preventDefault();
+                  setOpen(true);
+                }
+              }}
               whileTap={reduce ? undefined : { scale: 0.97 }}
-              className="inline-flex h-11 w-36 items-center justify-center border border-border bg-card text-sm font-medium text-foreground"
+              className="inline-flex h-11 w-36 items-center justify-center border border-border bg-card text-sm font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {/* own `layout` counter-scales the label so it stays crisp while the
                   button box morphs, instead of stretching with it */}

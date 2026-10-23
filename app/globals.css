@@ -2,6 +2,12 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Height of the announcement strip above the header. The page and sidebars
+   add it to the header offset; set it to 0px when there's no strip. */
+:root {
+    --announcement-h: 2.5rem;
+}
+
 :root {
     /* Light mode — beUI Current. */
     --background: oklch(99% 0 0);

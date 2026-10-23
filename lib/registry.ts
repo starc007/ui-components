@@ -62,6 +62,16 @@ export const registry: CategoryEntry[] = [
       "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
+        slug: "timeline",
+        name: "Timeline",
+        description:
+          "A draggable timeline of dated events around a focused card.",
+        file: "components/motion/timeline.tsx",
+        badge: "new",
+        launchedAt: "2026-10-20",
+        keywords: ["timeline", "react timeline", "horizontal timeline", "milestone timeline", "release history", "changelog timeline"],
+      },
+      {
         slug: "alert",
         name: "Animated Alert",
         description: "Composable feedback with smooth transitions.",
@@ -323,7 +333,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "tabs",
         name: "Tabs",
-        description: "Pill, segment or underline tabs with a spring layoutId indicator.",
+        description: "Pill, segment or underline tabs with a spring layoutId indicator and optional icons.",
         file: "components/motion/tabs.tsx",
       },
       {
@@ -1143,6 +1153,16 @@ export const registry: CategoryEntry[] = [
     description:
       "Animated React charts for activity, returns, price targets, and order books, built with Motion and Tailwind CSS as customizable copy-paste source.",
     components: [
+      {
+        slug: "sankey-chart",
+        name: "Sankey Chart",
+        description: "Weighted flows between stages that draw in and morph with your data.",
+        file: "components/charts/sankey-chart.tsx",
+        usageFile: "components/previews/charts/sankey-chart.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-10-22",
+        keywords: ["sankey chart", "sankey diagram", "flow chart", "income statement chart", "alluvial chart"],
+      },
       {
         slug: "treemap",
         name: "Treemap",

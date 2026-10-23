@@ -3,6 +3,7 @@ import {
   transformerNotationHighlight,
   transformerNotationDiff,
   transformerNotationFocus,
+  transformerStyleToClass,
 } from "@shikijs/transformers";
 import { CopyButton } from "./copy-button";
 import { ExpandableCode } from "./expandable-code";
@@ -47,7 +48,12 @@ export async function CodeBlock({
   const langLabel =
     LANG_LABELS[shikiLang] ?? LANG_LABELS[lang] ?? lang.toUpperCase();
 
-  const html = await codeToHtml(code, {
+  // Token colors become short shared classes instead of an inline style on
+  // every span. Pages that bundle many files (the Manual install tab) otherwise
+  // ship megabytes of repeated style attributes, twice: in the HTML and again
+  // in the RSC payload. Class names hash the colors, so blocks agree.
+  const styleToClass = transformerStyleToClass({ classPrefix: "k" });
+  const highlighted = await codeToHtml(code, {
     lang: shikiLang,
     themes: {
       light: "github-light-high-contrast",
@@ -58,8 +64,10 @@ export async function CodeBlock({
       transformerNotationHighlight(),
       transformerNotationDiff(),
       transformerNotationFocus(),
+      styleToClass,
     ],
   });
+  const html = `<style>${styleToClass.getCSS()}</style>${highlighted}`;
 
   const fileDir = filename ? filename.split("/").slice(0, -1).join("/") : null;
   const fileName = filename ? filename.split("/").pop() : null;

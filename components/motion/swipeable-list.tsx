@@ -1,5 +1,6 @@
 "use client";
 
+import { Ellipsis } from "lucide-react";
 import {
   animate,
   motion,
@@ -8,8 +9,10 @@ import {
   type PanInfo,
 } from "motion/react";
 import {
+  type KeyboardEvent,
   useCallback,
   useEffect,
+  useId,
   useRef,
   useState,
   type ReactNode,
@@ -211,6 +214,12 @@ function SwipeableListRow({
   renderItem?: (item: SwipeableListItem) => ReactNode;
 }) {
   const reduce = useReducedMotion();
+  const railId = useId();
+  const railRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  // Set when the keyboard opens a side, so focus follows into its actions once
+  // the rail stops being inert.
+  const focusActions = useRef(false);
   const x = useMotionValue(0);
   const animationRef = useRef<{ stop: () => void } | null>(null);
   const commandedTargetRef = useRef(0);
@@ -350,11 +359,55 @@ function SwipeableListRow({
       onAction?.({ item, action, side });
 
       if (closeOnAction) {
+        // The rail turns inert as the row closes; keep focus on the row.
+        if (railRef.current?.contains(document.activeElement))
+          toggleRef.current?.focus();
         snapTo(null);
       }
     },
     [closeOnAction, item, onAction, snapTo],
   );
+
+  useEffect(() => {
+    if (!openSide || !focusActions.current) return;
+    focusActions.current = false;
+    railRef.current
+      ?.querySelector<HTMLButtonElement>(
+        `[data-side="${openSide}"] button:not(:disabled)`,
+      )
+      ?.focus();
+  }, [openSide]);
+
+  const hasActions = leftWidth > 0 || rightWidth > 0;
+  const openFromKeyboard = (side: SwipeSide) => {
+    if ((side === "left" ? leftWidth : rightWidth) === 0) return;
+    focusActions.current = true;
+    snapTo(side);
+  };
+
+  // Keyboard stand-in for the swipe: the arrow keys move the row the way a
+  // swipe would, Enter or Space opens the trailing actions, and Escape closes.
+  const onToggleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      if (openSide === "left") snapTo(null);
+      else openFromKeyboard("right");
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      if (openSide === "right") snapTo(null);
+      else openFromKeyboard("left");
+    } else if (event.key === "Escape" && openSide) {
+      event.preventDefault();
+      snapTo(null);
+    }
+  };
+
+  const onRailKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Escape") return;
+    event.preventDefault();
+    toggleRef.current?.focus();
+    snapTo(null);
+  };
 
   const defaultContent = (
     <div className="flex min-w-0 items-center gap-3">
@@ -407,14 +460,20 @@ function SwipeableListRow({
       )}
     >
       <div
+        ref={railRef}
+        id={railId}
         aria-hidden={!openSide}
         inert={!openSide}
+        onKeyDown={onRailKeyDown}
         className={cn(
           "absolute inset-0 z-0 flex overflow-hidden rounded-2xl",
           classNames?.rail,
         )}
       >
-        <div className="flex h-full overflow-hidden rounded-l-2xl">
+        <div
+          data-side="left"
+          className="flex h-full overflow-hidden rounded-l-2xl"
+        >
           {leftActions.map((action) => (
             <SwipeActionButton
               key={action.id}
@@ -427,7 +486,10 @@ function SwipeableListRow({
             />
           ))}
         </div>
-        <div className="ml-auto flex h-full overflow-hidden rounded-r-2xl">
+        <div
+          data-side="right"
+          className="ml-auto flex h-full overflow-hidden rounded-r-2xl"
+        >
           {rightActions.map((action) => (
             <SwipeActionButton
               key={action.id}
@@ -462,6 +524,32 @@ function SwipeableListRow({
         )}
       >
         {renderItem ? renderItem(item) : item.content ?? defaultContent}
+        {hasActions && !item.disabled ? (
+          // Only visible while focused from the keyboard; pointers swipe.
+          <button
+            ref={toggleRef}
+            type="button"
+            aria-label={
+              typeof item.title === "string"
+                ? `Actions for ${item.title}`
+                : "Show actions"
+            }
+            aria-expanded={openSide !== null}
+            aria-controls={railId}
+            onClick={() =>
+              openSide
+                ? snapTo(null)
+                : openFromKeyboard(rightWidth > 0 ? "right" : "left")
+            }
+            onKeyDown={onToggleKeyDown}
+            className={cn(
+              "sr-only grid place-items-center rounded-full bg-muted text-muted-foreground outline-none",
+              "focus-visible:not-sr-only focus-visible:absolute focus-visible:right-3 focus-visible:top-1/2 focus-visible:h-8 focus-visible:w-8 focus-visible:-translate-y-1/2 focus-visible:ring-2 focus-visible:ring-ring",
+            )}
+          >
+            <Ellipsis aria-hidden className="h-4 w-4" />
+          </button>
+        ) : null}
       </motion.div>
     </div>
   );

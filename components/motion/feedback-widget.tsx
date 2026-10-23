@@ -6,6 +6,7 @@ import {
   type ReactNode,
   useCallback,
   useEffect,
+  useId,
   useRef,
   useState,
 } from "react";
@@ -63,6 +64,7 @@ export function FeedbackWidget({
   const reduce = useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const titleId = useId();
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [status, setStatus] = useState<Status>("idle");
@@ -368,7 +370,10 @@ export function FeedbackWidget({
                     >
                       <div className="min-h-[150px] rounded-[20px] bg-border/60 px-4 py-3.5">
                         <div className="flex items-start justify-between gap-3">
-                          <h3 className="text-sm font-semibold text-foreground">
+                          <h3
+                            id={titleId}
+                            className="text-sm font-semibold text-foreground"
+                          >
                             {title}
                           </h3>
                           <button
@@ -382,6 +387,7 @@ export function FeedbackWidget({
                         </div>
                         <textarea
                           ref={textareaRef}
+                          aria-labelledby={titleId}
                           value={message}
                           onChange={(e) => setMessage(e.target.value)}
                           placeholder={placeholder}

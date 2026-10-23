@@ -109,8 +109,15 @@ export const SHADER_BACKGROUND_VARIANTS = Object.keys(
 ) as ShaderBackgroundVariant[];
 
 /**
- * Not every variant animates (e.g. dot-grid is a static pattern), so `speed`
- * is only frozen for reduced motion when the variant actually exposes it.
+ * Variants with no `speed` param: static patterns that never animate, and that
+ * would pass an unknown `speed` through to their DOM node.
+ */
+const STATIC_VARIANTS = new Set<ShaderBackgroundVariant>(["dot-grid", "waves"]);
+
+/**
+ * Reduced motion freezes every animating variant at speed 0, whether or not
+ * the caller passed `speed`: the shaders animate by default when it is left
+ * out.
  */
 export function ShaderBackground({
   variant,
@@ -122,7 +129,8 @@ export function ShaderBackground({
     Record<string, unknown>
   >;
   const props = rest as Record<string, unknown>;
-  const speedProps = reducedMotion && "speed" in props ? { speed: 0 } : {};
+  const speedProps =
+    reducedMotion && !STATIC_VARIANTS.has(variant) ? { speed: 0 } : {};
 
   return (
     <Shader

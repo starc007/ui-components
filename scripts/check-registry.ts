@@ -1,5 +1,9 @@
 import { allComponents } from "../lib/registry";
+import { componentAbout } from "../lib/component-about";
 import { componentDates } from "../lib/component-dates";
+import { componentSeo, SEO_DESCRIPTION_MAX, SEO_TITLE_MAX } from "../lib/component-seo";
+import { seoPages } from "../lib/seo-pages";
+import { changelogEntries } from "../lib/changelog";
 import { allShadcnTargets, buildEntry, buildShadcnItem } from "../lib/registry-server";
 import { readSourceFile } from "../lib/source-files";
 
@@ -54,6 +58,93 @@ for (const target of allShadcnTargets()) {
     errors.push(`${label}: ${(error as Error).message}`);
   }
 }
+
+// Every component page needs About notes plus a search title and description
+// within the limits search results display, all written without em dashes.
+for (const component of allComponents()) {
+  const label = `${component.category.slug}/${component.slug}`;
+  const about = componentAbout[component.slug];
+  if (!about) {
+    errors.push(`${label}: missing entry in lib/component-about.ts`);
+  } else if (/\u2014/.test(JSON.stringify(about))) {
+    errors.push(`${label}: About copy contains an em dash`);
+  }
+  const seo = componentSeo[component.slug];
+  if (!seo) {
+    errors.push(`${label}: missing entry in lib/component-seo.ts`);
+    continue;
+  }
+  if (seo.title.length > SEO_TITLE_MAX) {
+    errors.push(`${label}: SEO title is ${seo.title.length} chars (max ${SEO_TITLE_MAX})`);
+  }
+  if (seo.description.length > SEO_DESCRIPTION_MAX) {
+    errors.push(
+      `${label}: SEO description is ${seo.description.length} chars (max ${SEO_DESCRIPTION_MAX})`,
+    );
+  }
+  if (/\u2014/.test(seo.title + seo.description)) {
+    errors.push(`${label}: SEO copy contains an em dash`);
+  }
+}
+
+const componentSlugs = new Set(allComponents().map((component) => component.slug));
+for (const slug of [...Object.keys(componentSeo), ...Object.keys(componentAbout)]) {
+  if (!componentSlugs.has(slug)) errors.push(`SEO or About entry "${slug}" has no component`);
+}
+
+// Alternatives and guides pages: search copy limits, real component links,
+// unique slugs and enough substance to stand on their own.
+for (const kind of ["alternatives", "guides"] as const) {
+  const seen = new Set<string>();
+  for (const page of seoPages(kind)) {
+    const label = `/${kind}/${page.slug}`;
+    if (seen.has(page.slug)) errors.push(`${label}: duplicate slug`);
+    seen.add(page.slug);
+    if (page.title.length > SEO_TITLE_MAX) {
+      errors.push(`${label}: title is ${page.title.length} chars (max ${SEO_TITLE_MAX})`);
+    }
+    if (page.description.length > SEO_DESCRIPTION_MAX) {
+      errors.push(
+        `${label}: description is ${page.description.length} chars (max ${SEO_DESCRIPTION_MAX})`,
+      );
+    }
+    if (page.sections.length < 3) errors.push(`${label}: needs at least 3 sections`);
+    if (page.faq.length < 3) errors.push(`${label}: needs at least 3 FAQ items`);
+    if (/\u2014/.test(JSON.stringify(page))) errors.push(`${label}: contains an em dash`);
+    for (const slug of page.components) {
+      if (!componentSlugs.has(slug)) errors.push(`${label}: unknown component "${slug}"`);
+    }
+  }
+}
+
+// Changelog: Monday-dated weeks, newest first, each item tied to a real
+// component when it names one.
+changelogEntries.forEach((entry, index) => {
+  const label = `changelog ${entry.date}`;
+  const day = new Date(`${entry.date}T00:00:00Z`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.date) || Number.isNaN(day.getTime())) {
+    errors.push(`${label}: date must be YYYY-MM-DD`);
+  } else if (day.getUTCDay() !== 1) {
+    errors.push(`${label}: date must be the Monday that starts the week`);
+  }
+  const previous = changelogEntries[index - 1];
+  if (previous && previous.date <= entry.date) {
+    errors.push(`${label}: entries must be newest first with one per week`);
+  }
+  if (entry.items.length === 0) errors.push(`${label}: has no items`);
+  if (new Set(entry.items.map((item) => item.text)).size !== entry.items.length) {
+    errors.push(`${label}: duplicate item text`);
+  }
+  if (/\u2014/.test(JSON.stringify(entry))) errors.push(`${label}: contains an em dash`);
+  for (const item of entry.items) {
+    if (item.component && !componentSlugs.has(item.component)) {
+      errors.push(`${label}: unknown component "${item.component}"`);
+    }
+    if (item.href && !item.href.startsWith("/")) {
+      errors.push(`${label}: href must be a site path, got "${item.href}"`);
+    }
+  }
+});
 
 for (const [slug, labels] of slugLabels) {
   if (labels.length > 1) {
