@@ -219,11 +219,12 @@ function SponsorTier({
   );
 }
 
-// Updated by hand from the Tracwell dashboard.
-const TRAFFIC_UPDATED_AT = "Oct 12, 2026";
+// Updated by hand from the Tracwell dashboard. Values are rounded down and
+// shown as "at least", so the page never overstates traffic.
+const TRAFFIC_UPDATED_AT = "Oct 23, 2026";
 const TRAFFIC_STATS = [
-  { period: "Last 30 days", visitors: 50_696, pageViews: 867_232 },
-  { period: "Last 90 days", visitors: 150_109, pageViews: 2_198_130 },
+  { period: "Last 30 days", visitors: 54_000, pageViews: 800_000 },
+  { period: "Last 90 days", visitors: 175_000, pageViews: 2_400_000 },
 ];
 
 const compactNumber = new Intl.NumberFormat("en-US", {
@@ -237,9 +238,9 @@ function TrafficStat({ label, value }: { label: string; value: number }) {
       <dt className="text-sm text-muted-foreground">{label}</dt>
       <dd
         className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-foreground"
-        title={value.toLocaleString("en-US")}
+        title={`More than ${value.toLocaleString("en-US")}`}
       >
-        {compactNumber.format(value)}
+        {compactNumber.format(value)}+
       </dd>
     </div>
   );
