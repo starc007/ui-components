@@ -216,6 +216,9 @@ export const previews: Record<string, ComponentType> = {
   "blocks/feedback-widget": dynamic(() =>
     import("./blocks/feedback-widget.preview").then((m) => m.FeedbackWidgetPreview),
   ),
+  "blocks/card-dealer": dynamic(() =>
+    import("./blocks/card-dealer.preview").then((m) => m.CardDealerPreview),
+  ),
   "blocks/bloom-menu": dynamic(() =>
     import("./blocks/bloom-menu.preview").then((m) => m.BloomMenuPreview),
   ),

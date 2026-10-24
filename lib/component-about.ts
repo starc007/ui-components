@@ -3095,6 +3095,34 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  "card-dealer": {
+    overview:
+      "Card Dealer is a React card table built with Framer Motion. It lays out a face-down deck, a fanned hand and a tilted discard pile, and you move a card by changing its zone. Every card stays mounted, so the change becomes a flight: the card arcs across the table on motion's arc() path and flips face up or down in 3D on the way. Several cards moving at once leave one after another, and reordering the hand makes cards hop over each other into their new slots. Faces and backs are yours to render.",
+    useWhen: [
+      "A card game, flashcard app or quiz needs to deal, play and collect cards with motion people expect from a real table.",
+      "An onboarding flow or pricing page wants to deal out steps or plans as cards that can be picked and played.",
+      "A landing page or demo wants a playful, tactile showcase of arc and flip motion.",
+    ],
+    accessibility:
+      "The table is a labelled region. With onCardSelect, each hand card is a button named by its label, and the hand renders in fan order so Tab moves through it left to right. Focusing a card lifts it and parts its neighbours the same way hovering does. Deck and pile cards are decorative. With reduced motion enabled, cards move and flip instantly with no arc, stagger or lift animation.",
+    faq: [
+      {
+        question: "How do I deal a card?",
+        answer:
+          "Change the card's zone from deck to hand in your state. The component animates the move; you never call an animation yourself. Moving a card to the end of your array puts it on top of its new zone.",
+      },
+      {
+        question: "Can I use my own card design?",
+        answer:
+          "Yes. renderFace draws the front of every card and renderBack the back shown in the deck. Pass cardWidth and cardHeight to change the card size.",
+      },
+      {
+        question: "Does it need playing cards?",
+        answer:
+          "No. A card is any object with an id, a zone and a label, so the same table works for flashcards, plans, steps or photos.",
+      },
+    ],
+  },
   "bloom-menu": {
     overview:
       "Bloom Menu is a React button that morphs into a menu panel using a Framer Motion shared layout animation. When it opens, the grid of options reveals from the center outward like an iris, and each option fades and scales in with a stagger based on its distance from the middle. It ships with a set of create actions (doc, board, table, folder, reminder, link) that you can replace with your own items and icons.",

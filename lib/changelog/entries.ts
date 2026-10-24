@@ -12,6 +12,11 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
+        "text": "Card Dealer lays out a deck, a fanned hand and a discard pile. Cards arc across the table and flip in flight, and hop over each other when you sort the hand.",
+        "component": "card-dealer"
+      },
+      {
+        "type": "new",
         "text": "Sankey Chart shows weighted flows between stages: bands draw in from left to right, morph when the data changes, and light up with everything a node or flow connects.",
         "component": "sankey-chart"
       },
