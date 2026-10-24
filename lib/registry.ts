@@ -2199,6 +2199,15 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "card-dealer",
+        name: "Card Dealer",
+        description: "A card table with a face-down deck, a fanned hand and a discard pile. Cards arc across the table between them and flip in flight, hop over each other when the hand is sorted, and lift on hover. Data-driven by each card's zone, with custom faces and backs, keyboard-playable hand cards and reduced-motion support.",
+        file: "components/motion/card-dealer.tsx",
+        badge: "new",
+        launchedAt: "2026-10-24",
+        keywords: ["card dealer", "card hand", "deal cards animation", "playing cards react", "card fan"],
+      },
+      {
         slug: "bloom-menu",
         name: "Bloom Menu",
         description: "A button that morphs open into a menu and blooms iris-out from the center, the grid revealing in every direction with radially staggered items.",

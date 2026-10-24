@@ -551,6 +551,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Animated React sign up form with on-blur validation, a password strength meter, password reveal and loading and success states. Free, open source.",
   },
+  "card-dealer": {
+    title: "Animated Card Dealer and Card Hand for React",
+    description:
+      "React card table with a deck, fanned hand and discard pile. Cards arc across the table, flip in flight and hop when sorted. Framer Motion, install with shadcn.",
+  },
   "bloom-menu": {
     title: "Animated Bloom Menu Button for React",
     description:
