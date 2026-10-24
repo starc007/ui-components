@@ -58,11 +58,18 @@ const HOP: Transition = { type: "spring", visualDuration: 0.4, bounce: 0.2 };
 const FLIGHT_STRENGTH = -0.35;
 const HOP_STRENGTH = -0.3;
 // Cards in a multi-card move leave one after another, not as a single slab.
+// A big move shares a fixed window, so dealing the whole deck still flows.
 const STAGGER = 0.045;
-const MAX_STAGGERED = 12;
+const MAX_STAGGER_WINDOW = 0.6;
 const EDGE = 16;
 const HOVER_LIFT = 18;
 const HOVER_PUSH = 14;
+// The fan's outermost tilt and drop, whatever the hand size. Small hands sit
+// well inside both; a whole deck spread into the hand becomes one shallow
+// ribbon instead of cards tipping past vertical.
+const MAX_FAN_ANGLE = 40;
+const MAX_FAN_DROP = 26;
+const FAN_DROP = 2.2;
 
 type Pose = { x: number; y: number; rotate: number; faceDown: boolean; z: number };
 
@@ -147,6 +154,10 @@ export function CardDealer<T extends CardDealerCard>({
     }
     const count = hand.length;
     const offset = slot - (count - 1) / 2;
+    const edge = Math.max((count - 1) / 2, 1);
+    const reach = offset / edge;
+    const tilt = Math.min(angle * edge, MAX_FAN_ANGLE);
+    const drop = Math.min(FAN_DROP * edge * edge, MAX_FAN_DROP);
     const room = width - cardWidth - EDGE * 2;
     const step = count > 1 ? Math.min(spread, room / (count - 1)) : 0;
     const hoveredSlot = hovered ? hand.findIndex((item) => item.id === hovered) : -1;
@@ -157,8 +168,13 @@ export function CardDealer<T extends CardDealerCard>({
     return {
       x: width / 2 - cardWidth / 2 + offset * step + push,
       // Outer cards sit lower so the fan reads as held, not laid flat.
-      y: height - cardHeight - EDGE + offset * offset * 2.2 - (slot === hoveredSlot ? HOVER_LIFT : 0),
-      rotate: offset * angle,
+      y:
+        height -
+        cardHeight -
+        EDGE +
+        reach * reach * drop -
+        (slot === hoveredSlot ? HOVER_LIFT : 0),
+      rotate: reach * tilt,
       faceDown: false,
       z: slot === hoveredSlot ? 300 : 100 + slot,
     };
@@ -166,12 +182,17 @@ export function CardDealer<T extends CardDealerCard>({
 
   // Moving cards leave in stacking order, so a deal or a collect fans out.
   let moving = 0;
+  const movers = cards.filter((card) => {
+    const was = previous.current.get(card.id);
+    return was !== undefined && was.zone !== card.zone;
+  }).length;
+  const stagger = movers > 1 ? Math.min(STAGGER, MAX_STAGGER_WINDOW / (movers - 1)) : 0;
   const transitionFor = (card: T, slot: number): Transition => {
     if (reduce || resized.current) return { duration: 0 };
     const was = previous.current.get(card.id);
     if (!was) return { duration: 0 };
     if (was.zone !== card.zone) {
-      const delay = Math.min(moving, MAX_STAGGERED) * STAGGER;
+      const delay = moving * stagger;
       moving += 1;
       return { ...FLIGHT, delay, path: arc({ strength: FLIGHT_STRENGTH }) };
     }

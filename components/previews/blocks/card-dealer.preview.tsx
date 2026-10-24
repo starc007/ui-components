@@ -12,7 +12,7 @@ const SUITS = [
 ] as const;
 const RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 const RANK_NAMES: Record<string, string> = { A: "Ace", J: "Jack", Q: "Queen", K: "King" };
-const HAND_LIMIT = 9;
+const HAND_LIMIT = 13;
 
 type PlayingCard = CardDealerCard & { rank: number; suit: number };
 
@@ -95,10 +95,16 @@ export function CardDealerPreview() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const deal = () => {
-    const top = deck.at(-1);
-    if (top) setCards((current) => moveTo(current, [top.id], "hand"));
-  };
+  // Deals from the top of the deck, never past the hand limit.
+  const deal = (count: number) =>
+    setCards((current) => {
+      const room = HAND_LIMIT - current.filter((card) => card.zone === "hand").length;
+      const top = current
+        .filter((card) => card.zone === "deck")
+        .slice(-Math.max(0, Math.min(count, room)))
+        .reverse();
+      return top.length ? moveTo(current, top.map((card) => card.id), "hand") : current;
+    });
   const sort = () =>
     setCards((current) =>
       moveTo(
@@ -143,8 +149,11 @@ export function CardDealerPreview() {
         aria-label="Card table. Select a card in your hand to play it."
       />
       <div className="flex flex-wrap items-center justify-center gap-2">
-        <Button size="sm" onClick={deal} disabled={!deck.length || hand.length >= HAND_LIMIT}>
+        <Button size="sm" onClick={() => deal(1)} disabled={!deck.length || hand.length >= HAND_LIMIT}>
           Deal
+        </Button>
+        <Button size="sm" onClick={() => deal(3)} disabled={!deck.length || hand.length >= HAND_LIMIT}>
+          Deal 3
         </Button>
         <Button size="sm" variant="secondary" onClick={sort} disabled={hand.length < 2}>
           Sort
