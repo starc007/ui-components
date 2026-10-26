@@ -255,7 +255,9 @@ export function CardDealer<T extends CardDealerCard>({
     <section
       ref={stageRef}
       aria-label={ariaLabel}
-      className={cn("relative h-80 w-full touch-manipulation select-none", className)}
+      // isolate: card z-indices only order cards against each other, so the
+      // table never draws over sticky page chrome such as a header.
+      className={cn("relative isolate h-80 w-full touch-manipulation select-none", className)}
     >
       {/* One flat list, so a card changing zones keeps its element and flies
           instead of remounting; zone by zone with the hand in fan order, so
