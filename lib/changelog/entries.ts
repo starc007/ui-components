@@ -7,6 +7,17 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
  */
 export const changelogEntries: ChangelogEntry[] = [
   {
+    "date": "2026-10-26",
+    "title": "Card Dealer fixes",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Card Dealer cards stay inside their table and no longer draw over a sticky page header when you scroll.",
+        "component": "card-dealer"
+      }
+    ]
+  },
+  {
     "date": "2026-10-19",
     "title": "A public changelog",
     "items": [

@@ -5,7 +5,7 @@
  * maintenance should not refresh every component's public update date.
  */
 const COMPONENT_DATES = {
-  "blocks/card-dealer": { publishedAt: "2026-10-24", updatedAt: "2026-10-24" },
+  "blocks/card-dealer": { publishedAt: "2026-10-24", updatedAt: "2026-10-26" },
   "charts/sankey-chart": { publishedAt: "2026-10-22", updatedAt: "2026-10-22" },
   "motion/timeline": { publishedAt: "2026-10-20", updatedAt: "2026-10-20" },
   "charts/donut-chart": { publishedAt: "2026-10-12", updatedAt: "2026-10-18" },
