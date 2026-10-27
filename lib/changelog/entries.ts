@@ -27,6 +27,11 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "fixed",
+        "text": "Composition Chart's crosshair follows your finger directly when you drag across the chart on a touch screen, instead of gliding behind it.",
+        "component": "composition-chart"
+      },
+      {
+        "type": "fixed",
         "text": "Card Dealer cards stay inside their table and no longer draw over a sticky page header when you scroll.",
         "component": "card-dealer"
       }
