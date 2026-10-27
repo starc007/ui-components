@@ -3,7 +3,7 @@ import { RainbowCta } from "@/components/app/rainbow-cta";
 
 // beUI Pro for mobile presale. The price is set by hand in the Pro repo; update
 // it here when the presale tier changes.
-const PRESALE_PRICE = "$99";
+const PRESALE_PRICE = "$129";
 
 /** Sidebar promo on React Native pages for the beUI Pro for mobile presale. */
 export function ProMobileCard() {

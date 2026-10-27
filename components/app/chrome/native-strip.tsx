@@ -9,7 +9,7 @@ import styles from "./native-strip.module.css";
 
 // beUI Pro for mobile presale. The price is set by hand in the Pro repo; update
 // it here when the presale tier changes.
-const PRESALE_PRICE = "$99";
+const PRESALE_PRICE = "$129";
 const PRESALE_URL =
   "https://pro.beui.dev/mobile?utm_source=beui&utm_medium=referral&utm_campaign=mobile_presale&utm_content=strip";
 
