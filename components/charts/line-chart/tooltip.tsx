@@ -48,6 +48,7 @@ export function LineChartTooltip({ children, className, side = "auto" }: LineCha
     tooltipId,
     formatValue,
     reduce,
+    touching,
   } = useLineChart();
   const panelRef = useRef<HTMLDivElement>(null);
   // Kept between openings: the panel's size barely changes from one point to the next.
@@ -121,7 +122,8 @@ export function LineChartTooltip({ children, className, side = "auto" }: LineCha
           className="pointer-events-none absolute top-0 left-0 z-10 w-max"
           initial={position}
           animate={position}
-          transition={reduce ? { duration: 0 } : FOLLOW}
+          // The trailing follow suits a mouse; under a finger it reads as lag.
+          transition={reduce || touching ? { duration: 0 } : FOLLOW}
         >
           <TooltipSurface
             id={tooltipId}

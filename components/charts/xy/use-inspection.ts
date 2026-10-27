@@ -42,6 +42,8 @@ export function useInspection({
   if (activeId === undefined && requested !== null && !ids.includes(requested)) setInternal(null);
   const activeIndex = requested === null ? -1 : ids.indexOf(requested);
   const [open, setOpen] = useState(false);
+  // A finger on the plot: inspection marks follow it directly instead of gliding.
+  const [touching, setTouching] = useState(false);
   const plotRef = useRef<HTMLDivElement>(null);
   const tooltipId = useId();
   return {
@@ -50,6 +52,8 @@ export function useInspection({
     setActive,
     open,
     setOpen,
+    touching,
+    setTouching,
     plotRef,
     tooltipId,
   };

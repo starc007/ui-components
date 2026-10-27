@@ -18,6 +18,8 @@ export interface XYInspectorProps {
   setOpen: (open: boolean) => void;
   tooltipId?: string;
   canHover: boolean;
+  /** Reports a touch drag starting and ending, so marks can track the finger 1:1. */
+  onTouchChange?: (touching: boolean) => void;
   className?: string;
   style?: CSSProperties;
 }
@@ -38,6 +40,7 @@ export function XYInspector({
   setOpen,
   tooltipId,
   canHover,
+  onTouchChange,
   className,
   style,
 }: XYInspectorProps) {
@@ -107,12 +110,17 @@ export function XYInspector({
       }}
       onPointerDown={(event) => {
         pointerDriven.current = true;
-        if (event.pointerType !== "touch") mouseFocus.current = true;
+        if (event.pointerType === "touch") onTouchChange?.(true);
+        else mouseFocus.current = true;
         last.current = null;
         inspectPointer(event);
       }}
-      onPointerCancel={() => {
+      onPointerUp={(event) => {
+        if (event.pointerType === "touch") onTouchChange?.(false);
+      }}
+      onPointerCancel={(event) => {
         pointerDriven.current = false;
+        if (event.pointerType === "touch") onTouchChange?.(false);
         setOpen(false);
       }}
       onClick={() => {
