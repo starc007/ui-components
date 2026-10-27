@@ -8,8 +8,23 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
 export const changelogEntries: ChangelogEntry[] = [
   {
     "date": "2026-10-26",
-    "title": "Card Dealer fixes",
+    "title": "Line, bar and sparkline charts",
     "items": [
+      {
+        "type": "new",
+        "text": "Line Chart draws line and area charts that morph when the data changes. Inspecting rolls a pill along the category axis, recedes the line past the crosshair and springs a tooltip beside the values, and a loading status holds a pulsing placeholder until your data draws in.",
+        "component": "line-chart"
+      },
+      {
+        "type": "new",
+        "text": "Bar Chart shows grouped or stacked bars, vertical or horizontal. Bars grow in from the baseline, and sorting by total glides each category to its new place.",
+        "component": "bar-chart"
+      },
+      {
+        "type": "new",
+        "text": "Sparkline adds a compact trend to stat cards and tables, with an optional change badge and a hover or keyboard readout for individual samples.",
+        "component": "sparkline"
+      },
       {
         "type": "fixed",
         "text": "Card Dealer cards stay inside their table and no longer draw over a sticky page header when you scroll.",

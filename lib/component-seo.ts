@@ -287,6 +287,21 @@ export const componentSeo: Record<string, ComponentSeo> = {
   },
 
   // Charts
+  "line-chart": {
+    title: "Animated React Line Chart and Area Chart",
+    description:
+      "React line and area chart with lines that morph on new data, a snapping crosshair, animated value tooltips, series toggles and keyboard access. Free source.",
+  },
+  "bar-chart": {
+    title: "Animated React Bar Chart Component",
+    description:
+      "React bar chart with grouped, stacked and horizontal layouts, bars that grow in and reorder with springs, tooltips and keyboard access. Free source, shadcn.",
+  },
+  sparkline: {
+    title: "React Sparkline Chart Component",
+    description:
+      "React sparkline for stat cards and tables: a compact trend line or area with a change badge, live morphing and an optional hover readout. Free source.",
+  },
   "sankey-chart": {
     title: "Animated React Sankey Chart Component",
     description:

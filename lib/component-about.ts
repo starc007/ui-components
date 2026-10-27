@@ -1674,6 +1674,98 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  "line-chart": {
+    overview:
+      "Line Chart is an animated React line and area chart built with Framer Motion and Tailwind CSS. You pass series with one value per category; lines draw in from left to right when the chart scrolls into view, and every sample springs to its new place when the data changes, so lines, gradient fills and the value axis morph together instead of redrawing. Lines fade out toward both edges of the plot. Hovering, dragging or using the arrow keys moves a crosshair that snaps to the nearest category: the line beyond it recedes, a pill on the category axis rolls to the new label, and a tooltip springs along beside the highest value, rolling each value into place. Legend entries toggle series, and the axis rescales to what is left. Set status to loading while you fetch, and a pulsing placeholder line holds the space until the real lines draw in.",
+    useWhen: [
+      "An analytics dashboard compares this period with the last one, or actuals with a target.",
+      "A billing or finance page shows revenue, costs or balances over months.",
+      "A monitoring view plots a few metrics over time and updates as new samples arrive.",
+    ],
+    accessibility:
+      "The chart is a labelled region with one tab stop: an invisible native slider over the plot. Arrow keys, Home and End move between categories, the slider announces the category with every visible series value, and its tooltip is linked through aria-describedby. Escape closes the tooltip. Legend entries are buttons with a pressed state for each visible series. A visually hidden table lists every value, and gaps read as No data. While loading, the chart is marked busy, the loading label is announced as a status, and the slider and data table are left out until real data arrives. With reduced motion enabled, lines appear in place, data, rescale and crosshair changes happen without springs, and the loading placeholder only pulses its opacity.",
+    faq: [
+      {
+        question: "How do I make a line chart in React?",
+        answer:
+          "Install the component and pass categories, such as month labels, and series, each with an id, name, color and an array of values aligned with the categories. Leave children empty for the plot, tooltip and legend, or compose LineChartPlot, LineChartTooltip and LineChartLegend yourself.",
+      },
+      {
+        question: "How do I get an area chart?",
+        answer:
+          "Set variant to area. Each line fills down to zero with a fading gradient in its own color, and the value axis always includes zero. Use curve to choose monotone, linear or step lines.",
+      },
+      {
+        question: "What happens with missing values?",
+        answer:
+          "Pass null, or any non-finite number, and the line breaks there instead of joining across the gap. The tooltip and the hidden data table show No data for that point.",
+      },
+      {
+        question: "How do I show a loading state?",
+        answer:
+          "Pass status=\"loading\" while your data is fetching and status=\"ready\" when it resolves, on the same mounted chart. A placeholder line pulses under a shimmering label, set with loadingLabel, then fades away as the real lines draw in. Switching back to loading hides the lines again.",
+      },
+    ],
+  },
+
+  "bar-chart": {
+    overview:
+      "Bar Chart is an animated React bar chart for comparing values across categories, built with Framer Motion and Tailwind CSS. It draws grouped or stacked bars, vertically or horizontally, and grows them out of the baseline with a short stagger when the chart scrolls into view. Bars are moved with transforms only and keep their rounded caps unstretched, so new data, a hidden series or a rescaled axis animate smoothly, and turning on sorting glides each category to its new rank.",
+    useWhen: [
+      "A dashboard compares revenue, signups or usage across regions, plans or teams.",
+      "A report breaks each month into parts with stacked bars and shows the total in the tooltip.",
+      "A leaderboard of long category names reads better as sorted horizontal bars.",
+    ],
+    accessibility:
+      "The chart is a labelled region with one tab stop: an invisible native slider over the plot that follows the visual order of the categories. Arrow keys, Home and End move between categories, with Arrow Down moving down the list for horizontal bars, and the slider announces each series value plus the total for stacked bars. Escape closes the tooltip. Legend entries are buttons with a pressed state. A visually hidden table lists every value. With reduced motion enabled, bars appear at full size and update without growth, glide or stagger.",
+    faq: [
+      {
+        question: "How do I make a stacked bar chart in React?",
+        answer:
+          "Install the component, pass categories and series with one value per category, and set layout to stacked. The tooltip adds a total row, and the value axis fits the tallest stack.",
+      },
+      {
+        question: "Can bars be horizontal or sorted?",
+        answer:
+          "Yes. Set orientation to horizontal for bars that grow to the right with category labels in a left gutter, and sort to ascending or descending to order categories by their visible total. When the order changes, bars glide to their new place.",
+      },
+      {
+        question: "Does it support negative values?",
+        answer:
+          "No. Bars measure nonnegative amounts from a zero baseline, and negative or missing values leave a gap. Use a line chart for values that cross zero.",
+      },
+    ],
+  },
+
+  sparkline: {
+    overview:
+      "Sparkline is a compact React trend line for stat cards, tables and inline text, built with Framer Motion and Tailwind CSS. It fits its data tightly into a small line or area, marks the latest sample with a dot, and can show the change from the first to the last sample as a colored badge. When values update or a live window shifts, the line morphs on springs instead of redrawing, and the optional interactive mode lets people hover, drag or use the arrow keys to read individual samples.",
+    useWhen: [
+      "A row of KPI cards shows each metric's recent trend under its current value.",
+      "A table of stocks, products or services needs a small trend in every row.",
+      "A live dashboard tile follows a metric as new samples arrive.",
+    ],
+    accessibility:
+      "By default the sparkline is an image whose label summarizes the trend, such as from the first to the last value and the percentage change, so it adds no tab stops to a table. With interactive set, it adds one native slider named after the label; Arrow keys, Home and End move between samples, each announced with its label and value, and Escape ends the readout. The change badge repeats information already in the label, so it is hidden from screen readers. With reduced motion enabled, values update in place.",
+    faq: [
+      {
+        question: "How do I add a sparkline in React?",
+        answer:
+          "Install the component and pass data, an array of numbers, and label, a short description such as Revenue, last 30 days. Width follows the container and height defaults to 32px.",
+      },
+      {
+        question: "Can I show the percentage change?",
+        answer:
+          "Yes. Set showDelta to add a badge with the change from the first to the last sample, green when it rises and red when it falls. Add invertDelta for metrics where lower is better, such as error rate. The badge is left out when the first value is zero.",
+      },
+      {
+        question: "Can people read exact values?",
+        answer:
+          "Set interactive and pass labels, such as dates. Hovering, dragging or the arrow keys move a dot along the line, and a readout beside it shows that sample's value and label.",
+      },
+    ],
+  },
+
   "sankey-chart": {
     overview:
       "Sankey Chart is an animated React Sankey diagram for weighted flows between stages, built with Framer Motion and Tailwind CSS. You pass nodes and links between their ids; the chart places nodes in columns by how far they sit from a source, sizes each one to its value and arranges every column to keep bands short and uncrossed. Links draw in from left to right when the chart scrolls into view and spring to new positions when the data changes, and hovering or focusing a node or flow highlights everything it connects.",
