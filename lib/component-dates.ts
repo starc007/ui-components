@@ -85,7 +85,7 @@ const COMPONENT_DATES = {
   "motion/table": { publishedAt: "2026-07-01", updatedAt: "2026-10-18" },
   "motion/shader-background": { publishedAt: "2026-07-02", updatedAt: "2026-10-18" },
   "motion/cylinder-carousel": { publishedAt: "2026-07-04", updatedAt: "2026-10-18" },
-  "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-10-18" },
+  "motion/loader": { publishedAt: "2026-07-04", updatedAt: "2026-10-27" },
   "charts/composition-chart": { publishedAt: "2026-09-25", updatedAt: "2026-10-27" },
   "charts/funnel-chart": { publishedAt: "2026-09-20", updatedAt: "2026-10-18" },
   "charts/liquidity-heatmap": { publishedAt: "2026-09-20", updatedAt: "2026-10-18" },
@@ -96,7 +96,7 @@ const COMPONENT_DATES = {
   "charts/price-target-fan": { publishedAt: "2026-09-11", updatedAt: "2026-10-18" },
   "agents/loading-states": {
     publishedAt: "2026-07-30",
-    updatedAt: "2026-10-18",
+    updatedAt: "2026-10-27",
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
