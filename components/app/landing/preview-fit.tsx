@@ -94,7 +94,7 @@ export function PreviewFit({
   return (
     <div
       ref={outerRef}
-      className="relative m-2 mb-0 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.25rem] bg-background p-3 contain-[paint]"
+      className="relative m-2 mb-0 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-2xl bg-background p-3 contain-[paint]"
     >
       <div
         ref={stageRef}

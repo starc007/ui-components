@@ -752,7 +752,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
             transition: { duration: 0.12, ease: EASE_OUT },
           }}
           transition={{ duration: 0.18, ease: EASE_OUT }}
-          className="mt-2 rounded-xl bg-background p-4 text-sm text-foreground"
+          className="mt-2 rounded-lg bg-background p-4 text-sm text-foreground"
         >
           {tab === "Preview" ? "Live component view" : "Copy-ready source"}
         </motion.div>

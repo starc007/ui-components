@@ -32,7 +32,7 @@ export function ComponentCard({
         {badge === "new" ? <NewBadge launchedAt={launchedAt} /> : null}
       </div>
 
-      <div className="mx-2 mb-2 flex min-h-0 flex-1 items-start overflow-hidden rounded-3xl bg-background px-4 py-4 transition-colors duration-300 ease-out group-hover/card:bg-background/80 group-focus-visible/card:bg-background/80">
+      <div className="mx-2 mb-2 flex min-h-0 flex-1 items-start overflow-hidden rounded-2xl bg-background px-4 py-4 transition-colors duration-300 ease-out group-hover/card:bg-background/80 group-focus-visible/card:bg-background/80">
         <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
           {description}
         </p>

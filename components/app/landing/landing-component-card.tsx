@@ -72,7 +72,7 @@ export function LandingComponentCard({
         ) : (
           <div
             aria-hidden="true"
-            className="relative m-2 mb-0 min-h-0 flex-1 rounded-[1.25rem] bg-background"
+            className="relative m-2 mb-0 min-h-0 flex-1 rounded-2xl bg-background"
           />
         )}
 
