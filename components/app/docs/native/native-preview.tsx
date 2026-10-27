@@ -19,7 +19,7 @@ import type { NativeClip, NativeTheme } from "@/lib/native";
 import { cn } from "@/lib/utils";
 
 const control =
-  "inline-flex size-9 items-center justify-center rounded-xl border border-border bg-background/80 text-muted-foreground backdrop-blur outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring";
+  "inline-flex size-9 items-center justify-center rounded-full border border-border bg-background/80 text-muted-foreground backdrop-blur outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring";
 
 /**
  * A component's looping recording from the iOS Simulator, in the site's

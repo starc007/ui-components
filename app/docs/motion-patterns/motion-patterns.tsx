@@ -518,7 +518,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(18rem,1.2fr)] lg:items-stretch lg:gap-8">
         <div className="flex flex-col">
           <div className="flex items-center gap-3">
-            <span className="flex size-8 items-center justify-center rounded-lg border border-border bg-card">
+            <span className="flex size-8 items-center justify-center rounded-full border border-border bg-card">
               <Icon className="size-3.5 text-foreground" aria-hidden="true" />
             </span>
             <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">

@@ -39,6 +39,7 @@ export function MobileNav() {
       <Button
         variant="ghost"
         size="icon"
+        className="rounded-full"
         onClick={() => setOpen(true)}
         aria-label="Open navigation"
         aria-haspopup="dialog"
