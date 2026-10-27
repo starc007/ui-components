@@ -43,6 +43,10 @@ export function XYInspector({
 }: XYInspectorProps) {
   const pointerDriven = useRef(false);
   const focused = useRef(false);
+  // Focus from a mouse click is incidental: it must not pin the tooltip open
+  // once the pointer leaves. Focus from the keyboard (or keys pressed after a
+  // click) is deliberate and keeps it open until blur or Escape.
+  const mouseFocus = useRef(false);
   const last = useRef<number | null>(null);
   const index = activeIndex >= 0 ? activeIndex : count - 1;
   const vertical = orientation === "vertical";
@@ -84,6 +88,7 @@ export function XYInspector({
       }}
       onBlur={() => {
         focused.current = false;
+        mouseFocus.current = false;
         pointerDriven.current = false;
         setOpen(false);
       }}
@@ -94,12 +99,15 @@ export function XYInspector({
         if (event.pointerType === "touch" ? event.buttons === 1 : canHover || event.buttons === 1)
           inspectPointer(event);
       }}
-      onPointerLeave={() => {
+      onPointerLeave={(event) => {
         last.current = null;
-        if (!focused.current || pointerDriven.current) setOpen(false);
+        // Touch fires a leave after every tap; tap-to-inspect stays open.
+        const mouse = event.pointerType !== "touch" && mouseFocus.current;
+        if (!focused.current || pointerDriven.current || mouse) setOpen(false);
       }}
       onPointerDown={(event) => {
         pointerDriven.current = true;
+        if (event.pointerType !== "touch") mouseFocus.current = true;
         last.current = null;
         inspectPointer(event);
       }}
@@ -114,6 +122,7 @@ export function XYInspector({
       }}
       onKeyDown={(event) => {
         pointerDriven.current = false;
+        mouseFocus.current = false;
         if (event.key === "Escape") setOpen(false);
         else if (vertical && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
           // Categories read top to bottom, so Down moves down the list.

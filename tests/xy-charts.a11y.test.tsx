@@ -121,8 +121,8 @@ test("chart previews keep their controls and charts named", async () => {
   );
   expect(getByRole("region", { name: "Illustrative monthly revenue" })).toBeTruthy();
   expect(getByRole("region", { name: "Illustrative revenue by region" })).toBeTruthy();
-  fireEvent.click(getByRole("button", { name: "Horizontal" }));
-  expect(getByRole("button", { name: "Horizontal" }).getAttribute("aria-pressed")).toBe("true");
+  fireEvent.click(getByRole("tab", { name: "Horizontal" }));
+  expect(getByRole("tab", { name: "Horizontal" }).getAttribute("aria-selected")).toBe("true");
   expect(getAllByRole("img").length).toBeGreaterThanOrEqual(3);
   expect(getByRole("slider", { name: "Active users, last 30 days: inspect samples" })).toBeTruthy();
   expect((await axe(container)).violations).toEqual([]);

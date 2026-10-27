@@ -1,8 +1,9 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { useState } from "react";
 import { BarChart, type BarChartSeries } from "@/components/charts/bar-chart";
 import { Button } from "@/components/motion/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { cn } from "@/lib/utils";
 
 const regions = ["North America", "Europe", "Asia Pacific", "Latin America", "Middle East", "Africa"];
@@ -24,37 +25,6 @@ function makeSeries(seed: number): BarChartSeries[] {
   ];
 }
 
-function Segmented<T extends string>({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: T;
-  options: readonly { value: T; label: ReactNode }[];
-  onChange: (value: T) => void;
-}) {
-  return (
-    <fieldset className="flex rounded-lg bg-muted p-0.5">
-      <legend className="sr-only">{label}</legend>
-      {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          aria-pressed={value === option.value}
-          onClick={() => onChange(option.value)}
-          className={cn(
-            "min-h-8 rounded-md px-3 text-xs text-muted-foreground transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-            value === option.value && "bg-background text-foreground shadow-sm",
-          )}
-        >
-          {option.label}
-        </button>
-      ))}
-    </fieldset>
-  );
-}
 
 export function BarChartPreview() {
   const [layout, setLayout] = useState<"grouped" | "stacked">("grouped");
@@ -69,24 +39,42 @@ export function BarChartPreview() {
           <p className="text-xs text-muted-foreground">Demo data, in thousands of dollars</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Segmented
-            label="Layout"
+          <Tabs
             value={layout}
-            onChange={setLayout}
-            options={[
-              { value: "grouped", label: "Grouped" },
-              { value: "stacked", label: "Stacked" },
-            ]}
-          />
-          <Segmented
-            label="Orientation"
+            onValueChange={(value) => setLayout(value as "grouped" | "stacked")}
+            variant="pill"
+          >
+            <TabsList aria-label="Layout" wrapperClassName="w-auto">
+              <TabsTrigger
+                value="grouped"
+                indicatorClassName="bg-background"
+                className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+              >Grouped</TabsTrigger>
+              <TabsTrigger
+                value="stacked"
+                indicatorClassName="bg-background"
+                className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+              >Stacked</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <Tabs
             value={orientation}
-            onChange={setOrientation}
-            options={[
-              { value: "vertical", label: "Vertical" },
-              { value: "horizontal", label: "Horizontal" },
-            ]}
-          />
+            onValueChange={(value) => setOrientation(value as "vertical" | "horizontal")}
+            variant="pill"
+          >
+            <TabsList aria-label="Orientation" wrapperClassName="w-auto">
+              <TabsTrigger
+                value="vertical"
+                indicatorClassName="bg-background"
+                className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+              >Vertical</TabsTrigger>
+              <TabsTrigger
+                value="horizontal"
+                indicatorClassName="bg-background"
+                className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+              >Horizontal</TabsTrigger>
+            </TabsList>
+          </Tabs>
           <Button
             variant="ghost"
             size="sm"

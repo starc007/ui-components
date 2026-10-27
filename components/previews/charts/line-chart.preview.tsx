@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { LineChart, type LineChartSeries } from "@/components/charts/line-chart";
 import { Button } from "@/components/motion/button";
-import { cn } from "@/lib/utils";
+import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -29,29 +29,6 @@ function makeSeries(seed: number): LineChartSeries[] {
   ];
 }
 
-function Toggle({
-  pressed,
-  onClick,
-  children,
-}: {
-  pressed: boolean;
-  onClick: () => void;
-  children: string;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={pressed}
-      onClick={onClick}
-      className={cn(
-        "min-h-8 rounded-md px-3 text-xs text-muted-foreground transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-        pressed && "bg-background text-foreground shadow-sm",
-      )}
-    >
-      {children}
-    </button>
-  );
-}
 
 export function LineChartPreview() {
   const [variant, setVariant] = useState<"line" | "area">("area");
@@ -75,15 +52,24 @@ export function LineChartPreview() {
           <p className="text-xs text-muted-foreground">Demo data, in thousands of dollars</p>
         </div>
         <div className="flex items-center gap-2">
-          <fieldset className="flex rounded-lg bg-muted p-0.5">
-            <legend className="sr-only">Chart style</legend>
-            <Toggle pressed={variant === "line"} onClick={() => setVariant("line")}>
-              Line
-            </Toggle>
-            <Toggle pressed={variant === "area"} onClick={() => setVariant("area")}>
-              Area
-            </Toggle>
-          </fieldset>
+          <Tabs
+            value={variant}
+            onValueChange={(value) => setVariant(value as "line" | "area")}
+            variant="pill"
+          >
+            <TabsList aria-label="Chart style" wrapperClassName="w-auto">
+              <TabsTrigger
+                value="line"
+                indicatorClassName="bg-background"
+                className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+              >Line</TabsTrigger>
+              <TabsTrigger
+                value="area"
+                indicatorClassName="bg-background"
+                className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
+              >Area</TabsTrigger>
+            </TabsList>
+          </Tabs>
           <Button
             variant="ghost"
             size="sm"
