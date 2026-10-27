@@ -76,8 +76,9 @@ export async function CodeBlock({
     <div
       className={cn(
         // The card frame: a gray surface holding the header, with the code
-        // on an inset background panel.
-        "group relative overflow-hidden rounded-3xl bg-card",
+        // on an inset background panel. Radii are concentric: the 16px frame
+        // minus the 8px inset gives the 8px panel.
+        "group relative overflow-hidden rounded-2xl bg-card",
         "font-mono text-[13px]",
         !filename && "p-2",
         className,
@@ -105,7 +106,7 @@ export async function CodeBlock({
         </div>
       )}
 
-      <div className={cn("overflow-hidden rounded-3xl bg-background", filename && "mx-2 mb-2")}>
+      <div className={cn("overflow-hidden rounded-lg bg-background", filename && "mx-2 mb-2")}>
       <ExpandableCode>
         <div
           className={cn(

@@ -71,7 +71,7 @@ export function InstallCommand({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-3xl bg-card text-sm",
+        "relative overflow-hidden rounded-2xl bg-card text-sm",
         className,
       )}
     >
@@ -103,7 +103,7 @@ export function InstallCommand({
         </div>
       </div>
 
-      <div className="mx-2 mb-2 overflow-x-auto rounded-3xl bg-background">
+      <div className="mx-2 mb-2 overflow-x-auto rounded-lg bg-background">
         <div className="min-w-max px-5 py-4 font-mono text-[13px] whitespace-nowrap">
           <span className="select-none text-[#6e7781] dark:text-[#8b949e]">{"$ "}</span>
           <span className="text-[#1f6feb] dark:text-[#ffa657]">
