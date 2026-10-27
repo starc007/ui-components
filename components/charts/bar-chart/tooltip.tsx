@@ -16,12 +16,15 @@ export interface BarChartTooltipData {
 export interface BarChartTooltipProps {
   children?: ReactNode | ((data: BarChartTooltipData) => ReactNode);
   className?: string;
-  /** Defaults to `top` for vertical bars and `right` for horizontal bars. */
   side?: "top" | "right" | "bottom" | "left";
 }
 
-/** Snaps to the inspected category, at the end of its longest bar. */
-export function BarChartTooltip({ children, className, side }: BarChartTooltipProps) {
+/**
+ * Follows the pointer like the other beUI charts' readouts. Keyboard
+ * inspection, which has no pointer, anchors at the end of the category's
+ * longest bar instead.
+ */
+export function BarChartTooltip({ children, className, side = "top" }: BarChartTooltipProps) {
   const {
     categories,
     visibleRows,
@@ -45,30 +48,21 @@ export function BarChartTooltip({ children, className, side }: BarChartTooltipPr
     value: row.values[activeIndex] ?? null,
   }));
   const total = totals[activeIndex] ?? 0;
-  const reach =
-    layout === "stacked"
-      ? total
-      : Math.max(0, ...rows.map((row) => row.value ?? 0));
-  const vertical = orientation === "vertical";
-  // Horizontal tooltips start past the longest bar of any row, so a longer
-  // neighbour never sits under the tooltip.
-  const longest = vertical
-    ? reach
-    : layout === "stacked"
-      ? Math.max(0, ...totals)
-      : Math.max(0, ...visibleRows.flatMap((row) => row.values.map((value) => value ?? 0)));
-  const along = Math.min(1, longest / (domain.max || 1));
+  const reach = layout === "stacked" ? total : Math.max(0, ...rows.map((row) => row.value ?? 0));
+  const along = Math.min(1, reach / (domain.max || 1));
   const across = (Math.max(order.indexOf(activeIndex), 0) + 0.5) / Math.max(categories.length, 1);
   return (
     <Tooltip
       id={tooltipId}
       anchorRef={plotRef}
-      anchorPoint={vertical ? { x: across, y: 1 - along } : { x: along, y: across }}
-      sideOffset={10}
+      followCursor
+      anchorPoint={
+        orientation === "vertical" ? { x: across, y: 1 - along } : { x: along, y: across }
+      }
       open={open && category !== undefined}
       onOpenChange={setOpen}
-      side={side ?? (vertical ? "top" : "right")}
-      className={cn("max-w-[calc(100vw-1rem)]", className)}
+      side={side}
+      className={cn("max-w-64", className)}
       content={
         category === undefined ? null : typeof children === "function" ? (
           children({ category, index: activeIndex, rows, total })
@@ -79,6 +73,7 @@ export function BarChartTooltip({ children, className, side }: BarChartTooltipPr
               rows={rows}
               formatValue={formatValue}
               total={layout === "stacked" && rows.length > 1 ? total : undefined}
+              compact
             />
           ))
         )

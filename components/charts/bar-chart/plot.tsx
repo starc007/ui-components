@@ -146,6 +146,24 @@ export function BarChartPlot({
                   reduce={reduce}
                 />
               ) : null}
+              {/* A soft band behind the inspected category, the full depth of
+                  the plot, gliding between slots. Bars stay at full strength. */}
+              <motion.rect
+                x={0}
+                y={0}
+                width={vertical ? slot : valueLength + PAD.right}
+                height={vertical ? valueLength : slot}
+                rx={4}
+                fill="currentColor"
+                className="text-foreground"
+                initial={false}
+                animate={{
+                  x: vertical ? bandStart + Math.max(activeRank, 0) * slot : valueStart,
+                  y: vertical ? PAD.top : Math.max(activeRank, 0) * slot,
+                  opacity: open && activeRank >= 0 ? 0.05 : 0,
+                }}
+                transition={{ default: spring, opacity: { duration: 0.1, ease: EASE_OUT } }}
+              />
               <g clipPath={`url(#${clipId})`}>
                 {order.map((categoryIndex, rank) => {
                   const category = categories[categoryIndex];
@@ -158,11 +176,8 @@ export function BarChartPlot({
                     <motion.g
                       key={category}
                       initial={false}
-                      animate={{
-                        [vertical ? "x" : "y"]: position,
-                        opacity: open && activeRank >= 0 && activeRank !== rank ? 0.35 : 1,
-                      }}
-                      transition={{ default: spring, opacity: { duration: 0.15, ease: EASE_OUT } }}
+                      animate={{ [vertical ? "x" : "y"]: position }}
+                      transition={spring}
                     >
                       {rows.map((row) => {
                         const isHidden = hidden.includes(row.id);
