@@ -84,6 +84,8 @@ export function LineChartPlot({
     setActive,
     open,
     setOpen,
+    touching,
+    setTouching,
     setOverlay,
     setGeometry,
     tooltipId,
@@ -157,7 +159,9 @@ export function LineChartPlot({
         });
   const stride = labelStride(n, plotWidth, 64);
   const baselinePoint = points.get(BASELINE);
-  const spring: Transition = reduce ? { duration: 0 } : SPRING_LAYOUT;
+  // Inspection marks glide between samples for a mouse or keys, but under a
+  // finger any glide reads as lag, so they track the touch directly.
+  const spring: Transition = reduce || touching ? { duration: 0 } : SPRING_LAYOUT;
   const revealed = (inView || reduce) && !loading;
   const fade = plotWidth > 0 ? Math.min(32, plotWidth * 0.08) / plotWidth : 0;
   const crossX = active === null ? AXIS : x(active);
@@ -382,6 +386,7 @@ export function LineChartPlot({
               mode="point"
               open={open}
               setOpen={setOpen}
+              onTouchChange={setTouching}
               tooltipId={tooltipId}
               canHover={canHover}
               className="inset-0 size-full"

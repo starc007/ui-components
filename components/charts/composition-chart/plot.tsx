@@ -1,13 +1,13 @@
 "use client";
 
-import { useId, useRef, useState, type PointerEvent } from "react";
-import { Tooltip } from "@/components/motion/tooltip";
-import { CompositionTooltipContent } from "./tooltip-content";
 import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
+import { type PointerEvent, useId, useRef, useState } from "react";
+import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_LAYOUT } from "@/lib/ease";
+import { cn } from "@/lib/utils";
 import { useCompositionChart } from "./context";
 import { compositionArea } from "./model";
+import { CompositionTooltipContent } from "./tooltip-content";
 
 export function CompositionChartPlot({ className }: { className?: string }) {
   const { columns, rows, column, index, select, view, highlight, reduce, canHover } =
@@ -16,6 +16,8 @@ export function CompositionChartPlot({ className }: { className?: string }) {
   const tooltipId = useId();
   const pointerDriven = useRef(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
+  // Under a finger the crosshair tracks the touch directly; a glide reads as lag.
+  const [touching, setTouching] = useState(false);
   const inspectPointer = (event: PointerEvent<HTMLDivElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
     if (!bounds.width || !bounds.height || !columns.length) return;
@@ -54,14 +56,17 @@ export function CompositionChartPlot({ className }: { className?: string }) {
         }}
         onPointerDown={(event) => {
           pointerDriven.current = true;
+          if (event.pointerType === "touch") setTouching(true);
           inspectPointer(event);
           setTooltipOpen(true);
         }}
         onPointerUp={() => {
           pointerDriven.current = false;
+          setTouching(false);
         }}
         onPointerCancel={() => {
           pointerDriven.current = false;
+          setTouching(false);
           setTooltipOpen(false);
         }}
         onPointerMove={(event) => {
@@ -125,7 +130,7 @@ export function CompositionChartPlot({ className }: { className?: string }) {
           <motion.line
             initial={false}
             animate={{ x: ((index + 0.5) / columns.length) * 100 }}
-            transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
+            transition={reduce || touching ? { duration: 0 } : SPRING_LAYOUT}
             x1="0"
             x2="0"
             y1="0"

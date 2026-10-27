@@ -63,6 +63,8 @@ export function BarChartPlot({
     setActive,
     open,
     setOpen,
+    touching,
+    setTouching,
     plotRef,
     tooltipId,
     reduce,
@@ -162,7 +164,11 @@ export function BarChartPlot({
                   y: vertical ? PAD.top : Math.max(activeRank, 0) * slot,
                   opacity: open && activeRank >= 0 ? 0.05 : 0,
                 }}
-                transition={{ default: spring, opacity: { duration: 0.1, ease: EASE_OUT } }}
+                // The band tracks a finger directly; any glide under touch reads as lag.
+                transition={{
+                  default: touching ? { duration: 0 } : spring,
+                  opacity: { duration: 0.1, ease: EASE_OUT },
+                }}
               />
               <g clipPath={`url(#${clipId})`}>
                 {order.map((categoryIndex, rank) => {
@@ -317,6 +323,7 @@ export function BarChartPlot({
             orientation={vertical ? "horizontal" : "vertical"}
             open={open}
             setOpen={setOpen}
+            onTouchChange={setTouching}
             tooltipId={tooltipId}
             canHover={canHover}
             className="inset-0 size-full"

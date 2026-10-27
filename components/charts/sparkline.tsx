@@ -65,6 +65,8 @@ export function Sparkline({
   const { ref, width } = useElementWidth<HTMLDivElement>();
   const [active, setActive] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
+  // Under a finger the readout dot tracks the touch directly instead of gliding.
+  const [touching, setTouching] = useState(false);
   const values = data.map((value) =>
     typeof value === "number" && Number.isFinite(value) ? value : null,
   );
@@ -167,7 +169,7 @@ export function Sparkline({
               strokeWidth={inspecting ? 2 : 0}
               initial={false}
               animate={{ x: x(dotIndex), y: y(dotValue) }}
-              transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
+              transition={reduce || touching ? { duration: 0 } : SPRING_LAYOUT}
             />
           ) : null}
         </svg>
@@ -185,6 +187,7 @@ export function Sparkline({
               mode="point"
               open={open}
               setOpen={setOpen}
+              onTouchChange={setTouching}
               tooltipId={tooltipId}
               canHover={canHover}
               className="inset-0 size-full"
