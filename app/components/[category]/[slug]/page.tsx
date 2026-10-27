@@ -24,7 +24,6 @@ import {
   TabsTrigger,
 } from "@/components/motion/tabs";
 import { NewBadge } from "@/components/app/docs/new-badge";
-import { ComponentCard } from "@/components/app/docs/component-card";
 import { ComponentAbout } from "@/components/app/docs/component-about";
 import { ComponentGuide } from "@/components/app/docs/component-guide";
 import { CopyPage } from "@/components/app/docs/copy-page";
@@ -32,6 +31,7 @@ import {
   PreviewExpand,
   PreviewExpandStage,
   PreviewExpandToggle,
+  PreviewReplayToggle,
 } from "@/components/app/docs/preview-fullscreen";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { getPreview, previews } from "@/components/previews";
@@ -43,6 +43,7 @@ import { componentDates } from "@/lib/component-dates";
 import { findNativeComponent } from "@/lib/native";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { RelatedSection } from "@/components/app/docs/related-section";
+import { PagePager } from "@/components/app/docs/page-pager";
 import {
   breadcrumbJsonLd,
   componentJsonLd,
@@ -321,6 +322,7 @@ export default async function ComponentPage({
           }).format(new Date(`${dates.updatedAt}T00:00:00Z`))}
         </time>
       </p>
+      <PagePager category={cat.slug} slug={comp.slug} />
     </div>
   );
 }
@@ -392,7 +394,10 @@ async function ExampleBlock({
               Code
             </TabsTrigger>
           </TabsList>
+            <div className="flex items-center gap-2">
+            <PreviewReplayToggle />
             <PreviewExpandToggle />
+          </div>
           </div>
           <TabsContent value="preview" className="mt-4">
             <PreviewExpandStage className="flex min-h-[260px] items-center justify-center py-10">
@@ -491,7 +496,10 @@ async function DefaultTabs({
             Code
           </TabsTrigger>
         </TabsList>
-          <PreviewExpandToggle />
+          <div className="flex items-center gap-2">
+            <PreviewReplayToggle />
+            <PreviewExpandToggle />
+          </div>
         </div>
         <TabsContent value="preview" className="mt-4">
           <PreviewExpandStage className="flex min-h-[320px] items-center justify-center py-10">

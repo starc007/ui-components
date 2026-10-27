@@ -1,8 +1,9 @@
 "use client";
 
-import { Maximize2, Minimize2 } from "lucide-react";
+import { Maximize2, Minimize2, RotateCcw } from "lucide-react";
 import {
   createContext,
+  Fragment,
   type ReactNode,
   useContext,
   useEffect,
@@ -16,7 +17,12 @@ type Expand = {
   expanded: boolean;
   setExpanded: (expanded: boolean) => void;
   toggleRef: React.RefObject<HTMLButtonElement | null>;
+  replayKey: number;
+  replay: () => void;
 };
+
+const ICON_BUTTON_CLASS =
+  "inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-card text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40";
 
 const ExpandContext = createContext<Expand | null>(null);
 
@@ -39,9 +45,13 @@ export function PreviewExpand({
   children: ReactNode;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [replayKey, setReplayKey] = useState(0);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const replay = () => setReplayKey((key) => key + 1);
   return (
-    <ExpandContext.Provider value={{ stageId, expanded, setExpanded, toggleRef }}>
+    <ExpandContext.Provider
+      value={{ stageId, expanded, setExpanded, toggleRef, replayKey, replay }}
+    >
       {children}
     </ExpandContext.Provider>
   );
@@ -90,12 +100,40 @@ export function PreviewExpandToggle({ className }: { className?: string }) {
       aria-expanded={expanded}
       aria-controls={stageId}
       title="Expand preview"
-      className={cn(
-        "inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-card text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
-        className,
-      )}
+      className={cn(ICON_BUTTON_CLASS, className)}
     >
       <Maximize2 aria-hidden="true" className="size-4" />
+    </button>
+  );
+}
+
+/**
+ * Button beside the expand toggle that remounts the demo, so entrance
+ * animations can be watched again. Shows the Preview tab first when another
+ * tab is open.
+ */
+export function PreviewReplayToggle({ className }: { className?: string }) {
+  const { stageId, replay } = useExpand();
+  const onClick = () => {
+    const panel = document
+      .getElementById(stageId)
+      ?.closest<HTMLElement>("[role=tabpanel]");
+    if (panel?.hidden) {
+      document
+        .querySelector<HTMLElement>(`[role=tab][aria-controls="${panel.id}"]`)
+        ?.click();
+    }
+    replay();
+  };
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Replay preview"
+      title="Replay preview"
+      className={cn(ICON_BUTTON_CLASS, className)}
+    >
+      <RotateCcw aria-hidden="true" className="size-4" />
     </button>
   );
 }
@@ -112,7 +150,8 @@ export function PreviewExpandStage({
   className?: string;
   children: ReactNode;
 }) {
-  const { stageId, expanded, setExpanded, toggleRef } = useExpand();
+  const { stageId, expanded, setExpanded, toggleRef, replayKey, replay } =
+    useExpand();
   const exitRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -146,18 +185,30 @@ export function PreviewExpandStage({
       )}
     >
       {expanded ? (
-        <button
-          ref={exitRef}
-          type="button"
-          onClick={() => setExpanded(false)}
-          aria-label="Exit expanded preview"
-          title="Exit (Esc)"
-          className="absolute top-4 right-4 inline-flex size-10 items-center justify-center rounded-full bg-card text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-        >
-          <Minimize2 aria-hidden="true" className="size-4" />
-        </button>
+        <div className="absolute top-4 right-4 flex gap-2">
+          <button
+            type="button"
+            onClick={replay}
+            aria-label="Replay preview"
+            title="Replay preview"
+            className={ICON_BUTTON_CLASS}
+          >
+            <RotateCcw aria-hidden="true" className="size-4" />
+          </button>
+          <button
+            ref={exitRef}
+            type="button"
+            onClick={() => setExpanded(false)}
+            aria-label="Exit expanded preview"
+            title="Exit (Esc)"
+            className={ICON_BUTTON_CLASS}
+          >
+            <Minimize2 aria-hidden="true" className="size-4" />
+          </button>
+        </div>
       ) : null}
-      {children}
+      {/* A new key remounts the demo, replaying its entrance. */}
+      <Fragment key={replayKey}>{children}</Fragment>
     </div>
   );
 }

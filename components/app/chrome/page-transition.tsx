@@ -27,12 +27,12 @@ export function PageTransition({ children }: { children: ReactNode }) {
       initial={
         mounted
           ? shouldTranslate
-            ? { opacity: 0, y: 24 }
+            ? { opacity: 0, y: 8 }
             : { opacity: 0 }
           : false
       }
       animate={shouldTranslate ? { opacity: 1, y: 0 } : { opacity: 1 }}
-      transition={{ duration: shouldTranslate ? 0.6 : 0.2, ease: EASE_OUT }}
+      transition={{ duration: shouldTranslate ? 0.25 : 0.2, ease: EASE_OUT }}
       onAnimationComplete={() => {
         const el = ref.current;
         if (!el) return;

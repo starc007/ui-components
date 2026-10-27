@@ -2,8 +2,8 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Height of the announcement strip above the header. The page and sidebars
-   add it to the header offset; set it to 0px when there's no strip. */
+/* Height of the announcement strip above the header. The strip sits in the
+   page flow and scrolls away; the header and sidebars stick below it. */
 :root {
     --announcement-h: 2.5rem;
 }
@@ -78,9 +78,6 @@
         oklch(72% 0.18 295) 100%
     );
 }
-
-/* Color theme presets (full token sets) are injected at runtime from
-   lib/themes.ts via PreferencesProvider, keyed by data-theme on <html>. */
 
 @theme inline {
     /* Strong easing curves shared across every component. */

@@ -37,9 +37,12 @@ export function LandingComponentCard({
     once: true,
     margin: "0px",
   });
+  // Components documented only through variants have no page-level preview,
+  // so they show their first variant.
   const Preview = previewKey
     ? previews[previewKey]
-    : getPreview(category, component.slug);
+    : (getPreview(category, component.slug) ??
+      (component.examples?.[0] ? previews[component.examples[0].previewKey] : undefined));
   const [hover, setHover] = useState(false);
   const feature = variant === "feature";
 
