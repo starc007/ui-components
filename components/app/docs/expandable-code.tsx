@@ -43,7 +43,7 @@ export function ExpandableCode({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       {!expanded && canExpand && (
-        <div className="absolute bottom-0 left-0 right-0 flex h-32 items-end justify-center bg-gradient-to-t from-card to-transparent pb-4">
+        <div className="absolute bottom-0 left-0 right-0 flex h-32 items-end justify-center bg-gradient-to-t from-background to-transparent pb-4">
           <button
             type="button"
             onClick={() => setExpanded(true)}

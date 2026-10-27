@@ -28,7 +28,7 @@ export async function ManualInstall({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+      <div className="rounded-3xl bg-card px-5 py-4 text-sm text-muted-foreground">
         Needs the theme tokens once. Already ran{" "}
         <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
           shadcn init

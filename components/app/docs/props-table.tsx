@@ -15,15 +15,16 @@ export function PropsTable({ docs }: { docs: ComponentPropsDoc[] }) {
               {doc.displayName}
             </h3>
           ) : null}
-          <div className="divide-y divide-border rounded-xl border border-border">
+          <div className="rounded-3xl bg-card p-2 sm:pt-0">
             <div
               aria-hidden="true"
-              className={`hidden gap-4 px-4 py-2 text-xs font-medium text-muted-foreground sm:grid ${COLUMNS}`}
+              className={`hidden gap-4 px-6 py-3 text-xs font-medium text-muted-foreground sm:grid ${COLUMNS}`}
             >
               <span>Prop</span>
               <span>Type</span>
               <span className="justify-self-end">Default</span>
             </div>
+            <div className="divide-y divide-border rounded-3xl bg-background">
             {doc.props.map((prop) => (
               <div
                 key={prop.name}
@@ -53,6 +54,7 @@ export function PropsTable({ docs }: { docs: ComponentPropsDoc[] }) {
                 </div>
               </div>
             ))}
+            </div>
           </div>
         </div>
       ))}

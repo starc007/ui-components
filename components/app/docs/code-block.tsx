@@ -75,15 +75,18 @@ export async function CodeBlock({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-xl border border-border bg-card",
+        // The card frame: a gray surface holding the header, with the code
+        // on an inset background panel.
+        "group relative overflow-hidden rounded-3xl bg-card",
         "font-mono text-[13px]",
+        !filename && "p-2",
         className,
       )}
     >
       {filename ? (
-        <div className="flex items-center justify-between gap-3 border-b border-border bg-background/60 px-4 py-2.5">
+        <div className="flex items-center justify-between gap-3 py-2 pr-3 pl-4">
           <div className="flex min-w-0 items-center gap-2 text-xs">
-            <span className="inline-flex h-5 shrink-0 items-center rounded border border-border bg-card px-1.5 font-mono text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+            <span className="inline-flex h-5 shrink-0 items-center rounded-md bg-background px-1.5 font-mono text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
               {langLabel}
             </span>
 
@@ -97,11 +100,12 @@ export async function CodeBlock({
           <CopyButton text={code} eventLabel={filename ?? lang} />
         </div>
       ) : (
-        <div className="absolute right-3 top-3 z-10">
+        <div className="absolute top-5 right-5 z-10">
           <CopyButton text={code} eventLabel={filename ?? lang} />
         </div>
       )}
 
+      <div className={cn("overflow-hidden rounded-3xl bg-background", filename && "mx-2 mb-2")}>
       <ExpandableCode>
         <div
           className={cn(
@@ -120,6 +124,7 @@ export async function CodeBlock({
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </ExpandableCode>
+      </div>
     </div>
   );
 }

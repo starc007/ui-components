@@ -71,11 +71,11 @@ export function InstallCommand({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl border border-border bg-card text-sm",
+        "relative overflow-hidden rounded-3xl bg-card text-sm",
         className,
       )}
     >
-      <div className="flex items-center gap-2 border-b border-border px-3 py-1.5">
+      <div className="flex items-center gap-2 py-2 pr-3 pl-3">
         <Tabs
           value={pm}
           onValueChange={(v) => setPm(v as PM)}
@@ -86,7 +86,7 @@ export function InstallCommand({
               <TabsTrigger
                 key={p}
                 value={p}
-                indicatorClassName="bg-background border border-border shadow-none"
+                indicatorClassName="bg-background shadow-none"
                 className="h-7 px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
               >
                 {p}
@@ -103,7 +103,7 @@ export function InstallCommand({
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="mx-2 mb-2 overflow-x-auto rounded-3xl bg-background">
         <div className="min-w-max px-5 py-4 font-mono text-[13px] whitespace-nowrap">
           <span className="select-none text-[#6e7781] dark:text-[#8b949e]">{"$ "}</span>
           <span className="text-[#1f6feb] dark:text-[#ffa657]">
