@@ -267,9 +267,6 @@ export default async function ComponentPage({
             componentName={comp.name}
           />
         </div>
-        <p className="mt-2 max-w-2xl text-muted-foreground">
-          {comp.description}
-        </p>
       </div>
 
       {/* Wide screens pick the platform from the right sidebar. */}
@@ -362,11 +359,6 @@ async function ExampleBlock({
           {example.file.split("/").pop()}
         </code>
       </div>
-      {example.description ? (
-        <p className="mb-4 text-sm text-muted-foreground">
-          {example.description}
-        </p>
-      ) : null}
       <div id={`${example.slug}-preview`} className="scroll-mt-24">
         <PreviewExpand stageId={`${example.slug}-stage`}>
         <Tabs defaultValue="preview" variant="pill">
