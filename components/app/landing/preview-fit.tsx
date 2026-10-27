@@ -94,7 +94,7 @@ export function PreviewFit({
   return (
     <div
       ref={outerRef}
-      className="relative m-2 mb-0 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.25rem] bg-background p-3 contain-[paint]"
+      className="relative m-2 mb-0 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-2xl bg-background p-3 contain-[paint]"
     >
       <div
         ref={stageRef}
@@ -102,7 +102,7 @@ export function PreviewFit({
         className={cn(
           "pointer-events-none flex origin-center shrink-0 items-center justify-center [&_*]:!cursor-default",
           measured
-            ? "transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)]"
+            ? "transition-transform duration-300 ease-out"
             : "invisible",
         )}
       >

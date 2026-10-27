@@ -96,7 +96,9 @@ export function NativeShowcase() {
             <InstallCommand
               tool="beui-native"
               slugs={nativeSlugs}
-              className="mt-7"
+              // The panel behind is already the card gray, so the frame
+              // darkens it a step to stay visible.
+              className="mt-7 bg-foreground/[0.05]"
             />
           </div>
         </div>

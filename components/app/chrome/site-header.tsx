@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, SwatchBook } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useMotionValueEvent, useScroll } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,13 +8,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { GithubIcon } from "@/components/app/icons";
 import { MobileNav } from "@/components/app/chrome/mobile-nav";
-import { NativeStrip } from "@/components/app/chrome/native-strip";
-import { usePreferences } from "@/components/app/preferences/preferences-provider";
 import { PressLink } from "@/components/app/press-link";
 import { RainbowCta } from "@/components/app/rainbow-cta";
 import { SiteSearch } from "@/components/app/chrome/site-search";
 import { ThemeToggle } from "@/components/app/chrome/theme-toggle";
-import { Tooltip } from "@/components/motion/tooltip";
 import { hasSiteSidebar } from "@/lib/component-paths";
 import { cn } from "@/lib/utils";
 
@@ -43,7 +40,6 @@ export function SiteHeader() {
   }, []);
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
-  const { setPanelOpen } = usePreferences();
   const pathname = usePathname();
   const sidebarPage = hasSiteSidebar(pathname);
   const isComponents = pathname.startsWith("/components/motion");
@@ -64,13 +60,12 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-40 transition-[background,border-color,backdrop-filter] duration-300",
+        "sticky top-0 z-40 transition-[background,border-color,backdrop-filter] duration-300",
         scrolled
           ? "border-b border-border bg-background/70 backdrop-blur-xl backdrop-saturate-150"
           : "border-b border-transparent bg-transparent",
       )}
     >
-      <NativeStrip />
       <div className="relative flex h-14 w-full items-center justify-between gap-4 px-4 md:px-6 xl:px-8">
         <div className="flex items-center gap-4">
           <MobileNav />
@@ -161,18 +156,8 @@ export function SiteHeader() {
         </div>
 
         <nav className="flex items-center gap-2">
-          <SiteSearch className="w-9 shrink-0 justify-center px-0 [&>span]:hidden [&>kbd]:hidden" />
+          <SiteSearch className="w-9 shrink-0 justify-center px-0 lg:w-48 lg:justify-start lg:px-3 xl:w-60 [&>span]:hidden lg:[&>span]:block [&>kbd]:hidden lg:[&>kbd]:inline-block" />
           <ThemeToggle />
-          <Tooltip content="Customize" side="bottom">
-            <button
-              type="button"
-              onClick={() => setPanelOpen(true)}
-              aria-label="Customize theme"
-              className="hidden h-9 w-9 items-center justify-center rounded-full border border-border bg-card/20 text-muted-foreground transition-colors hover:text-foreground lg:flex"
-            >
-              <SwatchBook className="h-4 w-4" />
-            </button>
-          </Tooltip>
           <PressLink
             href="https://github.com/starc007/ui-components"
             target="_blank"

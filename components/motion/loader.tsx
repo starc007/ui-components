@@ -255,6 +255,9 @@ function Morph({ size, speed, reduce }: PartProps) {
       <motion.path
         fill="currentColor"
         d={MORPH_PATHS[0]}
+        // Seeds the motion value; without it motion writes d="undefined"
+        // before the keyframes start.
+        initial={{ d: MORPH_PATHS[0] }}
         animate={reduce ? undefined : { d: MORPH_SEQ }}
         transition={
           reduce
@@ -365,16 +368,18 @@ function Metaballs({ size, speed, reduce }: PartProps) {
         <motion.circle
           cy="50"
           r="15"
+          // Seeds the motion value; without it motion writes cx="undefined"
+          // before the keyframes start.
+          initial={{ cx: reduce ? 40 : 30 }}
           animate={reduce ? { opacity: [0.4, 1, 0.4] } : { cx: [30, 70, 30] }}
           transition={{ duration: speed * 1.6, ease: EASE_IN_OUT, repeat: Infinity }}
-          cx={reduce ? 40 : 30}
         />
         <motion.circle
           cy="50"
           r="15"
+          initial={{ cx: reduce ? 60 : 70 }}
           animate={reduce ? { opacity: [0.4, 1, 0.4] } : { cx: [70, 30, 70] }}
           transition={{ duration: speed * 1.6, ease: EASE_IN_OUT, repeat: Infinity }}
-          cx={reduce ? 60 : 70}
         />
       </g>
     </svg>

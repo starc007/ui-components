@@ -30,3 +30,14 @@ export function isComponentNew(component: ComponentLaunch, now = Date.now()) {
     getNewBadgeRemainingMs(component.launchedAt, now) > 0
   );
 }
+
+/** Sidebar order: items still marked new first, the rest in catalog order. */
+export function moveNewItemsToTop<T extends ComponentLaunch>(
+  items: readonly T[],
+  now = Date.now(),
+) {
+  return [
+    ...items.filter((item) => isComponentNew(item, now)),
+    ...items.filter((item) => !isComponentNew(item, now)),
+  ];
+}

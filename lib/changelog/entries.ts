@@ -34,6 +34,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "fixed",
         "text": "Card Dealer cards stay inside their table and no longer draw over a sticky page header when you scroll.",
         "component": "card-dealer"
+      },
+      {
+        "type": "fixed",
+        "text": "Loader's Morph and Metaballs styles no longer log SVG attribute errors in the console when they mount.",
+        "component": "loader"
       }
     ]
   },

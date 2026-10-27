@@ -19,7 +19,7 @@ import { NewBadge } from "@/components/app/docs/new-badge";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import { Button } from "@/components/motion/button";
 import { Tooltip } from "@/components/motion/tooltip";
-import { isComponentNew } from "@/lib/component-status";
+import { moveNewItemsToTop } from "@/lib/component-status";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -218,15 +218,6 @@ export function SidebarCategoryTabs({
       </motion.div>
     </motion.section>
   );
-}
-
-function moveNewItemsToTop<
-  T extends { badge?: "new"; launchedAt?: string },
->(items: readonly T[], now: number) {
-  return [
-    ...items.filter((item) => isComponentNew(item, now)),
-    ...items.filter((item) => !isComponentNew(item, now)),
-  ];
 }
 
 const COUNT_CLASS =

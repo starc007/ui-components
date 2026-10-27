@@ -32,7 +32,7 @@ export function ExpandableCode({ children }: { children: React.ReactNode }) {
       <div
         ref={contentRef}
         className={cn(
-          "transition-[max-height] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)]",
+          "transition-[max-height] duration-300 ease-out",
           expanded
             ? "max-h-[640px] overflow-auto"
             : canExpand === false
@@ -43,7 +43,7 @@ export function ExpandableCode({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       {!expanded && canExpand && (
-        <div className="absolute bottom-0 left-0 right-0 flex h-32 items-end justify-center bg-gradient-to-t from-card to-transparent pb-4">
+        <div className="absolute bottom-0 left-0 right-0 flex h-32 items-end justify-center bg-gradient-to-t from-background to-transparent pb-4">
           <button
             type="button"
             onClick={() => setExpanded(true)}

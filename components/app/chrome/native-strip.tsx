@@ -15,8 +15,8 @@ const PRESALE_URL =
 
 /**
  * Site-wide announcement above the header: beUI Native is free, and points to
- * the beUI Pro for mobile presale. Its height is --announcement-h, which the
- * page and sidebars add to the header offset.
+ * the beUI Pro for mobile presale. It sits in the page flow above the sticky
+ * header, so it scrolls away with the page.
  */
 export function NativeStrip() {
   const waveGradientId = useId();

@@ -37,9 +37,12 @@ export function LandingComponentCard({
     once: true,
     margin: "0px",
   });
+  // Components documented only through variants have no page-level preview,
+  // so they show their first variant.
   const Preview = previewKey
     ? previews[previewKey]
-    : getPreview(category, component.slug);
+    : (getPreview(category, component.slug) ??
+      (component.examples?.[0] ? previews[component.examples[0].previewKey] : undefined));
   const [hover, setHover] = useState(false);
   const feature = variant === "feature";
 
@@ -69,7 +72,7 @@ export function LandingComponentCard({
         ) : (
           <div
             aria-hidden="true"
-            className="relative m-2 mb-0 min-h-0 flex-1 rounded-[1.25rem] bg-background"
+            className="relative m-2 mb-0 min-h-0 flex-1 rounded-2xl bg-background"
           />
         )}
 

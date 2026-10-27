@@ -3,9 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@/components/app/analytics/google-analytics";
 import { ThemeProvider } from "@/components/app/chrome/theme-provider";
-import { PreferencesProvider } from "@/components/app/preferences/preferences-provider";
-import { PreferencesPanel } from "@/components/app/preferences/preferences-panel";
 import { SiteHeader } from "@/components/app/chrome/site-header";
+import { NativeStrip } from "@/components/app/chrome/native-strip";
 import { SiteFrame } from "@/components/app/chrome/site-frame";
 import { KeyboardShortcuts } from "@/components/app/chrome/keyboard-shortcuts";
 import { JsonLd } from "@/components/app/analytics/json-ld";
@@ -129,15 +128,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen antialiased">
         <JsonLd data={siteJsonLd()} />
         <ThemeProvider>
-          <PreferencesProvider>
-            <KeyboardShortcuts />
-            <SiteHeader />
-            <main className="pt-[calc(3.5rem+var(--announcement-h))]">
-              <SiteFrame>{children}</SiteFrame>
-            </main>
-            <PreferencesPanel />
-            <GoogleAnalytics measurementId={googleAnalyticsId} />
-          </PreferencesProvider>
+          <KeyboardShortcuts />
+          <NativeStrip />
+          <SiteHeader />
+          <main>
+            <SiteFrame>{children}</SiteFrame>
+          </main>
+          <GoogleAnalytics measurementId={googleAnalyticsId} />
         </ThemeProvider>
       </body>
     </html>
