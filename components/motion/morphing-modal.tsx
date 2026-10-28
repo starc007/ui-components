@@ -161,12 +161,12 @@ export function MorphingModal({
               >
                 <motion.div layout="position" className="p-5">
                   <AnimatePresence mode="popLayout" initial={false}>
-                    <PresenceGate key={viewId}>
-                      {({ isPresent: viewPresent }) => (
+                    {/* The motion element is the direct child so popLayout can
+                        take its ref and lift the outgoing view out of flow;
+                        otherwise both views stack for the exit and the panel
+                        briefly grows to their combined height. */}
                     <motion.div
-                      // The outgoing view stays for its exit; inert keeps the
-                      // trap and assistive technology on the incoming one.
-                      inert={!viewPresent}
+                      key={viewId}
                       data-view={viewId}
                       initial={
                         reduce
@@ -212,10 +212,14 @@ export function MorphingModal({
                             }
                       }
                     >
-                      {children}
+                      <PresenceGate>
+                        {({ isPresent: viewPresent }) => (
+                          // The outgoing view stays for its exit; inert keeps
+                          // the trap and assistive technology on the incoming one.
+                          <div inert={!viewPresent}>{children}</div>
+                        )}
+                      </PresenceGate>
                     </motion.div>
-                      )}
-                    </PresenceGate>
                   </AnimatePresence>
                 </motion.div>
               </motion.div>

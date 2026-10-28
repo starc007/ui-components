@@ -39,6 +39,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "fixed",
         "text": "Loader's Morph and Metaballs styles no longer log SVG attribute errors in the console when they mount.",
         "component": "loader"
+      },
+      {
+        "type": "fixed",
+        "text": "Morphing Modal no longer stretches upward for a moment when you switch views. The panel now moves straight to the new view's height.",
+        "component": "morphing-modal"
       }
     ]
   },
