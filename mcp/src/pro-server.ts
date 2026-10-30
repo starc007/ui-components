@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import {
   getProEntry,
-  getProIndex,
+  getProCatalog,
   getProMobileComponents,
-  PRO_MOBILE_PREFIX,
   PRO_PACKAGE_MANAGERS,
   PRO_REGISTRY_SETUP,
   proInstallCommand,
+  type ProCatalogItem,
   type ProPackageManager,
-  type ProRegistryItem,
 } from "./pro-registry.js";
 
 type ProEnv = {
@@ -25,7 +24,7 @@ const error = (message: string) => ({
   content: [{ type: "text" as const, text: message }],
 });
 
-function score(item: Omit<ProRegistryItem, "$schema">, query: string) {
+function score(item: ProCatalogItem, query: string) {
   const normalized = query.toLowerCase();
   const name = item.name.toLowerCase();
   const title = item.title.toLowerCase();
@@ -35,13 +34,12 @@ function score(item: Omit<ProRegistryItem, "$schema">, query: string) {
   return 0;
 }
 
-function summary(item: Omit<ProRegistryItem, "$schema">) {
+function summary(item: ProCatalogItem) {
   return {
     slug: item.name,
     name: item.title,
     description: item.description,
-    // React Native items install as @beui-pro/native-<slug>.
-    platform: item.name.startsWith(PRO_MOBILE_PREFIX) ? "mobile" : "web",
+    platform: item.platform,
   };
 }
 
@@ -71,8 +69,8 @@ export function createProServer(env: ProEnv, authorization: string) {
     },
     async () => {
       try {
-        const index = await getProIndex(env, authorization);
-        return json(index.items.map(summary));
+        const items = await getProCatalog(env, authorization);
+        return json(items.map(summary));
       } catch (cause) {
         return error(
           `Failed to list beUI Pro components: ${(cause as Error).message}`,
@@ -95,8 +93,8 @@ export function createProServer(env: ProEnv, authorization: string) {
     },
     async ({ query }) => {
       try {
-        const index = await getProIndex(env, authorization);
-        const matches = index.items
+        const items = await getProCatalog(env, authorization);
+        const matches = items
           .map((item) => ({ item, relevance: score(item, query) }))
           .filter(({ relevance }) => relevance > 0)
           .sort((a, b) => b.relevance - a.relevance)

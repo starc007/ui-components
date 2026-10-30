@@ -67,8 +67,10 @@ The Pro endpoint exposes the same four tool names against the installable
 `@beui-pro` catalog. `get_component` returns the licensed source files, while
 `get_install_command` also returns the registry configuration required by the
 shadcn CLI. Standalone templates that are not in the private shadcn index are
-not exposed as installable components. List and search results carry a
-`platform` of `web` or `mobile`.
+not exposed as installable components. List and search read the slim
+`pro.beui.dev/r/catalog.json` (names and descriptions, no file lists) rather
+than the full `registry.json`, and each result carries a `platform` of `web`
+or `mobile`.
 
 Pro also has `list_mobile_components` (`query?`, `kind?`), which reads
 `pro.beui.dev/r` and lists the license's React Native blocks and screens with
