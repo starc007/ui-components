@@ -7,15 +7,12 @@ import { useId } from "react";
 import { ButtonLink } from "@/components/motion/button";
 import styles from "./native-strip.module.css";
 
-// beUI Pro for mobile presale. The price is set by hand in the Pro repo; update
-// it here when the presale tier changes.
-const PRESALE_PRICE = "$129";
-const PRESALE_URL =
-  "https://pro.beui.dev/mobile?utm_source=beui&utm_medium=referral&utm_campaign=mobile_presale&utm_content=strip";
+const PRO_MOBILE_URL =
+  "https://pro.beui.dev/mobile?utm_source=beui&utm_medium=referral&utm_campaign=mobile_launch&utm_content=strip";
 
 /**
- * Site-wide announcement above the header: beUI Native is free, and points to
- * the beUI Pro for mobile presale. It sits in the page flow above the sticky
+ * Site-wide announcement above the header: beUI Pro for mobile is live, and
+ * the strip points to it. It sits in the page flow above the sticky
  * header, so it scrolls away with the page.
  */
 export function NativeStrip() {
@@ -24,7 +21,7 @@ export function NativeStrip() {
 
   return (
     <aside
-      aria-label="beUI Pro for mobile presale"
+      aria-label="beUI Pro for mobile"
       className="relative isolate flex h-(--announcement-h) items-center justify-center gap-x-2 border-b border-transparent bg-primary px-3 text-sm text-primary-foreground/80 sm:gap-x-3"
     >
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
@@ -56,21 +53,13 @@ export function NativeStrip() {
         </svg>
       </div>
       <p className="truncate">
-        <a
-          href="/react-native"
-          className="text-primary-foreground underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-foreground"
-        >
-          beUI Native
-        </a>{" "}
-        is free
+        beUI Pro for mobile is live
         <span className="hidden sm:inline">
-          {" — "}
+          , with{" "}
           <strong className="font-medium text-primary-foreground">
-            Pro mobile blocks and screens
-          </strong>{" "}
-          are in presale from {PRESALE_PRICE}
+            50 React Native blocks and screens
+          </strong>
         </span>
-        <span className="sm:hidden"> · Pro presale</span>
       </p>
       <BorderBeam
         active={!reduceMotion}
@@ -83,12 +72,12 @@ export function NativeStrip() {
         theme="auto"
       >
         <ButtonLink
-          href={PRESALE_URL}
+          href={PRO_MOBILE_URL}
           variant="outline"
           size="sm"
           className="h-7 gap-1 rounded-full bg-background px-2.5 text-xs text-foreground hover:bg-background/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-foreground"
         >
-          Reserve<span className="sr-only"> beUI Pro for mobile</span>
+          Explore<span className="sr-only"> beUI Pro for mobile</span>
           <ArrowRight aria-hidden className="size-3 shrink-0" />
         </ButtonLink>
       </BorderBeam>

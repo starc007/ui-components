@@ -1,11 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { RainbowCta } from "@/components/app/rainbow-cta";
 
-// beUI Pro for mobile presale. The price is set by hand in the Pro repo; update
-// it here when the presale tier changes.
-const PRESALE_PRICE = "$129";
-
-/** Sidebar promo on React Native pages for the beUI Pro for mobile presale. */
+/** Sidebar promo on React Native pages for beUI Pro for mobile. */
 export function ProMobileCard() {
   return (
     <section
@@ -30,24 +26,19 @@ export function ProMobileCard() {
           Need full screens?
         </h2>
         <p className="mt-2 text-sm leading-5 text-muted-foreground">
-          Onboarding, paywall, profile, and checkout screens, animated blocks,
-          and app templates are coming to beUI Pro for mobile.
-        </p>
-        <p className="mt-3 flex flex-wrap items-center gap-x-2 text-xs leading-5 text-muted-foreground">
-          <span className="font-medium text-foreground">
-            Presale from {PRESALE_PRICE} lifetime
-          </span>
+          50 React Native blocks and screens, from onboarding and paywalls to
+          profile and checkout, are live in beUI Pro for mobile.
         </p>
       </div>
       <RainbowCta
-        href="https://pro.beui.dev/mobile?utm_source=beui&utm_medium=referral&utm_campaign=mobile_presale&utm_content=native_sidebar"
+        href="https://pro.beui.dev/mobile?utm_source=beui&utm_medium=referral&utm_campaign=mobile_launch&utm_content=native_sidebar"
         target="_blank"
         rel="noreferrer noopener"
         shape="pill"
         className="w-full"
         innerClassName="py-2"
       >
-        Reserve beUI Pro Mobile
+        Explore beUI Pro Mobile
         <ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0" />
       </RainbowCta>
     </section>
