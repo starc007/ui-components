@@ -3,6 +3,8 @@ import { z } from "zod";
 import {
   getProEntry,
   getProIndex,
+  getProMobileComponents,
+  PRO_MOBILE_PREFIX,
   PRO_PACKAGE_MANAGERS,
   PRO_REGISTRY_SETUP,
   proInstallCommand,
@@ -38,7 +40,20 @@ function summary(item: Omit<ProRegistryItem, "$schema">) {
     slug: item.name,
     name: item.title,
     description: item.description,
+    // React Native items install as @beui-pro/native-<slug>.
+    platform: item.name.startsWith(PRO_MOBILE_PREFIX) ? "mobile" : "web",
   };
+}
+
+/** Matches a search term against a mobile item's name, slug, kind and text. */
+function matchesMobile(
+  item: { slug: string; name: string; description: string; kind: string },
+  query: string,
+) {
+  const normalized = query.toLowerCase();
+  return [item.slug, item.name, item.description, item.kind].some((field) =>
+    field.toLowerCase().includes(normalized),
+  );
 }
 
 export function createProServer(env: ProEnv, authorization: string) {
@@ -90,6 +105,52 @@ export function createProServer(env: ProEnv, authorization: string) {
       } catch (cause) {
         return error(
           `Failed to search beUI Pro components: ${(cause as Error).message}`,
+        );
+      }
+    },
+  );
+
+  server.registerTool(
+    "list_mobile_components",
+    {
+      description:
+        "List the beUI Pro React Native blocks and screens for Expo and React Native that this license includes. Install one with get_component or get_install_command using its install slug (native-<slug>). Requires a Mobile or Web + Mobile license.",
+      inputSchema: {
+        query: z
+          .string()
+          .min(1)
+          .optional()
+          .describe("Optional search term, such as 'login', 'paywall', or 'tab bar'."),
+        kind: z
+          .enum(["block", "screen", "template"])
+          .optional()
+          .describe("Optional filter: a block, a full screen, or an app template."),
+      },
+    },
+    async ({ query, kind }) => {
+      try {
+        const components = await getProMobileComponents(env, authorization);
+        if (components.length === 0) {
+          return error(
+            "This license doesn't include beUI Pro for mobile. React Native items need a Mobile or Web + Mobile license: https://pro.beui.dev/#pricing",
+          );
+        }
+        return json(
+          components
+            .filter((item) => !kind || item.kind === kind)
+            .filter((item) => !query || matchesMobile(item, query))
+            .map((item) => ({
+              slug: item.install_slug,
+              name: item.name,
+              description: item.description,
+              kind: item.kind,
+              page: item.page_url,
+              expoSdk: item.expo_sdk,
+            })),
+        );
+      } catch (cause) {
+        return error(
+          `Failed to list beUI Pro mobile components: ${(cause as Error).message}`,
         );
       }
     },

@@ -22,6 +22,22 @@ export type ProRegistryIndex = {
   items: Array<Omit<ProRegistryItem, "$schema">>;
 };
 
+/** A React Native item in the Pro agent index (`/r`), for Mobile licenses. */
+export type ProMobileComponent = {
+  slug: string;
+  name: string;
+  description: string;
+  platform: "mobile";
+  kind: "block" | "screen" | "template";
+  install_slug: string;
+  item_url: string;
+  page_url: string;
+  expo_sdk: number;
+};
+
+/** Install slugs that start with this are React Native items. */
+export const PRO_MOBILE_PREFIX = "native-";
+
 export class ProRegistryError extends Error {
   constructor(
     message: string,
@@ -67,6 +83,18 @@ export function getProIndex(
     `${base(env)}/r/registry.json`,
     authorization,
   );
+}
+
+/** The license's React Native items; empty without mobile access. */
+export async function getProMobileComponents(
+  env: { PRO_REGISTRY_URL?: string },
+  authorization: string,
+) {
+  const index = await fetchJson<{ mobile_components?: ProMobileComponent[] }>(
+    `${base(env)}/r`,
+    authorization,
+  );
+  return index.mobile_components ?? [];
 }
 
 export function getProEntry(
