@@ -572,6 +572,64 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  pagination: {
+    overview:
+      "Animated Pagination is page navigation for React. A pill glides to the current page on a Framer Motion spring, page numbers slide into place as the visible window moves, and each ellipsis turns into a double chevron on hover and jumps several pages when pressed. The row keeps one length as you page through, so it never shifts the layout around it. Pages render as buttons, or as links through getHref and your router's Link.",
+    useWhen: [
+      "A search results or product listing page splits results into numbered pages.",
+      "A data table or admin list needs compact page controls below the rows.",
+      "A blog or docs archive keeps shareable page URLs while a client router handles the navigation.",
+    ],
+    accessibility:
+      "Pagination renders a nav landmark labelled \"Pagination\" by default with a list of native buttons or links. The current page carries aria-current=\"page\", every number is named \"Page N\", the arrows are \"Previous page\" and \"Next page\" and are disabled at the ends, and each ellipsis is named for its jump, such as \"Forward 5 pages\". Focus shows a visible ring. With reduced motion enabled, the pill and the page numbers move without gliding and only fade.",
+    faq: [
+      {
+        question: "How do I add pagination in React?",
+        answer:
+          "Render Pagination with totalPages and either a page and onPageChange pair for controlled state, or defaultPage for uncontrolled state.",
+      },
+      {
+        question: "Does it work with Next.js links?",
+        answer:
+          "Yes. Pass getHref to turn every page into a link, and renderLink to render it through the Next.js Link component. onPageChange still fires on click.",
+      },
+      {
+        question: "How do I change how many pages show?",
+        answer:
+          "siblings sets the pages either side of the current one and boundaries sets the pages always shown at each end. jump sets how far an ellipsis moves.",
+      },
+    ],
+  },
+
+  "avatar-group": {
+    overview:
+      "Animated Avatar Group is an overlapping avatar stack for React. On hover the avatars fan apart on a Framer Motion spring, the one under the pointer lifts and shows its name in a tooltip, and a +N count expands the group to show every member, with the new avatars springing in beside it. Avatars show an image or fall back to initials when there is no image or it fails to load, in three sizes.",
+    useWhen: [
+      "A project or document header shows who has access or who is collaborating.",
+      "A task, card or comment thread shows its assignees or participants in little space.",
+      "A team or community page previews its members with a way to see everyone.",
+    ],
+    accessibility:
+      "The avatars are a list with an accessible label, \"Members\" by default, and every avatar exposes its member name through the image alt text or visually hidden text behind the initials. The +N count is a native button named \"Show N more members\" with aria-expanded, and it becomes \"Show fewer members\" once open. The fan and lift run only on devices with a fine pointer that can hover, and with reduced motion enabled the avatars stay put and only fade.",
+    faq: [
+      {
+        question: "How do I make an avatar stack in React?",
+        answer:
+          "Pass a members array of id, name and an optional src to AvatarGroup. Set max for how many show before the rest collapse into a +N count.",
+      },
+      {
+        question: "What happens when an avatar image fails?",
+        answer:
+          "The avatar falls back to the member's initials, so a broken image never leaves an empty circle.",
+      },
+      {
+        question: "Can I control whether the group is expanded?",
+        answer:
+          "Yes. Pass expanded and onExpandedChange to control it, or defaultExpanded to start open.",
+      },
+    ],
+  },
+
   breadcrumb: {
     overview:
       "Animated Breadcrumb is composable breadcrumb navigation for React made of Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator and BreadcrumbEllipsis parts. As the route changes, path items slide and fade in and out with Framer Motion. Long trails collapse their middle items behind an ellipsis that opens a dropdown of the hidden paths on hover, click or keyboard, and links can render through your router's Link component.",

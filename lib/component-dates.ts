@@ -28,6 +28,8 @@ const COMPONENT_DATES = {
   "motion/image-viewer": { publishedAt: "2026-10-02", updatedAt: "2026-10-23" },
   "motion/date-range-picker": { publishedAt: "2026-10-02", updatedAt: "2026-10-23" },
   "motion/color-selector": { publishedAt: "2026-09-27", updatedAt: "2026-10-18" },
+  "motion/pagination": { publishedAt: "2026-10-31", updatedAt: "2026-10-31" },
+  "motion/avatar-group": { publishedAt: "2026-10-31", updatedAt: "2026-10-31" },
   "motion/breadcrumb": { publishedAt: "2026-09-27", updatedAt: "2026-10-23" },
   "motion/tilt-card": { publishedAt: "2026-05-17", updatedAt: "2026-10-18" },
   "motion/button": { publishedAt: "2026-05-17", updatedAt: "2026-10-18" },

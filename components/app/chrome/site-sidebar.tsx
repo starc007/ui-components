@@ -381,7 +381,7 @@ function WebSidebarNav({
   return (
     <nav ref={navRef} aria-label="Browse components" className="flex flex-col gap-6">
       {!isCharts ? (
-        <div className="sticky -top-6 z-20 -mt-6 -mb-4 bg-background pt-6">
+        <div className="sticky -top-4 z-20 -mt-4 -mb-4 bg-background pt-4">
           <SidebarCategoryTabs
             id={tabsId}
             panelId={panelId}

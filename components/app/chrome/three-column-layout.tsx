@@ -21,16 +21,17 @@ export function ThreeColumnLayout({
       )}
     >
       <div className="hidden min-w-0 md:block">
-        <div className="sticky top-14 h-[calc(100dvh-3.5rem)] overflow-y-auto py-6 pr-4 scrollbar-hide">
+        <div className="sticky top-14 h-[calc(100dvh-3.5rem)] overflow-y-auto pt-4 pb-6 pr-4 scrollbar-hide">
           {leftSidebar}
         </div>
       </div>
-      <div className="min-w-0 py-8">
+      <div className="min-w-0 pt-4 pb-8">
         {children}
         <DocsFooter />
       </div>
-      <aside aria-label="Sponsors and resources" className="hidden min-w-0 pt-10 xl:block">
-        <div className="sticky top-24 z-10 max-h-[calc(100dvh-8rem)] overflow-y-auto pb-1 scrollbar-hide">
+      <aside aria-label="Sponsors and resources" className="hidden min-w-0 pt-4 xl:block">
+        {/* 16px under the 56px header, matching the other two columns. */}
+        <div className="sticky top-[4.5rem] z-10 max-h-[calc(100dvh-5.5rem)] overflow-y-auto pb-1 scrollbar-hide">
           {rightSidebar}
         </div>
       </aside>
