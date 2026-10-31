@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { type ComponentPropsWithRef, useState } from "react";
+import { type ComponentPropsWithRef, type PointerEvent, useState } from "react";
 import { Tooltip, TooltipProvider } from "@/components/motion/tooltip";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
@@ -98,16 +98,27 @@ export function AvatarGroup({
   const canHover = useHoverCapable();
   const [internalExpanded, setInternalExpanded] = useState(defaultExpanded);
   const isExpanded = expanded ?? internalExpanded;
-  const [spread, setSpread] = useState(false);
-  const [lifted, setLifted] = useState<string | null>(null);
+  // Index of the avatar under a mouse pointer; the +N button counts as the
+  // last slot.
+  const [hovered, setHovered] = useState<number | null>(null);
 
   const limit = Math.max(1, max);
   const overflow = Math.max(0, members.length - limit);
   const visible = isExpanded ? members : members.slice(0, limit);
   const px = SIZES[size].px;
-  // Avatars overlap by a third of their width, and hovering opens that up.
+  // Avatars overlap by a third of their width. Hovering one parts the row
+  // around it: everything before slides back, everything after slides on,
+  // so the hovered avatar shows in full while the group stays in place.
   const overlap = Math.round(px / 3);
-  const fan = !reduce && canHover && spread;
+  const push = Math.round(overlap * 0.75);
+  const parting = !reduce && canHover && hovered !== null;
+  const offset = (index: number) =>
+    !parting || index === hovered ? 0 : index < (hovered ?? 0) ? -push : push;
+  const hoverHandlers = (index: number) => ({
+    onPointerEnter: (event: PointerEvent) => {
+      if (event.pointerType === "mouse") setHovered(index);
+    },
+  });
 
   const toggle = () => {
     const next = !isExpanded;
@@ -119,14 +130,9 @@ export function AvatarGroup({
     <TooltipProvider skipDelay={400}>
       <div
         {...props}
-        onPointerEnter={(event) => {
-          props.onPointerEnter?.(event);
-          if (event.pointerType === "mouse") setSpread(true);
-        }}
         onPointerLeave={(event) => {
           props.onPointerLeave?.(event);
-          setSpread(false);
-          setLifted(null);
+          setHovered(null);
         }}
         className={cn("inline-flex items-center", className)}
       >
@@ -144,21 +150,21 @@ export function AvatarGroup({
                   transition: { duration: 0.14, ease: EASE_OUT },
                 }}
                 transition={{ layout: SPRING_LAYOUT, scale: SPRING_LAYOUT, opacity: { duration: 0.18, ease: EASE_OUT } }}
-                // Later avatars sit on top, except the lifted one.
+                // Later avatars sit on top, except the hovered one.
                 style={{
                   marginLeft: index === 0 ? 0 : -overlap,
-                  zIndex: lifted === member.id ? visible.length + 1 : index,
+                  zIndex: parting && hovered === index ? visible.length + 1 : index,
                   position: "relative",
                 }}
               >
                 <Tooltip content={member.name} side="top">
                   <motion.span
                     className="block rounded-full"
-                    onPointerEnter={() => setLifted(member.id)}
+                    {...hoverHandlers(index)}
                     animate={{
-                      x: fan ? index * (overlap / 2) : 0,
-                      y: fan && lifted === member.id ? -4 : 0,
-                      scale: fan && lifted === member.id ? 1.08 : 1,
+                      x: offset(index),
+                      y: parting && hovered === index ? -3 : 0,
+                      scale: parting && hovered === index ? 1.06 : 1,
                     }}
                     transition={SPRING_LAYOUT}
                   >
@@ -176,7 +182,8 @@ export function AvatarGroup({
               >
                 <motion.span
                   className="block"
-                  animate={{ x: fan ? visible.length * (overlap / 2) : 0 }}
+                  {...hoverHandlers(visible.length)}
+                  animate={{ x: offset(visible.length) }}
                   transition={SPRING_LAYOUT}
                 >
                   <motion.button
