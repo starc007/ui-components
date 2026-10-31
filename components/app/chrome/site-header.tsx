@@ -2,16 +2,16 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useMotionValueEvent, useScroll } from "motion/react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { GithubIcon } from "@/components/app/icons";
 import { MobileNav } from "@/components/app/chrome/mobile-nav";
-import { PressLink } from "@/components/app/press-link";
-import { RainbowCta } from "@/components/app/rainbow-cta";
 import { SiteSearch } from "@/components/app/chrome/site-search";
 import { ThemeToggle } from "@/components/app/chrome/theme-toggle";
+import { HalloweenMark } from "@/components/app/halloween-mark";
+import { GithubIcon } from "@/components/app/icons";
+import { PressLink } from "@/components/app/press-link";
+import { RainbowCta } from "@/components/app/rainbow-cta";
 import { hasSiteSidebar } from "@/lib/component-paths";
 import { cn } from "@/lib/utils";
 
@@ -40,6 +40,7 @@ export function SiteHeader() {
   }, []);
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
+  const [markHovered, setMarkHovered] = useState(false);
   const pathname = usePathname();
   const sidebarPage = hasSiteSidebar(pathname);
   const isComponents = pathname.startsWith("/components/motion");
@@ -72,15 +73,14 @@ export function SiteHeader() {
           <Link
             href="/"
             className="group flex items-center gap-2.5 text-sm font-semibold tracking-tight text-foreground"
+            onPointerEnter={(e) => {
+              if (e.pointerType === "mouse") setMarkHovered(true);
+            }}
+            onPointerLeave={() => setMarkHovered(false)}
+            onFocus={(e) => setMarkHovered(e.currentTarget.matches(":focus-visible"))}
+            onBlur={() => setMarkHovered(false)}
           >
-            <Image
-              src="/beui-mark.png"
-              alt=""
-              aria-hidden="true"
-              width={24}
-              height={24}
-              className="h-6 w-6 rounded-lg"
-            />
+            <HalloweenMark hovered={markHovered} className="h-6 w-6" />
             <span>beUI</span>
           </Link>
           <nav className={cn("hidden items-center gap-0.5", sidebarPage ? "md:flex" : "xl:flex")}>
