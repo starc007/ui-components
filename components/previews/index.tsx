@@ -40,6 +40,12 @@ export const previews: Record<string, ComponentType> = {
   "motion/color-picker": dynamic(() =>
     import("./motion/color-picker.preview").then((m) => m.ColorPickerPreview),
   ),
+  "motion/pagination": dynamic(() =>
+    import("./motion/pagination.preview").then((m) => m.PaginationPreview),
+  ),
+  "motion/avatar-group": dynamic(() =>
+    import("./motion/avatar-group.preview").then((m) => m.AvatarGroupPreview),
+  ),
   "motion/color-selector": dynamic(() =>
     import("./motion/color-selector.preview").then((m) => m.ColorSelectorPreview),
   ),

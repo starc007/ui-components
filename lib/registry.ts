@@ -173,6 +173,24 @@ export const registry: CategoryEntry[] = [
         launchedAt: "2026-09-27",
       },
       {
+        slug: "pagination",
+        name: "Animated Pagination",
+        description:
+          "Page navigation with a gliding current-page pill, page numbers that slide as the window moves, and ellipses that jump several pages.",
+        file: "components/motion/pagination.tsx",
+        badge: "new",
+        launchedAt: "2026-10-31",
+      },
+      {
+        slug: "avatar-group",
+        name: "Animated Avatar Group",
+        description:
+          "Overlapping avatars that fan apart on hover, lift with a name tooltip, and expand from a +N count to show everyone.",
+        file: "components/motion/avatar-group.tsx",
+        badge: "new",
+        launchedAt: "2026-10-31",
+      },
+      {
         slug: "breadcrumb",
         name: "Animated Breadcrumb",
         description:

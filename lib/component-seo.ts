@@ -70,6 +70,16 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "React color swatch picker built on native radio inputs, with a gliding selection ring, press feedback and keyboard navigation. Copy the source or use shadcn.",
   },
+  pagination: {
+    title: "Animated Pagination Component for React",
+    description:
+      "React pagination with a gliding current-page pill, sliding page numbers, ellipsis jumps, router link support and keyboard access. Copy the source or use shadcn.",
+  },
+  "avatar-group": {
+    title: "Animated Avatar Group Component for React",
+    description:
+      "React avatar stack that fans out on hover, shows names in tooltips, falls back to initials and expands from a +N count. Copy the source or use shadcn.",
+  },
   breadcrumb: {
     title: "Animated Breadcrumb Component for React",
     description:

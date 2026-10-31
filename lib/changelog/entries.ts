@@ -12,6 +12,16 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
+        "text": "Pagination glides a pill to the current page, slides page numbers into place as the window moves, and turns each ellipsis into a jump of several pages.",
+        "component": "pagination"
+      },
+      {
+        "type": "new",
+        "text": "Avatar Group fans its avatars apart on hover, lifts the one under your pointer with its name, and expands from a +N count to show everyone.",
+        "component": "avatar-group"
+      },
+      {
+        "type": "new",
         "text": "Line Chart draws line and area charts that morph when the data changes. Inspecting rolls a pill along the category axis, recedes the line past the crosshair and springs a tooltip beside the values, and a loading status holds a pulsing placeholder until your data draws in.",
         "component": "line-chart"
       },
