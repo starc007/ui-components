@@ -271,11 +271,7 @@ export default function NativeSetupPage() {
           <Link href="/react-native" className={link}>
             React Native component
           </Link>{" "}
-          page has a QR code that opens it in{" "}
-          <a href="https://expo.dev/go" target="_blank" rel="noreferrer noopener" className={link}>
-            Expo Go
-          </a>{" "}
-          (SDK {native.expoGo.sdk}), so you can feel the motion on your phone
+          page has a recording in light and dark, so you can see the motion
           first. Coding agents can fetch any component with its install commands
           and files from <Code>{`${SITE_URL}/native/r`}</Code>, or through the
           beUI MCP server. See the{" "}

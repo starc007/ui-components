@@ -84,14 +84,6 @@ export function NativeShowcase() {
                   className="size-4 transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none"
                 />
               </Link>
-              {/* Expo Go links only open on a phone, so desktops don't get one. */}
-              <a
-                href={native.expoGo.url}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground underline decoration-foreground/30 underline-offset-4 lg:hidden"
-              >
-                <Smartphone aria-hidden="true" className="size-3.5" />
-                Open in Expo Go
-              </a>
             </div>
             <InstallCommand
               tool="beui-native"

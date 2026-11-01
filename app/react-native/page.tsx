@@ -85,19 +85,14 @@ export default function NativeIndexPage() {
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">
         Built for touch with Reanimated, Gesture Handler and Uniwind. Copy the
-        source into your Expo or React Native app, or try each one on your
-        phone in Expo Go.
+        source into your Expo or React Native app.
       </p>
       <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
         New here?{" "}
         <Link href="/docs/native-setup" className={link}>
           Set up your app
         </Link>{" "}
-        once, then add any component with the CLI. Or open the whole showcase in{" "}
-        <a href={native.expoGo.url} className={link}>
-          Expo Go
-        </a>{" "}
-        (SDK {native.expoGo.sdk}) on your phone.
+        once, then add any component with the CLI.
       </p>
       <div className="mt-6 xl:hidden">
         <PlatformSwitch />

@@ -40,7 +40,6 @@ export async function GET() {
   lines.push(`- All native components: ${SITE_URL}/react-native`);
   lines.push(`- Native index (JSON): ${nativeIndex.endpoints.index}`);
   lines.push(`- Native detail (JSON, every file with contents): ${nativeIndex.endpoints.detail}`);
-  lines.push(`- Showcase in Expo Go (SDK ${nativeIndex.expo_go.sdk}): ${nativeIndex.expo_go.url}`);
   lines.push(`- Source: ${nativeIndex.repository}`);
   lines.push("");
   for (const c of nativeIndex.components) {

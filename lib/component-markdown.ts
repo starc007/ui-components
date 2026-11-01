@@ -169,7 +169,6 @@ export async function buildComponentMarkdown(
       "```",
       "",
       `- Native detail: ${nativeEntry.detail_url}`,
-      `- Try it in Expo Go: ${nativeEntry.expo_go_url}`,
       `- GitHub: ${nativeEntry.source_url}`,
       "",
     );

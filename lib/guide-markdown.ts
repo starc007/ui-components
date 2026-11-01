@@ -362,7 +362,7 @@ ${SOURCE_SNIPPET}
 
 ## Try before you copy
 
-Every React Native component page (${SITE_URL}/react-native) has a QR code that opens it in Expo Go (SDK ${native.expoGo.sdk}). Agents can fetch components from ${SITE_URL}/native/r or the beUI MCP server. Every component follows the system Reduce Motion setting and takes a \`disableAnimation\` prop. Source: ${native.repository}`,
+Every React Native component page (${SITE_URL}/react-native) has a recording in light and dark. Agents can fetch components from ${SITE_URL}/native/r or the beUI MCP server. Every component follows the system Reduce Motion setting and takes a \`disableAnimation\` prop. Source: ${native.repository}`,
   },
 } as const;
 

@@ -4,7 +4,6 @@ import { CodeBlock } from "@/components/app/docs/code-block";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { InstallTabs } from "@/components/app/docs/install-tabs";
 import { NativePreview } from "@/components/app/docs/native/native-preview";
-import { QrCode } from "@/components/app/docs/native/qr-code";
 import {
   native,
   nativeInstallCommands,
@@ -51,8 +50,8 @@ const external =
   "inline-flex items-center gap-1 text-foreground underline underline-offset-4";
 
 /**
- * The React Native version of a component: a recording, a QR code that opens
- * it in Expo Go, and copy-paste install steps from beUI Native.
+ * The React Native version of a component: a recording and copy-paste install
+ * steps from beUI Native.
  */
 export function NativePanel({ component }: { component: NativeComponent }) {
 
@@ -60,19 +59,7 @@ export function NativePanel({ component }: { component: NativeComponent }) {
     <div className="mt-8 flex flex-col gap-12">
       <section id="native-preview" className="scroll-mt-24">
         <h2 className="sr-only">Preview</h2>
-        <NativePreview
-          clips={component.clips}
-          title={component.title}
-          expoGo={component.expoGo}
-          sdk={native.expoGo.sdk}
-          qr={
-            <QrCode
-              value={component.expoGo}
-              label={`QR code that opens ${component.title} in Expo Go`}
-              className="w-full"
-            />
-          }
-        />
+        <NativePreview clips={component.clips} title={component.title} />
       </section>
 
       <section

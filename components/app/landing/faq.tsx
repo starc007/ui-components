@@ -70,7 +70,7 @@ const FAQS = [
         <Link className="underline underline-offset-4" href="/react-native">
           React Native component
         </Link>{" "}
-        page has a QR code to try it in Expo Go first.
+        page has a recording to watch it in motion first.
       </>
     ),
   },
