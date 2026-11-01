@@ -12,7 +12,7 @@ import { HalloweenMark } from "@/components/app/halloween-mark";
 import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { RainbowCta } from "@/components/app/rainbow-cta";
-import { hasSiteSidebar } from "@/lib/component-paths";
+import { hasSiteSidebar, isNativePath, NATIVE_PATH } from "@/lib/component-paths";
 import { cn } from "@/lib/utils";
 
 function formatStarCount(count: number) {
@@ -47,6 +47,7 @@ export function SiteHeader() {
   const isBlocks = pathname.startsWith("/components/blocks");
   const isAgents = pathname.startsWith("/components/agents");
   const isCharts = pathname.startsWith("/charts");
+  const isNative = isNativePath(pathname);
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
   const formattedStarCount =
@@ -129,6 +130,17 @@ export function SiteHeader() {
               )}
             >
               Charts
+            </Link>
+            <Link
+              href={NATIVE_PATH}
+              className={cn(
+                "inline-flex rounded-md px-1.5 py-1.5 text-sm whitespace-nowrap transition-colors lg:px-3",
+                isNative
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              React Native
             </Link>
             <Link
               href="/playground"

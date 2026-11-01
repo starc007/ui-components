@@ -8,7 +8,7 @@ import { SidebarNav } from "@/components/app/chrome/site-sidebar";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { Button } from "@/components/motion/button";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
-import { hasPlatformSwitch, hasSiteSidebar } from "@/lib/component-paths";
+import { hasPlatformSwitch, hasSiteSidebar, isNativePath, NATIVE_PATH } from "@/lib/component-paths";
 import { cn } from "@/lib/utils";
 
 /** Mobile nav: a header hamburger that opens the sidebar list in beUI's own bottom sheet. */
@@ -104,6 +104,18 @@ export function MobileNav() {
               )}
             >
               Charts
+            </Link>
+            <Link
+              href={NATIVE_PATH}
+              onClick={() => setOpen(false)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                isNativePath(pathname)
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              React Native
             </Link>
             <Link
               href="/playground"
