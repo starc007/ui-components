@@ -61,12 +61,17 @@ const read = (file: string) => readFileSync(path.join(NATIVE, file), "utf8");
 mkdirSync(path.dirname(CATALOG), { recursive: true });
 const posters = mkdtempSync(path.join(tmpdir(), "beui-native-posters-"));
 
-// URLs already in the catalog were uploaded by an earlier sync.
+// URLs already in the catalog were uploaded by an earlier sync. A clip
+// whose recording is no longer on disk keeps its uploaded version.
+type Clip = { video: string; poster: string };
 const uploaded = new Set<string>();
+const previous = new Map<string, Clip>();
 if (existsSync(CATALOG)) {
   for (const component of JSON.parse(readFileSync(CATALOG, "utf8")).components) {
-    for (const clip of Object.values(component.clips) as ({ video: string; poster: string } | null)[]) {
-      if (clip) uploaded.add(clip.video).add(clip.poster);
+    for (const [theme, clip] of Object.entries(component.clips) as [string, Clip | null][]) {
+      if (!clip) continue;
+      uploaded.add(clip.video).add(clip.poster);
+      previous.set(`${component.slug}-${theme}`, clip);
     }
   }
 }
@@ -99,8 +104,9 @@ const components = (manifest.components as ManifestComponent[]).map(
         const name = component.clips[theme];
         const from = path.join(NATIVE, "recordings", name);
         if (!existsSync(from)) {
-          missing.push(name);
-          return [theme, null];
+          const kept = previous.get(`${component.slug}-${theme}`);
+          if (!kept) missing.push(name);
+          return [theme, kept ?? null];
         }
         const bytes = readFileSync(from);
         const hash = createHash("sha256").update(bytes).digest("hex").slice(0, 10);
