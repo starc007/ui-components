@@ -1,7 +1,7 @@
 "use client";
 
 import { Volume2, VolumeX } from "lucide-react";
-import { motion, useAnimate, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
 import {
   useCallback,
   useEffect,
@@ -12,6 +12,7 @@ import {
 } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
+import { EASE_OUT } from "@/lib/ease";
 import { createTickPlayer } from "@/lib/tick-sound";
 import { cn } from "@/lib/utils";
 
@@ -65,7 +66,15 @@ const HOP_HEIGHT = 7;
 const LANDING_RATE = 0.55;
 const LANDING_SPREAD = 0.4;
 
-type Ball = { id: number; path: { x: number; y: number }[]; times: number[]; slot: number; duration: number };
+type Ball = {
+  id: number;
+  path: { x: number; y: number }[];
+  times: number[];
+  slot: number;
+  duration: number;
+  /** Set once the ball reaches its slot; its exit fade must not land again. */
+  landed?: boolean;
+};
 
 let nextBall = 0;
 
@@ -73,7 +82,7 @@ let nextBall = 0;
 function plan(rows: number, width: number): Omit<Ball, "id"> {
   const center = width / 2;
   const contactY = (row: number) => TOP + row * ROW - PEG - BALL;
-  const points = [{ x: center, y: 0 }];
+  const points = [{ x: center, y: BALL }]; // enters fully inside the board
   const steps: number[] = [0.22]; // first fall from the chute to the top peg
   let k = 0; // rightward steps so far
   for (let row = 0; row < rows; row++) {
@@ -84,7 +93,8 @@ function plan(rows: number, width: number): Omit<Ball, "id"> {
     steps.push(HOP_TIME, DROP_TIME);
     if (right) k++;
   }
-  const slotY = TOP + rows * ROW + SLOT / 2 - BALL / 2;
+  // Come to rest just inside the slot's top edge, clear of its label.
+  const slotY = TOP + rows * ROW - BALL + 3;
   points.push({ x: center + (k - rows / 2) * GAP, y: slotY });
   const duration = steps.reduce((sum, step) => sum + step, 0);
   const times = [0];
@@ -116,6 +126,8 @@ export function Plinko({
   const [scope, animate] = useAnimate();
   const [balls, setBalls] = useState<Ball[]>([]);
   const [announcement, setAnnouncement] = useState("");
+  // The last slot hit stays marked after its flash fades.
+  const [lastSlot, setLastSlot] = useState<number | null>(null);
   const [internalSound, setInternalSound] = useState(defaultSound);
   const soundOn = sound ?? internalSound;
 
@@ -146,10 +158,10 @@ export function Plinko({
     },
     [],
   );
-  const tickAt = (seconds: number) => {
+  const at = (seconds: number, run: () => void) => {
     const timer = window.setTimeout(() => {
       timers.current.delete(timer);
-      tick();
+      run();
     }, seconds * 1000);
     timers.current.add(timer);
   };
@@ -176,6 +188,7 @@ export function Plinko({
     for (const timer of timers.current) clearTimeout(timer);
     timers.current.clear();
     setBalls([]);
+    setLastSlot(null);
   }, [rows]);
 
   const width = (rows + 2) * GAP;
@@ -200,6 +213,7 @@ export function Plinko({
       // A lower thunk than a peg hit marks the landing. It brightens toward
       // the edges, where landing is rarest, so a good drop is heard.
       tick(LANDING_RATE + LANDING_SPREAD * (Math.abs(slot - rows / 2) / (rows / 2)));
+      setLastSlot(slot);
       setAnnouncement(`Landed in slot ${slot + 1}`);
       onLand?.(slot, labels[slot]);
     },
@@ -213,18 +227,17 @@ export function Plinko({
       land(ball.slot);
       return;
     }
-    // Flash and click each peg as the ball reaches it.
+    // Flash and click each peg the moment the ball reaches it. Starting the
+    // flash then, rather than queueing it with a delay now, keeps the route
+    // from showing on the pegs before the ball gets there.
     ball.path.slice(1, -1).forEach((point, index) => {
       if (index % 2) return; // odd points are the hop apex, not a peg
       const row = index / 2;
       const peg = Math.round((point.x - width / 2) / GAP + row / 2);
-      const at = ball.times[index + 1] * ball.duration;
-      animate(
-        `[data-peg="${row}-${peg}"]`,
-        { scale: [1, 1.8, 1], opacity: [0.4, 1, 0.4] },
-        { duration: 0.3, delay: at },
-      );
-      if (soundOn) tickAt(at);
+      at(ball.times[index + 1] * ball.duration, () => {
+        animate(`[data-peg="${row}-${peg}"]`, { scale: [1, 1.8, 1], opacity: [0.4, 1, 0.4] }, { duration: 0.3 });
+        tick();
+      });
     });
     setBalls((current) => [...current, ball]);
   };
@@ -257,7 +270,14 @@ export function Plinko({
           return (
             // biome-ignore lint/suspicious/noArrayIndexKey: slots are positional
             <g key={slot}>
-              <rect x={x + 2} y={y} width={GAP - 4} height={SLOT - 4} rx={6} className="fill-muted" />
+              <rect
+                x={x + 2}
+                y={y}
+                width={GAP - 4}
+                height={SLOT - 4}
+                rx={6}
+                className={slot === lastSlot ? "fill-primary/20" : "fill-muted"}
+              />
               <rect data-slot={slot} x={x + 2} y={y} width={GAP - 4} height={SLOT - 4} rx={6} className="fill-primary opacity-0" />
               <text
                 x={x + GAP / 2}
@@ -266,7 +286,7 @@ export function Plinko({
                 dominantBaseline="central"
                 // Long values shrink to fit their slot.
                 fontSize={Math.min(9, (GAP - 8) / (String(label).length * 0.6))}
-                className="fill-foreground font-medium tabular-nums"
+                className={cn("fill-foreground tabular-nums", slot === lastSlot ? "font-semibold" : "font-medium")}
               >
                 {label}
               </text>
@@ -274,6 +294,8 @@ export function Plinko({
           );
         })}
 
+        {/* Keyed by size: balls from a board that changed size leave at once. */}
+        <AnimatePresence key={rows}>
         {balls.map((ball) => (
           <motion.circle
             key={ball.id}
@@ -281,12 +303,20 @@ export function Plinko({
             cx={0}
             cy={0}
             className="fill-primary"
-            initial={{ x: ball.path[0].x, y: ball.path[0].y }}
+            initial={{ x: ball.path[0].x, y: ball.path[0].y, opacity: 0 }}
             animate={{
               x: ball.path.map((point) => point.x),
               y: ball.path.map((point) => point.y),
+              opacity: 1,
+            }}
+            // Settle into the slot: a short fade with a small drop.
+            exit={{
+              opacity: 0,
+              y: (ball.path.at(-1)?.y ?? 0) + 4,
+              transition: { duration: 0.15, ease: EASE_OUT },
             }}
             transition={{
+              opacity: { duration: 0.1, ease: EASE_OUT },
               x: { duration: ball.duration, times: ball.times, ease: "linear" },
               y: {
                 duration: ball.duration,
@@ -296,15 +326,18 @@ export function Plinko({
               },
             }}
             onAnimationComplete={() => {
+              if (ball.landed) return;
+              ball.landed = true;
               land(ball.slot);
               setBalls((current) => current.filter((other) => other.id !== ball.id));
             }}
           />
         ))}
+        </AnimatePresence>
       </svg>
 
       <div className="flex items-center gap-2">
-        <Button onClick={drop} disabled={balls.length >= maxBalls}>
+        <Button onClick={drop} disabled={balls.length >= maxBalls} pressScale={0.96}>
           {dropLabel}
         </Button>
         <Button
@@ -312,6 +345,7 @@ export function Plinko({
           onClick={toggleSound}
           aria-label={soundLabel}
           aria-pressed={soundOn}
+          pressScale={0.96}
           className="w-10 px-0"
         >
           <ActionSwapCascadeIcon value={soundOn ? "on" : "off"} className="size-4">
