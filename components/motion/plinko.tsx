@@ -5,7 +5,7 @@ import { type ReactNode, useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/motion/button";
 import { cn } from "@/lib/utils";
 
-export interface PachinkoProps {
+export interface PlinkoProps {
   /** Rows of pegs the ball falls through. Default 8. */
   rows?: number;
   /** One label per slot, left to right; there are `rows + 1` slots. */
@@ -16,7 +16,7 @@ export interface PachinkoProps {
   maxBalls?: number;
   /** Label of the drop button. Default "Drop ball". */
   dropLabel?: string;
-  /** Accessible name for the board. Default "Pachinko board". */
+  /** Accessible name for the board. Default "Plinko board". */
   "aria-label"?: string;
   className?: string;
 }
@@ -66,19 +66,19 @@ function plan(rows: number, width: number): Omit<Ball, "id"> {
 }
 
 /**
- * A pachinko board: balls drop through rows of pegs, bounce left or right off
+ * A Plinko board: balls drop through rows of pegs, bounce left or right off
  * each one and land in a slot. Pegs flash when hit and the slot pulses on
  * landing. With reduced motion a ball lands at once.
  */
-export function Pachinko({
+export function Plinko({
   rows = 8,
   slots,
   onLand,
   maxBalls = 12,
   dropLabel = "Drop ball",
-  "aria-label": ariaLabel = "Pachinko board",
+  "aria-label": ariaLabel = "Plinko board",
   className,
-}: PachinkoProps) {
+}: PlinkoProps) {
   const reduce = useReducedMotion() ?? false;
   const [scope, animate] = useAnimate();
   const [balls, setBalls] = useState<Ball[]>([]);

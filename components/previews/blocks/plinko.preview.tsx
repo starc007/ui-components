@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Pachinko } from "@/components/motion/pachinko";
+import { Plinko } from "@/components/motion/plinko";
 
 const SLOTS = [80, 40, 20, 10, 5, 10, 20, 40, 80];
 
-export function PachinkoPreview() {
+export function PlinkoPreview() {
   const [score, setScore] = useState(0);
   const [drops, setDrops] = useState(0);
 
@@ -14,7 +14,7 @@ export function PachinkoPreview() {
       <p className="text-sm text-muted-foreground tabular-nums">
         Score <span className="font-medium text-foreground">{score}</span> · {drops} balls
       </p>
-      <Pachinko
+      <Plinko
         slots={SLOTS}
         onLand={(slot) => {
           setScore((value) => value + SLOTS[slot]);

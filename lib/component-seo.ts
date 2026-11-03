@@ -576,10 +576,10 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Animated React sign up form with on-blur validation, a password strength meter, password reveal and loading and success states. Free, open source.",
   },
-  pachinko: {
-    title: "Animated Pachinko and Plinko Board for React",
+  plinko: {
+    title: "Animated Plinko Board for React",
     description:
-      "React pachinko board: balls bounce through pegs into scoring slots, pegs flash on hit and slots pulse on landing. Framer Motion, install with shadcn.",
+      "React Plinko board: balls bounce through pegs into scoring slots, pegs flash on hit and slots pulse on landing. Framer Motion, install with shadcn.",
   },
   "card-dealer": {
     title: "Animated Card Dealer and Card Hand for React",

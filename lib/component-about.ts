@@ -3245,9 +3245,9 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
-  pachinko: {
+  plinko: {
     overview:
-      "Pachinko is a React ball drop board built with Framer Motion. Each press of the drop button sends a ball through rows of pegs; at every peg it hops and falls left or right at random, so most balls land near the middle and few reach the edges. Pegs flash as the ball strikes them and the slot it lands in pulses. Several balls can fall at once, and onLand reports the slot index so you can keep score.",
+      "Plinko is a React ball drop board built with Framer Motion. Each press of the drop button sends a ball through rows of pegs; at every peg it hops and falls left or right at random, so most balls land near the middle and few reach the edges. Pegs flash as the ball strikes them and the slot it lands in pulses. Several balls can fall at once, and onLand reports the slot index so you can keep score.",
     useWhen: [
       "A game, giveaway or rewards screen needs a playful way to pick a prize with visible chance.",
       "A statistics lesson or landing page wants to show a bell curve forming one ball at a time.",
