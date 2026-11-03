@@ -1,4 +1,11 @@
 import path from "node:path";
+import createNextIntlPlugin from "next-intl/plugin";
+import languages from "./i18n/languages.json" with { type: "json" };
+
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
+
+// Every language but English (the default) gets a URL prefix. See i18n/routing.ts.
+const LOCALE_PREFIX = `/:locale(${Object.keys(languages).filter((locale) => locale !== "en").join("|")})`;
 
 const cloudflareAliases = process.env.BEUI_CLOUDFLARE === "1" ? {
   "@/lib/source-reader": "./.cloudflare/source-reader.ts",
@@ -119,10 +126,13 @@ const nextConfig = {
         source: "/components/:category/:slug.md",
         destination: "/r/:slug.md?category=:category",
       },
+      // shadcn directory items (/{slug}.json). A root [slug] route would clash
+      // with app/[locale], so the handler lives under /registry-item.
+      { source: "/:slug([^/]+\\.json)", destination: "/registry-item/:slug" },
     ];
   },
   async redirects() {
-    return [
+    const redirects = [
       { source: "/pro", destination: "https://pro.beui.dev", permanent: true },
       { source: "/components/charts", destination: "/charts", permanent: true },
       { source: "/components/charts/:path+", destination: "/charts/:path+", permanent: true },
@@ -154,6 +164,18 @@ const nextConfig = {
         permanent: true,
       },
     ];
+    // Same redirects inside each language prefix (/de/components/motion/swap).
+    return [
+      ...redirects,
+      ...redirects
+        // Markdown and external targets stay unprefixed.
+        .filter((redirect) => redirect.destination.startsWith("/") && !redirect.destination.endsWith(".md"))
+        .map((redirect) => ({
+          ...redirect,
+          source: `${LOCALE_PREFIX}${redirect.source}`,
+          destination: `/:locale${redirect.destination}`,
+        })),
+    ];
   },
   // The MCP server is deployed independently from mcp/wrangler.jsonc.
   // Keep its source and dependencies out of the site's standalone/OpenNext output.
@@ -161,6 +183,17 @@ const nextConfig = {
     "/*": ["./mcp/**/*"],
   },
   outputFileTracingIncludes: {
+    "/[locale]/charts/*": [
+      "./components/charts/**/*",
+      "./components/motion/**/*",
+      "./components/previews/charts/**/*",
+      "./lib/**/*",
+    ],
+    "/[locale]/components/*": [
+      "./components/motion/**/*",
+      "./components/charts/**/*",
+      "./components/previews/**/*",
+    ],
     "/charts/*": [
       "./components/charts/**/*",
       "./components/motion/**/*",
@@ -186,4 +219,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

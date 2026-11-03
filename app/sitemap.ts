@@ -11,6 +11,22 @@ import { native } from "@/lib/native";
 import { seoPagePath, seoPages } from "@/lib/seo-pages";
 import { changelogEntries } from "@/lib/changelog";
 import { SITE_URL as SITE } from "@/lib/site";
+import { LANGUAGES, localizedPath, routing } from "@/i18n/routing";
+
+/** One entry per language, each listing every language as an alternate. */
+function withLanguages(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
+  return entries.flatMap((entry) => {
+    const path = entry.url.slice(SITE.length) || "/";
+    const languages = Object.fromEntries(
+      routing.locales.map((locale) => [LANGUAGES[locale].hreflang, `${SITE}${localizedPath(path, locale)}`]),
+    );
+    return routing.locales.map((locale) => ({
+      ...entry,
+      url: `${SITE}${localizedPath(path, locale)}`,
+      alternates: { languages },
+    }));
+  });
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const components = allComponents();
@@ -25,6 +41,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/docs/openui`, lastModified: "2026-08-13", changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE}/docs/native-setup`, lastModified: "2026-10-16", changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE}/docs/theme`, lastModified: "2026-07-04", changeFrequency: "monthly", priority: 0.6 },
+  ];
+  // English-only content (articles stay English in every language) and machine endpoints.
+  const englishOnlyPages: MetadataRoute.Sitemap = [
     { url: `${SITE}/changelog`, lastModified: changelogEntries[0]?.date, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE}/llms.txt`, lastModified: newestComponentDate, changeFrequency: "weekly", priority: 0.5 },
   ];
@@ -75,5 +94,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       })),
   );
 
-  return [...staticPages, ...categoryPages, ...componentPages, ...nativePages, ...landingPages];
+  return [
+    ...withLanguages([...staticPages, ...categoryPages, ...componentPages, ...nativePages]),
+    ...englishOnlyPages,
+    ...landingPages,
+  ];
 }
