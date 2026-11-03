@@ -29,12 +29,10 @@ export interface MinesProps {
   defaultMines?: number;
   /** Called when the mine count changes between rounds. */
   onMinesChange?: (mines: number) => void;
-  /** Called for every tile picked during a round. */
+  /** Called for every tile picked during a round; a mine reports multiplier 0 and ends it. */
   onReveal?: (tile: number, result: MinesTile, multiplier: number) => void;
   /** Called when the player cashes out, or clears every gem. */
   onCashOut?: (multiplier: number, gems: number) => void;
-  /** Called when the player picks a mine. */
-  onBust?: (tile: number) => void;
   /** Click on reveals (controlled). */
   sound?: boolean;
   /** Initial sound state when uncontrolled. Default false. */
@@ -91,7 +89,6 @@ export function Mines({
   onMinesChange,
   onReveal,
   onCashOut,
-  onBust,
   sound,
   defaultSound = false,
   onSoundChange,
@@ -237,7 +234,6 @@ export function Mines({
       setAnnouncement("Mine. The round is over.");
       if (soundOn) getPlayer().mine();
       onReveal?.(tile, "mine", 0);
-      onBust?.(tile);
       return;
     }
     const found = gems + 1;

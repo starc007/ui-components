@@ -3269,7 +3269,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       {
         question: "What happens when a round ends?",
         answer:
-          "The rest of the board reveals, then a result ticket rises over it with the outcome, your multiplier, the gems you found, the odds you beat and a miniature map of your run. The main Play again button starts the next round, and tapping the board or pressing Escape puts the ticket away so you can study the board. Pass showResult={false} to use your own result screen with onCashOut and onBust.",
+          "The rest of the board reveals, then a result ticket rises over it with the outcome, your multiplier, the gems you found, the odds you beat and a miniature map of your run. The main Play again button starts the next round, and tapping the board or pressing Escape puts the ticket away so you can study the board. Pass showResult={false} to use your own result screen with onCashOut and onReveal, which reports a mine with a multiplier of 0.",
       },
       {
         question: "Does it make sound?",
@@ -3279,7 +3279,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       {
         question: "Does it handle money or betting?",
         answer:
-          "No. It only reports the multiplier through onReveal, onCashOut and onBust, so any scoring, points or rewards are up to your app.",
+          "No. It only reports the multiplier through onReveal and onCashOut, so any scoring, points or rewards are up to your app.",
       },
     ],
   },
