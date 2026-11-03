@@ -159,8 +159,8 @@ export default async function ComponentPage({
   const dates = componentDates(cat.slug, comp.slug);
   const related = relatedComponents(cat.slug, comp.slug, 3);
   const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
-  const creditUrl = comp.credit ? new URL(comp.credit.url) : null;
-  creditUrl?.searchParams.set("ref", "beui");
+  const credit = comp.credit ? { ...comp.credit, url: new URL(comp.credit.url) } : null;
+  credit?.url.searchParams.set("ref", "beui");
 
   const nativeComponent = findNativeComponent(comp.slug);
   const webContent = (
@@ -255,33 +255,26 @@ export default async function ComponentPage({
                 <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
               ) : null}
             </div>
-            {comp.credit && creditUrl ? (
+            {credit ? (
               <a
-                href={creditUrl.toString()}
+                href={credit.url.toString()}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="group -ml-1 mt-3 inline-flex items-center gap-2 rounded-full py-1 pr-2.5 pl-1 text-sm text-muted-foreground outline-none transition-colors duration-150 hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               >
-                {comp.credit.avatar ? (
-                  // biome-ignore lint/performance/noImgElement: external contributor avatar, not worth a next/image remotePatterns entry
+                {credit.avatar ? (
+                  // biome-ignore lint/performance/noImgElement: 20px contributor avatar from any host, not worth next/image
                   <img
-                    src={comp.credit.avatar}
+                    src={credit.avatar}
                     alt=""
                     width={20}
                     height={20}
                     className="size-5 shrink-0 rounded-full object-cover outline outline-1 -outline-offset-1 outline-foreground/10"
                   />
-                ) : (
-                  <span
-                    aria-hidden="true"
-                    className="grid size-5 shrink-0 place-items-center rounded-full bg-foreground/10 text-[10px] font-semibold text-foreground"
-                  >
-                    {comp.credit.name.charAt(0).toUpperCase()}
-                  </span>
-                )}
+                ) : null}
                 <span>
                   Contributed by{" "}
-                  <span className="font-medium text-foreground">{comp.credit.name}</span>
+                  <span className="font-medium text-foreground">{credit.name}</span>
                 </span>
                 <ArrowUpRight
                   aria-hidden="true"

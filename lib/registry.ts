@@ -976,7 +976,7 @@ export const registry: CategoryEntry[] = [
         credit: {
           name: "Avinit",
           url: "https://x.com/0xvntr",
-          avatar: "/contributors/avinit.jpg",
+          avatar: "https://github.com/avinitDollarpe.png?size=112",
         },
         keywords: [
           "slider",
@@ -1996,7 +1996,7 @@ export const registry: CategoryEntry[] = [
         credit: {
           name: "Avinit",
           url: "https://x.com/0xvntr",
-          avatar: "/contributors/avinit.jpg",
+          avatar: "https://github.com/avinitDollarpe.png?size=112",
         },
         extraFiles: ["components/motion/knockout-wheel.tsx"],
         examples: [
