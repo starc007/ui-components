@@ -973,6 +973,11 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/range-slider.tsx",
         badge: "new",
         launchedAt: "2026-09-09",
+        credit: {
+          name: "Avinit",
+          url: "https://x.com/0xvntr",
+          avatar: "/contributors/avinit.jpg",
+        },
         keywords: [
           "slider",
           "range slider",
@@ -1988,6 +1993,11 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/knockout-bracket.tsx",
         badge: "new",
         launchedAt: "2026-07-27",
+        credit: {
+          name: "Avinit",
+          url: "https://x.com/0xvntr",
+          avatar: "/contributors/avinit.jpg",
+        },
         extraFiles: ["components/motion/knockout-wheel.tsx"],
         examples: [
           {
