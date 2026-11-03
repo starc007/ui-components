@@ -28,7 +28,7 @@ test("plinko board exposes named toggles and announces each landing", async () =
     await new Promise((resolve) => setTimeout(resolve, 1200));
   });
   const live = container.querySelector("[aria-live='polite']");
-  expect(live?.textContent).toMatch(/^Landed in slot [1-3]: (10|1)$/);
+  expect(live?.textContent).toMatch(/^Ball 1 landed in slot [1-3]: (10|1)$/);
   expect((await axe(container)).violations).toEqual([]);
 });
 

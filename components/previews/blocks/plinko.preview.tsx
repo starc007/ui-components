@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Plinko, plinkoSlots } from "@/components/motion/plinko";
+import { Plinko } from "@/components/motion/plinko";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
 
-// Any list of values works: its length sets the board (n slots, n - 1 rows).
-// plinkoSlots builds one for a row count, from 1 in the middle to 100 at the edges.
 const ROW_COUNTS = ["8", "12", "16"];
 
 export function PlinkoPreview() {
@@ -28,7 +26,7 @@ export function PlinkoPreview() {
         Score <span className="font-medium text-foreground">{score}</span> · {drops} balls
       </p>
       <Plinko
-        slots={plinkoSlots(Number(rows))}
+        rows={Number(rows)}
         onLand={(_, value) => {
           setScore((total) => total + Number(value));
           setDrops((count) => count + 1);

@@ -2,7 +2,7 @@
 
 import { type LucideIcon, Volume2, VolumeX, Zap, ZapOff } from "lucide-react";
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
 import { Tooltip } from "@/components/motion/tooltip";
@@ -27,7 +27,7 @@ export interface PlinkoProps {
   maxBalls?: number;
   /** Label of the drop button. Default "Drop ball". */
   dropLabel?: string;
-  /** Flash each peg as the ball hits it (controlled). */
+  /** Flash each peg as the ball hits it (controlled). Its button is hidden with reduced motion, where no pegs are hit. */
   pegFlash?: boolean;
   /** Initial peg flash state when uncontrolled. Default true. */
   defaultPegFlash?: boolean;
@@ -151,14 +151,9 @@ export function Plinko({
   const [internalFlash, setInternalFlash] = useState(defaultPegFlash);
   const flashOn = pegFlash ?? internalFlash;
 
-  // Peg hits fire from the ball's animation frames, which can outlive the
-  // render that started them, so they read the latest settings from refs.
-  const soundRef = useRef(soundOn);
-  const flashRef = useRef(flashOn);
-  useLayoutEffect(() => {
-    soundRef.current = soundOn;
-    flashRef.current = flashOn;
-  });
+  // Landings are numbered so a second ball in the same slot still changes
+  // the live region's text and is announced again.
+  const landings = useRef(0);
   // Each player cuts its own previous tick, so landings get their own player:
   // another ball's peg click would otherwise cut the longer landing thunk.
   const players = useRef<Record<"peg" | "landing", ReturnType<typeof createTickPlayer>> | null>(null);
@@ -212,32 +207,30 @@ export function Plinko({
   const height = TOP + rows * ROW + SLOT;
   // Each row runs one peg past the ball's reach on both sides, so the board
   // reads as a triangle that widens down to the slots.
-  const pegs = useMemo(
-    () =>
-      Array.from({ length: rows }, (_, row) =>
-        Array.from({ length: row + 3 }, (_, i) => ({
-          id: `${row}-${i - 1}`,
-          x: width / 2 + (i - 1 - row / 2) * GAP,
-          y: TOP + row * ROW,
-        })),
-      ).flat(),
-    [rows, width],
-  );
+  const pegs = Array.from({ length: rows }, (_, row) =>
+    Array.from({ length: row + 3 }, (_, i) => ({
+      id: `${row}-${i - 1}`,
+      x: width / 2 + (i - 1 - row / 2) * GAP,
+      y: TOP + row * ROW,
+    })),
+  ).flat();
 
   const land = (slot: number) => {
     animate(`[data-slot="${slot}"]`, { opacity: [0.9, 0] }, { duration: 0.3, ease: EASE_OUT });
     // A lower thunk than a peg hit marks the landing. It brightens toward
     // the edges, where landing is rarest, so a good drop is heard.
-    if (soundRef.current)
+    if (soundOn)
       getPlayers().landing.play(LANDING_RATE + LANDING_SPREAD * (Math.abs(slot - rows / 2) / (rows / 2)));
     setLastSlot(slot);
-    setAnnouncement(`Landed in slot ${slot + 1}: ${labels[slot]}`);
+    landings.current++;
+    setAnnouncement(`Ball ${landings.current} landed in slot ${slot + 1}: ${labels[slot]}`);
     onLand?.(slot, labels[slot]);
   };
 
   // Flash and click a peg on the frame the ball turns back up off it. Reading
   // the ball's own frames keeps both on its clock: a background tab pauses
-  // them together.
+  // them together. motion rebinds onUpdate every render, so the settings
+  // read here are always current.
   const hitPegs = (ball: Ball, y: number) => {
     const rising = y < ball.y;
     // The row comes from where the ball turned, not from counting turns, so
@@ -247,7 +240,7 @@ export function Plinko({
     if (rising && !ball.rising && row > ball.lastRow && row < ball.pegs.length) {
       ball.lastRow = row;
       const peg = ball.pegs[row];
-      if (flashRef.current) {
+      if (flashOn) {
         // Fast attack, slower decay: the pop peaks a third of the way in.
         animate(
           `[data-peg="${peg}"]`,
@@ -255,7 +248,7 @@ export function Plinko({
           { duration: 0.3, times: [0, 0.3, 1], ease: EASE_OUT },
         );
       }
-      if (soundRef.current) getPlayers().peg.play();
+      if (soundOn) getPlayers().peg.play();
     }
     ball.y = y;
     ball.rising = rising;
@@ -387,7 +380,10 @@ export function Plinko({
         >
           {dropLabel}
         </Button>
-        <ToggleButton on={flashOn} onToggle={togglePegFlash} label={pegFlashLabel} onIcon={Zap} offIcon={ZapOff} />
+        {/* With reduced motion balls land at once and hit no pegs. */}
+        {reduce ? null : (
+          <ToggleButton on={flashOn} onToggle={togglePegFlash} label={pegFlashLabel} onIcon={Zap} offIcon={ZapOff} />
+        )}
         <ToggleButton on={soundOn} onToggle={toggleSound} label={soundLabel} onIcon={Volume2} offIcon={VolumeX} />
       </div>
       <p aria-live="polite" className="sr-only">
