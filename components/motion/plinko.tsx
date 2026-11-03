@@ -56,6 +56,9 @@ const RISE = [0, 0.55, 0.45, 1] as const;
 const HOP_TIME = 0.09; // seconds rising after a peg
 const DROP_TIME = 0.16; // seconds falling to the next peg
 const HOP_HEIGHT = 7;
+// Landing tick playback rates: 0.55 in the centre slot, up to 0.95 at the edges.
+const LANDING_RATE = 0.55;
+const LANDING_SPREAD = 0.4;
 
 type Ball = { id: number; path: { x: number; y: number }[]; times: number[]; slot: number; duration: number };
 
@@ -87,8 +90,9 @@ function plan(rows: number, width: number): Omit<Ball, "id"> {
 /**
  * A Plinko board: balls drop through rows of pegs, bounce left or right off
  * each one and land in a slot. Pegs flash when hit and the slot pulses on
- * landing, and an optional sound clicks on every hit. With reduced motion a
- * ball lands at once.
+ * landing. Optional sound clicks on every peg and lands with a thunk that
+ * brightens toward the rarer edge slots. With reduced motion a ball lands at
+ * once.
  */
 export function Plinko({
   rows = 8,
@@ -122,9 +126,12 @@ export function Plinko({
     if (!player.current) player.current = createTickPlayer();
     return player.current;
   }, []);
-  const tick = useCallback(() => {
-    if (soundRef.current) getPlayer().play();
-  }, [getPlayer]);
+  const tick = useCallback(
+    (rate?: number) => {
+      if (soundRef.current) getPlayer().play(rate);
+    },
+    [getPlayer],
+  );
   useEffect(
     () => () => {
       for (const timer of timers.current) clearTimeout(timer);
@@ -173,11 +180,13 @@ export function Plinko({
   const land = useCallback(
     (slot: number) => {
       animate(`[data-slot="${slot}"]`, { opacity: [0.9, 0] }, { duration: 0.6 });
-      tick();
+      // A lower thunk than a peg hit marks the landing. It brightens toward
+      // the edges, where landing is rarest, so a good drop is heard.
+      tick(LANDING_RATE + LANDING_SPREAD * (Math.abs(slot - rows / 2) / (rows / 2)));
       setAnnouncement(`Landed in slot ${slot + 1}`);
       onLand?.(slot);
     },
-    [animate, onLand, tick],
+    [animate, onLand, tick, rows],
   );
 
   const drop = () => {

@@ -95,7 +95,8 @@ function prepareContext() {
 
 interface TickPlayer {
   prepare: () => void;
-  play: () => void;
+  /** `rate` below 1 plays a lower, longer tick; above 1 a higher, shorter one. */
+  play: (rate?: number) => void;
   dispose: () => void;
 }
 
@@ -116,7 +117,7 @@ export function createTickPlayer(): TickPlayer {
       if (disposed) return;
       prepareContext();
     },
-    play() {
+    play(rate = 1) {
       if (disposed) return;
       prepareContext();
       if (!ctx || !masterGain || !clickBuffer) return;
@@ -126,6 +127,7 @@ export function createTickPlayer(): TickPlayer {
       activeSource?.stop();
       const source = ctx.createBufferSource();
       source.buffer = clickBuffer;
+      source.playbackRate.value = rate;
       source.connect(masterGain);
       source.onended = () => {
         source.disconnect();

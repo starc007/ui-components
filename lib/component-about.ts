@@ -3267,6 +3267,11 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
           "Yes. rows sets the number of peg rows, and slots takes one label per slot, left to right. A board with eight rows has nine slots.",
       },
       {
+        question: "Does it make sound?",
+        answer:
+          "Only when you turn it on with the sound button, or the sound prop. Each peg hit clicks and the landing plays a lower thunk that gets brighter toward the rarer edge slots. The sound is synthesized in the browser, so there are no audio files to load.",
+      },
+      {
         question: "Does it use a physics engine?",
         answer:
           "No. Each drop picks its left and right bounces up front and plays them as keyframes, with an accelerating fall between pegs and a short hop after each hit. That keeps it light and smooth on phones.",
