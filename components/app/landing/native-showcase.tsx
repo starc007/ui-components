@@ -1,10 +1,11 @@
 import { ArrowRight, Smartphone } from "lucide-react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import {
   type NativePhone,
   NativePhones,
 } from "@/components/app/landing/native-phones";
+import { Link } from "@/i18n/navigation";
 import { nativeComponentPath } from "@/lib/component-paths";
 import { native } from "@/lib/native";
 import nativeSlugs from "@/lib/native/slugs.json";
@@ -41,6 +42,7 @@ function Waves() {
 
 /** Landing panel introducing beUI Native: pitch, install, and phones. */
 export function NativeShowcase() {
+  const t = useTranslations("Landing");
   const phones: NativePhone[] = FEATURED.flatMap((slug) => {
     const component = native.components.find((c) => c.slug === slug);
     return component
@@ -66,19 +68,17 @@ export function NativeShowcase() {
               id="landing-native"
               className="mt-5 font-display text-3xl font-medium leading-tight tracking-tight text-foreground md:text-5xl"
             >
-              Now on React Native
+              {t("native.title")}
             </h2>
             <p className="mt-4 text-pretty text-muted-foreground md:text-lg">
-              {summary.variants} components rebuilt for touch with Reanimated,
-              Gesture Handler and Uniwind. The same motion language as beUI,
-              designed for fingers.
+              {t("native.description", { count: summary.variants })}
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
               <Link
                 href="/react-native"
                 className="group inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card"
               >
-                Browse components
+                {t("hero.browseComponents")}
                 <ArrowRight
                   aria-hidden="true"
                   className="size-4 transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none"

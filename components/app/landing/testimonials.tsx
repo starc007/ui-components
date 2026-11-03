@@ -1,8 +1,10 @@
+import { useTranslations } from "next-intl";
 import { TestimonialCard } from "@/components/app/landing/testimonial-card";
 import { TESTIMONIALS } from "@/components/app/landing/testimonials-data";
 import { Marquee } from "@/components/motion/marquee";
 
 export function Testimonials() {
+  const t = useTranslations("Landing.testimonials");
   // Split into two rows that scroll in opposite directions.
   const mid = Math.ceil(TESTIMONIALS.length / 2);
   const rowOne = TESTIMONIALS.slice(0, mid);
@@ -11,12 +13,12 @@ export function Testimonials() {
   return (
     <section aria-labelledby="landing-testimonials" className="pt-24 pb-4 sm:pt-32 sm:pb-8">
       <div className="mx-auto mb-10 max-w-2xl px-4 text-center">
-        <p className="text-sm text-muted-foreground">Testimonials</p>
+        <p className="text-sm text-muted-foreground">{t("eyebrow")}</p>
         <h2
           id="landing-testimonials"
           className="mt-4 font-display text-3xl font-medium leading-tight tracking-tight text-foreground md:text-4xl"
         >
-          Loved by builders
+          {t("title")}
         </h2>
       </div>
 

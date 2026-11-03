@@ -1,4 +1,5 @@
 import { ArrowUpRight, Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { PressLink } from "@/components/app/press-link";
 import styles from "./landing.module.css";
 
@@ -6,6 +7,7 @@ const CAL_URL = "https://cal.com/saurra3h/30min";
 const EMAIL = "saurabh10102@gmail.com";
 
 export function WorkCta() {
+  const t = useTranslations("Landing.workCta");
   return (
     <section
       aria-labelledby="landing-contact"
@@ -20,16 +22,15 @@ export function WorkCta() {
           <span className="mx-auto grid size-12 place-items-center rounded-full border border-border bg-background text-foreground">
             <Mail aria-hidden="true" className="size-5" strokeWidth={1.5} />
           </span>
-          <p className="mt-6 text-sm text-muted-foreground">Work with me</p>
+          <p className="mt-6 text-sm text-muted-foreground">{t("eyebrow")}</p>
           <h2
             id="landing-contact"
             className="mt-4 text-balance font-display text-3xl font-medium tracking-tight text-foreground sm:text-4xl"
           >
-            Need components built for your product?
+            {t("title")}
           </h2>
           <p className="mx-auto mt-5 max-w-md text-pretty text-sm leading-7 text-muted-foreground">
-            Custom motion components and frontend systems, built to spec. Book a
-            call or drop a line, whichever's easier.
+            {t("description")}
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <PressLink
@@ -38,14 +39,14 @@ export function WorkCta() {
               rel="noreferrer noopener"
               className={styles.primaryLink}
             >
-              Book a call
+              {t("bookCall")}
               <ArrowUpRight aria-hidden="true" className="size-4" />
             </PressLink>
             <PressLink
               href={`mailto:${EMAIL}`}
               className={styles.secondaryLink}
             >
-              Email me
+              {t("email")}
               <Mail aria-hidden="true" className="size-4" />
             </PressLink>
           </div>

@@ -1,6 +1,8 @@
 import { ArrowRight } from "lucide-react";
+import { notFound } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
+import { hasLocale } from "next-intl";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { FreeAndPro } from "@/components/app/landing/free-and-pro";
 import { LandingFaq } from "@/components/app/landing/faq";
@@ -10,8 +12,11 @@ import { LandingComponentCard } from "@/components/app/landing/landing-component
 import { NativeShowcase } from "@/components/app/landing/native-showcase";
 import { Testimonials } from "@/components/app/landing/testimonials";
 import { WorkCta } from "@/components/app/landing/work-cta";
+import { localizeCategory } from "@/i18n/catalog";
+import { Link } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
 import { isComponentNew } from "@/lib/component-status";
-import { registry } from "@/lib/registry";
+import { registry as englishRegistry } from "@/lib/registry";
 
 const CURATED: { category: string; slug: string }[] = [
   { category: "motion", slug: "button" },
@@ -47,11 +52,11 @@ const RECENTLY_LAUNCHED_FEATURED = "blocks/card-folder";
 function SectionHeader({
   eyebrow,
   title,
-  href,
+  link,
 }: {
   eyebrow: string;
   title: string;
-  href?: string;
+  link?: { href: string; label: string };
 }) {
   return (
     <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -61,12 +66,12 @@ function SectionHeader({
           {title}
         </h2>
       </div>
-      {href ? (
+      {link ? (
         <Link
-          href={href}
+          href={link.href}
           className="group inline-flex items-center self-start text-sm font-medium text-muted-foreground transition-colors hover:text-foreground md:self-auto"
         >
-          Browse animated React components
+          {link.label}
           <ArrowRight aria-hidden="true" className="ml-1.5 size-3.5" />
         </Link>
       ) : null}
@@ -81,7 +86,20 @@ const LANDING_SPONSORS = [
   { name: "Illos", domain: "illos.dev", icon: "illos-icon" },
 ];
 
-export default function Home() {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
+  const t = await getTranslations("Landing.home");
+  const messages = await getMessages();
+  const registry = englishRegistry.map((category) =>
+    localizeCategory(category, messages),
+  );
+
   const newComponents = registry
     .flatMap((category) =>
       category.components
@@ -148,10 +166,10 @@ export default function Home() {
           id="landing-sponsors"
           className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground"
         >
-          Sponsored by
+          {t("sponsoredBy")}
         </h2>
         {LANDING_SPONSORS.map((sponsor) => (
-          <Link
+          <a
             key={sponsor.domain}
             href={`https://${sponsor.domain}/?utm_source=beui&utm_medium=referral&utm_campaign=sponsorship&utm_content=landing_hero`}
             target="_blank"
@@ -175,7 +193,7 @@ export default function Home() {
             <span className="font-display text-xl font-semibold tracking-tight">
               {sponsor.name}
             </span>
-          </Link>
+          </a>
         ))}
       </section>
 
@@ -183,7 +201,7 @@ export default function Home() {
 
       {newComponents.length ? (
         <section className="mx-auto max-w-7xl px-4 pb-16 sm:pb-20">
-          <SectionHeader eyebrow="New" title="Recently launched" />
+          <SectionHeader eyebrow={t("newEyebrow")} title={t("newTitle")} />
           <div className={GRID_CLASS}>
             {newComponents.map(({ category, component, previewKey }) => (
               <LandingComponentCard
@@ -201,9 +219,9 @@ export default function Home() {
 
       <section className="mx-auto max-w-7xl px-4 pb-4">
         <SectionHeader
-          eyebrow="Components"
-          title="Motion primitives"
-          href="/components/motion"
+          eyebrow={t("componentsEyebrow")}
+          title={t("componentsTitle")}
+          link={{ href: "/components/motion", label: t("browseAll") }}
         />
         <div className={GRID_CLASS}>
           {curatedComponents.map(({ category, component }) => (

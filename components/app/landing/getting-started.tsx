@@ -1,14 +1,15 @@
 "use client";
 
 import { Globe, Smartphone } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import nativeSlugs from "@/lib/native/slugs.json";
 
 const TAGLINES = {
-  web: "Built on Framer Motion. Distributed via shadcn.",
-  native: "Built on Reanimated and Uniwind. Installed with the beUI Native CLI.",
+  web: "builtOn",
+  native: "builtOnNative",
 } as const;
 
 type Platform = keyof typeof TAGLINES;
@@ -18,6 +19,7 @@ type Platform = keyof typeof TAGLINES;
  * section, so trying the native command doesn't change the site's platform.
  */
 export function GettingStarted() {
+  const t = useTranslations("Landing.home");
   const [platform, setPlatform] = useState<Platform>("web");
 
   return (
@@ -32,9 +34,9 @@ export function GettingStarted() {
           variant="pill"
           icons="selected"
         >
-          <TabsList aria-label="Install for">
+          <TabsList aria-label={t("installFor")}>
             <TabsTrigger value="web" icon={<Globe className="size-3.5" />}>
-              Web
+              {t("web")}
             </TabsTrigger>
             <TabsTrigger value="native" icon={<Smartphone className="size-3.5" />}>
               React Native
@@ -45,7 +47,7 @@ export function GettingStarted() {
           id="landing-install"
           className="mt-5 mb-5 text-center text-sm font-normal text-muted-foreground"
         >
-          {TAGLINES[platform]}
+          {t(TAGLINES[platform])}
         </h2>
         {platform === "web" ? (
           <InstallCommand className="w-full" />
