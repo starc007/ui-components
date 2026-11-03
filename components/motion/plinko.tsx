@@ -1,8 +1,19 @@
 "use client";
 
+import { Volume2, VolumeX } from "lucide-react";
 import { motion, useAnimate, useReducedMotion } from "motion/react";
-import { type ReactNode, useCallback, useMemo, useState } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
+import { createTickPlayer } from "@/lib/tick-sound";
 import { cn } from "@/lib/utils";
 
 export interface PlinkoProps {
@@ -16,6 +27,14 @@ export interface PlinkoProps {
   maxBalls?: number;
   /** Label of the drop button. Default "Drop ball". */
   dropLabel?: string;
+  /** Click on every peg hit and landing (controlled). */
+  sound?: boolean;
+  /** Initial sound state when uncontrolled. Default false. */
+  defaultSound?: boolean;
+  /** Called when the sound button is toggled. */
+  onSoundChange?: (sound: boolean) => void;
+  /** Accessible name of the sound button. Default "Sound". */
+  soundLabel?: string;
   /** Accessible name for the board. Default "Plinko board". */
   "aria-label"?: string;
   className?: string;
@@ -68,7 +87,8 @@ function plan(rows: number, width: number): Omit<Ball, "id"> {
 /**
  * A Plinko board: balls drop through rows of pegs, bounce left or right off
  * each one and land in a slot. Pegs flash when hit and the slot pulses on
- * landing. With reduced motion a ball lands at once.
+ * landing, and an optional sound clicks on every hit. With reduced motion a
+ * ball lands at once.
  */
 export function Plinko({
   rows = 8,
@@ -76,6 +96,10 @@ export function Plinko({
   onLand,
   maxBalls = 12,
   dropLabel = "Drop ball",
+  sound,
+  defaultSound = false,
+  onSoundChange,
+  soundLabel = "Sound",
   "aria-label": ariaLabel = "Plinko board",
   className,
 }: PlinkoProps) {
@@ -83,6 +107,48 @@ export function Plinko({
   const [scope, animate] = useAnimate();
   const [balls, setBalls] = useState<Ball[]>([]);
   const [announcement, setAnnouncement] = useState("");
+  const [internalSound, setInternalSound] = useState(defaultSound);
+  const soundOn = sound ?? internalSound;
+
+  // Ticks are scheduled ahead of the ball; each checks the latest sound state
+  // when it fires, so muting mid-drop silences the rest of the fall.
+  const soundRef = useRef(soundOn);
+  useLayoutEffect(() => {
+    soundRef.current = soundOn;
+  });
+  const player = useRef<ReturnType<typeof createTickPlayer> | null>(null);
+  const timers = useRef(new Set<number>());
+  const getPlayer = useCallback(() => {
+    if (!player.current) player.current = createTickPlayer();
+    return player.current;
+  }, []);
+  const tick = useCallback(() => {
+    if (soundRef.current) getPlayer().play();
+  }, [getPlayer]);
+  useEffect(
+    () => () => {
+      for (const timer of timers.current) clearTimeout(timer);
+      timers.current.clear();
+      player.current?.dispose();
+      player.current = null;
+    },
+    [],
+  );
+  const tickAt = (seconds: number) => {
+    const timer = window.setTimeout(() => {
+      timers.current.delete(timer);
+      tick();
+    }, seconds * 1000);
+    timers.current.add(timer);
+  };
+
+  const toggleSound = () => {
+    const next = !soundOn;
+    // Unlock audio inside the click, where browsers allow it.
+    if (next) getPlayer().prepare();
+    if (sound === undefined) setInternalSound(next);
+    onSoundChange?.(next);
+  };
 
   const width = (rows + 2) * GAP;
   const height = TOP + rows * ROW + SLOT;
@@ -107,28 +173,32 @@ export function Plinko({
   const land = useCallback(
     (slot: number) => {
       animate(`[data-slot="${slot}"]`, { opacity: [0.9, 0] }, { duration: 0.6 });
+      tick();
       setAnnouncement(`Landed in slot ${slot + 1}`);
       onLand?.(slot);
     },
-    [animate, onLand],
+    [animate, onLand, tick],
   );
 
   const drop = () => {
     const ball = { id: nextBall++, ...plan(rows, width) };
+    if (soundOn) getPlayer().prepare();
     if (reduce) {
       land(ball.slot);
       return;
     }
-    // Flash each peg as the ball reaches it.
+    // Flash and click each peg as the ball reaches it.
     ball.path.slice(1, -1).forEach((point, index) => {
       if (index % 2) return; // odd points are the hop apex, not a peg
       const row = index / 2;
       const peg = Math.round((point.x - width / 2) / GAP + row / 2);
+      const at = ball.times[index + 1] * ball.duration;
       animate(
         `[data-peg="${row}-${peg}"]`,
         { scale: [1, 1.8, 1], opacity: [0.4, 1, 0.4] },
-        { duration: 0.3, delay: ball.times[index + 1] * ball.duration },
+        { duration: 0.3, delay: at },
       );
+      if (soundOn) tickAt(at);
     });
     setBalls((current) => [...current, ball]);
   };
@@ -197,9 +267,26 @@ export function Plinko({
         ))}
       </svg>
 
-      <Button onClick={drop} disabled={balls.length >= maxBalls}>
-        {dropLabel}
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button onClick={drop} disabled={balls.length >= maxBalls}>
+          {dropLabel}
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={toggleSound}
+          aria-label={soundLabel}
+          aria-pressed={soundOn}
+          className="w-10 px-0"
+        >
+          <ActionSwapCascadeIcon value={soundOn ? "on" : "off"} className="size-4">
+            {soundOn ? (
+              <Volume2 aria-hidden="true" className="size-4" />
+            ) : (
+              <VolumeX aria-hidden="true" className="size-4" />
+            )}
+          </ActionSwapCascadeIcon>
+        </Button>
+      </div>
       <p aria-live="polite" className="sr-only">
         {announcement}
       </p>
