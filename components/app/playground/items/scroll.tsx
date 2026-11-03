@@ -1,11 +1,13 @@
 "use client";
 
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useRef } from "react";
-import { type PlaygroundItem, str, type Values } from "../core";
+import { type PlaygroundItem, type PlaygroundT, str, type Values } from "../core";
 
 function ScrollPreview({ values }: { values: Values; replayKey: number }) {
   const reduce = useReducedMotion();
+  const t = useTranslations("Pages.playground.scroll");
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ container: ref });
   const effect = str(values, "effect", "fade");
@@ -33,7 +35,7 @@ function ScrollPreview({ values }: { values: Values; replayKey: number }) {
         className="relative h-52 overflow-y-auto rounded-xl border border-border"
       >
         <div className="h-[560px] px-4 pt-3">
-          <p className="text-xs text-muted-foreground">scroll down ↓</p>
+          <p className="text-xs text-muted-foreground">{t("scrollDown")}</p>
           <div className="sticky top-20 flex justify-center">
             <motion.div style={style} className="h-16 w-16 rounded-2xl bg-primary" />
           </div>
@@ -43,22 +45,21 @@ function ScrollPreview({ values }: { values: Values; replayKey: number }) {
   );
 }
 
-export const scrollItem: PlaygroundItem = {
+export const scrollItem = (t: PlaygroundT): PlaygroundItem => ({
   slug: "scroll",
-  label: "Scroll",
-  blurb:
-    "Scroll-linked motion ties a value to scroll position. useScroll reports 0→1 progress; useTransform maps that range onto a transform.",
+  label: t("scroll.label"),
+  blurb: t("scroll.blurb"),
   controls: [
     {
       kind: "select",
       key: "effect",
-      label: "Effect",
-      hint: "What the box does as the panel scrolls.",
+      label: t("scroll.controls.effect.label"),
+      hint: t("scroll.controls.effect.hint"),
       options: [
-        { label: "Fade", value: "fade" },
-        { label: "Scale", value: "scale" },
-        { label: "Slide", value: "slide" },
-        { label: "Rotate", value: "rotate" },
+        { label: t("scroll.controls.effect.fade"), value: "fade" },
+        { label: t("scroll.controls.effect.scale"), value: "scale" },
+        { label: t("scroll.controls.effect.slide"), value: "slide" },
+        { label: t("scroll.controls.effect.rotate"), value: "rotate" },
       ],
     },
   ],
@@ -68,24 +69,29 @@ export const scrollItem: PlaygroundItem = {
   explain: (v) => {
     const effect = str(v, "effect", "fade");
     const map: Record<string, { prop: string; range: string; start: string; end: string }> = {
-      fade: { prop: "opacity", range: "[0.15, 1]", start: "15% visible", end: "fully visible" },
-      scale: { prop: "scale", range: "[0.6, 1]", start: "60% size", end: "full size" },
-      slide: { prop: "x", range: "[-70, 0]", start: "70px left", end: "in place" },
-      rotate: { prop: "rotate", range: "[0, 180]", start: "0°", end: "180°" },
+      fade: { prop: "opacity", range: "[0.15, 1]", start: t("scroll.range.fadeStart"), end: t("scroll.range.fadeEnd") },
+      scale: { prop: "scale", range: "[0.6, 1]", start: t("scroll.range.scaleStart"), end: t("scroll.range.scaleEnd") },
+      slide: { prop: "x", range: "[-70, 0]", start: t("scroll.range.slideStart"), end: t("scroll.range.slideEnd") },
+      rotate: { prop: "rotate", range: "[0, 180]", start: t("scroll.range.rotateStart"), end: t("scroll.range.rotateEnd") },
     };
     const m = map[effect] ?? map.fade;
     return [
       {
         code: "useScroll({ container: ref })",
-        text: "Watches how far the panel is scrolled and gives back scrollYProgress: a number from 0 (scrolled to top) to 1 (scrolled to bottom). It updates on every scroll frame.",
+        text: t("scroll.explain.useScroll"),
       },
       {
         code: `useTransform(p, [0, 1], ${m.range})`,
-        text: `Remaps that 0→1 progress onto a real value range. As progress goes 0→1, ${m.prop} goes ${m.range.replace(/[[\]]/g, "")} — so at the top it's ${m.start}, at the bottom ${m.end}.`,
+        text: t("scroll.explain.useTransform", {
+          prop: m.prop,
+          range: m.range.replace(/[[\]]/g, ""),
+          start: m.start,
+          end: m.end,
+        }),
       },
       {
         code: `style={{ ${m.prop} }}`,
-        text: "The mapped value is a live motion value wired straight into the box's style, so it tracks your scroll exactly — scroll up and it runs in reverse.",
+        text: t("scroll.explain.style"),
       },
     ];
   },
@@ -113,4 +119,4 @@ export function Demo() {
   );
 }`;
   },
-};
+});

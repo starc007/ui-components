@@ -3,7 +3,9 @@ import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { ArrowRight, ArrowUpRight, Check, CircleCheck, Gem, Medal, Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
+import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { CopyButton } from "@/components/app/docs/copy-button";
 import { PressLink } from "@/components/app/press-link";
@@ -12,28 +14,46 @@ import {
   type OpenSponsorSlotSize,
 } from "@/components/app/sponsors/open-sponsor-slot";
 import { SponsorPlanBeam } from "@/components/app/sponsors/sponsor-plan-beam";
+import { localeAlternates } from "@/i18n/metadata";
+import { LANGUAGES, type Locale, routing } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: "Sponsors",
-  description:
-    "Support beUI's development with monthly sponsor stages through Dodo Payments, GitHub Sponsors, or crypto.",
-  alternates: { canonical: "/sponsors" },
-  openGraph: {
-    title: "Sponsors · beUI",
-    description:
-      "Support beUI's development with monthly sponsor stages through Dodo Payments, GitHub Sponsors, or crypto.",
-    url: "/sponsors",
-    type: "website",
-    siteName: "beUI",
-    images: ["/api/og"],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Sponsors · beUI",
-    images: ["/api/og"],
-  },
+const PAGE_PATH = "/sponsors";
+
+type PageProps = {
+  params: Promise<{ locale: string }>;
+  searchParams?: Promise<{ success?: string }>;
 };
+
+type PagesT = Awaited<ReturnType<typeof getTranslations<"Pages.sponsors">>>;
+
+export async function generateMetadata({
+  params,
+}: Pick<PageProps, "params">): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+  const t = await getTranslations({ locale, namespace: "Pages.sponsors.meta" });
+  const alternates = localeAlternates(PAGE_PATH, locale);
+  return {
+    title: t("title"),
+    description: t("description"),
+    alternates,
+    openGraph: {
+      title: `${t("title")} · beUI`,
+      description: t("description"),
+      url: alternates.canonical,
+      locale: LANGUAGES[locale].og,
+      type: "website",
+      siteName: "beUI",
+      images: ["/api/og"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${t("title")} · beUI`,
+      images: ["/api/og"],
+    },
+  };
+}
 
 const GITHUB_SPONSORS_URL = "https://github.com/sponsors/starc007";
 const CONTACT_URL = "mailto:hello@beui.dev?subject=beUI%20sponsorship";
@@ -84,7 +104,8 @@ type SponsorTone = keyof typeof PLAN_STYLES;
 
 type DiamondSponsor = {
   name: string;
-  tagline: string;
+  /** Key under Pages.sponsors.sponsorTaglines. */
+  tagline: "tracwell" | "illos";
   domain: string;
   /** Icon basename in /public/sponsors, with -light and -dark variants. */
   icon: string;
@@ -93,21 +114,27 @@ type DiamondSponsor = {
 const DIAMOND_SPONSORS: DiamondSponsor[] = [
   {
     name: "Tracwell",
-    tagline: "Turn visitor insights into growth",
+    tagline: "tracwell",
     domain: "tracwell.app",
     icon: "tracwell-icon",
   },
   {
     name: "Illos",
-    tagline: "Animated illustrations for product sites",
+    tagline: "illos",
     domain: "illos.dev",
     icon: "illos-icon",
   },
 ];
 
-function DiamondSponsorCard({ name, tagline, domain, icon }: DiamondSponsor) {
+function DiamondSponsorCard({
+  name,
+  tagline,
+  domain,
+  icon,
+  t,
+}: DiamondSponsor & { t: PagesT }) {
   return (
-    <Link
+    <a
       href={`https://${domain}/?utm_source=beui&utm_medium=referral&utm_campaign=sponsorship&utm_content=diamond_sponsor`}
       target="_blank"
       rel="noreferrer noopener"
@@ -133,7 +160,7 @@ function DiamondSponsorCard({ name, tagline, domain, icon }: DiamondSponsor) {
             {name}
           </h3>
           <p className="mt-1 max-w-44 text-xs leading-relaxed text-muted-foreground">
-            {tagline}
+            {t(`sponsorTaglines.${tagline}`)}
           </p>
         </div>
       </div>
@@ -141,15 +168,18 @@ function DiamondSponsorCard({ name, tagline, domain, icon }: DiamondSponsor) {
         <span className="text-sm font-medium text-foreground">{domain}</span>
         <ArrowRight aria-hidden="true" className="size-5 shrink-0 text-muted-foreground" />
       </div>
-    </Link>
+    </a>
   );
 }
 
 // Filled slots per tier. Adding a sponsor here closes one open slot.
-const CURRENT_SPONSORS: Record<SponsorTone, { id: string; card: ReactNode }[]> = {
+const CURRENT_SPONSORS: Record<
+  SponsorTone,
+  { id: string; card: (t: PagesT) => ReactNode }[]
+> = {
   diamond: DIAMOND_SPONSORS.map((sponsor) => ({
     id: sponsor.domain,
-    card: <DiamondSponsorCard {...sponsor} />,
+    card: (t: PagesT) => <DiamondSponsorCard {...sponsor} t={t} />,
   })),
   platinum: [],
   silver: [],
@@ -168,11 +198,13 @@ function SponsorTier({
   price,
   tone,
   slots,
+  t,
 }: {
   name: string;
   price: string;
   tone: SponsorTone;
   slots: number;
+  t: PagesT;
 }) {
   const styles = PLAN_STYLES[tone];
   const Icon = styles.Icon;
@@ -194,13 +226,13 @@ function SponsorTier({
           {name}
         </h2>
         <p className="text-xs text-muted-foreground">
-          {open > 0 ? `${open} of ${slots} open` : "All slots taken"}
+          {open > 0 ? t("slotsOpen", { open, slots }) : t("allSlotsTaken")}
         </p>
       </div>
       <div className={cn("mt-4 grid gap-4", styles.grid)}>
         {sponsors.map((sponsor) => (
           <div key={sponsor.id} className={styles.filled}>
-            {sponsor.card}
+            {sponsor.card(t)}
           </div>
         ))}
         {Array.from({ length: open }, (_, index) => (
@@ -221,24 +253,33 @@ function SponsorTier({
 
 // Updated by hand from the Tracwell dashboard. Values are rounded down and
 // shown as "at least", so the page never overstates traffic.
-const TRAFFIC_UPDATED_AT = "Oct 23, 2026";
+const TRAFFIC_UPDATED_AT = new Date("2026-10-23T00:00:00Z");
 const TRAFFIC_STATS = [
-  { period: "Last 30 days", visitors: 54_000, pageViews: 800_000 },
-  { period: "Last 90 days", visitors: 175_000, pageViews: 2_400_000 },
+  { days: 30, visitors: 54_000, pageViews: 800_000 },
+  { days: 90, visitors: 175_000, pageViews: 2_400_000 },
 ];
 
-const compactNumber = new Intl.NumberFormat("en-US", {
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
-
-function TrafficStat({ label, value }: { label: string; value: number }) {
+function TrafficStat({
+  label,
+  value,
+  locale,
+  t,
+}: {
+  label: string;
+  value: number;
+  locale: Locale;
+  t: PagesT;
+}) {
+  const compactNumber = new Intl.NumberFormat(locale, {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  });
   return (
     <div className="rounded-2xl border border-border bg-background px-4 py-4">
       <dt className="text-sm text-muted-foreground">{label}</dt>
       <dd
         className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-foreground"
-        title={`More than ${value.toLocaleString("en-US")}`}
+        title={t("audience.moreThan", { value: value.toLocaleString(locale) })}
       >
         {compactNumber.format(value)}+
       </dd>
@@ -275,6 +316,7 @@ function SponsorPlanCard({
   featured = false,
   tone,
   slots,
+  t,
 }: {
   name: string;
   price: string;
@@ -284,6 +326,7 @@ function SponsorPlanCard({
   featured?: boolean;
   tone: SponsorTone;
   slots: number;
+  t: PagesT;
 }) {
   const styles = PLAN_STYLES[tone];
   const Icon = styles.Icon;
@@ -302,7 +345,7 @@ function SponsorPlanCard({
       >
         {featured ? (
           <span className="absolute right-4 top-4 rounded-full border border-white/10 bg-foreground px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-wider text-background">
-            Highest impact
+            {t("planCard.highestImpact")}
           </span>
         ) : null}
         <div className="flex items-start justify-between gap-4 pr-24">
@@ -327,9 +370,11 @@ function SponsorPlanCard({
           <span className="text-4xl font-semibold tracking-tight text-foreground">
             {price}
           </span>
-          <span className="text-sm text-muted-foreground">/mo</span>
+          <span className="text-sm text-muted-foreground">
+            {t("planCard.perMonth")}
+          </span>
           <span className="ml-auto text-xs text-muted-foreground">
-            {open > 0 ? `${open} of ${slots} open` : "Full"}
+            {open > 0 ? t("slotsOpen", { open, slots }) : t("planCard.full")}
           </span>
         </div>
         <ul className="mb-6 mt-6 min-h-32 space-y-3 text-sm text-foreground">
@@ -351,7 +396,9 @@ function SponsorPlanCard({
               : "border border-border bg-background text-foreground hover:border-border-strong",
           )}
         >
-          {paymentUrl ? `Sponsor as ${name}` : "Request payment link"}
+          {paymentUrl
+            ? t("planCard.sponsorAs", { name })
+            : t("planCard.requestLink")}
           <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </PressLink>
       </div>
@@ -359,28 +406,27 @@ function SponsorPlanCard({
   );
 }
 
-export default async function SponsorsPage({
-  searchParams,
-}: {
-  searchParams?: Promise<{ success?: string }>;
-}) {
+export default async function SponsorsPage({ params, searchParams }: PageProps) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
+  const t = await getTranslations("Pages.sponsors");
   const resolvedSearchParams = await searchParams;
   const checkoutSucceeded = resolvedSearchParams?.success === "true";
   const evmAddress = process.env.SPONSOR_EVM_ADDRESS;
   const solAddress = process.env.SPONSOR_SOL_ADDRESS;
   const sponsorPlans = [
     {
-      name: "Diamond",
+      name: t("plans.diamond.name"),
       price: "$199",
-      description:
-        "Maximum visibility for teams that want their logo in the highest-signal sponsor slot.",
+      description: t("plans.diamond.description"),
       benefits: [
-        "Logo on the home page, right below the hero",
-        "Largest logo placement on the sponsors page",
-        "Largest logo placement in the docs sidebar",
-        "Largest logo placement in the README",
-        "Shoutout on X after sponsorship",
-        "Priority feedback channel for requests",
+        t("plans.diamond.benefits.homePage"),
+        t("plans.diamond.benefits.sponsorsPage"),
+        t("plans.diamond.benefits.docsSidebar"),
+        t("plans.diamond.benefits.readme"),
+        t("plans.diamond.benefits.shoutout"),
+        t("plans.diamond.benefits.priorityFeedback"),
       ],
       paymentUrl:
         process.env.DODO_SPONSOR_DIAMOND_SUBSCRIPTION_URL ??
@@ -390,15 +436,14 @@ export default async function SponsorsPage({
       slots: 3,
     },
     {
-      name: "Platinum",
+      name: t("plans.platinum.name"),
       price: "$99",
-      description:
-        "Prominent placement for product teams supporting polished open-source UI.",
+      description: t("plans.platinum.description"),
       benefits: [
-        "Larger logo placement on the sponsors page",
-        "Large logo placement in the docs sidebar",
-        "Larger logo placement in the README",
-        "Shoutout on X after sponsorship",
+        t("plans.platinum.benefits.sponsorsPage"),
+        t("plans.platinum.benefits.docsSidebar"),
+        t("plans.platinum.benefits.readme"),
+        t("plans.platinum.benefits.shoutout"),
       ],
       paymentUrl:
         process.env.DODO_SPONSOR_PLATINUM_SUBSCRIPTION_URL ??
@@ -407,15 +452,14 @@ export default async function SponsorsPage({
       slots: 2,
     },
     {
-      name: "Silver",
+      name: t("plans.silver.name"),
       price: "$49",
-      description:
-        "A simple way to support ongoing component work and be listed publicly.",
+      description: t("plans.silver.description"),
       benefits: [
-        "Logo on the sponsors page",
-        "Logo placement in the docs sidebar",
-        "Logo in the README",
-        "Public sponsor listing",
+        t("plans.silver.benefits.sponsorsPage"),
+        t("plans.silver.benefits.docsSidebar"),
+        t("plans.silver.benefits.readme"),
+        t("plans.silver.benefits.publicListing"),
       ],
       paymentUrl:
         process.env.DODO_SPONSOR_SILVER_SUBSCRIPTION_URL ??
@@ -433,27 +477,22 @@ export default async function SponsorsPage({
             <CircleCheck className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
             <div>
               <p className="text-sm font-semibold text-emerald-950 dark:text-emerald-100">
-                Sponsorship checkout complete
+                {t("checkout.title")}
               </p>
               <p className="mt-1 text-sm leading-relaxed text-emerald-900/75 dark:text-emerald-100/75">
-                Thanks for sponsoring beUI. I’ll follow up for logo assets and
-                placement details.
+                {t("checkout.body")}
               </p>
             </div>
           </div>
         ) : null}
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Sponsors
+            {t("hero.eyebrow")}
           </p>
           <h1 className="mt-2 text-4xl font-semibold tracking-tight text-foreground">
-            Support beUI
+            {t("hero.title")}
           </h1>
-          <p className="mt-3 text-muted-foreground">
-            beUI is free and open source. Sponsor a monthly stage to reach
-            developers actively browsing motion components, blocks, and registry
-            installs.
-          </p>
+          <p className="mt-3 text-muted-foreground">{t("hero.body")}</p>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <PressLink
@@ -462,7 +501,7 @@ export default async function SponsorsPage({
               rel="noreferrer noopener"
               className="group inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:border-border-strong"
             >
-              Sponsor on GitHub
+              {t("hero.githubCta")}
               <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </PressLink>
           </div>
@@ -474,24 +513,39 @@ export default async function SponsorsPage({
               id="traffic-stats"
               className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
             >
-              Audience
+              {t("audience.title")}
             </h2>
             <p className="text-xs text-muted-foreground">
-              Analytics by Tracwell, updated {TRAFFIC_UPDATED_AT}
+              {t("audience.updated", {
+                date: new Intl.DateTimeFormat(locale, {
+                  dateStyle: "medium",
+                  timeZone: "UTC",
+                }).format(TRAFFIC_UPDATED_AT),
+              })}
             </p>
           </div>
           <div className="mt-3 grid gap-4 md:grid-cols-2">
             {TRAFFIC_STATS.map((stat) => (
               <div
-                key={stat.period}
+                key={stat.days}
                 className="rounded-3xl border border-border bg-card p-2"
               >
                 <h3 className="px-3 pb-2 pt-2 text-sm font-medium text-foreground">
-                  {stat.period}
+                  {t("audience.lastDays", { days: stat.days })}
                 </h3>
                 <dl className="grid grid-cols-2 gap-2">
-                  <TrafficStat label="Visitors" value={stat.visitors} />
-                  <TrafficStat label="Page views" value={stat.pageViews} />
+                  <TrafficStat
+                    label={t("audience.visitors")}
+                    value={stat.visitors}
+                    locale={locale}
+                    t={t}
+                  />
+                  <TrafficStat
+                    label={t("audience.pageViews")}
+                    value={stat.pageViews}
+                    locale={locale}
+                    t={t}
+                  />
                 </dl>
               </div>
             ))}
@@ -502,7 +556,7 @@ export default async function SponsorsPage({
           {sponsorPlans
             .filter((plan) => plan.tone === "diamond")
             .map((plan) => (
-              <SponsorTier key={plan.name} {...plan} />
+              <SponsorTier key={plan.tone} {...plan} t={t} />
             ))}
           {/* Platinum and Silver share a row; the 3:2 split keeps each
               Platinum slot wider than a Silver one. */}
@@ -510,19 +564,19 @@ export default async function SponsorsPage({
             {sponsorPlans
               .filter((plan) => plan.tone !== "diamond")
               .map((plan) => (
-                <SponsorTier key={plan.name} {...plan} />
+                <SponsorTier key={plan.tone} {...plan} t={t} />
               ))}
           </div>
         </div>
 
         <section
           id="sponsor-plans"
-          aria-label="Sponsor plans"
+          aria-label={t("plansLabel")}
           className="mt-12 scroll-mt-24"
         >
           <div className="grid gap-4 md:grid-cols-3">
             {sponsorPlans.map((plan) => (
-              <SponsorPlanCard key={plan.name} {...plan} />
+              <SponsorPlanCard key={plan.tone} {...plan} t={t} />
             ))}
           </div>
         </section>
@@ -530,7 +584,7 @@ export default async function SponsorsPage({
         {evmAddress || solAddress ? (
           <div className="mt-14">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Crypto
+              {t("crypto")}
             </p>
             <div className="mt-3 grid gap-3 md:grid-cols-2">
               {evmAddress ? <AddressRow label="EVM" address={evmAddress} /> : null}

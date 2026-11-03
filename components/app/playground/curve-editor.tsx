@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { capturePointer, TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ export function CurveEditor({
   value: number[];
   onChange: (next: number[]) => void;
 }) {
+  const t = useTranslations("Pages.playground.controls");
   const ref = useRef<SVGSVGElement>(null);
   const [drag, setDrag] = useState<0 | 1 | null>(null);
   const [x1, y1, x2, y2] = value;
@@ -65,7 +67,7 @@ export function CurveEditor({
       onPointerMove={(e) => drag !== null && move(e, drag)}
       onPointerUp={() => setDrag(null)}
       onPointerLeave={() => setDrag(null)}
-      aria-label="Easing curve editor"
+      aria-label={t("curveEditor")}
     >
       {/* baseline 0 and 1 guides */}
       <line x1={PAD} y1={py(0)} x2={SIZE - PAD} y2={py(0)} className="stroke-border" strokeWidth={1} strokeDasharray="3 3" />

@@ -1,84 +1,97 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { CodeBlock } from "@/components/app/docs/code-block";
+import { localeAlternates } from "@/i18n/metadata";
+import { LANGUAGES, routing } from "@/i18n/routing";
 import { THEME_CSS } from "@/lib/theme-css";
 
-export const metadata: Metadata = {
-  title: "Theme setup",
-  description:
-    "One-time theme setup for beUI components: install the shadcn token layer, or paste the beUI theme CSS into your globals.css.",
-  alternates: { canonical: "/docs/theme" },
-  openGraph: {
-    title: "Theme setup · beUI",
-    description:
-      "One-time theme setup for beUI components: shadcn tokens or the beUI theme CSS.",
-    url: "/docs/theme",
-    type: "article",
-    siteName: "beUI",
-    images: ["/api/og"],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Theme setup · beUI",
-    images: ["/api/og"],
-  },
-};
+const PAGE_PATH = "/docs/theme";
+
+type PageProps = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+  const t = await getTranslations({ locale, namespace: "Pages.theme.meta" });
+  const alternates = localeAlternates(PAGE_PATH, locale);
+  return {
+    title: t("title"),
+    description: t("description"),
+    alternates,
+    openGraph: {
+      title: `${t("title")} · beUI`,
+      description: t("ogDescription"),
+      url: alternates.canonical,
+      locale: LANGUAGES[locale].og,
+      type: "article",
+      siteName: "beUI",
+      images: ["/api/og"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${t("title")} · beUI`,
+      images: ["/api/og"],
+    },
+  };
+}
 
 const SHADCN_INIT = `npx shadcn@latest init`;
 
-export default function ThemePage() {
+const code = (chunks: ReactNode) => (
+  <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+    {chunks}
+  </code>
+);
+
+export default async function ThemePage({ params }: PageProps) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
+  const t = await getTranslations("Pages.theme");
+
   return (
     <div className="max-w-3xl">
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        Setup
+        {t("eyebrow")}
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-        Theme setup
+        {t("title")}
       </h1>
-      <p className="mt-3 text-muted-foreground">
-        beUI components style themselves with shadcn semantic tokens
-        (<code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">bg-primary</code>,
-        {" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">text-muted-foreground</code>,
-        {" "}border, ring). Set those tokens up once and every component works.
-        Two ways:
-      </p>
+      <p className="mt-3 text-muted-foreground">{t.rich("intro", { code })}</p>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
-        Option 1 — shadcn init (recommended)
+        {t("option1.title")}
       </h2>
-      <p className="mt-2 text-muted-foreground">
-        If your project uses shadcn, you already have these tokens. Otherwise
-        run init once; it writes the token layer into your CSS.
-      </p>
+      <p className="mt-2 text-muted-foreground">{t("option1.body")}</p>
       <div className="mt-4">
         <CodeBlock code={SHADCN_INIT} lang="bash" filename="terminal" />
       </div>
 
       <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
-        Option 2 — paste the theme CSS
+        {t("option2.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">
-        Not using shadcn? Paste this into your{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">globals.css</code>{" "}
-        directly below{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">@import "tailwindcss";</code>.
-        It defines the tokens, motion animations and surface utilities the
-        components use. Requires Tailwind CSS v4.
+        {t.rich("option2.body", { code })}
       </p>
       <p className="mt-2 text-sm text-muted-foreground">
-        Also available at{" "}
-        <Link
-          href="/theme.css"
-          target="_blank"
-          rel="noreferrer noopener"
-          className="inline-flex items-center gap-1 text-foreground underline underline-offset-4"
-        >
-          /theme.css
-          <ArrowUpRight className="h-3 w-3" />
-        </Link>
-        .
+        {t.rich("option2.alsoAvailable", {
+          // A static file, not a page: keep one unprefixed URL.
+          link: (chunks) => (
+            <a
+              href="/theme.css"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="inline-flex items-center gap-1 text-foreground underline underline-offset-4"
+            >
+              {chunks}
+              <ArrowUpRight className="h-3 w-3" />
+            </a>
+          ),
+        })}
       </p>
       <div className="mt-4">
         <CodeBlock code={THEME_CSS} lang="css" filename="globals.css" />

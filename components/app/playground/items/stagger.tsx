@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { num, type PlaygroundItem, str, type Values } from "../core";
+import { num, type PlaygroundItem, type PlaygroundT, str, type Values } from "../core";
 
 function StaggerPreview({
   values,
@@ -52,17 +52,16 @@ function StaggerPreview({
   );
 }
 
-export const staggerItem: PlaygroundItem = {
+export const staggerItem = (t: PlaygroundT): PlaygroundItem => ({
   slug: "stagger",
-  label: "Stagger",
-  blurb:
-    "Children animate in sequence. Stagger sets the gap between each; delay holds the whole group before it starts.",
+  label: t("stagger.label"),
+  blurb: t("stagger.blurb"),
   controls: [
     {
       kind: "slider",
       key: "count",
-      label: "Children",
-      hint: "How many items animate in.",
+      label: t("stagger.controls.count.label"),
+      hint: t("stagger.controls.count.hint"),
       min: 3,
       max: 12,
       step: 1,
@@ -70,8 +69,8 @@ export const staggerItem: PlaygroundItem = {
     {
       kind: "slider",
       key: "stagger",
-      label: "Stagger",
-      hint: "Gap between each child starting. Higher = more of a wave.",
+      label: t("stagger.controls.stagger.label"),
+      hint: t("stagger.controls.stagger.hint"),
       min: 0,
       max: 0.2,
       step: 0.01,
@@ -80,8 +79,8 @@ export const staggerItem: PlaygroundItem = {
     {
       kind: "slider",
       key: "delayChildren",
-      label: "Delay",
-      hint: "Pause before the whole group begins.",
+      label: t("stagger.controls.delayChildren.label"),
+      hint: t("stagger.controls.delayChildren.hint"),
       min: 0,
       max: 0.6,
       step: 0.05,
@@ -90,19 +89,19 @@ export const staggerItem: PlaygroundItem = {
     {
       kind: "select",
       key: "direction",
-      label: "Direction",
-      hint: "Order children fire in.",
+      label: t("stagger.controls.direction.label"),
+      hint: t("stagger.controls.direction.hint"),
       options: [
-        { label: "Forward", value: "forward" },
-        { label: "Reverse", value: "reverse" },
+        { label: t("stagger.controls.direction.forward"), value: "forward" },
+        { label: t("stagger.controls.direction.reverse"), value: "reverse" },
       ],
     },
   ],
   defaults: { count: 6, stagger: 0.06, delayChildren: 0, direction: "forward" },
   presets: [
-    { name: "Tight", values: { stagger: 0.03, delayChildren: 0 } },
-    { name: "Relaxed", values: { stagger: 0.08, delayChildren: 0.1 } },
-    { name: "Dramatic", values: { stagger: 0.14, delayChildren: 0.2 } },
+    { name: t("stagger.presets.tight"), values: { stagger: 0.03, delayChildren: 0 } },
+    { name: t("stagger.presets.relaxed"), values: { stagger: 0.08, delayChildren: 0.1 } },
+    { name: t("stagger.presets.dramatic"), values: { stagger: 0.14, delayChildren: 0.2 } },
   ],
   Preview: StaggerPreview,
   explain: (v) => {
@@ -114,19 +113,32 @@ export const staggerItem: PlaygroundItem = {
     return [
       {
         code: "variants={ hidden, show }",
-        text: 'Two named states. "hidden" is the start (invisible, small, nudged down), "show" is the end. Every child animates from hidden to show — you describe states, not steps.',
+        text: t("stagger.explain.variants"),
       },
       {
         code: `staggerChildren: ${st}`,
-        text: `The gap between each child starting, in seconds. They don't all fire at once — child 2 waits ${st}s after child 1, and so on, making the wave.`,
+        text: t("stagger.explain.staggerChildren", { value: String(st) }),
       },
       {
         code: `delayChildren: ${dc}`,
-        text: `How long the whole group waits before the first child starts. ${dc === 0 ? "0 = starts immediately." : `Here, ${dc}s of dead time up front.`}`,
+        text: t("stagger.explain.delayChildren", {
+          value: String(dc),
+          immediate: dc === 0 ? "yes" : "no",
+        }),
       },
       {
-        code: `${count} items, ${dir}`,
-        text: `With ${count} children at ${st}s apart${dc ? ` after a ${dc}s delay` : ""}, the last one begins ${last}s in. ${dir === "reverse" ? "Reverse means the last child fires first." : "Forward fires them first-to-last."}`,
+        code: t("stagger.explain.summaryCode", {
+          count: String(count),
+          direction: dir,
+        }),
+        text: t("stagger.explain.summary", {
+          count: String(count),
+          stagger: String(st),
+          delayed: dc ? "yes" : "no",
+          delay: String(dc),
+          last: String(last),
+          direction: dir,
+        }),
       },
     ];
   },
@@ -159,4 +171,4 @@ export function Demo() {
   );
 }`;
   },
-};
+});

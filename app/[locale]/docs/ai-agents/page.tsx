@@ -1,70 +1,64 @@
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import type { ReactNode } from "react";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
+import { localeAlternates } from "@/i18n/metadata";
+import { Link } from "@/i18n/navigation";
+import { LANGUAGES, routing } from "@/i18n/routing";
 import { SITE_URL } from "@/lib/site";
 
 const PAGE_PATH = "/docs/ai-agents";
 
+type PageProps = { params: Promise<{ locale: string }> };
 
-export const metadata: Metadata = {
-  title: "AI Agents",
-  description:
-    "Install the beUI agent skill, connect the MCP server, or use the agent-friendly endpoints (llms.txt, JSON registry, raw source) to consume components programmatically.",
-  alternates: {
-    canonical: PAGE_PATH,
-    types: { "text/markdown": `${PAGE_PATH}.md` },
-  },
-  openGraph: {
-    title: "AI Agents · beUI",
-    description:
-      "Install the beUI agent skill, connect the MCP server, or use the agent-friendly endpoints (llms.txt, JSON registry, raw source) to consume components programmatically.",
-    url: "/docs/ai-agents",
-    type: "article",
-    siteName: "beUI",
-    images: ["/api/og"],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AI Agents · beUI",
-    images: ["/api/og"],
-  },
-};
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+  const t = await getTranslations({ locale, namespace: "Pages.aiAgents.meta" });
+  const alternates = localeAlternates(PAGE_PATH, locale);
+  return {
+    title: t("title"),
+    description: t("description"),
+    alternates: {
+      ...alternates,
+      types: { "text/markdown": `${PAGE_PATH}.md` },
+    },
+    openGraph: {
+      title: `${t("title")} · beUI`,
+      description: t("description"),
+      url: alternates.canonical,
+      locale: LANGUAGES[locale].og,
+      type: "article",
+      siteName: "beUI",
+      images: ["/api/og"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${t("title")} · beUI`,
+      images: ["/api/og"],
+    },
+  };
+}
 
-const ENDPOINTS: { label: string; url: string; desc: string }[] = [
-  {
-    label: "llms.txt",
-    url: "/llms.txt",
-    desc: "Markdown index in llmstxt.org format.",
-  },
-  {
-    label: "Registry index",
-    url: "/r",
-    desc: "JSON catalogue of every component.",
-  },
-  {
-    label: "Component detail",
-    url: "/r/{slug}",
-    desc: "JSON with files, deps, source.",
-  },
-  {
-    label: "shadcn catalog",
-    url: "/registry.json",
-    desc: "Directory-compatible registry catalog.",
-  },
-  {
-    label: "shadcn item",
-    url: "/r/{slug}.json",
-    desc: "Install item with inline file content and shadcn semantic color classes.",
-  },
-  {
-    label: "Raw source",
-    url: "/r/{slug}/raw",
-    desc: "Plain text .tsx ready to drop in.",
-  },
-];
+const ENDPOINTS = [
+  { key: "llmsTxt", url: "/llms.txt" },
+  { key: "registryIndex", url: "/r" },
+  { key: "componentDetail", url: "/r/{slug}" },
+  { key: "shadcnCatalog", url: "/registry.json" },
+  { key: "shadcnItem", url: "/r/{slug}.json" },
+  { key: "rawSource", url: "/r/{slug}/raw" },
+] as const;
+
+const code = (chunks: ReactNode) => (
+  <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+    {chunks}
+  </code>
+);
 
 const MCP_URL = "https://mcp.beui.dev/mcp";
 
@@ -125,16 +119,22 @@ const ENTRY_SHAPE = `{
   ]
 }`;
 
-export default function AIAgentsPage() {
+export default async function AIAgentsPage({ params }: PageProps) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
+  const t = await getTranslations("Pages.aiAgents");
+
+
   return (
     <GuideShell>
       <header id="overview" className="scroll-mt-24">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Agent guide
+          {t("header.eyebrow")}
         </p>
         <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <h1 className="text-3xl font-medium tracking-tight text-foreground">
-            For AI agents
+            {t("header.title")}
           </h1>
           <CopyPage
             pageUrl={`${SITE_URL}${PAGE_PATH}`}
@@ -143,10 +143,7 @@ export default function AIAgentsPage() {
           />
         </div>
         <p className="mt-3 max-w-2xl text-muted-foreground">
-          beUI exposes a static, agent-friendly surface. Install the beUI skill,
-          connect the MCP server below, or hit the raw endpoints directly. Coding
-          agents (Claude, Codex, Cursor, Amp) can list components, fetch source
-          with all deps, and drop files into the user&apos;s project.
+          {t("header.intro")}
         </p>
       </header>
 
@@ -154,17 +151,10 @@ export default function AIAgentsPage() {
         id="agent-skill"
         className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
       >
-        Agent skill
+        {t("agentSkill.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">
-        The skill teaches coding agents to fetch the live registry first, pick
-        the closest{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          items[].name
-        </code>{" "}
-        install slug, inspect it with shadcn, then install and compose from
-        the generated source. Use it when you want agents to choose existing
-        beUI components instead of inventing custom motion widgets.
+        {t.rich("agentSkill.body", { code })}
       </p>
       <div className="mt-4">
         <CodeBlock code={SKILL_SNIPPET} lang="bash" filename="terminal" />
@@ -174,58 +164,27 @@ export default function AIAgentsPage() {
         id="mcp-server"
         className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
       >
-        MCP server
+        {t("mcpServer.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">
-        The fastest path: connect the beUI MCP server and your agent can list,
-        search and install components directly. Hosted at{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          {MCP_URL}
-        </code>
-        .
+        {t.rich("mcpServer.body", { code, url: MCP_URL })}
       </p>
       <div className="mt-4">
         <CodeBlock code={MCP_CLI_SNIPPET} lang="bash" filename="terminal" />
       </div>
-      <p className="mt-4 text-muted-foreground">
-        Any other client: add it manually to your MCP config.
-      </p>
+      <p className="mt-4 text-muted-foreground">{t("mcpServer.manual")}</p>
       <div className="mt-4">
         <CodeBlock code={MCP_MANUAL_SNIPPET} lang="json" filename="mcp.json" />
       </div>
       <p className="mt-4 text-sm text-muted-foreground">
-        Tools:{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          list_components
-        </code>
-        ,{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          search_components
-        </code>
-        ,{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          get_component
-        </code>
-        ,{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          get_install_command
-        </code>
-        . For React Native apps,{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          list_native_components
-        </code>{" "}
-        and{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          get_native_component
-        </code>{" "}
-        return beUI Native components with every file to copy.
+        {t.rich("mcpServer.toolsWithNative", { code })}
       </p>
 
       <h2
         id="endpoints"
         className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
       >
-        Endpoints
+        {t("endpoints.title")}
       </h2>
       <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
         {ENDPOINTS.map((e) => (
@@ -239,21 +198,24 @@ export default function AIAgentsPage() {
                   {e.url}
                 </code>
                 <span className="text-sm font-medium text-foreground">
-                  {e.label}
+                  {t(`endpoints.${e.key}.label`)}
                 </span>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">{e.desc}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t(`endpoints.${e.key}.desc`)}
+              </p>
             </div>
             {!e.url.includes("{") ? (
-              <Link
+              // Machine endpoints keep one unprefixed URL, so no locale-aware Link.
+              <a
                 href={e.url}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground hover:text-foreground"
               >
-                Open
+                {t("endpoints.open")}
                 <ArrowUpRight className="h-3 w-3" />
-              </Link>
+              </a>
             ) : null}
           </li>
         ))}
@@ -263,12 +225,9 @@ export default function AIAgentsPage() {
         id="agent-flow"
         className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
       >
-        Agent flow
+        {t("agentFlow.title")}
       </h2>
-      <p className="mt-2 text-muted-foreground">
-        Four calls, then install. Components are self-contained and own their
-        files.
-      </p>
+      <p className="mt-2 text-muted-foreground">{t("agentFlow.body")}</p>
       <div className="mt-4">
         <CodeBlock code={FETCH_SNIPPET} lang="ts" filename="agent.ts" />
       </div>
@@ -277,13 +236,9 @@ export default function AIAgentsPage() {
         id="shadcn-flow"
         className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
       >
-        shadcn flow
+        {t("shadcnFlow.title")}
       </h2>
-      <p className="mt-2 text-muted-foreground">
-        The shadcn item installs source files and package dependencies.
-        Components use shadcn semantic color utilities directly, so they inherit
-        the target app&apos;s theme without beUI-specific color variables.
-      </p>
+      <p className="mt-2 text-muted-foreground">{t("shadcnFlow.body")}</p>
       <div className="mt-4">
         <CodeBlock code={SHADCN_SNIPPET} lang="bash" filename="terminal" />
       </div>
@@ -292,18 +247,10 @@ export default function AIAgentsPage() {
         id="entry-shape"
         className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
       >
-        Entry shape
+        {t("entryShape.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">
-        Internal helpers (e.g.{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          @/lib/utils
-        </code>
-        ) ship inline as{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          type: util
-        </code>{" "}
-        so the agent does not have to chase imports.
+        {t.rich("entryShape.body", { code })}
       </p>
       <div className="mt-4">
         <CodeBlock code={ENTRY_SHAPE} lang="json" filename="r/swap.json" />
@@ -313,19 +260,19 @@ export default function AIAgentsPage() {
         id="generative-ui"
         className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
       >
-        Generative UI
+        {t("generativeUi.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">
-        Want the model to compose these components into a live interface? Follow
-        the{" "}
-        <Link
-          href="/docs/openui"
-          className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
-        >
-          OpenUI integration guide
-        </Link>{" "}
-        to register a custom component library, generate its system prompt, and
-        render interactive OpenUI Lang as it streams.
+        {t.rich("generativeUi.body", {
+          link: (chunks) => (
+            <Link
+              href="/docs/openui"
+              className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
     </GuideShell>
   );

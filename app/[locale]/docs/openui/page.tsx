@@ -1,49 +1,66 @@
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import type { ReactNode } from "react";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
+import { localeAlternates } from "@/i18n/metadata";
+import { Link } from "@/i18n/navigation";
+import { LANGUAGES, localizedPath, routing } from "@/i18n/routing";
 import { breadcrumbJsonLd, docsArticleJsonLd } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
-const PAGE_TITLE = "OpenUI integration guide";
-const PAGE_DESCRIPTION =
-  "Build an OpenUI React integration with beUI. Register animated components, generate the system prompt, stream OpenUI Lang, and render interactive UI.";
 const PAGE_PATH = "/docs/openui";
 const PAGE_IMAGE = "/api/og?page=openui&v=2";
 
+type PageProps = { params: Promise<{ locale: string }> };
 
-export const metadata: Metadata = {
-  title: PAGE_TITLE,
-  description: PAGE_DESCRIPTION,
-  alternates: {
-    canonical: PAGE_PATH,
-    types: { "text/markdown": `${PAGE_PATH}.md` },
-  },
-  openGraph: {
-    title: `${PAGE_TITLE} · beUI`,
-    description: PAGE_DESCRIPTION,
-    url: PAGE_PATH,
-    type: "article",
-    siteName: "beUI",
-    images: [
-      {
-        url: PAGE_IMAGE,
-        width: 1200,
-        height: 630,
-        alt: "Use beUI with OpenUI",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${PAGE_TITLE} · beUI`,
-    description: PAGE_DESCRIPTION,
-    images: [{ url: PAGE_IMAGE, alt: "Use beUI with OpenUI" }],
-  },
-};
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+  const t = await getTranslations({ locale, namespace: "Pages.openui.meta" });
+  const alternates = localeAlternates(PAGE_PATH, locale);
+  const title = t("title");
+  const description = t("description");
+  return {
+    title,
+    description,
+    alternates: {
+      ...alternates,
+      types: { "text/markdown": `${PAGE_PATH}.md` },
+    },
+    openGraph: {
+      title: `${title} · beUI`,
+      description,
+      url: alternates.canonical,
+      locale: LANGUAGES[locale].og,
+      type: "article",
+      siteName: "beUI",
+      images: [
+        {
+          url: PAGE_IMAGE,
+          width: 1200,
+          height: 630,
+          alt: t("imageAlt"),
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} · beUI`,
+      description,
+      images: [{ url: PAGE_IMAGE, alt: t("imageAlt") }],
+    },
+  };
+}
+
+const SCAFFOLD_COMMAND = "npx @openuidev/cli@latest create";
+const GENERATE_COMMAND =
+  "npx @openuidev/cli@latest generate --spec ./lib/beui-library.tsx --out ./lib/generated/beui-library.spec.json";
 
 const INSTALL_SNIPPET = `# OpenUI runtime, server prompt generation, and schema validation
 npm install @openuidev/react-lang @openuidev/lang-core zod
@@ -225,56 +242,71 @@ export function GenerativeResponse({
   );
 }`;
 
-const RESOURCES: { label: string; url: string; desc: string }[] = [
+const RESOURCES = [
+  { key: "openui", url: "https://www.openui.com" },
   {
-    label: "OpenUI",
-    url: "https://www.openui.com",
-    desc: "The generative UI framework and its OpenUI Lang.",
-  },
-  {
-    label: "Defining components",
+    key: "definingComponents",
     url: "https://www.openui.com/docs/openui-lang/defining-components",
-    desc: "Full defineComponent / createLibrary reference.",
   },
   {
-    label: "shadcn chat example",
+    key: "shadcnChat",
     url: "https://www.openui.com/docs/openui-lang/examples/shadcn-chat",
-    desc: "The registry-library pattern this guide follows.",
   },
-];
+] as const;
 
-export default function OpenUIPage() {
+const code = (chunks: ReactNode) => (
+  <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+    {chunks}
+  </code>
+);
+
+const em = (chunks: ReactNode) => <em>{chunks}</em>;
+
+const H2_CLASS =
+  "mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground";
+
+export default async function OpenUIPage({ params }: PageProps) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
+  const t = await getTranslations("Pages.openui");
+  const localPath = localizedPath(PAGE_PATH, locale);
+
+
   return (
     <GuideShell>
       <JsonLd
         data={[
           breadcrumbJsonLd([
-            { name: "Home", path: "/" },
-            { name: "OpenUI integration", path: PAGE_PATH },
+            { name: t("breadcrumb.home"), path: localizedPath("/", locale) },
+            { name: t("breadcrumb.page"), path: localPath },
           ]),
-          docsArticleJsonLd({
-            path: PAGE_PATH,
-            headline: PAGE_TITLE,
-            description: PAGE_DESCRIPTION,
-            image: PAGE_IMAGE,
-            datePublished: "2026-07-27",
-            dateModified: "2026-08-14",
-            about: [
-              "OpenUI React integration",
-              "Custom OpenUI component library",
-              "Generative UI",
-              "beUI",
-            ],
-          }),
+          {
+            ...docsArticleJsonLd({
+              path: localPath,
+              headline: t("meta.title"),
+              description: t("meta.description"),
+              image: PAGE_IMAGE,
+              datePublished: "2026-07-27",
+              dateModified: "2026-08-14",
+              about: [
+                t("about.integration"),
+                t("about.library"),
+                t("about.generativeUi"),
+                "beUI",
+              ],
+            }),
+            inLanguage: LANGUAGES[locale].hreflang,
+          },
         ]}
       />
       <header id="overview" className="scroll-mt-24">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Integration guide
+          {t("header.eyebrow")}
         </p>
         <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <h1 className="text-3xl font-medium tracking-tight text-foreground">
-            Use beUI with OpenUI
+            {t("header.title")}
           </h1>
           <CopyPage
             pageUrl={`${SITE_URL}${PAGE_PATH}`}
@@ -283,206 +315,121 @@ export default function OpenUIPage() {
           />
         </div>
         <p className="mt-3 max-w-2xl text-muted-foreground">
-          <Link
-            href="https://www.openui.com"
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
-          >
-            OpenUI
-          </Link>{" "}
-          is a generative UI framework: instead of returning markdown, the model
-          emits an abstract UI tree (OpenUI Lang) and a React runtime maps every
-          node to a component <em>you</em> register. This OpenUI React integration
-          turns beUI into a custom OpenUI component library, so each generated
-          response uses real, animated components—and only the components you
-          allow.
+          {t.rich("header.intro", {
+            em,
+            link: (chunks) => (
+              <a
+                href="https://www.openui.com"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
+              >
+                {chunks}
+              </a>
+            ),
+          })}
         </p>
       </header>
 
-      <h2
-        id="install"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
-      >
-        Install
+      <h2 id="install" className={H2_CLASS}>
+        {t("install.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">
-        You need OpenUI&apos;s React runtime and the beUI components you want to
-        expose. Pull beUI source with the shadcn registry (see the{" "}
-        <Link
-          href="/docs/ai-agents"
-          className="text-foreground underline underline-offset-4 decoration-border hover:decoration-foreground"
-        >
-          AI Agents
-        </Link>{" "}
-        guide for other install paths).
+        {t.rich("install.body", {
+          link: (chunks) => (
+            <Link
+              href="/docs/ai-agents"
+              className="text-foreground underline underline-offset-4 decoration-border hover:decoration-foreground"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
       <div className="mt-4">
         <CodeBlock code={INSTALL_SNIPPET} lang="bash" filename="terminal" />
       </div>
       <p className="mt-4 text-sm text-muted-foreground">
-        Scaffolding from scratch? Run{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          npx @openuidev/cli@latest create
-        </code>{" "}
-        for a working streaming app, then swap its default library for the beUI
-        one below.
+        {t.rich("install.scaffold", { code, command: SCAFFOLD_COMMAND })}
       </p>
 
-      <h2
-        id="register-components"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
-      >
-        Register components
+      <h2 id="register-components" className={H2_CLASS}>
+        {t("registerComponents.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          defineComponent
-        </code>{" "}
-        maps one OpenUI Lang node to a beUI component. The Zod{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          props
-        </code>{" "}
-        schema validates the model&apos;s output as it streams, the{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          description
-        </code>{" "}
-        is injected into the system prompt so the model learns each
-        component&apos;s intent, and{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          useTriggerAction
-        </code>{" "}
-        keeps rendered controls interactive. Describe a container&apos;s children
-        as a union of the registered{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          .ref
-        </code>{" "}
-        schemas so nesting is both validated and advertised to the model.
+        {t.rich("registerComponents.body", { code })}
       </p>
       <div className="mt-4">
         <CodeBlock code={DEFINE_SNIPPET} lang="tsx" filename="lib/beui-library.tsx" />
       </div>
 
-      <h2
-        id="assemble-library"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
-      >
-        Assemble the library
+      <h2 id="assemble-library" className={H2_CLASS}>
+        {t("assembleLibrary.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          createLibrary
-        </code>{" "}
-        collects the definitions, names the{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          root
-        </code>{" "}
-        node, and organises the prompt into{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          componentGroups
-        </code>{" "}
-        with notes that steer how the model reaches for each one.
+        {t.rich("assembleLibrary.body", { code })}
       </p>
       <div className="mt-4">
         <CodeBlock code={LIBRARY_SNIPPET} lang="tsx" filename="lib/beui-library.tsx" />
       </div>
 
-      <h2
-        id="generate-prompt"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
-      >
-        Generate the prompt
+      <h2 id="generate-prompt" className={H2_CLASS}>
+        {t("generatePrompt.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">
-        The client renders OpenUI Lang, but the model has to produce it. In the
-        CLI, call{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          npx @openuidev/cli@latest generate --spec ./lib/beui-library.tsx --out ./lib/generated/beui-library.spec.json
-        </code>{" "}
-        to build the library spec. The backend combines its component
-        signatures, descriptions, and nesting constraints with the OpenUI Lang
-        grammar, then streams the model&apos;s reply back to the browser.
+        {t.rich("generatePrompt.body", { code, command: GENERATE_COMMAND })}
       </p>
       <div className="mt-4">
         <CodeBlock code={PROMPT_SNIPPET} lang="tsx" filename="app/api/generate/route.ts" />
       </div>
       <p className="mt-4 text-sm text-muted-foreground">
-        Run that command when the library changes. It serializes the library to
-        JSON at build time, and the route imports that generated file through
-        the same{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          @/lib/generated
-        </code>{" "}
-        path, so the server bundle never imports your client components.
+        {t.rich("generatePrompt.note", { code })}
       </p>
 
-      <h2
-        id="render-stream"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
-      >
-        Render the stream
+      <h2 id="render-stream" className={H2_CLASS}>
+        {t("renderStream.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">
-        Pass the library to{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          &lt;Renderer&gt;
-        </code>{" "}
-        on the client. It parses the OpenUI Lang your server streams and paints
-        beUI components progressively as tokens arrive. Wire{" "}
-        <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-          onAction
-        </code>{" "}
-        to send a pressed button&apos;s message back to the model and continue
-        the loop.
+        {t.rich("renderStream.body", { code, renderer: "<Renderer>" })}
       </p>
       <div className="mt-4">
         <CodeBlock code={RENDER_SNIPPET} lang="tsx" filename="generative-response.tsx" />
       </div>
 
-      <h2
-        id="why-beui"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
-      >
-        Why beUI fits
+      <h2 id="why-beui" className={H2_CLASS}>
+        {t("whyBeui.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">
-        beUI components own their files and ship through the registry, so
-        there&apos;s no runtime to bolt on — the library above <em>is</em> the
-        integration. They use semantic controls and shadcn tokens, so
-        model-generated UIs inherit the host app&apos;s theme without extra wiring.
+        {t.rich("whyBeui.body", { em })}
       </p>
 
-      <h2
-        id="resources"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
-      >
-        Resources
+      <h2 id="resources" className={H2_CLASS}>
+        {t("resources.title")}
       </h2>
       <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
         {RESOURCES.map((r) => (
           <li key={r.url} className="flex items-start justify-between gap-4 p-4">
             <div className="min-w-0">
               <span className="text-sm font-medium text-foreground">
-                {r.label}
+                {t(`resources.${r.key}.label`)}
               </span>
-              <p className="mt-1 text-sm text-muted-foreground">{r.desc}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t(`resources.${r.key}.desc`)}
+              </p>
             </div>
-            <Link
+            <a
               href={r.url}
               target="_blank"
               rel="noreferrer noopener"
               className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground hover:text-foreground"
             >
-              Open
+              {t("resources.open")}
               <ArrowUpRight className="h-3 w-3" />
-            </Link>
+            </a>
           </li>
         ))}
       </ul>
-      <p className="mt-6 text-sm text-muted-foreground">
-        Other generative UI frameworks that consume shadcn registries can pull
-        beUI the same way — more integration guides to come.
-      </p>
+      <p className="mt-6 text-sm text-muted-foreground">{t("resources.more")}</p>
     </GuideShell>
   );
 }

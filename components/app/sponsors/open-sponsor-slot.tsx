@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { MouseEvent } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,7 @@ export function OpenSponsorSlot({
   targetId: string;
   size?: OpenSponsorSlotSize;
 }) {
+  const t = useTranslations("Pages.sponsors.openSlot");
   const styles = SIZES[size];
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
@@ -64,12 +66,12 @@ export function OpenSponsorSlot({
             styles.title,
           )}
         >
-          Your logo here
+          {t("title")}
         </span>
         <span className="mt-0.5 block text-xs text-muted-foreground">
-          {tier} · {price}/mo
+          {t("price", { tier, price })}
         </span>
-        <span className="sr-only">View plan</span>
+        <span className="sr-only">{t("viewPlan")}</span>
       </span>
     </a>
   );

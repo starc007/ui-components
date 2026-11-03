@@ -19,6 +19,7 @@ import {
   useReducedMotion,
   type Variants,
 } from "motion/react";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useId, useState } from "react";
 import {
   EASE_IN_OUT,
@@ -44,79 +45,30 @@ const CONTINUITY_LABEL: Variants = {
 };
 
 type Recipe = {
-  title: string;
-  eyebrow: string;
-  description: string;
-  purpose: string;
-  avoid: string;
+  key: "press" | "icon" | "reveal" | "layout" | "swap";
   icon: LucideIcon;
   demo: RecipeDemo;
   code: string;
 };
 
 const decisions = [
-  {
-    number: "01",
-    title: "Check frequency",
-    body: "Repeated actions should feel nearly instant. Save expressive motion for moments users see occasionally.",
-    note: "100× a day: no choreography. Rare moments: more delight is allowed.",
-  },
-  {
-    number: "02",
-    title: "Name the purpose",
-    body: "Motion should explain space, confirm input, show state, or soften a change. Decoration alone is not enough.",
-    note: "If you cannot explain why it moves, remove the movement.",
-  },
-  {
-    number: "03",
-    title: "Choose the physics",
-    body: "Use ease-out for entrances, ease-in-out for movement, linear for progress, and springs for gestures.",
-    note: "The curve should match what the object is doing, not personal taste.",
-  },
-  {
-    number: "04",
-    title: "Design the fallback",
-    body: "Reduced motion keeps useful opacity and color feedback while removing travel, scale, and parallax.",
-    note: "Accessibility is a motion state, not an afterthought.",
-  },
+  { number: "01", key: "frequency" },
+  { number: "02", key: "purpose" },
+  { number: "03", key: "physics" },
+  { number: "04", key: "fallback" },
 ] as const;
 
 const timings = [
-  {
-    use: "Press feedback",
-    range: "100–160ms",
-    feel: "Immediate and physical",
-  },
-  {
-    use: "Tooltip / popover",
-    range: "125–200ms",
-    feel: "Quick, origin-aware",
-  },
-  {
-    use: "Dropdown / select",
-    range: "150–250ms",
-    feel: "Responsive, no waiting",
-  },
-  {
-    use: "Modal / drawer",
-    range: "200–500ms",
-    feel: "Enough time to explain space",
-  },
-  {
-    use: "Marketing demo",
-    range: "Flexible",
-    feel: "Clarity matters more than speed",
-  },
+  "press",
+  "tooltip",
+  "dropdown",
+  "modal",
+  "marketing",
 ] as const;
 
 const recipes: Recipe[] = [
   {
-    title: "Press feedback",
-    eyebrow: "Feedback",
-    description:
-      "A press should acknowledge input before the action finishes. Keep the scale small and the response immediate.",
-    purpose: "Confirms that the interface heard the user.",
-    avoid: "Large scale changes, slow rebounds, or a spring on every child.",
+    key: "press",
     icon: MousePointer2,
     demo: "press",
     code: `import { motion, useReducedMotion } from "motion/react";
@@ -132,12 +84,7 @@ const reduce = useReducedMotion();
 </motion.button>`,
   },
   {
-    title: "Semantic icon motion",
-    eyebrow: "Meaning",
-    description:
-      "Let the icon imitate its real action. A bell swings from its hinge; a download arrow drops toward its tray.",
-    purpose: "Reinforces what the action does without adding another label.",
-    avoid: "The same generic bounce on every icon, or motion on touch hover.",
+    key: "icon",
     icon: Bell,
     demo: "icon",
     code: `const reduce = useReducedMotion();
@@ -154,12 +101,7 @@ const canHover = useHoverCapable();
 </motion.span>`,
   },
   {
-    title: "Content reveal",
-    eyebrow: "Entrance",
-    description:
-      "Reveal one meaningful surface with a short lift and restrained blur. The motion should finish before it becomes the focus.",
-    purpose: "Prevents new content from appearing as a jarring visual cut.",
-    avoid: "Half-second UI entrances or a long stagger across every small child.",
+    key: "reveal",
     icon: Sparkles,
     demo: "reveal",
     code: `const reduce = useReducedMotion();
@@ -179,12 +121,7 @@ const canHover = useHoverCapable();
 />`,
   },
   {
-    title: "Layout continuity",
-    eyebrow: "Movement",
-    description:
-      "Keep the same surface visible while its footprint changes. Move the shape first, then introduce its label.",
-    purpose: "Preserves object identity while a compact control expands.",
-    avoid: "Direct width tweens or text appearing before the surface makes room.",
+    key: "layout",
     icon: PanelTopOpen,
     demo: "layout",
     code: `<motion.div layout transition={CONTINUITY_SPRING}>
@@ -211,12 +148,7 @@ const canHover = useHoverCapable();
 </motion.div>`,
   },
   {
-    title: "Content swap",
-    eyebrow: "State change",
-    description:
-      "For small view changes, let the old content leave faster than the new content arrives. Keep travel to a few pixels.",
-    purpose: "Clarifies that content changed while the surrounding context stayed put.",
-    avoid: "Large page-like transitions for tabs, filters, or frequently changed views.",
+    key: "swap",
     icon: Rows3,
     demo: "swap",
     code: `<AnimatePresence mode="wait" initial={false}>
@@ -236,13 +168,15 @@ const canHover = useHoverCapable();
 ];
 
 export function MotionPatterns() {
+  const t = useTranslations("Pages.motionPatterns");
+
   return (
     <div className="mt-12 space-y-20">
       <GuideSection
         id="decision-framework"
-        eyebrow="Decision framework"
-        title="Four questions before motion"
-        description="The best animation decision is often made before touching a duration or spring value."
+        eyebrow={t("sections.decisionFramework.eyebrow")}
+        title={t("sections.decisionFramework.title")}
+        description={t("sections.decisionFramework.description")}
       >
         <div className="divide-y divide-border border-y border-border">
           {decisions.map((decision) => (
@@ -254,14 +188,14 @@ export function MotionPatterns() {
                 {decision.number}
               </span>
               <h3 className="text-sm font-medium text-foreground">
-                {decision.title}
+                {t(`decisions.${decision.key}.title`)}
               </h3>
               <div>
                 <p className="text-sm leading-6 text-muted-foreground">
-                  {decision.body}
+                  {t(`decisions.${decision.key}.body`)}
                 </p>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                  {decision.note}
+                  {t(`decisions.${decision.key}.note`)}
                 </p>
               </div>
             </article>
@@ -271,38 +205,38 @@ export function MotionPatterns() {
 
       <GuideSection
         id="motion-tokens"
-        eyebrow="Motion tokens"
-        title="Use one language everywhere"
-        description="beUI keeps deliberate motion in shared tokens. Choose by purpose so components feel related without moving identically."
+        eyebrow={t("sections.motionTokens.eyebrow")}
+        title={t("sections.motionTokens.title")}
+        description={t("sections.motionTokens.description")}
       >
         <EasingLab />
       </GuideSection>
 
       <GuideSection
         id="timing"
-        eyebrow="Timing"
-        title="Fast enough to feel immediate"
-        description="Duration depends on size, distance, and frequency. These ranges are starting points, not targets to hit mechanically."
+        eyebrow={t("sections.timing.eyebrow")}
+        title={t("sections.timing.title")}
+        description={t("sections.timing.description")}
       >
         <div className="border-y border-border">
           <div className="hidden grid-cols-[1fr_8rem_1.4fr] gap-4 border-b border-border bg-card px-5 py-3 font-mono text-[10px] uppercase tracking-wider text-muted-foreground sm:grid">
-            <span>Interaction</span>
-            <span>Range</span>
-            <span>Desired feel</span>
+            <span>{t("timing.interaction")}</span>
+            <span>{t("timing.range")}</span>
+            <span>{t("timing.desiredFeel")}</span>
           </div>
           {timings.map((timing) => (
             <div
-              key={timing.use}
+              key={timing}
               className="grid gap-1 border-b border-border px-5 py-4 last:border-b-0 sm:grid-cols-[1fr_8rem_1.4fr] sm:items-center sm:gap-4"
             >
               <span className="text-sm font-medium text-foreground">
-                {timing.use}
+                {t(`timing.rows.${timing}.use`)}
               </span>
               <span className="font-mono text-xs text-foreground">
-                {timing.range}
+                {t(`timing.rows.${timing}.range`)}
               </span>
               <span className="text-sm text-muted-foreground">
-                {timing.feel}
+                {t(`timing.rows.${timing}.feel`)}
               </span>
             </div>
           ))}
@@ -310,40 +244,38 @@ export function MotionPatterns() {
         <div className="mt-5 flex gap-3 border-l border-border py-1 pl-4">
           <Zap className="mt-0.5 size-4 shrink-0 text-foreground" aria-hidden="true" />
           <p className="text-sm leading-6 text-muted-foreground">
-            Under 300ms is the default for interface motion. Longer motion belongs
-            to explanatory demos, deliberate gestures, and large spatial changes.
+            {t("timing.note")}
           </p>
         </div>
       </GuideSection>
 
       <GuideSection
         id="recipes"
-        eyebrow="Recipes"
-        title="Patterns you can copy"
-        description="Each recipe connects a purpose to a production token, a reduced-motion state, and a concrete failure mode."
+        eyebrow={t("sections.recipes.eyebrow")}
+        title={t("sections.recipes.title")}
+        description={t("sections.recipes.description")}
       >
         <div className="divide-y divide-border border-y border-border">
           {recipes.map((recipe) => (
-            <RecipeCard key={recipe.title} recipe={recipe} />
+            <RecipeCard key={recipe.key} recipe={recipe} />
           ))}
         </div>
       </GuideSection>
 
       <GuideSection
         id="accessibility"
-        eyebrow="Accessibility"
-        title="Reduced motion is a designed state"
-        description="Do not remove every transition. Keep feedback that helps comprehension and remove movement that can cause discomfort."
+        eyebrow={t("sections.accessibility.eyebrow")}
+        title={t("sections.accessibility.title")}
+        description={t("sections.accessibility.description")}
       >
         <div className="grid border-y border-border lg:grid-cols-[0.9fr_1.1fr]">
           <div className="border-b border-border py-6 lg:border-r lg:border-b-0 lg:pr-8">
             <Accessibility className="size-5 text-foreground" aria-hidden="true" />
             <h3 className="mt-8 text-base font-medium text-foreground">
-              Keep meaning. Remove travel.
+              {t("accessibility.title")}
             </h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Preserve opacity, color, and instant state changes. Drop parallax,
-              large transforms, repeated scale, and spring overshoot.
+              {t("accessibility.body")}
             </p>
           </div>
           <CodeRecipe
@@ -396,6 +328,7 @@ function GuideSection({
 }
 
 function EasingLab() {
+  const t = useTranslations("Pages.motionPatterns.easing");
   const [replay, setReplay] = useState(0);
   const reduce = useReducedMotion();
 
@@ -403,9 +336,9 @@ function EasingLab() {
     <div className="overflow-hidden rounded-2xl border border-border">
       <div className="flex items-start justify-between gap-4 border-b border-border bg-card px-5 py-4">
         <div>
-          <p className="text-sm font-medium text-foreground">Compare the curves</p>
+          <p className="text-sm font-medium text-foreground">{t("title")}</p>
           <p className="mt-1 text-xs leading-5 text-muted-foreground">
-            Same distance and duration. Different jobs.
+            {t("subtitle")}
           </p>
         </div>
         <ReplayButton
@@ -418,7 +351,7 @@ function EasingLab() {
           key={`out-${replay}`}
           label="EASE_OUT"
           value="[0.16, 1, 0.3, 1]"
-          description="Entrances and exits respond immediately, then settle quietly."
+          description={t("easeOut")}
           ease={EASE_OUT}
           reduce={Boolean(reduce)}
         />
@@ -426,7 +359,7 @@ function EasingLab() {
           key={`in-out-${replay}`}
           label="EASE_IN_OUT"
           value="[0.77, 0, 0.175, 1]"
-          description="Objects already on screen accelerate and decelerate naturally."
+          description={t("easeInOut")}
           ease={EASE_IN_OUT}
           reduce={Boolean(reduce)}
         />
@@ -435,12 +368,12 @@ function EasingLab() {
         <TokenNote
           icon={MousePointer2}
           title="SPRING_PRESS"
-          body="Fast, weighted feedback for buttons and other pressable surfaces."
+          body={t("springPress")}
         />
         <TokenNote
           icon={CircleGauge}
           title="SPRING_LAYOUT"
-          body="Shared surfaces and indicators that need continuous spatial movement."
+          body={t("springLayout")}
         />
       </div>
     </div>
@@ -511,6 +444,7 @@ function TokenNote({
 }
 
 function RecipeCard({ recipe }: { recipe: Recipe }) {
+  const t = useTranslations("Pages.motionPatterns.recipes");
   const Icon = recipe.icon;
 
   return (
@@ -522,18 +456,18 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
               <Icon className="size-3.5 text-foreground" aria-hidden="true" />
             </span>
             <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-              {recipe.eyebrow}
+              {t(`${recipe.key}.eyebrow`)}
             </span>
           </div>
           <h3 className="mt-5 text-lg font-medium text-foreground">
-            {recipe.title}
+            {t(`${recipe.key}.title`)}
           </h3>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            {recipe.description}
+            {t(`${recipe.key}.description`)}
           </p>
           <div className="mt-6 grid gap-3 text-xs leading-5">
-            <Rule label="Purpose" value={recipe.purpose} />
-            <Rule label="Avoid" value={recipe.avoid} />
+            <Rule label={t("purpose")} value={t(`${recipe.key}.purpose`)} />
+            <Rule label={t("avoid")} value={t(`${recipe.key}.avoid`)} />
           </div>
         </div>
         <div className="flex min-h-48 items-center justify-center rounded-2xl border border-border bg-card/60 p-6">
@@ -563,6 +497,8 @@ function CodeRecipe({
   code: string;
   alwaysOpen?: boolean;
 }) {
+  const t = useTranslations("Pages.motionPatterns.recipes");
+
   if (alwaysOpen) {
     return (
       <pre className="overflow-x-auto bg-card/60 p-5 font-mono text-xs leading-6 text-foreground sm:p-6">
@@ -574,7 +510,7 @@ function CodeRecipe({
   return (
     <details className="group/code border-t border-border">
       <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 text-xs font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
-        View recipe
+        {t("viewRecipe")}
         <span className="font-mono text-muted-foreground transition-transform group-open/code:rotate-45">
           +
         </span>
@@ -587,6 +523,7 @@ function CodeRecipe({
 }
 
 function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
+  const t = useTranslations("Pages.motionPatterns.demos");
   const reduce = useReducedMotion();
   const hoverCapable = useHoverCapable();
   const [replay, setReplay] = useState(0);
@@ -603,7 +540,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
         transition={SPRING_PRESS}
         className="h-11 rounded-full bg-foreground px-5 text-sm font-medium text-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        Press me
+        {t("pressMe")}
       </motion.button>
     );
   }
@@ -627,7 +564,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
         >
           <Bell className="size-4" aria-hidden="true" />
         </motion.span>
-        Hover bell
+        {t("hoverBell")}
       </button>
     );
   }
@@ -654,8 +591,10 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
           transition={{ duration: 0.22, ease: EASE_OUT }}
           className="mt-3 w-48 rounded-xl border border-border bg-card p-3"
         >
-          <p className="text-sm font-medium text-foreground">New surface</p>
-          <p className="mt-1 text-xs text-muted-foreground">Ready before focus.</p>
+          <p className="text-sm font-medium text-foreground">{t("newSurface")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {t("readyBeforeFocus")}
+          </p>
         </motion.div>
       </div>
     );
@@ -674,7 +613,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
           layout
           type="button"
           aria-expanded={expanded}
-          aria-label={expanded ? "Collapse panel" : "Expand panel"}
+          aria-label={expanded ? t("collapsePanel") : t("expandPanel")}
           onClick={() => setExpanded((current) => !current)}
           whileTap={reduce ? undefined : { scale: 0.97 }}
           transition={transition}
@@ -700,7 +639,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
                 transition={transition}
                 className="relative inline-flex w-max items-center whitespace-nowrap pr-3"
               >
-                Open panel
+                {t("openPanel")}
               </motion.span>
             ) : null}
           </AnimatePresence>
@@ -711,7 +650,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
 
   return (
     <div className="w-full max-w-64 rounded-2xl bg-card p-2">
-      <div role="tablist" aria-label="Example views" className="grid grid-cols-2 gap-1">
+      <div role="tablist" aria-label={t("exampleViews")} className="grid grid-cols-2 gap-1">
         {(["Preview", "Code"] as const).map((item) => {
           const selected = tab === item;
           return (
@@ -730,7 +669,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              {item}
+              {item === "Preview" ? t("preview") : t("code")}
             </button>
           );
         })}
@@ -754,7 +693,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
           transition={{ duration: 0.18, ease: EASE_OUT }}
           className="mt-2 rounded-lg bg-background p-4 text-sm text-foreground"
         >
-          {tab === "Preview" ? "Live component view" : "Copy-ready source"}
+          {tab === "Preview" ? t("livePreview") : t("copyReadySource")}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -768,6 +707,8 @@ function ReplayButton({
   onClick: () => void;
   reduce: boolean;
 }) {
+  const t = useTranslations("Pages.motionPatterns.demos");
+
   return (
     <motion.button
       type="button"
@@ -777,7 +718,7 @@ function ReplayButton({
       className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-xs font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <RefreshCw className="size-3" aria-hidden="true" />
-      Replay
+      {t("replay")}
     </motion.button>
   );
 }

@@ -1,1 +1,696 @@
-{}
+{
+  "theme": {
+    "meta": {
+      "title": "Theme setup",
+      "description": "One-time theme setup for beUI components: install the shadcn token layer, or paste the beUI theme CSS into your globals.css.",
+      "ogDescription": "One-time theme setup for beUI components: shadcn tokens or the beUI theme CSS."
+    },
+    "eyebrow": "Setup",
+    "title": "Theme setup",
+    "intro": "beUI components style themselves with shadcn semantic tokens (<code>bg-primary</code>, <code>text-muted-foreground</code>, border, ring). Set those tokens up once and every component works. Two ways:",
+    "option1": {
+      "title": "Option 1 — shadcn init (recommended)",
+      "body": "If your project uses shadcn, you already have these tokens. Otherwise run init once; it writes the token layer into your CSS."
+    },
+    "option2": {
+      "title": "Option 2 — paste the theme CSS",
+      "body": "Not using shadcn? Paste this into your <code>globals.css</code> directly below <code>@import \"tailwindcss\";</code>. It defines the tokens, motion animations and surface utilities the components use. Requires Tailwind CSS v4.",
+      "alsoAvailable": "Also available at <link>/theme.css</link>."
+    }
+  },
+  "aiAgents": {
+    "meta": {
+      "title": "AI Agents",
+      "description": "Install the beUI agent skill, connect the MCP server, or use the agent-friendly endpoints (llms.txt, JSON registry, raw source) to consume components programmatically."
+    },
+    "header": {
+      "eyebrow": "Agent guide",
+      "title": "For AI agents",
+      "intro": "beUI exposes a static, agent-friendly surface. Install the beUI skill, connect the MCP server below, or hit the raw endpoints directly. Coding agents (Claude, Codex, Cursor, Amp) can list components, fetch source with all deps, and drop files into the user's project."
+    },
+    "agentSkill": {
+      "title": "Agent skill",
+      "body": "The skill teaches coding agents to fetch the live registry first, pick the closest <code>items[].name</code> install slug, inspect it with shadcn, then install and compose from the generated source. Use it when you want agents to choose existing beUI components instead of inventing custom motion widgets."
+    },
+    "mcpServer": {
+      "title": "MCP server",
+      "body": "The fastest path: connect the beUI MCP server and your agent can list, search and install components directly. Hosted at <code>{url}</code>.",
+      "manual": "Any other client: add it manually to your MCP config.",
+      "toolsWithNative": "Tools: <code>list_components</code>, <code>search_components</code>, <code>get_component</code>, <code>get_install_command</code>. For React Native apps, <code>list_native_components</code> and <code>get_native_component</code> return beUI Native components with every file to copy."
+    },
+    "endpoints": {
+      "title": "Endpoints",
+      "open": "Open",
+      "llmsTxt": {
+        "label": "llms.txt",
+        "desc": "Markdown index in llmstxt.org format."
+      },
+      "registryIndex": {
+        "label": "Registry index",
+        "desc": "JSON catalogue of every component."
+      },
+      "componentDetail": {
+        "label": "Component detail",
+        "desc": "JSON with files, deps, source."
+      },
+      "shadcnCatalog": {
+        "label": "shadcn catalog",
+        "desc": "Directory-compatible registry catalog."
+      },
+      "shadcnItem": {
+        "label": "shadcn item",
+        "desc": "Install item with inline file content and shadcn semantic color classes."
+      },
+      "rawSource": {
+        "label": "Raw source",
+        "desc": "Plain text .tsx ready to drop in."
+      }
+    },
+    "agentFlow": {
+      "title": "Agent flow",
+      "body": "Four calls, then install. Components are self-contained and own their files."
+    },
+    "shadcnFlow": {
+      "title": "shadcn flow",
+      "body": "The shadcn item installs source files and package dependencies. Components use shadcn semantic color utilities directly, so they inherit the target app's theme without beUI-specific color variables."
+    },
+    "entryShape": {
+      "title": "Entry shape",
+      "body": "Internal helpers (e.g. <code>@/lib/utils</code>) ship inline as <code>type: util</code> so the agent does not have to chase imports."
+    },
+    "generativeUi": {
+      "title": "Generative UI",
+      "body": "Want the model to compose these components into a live interface? Follow the <link>OpenUI integration guide</link> to register a custom component library, generate its system prompt, and render interactive OpenUI Lang as it streams."
+    }
+  },
+  "openui": {
+    "meta": {
+      "title": "OpenUI integration guide",
+      "description": "Build an OpenUI React integration with beUI. Register animated components, generate the system prompt, stream OpenUI Lang, and render interactive UI.",
+      "imageAlt": "Use beUI with OpenUI"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "page": "OpenUI integration"
+    },
+    "about": {
+      "integration": "OpenUI React integration",
+      "library": "Custom OpenUI component library",
+      "generativeUi": "Generative UI"
+    },
+    "header": {
+      "eyebrow": "Integration guide",
+      "title": "Use beUI with OpenUI",
+      "intro": "<link>OpenUI</link> is a generative UI framework: instead of returning markdown, the model emits an abstract UI tree (OpenUI Lang) and a React runtime maps every node to a component <em>you</em> register. This OpenUI React integration turns beUI into a custom OpenUI component library, so each generated response uses real, animated components—and only the components you allow."
+    },
+    "install": {
+      "title": "Install",
+      "body": "You need OpenUI's React runtime and the beUI components you want to expose. Pull beUI source with the shadcn registry (see the <link>AI Agents</link> guide for other install paths).",
+      "scaffold": "Scaffolding from scratch? Run <code>{command}</code> for a working streaming app, then swap its default library for the beUI one below."
+    },
+    "registerComponents": {
+      "title": "Register components",
+      "body": "<code>defineComponent</code> maps one OpenUI Lang node to a beUI component. The Zod <code>props</code> schema validates the model's output as it streams, the <code>description</code> is injected into the system prompt so the model learns each component's intent, and <code>useTriggerAction</code> keeps rendered controls interactive. Describe a container's children as a union of the registered <code>.ref</code> schemas so nesting is both validated and advertised to the model."
+    },
+    "assembleLibrary": {
+      "title": "Assemble the library",
+      "body": "<code>createLibrary</code> collects the definitions, names the <code>root</code> node, and organises the prompt into <code>componentGroups</code> with notes that steer how the model reaches for each one."
+    },
+    "generatePrompt": {
+      "title": "Generate the prompt",
+      "body": "The client renders OpenUI Lang, but the model has to produce it. In the CLI, call <code>{command}</code> to build the library spec. The backend combines its component signatures, descriptions, and nesting constraints with the OpenUI Lang grammar, then streams the model's reply back to the browser.",
+      "note": "Run that command when the library changes. It serializes the library to JSON at build time, and the route imports that generated file through the same <code>@/lib/generated</code> path, so the server bundle never imports your client components."
+    },
+    "renderStream": {
+      "title": "Render the stream",
+      "body": "Pass the library to <code>{renderer}</code> on the client. It parses the OpenUI Lang your server streams and paints beUI components progressively as tokens arrive. Wire <code>onAction</code> to send a pressed button's message back to the model and continue the loop."
+    },
+    "whyBeui": {
+      "title": "Why beUI fits",
+      "body": "beUI components own their files and ship through the registry, so there's no runtime to bolt on — the library above <em>is</em> the integration. They use semantic controls and shadcn tokens, so model-generated UIs inherit the host app's theme without extra wiring."
+    },
+    "resources": {
+      "title": "Resources",
+      "open": "Open",
+      "openui": {
+        "label": "OpenUI",
+        "desc": "The generative UI framework and its OpenUI Lang."
+      },
+      "definingComponents": {
+        "label": "Defining components",
+        "desc": "Full defineComponent / createLibrary reference."
+      },
+      "shadcnChat": {
+        "label": "shadcn chat example",
+        "desc": "The registry-library pattern this guide follows."
+      },
+      "more": "Other generative UI frameworks that consume shadcn registries can pull beUI the same way — more integration guides to come."
+    }
+  },
+  "motionPatterns": {
+    "meta": {
+      "title": "Motion Guides",
+      "description": "Practical motion guidance for React interfaces: when to animate, which beUI token to use, timing ranges, reduced motion, and copy-ready patterns.",
+      "ogDescription": "Practical guidance for purposeful animation, timing, easing, springs, and accessible motion in React interfaces."
+    },
+    "header": {
+      "eyebrow": "Motion guide",
+      "title": "Motion that explains, not distracts",
+      "intro": "A practical guide to deciding when something should move, choosing the right token, and shipping motion that stays fast, coherent, and accessible."
+    },
+    "sections": {
+      "decisionFramework": {
+        "eyebrow": "Decision framework",
+        "title": "Four questions before motion",
+        "description": "The best animation decision is often made before touching a duration or spring value."
+      },
+      "motionTokens": {
+        "eyebrow": "Motion tokens",
+        "title": "Use one language everywhere",
+        "description": "beUI keeps deliberate motion in shared tokens. Choose by purpose so components feel related without moving identically."
+      },
+      "timing": {
+        "eyebrow": "Timing",
+        "title": "Fast enough to feel immediate",
+        "description": "Duration depends on size, distance, and frequency. These ranges are starting points, not targets to hit mechanically."
+      },
+      "recipes": {
+        "eyebrow": "Recipes",
+        "title": "Patterns you can copy",
+        "description": "Each recipe connects a purpose to a production token, a reduced-motion state, and a concrete failure mode."
+      },
+      "accessibility": {
+        "eyebrow": "Accessibility",
+        "title": "Reduced motion is a designed state",
+        "description": "Do not remove every transition. Keep feedback that helps comprehension and remove movement that can cause discomfort."
+      }
+    },
+    "decisions": {
+      "frequency": {
+        "title": "Check frequency",
+        "body": "Repeated actions should feel nearly instant. Save expressive motion for moments users see occasionally.",
+        "note": "100× a day: no choreography. Rare moments: more delight is allowed."
+      },
+      "purpose": {
+        "title": "Name the purpose",
+        "body": "Motion should explain space, confirm input, show state, or soften a change. Decoration alone is not enough.",
+        "note": "If you cannot explain why it moves, remove the movement."
+      },
+      "physics": {
+        "title": "Choose the physics",
+        "body": "Use ease-out for entrances, ease-in-out for movement, linear for progress, and springs for gestures.",
+        "note": "The curve should match what the object is doing, not personal taste."
+      },
+      "fallback": {
+        "title": "Design the fallback",
+        "body": "Reduced motion keeps useful opacity and color feedback while removing travel, scale, and parallax.",
+        "note": "Accessibility is a motion state, not an afterthought."
+      }
+    },
+    "timing": {
+      "interaction": "Interaction",
+      "range": "Range",
+      "desiredFeel": "Desired feel",
+      "note": "Under 300ms is the default for interface motion. Longer motion belongs to explanatory demos, deliberate gestures, and large spatial changes.",
+      "rows": {
+        "press": {
+          "use": "Press feedback",
+          "range": "100–160ms",
+          "feel": "Immediate and physical"
+        },
+        "tooltip": {
+          "use": "Tooltip / popover",
+          "range": "125–200ms",
+          "feel": "Quick, origin-aware"
+        },
+        "dropdown": {
+          "use": "Dropdown / select",
+          "range": "150–250ms",
+          "feel": "Responsive, no waiting"
+        },
+        "modal": {
+          "use": "Modal / drawer",
+          "range": "200–500ms",
+          "feel": "Enough time to explain space"
+        },
+        "marketing": {
+          "use": "Marketing demo",
+          "range": "Flexible",
+          "feel": "Clarity matters more than speed"
+        }
+      }
+    },
+    "easing": {
+      "title": "Compare the curves",
+      "subtitle": "Same distance and duration. Different jobs.",
+      "easeOut": "Entrances and exits respond immediately, then settle quietly.",
+      "easeInOut": "Objects already on screen accelerate and decelerate naturally.",
+      "springPress": "Fast, weighted feedback for buttons and other pressable surfaces.",
+      "springLayout": "Shared surfaces and indicators that need continuous spatial movement."
+    },
+    "recipes": {
+      "purpose": "Purpose",
+      "avoid": "Avoid",
+      "viewRecipe": "View recipe",
+      "press": {
+        "title": "Press feedback",
+        "eyebrow": "Feedback",
+        "description": "A press should acknowledge input before the action finishes. Keep the scale small and the response immediate.",
+        "purpose": "Confirms that the interface heard the user.",
+        "avoid": "Large scale changes, slow rebounds, or a spring on every child."
+      },
+      "icon": {
+        "title": "Semantic icon motion",
+        "eyebrow": "Meaning",
+        "description": "Let the icon imitate its real action. A bell swings from its hinge; a download arrow drops toward its tray.",
+        "purpose": "Reinforces what the action does without adding another label.",
+        "avoid": "The same generic bounce on every icon, or motion on touch hover."
+      },
+      "reveal": {
+        "title": "Content reveal",
+        "eyebrow": "Entrance",
+        "description": "Reveal one meaningful surface with a short lift and restrained blur. The motion should finish before it becomes the focus.",
+        "purpose": "Prevents new content from appearing as a jarring visual cut.",
+        "avoid": "Half-second UI entrances or a long stagger across every small child."
+      },
+      "layout": {
+        "title": "Layout continuity",
+        "eyebrow": "Movement",
+        "description": "Keep the same surface visible while its footprint changes. Move the shape first, then introduce its label.",
+        "purpose": "Preserves object identity while a compact control expands.",
+        "avoid": "Direct width tweens or text appearing before the surface makes room."
+      },
+      "swap": {
+        "title": "Content swap",
+        "eyebrow": "State change",
+        "description": "For small view changes, let the old content leave faster than the new content arrives. Keep travel to a few pixels.",
+        "purpose": "Clarifies that content changed while the surrounding context stayed put.",
+        "avoid": "Large page-like transitions for tabs, filters, or frequently changed views."
+      }
+    },
+    "accessibility": {
+      "title": "Keep meaning. Remove travel.",
+      "body": "Preserve opacity, color, and instant state changes. Drop parallax, large transforms, repeated scale, and spring overshoot."
+    },
+    "demos": {
+      "replay": "Replay",
+      "pressMe": "Press me",
+      "hoverBell": "Hover bell",
+      "newSurface": "New surface",
+      "readyBeforeFocus": "Ready before focus.",
+      "expandPanel": "Expand panel",
+      "collapsePanel": "Collapse panel",
+      "openPanel": "Open panel",
+      "exampleViews": "Example views",
+      "preview": "Preview",
+      "code": "Code",
+      "livePreview": "Live component view",
+      "copyReadySource": "Copy-ready source"
+    }
+  },
+  "sponsors": {
+    "meta": {
+      "title": "Sponsors",
+      "description": "Support beUI's development with monthly sponsor stages through Dodo Payments, GitHub Sponsors, or crypto."
+    },
+    "checkout": {
+      "title": "Sponsorship checkout complete",
+      "body": "Thanks for sponsoring beUI. I’ll follow up for logo assets and placement details."
+    },
+    "hero": {
+      "eyebrow": "Sponsors",
+      "title": "Support beUI",
+      "body": "beUI is free and open source. Sponsor a monthly stage to reach developers actively browsing motion components, blocks, and registry installs.",
+      "githubCta": "Sponsor on GitHub"
+    },
+    "planCard": {
+      "highestImpact": "Highest impact",
+      "perMonth": "/mo",
+      "sponsorAs": "Sponsor as {name}",
+      "requestLink": "Request payment link",
+      "full": "Full"
+    },
+    "plans": {
+      "diamond": {
+        "name": "Diamond",
+        "description": "Maximum visibility for teams that want their logo in the highest-signal sponsor slot.",
+        "benefits": {
+          "homePage": "Logo on the home page, right below the hero",
+          "sponsorsPage": "Largest logo placement on the sponsors page",
+          "docsSidebar": "Largest logo placement in the docs sidebar",
+          "readme": "Largest logo placement in the README",
+          "shoutout": "Shoutout on X after sponsorship",
+          "priorityFeedback": "Priority feedback channel for requests"
+        }
+      },
+      "platinum": {
+        "name": "Platinum",
+        "description": "Prominent placement for product teams supporting polished open-source UI.",
+        "benefits": {
+          "sponsorsPage": "Larger logo placement on the sponsors page",
+          "docsSidebar": "Large logo placement in the docs sidebar",
+          "readme": "Larger logo placement in the README",
+          "shoutout": "Shoutout on X after sponsorship"
+        }
+      },
+      "silver": {
+        "name": "Silver",
+        "description": "A simple way to support ongoing component work and be listed publicly.",
+        "benefits": {
+          "sponsorsPage": "Logo on the sponsors page",
+          "docsSidebar": "Logo placement in the docs sidebar",
+          "readme": "Logo in the README",
+          "publicListing": "Public sponsor listing"
+        }
+      }
+    },
+    "crypto": "Crypto",
+    "sponsorTaglines": {
+      "tracwell": "Turn visitor insights into growth",
+      "illos": "Animated illustrations for product sites"
+    },
+    "slotsOpen": "{open} of {slots} open",
+    "allSlotsTaken": "All slots taken",
+    "plansLabel": "Sponsor plans",
+    "audience": {
+      "title": "Audience",
+      "updated": "Analytics by Tracwell, updated {date}",
+      "lastDays": "Last {days} days",
+      "visitors": "Visitors",
+      "pageViews": "Page views",
+      "moreThan": "More than {value}"
+    },
+    "openSlot": {
+      "title": "Your logo here",
+      "price": "{tier} · {price}/mo",
+      "viewPlan": "View plan"
+    }
+  },
+  "playground": {
+    "meta": {
+      "title": "Playground",
+      "description": "Tweak spring, tween and stagger properties, watch them play, and copy the motion code. Built on beUI's motion tokens."
+    },
+    "header": {
+      "title": "Playground",
+      "body": "Learn motion by playing. Tweak a property, watch it run, read what the code is doing line by line, then copy it."
+    },
+    "howItWorks": "How it works",
+    "try": "Try",
+    "soon": "Soon",
+    "preview": "Preview",
+    "replay": "Replay",
+    "controls": {
+      "checkpoint": "Checkpoint {index}",
+      "checkpointStart": "Checkpoint {index} (start)",
+      "checkpointEnd": "Checkpoint {index} (end)",
+      "removeCheckpoint": "Remove checkpoint {index}",
+      "addCheckpoint": "Add checkpoint",
+      "curveEditor": "Easing curve editor"
+    },
+    "travel": {
+      "start": "start",
+      "target": "target"
+    },
+    "spring": {
+      "label": "Spring",
+      "blurb": "Physics-based motion. Stiffness pulls toward the target, damping resists, mass adds weight. Lower damping overshoots.",
+      "controls": {
+        "stiffness": {
+          "label": "Stiffness",
+          "hint": "Pull toward the target. Higher = faster, snappier."
+        },
+        "damping": {
+          "label": "Damping",
+          "hint": "Resistance / friction. Lower = more bounce and overshoot."
+        },
+        "mass": {
+          "label": "Mass",
+          "hint": "Weight of the object. Heavier = slower, more sluggish."
+        }
+      },
+      "presets": {
+        "gentle": "Gentle",
+        "wobbly": "Wobbly",
+        "stiff": "Stiff",
+        "slow": "Slow"
+      },
+      "explain": {
+        "type": "No duration here. Instead of taking a fixed time, the box is pulled to the target like it's on a real spring. The three numbers below decide how that feels.",
+        "stiffness": "How hard the spring pulls. {value} is {level, select, soft {soft, so it moves slowly} medium {medium} other {strong, so it snaps fast}}. Higher = faster, more urgent.",
+        "damping": "Friction that slows the spring down. {level, select, low {{value} is low, so the box overshoots the target and bounces before settling.} medium {{value} gives a little overshoot, then settles.} other {{value} is high, so it eases in with no bounce.}}",
+        "mass": "The box's weight. {level, select, light {{value} is light, so it reacts quickly.} heavy {{value} is heavy, so it feels sluggish and slow to start.} other {{value} is medium weight.}} Heavier = slower, more inertia."
+      }
+    },
+    "tween": {
+      "label": "Tween / Ease",
+      "blurb": "Time-based motion. Duration sets how long; the cubic-bezier curve sets the pacing. Drag the handles to shape it.",
+      "controls": {
+        "duration": {
+          "label": "Duration",
+          "hint": "How long the animation takes, start to finish."
+        },
+        "curve": {
+          "label": "Easing curve",
+          "hint": "Pacing over time. Drag the handles — steep = fast, flat = slow."
+        }
+      },
+      "curves": {
+        "linear": "Constant speed the whole way. Mechanical, no acceleration.",
+        "easeIn": "Starts slow, speeds up into the end. Good for things leaving.",
+        "easeOut": "Starts fast, slows into the end. Good for things arriving.",
+        "easeInOut": "Slow start and finish, fast through the middle. Smooth and natural.",
+        "customTitle": "custom",
+        "custom": "Your own pacing. Steeper parts of the curve move faster."
+      },
+      "explain": {
+        "duration": "A fixed time, in seconds. The whole move always takes {value}s, no matter the distance. (Springs don't have this — tweens do.)",
+        "ease": "The easing curve, written as a cubic-bezier. The four numbers are two control handles (x1, y1, x2, y2) that bend how speed changes over time. You rarely type these by hand — drag the curve handles instead.",
+        "curve": "This curve reads as \"{title}\": {text} The dots in the preview are the box's position at equal time slices, so spacing shows speed."
+      }
+    },
+    "stagger": {
+      "label": "Stagger",
+      "blurb": "Children animate in sequence. Stagger sets the gap between each; delay holds the whole group before it starts.",
+      "controls": {
+        "count": {
+          "label": "Children",
+          "hint": "How many items animate in."
+        },
+        "stagger": {
+          "label": "Stagger",
+          "hint": "Gap between each child starting. Higher = more of a wave."
+        },
+        "delayChildren": {
+          "label": "Delay",
+          "hint": "Pause before the whole group begins."
+        },
+        "direction": {
+          "label": "Direction",
+          "hint": "Order children fire in.",
+          "forward": "Forward",
+          "reverse": "Reverse"
+        }
+      },
+      "presets": {
+        "tight": "Tight",
+        "relaxed": "Relaxed",
+        "dramatic": "Dramatic"
+      },
+      "explain": {
+        "variants": "Two named states. \"hidden\" is the start (invisible, small, nudged down), \"show\" is the end. Every child animates from hidden to show — you describe states, not steps.",
+        "staggerChildren": "The gap between each child starting, in seconds. They don't all fire at once — child 2 waits {value}s after child 1, and so on, making the wave.",
+        "delayChildren": "How long the whole group waits before the first child starts. {immediate, select, yes {0 = starts immediately.} other {Here, {value}s of dead time up front.}}",
+        "summaryCode": "{count} items, {direction, select, reverse {reverse} other {forward}}",
+        "summary": "With {count} children at {stagger}s apart{delayed, select, yes { after a {delay}s delay} other {}}, the last one begins {last}s in. {direction, select, reverse {Reverse means the last child fires first.} other {Forward fires them first-to-last.}}"
+      }
+    },
+    "keyframes": {
+      "label": "Keyframes",
+      "blurb": "A property steps through a list of values in order, evenly spaced across the duration. Edit the list to change where it goes.",
+      "controls": {
+        "property": {
+          "label": "Property",
+          "hint": "Which property the keyframes drive. Switching it resets the values."
+        },
+        "frames": {
+          "label": "Keyframe values",
+          "hint": "Each slider is a checkpoint the box passes through, in order. Drag one, or add/remove checkpoints."
+        },
+        "duration": {
+          "label": "Duration",
+          "hint": "Time for one pass through all the values."
+        },
+        "repeat": {
+          "label": "Repeat",
+          "hint": "Once, loop from the start, or mirror back and forth.",
+          "once": "Once",
+          "loop": "Loop",
+          "mirror": "Mirror"
+        }
+      },
+      "presets": {
+        "pulse": "Pulse",
+        "spin": "Spin",
+        "blink": "Blink"
+      },
+      "describe": {
+        "scale": "{percent}% size{trend, select, bigger {, bigger} smaller {, smaller} other {, normal}}",
+        "opacity": "{percent}% visible{state, select, invisible {, invisible} solid {, solid} other {}}",
+        "rotate": "rotated {value}°{upright, select, yes {, upright} other {}}",
+        "x": "{value}px {side, select, right {right of} left {left of} other {at}} start"
+      },
+      "read": {
+        "scale": "{value} ({percent}% size{trend, select, bigger {, bigger} smaller {, smaller} other {, normal}})",
+        "opacity": "{value} ({percent}% visible)"
+      },
+      "explain": {
+        "sequence": "This array is a list of values the box passes through, in order: {sequence}. It's not \"from A to B\" — it hits every value as a checkpoint.",
+        "countCode": "{count} keyframes over {duration}s",
+        "spacing": "The values are spaced evenly across the duration. {count} values over {duration}s means each leg takes about {leg}s. Add or remove values to change the path.",
+        "loop": "Loop: when it reaches the last value it jumps back to the first and runs again — so it can snap at the seam.",
+        "mirror": "Mirror: it plays forward, then backward, then forward — smooth, no snap, like a pulse.",
+        "once": "Once: it runs a single time and stops on the last value."
+      }
+    },
+    "gestures": {
+      "label": "Gestures",
+      "blurb": "Motion responds to pointer input. whileHover and whileTap animate to a state during the gesture; drag makes an element throwable.",
+      "box": "drag",
+      "controls": {
+        "hover": {
+          "label": "Hover scale",
+          "hint": "Size while the pointer is over it."
+        },
+        "tap": {
+          "label": "Tap scale",
+          "hint": "Size while pressed. Under 1 = a press-in."
+        },
+        "drag": {
+          "label": "Drag",
+          "hint": "Constrain dragging to an axis, free, or off.",
+          "off": "Off",
+          "x": "X only",
+          "y": "Y only",
+          "free": "Free"
+        }
+      },
+      "presets": {
+        "subtle": "Subtle",
+        "pop": "Pop"
+      },
+      "explain": {
+        "hover": "While the pointer is over the box, animate to {value}× size ({percent}%). It springs back to normal when the pointer leaves — no state or handlers needed.",
+        "tap": "While it's being pressed, go to {value}× size. {pressIn, select, yes {Under 1 = a press-in, the tactile feel of a real button.} other {At 1 it stays put on press.}}",
+        "dragOff": "Dragging is off.",
+        "drag": "Makes the box draggable{mode, select, free { in any direction} other { on the {mode}-axis only}}. dragConstraints keeps it inside its parent, and it springs back if thrown past the edge."
+      }
+    },
+    "layout": {
+      "label": "Layout",
+      "blurb": "A shared layoutId morphs one element into another when which one is mounted changes, so an indicator glides between positions instead of jumping.",
+      "tab": "Tab {index}",
+      "clickTab": "click a tab",
+      "controls": {
+        "feel": {
+          "label": "Feel",
+          "hint": "The transition the pill travels with.",
+          "snappy": "Snappy",
+          "smooth": "Smooth",
+          "slow": "Slow"
+        }
+      },
+      "explain": {
+        "layoutId": "The key idea. Only one pill is rendered — under the active tab. When you click another tab, React unmounts it here and mounts it there, but the shared layoutId tells Motion they're the same element, so it animates between the two positions instead of popping.",
+        "conditional": "The pill only exists inside the active tab. You don't compute any positions or offsets yourself — Motion measures the old and new spots and tweens the gap automatically.",
+        "transitionCode": "transition ({feel})",
+        "transition": "Controls how the pill travels. {feel, select, Slow {A timed tween — same duration every move.} Snappy {A spring — stiff, so it snaps over quickly.} other {A spring — softer, so it glides.}}"
+      }
+    },
+    "scroll": {
+      "label": "Scroll",
+      "blurb": "Scroll-linked motion ties a value to scroll position. useScroll reports 0→1 progress; useTransform maps that range onto a transform.",
+      "scrollDown": "scroll down ↓",
+      "controls": {
+        "effect": {
+          "label": "Effect",
+          "hint": "What the box does as the panel scrolls.",
+          "fade": "Fade",
+          "scale": "Scale",
+          "slide": "Slide",
+          "rotate": "Rotate"
+        }
+      },
+      "range": {
+        "fadeStart": "15% visible",
+        "fadeEnd": "fully visible",
+        "scaleStart": "60% size",
+        "scaleEnd": "full size",
+        "slideStart": "70px left",
+        "slideEnd": "in place",
+        "rotateStart": "0°",
+        "rotateEnd": "180°"
+      },
+      "explain": {
+        "useScroll": "Watches how far the panel is scrolled and gives back scrollYProgress: a number from 0 (scrolled to top) to 1 (scrolled to bottom). It updates on every scroll frame.",
+        "useTransform": "Remaps that 0→1 progress onto a real value range. As progress goes 0→1, {prop} goes {range} — so at the top it's {start}, at the bottom {end}.",
+        "style": "The mapped value is a live motion value wired straight into the box's style, so it tracks your scroll exactly — scroll up and it runs in reverse."
+      }
+    },
+    "motionTypes": "Motion types"
+  },
+  "nativeSetup": {
+    "meta": {
+      "title": "Set up beUI Native in your React Native app",
+      "description": "One-time setup for beUI Native: install Reanimated, Gesture Handler and Uniwind, configure Metro, add the theme tokens, then copy in any component.",
+      "imageAlt": "Set up beUI Native"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "page": "React Native setup"
+    },
+    "header": {
+      "eyebrow": "React Native",
+      "title": "Set up beUI Native",
+      "intro": "beUI Native components are plain source you copy into your app, like the web components. Do the setup below once per app. After that, adding a component is copying its files from its page. It works in Expo and in bare React Native."
+    },
+    "requirements": {
+      "title": "Requirements",
+      "body": "The components are built and tested against these versions."
+    },
+    "install": {
+      "title": "1. Install the libraries",
+      "body": "In an Expo app, <code>expo install</code> picks the versions that match your SDK. Uniwind and Tailwind come from npm.",
+      "babelNote": "Expo's Babel preset already includes the Worklets plugin that Reanimated 4 needs. In a bare React Native app, add it to <code>babel.config.js</code> yourself:"
+    },
+    "uniwind": {
+      "title": "2. Set up Uniwind",
+      "body": "Components are styled with Tailwind class names through <link>Uniwind</link>. Create <code>global.css</code> in the project root. It loads Tailwind, Uniwind and the beUI theme you add in the next step.",
+      "metro": "Then point Metro at it. <code>withUniwindConfig</code> must be the outermost wrapper if you use other Metro wrappers, and <code>cssEntryFile</code> must be a relative path.",
+      "bareNote": "In a bare React Native app, the default config comes from <code>@react-native/metro-config</code> instead:",
+      "typesNote": "Uniwind writes the class name types to <code>dtsFile</code> when Metro starts, so start it once before checking types. If TypeScript then can't find the <code>global.css</code> import, declare CSS files:"
+    },
+    "theme": {
+      "title": "3. Add the theme tokens",
+      "body": "Components use semantic colors like <code>bg-primary</code> and <code>text-muted</code>, defined for light and dark mode, so they follow the system appearance. Save this file as <code>{path}</code>, the path <code>global.css</code> imports, and change the values to match your brand."
+    },
+    "root": {
+      "title": "4. Wrap your app",
+      "body": "Import <code>global.css</code> from your root component, not from the file that registers the app, or every style change reloads the whole app. Wrap the app in <code>GestureHandlerRootView</code> so swipeable and draggable components can receive gestures. With Expo Router, both go in the root layout:",
+      "bareNote": "In a bare app, do the same in <code>App.tsx</code>. For forms, also wrap the app in <code>KeyboardProvider</code> from <link>react-native-keyboard-controller</link> to keep focused fields above the keyboard."
+    },
+    "addComponent": {
+      "title": "5. Add a component",
+      "cli": "Run the beUI Native CLI from your app's root. It copies the component and the shared files it needs into <code>src/</code> and installs any libraries you don't have yet.",
+      "manual": "To copy files by hand instead, open the component from the <link>React Native components</link> and use its Manual steps. Either way, keep the folder layout, since components import shared files by relative path. Tabs ends up like this:",
+      "treeLabel": "your app",
+      "usage": "Then use it like any other component:",
+      "sourceNote": "Tailwind finds class names in files under the folder that holds <code>global.css</code>. If it lives somewhere else, like <code>app/</code>, add an <code>@source</code> for the components:"
+    },
+    "tryFirst": {
+      "title": "Try before you copy",
+      "body": "Every <componentsLink>React Native component</componentsLink> page has a recording in light and dark, so you can see the motion first. Coding agents can fetch any component with its install commands and files from <code>{url}</code>, or through the beUI MCP server. See the <agentLink>Agent Guide</agentLink>.",
+      "note": "Every component follows the system Reduce Motion setting and takes a <code>disableAnimation</code> prop. The source is on <link>GitHub</link>."
+    }
+  }
+}

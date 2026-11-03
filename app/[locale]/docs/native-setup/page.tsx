@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
+import { localeAlternates } from "@/i18n/metadata";
+import { Link } from "@/i18n/navigation";
+import { LANGUAGES, localizedPath, routing } from "@/i18n/routing";
 import { native } from "@/lib/native";
 import {
   BABEL_SNIPPET,
@@ -24,33 +29,41 @@ import {
 import { breadcrumbJsonLd, docsArticleJsonLd } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
-const PAGE_TITLE = "Set up beUI Native in your React Native app";
-const PAGE_DESCRIPTION =
-  "One-time setup for beUI Native: install Reanimated, Gesture Handler and Uniwind, configure Metro, add the theme tokens, then copy in any component.";
 const PAGE_IMAGE = "/api/og?page=native-setup";
 
-export const metadata: Metadata = {
-  title: PAGE_TITLE,
-  description: PAGE_DESCRIPTION,
-  alternates: {
-    canonical: PAGE_PATH,
-    types: { "text/markdown": `${PAGE_PATH}.md` },
-  },
-  openGraph: {
-    title: `${PAGE_TITLE} · beUI`,
-    description: PAGE_DESCRIPTION,
-    url: PAGE_PATH,
-    type: "article",
-    siteName: "beUI",
-    images: [{ url: PAGE_IMAGE, width: 1200, height: 630, alt: "Set up beUI Native" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${PAGE_TITLE} · beUI`,
-    description: PAGE_DESCRIPTION,
-    images: [{ url: PAGE_IMAGE, alt: "Set up beUI Native" }],
-  },
-};
+type PageProps = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+  const t = await getTranslations({ locale, namespace: "Pages.nativeSetup.meta" });
+  const alternates = localeAlternates(PAGE_PATH, locale);
+  const title = t("title");
+  const description = t("description");
+  return {
+    title,
+    description,
+    alternates: {
+      ...alternates,
+      types: { "text/markdown": `${PAGE_PATH}.md` },
+    },
+    openGraph: {
+      title: `${title} · beUI`,
+      description,
+      url: alternates.canonical,
+      locale: LANGUAGES[locale].og,
+      type: "article",
+      siteName: "beUI",
+      images: [{ url: PAGE_IMAGE, width: 1200, height: 630, alt: t("imageAlt") }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} · beUI`,
+      description,
+      images: [{ url: PAGE_IMAGE, alt: t("imageAlt") }],
+    },
+  };
+}
 
 const link =
   "text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground";
@@ -80,33 +93,60 @@ function Note({ children }: { children: ReactNode }) {
   return <p className="mt-4 max-w-2xl text-sm text-muted-foreground">{children}</p>;
 }
 
-export default function NativeSetupPage() {
+const code = (chunks: ReactNode) => <Code>{chunks}</Code>;
+
+function external(href: string) {
+  return (chunks: ReactNode) => (
+    <a href={href} target="_blank" rel="noreferrer noopener" className={link}>
+      {chunks}
+    </a>
+  );
+}
+
+function internal(href: string) {
+  return (chunks: ReactNode) => (
+    <Link href={href} className={link}>
+      {chunks}
+    </Link>
+  );
+}
+
+export default async function NativeSetupPage({ params }: PageProps) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
+  const t = await getTranslations("Pages.nativeSetup");
+  const localPath = localizedPath(PAGE_PATH, locale);
+
   return (
     <GuideShell>
       <JsonLd
         data={[
           breadcrumbJsonLd([
-            { name: "Home", path: "/" },
-            { name: "React Native setup", path: PAGE_PATH },
+            { name: t("breadcrumb.home"), path: localizedPath("/", locale) },
+            { name: t("breadcrumb.page"), path: localPath },
           ]),
-          docsArticleJsonLd({
-            path: PAGE_PATH,
-            headline: PAGE_TITLE,
-            description: PAGE_DESCRIPTION,
-            image: PAGE_IMAGE,
-            datePublished: "2026-10-16",
-            dateModified: "2026-10-16",
-            about: ["React Native", "Expo", "Uniwind", "Reanimated", "beUI Native"],
-          }),
+          {
+            ...docsArticleJsonLd({
+              path: localPath,
+              headline: t("meta.title"),
+              description: t("meta.description"),
+              image: PAGE_IMAGE,
+              datePublished: "2026-10-16",
+              dateModified: "2026-10-16",
+              about: ["React Native", "Expo", "Uniwind", "Reanimated", "beUI Native"],
+            }),
+            inLanguage: LANGUAGES[locale].hreflang,
+          },
         ]}
       />
       <header id="overview" className="scroll-mt-24">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          React Native
+          {t("header.eyebrow")}
         </p>
         <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <h1 className="text-3xl font-medium tracking-tight text-foreground">
-            Set up beUI Native
+            {t("header.title")}
           </h1>
           <CopyPage
             pageUrl={`${SITE_URL}${PAGE_PATH}`}
@@ -114,16 +154,11 @@ export default function NativeSetupPage() {
             componentName="React Native Setup"
           />
         </div>
-        <p className="mt-3 max-w-2xl text-muted-foreground">
-          beUI Native components are plain source you copy into your app, like
-          the web components. Do the setup below once per app. After that,
-          adding a component is copying its files from its page. It works in
-          Expo and in bare React Native.
-        </p>
+        <p className="mt-3 max-w-2xl text-muted-foreground">{t("header.intro")}</p>
       </header>
 
-      <Section id="requirements" title="Requirements">
-        <Prose>The components are built and tested against these versions.</Prose>
+      <Section id="requirements" title={t("requirements.title")}>
+        <Prose>{t("requirements.body")}</Prose>
         <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
           {NATIVE_VERSIONS.map((row) => (
             <li key={row.library} className="flex items-center justify-between gap-4 px-4 py-3 text-sm">
@@ -136,158 +171,87 @@ export default function NativeSetupPage() {
         </ul>
       </Section>
 
-      <Section id="install" title="1. Install the libraries">
-        <Prose>
-          In an Expo app, <Code>expo install</Code> picks the versions that
-          match your SDK. Uniwind and Tailwind come from npm.
-        </Prose>
+      <Section id="install" title={t("install.title")}>
+        <Prose>{t.rich("install.body", { code })}</Prose>
         <div className="mt-4">
           <CodeBlock code={INSTALL_SNIPPET} lang="bash" filename="terminal" />
         </div>
-        <Note>
-          Expo&apos;s Babel preset already includes the Worklets plugin that
-          Reanimated 4 needs. In a bare React Native app, add it to{" "}
-          <Code>babel.config.js</Code> yourself:
-        </Note>
+        <Note>{t.rich("install.babelNote", { code })}</Note>
         <div className="mt-4">
           <CodeBlock code={BABEL_SNIPPET} lang="js" filename="babel.config.js" />
         </div>
       </Section>
 
-      <Section id="uniwind" title="2. Set up Uniwind">
+      <Section id="uniwind" title={t("uniwind.title")}>
         <Prose>
-          Components are styled with Tailwind class names through{" "}
-          <a href="https://docs.uniwind.dev" target="_blank" rel="noreferrer noopener" className={link}>
-            Uniwind
-          </a>
-          . Create <Code>global.css</Code> in the project root. It loads
-          Tailwind, Uniwind and the beUI theme you add in the next step.
+          {t.rich("uniwind.body", { code, link: external("https://docs.uniwind.dev") })}
         </Prose>
         <div className="mt-4">
           <CodeBlock code={GLOBAL_CSS_SNIPPET} lang="css" filename="global.css" />
         </div>
-        <Prose>
-          Then point Metro at it. <Code>withUniwindConfig</Code> must be the
-          outermost wrapper if you use other Metro wrappers, and{" "}
-          <Code>cssEntryFile</Code> must be a relative path.
-        </Prose>
+        <Prose>{t.rich("uniwind.metro", { code })}</Prose>
         <div className="mt-4">
           <CodeBlock code={METRO_EXPO_SNIPPET} lang="js" filename="metro.config.js" />
         </div>
-        <Note>
-          In a bare React Native app, the default config comes from{" "}
-          <Code>@react-native/metro-config</Code> instead:
-        </Note>
+        <Note>{t.rich("uniwind.bareNote", { code })}</Note>
         <div className="mt-4">
           <CodeBlock code={METRO_BARE_SNIPPET} lang="js" filename="metro.config.js" />
         </div>
-        <Note>
-          Uniwind writes the class name types to <Code>dtsFile</Code> when Metro
-          starts, so start it once before checking types. If TypeScript then
-          can&apos;t find the <Code>global.css</Code> import, declare CSS files:
-        </Note>
+        <Note>{t.rich("uniwind.typesNote", { code })}</Note>
         <div className="mt-4">
           <CodeBlock code={CSS_TYPES_SNIPPET} lang="ts" filename="src/env.d.ts" />
         </div>
       </Section>
 
-      <Section id="theme" title="3. Add the theme tokens">
-        <Prose>
-          Components use semantic colors like <Code>bg-primary</Code> and{" "}
-          <Code>text-muted</Code>, defined for light and dark mode, so they
-          follow the system appearance. Save this file as{" "}
-          <Code>{native.theme.path}</Code>, the path <Code>global.css</Code>{" "}
-          imports, and change the values to match your brand.
-        </Prose>
+      <Section id="theme" title={t("theme.title")}>
+        <Prose>{t.rich("theme.body", { code, path: native.theme.path })}</Prose>
         <div className="mt-4">
           <CodeBlock code={native.theme.content} lang="css" filename={native.theme.path} />
         </div>
       </Section>
 
-      <Section id="root" title="4. Wrap your app">
-        <Prose>
-          Import <Code>global.css</Code> from your root component, not from the
-          file that registers the app, or every style change reloads the whole
-          app. Wrap the app in <Code>GestureHandlerRootView</Code> so swipeable
-          and draggable components can receive gestures. With Expo Router, both
-          go in the root layout:
-        </Prose>
+      <Section id="root" title={t("root.title")}>
+        <Prose>{t.rich("root.body", { code })}</Prose>
         <div className="mt-4">
           <CodeBlock code={LAYOUT_SNIPPET} lang="tsx" filename="app/_layout.tsx" />
         </div>
         <Note>
-          In a bare app, do the same in <Code>App.tsx</Code>. For forms, also
-          wrap the app in <Code>KeyboardProvider</Code> from{" "}
-          <a
-            href="https://docs.expo.dev/versions/v57.0.0/sdk/keyboard-controller/"
-            target="_blank"
-            rel="noreferrer noopener"
-            className={link}
-          >
-            react-native-keyboard-controller
-          </a>{" "}
-          to keep focused fields above the keyboard.
+          {t.rich("root.bareNote", {
+            code,
+            link: external("https://docs.expo.dev/versions/v57.0.0/sdk/keyboard-controller/"),
+          })}
         </Note>
       </Section>
 
-      <Section id="add-component" title="5. Add a component">
-        <Prose>
-          Run the beUI Native CLI from your app&apos;s root. It copies the
-          component and the shared files it needs into <Code>src/</Code> and
-          installs any libraries you don&apos;t have yet.
-        </Prose>
+      <Section id="add-component" title={t("addComponent.title")}>
+        <Prose>{t.rich("addComponent.cli", { code })}</Prose>
         <div className="mt-4">
           <CodeBlock code={CLI_SNIPPET} lang="bash" filename="terminal" />
         </div>
-        <Prose>
-          To copy files by hand instead, open the component from the{" "}
-          <Link href="/react-native" className={link}>
-            React Native components
-          </Link>{" "}
-          and use its Manual steps. Either way, keep the folder layout, since
-          components import shared files by relative path. Tabs ends up like
-          this:
-        </Prose>
+        <Prose>{t.rich("addComponent.manual", { link: internal("/react-native") })}</Prose>
         <div className="mt-4">
-          <CodeBlock code={LAYOUT_TREE} lang="text" filename="your app" />
+          <CodeBlock code={LAYOUT_TREE} lang="text" filename={t("addComponent.treeLabel")} />
         </div>
-        <Prose>Then use it like any other component:</Prose>
+        <Prose>{t("addComponent.usage")}</Prose>
         <div className="mt-4">
           <CodeBlock code={USAGE_SNIPPET} lang="tsx" filename="app/index.tsx" />
         </div>
-        <Note>
-          Tailwind finds class names in files under the folder that holds{" "}
-          <Code>global.css</Code>. If it lives somewhere else, like{" "}
-          <Code>app/</Code>, add an <Code>@source</Code> for the components:
-        </Note>
+        <Note>{t.rich("addComponent.sourceNote", { code })}</Note>
         <div className="mt-4">
           <CodeBlock code={SOURCE_SNIPPET} lang="css" filename="app/global.css" />
         </div>
       </Section>
 
-      <Section id="try-first" title="Try before you copy">
+      <Section id="try-first" title={t("tryFirst.title")}>
         <Prose>
-          Every{" "}
-          <Link href="/react-native" className={link}>
-            React Native component
-          </Link>{" "}
-          page has a recording in light and dark, so you can see the motion
-          first. Coding agents can fetch any component with its install commands
-          and files from <Code>{`${SITE_URL}/native/r`}</Code>, or through the
-          beUI MCP server. See the{" "}
-          <Link href="/docs/ai-agents" className={link}>
-            Agent Guide
-          </Link>
-          .
+          {t.rich("tryFirst.body", {
+            code,
+            url: `${SITE_URL}/native/r`,
+            componentsLink: internal("/react-native"),
+            agentLink: internal("/docs/ai-agents"),
+          })}
         </Prose>
-        <Note>
-          Every component follows the system Reduce Motion setting and takes a{" "}
-          <Code>disableAnimation</Code> prop. The source is on{" "}
-          <a href={native.repository} target="_blank" rel="noreferrer noopener" className={link}>
-            GitHub
-          </a>
-          .
-        </Note>
+        <Note>{t.rich("tryFirst.note", { code, link: external(native.repository) })}</Note>
       </Section>
     </GuideShell>
   );

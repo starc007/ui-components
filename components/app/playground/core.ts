@@ -1,4 +1,8 @@
+import type { useTranslations } from "next-intl";
 import type { FC } from "react";
+
+/** Translator scoped to `Pages.playground`; items build their copy from it. */
+export type PlaygroundT = ReturnType<typeof useTranslations<"Pages.playground">>;
 
 /** A single control's current value. */
 export type ControlValue = number | string | number[];
@@ -61,6 +65,8 @@ export interface ExplainPoint {
 /**
  * A self-contained playground type (spring, tween, stagger...). Adding one is a
  * single module plus a line in `items/index.ts` — the shell stays untouched.
+ * Each module exports a `(t: PlaygroundT) => PlaygroundItem` so its copy is
+ * translated; generated code (`toCode`) stays English.
  */
 export interface PlaygroundItem {
   slug: string;
