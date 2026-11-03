@@ -1,1 +1,136 @@
-{}
+{
+  "breadcrumb": "面包屑导航",
+  "newBadge": "新",
+  "category": {
+    "new": "新",
+    "ogImageAlt": "beUI 的{name}组件",
+    "motion": {
+      "title": "React 动画组件 — 可复制粘贴的动效 UI",
+      "heading": "React 动画组件",
+      "description": "探索基于 Motion 和 Tailwind CSS 构建的免费开源 React 动画组件。将 TypeScript 源码复制到你的应用中，自由定制每一处交互。",
+      "allLabel": "全部动画组件"
+    },
+    "blocks": {
+      "title": "React 动画 UI 区块 — 可直接用于产品的动效",
+      "heading": "React 动画 UI 区块",
+      "description": "探索基于 Motion 和 Tailwind CSS 构建、可直接用于产品的 React 动画区块。将完整交互复制到你的应用中，并按产品需求调整源码。",
+      "allLabel": "全部动画区块"
+    },
+    "agents": {
+      "title": "AI 智能体组件 — React 动画 AI 界面",
+      "heading": "AI 智能体动画组件",
+      "description": "使用开源 React 组件呈现智能体推理、进度、工具活动和对话状态，打造清晰、灵敏的 AI 体验。",
+      "allLabel": "全部智能体组件"
+    },
+    "agentGroups": {
+      "conversation": {
+        "title": "对话组件",
+        "description": "编写提示词、按发送者排列消息、塑造对话界面，并在读者浏览记录时保持流式消息稳定。"
+      },
+      "responses": {
+        "title": "回复与来源组件",
+        "description": "在内容到达时渲染丰富的回答，适时显示完成后的操作，并将生成的论断关联到可查验的来源。"
+      },
+      "progress": {
+        "title": "进度与规划组件",
+        "description": "呈现时长未知的等待、持久的任务计划和按时间排列的智能体活动，既不虚构精度，也不暴露未经过滤的追踪信息。"
+      },
+      "tools": {
+        "title": "工具与代码组件",
+        "description": "以有界的流式输出、稳定的语法高亮和可查验的完成状态，展示执行结果、生成的源码和文件改动。"
+      },
+      "humanControl": {
+        "title": "人机协同组件",
+        "description": "暂停智能体工作，以获取限定范围的授权、澄清、审阅或决策，并将最终结果保留在运行历史中。"
+      }
+    },
+    "charts": {
+      "title": "React 动画图表 — 热力图与目标价图",
+      "heading": "React 动画图表",
+      "description": "探索交互式活动热力图、月度收益图和目标价图表。复制 React 源码，并根据你的数据进行定制。",
+      "allLabel": "全部图表"
+    }
+  },
+  "component": {
+    "metaDescription": "{description} 免费开源的 React 和 Next.js 动效组件。可复制粘贴源码，或通过 shadcn 安装。",
+    "ogImageAlt": "{name} 组件预览",
+    "preview": "预览",
+    "usage": "用法",
+    "code": "代码",
+    "install": "安装",
+    "installDescription": "通过 shadcn CLI 添加，或手动复制源码。",
+    "apiReference": "API 参考",
+    "composition": "组合结构",
+    "howItWorks": "实现原理",
+    "note": "注意：",
+    "relatedComponents": "相关组件",
+    "updated": "更新于 <time>{date}</time>",
+    "seoTitle": "{name} — React 动画组件",
+    "contributedBy": "贡献者",
+    "alsoOnNative": "也提供 React Native 版本。"
+  },
+  "install": {
+    "cli": "CLI",
+    "manual": "手动",
+    "themeNotice": "需要先配置一次主题令牌。已经运行过 <code>shadcn init</code>？那就无需额外操作。<link>主题配置</link>",
+    "dependencies": "安装依赖",
+    "utilFiles": "{count, plural, one {添加工具文件} other {添加工具文件}}",
+    "sourceCode": "复制源码"
+  },
+  "copyButton": {
+    "copy": "复制代码",
+    "copied": "已复制"
+  },
+  "expandCode": "展开代码",
+  "copyPage": {
+    "copy": "复制页面",
+    "tryAgain": "重试",
+    "copyAria": "以 Markdown 格式复制页面",
+    "copiedAria": "页面已复制",
+    "errorAria": "复制失败，请重试",
+    "moreActions": "更多页面操作",
+    "menu": "页面操作",
+    "viewMarkdown": "以 Markdown 查看",
+    "openIn": "在 {app} 中打开"
+  },
+  "keepInMind": {
+    "title": "请注意",
+    "body": "本站部分组件受网络上已有作品启发或据其复刻。我无意据为己有，只是想学习、实验，偶尔再往前推进一点。如果某个作品看起来眼熟而我忘了注明出处，请<link>联系我</link>，我会立即更正。"
+  },
+  "proCard": {
+    "heading": "限时优惠",
+    "summary": "350+ 个面向 React 和 Next.js 的区块与高级动效组件。",
+    "price": "$179 终身使用",
+    "explore": "了解 beUI Pro"
+  },
+  "proMobileCard": {
+    "title": "需要完整页面？",
+    "description": "从引导页、付费墙到个人资料和结账，50 个 React Native 区块和页面已在 beUI Pro 移动版上线。",
+    "cta": "了解 beUI Pro 移动版"
+  },
+  "sponsorCard": {
+    "title": "赞助商",
+    "tier": "钻石",
+    "become": "成为赞助商",
+    "taglines": {
+      "tracwell": "助力增长的访客洞察",
+      "illos": "为产品网站打造的动画插画"
+    }
+  },
+  "pager": {
+    "label": "上一个和下一个组件",
+    "previous": "上一个",
+    "next": "下一个"
+  },
+  "previewExpand": {
+    "expand": "展开预览",
+    "replay": "重播预览",
+    "exit": "退出展开预览",
+    "exitTitle": "退出（Esc）"
+  },
+  "propsTable": {
+    "prop": "属性",
+    "type": "类型",
+    "default": "默认值"
+  }
+}

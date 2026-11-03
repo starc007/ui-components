@@ -1,1 +1,696 @@
-{}
+{
+  "theme": {
+    "meta": {
+      "title": "Theme einrichten",
+      "description": "Einmalige Theme-Einrichtung für beUI-Komponenten: die shadcn-Token-Schicht installieren oder das beUI-Theme-CSS in die globals.css einfügen.",
+      "ogDescription": "Einmalige Theme-Einrichtung für beUI-Komponenten: shadcn-Tokens oder das beUI-Theme-CSS."
+    },
+    "eyebrow": "Einrichtung",
+    "title": "Theme einrichten",
+    "intro": "beUI-Komponenten gestalten sich über semantische shadcn-Tokens (<code>bg-primary</code>, <code>text-muted-foreground</code>, border, ring). Diese Tokens einmal einrichten, und jede Komponente funktioniert. Zwei Wege:",
+    "option1": {
+      "title": "Option 1 – shadcn init (empfohlen)",
+      "body": "Projekte mit shadcn haben diese Tokens bereits. Andernfalls init einmal ausführen; es schreibt die Token-Schicht ins CSS."
+    },
+    "option2": {
+      "title": "Option 2 – Theme-CSS einfügen",
+      "body": "Ohne shadcn? Diesen Code in die <code>globals.css</code> direkt unter <code>@import \"tailwindcss\";</code> einfügen. Er definiert die Tokens, Motion-Animationen und Surface-Utilities, die die Komponenten verwenden. Erfordert Tailwind CSS v4.",
+      "alsoAvailable": "Auch verfügbar unter <link>/theme.css</link>."
+    }
+  },
+  "aiAgents": {
+    "meta": {
+      "title": "KI-Agents",
+      "description": "Den beUI-Agent-Skill installieren, den MCP-Server verbinden oder die agentenfreundlichen Endpunkte (llms.txt, JSON-Registry, Roh-Quellcode) nutzen, um Komponenten programmatisch abzurufen."
+    },
+    "header": {
+      "eyebrow": "Agent-Leitfaden",
+      "title": "Für KI-Agents",
+      "intro": "beUI bietet eine statische, agentenfreundliche Schnittstelle. Den beUI-Skill installieren, den unten beschriebenen MCP-Server verbinden oder die Roh-Endpunkte direkt aufrufen. Coding-Agents (Claude, Codex, Cursor, Amp) können Komponenten auflisten, Quellcode samt aller Abhängigkeiten abrufen und Dateien direkt im Projekt ablegen."
+    },
+    "agentSkill": {
+      "title": "Agent-Skill",
+      "body": "Der Skill bringt Coding-Agents bei, zuerst die Live-Registry abzurufen, den passendsten Install-Slug aus <code>items[].name</code> zu wählen, ihn mit shadcn zu prüfen und dann aus dem generierten Quellcode zu installieren und zusammenzusetzen. Sinnvoll, wenn Agents vorhandene beUI-Komponenten wählen sollen, statt eigene Motion-Widgets zu erfinden."
+    },
+    "mcpServer": {
+      "title": "MCP-Server",
+      "body": "Der schnellste Weg: Mit dem beUI-MCP-Server kann der Agent Komponenten direkt auflisten, durchsuchen und installieren. Gehostet unter <code>{url}</code>.",
+      "manual": "Jeder andere Client: manuell zur MCP-Konfiguration hinzufügen.",
+      "toolsWithNative": "Tools: <code>list_components</code>, <code>search_components</code>, <code>get_component</code>, <code>get_install_command</code>. Für React-Native-Apps liefern <code>list_native_components</code> und <code>get_native_component</code> beUI-Native-Komponenten mit allen zu kopierenden Dateien."
+    },
+    "endpoints": {
+      "title": "Endpunkte",
+      "open": "Öffnen",
+      "llmsTxt": {
+        "label": "llms.txt",
+        "desc": "Markdown-Index im llmstxt.org-Format."
+      },
+      "registryIndex": {
+        "label": "Registry-Index",
+        "desc": "JSON-Katalog aller Komponenten."
+      },
+      "componentDetail": {
+        "label": "Komponentendetails",
+        "desc": "JSON mit Dateien, Abhängigkeiten, Quellcode."
+      },
+      "shadcnCatalog": {
+        "label": "shadcn-Katalog",
+        "desc": "Verzeichniskompatibler Registry-Katalog."
+      },
+      "shadcnItem": {
+        "label": "shadcn-Item",
+        "desc": "Install-Item mit eingebettetem Dateiinhalt und semantischen shadcn-Farbklassen."
+      },
+      "rawSource": {
+        "label": "Roh-Quellcode",
+        "desc": "Reines .tsx als Text, direkt einsetzbar."
+      }
+    },
+    "agentFlow": {
+      "title": "Agent-Ablauf",
+      "body": "Vier Aufrufe, dann installieren. Komponenten sind eigenständig und besitzen ihre Dateien selbst."
+    },
+    "shadcnFlow": {
+      "title": "shadcn-Ablauf",
+      "body": "Das shadcn-Item installiert Quelldateien und Paketabhängigkeiten. Komponenten nutzen die semantischen shadcn-Farb-Utilities direkt und übernehmen so das Theme der Ziel-App ohne beUI-spezifische Farbvariablen."
+    },
+    "entryShape": {
+      "title": "Eintragsformat",
+      "body": "Interne Helfer (z. B. <code>@/lib/utils</code>) werden eingebettet als <code>type: util</code> mitgeliefert, damit der Agent keinen Imports hinterherlaufen muss."
+    },
+    "generativeUi": {
+      "title": "Generative UI",
+      "body": "Soll das Modell diese Komponenten zu einer Live-Oberfläche zusammensetzen? Der <link>OpenUI-Integrationsleitfaden</link> zeigt, wie man eine eigene Komponentenbibliothek registriert, ihren System-Prompt generiert und interaktives OpenUI Lang beim Streamen rendert."
+    }
+  },
+  "openui": {
+    "meta": {
+      "title": "OpenUI-Integrationsleitfaden",
+      "description": "Eine OpenUI-React-Integration mit beUI bauen: animierte Komponenten registrieren, den System-Prompt generieren, OpenUI Lang streamen und interaktive UI rendern.",
+      "imageAlt": "beUI mit OpenUI verwenden"
+    },
+    "breadcrumb": {
+      "home": "Start",
+      "page": "OpenUI-Integration"
+    },
+    "about": {
+      "integration": "OpenUI-React-Integration",
+      "library": "Eigene OpenUI-Komponentenbibliothek",
+      "generativeUi": "Generative UI"
+    },
+    "header": {
+      "eyebrow": "Integrationsleitfaden",
+      "title": "beUI mit OpenUI verwenden",
+      "intro": "<link>OpenUI</link> ist ein Framework für generative UI: Statt Markdown zurückzugeben, erzeugt das Modell einen abstrakten UI-Baum (OpenUI Lang), und eine React-Runtime ordnet jeden Knoten einer Komponente zu, die <em>selbst</em> registriert wurde. Diese OpenUI-React-Integration macht beUI zu einer eigenen OpenUI-Komponentenbibliothek, sodass jede generierte Antwort echte, animierte Komponenten verwendet – und nur die freigegebenen."
+    },
+    "install": {
+      "title": "Installation",
+      "body": "Benötigt werden die React-Runtime von OpenUI und die beUI-Komponenten, die bereitgestellt werden sollen. Den beUI-Quellcode über die shadcn-Registry beziehen (weitere Installationswege im Leitfaden <link>KI-Agents</link>).",
+      "scaffold": "Neues Projekt von Grund auf? <code>{command}</code> ausführen, um eine funktionierende Streaming-App zu erhalten, und dann ihre Standardbibliothek gegen die beUI-Bibliothek unten austauschen."
+    },
+    "registerComponents": {
+      "title": "Komponenten registrieren",
+      "body": "<code>defineComponent</code> ordnet einen OpenUI-Lang-Knoten einer beUI-Komponente zu. Das Zod-Schema <code>props</code> validiert die Ausgabe des Modells während des Streamens, die <code>description</code> wird in den System-Prompt eingefügt, damit das Modell den Zweck jeder Komponente lernt, und <code>useTriggerAction</code> hält gerenderte Steuerelemente interaktiv. Die Kinder eines Containers als Union der registrierten <code>.ref</code>-Schemas beschreiben, damit die Verschachtelung sowohl validiert als auch dem Modell mitgeteilt wird."
+    },
+    "assembleLibrary": {
+      "title": "Bibliothek zusammenstellen",
+      "body": "<code>createLibrary</code> sammelt die Definitionen, benennt den <code>root</code>-Knoten und gliedert den Prompt in <code>componentGroups</code> mit Hinweisen, die steuern, wann das Modell zu welcher Komponente greift."
+    },
+    "generatePrompt": {
+      "title": "Prompt generieren",
+      "body": "Der Client rendert OpenUI Lang, aber das Modell muss es erzeugen. In der CLI <code>{command}</code> aufrufen, um die Bibliotheksspezifikation zu erstellen. Das Backend kombiniert deren Komponentensignaturen, Beschreibungen und Verschachtelungsregeln mit der OpenUI-Lang-Grammatik und streamt die Antwort des Modells zurück an den Browser.",
+      "note": "Den Befehl bei jeder Änderung der Bibliothek ausführen. Er serialisiert die Bibliothek zur Build-Zeit als JSON, und die Route importiert diese generierte Datei über denselben Pfad <code>@/lib/generated</code>, sodass das Server-Bundle nie die Client-Komponenten importiert."
+    },
+    "renderStream": {
+      "title": "Stream rendern",
+      "body": "Die Bibliothek im Client an <code>{renderer}</code> übergeben. Er parst das vom Server gestreamte OpenUI Lang und zeichnet beUI-Komponenten schrittweise, während die Tokens eintreffen. <code>onAction</code> so verdrahten, dass die Nachricht eines gedrückten Buttons an das Modell zurückgeht und die Schleife weiterläuft."
+    },
+    "whyBeui": {
+      "title": "Warum beUI passt",
+      "body": "beUI-Komponenten besitzen ihre Dateien selbst und werden über die Registry ausgeliefert – es gibt also keine Runtime, die angeflanscht werden muss. Die Bibliothek oben <em>ist</em> die Integration. Sie nutzen semantische Steuerelemente und shadcn-Tokens, sodass vom Modell generierte UIs ohne zusätzliche Verdrahtung das Theme der Host-App übernehmen."
+    },
+    "resources": {
+      "title": "Ressourcen",
+      "open": "Öffnen",
+      "openui": {
+        "label": "OpenUI",
+        "desc": "Das Framework für generative UI und seine Sprache OpenUI Lang."
+      },
+      "definingComponents": {
+        "label": "Komponenten definieren",
+        "desc": "Vollständige Referenz zu defineComponent / createLibrary."
+      },
+      "shadcnChat": {
+        "label": "shadcn-Chat-Beispiel",
+        "desc": "Das Registry-Bibliotheksmuster, dem dieser Leitfaden folgt."
+      },
+      "more": "Andere Frameworks für generative UI, die shadcn-Registries nutzen, können beUI auf dieselbe Weise einbinden – weitere Integrationsleitfäden folgen."
+    }
+  },
+  "motionPatterns": {
+    "meta": {
+      "title": "Motion-Leitfäden",
+      "description": "Praxisnahe Motion-Leitlinien für React-Interfaces: wann animieren, welcher beUI-Token passt, Timing-Bereiche, reduzierte Bewegung und Muster zum Kopieren.",
+      "ogDescription": "Praxisnahe Leitlinien für zweckvolle Animation, Timing, Easing, Springs und barrierearme Motion in React-Interfaces."
+    },
+    "header": {
+      "eyebrow": "Motion-Leitfaden",
+      "title": "Motion, die erklärt statt ablenkt",
+      "intro": "Ein praxisnaher Leitfaden, um zu entscheiden, wann sich etwas bewegen sollte, den richtigen Token zu wählen und Motion auszuliefern, die schnell, stimmig und barrierearm bleibt."
+    },
+    "sections": {
+      "decisionFramework": {
+        "eyebrow": "Entscheidungshilfe",
+        "title": "Vier Fragen vor jeder Animation",
+        "description": "Die beste Animationsentscheidung fällt oft, bevor eine Dauer oder ein Spring-Wert angefasst wird."
+      },
+      "motionTokens": {
+        "eyebrow": "Motion-Tokens",
+        "title": "Überall dieselbe Sprache",
+        "description": "beUI hält bewusste Motion in gemeinsamen Tokens. Nach Zweck wählen, damit Komponenten zusammengehörig wirken, ohne sich identisch zu bewegen."
+      },
+      "timing": {
+        "eyebrow": "Timing",
+        "title": "Schnell genug, um unmittelbar zu wirken",
+        "description": "Die Dauer hängt von Größe, Distanz und Häufigkeit ab. Diese Bereiche sind Ausgangspunkte, keine Zielwerte zum mechanischen Abhaken."
+      },
+      "recipes": {
+        "eyebrow": "Rezepte",
+        "title": "Muster zum Kopieren",
+        "description": "Jedes Rezept verbindet einen Zweck mit einem Produktions-Token, einem Zustand für reduzierte Bewegung und einem konkreten Fehlerbild."
+      },
+      "accessibility": {
+        "eyebrow": "Barrierefreiheit",
+        "title": "Reduzierte Bewegung ist ein gestalteter Zustand",
+        "description": "Nicht jede Transition entfernen. Feedback, das dem Verständnis dient, behalten und Bewegung entfernen, die Unbehagen auslösen kann."
+      }
+    },
+    "decisions": {
+      "frequency": {
+        "title": "Häufigkeit prüfen",
+        "body": "Wiederholte Aktionen sollten sich nahezu sofort anfühlen. Ausdrucksstarke Motion für Momente aufheben, die selten zu sehen sind.",
+        "note": "100× am Tag: keine Choreografie. Seltene Momente: Mehr Effekt ist erlaubt."
+      },
+      "purpose": {
+        "title": "Zweck benennen",
+        "body": "Motion sollte Räumlichkeit erklären, Eingaben bestätigen, Zustände zeigen oder eine Änderung abfedern. Reine Dekoration genügt nicht.",
+        "note": "Lässt sich nicht erklären, warum sich etwas bewegt, die Bewegung entfernen."
+      },
+      "physics": {
+        "title": "Physik wählen",
+        "body": "Ease-out für Eintritte, ease-in-out für Bewegung, linear für Fortschritt und Springs für Gesten.",
+        "note": "Die Kurve sollte dazu passen, was das Objekt tut – nicht zum persönlichen Geschmack."
+      },
+      "fallback": {
+        "title": "Fallback gestalten",
+        "body": "Reduzierte Bewegung behält nützliches Opacity- und Farbfeedback bei und entfernt Wege, Skalierung und Parallax.",
+        "note": "Barrierefreiheit ist ein Motion-Zustand, kein Nachgedanke."
+      }
+    },
+    "timing": {
+      "interaction": "Interaktion",
+      "range": "Bereich",
+      "desiredFeel": "Gewünschte Wirkung",
+      "note": "Unter 300 ms ist der Standard für Interface-Motion. Längere Motion gehört zu erklärenden Demos, bewussten Gesten und großen räumlichen Änderungen.",
+      "rows": {
+        "press": {
+          "use": "Druck-Feedback",
+          "range": "100–160 ms",
+          "feel": "Unmittelbar und physisch"
+        },
+        "tooltip": {
+          "use": "Tooltip / Popover",
+          "range": "125–200 ms",
+          "feel": "Schnell, ursprungsbewusst"
+        },
+        "dropdown": {
+          "use": "Dropdown / Select",
+          "range": "150–250 ms",
+          "feel": "Reaktionsschnell, kein Warten"
+        },
+        "modal": {
+          "use": "Modal / Drawer",
+          "range": "200–500 ms",
+          "feel": "Genug Zeit, um Räumlichkeit zu erklären"
+        },
+        "marketing": {
+          "use": "Marketing-Demo",
+          "range": "Flexibel",
+          "feel": "Klarheit zählt mehr als Tempo"
+        }
+      }
+    },
+    "easing": {
+      "title": "Kurven vergleichen",
+      "subtitle": "Gleiche Distanz und Dauer. Unterschiedliche Aufgaben.",
+      "easeOut": "Eintritte und Austritte reagieren sofort und kommen dann ruhig zum Stehen.",
+      "easeInOut": "Bereits sichtbare Objekte beschleunigen und bremsen natürlich ab.",
+      "springPress": "Schnelles, gewichtiges Feedback für Buttons und andere drückbare Flächen.",
+      "springLayout": "Gemeinsame Flächen und Indikatoren, die kontinuierliche räumliche Bewegung brauchen."
+    },
+    "recipes": {
+      "purpose": "Zweck",
+      "avoid": "Vermeiden",
+      "viewRecipe": "Rezept ansehen",
+      "press": {
+        "title": "Druck-Feedback",
+        "eyebrow": "Feedback",
+        "description": "Ein Druck sollte die Eingabe bestätigen, bevor die Aktion abgeschlossen ist. Die Skalierung klein und die Reaktion unmittelbar halten.",
+        "purpose": "Bestätigt, dass das Interface die Eingabe registriert hat.",
+        "avoid": "Große Skalierungsänderungen, langsames Zurückfedern oder ein Spring auf jedem Kindelement."
+      },
+      "icon": {
+        "title": "Semantische Icon-Motion",
+        "eyebrow": "Bedeutung",
+        "description": "Das Icon seine echte Aktion nachahmen lassen. Eine Glocke schwingt an ihrer Aufhängung; ein Download-Pfeil fällt in seine Ablage.",
+        "purpose": "Verdeutlicht, was die Aktion bewirkt, ohne ein weiteres Label hinzuzufügen.",
+        "avoid": "Dasselbe generische Hüpfen auf jedem Icon oder Motion bei Touch-Hover."
+      },
+      "reveal": {
+        "title": "Inhalt einblenden",
+        "eyebrow": "Eintritt",
+        "description": "Eine bedeutsame Fläche mit kurzem Anheben und zurückhaltendem Blur einblenden. Die Motion sollte enden, bevor sie selbst in den Fokus rückt.",
+        "purpose": "Verhindert, dass neue Inhalte wie ein harter visueller Schnitt erscheinen.",
+        "avoid": "UI-Eintritte von einer halben Sekunde oder ein langer Stagger über jedes kleine Kindelement."
+      },
+      "layout": {
+        "title": "Layout-Kontinuität",
+        "eyebrow": "Bewegung",
+        "description": "Dieselbe Fläche sichtbar halten, während sich ihre Ausdehnung ändert. Zuerst die Form bewegen, dann das Label einführen.",
+        "purpose": "Bewahrt die Identität des Objekts, während sich ein kompaktes Steuerelement ausdehnt.",
+        "avoid": "Direkte Breiten-Tweens oder Text, der erscheint, bevor die Fläche Platz gemacht hat."
+      },
+      "swap": {
+        "title": "Inhaltswechsel",
+        "eyebrow": "Zustandswechsel",
+        "description": "Bei kleinen Ansichtswechseln den alten Inhalt schneller gehen lassen, als der neue ankommt. Den Weg auf wenige Pixel beschränken.",
+        "purpose": "Macht klar, dass sich der Inhalt geändert hat, während der umgebende Kontext an Ort und Stelle blieb.",
+        "avoid": "Große, seitenartige Übergänge für Tabs, Filter oder häufig wechselnde Ansichten."
+      }
+    },
+    "accessibility": {
+      "title": "Bedeutung behalten. Wege entfernen.",
+      "body": "Opacity, Farbe und sofortige Zustandswechsel beibehalten. Parallax, große Transforms, wiederholte Skalierung und Spring-Überschwingen weglassen."
+    },
+    "demos": {
+      "replay": "Wiederholen",
+      "pressMe": "Drücken",
+      "hoverBell": "Glocke hovern",
+      "newSurface": "Neue Fläche",
+      "readyBeforeFocus": "Bereit vor dem Fokus.",
+      "expandPanel": "Panel ausklappen",
+      "collapsePanel": "Panel einklappen",
+      "openPanel": "Panel öffnen",
+      "exampleViews": "Beispielansichten",
+      "preview": "Vorschau",
+      "code": "Code",
+      "livePreview": "Live-Ansicht der Komponente",
+      "copyReadySource": "Quellcode zum Kopieren"
+    }
+  },
+  "sponsors": {
+    "meta": {
+      "title": "Sponsoren",
+      "description": "Die Entwicklung von beUI mit monatlichen Sponsorenstufen über Dodo Payments, GitHub Sponsors oder Krypto unterstützen."
+    },
+    "checkout": {
+      "title": "Sponsoring abgeschlossen",
+      "body": "Danke für das Sponsoring von beUI. Für Logo-Dateien und Details zur Platzierung melde ich mich in Kürze."
+    },
+    "hero": {
+      "eyebrow": "Sponsoren",
+      "title": "beUI unterstützen",
+      "body": "beUI ist kostenlos und quelloffen. Mit einer monatlichen Sponsorenstufe Entwickler erreichen, die aktiv nach Motion-Komponenten, Blöcken und Registry-Installationen suchen.",
+      "githubCta": "Auf GitHub sponsern"
+    },
+    "planCard": {
+      "highestImpact": "Größte Wirkung",
+      "perMonth": "/Monat",
+      "sponsorAs": "Als {name} sponsern",
+      "requestLink": "Zahlungslink anfragen",
+      "full": "Belegt"
+    },
+    "plans": {
+      "diamond": {
+        "name": "Diamond",
+        "description": "Maximale Sichtbarkeit für Teams, die ihr Logo im prominentesten Sponsorenplatz wollen.",
+        "benefits": {
+          "sponsorsPage": "Größte Logo-Platzierung auf der Sponsorenseite",
+          "docsSidebar": "Größte Logo-Platzierung in der Docs-Seitenleiste",
+          "readme": "Größte Logo-Platzierung in der README",
+          "shoutout": "Shoutout auf X nach dem Sponsoring",
+          "priorityFeedback": "Priorisierter Feedback-Kanal für Anfragen",
+          "homePage": "Logo auf der Startseite, direkt unter dem Hero"
+        }
+      },
+      "platinum": {
+        "name": "Platinum",
+        "description": "Prominente Platzierung für Produktteams, die ausgefeilte Open-Source-UI unterstützen.",
+        "benefits": {
+          "sponsorsPage": "Größere Logo-Platzierung auf der Sponsorenseite",
+          "docsSidebar": "Große Logo-Platzierung in der Docs-Seitenleiste",
+          "readme": "Größere Logo-Platzierung in der README",
+          "shoutout": "Shoutout auf X nach dem Sponsoring"
+        }
+      },
+      "silver": {
+        "name": "Silver",
+        "description": "Ein einfacher Weg, die laufende Arbeit an Komponenten zu unterstützen und öffentlich gelistet zu werden.",
+        "benefits": {
+          "sponsorsPage": "Logo auf der Sponsorenseite",
+          "docsSidebar": "Logo-Platzierung in der Docs-Seitenleiste",
+          "readme": "Logo in der README",
+          "publicListing": "Öffentlicher Sponsoreneintrag"
+        }
+      }
+    },
+    "crypto": "Krypto",
+    "sponsorTaglines": {
+      "tracwell": "Besucher-Insights in Wachstum verwandeln",
+      "illos": "Animierte Illustrationen für Produktseiten"
+    },
+    "slotsOpen": "{open} von {slots} frei",
+    "allSlotsTaken": "Alle Plätze vergeben",
+    "plansLabel": "Sponsorenstufen",
+    "audience": {
+      "title": "Reichweite",
+      "updated": "Analytics von Tracwell, aktualisiert am {date}",
+      "lastDays": "Letzte {days} Tage",
+      "visitors": "Besucher",
+      "pageViews": "Seitenaufrufe",
+      "moreThan": "Mehr als {value}"
+    },
+    "openSlot": {
+      "title": "Hier könnte das eigene Logo stehen",
+      "price": "{tier} · {price}/Monat",
+      "viewPlan": "Stufe ansehen"
+    }
+  },
+  "playground": {
+    "meta": {
+      "title": "Playground",
+      "description": "Spring-, Tween- und Stagger-Eigenschaften anpassen, ablaufen lassen und den Motion-Code kopieren. Basiert auf den Motion-Tokens von beUI."
+    },
+    "header": {
+      "title": "Playground",
+      "body": "Motion spielerisch lernen. Eine Eigenschaft anpassen, beim Ablauf zusehen, Zeile für Zeile nachlesen, was der Code tut, und ihn dann kopieren."
+    },
+    "howItWorks": "Funktionsweise",
+    "try": "Ausprobieren",
+    "soon": "Bald",
+    "preview": "Vorschau",
+    "replay": "Wiederholen",
+    "controls": {
+      "checkpoint": "Checkpoint {index}",
+      "checkpointStart": "Checkpoint {index} (Start)",
+      "checkpointEnd": "Checkpoint {index} (Ende)",
+      "removeCheckpoint": "Checkpoint {index} entfernen",
+      "addCheckpoint": "Checkpoint hinzufügen",
+      "curveEditor": "Easing-Kurven-Editor"
+    },
+    "travel": {
+      "start": "Start",
+      "target": "Ziel"
+    },
+    "spring": {
+      "label": "Spring",
+      "blurb": "Physikbasierte Motion. Stiffness zieht zum Ziel, Damping bremst, Mass fügt Gewicht hinzu. Geringeres Damping schwingt über.",
+      "controls": {
+        "stiffness": {
+          "label": "Stiffness",
+          "hint": "Zug zum Ziel. Höher = schneller, knackiger."
+        },
+        "damping": {
+          "label": "Damping",
+          "hint": "Widerstand / Reibung. Niedriger = mehr Federn und Überschwingen."
+        },
+        "mass": {
+          "label": "Mass",
+          "hint": "Gewicht des Objekts. Schwerer = langsamer, träger."
+        }
+      },
+      "presets": {
+        "gentle": "Sanft",
+        "wobbly": "Wackelig",
+        "stiff": "Straff",
+        "slow": "Langsam"
+      },
+      "explain": {
+        "type": "Hier gibt es keine Dauer. Statt eine feste Zeit zu brauchen, wird die Box wie an einer echten Feder zum Ziel gezogen. Die drei Zahlen unten bestimmen, wie sich das anfühlt.",
+        "stiffness": "Wie stark die Feder zieht. {value} ist {level, select, soft {weich, daher bewegt sie sich langsam} medium {mittel} other {stark, daher schnappt sie schnell}}. Höher = schneller, drängender.",
+        "damping": "Reibung, die die Feder abbremst. {level, select, low {{value} ist niedrig, daher schießt die Box über das Ziel hinaus und federt nach, bevor sie zur Ruhe kommt.} medium {{value} sorgt für leichtes Überschwingen, dann Ruhe.} other {{value} ist hoch, daher gleitet sie ohne Federn ein.}}",
+        "mass": "Das Gewicht der Box. {level, select, light {{value} ist leicht, daher reagiert sie schnell.} heavy {{value} ist schwer, daher wirkt sie träge und startet langsam.} other {{value} ist ein mittleres Gewicht.}} Schwerer = langsamer, mehr Trägheit."
+      }
+    },
+    "tween": {
+      "label": "Tween / Ease",
+      "blurb": "Zeitbasierte Motion. Die Dauer legt fest, wie lange; die cubic-bezier-Kurve bestimmt das Tempo. Zum Formen die Griffe ziehen.",
+      "controls": {
+        "duration": {
+          "label": "Dauer",
+          "hint": "Wie lange die Animation von Anfang bis Ende dauert."
+        },
+        "curve": {
+          "label": "Easing-Kurve",
+          "hint": "Tempo über die Zeit. Griffe ziehen – steil = schnell, flach = langsam."
+        }
+      },
+      "curves": {
+        "linear": "Gleichbleibendes Tempo über die ganze Strecke. Mechanisch, keine Beschleunigung.",
+        "easeIn": "Startet langsam, wird zum Ende schneller. Gut für Elemente, die verschwinden.",
+        "easeOut": "Startet schnell, wird zum Ende langsamer. Gut für Elemente, die erscheinen.",
+        "easeInOut": "Langsamer Start und Schluss, schnell in der Mitte. Weich und natürlich.",
+        "customTitle": "benutzerdefiniert",
+        "custom": "Eigenes Tempo. Steilere Abschnitte der Kurve bewegen sich schneller."
+      },
+      "explain": {
+        "duration": "Eine feste Zeit in Sekunden. Die gesamte Bewegung dauert immer {value}s, unabhängig von der Distanz. (Springs haben das nicht – Tweens schon.)",
+        "ease": "Die Easing-Kurve als cubic-bezier. Die vier Zahlen sind zwei Kontrollgriffe (x1, y1, x2, y2), die verändern, wie sich die Geschwindigkeit über die Zeit entwickelt. Von Hand tippt man sie selten – stattdessen die Kurvengriffe ziehen.",
+        "curve": "Diese Kurve entspricht „{title}“: {text} Die Punkte in der Vorschau sind die Positionen der Box in gleichen Zeitabständen, ihr Abstand zeigt also das Tempo."
+      }
+    },
+    "stagger": {
+      "label": "Stagger",
+      "blurb": "Kindelemente animieren nacheinander. Stagger legt den Abstand zwischen ihnen fest; Delay hält die ganze Gruppe vor dem Start an.",
+      "controls": {
+        "count": {
+          "label": "Kinder",
+          "hint": "Wie viele Elemente einanimiert werden."
+        },
+        "stagger": {
+          "label": "Stagger",
+          "hint": "Abstand zwischen den Starts der Kinder. Höher = stärkere Welle."
+        },
+        "delayChildren": {
+          "label": "Delay",
+          "hint": "Pause, bevor die ganze Gruppe beginnt."
+        },
+        "direction": {
+          "label": "Richtung",
+          "hint": "Reihenfolge, in der die Kinder starten.",
+          "forward": "Vorwärts",
+          "reverse": "Rückwärts"
+        }
+      },
+      "presets": {
+        "tight": "Dicht",
+        "relaxed": "Locker",
+        "dramatic": "Dramatisch"
+      },
+      "explain": {
+        "variants": "Zwei benannte Zustände. „hidden“ ist der Start (unsichtbar, klein, leicht nach unten versetzt), „show“ das Ende. Jedes Kind animiert von hidden zu show – beschrieben werden Zustände, keine Schritte.",
+        "staggerChildren": "Der Abstand zwischen den Starts der Kinder in Sekunden. Sie starten nicht alle gleichzeitig – Kind 2 wartet {value}s nach Kind 1 und so weiter, so entsteht die Welle.",
+        "delayChildren": "Wie lange die ganze Gruppe wartet, bevor das erste Kind startet. {immediate, select, yes {0 = startet sofort.} other {Hier {value}s Leerlauf zu Beginn.}}",
+        "summaryCode": "{count} Elemente, {direction, select, reverse {rückwärts} other {vorwärts}}",
+        "summary": "Bei {count} Kindern im Abstand von {stagger}s{delayed, select, yes { nach {delay}s Verzögerung} other {}} startet das letzte nach {last}s. {direction, select, reverse {Rückwärts heißt: Das letzte Kind startet zuerst.} other {Vorwärts startet sie vom ersten bis zum letzten.}}"
+      }
+    },
+    "keyframes": {
+      "label": "Keyframes",
+      "blurb": "Eine Eigenschaft durchläuft eine Liste von Werten der Reihe nach, gleichmäßig über die Dauer verteilt. Die Liste bearbeiten, um den Verlauf zu ändern.",
+      "controls": {
+        "property": {
+          "label": "Eigenschaft",
+          "hint": "Welche Eigenschaft die Keyframes steuern. Ein Wechsel setzt die Werte zurück."
+        },
+        "frames": {
+          "label": "Keyframe-Werte",
+          "hint": "Jeder Slider ist ein Checkpoint, den die Box der Reihe nach passiert. Einen ziehen oder Checkpoints hinzufügen/entfernen."
+        },
+        "duration": {
+          "label": "Dauer",
+          "hint": "Zeit für einen Durchlauf durch alle Werte."
+        },
+        "repeat": {
+          "label": "Wiederholung",
+          "hint": "Einmal, von vorn als Schleife oder hin und her gespiegelt.",
+          "once": "Einmal",
+          "loop": "Schleife",
+          "mirror": "Spiegeln"
+        }
+      },
+      "presets": {
+        "pulse": "Puls",
+        "spin": "Drehen",
+        "blink": "Blinken"
+      },
+      "describe": {
+        "scale": "{percent}% Größe{trend, select, bigger {, größer} smaller {, kleiner} other {, normal}}",
+        "opacity": "{percent}% sichtbar{state, select, invisible {, unsichtbar} solid {, deckend} other {}}",
+        "rotate": "um {value}° gedreht{upright, select, yes {, aufrecht} other {}}",
+        "x": "{value}px {side, select, right {rechts vom} left {links vom} other {am}} Start"
+      },
+      "read": {
+        "scale": "{value} ({percent}% Größe{trend, select, bigger {, größer} smaller {, kleiner} other {, normal}})",
+        "opacity": "{value} ({percent}% sichtbar)"
+      },
+      "explain": {
+        "sequence": "Dieses Array ist eine Liste von Werten, die die Box der Reihe nach passiert: {sequence}. Es geht nicht „von A nach B“ – jeder Wert wird als Checkpoint angesteuert.",
+        "countCode": "{count} Keyframes über {duration}s",
+        "spacing": "Die Werte sind gleichmäßig über die Dauer verteilt. {count} Werte über {duration}s bedeuten, dass jeder Abschnitt etwa {leg}s dauert. Werte hinzufügen oder entfernen, um den Verlauf zu ändern.",
+        "loop": "Schleife: Beim letzten Wert springt sie zurück zum ersten und läuft erneut – an der Nahtstelle kann sie daher springen.",
+        "mirror": "Spiegeln: Sie läuft vorwärts, dann rückwärts, dann wieder vorwärts – weich, ohne Sprung, wie ein Puls.",
+        "once": "Einmal: Sie läuft ein einziges Mal und bleibt beim letzten Wert stehen."
+      }
+    },
+    "gestures": {
+      "label": "Gesten",
+      "blurb": "Motion reagiert auf Pointer-Eingaben. whileHover und whileTap animieren während der Geste zu einem Zustand; drag macht ein Element werfbar.",
+      "box": "ziehen",
+      "controls": {
+        "hover": {
+          "label": "Hover-Skalierung",
+          "hint": "Größe, solange der Pointer darüber ist."
+        },
+        "tap": {
+          "label": "Tap-Skalierung",
+          "hint": "Größe beim Drücken. Unter 1 = Eindrücken."
+        },
+        "drag": {
+          "label": "Ziehen",
+          "hint": "Ziehen auf eine Achse beschränken, frei oder aus.",
+          "off": "Aus",
+          "x": "Nur X",
+          "y": "Nur Y",
+          "free": "Frei"
+        }
+      },
+      "presets": {
+        "subtle": "Dezent",
+        "pop": "Pop"
+      },
+      "explain": {
+        "hover": "Solange der Pointer über der Box ist, auf {value}× Größe ({percent}%) animieren. Verlässt der Pointer sie, federt sie zurück – ganz ohne State oder Handler.",
+        "tap": "Beim Drücken auf {value}× Größe gehen. {pressIn, select, yes {Unter 1 = Eindrücken, das haptische Gefühl eines echten Buttons.} other {Bei 1 bleibt sie beim Drücken unverändert.}}",
+        "dragOff": "Ziehen ist deaktiviert.",
+        "drag": "Macht die Box ziehbar{mode, select, free { in jede Richtung} other { nur auf der {mode}-Achse}}. dragConstraints hält sie in ihrem Elternelement, und sie federt zurück, wenn sie über den Rand geworfen wird."
+      }
+    },
+    "layout": {
+      "label": "Layout",
+      "blurb": "Eine gemeinsame layoutId verwandelt ein Element in ein anderes, wenn sich ändert, welches gemountet ist – so gleitet ein Indikator zwischen Positionen, statt zu springen.",
+      "tab": "Tab {index}",
+      "clickTab": "Tab anklicken",
+      "controls": {
+        "feel": {
+          "label": "Charakter",
+          "hint": "Die Transition, mit der sich die Pille bewegt.",
+          "snappy": "Knackig",
+          "smooth": "Weich",
+          "slow": "Langsam"
+        }
+      },
+      "explain": {
+        "layoutId": "Die Kernidee. Es wird nur eine Pille gerendert – unter dem aktiven Tab. Beim Klick auf einen anderen Tab unmountet React sie hier und mountet sie dort, aber die gemeinsame layoutId teilt Motion mit, dass es dasselbe Element ist. Daher animiert sie zwischen den beiden Positionen, statt aufzuploppen.",
+        "conditional": "Die Pille existiert nur im aktiven Tab. Positionen oder Offsets müssen nicht selbst berechnet werden – Motion misst alte und neue Stelle und überbrückt die Lücke automatisch per Tween.",
+        "transitionCode": "transition ({feel})",
+        "transition": "Steuert, wie sich die Pille bewegt. {feel, select, Slow {Ein zeitbasierter Tween – bei jeder Bewegung dieselbe Dauer.} Snappy {Ein Spring – straff, daher schnappt sie schnell hinüber.} other {Ein Spring – weicher, daher gleitet sie.}}"
+      }
+    },
+    "scroll": {
+      "label": "Scroll",
+      "blurb": "Scroll-gekoppelte Motion bindet einen Wert an die Scrollposition. useScroll liefert den Fortschritt von 0→1; useTransform bildet diesen Bereich auf einen Transform ab.",
+      "scrollDown": "nach unten scrollen ↓",
+      "controls": {
+        "effect": {
+          "label": "Effekt",
+          "hint": "Was die Box beim Scrollen des Panels tut.",
+          "fade": "Fade",
+          "scale": "Skalieren",
+          "slide": "Gleiten",
+          "rotate": "Drehen"
+        }
+      },
+      "range": {
+        "fadeStart": "15 % sichtbar",
+        "fadeEnd": "voll sichtbar",
+        "scaleStart": "60 % Größe",
+        "scaleEnd": "volle Größe",
+        "slideStart": "70px links",
+        "slideEnd": "an Ort und Stelle",
+        "rotateStart": "0°",
+        "rotateEnd": "180°"
+      },
+      "explain": {
+        "useScroll": "Beobachtet, wie weit das Panel gescrollt ist, und liefert scrollYProgress: eine Zahl von 0 (ganz oben) bis 1 (ganz unten). Aktualisiert sich in jedem Scroll-Frame.",
+        "useTransform": "Bildet den Fortschritt von 0→1 auf einen echten Wertebereich ab. Während der Fortschritt von 0→1 läuft, geht {prop} von {range} – oben also {start}, unten {end}.",
+        "style": "Der abgebildete Wert ist ein Live-Motion-Value, der direkt in den Style der Box eingebunden ist. Er folgt dem Scrollen daher exakt – beim Hochscrollen läuft er rückwärts."
+      }
+    },
+    "motionTypes": "Motion-Typen"
+  },
+  "nativeSetup": {
+    "meta": {
+      "title": "beUI Native in einer React-Native-App einrichten",
+      "description": "Einmalige Einrichtung für beUI Native: Reanimated, Gesture Handler und Uniwind installieren, Metro konfigurieren, Theme-Tokens hinzufügen und dann beliebige Komponenten kopieren.",
+      "imageAlt": "beUI Native einrichten"
+    },
+    "breadcrumb": {
+      "home": "Start",
+      "page": "React Native einrichten"
+    },
+    "header": {
+      "eyebrow": "React Native",
+      "title": "beUI Native einrichten",
+      "intro": "beUI-Native-Komponenten sind schlichter Quellcode, der wie bei den Web-Komponenten in die App kopiert wird. Die Einrichtung unten einmal pro App durchführen. Danach heißt eine Komponente hinzufügen nur noch, ihre Dateien von ihrer Seite zu kopieren. Funktioniert in Expo und in Bare React Native."
+    },
+    "requirements": {
+      "title": "Voraussetzungen",
+      "body": "Die Komponenten sind mit diesen Versionen gebaut und getestet."
+    },
+    "install": {
+      "title": "1. Bibliotheken installieren",
+      "body": "In einer Expo-App wählt <code>expo install</code> die zum SDK passenden Versionen. Uniwind und Tailwind kommen von npm.",
+      "babelNote": "Das Babel-Preset von Expo enthält bereits das Worklets-Plugin, das Reanimated 4 benötigt. In einer Bare-React-Native-App muss es selbst in <code>babel.config.js</code> ergänzt werden:"
+    },
+    "uniwind": {
+      "title": "2. Uniwind einrichten",
+      "body": "Komponenten werden über <link>Uniwind</link> mit Tailwind-Klassennamen gestylt. Im Projektstamm eine <code>global.css</code> anlegen. Sie lädt Tailwind, Uniwind und das beUI-Theme, das im nächsten Schritt hinzukommt.",
+      "metro": "Dann Metro darauf verweisen. <code>withUniwindConfig</code> muss bei weiteren Metro-Wrappern der äußerste sein, und <code>cssEntryFile</code> muss ein relativer Pfad sein.",
+      "bareNote": "In einer Bare-React-Native-App kommt die Standardkonfiguration stattdessen aus <code>@react-native/metro-config</code>:",
+      "typesNote": "Uniwind schreibt die Typen der Klassennamen beim Start von Metro nach <code>dtsFile</code>, Metro also einmal starten, bevor Typen geprüft werden. Findet TypeScript danach den Import von <code>global.css</code> nicht, CSS-Dateien deklarieren:"
+    },
+    "theme": {
+      "title": "3. Theme-Tokens hinzufügen",
+      "body": "Komponenten nutzen semantische Farben wie <code>bg-primary</code> und <code>text-muted</code>, definiert für Light und Dark Mode, und folgen so der Systemdarstellung. Diese Datei als <code>{path}</code> speichern, den Pfad, den <code>global.css</code> importiert, und die Werte an die eigene Marke anpassen."
+    },
+    "root": {
+      "title": "4. App einbetten",
+      "body": "<code>global.css</code> in der Root-Komponente importieren, nicht in der Datei, die die App registriert, sonst lädt jede Stiländerung die ganze App neu. Die App in <code>GestureHandlerRootView</code> einbetten, damit wischbare und ziehbare Komponenten Gesten empfangen. Mit Expo Router gehört beides ins Root-Layout:",
+      "bareNote": "In einer Bare-App dasselbe in <code>App.tsx</code>. Für Formulare die App zusätzlich in <code>KeyboardProvider</code> aus <link>react-native-keyboard-controller</link> einbetten, damit fokussierte Felder über der Tastatur bleiben."
+    },
+    "addComponent": {
+      "title": "5. Komponente hinzufügen",
+      "cli": "Die beUI Native CLI im Stammverzeichnis der App ausführen. Sie kopiert die Komponente und die benötigten gemeinsamen Dateien nach <code>src/</code> und installiert noch fehlende Bibliotheken.",
+      "manual": "Um Dateien stattdessen von Hand zu kopieren, die Komponente unter <link>React-Native-Komponenten</link> öffnen und den manuellen Schritten folgen. In beiden Fällen die Ordnerstruktur beibehalten, da Komponenten gemeinsame Dateien über relative Pfade importieren. Für Tabs sieht das so aus:",
+      "treeLabel": "eigene App",
+      "usage": "Dann wie jede andere Komponente verwenden:",
+      "sourceNote": "Tailwind findet Klassennamen in Dateien unterhalb des Ordners, der <code>global.css</code> enthält. Liegt sie woanders, etwa in <code>app/</code>, eine <code>@source</code> für die Komponenten ergänzen:"
+    },
+    "tryFirst": {
+      "title": "Vor dem Kopieren ausprobieren",
+      "body": "Jede Seite einer <componentsLink>React-Native-Komponente</componentsLink> zeigt eine Aufnahme in Hell und Dunkel, damit die Animation vorab sichtbar ist. Coding-Agents können jede Komponente samt Installationsbefehlen und Dateien unter <code>{url}</code> oder über den beUI-MCP-Server abrufen. Siehe den <agentLink>Agent-Leitfaden</agentLink>.",
+      "note": "Jede Komponente folgt der Systemeinstellung „Bewegung reduzieren“ und akzeptiert eine <code>disableAnimation</code>-Prop. Der Quellcode liegt auf <link>GitHub</link>."
+    }
+  }
+}

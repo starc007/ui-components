@@ -1,1 +1,136 @@
-{}
+{
+  "breadcrumb": "Breadcrumb",
+  "newBadge": "Neu",
+  "category": {
+    "new": "Neu",
+    "ogImageAlt": "{name}-Komponenten von beUI",
+    "motion": {
+      "title": "Animierte React-Komponenten – Motion-UI zum Kopieren",
+      "heading": "Animierte React-Komponenten",
+      "description": "Kostenlose, quelloffene animierte React-Komponenten, gebaut mit Motion und Tailwind CSS. Den TypeScript-Quellcode in die eigene App kopieren und jede Interaktion anpassen.",
+      "allLabel": "Alle animierten Komponenten"
+    },
+    "blocks": {
+      "title": "Animierte React-UI-Blöcke – produktreife Motion",
+      "heading": "Animierte React-UI-Blöcke",
+      "description": "Produktreife animierte React-Blöcke, gebaut mit Motion und Tailwind CSS. Komplette Interaktionen in die eigene App kopieren und den Quellcode an das Produkt anpassen.",
+      "allLabel": "Alle animierten Blöcke"
+    },
+    "agents": {
+      "title": "KI-Agent-Komponenten – animierte React-KI-Interfaces",
+      "heading": "Animierte KI-Agent-Komponenten",
+      "description": "Klare, reaktionsschnelle KI-Erlebnisse mit quelloffenen React-Komponenten für Agent-Reasoning, Fortschritt, Tool-Aktivität und Konversationszustände.",
+      "allLabel": "Alle Agent-Komponenten"
+    },
+    "agentGroups": {
+      "conversation": {
+        "title": "Konversationskomponenten",
+        "description": "Prompts verfassen, Nachrichten nach Absender anordnen, Konversationsflächen gestalten und gestreamte Beiträge stabil halten, während sich die Lesenden durch das Transkript bewegen."
+      },
+      "responses": {
+        "title": "Antwort- und Quellenkomponenten",
+        "description": "Reichhaltige Antworten beim Eintreffen rendern, Abschlussaktionen im richtigen Moment zeigen und generierte Aussagen mit überprüfbaren Quellen verknüpfen."
+      },
+      "progress": {
+        "title": "Fortschritts- und Planungskomponenten",
+        "description": "Unbestimmte Wartezeiten, dauerhafte Aufgabenpläne und chronologische Agent-Aktivität vermitteln, ohne Präzision vorzutäuschen oder einen ungefilterten Trace offenzulegen."
+      },
+      "tools": {
+        "title": "Tool- und Code-Komponenten",
+        "description": "Ausführungsergebnisse, generierten Quellcode und Dateiänderungen mit begrenztem Streaming, stabilem Highlighting und überprüfbaren Abschlusszuständen darstellen."
+      },
+      "humanControl": {
+        "title": "Human-in-the-Loop-Komponenten",
+        "description": "Die Arbeit des Agents für eine eng gefasste Berechtigung, Rückfrage, Prüfung oder Entscheidung pausieren und das Ergebnis anschließend im Verlauf des Laufs festhalten."
+      }
+    },
+    "charts": {
+      "title": "Animierte React-Charts – Heatmaps und Kursziele",
+      "heading": "Animierte React-Charts",
+      "description": "Interaktive Aktivitäts-Heatmaps, Monatsrenditen und Kursziel-Charts entdecken. Den React-Quellcode kopieren und an die eigenen Daten anpassen.",
+      "allLabel": "Alle Charts"
+    }
+  },
+  "component": {
+    "metaDescription": "{description} Kostenlose, quelloffene Motion-Komponente für React und Next.js. Quellcode kopieren oder mit shadcn installieren.",
+    "ogImageAlt": "Vorschau der Komponente {name}",
+    "preview": "Vorschau",
+    "usage": "Verwendung",
+    "code": "Code",
+    "install": "Installation",
+    "installDescription": "Mit der shadcn-CLI hinzufügen oder den Quellcode manuell kopieren.",
+    "apiReference": "API-Referenz",
+    "composition": "Aufbau",
+    "howItWorks": "Funktionsweise",
+    "note": "Hinweis:",
+    "relatedComponents": "Verwandte Komponenten",
+    "updated": "Aktualisiert am <time>{date}</time>",
+    "seoTitle": "{name}: animierte Komponente für React",
+    "contributedBy": "Beigetragen von",
+    "alsoOnNative": "Auch für React Native."
+  },
+  "install": {
+    "cli": "CLI",
+    "manual": "Manuell",
+    "themeNotice": "Die Theme-Tokens werden einmalig benötigt. <code>shadcn init</code> bereits ausgeführt? Dann ist alles bereit. <link>Theme einrichten</link>",
+    "dependencies": "Abhängigkeiten installieren",
+    "utilFiles": "{count, plural, one {Util-Datei hinzufügen} other {Util-Dateien hinzufügen}}",
+    "sourceCode": "Quellcode kopieren"
+  },
+  "copyButton": {
+    "copy": "Code kopieren",
+    "copied": "Kopiert"
+  },
+  "expandCode": "Code ausklappen",
+  "copyPage": {
+    "copy": "Seite kopieren",
+    "tryAgain": "Erneut versuchen",
+    "copyAria": "Seite als Markdown kopieren",
+    "copiedAria": "Seite kopiert",
+    "errorAria": "Kopieren fehlgeschlagen. Erneut versuchen",
+    "moreActions": "Weitere Seitenaktionen",
+    "menu": "Seitenaktionen",
+    "viewMarkdown": "Als Markdown anzeigen",
+    "openIn": "In {app} öffnen"
+  },
+  "keepInMind": {
+    "title": "Gut zu wissen",
+    "body": "Einige Komponenten dieser Website sind von bestehenden Arbeiten aus dem Web inspiriert oder ihnen nachgebaut. Es geht nicht darum, sich mit fremden Federn zu schmücken, sondern ums Lernen, Experimentieren und darum, Dinge manchmal etwas weiterzutreiben. Wenn etwas bekannt vorkommt und eine Nennung fehlt, bitte <link>Bescheid geben</link> – das wird umgehend korrigiert."
+  },
+  "proCard": {
+    "heading": "Begrenztes Angebot",
+    "summary": "350+ Blöcke und Premium-Motion-Komponenten für React und Next.js.",
+    "price": "179 $ für lebenslangen Zugang",
+    "explore": "beUI Pro entdecken"
+  },
+  "proMobileCard": {
+    "title": "Komplette Screens gesucht?",
+    "description": "50 React-Native-Blöcke und -Screens, von Onboarding und Paywalls bis Profil und Checkout, jetzt in beUI Pro für Mobile.",
+    "cta": "beUI Pro Mobile entdecken"
+  },
+  "sponsorCard": {
+    "title": "Sponsoren",
+    "tier": "Diamond",
+    "become": "Sponsor werden",
+    "taglines": {
+      "tracwell": "Besucher-Insights für Wachstum",
+      "illos": "Animierte Illustrationen für Produktseiten"
+    }
+  },
+  "pager": {
+    "label": "Vorherige und nächste Komponente",
+    "previous": "Zurück",
+    "next": "Weiter"
+  },
+  "previewExpand": {
+    "expand": "Vorschau vergrößern",
+    "replay": "Vorschau wiederholen",
+    "exit": "Vergrößerte Vorschau schließen",
+    "exitTitle": "Schließen (Esc)"
+  },
+  "propsTable": {
+    "prop": "Prop",
+    "type": "Typ",
+    "default": "Standard"
+  }
+}

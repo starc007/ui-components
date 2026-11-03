@@ -1,1 +1,89 @@
-{}
+{
+  "header": {
+    "components": "Composants",
+    "blocks": "Blocs",
+    "agents": "Agents",
+    "playground": "Playground",
+    "sponsors": "Sponsors",
+    "starOnGithub": "Star sur GitHub",
+    "starOnGithubCount": "Star sur GitHub, {count} étoiles",
+    "getPro": "Passer à Pro",
+    "charts": "Graphiques"
+  },
+  "language": {
+    "label": "Langue : {language}",
+    "menu": "Choisir la langue"
+  },
+  "mobileNav": {
+    "open": "Ouvrir la navigation",
+    "title": "Menu"
+  },
+  "dock": {
+    "email": "E-mail"
+  },
+  "docsPages": {
+    "aiAgents": "Agents IA",
+    "agentGuide": "Guide des agents",
+    "motionGuides": "Guides d’animation",
+    "themeSetup": "Configuration du thème",
+    "nativeSetup": "Configuration React Native",
+    "nativeComponents": "Composants React Native",
+    "changelog": "Journal des modifications",
+    "forCodingAgents": "Pour les agents de code",
+    "theming": "Thèmes",
+    "motionPatterns": "Modèles d’animation"
+  },
+  "sidebar": {
+    "intro": "Introduction",
+    "home": "Accueil",
+    "guides": "Guides",
+    "overview": "Vue d’ensemble",
+    "setup": "Configuration",
+    "all": "Tout",
+    "filterByCategory": "Filtrer la navigation par catégorie",
+    "componentCategories": "Catégories de composants",
+    "browseComponents": "Parcourir les composants",
+    "browseNative": "Parcourir les composants React Native",
+    "siteNavigation": "Navigation du site",
+    "resources": "Sponsors et ressources",
+    "nativeGroups": {
+      "AI agents": "Agents IA",
+      "Actions": "Actions",
+      "Forms": "Formulaires",
+      "Motion": "Animation",
+      "Navigation and lists": "Navigation et listes"
+    }
+  },
+  "search": {
+    "label": "Rechercher des composants",
+    "trigger": "Rechercher",
+    "placeholder": "Rechercher des composants…",
+    "empty": "Aucun résultat.",
+    "pages": "Pages"
+  },
+  "footer": {
+    "createdBy": "Créé par <link>Saurabh</link>",
+    "links": "Liens",
+    "viewAll": "Tout voir ({count})",
+    "browseAll": "Tout parcourir",
+    "sponsor": "Sponsoriser",
+    "description": "Composants animés pour React, Next.js et React Native. Copiez le code source ou installez-les avec une CLI.",
+    "alsoByUs": "Du même auteur",
+    "docsTagline": "La boîte à outils d’animation pour React et Next.js",
+    "label": "Pied de page"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "La page que vous cherchez n’existe pas."
+  },
+  "theme": {
+    "lightTheme": "Thème clair",
+    "darkTheme": "Thème sombre",
+    "systemTheme": "Thème du système"
+  },
+  "nativeStrip": {
+    "label": "beUI Pro pour mobile",
+    "announcement": "beUI Pro pour mobile est disponible<more>, avec <strong>50 blocs et écrans React Native</strong></more>",
+    "explore": "Découvrir"
+  }
+}

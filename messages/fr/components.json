@@ -1,1 +1,12 @@
-{}
+{
+  "todoList": {
+    "title": "Tâches",
+    "label": "Liste des tâches de l’agent",
+    "progress": "{completed} tâches terminées sur {total}",
+    "empty": "Aucune tâche pour l’instant",
+    "pending": "En attente",
+    "inProgress": "En cours",
+    "completed": "Terminée",
+    "cancelled": "Annulée"
+  }
+}
