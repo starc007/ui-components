@@ -2249,7 +2249,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "mines",
         name: "Mines",
-        description: "A mines board: pick tiles to find gems, each one raising the multiplier, and cash out before you hit a mine. Every pick joins a constellation drawn across the board, an odds ring shows the chance the next pick is safe, and the round's end reveals every tile in a ripple from your last pick. Distinct synthesized sounds for gems, streaks, mines and cash outs; keyboard playable, reduced-motion safe.",
+        description: "A mines board: pick tiles to find gems, each one raising the multiplier, and cash out before you hit a mine. Each gem you find is numbered in pick order, an odds ring shows the chance the next pick is safe, and the round's end reveals every tile in a ripple from your last pick. Distinct synthesized sounds for gems, streaks, mines and cash outs; keyboard playable, reduced-motion safe.",
         file: "components/motion/mines.tsx",
         badge: "new",
         launchedAt: "2026-11-03",

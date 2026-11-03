@@ -72,8 +72,6 @@ const RIPPLE_STEP = 0.025;
 const SHAKE = { duration: 0.3, ease: "easeOut" } as const;
 // Exits are shorter than entrances.
 const EXIT = { duration: 0.12, ease: EASE_OUT } as const;
-// Gap between tiles in px; matches the grid's gap-2.
-const GAP = 8;
 
 /**
  * A mines board: pick tiles to find gems, each raising the multiplier, and
@@ -105,18 +103,6 @@ export function Mines({
   const tileRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [, animate] = useAnimate();
 
-  // The constellation is drawn in the board's own pixels, so measure it.
-  const gridRef = useRef<HTMLFieldSetElement>(null);
-  const [boardWidth, setBoardWidth] = useState(0);
-  useLayoutEffect(() => {
-    const grid = gridRef.current;
-    if (!grid) return;
-    const measure = () => setBoardWidth(grid.clientWidth);
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(grid);
-    return () => observer.disconnect();
-  }, []);
 
   const gems = picked.filter((tile) => !mineSet.has(tile)).length;
   const multiplier = minesMultiplier(tiles, mines, gems);
@@ -243,29 +229,6 @@ export function Mines({
     onSoundChange?.(nextSound);
   };
 
-  const tileSize = (boardWidth - GAP * (size - 1)) / size;
-  const centerOf = (tile: number) => ({
-    x: (tile % size) * (tileSize + GAP) + tileSize / 2,
-    y: Math.floor(tile / size) * (tileSize + GAP) + tileSize / 2,
-  });
-  // Lines join consecutive picks edge to edge, leaving the icons clear.
-  const segments = picked.slice(1).map((to, index) => {
-    const from = picked[index];
-    const a = centerOf(from);
-    const b = centerOf(to);
-    const length = Math.hypot(b.x - a.x, b.y - a.y) || 1;
-    const trim = Math.min(tileSize * 0.34, length / 2);
-    const ux = (b.x - a.x) / length;
-    const uy = (b.y - a.y) / length;
-    return {
-      id: `${from}-${to}`,
-      x1: a.x + ux * trim,
-      y1: a.y + uy * trim,
-      x2: b.x - ux * trim,
-      y2: b.y - uy * trim,
-      toMine: mineSet.has(to),
-    };
-  });
 
   return (
     <section aria-label={ariaLabel} className={cn("flex w-full max-w-md flex-col gap-4", className)}>
@@ -316,7 +279,6 @@ export function Mines({
       {/* Board panel: 12px tiles + 12px padding give the 24px outer radius. */}
       <div className="relative rounded-3xl bg-muted/40 p-3">
         <fieldset
-          ref={gridRef}
           className="m-0 grid min-w-0 gap-2 border-0 p-0"
           style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
         >
@@ -378,6 +340,18 @@ export function Mines({
                     transition={{ duration: 0.45, ease: EASE_OUT }}
                   />
                 ) : null}
+                {isPicked && !isMine ? (
+                  // Pick order: the run, read tile by tile.
+                  <motion.span
+                    aria-hidden="true"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.15, ease: EASE_OUT, delay: 0.1 }}
+                    className="absolute top-1.5 left-2 text-[10px] font-medium text-primary/70 tabular-nums"
+                  >
+                    {order + 1}
+                  </motion.span>
+                ) : null}
                 <AnimatePresence initial={false}>
                   {content ? (
                     <motion.span
@@ -413,36 +387,6 @@ export function Mines({
           })}
         </fieldset>
 
-        {/* The constellation: your picks, joined in order. */}
-        {boardWidth > 0 ? (
-          <svg
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-3 overflow-visible"
-            viewBox={`0 0 ${boardWidth} ${boardWidth}`}
-          >
-            <AnimatePresence>
-              {segments.map((segment) => (
-                <motion.line
-                  key={segment.id}
-                  x1={segment.x1}
-                  y1={segment.y1}
-                  x2={segment.x2}
-                  y2={segment.y2}
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  className={segment.toMine ? "stroke-rose-500 dark:stroke-rose-400" : "stroke-primary"}
-                  initial={reduce ? { opacity: 0 } : { pathLength: 0, opacity: 0 }}
-                  animate={{
-                    pathLength: 1,
-                    opacity: segment.toMine || phase === "cashed" ? 0.9 : phase === "busted" ? 0.3 : 0.55,
-                  }}
-                  exit={{ opacity: 0, transition: EXIT }}
-                  transition={{ duration: 0.22, ease: EASE_OUT }}
-                />
-              ))}
-            </AnimatePresence>
-          </svg>
-        ) : null}
       </div>
 
       <div className="flex items-center gap-2">

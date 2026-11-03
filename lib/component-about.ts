@@ -3247,7 +3247,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   mines: {
     overview:
-      "Mines is a React tile game built with Framer Motion. Pick a mine count and start a round, then reveal tiles one at a time. Each gem raises the multiplier, shown as rolling digits with the next step beside it, and a mine ends the round. Cash out whenever you like; clearing every gem cashes out for you. Every pick is joined to the one before it, so your run draws a constellation across the board that lights up when you cash out and snaps red into a mine. A small ring beside the multiplier shows the chance your next pick is safe. When a round ends the rest of the board reveals in a ripple spreading from your last pick, with the tiles you never touched shown faded.",
+      "Mines is a React tile game built with Framer Motion. Pick a mine count and start a round, then reveal tiles one at a time. Each gem raises the multiplier, shown as rolling digits with the next step beside it, and a mine ends the round. Cash out whenever you like; clearing every gem cashes out for you. Each gem you find is numbered in the order you picked it, so the board shows your run at a glance. A small ring beside the multiplier shows the chance your next pick is safe. When a round ends the rest of the board reveals in a ripple spreading from your last pick, with the tiles you never touched shown faded.",
     useWhen: [
       "A game, rewards screen or giveaway wants a push-your-luck mechanic with a clear, growing reward.",
       "A demo or landing page wants a tactile grid interaction with satisfying reveals.",
