@@ -6,7 +6,7 @@ import {
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, ChevronRight, Smartphone } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronRight, Smartphone } from "lucide-react";
 import {
   findCategory,
   findComponent,
@@ -246,12 +246,49 @@ export default async function ComponentPage({
           <span className="font-medium text-foreground">{comp.name}</span>
         </nav>
         <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-medium tracking-tight text-foreground">
-              {comp.name}
-            </h1>
-            {comp.badge === "new" ? (
-              <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
+          <div className="min-w-0">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-medium tracking-tight text-foreground">
+                {comp.name}
+              </h1>
+              {comp.badge === "new" ? (
+                <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
+              ) : null}
+            </div>
+            {comp.credit && creditUrl ? (
+              <a
+                href={creditUrl.toString()}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="group -ml-1 mt-3 inline-flex items-center gap-2 rounded-full py-1 pr-2.5 pl-1 text-sm text-muted-foreground outline-none transition-colors duration-150 hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {comp.credit.avatar ? (
+                  // biome-ignore lint/performance/noImgElement: external contributor avatar, not worth a next/image remotePatterns entry
+                  <img
+                    src={comp.credit.avatar}
+                    alt=""
+                    width={20}
+                    height={20}
+                    className="size-5 shrink-0 rounded-full object-cover outline outline-1 -outline-offset-1 outline-foreground/10"
+                  />
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    className="grid size-5 shrink-0 place-items-center rounded-full bg-foreground/10 text-[10px] font-semibold text-foreground"
+                  >
+                    {comp.credit.name.charAt(0).toUpperCase()}
+                  </span>
+                )}
+                <span>
+                  Contributed by{" "}
+                  <span className="font-medium text-foreground">{comp.credit.name}</span>
+                </span>
+                <ArrowUpRight
+                  aria-hidden="true"
+                  className="size-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-px group-hover:translate-x-px motion-reduce:transition-none"
+                />
+                <span className="sr-only">(opens in new tab)</span>
+              </a>
             ) : null}
           </div>
           <CopyPage
@@ -288,19 +325,6 @@ export default async function ComponentPage({
       ) : null}
       <RelatedSection related={related} />
 
-      {comp.credit ? (
-        <section className="mt-12 border-t border-border pt-8">
-          <h2 className="text-sm font-semibold text-foreground">Contributed by</h2>
-          <Link
-            href={creditUrl!.toString()}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-foreground"
-          >
-            <span className="underline underline-offset-2">{comp.credit.name}</span>
-          </Link>
-        </section>
-      ) : null}
       {cat.slug === "blocks" ? <KeepInMind /> : null}
       <p className="mt-6 text-xs text-muted-foreground">
         Updated{" "}
