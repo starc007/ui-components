@@ -1,6 +1,6 @@
 "use client";
 
-import { Volume2, VolumeX } from "lucide-react";
+import { type LucideIcon, Volume2, VolumeX, Zap, ZapOff } from "lucide-react";
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
 import {
   useCallback,
@@ -33,8 +33,14 @@ export interface PlinkoProps {
   maxBalls?: number;
   /** Label of the drop button. Default "Drop ball". */
   dropLabel?: string;
-  /** Flash each peg as the ball hits it. Default true. */
+  /** Flash each peg as the ball hits it (controlled). */
   pegFlash?: boolean;
+  /** Initial peg flash state when uncontrolled. Default true. */
+  defaultPegFlash?: boolean;
+  /** Called when the peg flash button is toggled. */
+  onPegFlashChange?: (pegFlash: boolean) => void;
+  /** Accessible name of the peg flash button. Default "Peg flash". */
+  pegFlashLabel?: string;
   /** Click on every peg hit and landing (controlled). */
   sound?: boolean;
   /** Initial sound state when uncontrolled. Default false. */
@@ -117,7 +123,10 @@ export function Plinko({
   onLand,
   maxBalls = 12,
   dropLabel = "Drop ball",
-  pegFlash = true,
+  pegFlash,
+  defaultPegFlash = true,
+  onPegFlashChange,
+  pegFlashLabel = "Peg flash",
   sound,
   defaultSound = false,
   onSoundChange,
@@ -133,12 +142,16 @@ export function Plinko({
   const [lastSlot, setLastSlot] = useState<number | null>(null);
   const [internalSound, setInternalSound] = useState(defaultSound);
   const soundOn = sound ?? internalSound;
+  const [internalFlash, setInternalFlash] = useState(defaultPegFlash);
+  const flashOn = pegFlash ?? internalFlash;
 
   // Ticks are scheduled ahead of the ball; each checks the latest sound state
   // when it fires, so muting mid-drop silences the rest of the fall.
   const soundRef = useRef(soundOn);
+  const flashRef = useRef(flashOn);
   useLayoutEffect(() => {
     soundRef.current = soundOn;
+    flashRef.current = flashOn;
   });
   const player = useRef<ReturnType<typeof createTickPlayer> | null>(null);
   const timers = useRef(new Set<number>());
@@ -167,6 +180,12 @@ export function Plinko({
       run();
     }, seconds * 1000);
     timers.current.add(timer);
+  };
+
+  const togglePegFlash = () => {
+    const next = !flashOn;
+    if (pegFlash === undefined) setInternalFlash(next);
+    onPegFlashChange?.(next);
   };
 
   const toggleSound = () => {
@@ -238,7 +257,7 @@ export function Plinko({
       const row = index / 2;
       const peg = Math.round((point.x - width / 2) / GAP + row / 2);
       at(ball.times[index + 1] * ball.duration, () => {
-        if (pegFlash) {
+        if (flashRef.current) {
           animate(`[data-peg="${row}-${peg}"]`, { scale: [1, 1.8, 1], opacity: [0.4, 1, 0.4] }, { duration: 0.3 });
         }
         tick();
@@ -345,22 +364,8 @@ export function Plinko({
         <Button onClick={drop} disabled={balls.length >= maxBalls} pressScale={0.96}>
           {dropLabel}
         </Button>
-        <Button
-          variant="secondary"
-          onClick={toggleSound}
-          aria-label={soundLabel}
-          aria-pressed={soundOn}
-          pressScale={0.96}
-          className="w-10 px-0"
-        >
-          <ActionSwapCascadeIcon value={soundOn ? "on" : "off"} className="size-4">
-            {soundOn ? (
-              <Volume2 aria-hidden="true" className="size-4" />
-            ) : (
-              <VolumeX aria-hidden="true" className="size-4" />
-            )}
-          </ActionSwapCascadeIcon>
-        </Button>
+        <ToggleButton on={flashOn} onToggle={togglePegFlash} label={pegFlashLabel} onIcon={Zap} offIcon={ZapOff} />
+        <ToggleButton on={soundOn} onToggle={toggleSound} label={soundLabel} onIcon={Volume2} offIcon={VolumeX} />
       </div>
       <p aria-live="polite" className="sr-only">
         {announcement}
@@ -386,4 +391,34 @@ export function plinkoSlots(
     const scale = 10 ** Math.floor(Math.log10(value));
     return Math.round(value / scale) * scale;
   });
+}
+
+/** An icon button that shows and toggles one on/off setting. */
+function ToggleButton({
+  on,
+  onToggle,
+  label,
+  onIcon: OnIcon,
+  offIcon: OffIcon,
+}: {
+  on: boolean;
+  onToggle: () => void;
+  label: string;
+  onIcon: LucideIcon;
+  offIcon: LucideIcon;
+}) {
+  return (
+    <Button
+      variant="secondary"
+      onClick={onToggle}
+      aria-label={label}
+      aria-pressed={on}
+      pressScale={0.96}
+      className="w-10 px-0"
+    >
+      <ActionSwapCascadeIcon value={on ? "on" : "off"} className="size-4">
+        {on ? <OnIcon aria-hidden="true" className="size-4" /> : <OffIcon aria-hidden="true" className="size-4" />}
+      </ActionSwapCascadeIcon>
+    </Button>
+  );
 }
