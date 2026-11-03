@@ -5,12 +5,28 @@ import {
 } from "@/lib/component-paths";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { ArrowRight, ChevronRight, Smartphone } from "lucide-react";
+import { hasLocale } from "next-intl";
+import {
+  getFormatter,
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
+import {
+  localizeCategory,
+  localizeComponent,
+  localizeGuide,
+} from "@/i18n/catalog";
+import type { SiteMessages } from "@/i18n/messages";
+import { localeAlternates } from "@/i18n/metadata";
+import { Link } from "@/i18n/navigation";
+import { LANGUAGES, type Locale, localizedPath, routing } from "@/i18n/routing";
 import {
   findCategory,
   findComponent,
   registry,
+  type ComponentEntry,
   type ComponentExample,
 } from "@/lib/registry";
 import { CodeBlock } from "@/components/app/docs/code-block";
@@ -46,8 +62,6 @@ import {
   breadcrumbJsonLd,
   componentJsonLd,
   componentKeywords,
-  componentMetaDescription,
-  componentSeoTitle,
   relatedComponents,
 } from "@/lib/seo";
 
@@ -60,15 +74,49 @@ export function generateStaticParams() {
   );
 }
 
+type ComponentParams = Promise<{
+  locale: string;
+  category: string;
+  slug: string;
+}>;
+
+/** Registry entry with translated name, description, examples and guide. */
+function localizeEntry(comp: ComponentEntry, messages: SiteMessages) {
+  return {
+    ...localizeComponent(comp, messages),
+    guide: comp.guide && localizeGuide(comp.slug, comp.guide, messages),
+  };
+}
+
+/**
+ * Search title and meta description: lib/component-seo.ts copy through the
+ * Catalog messages (English when a language has no translation).
+ */
+async function pageCopy(comp: ComponentEntry, messages: SiteMessages, locale: Locale) {
+  const t = await getTranslations({ locale, namespace: "Docs.component" });
+  const seo = messages.Catalog.components[comp.slug]?.seo;
+  return {
+    title: seo?.title ?? t("seoTitle", { name: comp.name }),
+    description:
+      seo?.description ?? t("metaDescription", { description: comp.description }),
+  };
+}
+
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ category: string; slug: string }>;
+  params: ComponentParams;
 }): Promise<Metadata> {
-  const { category, slug } = await params;
+  const { locale, category, slug } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
   const cat = findCategory(category);
-  const comp = findComponent(category, slug);
-  if (!cat || !comp) return {};
+  const rawComp = findComponent(category, slug);
+  if (!cat || !rawComp) return {};
+  const [messages, t] = await Promise.all([
+    getMessages({ locale }),
+    getTranslations({ locale, namespace: "Docs.component" }),
+  ]);
+  const comp = localizeComponent(rawComp, messages);
   const installSlugs =
     comp.examples?.flatMap((example) =>
       example.installSlug ? [example.installSlug] : [],
@@ -80,12 +128,16 @@ export async function generateMetadata({
     ? `/${installSlugs[0]}.json`
     : `/${comp.slug}.json`;
 
-  const title = componentSeoTitle(comp);
+  const { title, description: metaDescription } = await pageCopy(
+    comp,
+    messages,
+    locale,
+  );
   const ogTitle = `${title} · beUI`;
-  const pageUrl = componentPath(cat.slug, comp.slug);
+  const alternates = localeAlternates(componentPath(cat.slug, comp.slug), locale);
   const imageUrl = `/api/og?component=${comp.slug}`;
-  const keywords = componentKeywords(cat, comp);
-  const metaDescription = componentMetaDescription(comp);
+  // Search keywords stay English.
+  const keywords = componentKeywords(cat, rawComp);
 
   return {
     title,
@@ -94,15 +146,16 @@ export async function generateMetadata({
     openGraph: {
       title: ogTitle,
       description: metaDescription,
-      url: pageUrl,
+      url: alternates.canonical,
       type: "article",
       siteName: "beUI",
+      locale: LANGUAGES[locale].og,
       images: [
         {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: `${comp.name} component preview`,
+          alt: t("ogImageAlt", { name: comp.name }),
         },
       ],
     },
@@ -113,7 +166,7 @@ export async function generateMetadata({
       images: [imageUrl],
     },
     alternates: {
-      canonical: pageUrl,
+      ...alternates,
       types: {
         "application/json":
           installSlugs.length > 0 ? `/r/${comp.slug}` : `/r/${comp.slug}.json`,
@@ -143,12 +196,23 @@ async function loadSource(file: string) {
 export default async function ComponentPage({
   params,
 }: {
-  params: Promise<{ category: string; slug: string }>;
+  params: ComponentParams;
 }) {
-  const { category, slug } = await params;
+  const { locale, category, slug } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
   const cat = findCategory(category);
-  const comp = findComponent(category, slug);
-  if (!cat || !comp) notFound();
+  const rawComp = findComponent(category, slug);
+  if (!cat || !rawComp) notFound();
+  const [messages, t, tDocs, format] = await Promise.all([
+    getMessages(),
+    getTranslations("Docs.component"),
+    getTranslations("Docs"),
+    getFormatter(),
+  ]);
+  const comp = localizeEntry(rawComp, messages);
+  const { title, description } = await pageCopy(comp, messages, locale);
+  const catName = localizeCategory(cat, messages).name;
   const hasVariantInstallCommands =
     comp.examples?.some((example) => example.installSlug) ?? false;
   const examplesShareSource =
@@ -157,7 +221,10 @@ export default async function ComponentPage({
   const shouldShowExampleApi = (index: number) =>
     !examplesShareSource || index === (comp.examples?.length ?? 0) - 1;
   const dates = componentDates(cat.slug, comp.slug);
-  const related = relatedComponents(cat.slug, comp.slug, 3);
+  const related = relatedComponents(cat.slug, comp.slug, 3).map((rel) => {
+    const text = messages.Catalog.components[rel.slug];
+    return text ? { ...rel, name: text.name, description: text.description ?? rel.description } : rel;
+  });
   const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
   const creditUrl = comp.credit ? new URL(comp.credit.url) : null;
   creditUrl?.searchParams.set("ref", "beui");
@@ -192,9 +259,11 @@ export default async function ComponentPage({
           className="mt-12 scroll-mt-24 border-t border-border pt-8"
         >
           <div className="min-w-0">
-            <h2 className="text-sm font-semibold text-foreground">Install</h2>
+            <h2 className="text-sm font-semibold text-foreground">
+              {t("install")}
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Add it with the shadcn CLI, or copy the source manually.
+              {t("installDescription")}
             </p>
             <div className="mt-3">
               <InstallBlock category={cat.slug} slug={comp.slug} />
@@ -209,7 +278,7 @@ export default async function ComponentPage({
           className="mt-12 scroll-mt-24 border-t border-border pt-8"
         >
           <h2 className="text-sm font-semibold text-foreground">
-            API Reference
+            {t("apiReference")}
           </h2>
           <div className="mt-4">
             <PropsTable docs={propsDocs} />
@@ -224,23 +293,26 @@ export default async function ComponentPage({
       <JsonLd
         data={[
           breadcrumbJsonLd([
-            { name: "beUI", path: "/" },
-            { name: cat.name, path: categoryPath(cat.slug) },
-            { name: comp.name, path: componentPath(cat.slug, comp.slug) },
+            { name: "beUI", path: localizedPath("/", locale) },
+            { name: catName, path: localizedPath(categoryPath(cat.slug), locale) },
+            {
+              name: comp.name,
+              path: localizedPath(componentPath(cat.slug, comp.slug), locale),
+            },
           ]),
-          componentJsonLd(cat, comp),
+          componentJsonLd(cat, comp, { headline: title, description, locale }),
         ]}
       />
       <div id="overview" className="scroll-mt-24">
         <nav
-          aria-label="Breadcrumb"
+          aria-label={tDocs("breadcrumb")}
           className="flex items-center gap-1.5 text-sm"
         >
           <Link
             href={categoryPath(cat.slug)}
             className="text-muted-foreground transition-colors hover:text-foreground"
           >
-            {cat.name}
+            {catName}
           </Link>
           <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
           <span className="font-medium text-foreground">{comp.name}</span>
@@ -257,7 +329,7 @@ export default async function ComponentPage({
           <CopyPage
             pageUrl={pageUrlFor(cat.slug, comp.slug)}
             markdownPath={`${componentPath(cat.slug, comp.slug)}.md`}
-            componentName={comp.name}
+            componentName={rawComp.name}
           />
         </div>
       </div>
@@ -277,7 +349,7 @@ export default async function ComponentPage({
         >
           <Smartphone aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
           <span className="min-w-0 flex-1">
-            <span className="font-medium text-foreground">Also on React Native.</span>{" "}
+            <span className="font-medium text-foreground">{t("alsoOnNative")}</span>{" "}
             <span className="text-muted-foreground">{nativeComponent.description}</span>
           </span>
           <ArrowRight
@@ -290,26 +362,26 @@ export default async function ComponentPage({
 
       {comp.credit ? (
         <section className="mt-12 border-t border-border pt-8">
-          <h2 className="text-sm font-semibold text-foreground">Contributed by</h2>
-          <Link
-            href={creditUrl!.toString()}
+          <h2 className="text-sm font-semibold text-foreground">{t("contributedBy")}</h2>
+          <a
+            href={creditUrl?.toString()}
             target="_blank"
             rel="noreferrer noopener"
             className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-foreground"
           >
             <span className="underline underline-offset-2">{comp.credit.name}</span>
-          </Link>
+          </a>
         </section>
       ) : null}
       {cat.slug === "blocks" ? <KeepInMind /> : null}
       <p className="mt-6 text-xs text-muted-foreground">
-        Updated{" "}
-        <time dateTime={dates.updatedAt}>
-          {new Intl.DateTimeFormat("en", {
+        {t.rich("updated", {
+          date: format.dateTime(new Date(`${dates.updatedAt}T00:00:00Z`), {
             dateStyle: "medium",
             timeZone: "UTC",
-          }).format(new Date(`${dates.updatedAt}T00:00:00Z`))}
-        </time>
+          }),
+          time: (chunks) => <time dateTime={dates.updatedAt}>{chunks}</time>,
+        })}
       </p>
       <PagePager category={cat.slug} slug={comp.slug} />
     </div>
@@ -329,9 +401,10 @@ async function ExampleBlock({
 }) {
   const Preview = previews[example.previewKey];
   const usageFile = example.usageFile ?? example.previewFile;
-  const [source, usage] = await Promise.all([
+  const [source, usage, t] = await Promise.all([
     loadSource(example.file),
     loadSource(usageFile),
+    getTranslations("Docs.component"),
   ]);
   const installSlug = example.installSlug ?? null;
   const propsDocs = showApiReference ? getComponentProps(example.file) : [];
@@ -361,21 +434,21 @@ async function ExampleBlock({
               indicatorClassName="bg-background"
               className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
             >
-              Preview
+              {t("preview")}
             </TabsTrigger>
             <TabsTrigger
               value="usage"
               indicatorClassName="bg-background"
               className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
             >
-              Usage
+              {t("usage")}
             </TabsTrigger>
             <TabsTrigger
               value="source"
               indicatorClassName="bg-background"
               className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
             >
-              Code
+              {t("code")}
             </TabsTrigger>
           </TabsList>
             <div className="flex items-center gap-2">
@@ -409,7 +482,9 @@ async function ExampleBlock({
           id={`${example.slug}-install`}
           className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
         >
-          <h2 className="text-sm font-semibold text-foreground">Install</h2>
+          <h2 className="text-sm font-semibold text-foreground">
+            {t("install")}
+          </h2>
           <div className="mt-3">
             <InstallBlock category={category} slug={installSlug} />
           </div>
@@ -421,7 +496,7 @@ async function ExampleBlock({
           className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
         >
           <h2 className="text-sm font-semibold text-foreground">
-            API Reference
+            {t("apiReference")}
           </h2>
           <div className="mt-3">
             <PropsTable docs={propsDocs} />
@@ -446,14 +521,15 @@ async function DefaultTabs({
   const Preview = getPreview(category, slug);
   const previewFile = `components/previews/${category}/${slug}.preview.tsx`;
   const resolvedUsageFile = usageFile ?? previewFile;
-  const [source, usage] = await Promise.all([
+  const [source, usage, t] = await Promise.all([
     loadSource(file),
     loadSource(resolvedUsageFile),
+    getTranslations("Docs.component"),
   ]);
 
   return (
     <section id="preview" className="mt-8 scroll-mt-24">
-      <h2 className="sr-only">Preview</h2>
+      <h2 className="sr-only">{t("preview")}</h2>
       <PreviewExpand stageId="preview-stage">
       <Tabs defaultValue="preview" variant="pill">
         <div className="flex items-center justify-between gap-3">
@@ -463,21 +539,21 @@ async function DefaultTabs({
             indicatorClassName="bg-background"
             className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
           >
-            Preview
+            {t("preview")}
           </TabsTrigger>
           <TabsTrigger
             value="usage"
             indicatorClassName="bg-background"
             className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
           >
-            Usage
+            {t("usage")}
           </TabsTrigger>
           <TabsTrigger
             value="source"
             indicatorClassName="bg-background"
             className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
           >
-            Code
+            {t("code")}
           </TabsTrigger>
         </TabsList>
           <div className="flex items-center gap-2">

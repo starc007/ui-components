@@ -1,6 +1,11 @@
 import { categoryPath } from "@/lib/component-paths";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import { localizeCategory } from "@/i18n/catalog";
+import { localeAlternates } from "@/i18n/metadata";
+import { LANGUAGES, localizedPath, routing } from "@/i18n/routing";
 import { findCategory, registry } from "@/lib/registry";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
 import { JsonLd } from "@/components/app/analytics/json-ld";
@@ -8,75 +13,43 @@ import { isComponentNew } from "@/lib/component-status";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 
-const categoryContent = {
-  motion: {
-    title: "Animated React Components — Copy-Paste Motion UI",
-    heading: "Animated React components",
-    description:
-      "Explore free, open-source animated React components built with Motion and Tailwind CSS. Copy the TypeScript source into your app and customize every interaction.",
-    allLabel: "All animated components",
-  },
-  blocks: {
-    title: "Animated React UI Blocks — Product-Ready Motion",
-    heading: "Animated React UI blocks",
-    description:
-      "Explore product-ready animated React blocks built with Motion and Tailwind CSS. Copy complete interactions into your app and adapt the source to your product.",
-    allLabel: "All animated blocks",
-  },
-  charts: {
-    title: "Animated React Charts — Heatmaps and Price Targets",
-    heading: "Animated React charts",
-    description:
-      "Explore interactive activity heatmaps, monthly returns, and price target charts. Copy the React source and customize it for your data.",
-    allLabel: "All charts",
-  },
-  agents: {
-    title: "AI Agent Components — Animated React AI Interfaces",
-    heading: "Animated AI agent components",
-    description:
-      "Build clear, responsive AI experiences with open-source React components for agent reasoning, progress, tool activity, and conversation states.",
-    allLabel: "All agent components",
-  },
-} as const;
+/** Copy per category in messages Docs.category; unknown categories read as motion. */
+const CONTENT_KEYS = ["motion", "blocks", "charts", "agents"] as const;
+type ContentKey = (typeof CONTENT_KEYS)[number];
 
+function contentKey(slug: string): ContentKey {
+  return CONTENT_KEYS.find((key) => key === slug) ?? "motion";
+}
 
 const AGENT_CATEGORY_GROUPS = [
   {
     id: "conversation",
-    title: "Conversation components",
-    description:
-      "Compose prompts, arrange sender-aware messages, shape conversational surfaces, and keep streamed turns stable while the reader moves through the transcript.",
+    key: "conversation",
     slugs: ["prompt-input", "message", "message-bubble", "message-scroller"],
   },
   {
     id: "responses",
-    title: "Response and evidence components",
-    description:
-      "Render rich answers as they arrive, reveal completion actions at the right time, and connect generated claims to inspectable sources.",
+    key: "responses",
     slugs: ["streaming-response", "image-generation", "citations"],
   },
   {
     id: "progress",
-    title: "Progress and planning components",
-    description:
-      "Communicate unknown waits, durable task plans, and chronological agent activity without inventing precision or exposing an unfiltered trace.",
+    key: "progress",
     slugs: ["loading-states", "todo-list", "agent-activity"],
   },
   {
     id: "tools",
-    title: "Tool and code components",
-    description:
-      "Present execution outcomes, generated source, and file changes with bounded streaming, stable highlighting, and inspectable completion states.",
+    key: "tools",
     slugs: ["tool-result", "code-block", "file-diff"],
   },
   {
     id: "human-control",
-    title: "Human-in-the-loop components",
-    description:
-      "Pause agent work for a scoped permission, clarification, review, or decision, then preserve the resolved outcome in the run history.",
+    key: "humanControl",
     slugs: ["tool-approval", "approval-card"],
   },
 ] as const;
+
+type CategoryParams = Promise<{ locale: string; category: string }>;
 
 export function generateStaticParams() {
   return registry.filter((c) => c.slug !== "charts").map((c) => ({ category: c.slug }));
@@ -85,24 +58,29 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ category: string }>;
+  params: CategoryParams;
 }): Promise<Metadata> {
-  const { category } = await params;
+  const { locale, category } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
   const cat = findCategory(category);
   if (!cat) return {};
 
-  const content =
-    categoryContent[cat.slug as keyof typeof categoryContent] ??
-    categoryContent.motion;
-  const title = content.title;
+  const [messages, t] = await Promise.all([
+    getMessages({ locale }),
+    getTranslations({ locale, namespace: "Docs.category" }),
+  ]);
+  const key = contentKey(cat.slug);
+  const title = t(`${key}.title`);
+  const description = t(`${key}.description`);
   const ogTitle = `${title} · beUI`;
-  const pageUrl = categoryPath(cat.slug);
+  const alternates = localeAlternates(categoryPath(cat.slug), locale);
   const imageUrl = `/api/og?category=${cat.slug}`;
   const componentNames = cat.components.map((comp) => comp.name);
 
   return {
     title,
-    description: content.description,
+    description,
+    // Search keywords stay English.
     keywords: [
       `${cat.name} components`,
       "React motion components",
@@ -120,27 +98,28 @@ export async function generateMetadata({
     ],
     openGraph: {
       title: ogTitle,
-      description: content.description,
-      url: pageUrl,
+      description,
+      url: alternates.canonical,
       type: "website",
       siteName: "beUI",
+      locale: LANGUAGES[locale].og,
       images: [
         {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: `${cat.name} components by beUI`,
+          alt: t("ogImageAlt", { name: localizeCategory(cat, messages).name }),
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
-      description: content.description,
+      description,
       images: [imageUrl],
     },
     alternates: {
-      canonical: pageUrl,
+      ...alternates,
       types: {
         "application/json": "/registry.json",
       },
@@ -151,14 +130,20 @@ export async function generateMetadata({
 export default async function CategoryPage({
   params,
 }: {
-  params: Promise<{ category: string }>;
+  params: CategoryParams;
 }) {
-  const { category } = await params;
-  const cat = findCategory(category);
-  if (!cat) notFound();
-  const content =
-    categoryContent[cat.slug as keyof typeof categoryContent] ??
-    categoryContent.motion;
+  const { locale, category } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
+  const rawCat = findCategory(category);
+  if (!rawCat) notFound();
+  const [messages, t, tDocs] = await Promise.all([
+    getMessages(),
+    getTranslations("Docs.category"),
+    getTranslations("Docs"),
+  ]);
+  const cat = localizeCategory(rawCat, messages);
+  const key = contentKey(cat.slug);
   const now = Date.now();
   const newComponents = cat.components.filter((comp) =>
     isComponentNew(comp, now),
@@ -171,6 +156,8 @@ export default async function CategoryPage({
     cat.slug === "agents"
       ? AGENT_CATEGORY_GROUPS.map((group) => ({
           ...group,
+          title: t(`agentGroups.${group.key}.title`),
+          description: t(`agentGroups.${group.key}.description`),
           components: group.slugs.flatMap((slug) => {
             const component = cat.components.find((item) => item.slug === slug);
             return component ? [component] : [];
@@ -183,23 +170,23 @@ export default async function CategoryPage({
       <JsonLd
         data={[
           breadcrumbJsonLd([
-            { name: "beUI", path: "/" },
-            { name: cat.name, path: categoryPath(cat.slug) },
+            { name: "beUI", path: localizedPath("/", locale) },
+            { name: cat.name, path: localizedPath(categoryPath(cat.slug), locale) },
           ]),
-          categoryJsonLd(cat),
+          categoryJsonLd(cat, locale),
         ]}
       />
       <nav
-        aria-label="Breadcrumb"
+        aria-label={tDocs("breadcrumb")}
         className="flex items-center gap-1.5 text-sm"
       >
         <span className="font-medium text-foreground">{cat.name}</span>
       </nav>
       <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
-        {content.heading}
+        {t(`${key}.heading`)}
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">
-        {content.description}
+        {t(`${key}.description`)}
       </p>
       <div className="mt-6 xl:hidden">
         <PlatformSwitch />
@@ -231,7 +218,7 @@ export default async function CategoryPage({
             {newComponents.length ? (
               <section className="mt-10">
                 <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
-                  New
+                  {t("new")}
                 </h2>
                 <div className="mt-4 grid grid-cols-1 gap-4 [grid-auto-rows:17rem] sm:grid-cols-2 2xl:grid-cols-3">
                   {newComponents.map((comp) => (
@@ -244,7 +231,7 @@ export default async function CategoryPage({
             {components.length ? (
               <section className="mt-10">
                 <h2 className="font-display text-xs font-medium uppercase text-muted-foreground">
-                  {content.allLabel}
+                  {t(`${key}.allLabel`)}
                 </h2>
                 <div className="mt-4 grid grid-cols-1 gap-4 [grid-auto-rows:17rem] sm:grid-cols-2 2xl:grid-cols-3">
                   {components.map((comp) => (

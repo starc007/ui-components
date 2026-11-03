@@ -1,7 +1,9 @@
 import { ArrowUpRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { RainbowCta } from "@/components/app/rainbow-cta";
 
 export function ProCard() {
+  const t = useTranslations("Docs.proCard");
   return (
     <section
       aria-labelledby="beui-pro-card-title"
@@ -22,13 +24,13 @@ export function ProCard() {
           id="beui-pro-card-title"
           className="text-lg font-semibold leading-tight tracking-tight text-foreground"
         >
-          Limited Offer
+          {t("heading")}
         </h2>
         <p className="mt-2 text-sm leading-5 text-muted-foreground">
-          350+ blocks and premium motion components for React and Next.js.
+          {t("summary")}
         </p>
         <p className="mt-3 flex flex-wrap items-center gap-x-2 text-xs leading-5 text-muted-foreground">
-          <span className="font-medium text-foreground">$179 lifetime access</span>
+          <span className="font-medium text-foreground">{t("price")}</span>
         </p>
       </div>
       <RainbowCta
@@ -39,7 +41,7 @@ export function ProCard() {
         className="w-full"
         innerClassName="py-2"
       >
-        Explore beUI Pro
+        {t("explore")}
         <ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0" />
       </RainbowCta>
     </section>
