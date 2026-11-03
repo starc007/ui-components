@@ -3247,7 +3247,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   mines: {
     overview:
-      "Mines is a React tile game built with Framer Motion. Pick a mine count and start a round, then reveal tiles one at a time. Each gem raises the multiplier, shown as rolling digits with the next step beside it, and a mine ends the round. Cash out whenever you like; clearing every gem cashes out for you. When a round ends the rest of the board reveals in a ripple spreading from your last pick, with the tiles you never touched shown faded.",
+      "Mines is a React tile game built with Framer Motion. Pick a mine count and start a round, then reveal tiles one at a time. Each gem raises the multiplier, shown as rolling digits with the next step beside it, and a mine ends the round. Cash out whenever you like; clearing every gem cashes out for you. Every pick is joined to the one before it, so your run draws a constellation across the board that lights up when you cash out and snaps red into a mine. A small ring beside the multiplier shows the chance your next pick is safe. When a round ends the rest of the board reveals in a ripple spreading from your last pick, with the tiles you never touched shown faded.",
     useWhen: [
       "A game, rewards screen or giveaway wants a push-your-luck mechanic with a clear, growing reward.",
       "A demo or landing page wants a tactile grid interaction with satisfying reveals.",
@@ -3265,6 +3265,11 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
         question: "Can I change the board size or mine count?",
         answer:
           "Yes. size sets the tiles per side, 5 by default for a 5 by 5 board. The mine count comes from the built-in stepper and can be controlled with mines and onMinesChange, or set once with defaultMines.",
+      },
+      {
+        question: "Does it make sound?",
+        answer:
+          "Only when you turn it on with the sound button, or the sound prop. Gems chime and climb a musical scale as your streak grows, with a sparkle from the third gem and a short run every fifth; a mine plays a low blast and cashing out plays a rising arpeggio. Everything is synthesized in the browser, so there are no audio files.",
       },
       {
         question: "Does it handle money or betting?",

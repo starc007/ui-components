@@ -1,7 +1,7 @@
 "use client";
 
 import { Bomb, Gem, Volume2, VolumeX } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
 import {
   type KeyboardEvent,
   useCallback,
@@ -19,6 +19,7 @@ import {
 } from "@/components/motion/adaptive-stepper";
 import { Button } from "@/components/motion/button";
 import { NumberTicker } from "@/components/motion/number-ticker";
+import { EASE_OUT } from "@/lib/ease";
 import { createGameSounds, type GameSounds } from "@/lib/game-sounds";
 import { cn } from "@/lib/utils";
 
@@ -69,6 +70,10 @@ const ICON_SPRING = { type: "spring", duration: 0.3, bounce: 0 } as const;
 const RIPPLE_STEP = 0.025;
 // A mine shakes once, quickly: 300ms, settling to rest.
 const SHAKE = { duration: 0.3, ease: "easeOut" } as const;
+// Exits are shorter than entrances.
+const EXIT = { duration: 0.12, ease: EASE_OUT } as const;
+// Gap between tiles in px; matches the grid's gap-2.
+const GAP = 8;
 
 /**
  * A mines board: pick tiles to find gems, each raising the multiplier, and
@@ -98,11 +103,27 @@ export function Mines({
   const [cursor, setCursor] = useState(0);
   const [announcement, setAnnouncement] = useState("");
   const tileRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [, animate] = useAnimate();
+
+  // The constellation is drawn in the board's own pixels, so measure it.
+  const gridRef = useRef<HTMLFieldSetElement>(null);
+  const [boardWidth, setBoardWidth] = useState(0);
+  useLayoutEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    const measure = () => setBoardWidth(grid.clientWidth);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(grid);
+    return () => observer.disconnect();
+  }, []);
 
   const gems = picked.filter((tile) => !mineSet.has(tile)).length;
   const multiplier = minesMultiplier(tiles, mines, gems);
   const next = minesMultiplier(tiles, mines, gems + 1);
   const over = phase === "busted" || phase === "cashed";
+  // Chance the next pick is a gem.
+  const safe = (tiles - mines - gems) / (tiles - gems);
   const lastPick = picked.at(-1) ?? Math.floor(tiles / 2);
   // A roving tab stop that always points at a tile on the board.
   const focusTile = Math.min(cursor, tiles - 1);
@@ -155,6 +176,15 @@ export function Mines({
     setMineSet(new Set(order.slice(0, mines)));
     setPicked([]);
     setPhase("playing");
+    // The board wakes up in a short diagonal wave, so a new round reads as
+    // live before the first pick.
+    if (!reduce) {
+      tileRefs.current.forEach((tile, index) => {
+        if (!tile) return;
+        const wave = Math.floor(index / size) + (index % size);
+        animate(tile, { scale: [0.94, 1], opacity: [0.5, 1] }, { duration: 0.2, delay: wave * 0.025, ease: EASE_OUT });
+      });
+    }
     setAnnouncement(`Round started with ${mines} ${mines === 1 ? "mine" : "mines"}.`);
     if (soundOn) getPlayer().prepare();
   };
@@ -213,6 +243,30 @@ export function Mines({
     onSoundChange?.(nextSound);
   };
 
+  const tileSize = (boardWidth - GAP * (size - 1)) / size;
+  const centerOf = (tile: number) => ({
+    x: (tile % size) * (tileSize + GAP) + tileSize / 2,
+    y: Math.floor(tile / size) * (tileSize + GAP) + tileSize / 2,
+  });
+  // Lines join consecutive picks edge to edge, leaving the icons clear.
+  const segments = picked.slice(1).map((to, index) => {
+    const from = picked[index];
+    const a = centerOf(from);
+    const b = centerOf(to);
+    const length = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+    const trim = Math.min(tileSize * 0.34, length / 2);
+    const ux = (b.x - a.x) / length;
+    const uy = (b.y - a.y) / length;
+    return {
+      id: `${from}-${to}`,
+      x1: a.x + ux * trim,
+      y1: a.y + uy * trim,
+      x2: b.x - ux * trim,
+      y2: b.y - uy * trim,
+      toMine: mineSet.has(to),
+    };
+  });
+
   return (
     <section aria-label={ariaLabel} className={cn("flex w-full max-w-md flex-col gap-4", className)}>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -239,85 +293,157 @@ export function Mines({
 
         <div className="text-right">
           <div className="text-2xl font-semibold text-foreground">
-            <NumberTicker value={multiplier} decimals={2} suffix="×" startOnView={false} duration={0.5} />
+            <NumberTicker value={multiplier} decimals={2} suffix="×" startOnView={false} duration={0.35} />
           </div>
-          <p className="text-xs text-muted-foreground tabular-nums">
-            {phase === "playing" && gems < tiles - mines ? `Next ${format(next)}` : "Multiplier"}
+          <p className="flex items-center justify-end gap-1.5 text-xs text-muted-foreground tabular-nums">
+            {phase === "playing" && gems < tiles - mines ? (
+              <>
+                <OddsRing safe={safe} reduce={reduce} />
+                {`${Math.round(safe * 100)}% safe · next ${format(next)}`}
+              </>
+            ) : phase === "idle" ? (
+              <>
+                <OddsRing safe={safe} reduce={reduce} />
+                {`First pick ${Math.round(safe * 100)}% safe`}
+              </>
+            ) : (
+              "Multiplier"
+            )}
           </p>
         </div>
       </div>
 
-      <fieldset
-        className="m-0 grid min-w-0 gap-2 border-0 p-0"
-        style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
-      >
-        <legend className="sr-only">Tiles</legend>
-        {Array.from({ length: tiles }, (_, tile) => {
-          const isPicked = picked.includes(tile);
-          const isMine = mineSet.has(tile);
-          const shown = isPicked || over;
-          const content: MinesTile | null = shown ? (isMine ? "mine" : "gem") : null;
-          const hit = isPicked && isMine;
-          const row = Math.floor(tile / size);
-          const col = tile % size;
-          // Tiles the player never picked are revealed faded, in rings
-          // spreading from the last pick.
-          const ripple = Math.max(
-            Math.abs(row - Math.floor(lastPick / size)),
-            Math.abs(col - (lastPick % size)),
-          );
-          const interactive = phase === "playing" && !isPicked;
-          return (
-            <motion.button
-              // biome-ignore lint/suspicious/noArrayIndexKey: tiles are positional
-              key={tile}
-              ref={(node) => {
-                tileRefs.current[tile] = node;
-              }}
-              type="button"
-              tabIndex={tile === focusTile ? 0 : -1}
-              aria-disabled={!interactive}
-              aria-label={`Row ${row + 1}, column ${col + 1}, ${content ?? "hidden"}`}
-              onFocus={() => setCursor(tile)}
-              onClick={() => pick(tile)}
-              onKeyDown={(event) => onKeyDown(event, tile)}
-              animate={hit && !reduce ? { x: [0, -5, 5, -3, 3, 0] } : { x: 0 }}
-              transition={SHAKE}
-              className={cn(
-                "relative grid aspect-square place-items-center rounded-xl border outline-none",
-                "transition-[translate,scale,background-color,border-color] duration-150 ease-out",
-                "focus-visible:ring-2 focus-visible:ring-ring",
-                interactive
-                  ? "cursor-pointer border-border bg-card hover:-translate-y-0.5 hover:border-(--color-border-strong) active:scale-[0.96]"
-                  : "cursor-default border-transparent",
-                !interactive && !shown && "bg-card/60",
-                content === "gem" && (isPicked ? "bg-primary/15" : "bg-muted/60"),
-                content === "mine" && (hit ? "bg-rose-500/20" : "bg-muted/60"),
-              )}
-            >
-              {content ? (
-                <motion.span
-                  key={content}
-                  aria-hidden="true"
-                  initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.25, filter: "blur(4px)" }}
-                  animate={{ opacity: isPicked ? 1 : 0.4, scale: 1, filter: "blur(0px)" }}
-                  transition={{ ...ICON_SPRING, delay: isPicked ? 0 : ripple * RIPPLE_STEP }}
-                  className={cn(
-                    "grid place-items-center",
-                    content === "gem" ? "text-primary" : "text-rose-500 dark:text-rose-400",
-                  )}
-                >
-                  {content === "gem" ? (
-                    <Gem className="size-[45%] min-h-5 min-w-5" strokeWidth={2} />
-                  ) : (
-                    <Bomb className="size-[45%] min-h-5 min-w-5" strokeWidth={2} />
-                  )}
-                </motion.span>
-              ) : null}
-            </motion.button>
-          );
-        })}
-      </fieldset>
+      {/* Board panel: 12px tiles + 12px padding give the 24px outer radius. */}
+      <div className="relative rounded-3xl bg-muted/40 p-3">
+        <fieldset
+          ref={gridRef}
+          className="m-0 grid min-w-0 gap-2 border-0 p-0"
+          style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
+        >
+          <legend className="sr-only">Tiles</legend>
+          {Array.from({ length: tiles }, (_, tile) => {
+            const isPicked = picked.includes(tile);
+            const isMine = mineSet.has(tile);
+            const shown = isPicked || over;
+            const content: MinesTile | null = shown ? (isMine ? "mine" : "gem") : null;
+            const hit = isPicked && isMine;
+            const row = Math.floor(tile / size);
+            const col = tile % size;
+            // Tiles the player never picked are revealed faded, in rings
+            // spreading from the last pick.
+            const ripple = Math.max(
+              Math.abs(row - Math.floor(lastPick / size)),
+              Math.abs(col - (lastPick % size)),
+            );
+            const order = picked.indexOf(tile);
+            const celebrate = phase === "cashed" && isPicked && !reduce;
+            const interactive = phase === "playing" && !isPicked;
+            return (
+              <motion.button
+                // biome-ignore lint/suspicious/noArrayIndexKey: tiles are positional
+                key={tile}
+                ref={(node) => {
+                  tileRefs.current[tile] = node;
+                }}
+                type="button"
+                tabIndex={tile === focusTile ? 0 : -1}
+                aria-disabled={!interactive}
+                aria-label={`Row ${row + 1}, column ${col + 1}, ${content ?? "hidden"}`}
+                onFocus={() => setCursor(tile)}
+                onClick={() => pick(tile)}
+                onKeyDown={(event) => onKeyDown(event, tile)}
+                animate={hit && !reduce ? { x: [0, -5, 5, -3, 3, 0] } : { x: 0 }}
+                transition={SHAKE}
+                className={cn(
+                  "relative grid aspect-square place-items-center rounded-xl border outline-none",
+                  // The mine's shockwave paints over its neighbours.
+                  hit && "z-10",
+                  "transition-[translate,scale,background-color,border-color] duration-150 ease-out",
+                  "focus-visible:ring-2 focus-visible:ring-ring",
+                  interactive
+                    ? "cursor-pointer border-border bg-card hover:-translate-y-0.5 hover:border-(--color-border-strong) active:scale-[0.96]"
+                    : "cursor-default border-transparent",
+                  !interactive && !shown && "bg-card/60",
+                  content === "gem" && (isPicked ? "bg-primary/15" : "bg-card/40"),
+                  content === "mine" && (hit ? "bg-rose-500/20" : "bg-card/40"),
+                )}
+              >
+                {hit && !reduce ? (
+                  // A shockwave rings out once from the mine.
+                  <motion.span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 rounded-xl border-2 border-rose-500"
+                    initial={{ scale: 1, opacity: 0.7 }}
+                    animate={{ scale: 1.7, opacity: 0 }}
+                    transition={{ duration: 0.45, ease: EASE_OUT }}
+                  />
+                ) : null}
+                <AnimatePresence initial={false}>
+                  {content ? (
+                    <motion.span
+                      key={content}
+                      aria-hidden="true"
+                      initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.25, filter: "blur(4px)" }}
+                      animate={
+                        celebrate
+                          ? { opacity: 1, scale: [1, 1.2, 1], filter: "blur(0px)" }
+                          : { opacity: isPicked ? 1 : 0.4, scale: 1, filter: "blur(0px)" }
+                      }
+                      exit={reduce ? { opacity: 0, transition: EXIT } : { opacity: 0, scale: 0.9, transition: EXIT }}
+                      transition={
+                        celebrate
+                          ? { duration: 0.35, ease: EASE_OUT, delay: order * 0.04 }
+                          : { ...ICON_SPRING, delay: isPicked ? 0 : ripple * RIPPLE_STEP }
+                      }
+                      className={cn(
+                        "grid place-items-center",
+                        content === "gem" ? "text-primary" : "text-rose-500 dark:text-rose-400",
+                      )}
+                    >
+                      {content === "gem" ? (
+                        <Gem className="size-[45%] min-h-5 min-w-5" strokeWidth={2} />
+                      ) : (
+                        <Bomb className="size-[45%] min-h-5 min-w-5" strokeWidth={2} />
+                      )}
+                    </motion.span>
+                  ) : null}
+                </AnimatePresence>
+              </motion.button>
+            );
+          })}
+        </fieldset>
+
+        {/* The constellation: your picks, joined in order. */}
+        {boardWidth > 0 ? (
+          <svg
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-3 overflow-visible"
+            viewBox={`0 0 ${boardWidth} ${boardWidth}`}
+          >
+            <AnimatePresence>
+              {segments.map((segment) => (
+                <motion.line
+                  key={segment.id}
+                  x1={segment.x1}
+                  y1={segment.y1}
+                  x2={segment.x2}
+                  y2={segment.y2}
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  className={segment.toMine ? "stroke-rose-500 dark:stroke-rose-400" : "stroke-primary"}
+                  initial={reduce ? { opacity: 0 } : { pathLength: 0, opacity: 0 }}
+                  animate={{
+                    pathLength: 1,
+                    opacity: segment.toMine || phase === "cashed" ? 0.9 : phase === "busted" ? 0.3 : 0.55,
+                  }}
+                  exit={{ opacity: 0, transition: EXIT }}
+                  transition={{ duration: 0.22, ease: EASE_OUT }}
+                />
+              ))}
+            </AnimatePresence>
+          </svg>
+        ) : null}
+      </div>
 
       <div className="flex items-center gap-2">
         <Button
@@ -346,6 +472,27 @@ export function Mines({
         {announcement}
       </p>
     </section>
+  );
+}
+
+/** A small ring that fills with the chance the next pick is safe. */
+function OddsRing({ safe, reduce }: { safe: number; reduce: boolean }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 14 14" className="size-3.5 -rotate-90">
+      <circle cx={7} cy={7} r={5.5} fill="none" strokeWidth={2} className="stroke-foreground/10" />
+      <motion.circle
+        cx={7}
+        cy={7}
+        r={5.5}
+        fill="none"
+        strokeWidth={2}
+        strokeLinecap="round"
+        className={safe < 0.5 ? "stroke-rose-500 dark:stroke-rose-400" : "stroke-primary"}
+        initial={false}
+        animate={{ pathLength: safe }}
+        transition={reduce ? { duration: 0 } : { duration: 0.2, ease: EASE_OUT }}
+      />
+    </svg>
   );
 }
 

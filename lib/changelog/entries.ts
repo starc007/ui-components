@@ -12,7 +12,7 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
-        "text": "Mines is a tile game: choose how many mines to hide, reveal tiles to find gems that raise the multiplier, and cash out before you hit a mine. The end of each round reveals the whole board in a ripple from your last pick, and the board plays fully from the keyboard.",
+        "text": "Mines is a tile game: choose how many mines to hide, reveal tiles to find gems that raise the multiplier, and cash out before you hit a mine. Your picks draw a constellation across the board, an odds ring shows how safe the next pick is, and optional sound gives gems, streaks, mines and cash outs their own voice. It plays fully from the keyboard.",
         "component": "mines"
       }
     ]
