@@ -154,7 +154,7 @@ export function Pachinko({
             // biome-ignore lint/suspicious/noArrayIndexKey: slots are positional
             <g key={slot}>
               <rect x={x + 2} y={y} width={GAP - 4} height={SLOT - 4} rx={6} className="fill-muted" />
-              <rect data-slot={slot} x={x + 2} y={y} width={GAP - 4} height={SLOT - 4} rx={6} className="fill-accent opacity-0" />
+              <rect data-slot={slot} x={x + 2} y={y} width={GAP - 4} height={SLOT - 4} rx={6} className="fill-primary opacity-0" />
               <text
                 x={x + GAP / 2}
                 y={y + (SLOT - 4) / 2}
@@ -174,7 +174,7 @@ export function Pachinko({
             r={BALL}
             cx={0}
             cy={0}
-            className="fill-accent"
+            className="fill-primary"
             initial={{ x: ball.path[0].x, y: ball.path[0].y }}
             animate={{
               x: ball.path.map((point) => point.x),
