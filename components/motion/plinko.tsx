@@ -231,7 +231,7 @@ export function Plinko({
 
   const land = useCallback(
     (slot: number) => {
-      animate(`[data-slot="${slot}"]`, { opacity: [0.9, 0] }, { duration: 0.6, ease: EASE_OUT });
+      animate(`[data-slot="${slot}"]`, { opacity: [0.9, 0] }, { duration: 0.3, ease: EASE_OUT });
       // A lower thunk than a peg hit marks the landing. It brightens toward
       // the edges, where landing is rarest, so a good drop is heard.
       tick(LANDING_RATE + LANDING_SPREAD * (Math.abs(slot - rows / 2) / (rows / 2)));
@@ -258,7 +258,12 @@ export function Plinko({
       const peg = Math.round((point.x - width / 2) / GAP + row / 2);
       at(ball.times[index + 1] * ball.duration, () => {
         if (flashRef.current) {
-          animate(`[data-peg="${row}-${peg}"]`, { scale: [1, 1.8, 1], opacity: [0.4, 1, 0.4] }, { duration: 0.3 });
+          // Fast attack, slower decay: the pop peaks a third of the way in.
+          animate(
+            `[data-peg="${row}-${peg}"]`,
+            { scale: [1, 1.8, 1], opacity: [0.4, 1, 0.4] },
+            { duration: 0.3, times: [0, 0.3, 1], ease: EASE_OUT },
+          );
         }
         tick();
       });
@@ -327,20 +332,25 @@ export function Plinko({
             cx={0}
             cy={0}
             className="fill-primary"
-            initial={{ x: ball.path[0].x, y: ball.path[0].y, opacity: 0 }}
+            // Enters from 90% scale and transparent, never from nothing. The
+            // circle is drawn at 0,0 and placed by translate, so it scales
+            // about its own centre.
+            initial={{ x: ball.path[0].x, y: ball.path[0].y, opacity: 0, scale: 0.9 }}
             animate={{
               x: ball.path.map((point) => point.x),
               y: ball.path.map((point) => point.y),
               opacity: 1,
+              scale: 1,
             }}
             // Settle into the slot: a short fade with a small drop.
             exit={{
               opacity: 0,
               y: (ball.path.at(-1)?.y ?? 0) + 4,
-              transition: { duration: 0.15, ease: EASE_OUT },
+              transition: { duration: 0.12, ease: EASE_OUT },
             }}
             transition={{
-              opacity: { duration: 0.1, ease: EASE_OUT },
+              opacity: { duration: 0.15, ease: EASE_OUT },
+              scale: { duration: 0.15, ease: EASE_OUT },
               x: { duration: ball.duration, times: ball.times, ease: "linear" },
               y: {
                 duration: ball.duration,
