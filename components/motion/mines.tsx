@@ -1,6 +1,6 @@
 "use client";
 
-import { Bomb, Gem, Volume2, VolumeX } from "lucide-react";
+import { Gem, Volume2, VolumeX } from "lucide-react";
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
 import {
   type KeyboardEvent,
@@ -292,7 +292,7 @@ export function Mines({
           <AdaptiveStepperValue>
             {(value) => (
               <span className="inline-flex items-center gap-1.5">
-                <Bomb aria-hidden="true" className="size-4 text-muted-foreground" />
+                <MineIcon className="size-4 text-muted-foreground" />
                 {value}
               </span>
             )}
@@ -423,7 +423,7 @@ export function Mines({
                       {content === "gem" ? (
                         <Gem className="size-[45%] min-h-5 min-w-5" strokeWidth={2} />
                       ) : (
-                        <Bomb className="size-[45%] min-h-5 min-w-5" strokeWidth={2} />
+                        <MineIcon className="size-[45%] min-h-5 min-w-5" />
                       )}
                     </motion.span>
                   ) : null}
@@ -650,6 +650,38 @@ function Row({ label, value }: { label: string; value: string | number }) {
       <dt className="text-muted-foreground">{label}</dt>
       <dd className="font-medium tabular-nums">{value}</dd>
     </div>
+  );
+}
+
+// The classic minesweeper mine: a solid ball (so it never reads as a sun),
+// four thick spikes on the axes and four shorter ones on the diagonals.
+const SPIKES = Array.from({ length: 8 }, (_, i) => {
+  const angle = (i * Math.PI) / 4;
+  const main = i % 2 === 0;
+  const [cos, sin] = [Math.cos(angle), Math.sin(angle)];
+  const reach = main ? 10.5 : 9;
+  return { main, x1: 12 + cos * 6, y1: 12 + sin * 6, x2: 12 + cos * reach, y2: 12 + sin * reach };
+});
+
+/** A mine on Lucide's 24px grid, sized to pair with the gem. */
+function MineIcon({ className }: { className?: string }) {
+  // Decorative: tiles and the stepper name the mine in text.
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeLinecap="round" className={className}>
+      {SPIKES.map((spike) => (
+        <line
+          key={`${spike.x2.toFixed(2)}-${spike.y2.toFixed(2)}`}
+          x1={spike.x1}
+          y1={spike.y1}
+          x2={spike.x2}
+          y2={spike.y2}
+          strokeWidth={spike.main ? 2.5 : 2}
+        />
+      ))}
+      <circle cx={12} cy={12} r={6.5} stroke="none" />
+      {/* Glint. */}
+      <circle cx={9.75} cy={9.75} r={1.6} fill="white" fillOpacity={0.75} stroke="none" />
+    </svg>
   );
 }
 
