@@ -2,15 +2,7 @@
 
 import { Gem, Volume2, VolumeX } from "lucide-react";
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
-import {
-  type KeyboardEvent,
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { type KeyboardEvent, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import {
   AdaptiveStepper,
@@ -20,17 +12,18 @@ import {
 } from "@/components/motion/adaptive-stepper";
 import { Button } from "@/components/motion/button";
 import { NumberTicker } from "@/components/motion/number-ticker";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT } from "@/lib/ease";
 import { createGameSounds, type GameSounds } from "@/lib/game-sounds";
-import { PresenceGate } from "@/lib/presence-gate";
+import { PresenceGate, type PresenceGateRenderProps } from "@/lib/presence-gate";
 import { cn } from "@/lib/utils";
 
 export type MinesTile = "gem" | "mine";
 
 export interface MinesProps {
-  /** Tiles per side. Default 5 (a 5 × 5 board). */
+  /** Tiles per side, rounded, at least 2. Default 5 (a 5 × 5 board). Changing it ends the round. */
   size?: number;
-  /** Mines on the board (controlled). */
+  /** Mines on the board (controlled), rounded and kept between 1 and tiles − 1. Takes effect from the next round. */
   mines?: number;
   /** Initial mine count when uncontrolled. Default 3. */
   defaultMines?: number;
@@ -59,11 +52,15 @@ type Phase = "idle" | "playing" | "busted" | "cashed";
 
 /**
  * Fair payout after `gems` safe picks on a board of `tiles` with `mines`:
- * the inverse of the chance of picking that many gems in a row.
+ * the inverse of the chance of picking that many gems in a row. `mines` is
+ * kept between 0 and tiles − 1 and `gems` between 0 and the safe tiles, so
+ * the result is always finite.
  */
 export function minesMultiplier(tiles: number, mines: number, gems: number) {
+  const safeMines = Math.max(0, Math.min(Math.round(mines), tiles - 1));
+  const safeGems = Math.max(0, Math.min(Math.round(gems), tiles - safeMines));
   let multiplier = 1;
-  for (let i = 0; i < gems; i++) multiplier *= (tiles - i) / (tiles - mines - i);
+  for (let i = 0; i < safeGems; i++) multiplier *= (tiles - i) / (tiles - safeMines - i);
   return multiplier;
 }
 
@@ -73,11 +70,11 @@ export function minesMultiplier(tiles: number, mines: number, gems: number) {
 const ICON_SPRING = { type: "spring", duration: 0.3, bounce: 0 } as const;
 const RIPPLE_STEP = 0.025;
 // A mine shakes once, quickly: 300ms, settling to rest.
-const SHAKE = { duration: 0.3, ease: "easeOut" } as const;
+const SHAKE = { duration: 0.3, ease: EASE_OUT } as const;
 // A found gem's tile springs back from a slight squash.
 const GEM_POP = { type: "spring", duration: 0.35, bounce: 0.4 } as const;
-// The cash-out pulse runs through the picked gems 40ms apart over 350ms; the
-// result waits for it to finish.
+// The cash-out pulse runs through the picked gems 40ms apart over 350ms. The
+// result opens when the last tile's closing animation completes.
 const PULSE_STEP = 40;
 const PULSE_TIME = 350;
 // Exits are shorter than entrances.
@@ -88,7 +85,7 @@ const EXIT = { duration: 0.12, ease: EASE_OUT } as const;
  * cash out before you hit a mine. The round's end reveals every tile.
  */
 export function Mines({
-  size = 5,
+  size: sizeProp = 5,
   mines: minesProp,
   defaultMines = 3,
   onMinesChange,
@@ -103,20 +100,44 @@ export function Mines({
   className,
 }: MinesProps) {
   const reduce = useReducedMotion() ?? false;
+  const size = Math.max(2, Math.round(sizeProp) || 2);
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production" && size !== sizeProp)
+      console.warn(`Mines: size must be a whole number of at least 2; using ${size}.`);
+  }, [size, sizeProp]);
   const tiles = size * size;
   const [internalMines, setInternalMines] = useState(defaultMines);
-  const mines = Math.min(Math.max(1, minesProp ?? internalMines), tiles - 1);
+  // The count chosen for the next round.
+  const chosenMines = Math.min(Math.max(1, Math.round(minesProp ?? internalMines) || 1), tiles - 1);
   const [phase, setPhase] = useState<Phase>("idle");
   const [mineSet, setMineSet] = useState<ReadonlySet<number>>(new Set());
   const [picked, setPicked] = useState<number[]>([]);
   const [cursor, setCursor] = useState(0);
   const [announcement, setAnnouncement] = useState("");
   const [resultOpen, setResultOpen] = useState(false);
+  // Set when a round ends, cleared when its result opens, so only that
+  // round's closing animation can open it.
+  const awaitingResult = useRef(false);
   const mainButtonRef = useRef<HTMLButtonElement>(null);
   const tileRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [, animate] = useAnimate();
 
+  // A new size renumbers every tile, so the mines placed for the old board no
+  // longer match it. End the round in the same render.
+  const [boardSize, setBoardSize] = useState(size);
+  if (boardSize !== size) {
+    setBoardSize(size);
+    setPhase("idle");
+    setPicked([]);
+    setMineSet(new Set());
+    setResultOpen(false);
+    setCursor(0);
+    awaitingResult.current = false;
+  }
 
+  // Once a round starts, its payout follows the mines actually on the board,
+  // even if a controlled `mines` changes before the next round.
+  const mines = phase === "idle" ? chosenMines : mineSet.size;
   const gems = picked.filter((tile) => !mineSet.has(tile)).length;
   const multiplier = minesMultiplier(tiles, mines, gems);
   const next = minesMultiplier(tiles, mines, gems + 1);
@@ -136,16 +157,13 @@ export function Mines({
     soundRef.current = soundOn;
   });
   const player = useRef<GameSounds | null>(null);
-  const getPlayer = useCallback(() => {
+  const getPlayer = () => {
     if (!player.current) player.current = createGameSounds();
     return player.current;
-  }, []);
-  const play = useCallback(
-    (sound: (sounds: GameSounds) => void) => {
-      if (soundRef.current) sound(getPlayer());
-    },
-    [getPlayer],
-  );
+  };
+  const play = (sound: (sounds: GameSounds) => void) => {
+    if (soundRef.current) sound(getPlayer());
+  };
   useEffect(
     () => () => {
       player.current?.dispose();
@@ -166,16 +184,13 @@ export function Mines({
     onMinesChange?.(value);
   };
 
-  // The ticket rises once the board's closing reveal has played: the ripple
-  // reaches the far corner in about 450ms after a mine, sooner on a cash out.
-  useEffect(() => {
-    if (!showResult || (phase !== "busted" && phase !== "cashed")) return;
-    const delay =
-      phase === "busted" ? 550 : Math.min(900, PULSE_TIME + Math.max(0, gems - 1) * PULSE_STEP + 100);
-    const timer = window.setTimeout(() => setResultOpen(true), delay);
-    return () => window.clearTimeout(timer);
-    // gems is final once a round ends, so this runs once per round.
-  }, [phase, showResult, gems]);
+  // The ticket rises once the board's closing animation has played. The tile
+  // that finishes last calls this, so the ticket follows the animation clock.
+  const openResult = () => {
+    if (!awaitingResult.current || !over) return;
+    awaitingResult.current = false;
+    if (showResult) setResultOpen(true);
+  };
 
   // The main button already says Play again, so keyboard users land there.
   useEffect(() => {
@@ -189,13 +204,14 @@ export function Mines({
 
   const start = () => {
     setResultOpen(false);
+    awaitingResult.current = false;
     // Mines are placed when the round starts, never on the server.
     const order = Array.from({ length: tiles }, (_, i) => i);
     for (let i = order.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [order[i], order[j]] = [order[j], order[i]];
     }
-    setMineSet(new Set(order.slice(0, mines)));
+    setMineSet(new Set(order.slice(0, chosenMines)));
     setPicked([]);
     setPhase("playing");
     // The board wakes up in a short diagonal wave, so a new round reads as
@@ -207,12 +223,14 @@ export function Mines({
         animate(tile, { scale: [0.94, 1], opacity: [0.5, 1] }, { duration: 0.2, delay: wave * 0.025, ease: EASE_OUT });
       });
     }
-    setAnnouncement(`Round started with ${mines} ${mines === 1 ? "mine" : "mines"}.`);
+    setAnnouncement(`Round started with ${chosenMines} ${chosenMines === 1 ? "mine" : "mines"}.`);
     if (soundOn) getPlayer().prepare();
   };
 
   const cashOut = (finalGems = gems) => {
+    if (phase !== "playing" || finalGems === 0) return;
     const value = minesMultiplier(tiles, mines, finalGems);
+    awaitingResult.current = true;
     setPhase("cashed");
     setAnnouncement(`Cashed out at ${format(value)}.`);
     play((sounds) => sounds.cashOut());
@@ -223,6 +241,7 @@ export function Mines({
     if (phase !== "playing" || picked.includes(tile)) return;
     setPicked((current) => [...current, tile]);
     if (mineSet.has(tile)) {
+      awaitingResult.current = true;
       setPhase("busted");
       setAnnouncement("Mine. The round is over.");
       play((sounds) => sounds.mine());
@@ -262,6 +281,27 @@ export function Mines({
     tileRefs.current[target]?.focus();
   };
 
+  // The tile whose closing animation ends last opens the result: unpicked
+  // tiles reveal in a ripple from the last pick, and picked gems pulse on a
+  // cash out. Every finished round has unpicked tiles, so one always exists.
+  let closingTile = -1;
+  if (over) {
+    let lastEnd = -1;
+    for (let tile = 0; tile < tiles; tile++) {
+      const order = picked.indexOf(tile);
+      const end =
+        order === -1
+          ? ringFrom(lastPick, tile, size) * RIPPLE_STEP + ICON_SPRING.duration
+          : phase === "cashed" && !reduce
+            ? (order * PULSE_STEP + PULSE_TIME) / 1000
+            : -1;
+      if (end > lastEnd) {
+        closingTile = tile;
+        lastEnd = end;
+      }
+    }
+  }
+
   const toggleSound = () => {
     const nextSound = !soundOn;
     if (nextSound) getPlayer().prepare();
@@ -275,12 +315,15 @@ export function Mines({
       aria-label={ariaLabel}
       className={cn("flex w-full max-w-md flex-col gap-4", className)}
       onKeyDown={(event) => {
-        if (event.key === "Escape" && resultOpen) closeResult();
+        if (event.key !== "Escape" || !resultOpen) return;
+        // Escape is used up here; an enclosing dialog must not close too.
+        event.stopPropagation();
+        closeResult();
       }}
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <AdaptiveStepper
-          value={mines}
+          value={chosenMines}
           onValueChange={setMines}
           min={1}
           max={tiles - 1}
@@ -324,7 +367,9 @@ export function Mines({
 
       {/* Board panel: 12px tiles + 12px padding give the 24px outer radius. */}
       <div className="relative rounded-3xl bg-muted/40 p-3">
+        {/* Under the result card the tiles leave the tab order. */}
         <fieldset
+          inert={resultOpen}
           className="m-0 grid min-w-0 gap-2 border-0 p-0"
           style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
         >
@@ -339,10 +384,7 @@ export function Mines({
             const col = tile % size;
             // Tiles the player never picked are revealed faded, in rings
             // spreading from the last pick.
-            const ripple = Math.max(
-              Math.abs(row - Math.floor(lastPick / size)),
-              Math.abs(col - (lastPick % size)),
-            );
+            const ripple = ringFrom(lastPick, tile, size);
             const order = picked.indexOf(tile);
             const celebrate = phase === "cashed" && isPicked && !reduce;
             const interactive = phase === "playing" && !isPicked;
@@ -410,6 +452,7 @@ export function Mines({
                           : { opacity: isPicked ? 1 : 0.4, scale: 1, filter: "blur(0px)" }
                       }
                       exit={reduce ? { opacity: 0, transition: EXIT } : { opacity: 0, scale: 0.9, transition: EXIT }}
+                      onAnimationComplete={tile === closingTile ? openResult : undefined}
                       transition={
                         celebrate
                           ? { duration: PULSE_TIME / 1000, ease: EASE_OUT, delay: (order * PULSE_STEP) / 1000 }
@@ -436,9 +479,10 @@ export function Mines({
         <AnimatePresence>
           {resultOpen && over ? (
             <PresenceGate key="result">
-              {({ isPresent }) => (
+              {({ isPresent, gate }) => (
                 <ResultCard
                   isPresent={isPresent}
+                  gate={gate}
                   outcome={phase === "cashed" ? "cashed" : "busted"}
                   multiplier={multiplier}
                   gems={gems}
@@ -457,27 +501,31 @@ export function Mines({
       </div>
 
       <div className="flex items-center gap-2">
+        {/* aria-disabled, not disabled: Start turns into this button, and a
+            disabled button would drop the keyboard focus that pressed it. */}
         <Button
           ref={mainButtonRef}
-          className="flex-1"
+          className="flex-1 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
           pressScale={0.96}
-          disabled={phase === "playing" && gems === 0}
+          aria-disabled={(phase === "playing" && gems === 0) || undefined}
           onClick={() => (phase === "playing" ? cashOut() : start())}
         >
           {phase === "playing" ? `Cash out ${format(multiplier)}` : over ? "Play again" : "Start"}
         </Button>
-        <Button
-          variant="secondary"
-          onClick={toggleSound}
-          aria-label="Sound"
-          aria-pressed={soundOn}
-          pressScale={0.96}
-          className={cn("w-10 px-0", soundOn ? "text-foreground" : "text-muted-foreground")}
-        >
-          <ActionSwapCascadeIcon value={soundOn ? "on" : "off"} className="size-4">
-            {soundOn ? <Volume2 aria-hidden="true" className="size-4" /> : <VolumeX aria-hidden="true" className="size-4" />}
-          </ActionSwapCascadeIcon>
-        </Button>
+        {/* The tooltip is the button's accessible name as well as its visible label. */}
+        <Tooltip content="Sound" asLabel side="top">
+          <Button
+            variant="secondary"
+            onClick={toggleSound}
+            aria-pressed={soundOn}
+            pressScale={0.96}
+            className={cn("w-10 px-0", soundOn ? "text-foreground" : "text-muted-foreground")}
+          >
+            <ActionSwapCascadeIcon value={soundOn ? "on" : "off"} className="size-4">
+              {soundOn ? <Volume2 aria-hidden="true" className="size-4" /> : <VolumeX aria-hidden="true" className="size-4" />}
+            </ActionSwapCascadeIcon>
+          </Button>
+        </Tooltip>
       </div>
 
       <p aria-live="polite" className="sr-only">
@@ -496,6 +544,7 @@ const CARD_OUT = { duration: 0.15, ease: EASE_OUT } as const;
 
 interface ResultProps {
   isPresent: boolean;
+  gate: PresenceGateRenderProps["gate"];
   outcome: "cashed" | "busted";
   multiplier: number;
   gems: number;
@@ -514,15 +563,14 @@ interface ResultProps {
  * the board (or Escape) puts the card away to study the board.
  */
 function ResultCard(props: ResultProps) {
-  const { isPresent, reduce, onClose } = props;
+  const { isPresent, gate, reduce, onClose } = props;
   return (
     <>
       <motion.button
         type="button"
         aria-label="Hide result and show the board"
         onClick={onClose}
-        inert={!isPresent}
-        style={{ pointerEvents: isPresent ? "auto" : "none" }}
+        {...gate}
         className="absolute inset-0 z-20 cursor-default rounded-3xl bg-background/55 outline-none backdrop-blur-[2px] focus-visible:ring-2 focus-visible:ring-ring"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -553,6 +601,9 @@ function ResultCard(props: ResultProps) {
 const STAGE = { duration: 0.25, ease: EASE_OUT } as const;
 const REPLAY_START = 0.3;
 const REPLAY_STEP = 0.05;
+// Mini map cells pop in with a small overshoot: each is 8px, so a bounce
+// reads as a cell landing rather than a wobble.
+const CELL_SPRING = { type: "spring", duration: 0.3, bounce: 0.3 } as const;
 
 function Stage({ delay, reduce, className, children }: { delay: number; reduce: boolean; className?: string; children: ReactNode }) {
   return (
@@ -582,7 +633,7 @@ function MiniMap({ size, picked, mineSet, reduce }: Pick<ResultProps, "size" | "
             // Picked cells fill in the order they were picked, replaying the run.
             initial={isPicked && !reduce ? { opacity: 0, scale: 0.4 } : false}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: "spring", duration: 0.3, bounce: 0.3, delay: REPLAY_START + order * REPLAY_STEP }}
+            transition={{ ...CELL_SPRING, delay: REPLAY_START + order * REPLAY_STEP }}
             className={cn(
               "size-2 rounded-[2px]",
               isPicked && !isMine && "bg-primary",
@@ -703,6 +754,14 @@ function OddsRing({ safe, reduce }: { safe: number; reduce: boolean }) {
         transition={reduce ? { duration: 0 } : { duration: 0.2, ease: EASE_OUT }}
       />
     </svg>
+  );
+}
+
+/** Rings between two tiles: 0 for the same tile, 1 for its neighbours. */
+function ringFrom(from: number, tile: number, size: number) {
+  return Math.max(
+    Math.abs(Math.floor(tile / size) - Math.floor(from / size)),
+    Math.abs((tile % size) - (from % size)),
   );
 }
 

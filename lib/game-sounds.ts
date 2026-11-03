@@ -95,19 +95,22 @@ export function createGameSounds(): GameSounds {
       const context = live();
       if (!context) return;
       const now = context.currentTime;
+      // Every fifth gem in a row leads in with a quick two-note run, so the
+      // chime waits for it. Notes can't start in the past.
+      const run = streak % 5 === 0;
+      const at = run ? now + 0.06 : now;
+      if (run) {
+        [-2, -1].forEach((offset, index) => {
+          tone(context, note(Math.max(0, streak - 1 + offset)), now + index * 0.03, { gain: 0.35, duration: 0.08 });
+        });
+      }
       // Each gem in a row climbs the scale, capped two octaves up.
       const frequency = note(Math.min(streak - 1, SCALE.length * 2));
       // Glassy: a sine fundamental with a quiet triangle an octave up.
-      tone(context, frequency, now, { gain: 0.9 });
-      tone(context, frequency * 2, now, { type: "triangle", gain: 0.15, duration: 0.12 });
-      // From the third gem in a row, a sparkle a fifth above answers the chime…
-      if (streak >= 3) tone(context, frequency * 1.5, now + 0.05, { gain: 0.25, duration: 0.1 });
-      // …and every fifth adds a quick run up to it.
-      if (streak % 5 === 0) {
-        [-2, -1].forEach((offset, index) => {
-          tone(context, note(Math.max(0, streak - 1 + offset)), now - 0.06 + index * 0.03, { gain: 0.35, duration: 0.08 });
-        });
-      }
+      tone(context, frequency, at, { gain: 0.9 });
+      tone(context, frequency * 2, at, { type: "triangle", gain: 0.15, duration: 0.12 });
+      // From the third gem in a row, a sparkle a fifth above answers the chime.
+      if (streak >= 3) tone(context, frequency * 1.5, at + 0.05, { gain: 0.25, duration: 0.1 });
     },
     mine() {
       const context = live();

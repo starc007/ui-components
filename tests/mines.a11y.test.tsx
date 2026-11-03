@@ -72,3 +72,18 @@ test("cashing out shows a labelled result, sends focus to Play again and hides o
     Math.random = random;
   }
 });
+
+test("starting a round keeps focus on the main button and the sound toggle is named", async () => {
+  const { container, getByRole } = render(<Mines />);
+  expect(getByRole("button", { name: "Sound" }).getAttribute("aria-pressed")).toBe("false");
+  const main = getByRole("button", { name: "Start" });
+  main.focus();
+  await act(async () => {
+    fireEvent.click(main);
+  });
+  // With no gems yet, Cash out is unavailable but still holds focus.
+  expect(main.textContent).toMatch(/^Cash out/);
+  expect(main.getAttribute("aria-disabled")).toBe("true");
+  expect(document.activeElement).toBe(main);
+  expect((await axe(container)).violations).toEqual([]);
+});
