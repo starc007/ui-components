@@ -8,8 +8,8 @@ import {
   MorphPopoverContent,
   MorphPopoverTrigger,
 } from "@/components/motion/popover-morph";
-import { Link, usePathname } from "@/i18n/navigation";
-import { LANGUAGES, type Locale, routing } from "@/i18n/routing";
+import { usePathname } from "@/i18n/navigation";
+import { LANGUAGES, type Locale, localizedPath, routing } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 
 export function LanguageSwitcher({ className }: { className?: string }) {
@@ -37,10 +37,12 @@ export function LanguageSwitcher({ className }: { className?: string }) {
       <MorphPopoverContent align="end" className="w-40 p-1.5">
         <nav aria-label={t("menu")}>
           {routing.locales.map((each) => (
-            <Link
+            // A plain link, not next-intl's Link: changing language reloads the
+            // document so <html lang> and the root layout (including the
+            // theme script) start fresh instead of remounting on the client.
+            <a
               key={each}
-              href={pathname}
-              locale={each}
+              href={localizedPath(pathname, each)}
               lang={each}
               hrefLang={each}
               aria-current={each === locale ? "true" : undefined}
@@ -51,7 +53,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
               {each === locale ? (
                 <Check aria-hidden="true" className="h-3.5 w-3.5 text-muted-foreground" />
               ) : null}
-            </Link>
+            </a>
           ))}
         </nav>
       </MorphPopoverContent>
