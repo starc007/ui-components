@@ -1,52 +1,64 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { ComponentCard } from "@/components/app/docs/component-card";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
+import { localeAlternates } from "@/i18n/metadata";
+import { Link } from "@/i18n/navigation";
+import { LANGUAGES, routing } from "@/i18n/routing";
 import { NATIVE_PATH, nativeComponentPath } from "@/lib/component-paths";
 import { native } from "@/lib/native";
 import nativeSlugs from "@/lib/native/slugs.json";
-import {
-  NATIVE_INDEX_DESCRIPTION,
-  NATIVE_INDEX_TITLE,
-  nativeIndexJsonLd,
-} from "@/lib/native-seo";
+import { nativeIndexJsonLd } from "@/lib/native-seo";
 import { breadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
 const IMAGE = "/api/og?page=react-native";
 
-export const metadata: Metadata = {
-  title: NATIVE_INDEX_TITLE,
-  description: NATIVE_INDEX_DESCRIPTION,
-  keywords: [
-    "react native components",
-    "animated react native components",
-    "expo components",
-    "react native ui library",
-    "reanimated components",
-    "react native animation",
-  ],
-  openGraph: {
-    title: `${NATIVE_INDEX_TITLE} · beUI`,
-    description: NATIVE_INDEX_DESCRIPTION,
-    url: NATIVE_PATH,
-    siteName: "beUI",
-    images: [{ url: IMAGE, width: 1200, height: 630, alt: NATIVE_INDEX_TITLE }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${NATIVE_INDEX_TITLE} · beUI`,
-    description: NATIVE_INDEX_DESCRIPTION,
-    images: [IMAGE],
-  },
-  alternates: {
-    canonical: NATIVE_PATH,
-    types: { "application/json": "/native/r" },
-  },
-};
+type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) return {};
+  const t = await getTranslations({ locale, namespace: "Native.index" });
+  const title = t("metaTitle");
+  const description = t("metaDescription");
+  const alternates = localeAlternates(NATIVE_PATH, locale);
+  return {
+    title,
+    description,
+    keywords: [
+      "react native components",
+      "animated react native components",
+      "expo components",
+      "react native ui library",
+      "reanimated components",
+      "react native animation",
+    ],
+    openGraph: {
+      title: `${title} · beUI`,
+      description,
+      url: alternates.canonical,
+      locale: LANGUAGES[locale].og,
+      siteName: "beUI",
+      images: [{ url: IMAGE, width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} · beUI`,
+      description,
+      images: [IMAGE],
+    },
+    alternates: {
+      ...alternates,
+      types: { "application/json": "/native/r" },
+    },
+  };
+}
 
 const link =
   "text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground";
@@ -65,7 +77,12 @@ function groups() {
 const groupId = (name: string) =>
   `native-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
-export default function NativeIndexPage() {
+export default async function NativeIndexPage({ params }: Props) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
+  const t = await getTranslations("Native.index");
+  const groupNames: Record<string, string> = (await getMessages()).Chrome.sidebar.nativeGroups;
   return (
     <div>
       <JsonLd
@@ -77,22 +94,23 @@ export default function NativeIndexPage() {
           nativeIndexJsonLd(),
         ]}
       />
-      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
+      <nav aria-label={t("breadcrumb")} className="flex items-center gap-1.5 text-sm">
         <span className="font-medium text-foreground">React Native</span>
       </nav>
       <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
-        Animated React Native components
+        {t("heading")}
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">
-        Built for touch with Reanimated, Gesture Handler and Uniwind. Copy the
-        source into your Expo or React Native app.
+        {t("intro")}
       </p>
       <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-        New here?{" "}
-        <Link href="/docs/native-setup" className={link}>
-          Set up your app
-        </Link>{" "}
-        once, then add any component with the CLI.
+        {t.rich("setup", {
+          link: (chunks) => (
+            <Link href="/docs/native-setup" className={link}>
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
       <div className="mt-6 xl:hidden">
         <PlatformSwitch />
@@ -106,7 +124,7 @@ export default function NativeIndexPage() {
               id={groupId(name)}
               className="font-display text-xs font-medium uppercase text-muted-foreground"
             >
-              {name}
+              {groupNames[name] ?? name}
             </h2>
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {components.map((component) => (

@@ -1,8 +1,9 @@
 "use client";
 
 import { Globe, Smartphone } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import {
   componentPath,
   isNativePath,
@@ -49,6 +50,8 @@ export function PlatformSwitch({
   layout?: "inline" | "block";
   className?: string;
 }) {
+  const t = useTranslations("Native.platform");
+  // Locale-free path; the locale-aware router puts the prefix back.
   const pathname = usePathname();
   const router = useRouter();
   const platform = isNativePath(pathname) ? "native" : "web";
@@ -64,13 +67,13 @@ export function PlatformSwitch({
       icons="selected"
       className={className}
     >
-      <TabsList aria-label="Platform" className={block ? "grid w-full grid-cols-2" : undefined}>
+      <TabsList aria-label={t("label")} className={block ? "grid w-full grid-cols-2" : undefined}>
         <TabsTrigger
           value="web"
           icon={<Globe className="size-3.5" />}
           className={block ? trigger : undefined}
         >
-          Web
+          {t("web")}
         </TabsTrigger>
         <TabsTrigger
           value="native"

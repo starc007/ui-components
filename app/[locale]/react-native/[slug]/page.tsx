@@ -1,25 +1,25 @@
 import { ArrowRight, ChevronRight, Globe } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { NativePanel } from "@/components/app/docs/native/native-panel";
 import { NativeReadme } from "@/components/app/docs/native/native-readme";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { RelatedSection } from "@/components/app/docs/related-section";
+import { localeAlternates } from "@/i18n/metadata";
+import { Link } from "@/i18n/navigation";
+import { LANGUAGES, routing } from "@/i18n/routing";
 import {
   componentPath,
   NATIVE_PATH,
   nativeComponentPath,
 } from "@/lib/component-paths";
 import { findNativeComponent, native } from "@/lib/native";
-import {
-  nativeComponentJsonLd,
-  nativeMetaDescription,
-  nativeTitle,
-} from "@/lib/native-seo";
+import { nativeComponentJsonLd } from "@/lib/native-seo";
 import { registry } from "@/lib/registry";
-import { breadcrumbJsonLd, relatedComponents } from "@/lib/seo";
+import { breadcrumbJsonLd, clampText, relatedComponents } from "@/lib/seo";
 
 export const dynamic = "force-static";
 export const dynamicParams = false;
@@ -35,17 +35,19 @@ function webCategoryOf(slug: string) {
   );
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
+type Props = { params: Promise<{ locale: string; slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale, slug } = await params;
   const component = findNativeComponent(slug);
-  if (!component) return {};
-  const title = nativeTitle(component);
-  const description = nativeMetaDescription(component);
-  const url = nativeComponentPath(slug);
+  if (!component || !hasLocale(routing.locales, locale)) return {};
+  const t = await getTranslations({ locale, namespace: "Native.component" });
+  const title = t("metaTitle", { name: component.title });
+  const description = clampText(
+    t("metaDescription", { description: component.description }),
+    160,
+  );
+  const alternates = localeAlternates(nativeComponentPath(slug), locale);
   const image = `/api/og?native=${slug}`;
   return {
     title,
@@ -61,10 +63,11 @@ export async function generateMetadata({
     openGraph: {
       title: `${title} · beUI`,
       description,
-      url,
+      url: alternates.canonical,
+      locale: LANGUAGES[locale].og,
       type: "article",
       siteName: "beUI",
-      images: [{ url: image, width: 1200, height: 630, alt: `${component.title} for React Native` }],
+      images: [{ url: image, width: 1200, height: 630, alt: t("ogAlt", { name: component.title }) }],
     },
     twitter: {
       card: "summary_large_image",
@@ -73,20 +76,18 @@ export async function generateMetadata({
       images: [image],
     },
     alternates: {
-      canonical: url,
+      ...alternates,
       types: { "application/json": `/native/r/${slug}` },
     },
   };
 }
 
-export default async function NativeComponentPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+export default async function NativeComponentPage({ params }: Props) {
+  const { locale, slug } = await params;
   const component = findNativeComponent(slug);
-  if (!component) notFound();
+  if (!component || !hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
+  const t = await getTranslations("Native");
   const category = webCategoryOf(slug);
   // Related native components, picked like the web page's related ones.
   const related = category
@@ -120,7 +121,7 @@ export default async function NativeComponentPage({
           nativeComponentJsonLd(component),
         ]}
       />
-      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
+      <nav aria-label={t("index.breadcrumb")} className="flex items-center gap-1.5 text-sm">
         <Link
           href={NATIVE_PATH}
           className="text-muted-foreground transition-colors hover:text-foreground"
@@ -154,7 +155,7 @@ export default async function NativeComponentPage({
           className="mt-12 scroll-mt-24 border-t border-border pt-8"
         >
           <h2 id="native-docs-heading" className="text-sm font-semibold text-foreground">
-            Documentation
+            {t("component.documentation")}
           </h2>
           <div className="mt-4">
             <NativeReadme markdown={component.readme} />
@@ -169,9 +170,9 @@ export default async function NativeComponentPage({
         >
           <Globe aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
           <span className="min-w-0 flex-1">
-            <span className="font-medium text-foreground">Also on the web.</span>{" "}
+            <span className="font-medium text-foreground">{t("component.webTitle")}</span>{" "}
             <span className="text-muted-foreground">
-              The React version of {component.title}, built with Motion and Tailwind CSS.
+              {t("component.webDescription", { name: component.title })}
             </span>
           </span>
           <ArrowRight

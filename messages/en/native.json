@@ -1,1 +1,64 @@
-{}
+{
+  "index": {
+    "metaTitle": "Animated React Native Components",
+    "metaDescription": "Free, open-source animated components for React Native and Expo, built for touch with Reanimated, Gesture Handler and Uniwind. Copy the source or install with npx beui-native.",
+    "breadcrumb": "Breadcrumb",
+    "heading": "Animated React Native components",
+    "intro": "Built for touch with Reanimated, Gesture Handler and Uniwind. Copy the source into your Expo or React Native app.",
+    "setup": "New here? <link>Set up your app</link> once, then add any component with the CLI."
+  },
+  "component": {
+    "metaTitle": "{name} · Animated React Native component",
+    "metaDescription": "{description} An animated, accessible React Native component for Expo and bare apps, built with Reanimated.",
+    "ogAlt": "{name} for React Native",
+    "documentation": "Documentation",
+    "webTitle": "Also on the web.",
+    "webDescription": "The React version of {name}, built with Motion and Tailwind CSS."
+  },
+  "panel": {
+    "preview": "Preview",
+    "install": "Install",
+    "source": "Source on GitHub",
+    "worksIn": "It works in Expo and in bare React Native. New to beUI Native? <link>Set up your app first</link>.",
+    "cli": "Copies the component and the shared files it needs into <code>src/</code>, adds the theme tokens if they're missing, and installs its libraries. Files you've changed are kept.",
+    "manualIntro": "Keep the folder layout, since the component imports the shared files by relative path.",
+    "stepLibraries": "Install the libraries",
+    "gestureRoot": "Wrap your app in <code>GestureHandlerRootView</code> if it isn't already.",
+    "stepTheme": "Add the theme tokens",
+    "themeBody": "Once per app. Import it from the CSS file Uniwind reads, after Tailwind and Uniwind, and change the values to match your brand.",
+    "stepShared": "Copy the shared files",
+    "stepComponent": "Copy the component"
+  },
+  "preview": {
+    "videoLabel": "{name} running on iOS",
+    "play": "Play",
+    "pause": "Pause",
+    "replay": "Replay"
+  },
+  "platform": {
+    "label": "Platform",
+    "web": "Web"
+  },
+  "changelog": {
+    "title": "Changelog",
+    "heading": "What's new in beUI",
+    "description": "Every week of beUI: new animated React and React Native components, improvements, and accessibility and motion fixes.",
+    "rss": "RSS feed",
+    "weekOf": "Week of",
+    "new": "New",
+    "improved": "Improved",
+    "fixed": "Fixed",
+    "view": "View {name}",
+    "learnMore": "Learn more"
+  },
+  "article": {
+    "guide": "Guide",
+    "comparison": "Comparison",
+    "versus": "beUI vs {competitor}",
+    "feature": "Feature",
+    "officialSite": "{competitor} official site",
+    "components": "Components in this guide",
+    "faq": "FAQ",
+    "updated": "Updated <time></time>"
+  }
+}
