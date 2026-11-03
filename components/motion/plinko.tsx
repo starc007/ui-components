@@ -435,11 +435,13 @@ function ToggleButton({
   offIcon: LucideIcon;
 }) {
   return (
-    // The tooltip is the button's accessible name as well as its visible label.
-    <Tooltip content={label} asLabel side="top">
+    // aria-label names the button; the tooltip shows the same label on hover
+    // and focus. Tooltip's asLabel would hydrate differently from the server.
+    <Tooltip content={label} side="top">
       <Button
         variant="secondary"
         onClick={onToggle}
+        aria-label={label}
         aria-pressed={on}
         pressScale={0.96}
         // Full strength when on, muted when off: the slash alone is a thin cue.
