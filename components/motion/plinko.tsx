@@ -2,16 +2,10 @@
 
 import { type LucideIcon, Volume2, VolumeX, Zap, ZapOff } from "lucide-react";
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT } from "@/lib/ease";
 import { createTickPlayer } from "@/lib/tick-sound";
 import { cn } from "@/lib/utils";
@@ -24,7 +18,7 @@ export interface PlinkoProps {
   /**
    * Slot values, left to right. Their count sets the board: n slots get
    * n - 1 rows of pegs, so `rows` is ignored when this is passed. Without it
-   * the slots come from `plinkoSlots(rows)`.
+   * the slots come from `plinkoSlots(rows)`. Fewer than 2 slots render nothing.
    */
   slots?: PlinkoValue[];
   /** Called with the slot index and its value when a ball lands. */
@@ -39,7 +33,7 @@ export interface PlinkoProps {
   defaultPegFlash?: boolean;
   /** Called when the peg flash button is toggled. */
   onPegFlashChange?: (pegFlash: boolean) => void;
-  /** Accessible name of the peg flash button. Default "Peg flash". */
+  /** Tooltip and accessible name of the peg flash button. Default "Peg flash". */
   pegFlashLabel?: string;
   /** Click on every peg hit and landing (controlled). */
   sound?: boolean;
@@ -47,7 +41,7 @@ export interface PlinkoProps {
   defaultSound?: boolean;
   /** Called when the sound button is toggled. */
   onSoundChange?: (sound: boolean) => void;
-  /** Accessible name of the sound button. Default "Sound". */
+  /** Tooltip and accessible name of the sound button. Default "Sound". */
   soundLabel?: string;
   /** Accessible name for the board. Default "Plinko board". */
   "aria-label"?: string;
@@ -80,6 +74,14 @@ type Ball = {
   times: number[];
   slot: number;
   duration: number;
+  /** Id of the peg hit on each row, top to bottom. */
+  pegs: string[];
+  /** Pegs hit so far, counted from the ball's own frames. */
+  hits: number;
+  /** Last rendered y, to catch the frame the ball turns back up off a peg. */
+  y: number;
+  /** Moving up on the last frame: still on the hop from the last peg. */
+  rising: boolean;
   /** Set once the ball reaches its slot; its exit fade must not land again. */
   landed?: boolean;
 };
@@ -87,14 +89,16 @@ type Ball = {
 let nextBall = 0;
 
 /** Random left/right steps from the top peg to a slot, as keyframes. */
-function plan(rows: number, width: number): Omit<Ball, "id"> {
+function plan(rows: number, width: number): Omit<Ball, "id" | "hits" | "y" | "rising"> {
   const center = width / 2;
   const contactY = (row: number) => TOP + row * ROW - PEG - BALL;
   const points = [{ x: center, y: BALL }]; // enters fully inside the board
   const steps: number[] = [0.22]; // first fall from the chute to the top peg
+  const pegs: string[] = [];
   let k = 0; // rightward steps so far
   for (let row = 0; row < rows; row++) {
     const x = center + (k - row / 2) * GAP;
+    pegs.push(`${row}-${k}`);
     points.push({ x, y: contactY(row) });
     const right = Math.random() < 0.5;
     points.push({ x: x + (right ? GAP / 4 : -GAP / 4), y: contactY(row) - HOP_HEIGHT });
@@ -107,7 +111,7 @@ function plan(rows: number, width: number): Omit<Ball, "id"> {
   const duration = steps.reduce((sum, step) => sum + step, 0);
   const times = [0];
   for (const step of steps) times.push(times[times.length - 1] + step / duration);
-  return { path: points, times, slot: k, duration };
+  return { path: points, times, slot: k, duration, pegs };
 }
 
 /**
@@ -145,42 +149,29 @@ export function Plinko({
   const [internalFlash, setInternalFlash] = useState(defaultPegFlash);
   const flashOn = pegFlash ?? internalFlash;
 
-  // Ticks are scheduled ahead of the ball; each checks the latest sound state
-  // when it fires, so muting mid-drop silences the rest of the fall.
+  // Peg hits fire from the ball's animation frames, which can outlive the
+  // render that started them, so they read the latest settings from refs.
   const soundRef = useRef(soundOn);
   const flashRef = useRef(flashOn);
   useLayoutEffect(() => {
     soundRef.current = soundOn;
     flashRef.current = flashOn;
   });
-  const player = useRef<ReturnType<typeof createTickPlayer> | null>(null);
-  const timers = useRef(new Set<number>());
-  const getPlayer = useCallback(() => {
-    if (!player.current) player.current = createTickPlayer();
-    return player.current;
-  }, []);
-  const tick = useCallback(
-    (rate?: number) => {
-      if (soundRef.current) getPlayer().play(rate);
-    },
-    [getPlayer],
-  );
+  // Each player cuts its own previous tick, so landings get their own player:
+  // another ball's peg click would otherwise cut the longer landing thunk.
+  const players = useRef<Record<"peg" | "landing", ReturnType<typeof createTickPlayer>> | null>(null);
+  const getPlayers = () => {
+    if (!players.current) players.current = { peg: createTickPlayer(), landing: createTickPlayer() };
+    return players.current;
+  };
   useEffect(
     () => () => {
-      for (const timer of timers.current) clearTimeout(timer);
-      timers.current.clear();
-      player.current?.dispose();
-      player.current = null;
+      players.current?.peg.dispose();
+      players.current?.landing.dispose();
+      players.current = null;
     },
     [],
   );
-  const at = (seconds: number, run: () => void) => {
-    const timer = window.setTimeout(() => {
-      timers.current.delete(timer);
-      run();
-    }, seconds * 1000);
-    timers.current.add(timer);
-  };
 
   const togglePegFlash = () => {
     const next = !flashOn;
@@ -191,27 +182,29 @@ export function Plinko({
   const toggleSound = () => {
     const next = !soundOn;
     // Unlock audio inside the click, where browsers allow it.
-    if (next) getPlayer().prepare();
+    if (next) getPlayers().peg.prepare();
     if (sound === undefined) setInternalSound(next);
     onSoundChange?.(next);
   };
 
-  const labels = useMemo(() => {
-    if (slots && slots.length >= 2) return slots;
-    const count = Math.max(1, Math.round(rowsProp));
-    return plinkoSlots(count);
-  }, [slots, rowsProp]);
+  const labels = slots ?? plinkoSlots(rowsProp);
   const rows = labels.length - 1;
+  const invalid = labels.length < 2;
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production" && invalid)
+      console.warn("Plinko needs at least 2 slots; it renders nothing until it has them.");
+  }, [invalid]);
 
   // A new board size makes every ball in flight point at pegs that moved, so
-  // drop them and their pending clicks.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: rows is the trigger, not a value read inside
-  useEffect(() => {
-    for (const timer of timers.current) clearTimeout(timer);
-    timers.current.clear();
+  // drop them in the same render. Clearing them in an effect would mount them
+  // in the new board first, and their exit would land in a slot that may not
+  // exist any more.
+  const [boardRows, setBoardRows] = useState(rows);
+  if (boardRows !== rows) {
+    setBoardRows(rows);
     setBalls([]);
     setLastSlot(null);
-  }, [rows]);
+  }
 
   const width = (rows + 2) * GAP;
   const height = TOP + rows * ROW + SLOT;
@@ -229,47 +222,51 @@ export function Plinko({
     [rows, width],
   );
 
-  const land = useCallback(
-    (slot: number) => {
-      animate(`[data-slot="${slot}"]`, { opacity: [0.9, 0] }, { duration: 0.3, ease: EASE_OUT });
-      // A lower thunk than a peg hit marks the landing. It brightens toward
-      // the edges, where landing is rarest, so a good drop is heard.
-      tick(LANDING_RATE + LANDING_SPREAD * (Math.abs(slot - rows / 2) / (rows / 2)));
-      setLastSlot(slot);
-      setAnnouncement(`Landed in slot ${slot + 1}: ${labels[slot]}`);
-      onLand?.(slot, labels[slot]);
-    },
-    [animate, onLand, tick, rows, labels],
-  );
+  const land = (slot: number) => {
+    animate(`[data-slot="${slot}"]`, { opacity: [0.9, 0] }, { duration: 0.3, ease: EASE_OUT });
+    // A lower thunk than a peg hit marks the landing. It brightens toward
+    // the edges, where landing is rarest, so a good drop is heard.
+    if (soundRef.current)
+      getPlayers().landing.play(LANDING_RATE + LANDING_SPREAD * (Math.abs(slot - rows / 2) / (rows / 2)));
+    setLastSlot(slot);
+    setAnnouncement(`Landed in slot ${slot + 1}: ${labels[slot]}`);
+    onLand?.(slot, labels[slot]);
+  };
 
+  // Flash and click a peg on the frame the ball turns back up off it. Reading
+  // the ball's own frames keeps both on its clock: a background tab pauses
+  // them together.
+  const hitPegs = (ball: Ball, y: number) => {
+    const rising = y < ball.y;
+    if (rising && !ball.rising && ball.hits < ball.pegs.length) {
+      const peg = ball.pegs[ball.hits++];
+      if (flashRef.current) {
+        // Fast attack, slower decay: the pop peaks a third of the way in.
+        animate(
+          `[data-peg="${peg}"]`,
+          { scale: [1, 1.8, 1], opacity: [0.4, 1, 0.4] },
+          { duration: 0.3, times: [0, 0.3, 1], ease: EASE_OUT },
+        );
+      }
+      if (soundRef.current) getPlayers().peg.play();
+    }
+    ball.y = y;
+    ball.rising = rising;
+  };
+
+  const full = balls.length >= maxBalls;
   const drop = () => {
-    const ball = { id: nextBall++, ...plan(rows, width) };
-    if (soundOn) getPlayer().prepare();
+    if (full) return;
+    const ball: Ball = { id: nextBall++, hits: 0, y: 0, rising: false, ...plan(rows, width) };
+    if (soundOn) getPlayers().peg.prepare();
     if (reduce) {
       land(ball.slot);
       return;
     }
-    // Flash and click each peg the moment the ball reaches it. Starting the
-    // flash then, rather than queueing it with a delay now, keeps the route
-    // from showing on the pegs before the ball gets there.
-    ball.path.slice(1, -1).forEach((point, index) => {
-      if (index % 2) return; // odd points are the hop apex, not a peg
-      const row = index / 2;
-      const peg = Math.round((point.x - width / 2) / GAP + row / 2);
-      at(ball.times[index + 1] * ball.duration, () => {
-        if (flashRef.current) {
-          // Fast attack, slower decay: the pop peaks a third of the way in.
-          animate(
-            `[data-peg="${row}-${peg}"]`,
-            { scale: [1, 1.8, 1], opacity: [0.4, 1, 0.4] },
-            { duration: 0.3, times: [0, 0.3, 1], ease: EASE_OUT },
-          );
-        }
-        tick();
-      });
-    });
     setBalls((current) => [...current, ball]);
   };
+
+  if (invalid) return null;
 
   return (
     <section aria-label={ariaLabel} className={cn("flex w-full flex-col items-center gap-4", className)}>
@@ -359,6 +356,9 @@ export function Plinko({
                 ease: ball.times.slice(1).map((_, i) => (i % 2 === 1 ? RISE : FALL)),
               },
             }}
+            onUpdate={(latest) => {
+              if (typeof latest.y === "number") hitPegs(ball, latest.y);
+            }}
             onAnimationComplete={() => {
               if (ball.landed) return;
               ball.landed = true;
@@ -371,7 +371,13 @@ export function Plinko({
       </svg>
 
       <div className="flex items-center gap-2">
-        <Button onClick={drop} disabled={balls.length >= maxBalls} pressScale={0.96}>
+        {/* aria-disabled, not disabled: a disabled button drops keyboard focus. */}
+        <Button
+          onClick={drop}
+          aria-disabled={full || undefined}
+          pressScale={0.96}
+          className="aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+        >
           {dropLabel}
         </Button>
         <ToggleButton on={flashOn} onToggle={togglePegFlash} label={pegFlashLabel} onIcon={Zap} offIcon={ZapOff} />
@@ -388,11 +394,16 @@ export function Plinko({
  * Slot values for a board of `rows`: `center` in the middle, growing evenly
  * (geometrically) to `edge` at both ends, where landing is rarest. Rounded to
  * readable numbers: 12 rows give 100, 50, 20, 10, 5, 2, 1, 2, 5, 10, 20, 50, 100.
+ * `rows` is rounded to at least 1, `center` raised to at least 1 and `edge`
+ * to at least `center`.
  */
 export function plinkoSlots(
-  rows: number,
-  { center = 1, edge = 100 }: { center?: number; edge?: number } = {},
+  rowCount: number,
+  options: { center?: number; edge?: number } = {},
 ): number[] {
+  const rows = Math.max(1, Math.round(rowCount) || 1);
+  const center = Math.max(1, options.center ?? 1);
+  const edge = Math.max(center, options.edge ?? 100);
   const half = rows / 2;
   return Array.from({ length: rows + 1 }, (_, slot) => {
     const value = center * (edge / center) ** (Math.abs(slot - half) / half);
@@ -418,18 +429,20 @@ function ToggleButton({
   offIcon: LucideIcon;
 }) {
   return (
-    <Button
-      variant="secondary"
-      onClick={onToggle}
-      aria-label={label}
-      aria-pressed={on}
-      pressScale={0.96}
-      // Full strength when on, muted when off: the slash alone is a thin cue.
-      className={cn("w-10 px-0", on ? "text-foreground" : "text-muted-foreground")}
-    >
-      <ActionSwapCascadeIcon value={on ? "on" : "off"} className="size-4">
-        {on ? <OnIcon aria-hidden="true" className="size-4" /> : <OffIcon aria-hidden="true" className="size-4" />}
-      </ActionSwapCascadeIcon>
-    </Button>
+    // The tooltip is the button's accessible name as well as its visible label.
+    <Tooltip content={label} asLabel side="top">
+      <Button
+        variant="secondary"
+        onClick={onToggle}
+        aria-pressed={on}
+        pressScale={0.96}
+        // Full strength when on, muted when off: the slash alone is a thin cue.
+        className={cn("w-10 px-0", on ? "text-foreground" : "text-muted-foreground")}
+      >
+        <ActionSwapCascadeIcon value={on ? "on" : "off"} className="size-4">
+          {on ? <OnIcon aria-hidden="true" className="size-4" /> : <OffIcon aria-hidden="true" className="size-4" />}
+        </ActionSwapCascadeIcon>
+      </Button>
+    </Tooltip>
   );
 }

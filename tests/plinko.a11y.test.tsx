@@ -31,3 +31,15 @@ test("plinko board exposes named toggles and announces each landing", async () =
   expect(live?.textContent).toMatch(/^Landed in slot [1-3]: (10|1)$/);
   expect((await axe(container)).violations).toEqual([]);
 });
+
+test("plinko drop button stays focusable while the board is full", async () => {
+  const { container, getByRole } = render(<Plinko slots={[10, 1, 10]} maxBalls={1} />);
+  const drop = getByRole("button", { name: "Drop ball" });
+  drop.focus();
+  await act(async () => {
+    fireEvent.click(drop);
+  });
+  expect(drop.getAttribute("aria-disabled")).toBe("true");
+  expect(document.activeElement).toBe(drop);
+  expect((await axe(container)).violations).toEqual([]);
+});
