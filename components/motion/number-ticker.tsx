@@ -3,6 +3,7 @@
 import { animate, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export interface NumberTickerProps {
@@ -26,8 +27,11 @@ export interface NumberTickerProps {
   blur?: boolean;
   className?: string;
   digitClassName?: string;
-  /** Insert locale group separators (commas). Server-component safe. */
-  locale?: boolean;
+  /**
+   * Insert locale group separators. `true` uses the `LocaleProvider` locale
+   * (or the runtime default without one); a BCP 47 tag such as `"de-DE"` pins it.
+   */
+  locale?: boolean | string;
   /** Custom formatter. Client-only — server components must use `locale` instead. */
   format?: (value: number) => string;
 }
@@ -53,6 +57,7 @@ export function NumberTicker({
   const containerRef = useRef<HTMLSpanElement>(null);
   const inView = useInView(containerRef, { once: true, amount: 0.6 });
   const [armed, setArmed] = useState(!startOnView);
+  const { locale: contextLocale } = useLocale();
 
   useEffect(() => {
     if (startOnView && inView) setArmed(true);
@@ -65,13 +70,13 @@ export function NumberTicker({
     const formatted = format
       ? format(rounded)
       : locale
-        ? rounded.toLocaleString(undefined, {
+        ? rounded.toLocaleString(typeof locale === "string" ? locale : contextLocale, {
             minimumFractionDigits: places,
             maximumFractionDigits: places,
           })
         : rounded.toFixed(places);
     return pad ? formatted.padStart(pad, "0") : formatted;
-  }, [value, pad, decimals, format, locale]);
+  }, [value, pad, decimals, format, locale, contextLocale]);
   const glyphs = useMemo(() => {
     const chars = text.split("");
     // Key by place value (position from the right): a changing digit keeps its
