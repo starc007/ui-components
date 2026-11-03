@@ -33,6 +33,8 @@ export interface PlinkoProps {
   maxBalls?: number;
   /** Label of the drop button. Default "Drop ball". */
   dropLabel?: string;
+  /** Flash each peg as the ball hits it. Default true. */
+  pegFlash?: boolean;
   /** Click on every peg hit and landing (controlled). */
   sound?: boolean;
   /** Initial sound state when uncontrolled. Default false. */
@@ -115,6 +117,7 @@ export function Plinko({
   onLand,
   maxBalls = 12,
   dropLabel = "Drop ball",
+  pegFlash = true,
   sound,
   defaultSound = false,
   onSoundChange,
@@ -235,7 +238,9 @@ export function Plinko({
       const row = index / 2;
       const peg = Math.round((point.x - width / 2) / GAP + row / 2);
       at(ball.times[index + 1] * ball.duration, () => {
-        animate(`[data-peg="${row}-${peg}"]`, { scale: [1, 1.8, 1], opacity: [0.4, 1, 0.4] }, { duration: 0.3 });
+        if (pegFlash) {
+          animate(`[data-peg="${row}-${peg}"]`, { scale: [1, 1.8, 1], opacity: [0.4, 1, 0.4] }, { duration: 0.3 });
+        }
         tick();
       });
     });
