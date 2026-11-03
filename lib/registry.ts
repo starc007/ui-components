@@ -2247,6 +2247,15 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "pachinko",
+        name: "Pachinko",
+        description: "A pachinko board where balls drop through rows of pegs, bounce left or right off each one and land in a slot. Pegs flash when hit, the slot pulses on landing, several balls can fall at once, and reduced motion lands a ball instantly.",
+        file: "components/motion/pachinko.tsx",
+        badge: "new",
+        launchedAt: "2026-11-03",
+        keywords: ["pachinko", "plinko", "galton board", "ball drop game react", "peg board animation"],
+      },
+      {
         slug: "card-dealer",
         name: "Card Dealer",
         description: "A card table with a face-down deck, a fanned hand and a discard pile. Cards arc across the table between them and flip in flight, hop over each other when the hand is sorted, and lift on hover. Data-driven by each card's zone, with custom faces and backs, keyboard-playable hand cards and reduced-motion support.",

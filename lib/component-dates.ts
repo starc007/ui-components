@@ -8,6 +8,7 @@ const COMPONENT_DATES = {
   "charts/line-chart": { publishedAt: "2026-10-27", updatedAt: "2026-10-27" },
   "charts/bar-chart": { publishedAt: "2026-10-27", updatedAt: "2026-10-27" },
   "charts/sparkline": { publishedAt: "2026-10-27", updatedAt: "2026-10-27" },
+  "blocks/pachinko": { publishedAt: "2026-11-03", updatedAt: "2026-11-03" },
   "blocks/card-dealer": { publishedAt: "2026-10-24", updatedAt: "2026-10-26" },
   "charts/sankey-chart": { publishedAt: "2026-10-22", updatedAt: "2026-10-22" },
   "motion/timeline": { publishedAt: "2026-10-20", updatedAt: "2026-10-20" },
