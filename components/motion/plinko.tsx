@@ -76,8 +76,8 @@ type Ball = {
   duration: number;
   /** Id of the peg hit on each row, top to bottom. */
   pegs: string[];
-  /** Pegs hit so far, counted from the ball's own frames. */
-  hits: number;
+  /** Row of the last peg hit, -1 before the first. */
+  lastRow: number;
   /** Last rendered y, to catch the frame the ball turns back up off a peg. */
   y: number;
   /** Moving up on the last frame: still on the hop from the last peg. */
@@ -88,10 +88,12 @@ type Ball = {
 
 let nextBall = 0;
 
+/** Height of the ball's centre where it touches a peg on `row`. */
+const contactY = (row: number) => TOP + row * ROW - PEG - BALL;
+
 /** Random left/right steps from the top peg to a slot, as keyframes. */
-function plan(rows: number, width: number): Omit<Ball, "id" | "hits" | "y" | "rising"> {
+function plan(rows: number, width: number): Omit<Ball, "id" | "lastRow" | "y" | "rising"> {
   const center = width / 2;
-  const contactY = (row: number) => TOP + row * ROW - PEG - BALL;
   const points = [{ x: center, y: BALL }]; // enters fully inside the board
   const steps: number[] = [0.22]; // first fall from the chute to the top peg
   const pegs: string[] = [];
@@ -238,8 +240,13 @@ export function Plinko({
   // them together.
   const hitPegs = (ball: Ball, y: number) => {
     const rising = y < ball.y;
-    if (rising && !ball.rising && ball.hits < ball.pegs.length) {
-      const peg = ball.pegs[ball.hits++];
+    // The row comes from where the ball turned, not from counting turns, so
+    // a slow frame that skips a whole hop misses only that peg. Both frames
+    // sit within a hop height above the contact, which rounds to its row.
+    const row = Math.round((Math.max(ball.y, y) - contactY(0)) / ROW);
+    if (rising && !ball.rising && row > ball.lastRow && row < ball.pegs.length) {
+      ball.lastRow = row;
+      const peg = ball.pegs[row];
       if (flashRef.current) {
         // Fast attack, slower decay: the pop peaks a third of the way in.
         animate(
@@ -257,7 +264,7 @@ export function Plinko({
   const full = balls.length >= maxBalls;
   const drop = () => {
     if (full) return;
-    const ball: Ball = { id: nextBall++, hits: 0, y: 0, rising: false, ...plan(rows, width) };
+    const ball: Ball = { id: nextBall++, lastRow: -1, y: 0, rising: false, ...plan(rows, width) };
     if (soundOn) getPlayers().peg.prepare();
     if (reduce) {
       land(ball.slot);
@@ -394,23 +401,26 @@ export function Plinko({
  * Slot values for a board of `rows`: `center` in the middle, growing evenly
  * (geometrically) to `edge` at both ends, where landing is rarest. Rounded to
  * readable numbers: 12 rows give 100, 50, 20, 10, 5, 2, 1, 2, 5, 10, 20, 50, 100.
- * `rows` is rounded to at least 1, `center` raised to at least 1 and `edge`
- * to at least `center`.
+ * Values from 1 to 10 round to whole numbers, the rest to one significant
+ * figure, so fractional curves work: 8 rows with `center: 0.5, edge: 10`
+ * give 10, 5, 2, 1, 0.5, 1, 2, 5, 10.
+ * `rows` is rounded to at least 1, `center` raised to at least 0.01 and
+ * `edge` to at least `center`.
  */
 export function plinkoSlots(
   rowCount: number,
   options: { center?: number; edge?: number } = {},
 ): number[] {
   const rows = Math.max(1, Math.round(rowCount) || 1);
-  const center = Math.max(1, options.center ?? 1);
+  // Any positive center works; zero or below would divide by zero.
+  const center = Math.max(0.01, options.center ?? 1);
   const edge = Math.max(center, options.edge ?? 100);
   const half = rows / 2;
   return Array.from({ length: rows + 1 }, (_, slot) => {
     const value = center * (edge / center) ** (Math.abs(slot - half) / half);
-    if (value < 10) return Math.round(value);
-    // One significant figure: 46 reads as 50, 315 as 300.
-    const scale = 10 ** Math.floor(Math.log10(value));
-    return Math.round(value / scale) * scale;
+    if (value >= 1 && value < 10) return Math.round(value);
+    // One significant figure: 46 reads as 50, 315 as 300, 0.46 as 0.5.
+    return Number(value.toPrecision(1));
   });
 }
 
