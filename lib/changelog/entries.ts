@@ -7,6 +7,17 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
  */
 export const changelogEntries: ChangelogEntry[] = [
   {
+    "date": "2026-11-02",
+    "title": "Plinko",
+    "items": [
+      {
+        "type": "new",
+        "text": "Plinko drops balls through rows of pegs into scoring slots. Pass your own slot values and the board sizes itself, or let plinkoSlots build a curve for any number of rows. Pegs flash as they're hit, the winning slot stays marked, and optional sound clicks on every peg and lands with a deeper thunk at the rarer edges.",
+        "component": "plinko"
+      }
+    ]
+  },
+  {
     "date": "2026-10-26",
     "title": "Line, bar and sparkline charts",
     "items": [
