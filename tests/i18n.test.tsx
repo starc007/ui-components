@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
 
 import { TodoList, todoListMessages } from "@/components/agents/todo-list";
-import { directionOf, LocaleProvider } from "@/lib/i18n";
+import { LocaleProvider } from "@/lib/i18n";
 
 afterEach(cleanup);
 
@@ -116,11 +116,4 @@ describe("useMessages", () => {
     );
     expect(screen.getByText("1.200 of 1.200 tasks completed")).toBeDefined();
   });
-});
-
-test("directionOf reads the language subtag", () => {
-  expect(directionOf("ar-EG")).toBe("rtl");
-  expect(directionOf("he")).toBe("rtl");
-  expect(directionOf("pt-BR")).toBe("ltr");
-  expect(directionOf(undefined)).toBe("ltr");
 });

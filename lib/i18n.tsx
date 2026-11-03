@@ -19,26 +19,14 @@ export type Messages = Record<string, string>;
 /** A language file: component namespace → any subset of that component's messages. */
 export type LocaleMessages = Record<string, Partial<Messages>>;
 
-export type TextDirection = "ltr" | "rtl";
-
 type LocaleContextValue = {
   locale?: string;
-  dir: TextDirection;
   messages: LocaleMessages;
 };
 
 const NO_MESSAGES: LocaleMessages = {};
-const RTL_LANGUAGES = new Set(["ar", "ckb", "dv", "fa", "he", "ps", "sd", "ug", "ur", "yi"]);
 
-const LocaleContext = createContext<LocaleContextValue>({
-  dir: "ltr",
-  messages: NO_MESSAGES,
-});
-
-export function directionOf(locale?: string): TextDirection {
-  const language = locale?.split(/[-_]/)[0]?.toLowerCase();
-  return language && RTL_LANGUAGES.has(language) ? "rtl" : "ltr";
-}
+const LocaleContext = createContext<LocaleContextValue>({ messages: NO_MESSAGES });
 
 /** Without a locale, digits stay plain so server and client render the same text. */
 export function formatNumber(value: number, locale?: string) {
@@ -46,31 +34,20 @@ export function formatNumber(value: number, locale?: string) {
 }
 
 export interface LocaleProviderProps {
-  /** BCP 47 tag, e.g. `de`, `pt-BR`, `ar-EG`. Drives `Intl` number formatting. */
+  /** BCP 47 tag, e.g. `de`, `pt-BR`. Drives `Intl` number formatting. */
   locale: string;
-  /** Defaults to the locale's script direction. Also set `dir` on `<html>`. */
-  dir?: TextDirection;
   /** Component namespace → translated strings. Missing keys fall back to English. */
   messages?: LocaleMessages;
   children: ReactNode;
 }
 
-export function LocaleProvider({
-  locale,
-  dir,
-  messages = NO_MESSAGES,
-  children,
-}: LocaleProviderProps) {
-  const value = useMemo(
-    () => ({ locale, dir: dir ?? directionOf(locale), messages }),
-    [locale, dir, messages],
-  );
+export function LocaleProvider({ locale, messages = NO_MESSAGES, children }: LocaleProviderProps) {
+  const value = useMemo(() => ({ locale, messages }), [locale, messages]);
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }
 
-export function useLocale(): Omit<LocaleContextValue, "messages"> {
-  const { locale, dir } = useContext(LocaleContext);
-  return { locale, dir };
+export function useLocale(): { locale?: string } {
+  return { locale: useContext(LocaleContext).locale };
 }
 
 /**
