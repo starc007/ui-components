@@ -73,10 +73,10 @@ const RIPPLE_STEP = 0.025;
 const SHAKE = { duration: 0.3, ease: EASE_OUT } as const;
 // A found gem's tile springs back from a slight squash.
 const GEM_POP = { type: "spring", duration: 0.35, bounce: 0.4 } as const;
-// The cash-out pulse runs through the picked gems 40ms apart over 350ms. The
-// result opens when the last tile's closing animation completes.
-const PULSE_STEP = 40;
-const PULSE_TIME = 350;
+// The cash-out pulse runs through the picked gems 40ms apart over 350ms, in
+// seconds. The result opens when the last tile's closing animation completes.
+const PULSE_STEP = 0.04;
+const PULSE_TIME = 0.35;
 // Exits are shorter than entrances.
 const EXIT = { duration: 0.12, ease: EASE_OUT } as const;
 
@@ -145,8 +145,6 @@ export function Mines({
   // Chance the next pick is a gem.
   const safe = (tiles - mines - gems) / (tiles - gems);
   const lastPick = picked.at(-1) ?? Math.floor(tiles / 2);
-  // A roving tab stop that always points at a tile on the board.
-  const focusTile = Math.min(cursor, tiles - 1);
 
   // Each event has its own synthesized sound (lib/game-sounds.ts): gems chime
   // up a scale as the streak grows, a mine blasts, a cash out arpeggiates.
@@ -156,9 +154,6 @@ export function Mines({
   const getPlayer = () => {
     if (!player.current) player.current = createGameSounds();
     return player.current;
-  };
-  const play = (sound: (sounds: GameSounds) => void) => {
-    if (soundOn) sound(getPlayer());
   };
   useEffect(
     () => () => {
@@ -229,7 +224,7 @@ export function Mines({
     awaitingResult.current = true;
     setPhase("cashed");
     setAnnouncement(`Cashed out at ${format(value)}.`);
-    play((sounds) => sounds.cashOut());
+    if (soundOn) getPlayer().cashOut();
     onCashOut?.(value, finalGems);
   };
 
@@ -240,7 +235,7 @@ export function Mines({
       awaitingResult.current = true;
       setPhase("busted");
       setAnnouncement("Mine. The round is over.");
-      play((sounds) => sounds.mine());
+      if (soundOn) getPlayer().mine();
       onReveal?.(tile, "mine", 0);
       onBust?.(tile);
       return;
@@ -251,7 +246,7 @@ export function Mines({
     const node = tileRefs.current[tile];
     if (node && !reduce) animate(node, { scale: [0.92, 1] }, GEM_POP);
     const value = minesMultiplier(tiles, mines, found);
-    play((sounds) => sounds.gem(found));
+    if (soundOn) getPlayer().gem(found);
     onReveal?.(tile, "gem", value);
     if (found === tiles - mines) {
       cashOut(found);
@@ -289,7 +284,7 @@ export function Mines({
         order === -1
           ? ringFrom(lastPick, tile, size) * RIPPLE_STEP + ICON_SPRING.duration
           : phase === "cashed" && !reduce
-            ? (order * PULSE_STEP + PULSE_TIME) / 1000
+            ? order * PULSE_STEP + PULSE_TIME
             : -1;
       if (end > lastEnd) {
         closingTile = tile;
@@ -344,18 +339,15 @@ export function Mines({
             <NumberTicker value={multiplier} decimals={2} suffix="×" startOnView={false} duration={0.35} />
           </div>
           <p className="flex items-center justify-end gap-1.5 text-xs text-muted-foreground tabular-nums">
-            {phase === "playing" && gems < tiles - mines ? (
-              <>
-                <OddsRing safe={safe} reduce={reduce} />
-                {`${Math.round(safe * 100)}% safe · next ${format(next)}`}
-              </>
-            ) : phase === "idle" ? (
-              <>
-                <OddsRing safe={safe} reduce={reduce} />
-                {`First pick ${Math.round(safe * 100)}% safe`}
-              </>
-            ) : (
+            {over ? (
               "Multiplier"
+            ) : (
+              <>
+                <OddsRing safe={safe} reduce={reduce} />
+                {phase === "playing"
+                  ? `${Math.round(safe * 100)}% safe · next ${format(next)}`
+                  : `First pick ${Math.round(safe * 100)}% safe`}
+              </>
             )}
           </p>
         </div>
@@ -392,7 +384,7 @@ export function Mines({
                   tileRefs.current[tile] = node;
                 }}
                 type="button"
-                tabIndex={tile === focusTile ? 0 : -1}
+                tabIndex={tile === cursor ? 0 : -1}
                 aria-disabled={!interactive}
                 aria-label={`Row ${row + 1}, column ${col + 1}, ${content ?? "hidden"}`}
                 onFocus={() => setCursor(tile)}
@@ -451,7 +443,7 @@ export function Mines({
                       onAnimationComplete={tile === closingTile ? openResult : undefined}
                       transition={
                         celebrate
-                          ? { duration: PULSE_TIME / 1000, ease: EASE_OUT, delay: (order * PULSE_STEP) / 1000 }
+                          ? { duration: PULSE_TIME, ease: EASE_OUT, delay: order * PULSE_STEP }
                           : { ...ICON_SPRING, delay: isPicked ? 0 : ripple * RIPPLE_STEP }
                       }
                       className={cn(
@@ -475,9 +467,8 @@ export function Mines({
         <AnimatePresence>
           {resultOpen && over ? (
             <PresenceGate key="result">
-              {({ isPresent, gate }) => (
+              {({ gate }) => (
                 <ResultCard
-                  isPresent={isPresent}
                   gate={gate}
                   outcome={phase === "cashed" ? "cashed" : "busted"}
                   multiplier={multiplier}
@@ -541,7 +532,6 @@ const CARD_IN = { type: "spring", duration: 0.4, bounce: 0.15 } as const;
 const CARD_OUT = { duration: 0.15, ease: EASE_OUT } as const;
 
 interface ResultProps {
-  isPresent: boolean;
   gate: PresenceGateRenderProps["gate"];
   outcome: "cashed" | "busted";
   multiplier: number;
@@ -561,7 +551,7 @@ interface ResultProps {
  * the board (or Escape) puts the card away to study the board.
  */
 function ResultCard(props: ResultProps) {
-  const { isPresent, gate, reduce, onClose } = props;
+  const { gate, reduce, onClose } = props;
   return (
     <>
       <motion.button
@@ -576,7 +566,7 @@ function ResultCard(props: ResultProps) {
         transition={{ duration: 0.2, ease: EASE_OUT }}
       />
       <div
-        inert={!isPresent}
+        inert={gate.inert}
         className="pointer-events-none absolute inset-0 z-20 grid place-items-center p-4"
       >
         <motion.div
@@ -667,7 +657,7 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
         </Stage>
         <Stage delay={0.1} reduce={reduce}>
           <p className={cn("text-3xl font-semibold", !cashed && "text-muted-foreground line-through decoration-2")}>
-            {cashed && !reduce ? (
+            {cashed ? (
               // A win rolls up to its multiplier; a loss just states it.
               <NumberTicker value={multiplier} decimals={2} suffix="×" startOnView={false} duration={0.6} stagger={0.05} />
             ) : (
