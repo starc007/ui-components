@@ -1,0 +1,60 @@
+"use client";
+
+import { Check, ChevronDown, Languages } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
+import {
+  MorphPopover,
+  MorphPopoverContent,
+  MorphPopoverTrigger,
+} from "@/components/motion/popover-morph";
+import { Link, usePathname } from "@/i18n/navigation";
+import { LANGUAGES, type Locale, routing } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
+
+export function LanguageSwitcher({ className }: { className?: string }) {
+  const t = useTranslations("Chrome.language");
+  const locale = useLocale() as Locale;
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <MorphPopover open={open} onOpenChange={setOpen}>
+      <MorphPopoverTrigger>
+        <button
+          type="button"
+          aria-label={t("label", { language: LANGUAGES[locale].name })}
+          className={cn(
+            "inline-flex h-9 items-center gap-1.5 rounded-2xl border border-border bg-card/20 px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground",
+            className,
+          )}
+        >
+          <Languages aria-hidden="true" className="h-3.5 w-3.5" />
+          <span className="uppercase">{locale}</span>
+          <ChevronDown aria-hidden="true" className="h-3 w-3" />
+        </button>
+      </MorphPopoverTrigger>
+      <MorphPopoverContent align="end" className="w-40 p-1.5">
+        <nav aria-label={t("menu")}>
+          {routing.locales.map((each) => (
+            <Link
+              key={each}
+              href={pathname}
+              locale={each}
+              lang={each}
+              hrefLang={each}
+              aria-current={each === locale ? "true" : undefined}
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center justify-between gap-2.5 rounded-lg px-2.5 py-2 text-sm text-foreground outline-none transition-colors hover:bg-muted focus-visible:bg-muted"
+            >
+              {LANGUAGES[each].name}
+              {each === locale ? (
+                <Check aria-hidden="true" className="h-3.5 w-3.5 text-muted-foreground" />
+              ) : null}
+            </Link>
+          ))}
+        </nav>
+      </MorphPopoverContent>
+    </MorphPopover>
+  );
+}

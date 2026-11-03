@@ -8,11 +8,13 @@ import {
   nativeComponentPath,
 } from "@/lib/component-paths";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Blocks, Bot, LayoutGrid, Shapes } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
+import { useLocale, useMessages, useTranslations } from "next-intl";
 import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
+import { localizeCategory } from "@/i18n/catalog";
+import { Link, usePathname } from "@/i18n/navigation";
+import { type Locale, localizedPath } from "@/i18n/routing";
 import { registry } from "@/lib/registry";
 import nativeNav from "@/lib/native/nav.json";
 import { NewBadge } from "@/components/app/docs/new-badge";
@@ -23,17 +25,29 @@ import { moveNewItemsToTop } from "@/lib/component-status";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
-const INTRO = [
-  { slug: "home", name: "Home", href: "/components/motion" },
-  { slug: "react-native", name: "React Native", href: NATIVE_PATH },
-  { slug: "changelog", name: "Changelog", href: "/changelog" },
+// `key` is a Chrome message key; a null key keeps `name` (a product name).
+type NavLink = {
+  slug: string;
+  href: string;
+  key: "sidebar.home" | "sidebar.overview" | "sidebar.setup" | `docsPages.${
+    "changelog" | "motionGuides" | "agentGuide" | "nativeSetup"
+  }` | null;
+  name?: string;
+};
+
+const INTRO: NavLink[] = [
+  { slug: "home", key: "sidebar.home", href: "/components/motion" },
+  { slug: "react-native", key: null, name: "React Native", href: NATIVE_PATH },
+  { slug: "changelog", key: "docsPages.changelog", href: "/changelog" },
 ];
 
-const PATTERNS = [
-  { slug: "motion-patterns", name: "Motion Guides", href: "/docs/motion-patterns" },
-  { slug: "ai-agents", name: "Agent Guide", href: "/docs/ai-agents" },
-  { slug: "openui", name: "OpenUI", href: "/docs/openui" },
-  { slug: "native-setup", name: "React Native Setup", href: "/docs/native-setup" },
+const CHARTS_INTRO: NavLink[] = [{ slug: "home", key: "sidebar.home", href: "/charts" }];
+
+const PATTERNS: NavLink[] = [
+  { slug: "motion-patterns", key: "docsPages.motionGuides", href: "/docs/motion-patterns" },
+  { slug: "ai-agents", key: "docsPages.agentGuide", href: "/docs/ai-agents" },
+  { slug: "openui", key: null, name: "OpenUI", href: "/docs/openui" },
+  { slug: "native-setup", key: "docsPages.nativeSetup", href: "/docs/native-setup" },
 ];
 
 const SIDEBAR_CATEGORY_ORDER: Record<string, number> = {
@@ -60,20 +74,20 @@ const NATIVE_GROUPS = nativeNav.reduce<{ name: string; items: typeof nativeNav }
   [],
 );
 
-const NATIVE_INTRO = [
-  { slug: "native-home", name: "Overview", href: NATIVE_PATH },
-  { slug: "native-setup", name: "Setup", href: "/docs/native-setup" },
+const NATIVE_INTRO: NavLink[] = [
+  { slug: "native-home", key: "sidebar.overview", href: NATIVE_PATH },
+  { slug: "native-setup", key: "sidebar.setup", href: "/docs/native-setup" },
 ];
 
 const CATEGORY_FILTERS = [
-  { value: "all", label: "All", icon: LayoutGrid },
-  { value: "agents", label: "Agents", icon: Bot },
-  { value: "motion", label: "Components", icon: Shapes },
-  { value: "blocks", label: "Blocks", icon: Blocks },
+  { value: "all", label: "sidebar.all", icon: LayoutGrid },
+  { value: "agents", label: "header.agents", icon: Bot },
+  { value: "motion", label: "header.components", icon: Shapes },
+  { value: "blocks", label: "header.blocks", icon: Blocks },
 ] as const;
 
 function SidebarCategoryTab({
-  filter: { value: filterValue, label, icon: Icon },
+  filter: { value: filterValue, label: labelKey, icon: Icon },
   value,
   onValueChange,
   id,
@@ -85,6 +99,8 @@ function SidebarCategoryTab({
   id: string;
   panelId: string;
 }) {
+  const t = useTranslations("Chrome");
+  const label = t(labelKey);
   const reduce = useReducedMotion();
   const active = value === filterValue;
   const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -171,12 +187,13 @@ export function SidebarCategoryTabs({
   id: string;
   panelId: string;
 }) {
+  const t = useTranslations("Chrome.sidebar");
   const reduce = useReducedMotion();
 
   return (
     <motion.section
       layoutRoot
-      aria-label="Filter navigation by category"
+      aria-label={t("filterByCategory")}
       className="bg-background pb-3"
       onKeyDown={(event) => {
         if (!(event.target instanceof HTMLButtonElement) || event.target.getAttribute("role") !== "tab") return;
@@ -203,7 +220,7 @@ export function SidebarCategoryTabs({
         transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
         style={{ borderRadius: 9999 }}
         role="tablist"
-        aria-label="Component categories"
+        aria-label={t("componentCategories")}
         className="inline-flex min-h-9 items-center gap-1 rounded-full bg-muted p-0.5"
       >
         {CATEGORY_FILTERS.map((filter) => (
@@ -238,11 +255,13 @@ const STICKY_CLEARANCE = 64;
  */
 function useRevealActiveLink(pathname: string) {
   const ref = useRef<HTMLElement>(null);
+  // Rendered hrefs carry the locale prefix; `pathname` does not.
+  const href = localizedPath(pathname, useLocale() as Locale);
   useLayoutEffect(() => {
     const nav = ref.current;
     if (!nav) return;
     const link = Array.from(nav.querySelectorAll("a")).find(
-      (anchor) => anchor.getAttribute("href") === pathname,
+      (anchor) => anchor.getAttribute("href") === href,
     );
     // A link inside a filtered-out group has no boxes to reveal.
     if (!link || link.getClientRects().length === 0) return;
@@ -255,7 +274,7 @@ function useRevealActiveLink(pathname: string) {
     const item = link.getBoundingClientRect();
     if (item.top >= view.top + STICKY_CLEARANCE && item.bottom <= view.bottom) return;
     scroller.scrollTop += item.top - view.top - (view.height - item.height) / 2;
-  }, [pathname]);
+  }, [href]);
   return ref;
 }
 
@@ -276,11 +295,13 @@ function NativeSidebarNav({
   pathname: string;
   onNavigate?: () => void;
 }) {
+  const t = useTranslations("Chrome");
+  const groupNames: Record<string, string> = useMessages().Chrome.sidebar.nativeGroups;
   const navRef = useRevealActiveLink(pathname);
   const now = Date.now();
 
   return (
-    <nav ref={navRef} aria-label="Browse React Native components" className="flex flex-col gap-6">
+    <nav ref={navRef} aria-label={t("sidebar.browseNative")} className="flex flex-col gap-6">
       <div>
         <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           React Native
@@ -295,7 +316,7 @@ function NativeSidebarNav({
               onClick={onNavigate}
               className={linkClass(pathname === item.href)}
             >
-              {item.name}
+              {item.key ? t(item.key) : item.name}
             </Link>
           ))}
         </SharedLayoutBg>
@@ -303,7 +324,7 @@ function NativeSidebarNav({
       {NATIVE_GROUPS.map((group) => (
         <div key={group.name}>
           <p className={GROUP_LABEL}>
-            {group.name}
+            {groupNames[group.name] ?? group.name}
             <span className={COUNT_CLASS}>{group.items.length}</span>
           </p>
           <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
@@ -356,6 +377,8 @@ function WebSidebarNav({
   pathname: string;
   onNavigate?: () => void;
 }) {
+  const t = useTranslations("Chrome");
+  const messages = useMessages();
   const tabsId = useId();
   const panelId = useId();
   const navRef = useRevealActiveLink(pathname);
@@ -372,15 +395,13 @@ function WebSidebarNav({
   const isCharts = pathname === "/charts" || pathname.startsWith("/charts/");
   const categoryFilter = filter.value;
   const now = Date.now();
-  const categories = isCharts
-    ? registry.filter((category) => category.slug === "charts")
-    : SIDEBAR_CATEGORIES;
-  const intro = isCharts
-    ? [{ slug: "home", name: "Home", href: "/charts" }]
-    : INTRO;
+  const categories = (
+    isCharts ? registry.filter((category) => category.slug === "charts") : SIDEBAR_CATEGORIES
+  ).map((category) => localizeCategory(category, messages));
+  const intro = isCharts ? CHARTS_INTRO : INTRO;
 
   return (
-    <nav ref={navRef} aria-label="Browse components" className="flex flex-col gap-6">
+    <nav ref={navRef} aria-label={t("sidebar.browseComponents")} className="flex flex-col gap-6">
       {!isCharts ? (
         <div className="sticky -top-4 z-20 -mt-4 -mb-4 bg-background pt-4">
           <SidebarCategoryTabs
@@ -402,7 +423,7 @@ function WebSidebarNav({
       >
         <div hidden={!isCharts && categoryFilter !== "all"}>
           <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            Intro
+            {t("sidebar.intro")}
           </p>
           <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
             {intro.map((item) => (
@@ -413,7 +434,7 @@ function WebSidebarNav({
                 onClick={onNavigate}
                 className={linkClass(pathname === item.href)}
               >
-                {item.name}
+                {item.key ? t(item.key) : item.name}
               </Link>
             ))}
           </SharedLayoutBg>
@@ -421,7 +442,7 @@ function WebSidebarNav({
         {!isCharts ? (
           <div hidden={categoryFilter !== "all"}>
             <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Guides
+              {t("sidebar.guides")}
             </p>
             <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
               {PATTERNS.map((item) => (
@@ -432,7 +453,7 @@ function WebSidebarNav({
                   onClick={onNavigate}
                   className={linkClass(pathname === item.href)}
                 >
-                  {item.name}
+                  {item.key ? t(item.key) : item.name}
                 </Link>
               ))}
             </SharedLayoutBg>
@@ -482,8 +503,9 @@ function WebSidebarNav({
 }
 
 export function SiteSidebar() {
+  const t = useTranslations("Chrome.sidebar");
   return (
-    <aside aria-label="Site navigation">
+    <aside aria-label={t("siteNavigation")}>
       <SidebarNav />
     </aside>
   );

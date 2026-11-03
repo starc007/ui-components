@@ -1,1 +1,89 @@
-{}
+{
+  "header": {
+    "components": "Components",
+    "blocks": "Blocks",
+    "agents": "Agents",
+    "charts": "Charts",
+    "playground": "Playground",
+    "sponsors": "Sponsors",
+    "starOnGithub": "Star on GitHub",
+    "starOnGithubCount": "Star on GitHub, {count} stars",
+    "getPro": "Get Pro"
+  },
+  "language": {
+    "label": "Language: {language}",
+    "menu": "Choose language"
+  },
+  "mobileNav": {
+    "open": "Open navigation",
+    "title": "Menu"
+  },
+  "theme": {
+    "lightTheme": "Light theme",
+    "darkTheme": "Dark theme",
+    "systemTheme": "System theme"
+  },
+  "dock": {
+    "email": "Email"
+  },
+  "docsPages": {
+    "aiAgents": "AI Agents",
+    "agentGuide": "Agent Guide",
+    "motionGuides": "Motion Guides",
+    "themeSetup": "Theme setup",
+    "nativeSetup": "React Native Setup",
+    "nativeComponents": "React Native components",
+    "changelog": "Changelog",
+    "forCodingAgents": "For coding agents",
+    "theming": "Theming",
+    "motionPatterns": "Motion patterns"
+  },
+  "sidebar": {
+    "intro": "Intro",
+    "home": "Home",
+    "guides": "Guides",
+    "overview": "Overview",
+    "setup": "Setup",
+    "all": "All",
+    "filterByCategory": "Filter navigation by category",
+    "componentCategories": "Component categories",
+    "browseComponents": "Browse components",
+    "browseNative": "Browse React Native components",
+    "siteNavigation": "Site navigation",
+    "resources": "Sponsors and resources",
+    "nativeGroups": {
+      "AI agents": "AI agents",
+      "Actions": "Actions",
+      "Forms": "Forms",
+      "Motion": "Motion",
+      "Navigation and lists": "Navigation and lists"
+    }
+  },
+  "search": {
+    "label": "Search components",
+    "trigger": "Search",
+    "placeholder": "Search components…",
+    "empty": "No results found.",
+    "pages": "Pages"
+  },
+  "footer": {
+    "description": "Animated components for React, Next.js and React Native. Copy the source or install with a CLI.",
+    "createdBy": "Created by <link>Saurabh</link>",
+    "links": "Links",
+    "viewAll": "View all ({count})",
+    "browseAll": "Browse all",
+    "sponsor": "Sponsor",
+    "alsoByUs": "Also by us",
+    "docsTagline": "The motion toolkit for React & Next.js",
+    "label": "Footer"
+  },
+  "nativeStrip": {
+    "label": "beUI Pro for mobile",
+    "announcement": "beUI Pro for mobile is live<more>, with <strong>50 React Native blocks and screens</strong></more>",
+    "explore": "Explore"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist."
+  }
+}

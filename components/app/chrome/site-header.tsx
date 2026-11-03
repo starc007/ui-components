@@ -2,16 +2,17 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useMotionValueEvent, useScroll } from "motion/react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { MobileNav } from "@/components/app/chrome/mobile-nav";
 import { SiteSearch } from "@/components/app/chrome/site-search";
 import { ThemeToggle } from "@/components/app/chrome/theme-toggle";
+import { LanguageSwitcher } from "@/components/app/chrome/language-switcher";
 import { HalloweenMark } from "@/components/app/halloween-mark";
 import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { RainbowCta } from "@/components/app/rainbow-cta";
+import { Link, usePathname } from "@/i18n/navigation";
 import { hasSiteSidebar, isNativePath, NATIVE_PATH } from "@/lib/component-paths";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +25,7 @@ function formatStarCount(count: number) {
 }
 
 export function SiteHeader() {
+  const t = useTranslations("Chrome.header");
   const [githubStarCount, setGithubStarCount] = useState<number | null>(null);
   useEffect(() => {
     const controller = new AbortController();
@@ -95,7 +97,7 @@ export function SiteHeader() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Components
+              {t("components")}
             </Link>
             <Link
               href="/components/blocks"
@@ -106,7 +108,7 @@ export function SiteHeader() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Blocks
+              {t("blocks")}
             </Link>
             <Link
               href="/components/agents"
@@ -117,7 +119,7 @@ export function SiteHeader() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Agents
+              {t("agents")}
             </Link>
             <Link
               href="/charts"
@@ -129,7 +131,7 @@ export function SiteHeader() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Charts
+              {t("charts")}
             </Link>
             <Link
               href={NATIVE_PATH}
@@ -151,7 +153,7 @@ export function SiteHeader() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Playground
+              {t("playground")}
             </Link>
             <Link
               href="/sponsors"
@@ -162,7 +164,7 @@ export function SiteHeader() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Sponsors
+              {t("sponsors")}
             </Link>
           </nav>
         </div>
@@ -170,6 +172,8 @@ export function SiteHeader() {
         <nav className="flex items-center gap-2">
           <SiteSearch className="w-9 shrink-0 justify-center px-0 lg:w-48 lg:justify-start lg:px-3 xl:w-60 [&>span]:hidden lg:[&>span]:block [&>kbd]:hidden lg:[&>kbd]:inline-block" />
           <ThemeToggle />
+          {/* Icon-less on phones so the right-side controls still fit at 360px. */}
+          <LanguageSwitcher className="rounded-full px-2.5 [&>svg:first-child]:hidden sm:[&>svg:first-child]:block" />
           <PressLink
             href="https://github.com/starc007/ui-components"
             target="_blank"
@@ -177,8 +181,8 @@ export function SiteHeader() {
             className="group hidden items-center gap-1.5 rounded-full lg:inline-flex border border-border bg-card/20 px-3 py-2 text-xs font-medium text-foreground hover:border-(--color-border-strong)"
             aria-label={
               formattedStarCount
-                ? `Star on GitHub, ${formattedStarCount} stars`
-                : "Star on GitHub"
+                ? t("starOnGithubCount", { count: formattedStarCount })
+                : t("starOnGithub")
             }
           >
             <GithubIcon className="h-3.5 w-3.5" />
@@ -195,7 +199,7 @@ export function SiteHeader() {
             className="hidden min-h-9 text-xs sm:inline-flex"
             innerClassName="whitespace-nowrap bg-foreground px-3 text-background sm:px-3.5"
           >
-            Get Pro
+            {t("getPro")}
             <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
           </RainbowCta>
         </nav>
