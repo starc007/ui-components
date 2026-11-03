@@ -38,7 +38,7 @@ test("mines board is one tab stop of named tiles and announces each pick", async
   expect((await axe(container)).violations).toEqual([]);
 });
 
-test("cashing out opens a labelled result ticket that takes focus and closes on Escape", async () => {
+test("cashing out shows a labelled result, sends focus to Play again and hides on Escape", async () => {
   // Never swap during the shuffle, so the mines are tiles 0 to 2.
   const random = Math.random;
   Math.random = () => 0.999;
@@ -55,15 +55,18 @@ test("cashing out opens a labelled result ticket that takes focus and closes on 
       fireEvent.click(getByRole("button", { name: /^Cash out/ }));
       await new Promise((resolve) => setTimeout(resolve, 450));
     });
-    const ticket = getByRole("dialog", { name: "Cashed out" });
+    const result = getByRole("group", { name: "Round result" });
+    expect(result.textContent).toContain("Cashed out");
+    expect(getByRole("button", { name: "Hide result and show the board" })).toBeTruthy();
+    // The card has no buttons of its own: focus goes to the main action.
     expect(document.activeElement?.textContent).toBe("Play again");
     expect((await axe(container)).violations).toEqual([]);
 
     await act(async () => {
-      fireEvent.keyDown(ticket, { key: "Escape" });
+      fireEvent.keyDown(document.activeElement as Element, { key: "Escape" });
       await new Promise((resolve) => setTimeout(resolve, 300));
     });
-    expect(container.querySelector("dialog")).toBeNull();
+    expect(container.querySelector("[aria-label='Round result']")).toBeNull();
   } finally {
     Math.random = random;
   }

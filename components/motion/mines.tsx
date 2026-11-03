@@ -5,7 +5,6 @@ import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/re
 import {
   type KeyboardEvent,
   useCallback,
-  useId,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -48,7 +47,7 @@ export interface MinesProps {
   defaultSound?: boolean;
   /** Called when the sound button is toggled. */
   onSoundChange?: (sound: boolean) => void;
-  /** Show the result ticket when a round ends. Default true. */
+  /** Show the result card when a round ends. Default true. */
   showResult?: boolean;
   /** Accessible name for the game. Default "Mines". */
   "aria-label"?: string;
@@ -168,6 +167,11 @@ export function Mines({
     return () => window.clearTimeout(timer);
   }, [phase, showResult]);
 
+  // The main button already says Play again, so keyboard users land there.
+  useEffect(() => {
+    if (resultOpen) mainButtonRef.current?.focus({ preventScroll: true });
+  }, [resultOpen]);
+
   const closeResult = () => {
     setResultOpen(false);
     mainButtonRef.current?.focus();
@@ -253,7 +257,13 @@ export function Mines({
 
 
   return (
-    <section aria-label={ariaLabel} className={cn("flex w-full max-w-md flex-col gap-4", className)}>
+    <section
+      aria-label={ariaLabel}
+      className={cn("flex w-full max-w-md flex-col gap-4", className)}
+      onKeyDown={(event) => {
+        if (event.key === "Escape" && resultOpen) closeResult();
+      }}
+    >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <AdaptiveStepper
           value={mines}
@@ -412,9 +422,8 @@ export function Mines({
         <AnimatePresence>
           {resultOpen && over ? (
             <PresenceGate key="result">
-              {({ isPresent, gate }) => (
-                <ResultTicket
-                  gate={gate}
+              {({ isPresent }) => (
+                <ResultCard
                   isPresent={isPresent}
                   outcome={phase === "cashed" ? "cashed" : "busted"}
                   multiplier={multiplier}
@@ -425,7 +434,6 @@ export function Mines({
                   picked={picked}
                   mineSet={mineSet}
                   reduce={reduce}
-                  onPlayAgain={start}
                   onClose={closeResult}
                 />
               )}
@@ -469,25 +477,10 @@ export function Mines({
 const TEAR = 104;
 const NOTCH_MASK = `radial-gradient(circle 9px at 0 ${TEAR}px, transparent 98%, black), radial-gradient(circle 9px at 100% ${TEAR}px, transparent 98%, black)`;
 // Rises with a little settle (a rare, end-of-round moment), leaves quickly.
-const TICKET_IN = { type: "spring", duration: 0.4, bounce: 0.15 } as const;
-const TICKET_OUT = { duration: 0.15, ease: EASE_OUT } as const;
+const CARD_IN = { type: "spring", duration: 0.4, bounce: 0.15 } as const;
+const CARD_OUT = { duration: 0.15, ease: EASE_OUT } as const;
 
-function ResultTicket({
-  gate,
-  isPresent,
-  outcome,
-  multiplier,
-  gems,
-  safeTiles,
-  mines,
-  size,
-  picked,
-  mineSet,
-  reduce,
-  onPlayAgain,
-  onClose,
-}: {
-  gate: { inert: boolean; style: { pointerEvents: "auto" | "none" } };
+interface ResultProps {
   isPresent: boolean;
   outcome: "cashed" | "busted";
   multiplier: number;
@@ -498,136 +491,114 @@ function ResultTicket({
   picked: number[];
   mineSet: ReadonlySet<number>;
   reduce: boolean;
-  onPlayAgain: () => void;
   onClose: () => void;
-}) {
-  const cashed = outcome === "cashed";
-  const titleId = useId();
-  const playRef = useRef<HTMLButtonElement>(null);
-  // Keyboard users land on the next action.
-  useEffect(() => {
-    playRef.current?.focus({ preventScroll: true });
-  }, []);
-  const hit = picked.at(-1);
+}
 
+/**
+ * The end-of-round summary over a dimmed board. It has no buttons: the main
+ * action below the board already says Play again, and tapping anywhere on
+ * the board (or Escape) puts the card away to study the board.
+ */
+function ResultCard(props: ResultProps) {
+  const { isPresent, reduce, onClose } = props;
   return (
     <>
-      {/* Scrim: dims the board without hiding the reveal behind it. */}
-      <motion.div
-        aria-hidden="true"
+      <motion.button
+        type="button"
+        aria-label="Hide result and show the board"
+        onClick={onClose}
         inert={!isPresent}
-        className="pointer-events-none absolute inset-0 z-20 rounded-3xl bg-background/55 backdrop-blur-[2px]"
+        style={{ pointerEvents: isPresent ? "auto" : "none" }}
+        className="absolute inset-0 z-20 cursor-default rounded-3xl bg-background/55 outline-none backdrop-blur-[2px] focus-visible:ring-2 focus-visible:ring-ring"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0, transition: TICKET_OUT }}
+        exit={{ opacity: 0, transition: CARD_OUT }}
         transition={{ duration: 0.2, ease: EASE_OUT }}
       />
-      {/* z-20: above the mine tile, which lifts to z-10 for its shockwave. */}
-      <div inert={!isPresent} className="pointer-events-none absolute inset-0 z-20 grid place-items-center p-4">
-        <motion.dialog
-          open
-          inert={gate.inert}
-          aria-labelledby={titleId}
-          onKeyDown={(event) => {
-            if (event.key === "Escape") onClose();
-          }}
+      <div
+        inert={!isPresent}
+        className="pointer-events-none absolute inset-0 z-20 grid place-items-center p-4"
+      >
+        <motion.div
+          role="group"
+          aria-label="Round result"
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={reduce ? { opacity: 0, transition: TICKET_OUT } : { opacity: 0, y: 8, scale: 0.98, transition: TICKET_OUT }}
-          transition={reduce ? { duration: 0.2 } : TICKET_IN}
-          className="static m-0 w-full max-w-[17rem] rounded-2xl border-0 bg-card p-0 text-foreground shadow-[0_1px_2px_rgb(0_0_0/0.12),0_16px_40px_-12px_rgb(0_0_0/0.45)]"
-          style={{
-            ...gate.style,
-            // Two notches cut from the sides at the tear line make it a ticket stub.
-            WebkitMaskImage: NOTCH_MASK,
-            WebkitMaskComposite: "source-in",
-            maskImage: NOTCH_MASK,
-            maskComposite: "intersect",
-          }}
+          exit={reduce ? { opacity: 0, transition: CARD_OUT } : { opacity: 0, y: 8, scale: 0.98, transition: CARD_OUT }}
+          transition={reduce ? { duration: 0.2 } : CARD_IN}
         >
-          <div
-            className={cn(
-              "flex flex-col items-center justify-center gap-1 rounded-t-2xl px-5 text-center",
-              cashed ? "bg-primary/10" : "bg-rose-500/10",
-            )}
-            style={{ height: TEAR }}
-          >
-            <p
-              id={titleId}
-              className={cn(
-                "text-xs font-medium tracking-wide uppercase",
-                cashed ? "text-primary" : "text-rose-600 dark:text-rose-400",
-              )}
-            >
-              {cashed ? "Cashed out" : "Mine hit"}
-            </p>
-            <p
-              className={cn(
-                "text-3xl font-semibold tabular-nums",
-                !cashed && "text-muted-foreground line-through decoration-2",
-              )}
-            >
-              {format(multiplier)}
-            </p>
-          </div>
-
-          {/* The tear line. */}
-          <div aria-hidden="true" className="mx-4 border-t-2 border-dashed border-border" />
-
-          <div className="flex items-center gap-4 px-5 pt-4 pb-3">
-            <dl className="grid flex-1 gap-1.5 text-xs">
-              <div className="flex justify-between gap-2">
-                <dt className="text-muted-foreground">Gems</dt>
-                <dd className="font-medium tabular-nums">
-                  {gems} of {safeTiles}
-                </dd>
-              </div>
-              <div className="flex justify-between gap-2">
-                <dt className="text-muted-foreground">Mines</dt>
-                <dd className="font-medium tabular-nums">{mines}</dd>
-              </div>
-              <div className="flex justify-between gap-2">
-                <dt className="text-muted-foreground">{cashed ? "Odds beaten" : "Lost on pick"}</dt>
-                <dd className="font-medium tabular-nums">{cashed ? `1 in ${multiplier.toFixed(2)}` : picked.length}</dd>
-              </div>
-            </dl>
-            {/* The run in miniature: picks, the mine hit and the mines missed. */}
-            <div
-              aria-hidden="true"
-              className="grid shrink-0 gap-[3px]"
-              style={{ gridTemplateColumns: `repeat(${size}, 0.5rem)` }}
-            >
-              {Array.from({ length: size * size }, (_, tile) => {
-                const isMine = mineSet.has(tile);
-                const isPicked = picked.includes(tile);
-                return (
-                  <span
-                    // biome-ignore lint/suspicious/noArrayIndexKey: tiles are positional
-                    key={tile}
-                    className={cn(
-                      "size-2 rounded-[2px]",
-                      isPicked && !isMine && "bg-primary",
-                      isPicked && isMine && tile === hit && "bg-rose-500",
-                      !isPicked && isMine && "ring-1 ring-rose-500/60 ring-inset",
-                      !isPicked && !isMine && "bg-foreground/10",
-                    )}
-                  />
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="flex gap-2 px-4 pb-4">
-            <Button ref={playRef} size="sm" pressScale={0.96} className="flex-1" onClick={onPlayAgain}>
-              Play again
-            </Button>
-            <Button size="sm" variant="secondary" pressScale={0.96} onClick={onClose}>
-              View board
-            </Button>
-          </div>
-        </motion.dialog>
+          <Ticket {...props} />
+        </motion.div>
       </div>
     </>
+  );
+}
+
+function MiniMap({ size, picked, mineSet }: Pick<ResultProps, "size" | "picked" | "mineSet">) {
+  const hit = picked.at(-1);
+  return (
+    <div aria-hidden="true" className="grid shrink-0 gap-[3px]" style={{ gridTemplateColumns: `repeat(${size}, auto)` }}>
+      {Array.from({ length: size * size }, (_, tile) => {
+        const isMine = mineSet.has(tile);
+        const isPicked = picked.includes(tile);
+        return (
+          <span
+            // biome-ignore lint/suspicious/noArrayIndexKey: tiles are positional
+            key={tile}
+            className={cn(
+              "size-2 rounded-[2px]",
+              isPicked && !isMine && "bg-primary",
+              isPicked && isMine && tile === hit && "bg-rose-500",
+              !isPicked && isMine && "ring-1 ring-rose-500/60 ring-inset",
+              !isPicked && !isMine && "bg-foreground/10",
+            )}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+const CARD_SHADOW = "shadow-[0_1px_2px_rgb(0_0_0/0.12),0_16px_40px_-12px_rgb(0_0_0/0.45)]";
+
+/** A ticket stub, notched at a dashed tear line. */
+function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, mineSet }: ResultProps) {
+  const cashed = outcome === "cashed";
+  return (
+    <div
+      className={cn("w-[17rem] rounded-2xl bg-card text-foreground", CARD_SHADOW)}
+      style={{ WebkitMaskImage: NOTCH_MASK, WebkitMaskComposite: "source-in", maskImage: NOTCH_MASK, maskComposite: "intersect" }}
+    >
+      <div
+        className={cn("flex flex-col items-center justify-center gap-1 rounded-t-2xl px-5 text-center", cashed ? "bg-primary/10" : "bg-rose-500/10")}
+        style={{ height: TEAR }}
+      >
+        <p className={cn("text-xs font-medium tracking-wide uppercase", cashed ? "text-primary" : "text-rose-600 dark:text-rose-400")}>
+          {cashed ? "Cashed out" : "Mine hit"}
+        </p>
+        <p className={cn("text-3xl font-semibold tabular-nums", !cashed && "text-muted-foreground line-through decoration-2")}>
+          {format(multiplier)}
+        </p>
+      </div>
+      <div aria-hidden="true" className="mx-4 border-t-2 border-dashed border-border" />
+      <div className="flex items-center gap-4 px-5 pt-4 pb-5">
+        <dl className="grid flex-1 gap-1.5 text-xs">
+          <Row label="Gems" value={`${gems} of ${safeTiles}`} />
+          <Row label="Mines" value={mines} />
+          <Row label={cashed ? "Odds beaten" : "Lost on pick"} value={cashed ? `1 in ${multiplier.toFixed(2)}` : picked.length} />
+        </dl>
+        <MiniMap size={size} picked={picked} mineSet={mineSet} />
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="flex justify-between gap-2">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="font-medium tabular-nums">{value}</dd>
+    </div>
   );
 }
 
