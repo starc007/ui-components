@@ -3264,7 +3264,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       {
         question: "Can I change the slot values or the number of rows?",
         answer:
-          "Yes. Pass slots, an array of numbers or strings from left to right, and the board sizes itself: n values make n - 1 rows of pegs, so 13 values give a 12-row board. Without slots, rows sets the size and the slots show points that grow toward the edges. onLand receives the slot index and its value.",
+          "Yes. Pass slots, an array of numbers or strings from left to right, and the board sizes itself: n values make n - 1 rows of pegs, so 13 values give a 12-row board. Without slots, rows sets the size (12 by default). To generate values for any size, call plinkoSlots(rows), which runs from 1 in the middle to 100 at the edges, or plinkoSlots(rows, { center, edge }) for your own range. onLand receives the slot index and its value.",
       },
       {
         question: "Does it make sound?",

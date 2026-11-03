@@ -19,12 +19,12 @@ import { cn } from "@/lib/utils";
 export type PlinkoValue = string | number;
 
 export interface PlinkoProps {
-  /** Rows of pegs when `slots` isn't passed. Default 8. */
+  /** Rows of pegs when `slots` isn't passed. Default 12. */
   rows?: number;
   /**
    * Slot values, left to right. Their count sets the board: n slots get
    * n - 1 rows of pegs, so `rows` is ignored when this is passed. Without it
-   * the slots show points that grow toward the rarer edges.
+   * the slots come from `plinkoSlots(rows)`.
    */
   slots?: PlinkoValue[];
   /** Called with the slot index and its value when a ball lands. */
@@ -110,7 +110,7 @@ function plan(rows: number, width: number): Omit<Ball, "id"> {
  * once.
  */
 export function Plinko({
-  rows: rowsProp = 8,
+  rows: rowsProp = 12,
   slots,
   onLand,
   maxBalls = 12,
@@ -177,7 +177,7 @@ export function Plinko({
   const labels = useMemo(() => {
     if (slots && slots.length >= 2) return slots;
     const count = Math.max(1, Math.round(rowsProp));
-    return Array.from({ length: count + 1 }, (_, i) => defaultLabel(i, count));
+    return plinkoSlots(count);
   }, [slots, rowsProp]);
   const rows = labels.length - 1;
 
@@ -364,8 +364,21 @@ export function Plinko({
   );
 }
 
-/** Points that grow toward the edges, where landing is least likely. */
-function defaultLabel(slot: number, rows: number) {
-  const fromCenter = Math.abs(slot - rows / 2);
-  return Math.round(5 * 2 ** fromCenter);
+/**
+ * Slot values for a board of `rows`: `center` in the middle, growing evenly
+ * (geometrically) to `edge` at both ends, where landing is rarest. Rounded to
+ * readable numbers: 12 rows give 100, 50, 20, 10, 5, 2, 1, 2, 5, 10, 20, 50, 100.
+ */
+export function plinkoSlots(
+  rows: number,
+  { center = 1, edge = 100 }: { center?: number; edge?: number } = {},
+): number[] {
+  const half = rows / 2;
+  return Array.from({ length: rows + 1 }, (_, slot) => {
+    const value = center * (edge / center) ** (Math.abs(slot - half) / half);
+    if (value < 10) return Math.round(value);
+    // One significant figure: 46 reads as 50, 315 as 300.
+    const scale = 10 ** Math.floor(Math.log10(value));
+    return Math.round(value / scale) * scale;
+  });
 }
