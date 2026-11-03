@@ -121,8 +121,19 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  // Guides are long and only rendered on the server; keep them out of the client payload.
-  const { Guides: _serverOnlyGuides, ...clientMessages } = await getMessages();
+  // Only text client components read goes to the browser. Guide and docs
+  // prose and SEO metadata render on the server, so they stay there.
+  const { Guides: _guides, Pages, Catalog, ...shared } = await getMessages();
+  const clientMessages = {
+    ...shared,
+    Pages: { motionPatterns: Pages.motionPatterns, playground: Pages.playground, sponsors: Pages.sponsors },
+    Catalog: {
+      categories: Catalog.categories,
+      components: Object.fromEntries(
+        Object.entries(Catalog.components).map(([slug, { seo: _seo, ...text }]) => [slug, text]),
+      ),
+    },
+  };
   const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
   return (
