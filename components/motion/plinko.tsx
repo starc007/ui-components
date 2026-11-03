@@ -231,12 +231,12 @@ export function Plinko({
 
   const land = useCallback(
     (slot: number) => {
-      animate(`[data-slot="${slot}"]`, { opacity: [0.9, 0] }, { duration: 0.6 });
+      animate(`[data-slot="${slot}"]`, { opacity: [0.9, 0] }, { duration: 0.6, ease: EASE_OUT });
       // A lower thunk than a peg hit marks the landing. It brightens toward
       // the edges, where landing is rarest, so a good drop is heard.
       tick(LANDING_RATE + LANDING_SPREAD * (Math.abs(slot - rows / 2) / (rows / 2)));
       setLastSlot(slot);
-      setAnnouncement(`Landed in slot ${slot + 1}`);
+      setAnnouncement(`Landed in slot ${slot + 1}: ${labels[slot]}`);
       onLand?.(slot, labels[slot]);
     },
     [animate, onLand, tick, rows, labels],
@@ -414,7 +414,8 @@ function ToggleButton({
       aria-label={label}
       aria-pressed={on}
       pressScale={0.96}
-      className="w-10 px-0"
+      // Full strength when on, muted when off: the slash alone is a thin cue.
+      className={cn("w-10 px-0", on ? "text-foreground" : "text-muted-foreground")}
     >
       <ActionSwapCascadeIcon value={on ? "on" : "off"} className="size-4">
         {on ? <OnIcon aria-hidden="true" className="size-4" /> : <OffIcon aria-hidden="true" className="size-4" />}
