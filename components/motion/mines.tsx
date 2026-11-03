@@ -2,7 +2,7 @@
 
 import { Gem, Volume2, VolumeX } from "lucide-react";
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
-import { type KeyboardEvent, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import {
   AdaptiveStepper,
@@ -152,17 +152,13 @@ export function Mines({
   // up a scale as the streak grows, a mine blasts, a cash out arpeggiates.
   const [internalSound, setInternalSound] = useState(defaultSound);
   const soundOn = sound ?? internalSound;
-  const soundRef = useRef(soundOn);
-  useLayoutEffect(() => {
-    soundRef.current = soundOn;
-  });
   const player = useRef<GameSounds | null>(null);
   const getPlayer = () => {
     if (!player.current) player.current = createGameSounds();
     return player.current;
   };
   const play = (sound: (sounds: GameSounds) => void) => {
-    if (soundRef.current) sound(getPlayer());
+    if (soundOn) sound(getPlayer());
   };
   useEffect(
     () => () => {
@@ -329,7 +325,7 @@ export function Mines({
           max={tiles - 1}
           disabled={phase === "playing"}
           formatValueText={(value) => `${value} ${value === 1 ? "mine" : "mines"}`}
-          aria-label="Mines"
+          aria-label="Mine count"
         >
           <AdaptiveStepperDecrement />
           <AdaptiveStepperValue>
@@ -512,11 +508,13 @@ export function Mines({
         >
           {phase === "playing" ? `Cash out ${format(multiplier)}` : over ? "Play again" : "Start"}
         </Button>
-        {/* The tooltip is the button's accessible name as well as its visible label. */}
-        <Tooltip content="Sound" asLabel side="top">
+        {/* aria-label names the button; the tooltip shows the same label on hover
+            and focus. Tooltip's asLabel would hydrate differently from the server. */}
+        <Tooltip content="Sound" side="top">
           <Button
             variant="secondary"
             onClick={toggleSound}
+            aria-label="Sound"
             aria-pressed={soundOn}
             pressScale={0.96}
             className={cn("w-10 px-0", soundOn ? "text-foreground" : "text-muted-foreground")}
