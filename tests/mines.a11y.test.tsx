@@ -37,3 +37,34 @@ test("mines board is one tab stop of named tiles and announces each pick", async
   expect(tiles()[1].getAttribute("aria-label")).toMatch(/, (gem|mine)$/);
   expect((await axe(container)).violations).toEqual([]);
 });
+
+test("cashing out opens a labelled result ticket that takes focus and closes on Escape", async () => {
+  // Never swap during the shuffle, so the mines are tiles 0 to 2.
+  const random = Math.random;
+  Math.random = () => 0.999;
+  try {
+    const { container, getByRole, getAllByRole } = render(<Mines />);
+    const tiles = () => getAllByRole("button", { name: /^Row \d, column \d,/ });
+    await act(async () => {
+      fireEvent.click(getByRole("button", { name: "Start" }));
+    });
+    await act(async () => {
+      fireEvent.click(tiles()[24]);
+    });
+    await act(async () => {
+      fireEvent.click(getByRole("button", { name: /^Cash out/ }));
+      await new Promise((resolve) => setTimeout(resolve, 450));
+    });
+    const ticket = getByRole("dialog", { name: "Cashed out" });
+    expect(document.activeElement?.textContent).toBe("Play again");
+    expect((await axe(container)).violations).toEqual([]);
+
+    await act(async () => {
+      fireEvent.keyDown(ticket, { key: "Escape" });
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    });
+    expect(container.querySelector("dialog")).toBeNull();
+  } finally {
+    Math.random = random;
+  }
+});

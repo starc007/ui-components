@@ -3267,6 +3267,11 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
           "Yes. size sets the tiles per side, 5 by default for a 5 by 5 board. The mine count comes from the built-in stepper and can be controlled with mines and onMinesChange, or set once with defaultMines.",
       },
       {
+        question: "What happens when a round ends?",
+        answer:
+          "The rest of the board reveals, then a result ticket rises over it with the outcome, your multiplier, the gems you found, the odds you beat and a miniature map of your run. Play again starts a new round; View board or Escape closes the ticket so you can study the board. Pass showResult={false} to use your own result screen with onCashOut and onBust.",
+      },
+      {
         question: "Does it make sound?",
         answer:
           "Only when you turn it on with the sound button, or the sound prop. Gems chime and climb a musical scale as your streak grows, with a sparkle from the third gem and a short run every fifth; a mine plays a low blast and cashing out plays a rising arpeggio. Everything is synthesized in the browser, so there are no audio files.",
