@@ -4,6 +4,7 @@ import { Bomb, Gem, Volume2, VolumeX } from "lucide-react";
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "motion/react";
 import {
   type KeyboardEvent,
+  type ReactNode,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -73,6 +74,12 @@ const ICON_SPRING = { type: "spring", duration: 0.3, bounce: 0 } as const;
 const RIPPLE_STEP = 0.025;
 // A mine shakes once, quickly: 300ms, settling to rest.
 const SHAKE = { duration: 0.3, ease: "easeOut" } as const;
+// A found gem's tile springs back from a slight squash.
+const GEM_POP = { type: "spring", duration: 0.35, bounce: 0.4 } as const;
+// The cash-out pulse runs through the picked gems 40ms apart over 350ms; the
+// result waits for it to finish.
+const PULSE_STEP = 40;
+const PULSE_TIME = 350;
 // Exits are shorter than entrances.
 const EXIT = { duration: 0.12, ease: EASE_OUT } as const;
 
@@ -163,9 +170,12 @@ export function Mines({
   // reaches the far corner in about 450ms after a mine, sooner on a cash out.
   useEffect(() => {
     if (!showResult || (phase !== "busted" && phase !== "cashed")) return;
-    const timer = window.setTimeout(() => setResultOpen(true), phase === "busted" ? 550 : 300);
+    const delay =
+      phase === "busted" ? 550 : Math.min(900, PULSE_TIME + Math.max(0, gems - 1) * PULSE_STEP + 100);
+    const timer = window.setTimeout(() => setResultOpen(true), delay);
     return () => window.clearTimeout(timer);
-  }, [phase, showResult]);
+    // gems is final once a round ends, so this runs once per round.
+  }, [phase, showResult, gems]);
 
   // The main button already says Play again, so keyboard users land there.
   useEffect(() => {
@@ -221,6 +231,10 @@ export function Mines({
       return;
     }
     const found = gems + 1;
+    // The tile gives under the pick and springs back: a playful component can
+    // bounce a little. Keyboard picks get it too, as the press feedback.
+    const node = tileRefs.current[tile];
+    if (node && !reduce) animate(node, { scale: [0.92, 1] }, GEM_POP);
     const value = minesMultiplier(tiles, mines, found);
     play((sounds) => sounds.gem(found));
     onReveal?.(tile, "gem", value);
@@ -398,7 +412,7 @@ export function Mines({
                       exit={reduce ? { opacity: 0, transition: EXIT } : { opacity: 0, scale: 0.9, transition: EXIT }}
                       transition={
                         celebrate
-                          ? { duration: 0.35, ease: EASE_OUT, delay: order * 0.04 }
+                          ? { duration: PULSE_TIME / 1000, ease: EASE_OUT, delay: (order * PULSE_STEP) / 1000 }
                           : { ...ICON_SPRING, delay: isPicked ? 0 : ripple * RIPPLE_STEP }
                       }
                       className={cn(
@@ -534,17 +548,41 @@ function ResultCard(props: ResultProps) {
   );
 }
 
-function MiniMap({ size, picked, mineSet }: Pick<ResultProps, "size" | "picked" | "mineSet">) {
+// Inside the ticket, chunks arrive in reading order: outcome, multiplier,
+// stats, then the run replays on the mini map in pick order.
+const STAGE = { duration: 0.25, ease: EASE_OUT } as const;
+const REPLAY_START = 0.3;
+const REPLAY_STEP = 0.05;
+
+function Stage({ delay, reduce, className, children }: { delay: number; reduce: boolean; className?: string; children: ReactNode }) {
+  return (
+    <motion.div
+      className={className}
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ ...STAGE, delay: reduce ? 0 : delay }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function MiniMap({ size, picked, mineSet, reduce }: Pick<ResultProps, "size" | "picked" | "mineSet" | "reduce">) {
   const hit = picked.at(-1);
   return (
     <div aria-hidden="true" className="grid shrink-0 gap-[3px]" style={{ gridTemplateColumns: `repeat(${size}, auto)` }}>
       {Array.from({ length: size * size }, (_, tile) => {
         const isMine = mineSet.has(tile);
         const isPicked = picked.includes(tile);
+        const order = picked.indexOf(tile);
         return (
-          <span
+          <motion.span
             // biome-ignore lint/suspicious/noArrayIndexKey: tiles are positional
             key={tile}
+            // Picked cells fill in the order they were picked, replaying the run.
+            initial={isPicked && !reduce ? { opacity: 0, scale: 0.4 } : false}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: "spring", duration: 0.3, bounce: 0.3, delay: REPLAY_START + order * REPLAY_STEP }}
             className={cn(
               "size-2 rounded-[2px]",
               isPicked && !isMine && "bg-primary",
@@ -562,7 +600,7 @@ function MiniMap({ size, picked, mineSet }: Pick<ResultProps, "size" | "picked" 
 const CARD_SHADOW = "shadow-[0_1px_2px_rgb(0_0_0/0.12),0_16px_40px_-12px_rgb(0_0_0/0.45)]";
 
 /** A ticket stub, notched at a dashed tear line. */
-function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, mineSet }: ResultProps) {
+function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, mineSet, reduce }: ResultProps) {
   const cashed = outcome === "cashed";
   return (
     <div
@@ -573,21 +611,34 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
         className={cn("flex flex-col items-center justify-center gap-1 rounded-t-2xl px-5 text-center", cashed ? "bg-primary/10" : "bg-rose-500/10")}
         style={{ height: TEAR }}
       >
-        <p className={cn("text-xs font-medium tracking-wide uppercase", cashed ? "text-primary" : "text-rose-600 dark:text-rose-400")}>
-          {cashed ? "Cashed out" : "Mine hit"}
-        </p>
-        <p className={cn("text-3xl font-semibold tabular-nums", !cashed && "text-muted-foreground line-through decoration-2")}>
-          {format(multiplier)}
-        </p>
+        <Stage delay={0.05} reduce={reduce}>
+          <p className={cn("text-xs font-medium tracking-wide uppercase", cashed ? "text-primary" : "text-rose-600 dark:text-rose-400")}>
+            {cashed ? "Cashed out" : "Mine hit"}
+          </p>
+        </Stage>
+        <Stage delay={0.1} reduce={reduce}>
+          <p className={cn("text-3xl font-semibold", !cashed && "text-muted-foreground line-through decoration-2")}>
+            {cashed && !reduce ? (
+              // A win rolls up to its multiplier; a loss just states it.
+              <NumberTicker value={multiplier} decimals={2} suffix="×" startOnView={false} duration={0.6} stagger={0.05} />
+            ) : (
+              <span className="tabular-nums">{format(multiplier)}</span>
+            )}
+          </p>
+        </Stage>
       </div>
       <div aria-hidden="true" className="mx-4 border-t-2 border-dashed border-border" />
       <div className="flex items-center gap-4 px-5 pt-4 pb-5">
-        <dl className="grid flex-1 gap-1.5 text-xs">
-          <Row label="Gems" value={`${gems} of ${safeTiles}`} />
-          <Row label="Mines" value={mines} />
-          <Row label={cashed ? "Odds beaten" : "Lost on pick"} value={cashed ? `1 in ${multiplier.toFixed(2)}` : picked.length} />
-        </dl>
-        <MiniMap size={size} picked={picked} mineSet={mineSet} />
+        <Stage delay={0.18} reduce={reduce} className="flex-1">
+          <dl className="grid gap-1.5 text-xs">
+            <Row label="Gems" value={`${gems} of ${safeTiles}`} />
+            <Row label="Mines" value={mines} />
+            <Row label={cashed ? "Odds beaten" : "Lost on pick"} value={cashed ? `1 in ${multiplier.toFixed(2)}` : picked.length} />
+          </dl>
+        </Stage>
+        <Stage delay={0.24} reduce={reduce}>
+          <MiniMap size={size} picked={picked} mineSet={mineSet} reduce={reduce} />
+        </Stage>
       </div>
     </div>
   );

@@ -53,7 +53,8 @@ test("cashing out shows a labelled result, sends focus to Play again and hides o
     });
     await act(async () => {
       fireEvent.click(getByRole("button", { name: /^Cash out/ }));
-      await new Promise((resolve) => setTimeout(resolve, 450));
+      // The result waits for the cash-out pulse to finish.
+      await new Promise((resolve) => setTimeout(resolve, 900));
     });
     const result = getByRole("group", { name: "Round result" });
     expect(result.textContent).toContain("Cashed out");
