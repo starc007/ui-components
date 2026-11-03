@@ -576,6 +576,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Animated React sign up form with on-blur validation, a password strength meter, password reveal and loading and success states. Free, open source.",
   },
+  mines: {
+    title: "Animated Mines Game Board for React",
+    description:
+      "React mines board: pick tiles for gems, watch the multiplier roll up, cash out before a mine. Ripple reveals and keyboard play. Framer Motion, install with shadcn.",
+  },
   "card-dealer": {
     title: "Animated Card Dealer and Card Hand for React",
     description:

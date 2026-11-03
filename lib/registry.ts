@@ -2247,6 +2247,15 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "mines",
+        name: "Mines",
+        description: "A mines board: pick tiles to find gems, each one raising the multiplier, and cash out before you hit a mine. Choose the mine count, watch the multiplier roll up, and the round's end reveals every tile in a ripple from your last pick. Keyboard playable with arrow keys, optional sound, reduced-motion safe.",
+        file: "components/motion/mines.tsx",
+        badge: "new",
+        launchedAt: "2026-11-03",
+        keywords: ["mines game", "minesweeper react", "gem mines", "reveal tiles game", "multiplier game ui"],
+      },
+      {
         slug: "card-dealer",
         name: "Card Dealer",
         description: "A card table with a face-down deck, a fanned hand and a discard pile. Cards arc across the table between them and flip in flight, hop over each other when the hand is sorted, and lift on hover. Data-driven by each card's zone, with custom faces and backs, keyboard-playable hand cards and reduced-motion support.",

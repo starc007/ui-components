@@ -3245,6 +3245,34 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  mines: {
+    overview:
+      "Mines is a React tile game built with Framer Motion. Pick a mine count and start a round, then reveal tiles one at a time. Each gem raises the multiplier, shown as rolling digits with the next step beside it, and a mine ends the round. Cash out whenever you like; clearing every gem cashes out for you. When a round ends the rest of the board reveals in a ripple spreading from your last pick, with the tiles you never touched shown faded.",
+    useWhen: [
+      "A game, rewards screen or giveaway wants a push-your-luck mechanic with a clear, growing reward.",
+      "A demo or landing page wants a tactile grid interaction with satisfying reveals.",
+      "A probability lesson wants to show how risk compounds with every safe pick.",
+    ],
+    accessibility:
+      "The game is a labelled region. The board is one tab stop: arrow keys move between tiles, Home and End jump to the ends of a row, and Enter or Space reveals. Each tile is a button named by its row, column and what it shows, and every gem, mine and cash out is announced in a polite live region. With reduced motion, reveals fade in without scaling, blurring or shaking.",
+    faq: [
+      {
+        question: "How is the multiplier calculated?",
+        answer:
+          "It is the fair payout for the risk taken: the inverse of the chance of picking that many gems in a row on a board with that many mines. The exported minesMultiplier(tiles, mines, gems) returns the same number if you need it elsewhere.",
+      },
+      {
+        question: "Can I change the board size or mine count?",
+        answer:
+          "Yes. size sets the tiles per side, 5 by default for a 5 by 5 board. The mine count comes from the built-in stepper and can be controlled with mines and onMinesChange, or set once with defaultMines.",
+      },
+      {
+        question: "Does it handle money or betting?",
+        answer:
+          "No. It only reports the multiplier through onReveal, onCashOut and onBust, so any scoring, points or rewards are up to your app.",
+      },
+    ],
+  },
   "card-dealer": {
     overview:
       "Card Dealer is a React card table built with Framer Motion. It lays out a face-down deck, a fanned hand and a tilted discard pile, and you move a card by changing its zone. Every card stays mounted, so the change becomes a flight: the card arcs across the table on motion's arc() path and flips face up or down in 3D on the way. Several cards moving at once leave one after another, and reordering the hand makes cards hop over each other into their new slots. Faces and backs are yours to render.",

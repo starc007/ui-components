@@ -7,6 +7,17 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
  */
 export const changelogEntries: ChangelogEntry[] = [
   {
+    "date": "2026-11-02",
+    "title": "Mines",
+    "items": [
+      {
+        "type": "new",
+        "text": "Mines is a tile game: choose how many mines to hide, reveal tiles to find gems that raise the multiplier, and cash out before you hit a mine. The end of each round reveals the whole board in a ripple from your last pick, and the board plays fully from the keyboard.",
+        "component": "mines"
+      }
+    ]
+  },
+  {
     "date": "2026-10-26",
     "title": "Line, bar and sparkline charts",
     "items": [
