@@ -23,7 +23,7 @@ export function PlinkoPreview() {
         </TabsList>
       </Tabs>
       <p className="text-sm text-muted-foreground tabular-nums">
-        Score <span className="font-medium text-foreground">{score}</span> · {drops} balls
+        Score <span className="font-medium text-foreground">{score}</span> · {drops} {drops === 1 ? "ball" : "balls"}
       </p>
       <Plinko
         rows={Number(rows)}
