@@ -3,7 +3,6 @@
 import { Volume2, VolumeX } from "lucide-react";
 import { motion, useAnimate, useReducedMotion } from "motion/react";
 import {
-  type ReactNode,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -16,13 +15,19 @@ import { Button } from "@/components/motion/button";
 import { createTickPlayer } from "@/lib/tick-sound";
 import { cn } from "@/lib/utils";
 
+export type PlinkoValue = string | number;
+
 export interface PlinkoProps {
-  /** Rows of pegs the ball falls through. Default 8. */
+  /** Rows of pegs when `slots` isn't passed. Default 8. */
   rows?: number;
-  /** One label per slot, left to right; there are `rows + 1` slots. */
-  slots?: ReactNode[];
-  /** Called with the slot index when a ball lands. */
-  onLand?: (slot: number) => void;
+  /**
+   * Slot values, left to right. Their count sets the board: n slots get
+   * n - 1 rows of pegs, so `rows` is ignored when this is passed. Without it
+   * the slots show points that grow toward the rarer edges.
+   */
+  slots?: PlinkoValue[];
+  /** Called with the slot index and its value when a ball lands. */
+  onLand?: (slot: number, value: PlinkoValue) => void;
   /** Balls allowed in flight at once. Default 12. */
   maxBalls?: number;
   /** Label of the drop button. Default "Drop ball". */
@@ -95,7 +100,7 @@ function plan(rows: number, width: number): Omit<Ball, "id"> {
  * once.
  */
 export function Plinko({
-  rows = 8,
+  rows: rowsProp = 8,
   slots,
   onLand,
   maxBalls = 12,
@@ -157,6 +162,22 @@ export function Plinko({
     onSoundChange?.(next);
   };
 
+  const labels = useMemo(() => {
+    if (slots && slots.length >= 2) return slots;
+    const count = Math.max(1, Math.round(rowsProp));
+    return Array.from({ length: count + 1 }, (_, i) => defaultLabel(i, count));
+  }, [slots, rowsProp]);
+  const rows = labels.length - 1;
+
+  // A new board size makes every ball in flight point at pegs that moved, so
+  // drop them and their pending clicks.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: rows is the trigger, not a value read inside
+  useEffect(() => {
+    for (const timer of timers.current) clearTimeout(timer);
+    timers.current.clear();
+    setBalls([]);
+  }, [rows]);
+
   const width = (rows + 2) * GAP;
   const height = TOP + rows * ROW + SLOT;
   // Each row runs one peg past the ball's reach on both sides, so the board
@@ -172,10 +193,6 @@ export function Plinko({
       ).flat(),
     [rows, width],
   );
-  const labels = useMemo(
-    () => slots ?? Array.from({ length: rows + 1 }, (_, i) => defaultLabel(i, rows)),
-    [slots, rows],
-  );
 
   const land = useCallback(
     (slot: number) => {
@@ -184,9 +201,9 @@ export function Plinko({
       // the edges, where landing is rarest, so a good drop is heard.
       tick(LANDING_RATE + LANDING_SPREAD * (Math.abs(slot - rows / 2) / (rows / 2)));
       setAnnouncement(`Landed in slot ${slot + 1}`);
-      onLand?.(slot);
+      onLand?.(slot, labels[slot]);
     },
-    [animate, onLand, tick, rows],
+    [animate, onLand, tick, rows, labels],
   );
 
   const drop = () => {
@@ -214,7 +231,15 @@ export function Plinko({
 
   return (
     <section aria-label={ariaLabel} className={cn("flex w-full flex-col items-center gap-4", className)}>
-      <svg ref={scope} viewBox={`0 0 ${width} ${height}`} className="w-full max-w-md" aria-hidden="true">
+      <svg
+        ref={scope}
+        viewBox={`0 0 ${width} ${height}`}
+        // Grow with the board so pegs keep the same on-screen spacing at any
+        // row count, until the container's width runs out.
+        style={{ maxWidth: width * 1.4 }}
+        className="w-full"
+        aria-hidden="true"
+      >
         {pegs.map((peg) => (
           <circle
             key={peg.id}
@@ -239,7 +264,9 @@ export function Plinko({
                 y={y + (SLOT - 4) / 2}
                 textAnchor="middle"
                 dominantBaseline="central"
-                className="fill-foreground text-[9px] font-medium tabular-nums"
+                // Long values shrink to fit their slot.
+                fontSize={Math.min(9, (GAP - 8) / (String(label).length * 0.6))}
+                className="fill-foreground font-medium tabular-nums"
               >
                 {label}
               </text>

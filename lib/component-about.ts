@@ -3247,7 +3247,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   plinko: {
     overview:
-      "Plinko is a React ball drop board built with Framer Motion. Each press of the drop button sends a ball through rows of pegs; at every peg it hops and falls left or right at random, so most balls land near the middle and few reach the edges. Pegs flash as the ball strikes them and the slot it lands in pulses. Several balls can fall at once, and onLand reports the slot index so you can keep score.",
+      "Plinko is a React ball drop board built with Framer Motion. Each press of the drop button sends a ball through rows of pegs; at every peg it hops and falls left or right at random, so most balls land near the middle and few reach the edges. Pegs flash as the ball strikes them and the slot it lands in pulses. Several balls can fall at once, and onLand reports the slot and its value so you can keep score. The board is dynamic: the slot values you pass set how many rows of pegs it has.",
     useWhen: [
       "A game, giveaway or rewards screen needs a playful way to pick a prize with visible chance.",
       "A statistics lesson or landing page wants to show a bell curve forming one ball at a time.",
@@ -3262,9 +3262,9 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
           "Pass onLand. It receives the slot index of each ball that lands, so you can add the slot's value to your own score state.",
       },
       {
-        question: "Can I change the slot labels or the number of rows?",
+        question: "Can I change the slot values or the number of rows?",
         answer:
-          "Yes. rows sets the number of peg rows, and slots takes one label per slot, left to right. A board with eight rows has nine slots.",
+          "Yes. Pass slots, an array of numbers or strings from left to right, and the board sizes itself: n values make n - 1 rows of pegs, so 13 values give a 12-row board. Without slots, rows sets the size and the slots show points that grow toward the edges. onLand receives the slot index and its value.",
       },
       {
         question: "Does it make sound?",
