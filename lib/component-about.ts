@@ -3245,6 +3245,78 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  mines: {
+    overview:
+      "Mines is a React tile game built with Framer Motion. Pick a mine count and start a round, then reveal tiles one at a time. Each gem raises the multiplier, shown as rolling digits with the next step beside it, and a mine ends the round. Cash out whenever you like; clearing every gem cashes out for you. Each gem you find is numbered in the order you picked it, so the board shows your run at a glance. A small ring beside the multiplier shows the chance your next pick is safe. When a round ends the rest of the board reveals in a ripple spreading from your last pick, with the tiles you never touched shown faded.",
+    useWhen: [
+      "A game, rewards screen or giveaway wants a push-your-luck mechanic with a clear, growing reward.",
+      "A demo or landing page wants a tactile grid interaction with satisfying reveals.",
+      "A probability lesson wants to show how risk compounds with every safe pick.",
+    ],
+    accessibility:
+      "The game is a labelled region. The board is one tab stop: arrow keys move between tiles, Home and End jump to the ends of a row, and Enter or Space reveals. Each tile is a button named by its row, column and what it shows (a found gem gives its pick number, and revealed tiles you never picked say so), and every gem, mine and cash out is announced in a polite live region. With reduced motion, reveals fade in without scaling, blurring or shaking.",
+    faq: [
+      {
+        question: "How is the multiplier calculated?",
+        answer:
+          "It is the fair payout for the risk taken: the inverse of the chance of picking that many gems in a row on a board with that many mines. The exported minesMultiplier(tiles, mines, gems) returns the same number if you need it elsewhere.",
+      },
+      {
+        question: "Can I change the board size or mine count?",
+        answer:
+          "Yes. size sets the tiles per side, 5 by default for a 5 by 5 board. The mine count comes from the built-in stepper and can be controlled with mines and onMinesChange, or set once with defaultMines.",
+      },
+      {
+        question: "What happens when a round ends?",
+        answer:
+          "The rest of the board reveals, then a result ticket rises over it with the outcome, your multiplier, the gems you found, the odds you beat and a miniature map of your run. The main Play again button starts the next round, and tapping the board or pressing Escape puts the ticket away so you can study the board. Pass showResult={false} to use your own result screen with onCashOut and onReveal, which reports a mine with a multiplier of 0.",
+      },
+      {
+        question: "Does it make sound?",
+        answer:
+          "Only when you turn it on with the sound button, or the sound prop. Gems chime and climb a musical scale as your streak grows, with a sparkle from the third gem and a short run every fifth; a mine plays a low blast and cashing out plays a rising arpeggio. Everything is synthesized in the browser, so there are no audio files.",
+      },
+      {
+        question: "Does it handle money or betting?",
+        answer:
+          "No. It only reports the multiplier through onReveal and onCashOut, so any scoring, points or rewards are up to your app.",
+      },
+    ],
+  },
+
+  plinko: {
+    overview:
+      "Plinko is a React ball drop board built with Framer Motion. Each press of the drop button sends a ball through rows of pegs; at every peg it hops and falls left or right at random, so most balls land near the middle and few reach the edges. Pegs flash as the ball strikes them and the slot it lands in pulses. Several balls can fall at once, and onLand reports the slot and its value so you can keep score. The board is dynamic: the slot values you pass set how many rows of pegs it has.",
+    useWhen: [
+      "A game, giveaway or rewards screen needs a playful way to pick a prize with visible chance.",
+      "A statistics lesson or landing page wants to show a bell curve forming one ball at a time.",
+      "A demo wants a satisfying physics-style showcase without a physics engine.",
+    ],
+    accessibility:
+      "The board is a labelled region and the drawing is hidden from screen readers. Balls drop from a real button, and every landing is announced in a polite live region. With reduced motion the ball skips the fall and lands at once; the slot still highlights with a fade.",
+    faq: [
+      {
+        question: "How do I keep score?",
+        answer:
+          "Pass onLand. It receives the slot index of each ball that lands, so you can add the slot's value to your own score state.",
+      },
+      {
+        question: "Can I change the slot values or the number of rows?",
+        answer:
+          "Yes. Pass slots, an array of numbers or strings from left to right, and the board sizes itself: n values make n - 1 rows of pegs, so 13 values give a 12-row board. Without slots, rows sets the size (12 by default). To generate values for any size, call plinkoSlots(rows), which runs from 1 in the middle to 100 at the edges, or plinkoSlots(rows, { center, edge }) for your own range. onLand receives the slot index and its value.",
+      },
+      {
+        question: "Does it make sound?",
+        answer:
+          "Only when you turn it on with the sound button, or the sound prop. Each peg hit clicks and the landing plays a lower thunk that gets brighter toward the rarer edge slots. The sound is synthesized in the browser, so there are no audio files to load.",
+      },
+      {
+        question: "Does it use a physics engine?",
+        answer:
+          "No. Each drop picks its left and right bounces up front and plays them as keyframes, with an accelerating fall between pegs and a short hop after each hit. That keeps it light and smooth on phones.",
+      },
+    ],
+  },
   "card-dealer": {
     overview:
       "Card Dealer is a React card table built with Framer Motion. It lays out a face-down deck, a fanned hand and a tilted discard pile, and you move a card by changing its zone. Every card stays mounted, so the change becomes a flight: the card arcs across the table on motion's arc() path and flips face up or down in 3D on the way. Several cards moving at once leave one after another, and reordering the hand makes cards hop over each other into their new slots. Faces and backs are yours to render.",
