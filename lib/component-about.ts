@@ -3283,6 +3283,40 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       },
     ],
   },
+
+  plinko: {
+    overview:
+      "Plinko is a React ball drop board built with Framer Motion. Each press of the drop button sends a ball through rows of pegs; at every peg it hops and falls left or right at random, so most balls land near the middle and few reach the edges. Pegs flash as the ball strikes them and the slot it lands in pulses. Several balls can fall at once, and onLand reports the slot and its value so you can keep score. The board is dynamic: the slot values you pass set how many rows of pegs it has.",
+    useWhen: [
+      "A game, giveaway or rewards screen needs a playful way to pick a prize with visible chance.",
+      "A statistics lesson or landing page wants to show a bell curve forming one ball at a time.",
+      "A demo wants a satisfying physics-style showcase without a physics engine.",
+    ],
+    accessibility:
+      "The board is a labelled region and the drawing is hidden from screen readers. Balls drop from a real button, and every landing is announced in a polite live region. With reduced motion the ball skips the fall and lands at once; the slot still highlights with a fade.",
+    faq: [
+      {
+        question: "How do I keep score?",
+        answer:
+          "Pass onLand. It receives the slot index of each ball that lands, so you can add the slot's value to your own score state.",
+      },
+      {
+        question: "Can I change the slot values or the number of rows?",
+        answer:
+          "Yes. Pass slots, an array of numbers or strings from left to right, and the board sizes itself: n values make n - 1 rows of pegs, so 13 values give a 12-row board. Without slots, rows sets the size (12 by default). To generate values for any size, call plinkoSlots(rows), which runs from 1 in the middle to 100 at the edges, or plinkoSlots(rows, { center, edge }) for your own range. onLand receives the slot index and its value.",
+      },
+      {
+        question: "Does it make sound?",
+        answer:
+          "Only when you turn it on with the sound button, or the sound prop. Each peg hit clicks and the landing plays a lower thunk that gets brighter toward the rarer edge slots. The sound is synthesized in the browser, so there are no audio files to load.",
+      },
+      {
+        question: "Does it use a physics engine?",
+        answer:
+          "No. Each drop picks its left and right bounces up front and plays them as keyframes, with an accelerating fall between pegs and a short hop after each hit. That keeps it light and smooth on phones.",
+      },
+    ],
+  },
   "card-dealer": {
     overview:
       "Card Dealer is a React card table built with Framer Motion. It lays out a face-down deck, a fanned hand and a tilted discard pile, and you move a card by changing its zone. Every card stays mounted, so the change becomes a flight: the card arcs across the table on motion's arc() path and flips face up or down in 3D on the way. Several cards moving at once leave one after another, and reordering the hand makes cards hop over each other into their new slots. Faces and backs are yours to render.",
