@@ -145,6 +145,8 @@ export function Mines({
   // Chance the next pick is a gem.
   const safe = (tiles - mines - gems) / (tiles - gems);
   const lastPick = picked.at(-1) ?? Math.floor(tiles / 2);
+  // Turning showResult off hides an open ticket too.
+  const resultShown = resultOpen && showResult && over;
 
   // Each event has its own synthesized sound (lib/game-sounds.ts): gems chime
   // up a scale as the streak grows, a mine blasts, a cash out arpeggiates.
@@ -292,7 +294,7 @@ export function Mines({
       aria-label={ariaLabel}
       className={cn("flex w-full max-w-md flex-col gap-4", className)}
       onKeyDown={(event) => {
-        if (event.key !== "Escape" || !resultOpen) return;
+        if (event.key !== "Escape" || !resultShown) return;
         // Escape is used up here; an enclosing dialog must not close too.
         event.stopPropagation();
         closeResult();
@@ -351,7 +353,7 @@ export function Mines({
       <div className="relative rounded-3xl bg-muted/40 p-3">
         {/* Under the result card the tiles leave the tab order. */}
         <fieldset
-          inert={resultOpen}
+          inert={resultShown}
           className="m-0 grid min-w-0 gap-2 border-0 p-0"
           style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
         >
@@ -380,7 +382,7 @@ export function Mines({
                 type="button"
                 tabIndex={tile === cursor ? 0 : -1}
                 aria-disabled={!interactive}
-                aria-label={`Row ${row + 1}, column ${col + 1}, ${content ?? "hidden"}`}
+                aria-label={`Row ${row + 1}, column ${col + 1}, ${tileState(content, isPicked, order)}`}
                 onFocus={() => setCursor(tile)}
                 onClick={() => pick(tile)}
                 onKeyDown={(event) => onKeyDown(event, tile)}
@@ -458,7 +460,7 @@ export function Mines({
         </fieldset>
 
         <AnimatePresence>
-          {resultOpen && over ? (
+          {resultShown ? (
             <PresenceGate key="result">
               {({ gate }) => (
                 <ResultCard
@@ -736,6 +738,13 @@ function OddsRing({ safe, reduce }: { safe: number; reduce: boolean }) {
       />
     </svg>
   );
+}
+
+/** What a tile shows, and for revealed tiles whether the player picked it. */
+function tileState(content: MinesTile | null, isPicked: boolean, order: number) {
+  if (!content) return "hidden";
+  if (!isPicked) return `${content}, not picked`;
+  return content === "mine" ? "mine, hit" : `gem, pick ${order + 1}`;
 }
 
 /** Rings between two tiles: 0 for the same tile, 1 for its neighbours. */

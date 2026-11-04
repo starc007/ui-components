@@ -34,7 +34,7 @@ test("mines board is one tab stop of named tiles and announces each pick", async
   // The stepper has its own live region; the game's is last.
   const live = [...container.querySelectorAll("[aria-live='polite']")].at(-1);
   expect(live?.textContent).toMatch(/^(Gem\. \d+\.\d{2}×\.|Mine\. The round is over\.)$/);
-  expect(tiles()[1].getAttribute("aria-label")).toMatch(/, (gem|mine)$/);
+  expect(tiles()[1].getAttribute("aria-label")).toMatch(/, (gem, pick 1|mine, hit)$/);
   expect((await axe(container)).violations).toEqual([]);
 });
 

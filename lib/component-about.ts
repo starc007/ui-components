@@ -3254,7 +3254,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A probability lesson wants to show how risk compounds with every safe pick.",
     ],
     accessibility:
-      "The game is a labelled region. The board is one tab stop: arrow keys move between tiles, Home and End jump to the ends of a row, and Enter or Space reveals. Each tile is a button named by its row, column and what it shows, and every gem, mine and cash out is announced in a polite live region. With reduced motion, reveals fade in without scaling, blurring or shaking.",
+      "The game is a labelled region. The board is one tab stop: arrow keys move between tiles, Home and End jump to the ends of a row, and Enter or Space reveals. Each tile is a button named by its row, column and what it shows (a found gem gives its pick number, and revealed tiles you never picked say so), and every gem, mine and cash out is announced in a polite live region. With reduced motion, reveals fade in without scaling, blurring or shaking.",
     faq: [
       {
         question: "How is the multiplier calculated?",
