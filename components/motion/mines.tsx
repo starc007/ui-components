@@ -33,7 +33,7 @@ export interface MinesProps {
   onReveal?: (tile: number, result: MinesTile, multiplier: number) => void;
   /** Called when the player cashes out, or clears every gem. */
   onCashOut?: (multiplier: number, gems: number) => void;
-  /** Click on reveals (controlled). */
+  /** Play synthesized sounds (controlled): gem chimes, a mine blast and a cash-out arpeggio. */
   sound?: boolean;
   /** Initial sound state when uncontrolled. Default false. */
   defaultSound?: boolean;
@@ -72,7 +72,7 @@ const SHAKE = { duration: 0.3, ease: EASE_OUT } as const;
 // A found gem's tile springs back from a slight squash.
 const GEM_POP = { type: "spring", duration: 0.35, bounce: 0.4 } as const;
 // The cash-out pulse runs through the picked gems 40ms apart over 350ms, in
-// seconds. The result opens when the last tile's closing animation completes.
+// seconds. The result opens once the last tile's closing animation is done.
 const PULSE_STEP = 0.04;
 const PULSE_TIME = 0.35;
 // Exits are shorter than entrances.
@@ -112,24 +112,27 @@ export function Mines({
   const [cursor, setCursor] = useState(0);
   const [announcement, setAnnouncement] = useState("");
   const [resultOpen, setResultOpen] = useState(false);
-  // Set when a round ends, cleared when its result opens, so only that
-  // round's closing animation can open it.
-  const awaitingResult = useRef(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const mainButtonRef = useRef<HTMLButtonElement>(null);
   const tileRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [, animate] = useAnimate();
+
+  // Clears the board for the next round. Only sets state, so the render-time
+  // size reset below can call it too.
+  const resetBoard = () => {
+    setPhase("idle");
+    setPicked([]);
+    setMineSet(new Set());
+    setResultOpen(false);
+  };
 
   // A new size renumbers every tile, so the mines placed for the old board no
   // longer match it. End the round in the same render.
   const [boardSize, setBoardSize] = useState(size);
   if (boardSize !== size) {
     setBoardSize(size);
-    setPhase("idle");
-    setPicked([]);
-    setMineSet(new Set());
-    setResultOpen(false);
+    resetBoard();
     setCursor(0);
-    awaitingResult.current = false;
   }
 
   // Once a round starts, its payout follows the mines actually on the board,
@@ -162,28 +165,10 @@ export function Mines({
 
   const setMines = (value: number) => {
     // A finished board shows the old count's mines; clear it for the new one.
-    if (over) {
-      setResultOpen(false);
-      setPhase("idle");
-      setPicked([]);
-      setMineSet(new Set());
-    }
+    if (over) resetBoard();
     if (minesProp === undefined) setInternalMines(value);
     onMinesChange?.(value);
   };
-
-  // The ticket rises once the board's closing animation has played. The tile
-  // that finishes last calls this, so the ticket follows the animation clock.
-  const openResult = () => {
-    if (!awaitingResult.current || !over) return;
-    awaitingResult.current = false;
-    if (showResult) setResultOpen(true);
-  };
-
-  // The main button already says Play again, so keyboard users land there.
-  useEffect(() => {
-    if (resultOpen) mainButtonRef.current?.focus({ preventScroll: true });
-  }, [resultOpen]);
 
   const closeResult = () => {
     setResultOpen(false);
@@ -191,8 +176,7 @@ export function Mines({
   };
 
   const start = () => {
-    setResultOpen(false);
-    awaitingResult.current = false;
+    resetBoard();
     // Mines are placed when the round starts, never on the server.
     const order = Array.from({ length: tiles }, (_, i) => i);
     for (let i = order.length - 1; i > 0; i--) {
@@ -218,7 +202,6 @@ export function Mines({
   const cashOut = (finalGems = gems) => {
     if (phase !== "playing" || finalGems === 0) return;
     const value = minesMultiplier(tiles, mines, finalGems);
-    awaitingResult.current = true;
     setPhase("cashed");
     setAnnouncement(`Cashed out at ${format(value)}.`);
     if (soundOn) getPlayer().cashOut();
@@ -229,7 +212,6 @@ export function Mines({
     if (phase !== "playing" || picked.includes(tile)) return;
     setPicked((current) => [...current, tile]);
     if (mineSet.has(tile)) {
-      awaitingResult.current = true;
       setPhase("busted");
       setAnnouncement("Mine. The round is over.");
       if (soundOn) getPlayer().mine();
@@ -268,12 +250,10 @@ export function Mines({
     tileRefs.current[target]?.focus();
   };
 
-  // The tile whose closing animation ends last opens the result: unpicked
-  // tiles reveal in a ripple from the last pick, and picked gems pulse on a
-  // cash out. Every finished round has unpicked tiles, so one always exists.
-  let closingTile = -1;
+  // When the board's closing animation ends, in seconds: unpicked tiles
+  // reveal in a ripple from the last pick, and picked gems pulse on a cash out.
+  let closingEnd = 0;
   if (over) {
-    let lastEnd = -1;
     for (let tile = 0; tile < tiles; tile++) {
       const order = picked.indexOf(tile);
       const end =
@@ -281,13 +261,24 @@ export function Mines({
           ? ringFrom(lastPick, tile, size) * RIPPLE_STEP + ICON_SPRING.duration
           : phase === "cashed" && !reduce
             ? order * PULSE_STEP + PULSE_TIME
-            : -1;
-      if (end > lastEnd) {
-        closingTile = tile;
-        lastEnd = end;
-      }
+            : 0;
+      closingEnd = Math.max(closingEnd, end);
     }
   }
+
+  // The ticket rises once the closing animation has played. A timer, not an
+  // animation callback, so a cut-short animation can't keep it shut; a new
+  // round or a reset clears it.
+  useEffect(() => {
+    if (!over || !showResult) return;
+    const id = setTimeout(() => {
+      // The main button already says Play again, so a player still on the
+      // board lands there. Focus elsewhere on the page stays put.
+      if (sectionRef.current?.contains(document.activeElement)) mainButtonRef.current?.focus({ preventScroll: true });
+      setResultOpen(true);
+    }, closingEnd * 1000);
+    return () => clearTimeout(id);
+  }, [over, showResult, closingEnd]);
 
   const toggleSound = () => {
     const nextSound = !soundOn;
@@ -299,6 +290,7 @@ export function Mines({
 
   return (
     <section
+      ref={sectionRef}
       aria-label={ariaLabel}
       className={cn("flex w-full max-w-md flex-col gap-4", className)}
       onKeyDown={(event) => {
@@ -331,8 +323,14 @@ export function Mines({
         </AdaptiveStepper>
 
         <div className="text-right">
-          <div className="text-2xl font-semibold text-foreground">
-            <NumberTicker value={multiplier} decimals={2} suffix="×" startOnView={false} duration={0.35} />
+          {/* After a mine the multiplier is lost: struck through, as on the ticket. */}
+          <div
+            className={cn(
+              "text-2xl font-semibold",
+              phase === "busted" ? "text-muted-foreground line-through decoration-2" : "text-foreground",
+            )}
+          >
+            <NumberTicker value={multiplier} decimals={2} format={compact} suffix="×" startOnView={false} duration={0.35} />
           </div>
           <p className="flex items-center justify-end gap-1.5 text-xs text-muted-foreground tabular-nums">
             {over ? (
@@ -436,7 +434,6 @@ export function Mines({
                           : { opacity: isPicked ? 1 : 0.4, scale: 1, filter: "blur(0px)" }
                       }
                       exit={reduce ? { opacity: 0, transition: EXIT } : { opacity: 0, scale: 0.9, transition: EXIT }}
-                      onAnimationComplete={tile === closingTile ? openResult : undefined}
                       transition={
                         celebrate
                           ? { duration: PULSE_TIME, ease: EASE_OUT, delay: order * PULSE_STEP }
@@ -639,7 +636,7 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
   const cashed = outcome === "cashed";
   return (
     <div
-      className={cn("w-[17rem] rounded-2xl bg-card text-foreground", CARD_SHADOW)}
+      className={cn("w-full max-w-[17rem] rounded-2xl bg-card text-foreground", CARD_SHADOW)}
       style={{ WebkitMaskImage: NOTCH_MASK, WebkitMaskComposite: "source-in", maskImage: NOTCH_MASK, maskComposite: "intersect" }}
     >
       <div
@@ -655,7 +652,7 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
           <p className={cn("text-3xl font-semibold", !cashed && "text-muted-foreground line-through decoration-2")}>
             {cashed ? (
               // A win rolls up to its multiplier; a loss just states it.
-              <NumberTicker value={multiplier} decimals={2} suffix="×" startOnView={false} duration={0.6} stagger={0.05} />
+              <NumberTicker value={multiplier} decimals={2} format={compact} suffix="×" startOnView={false} duration={0.6} stagger={0.05} />
             ) : (
               <span className="tabular-nums">{format(multiplier)}</span>
             )}
@@ -668,7 +665,7 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
           <dl className="grid gap-1.5 text-xs">
             <Row label="Gems" value={`${gems} of ${safeTiles}`} />
             <Row label="Mines" value={mines} />
-            <Row label={cashed ? "Odds beaten" : "Lost on pick"} value={cashed ? `1 in ${multiplier.toFixed(2)}` : picked.length} />
+            <Row label={cashed ? "Odds beaten" : "Lost on pick"} value={cashed ? `1 in ${compact(multiplier)}` : picked.length} />
           </dl>
         </Stage>
         <Stage delay={0.24} reduce={reduce}>
@@ -749,6 +746,16 @@ function ringFrom(from: number, tile: number, size: number) {
   );
 }
 
+// Payouts grow without limit (a cleared 5 × 5 board with 12 mines pays over
+// five million), so big ones are shortened to fit: 5.2M, then 1.3E29.
+const SHORT = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
+const SCIENTIFIC = new Intl.NumberFormat("en", { notation: "scientific", maximumFractionDigits: 1 });
+
+function compact(multiplier: number) {
+  if (multiplier < 10_000) return multiplier.toFixed(2);
+  return (multiplier < 1e15 ? SHORT : SCIENTIFIC).format(multiplier);
+}
+
 function format(multiplier: number) {
-  return `${multiplier.toFixed(2)}×`;
+  return `${compact(multiplier)}×`;
 }

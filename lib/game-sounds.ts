@@ -2,7 +2,7 @@
 // blast, a cash-out arpeggio) built from oscillators and noise at runtime, so
 // there are no audio files to ship.
 
-type AudioContextCtor = typeof AudioContext;
+import { getAudioContext, retainAudioContext } from "@/lib/audio-context";
 
 const MASTER_GAIN = 0.12;
 // Pentatonic steps from G5, so any run of gems stays in key. Two octaves of
@@ -10,31 +10,17 @@ const MASTER_GAIN = 0.12;
 const BASE = 783.99;
 const SCALE = [0, 2, 4, 7, 9];
 
-function getAudioContextCtor(): AudioContextCtor | undefined {
-  if (typeof window === "undefined") return undefined;
-  return (
-    window.AudioContext ??
-    (window as unknown as { webkitAudioContext?: AudioContextCtor }).webkitAudioContext
-  );
-}
-
-// One context for every player on the page, closed when the last one is
-// disposed (the same model as lib/tick-sound.ts).
-let ctx: AudioContext | null = null;
+// The context is shared page-wide (lib/audio-context.ts). The master gain
+// belongs to it, so it is rebuilt if the context was closed and recreated.
 let master: GainNode | null = null;
-let consumers = 0;
 
 function ensureContext() {
-  if (!ctx) {
-    const Ctor = getAudioContextCtor();
-    if (!Ctor) return null;
-    ctx = new Ctor();
+  const ctx = getAudioContext();
+  if (ctx && master?.context !== ctx) {
     master = ctx.createGain();
     master.gain.value = MASTER_GAIN;
     master.connect(ctx.destination);
   }
-  // Browsers may refuse outside a user gesture; prepare() runs inside one.
-  if (ctx.state === "suspended") void ctx.resume().catch(() => undefined);
   return ctx;
 }
 
@@ -78,12 +64,12 @@ export interface GameSounds {
 }
 
 /**
- * Lazily-initialized game sounds sharing one AudioContext. Nothing is created
+ * Lazily-initialized game sounds on the page's shared AudioContext. Nothing is created
  * until the first call. Safe during SSR and without Web Audio: every call
  * becomes a silent no-op.
  */
 export function createGameSounds(): GameSounds {
-  consumers++;
+  const release = retainAudioContext();
   let disposed = false;
   const live = () => (disposed ? null : ensureContext());
 
@@ -160,12 +146,7 @@ export function createGameSounds(): GameSounds {
     dispose() {
       if (disposed) return;
       disposed = true;
-      consumers = Math.max(0, consumers - 1);
-      if (consumers === 0 && ctx) {
-        void ctx.close();
-        ctx = null;
-        master = null;
-      }
+      release();
     },
   };
 }

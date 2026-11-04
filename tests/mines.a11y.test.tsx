@@ -52,6 +52,8 @@ test("cashing out shows a labelled result, sends focus to Play again and hides o
       fireEvent.click(tiles()[24]);
     });
     await act(async () => {
+      // Focus is moved only while it is on the board, as it is for a keyboard player.
+      tiles()[24].focus();
       fireEvent.click(getByRole("button", { name: /^Cash out/ }));
       // The result waits for the cash-out pulse to finish.
       await new Promise((resolve) => setTimeout(resolve, 900));
