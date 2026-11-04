@@ -2252,7 +2252,7 @@ export const registry: CategoryEntry[] = [
         description: "A mines board: pick tiles to find gems, each one raising the multiplier, and cash out before you hit a mine. Each gem you find is numbered in pick order, an odds ring shows the chance the next pick is safe, and the round's end reveals every tile in a ripple from your last pick before a ticket-stub result card rises with the outcome, stats and a miniature of your run. Distinct synthesized sounds for gems, streaks, mines and cash outs; keyboard playable, reduced-motion safe.",
         file: "components/motion/mines.tsx",
         badge: "new",
-        launchedAt: "2026-11-03",
+        launchedAt: "2026-11-05",
         keywords: ["mines game", "minesweeper react", "gem mines", "reveal tiles game", "multiplier game ui"],
       },
       {
