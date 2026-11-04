@@ -184,7 +184,6 @@ export function Mines({
       [order[i], order[j]] = [order[j], order[i]];
     }
     setMineSet(new Set(order.slice(0, chosenMines)));
-    setPicked([]);
     setPhase("playing");
     // The board wakes up in a short diagonal wave, so a new round reads as
     // live before the first pick.
@@ -203,7 +202,7 @@ export function Mines({
     if (phase !== "playing" || finalGems === 0) return;
     const value = minesMultiplier(tiles, mines, finalGems);
     setPhase("cashed");
-    setAnnouncement(`Cashed out at ${format(value)}.`);
+    setAnnouncement(`Cashed out at ${formatMultiplier(value)}.`);
     if (soundOn) getPlayer().cashOut();
     onCashOut?.(value, finalGems);
   };
@@ -230,7 +229,7 @@ export function Mines({
       cashOut(found);
       return;
     }
-    setAnnouncement(`Gem. ${format(value)}.`);
+    setAnnouncement(`Gem. ${formatMultiplier(value)}.`);
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, tile: number) => {
@@ -287,7 +286,6 @@ export function Mines({
     onSoundChange?.(nextSound);
   };
 
-
   return (
     <section
       ref={sectionRef}
@@ -323,23 +321,25 @@ export function Mines({
         </AdaptiveStepper>
 
         <div className="text-right">
-          {/* After a mine the multiplier is lost: struck through, as on the ticket. */}
-          <div
-            className={cn(
-              "text-2xl font-semibold",
-              phase === "busted" ? "text-muted-foreground line-through decoration-2" : "text-foreground",
+          <div className="text-2xl font-semibold text-foreground">
+            {phase === "busted" ? (
+              // The multiplier is lost: struck through, as on the ticket. A plain
+              // span, since a line-through skips the ticker's inline-block digits.
+              <span className="text-muted-foreground tabular-nums line-through decoration-2">
+                {formatMultiplier(multiplier)}
+              </span>
+            ) : (
+              <NumberTicker value={multiplier} decimals={2} format={compact} suffix="×" startOnView={false} duration={0.35} />
             )}
-          >
-            <NumberTicker value={multiplier} decimals={2} format={compact} suffix="×" startOnView={false} duration={0.35} />
           </div>
           <p className="flex items-center justify-end gap-1.5 text-xs text-muted-foreground tabular-nums">
             {over ? (
-              "Multiplier"
+              phase === "busted" ? "Multiplier lost" : "Multiplier"
             ) : (
               <>
                 <OddsRing safe={safe} reduce={reduce} />
                 {phase === "playing"
-                  ? `${Math.round(safe * 100)}% safe · next ${format(next)}`
+                  ? `${Math.round(safe * 100)}% safe · next ${formatMultiplier(next)}`
                   : `First pick ${Math.round(safe * 100)}% safe`}
               </>
             )}
@@ -490,7 +490,7 @@ export function Mines({
           aria-disabled={(phase === "playing" && gems === 0) || undefined}
           onClick={() => (phase === "playing" ? cashOut() : start())}
         >
-          {phase === "playing" ? `Cash out ${format(multiplier)}` : over ? "Play again" : "Start"}
+          {phase === "playing" ? `Cash out ${formatMultiplier(multiplier)}` : over ? "Play again" : "Start"}
         </Button>
         {/* aria-label names the button; the tooltip shows the same label on hover
             and focus. Tooltip's asLabel would hydrate differently from the server. */}
@@ -654,7 +654,7 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
               // A win rolls up to its multiplier; a loss just states it.
               <NumberTicker value={multiplier} decimals={2} format={compact} suffix="×" startOnView={false} duration={0.6} stagger={0.05} />
             ) : (
-              <span className="tabular-nums">{format(multiplier)}</span>
+              <span className="tabular-nums">{formatMultiplier(multiplier)}</span>
             )}
           </p>
         </Stage>
@@ -756,6 +756,7 @@ function compact(multiplier: number) {
   return (multiplier < 1e15 ? SHORT : SCIENTIFIC).format(multiplier);
 }
 
-function format(multiplier: number) {
+/** A multiplier as Mines shows it: 2.50×, or shortened when large (5.2M×). */
+export function formatMultiplier(multiplier: number) {
   return `${compact(multiplier)}×`;
 }
