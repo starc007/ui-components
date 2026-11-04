@@ -11,6 +11,7 @@ import {
   findCategory,
   findComponent,
   registry,
+  type ComponentCredit,
   type ComponentExample,
 } from "@/lib/registry";
 import { CodeBlock } from "@/components/app/docs/code-block";
@@ -38,6 +39,8 @@ import { pageUrlFor, withSignature } from "@/lib/signature";
 import { readSourceFile } from "@/lib/source-files";
 import { getComponentProps } from "@/lib/props-extractor";
 import { componentDates } from "@/lib/component-dates";
+import { EASE_OUT_CSS } from "@/lib/ease";
+import { cn } from "@/lib/utils";
 import { findNativeComponent } from "@/lib/native";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { RelatedSection } from "@/components/app/docs/related-section";
@@ -159,8 +162,6 @@ export default async function ComponentPage({
   const dates = componentDates(cat.slug, comp.slug);
   const related = relatedComponents(cat.slug, comp.slug, 3);
   const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
-  const credit = comp.credit ? { ...comp.credit, url: new URL(comp.credit.url) } : null;
-  credit?.url.searchParams.set("ref", "beui");
 
   const nativeComponent = findNativeComponent(comp.slug);
   const webContent = (
@@ -255,33 +256,8 @@ export default async function ComponentPage({
                 <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
               ) : null}
             </div>
-            {credit ? (
-              <a
-                href={credit.url.toString()}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="group -ml-1 mt-3 inline-flex items-center gap-2 rounded-full py-1 pr-2.5 pl-1 text-sm text-muted-foreground outline-none transition-colors duration-150 hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                {credit.avatar ? (
-                  // biome-ignore lint/performance/noImgElement: 20px contributor avatar from any host, not worth next/image
-                  <img
-                    src={credit.avatar}
-                    alt=""
-                    width={20}
-                    height={20}
-                    className="size-5 shrink-0 rounded-full object-cover outline outline-1 -outline-offset-1 outline-foreground/10"
-                  />
-                ) : null}
-                <span>
-                  Contributed by{" "}
-                  <span className="font-medium text-foreground">{credit.name}</span>
-                </span>
-                <ArrowUpRight
-                  aria-hidden="true"
-                  className="size-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-px group-hover:translate-x-px motion-reduce:transition-none"
-                />
-                <span className="sr-only">(opens in new tab)</span>
-              </a>
+            {comp.credit ? (
+              <CreditLink credit={comp.credit} className="mt-3" />
             ) : null}
           </div>
           <CopyPage
@@ -333,6 +309,50 @@ export default async function ComponentPage({
   );
 }
 
+function CreditLink({
+  credit,
+  className,
+}: {
+  credit: ComponentCredit;
+  className?: string;
+}) {
+  const url = new URL(credit.url);
+  url.searchParams.set("ref", "beui");
+  return (
+    <a
+      href={url.toString()}
+      target="_blank"
+      rel="noreferrer noopener"
+      className={cn(
+        "group -ml-1 inline-flex items-center gap-2 rounded-full py-1 pr-2.5 pl-1 text-sm text-muted-foreground transition-colors duration-150 hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        className,
+      )}
+      style={{ transitionTimingFunction: EASE_OUT_CSS }}
+    >
+      {credit.avatar ? (
+        // biome-ignore lint/performance/noImgElement: 20px contributor avatar from any host, not worth next/image
+        <img
+          src={credit.avatar}
+          alt=""
+          width={20}
+          height={20}
+          className="size-5 shrink-0 rounded-full object-cover outline outline-1 -outline-offset-1 outline-foreground/10"
+        />
+      ) : null}
+      <span>
+        Contributed by{" "}
+        <span className="font-medium text-foreground">{credit.name}</span>
+      </span>
+      <ArrowUpRight
+        aria-hidden="true"
+        className="size-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-px group-hover:translate-x-px motion-reduce:transition-none"
+        style={{ transitionTimingFunction: EASE_OUT_CSS }}
+      />
+      <span className="sr-only">(opens in new tab)</span>
+    </a>
+  );
+}
+
 async function ExampleBlock({
   category,
   pageSlug,
@@ -368,6 +388,9 @@ async function ExampleBlock({
           {example.file.split("/").pop()}
         </code>
       </div>
+      {example.credit ? (
+        <CreditLink credit={example.credit} className="-mt-2 mb-4" />
+      ) : null}
       <div id={`${example.slug}-preview`} className="scroll-mt-24">
         <PreviewExpand stageId={`${example.slug}-stage`}>
         <Tabs defaultValue="preview" variant="pill">

@@ -1,9 +1,35 @@
 import { type AgentGuide, agentGuides } from "@/lib/agent-guides";
 
+/** Contributor credit shown on the website only. */
+export type ComponentCredit = {
+  name: string;
+  url: string;
+  /** Optional avatar shown before the name. */
+  avatar?: string;
+};
+
+// One place per contributor, so a handle or avatar change lands everywhere.
+// Avatars point at avatars.githubusercontent.com directly: github.com/<user>.png
+// redirects there first.
+const contributors = {
+  avinit: {
+    name: "Avinit",
+    url: "https://x.com/0xvntr",
+    avatar: "https://avatars.githubusercontent.com/u/70722540?s=64&v=4",
+  },
+  savva: {
+    name: "Savva",
+    url: "https://ssych.com",
+    avatar: "https://avatars.githubusercontent.com/u/117964765?s=64&v=4",
+  },
+} satisfies Record<string, ComponentCredit>;
+
 export type ComponentExample = {
   slug: string;
   name: string;
   description?: string;
+  /** Credit for this variant alone, when someone else built the rest of the page. */
+  credit?: ComponentCredit;
   badge?: "new";
   /** ISO date this variant shipped. */
   launchedAt?: string;
@@ -24,13 +50,8 @@ export type ComponentEntry = {
   name: string;
   description: string;
   file: string;
-  /** Optional contributor credit shown on the website only. */
-  credit?: {
-    name: string;
-    url: string;
-    /** Optional avatar shown before the name. */
-    avatar?: string;
-  };
+  /** Optional contributor credit for the whole page, shown on the website only. */
+  credit?: ComponentCredit;
   badge?: "new";
   /** ISO date the component shipped. Drives newest-first order in the landing
    * "Recently launched" section. Set it when adding a "new" component. */
@@ -973,11 +994,6 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/range-slider.tsx",
         badge: "new",
         launchedAt: "2026-09-09",
-        credit: {
-          name: "Avinit",
-          url: "https://x.com/0xvntr",
-          avatar: "https://github.com/avinitDollarpe.png?size=112",
-        },
         keywords: [
           "slider",
           "range slider",
@@ -1017,6 +1033,7 @@ export const registry: CategoryEntry[] = [
             description:
               "No thumb. The fill slides behind a rounded liquid cap, and the label flips color wherever the fill covers it.",
             installSlug: "range-slider-fluid",
+            credit: contributors.avinit,
             badge: "new",
             launchedAt: "2026-07-31",
             file: "components/motion/range-slider-fluid.tsx",
@@ -1029,6 +1046,7 @@ export const registry: CategoryEntry[] = [
             description:
               "Equalizer bars peak around the handle and drop back once it passes, so the value moves down the track as a wave.",
             installSlug: "range-slider-wave",
+            credit: contributors.avinit,
             badge: "new",
             launchedAt: "2026-07-31",
             file: "components/motion/range-slider-wave.tsx",
@@ -1041,6 +1059,7 @@ export const registry: CategoryEntry[] = [
             description:
               "Grab the thumb and a value bubble pops out of it. The bubble tilts and squashes with how fast you drag, then settles upright.",
             installSlug: "range-slider-bubble",
+            credit: contributors.avinit,
             badge: "new",
             launchedAt: "2026-07-31",
             file: "components/motion/range-slider-bubble.tsx",
@@ -1053,6 +1072,7 @@ export const registry: CategoryEntry[] = [
             description:
               "The needle stays put and the scale scrolls under it. A flick keeps going and settles on the nearest tick. Fractional steps read at the step's own precision.",
             installSlug: "range-slider-ruler",
+            credit: contributors.avinit,
             badge: "new",
             launchedAt: "2026-07-31",
             file: "components/motion/range-slider-ruler.tsx",
@@ -1331,11 +1351,7 @@ export const registry: CategoryEntry[] = [
         file: "components/charts/heat-calendar.tsx",
         badge: "new",
         launchedAt: "2026-09-11",
-        credit: {
-          name: "Savva",
-          url: "https://ssych.com",
-          avatar: "https://github.com/savvasicevs.png?size=112",
-        },
+        credit: contributors.savva,
         keywords: [
           "heatmap react",
           "activity calendar",
@@ -1352,11 +1368,7 @@ export const registry: CategoryEntry[] = [
         file: "components/charts/returns-calendar.tsx",
         badge: "new",
         launchedAt: "2026-09-11",
-        credit: {
-          name: "Savva",
-          url: "https://ssych.com",
-          avatar: "https://github.com/savvasicevs.png?size=112",
-        },
+        credit: contributors.savva,
         keywords: [
           "monthly returns heatmap",
           "returns calendar",
@@ -1373,11 +1385,7 @@ export const registry: CategoryEntry[] = [
         file: "components/charts/price-target-fan.tsx",
         badge: "new",
         launchedAt: "2026-09-11",
-        credit: {
-          name: "Savva",
-          url: "https://ssych.com",
-          avatar: "https://github.com/savvasicevs.png?size=112",
-        },
+        credit: contributors.savva,
         keywords: [
           "price target chart",
           "analyst targets",
@@ -1993,11 +2001,7 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/knockout-bracket.tsx",
         badge: "new",
         launchedAt: "2026-07-27",
-        credit: {
-          name: "Avinit",
-          url: "https://x.com/0xvntr",
-          avatar: "https://github.com/avinitDollarpe.png?size=112",
-        },
+        credit: contributors.avinit,
         extraFiles: ["components/motion/knockout-wheel.tsx"],
         examples: [
           {
