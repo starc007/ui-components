@@ -104,7 +104,6 @@ export function Mines({
   }, [size, sizeProp]);
   const tiles = size * size;
   const [internalMines, setInternalMines] = useState(defaultMines);
-  // The count chosen for the next round.
   const chosenMines = Math.min(Math.max(1, Math.round(minesProp ?? internalMines) || 1), tiles - 1);
   const [phase, setPhase] = useState<Phase>("idle");
   const [mineSet, setMineSet] = useState<ReadonlySet<number>>(new Set());
@@ -117,8 +116,7 @@ export function Mines({
   const tileRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [, animate] = useAnimate();
 
-  // Clears the board for the next round. Only sets state, so the render-time
-  // size reset below can call it too.
+  // Only sets state, so the render-time size reset below can call it.
   const resetBoard = () => {
     setPhase("idle");
     setPicked([]);
@@ -148,8 +146,6 @@ export function Mines({
   // Turning showResult off hides an open ticket too.
   const resultShown = resultOpen && showResult && over;
 
-  // Each event has its own synthesized sound (lib/game-sounds.ts): gems chime
-  // up a scale as the streak grows, a mine blasts, a cash out arpeggiates.
   const [internalSound, setInternalSound] = useState(defaultSound);
   const soundOn = sound ?? internalSound;
   const player = useRef<GameSounds | null>(null);
@@ -187,8 +183,6 @@ export function Mines({
     }
     setMineSet(new Set(order.slice(0, chosenMines)));
     setPhase("playing");
-    // The board wakes up in a short diagonal wave, so a new round reads as
-    // live before the first pick.
     if (!reduce) {
       tileRefs.current.forEach((tile, index) => {
         if (!tile) return;
@@ -220,8 +214,6 @@ export function Mines({
       return;
     }
     const found = gems + 1;
-    // The tile gives under the pick and springs back: a playful component can
-    // bounce a little. Keyboard picks get it too, as the press feedback.
     const node = tileRefs.current[tile];
     if (node && !reduce) animate(node, { scale: [0.92, 1] }, GEM_POP);
     const value = minesMultiplier(tiles, mines, found);
@@ -366,8 +358,6 @@ export function Mines({
             const hit = isPicked && isMine;
             const row = Math.floor(tile / size);
             const col = tile % size;
-            // Tiles the player never picked are revealed faded, in rings
-            // spreading from the last pick.
             const ripple = ringFrom(lastPick, tile, size);
             const order = picked.indexOf(tile);
             const celebrate = phase === "cashed" && isPicked && !reduce;
@@ -403,7 +393,6 @@ export function Mines({
                 )}
               >
                 {hit && !reduce ? (
-                  // A shockwave rings out once from the mine.
                   <motion.span
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-0 rounded-xl border-2 border-rose-500"
@@ -413,7 +402,6 @@ export function Mines({
                   />
                 ) : null}
                 {isPicked && !isMine ? (
-                  // Pick order: the run, read tile by tile.
                   <motion.span
                     aria-hidden="true"
                     initial={{ opacity: 0 }}
@@ -622,7 +610,6 @@ function MiniMap({ size, picked, mineSet, reduce }: Pick<ResultProps, "size" | "
           <motion.span
             // biome-ignore lint/suspicious/noArrayIndexKey: tiles are positional
             key={tile}
-            // Picked cells fill in the order they were picked, replaying the run.
             initial={isPicked && !reduce ? { opacity: 0, scale: 0.4 } : false}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ ...CELL_SPRING, delay: REPLAY_START + order * REPLAY_STEP }}
@@ -662,7 +649,6 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
         <Stage delay={0.1} reduce={reduce}>
           <p className={cn("text-3xl font-semibold", !cashed && "text-muted-foreground line-through decoration-2")}>
             {cashed ? (
-              // A win rolls up to its multiplier; a loss just states it.
               <NumberTicker value={multiplier} decimals={2} format={compact} suffix="×" startOnView={false} duration={0.6} stagger={0.05} />
             ) : (
               <span className="tabular-nums">{formatMultiplier(multiplier)}</span>
@@ -723,7 +709,6 @@ function MineIcon({ className }: { className?: string }) {
         />
       ))}
       <circle cx={12} cy={12} r={6.5} stroke="none" />
-      {/* Glint. */}
       <circle cx={9.75} cy={9.75} r={1.6} fill="white" fillOpacity={0.75} stroke="none" />
     </svg>
   );

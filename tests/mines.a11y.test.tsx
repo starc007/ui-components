@@ -21,7 +21,6 @@ test("mines board is one tab stop of named tiles and announces each pick", async
   });
   expect(tiles().every((tile) => tile.getAttribute("aria-disabled") === "false")).toBe(true);
 
-  // Arrow keys move the single tab stop.
   await act(async () => {
     tiles()[0].focus();
     fireEvent.keyDown(tiles()[0], { key: "ArrowRight" });
