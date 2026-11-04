@@ -222,6 +222,9 @@ export const previews: Record<string, ComponentType> = {
   "blocks/feedback-widget": dynamic(() =>
     import("./blocks/feedback-widget.preview").then((m) => m.FeedbackWidgetPreview),
   ),
+  "blocks/mines": dynamic(() =>
+    import("./blocks/mines.preview").then((m) => m.MinesPreview),
+  ),
   "blocks/plinko": dynamic(() =>
     import("./blocks/plinko.preview").then((m) => m.PlinkoPreview),
   ),
