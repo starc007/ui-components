@@ -4,13 +4,10 @@ import { type AgentGuide, agentGuides } from "@/lib/agent-guides";
 export type ComponentCredit = {
   name: string;
   url: string;
-  /** Optional avatar shown before the name. */
   avatar?: string;
 };
 
-// One place per contributor, so a handle or avatar change lands everywhere.
-// Avatars point at avatars.githubusercontent.com directly: github.com/<user>.png
-// redirects there first.
+// github.com/<user>.png redirects to avatars.githubusercontent.com; link there directly.
 const contributors = {
   avinit: {
     name: "Avinit",
@@ -28,7 +25,7 @@ export type ComponentExample = {
   slug: string;
   name: string;
   description?: string;
-  /** Credit for this variant alone, when someone else built the rest of the page. */
+  /** Contributor credit for this variant, shown on the website only. */
   credit?: ComponentCredit;
   badge?: "new";
   /** ISO date this variant shipped. */
@@ -50,7 +47,11 @@ export type ComponentEntry = {
   name: string;
   description: string;
   file: string;
-  /** Optional contributor credit for the whole page, shown on the website only. */
+  /**
+   * Contributor credit for a page without `examples`, shown on the website
+   * only. Pages with examples credit each example instead; when every example
+   * shares one contributor, the page shows that credit under the title once.
+   */
   credit?: ComponentCredit;
   badge?: "new";
   /** ISO date the component shipped. Drives newest-first order in the landing
@@ -2001,7 +2002,6 @@ export const registry: CategoryEntry[] = [
         file: "components/motion/knockout-bracket.tsx",
         badge: "new",
         launchedAt: "2026-07-27",
-        credit: contributors.avinit,
         extraFiles: ["components/motion/knockout-wheel.tsx"],
         examples: [
           {
@@ -2012,6 +2012,7 @@ export const registry: CategoryEntry[] = [
             badge: "new",
             launchedAt: "2026-07-27",
             installSlug: "knockout-wheel",
+            credit: contributors.avinit,
             file: "components/motion/knockout-wheel.tsx",
             previewKey: "blocks/knockout-wheel",
             previewFile: "components/previews/blocks/knockout-wheel.preview.tsx",
@@ -2022,6 +2023,7 @@ export const registry: CategoryEntry[] = [
             description:
               "Pages one round at a time. The leftmost round stacks at a fixed rhythm, each later round centers between its two feeder matches, and cards, elbow connectors, headers and stage height animate into every new layout. A third place play-off sits below the tree under its own rule. Round names, team artwork, dates and result chips all come from the data you pass.",
             installSlug: "knockout-bracket",
+            credit: contributors.avinit,
             file: "components/motion/knockout-bracket.tsx",
             previewKey: "blocks/knockout-bracket",
             previewFile:
