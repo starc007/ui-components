@@ -567,6 +567,9 @@ function ResultCard(props: ResultProps) {
         <motion.div
           role="group"
           aria-label="Round result"
+          // Sized here: the ticket is a size container, so it can't take its
+          // width from its contents.
+          className="w-full max-w-[17rem]"
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={reduce ? { opacity: 0, transition: CARD_OUT } : { opacity: 0, y: 8, scale: 0.98, transition: CARD_OUT }}
@@ -603,8 +606,14 @@ function Stage({ delay, reduce, className, children }: { delay: number; reduce: 
 
 function MiniMap({ size, picked, mineSet, reduce }: Pick<ResultProps, "size" | "picked" | "mineSet" | "reduce">) {
   const hit = picked.at(-1);
+  // 8px cells 3px apart, kept within 88px so big boards leave the stats room.
+  const gap = size > 10 ? 1 : 3;
   return (
-    <div aria-hidden="true" className="grid shrink-0 gap-[3px]" style={{ gridTemplateColumns: `repeat(${size}, auto)` }}>
+    <div
+      aria-hidden="true"
+      className="grid shrink-0"
+      style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`, gap, width: Math.min(88, size * 8 + (size - 1) * gap) }}
+    >
       {Array.from({ length: size * size }, (_, tile) => {
         const isMine = mineSet.has(tile);
         const isPicked = picked.includes(tile);
@@ -618,7 +627,7 @@ function MiniMap({ size, picked, mineSet, reduce }: Pick<ResultProps, "size" | "
             animate={{ opacity: 1, scale: 1 }}
             transition={{ ...CELL_SPRING, delay: REPLAY_START + order * REPLAY_STEP }}
             className={cn(
-              "size-2 rounded-[2px]",
+              "aspect-square rounded-[2px]",
               isPicked && !isMine && "bg-primary",
               isPicked && isMine && tile === hit && "bg-rose-500",
               !isPicked && isMine && "ring-1 ring-rose-500/60 ring-inset",
@@ -638,7 +647,7 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
   const cashed = outcome === "cashed";
   return (
     <div
-      className={cn("w-full max-w-[17rem] rounded-2xl bg-card text-foreground", CARD_SHADOW)}
+      className={cn("@container w-full rounded-2xl bg-card text-foreground", CARD_SHADOW)}
       style={{ WebkitMaskImage: NOTCH_MASK, WebkitMaskComposite: "source-in", maskImage: NOTCH_MASK, maskComposite: "intersect" }}
     >
       <div
@@ -670,7 +679,8 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
             <Row label={cashed ? "Odds beaten" : "Lost on pick"} value={cashed ? `1 in ${compact(multiplier)}` : picked.length} />
           </dl>
         </Stage>
-        <Stage delay={0.24} reduce={reduce}>
+        {/* A narrow ticket keeps the stats on one line each and drops the map. */}
+        <Stage delay={0.24} reduce={reduce} className="@max-[15rem]:hidden">
           <MiniMap size={size} picked={picked} mineSet={mineSet} reduce={reduce} />
         </Stage>
       </div>
@@ -680,7 +690,7 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
 
 function Row({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="flex justify-between gap-2">
+    <div className="flex justify-between gap-2 whitespace-nowrap">
       <dt className="text-muted-foreground">{label}</dt>
       <dd className="font-medium tabular-nums">{value}</dd>
     </div>
