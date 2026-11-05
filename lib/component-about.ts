@@ -3245,6 +3245,45 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  crash: {
+    overview:
+      "Crash is a React multiplier game built with Framer Motion. Start a round and a paper plane takes off, flying the multiplier up a curve, slowly at first and then faster, while the axes grow to keep it in view and a field of dots and streaks rushes past to show its speed. At a random point the round crashes and the plane tumbles out of the sky in a burst of paper shreds. Cash out before it does to keep the multiplier, either by hand or automatically at a target you pick from the Auto menu; a parachute opens where you bailed out. After you cash out the plane keeps flying on a dashed trail, so you can see how far it would have gone (the trail clears at the crash), and the main button can skip the rest. Recent crash points collect along the top of the card. Two more designs play the same game: Crash Balloon climbs an altimeter whose tape and clouds scroll past, drops a parachutist when you cash out and pops on a crash; Crash Tower stacks a block for every 8% the multiplier gains, sways more as it grows, flags your cash-out block and topples on a crash. All three share the same controls, props and callbacks, and each marks your auto target ahead of the flight (the main button fills toward it too). The balloon and tower also mark where the last round crashed. The multiplier warms from neutral to the primary colour at 2× and amber at 10×, and so do the history pills. The balloon passes birds, a jet and a satellite on the way up, and the tower's lower blocks crack as it grows. When a round ends, once the crash has played out a ticket rises over the stage, the same receipt Mines ends on: whether you cashed out, the multiplier that counts, where it crashed, how long it flew and, when the built-in crash point decided the round, the odds you beat, with a miniature of the flight. Tap the stage or press Escape to put it away and look at the round.",
+    useWhen: [
+      "A game, rewards screen or giveaway wants a push-your-luck mechanic where timing is the whole decision.",
+      "A demo or landing page wants a live, data-driven animation that people want to replay.",
+      "A probability lesson wants to show that every multiplier is reached with a chance of one over that multiplier.",
+    ],
+    accessibility:
+      "The game is a labelled region and is played with one button that changes from Start to Cash out, then Skip to crash or Play again, so keyboard focus never moves. The graph, balloon or tower is decorative; the current multiplier is shown as text and in the button's name. A polite live region announces the start of a round, milestones while you are still in (2× to 5×, then 10×, 20×, 50× and on, so a long flight doesn't flood it), the cash out and the crash. Recent crash points are a labelled list. With reduced motion the readout still climbs, since it is the game, but the plane points along the curve without bobbing or a take-off swing, the balloon and tower hold steady, all three fade instead of tumbling, popping or toppling, the speed field and clouds stand still, the balloon's landmarks are left out, and the shake, shreds, parachute, milestone pulse and sliding history are replaced by fades or left out, and skipping jumps straight to the crash.",
+    faq: [
+      {
+        question: "How is the crash point chosen?",
+        answer:
+          "Three ways, so any algorithm or server can drive it. By default the exported crashPoint() picks a fair point in the browser: the round reaches any multiplier m with a chance of 1 in m, floored to two decimals and capped at 1,000,000×; crashPoint(random, houseEdge) takes your own random draw and a house edge, so a provably fair round is crashPoint(() => parseInt(hash.slice(0, 13), 16) / 2 ** 52, 0.01) for a round hash. Pass getCrashPoint to decide each round yourself; it can return a Promise, so the round can come from your server, and the main button shows Starting… until it settles. For a server that keeps the crash point secret until it happens, onStart gives each round a number; pass crashAt as { round, value } when the server reveals that round's crash point. The flight runs open-ended until then. A value behind the plane crashes at once at that value; one still ahead means the display is running late, so the flight runs out to it and takes no more hand cash outs. onCashOut waits for the reveal, so it only reports cash outs that stand.",
+      },
+      {
+        question: "How does auto cash out work?",
+        answer:
+          "Pick a target from the Auto menu, or control it with autoCashOut and onAutoCashOutChange. If the round reaches the target you cash out at exactly that multiplier. It can't be changed while a round is running.",
+      },
+      {
+        question: "How fast does the multiplier grow?",
+        answer:
+          "Exponentially: it doubles about every 5.8 seconds, so 2× takes about 6 seconds and 10× about 19.",
+      },
+      {
+        question: "Does it make sound?",
+        answer:
+          "Only when you turn it on with the sound button, or the sound prop. Each milestone you hold through (2× to 5×, then 10×, 20×, 50× and on) chimes a step higher, cashing out plays a rising arpeggio and the crash plays a low blast. Everything is synthesized in the browser, so there are no audio files.",
+      },
+      {
+        question: "Does it handle money or betting?",
+        answer:
+          "No. It only reports multipliers through onCashOut and onCrash, so any scoring, points or rewards are up to your app.",
+      },
+    ],
+  },
+
   mines: {
     overview:
       "Mines is a React tile game built with Framer Motion. Pick a mine count and start a round, then reveal tiles one at a time. Each gem raises the multiplier, shown as rolling digits with the next step beside it, and a mine ends the round. Cash out whenever you like; clearing every gem cashes out for you. Each gem you find is numbered in the order you picked it, so the board shows your run at a glance. A small ring beside the multiplier shows the chance your next pick is safe. When a round ends the rest of the board reveals in a ripple spreading from your last pick, with the tiles you never touched shown faded.",

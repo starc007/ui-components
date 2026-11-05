@@ -222,6 +222,15 @@ export const previews: Record<string, ComponentType> = {
   "blocks/feedback-widget": dynamic(() =>
     import("./blocks/feedback-widget.preview").then((m) => m.FeedbackWidgetPreview),
   ),
+  "blocks/crash": dynamic(() =>
+    import("./blocks/crash.preview").then((m) => m.CrashPreview),
+  ),
+  "blocks/crash-balloon": dynamic(() =>
+    import("./blocks/crash-balloon.preview").then((m) => m.CrashBalloonPreview),
+  ),
+  "blocks/crash-tower": dynamic(() =>
+    import("./blocks/crash-tower.preview").then((m) => m.CrashTowerPreview),
+  ),
   "blocks/mines": dynamic(() =>
     import("./blocks/mines.preview").then((m) => m.MinesPreview),
   ),

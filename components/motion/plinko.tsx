@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
 import { Tooltip } from "@/components/motion/tooltip";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_IN, EASE_OUT } from "@/lib/ease";
 import { createTickPlayer } from "@/lib/tick-sound";
 import { cn } from "@/lib/utils";
 
@@ -57,9 +57,8 @@ const TOP = 48; // first peg row
 const SLOT = 34; // slot height
 
 // A ball falls between pegs under gravity and rises a little after each hit.
-// lib/ease has no ease-in, and the fall must accelerate, so these two are
-// local: FALL speeds up like a drop, RISE slows down like a hop.
-const FALL = [0.55, 0, 1, 0.45] as const;
+// A drop speeds up (EASE_IN); RISE, its mirror, slows down like a hop and is
+// local because only a bounce needs it.
 const RISE = [0, 0.55, 0.45, 1] as const;
 const HOP_TIME = 0.09; // seconds rising after a peg
 const DROP_TIME = 0.16; // seconds falling to the next peg
@@ -353,7 +352,7 @@ export function Plinko({
                 duration: ball.duration,
                 times: ball.times,
                 // Fall into the first peg, then hop up and fall down per row.
-                ease: ball.times.slice(1).map((_, i) => (i % 2 === 1 ? RISE : FALL)),
+                ease: ball.times.slice(1).map((_, i) => (i % 2 === 1 ? RISE : EASE_IN)),
               },
             }}
             onUpdate={(latest) => {

@@ -557,7 +557,7 @@ function ResultCard(props: ResultProps) {
           aria-label="Round result"
           // Sized here: the ticket is a size container, so it can't take its
           // width from its contents.
-          className="w-full max-w-[17rem]"
+          className={cn("w-full max-w-[17rem]", TICKET_SHADOW)}
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={reduce ? { opacity: 0, transition: CARD_OUT } : { opacity: 0, y: 8, scale: 0.98, transition: CARD_OUT }}
@@ -627,14 +627,16 @@ function MiniMap({ size, picked, mineSet, reduce }: Pick<ResultProps, "size" | "
   );
 }
 
-const CARD_SHADOW = "shadow-[0_1px_2px_rgb(0_0_0/0.12),0_16px_40px_-12px_rgb(0_0_0/0.45)]";
+// A drop-shadow on the ticket's wrapper: the notch mask would clip a
+// box-shadow on the ticket itself.
+const TICKET_SHADOW = "[filter:drop-shadow(0_1px_1px_rgb(0_0_0/0.12))_drop-shadow(0_12px_16px_rgb(0_0_0/0.3))]";
 
 /** A ticket stub, notched at a dashed tear line. */
 function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, mineSet, reduce }: ResultProps) {
   const cashed = outcome === "cashed";
   return (
     <div
-      className={cn("@container w-full rounded-2xl bg-card text-foreground", CARD_SHADOW)}
+      className="@container w-full rounded-2xl bg-card text-foreground"
       style={{ WebkitMaskImage: NOTCH_MASK, WebkitMaskComposite: "source-in", maskImage: NOTCH_MASK, maskComposite: "intersect" }}
     >
       <div
