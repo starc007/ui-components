@@ -76,6 +76,12 @@ export type CategoryEntry = {
   components: ComponentEntry[];
 };
 
+/**
+ * Categories whose items install as `registry:block`. Part of the public
+ * install contract: moving an item between these must not change its type.
+ */
+export const BLOCK_CATEGORIES = ["blocks", "casino"];
+
 export const registry: CategoryEntry[] = [
   {
     slug: "motion",

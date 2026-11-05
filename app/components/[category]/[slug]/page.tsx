@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, ChevronRight, Smartphone } from "lucide-react";
 import {
+  BLOCK_CATEGORIES,
   findCategory,
   findComponent,
   registry,
@@ -319,7 +320,7 @@ export default async function ComponentPage({
       ) : null}
       <RelatedSection related={related} />
 
-      {cat.slug === "blocks" || cat.slug === "casino" ? <KeepInMind /> : null}
+      {BLOCK_CATEGORIES.includes(cat.slug) ? <KeepInMind /> : null}
       <p className="mt-6 text-xs text-muted-foreground">
         Updated{" "}
         <time dateTime={dates.updatedAt}>
