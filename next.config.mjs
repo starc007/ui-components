@@ -136,13 +136,16 @@ const nextConfig = {
       ),
       { source: "/components/casino", destination: "/casino", permanent: true },
       { source: "/components/casino/:path+", destination: "/casino/:path+", permanent: true },
-      // Casino games shipped under Blocks before they got their own section.
+      // Casino games shipped under Blocks before they got their own section,
+      // and their source still lives in components/motion.
       ...["crash", "mines", "plinko"].flatMap((slug) =>
-        ["", ".md"].map((extension) => ({
-          source: `/components/blocks/${slug}${extension}`,
-          destination: `/casino/${slug}${extension}`,
-          permanent: true,
-        })),
+        ["blocks", "motion"].flatMap((category) =>
+          ["", ".md"].map((extension) => ({
+            source: `/components/${category}/${slug}${extension}`,
+            destination: `/casino/${slug}${extension}`,
+            permanent: true,
+          })),
+        ),
       ),
       ...BLOCK_COMPONENTS.map((slug) => ({
         source: `/components/motion/${slug}`,
