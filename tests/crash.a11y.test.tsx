@@ -52,7 +52,7 @@ for (const [name, Design] of Object.entries(DESIGNS)) {
       expect(main.textContent).toBe("Play again");
       expect(document.activeElement).toBe(main);
       expect(getByRole("list", { name: "Recent crashes" }).textContent).toContain("1.10×");
-      // The receipt rises once the crash has played, and focus lands on Play again.
+      // The receipt rises once the crash has played, and focus stays on Play again.
       const result = await waitFor(() => getByRole("group", { name: "Round result" }));
       expect(result.textContent).toContain("Crashed at1.10×");
       expect(getByRole("button", { name: "Hide result and show the flight" })).toBeTruthy();

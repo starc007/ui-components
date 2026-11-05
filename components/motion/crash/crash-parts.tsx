@@ -1,5 +1,7 @@
 "use client";
 
+// Pieces every Crash design shares, so each design only draws its stage.
+
 import { Check, History as HistoryIcon, Volume2, VolumeX, X } from "lucide-react";
 import { AnimatePresence, motion, type Transition } from "motion/react";
 import { memo, type ReactNode, type Ref, useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -44,7 +46,6 @@ const HEAT_PILL = {
   hot: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
 } as const;
 
-// Pieces every Crash design shares, so each design only draws the flight.
 /** The width of the viewBox an SVG stage draws in. */
 export const STAGE_W = 400;
 /**
@@ -166,7 +167,7 @@ const TICKET_DELAY = 0.7;
 const CARD_IN = { type: "spring", duration: 0.4, bounce: 0.15 } as const;
 const CARD_OUT = { duration: 0.15, ease: EASE_OUT } as const;
 // Inside, chunks arrive in reading order, then the flight replays.
-const STAGE = { duration: 0.25, ease: EASE_OUT } as const;
+const CHUNK = { duration: 0.25, ease: EASE_OUT } as const;
 // The tear line sits this far down; the side notches are cut there.
 const TEAR = 104;
 // A drop-shadow on the ticket's wrapper: the notch mask would clip a
@@ -223,13 +224,13 @@ function ResultTicket({
   );
 }
 
-function Stage({ delay, reduce, className, children }: { delay: number; reduce: boolean; className?: string; children: ReactNode }) {
+function Chunk({ delay, reduce, className, children }: { delay: number; reduce: boolean; className?: string; children: ReactNode }) {
   return (
     <motion.div
       className={className}
       initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ ...STAGE, delay: reduce ? 0 : delay }}
+      transition={{ ...CHUNK, delay: reduce ? 0 : delay }}
     >
       {children}
     </motion.div>
@@ -253,12 +254,12 @@ function Ticket({ game, miniature }: { game: CrashGame; miniature?: (props: Cras
         )}
         style={{ height: TEAR }}
       >
-        <Stage delay={0.05} reduce={reduce}>
+        <Chunk delay={0.05} reduce={reduce}>
           <p className={cn("text-xs font-medium tracking-wide uppercase", won ? PRIMARY_TEXT : "text-rose-700 dark:text-rose-400")}>
             {won ? "Cashed out" : "Crashed"}
           </p>
-        </Stage>
-        <Stage delay={0.1} reduce={reduce}>
+        </Chunk>
+        <Chunk delay={0.1} reduce={reduce}>
           <p className={cn("text-3xl font-semibold", !won && "text-muted-foreground line-through decoration-2")}>
             {won ? (
               <NumberTicker
@@ -276,11 +277,11 @@ function Ticket({ game, miniature }: { game: CrashGame; miniature?: (props: Cras
               <span className="tabular-nums">{formatMultiplier(crash)}</span>
             )}
           </p>
-        </Stage>
+        </Chunk>
       </div>
       <div aria-hidden="true" className="mx-4 border-t-2 border-dashed border-border" />
       <div className="flex items-center gap-4 px-5 pt-4 pb-5">
-        <Stage delay={0.18} reduce={reduce} className="flex-1">
+        <Chunk delay={0.18} reduce={reduce} className="flex-1">
           <dl className="grid gap-1.5 text-xs">
             <Row label="Crashed at" value={formatMultiplier(crash)} />
             <Row label="Flight" value={`${t.toFixed(1)}s`} />
@@ -294,12 +295,12 @@ function Ticket({ game, miniature }: { game: CrashGame; miniature?: (props: Cras
               <Row label="Auto target" value={roundAuto === null ? "Off" : formatShort(roundAuto)} />
             )}
           </dl>
-        </Stage>
+        </Chunk>
         {/* A narrow ticket keeps the figures on one line each and drops the miniature. */}
         {miniature ? (
-          <Stage delay={0.24} reduce={reduce} className="@max-[15rem]:hidden">
+          <Chunk delay={0.24} reduce={reduce} className="@max-[15rem]:hidden">
             {miniature({ crash, cashed, cashedT: game.cashedT, target: won ? null : roundAuto, reduce })}
-          </Stage>
+          </Chunk>
         ) : null}
       </div>
     </div>
