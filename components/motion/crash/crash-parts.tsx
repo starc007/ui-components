@@ -147,8 +147,10 @@ const CARD_OUT = { duration: 0.15, ease: EASE_OUT } as const;
 const STAGE = { duration: 0.25, ease: EASE_OUT } as const;
 // The tear line sits this far down; the side notches are cut there.
 const TEAR = 104;
+// A drop-shadow on the ticket's wrapper: the notch mask would clip a
+// box-shadow on the ticket itself.
+const TICKET_SHADOW = "[filter:drop-shadow(0_1px_1px_rgb(0_0_0/0.12))_drop-shadow(0_12px_16px_rgb(0_0_0/0.3))]";
 const NOTCH_MASK = `radial-gradient(circle 9px at 0 ${TEAR}px, transparent 98%, black), radial-gradient(circle 9px at 100% ${TEAR}px, transparent 98%, black)`;
-const CARD_SHADOW = "shadow-[0_1px_2px_rgb(0_0_0/0.12),0_16px_40px_-12px_rgb(0_0_0/0.45)]";
 
 /**
  * The end-of-round receipt over a dimmed stage. It has no buttons: the main
@@ -186,7 +188,7 @@ function ResultTicket({
           aria-label="Round result"
           // Sized here: the ticket is a size container, so it can't take its
           // width from its contents.
-          className="w-full max-w-[17rem]"
+          className={cn("w-full max-w-[17rem]", TICKET_SHADOW)}
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={reduce ? { opacity: 0, transition: CARD_OUT } : { opacity: 0, y: 8, scale: 0.98, transition: CARD_OUT }}
@@ -219,10 +221,7 @@ function Ticket({ game, miniature }: { game: CrashGame; miniature?: (props: Cras
     <div
       // The stub is about 200px tall; a short stage (its width sets its
       // height) scales it down rather than clipping it.
-      className={cn(
-        "@container w-full rounded-2xl bg-card text-foreground @max-[17rem]:scale-[0.72] @min-[17rem]:@max-[21rem]:scale-[0.85]",
-        CARD_SHADOW,
-      )}
+      className="@container w-full rounded-2xl bg-card text-foreground @max-[17rem]:scale-[0.72] @min-[17rem]:@max-[21rem]:scale-[0.85]"
       style={{ WebkitMaskImage: NOTCH_MASK, WebkitMaskComposite: "source-in", maskImage: NOTCH_MASK, maskComposite: "intersect" }}
     >
       <div
