@@ -2277,6 +2277,7 @@ export const registry: CategoryEntry[] = [
             description:
               "A paper plane flies the multiplier up a curve through a speed field; a parachute opens where you cash out, and a crash tumbles the plane out of the sky.",
             installSlug: "crash",
+            credit: contributors.avinit,
             badge: "new",
             launchedAt: "2026-11-05",
             file: "components/motion/crash.tsx",
@@ -2289,6 +2290,7 @@ export const registry: CategoryEntry[] = [
             description:
               "A hot-air balloon climbs an altimeter: the tape and clouds scroll past as the multiplier rises, a parachutist bails at your cash out, and a crash pops the envelope.",
             installSlug: "crash-balloon",
+            credit: contributors.avinit,
             badge: "new",
             launchedAt: "2026-11-05",
             file: "components/motion/crash/crash-balloon.tsx",
@@ -2301,6 +2303,7 @@ export const registry: CategoryEntry[] = [
             description:
               "Blocks stack higher with the multiplier and the tower sways more the taller it grows; your cash-out block keeps a pennant, and a crash topples the top of the stack.",
             installSlug: "crash-tower",
+            credit: contributors.avinit,
             badge: "new",
             launchedAt: "2026-11-05",
             file: "components/motion/crash/crash-tower.tsx",
@@ -2314,6 +2317,7 @@ export const registry: CategoryEntry[] = [
         name: "Mines",
         description: "A mines board: pick tiles to find gems, each one raising the multiplier, and cash out before you hit a mine. Each gem you find is numbered in pick order, an odds ring shows the chance the next pick is safe, and the round's end reveals every tile in a ripple from your last pick before a ticket-stub result card rises with the outcome, stats and a miniature of your run. Distinct synthesized sounds for gems, streaks, mines and cash outs; keyboard playable, reduced-motion safe.",
         file: "components/motion/mines.tsx",
+        credit: contributors.avinit,
         badge: "new",
         launchedAt: "2026-11-05",
         keywords: ["mines game", "minesweeper react", "gem mines", "reveal tiles game", "multiplier game ui"],
@@ -2323,6 +2327,7 @@ export const registry: CategoryEntry[] = [
         name: "Plinko",
         description: "A Plinko board where balls drop through rows of pegs, bounce left or right off each one and land in a slot. Pegs flash when hit, the slot pulses on landing, several balls can fall at once, and reduced motion lands a ball instantly.",
         file: "components/motion/plinko.tsx",
+        credit: contributors.avinit,
         badge: "new",
         launchedAt: "2026-11-03",
         keywords: ["plinko", "pachinko", "galton board", "ball drop game react", "peg board animation"],
