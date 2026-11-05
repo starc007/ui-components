@@ -49,6 +49,7 @@ export function SiteHeader() {
   const isBlocks = pathname.startsWith("/components/blocks");
   const isAgents = pathname.startsWith("/components/agents");
   const isCharts = pathname.startsWith("/charts");
+  const isCasino = pathname.startsWith("/casino");
   const isNative = isNativePath(pathname);
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
@@ -93,7 +94,7 @@ export function SiteHeader() {
               href="/components/motion"
               className={cn(
                 "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
-                isCharts ? "inline-flex" : "hidden xl:inline-flex",
+                isCharts || isCasino ? "inline-flex" : "hidden xl:inline-flex",
                 isComponents
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -127,13 +128,25 @@ export function SiteHeader() {
               href="/charts"
               className={cn(
                 "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
-                isCharts ? "hidden xl:inline-flex" : "inline-flex",
+                isCharts || isCasino ? "hidden xl:inline-flex" : "inline-flex",
                 isCharts
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
               Charts
+            </Link>
+            <Link
+              href="/casino"
+              className={cn(
+                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                isCasino ? "inline-flex" : "hidden xl:inline-flex",
+                isCasino
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Casino
             </Link>
             <Link
               href={NATIVE_PATH}

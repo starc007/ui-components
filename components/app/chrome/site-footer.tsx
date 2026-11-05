@@ -9,6 +9,7 @@ const COLUMNS = [
   { category: "blocks", title: "Blocks" },
   { category: "agents", title: "AI Agents" },
   { category: "charts", title: "Charts" },
+  { category: "casino", title: "Casino" },
 ].map(({ category, title }) => {
   const components =
     registry.find((entry) => entry.slug === category)?.components ?? [];
@@ -52,7 +53,7 @@ const PRODUCTS = [
 export function SiteFooter() {
   return (
     <footer className="relative isolate overflow-hidden border-border/60 border-t">
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-x-6 gap-y-12 px-4 pt-16 pb-48 sm:pb-64 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.4fr_repeat(6,minmax(0,1fr))]">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-x-6 gap-y-12 px-4 pt-16 pb-48 sm:pb-64 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.4fr_repeat(7,minmax(0,1fr))]">
         {/* Brand. */}
         <div className="max-w-xs">
           <Link

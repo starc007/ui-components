@@ -1,4 +1,4 @@
-import { categoryPath } from "@/lib/component-paths";
+import { categoryPath, TOP_LEVEL_CATEGORIES } from "@/lib/component-paths";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { findCategory, registry } from "@/lib/registry";
@@ -29,6 +29,13 @@ const categoryContent = {
     description:
       "Explore interactive activity heatmaps, monthly returns, and price target charts. Copy the React source and customize it for your data.",
     allLabel: "All charts",
+  },
+  casino: {
+    title: "Animated React Casino Games — Crash, Mines and Plinko",
+    heading: "Animated React casino games",
+    description:
+      "Explore animated crash, mines and plinko games with fair built-in outcomes or server-decided results. Copy the React source and wire it to your own game logic.",
+    allLabel: "All casino games",
   },
   agents: {
     title: "AI Agent Components — Animated React AI Interfaces",
@@ -79,7 +86,7 @@ const AGENT_CATEGORY_GROUPS = [
 ] as const;
 
 export function generateStaticParams() {
-  return registry.filter((c) => c.slug !== "charts").map((c) => ({ category: c.slug }));
+  return registry.filter((c) => !TOP_LEVEL_CATEGORIES.includes(c.slug)).map((c) => ({ category: c.slug }));
 }
 
 export async function generateMetadata({

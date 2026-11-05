@@ -322,7 +322,7 @@ export async function buildShadcnItem(
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: comp.slug,
-    type: comp.categorySlug === "blocks" ? "registry:block" : "registry:component",
+    type: comp.categorySlug === "blocks" || comp.categorySlug === "casino" ? "registry:block" : "registry:component",
     title: comp.name,
     description: comp.description,
     author: "Saurabh <saurabh10102@gmail.com>",

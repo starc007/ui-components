@@ -115,6 +115,7 @@ const nextConfig = {
   async rewrites() {
     return [
       { source: "/charts/:slug.md", destination: "/r/:slug.md?category=charts" },
+      { source: "/casino/:slug.md", destination: "/r/:slug.md?category=casino" },
       {
         source: "/components/:category/:slug.md",
         destination: "/r/:slug.md?category=:category",
@@ -130,6 +131,16 @@ const nextConfig = {
         ["", ".md"].map((extension) => ({
           source: `/components/motion/${slug}${extension}`,
           destination: `/charts/${slug}${extension}`,
+          permanent: true,
+        })),
+      ),
+      { source: "/components/casino", destination: "/casino", permanent: true },
+      { source: "/components/casino/:path+", destination: "/casino/:path+", permanent: true },
+      // Casino games shipped under Blocks before they got their own section.
+      ...["crash", "mines", "plinko"].flatMap((slug) =>
+        ["", ".md"].map((extension) => ({
+          source: `/components/blocks/${slug}${extension}`,
+          destination: `/casino/${slug}${extension}`,
           permanent: true,
         })),
       ),
@@ -165,6 +176,11 @@ const nextConfig = {
       "./components/charts/**/*",
       "./components/motion/**/*",
       "./components/previews/charts/**/*",
+      "./lib/**/*",
+    ],
+    "/casino/*": [
+      "./components/motion/**/*",
+      "./components/previews/casino/**/*",
       "./lib/**/*",
     ],
     "/components/*": [
