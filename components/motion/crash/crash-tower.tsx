@@ -4,7 +4,7 @@ import { AnimatePresence, motion, type Transition } from "motion/react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import { type CrashMiniatureProps, CrashShell, MINI, MINI_REPLAY } from "./crash-parts";
+import { type CrashMiniatureProps, CrashShell, MINI, MINI_REPLAY, PRIMARY_TEXT } from "./crash-parts";
 import { type CrashGame, type CrashProps, EXIT, formatShort, GROWTH, SWAP, useCrashGame } from "./use-crash-game";
 
 export { type CrashProps, crashPoint, formatMultiplier } from "./use-crash-game";
@@ -130,7 +130,7 @@ function Tower({ game }: { game: CrashGame }) {
             rise={markRise(ghost, cam)}
             ceiling={ceiling}
             label={`Last ${formatShort(ghost)}`}
-            className="border-muted-foreground/30 text-muted-foreground/60"
+            className="border-muted-foreground/30 text-muted-foreground"
           />
         ) : null}
         {target !== null ? (
@@ -139,7 +139,7 @@ function Tower({ game }: { game: CrashGame }) {
             rise={markRise(target, cam)}
             ceiling={ceiling}
             label={`Target ${formatShort(target)}`}
-            className="border-primary/70 text-primary/70"
+            className={cn("border-primary/70", PRIMARY_TEXT)}
           />
         ) : null}
       </AnimatePresence>
@@ -329,8 +329,9 @@ function MiniTower({ crash, cashed, target, reduce }: CrashMiniatureProps) {
         const w = (width(r) / 72) * 28;
         const x = cx + offset(r) * 0.4 - w / 2;
         const topple = r >= rows - fallen;
-        // How far into the fallen part this row is, top first.
-        const fall = rows - 1 - r;
+        // Fallen rows land in a pile beside the tower: the lowest falls
+        // first and lies at the bottom.
+        const pile = r - (rows - fallen);
         const isCash = r === cashRow;
         return (
           // biome-ignore lint/suspicious/noArrayIndexKey: rows are positional
@@ -342,9 +343,9 @@ function MiniTower({ crash, cashed, target, reduce }: CrashMiniatureProps) {
                 topple && !reduce
                   ? {
                       opacity: [0, 1, 1, 0.7],
-                      y: [-4, 0, 0, 10 + fall * 5],
-                      x: [0, 0, 0, 12 + fall * 7],
-                      rotate: [0, 0, 0, 35 + fall * 25],
+                      y: [-4, 0, 0, base - 3 - pile * 3.5 - rowY(r)],
+                      x: [0, 0, 0, 33 + pile * 2],
+                      rotate: [0, 0, 0, pile % 2 ? -3 : 4],
                     }
                   : { opacity: 1, y: 0 }
               }

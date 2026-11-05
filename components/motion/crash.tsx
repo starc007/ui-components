@@ -4,7 +4,7 @@ import { AnimatePresence, motion, type Transition } from "motion/react";
 import { useId } from "react";
 import { EASE_IN_OUT, EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import { type CrashMiniatureProps, CrashShell, MINI, MINI_REPLAY } from "./crash/crash-parts";
+import { type CrashMiniatureProps, CrashShell, MINI, MINI_REPLAY, PRIMARY_TEXT } from "./crash/crash-parts";
 import {
   BURST,
   type CrashProps,
@@ -224,12 +224,13 @@ function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphPro
             key="target"
             className="text-primary"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.75 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: EXIT }}
             transition={{ duration: 0.15, ease: EASE_OUT }}
           >
             {targetLine.above ? null : (
               <line
+                opacity={0.75}
                 x1={PAD.left}
                 x2={W - PAD.right}
                 y1={targetLine.y}
@@ -244,7 +245,7 @@ function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphPro
               x={W - PAD.right - 4}
               y={targetLine.above ? PAD.top + 4 : targetLine.y - 6}
               textAnchor="end"
-              className="fill-current text-[10px] font-medium tabular-nums"
+              className={cn("fill-current text-[10px] font-medium tabular-nums", PRIMARY_TEXT)}
             >
               {`Auto ${targetLine.label}${targetLine.above ? " ↑" : ""}`}
             </text>

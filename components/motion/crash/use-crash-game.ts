@@ -58,6 +58,10 @@ export const GROWTH = 0.12;
 export const growth = (seconds: number) => Math.exp(GROWTH * seconds);
 export const timeAt = (multiplier: number) => Math.log(multiplier) / GROWTH;
 const MAX_CRASH = 1_000_000;
+// The highest multiplier a round can show: a passed crash point settles no
+// higher, and an open live round stops climbing here (about 32 minutes in)
+// rather than overflowing to Infinity.
+const CEILING = 1e100;
 
 /**
  * A crash point from one uniform draw in [0, 1): the round reaches `m` with
@@ -73,12 +77,13 @@ export function crashPoint(random: () => number = Math.random, houseEdge = 0) {
 
 /**
  * A passed crash point as the game plays it: at least 1 and floored to two
- * decimals, the way crash games display them. Not capped, so the round ends
- * on exactly the caller's value however high; only `crashPoint()` caps.
+ * decimals, the way crash games display them. The round ends on exactly the
+ * caller's value up to the 1e100 ceiling; `crashPoint()` caps at 1,000,000.
+ * Anything not finite plays as 1.
  */
 const settle = (point: number) => {
-  const value = floor2(point);
-  return Number.isFinite(value) ? Math.max(1, value) : 1;
+  if (!Number.isFinite(point)) return 1;
+  return Math.max(1, floor2(Math.min(point, CEILING)));
 };
 
 /**
@@ -128,7 +133,7 @@ export function useCrashGame({
   const reduce = useReducedMotion() ?? false;
   const [internalAuto, setInternalAuto] = useState(defaultAutoCashOut);
   const rawAuto = autoProp === undefined ? internalAuto : autoProp;
-  const auto = rawAuto === null || !Number.isFinite(rawAuto) ? null : Math.max(1.01, rawAuto);
+  const auto = rawAuto === null || !Number.isFinite(rawAuto) ? null : Math.max(1.01, floor2(rawAuto));
   const [phase, setPhase] = useState<CrashPhase>("idle");
   const [round, setRound] = useState(0);
   const [elapsed, setElapsed] = useState(0);
@@ -296,7 +301,7 @@ export function useCrashGame({
       }
     }
     const end = timeAt(f.crash);
-    f.t = Math.min(end, f.t + dt * f.rate);
+    f.t = Math.min(end, f.t + dt * f.rate, timeAt(CEILING));
     const value = growth(f.t);
     if (cashedRef.current === null) {
       // A target at or below the crash point always pays, at the target. The

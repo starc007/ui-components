@@ -23,15 +23,23 @@ import {
   SWAP,
 } from "./use-crash-game";
 
+/**
+ * Primary for small text: a shade darker on light surfaces and lighter on
+ * dark ones, so 10-12px labels keep 4.5:1. Large text and marks use plain
+ * primary.
+ */
+export const PRIMARY_TEXT =
+  "text-[color:color-mix(in_oklab,var(--color-primary)_75%,black)] dark:text-[color:color-mix(in_oklab,var(--color-primary)_80%,white)]";
+
 // Readout and history colours per heat: neutral, then primary, then amber.
 const HEAT_TEXT = {
   cool: "text-foreground",
   warm: "text-primary",
-  hot: "text-amber-600 dark:text-amber-400",
+  hot: "text-amber-700 dark:text-amber-400",
 } as const;
 const HEAT_PILL = {
   cool: "bg-foreground/5 text-muted-foreground",
-  warm: "bg-primary/10 text-primary",
+  warm: `bg-primary/10 ${PRIMARY_TEXT}`,
   hot: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
 } as const;
 
@@ -164,7 +172,7 @@ function ResultTicket({
         aria-label="Hide result and show the flight"
         onClick={onClose}
         {...gate}
-        className="absolute inset-0 z-20 cursor-default bg-background/55 outline-none backdrop-blur-[2px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+        className="absolute inset-0 z-20 cursor-default bg-background/55 outline-none backdrop-blur-[2px] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0, transition: CARD_OUT }}
@@ -223,7 +231,7 @@ function Ticket({ game, miniature }: { game: CrashGame; miniature?: (props: Cras
         style={{ height: TEAR }}
       >
         <Stage delay={0.05} reduce={reduce}>
-          <p className={cn("text-xs font-medium tracking-wide uppercase", won ? "text-primary" : "text-rose-600 dark:text-rose-400")}>
+          <p className={cn("text-xs font-medium tracking-wide uppercase", won ? PRIMARY_TEXT : "text-rose-700 dark:text-rose-400")}>
             {won ? "Cashed out" : "Crashed"}
           </p>
         </Stage>
@@ -510,7 +518,7 @@ function CrashEyebrow({ game, className }: { game: CrashGame; className?: string
     <p
       className={cn(
         "flex h-4 items-center gap-1.5 text-[11px] font-medium tracking-[0.08em] uppercase transition-colors duration-150",
-        lost ? "text-rose-600 dark:text-rose-400" : crashed ? "text-primary" : "text-muted-foreground",
+        lost ? "text-rose-700 dark:text-rose-400" : crashed ? PRIMARY_TEXT : "text-muted-foreground",
         className,
       )}
     >

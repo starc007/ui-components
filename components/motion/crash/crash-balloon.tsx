@@ -4,7 +4,7 @@ import { AnimatePresence, cubicBezier, motion, type Transition } from "motion/re
 import { useId } from "react";
 import { EASE_IN_OUT, EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import { type CrashMiniatureProps, CrashShell, MINI, MINI_REPLAY } from "./crash-parts";
+import { type CrashMiniatureProps, CrashShell, MINI, MINI_REPLAY, PRIMARY_TEXT } from "./crash-parts";
 import {
   BURST,
   type CrashProps,
@@ -159,7 +159,7 @@ function Stage({ t, cashed, crashed, lost, round, pulse, target, ghost, reduce, 
             <path d="M-8.5,-2.5L-3.5,2.5M-3.5,-2.5L-8.5,2.5" stroke="currentColor" strokeWidth={1.25} />
             {/* Dropped when it would print over the target's label. */}
             {target !== null && Math.abs(at(ghost) - at(target)) < 12 ? null : (
-              <text x={-12} dy="0.32em" textAnchor="end" className="fill-current text-[9px] tabular-nums">
+              <text x={-12} dy="0.32em" textAnchor="end" className="fill-muted-foreground text-[10px] tabular-nums">
                 {formatShort(ghost)}
               </text>
             )}
@@ -174,15 +174,16 @@ function Stage({ t, cashed, crashed, lost, round, pulse, target, ghost, reduce, 
           <motion.g
             key="target"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.7 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: EXIT }}
             transition={SWAP}
             className="text-primary"
           >
+            {/* The marks stay quiet; the label keeps full contrast. */}
             <g transform={`translate(${TAPE_X},${at(target).toFixed(2)})`}>
-              <line x2={W - TAPE_X} stroke="currentColor" strokeDasharray="3 3" strokeWidth={1.25} />
-              <path d="M0,0V-10L8,-7L0,-4" fill="none" stroke="currentColor" strokeLinejoin="round" />
-              <text x={-12} dy="0.32em" textAnchor="end" className="fill-current text-[9px]">
+              <line x2={W - TAPE_X} stroke="currentColor" strokeDasharray="3 3" strokeWidth={1.25} opacity={0.7} />
+              <path d="M0,0V-10L8,-7L0,-4" fill="none" stroke="currentColor" strokeLinejoin="round" opacity={0.7} />
+              <text x={-12} dy="0.32em" textAnchor="end" className={cn("fill-current text-[10px]", PRIMARY_TEXT)}>
                 target
               </text>
             </g>
