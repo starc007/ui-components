@@ -29,6 +29,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "new",
         "text": "Mines is a tile game: choose how many mines to hide, reveal tiles to find gems that raise the multiplier, and cash out before you hit a mine. Found gems are numbered in pick order, an odds ring shows how safe the next pick is, a result ticket sums up each round with a miniature map of your run, and optional sound gives gems, streaks, mines and cash outs their own voice. It plays fully from the keyboard.",
         "component": "mines"
+      },
+      {
+        "type": "fixed",
+        "text": "Bouncy Accordion has its original weighted bounce back on every open, close and switch.",
+        "component": "bouncy-accordion"
       }
     ]
   },
