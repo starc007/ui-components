@@ -60,11 +60,13 @@ const crack = (k: number) => {
 };
 // The top surface of the block on top when the multiplier reaches m, in px over the baseline.
 const blockOf = (m: number) => Math.floor(Math.log(m) / Math.log(STEP) + 1e-9);
+// The block on top at a time into the flight.
+const blockAt = (t: number) => Math.floor(t * PER_SECOND + 1e-9);
 const markRise = (m: number, cam: number) => (blockOf(m) - cam) * PITCH + BLOCK_H;
 
 /** The stack, derived from t each frame: count, camera, sway and cracks. */
 function Tower({ game }: { game: CrashGame }) {
-  const { t, crashed, lost, cashed, round, reduce, target, ghost } = game;
+  const { t, crashed, lost, cashedT, round, reduce, target, ghost } = game;
   const stage = useRef<HTMLDivElement>(null);
   const [stageH, setStageH] = useState(MIN_STAGE_H);
   useLayoutEffect(() => {
@@ -93,7 +95,9 @@ function Tower({ game }: { game: CrashGame }) {
   // The upper blocks lag the sway a little, so the tower bends rather than pivots.
   const bend = amp * 1.5 * Math.sin(phase - 0.9);
 
-  const cashK = cashed === null ? null : blockOf(cashed);
+  // From the cash-out time, not the value: the value is floored to two
+  // decimals and can fall just below the block that was on top.
+  const cashK = cashedT === null ? null : blockAt(cashedT);
   // A mark's line sits on top of its block, so the labels of that block and
   // the next would print over the mark's own.
   const marked = [ghost, target].flatMap((m) => (m === null ? [] : [blockOf(m)]));
@@ -289,12 +293,12 @@ const MINI_ROWS = 10;
  * blocks so any height fits, your cash-out row is blue with a pennant, a
  * missed target is a dashed line, and the top rows topple off at the crash.
  */
-function MiniTower({ crash, cashed, target, reduce }: CrashMiniatureProps) {
+function MiniTower({ crash, cashed, cashedT, target, reduce }: CrashMiniatureProps) {
   const blocks = blockOf(crash) + 1;
   const per = Math.ceil(blocks / MINI_ROWS);
   const rows = Math.ceil(blocks / per);
-  const rowOf = (m: number) => Math.min(rows - 1, Math.floor(blockOf(m) / per));
-  const cashRow = cashed === null ? null : rowOf(cashed);
+  const rowOf = (block: number) => Math.min(rows - 1, Math.floor(block / per));
+  const cashRow = cashedT === null ? null : rowOf(blockAt(cashedT));
   const fallen = rows > 1 ? Math.min(3, rows - 1) : 0;
   const base = MINI.height - 4;
   const rowY = (r: number) => base - 4 * (r + 1);

@@ -276,7 +276,7 @@ function Ticket({ game, miniature }: { game: CrashGame; miniature?: (props: Cras
         {/* A narrow ticket keeps the figures on one line each and drops the miniature. */}
         {miniature ? (
           <Stage delay={0.24} reduce={reduce} className="@max-[15rem]:hidden">
-            {miniature({ crash, cashed, target: won ? null : roundAuto, reduce })}
+            {miniature({ crash, cashed, cashedT: game.cashedT, target: won ? null : roundAuto, reduce })}
           </Stage>
         ) : null}
       </div>
@@ -297,6 +297,8 @@ function Row({ label, value }: { label: string; value: string }) {
 export interface CrashMiniatureProps {
   crash: number;
   cashed: number | null;
+  /** Seconds into the flight at the cash out, for designs that count steps. */
+  cashedT: number | null;
   /** The auto target, only when the round crashed short of it. */
   target: number | null;
   reduce: boolean;

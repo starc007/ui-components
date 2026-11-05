@@ -152,6 +152,9 @@ export function useCrashGame({
   const [round, setRound] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [cashed, setCashed] = useState<number | null>(null);
+  // Seconds into the flight at the cash out. The value is floored to two
+  // decimals, so a design that counts steps (Tower's blocks) needs the time.
+  const [cashedT, setCashedT] = useState<number | null>(null);
   const [crashedAt, setCrashedAt] = useState<number | null>(null);
   const [history, setHistory] = useState<{ id: number; value: number }[]>([]);
   const [announcement, setAnnouncement] = useState("");
@@ -215,10 +218,11 @@ export function useCrashGame({
   const t = crashed && crashedAt !== null ? timeAt(crashedAt) : elapsed;
   const multiplier = crashed && crashedAt !== null ? crashedAt : floor2(growth(t));
 
-  const cashOut = (value: number) => {
+  const cashOut = (value: number, time: number) => {
     if (!busy.current || cashedRef.current !== null) return;
     cashedRef.current = value;
     setCashed(value);
+    setCashedT(time);
     setAnnouncement(`Cashed out at ${formatMultiplier(value)}.`);
     if (soundOn) getPlayer().cashOut();
     // A live cash out stands only if the crash point turns out above it.
@@ -264,6 +268,7 @@ export function useCrashGame({
     flight.current.pressTime = performance.now();
     cashedRef.current = null;
     setCashed(null);
+    setCashedT(null);
     setCrashedAt(null);
     setElapsed(0);
     setPulse(0);
@@ -322,6 +327,7 @@ export function useCrashGame({
       if (cashedRef.current !== null && cashedRef.current > f.crash) {
         cashedRef.current = null;
         setCashed(null);
+        setCashedT(null);
         f.held = false;
       }
     }
@@ -336,7 +342,7 @@ export function useCrashGame({
     if (cashedRef.current === null) {
       // A target at or below the crash point always pays, at the target. The
       // crash check covers a target equal to the crash point.
-      if (f.auto !== null && f.auto <= f.crash && (value >= f.auto || f.t >= end)) cashOut(f.auto);
+      if (f.auto !== null && f.auto <= f.crash && (value >= f.auto || f.t >= end)) cashOut(f.auto, timeAt(f.auto));
       // Finite: an open live round that runs for hours overflows to Infinity.
       else if (f.t < end && Number.isFinite(value) && value >= milestone(f.milestone)) {
         // A long frame can cross several; only the last is told.
@@ -413,7 +419,7 @@ export function useCrashGame({
     if (!running) start();
     else if (cashedRef.current === null) {
       flight.current.pressTime = now;
-      cashOut(floor2(growth(flight.current.t)));
+      cashOut(floor2(growth(flight.current.t)), flight.current.t);
     } else skip();
   };
   const actionLabel = starting
@@ -477,6 +483,8 @@ export function useCrashGame({
     t,
     multiplier,
     cashed,
+    /** Seconds into the flight at the cash out, or null. */
+    cashedT,
     round,
     pulse,
     history,
