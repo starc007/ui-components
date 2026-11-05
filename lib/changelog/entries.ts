@@ -12,6 +12,11 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
+        "text": "Crash, Mines and Plinko now have their own Casino section.",
+        "href": "/casino"
+      },
+      {
+        "type": "new",
         "text": "Crash is a multiplier game: cash out before the round crashes. It ships as a paper plane, a hot-air balloon and a stacking tower.",
         "component": "crash"
       },

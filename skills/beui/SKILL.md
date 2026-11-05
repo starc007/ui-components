@@ -149,7 +149,7 @@ The live registry is the source of truth. Use the table below only to resolve co
 
 When contributing to beUI itself, follow `AGENTS.md`. A new public component needs source, preview, registry entry, and a passing `bun run check:registry`. Never rename existing `/r/{name}.json` slugs.
 
-Chart components (`heat-calendar`, `returns-calendar`, `price-target-fan`) live under `/charts` in the docs. Their `@beui` install slugs are unchanged.
+Chart components (`heat-calendar`, `returns-calendar`, `price-target-fan`) live under `/charts` in the docs. Their `@beui` install slugs are unchanged. Casino games (`crash`, `mines`, `plinko`) live under `/casino` the same way, and keep their install slugs.
 
 Compose charts from their root and exported parts. `HeatCalendar` provides `HeatCalendarGrid`, `HeatCalendarLegend`, and `HeatCalendarTooltip`; `ReturnsCalendar` provides `ReturnsCalendarGrid` and `ReturnsCalendarTooltip`. Put each calendar tooltip inside its grid. Both accept `selection`, `defaultSelection`, and `onSelectionChange`.
 
