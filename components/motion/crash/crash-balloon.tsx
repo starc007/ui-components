@@ -2,7 +2,7 @@
 
 import { AnimatePresence, cubicBezier, motion, type Transition } from "motion/react";
 import { useId } from "react";
-import { EASE_IN_OUT, EASE_OUT } from "@/lib/ease";
+import { EASE_IN, EASE_IN_OUT, EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { type CrashMiniatureProps, CrashShell, MINI, MINI_REPLAY, PRIMARY_TEXT } from "./crash-parts";
 import {
@@ -398,10 +398,8 @@ function Landmarks({ t, at }: { t: number; at: (value: number) => number }) {
   );
 }
 
-// The basket drops out of the sky. lib/ease has no ease-in and a fall must
-// accelerate, so the curve is local (the same as Plinko's).
-const FALL = [0.55, 0, 1, 0.45] as const;
-const DROP: Transition = { duration: 0.6, ease: FALL };
+// The basket drops out of the sky, accelerating.
+const DROP: Transition = { duration: 0.6, ease: EASE_IN };
 // The bail-out is a once-a-round moment, so it may take its time.
 const CHUTE: Transition = {
   y: { duration: 2.2, ease: EASE_OUT },

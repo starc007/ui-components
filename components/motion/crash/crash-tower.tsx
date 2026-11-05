@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, type Transition } from "motion/react";
 import { useLayoutEffect, useRef, useState } from "react";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_IN, EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { type CrashMiniatureProps, CrashShell, MINI, MINI_REPLAY, PRIMARY_TEXT } from "./crash-parts";
 import { type CrashGame, type CrashProps, EXIT, formatShort, GROWTH, SWAP, useCrashGame } from "./use-crash-game";
@@ -30,8 +30,6 @@ const SWAY_RATE = 2.2;
 
 // A block lands with a little give, which reads as stacked by hand.
 const DROP: Transition = { type: "spring", duration: 0.35, bounce: 0.25 };
-// lib/ease has no ease-in and a fall must accelerate, so the curve is local (the same as Plinko's).
-const FALL = [0.55, 0, 1, 0.45] as const;
 
 /**
  * A crash game drawn as a tower: a block stacks on at every +8% and the tower
@@ -191,7 +189,7 @@ function Tower({ game }: { game: CrashGame }) {
                   falling && !reduce
                     ? {
                         duration: 0.6,
-                        ease: FALL,
+                        ease: EASE_IN,
                         // The top lets go first.
                         delay: (top - k) * 0.025,
                         opacity: { duration: 0.6, times: [0, 0.7, 1], delay: (top - k) * 0.025 },
@@ -351,7 +349,7 @@ function MiniTower({ crash, cashed, target, reduce }: CrashMiniatureProps) {
               }
               transition={
                 topple && !reduce
-                  ? { duration: 0.3 + 0.45, times: [0, 0.4, 0.5, 1], ease: FALL, delay: MINI_REPLAY.delay + r * step }
+                  ? { duration: 0.3 + 0.45, times: [0, 0.4, 0.5, 1], ease: EASE_IN, delay: MINI_REPLAY.delay + r * step }
                   : { ...MINI_LAND, delay: reduce ? 0 : MINI_REPLAY.delay + r * step }
               }
             >

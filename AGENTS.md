@@ -177,7 +177,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 ## Motion conventions
 
-- Use tokens from `lib/ease.ts`: `EASE_OUT`, `EASE_OUT_CSS`, `EASE_IN_OUT`, `EASE_DRAWER`, `SPRING_PRESS`, `SPRING_SWAP`, `SPRING_PANEL`, `SPRING_LAYOUT`, `SPRING_MOUSE`. No inline `cubic-bezier` or one-off spring configs; if tuning is genuinely component-specific, keep it a named local const with a comment saying why.
+- Use tokens from `lib/ease.ts`: `EASE_OUT`, `EASE_OUT_CSS`, `EASE_IN` (falls only), `EASE_IN_OUT`, `EASE_DRAWER`, `SPRING_PRESS`, `SPRING_SWAP`, `SPRING_PANEL`, `SPRING_LAYOUT`, `SPRING_MOUSE`. No inline `cubic-bezier` or one-off spring configs; if tuning is genuinely component-specific, keep it a named local const with a comment saying why.
 - Gate transform-based motion behind `useReducedMotion()` (from `motion/react`). Reduced motion keeps opacity/color transitions, drops movement. The global CSS media query cannot stop JS springs, so the hook is required.
 - Gate decorative hover effects (magnetic pull, tilt) behind `useHoverCapable()` from `lib/hooks/use-hover-capable` — touch devices get sticky phantom hover otherwise.
 - Animate `transform` and `opacity` only; never layout properties. Keep blur ≤ 10px. Exits faster than entrances. UI animations under ~300ms; press feedback ~100-160ms.
