@@ -7,6 +7,7 @@ import {
   NATIVE_PATH,
   nativeComponentPath,
   TOP_LEVEL_CATEGORIES,
+  topLevelCategory,
 } from "@/lib/component-paths";
 
 import Link from "next/link";
@@ -371,9 +372,7 @@ function WebSidebarNav({
     setFilter({ routeCategory, value: filter.value === "all" ? "all" : (routeCategory ?? "all") });
   }
   // Charts and Casino are their own sections: the sidebar lists only that section.
-  const section = TOP_LEVEL_CATEGORIES.find(
-    (slug) => pathname === `/${slug}` || pathname.startsWith(`/${slug}/`),
-  );
+  const section = topLevelCategory(pathname);
   const isSection = section !== undefined;
   const categoryFilter = filter.value;
   const now = Date.now();

@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { usePathname } from "next/navigation";
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { isTopLevelPath } from "@/lib/component-paths";
 import { EASE_OUT } from "@/lib/ease";
 
 export function PageTransition({ children }: { children: ReactNode }) {
@@ -12,7 +13,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
   // ancestor makes fixed descendants anchor to that moving element during the
   // transition instead of the viewport.
   const hasViewportFixedContent =
-    pathname.startsWith("/components/") || pathname.startsWith("/docs/") || pathname.startsWith("/charts") || pathname.startsWith("/casino") || pathname.startsWith("/playground");
+    pathname.startsWith("/components/") || pathname.startsWith("/docs/") || isTopLevelPath(pathname) || pathname.startsWith("/playground");
   const shouldTranslate = !reduce && !hasViewportFixedContent;
   const ref = useRef<HTMLDivElement>(null);
   // Skip enter animation on first load so LCP element is visible immediately.
