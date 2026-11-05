@@ -517,14 +517,26 @@ export function floor2(value: number) {
   return Math.floor(value * 100 + 1e-9) / 100;
 }
 
-const COMPACT = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
+// Truncated, never rounded up: a 10,960× payout reads 10.9K×, not 11K×.
+const COMPACT = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1, roundingMode: "trunc" });
 
-/** A multiplier as Crash shows it: 2.50×, or shortened when large (12.5K×). */
+/**
+ * Large values: compact up to trillions, then scientific (1.4e100), since
+ * compact notation stops at T and would print 1e100 as a 100-digit string.
+ */
+function formatLarge(multiplier: number) {
+  if (multiplier < 1e15) return COMPACT.format(multiplier);
+  // From toExponential, not log10: 1e100 / 10 ** 100 is 0.999….
+  const [mantissa, exponent] = multiplier.toExponential(6).split("e");
+  return `${Math.floor(Number(mantissa) * 10) / 10}e${Number(exponent)}`;
+}
+
+/** A multiplier as Crash shows it: 2.50×, or shortened when large (12.5K×, 1.4e20×). */
 export function formatMultiplier(multiplier: number) {
-  return `${multiplier < 10_000 ? multiplier.toFixed(2) : COMPACT.format(multiplier)}×`;
+  return `${multiplier < 10_000 ? multiplier.toFixed(2) : formatLarge(multiplier)}×`;
 }
 
 /** Scale and menu labels: 1.5×, 2×, 1.2K×. */
 export function formatShort(multiplier: number) {
-  return `${multiplier < 1000 ? +multiplier.toFixed(2) : COMPACT.format(multiplier)}×`;
+  return `${multiplier < 1000 ? +multiplier.toFixed(2) : formatLarge(multiplier)}×`;
 }
