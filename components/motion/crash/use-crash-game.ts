@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { createGameSounds, type GameSounds } from "@/lib/game-sounds";
 
@@ -308,7 +308,7 @@ export function useCrashGame({
     f.rate = reduce ? 1e9 : Math.max(1, (timeAt(f.crash) - f.t) / SKIP_TIME);
   };
 
-  const onFrame = useEffectEvent((dt: number) => {
+  const onFrame = useStable((dt: number) => {
     // The round already ended: a frame booked before a throwing onCrash.
     if (!busy.current) return false;
     const f = flight.current;
@@ -379,7 +379,7 @@ export function useCrashGame({
       if (!onFrame(dt)) cancelAnimationFrame(id);
     });
     return () => cancelAnimationFrame(id);
-  }, [phase]);
+  }, [phase, onFrame]);
 
   // Stable, so the menu and sound button can skip the 60fps re-renders.
   const setAuto = useStable((value: string) => {
@@ -493,8 +493,11 @@ export function useCrashGame({
 
 export type CrashGame = ReturnType<typeof useCrashGame>;
 
-/** A callback with one identity for the component's life that runs the latest render's code. */
-function useStable<A extends unknown[], R>(fn: (...args: A) => R) {
+/**
+ * A callback with one identity for the component's life that runs the latest
+ * render's code. Stands in for useEffectEvent, which needs React 19.2.
+ */
+export function useStable<A extends unknown[], R>(fn: (...args: A) => R) {
   const ref = useRef(fn);
   useLayoutEffect(() => {
     ref.current = fn;

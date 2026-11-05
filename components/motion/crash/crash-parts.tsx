@@ -2,7 +2,7 @@
 
 import { Check, History as HistoryIcon, Volume2, VolumeX, X } from "lucide-react";
 import { AnimatePresence, motion, type Transition } from "motion/react";
-import { memo, type ReactNode, type Ref, useEffect, useEffectEvent, useRef, useState } from "react";
+import { memo, type ReactNode, type Ref, useEffect, useRef, useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
 import { NumberTicker } from "@/components/motion/number-ticker";
@@ -21,6 +21,7 @@ import {
   PULSE,
   SHAKE,
   SWAP,
+  useStable,
 } from "./use-crash-game";
 
 /**
@@ -71,7 +72,7 @@ export function CrashShell({
   const resultShown = game.crashed && openRound === game.round;
   const { crashed, round } = game;
   // Read when the round ends, so a reduced-motion change can't reopen a closed ticket.
-  const ticketDelay = useEffectEvent(() => (game.reduce ? 0.15 : TICKET_DELAY) * 1000);
+  const ticketDelay = useStable(() => (game.reduce ? 0.15 : TICKET_DELAY) * 1000);
   useEffect(() => {
     if (!crashed) return;
     // A timer, not an animation callback, so a cut-short animation can't keep it shut.
@@ -79,7 +80,7 @@ export function CrashShell({
     // the main button, which now says Play again, kept focus through the round.
     const id = setTimeout(() => setOpenRound(round), ticketDelay());
     return () => clearTimeout(id);
-  }, [crashed, round]);
+  }, [crashed, round, ticketDelay]);
   const closeResult = () => {
     setOpenRound(null);
     mainRef.current?.focus();
