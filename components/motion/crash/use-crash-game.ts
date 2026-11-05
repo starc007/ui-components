@@ -34,7 +34,8 @@ export interface CrashProps {
    * the round ends lost and `onCashOut` is not called. A value still ahead
    * means the display is behind the server: the flight runs out to it
    * quickly and takes no more hand cash outs (an auto target below it still
-   * pays). Whether a round is live is fixed when it starts.
+   * pays). Whether a round is live is fixed when it starts; dropping
+   * `crashAt` mid-round ends it at the current multiplier.
    */
   crashAt?: CrashReveal | null;
   /** Called when the player starts a round, before its crash point is known, with the round's number (unique on the page). */
@@ -341,6 +342,18 @@ export function useCrashGame({
         setCashed(null);
         setCashedT(null);
         f.held = false;
+      }
+    }
+    // The live round lost its crash point source mid-flight: nothing can
+    // end it any more, so it ends here. A held cash out was never confirmed
+    // by the server, so it doesn't stand.
+    if (f.live && !live && !Number.isFinite(f.crash)) {
+      f.crash = settle(growth(f.t));
+      if (f.held) {
+        f.held = false;
+        cashedRef.current = null;
+        setCashed(null);
+        setCashedT(null);
       }
     }
     // A held live cash out stands now the crash point is known.
