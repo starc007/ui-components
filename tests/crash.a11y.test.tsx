@@ -105,7 +105,8 @@ test("a live round waits for the server's crash point and announces it", async (
   act(() => {
     fireEvent.click(main);
   });
-  await waitFor(() => expect(main.textContent).toMatch(/^Cash out 1\.0[1-9]/), { timeout: 2000 });
+  // Presses in the first 0.4s are taken as a double tap on Start; 1.05× comes after.
+  await waitFor(() => expect(main.textContent).toMatch(/^Cash out 1\.(0[5-9]|[1-9])/), { timeout: 2000 });
   act(() => {
     fireEvent.click(main);
   });

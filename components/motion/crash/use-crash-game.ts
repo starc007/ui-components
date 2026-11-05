@@ -100,8 +100,9 @@ export const AUTO_STEPS = [1.5, 2, 3, 5, 10, 25, 100];
 
 // Skipping after a cash out runs the rest of the flight in at most this long.
 const SKIP_TIME = 0.8;
-// Taps this soon after a cash out are the same press, not a skip (ms).
-const SKIP_GUARD = 400;
+// Presses this soon after a start, a cash-out press or a crash are the same
+// press repeated (a double tap, a mash), not the next action (ms).
+const PRESS_GUARD = 400;
 const HISTORY = 12;
 
 // Motion shared by every design.
@@ -147,8 +148,8 @@ export function useCrashGame({
   const [roundAuto, setRoundAuto] = useState<number | null>(null);
   // The flight lives in a ref so each frame can read and advance it. The
   // crash point stays out of state until it is reached. `milestone` indexes
-  // the next multiplier to announce.
-  // `cashedTime` is when the player cashed out, in performance.now() ms.
+  // the next multiplier to announce. `pressTime` is the last take-off,
+  // cash-out press or crash, in performance.now() ms.
   // `revealed` turns true once a live round has seen `crashAt` reset or
   // changed since it started, so a stale value can't end the new round.
   const flight = useRef({
@@ -157,7 +158,7 @@ export function useCrashGame({
     crash: 1,
     auto: null as number | null,
     milestone: 0,
-    cashedTime: 0,
+    pressTime: Number.NEGATIVE_INFINITY,
     stale: null as number | null,
     revealed: false,
   });
@@ -220,7 +221,9 @@ export function useCrashGame({
       crash,
       auto,
       milestone: 0,
-      cashedTime: 0,
+      // Kept from start(): an async crash point can take a while, and the
+      // first tap after it lands is a real cash out.
+      pressTime: flight.current.pressTime,
       stale: live ? (crashAt ?? null) : null,
       revealed: live && crashAt === null,
     };
@@ -234,6 +237,8 @@ export function useCrashGame({
     // second server round).
     if (busy.current) return;
     busy.current = true;
+    // The guard against a double tap on Start cashing out at once.
+    flight.current.pressTime = performance.now();
     cashedRef.current = null;
     setCashed(null);
     setCrashedAt(null);
@@ -274,11 +279,10 @@ export function useCrashGame({
   };
 
   // Runs the rest of the flight quickly; reduced motion jumps to the crash.
-  // A live round still waiting on its crash point can't be run out, and a
-  // second tap right after a cash out is a double tap, not a skip.
+  // A live round still waiting on its crash point can't be run out.
   const skip = () => {
     const f = flight.current;
-    if (!Number.isFinite(f.crash) || performance.now() - f.cashedTime < SKIP_GUARD) return;
+    if (!Number.isFinite(f.crash)) return;
     f.rate = reduce ? 1e9 : Math.max(1, (timeAt(f.crash) - f.t) / SKIP_TIME);
   };
 
@@ -322,6 +326,7 @@ export function useCrashGame({
       return true;
     }
     busy.current = false;
+    f.pressTime = performance.now();
     setCrashedAt(f.crash);
     setPhase("crashed");
     setHistory((current) => [{ id: round, value: f.crash }, ...current].slice(0, HISTORY));
@@ -366,14 +371,16 @@ export function useCrashGame({
 
   /** Start, cash out or skip, whichever the round is ready for. */
   const act = () => {
-    if (starting) return;
+    const now = performance.now();
+    // A double tap on Start mustn't cash out at 1.01×, nor a mashed cash out
+    // skip or start the next round. An auto cash out doesn't count as a
+    // press, so it can be skipped at once.
+    if (starting || now - flight.current.pressTime < PRESS_GUARD) return;
     if (!running) start();
     else if (cashedRef.current === null) {
-      // Only a press starts the skip guard; an auto cash out can be skipped at once.
-      flight.current.cashedTime = performance.now();
+      flight.current.pressTime = now;
       cashOut(floor2(growth(flight.current.t)));
-    }
-    else skip();
+    } else skip();
   };
   const actionLabel = starting
     ? "Starting…"

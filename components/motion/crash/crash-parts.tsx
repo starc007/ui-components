@@ -400,6 +400,11 @@ function CrashControls({ game, mainRef }: { game: CrashGame; mainRef: Ref<HTMLBu
         // No press while it can't act.
         pressScale={game.actionBusy ? 1 : 0.96}
         onClick={game.act}
+        // A held Enter repeats clicks; it would cash out, skip and start
+        // rounds on its own.
+        onKeyDown={(event) => {
+          if (event.repeat && event.key === "Enter") event.preventDefault();
+        }}
       >
         {game.actionLabel}
         {/* Progress toward the auto target, on the same log scale the
