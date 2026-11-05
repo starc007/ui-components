@@ -100,7 +100,11 @@ test("a crash point from a Promise holds the main button busy until it settles",
 });
 
 test("a live round waits for the server's crash point and announces it", async () => {
-  const { container, getByRole, rerender } = render(<Crash crashAt={null} />);
+  let round = 0;
+  const onStart = (value: number) => {
+    round = value;
+  };
+  const { container, getByRole, rerender } = render(<Crash crashAt={null} onStart={onStart} />);
   const main = getByRole("button", { name: "Start" });
   act(() => {
     fireEvent.click(main);
@@ -114,10 +118,7 @@ test("a live round waits for the server's crash point and announces it", async (
   expect(main.textContent).toBe("Waiting for crash");
   expect(main.getAttribute("aria-disabled")).toBe("true");
   expect((await axe(container)).violations).toEqual([]);
-  rerender(<Crash crashAt={1.5} />);
-  // Revealed ahead of the plane: the flight runs on to it.
-  expect(getByRole("button", { name: "Skip to crash" })).toBeTruthy();
-  rerender(<Crash crashAt={1} />);
+  rerender(<Crash crashAt={{ round, value: 1 }} onStart={onStart} />);
   // Revealed behind the plane: it crashes at once, at the server's value,
   // and a cash out above it never happened.
   await waitFor(() => expect(announcement(container)).toBe("Crashed at 1.00×. The round is lost."), { timeout: 2000 });

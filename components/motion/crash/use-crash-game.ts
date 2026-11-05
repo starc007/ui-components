@@ -26,16 +26,16 @@ export interface CrashProps {
   getCrashPoint?: () => number | Promise<number>;
   /**
    * Live rounds (controlled), for a server that keeps the crash point secret
-   * until it happens: null while the round is flying, then the crash point
-   * once revealed. The flight runs open-ended until it is set, and a value at
-   * or below the current multiplier crashes at once, at that value, and a
-   * cash out above it never happened: the round ends lost and `onCashOut` is
-   * not called. Set it back to null in `onStart`;
-   * the value a round starts with counts as last round's until it changes.
+   * until it happens: the round `onStart` was given and its crash point once
+   * revealed, or null. A round flies open-ended until its own crash point
+   * arrives; a value for any other round is ignored, so a reveal from last
+   * round can't end this one. A value at or below the current multiplier
+   * crashes at once, at that value, and a cash out above it never happened:
+   * the round ends lost and `onCashOut` is not called.
    */
-  crashAt?: number | null;
-  /** Called when the player starts a round, before its crash point is known. */
-  onStart?: () => void;
+  crashAt?: CrashReveal | null;
+  /** Called when the player starts a round, before its crash point is known, with the round's number (unique on the page). */
+  onStart?: (round: number) => void;
   /**
    * Called when the player cashes out, by hand or automatically. In a live
    * round it waits until the crash point is revealed, so it only fires for a
@@ -56,6 +56,12 @@ export interface CrashProps {
 }
 
 export type CrashPhase = "idle" | "starting" | "running" | "crashed";
+
+/** A live round's crash point, tagged with the round `onStart` was given. */
+export interface CrashReveal {
+  round: number;
+  value: number;
+}
 
 // The multiplier grows exponentially: 2× after 5.8s, 10× after 19s.
 export const GROWTH = 0.12;
@@ -107,6 +113,9 @@ const SKIP_TIME = 0.8;
 // Presses this soon after a start, a cash-out press or a crash are the same
 // press repeated (a double tap, a mash), not the next action (ms).
 const PRESS_GUARD = 400;
+// Round numbers, unique on the page, so a live reveal kept by the parent
+// across a remount can't match a fresh round.
+let rounds = 0;
 const HISTORY = 12;
 
 // Motion shared by every design.
@@ -155,17 +164,14 @@ export function useCrashGame({
   // the next multiplier to announce. `pressTime` is the last take-off,
   // cash-out press or crash, in performance.now() ms. `held` is a live cash out waiting on
   // the crash point before `onCashOut` hears of it.
-  // `revealed` turns true once a live round has seen `crashAt` reset or
-  // changed since it started, so a stale value can't end the new round.
   const flight = useRef({
+    round: 0,
     t: 0,
     rate: 1,
     crash: 1,
     auto: null as number | null,
     milestone: 0,
     pressTime: Number.NEGATIVE_INFINITY,
-    stale: null as number | null,
-    revealed: false,
     held: false,
   });
   const cashedRef = useRef<number | null>(null);
@@ -204,9 +210,8 @@ export function useCrashGame({
   const running = phase === "running";
   const starting = phase === "starting";
   const crashed = phase === "crashed";
-  // Unknown only in a live round the server hasn't ended yet; last round's
-  // value, still in place, doesn't count.
-  const crashKnown = !live || (crashAt !== null && (flight.current.revealed || crashAt !== flight.current.stale));
+  // Unknown only in a live round the server hasn't ended yet.
+  const crashKnown = !live || crashAt?.round === round;
   const t = crashed && crashedAt !== null ? timeAt(crashedAt) : elapsed;
   const multiplier = crashed && crashedAt !== null ? crashedAt : floor2(growth(t));
 
@@ -222,8 +227,9 @@ export function useCrashGame({
   };
 
   // Takes off once the crash point is settled (Infinity: not yet revealed).
-  const fly = (crash: number) => {
+  const fly = (id: number, crash: number) => {
     flight.current = {
+      round: id,
       t: 0,
       rate: 1,
       crash,
@@ -232,8 +238,6 @@ export function useCrashGame({
       // Kept from start(): an async crash point can take a while, and the
       // first tap after it lands is a real cash out.
       pressTime: flight.current.pressTime,
-      stale: live ? (crashAt ?? null) : null,
-      revealed: live && crashAt === null,
       held: false,
     };
     setPhase("running");
@@ -246,6 +250,8 @@ export function useCrashGame({
     // second server round).
     if (busy.current) return;
     busy.current = true;
+    rounds += 1;
+    const id = rounds;
     // The guard against a double tap on Start cashing out at once.
     flight.current.pressTime = performance.now();
     cashedRef.current = null;
@@ -254,11 +260,11 @@ export function useCrashGame({
     setElapsed(0);
     setPulse(0);
     setRoundAuto(auto);
-    setRound((value) => value + 1);
+    setRound(id);
     if (soundOn) getPlayer().prepare();
-    onStart?.();
+    onStart?.(id);
     if (live) {
-      fly(Number.POSITIVE_INFINITY);
+      fly(id, Number.POSITIVE_INFINITY);
       return;
     }
     let point: number | Promise<number>;
@@ -268,7 +274,7 @@ export function useCrashGame({
       point = Promise.reject();
     }
     if (typeof point === "number") {
-      fly(settle(point));
+      fly(id, settle(point));
       return;
     }
     setPhase("starting");
@@ -276,7 +282,7 @@ export function useCrashGame({
     // Promise.resolve: a plain-JS caller may hand back something else.
     Promise.resolve(point).then(
       (value) => {
-        if (alive.current) fly(settle(value));
+        if (alive.current) fly(id, settle(value));
       },
       () => {
         if (!alive.current) return;
@@ -298,20 +304,15 @@ export function useCrashGame({
   const onFrame = useEffectEvent((dt: number) => {
     const f = flight.current;
     // A live round's crash point lands whenever the server reveals it; one
-    // already behind the plane crashes at once, at that value. The value the
-    // round started with is last round's, so it counts only once it has been
-    // reset or replaced.
-    if (live) {
-      if (crashAt === null || crashAt !== f.stale) f.revealed = true;
-      if (f.revealed && crashAt !== null) {
-        f.crash = settle(crashAt);
-        // The server's crash came before the player's cash out: it never
-        // happened, so the round is lost after all.
-        if (cashedRef.current !== null && cashedRef.current > f.crash) {
-          cashedRef.current = null;
-          setCashed(null);
-          f.held = false;
-        }
+    // already behind the plane crashes at once, at that value.
+    if (live && !Number.isFinite(f.crash) && crashAt?.round === f.round) {
+      f.crash = settle(crashAt.value);
+      // The server's crash came before the player's cash out: it never
+      // happened, so the round is lost after all.
+      if (cashedRef.current !== null && cashedRef.current > f.crash) {
+        cashedRef.current = null;
+        setCashed(null);
+        f.held = false;
       }
     }
     // A held live cash out stands now the crash point is known.
@@ -344,7 +345,7 @@ export function useCrashGame({
     f.pressTime = performance.now();
     setCrashedAt(f.crash);
     setPhase("crashed");
-    setHistory((current) => [{ id: round, value: f.crash }, ...current].slice(0, HISTORY));
+    setHistory((current) => [{ id: f.round, value: f.crash }, ...current].slice(0, HISTORY));
     setAnnouncement(
       cashedRef.current === null
         ? `Crashed at ${formatMultiplier(f.crash)}. The round is lost.`

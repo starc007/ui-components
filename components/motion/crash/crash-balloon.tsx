@@ -28,7 +28,7 @@ import {
   useCrashGame,
 } from "./use-crash-game";
 
-export { type CrashProps, crashPoint, formatMultiplier } from "./use-crash-game";
+export { type CrashProps, type CrashReveal, crashPoint, formatMultiplier } from "./use-crash-game";
 
 // Stage geometry in SVG units; the stage scales to its container's width.
 const W = 400;

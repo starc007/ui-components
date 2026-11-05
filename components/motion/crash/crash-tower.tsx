@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { type CrashMiniatureProps, CrashShell, clamp01, MINI, MINI_REPLAY, PRIMARY_TEXT } from "./crash-parts";
 import { type CrashGame, type CrashProps, EXIT, formatShort, GROWTH, SWAP, useCrashGame } from "./use-crash-game";
 
-export { type CrashProps, crashPoint, formatMultiplier } from "./use-crash-game";
+export { type CrashProps, type CrashReveal, crashPoint, formatMultiplier } from "./use-crash-game";
 
 // One block per +8% on the multiplier, so block k lands at exactly 1.08^k:
 // one every 0.64s, while the readout keeps accelerating.

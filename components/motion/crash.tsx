@@ -27,7 +27,7 @@ import {
   useCrashGame,
 } from "./crash/use-crash-game";
 
-export { type CrashProps, crashPoint, formatMultiplier } from "./crash/use-crash-game";
+export { type CrashProps, type CrashReveal, crashPoint, formatMultiplier } from "./crash/use-crash-game";
 
 // Graph geometry in SVG units, matching the shell's 10:7 stage.
 const W = 400;
