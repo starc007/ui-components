@@ -302,6 +302,8 @@ export function useCrashGame({
   };
 
   const onFrame = useEffectEvent((dt: number) => {
+    // The round already ended: a frame booked before a throwing onCrash.
+    if (!busy.current) return false;
     const f = flight.current;
     // A live round's crash point lands whenever the server reveals it; one
     // already behind the plane crashes at once, at that value.
@@ -364,7 +366,10 @@ export function useCrashGame({
       const now = performance.now();
       const dt = Math.max(0, now - last) / 1000;
       last = now;
-      if (onFrame(dt)) id = requestAnimationFrame(step);
+      // The next frame is booked first, so a consumer callback that throws
+      // can't stall a running round; the crash cancels it.
+      id = requestAnimationFrame(step);
+      if (!onFrame(dt)) cancelAnimationFrame(id);
     });
     return () => cancelAnimationFrame(id);
   }, [phase]);
