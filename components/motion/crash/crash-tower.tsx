@@ -171,8 +171,10 @@ function Tower({ game }: { game: CrashGame }) {
                         ? "bg-foreground/15"
                         : "bg-foreground/10",
                 )}
-                // The idle block is already standing on first paint.
-                initial={round === 0 ? false : reduce ? { opacity: 0 } : { opacity: 0, y: -24 }}
+                // The idle block is already standing on first paint. A skip lays
+                // several blocks a frame that scroll off before a drop could
+                // finish, so they land at once.
+                initial={round === 0 || game.skipping ? false : reduce ? { opacity: 0 } : { opacity: 0, y: -24 }}
                 animate={
                   falling && !reduce
                     ? {
