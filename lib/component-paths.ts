@@ -3,7 +3,10 @@ export const TOP_LEVEL_CATEGORIES = ["charts", "casino"];
 
 /** The top-level section a path is in, if any. */
 export function topLevelCategory(pathname: string) {
-  return TOP_LEVEL_CATEGORIES.find((slug) => pathname === `/${slug}` || pathname.startsWith(`/${slug}/`));
+  return TOP_LEVEL_CATEGORIES.find((slug) => {
+    const path = categoryPath(slug);
+    return pathname === path || pathname.startsWith(`${path}/`);
+  });
 }
 
 export function isTopLevelPath(pathname: string) {

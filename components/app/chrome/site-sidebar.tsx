@@ -380,7 +380,7 @@ function WebSidebarNav({
     ? registry.filter((category) => category.slug === section)
     : SIDEBAR_CATEGORIES;
   const intro = isSection
-    ? [{ slug: "home", name: "Home", href: `/${section}` }]
+    ? [{ slug: "home", name: "Home", href: categoryPath(section) }]
     : INTRO;
 
   return (
