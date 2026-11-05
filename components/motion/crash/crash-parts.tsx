@@ -126,7 +126,7 @@ export function CrashShell({
       }}
     >
       {/* 24px card corners = 12px stage and control corners + 12px padding. */}
-      <div className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-3 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_12px_32px_-16px_rgb(0_0_0/0.25)]">
+      <div className="flex flex-col gap-3 rounded-3xl border border-border p-3">
         <div className="flex h-8 items-center gap-2 pl-1">
           <HistoryIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" strokeWidth={2} />
           {/* The game changes every frame; these take only what they show, so they skip those renders. */}
