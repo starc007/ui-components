@@ -13,6 +13,8 @@ import {
   niceAtLeast,
   Parachute,
   PRIMARY_TEXT,
+  STAGE_LABEL,
+  STAGE_W,
   wrap,
 } from "./crash/crash-parts";
 import {
@@ -30,7 +32,7 @@ import {
 export { type CrashProps, type CrashReveal, crashPoint, formatMultiplier } from "./crash/use-crash-game";
 
 // Graph geometry in SVG units, matching the shell's 10:7 stage.
-const W = 400;
+const W = STAGE_W;
 const H = 280;
 // The y labels sit in the right pad; the left pad clears the parked plane's tail.
 const PAD = { left: 18, right: 40, top: 20, bottom: 24 };
@@ -184,7 +186,7 @@ function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphPro
         })}
       </g>
 
-      <g className="text-[10px] text-muted-foreground tabular-nums">
+      <g className={cn(STAGE_LABEL, "text-muted-foreground tabular-nums")}>
         <AnimatePresence initial={false}>
           {yTicks.map((value) => (
             <motion.g
@@ -202,8 +204,9 @@ function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphPro
                 mask={value === 1 ? undefined : `url(#${fill}-grid)`}
                 className={value === 1 ? "stroke-border" : "stroke-foreground/[0.07]"}
               />
-              {/* Labels on the right, past the head, which stays at 82% across. */}
-              <text x={W - PAD.right + 8} y={y(value)} dy="0.32em" className="fill-current">
+              {/* Labels on the right, past the head, which stays at 82% across.
+                  Right-aligned, so a label grown for a narrow stage stays on it. */}
+              <text x={W - 2} y={y(value)} dy="0.32em" textAnchor="end" className="fill-current">
                 {formatShort(value)}
               </text>
             </motion.g>
@@ -255,7 +258,7 @@ function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphPro
               x={W - PAD.right - 4}
               y={targetLine.above ? PAD.top + 4 : targetLine.y - 6}
               textAnchor="end"
-              className={cn("fill-current text-[10px] font-medium tabular-nums", PRIMARY_TEXT)}
+              className={cn("fill-current font-medium tabular-nums", STAGE_LABEL, PRIMARY_TEXT)}
             >
               {`Auto ${targetLine.label}${targetLine.above ? " ↑" : ""}`}
             </text>

@@ -14,6 +14,8 @@ import {
   niceAtLeast,
   Parachute,
   PRIMARY_TEXT,
+  STAGE_LABEL,
+  STAGE_W,
   wrap,
 } from "./crash-parts";
 import {
@@ -31,7 +33,7 @@ import {
 export { type CrashProps, type CrashReveal, crashPoint, formatMultiplier } from "./use-crash-game";
 
 // Stage geometry in SVG units; the stage scales to its container's width.
-const W = 400;
+const W = STAGE_W;
 const H = 280;
 // The balloon sits centre right, clear of the readout; the tape runs down the right edge.
 const BX = 262;
@@ -176,7 +178,7 @@ function Stage({ t, cashed, crashed, lost, round, pulse, target, ghost, reduce, 
             <path d="M-8.5,-2.5L-3.5,2.5M-3.5,-2.5L-8.5,2.5" stroke="currentColor" strokeWidth={1.25} />
             {/* Dropped when it would print over the target's label. */}
             {target !== null && Math.abs(at(ghost) - Math.max(at(target), TARGET_PIN)) < 12 ? null : (
-              <text x={-12} dy="0.32em" textAnchor="end" className="fill-muted-foreground text-[10px] tabular-nums">
+              <text x={-12} dy="0.32em" textAnchor="end" className={cn(STAGE_LABEL, "fill-muted-foreground tabular-nums")}>
                 {formatShort(ghost)}
               </text>
             )}
@@ -203,7 +205,7 @@ function Stage({ t, cashed, crashed, lost, round, pulse, target, ghost, reduce, 
                 <line x2={W - TAPE_X} stroke="currentColor" strokeDasharray="3 3" strokeWidth={1.25} opacity={0.7} />
               )}
               <path d="M0,0V-10L8,-7L0,-4" fill="none" stroke="currentColor" strokeLinejoin="round" opacity={0.7} />
-              <text x={-12} dy="0.32em" textAnchor="end" className={cn("fill-current text-[10px]", PRIMARY_TEXT)}>
+              <text x={-12} dy="0.32em" textAnchor="end" className={cn("fill-current", STAGE_LABEL, PRIMARY_TEXT)}>
                 {at(target) < TARGET_PIN ? `target ${formatShort(target)} ↑` : "target"}
               </text>
             </g>
@@ -337,14 +339,15 @@ function Tape({ m, mask }: { m: number; mask: string }) {
   }
 
   return (
-    <g mask={mask} className="text-[10px] text-muted-foreground tabular-nums">
+    <g mask={mask} className={cn(STAGE_LABEL, "text-muted-foreground tabular-nums")}>
       <rect x={TAPE_X} width={W - TAPE_X} height={H} className="fill-foreground/[0.03]" />
       <line x1={TAPE_X} x2={TAPE_X} y1={0} y2={H} className="stroke-border" />
       {ticks.map(({ value, y, tick, label }) => (
         <g key={value} transform={`translate(${TAPE_X},${y.toFixed(2)})`}>
           <line x2={5 + 7 * label} opacity={tick} className="stroke-foreground/30" />
+          {/* Right-aligned, so a label grown for a narrow stage stays on it. */}
           {label > 0 ? (
-            <text x={18} dy="0.32em" opacity={label} className="fill-current">
+            <text x={W - TAPE_X - 2} dy="0.32em" textAnchor="end" opacity={label} className="fill-current">
               {formatShort(value)}
             </text>
           ) : null}

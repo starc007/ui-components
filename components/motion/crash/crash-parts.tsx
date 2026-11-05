@@ -2,7 +2,7 @@
 
 import { Check, History as HistoryIcon, Volume2, VolumeX, X } from "lucide-react";
 import { AnimatePresence, motion, type Transition } from "motion/react";
-import { memo, type ReactNode, type Ref, useEffect, useRef, useState } from "react";
+import { memo, type ReactNode, type Ref, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
 import { NumberTicker } from "@/components/motion/number-ticker";
@@ -45,6 +45,14 @@ const HEAT_PILL = {
 } as const;
 
 // Pieces every Crash design shares, so each design only draws the flight.
+/** The width of the viewBox an SVG stage draws in. */
+export const STAGE_W = 400;
+/**
+ * SVG stage labels: 10px on screen however narrow the card. A viewBox scales
+ * its text with the stage, so the shell sets --crash-label in viewBox units.
+ * The server render has no width to go on and draws them at 10 units.
+ */
+export const STAGE_LABEL = "text-[length:var(--crash-label,10px)]";
 
 /**
  * The frame every design sits in: one card holding the recent rounds and
@@ -66,6 +74,20 @@ export function CrashShell({
   miniature?: (props: CrashMiniatureProps) => ReactNode;
 }) {
   const mainRef = useRef<HTMLButtonElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  // Written straight to the style, so a resize doesn't re-render the game.
+  useLayoutEffect(() => {
+    const node = stageRef.current;
+    if (!node) return;
+    const measure = () => {
+      const width = node.clientWidth;
+      if (width > 0) node.style.setProperty("--crash-label", `${Math.max(10, (10 * STAGE_W) / width)}px`);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
   // The ticket opens per round once the crash has played; tapping the stage
   // or Escape puts it away, and the next round clears it.
   const [openRound, setOpenRound] = useState<number | null>(null);
@@ -112,7 +134,7 @@ export function CrashShell({
         </div>
         {/* A 10:7 stage in every design, so switching between them never
             jumps. A container: its width also fixes its height. */}
-        <div className="@container relative aspect-[10/7] overflow-hidden rounded-xl bg-muted/40">
+        <div ref={stageRef} className="@container relative aspect-[10/7] overflow-hidden rounded-xl bg-muted/40">
           {children}
           <div className="pointer-events-none absolute top-4 left-4">
             <CrashEyebrow game={game} />
