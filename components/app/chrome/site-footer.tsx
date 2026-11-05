@@ -46,6 +46,7 @@ const PRODUCTS = [
     label: "Pulse",
   },
   { href: "https://usemarkd.app", label: "Markd" },
+  { href: "https://dotsafe.dev", label: "Dotsafe" },
 ];
 
 export function SiteFooter() {
