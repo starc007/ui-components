@@ -4,7 +4,7 @@ import { AnimatePresence, motion, type Transition } from "motion/react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { EASE_IN, EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import { type CrashMiniatureProps, CrashShell, MINI, MINI_REPLAY, PRIMARY_TEXT } from "./crash-parts";
+import { type CrashMiniatureProps, CrashShell, clamp01, MINI, MINI_REPLAY, PRIMARY_TEXT } from "./crash-parts";
 import { type CrashGame, type CrashProps, EXIT, formatShort, GROWTH, SWAP, useCrashGame } from "./use-crash-game";
 
 export { type CrashProps, crashPoint, formatMultiplier } from "./use-crash-game";
@@ -58,7 +58,6 @@ const crack = (k: number) => {
     ? `M${x},0L${x + lean},6L${x - lean / 2},13`
     : `M${x},0L${x + lean},4L${x - lean},9L${x + lean / 2},13`;
 };
-const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 // The top surface of the block on top when the multiplier reaches m, in px over the baseline.
 const blockOf = (m: number) => Math.floor(Math.log(m) / Math.log(STEP) + 1e-9);
 const markRise = (m: number, cam: number) => (blockOf(m) - cam) * PITCH + BLOCK_H;

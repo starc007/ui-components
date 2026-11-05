@@ -2,9 +2,19 @@
 
 import { AnimatePresence, motion, type Transition } from "motion/react";
 import { useId } from "react";
-import { EASE_IN, EASE_IN_OUT, EASE_OUT } from "@/lib/ease";
+import { EASE_IN, EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import { type CrashMiniatureProps, CrashShell, MINI, MINI_REPLAY, PRIMARY_TEXT } from "./crash/crash-parts";
+import {
+  CHUTE,
+  type CrashMiniatureProps,
+  CrashShell,
+  MINI,
+  MINI_REPLAY,
+  niceAtLeast,
+  Parachute,
+  PRIMARY_TEXT,
+  wrap,
+} from "./crash/crash-parts";
 import {
   BURST,
   type CrashProps,
@@ -93,14 +103,14 @@ function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphPro
   const lost = crashed && cashed === null;
   const missed = cashT !== null && t > cashT && !crashed ? path(cashT, t) : null;
 
-  const yStep = niceStep(yMax - 1);
+  const yStep = niceAtLeast((yMax - 1) / 4);
   // 1× plus round multiples of the step (500×, 1K×, not 501×), skipping one
   // too close to the baseline. The epsilon keeps 0.8 / 0.2 from flooring to 3.
   const yTicks = [1];
   for (let k = Math.ceil(1 / yStep + 1e-9); k * yStep <= yMax + 1e-9; k++) {
     if (k * yStep - 1 >= yStep * 0.5) yTicks.push(+(k * yStep).toFixed(6));
   }
-  const xStep = niceStep(xMax);
+  const xStep = niceAtLeast(xMax / 4);
   const xTicks = Array.from({ length: Math.floor(xMax / xStep + 1e-9) }, (_, i) => (i + 1) * xStep);
 
   const head = { x: x(t), y: y(m) };
@@ -151,14 +161,14 @@ function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphPro
         {FAR.map((dot) => (
           <circle
             key={dot.id}
-            cx={wrap(dot.x - far)}
+            cx={wrap(dot.x - far, W)}
             cy={dot.y}
             r={1}
             className="fill-foreground/15"
           />
         ))}
         {NEAR.map((streak) => {
-          const from = wrap(streak.x - near);
+          const from = wrap(streak.x - near, W);
           return (
             <line
               key={streak.id}
@@ -378,12 +388,6 @@ function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphPro
 
 // The crashed plane tumbles and drops out of the sky, accelerating.
 const TUMBLE: Transition = { duration: 0.6, ease: EASE_IN, opacity: { duration: 0.6, times: [0, 0.6, 1] } };
-// The parachute is a once-a-round moment, so it may take its time.
-const CHUTE: Transition = {
-  y: { duration: 2.2, ease: EASE_OUT },
-  rotate: { duration: 2.2, ease: EASE_IN_OUT },
-  opacity: { duration: 2.2, times: [0, 0.08, 0.7, 1] },
-};
 
 // Paper shreds thrown out by the crash, spread round the head and pulled
 // down a little, as if by gravity. Fixed, so every crash is the same shape.
@@ -402,7 +406,6 @@ const SHREDS = Array.from({ length: 7 }, (_, i) => {
 const PLOT_H = H - PAD.top - PAD.bottom;
 const FAR = Array.from({ length: 22 }, (_, i) => ({ id: i, x: (i * 97.3) % W, y: PAD.top + ((i * 53.7) % PLOT_H) }));
 const NEAR = Array.from({ length: 9 }, (_, i) => ({ id: i, x: (i * 151.9) % W, y: PAD.top + 8 + ((i * 71.3) % (PLOT_H - 16)) }));
-const wrap = (value: number) => ((value % W) + W) % W;
 
 /** A folded paper plane, nose to the right, about 26 units long. */
 function PaperPlane() {
@@ -413,24 +416,6 @@ function PaperPlane() {
       <path d="M13,0L-4,-1" className="stroke-card/40" strokeWidth={0.75} />
     </g>
   );
-}
-
-/** A small parachute: a scalloped canopy, three lines and the player. */
-function Parachute() {
-  return (
-    <g className="text-primary">
-      <path d="M-9,0Q-9,-11 0,-11Q9,-11 9,0Q6,-3 3,0Q0,-3 -3,0Q-6,-3 -9,0Z" fill="currentColor" />
-      <path d="M-9,0L0,10M0,0L0,10M9,0L0,10" stroke="currentColor" strokeWidth={0.75} opacity={0.6} fill="none" />
-      <circle cy={11.5} r={2} fill="currentColor" />
-    </g>
-  );
-}
-
-/** A tick spacing of 1, 2 or 5 times a power of ten, giving at most about four ticks. */
-function niceStep(range: number) {
-  const raw = range / 4;
-  const power = 10 ** Math.floor(Math.log10(raw));
-  return ([1, 2, 5, 10].find((unit) => unit * power >= raw) ?? 10) * power;
 }
 
 /**

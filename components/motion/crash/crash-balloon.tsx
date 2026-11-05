@@ -4,7 +4,18 @@ import { AnimatePresence, cubicBezier, motion, type Transition } from "motion/re
 import { useId } from "react";
 import { EASE_IN, EASE_IN_OUT, EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import { type CrashMiniatureProps, CrashShell, MINI, MINI_REPLAY, PRIMARY_TEXT } from "./crash-parts";
+import {
+  CHUTE,
+  type CrashMiniatureProps,
+  CrashShell,
+  clamp01,
+  MINI,
+  MINI_REPLAY,
+  niceAtLeast,
+  Parachute,
+  PRIMARY_TEXT,
+  wrap,
+} from "./crash-parts";
 import {
   BURST,
   type CrashProps,
@@ -116,7 +127,7 @@ function Stage({ t, cashed, crashed, lost, round, pulse, target, ghost, reduce, 
       {CLOUDS.map((cloud) => (
         <g
           key={cloud.id}
-          transform={`translate(${cloud.x},${wrap(cloud.y + travel * cloud.speed) - 20}) scale(${cloud.size})`}
+          transform={`translate(${cloud.x},${wrap(cloud.y + travel * cloud.speed, SPAN) - 20}) scale(${cloud.size})`}
           opacity={cloud.opacity}
           className="fill-foreground"
         >
@@ -301,7 +312,7 @@ function Tape({ m, mask }: { m: number; mask: string }) {
   const bottom = Math.max(1, m * Math.exp((LEVEL - H) / PX));
   // The finest step still 8 units apart where ticks sit widest; denser ticks
   // further up fade out by spacing, so steps hand over without a jump.
-  const base = niceStep((bottom * 8) / PX);
+  const base = niceAtLeast((bottom * 8) / PX);
   const ticks: { value: number; y: number; tick: number; label: number }[] = [];
   for (let k = Math.ceil(bottom / base - 1e-9); k * base <= top; k++) {
     const value = Number((k * base).toPrecision(12));
@@ -400,12 +411,6 @@ function Landmarks({ t, at }: { t: number; at: (value: number) => number }) {
 
 // The basket drops out of the sky, accelerating.
 const DROP: Transition = { duration: 0.6, ease: EASE_IN };
-// The bail-out is a once-a-round moment, so it may take its time.
-const CHUTE: Transition = {
-  y: { duration: 2.2, ease: EASE_OUT },
-  rotate: { duration: 2.2, ease: EASE_IN_OUT },
-  opacity: { duration: 2.2, times: [0, 0.08, 0.7, 1] },
-};
 
 // Fabric torn from the envelope, thrown round it and pulled down a little.
 const SHARDS = Array.from({ length: 8 }, (_, i) => {
@@ -431,14 +436,7 @@ const CLOUDS = [
   { id: 5, x: 90, y: 220, size: 1, speed: 1.4, opacity: 0.07 },
 ];
 const SPAN = H + 40;
-const wrap = (value: number) => ((value % SPAN) + SPAN) % SPAN;
-const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
-/** A tick step of 1, 2 or 5 times a power of ten, at least `min`. */
-function niceStep(min: number) {
-  const power = 10 ** Math.floor(Math.log10(min));
-  return Number((([1, 2, 5, 10].find((unit) => unit * power >= min) ?? 10) * power).toPrecision(12));
-}
 
 /** The next step up the 1, 2, 5 ladder. */
 function nextStep(step: number) {
@@ -456,17 +454,6 @@ function Envelope() {
       />
       <path d="M0,-26C10,-12 10,14 4,28L-4,28C-10,14 -10,-12 0,-26Z" className="fill-card/25" />
       <rect x={-6} y={28} width={12} height={3} rx={1} fill="currentColor" opacity={0.7} />
-    </g>
-  );
-}
-
-/** A small parachute: a domed canopy, two lines and the player. */
-function Parachute() {
-  return (
-    <g className="text-primary">
-      <path d="M-8,0A8,7 0 0 1 8,0Z" fill="currentColor" />
-      <path d="M-8,0L0,9M8,0L0,9" stroke="currentColor" strokeWidth={0.75} opacity={0.6} fill="none" />
-      <circle cy={10.5} r={1.8} fill="currentColor" />
     </g>
   );
 }

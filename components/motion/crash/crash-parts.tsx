@@ -1,14 +1,14 @@
 "use client";
 
 import { Check, History as HistoryIcon, Volume2, VolumeX, X } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, type Transition } from "motion/react";
 import { type ReactNode, type Ref, useEffect, useEffectEvent, useRef, useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
 import { NumberTicker } from "@/components/motion/number-ticker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/motion/select";
 import { Tooltip } from "@/components/motion/tooltip";
-import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
+import { EASE_IN_OUT, EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { PresenceGate, type PresenceGateRenderProps } from "@/lib/presence-gate";
 import { cn } from "@/lib/utils";
 import {
@@ -299,6 +299,37 @@ export interface CrashMiniatureProps {
   /** The auto target, only when the round crashed short of it. */
   target: number | null;
   reduce: boolean;
+}
+
+// The parachute drifting down from a cash out is a once-a-round moment, so it
+// may take its time.
+export const CHUTE: Transition = {
+  y: { duration: 2.2, ease: EASE_OUT },
+  rotate: { duration: 2.2, ease: EASE_IN_OUT },
+  opacity: { duration: 2.2, times: [0, 0.08, 0.7, 1] },
+};
+
+export const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
+
+/** Wraps scenery that streams past into a loop `span` long. */
+export const wrap = (value: number, span: number) => ((value % span) + span) % span;
+
+/** A tick step of 1, 2 or 5 times a power of ten, at least `min`. */
+export function niceAtLeast(min: number) {
+  const power = 10 ** Math.floor(Math.log10(min));
+  // toPrecision drops float noise (0.30000000000000004), so steps add up cleanly.
+  return Number((([1, 2, 5, 10].find((unit) => unit * power >= min) ?? 10) * power).toPrecision(12));
+}
+
+/** The parachute that opens at a cash out: a scalloped canopy, three lines and the player. */
+export function Parachute() {
+  return (
+    <g className="text-primary">
+      <path d="M-9,0Q-9,-11 0,-11Q9,-11 9,0Q6,-3 3,0Q0,-3 -3,0Q-6,-3 -9,0Z" fill="currentColor" />
+      <path d="M-9,0L0,10M0,0L0,10M9,0L0,10" stroke="currentColor" strokeWidth={0.75} opacity={0.6} fill="none" />
+      <circle cy={11.5} r={2} fill="currentColor" />
+    </g>
+  );
 }
 
 /** Every miniature is 88 × 48, like Mines' mini map. */
