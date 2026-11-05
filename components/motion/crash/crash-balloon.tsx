@@ -45,6 +45,8 @@ const GROUND_Y = H - 24;
 const PARKED = GROUND_Y - 51;
 // Tape units per unit of ln(multiplier): 1× to 2× spans about 166 units.
 const PX = 240;
+// Clouds stop speeding up past 100×.
+const CLOUD_CAP = PX * Math.log(100);
 // The lift-off takes this long before the balloon holds and the world scrolls.
 const LIFT = 1.2;
 const rise = cubicBezier(...EASE_IN_OUT);
@@ -98,8 +100,10 @@ function Stage({ t, cashed, crashed, lost, round, pulse, target, ghost, reduce, 
   const sway = reduce ? 0 : lift;
   const tilt = Math.sin(t * 1.6) * 2 * sway;
   const drift = Math.sin(t * 1.1 + 0.6) * 2 * sway;
-  // Clouds speed up as the climb goes on.
-  const travel = reduce ? 0 : climb + climb ** 2 / 600;
+  // Clouds speed up as the climb goes on, up to 100×, then hold that speed
+  // so a very long climb can't strobe them.
+  const eased = Math.min(climb, CLOUD_CAP);
+  const travel = reduce ? 0 : climb + eased ** 2 / 600 + (eased / 300) * (climb - eased);
   const tone = lost ? "text-rose-500" : cashed !== null ? "text-muted-foreground" : "text-primary";
   // The basket falls clear of the stage, or stays put if it never left the ground.
   const fall = (H + 10 - (by + 42)) * lift;

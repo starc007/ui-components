@@ -127,7 +127,7 @@ function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphPro
   const takeOff = reduce ? (t > 0 ? 1 : 0) : Math.min(1, t / 0.6);
   const bank = Math.max(-70, (slope * 180) / Math.PI) * takeOff + bob;
 
-  const travel = reduce ? 0 : 30 * t + 9 * Math.min(t, 20) ** 2 + 390 * Math.max(0, t - 20);
+  const travel = reduce ? 0 : 30 * t + 9 * Math.min(t, 20) ** 2 + 360 * Math.max(0, t - 20);
   const near = travel;
   const far = travel * 0.35;
   const streakLength = 4 + Math.min(14, (30 + 18 * Math.min(t, 20)) * 0.035);
