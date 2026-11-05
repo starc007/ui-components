@@ -569,7 +569,7 @@ function CrashStatus({ game, className }: { game: CrashGame; className?: string 
 }
 
 /**
- * The small uppercase state label: Ready, In flight, then the result —
+ * The small uppercase state label: Ready, In flight, then the result:
  * Cashed out with a check, or Crashed with a cross.
  */
 function CrashEyebrow({ game, className }: { game: CrashGame; className?: string }) {
