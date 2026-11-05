@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { createGameSounds, type GameSounds } from "@/lib/game-sounds";
 
@@ -374,21 +374,24 @@ export function useCrashGame({
     return () => cancelAnimationFrame(id);
   }, [phase]);
 
-  const setAuto = (value: string) => {
+  // Stable, so the menu and sound button can skip the 60fps re-renders.
+  const setAuto = useStable((value: string) => {
     const next = value === "off" ? null : Number(value);
     if (autoProp === undefined) setInternalAuto(next);
     onAutoCashOutChange?.(next);
-  };
+  });
   // A custom target from the prop gets its own option, so the menu can show it.
-  const autoOptions =
-    auto === null || AUTO_STEPS.includes(auto) ? AUTO_STEPS : [...AUTO_STEPS, auto].sort((a, b) => a - b);
+  const autoOptions = useMemo(
+    () => (auto === null || AUTO_STEPS.includes(auto) ? AUTO_STEPS : [...AUTO_STEPS, auto].sort((a, b) => a - b)),
+    [auto],
+  );
 
-  const toggleSound = () => {
+  const toggleSound = useStable(() => {
     const next = !soundOn;
     if (next) getPlayer().prepare();
     if (sound === undefined) setInternalSound(next);
     onSoundChange?.(next);
-  };
+  });
 
   /** Start, cash out or skip, whichever the round is ready for. */
   const act = () => {
@@ -482,6 +485,15 @@ export function useCrashGame({
 }
 
 export type CrashGame = ReturnType<typeof useCrashGame>;
+
+/** A callback with one identity for the component's life that runs the latest render's code. */
+function useStable<A extends unknown[], R>(fn: (...args: A) => R) {
+  const ref = useRef(fn);
+  useLayoutEffect(() => {
+    ref.current = fn;
+  });
+  return useCallback((...args: A) => ref.current(...args), []);
+}
 
 /**
  * How hot a multiplier reads: cool under 2×, warm to 10×, hot beyond. The

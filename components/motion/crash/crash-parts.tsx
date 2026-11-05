@@ -2,7 +2,7 @@
 
 import { Check, History as HistoryIcon, Volume2, VolumeX, X } from "lucide-react";
 import { AnimatePresence, motion, type Transition } from "motion/react";
-import { type ReactNode, type Ref, useEffect, useEffectEvent, useRef, useState } from "react";
+import { memo, type ReactNode, type Ref, useEffect, useEffectEvent, useRef, useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
 import { NumberTicker } from "@/components/motion/number-ticker";
@@ -105,8 +105,9 @@ export function CrashShell({
       <div className="flex flex-col gap-3 rounded-3xl border border-border bg-card p-3 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_12px_32px_-16px_rgb(0_0_0/0.25)]">
         <div className="flex h-8 items-center gap-2 pl-1">
           <HistoryIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" strokeWidth={2} />
-          <CrashHistory game={game} className="min-w-0 flex-1" />
-          <SoundToggle game={game} />
+          {/* The game changes every frame; these take only what they show, so they skip those renders. */}
+          <CrashHistory history={game.history} reduce={game.reduce} className="min-w-0 flex-1" />
+          <SoundToggle on={game.soundOn} onToggle={game.toggleSound} />
         </div>
         {/* A 10:7 stage in every design, so switching between them never
             jumps. A container: its width also fixes its height. */}
@@ -338,21 +339,21 @@ export const MINI = { width: 88, height: 48 } as const;
 export const MINI_REPLAY = { delay: 0.3, duration: 0.6, ease: EASE_OUT } as const;
 
 /** The sound toggle: a quiet 32px icon button in the card's header. */
-function SoundToggle({ game }: { game: CrashGame }) {
+const SoundToggle = memo(function SoundToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   return (
     // aria-label names the button; the tooltip shows the same label on hover
     // and focus. Tooltip's asLabel would hydrate differently from the server.
     <Tooltip content="Sound" side="top">
       <Button
         variant="ghost"
-        onClick={game.toggleSound}
+        onClick={onToggle}
         aria-label="Sound"
-        aria-pressed={game.soundOn}
+        aria-pressed={on}
         pressScale={0.96}
-        className={cn("size-8 shrink-0 rounded-xl px-0", game.soundOn && "text-foreground")}
+        className={cn("size-8 shrink-0 rounded-xl px-0", on && "text-foreground")}
       >
-        <ActionSwapCascadeIcon value={game.soundOn ? "on" : "off"} className="size-4">
-          {game.soundOn ? (
+        <ActionSwapCascadeIcon value={on ? "on" : "off"} className="size-4">
+          {on ? (
             <Volume2 aria-hidden="true" className="size-4" />
           ) : (
             <VolumeX aria-hidden="true" className="size-4" />
@@ -361,34 +362,18 @@ function SoundToggle({ game }: { game: CrashGame }) {
       </Button>
     </Tooltip>
   );
-}
+});
 
 /** The Auto menu and the main action, in one 40px row with 12px corners. */
 function CrashControls({ game, mainRef }: { game: CrashGame; mainRef: Ref<HTMLButtonElement> }) {
   return (
     <div className="flex items-center gap-2">
-      <Select
-        value={game.auto === null ? "off" : String(game.auto)}
-        onValueChange={game.setAuto}
+      <AutoMenu
+        auto={game.auto}
+        options={game.autoOptions}
+        onChange={game.setAuto}
         disabled={game.running || game.starting}
-        className="w-32 shrink-0"
-      >
-        <SelectTrigger className="h-10 tabular-nums">
-          <span className="flex items-baseline gap-1.5">
-            <span className="text-xs text-muted-foreground">Auto</span>
-            {/* Options register after mount; the placeholder covers the server render. */}
-            <SelectValue placeholder={game.auto === null ? "Off" : formatShort(game.auto)} />
-          </span>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="off">Off</SelectItem>
-          {game.autoOptions.map((step) => (
-            <SelectItem key={step} value={String(step)}>
-              {formatShort(step)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      />
 
       <Button
         ref={mainRef}
@@ -421,9 +406,49 @@ function CrashControls({ game, mainRef }: { game: CrashGame; mainRef: Ref<HTMLBu
   );
 }
 
+/** The Auto cash-out menu. */
+const AutoMenu = memo(function AutoMenu({
+  auto,
+  options,
+  onChange,
+  disabled,
+}: {
+  auto: number | null;
+  options: number[];
+  onChange: (value: string) => void;
+  disabled: boolean;
+}) {
+  return (
+    <Select value={auto === null ? "off" : String(auto)} onValueChange={onChange} disabled={disabled} className="w-32 shrink-0">
+      <SelectTrigger className="h-10 tabular-nums">
+        <span className="flex items-baseline gap-1.5">
+          <span className="text-xs text-muted-foreground">Auto</span>
+          {/* Options register after mount; the placeholder covers the server render. */}
+          <SelectValue placeholder={auto === null ? "Off" : formatShort(auto)} />
+        </span>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="off">Off</SelectItem>
+        {options.map((step) => (
+          <SelectItem key={step} value={String(step)}>
+            {formatShort(step)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+});
+
 /** Recent crash points, newest first, sliding in from the left. */
-function CrashHistory({ game, className }: { game: CrashGame; className?: string }) {
-  const { history, reduce } = game;
+const CrashHistory = memo(function CrashHistory({
+  history,
+  reduce,
+  className,
+}: {
+  history: CrashGame["history"];
+  reduce: boolean;
+  className?: string;
+}) {
   return (
     <ul
       aria-label="Recent crashes"
@@ -458,7 +483,7 @@ function CrashHistory({ game, className }: { game: CrashGame; className?: string
       </AnimatePresence>
     </ul>
   );
-}
+});
 
 /**
  * The live multiplier, warming as it climbs, that becomes the result at the
