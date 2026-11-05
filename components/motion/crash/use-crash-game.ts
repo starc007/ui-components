@@ -31,7 +31,10 @@ export interface CrashProps {
    * arrives; a value for any other round is ignored, so a reveal from last
    * round can't end this one. A value at or below the current multiplier
    * crashes at once, at that value, and a cash out above it never happened:
-   * the round ends lost and `onCashOut` is not called.
+   * the round ends lost and `onCashOut` is not called. A value still ahead
+   * means the display is behind the server: the flight runs out to it
+   * quickly and takes no more hand cash outs (an auto target below it still
+   * pays). Whether a round is live is fixed when it starts.
    */
   crashAt?: CrashReveal | null;
   /** Called when the player starts a round, before its crash point is known, with the round's number (unique on the page). */
@@ -169,6 +172,7 @@ export function useCrashGame({
   // the crash point before `onCashOut` hears of it.
   const flight = useRef({
     round: 0,
+    live: false,
     t: 0,
     rate: 1,
     crash: 1,
@@ -213,8 +217,12 @@ export function useCrashGame({
   const running = phase === "running";
   const starting = phase === "starting";
   const crashed = phase === "crashed";
-  // Unknown only in a live round the server hasn't ended yet.
-  const crashKnown = !live || crashAt?.round === round;
+  // Unknown only in a live round the server hasn't ended yet. From the
+  // round's own mode, which a prop change mid-round doesn't move.
+  const roundLive = flight.current.live;
+  const crashKnown = !roundLive || crashAt?.round === round;
+  // A live round the server has ended while the display catches up.
+  const overtaken = running && roundLive && crashKnown;
   const t = crashed && crashedAt !== null ? timeAt(crashedAt) : elapsed;
   const multiplier = crashed && crashedAt !== null ? crashedAt : floor2(growth(t));
 
@@ -234,6 +242,7 @@ export function useCrashGame({
   const fly = (id: number, crash: number) => {
     flight.current = {
       round: id,
+      live,
       t: 0,
       rate: 1,
       crash,
@@ -319,9 +328,12 @@ export function useCrashGame({
     const f = flight.current;
     const wasIn = cashedRef.current === null;
     // A live round's crash point lands whenever the server reveals it; one
-    // already behind the plane crashes at once, at that value.
-    if (live && !Number.isFinite(f.crash) && crashAt?.round === f.round) {
+    // already behind the plane crashes at once, at that value. One ahead is
+    // a display running late: the server has crashed, so the flight runs
+    // out to it like a skip.
+    if (f.live && !Number.isFinite(f.crash) && crashAt?.round === f.round) {
       f.crash = settle(crashAt.value);
+      f.rate = reduce ? 1e9 : Math.max(1, (timeAt(f.crash) - f.t) / SKIP_TIME);
       // The server's crash came before the player's cash out: it never
       // happened, so the round is lost after all.
       if (cashedRef.current !== null && cashedRef.current > f.crash) {
@@ -344,7 +356,8 @@ export function useCrashGame({
       // crash check covers a target equal to the crash point.
       if (f.auto !== null && f.auto <= f.crash && (value >= f.auto || f.t >= end)) cashOut(f.auto, timeAt(f.auto));
       // Finite: an open live round that runs for hours overflows to Infinity.
-      else if (f.t < end && Number.isFinite(value) && value >= milestone(f.milestone)) {
+      // Not during a live run-out: the round is already decided.
+      else if (f.rate === 1 && f.t < end && Number.isFinite(value) && value >= milestone(f.milestone)) {
         // A long frame can cross several; only the last is told.
         while (value >= milestone(f.milestone + 1)) f.milestone++;
         setAnnouncement(formatShort(milestone(f.milestone)));
@@ -418,6 +431,9 @@ export function useCrashGame({
     if (starting || now - flight.current.pressTime < PRESS_GUARD) return;
     if (!running) start();
     else if (cashedRef.current === null) {
+      // The server already ended this live round; the display is catching
+      // up. `overtaken` covers the frame before onFrame takes the reveal.
+      if (overtaken || (flight.current.live && Number.isFinite(flight.current.crash))) return;
       flight.current.pressTime = now;
       cashOut(floor2(growth(flight.current.t)), flight.current.t);
     } else skip();
@@ -426,15 +442,17 @@ export function useCrashGame({
     ? "Starting…"
     : running
       ? cashed === null
-        ? `Cash out ${formatMultiplier(multiplier)}`
+        ? overtaken
+          ? "Crashing…"
+          : `Cash out ${formatMultiplier(multiplier)}`
         : crashKnown
           ? "Skip to crash"
           : "Waiting for crash"
       : crashed
         ? "Play again"
         : "Start";
-  /** The main action can't act right now: the crash point is still coming. */
-  const actionBusy = starting || (running && cashed !== null && !crashKnown);
+  /** The main action can't act right now: the crash point is still coming, or a live round is already over. */
+  const actionBusy = starting || (running && cashed !== null && !crashKnown) || (overtaken && cashed === null);
 
   // Red is kept for a loss: a crash after a cash out is no bad news.
   const lost = crashed && cashed === null;
