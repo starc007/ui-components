@@ -28,15 +28,19 @@ export interface CrashProps {
    * Live rounds (controlled), for a server that keeps the crash point secret
    * until it happens: null while the round is flying, then the crash point
    * once revealed. The flight runs open-ended until it is set, and a value at
-   * or below the current multiplier crashes at once, at that value; a cash
-   * out above it never happened, so the round ends lost (`onCrash` reports
-   * null) even though `onCashOut` fired. Set it back to null in `onStart`;
+   * or below the current multiplier crashes at once, at that value, and a
+   * cash out above it never happened: the round ends lost and `onCashOut` is
+   * not called. Set it back to null in `onStart`;
    * the value a round starts with counts as last round's until it changes.
    */
   crashAt?: number | null;
   /** Called when the player starts a round, before its crash point is known. */
   onStart?: () => void;
-  /** Called when the player cashes out, by hand or automatically. */
+  /**
+   * Called when the player cashes out, by hand or automatically. In a live
+   * round it waits until the crash point is revealed, so it only fires for a
+   * cash out that stands.
+   */
   onCashOut?: (multiplier: number) => void;
   /** Called when the round crashes, with the cash-out multiplier or null if the player was still in. */
   onCrash?: (crashPoint: number, cashedOut: number | null) => void;
@@ -149,7 +153,8 @@ export function useCrashGame({
   // The flight lives in a ref so each frame can read and advance it. The
   // crash point stays out of state until it is reached. `milestone` indexes
   // the next multiplier to announce. `pressTime` is the last take-off,
-  // cash-out press or crash, in performance.now() ms.
+  // cash-out press or crash, in performance.now() ms. `held` is a live cash out waiting on
+  // the crash point before `onCashOut` hears of it.
   // `revealed` turns true once a live round has seen `crashAt` reset or
   // changed since it started, so a stale value can't end the new round.
   const flight = useRef({
@@ -161,6 +166,7 @@ export function useCrashGame({
     pressTime: Number.NEGATIVE_INFINITY,
     stale: null as number | null,
     revealed: false,
+    held: false,
   });
   const cashedRef = useRef<number | null>(null);
   // A round is in progress from Start until it crashes or fails to start. A
@@ -210,7 +216,9 @@ export function useCrashGame({
     setCashed(value);
     setAnnouncement(`Cashed out at ${formatMultiplier(value)}.`);
     if (soundOn) getPlayer().cashOut();
-    onCashOut?.(value);
+    // A live cash out stands only if the crash point turns out above it.
+    if (Number.isFinite(flight.current.crash)) onCashOut?.(value);
+    else flight.current.held = true;
   };
 
   // Takes off once the crash point is settled (Infinity: not yet revealed).
@@ -226,6 +234,7 @@ export function useCrashGame({
       pressTime: flight.current.pressTime,
       stale: live ? (crashAt ?? null) : null,
       revealed: live && crashAt === null,
+      held: false,
     };
     setPhase("running");
     setAnnouncement(auto === null ? "Round started." : `Round started. Auto cash out at ${formatMultiplier(auto)}.`);
@@ -301,8 +310,14 @@ export function useCrashGame({
         if (cashedRef.current !== null && cashedRef.current > f.crash) {
           cashedRef.current = null;
           setCashed(null);
+          f.held = false;
         }
       }
+    }
+    // A held live cash out stands now the crash point is known.
+    if (f.held && Number.isFinite(f.crash) && cashedRef.current !== null) {
+      f.held = false;
+      onCashOut?.(cashedRef.current);
     }
     const end = timeAt(f.crash);
     f.t = Math.min(end, f.t + dt * f.rate, timeAt(CEILING));
