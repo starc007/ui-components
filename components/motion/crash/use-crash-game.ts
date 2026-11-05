@@ -312,6 +312,7 @@ export function useCrashGame({
     // The round already ended: a frame booked before a throwing onCrash.
     if (!busy.current) return false;
     const f = flight.current;
+    const wasIn = cashedRef.current === null;
     // A live round's crash point lands whenever the server reveals it; one
     // already behind the plane crashes at once, at that value.
     if (live && !Number.isFinite(f.crash) && crashAt?.round === f.round) {
@@ -358,7 +359,9 @@ export function useCrashGame({
     setAnnouncement(
       cashedRef.current === null
         ? `Crashed at ${formatMultiplier(f.crash)}. The round is lost.`
-        : `Crashed at ${formatMultiplier(f.crash)}.`,
+        : // A cash out on this same frame (a target at the crash point, a
+          // long frame) would otherwise never be heard.
+          `${wasIn ? `Cashed out at ${formatMultiplier(cashedRef.current)}. ` : ""}Crashed at ${formatMultiplier(f.crash)}.`,
     );
     if (soundOn) getPlayer().mine();
     onCrash?.(f.crash, cashedRef.current);
