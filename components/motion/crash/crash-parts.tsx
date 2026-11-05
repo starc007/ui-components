@@ -401,13 +401,15 @@ function CrashControls({ game, mainRef }: { game: CrashGame; mainRef: Ref<HTMLBu
 
       <Button
         ref={mainRef}
-        className="relative h-10 flex-1 overflow-hidden rounded-xl tabular-nums aria-disabled:cursor-wait aria-disabled:opacity-60"
+        className="relative h-10 flex-1 overflow-hidden rounded-xl tabular-nums aria-disabled:cursor-wait aria-disabled:opacity-60 aria-disabled:hover:bg-primary"
         // aria-disabled, not disabled: the button keeps keyboard focus while the
         // crash point is on its way.
         aria-disabled={game.actionBusy || undefined}
         aria-busy={game.starting || undefined}
-        // No press while it can't act.
+        // No press or hover response while it can't act. Passed only then:
+        // Button spreads props last, so an explicit undefined would drop its hover.
         pressScale={game.actionBusy ? 1 : 0.96}
+        {...(game.actionBusy ? { whileHover: {} } : {})}
         onClick={game.act}
         // A held Enter repeats clicks; it would cash out, skip and start
         // rounds on its own.
