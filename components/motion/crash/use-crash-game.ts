@@ -252,6 +252,14 @@ export function useCrashGame({
     busy.current = true;
     rounds += 1;
     const id = rounds;
+    // Before any state changes: if it throws, the round never began and the
+    // last one's result stays as it was.
+    try {
+      onStart?.(id);
+    } catch (error) {
+      busy.current = false;
+      throw error;
+    }
     // The guard against a double tap on Start cashing out at once.
     flight.current.pressTime = performance.now();
     cashedRef.current = null;
@@ -262,7 +270,6 @@ export function useCrashGame({
     setRoundAuto(auto);
     setRound(id);
     if (soundOn) getPlayer().prepare();
-    onStart?.(id);
     if (live) {
       fly(id, Number.POSITIVE_INFINITY);
       return;
