@@ -140,7 +140,7 @@ export function SiteHeader() {
               href="/casino"
               className={cn(
                 "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
-                isCasino ? "inline-flex" : "hidden xl:inline-flex",
+                "inline-flex",
                 isCasino
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -172,8 +172,9 @@ export function SiteHeader() {
             </Link>
             <Link
               href="/sponsors"
+              // From 2xl only, to leave room for Charts and Casino; the footer links it too.
               className={cn(
-                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                "hidden rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3 2xl:inline-flex",
                 isSponsors
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
