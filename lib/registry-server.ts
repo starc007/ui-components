@@ -1,4 +1,4 @@
-import { allComponents, findCategory, registry } from "@/lib/registry";
+import { allComponents, BLOCK_CATEGORIES, findCategory, registry } from "@/lib/registry";
 import { componentDates } from "@/lib/component-dates";
 import { pageUrlFor, withSignature } from "@/lib/signature";
 import { SITE_URL } from "@/lib/site";
@@ -322,7 +322,7 @@ export async function buildShadcnItem(
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: comp.slug,
-    type: comp.categorySlug === "blocks" ? "registry:block" : "registry:component",
+    type: BLOCK_CATEGORIES.includes(comp.categorySlug) ? "registry:block" : "registry:component",
     title: comp.name,
     description: comp.description,
     author: "Saurabh <saurabh10102@gmail.com>",

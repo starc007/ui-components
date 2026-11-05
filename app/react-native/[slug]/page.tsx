@@ -11,6 +11,7 @@ import {
   componentPath,
   NATIVE_PATH,
   nativeComponentPath,
+  TOP_LEVEL_CATEGORIES,
 } from "@/lib/component-paths";
 import { findNativeComponent, native } from "@/lib/native";
 import {
@@ -28,10 +29,13 @@ export function generateStaticParams() {
   return native.components.map((component) => ({ slug: component.slug }));
 }
 
-/** The web category a native component shares its slug with. */
+/**
+ * The web category a native component shares its slug with. Charts and
+ * Casino pages have no Web/React Native switch, so their slugs don't count.
+ */
 function webCategoryOf(slug: string) {
   return registry.find(
-    (cat) => cat.slug !== "charts" && cat.components.some((c) => c.slug === slug),
+    (cat) => !TOP_LEVEL_CATEGORIES.includes(cat.slug) && cat.components.some((c) => c.slug === slug),
   );
 }
 

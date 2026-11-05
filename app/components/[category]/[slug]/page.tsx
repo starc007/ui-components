@@ -2,12 +2,14 @@ import {
   categoryPath,
   componentPath,
   nativeComponentPath,
+  TOP_LEVEL_CATEGORIES,
 } from "@/lib/component-paths";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, ChevronRight, Smartphone } from "lucide-react";
 import {
+  BLOCK_CATEGORIES,
   findCategory,
   findComponent,
   registry,
@@ -58,7 +60,7 @@ export const dynamic = "force-static";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return registry.filter((c) => c.slug !== "charts").flatMap((c) =>
+  return registry.filter((c) => !TOP_LEVEL_CATEGORIES.includes(c.slug)).flatMap((c) =>
     c.components.map((comp) => ({ category: c.slug, slug: comp.slug })),
   );
 }
@@ -318,7 +320,7 @@ export default async function ComponentPage({
       ) : null}
       <RelatedSection related={related} />
 
-      {cat.slug === "blocks" ? <KeepInMind /> : null}
+      {BLOCK_CATEGORIES.includes(cat.slug) ? <KeepInMind /> : null}
       <p className="mt-6 text-xs text-muted-foreground">
         Updated{" "}
         <time dateTime={dates.updatedAt}>

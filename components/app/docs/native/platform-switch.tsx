@@ -8,16 +8,20 @@ import {
   isNativePath,
   NATIVE_PATH,
   nativeComponentPath,
+  TOP_LEVEL_CATEGORIES,
 } from "@/lib/component-paths";
 import nativeNav from "@/lib/native/nav.json";
 import { registry } from "@/lib/registry";
 
 const NATIVE = new Set(nativeNav.map((item) => item.slug));
 
-/** The web page a native component shares its slug with. */
+/**
+ * The web page a native component shares its slug with. Charts and Casino
+ * pages have no Web/React Native switch, so their slugs don't count.
+ */
 function webPathFor(slug: string) {
   const category = registry.find(
-    (cat) => cat.slug !== "charts" && cat.components.some((c) => c.slug === slug),
+    (cat) => !TOP_LEVEL_CATEGORIES.includes(cat.slug) && cat.components.some((c) => c.slug === slug),
   );
   return category ? componentPath(category.slug, slug) : "/components/motion";
 }

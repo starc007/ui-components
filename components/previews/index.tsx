@@ -222,20 +222,20 @@ export const previews: Record<string, ComponentType> = {
   "blocks/feedback-widget": dynamic(() =>
     import("./blocks/feedback-widget.preview").then((m) => m.FeedbackWidgetPreview),
   ),
-  "blocks/crash": dynamic(() =>
-    import("./blocks/crash.preview").then((m) => m.CrashPreview),
+  "casino/crash": dynamic(() =>
+    import("./casino/crash.preview").then((m) => m.CrashPreview),
   ),
-  "blocks/crash-balloon": dynamic(() =>
-    import("./blocks/crash-balloon.preview").then((m) => m.CrashBalloonPreview),
+  "casino/crash-balloon": dynamic(() =>
+    import("./casino/crash-balloon.preview").then((m) => m.CrashBalloonPreview),
   ),
-  "blocks/crash-tower": dynamic(() =>
-    import("./blocks/crash-tower.preview").then((m) => m.CrashTowerPreview),
+  "casino/crash-tower": dynamic(() =>
+    import("./casino/crash-tower.preview").then((m) => m.CrashTowerPreview),
   ),
-  "blocks/mines": dynamic(() =>
-    import("./blocks/mines.preview").then((m) => m.MinesPreview),
+  "casino/mines": dynamic(() =>
+    import("./casino/mines.preview").then((m) => m.MinesPreview),
   ),
-  "blocks/plinko": dynamic(() =>
-    import("./blocks/plinko.preview").then((m) => m.PlinkoPreview),
+  "casino/plinko": dynamic(() =>
+    import("./casino/plinko.preview").then((m) => m.PlinkoPreview),
   ),
   "blocks/card-dealer": dynamic(() =>
     import("./blocks/card-dealer.preview").then((m) => m.CardDealerPreview),
