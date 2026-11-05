@@ -38,6 +38,8 @@ const BX = 262;
 const TAPE_X = 348;
 // The balloon's envelope centre once aloft, and the tape caret beside it.
 const LEVEL = 112;
+// The highest a target mark sits, so its flag stays on the stage.
+const TARGET_PIN = 14;
 const GROUND_Y = H - 24;
 // The basket's bottom is 51 units under the envelope centre.
 const PARKED = GROUND_Y - 51;
@@ -169,7 +171,7 @@ function Stage({ t, cashed, crashed, lost, round, pulse, target, ghost, reduce, 
             <line x2={12} stroke="currentColor" strokeDasharray="2 2" />
             <path d="M-8.5,-2.5L-3.5,2.5M-3.5,-2.5L-8.5,2.5" stroke="currentColor" strokeWidth={1.25} />
             {/* Dropped when it would print over the target's label. */}
-            {target !== null && Math.abs(at(ghost) - at(target)) < 12 ? null : (
+            {target !== null && Math.abs(at(ghost) - Math.max(at(target), TARGET_PIN)) < 12 ? null : (
               <text x={-12} dy="0.32em" textAnchor="end" className="fill-muted-foreground text-[10px] tabular-nums">
                 {formatShort(ghost)}
               </text>
@@ -190,12 +192,15 @@ function Stage({ t, cashed, crashed, lost, round, pulse, target, ghost, reduce, 
             transition={SWAP}
             className="text-primary"
           >
-            {/* The marks stay quiet; the label keeps full contrast. */}
-            <g transform={`translate(${TAPE_X},${at(target).toFixed(2)})`}>
-              <line x2={W - TAPE_X} stroke="currentColor" strokeDasharray="3 3" strokeWidth={1.25} opacity={0.7} />
+            {/* The marks stay quiet; the label keeps full contrast. A target
+                above the view pins to the top with an arrow, like the plane's. */}
+            <g transform={`translate(${TAPE_X},${Math.max(at(target), TARGET_PIN).toFixed(2)})`}>
+              {at(target) < TARGET_PIN ? null : (
+                <line x2={W - TAPE_X} stroke="currentColor" strokeDasharray="3 3" strokeWidth={1.25} opacity={0.7} />
+              )}
               <path d="M0,0V-10L8,-7L0,-4" fill="none" stroke="currentColor" strokeLinejoin="round" opacity={0.7} />
               <text x={-12} dy="0.32em" textAnchor="end" className={cn("fill-current text-[10px]", PRIMARY_TEXT)}>
-                target
+                {at(target) < TARGET_PIN ? `target ${formatShort(target)} ↑` : "target"}
               </text>
             </g>
           </motion.g>
