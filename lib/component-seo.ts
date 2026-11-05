@@ -576,6 +576,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Animated React sign up form with on-blur validation, a password strength meter, password reveal and loading and success states. Free, open source.",
   },
+  crash: {
+    title: "Animated Crash Game for React",
+    description:
+      "React crash game: a multiplier climbs a live curve until it crashes. Cash out by hand or automatically, see what you missed. Framer Motion, install with shadcn.",
+  },
   mines: {
     title: "Animated Mines Game Board for React",
     description:

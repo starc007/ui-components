@@ -2263,6 +2263,53 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "crash",
+        name: "Crash",
+        description: "A crash game: a paper plane flies the multiplier up a curve, banking with its slope through a speed field that streams faster as it climbs, until the round crashes at a fair random point. Cash out by hand or at an auto target and a parachute pops open at the cash point while the plane flies on, so you see where it would have crashed. On a crash the plane tumbles out of the sky in a burst of paper shreds, milestones pulse the readout, and recent rounds slide into a history strip. Server-decided crash points, optional synthesized sound, reduced-motion safe.",
+        file: "components/motion/crash.tsx",
+        badge: "new",
+        launchedAt: "2026-11-05",
+        keywords: ["crash game", "crash game react", "rocket multiplier game", "cash out game ui", "multiplier curve animation"],
+        examples: [
+          {
+            slug: "plane",
+            name: "Plane",
+            description:
+              "A paper plane flies the multiplier up a curve through a speed field; a parachute opens where you cash out, and a crash tumbles the plane out of the sky.",
+            installSlug: "crash",
+            badge: "new",
+            launchedAt: "2026-11-05",
+            file: "components/motion/crash.tsx",
+            previewKey: "blocks/crash",
+            previewFile: "components/previews/blocks/crash.preview.tsx",
+          },
+          {
+            slug: "balloon",
+            name: "Balloon",
+            description:
+              "A hot-air balloon climbs an altimeter: the tape and clouds scroll past as the multiplier rises, a parachutist bails at your cash out, and a crash pops the envelope.",
+            installSlug: "crash-balloon",
+            badge: "new",
+            launchedAt: "2026-11-05",
+            file: "components/motion/crash/crash-balloon.tsx",
+            previewKey: "blocks/crash-balloon",
+            previewFile: "components/previews/blocks/crash-balloon.preview.tsx",
+          },
+          {
+            slug: "tower",
+            name: "Tower",
+            description:
+              "Blocks stack higher with the multiplier and the tower sways more the taller it grows; your cash-out block keeps a pennant, and a crash topples the top of the stack.",
+            installSlug: "crash-tower",
+            badge: "new",
+            launchedAt: "2026-11-05",
+            file: "components/motion/crash/crash-tower.tsx",
+            previewKey: "blocks/crash-tower",
+            previewFile: "components/previews/blocks/crash-tower.preview.tsx",
+          },
+        ],
+      },
+      {
         slug: "mines",
         name: "Mines",
         description: "A mines board: pick tiles to find gems, each one raising the multiplier, and cash out before you hit a mine. Each gem you find is numbered in pick order, an odds ring shows the chance the next pick is safe, and the round's end reveals every tile in a ripple from your last pick before a ticket-stub result card rises with the outcome, stats and a miniature of your run. Distinct synthesized sounds for gems, streaks, mines and cash outs; keyboard playable, reduced-motion safe.",

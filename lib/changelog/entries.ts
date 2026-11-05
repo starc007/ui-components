@@ -8,8 +8,13 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
 export const changelogEntries: ChangelogEntry[] = [
   {
     "date": "2026-11-02",
-    "title": "Plinko and Mines",
+    "title": "Plinko, Mines and Crash",
     "items": [
+      {
+        "type": "new",
+        "text": "Crash flies a paper plane up a live multiplier curve until the round crashes at a random point and the plane tumbles out of the sky. Cash out by hand or at an auto target and a parachute opens where you bailed, while the plane flies on to show where it would have crashed. Recent rounds collect in a history strip, getCrashPoint can return a Promise so your server decides each round, crashAt runs live rounds whose crash point the server reveals only when it happens, crashPoint takes a house edge and your own random draw for provably fair hashes, and optional sound chimes a step higher at each milestone you hold through. It ships in three designs that play the same game: the plane, a hot-air balloon climbing an altimeter that pops on a crash, and a stacking tower that sways as it grows and topples. Each marks your auto target ahead of the flight, the multiplier warms in colour as it climbs, and at the crash the readout turns into the round's result.",
+        "component": "crash"
+      },
       {
         "type": "new",
         "text": "Plinko drops balls through rows of pegs into scoring slots. Pass your own slot values and the board sizes itself, or let plinkoSlots build a curve for any number of rows. Pegs flash as they're hit, the winning slot stays marked, and optional sound clicks on every peg and lands with a thunk that brightens toward the rarer edges.",
