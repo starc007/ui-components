@@ -13,7 +13,15 @@ import { DiwaliRockets } from "@/components/app/diwali-rockets";
 import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { RainbowCta } from "@/components/app/rainbow-cta";
-import { hasSiteSidebar, isNativePath, NATIVE_PATH, topLevelCategory } from "@/lib/component-paths";
+import {
+  categoryPath,
+  hasSiteSidebar,
+  isNativePath,
+  NATIVE_PATH,
+  TOP_LEVEL_CATEGORIES,
+  topLevelCategory,
+} from "@/lib/component-paths";
+import { findCategory } from "@/lib/registry";
 import { cn } from "@/lib/utils";
 
 function formatStarCount(count: number) {
@@ -49,8 +57,6 @@ export function SiteHeader() {
   const isBlocks = pathname.startsWith("/components/blocks");
   const isAgents = pathname.startsWith("/components/agents");
   const section = topLevelCategory(pathname);
-  const isCharts = section === "charts";
-  const isCasino = section === "casino";
   const isNative = isNativePath(pathname);
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
@@ -125,30 +131,23 @@ export function SiteHeader() {
             >
               Agents
             </Link>
-            <Link
-              href="/charts"
-              className={cn(
-                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
-                section ? "hidden xl:inline-flex" : "inline-flex",
-                isCharts
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              Charts
-            </Link>
-            <Link
-              href="/casino"
-              className={cn(
-                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
-                "inline-flex",
-                isCasino
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              Casino
-            </Link>
+            {/* Each section's link hides below xl on its own pages, where
+                Components takes its place, so the other section stays one click away. */}
+            {TOP_LEVEL_CATEGORIES.map((slug) => (
+              <Link
+                key={slug}
+                href={categoryPath(slug)}
+                className={cn(
+                  "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                  section === slug ? "hidden xl:inline-flex" : "inline-flex",
+                  section === slug
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {findCategory(slug)?.name}
+              </Link>
+            ))}
             <Link
               href={NATIVE_PATH}
               className={cn(
