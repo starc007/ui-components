@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { MobileNav } from "@/components/app/chrome/mobile-nav";
 import { SiteSearch } from "@/components/app/chrome/site-search";
 import { ThemeToggle } from "@/components/app/chrome/theme-toggle";
-import { HalloweenMark } from "@/components/app/halloween-mark";
+import { DiwaliMark } from "@/components/app/diwali-mark";
 import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { RainbowCta } from "@/components/app/rainbow-cta";
@@ -81,7 +81,7 @@ export function SiteHeader() {
             onFocus={(e) => setMarkHovered(e.currentTarget.matches(":focus-visible"))}
             onBlur={() => setMarkHovered(false)}
           >
-            <HalloweenMark hovered={markHovered} className="h-6 w-6" />
+            <DiwaliMark hovered={markHovered} className="h-6 w-6" />
             <span>beUI</span>
           </Link>
           <nav className={cn("hidden items-center gap-0.5", sidebarPage ? "md:flex" : "xl:flex")}>
