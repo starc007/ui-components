@@ -24,6 +24,7 @@ export function BarChart({
   formatValue,
   formatTick,
   label,
+  labels,
   children,
   className,
   ...props
@@ -44,6 +45,7 @@ export function BarChart({
     formatValue,
     formatTick,
     label,
+    labels,
   });
   return (
     <BarChartContext.Provider value={model}>
@@ -67,18 +69,21 @@ export function BarChart({
           rows={model.rows}
           categories={model.categories}
           formatValue={model.formatValue}
+          t={model.xy}
         />
       </section>
     </BarChartContext.Provider>
   );
 }
 
-export type { BarChartProps } from "./bar-chart/context";
-export { useBarChart } from "./bar-chart/context";
+export type { BarChartMessages, BarChartProps } from "./bar-chart/context";
+export { barChartMessages, useBarChart } from "./bar-chart/context";
 export type { BarChartLegendProps } from "./bar-chart/legend";
 export { BarChartLegend } from "./bar-chart/legend";
 export type { BarChartPlotProps } from "./bar-chart/plot";
 export { BarChartPlot } from "./bar-chart/plot";
 export type { BarChartTooltipData, BarChartTooltipProps } from "./bar-chart/tooltip";
 export { BarChartTooltip } from "./bar-chart/tooltip";
+export type { XYChartMessages } from "./xy/messages";
+export { xyChartMessages } from "./xy/messages";
 export type { XYSeries as BarChartSeries } from "./xy/model";

@@ -18,6 +18,7 @@ import {
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export type OverflowActionsSize = "sm" | "md";
@@ -42,6 +43,14 @@ export type OverflowActionsClassNames = {
   label?: string;
 };
 
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const overflowActionsMessages = {
+  open: "Show extra actions",
+  close: "Hide extra actions",
+};
+
+export type OverflowActionsMessages = typeof overflowActionsMessages;
+
 export interface OverflowActionsProps {
   primaryActions: OverflowActionItem[];
   overflowActions: OverflowActionItem[];
@@ -53,6 +62,8 @@ export interface OverflowActionsProps {
   size?: OverflowActionsSize;
   openLabel?: string;
   closeLabel?: string;
+  /** Override any built-in string. */
+  labels?: Partial<OverflowActionsMessages>;
   className?: string;
   classNames?: OverflowActionsClassNames;
 }
@@ -146,13 +157,15 @@ export function OverflowActions({
   onAction,
   collapseOnAction = false,
   size = "md",
-  openLabel = "Show extra actions",
-  closeLabel = "Hide extra actions",
+  openLabel,
+  closeLabel,
+  labels,
   className,
   classNames,
 }: OverflowActionsProps) {
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
+  const t = useMessages("overflowActions", overflowActionsMessages, labels);
   const overflowId = useId();
   const overflowWrapperRef = useRef<HTMLDivElement>(null);
   const overflowWrapperLeftRef = useRef(0);
@@ -163,6 +176,9 @@ export function OverflowActions({
   });
 
   const transition = reduce ? { duration: 0 } : SHELL_TRANSITION;
+  const toggleLabel = isExpanded
+    ? (closeLabel ?? t("close"))
+    : (openLabel ?? t("open"));
 
   useLayoutEffect(() => {
     const overflowNode = overflowWrapperRef.current;
@@ -262,8 +278,8 @@ export function OverflowActions({
           layout
           aria-expanded={isExpanded}
           aria-controls={isExpanded ? overflowId : undefined}
-          aria-label={isExpanded ? closeLabel : openLabel}
-          title={isExpanded ? closeLabel : openLabel}
+          aria-label={toggleLabel}
+          title={toggleLabel}
           onClick={() => setIsExpanded(!isExpanded)}
           whileTap={reduce ? undefined : { scale: 0.96 }}
           whileHover={reduce || !canHover ? undefined : { scale: 1.03 }}

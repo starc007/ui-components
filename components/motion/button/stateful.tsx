@@ -15,9 +15,19 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { Button, type ButtonProps } from "./base";
 
 export type ButtonState = "idle" | "loading" | "success" | "error";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const statefulButtonMessages = {
+  loading: "Loading",
+  success: "Done",
+  error: "Try again",
+};
+
+export type StatefulButtonMessages = typeof statefulButtonMessages;
 
 export interface StatefulButtonProps extends Omit<ButtonProps, "children"> {
   state?: ButtonState;
@@ -26,6 +36,8 @@ export interface StatefulButtonProps extends Omit<ButtonProps, "children"> {
   successText?: ReactNode;
   errorText?: ReactNode;
   icon?: ReactNode;
+  /** Override any built-in string. */
+  labels?: Partial<StatefulButtonMessages>;
 }
 
 const CASCADE_STAGGER = 0.025;
@@ -184,23 +196,25 @@ export const StatefulButton = forwardRef<HTMLButtonElement, StatefulButtonProps>
   {
     state = "idle",
     children,
-    loadingText = "Loading",
-    successText = "Done",
-    errorText = "Try again",
+    loadingText,
+    successText,
+    errorText,
     icon,
+    labels,
     disabled,
     ...rest
   },
   ref,
 ) {
+  const t = useMessages("statefulButton", statefulButtonMessages, labels);
   const isBusy = state === "loading";
   const stateText =
     state === "loading"
-      ? loadingText
+      ? (loadingText ?? t("loading"))
       : state === "success"
-        ? successText
+        ? (successText ?? t("success"))
         : state === "error"
-        ? errorText
+        ? (errorText ?? t("error"))
         : children;
   const textKey =
     typeof stateText === "string" ? `${state}-${stateText}` : state;

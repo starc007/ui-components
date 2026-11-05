@@ -21,15 +21,26 @@ import {
   useState,
 } from "react";
 import {
-  EASE_OUT,
-  SPRING_PRESS,
-} from "@/lib/ease";
-import {
   Liquid,
   LiquidItem,
   type LiquidTransition,
 } from "@/components/motion/liquid";
+import {
+  EASE_OUT,
+  SPRING_PRESS,
+} from "@/lib/ease";
+import { formatNumber, useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const adaptiveStepperMessages = {
+  label: "Quantity",
+  summary: "{label}. Current value: {value}",
+  decrease: "Decrease value",
+  increase: "Increase value",
+};
+
+export type AdaptiveStepperMessages = typeof adaptiveStepperMessages;
 
 // The deliberately elastic separation curve from the liquid email reference.
 const STEPPER_LIQUID_TRANSITION = {
@@ -47,6 +58,7 @@ type AdaptiveStepperContextValue = {
   atMax: boolean;
   disabled: boolean;
   reduce: boolean;
+  t: (key: keyof AdaptiveStepperMessages & string) => string;
   decrement: (restoreFocus: boolean) => void;
   increment: (restoreFocus: boolean) => void;
   decrementRef: React.MutableRefObject<HTMLButtonElement | null>;
@@ -113,6 +125,8 @@ export interface AdaptiveStepperProps {
   formatValueText?: (value: number) => string;
   className?: string;
   "aria-label"?: string;
+  /** Override any built-in string. `{label}` and `{value}` fill `summary`. */
+  labels?: Partial<AdaptiveStepperMessages>;
 }
 
 export function AdaptiveStepper({
@@ -127,8 +141,12 @@ export function AdaptiveStepper({
   name,
   formatValueText,
   className,
-  "aria-label": ariaLabel = "Quantity",
+  "aria-label": ariaLabelProp,
+  labels,
 }: AdaptiveStepperProps) {
+  const t = useMessages("adaptiveStepper", adaptiveStepperMessages, labels);
+  const { locale } = useLocale();
+  const ariaLabel = ariaLabelProp ?? t("label");
   const reduce = useReducedMotion() ?? false;
   const labelId = useId();
   const decrementRef = useRef<HTMLButtonElement>(null);
@@ -196,7 +214,7 @@ export function AdaptiveStepper({
     [commit, currentValue, disabled, lower, stride, upper],
   );
 
-  const valueText = formatValueText?.(currentValue) ?? String(currentValue);
+  const valueText = formatValueText?.(currentValue) ?? formatNumber(currentValue, locale);
   const context = useMemo<AdaptiveStepperContextValue>(
     () => ({
       value: currentValue,
@@ -206,6 +224,7 @@ export function AdaptiveStepper({
       atMax: currentValue >= upper,
       disabled,
       reduce,
+      t,
       decrement,
       increment,
       decrementRef,
@@ -219,6 +238,7 @@ export function AdaptiveStepper({
       increment,
       lower,
       reduce,
+      t,
       upper,
       valueText,
     ],
@@ -234,7 +254,7 @@ export function AdaptiveStepper({
         )}
       >
         <legend id={labelId} className="sr-only">
-          {ariaLabel}. Current value: {valueText}
+          {t("summary", { label: ariaLabel, value: valueText })}
         </legend>
         <Liquid
           blur={8}
@@ -273,7 +293,7 @@ function StepperAction({
   const actionRef =
     direction === -1 ? context.decrementRef : context.incrementRef;
   const label =
-    ariaLabel ?? (direction === -1 ? "Decrease value" : "Increase value");
+    ariaLabel ?? context.t(direction === -1 ? "decrease" : "increase");
   const action = direction === -1 ? context.decrement : context.increment;
   const x =
     direction === -1

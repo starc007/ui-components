@@ -25,6 +25,7 @@ export function LineChart({
   label,
   status,
   loadingLabel,
+  labels,
   children,
   className,
   ...props
@@ -46,6 +47,7 @@ export function LineChart({
     label,
     status,
     loadingLabel,
+    labels,
   });
   return (
     <LineChartContext.Provider value={model}>
@@ -72,6 +74,7 @@ export function LineChart({
             rows={model.rows}
             categories={model.categories}
             formatValue={model.formatValue}
+            t={model.xy}
           />
         )}
       </section>
@@ -79,13 +82,15 @@ export function LineChart({
   );
 }
 
-export type { LineChartProps } from "./line-chart/context";
-export { useLineChart } from "./line-chart/context";
+export type { LineChartMessages, LineChartProps } from "./line-chart/context";
+export { lineChartMessages, useLineChart } from "./line-chart/context";
 export type { LineChartLegendProps } from "./line-chart/legend";
 export { LineChartLegend } from "./line-chart/legend";
 export type { LineChartPlotProps } from "./line-chart/plot";
 export { LineChartPlot } from "./line-chart/plot";
 export type { LineChartTooltipData, LineChartTooltipProps } from "./line-chart/tooltip";
 export { LineChartTooltip } from "./line-chart/tooltip";
+export type { XYChartMessages } from "./xy/messages";
+export { xyChartMessages } from "./xy/messages";
 export type { XYSeries as LineChartSeries } from "./xy/model";
 export type { XYCurve as LineChartCurve } from "./xy/path";

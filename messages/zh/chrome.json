@@ -74,7 +74,9 @@
   },
   "notFound": {
     "title": "页面未找到",
-    "description": "你访问的页面不存在。"
+    "description": "你访问的页面不存在。",
+    "homeLabel": "返回首页",
+    "browseLabel": "浏览组件"
   },
   "theme": {
     "lightTheme": "浅色主题",

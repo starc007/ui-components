@@ -69,6 +69,8 @@ export function BarChartPlot({
     tooltipId,
     reduce,
     canHover,
+    t,
+    xy,
   } = useBarChart();
   const { ref, width } = useElementWidth<HTMLDivElement>();
   const inView = useInView(ref, { once: true, amount: 0.3 });
@@ -89,7 +91,7 @@ export function BarChartPlot({
         className={cn("flex items-center justify-center text-sm text-muted-foreground", className)}
         style={{ height }}
       >
-        No data
+        {xy("noData")}
       </p>
     );
 
@@ -305,17 +307,20 @@ export function BarChartPlot({
             count={n}
             activeIndex={activeRank}
             onActive={(rank) => setActive(categories[order[rank]])}
-            label={`${label}: inspect categories`}
+            label={t("inspect", { label })}
             valueText={(rank) => {
               const i = order[rank];
               return [
                 categories[i],
                 ...visibleRows.map((row) => {
                   const value = row.values[i];
-                  return `${row.name} ${value === null ? "no data" : formatValue(value)}`;
+                  return xy("seriesValue", {
+                    name: row.name,
+                    value: value === null ? xy("missing") : formatValue(value),
+                  });
                 }),
                 ...(layout === "stacked" && visibleRows.length > 1
-                  ? [`Total ${formatValue(totals[i])}`]
+                  ? [xy("totalValue", { value: formatValue(totals[i]) })]
                   : []),
               ].join(". ");
             }}

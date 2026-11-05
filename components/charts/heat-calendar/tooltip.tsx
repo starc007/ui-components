@@ -4,7 +4,6 @@ import { NumberTicker } from "@/components/motion/number-ticker";
 import { Tooltip } from "@/components/motion/tooltip";
 import { cn } from "@/lib/utils";
 import { useHeatCalendar } from "./context";
-import { fmtDay, fmtRange } from "./utils";
 
 export function HeatCalendarTooltip({
   children,
@@ -13,7 +12,7 @@ export function HeatCalendarTooltip({
   children?: ReactNode | ((data: NonNullable<ReturnType<typeof useHeatCalendar>["tooltip"]>) => ReactNode);
   className?: string;
 }) {
-  const { gridRef, tooltipId, tip, tooltip, unit } = useHeatCalendar();
+  const { gridRef, tooltipId, tip, tooltip, unit, t, formats } = useHeatCalendar();
   const [dismissed, setDismissed] = useState<typeof tip>(null);
   const anchorRef = useMemo(() => ({ get current() {
     return tip ? gridRef.current?.querySelector<HTMLElement>(`[data-heat-cell="${tip.w}-${tip.d}"]`) ?? null : null;
@@ -41,10 +40,13 @@ export function HeatCalendarTooltip({
                 </span>
                 <span className="text-muted-foreground">
                   {tooltip.days > 1 && tooltip.startDate && tooltip.endDate
-                    ? `${fmtRange.format(tooltip.startDate)} – ${fmtRange.format(tooltip.endDate)}`
-                    : fmtDay.format(tooltip.date)}
+                    ? t("range", {
+                        start: formats.range.format(tooltip.startDate),
+                        end: formats.range.format(tooltip.endDate),
+                      })
+                    : formats.day.format(tooltip.date)}
                 </span>
-                {tooltip.days > 1 ? <span className="text-muted-foreground">{tooltip.days} days</span> : null}
+                {tooltip.days > 1 ? <span className="text-muted-foreground">{t("days", { days: tooltip.days })}</span> : null}
               </>
             )))}
     />

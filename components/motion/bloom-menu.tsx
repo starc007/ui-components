@@ -24,6 +24,7 @@ import {
 import { EASE_OUT } from "@/lib/ease";
 import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 type MenuItem = { label: string; icon: ComponentType<{ className?: string }> };
@@ -37,6 +38,31 @@ const ITEMS: MenuItem[] = [
   { label: "Link", icon: Link },
 ];
 
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const bloomMenuMessages = {
+  create: "Create",
+  close: "Close menu",
+  doc: "Doc",
+  board: "Board",
+  table: "Table",
+  folder: "Folder",
+  reminder: "Reminder",
+  link: "Link",
+};
+
+export type BloomMenuMessages = typeof bloomMenuMessages;
+
+// Default items keep their English label as the id and `onSelect` value;
+// only the visible text is translated.
+const ITEM_MESSAGE: Record<string, keyof BloomMenuMessages> = {
+  Doc: "doc",
+  Board: "board",
+  Table: "table",
+  Folder: "folder",
+  Reminder: "reminder",
+  Link: "link",
+};
+
 // Folder-open feel: a touch of overshoot as the panel expands, kept subtle.
 const SPRING_FOLDER = {
   type: "spring",
@@ -48,14 +74,18 @@ const SPRING_FOLDER = {
 export interface BloomMenuProps {
   items?: MenuItem[];
   onSelect?: (label: string) => void;
+  /** Override any built-in string. */
+  labels?: Partial<BloomMenuMessages>;
   className?: string;
 }
 
 export function BloomMenu({
   items = ITEMS,
   onSelect,
+  labels,
   className,
 }: BloomMenuProps) {
+  const t = useMessages("bloomMenu", bloomMenuMessages, labels);
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
   const layoutId = useId();
@@ -177,12 +207,12 @@ export function BloomMenu({
                     id={`${menuId}-label`}
                     className="text-sm font-medium text-muted-foreground"
                   >
-                    Create
+                    {t("create")}
                   </span>
                   <button
                     type="button"
                     onClick={() => close(true)}
-                    aria-label="Close menu"
+                    aria-label={t("close")}
                     className="rounded-sm text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <X className="h-4 w-4" />
@@ -261,7 +291,9 @@ export function BloomMenu({
                         className="flex flex-col items-center gap-2"
                       >
                         <item.icon className="h-5 w-5" />
-                        <span className="text-sm font-medium">{item.label}</span>
+                        <span className="text-sm font-medium">
+                          {items === ITEMS ? t(ITEM_MESSAGE[item.label]) : item.label}
+                        </span>
                       </motion.span>
                     </button>
                     );
@@ -295,7 +327,7 @@ export function BloomMenu({
                 layout
                 className="inline-flex items-center gap-2 whitespace-nowrap"
               >
-                Create
+                {t("create")}
                 <Plus className="h-4 w-4" />
               </motion.span>
             </motion.button>

@@ -5,19 +5,14 @@ import { type ReactNode, useEffect, useId, useState } from "react";
 import { Loader } from "@/components/motion/loader";
 import { TextScramble } from "@/components/motion/text-scramble";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import {
   TEXT_SHIMMER_CLASS_NAME,
   TEXT_SHIMMER_KEYFRAMES,
   textShimmerStyle,
 } from "@/lib/text-shimmer";
 import { cn } from "@/lib/utils";
-
-const DEFAULT_PHRASES = [
-  "Thinking",
-  "Reading the context",
-  "Connecting the details",
-  "Forming a response",
-];
+import { type LoadingStatesMessages, loadingStatesMessages } from "./messages";
 
 const CASCADE_STAGGER = 0.025;
 
@@ -34,6 +29,8 @@ export interface ReasoningTextProps {
   shimmerDuration?: number;
   /** Optional leading visual. Defaults to a terminal-style ASCII loader. */
   indicator?: ReactNode;
+  /** Override any built-in string, including the default phrases. */
+  labels?: Partial<LoadingStatesMessages>;
   className?: string;
 }
 
@@ -157,17 +154,27 @@ function ScramblePhrase({
 }
 
 export function ReasoningText({
-  phrases = DEFAULT_PHRASES,
+  phrases,
   variant = "cascade",
   interval = 1800,
   shimmerDuration = 2.2,
   indicator,
+  labels,
   className,
 }: ReasoningTextProps) {
+  const t = useMessages("loadingStates", loadingStatesMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const [index, setIndex] = useState(0);
   const statusId = useId();
-  const safePhrases = phrases.length > 0 ? phrases : DEFAULT_PHRASES;
+  const safePhrases =
+    phrases && phrases.length > 0
+      ? phrases
+      : [
+          t("phraseThinking"),
+          t("phraseReading"),
+          t("phraseConnecting"),
+          t("phraseForming"),
+        ];
   const phrase = safePhrases[index % safePhrases.length];
   const longestPhrase = safePhrases.reduce((longest, current) =>
     current.length > longest.length ? current : longest,
@@ -202,7 +209,7 @@ export function ReasoningText({
               variant="ascii-line"
               size={14}
               speed={0.8}
-              label="Reasoning"
+              label={t("reasoning")}
             />
           )}
         </span>

@@ -18,6 +18,9 @@ export const routing = defineRouting({
   localePrefix: "as-needed",
   // The URL alone picks the language, so a shared link renders the same for everyone.
   localeDetection: false,
+  // Detection is off, so the cookie is never read. Skipping it keeps static
+  // HTML cacheable (no Set-Cookie).
+  localeCookie: false,
 });
 
 /** Path for `pathname` ("/components/motion") in `locale`. */

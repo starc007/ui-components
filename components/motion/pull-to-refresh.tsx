@@ -23,8 +23,19 @@ import {
   SPRING_PANEL,
   SPRING_SWAP,
 } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { capturePointer, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const pullToRefreshMessages = {
+  pulling: "Pull to refresh",
+  release: "Release to refresh",
+  refreshing: "Refreshing",
+  label: "Refreshable content",
+};
+
+export type PullToRefreshMessages = typeof pullToRefreshMessages;
 
 export type PullToRefreshStatus =
   | "idle"
@@ -49,6 +60,8 @@ export interface PullToRefreshProps {
   releaseLabel?: ReactNode;
   refreshingLabel?: ReactNode;
   ariaLabel?: string;
+  /** Override any built-in string. */
+  labels?: Partial<PullToRefreshMessages>;
   className?: string;
   contentClassName?: string;
   indicatorClassName?: string;
@@ -216,14 +229,16 @@ export function PullToRefresh({
   threshold = 76,
   maxPull = 132,
   holdDistance = 68,
-  pullingLabel = "Pull to refresh",
-  releaseLabel = "Release to refresh",
-  refreshingLabel = "Refreshing",
-  ariaLabel = "Refreshable content",
+  pullingLabel,
+  releaseLabel,
+  refreshingLabel,
+  ariaLabel,
+  labels,
   className,
   contentClassName,
   indicatorClassName,
 }: PullToRefreshProps) {
+  const t = useMessages("pullToRefresh", pullToRefreshMessages, labels);
   const rootRef = useRef<HTMLElement>(null);
   const gestureRef = useRef<Gesture>({ ...EMPTY_GESTURE });
   const animationRef = useRef<{ stop: () => void } | null>(null);
@@ -437,15 +452,15 @@ export function PullToRefresh({
 
   const label =
     status === "refreshing"
-      ? refreshingLabel
+      ? (refreshingLabel ?? t("refreshing"))
       : status === "ready"
-        ? releaseLabel
-        : pullingLabel;
+        ? (releaseLabel ?? t("release"))
+        : (pullingLabel ?? t("pulling"));
 
   return (
     <section
       ref={rootRef}
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? t("label")}
       aria-busy={isRefreshing}
       data-state={status}
       data-disabled={disabled || undefined}

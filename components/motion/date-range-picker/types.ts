@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { DateRangePickerMessages } from "./messages";
 
 /** Calendar dates, independent of a browser's timezone: YYYY-MM-DD. */
 export interface DateRange {
@@ -33,4 +34,6 @@ export interface DateRangePickerProps {
   onOpenChange?: (open: boolean) => void;
   /** Close an open popover after a complete range or preset. Default false. */
   closeOnSelect?: boolean;
+  /** Override any built-in string. */
+  labels?: Partial<DateRangePickerMessages>;
 }

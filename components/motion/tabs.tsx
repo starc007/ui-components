@@ -17,7 +17,16 @@ import {
   type ReactNode,
 } from "react";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const tabsMessages = {
+  scrollLeft: "Scroll tabs left",
+  scrollRight: "Scroll tabs right",
+};
+
+export type TabsMessages = typeof tabsMessages;
 
 type Variant = "pill" | "underline" | "segment";
 /** Whether trigger icons show on every tab or only on the selected one. */
@@ -48,6 +57,7 @@ type Ctx = {
   unregisterPanel: (value: string) => void;
   tabId: (value: string) => string;
   panelId: (value: string) => string;
+  t: (key: keyof TabsMessages) => string;
 };
 
 type Track = Record<"x" | "y" | "width" | "height", MotionValue<number>>;
@@ -76,6 +86,7 @@ export function Tabs({
   onValueChange,
   variant = "pill",
   icons = "always",
+  labels,
   children,
   className,
 }: {
@@ -88,9 +99,12 @@ export function Tabs({
    * and folds away when another is chosen. Defaults to "always".
    */
   icons?: IconDisplay;
+  /** Override any built-in string. */
+  labels?: Partial<TabsMessages>;
   children: ReactNode;
   className?: string;
 }) {
+  const t = useMessages("tabs", tabsMessages, labels);
   const [internal, setInternal] = useState(defaultValue ?? "");
   const layoutId = useId();
   const reduce = useReducedMotion();
@@ -161,8 +175,9 @@ export function Tabs({
       unregisterPanel,
       tabId,
       panelId,
+      t,
     }),
-    [current, icons, layoutId, setValue, variant, track, placed, tabStop, registerTab, unregisterTab, panels, registerPanel, unregisterPanel, tabId, panelId],
+    [current, icons, layoutId, setValue, variant, track, placed, tabStop, registerTab, unregisterTab, panels, registerPanel, unregisterPanel, tabId, panelId, t],
   );
   return (
     <MotionConfig transition={reduce ? { duration: 0 } : transition}>
@@ -194,7 +209,7 @@ export function TabsList({
 }: {
   wrapperClassName?: string;
 } & HTMLAttributes<HTMLDivElement>) {
-  const { variant, value, icons, track, placed, setPlaced } = useTabs();
+  const { variant, value, icons, track, placed, setPlaced, t } = useTabs();
   const reduce = useReducedMotion();
   const tracked = icons === "selected" && variant !== "underline";
   const rootRef = useRef<HTMLDivElement>(null);
@@ -408,7 +423,7 @@ export function TabsList({
   return (
     <div ref={rootRef} className={cn("relative isolate flex w-full max-w-full min-w-0 items-center", edges.overflow && surfaceClass, wrapperClassName)}>
       {edges.overflow && (
-        <button type="button" aria-label="Scroll tabs left" aria-controls={viewportId} disabled={!edges.left} onClick={() => scroll(-1)} className={cn(controlClass, "left-0 rounded-l-full")}>
+        <button type="button" aria-label={t("scrollLeft")} aria-controls={viewportId} disabled={!edges.left} onClick={() => scroll(-1)} className={cn(controlClass, "left-0 rounded-l-full")}>
           <ChevronLeft size={20} aria-hidden="true" />
         </button>
       )}
@@ -435,7 +450,7 @@ export function TabsList({
         <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 rounded-r-[inherit] backdrop-blur-[2px] [mask-image:linear-gradient(to_left,black,transparent)]" />
       )}
       {edges.overflow && (
-        <button type="button" aria-label="Scroll tabs right" aria-controls={viewportId} disabled={!edges.right} onClick={() => scroll(1)} className={cn(controlClass, "right-0 rounded-r-full")}>
+        <button type="button" aria-label={t("scrollRight")} aria-controls={viewportId} disabled={!edges.right} onClick={() => scroll(1)} className={cn(controlClass, "right-0 rounded-r-full")}>
           <ChevronRight size={20} aria-hidden="true" />
         </button>
       )}

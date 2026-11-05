@@ -17,7 +17,17 @@ import {
   useAgentCodeTokens,
 } from "@/components/agents/agent-code";
 import { SPRING_PRESS } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+export const codeBlockMessages = {
+  writing: "Writing",
+  ready: "Ready",
+  copy: "Copy code",
+  copied: "Copied",
+};
+
+export type CodeBlockMessages = typeof codeBlockMessages;
 
 export type CodeBlockStatus = "streaming" | "complete";
 
@@ -33,6 +43,8 @@ export interface CodeBlockProps {
   copyable?: boolean;
   onCopy?: () => void | Promise<void>;
   className?: string;
+  /** Override any built-in string. */
+  labels?: Partial<CodeBlockMessages>;
 }
 
 export function CodeBlock({
@@ -47,7 +59,9 @@ export function CodeBlock({
   copyable = true,
   onCopy,
   className,
+  labels,
 }: CodeBlockProps) {
+  const t = useMessages("codeBlock", codeBlockMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const viewportRef = useRef<HTMLDivElement>(null);
   const copyTimer = useRef<number | undefined>(undefined);
@@ -134,13 +148,13 @@ export function CodeBlock({
           ) : (
             <Check className="size-3" />
           )}
-          {streaming ? "Writing" : "Ready"}
+          {streaming ? t("writing") : t("ready")}
         </span>
         {copyable || onCopy ? (
           <motion.button
             type="button"
-            aria-label={copied ? "Copied" : "Copy code"}
-            title={copied ? "Copied" : "Copy code"}
+            aria-label={copied ? t("copied") : t("copy")}
+            title={copied ? t("copied") : t("copy")}
             onClick={handleCopy}
             whileTap={reduce ? undefined : { scale: 0.9 }}
             transition={SPRING_PRESS}

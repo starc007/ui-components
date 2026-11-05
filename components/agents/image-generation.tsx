@@ -6,6 +6,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef } from "react";
 import { EASE_IN_OUT, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export type ImageGenerationStatus =
@@ -31,18 +32,26 @@ export interface ImageGenerationProps {
   statusText?: string;
   showStatus?: boolean;
   onRetry?: () => void;
+  /** Override any built-in string. `{status}` and `{prompt}` fill `labelWithPrompt`; `{prompt}` fills `quotedPrompt`. */
+  labels?: Partial<ImageGenerationMessages>;
   className?: string;
   mediaClassName?: string;
   statusClassName?: string;
 }
 
-const STATUS_TEXT: Record<ImageGenerationStatus, string> = {
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const imageGenerationMessages = {
   queued: "Waiting to generate",
   generating: "Generating image",
   refining: "Refining details",
   complete: "Image ready",
   error: "Generation failed",
+  labelWithPrompt: "{status}: {prompt}",
+  quotedPrompt: "“{prompt}”",
+  retry: "Try again",
 };
+
+export type ImageGenerationMessages = typeof imageGenerationMessages;
 
 const MEDIA_STATE: Record<
   ImageGenerationStatus,
@@ -254,17 +263,22 @@ export function ImageGeneration({
   statusText,
   showStatus = true,
   onRetry,
+  labels,
   className,
   mediaClassName,
   statusClassName,
 }: ImageGenerationProps) {
   const reduce = useReducedMotion() ?? false;
+  const t = useMessages("imageGeneration", imageGenerationMessages, labels);
   const active =
     status === "queued" || status === "generating" || status === "refining";
   const mediaState = MEDIA_STATE[status];
-  const resolvedStatusText = statusText ?? STATUS_TEXT[status];
+  const resolvedStatusText = statusText ?? t(status);
   const resolvedLabel =
-    label ?? (prompt ? `${resolvedStatusText}: ${prompt}` : resolvedStatusText);
+    label ??
+    (prompt
+      ? t("labelWithPrompt", { status: resolvedStatusText, prompt })
+      : resolvedStatusText);
 
   return (
     <div
@@ -364,7 +378,7 @@ export function ImageGeneration({
             ) : null}
             {prompt ? (
               <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                “{prompt}”
+                {t("quotedPrompt", { prompt })}
               </p>
             ) : null}
           </div>
@@ -379,7 +393,7 @@ export function ImageGeneration({
             className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
           >
             <RotateCcw aria-hidden="true" className="size-4" />
-            Try again
+            {t("retry")}
           </motion.button>
         ) : null}
       </div>

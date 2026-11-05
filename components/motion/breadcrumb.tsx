@@ -11,6 +11,8 @@ import {
 } from "motion/react";
 import {
   Children,
+  createContext,
+  useContext,
   forwardRef,
   useEffect,
   useLayoutEffect,
@@ -24,16 +26,37 @@ import {
 import { MorphPopover, MorphPopoverContent, MorphPopoverTrigger } from "@/components/motion/popover-morph";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-export type BreadcrumbProps = ComponentPropsWithRef<"nav">;
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const breadcrumbMessages = {
+  label: "Breadcrumb",
+  showHidden: "Show hidden paths",
+};
+
+export type BreadcrumbMessages = typeof breadcrumbMessages;
+
+const BreadcrumbLabels = createContext<Partial<BreadcrumbMessages> | undefined>(undefined);
+
+function useBreadcrumbMessages() {
+  return useMessages("breadcrumb", breadcrumbMessages, useContext(BreadcrumbLabels));
+}
+
+export type BreadcrumbProps = ComponentPropsWithRef<"nav"> & {
+  /** Override any built-in string. */
+  labels?: Partial<BreadcrumbMessages>;
+};
 
 /** A navigation landmark. Keep it mounted while the route changes. */
-export function Breadcrumb({ className, children, ...props }: BreadcrumbProps) {
+export function Breadcrumb({ className, children, labels, ...props }: BreadcrumbProps) {
   const id = useId();
+  const t = useMessages("breadcrumb", breadcrumbMessages, labels);
   return (
-    <nav aria-label="Breadcrumb" {...props} className={cn("min-w-0", className)}>
-      <LayoutGroup id={id}>{children}</LayoutGroup>
+    <nav aria-label={t("label")} {...props} className={cn("min-w-0", className)}>
+      <BreadcrumbLabels.Provider value={labels}>
+        <LayoutGroup id={id}>{children}</LayoutGroup>
+      </BreadcrumbLabels.Provider>
     </nav>
   );
 }
@@ -46,7 +69,7 @@ export type BreadcrumbListProps = ComponentPropsWithRef<"ol"> & {
 };
 
 /** Pass keyed BreadcrumbItems directly so entering and leaving routes animate. */
-export function BreadcrumbList({ className, children, maxItems = 4, overflowLabel = "Show hidden paths", ...props }: BreadcrumbListProps) {
+export function BreadcrumbList({ className, children, maxItems = 4, overflowLabel, ...props }: BreadcrumbListProps) {
   const items = Children.toArray(children);
   const limit = Number.isFinite(maxItems) ? Math.max(3, Math.floor(maxItems)) : 4;
   const collapse = maxItems !== Infinity && items.length > limit;
@@ -179,7 +202,8 @@ export interface BreadcrumbEllipsisProps {
 }
 
 /** Hover disclosure with click/touch toggle and keyboard access to ancestor links. */
-export function BreadcrumbEllipsis({ children, className, label = "Show hidden paths" }: BreadcrumbEllipsisProps) {
+export function BreadcrumbEllipsis({ children, className, label }: BreadcrumbEllipsisProps) {
+  const t = useBreadcrumbMessages();
   const [open, setOpen] = useState(false);
   const [placement, setPlacement] = useState<{ align: "start" | "end"; side: "top" | "bottom"; width: number }>({ align: "start", side: "bottom", width: 224 });
   const canHover = useHoverCapable();
@@ -249,7 +273,7 @@ export function BreadcrumbEllipsis({ children, className, label = "Show hidden p
           <button
             ref={trigger}
             type="button"
-            aria-label={label}
+            aria-label={label ?? t("showHidden")}
             className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             // Enter and Space open through MorphPopoverTrigger, which moves
             // focus to the first path itself. ArrowDown opens without a click.

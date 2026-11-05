@@ -11,21 +11,30 @@ import {
   useRef,
   useState,
 } from "react";
-import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
 import {
   EASE_OUT,
   SPRING_LAYOUT,
   SPRING_SWAP,
 } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ActivityRow } from "./activity-row";
+import {
+  type AgentActivityTranslate,
+  agentActivityMessages,
+} from "./messages";
 import type {
   AgentActivityContentType,
   AgentActivityItem,
   AgentActivityProps,
 } from "./types";
 
+export {
+  type AgentActivityMessages,
+  agentActivityMessages,
+} from "./messages";
 export type {
   AgentActivityContentType,
   AgentActivityItem,
@@ -41,13 +50,15 @@ export type {
   AgentTraceKind,
 } from "./types";
 
-function formatDuration(duration: number) {
+function formatDuration(duration: number, t: AgentActivityTranslate) {
   const seconds = Math.max(0, Math.round(duration));
-  if (seconds < 60) return `${seconds}s`;
+  if (seconds < 60) return t("seconds", { seconds });
 
   const minutes = Math.floor(seconds / 60);
   const remainder = seconds % 60;
-  return remainder === 0 ? `${minutes}m` : `${minutes}m ${remainder}s`;
+  return remainder === 0
+    ? t("minutes", { minutes })
+    : t("minutesSeconds", { minutes, seconds: remainder });
 }
 
 function useControllableOpen({
@@ -79,29 +90,38 @@ function getContentType(items: AgentActivityItem[]): AgentActivityContentType {
   return first && items.every((item) => item.type === first) ? first : "mixed";
 }
 
-function getActiveLabel(type: AgentActivityContentType) {
-  if (type === "search") return "Searching the web…";
-  if (type === "tool") return "Running tools…";
-  if (type === "trace") return "Working through the run…";
-  if (type === "mixed") return "Working through it…";
-  return "Thinking…";
+function getActiveLabel(
+  type: AgentActivityContentType,
+  t: AgentActivityTranslate,
+) {
+  if (type === "search") return t("searching");
+  if (type === "tool") return t("runningTools");
+  if (type === "trace") return t("workingTrace");
+  if (type === "mixed") return t("workingMixed");
+  return t("thinking");
 }
 
 function getSummary(
   type: AgentActivityContentType,
   items: AgentActivityItem[],
   duration: number,
+  t: AgentActivityTranslate,
 ): ReactNode {
+  const count = items.length;
   if (type === "step" || type === "text") {
+    // Raw template, split around the placeholder so the duration keeps its tabular figures.
+    const [before, after = ""] = t("thoughtFor").split("{duration}");
     return (
       <>
-        Thought for <span className="tabular-nums">{formatDuration(duration)}</span>
+        {before}
+        <span className="tabular-nums">{formatDuration(duration, t)}</span>
+        {after}
       </>
     );
   }
-  if (type === "search") return "Searched the web";
+  if (type === "search") return t("searched");
   if (type === "tool") {
-    return `Ran ${items.length} ${items.length === 1 ? "tool" : "tools"}`;
+    return t(count === 1 ? "ranToolsOne" : "ranToolsOther", { count });
   }
   if (type === "trace") {
     const messages = items.filter(
@@ -109,10 +129,19 @@ function getSummary(
         item.type === "trace" &&
         (item.kind === "thinking" || item.kind === "message"),
     ).length;
-    const tools = items.length - messages;
-    return `${tools} ${tools === 1 ? "tool call" : "tool calls"}, ${messages} ${messages === 1 ? "message" : "messages"}`;
+    const tools = count - messages;
+    return t("traceSummary", {
+      toolCalls: t(tools === 1 ? "toolCallsOne" : "toolCallsOther", {
+        count: tools,
+      }),
+      messages: t(messages === 1 ? "messagesOne" : "messagesOther", {
+        count: messages,
+      }),
+    });
   }
-  return `Completed ${items.length} ${items.length === 1 ? "step" : "steps"}`;
+  return t(count === 1 ? "completedStepsOne" : "completedStepsOther", {
+    count,
+  });
 }
 
 export function AgentActivity({
@@ -129,10 +158,12 @@ export function AgentActivity({
   renderWorkingStatus,
   renderCompletedStatus,
   maxHeight = 208,
+  labels,
   className,
   contentClassName,
 }: AgentActivityProps) {
   const reduce = useReducedMotion() ?? false;
+  const t = useMessages("agentActivity", agentActivityMessages, labels);
   const baseId = useId();
   const triggerId = `${baseId}-trigger`;
   const contentId = `${baseId}-content`;
@@ -183,8 +214,8 @@ export function AgentActivity({
     if (next) requestAnimationFrame(() => viewportRef.current?.scrollTo({ top: 0 }));
   };
 
-  const liveLabel = activeLabel ?? getActiveLabel(contentType);
-  const completedSummary = summary ?? getSummary(contentType, items, duration);
+  const liveLabel = activeLabel ?? getActiveLabel(contentType, t);
+  const completedSummary = summary ?? getSummary(contentType, items, duration, t);
   const maskImage = capped
     ? working
       ? "linear-gradient(to bottom, transparent, black 12px)"
@@ -275,7 +306,7 @@ export function AgentActivity({
                         }
                   }
                 >
-                  <ActivityRow item={item} />
+                  <ActivityRow item={item} t={t} />
                 </motion.div>
               ))}
             </AnimatePresence>

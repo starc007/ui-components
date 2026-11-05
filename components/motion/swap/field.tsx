@@ -1,11 +1,13 @@
 "use client";
 
 import { useId } from "react";
+import { useMessages } from "@/lib/i18n";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronDown, Loader2, Wallet } from "lucide-react";
 import type { Chain, Token, TokenSide } from "./types";
 import { TokenDot } from "./token-badges";
 import { EASE } from "./constants";
+import { type SwapMessages, swapMessages } from "./messages";
 import { formatAmount, sanitizeAmount } from "./utils";
 
 export function Field({
@@ -17,6 +19,7 @@ export function Field({
   editable,
   quoting,
   onOpenPicker,
+  labels,
 }: {
   side: TokenSide;
   token: Token;
@@ -26,7 +29,9 @@ export function Field({
   editable: boolean;
   quoting: boolean;
   onOpenPicker: () => void;
+  labels?: Partial<SwapMessages>;
 }) {
+  const t = useMessages("swap", swapMessages, labels);
   const id = useId();
   const usdValue = (Number(amount) || 0) * (token.usd ?? 0);
 
@@ -36,7 +41,7 @@ export function Field({
         htmlFor={id}
         className="mb-2 block text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
       >
-        {side === "from" ? "You pay" : "You get"}
+        {side === "from" ? t("youPay") : t("youGet")}
       </label>
 
       <div className="flex items-center justify-between gap-3">

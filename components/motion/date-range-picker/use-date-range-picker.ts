@@ -9,7 +9,9 @@ import {
   useState,
 } from "react";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
-import { DAY, parse, iso, monthOf, shiftMonth, ordered } from "./date-utils";
+import { useLocale, useMessages } from "@/lib/i18n";
+import { DAY, iso, monthOf, ordered, parse, shiftMonth } from "./date-utils";
+import { dateRangePickerMessages } from "./messages";
 import type { DateRange, DateRangePickerProps } from "./types";
 
 export function useDateRangePickerController({
@@ -21,8 +23,8 @@ export function useDateRangePickerController({
   max,
   isDateDisabled,
   presets = [],
-  locale = "en-US",
-  label = "Choose a date range",
+  locale: localeProp,
+  label: labelProp,
   disabled = false,
   autoFocus = false,
   showSummary = true,
@@ -30,7 +32,13 @@ export function useDateRangePickerController({
   defaultOpen = false,
   onOpenChange,
   closeOnSelect = false,
+  labels,
 }: DateRangePickerProps) {
+  const t = useMessages("dateRangePicker", dateRangePickerMessages, labels);
+  const contextLocale = useLocale().locale;
+  // Without any locale, keep the US English output on server and client.
+  const locale = localeProp ?? contextLocale ?? "en-US";
+  const label = labelProp ?? t("label");
   const [today] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -191,19 +199,20 @@ export function useDateRangePickerController({
     if (!value || value.to) {
       change({ from: date });
       setAnnouncement(
-        `Start date ${dateFormat.format(parse(date))}. Choose an end date.`,
+        t("startSelected", { date: dateFormat.format(parse(date)) }),
       );
     } else {
       const next = ordered(value.from, date);
       if (!rangeAvailable(next)) {
-        setAnnouncement(
-          "This range includes unavailable dates. Choose another end date.",
-        );
+        setAnnouncement(t("rangeUnavailable"));
         return;
       }
       change(next);
       setAnnouncement(
-        `${shortFormat.format(parse(next.from))} to ${shortFormat.format(parse(next.to))} selected.`,
+        t("rangeSelected", {
+          from: shortFormat.format(parse(next.from)),
+          to: shortFormat.format(parse(next.to)),
+        }),
       );
     }
   };
@@ -421,7 +430,7 @@ export function useDateRangePickerController({
     if (view === "days") pendingFocus.current = true;
     else returnToTrigger.current = view;
     change(null);
-    setAnnouncement("Date range cleared.");
+    setAnnouncement(t("cleared"));
   };
   const selectPreset = (range: DateRange, name: string) => {
     if (!rangeAvailable(range)) return;
@@ -430,7 +439,7 @@ export function useDateRangePickerController({
     setDirection(range.from >= month ? 1 : -1);
     setMonth(monthOf(range.from));
     setCursor(range.from);
-    setAnnouncement(`${name} selected.`);
+    setAnnouncement(t("presetSelected", { name }));
   };
   const [wasOpen, setWasOpen] = useState(open);
   if (wasOpen !== open) {
@@ -454,6 +463,7 @@ export function useDateRangePickerController({
     content,
     label,
     locale,
+    t,
     disabled,
     autoFocus,
     showSummary,

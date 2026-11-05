@@ -1,25 +1,30 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import { Settings } from "lucide-react";
 import { useReducedMotion } from "motion/react";
+import { useEffect, useMemo, useState } from "react";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { CHAINS, TOKENS } from "./swap/data";
 import { ActionButton, DestinationRow, FlipButton } from "./swap/controls";
+import { CHAINS, TOKENS } from "./swap/data";
 import { Field } from "./swap/field";
+import { type SwapMessages, swapMessages } from "./swap/messages";
 import { QuoteRow } from "./swap/quote-row";
 import { TokenPicker } from "./swap/token-picker";
 import type { Chain, Token, TokenSide } from "./swap/types";
 import { formatAmount } from "./swap/utils";
 
-export type { Chain, Token } from "./swap/types";
 export { SWAP_DRAWER_EASE } from "./swap/constants";
+export { type SwapMessages, swapMessages } from "./swap/messages";
+export type { Chain, Token } from "./swap/types";
 
 export interface MultiChainSwapProps {
   chains?: Chain[];
   tokens?: Token[];
   defaultFromId?: string;
   defaultToId?: string;
+  /** Override any built-in string. */
+  labels?: Partial<SwapMessages>;
   className?: string;
 }
 
@@ -28,8 +33,10 @@ export function MultiChainSwap({
   tokens = TOKENS,
   defaultFromId = "eth-eth",
   defaultToId = "sol-sol",
+  labels,
   className,
 }: MultiChainSwapProps) {
+  const t = useMessages("swap", swapMessages, labels);
   const reduce = useReducedMotion();
   const [fromId, setFromId] = useState(defaultFromId);
   const [toId, setToId] = useState(defaultToId);
@@ -91,11 +98,11 @@ export function MultiChainSwap({
     >
       <div className="flex h-12 items-center justify-between border-b border-border/50 px-3">
         <span className="px-2 text-sm font-semibold tracking-tight text-foreground">
-          Swap
+          {t("title")}
         </span>
         <button
           type="button"
-          aria-label="Settings"
+          aria-label={t("settings")}
           className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-transform hover:bg-muted/60 hover:text-foreground active:scale-[0.97]"
         >
           <Settings className="h-4 w-4" />
@@ -112,9 +119,15 @@ export function MultiChainSwap({
           editable
           quoting={false}
           onOpenPicker={() => setPicking("from")}
+          labels={labels}
         />
 
-        <FlipButton rotation={flipRot} reduce={!!reduce} onClick={flip} />
+        <FlipButton
+          rotation={flipRot}
+          reduce={!!reduce}
+          onClick={flip}
+          labels={labels}
+        />
 
         <Field
           side="to"
@@ -124,6 +137,7 @@ export function MultiChainSwap({
           editable={false}
           quoting={quoting}
           onOpenPicker={() => setPicking("to")}
+          labels={labels}
         />
 
         <QuoteRow
@@ -134,6 +148,7 @@ export function MultiChainSwap({
           slippage={0.5}
           eta="≈ 24s"
           quoting={quoting}
+          labels={labels}
         />
 
         <DestinationRow
@@ -145,6 +160,7 @@ export function MultiChainSwap({
           address={destAddress}
           onAddress={setDestAddress}
           reduce={!!reduce}
+          labels={labels}
         />
 
         <ActionButton
@@ -152,6 +168,7 @@ export function MultiChainSwap({
           to={to}
           amount={numericAmount}
           destAddress={destAddress}
+          labels={labels}
         />
       </div>
 
@@ -164,6 +181,7 @@ export function MultiChainSwap({
         onPick={pickToken}
         onClose={() => setPicking(null)}
         reduce={!!reduce}
+        labels={labels}
       />
     </div>
   );

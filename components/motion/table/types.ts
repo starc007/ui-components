@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { TableMessages } from "./messages";
 
 export type SortDirection = "asc" | "desc";
 
@@ -74,6 +75,8 @@ export interface TableProps<T> {
   /** How many skeleton rows to show while loading more (default 3). */
   skeletonRows?: number;
   emptyState?: ReactNode;
+  /** Override any built-in string. `{row}` and `{column}` fill the per-row and per-column labels. */
+  labels?: Partial<TableMessages>;
   className?: string;
 }
 

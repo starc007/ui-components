@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export interface BounceSidebarItem {
@@ -20,12 +21,21 @@ export interface BounceSidebarItem {
   rel?: string;
 }
 
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const bounceSidebarMessages = {
+  label: "Sidebar navigation",
+};
+
+export type BounceSidebarMessages = typeof bounceSidebarMessages;
+
 export interface BounceSidebarProps {
   items: BounceSidebarItem[];
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   ariaLabel?: string;
+  /** Override any built-in string. */
+  labels?: Partial<BounceSidebarMessages>;
   className?: string;
   listClassName?: string;
   itemClassName?: string;
@@ -54,13 +64,15 @@ export function BounceSidebar({
   value,
   defaultValue,
   onValueChange,
-  ariaLabel = "Sidebar navigation",
+  ariaLabel,
+  labels,
   className,
   listClassName,
   itemClassName,
   indicatorClassName,
 }: BounceSidebarProps) {
   const reduce = useReducedMotion();
+  const t = useMessages("bounceSidebar", bounceSidebarMessages, labels);
   const [internalValue, setInternalValue] = useState(
     defaultValue ?? items[0]?.id ?? "",
   );
@@ -158,7 +170,7 @@ export function BounceSidebar({
   };
 
   return (
-    <nav aria-label={ariaLabel} className={cn("relative", className)}>
+    <nav aria-label={ariaLabel ?? t("label")} className={cn("relative", className)}>
       <ul
         ref={listRef}
         className={cn("relative flex list-none flex-col gap-1.5 pl-6", listClassName)}

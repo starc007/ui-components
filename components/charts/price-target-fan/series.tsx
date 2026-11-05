@@ -7,7 +7,7 @@ import { usePriceTargetFan } from "./context";
 import { H, ink, PAD } from "./utils";
 
 export function PriceTargetFanHistory({ className }: { className?: string }) {
-  const { hist, history, scrub, setScrub, setActive, tooltipId, fmt, geo, reduce, drawn } =
+  const { hist, history, scrub, setScrub, setActive, tooltipId, fmt, geo, reduce, drawn, t } =
     usePriceTargetFan();
   return (
     <g className={cn(className)}>
@@ -15,7 +15,7 @@ export function PriceTargetFanHistory({ className }: { className?: string }) {
         <g
           role="slider"
           tabIndex={0}
-          aria-label="Price history"
+          aria-label={t("history")}
           aria-valuemin={0}
           aria-valuemax={hist.length - 1}
           aria-valuenow={scrub ?? hist.length - 1}
@@ -60,7 +60,8 @@ export function PriceTargetFanHistory({ className }: { className?: string }) {
 }
 
 export function PriceTargetFanTargets({ className }: { className?: string }) {
-  const { geo, hotT, setHotT, setActive, tooltipId, clipId, reduce, drawn, fmt } = usePriceTargetFan();
+  const { geo, hotT, setHotT, setActive, tooltipId, clipId, reduce, drawn, fmt, t } =
+    usePriceTargetFan();
   return (
     <g className={cn(className)}>
       {/* projections and target labels */}
@@ -73,7 +74,7 @@ export function PriceTargetFanTargets({ className }: { className?: string }) {
               key={p.key}
               role="button"
               tabIndex={0}
-              aria-label={`${p.key} target ${fmt(p.price)}, ${p.analysts} analysts`}
+              aria-label={t("targetButton", { key: p.key, price: fmt(p.price), analysts: p.analysts })}
               className="outline-none"
               aria-pressed={on}
               aria-describedby={on ? tooltipId : undefined}

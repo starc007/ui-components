@@ -4,8 +4,10 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { EditableCell } from "./editable-cell";
+import { tableMessages } from "./messages";
 import { RowHandle } from "./row-handle";
 import { SkeletonRows } from "./skeleton-rows";
 import { TableHeader } from "./table-header";
@@ -16,6 +18,7 @@ import { useColumnSort } from "./use-column-sort";
 import { useRowSelection } from "./use-row-selection";
 import { alignText, CHECKBOX_PX, CHECKBOX_WIDTH, readCell } from "./utils";
 
+export { type TableMessages, tableMessages } from "./messages";
 export type {
   SortDirection,
   SortState,
@@ -96,9 +99,11 @@ export function Table<T>({
   onEndReached,
   loading = false,
   skeletonRows = 3,
-  emptyState = "No data",
+  emptyState,
+  labels,
   className,
 }: TableProps<T>) {
+  const t = useMessages("table", tableMessages, labels);
   const reduce = useReducedMotion();
   const scrollRef = useRef<HTMLDivElement>(null);
   const thRefs: HeaderCellRefs = useRef<
@@ -310,6 +315,7 @@ export function Table<T>({
             activeColumn={hasColumnMenu ? activeColumn : null}
             onColumnActivate={hasColumnMenu ? activateColumn : undefined}
             onColumnDeactivate={hasColumnMenu ? deactivateColumn : undefined}
+            t={t}
           />
 
           <tbody>
@@ -327,7 +333,7 @@ export function Table<T>({
                     colSpan={leadColumns + 1}
                     className="p-10 text-center text-muted-foreground"
                   >
-                    {emptyState}
+                    {emptyState ?? t("empty")}
                   </td>
                 </tr>
               )
@@ -367,7 +373,7 @@ export function Table<T>({
                             <Checkbox
                               checked={isSelected}
                               onCheckedChange={() => toggleRow(entry.id)}
-                              aria-label={`Select row ${vItem.index + 1}`}
+                              aria-label={t("selectRow", { row: vItem.index + 1 })}
                             />
                           </div>
                         </td>
@@ -383,7 +389,11 @@ export function Table<T>({
                           {!column.cell && column.editable ? (
                             <EditableCell
                               value={String(readCell(entry.row, column) ?? "")}
-                              label={`${column.key} for row ${vItem.index + 1}`}
+                              label={t("cellLabel", {
+                                column: column.key,
+                                row: vItem.index + 1,
+                              })}
+                              placeholder={t("cellPlaceholder")}
                               onChange={(next) =>
                                 onCellEdit?.(entry.id, column.key, next)
                               }
@@ -424,6 +434,7 @@ export function Table<T>({
           onDeleteRow={onDeleteRow}
           onEnter={() => activateRow(activeRow.id, activeRow.index)}
           onLeave={deactivateRow}
+          t={t}
         />
       ) : null}
     </div>

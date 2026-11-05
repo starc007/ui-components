@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useBumpChart } from "./context";
 
 export function BumpChartLegend({ className }: { className?: string }) {
-  const { rows, pinned, highlighted, select, setHovered, setFocused, canHover } = useBumpChart();
+  const { rows, pinned, highlighted, select, setHovered, setFocused, canHover, t } = useBumpChart();
   return (
     <div className={cn("grid grid-cols-2 gap-x-5 gap-y-1 sm:grid-cols-3", className)}>
       {rows.map((row) => {
@@ -15,7 +15,7 @@ export function BumpChartLegend({ className }: { className?: string }) {
           <button
             key={row.id}
             type="button"
-            aria-label={`Highlight ${row.name}`}
+            aria-label={t("highlight", { name: row.name })}
             aria-pressed={pinned === row.id}
             onClick={() => select(pinned === row.id ? null : row.id)}
             onPointerEnter={() => {
@@ -50,10 +50,12 @@ export function BumpChartLegend({ className }: { className?: string }) {
               className="min-w-5 text-right font-mono text-[10px] tabular-nums text-muted-foreground"
               title={
                 gain == null
-                  ? "Change unavailable"
+                  ? t("changeUnavailable")
                   : gain === 0
-                    ? "Unchanged"
-                    : `${gain > 0 ? "Up" : "Down"} ${Math.abs(gain)} places`
+                    ? t("unchanged")
+                    : Math.abs(gain) === 1
+                      ? t(gain > 0 ? "upOne" : "downOne")
+                      : t(gain > 0 ? "up" : "down", { count: Math.abs(gain) })
               }
             >
               {gain == null || gain === 0 ? "—" : `${gain > 0 ? "↑" : "↓"}${Math.abs(gain)}`}

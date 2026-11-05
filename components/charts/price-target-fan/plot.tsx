@@ -31,7 +31,7 @@ export function PriceTargetFanPlot({ children, className }: { children?: ReactNo
 }
 
 export function PriceTargetFanSvg({ children, className }: { children?: ReactNode; className?: string }) {
-  const { svgRef, label, mean, fmt, current, onMove, setActive, fadeId, clipId, reduce, geo, drawn } =
+  const { svgRef, label, mean, fmt, current, onMove, setActive, fadeId, clipId, reduce, geo, drawn, t } =
     usePriceTargetFan();
   return (
     // biome-ignore lint/a11y/useSemanticElements: SVG cannot contain a fieldset; group exposes the interactive SVG descendants.
@@ -40,7 +40,7 @@ export function PriceTargetFanSvg({ children, className }: { children?: ReactNod
       viewBox={`0 0 ${W} ${H}`}
       className={cn("block h-auto w-full cursor-crosshair [&_*]:cursor-crosshair", className)}
       role="group"
-      aria-label={`${label}: mean ${fmt(mean.price)}, now ${fmt(current)}`}
+      aria-label={t("chart", { label, mean: fmt(mean.price), current: fmt(current) })}
       onPointerMove={onMove}
       onPointerLeave={(event) => {
         if (event.pointerType !== "touch") setActive(null);
@@ -82,7 +82,7 @@ export function PriceTargetFanSvg({ children, className }: { children?: ReactNod
 }
 
 export function PriceTargetFanAxes({ className }: { className?: string }) {
-  const { gridVals, y, geo, dates, history, fadeId } = usePriceTargetFan();
+  const { gridVals, y, geo, dates, history, fadeId, locale, t } = usePriceTargetFan();
   return (
     <g className={cn(className)}>
       {/* gridlines and the price axis */}
@@ -105,19 +105,19 @@ export function PriceTargetFanAxes({ className }: { className?: string }) {
       {/* the date axis: history, now, horizon */}
       {[
         ...(history.length
-          ? [{ x: geo.hx(0), t: dates.start ?? fmtAxisDate(history[0].date), a: "start" as const }]
+          ? [{ x: geo.hx(0), t: dates.start ?? fmtAxisDate(history[0].date, locale), a: "start" as const }]
           : []),
         ...(history.length > 2
           ? [
               {
                 x: geo.hx(Math.floor(history.length / 2)),
-                t: dates.mid ?? fmtAxisDate(history[Math.floor(history.length / 2)].date),
+                t: dates.mid ?? fmtAxisDate(history[Math.floor(history.length / 2)].date, locale),
                 a: "middle" as const,
               },
             ]
           : []),
-        { x: geo.nowX, t: "Now", a: "middle" as const },
-        { x: geo.endX, t: dates.horizon ?? "Target", a: "middle" as const },
+        { x: geo.nowX, t: t("now"), a: "middle" as const },
+        { x: geo.endX, t: dates.horizon ?? t("horizon"), a: "middle" as const },
       ].map((d) => (
         <text
           key={d.x}

@@ -17,9 +17,17 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  // Query and hash, read when the menu opens, so switching keeps the reader's place.
+  const [suffix, setSuffix] = useState("");
 
   return (
-    <MorphPopover open={open} onOpenChange={setOpen}>
+    <MorphPopover
+      open={open}
+      onOpenChange={(next) => {
+        if (next) setSuffix(window.location.search + window.location.hash);
+        setOpen(next);
+      }}
+    >
       <MorphPopoverTrigger>
         <button
           type="button"
@@ -42,7 +50,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
             // theme script) start fresh instead of remounting on the client.
             <a
               key={each}
-              href={localizedPath(pathname, each)}
+              href={localizedPath(pathname, each) + suffix}
               lang={each}
               hrefLang={each}
               aria-current={each === locale ? "true" : undefined}

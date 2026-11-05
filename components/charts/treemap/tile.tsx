@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useIsPresent } from "motion/react";
-import { useCallback, type ReactNode } from "react";
+import { type ReactNode, useCallback } from "react";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { useTreemap } from "./context";
@@ -29,6 +29,7 @@ export function TreemapCell({
     reduce,
     canHover,
     registerButton,
+    t,
   } = useTreemap();
   const present = useIsPresent();
   const ref = useCallback(
@@ -54,7 +55,7 @@ export function TreemapCell({
       aria-label={[
         tile.path.join(" / "),
         formatValue(tile.value),
-        `${(tile.share * 100).toFixed(1)}% of total`,
+        t("ofTotal", { share: (tile.share * 100).toFixed(1) }),
         tile.description,
       ]
         .filter(Boolean)

@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  animate,
   type AnimationPlaybackControls,
-  motion,
+  animate,
   type MotionValue,
+  motion,
   useMotionValue,
   useReducedMotion,
   useSpring,
@@ -22,6 +22,7 @@ import {
   useState,
 } from "react";
 import { SPRING_GLIDE, SPRING_LAYOUT } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export type ArcPickerOption = {
@@ -31,6 +32,18 @@ export type ArcPickerOption = {
 };
 
 export type ArcPickerSide = "top" | "bottom" | "left" | "right";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const arcPickerMessages = {
+  label: "Choose an option",
+  instructionsHorizontal:
+    "Drag horizontally or scroll to choose. Use arrow keys to move, Home and End to jump.",
+  instructionsVertical:
+    "Drag vertically or scroll to choose. Use arrow keys to move, Home and End to jump.",
+  empty: "No options",
+};
+
+export type ArcPickerMessages = typeof arcPickerMessages;
 
 export type ArcPickerProps = Omit<
   ComponentProps<"div">,
@@ -50,6 +63,8 @@ export type ArcPickerProps = Omit<
   visibleCount?: number;
   disabled?: boolean;
   name?: string;
+  /** Override any built-in string. */
+  labels?: Partial<ArcPickerMessages>;
 };
 
 // A short velocity projection lets a flick coast through several detents
@@ -244,10 +259,13 @@ export function ArcPicker({
   onFocusCapture,
   onBlurCapture,
   onClickCapture,
-  "aria-label": label = "Choose an option",
+  "aria-label": ariaLabel,
   "aria-describedby": describedBy,
+  labels,
   ...props
 }: ArcPickerProps) {
+  const t = useMessages("arcPicker", arcPickerMessages, labels);
+  const label = ariaLabel ?? t("label");
   const reducedMotion = useReducedMotion();
   const horizontal = side === "top" || side === "bottom";
   const instructionsId = useId();
@@ -823,8 +841,7 @@ export function ArcPicker({
       }}
     >
       <span id={instructionsId} className="sr-only">
-        Drag {horizontal ? "horizontally" : "vertically"} or scroll to choose.
-        Use arrow keys to move, Home and End to jump.
+        {t(horizontal ? "instructionsHorizontal" : "instructionsVertical")}
       </span>
       {name && (
         <input
@@ -863,7 +880,7 @@ export function ArcPicker({
       />
       {!options.length && (
         <span className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
-          No options
+          {t("empty")}
         </span>
       )}
     </div>

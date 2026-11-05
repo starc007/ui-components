@@ -24,6 +24,10 @@ export {
   type ComboboxSeparatorProps,
 } from "./combobox/list";
 export {
+  type ComboboxMessages,
+  comboboxMessages,
+} from "./combobox/messages";
+export {
   ComboboxInput,
   type ComboboxInputProps,
   ComboboxTrigger,

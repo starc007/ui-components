@@ -11,8 +11,7 @@ import {
 /**
  * A component's messages. Plain strings with `{name}` placeholders, so a
  * dictionary stays JSON-serializable and can be passed from a server layout.
- * ponytail: no plural categories yet; add `Intl.PluralRules`-keyed variants
- * when a message needs one.
+ * There are no plural forms: write messages that read correctly for any count.
  */
 export type Messages = Record<string, string>;
 

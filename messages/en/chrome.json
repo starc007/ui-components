@@ -84,6 +84,8 @@
   },
   "notFound": {
     "title": "Page not found",
-    "description": "The page you are looking for does not exist."
+    "description": "The page you are looking for does not exist.",
+    "homeLabel": "Back home",
+    "browseLabel": "Browse components"
   }
 }

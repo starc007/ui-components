@@ -9,7 +9,7 @@ export interface BarChartLegendProps {
 
 /** Toggle a series to hide it; its bars collapse and the axis rescales. */
 export function BarChartLegend({ className }: BarChartLegendProps) {
-  const { rows, hidden, toggle, setHovered, canHover } = useBarChart();
+  const { rows, hidden, toggle, setHovered, canHover, xy } = useBarChart();
   return (
     <XYLegend
       rows={rows}
@@ -17,7 +17,7 @@ export function BarChartLegend({ className }: BarChartLegendProps) {
       onToggle={toggle}
       onHover={setHovered}
       canHover={canHover}
-      label="Series"
+      label={xy("series")}
       className={className}
     />
   );

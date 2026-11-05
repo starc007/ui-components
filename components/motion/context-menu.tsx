@@ -27,6 +27,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { holdSelection, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +43,13 @@ type TriggerElementProps = React.HTMLAttributes<HTMLElement> & {
   ref?: Ref<HTMLElement>;
 };
 
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const contextMenuMessages = {
+  label: "Context menu",
+};
+
+export type ContextMenuMessages = typeof contextMenuMessages;
+
 interface ContextMenuContextValue {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -55,6 +63,7 @@ interface ContextMenuContextValue {
   activeId: string | null;
   setActiveId: (id: string | null) => void;
   reduce: boolean;
+  t: (key: keyof ContextMenuMessages) => string;
 }
 
 const ContextMenuContext = createContext<ContextMenuContextValue | null>(null);
@@ -105,6 +114,8 @@ export interface ContextMenuProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Override any built-in string. */
+  labels?: Partial<ContextMenuMessages>;
   className?: string;
 }
 
@@ -113,8 +124,10 @@ export function ContextMenu({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
+  labels,
   className,
 }: ContextMenuProps) {
+  const t = useMessages("contextMenu", contextMenuMessages, labels);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [point, setPoint] = useState<MenuPoint>({ x: 0, y: 0 });
   const [modality, setModality] = useState<OpenModality>("pointer");
@@ -179,6 +192,7 @@ export function ContextMenu({
       activeId,
       setActiveId,
       reduce,
+      t,
     }),
     [
       open,
@@ -190,6 +204,7 @@ export function ContextMenu({
       menuId,
       activeId,
       reduce,
+      t,
     ],
   );
 
@@ -338,7 +353,7 @@ export interface ContextMenuContentProps {
 export function ContextMenuContent({
   children,
   className,
-  ariaLabel = "Context menu",
+  ariaLabel,
 }: ContextMenuContentProps) {
   const context = useContextMenuContext("ContextMenuContent");
   const [mounted, setMounted] = useState(false);
@@ -497,7 +512,7 @@ export function ContextMenuContent({
         ref={context.contentRef}
         id={context.menuId}
         role="menu"
-        aria-label={ariaLabel}
+        aria-label={ariaLabel ?? context.t("label")}
         data-morph-ready={morphReady ? "true" : "false"}
         tabIndex={-1}
         initial={false}

@@ -1,11 +1,19 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef, type ReactNode } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
 import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
+import { useMessages } from "@/lib/i18n";
 import { PresenceGate } from "@/lib/presence-gate";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const drawerMessages = {
+  close: "Close",
+};
+
+export type DrawerMessages = typeof drawerMessages;
 
 export interface DrawerProps {
   open: boolean;
@@ -19,6 +27,8 @@ export interface DrawerProps {
   ariaLabel?: string;
   /** Close when the backdrop is clicked or Escape is pressed. Default true. */
   dismissable?: boolean;
+  /** Override any built-in string. */
+  labels?: Partial<DrawerMessages>;
 }
 
 export function Drawer({
@@ -30,7 +40,9 @@ export function Drawer({
   backdropClassName,
   ariaLabel,
   dismissable = true,
+  labels,
 }: DrawerProps) {
+  const t = useMessages("drawer", drawerMessages, labels);
   const reduce = useReducedMotion();
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -63,7 +75,7 @@ export function Drawer({
           {({ gate }) => (
             <motion.button
               type="button"
-              aria-label="Close"
+              aria-label={t("close")}
               // Outside the panel, so the focus trap never lands on it; it is
               // a pointer target only.
               tabIndex={-1}

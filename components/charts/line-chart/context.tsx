@@ -3,10 +3,22 @@
 import { useReducedMotion } from "motion/react";
 import { type ComponentProps, createContext, type ReactNode, useContext, useMemo, useState } from "react";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useMessages } from "@/lib/i18n";
+import { type XYChartMessages, xyChartMessages } from "../xy/messages";
 import { normalizeXY, type XYSeries } from "../xy/model";
 import type { XYCurve } from "../xy/path";
 import { niceDomain } from "../xy/scale";
 import { useControllable, useInspection } from "../xy/use-inspection";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const lineChartMessages = {
+  label: "Line chart",
+  loading: "Loading data",
+  loadingStatus: "Loading",
+  inspect: "{label}: inspect values",
+};
+
+export type LineChartMessages = typeof lineChartMessages;
 
 export interface LineChartProps extends Omit<ComponentProps<"section">, "children"> {
   series: readonly XYSeries[];
@@ -37,6 +49,8 @@ export interface LineChartProps extends Omit<ComponentProps<"section">, "childre
   status?: "ready" | "loading";
   /** Shown over the placeholder while loading. An empty string hides it. */
   loadingLabel?: string;
+  /** Override any built-in string, including the shared `xyChart` ones. */
+  labels?: Partial<LineChartMessages & XYChartMessages>;
   children?: ReactNode;
 }
 
@@ -58,10 +72,13 @@ export function useLineChartModel({
   onHiddenSeriesChange,
   formatValue = (value) => number.format(value),
   formatTick = (value) => compact.format(value),
-  label = "Line chart",
+  label,
   status = "ready",
-  loadingLabel = "Loading data",
+  loadingLabel,
+  labels,
 }: Omit<LineChartProps, "children">) {
+  const t = useMessages<LineChartMessages>("lineChart", lineChartMessages, labels);
+  const xy = useMessages<XYChartMessages>("xyChart", xyChartMessages, labels);
   // The plot area hosts the tooltip panel, and its measured size places it.
   const [overlay, setOverlay] = useState<HTMLDivElement | null>(null);
   const [geometry, setGeometry] = useState({ width: 0, height: 0 });
@@ -95,10 +112,12 @@ export function useLineChartModel({
     curve,
     formatValue,
     formatTick,
-    label,
+    label: label ?? t("label"),
     status,
     loading: status === "loading",
-    loadingLabel,
+    loadingLabel: loadingLabel ?? t("loading"),
+    t,
+    xy,
     overlay,
     setOverlay,
     geometry,

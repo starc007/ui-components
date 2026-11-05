@@ -1,4 +1,807 @@
 {
+  "adaptiveStepper": {
+    "label": "Quantity",
+    "summary": "{label}. Current value: {value}",
+    "decrease": "Decrease value",
+    "increase": "Increase value"
+  },
+  "agentActivity": {
+    "thinking": "Thinking…",
+    "searching": "Searching the web…",
+    "runningTools": "Running tools…",
+    "workingTrace": "Working through the run…",
+    "workingMixed": "Working through it…",
+    "thoughtFor": "Thought for {duration}",
+    "seconds": "{seconds}s",
+    "minutes": "{minutes}m",
+    "minutesSeconds": "{minutes}m {seconds}s",
+    "searched": "Searched the web",
+    "ranToolsOne": "Ran {count} tool",
+    "ranToolsOther": "Ran {count} tools",
+    "traceSummary": "{toolCalls}, {messages}",
+    "toolCallsOne": "{count} tool call",
+    "toolCallsOther": "{count} tool calls",
+    "messagesOne": "{count} message",
+    "messagesOther": "{count} messages",
+    "completedStepsOne": "Completed {count} step",
+    "completedStepsOther": "Completed {count} steps",
+    "moreResults": "+{count} more",
+    "read": "Read",
+    "edit": "Edit",
+    "write": "Write",
+    "run": "Run"
+  },
+  "aiSidebar": {
+    "label": "Resources",
+    "rename": "Rename",
+    "renameItem": "Rename {item}",
+    "actions": "Actions for {item}",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "moveInto": "Move into {target}",
+    "moveOut": "Move out",
+    "moveToTop": "Move to top level",
+    "movePending": "Wait for the current move to finish.",
+    "movedBefore": "Moved {item} before {target}.",
+    "movedInside": "Moved {item} inside {target}.",
+    "movedAfter": "Moved {item} after {target}.",
+    "movedToTop": "Moved {item} to the top level.",
+    "moveFailed": "Move failed. {item} was restored.",
+    "renameFailed": "Rename failed. {item} was restored.",
+    "unnamedItem": "item"
+  },
+  "alert": {
+    "dismiss": "Dismiss alert"
+  },
+  "animatedSidebar": {
+    "label": "Sidebar",
+    "toggle": "Toggle sidebar",
+    "close": "Close sidebar"
+  },
+  "animatedToastStack": {
+    "dismiss": "Dismiss toast"
+  },
+  "approvalCard": {
+    "title": "Approval required",
+    "approve": "Approve",
+    "submit": "Submit response",
+    "requestChanges": "Request changes",
+    "reject": "Reject",
+    "dismiss": "Dismiss",
+    "previousQuestion": "Previous question",
+    "nextQuestion": "Next question",
+    "customPlaceholder": "Add another response…",
+    "questionProgress": "Question {current} of {total}",
+    "stepCount": "{current}/{total}",
+    "inputRequired": "Input required",
+    "submitting": "Submitting",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "changesRequested": "Changes requested",
+    "answered": "Response submitted"
+  },
+  "arcPicker": {
+    "label": "Choose an option",
+    "instructionsHorizontal": "Drag horizontally or scroll to choose. Use arrow keys to move, Home and End to jump.",
+    "instructionsVertical": "Drag vertically or scroll to choose. Use arrow keys to move, Home and End to jump.",
+    "empty": "No options"
+  },
+  "attachmentUpload": {
+    "title": "Drag and drop or browse files",
+    "description": "Maximum {size} file size",
+    "attachments": "Attachments",
+    "input": "Upload attachments",
+    "limitTitle": "Attachment limit reached",
+    "limitDescription": "{count} of {max} attachments added",
+    "uploading": "Uploading {name}",
+    "uploadComplete": "Upload complete",
+    "uploadCompleteFor": "Upload complete for {name}",
+    "removingAttachment": "Removing attachment",
+    "removing": "Removing {name}",
+    "uploadFailed": "Upload failed",
+    "uploadFailedFor": "Upload failed for {name}",
+    "retryUpload": "Retry upload",
+    "retry": "Retry {name}",
+    "removeAttachment": "Remove attachment",
+    "remove": "Remove {name}",
+    "clickToPreview": "Click to preview",
+    "preview": "Preview {name}",
+    "previewOf": "Preview of {name}",
+    "closePreview": "Close image preview",
+    "play": "Play {name}",
+    "pause": "Pause {name}",
+    "open": "Open {name}",
+    "web": "Web"
+  },
+  "availabilityScheduler": {
+    "toggleDay": "Toggle {day} availability",
+    "unavailable": "Unavailable",
+    "addTime": "Add time",
+    "addRange": "Add time range to {day}",
+    "remove": "Remove",
+    "removeRange": "Remove time range",
+    "copyTimes": "Copy times",
+    "copyDay": "Copy {day} hours to other days",
+    "copyTo": "Copy times to",
+    "everyDay": "Every day",
+    "apply": "Apply"
+  },
+  "avatarGroup": {
+    "label": "Members",
+    "showFewer": "Show fewer members",
+    "showMore": "Show {count} more members"
+  },
+  "barChart": {
+    "label": "Bar chart",
+    "inspect": "{label}: inspect categories"
+  },
+  "bloomMenu": {
+    "create": "Create",
+    "close": "Close menu",
+    "doc": "Doc",
+    "board": "Board",
+    "table": "Table",
+    "folder": "Folder",
+    "reminder": "Reminder",
+    "link": "Link"
+  },
+  "bottomSheet": {
+    "label": "Bottom sheet",
+    "close": "Close bottom sheet"
+  },
+  "bounceSidebar": {
+    "label": "Sidebar navigation"
+  },
+  "breadcrumb": {
+    "label": "Breadcrumb",
+    "showHidden": "Show hidden paths"
+  },
+  "bumpChart": {
+    "label": "Rankings over time",
+    "empty": "No rankings yet",
+    "plot": "{label} plot, scroll horizontally for more periods",
+    "description": "Ranks run from best at the top to lowest at the bottom. Use the legend to highlight or pin a series. Exact values follow in a table.",
+    "caption": "{label} — exact ranks",
+    "series": "Series",
+    "noData": "No data",
+    "highlight": "Highlight {name}",
+    "changeUnavailable": "Change unavailable",
+    "unchanged": "Unchanged",
+    "noPrevious": "No previous rank",
+    "noChange": "No change",
+    "upOne": "Up 1 place",
+    "up": "Up {count} places",
+    "downOne": "Down 1 place",
+    "down": "Down {count} places",
+    "previously": "Previously #{rank} in {period}",
+    "point": "{name}, {period}: rank {rank}"
+  },
+  "candlestickChart": {
+    "label": "Candlestick chart",
+    "candle": "Candle",
+    "open": "O",
+    "high": "H",
+    "low": "L",
+    "close": "C",
+    "volume": "Vol",
+    "valueText": "{label}: open {open}, high {high}, low {low}, close {close}"
+  },
+  "cardDealer": {
+    "label": "Card table"
+  },
+  "cardFolder": {
+    "open": "Open {title}, card ending in {lastFour}, expires {expiry}",
+    "close": "Close {title}, card ending in {lastFour}, expires {expiry}",
+    "showDetails": "Show card details",
+    "hideDetails": "Hide card details",
+    "expiry": "Expiry",
+    "cvv": "CVV",
+    "actions": "Open actions for {title}"
+  },
+  "centerMorphModal": {
+    "close": "Close modal",
+    "dismiss": "Dismiss modal"
+  },
+  "checkbox": {
+    "checked": "Selected",
+    "indeterminate": "Partially selected"
+  },
+  "citations": {
+    "title": "Sources",
+    "viewCitation": "View citation {index}"
+  },
+  "codeBlock": {
+    "writing": "Writing",
+    "ready": "Ready",
+    "copy": "Copy code",
+    "copied": "Copied"
+  },
+  "colorPicker": {
+    "dialog": "Color picker",
+    "area": "Saturation and brightness",
+    "areaRole": "2D slider",
+    "areaValue": "Saturation {saturation}%, brightness {brightness}%",
+    "hue": "Hue",
+    "hueValue": "{value} degrees",
+    "opacity": "Opacity",
+    "opacityValue": "{value}%",
+    "hex": "Hex color",
+    "saturation": "Saturation",
+    "lightness": "Lightness",
+    "red": "Red",
+    "green": "Green",
+    "blue": "Blue",
+    "opacityPercent": "Opacity percent",
+    "eyeDropper": "Pick a color from the screen"
+  },
+  "combobox": {
+    "valuePlaceholder": "Select an option",
+    "inputLabel": "Search options",
+    "inputPlaceholder": "Search…",
+    "listLabel": "Options",
+    "empty": "No options found."
+  },
+  "commandPalette": {
+    "placeholder": "Type a command or search…",
+    "empty": "No results found.",
+    "close": "Close command palette",
+    "dialog": "Command palette",
+    "list": "Commands",
+    "results": "Results"
+  },
+  "compositionChart": {
+    "label": "Composition over time",
+    "empty": "No composition data",
+    "noData": "No data",
+    "inspect": "Inspect period",
+    "highlight": "Highlight {name}",
+    "missingValue": "Missing value",
+    "incomplete": "No complete data for this period."
+  },
+  "contextMenu": {
+    "label": "Context menu"
+  },
+  "cylinderCarousel": {
+    "roleDescription": "carousel"
+  },
+  "dateRangePicker": {
+    "label": "Choose a date range",
+    "placeholder": "Select dates",
+    "triggerLabel": "{label}: {summary}",
+    "selectEnd": "Select end",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "selectDate": "Select date",
+    "chooseMonth": "Choose month",
+    "chooseYear": "Choose year",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "previousYear": "Previous year",
+    "nextYear": "Next year",
+    "previousYears": "Previous years",
+    "nextYears": "Next years",
+    "monthChoices": "Choose a month in {year}",
+    "yearChoices": "Choose a year from {start} to {end}",
+    "help": "Use arrow keys to navigate dates, Home and End for the week, Page Up and Page Down for months, Shift with Page Up or Page Down for years. Enter or Space selects a date. Use the month and year buttons to jump directly. In the month or year choices, use arrow keys to move and Escape to return.",
+    "daySelected": "{count} day selected",
+    "daysSelected": "{count} days selected",
+    "chooseStartDate": "Choose a start date",
+    "chooseEndDate": "Choose an end date",
+    "clear": "Clear",
+    "clearLabel": "Clear date range",
+    "startSelected": "Start date {date}. Choose an end date.",
+    "rangeUnavailable": "This range includes unavailable dates. Choose another end date.",
+    "rangeSelected": "{from} to {to} selected.",
+    "cleared": "Date range cleared.",
+    "presetSelected": "{name} selected."
+  },
+  "donutChart": {
+    "label": "Donut chart",
+    "total": "Total"
+  },
+  "drawer": {
+    "close": "Close"
+  },
+  "expandableTabs": {
+    "label": "Navigation tabs"
+  },
+  "feedbackWidget": {
+    "title": "Help us improve",
+    "placeholder": "Share an idea or report a bug",
+    "close": "Close",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "sending": "Sending",
+    "sentTitle": "Thanks!",
+    "sentDescription": "Your feedback helps us build something better.",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "We couldn't send your feedback. Please try again.",
+    "retry": "Try again"
+  },
+  "fileDiff": {
+    "applying": "Applying changes",
+    "applied": "Changes applied",
+    "changes": "File changes",
+    "copy": "Copy diff",
+    "copied": "Copied"
+  },
+  "fileTree": {
+    "label": "Files"
+  },
+  "fileUpload": {
+    "title": "Drop files here",
+    "description": "Add files to the upload queue",
+    "browse": "Browse",
+    "input": "Upload files",
+    "limitTitle": "Upload limit reached",
+    "limitDescription": "{count} of {max} files added",
+    "queued": "Queued",
+    "uploading": "Uploading",
+    "success": "Uploaded",
+    "error": "Failed",
+    "retry": "Retry {name}",
+    "remove": "Remove {name}",
+    "progress": "{name} upload progress"
+  },
+  "funnelChart": {
+    "label": "Conversion funnel",
+    "unit": "people",
+    "empty": "No funnel data",
+    "stages": "Funnel stages",
+    "fromPrevious": "{percent} from previous stage",
+    "gained": "{value} gained",
+    "dropped": "{value} dropped",
+    "ofStart": "{percent} of starting total",
+    "stage": "{stage}: {value} {unit}, {percent} of starting total",
+    "range": "{first} → {last} {unit}",
+    "overall": "Overall conversion"
+  },
+  "heatCalendar": {
+    "unit": "commits",
+    "cell": "{count} {unit} on {date}",
+    "cellUndated": "{count} {unit}",
+    "range": "{start} – {end}",
+    "days": "{days} days",
+    "less": "less",
+    "more": "more",
+    "level": "Show activity level {level}"
+  },
+  "holdActionButton": {
+    "holding": "Keep holding",
+    "complete": "Done"
+  },
+  "imageGeneration": {
+    "queued": "Waiting to generate",
+    "generating": "Generating image",
+    "refining": "Refining details",
+    "complete": "Image ready",
+    "error": "Generation failed",
+    "labelWithPrompt": "{status}: {prompt}",
+    "quotedPrompt": "“{prompt}”",
+    "retry": "Try again"
+  },
+  "imageViewer": {
+    "label": "Image gallery",
+    "open": "Open {alt}",
+    "counter": "{current} / {total}",
+    "close": "Close viewer",
+    "previous": "Previous image",
+    "next": "Next image",
+    "loadError": "Unable to load this image.",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "panHelp": "When zoomed in, drag the image to pan, or keep this control focused and use the arrow keys."
+  },
+  "infiniteMasonry": {
+    "label": "Infinite masonry feed",
+    "emptyTitle": "No items yet",
+    "emptyDescription": "New items will appear here when they become available.",
+    "loadError": "Couldn't load more",
+    "retry": "Try again",
+    "loadingMore": "Loading more items"
+  },
+  "knockoutBracket": {
+    "label": "Tournament bracket",
+    "previousRound": "Previous round",
+    "nextRound": "Next round",
+    "showing": "Showing {rounds}",
+    "thirdPlace": "Third place play-off",
+    "tbd": "TBD",
+    "fullTime": "FT",
+    "fullTimePenalties": "FT (P)",
+    "sideScore": "{team} {score}",
+    "sideScorePenalties": "{team} {score} ({penalties} on penalties)",
+    "matchResult": "{round}: {home}, {away}",
+    "matchVersus": "{round}: {home} versus {away}",
+    "winner": "{team} won"
+  },
+  "knockoutWheel": {
+    "label": "Tournament wheel",
+    "labelWithChampion": "Tournament wheel, won by {team}",
+    "tbd": "TBD",
+    "versus": "{home} v {away}",
+    "result": "{teams} · {home}–{away}",
+    "resultPenalties": "{teams} · {home}–{away} ({homePenalties}–{awayPenalties} pens)",
+    "caption": "{round} · {match}"
+  },
+  "lineChart": {
+    "label": "Line chart",
+    "loading": "Loading data",
+    "loadingStatus": "Loading",
+    "inspect": "{label}: inspect values"
+  },
+  "liquidityHeatmap": {
+    "label": "Liquidity heatmap",
+    "unit": "units",
+    "empty": "No liquidity data",
+    "table": "Liquidity by price and time",
+    "cell": "{time}, {price}: {size} {unit}",
+    "cellEmpty": "{time}, {price}: No data",
+    "noData": "No data",
+    "market": "Market {price}",
+    "legend": "Resting liquidity · {unit}"
+  },
+  "loader": {
+    "label": "Loading",
+    "scramble": "LOADING"
+  },
+  "loadingStates": {
+    "thinking": "Thinking…",
+    "churning": "Churning",
+    "inProgress": "{label}, in progress",
+    "reasoning": "Reasoning",
+    "phraseThinking": "Thinking",
+    "phraseReading": "Reading the context",
+    "phraseConnecting": "Connecting the details",
+    "phraseForming": "Forming a response"
+  },
+  "message": {
+    "user": "user message",
+    "assistant": "assistant message",
+    "typing": "Responding"
+  },
+  "messageBubble": {
+    "showMore": "Show more",
+    "showLess": "Show less"
+  },
+  "messageScroller": {
+    "label": "Conversation",
+    "navigationLabel": "Message navigation",
+    "preview": "Message",
+    "goToUser": "Go to user message {index} of {total}",
+    "goToAssistant": "Go to assistant message {index} of {total}",
+    "goToMessage": "Go to conversation message {index} of {total}"
+  },
+  "morphingModal": {
+    "close": "Close modal"
+  },
+  "morphingSearch": {
+    "placeholder": "Search",
+    "empty": "No results found.",
+    "close": "Close search",
+    "dialog": "Search",
+    "results": "Search results"
+  },
+  "morphingSearchChips": {
+    "placeholder": "Search",
+    "label": "Search",
+    "suggestions": "Suggestions",
+    "recent": "Recent",
+    "recentSearches": "Recent searches",
+    "clear": "Clear",
+    "searching": "Searching…",
+    "removeFilter": "Remove filter {term}",
+    "hint": "Enter adds a filter. Backspace at the start of the field selects the last filter, and again removes it. Delete removes the highlighted recent search.",
+    "filterLimit": "Up to {max} filters",
+    "filterAdded": "Added filter {term}",
+    "filterRemoved": "Removed filter {term}",
+    "recentRemoved": "Removed {term} from recent searches",
+    "recentsCleared": "Cleared recent searches",
+    "filterMarked": "{term} selected. Press Backspace again to remove it."
+  },
+  "morphingTabs": {
+    "label": "Tabs",
+    "close": "Close {label}"
+  },
+  "multiSelect": {
+    "valuePlaceholder": "Select options",
+    "removeValue": "Remove {label}",
+    "inputLabel": "Search options",
+    "inputPlaceholder": "Search…",
+    "listLabel": "Options",
+    "empty": "No options found."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for moved, vanished, or never existed.",
+    "homeLabel": "Back home",
+    "browseLabel": "Browse components",
+    "stackedCaption": "out of the deck",
+    "terminalError": "cd: no such file or directory: /page"
+  },
+  "notificationStack": {
+    "collapsedLabel": "Notifications",
+    "expandedLabel": "View all",
+    "emptyLabel": "All caught up",
+    "collapsedAria": "Notifications: {count}. Expand notifications.",
+    "expandedAria": "Notifications: {count}. {label}."
+  },
+  "orderBook": {
+    "label": "Order book",
+    "price": "Price",
+    "size": "Size",
+    "total": "Total",
+    "cumulativeTotal": "Cumulative total",
+    "asksTable": "Asks · sell orders",
+    "bidsTable": "Bids · buy orders",
+    "noAsks": "No asks",
+    "noBids": "No bids",
+    "referencePrice": "Reference price:",
+    "spreadUnavailable": "Spread unavailable",
+    "crossedBook": "Crossed book",
+    "spread": "Spread {spread} · {percent}%",
+    "bids": "Bids",
+    "asks": "Asks",
+    "visibleDepth": "Visible depth",
+    "depthPlaceholder": "Hover a level to see the cost of filling up to it",
+    "average": "Avg"
+  },
+  "otpInput": {
+    "label": "One-time passcode",
+    "progress": "{entered} of {total} digits entered.",
+    "entered": "{digit}. {progress}",
+    "maskedDigit": "Digit",
+    "deleted": "Deleted. {progress}",
+    "position": "{slot}, digit {position} of {total}.",
+    "filled": "Filled",
+    "empty": "Empty",
+    "verified": "Verified"
+  },
+  "overflowActions": {
+    "open": "Show extra actions",
+    "close": "Hide extra actions"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Previous page",
+    "next": "Next page",
+    "back": "Back {count} pages",
+    "forward": "Forward {count} pages",
+    "page": "Page {page}"
+  },
+  "predictionMarket": {
+    "buy": "Buy",
+    "sell": "Sell",
+    "orderType": "Market",
+    "amount": "Amount",
+    "shares": "Shares",
+    "max": "Max",
+    "toWin": "To win",
+    "toReceive": "To receive",
+    "avgPrice": "Avg. Price {price}",
+    "trade": "Trade",
+    "trading": "Trading",
+    "tradeFilled": "Trade filled",
+    "connect": "Connect",
+    "enterAmount": "Enter an amount",
+    "minimum": "Minimum {amount}",
+    "insufficientBalance": "Insufficient balance",
+    "notEnoughShares": "Not enough shares"
+  },
+  "predictionMarketCard": {
+    "payoutHint": "Potential payout per $1 if this outcome wins, including your stake. Before fees; based on the displayed price.",
+    "payoutFor": "Potential payout for {outcome}",
+    "volume": "{volume} vol.",
+    "bookmark": "Bookmark {title}",
+    "trade": "Trade {outcome} at {percent}%",
+    "percent": "{percent}%",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "previewRail": {
+    "label": "Section navigation"
+  },
+  "priceTargetFan": {
+    "label": "Price target · 12 months",
+    "chart": "{label}: mean {mean}, now {current}",
+    "target": "{key} target",
+    "targetButton": "{key} target {price}, {analysts} analysts",
+    "history": "Price history",
+    "price": "Price",
+    "analysts": "Analysts",
+    "vsNow": "vs now",
+    "now": "Now",
+    "horizon": "Target"
+  },
+  "projectFolder": {
+    "description": "Updated recently",
+    "countOne": "{count} file",
+    "countOther": "{count} files",
+    "closeOverlay": "Close file overlay",
+    "close": "Close {title}"
+  },
+  "promptInput": {
+    "placeholder": "Ask the agent to do something…",
+    "label": "Prompt",
+    "addToPrompt": "Add to prompt",
+    "chooseModel": "Choose model",
+    "send": "Send prompt",
+    "stop": "Stop generating"
+  },
+  "pullToRefresh": {
+    "pulling": "Pull to refresh",
+    "release": "Release to refresh",
+    "refreshing": "Refreshing",
+    "label": "Refreshable content"
+  },
+  "returnsCalendar": {
+    "year": "Year",
+    "monthCell": "{month} {year} {value}%",
+    "yearCell": "{year} {value}% for the year",
+    "years": "{count} years",
+    "months": "{count} months",
+    "forYear": "for the year"
+  },
+  "sankeyChart": {
+    "label": "Sankey chart",
+    "tableCaption": "{label} data",
+    "flow": "Flow",
+    "value": "Value",
+    "shareOfSource": "Share of source",
+    "flowRow": "{source} to {target}",
+    "nodes": "{label} nodes",
+    "nodeFlows": "in {in}, out {out}",
+    "tooltipFlows": "In {in} · Out {out}",
+    "from": "From",
+    "to": "To",
+    "more": "{count} more",
+    "linkShare": "{share} of {source}",
+    "noFlows": "No flows to show",
+    "empty": "No sankey data"
+  },
+  "signUpForm": {
+    "title": "Create your account",
+    "description": "Start building in under a minute.",
+    "submit": "Create account",
+    "submitting": "Creating account",
+    "submitted": "Account created",
+    "retry": "Try again",
+    "nameLabel": "Name",
+    "namePlaceholder": "Ada Lovelace",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "At least {count} characters",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "confirmPasswordLabel": "Confirm password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "terms": "I agree to the Terms and Privacy Policy",
+    "strength": "Password strength: {level}",
+    "strengthTooShort": "Too short",
+    "strengthWeak": "Weak",
+    "strengthFair": "Fair",
+    "strengthGood": "Good",
+    "strengthStrong": "Strong",
+    "nameRequired": "Enter your name.",
+    "emailRequired": "Enter your email.",
+    "emailInvalid": "That doesn't look like an email address.",
+    "passwordRequired": "Choose a password.",
+    "passwordTooShort": "Use at least {count} characters.",
+    "confirmPasswordRequired": "Confirm your password.",
+    "passwordMismatch": "Passwords don't match.",
+    "termsRequired": "Accept the terms to continue."
+  },
+  "slideActionButton": {
+    "complete": "Complete",
+    "thumbLabel": "Slide action"
+  },
+  "sortableList": {
+    "label": "Sortable items",
+    "instructions": "Drag a handle to reorder. With a handle focused, use Up and Down to move, Home and End to move to the edges.",
+    "moved": "{item} moved to position {position} of {total}.",
+    "restored": "Previous order restored.",
+    "reorder": "Reorder {item}",
+    "undo": "Undo reorder"
+  },
+  "sparkline": {
+    "inspect": "{label}: inspect samples",
+    "sample": "Sample {index}",
+    "sampleValue": "{name}: {value}",
+    "range": "from {first} to {last}",
+    "up": "up {percent}%",
+    "down": "down {percent}%"
+  },
+  "statefulButton": {
+    "loading": "Loading",
+    "success": "Done",
+    "error": "Try again"
+  },
+  "statusBar": {
+    "label": "Status history",
+    "tableCaption": "{label} data",
+    "period": "Period",
+    "status": "Status",
+    "details": "Details",
+    "legend": "Status legend",
+    "inspect": "{label}: inspect period",
+    "empty": "No status data",
+    "operational": "Operational",
+    "degraded": "Degraded",
+    "outage": "Outage",
+    "maintenance": "Maintenance",
+    "unknown": "No data"
+  },
+  "streamingResponse": {
+    "copy": "Copy response",
+    "copied": "Copied",
+    "retry": "Retry response",
+    "helpful": "Helpful",
+    "notHelpful": "Not helpful",
+    "source": "{count} source",
+    "sources": "{count} sources"
+  },
+  "swap": {
+    "title": "Swap",
+    "settings": "Settings",
+    "reverse": "Reverse direction",
+    "enterAmount": "Enter an amount",
+    "insufficient": "Insufficient {symbol}",
+    "swapAndSend": "Swap + Send to {address}",
+    "swapTokens": "Swap {from} → {to}",
+    "sendToOther": "Send to different address",
+    "sendTo": "To: {address}",
+    "addressPlaceholder": "0x... or name.eth",
+    "clearAddress": "Clear address",
+    "close": "Close",
+    "selectFromToken": "Select from token",
+    "selectToToken": "Select to token",
+    "searchPlaceholder": "Search name or paste address",
+    "allChains": "All",
+    "popular": "Most popular",
+    "results": "Results",
+    "trending": "Trending",
+    "tokens": "Tokens",
+    "empty": "No tokens found",
+    "youPay": "You pay",
+    "youGet": "You get",
+    "rate": "Rate",
+    "networkFee": "Network fee",
+    "slippage": "Slippage",
+    "eta": "ETA"
+  },
+  "swipeableList": {
+    "actionsFor": "Actions for {title}",
+    "showActions": "Show actions"
+  },
+  "table": {
+    "empty": "No data",
+    "selectAll": "Select all rows",
+    "selectRow": "Select row {row}",
+    "cellLabel": "{column} for row {row}",
+    "cellPlaceholder": "Empty",
+    "columnOptions": "{column} column options",
+    "reorderColumn": "Reorder {column} column",
+    "renameColumn": "Rename {column} column",
+    "resizeColumn": "Resize {column} column",
+    "rowOptions": "Row {row} options",
+    "insertBefore": "Insert before",
+    "insertAfter": "Insert after",
+    "deleteColumn": "Delete column",
+    "deleteRow": "Delete row"
+  },
+  "tabs": {
+    "scrollLeft": "Scroll tabs left",
+    "scrollRight": "Scroll tabs right"
+  },
+  "themeToggle": {
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
+  },
+  "timeline": {
+    "label": "Timeline",
+    "hint": "Use the left and right arrow keys to move between events."
+  },
   "todoList": {
     "title": "To-dos",
     "label": "Agent task list",
@@ -8,5 +811,89 @@
     "inProgress": "In progress",
     "completed": "Completed",
     "cancelled": "Cancelled"
+  },
+  "toolApproval": {
+    "title": "Allow this tool to run?",
+    "viewDetails": "View details",
+    "allowOnce": "Allow once",
+    "alwaysAllow": "Always allow",
+    "deny": "Deny",
+    "pending": "Approval required",
+    "approving": "Approving",
+    "approved": "Approved",
+    "denied": "Denied",
+    "running": "Running",
+    "complete": "Completed",
+    "error": "Failed"
+  },
+  "toolResult": {
+    "running": "Running",
+    "success": "Completed",
+    "error": "Failed",
+    "cancelled": "Cancelled",
+    "copy": "Copy result",
+    "copied": "Copied",
+    "retry": "Run again"
+  },
+  "treemap": {
+    "label": "Treemap",
+    "tableCaption": "{label} data",
+    "item": "Item",
+    "value": "Value",
+    "share": "Share of total",
+    "details": "Details",
+    "legend": "Treemap legend",
+    "tiles": "Treemap tiles",
+    "ofTotal": "{share}% of total",
+    "noPositive": "No positive values",
+    "empty": "No treemap data"
+  },
+  "volumeProfile": {
+    "label": "Volume profile",
+    "unit": "units",
+    "empty": "No volume data",
+    "inspect": "{label}: inspect price level",
+    "caption": "{label} data",
+    "priceRange": "Price range",
+    "volume": "Volume ({unit})",
+    "share": "Share",
+    "level": "Level",
+    "range": "{low} to {high}",
+    "amount": "{volume} {unit}",
+    "shareOfTotal": "{share} of total volume",
+    "poc": "Point of control",
+    "pocBadge": "POC",
+    "inside": "Inside value area",
+    "outside": "Outside value area",
+    "totalVolume": "Total volume",
+    "valueArea": "Value area · {target}% target",
+    "shareOfVolume": "{share} of volume"
+  },
+  "walletCard": {
+    "notifications": "Notifications",
+    "balance": "Balance",
+    "showBalance": "Show balance",
+    "hideBalance": "Hide balance",
+    "search": "Search",
+    "searchPlaceholder": "Search",
+    "noMatches": "No matches",
+    "noRecent": "No recent searches",
+    "selectAccount": "Select account",
+    "send": "Send",
+    "deposit": "Deposit",
+    "swap": "Swap",
+    "buy": "Buy",
+    "copied": "Copied",
+    "copyAddress": "Copy address"
+  },
+  "xyChart": {
+    "noData": "No data",
+    "missing": "no data",
+    "dataCaption": "{label} data",
+    "category": "Category",
+    "total": "Total",
+    "series": "Series",
+    "seriesValue": "{name} {value}",
+    "totalValue": "Total {value}"
   }
 }

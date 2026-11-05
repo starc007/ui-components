@@ -33,7 +33,8 @@
     "typecheck": "tsc --noEmit",
     "check:registry": "bun scripts/check-registry.ts",
     "test": "bun test",
-    "check": "bun run typecheck && bun run lint && bun run check:registry"
+    "check:messages": "bun scripts/check-messages.ts",
+    "check": "bun run typecheck && bun run lint && bun run check:registry && bun run check:messages"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.8.0",

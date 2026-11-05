@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useVolumeProfile } from "./context";
 
 export function VolumeProfileSummary({ className }: { className?: string }) {
-  const { rows, totalVolume, poc, valueArea, formatPrice, formatVolume, unit, color, pocColor } =
+  const { rows, totalVolume, poc, valueArea, formatPrice, formatVolume, unit, color, pocColor, t } =
     useVolumeProfile();
   if (!rows.length) return null;
   return (
@@ -15,9 +15,9 @@ export function VolumeProfileSummary({ className }: { className?: string }) {
       )}
     >
       <div className="space-y-1.5">
-        <dt className="text-muted-foreground">Total volume</dt>
+        <dt className="text-muted-foreground">{t("totalVolume")}</dt>
         <dd className="font-mono font-medium tabular-nums">
-          {formatVolume(totalVolume)} {unit}
+          {t("amount", { volume: formatVolume(totalVolume), unit })}
         </dd>
       </div>
       <div className="space-y-1.5">
@@ -27,7 +27,7 @@ export function VolumeProfileSummary({ className }: { className?: string }) {
             className="size-1.5 rounded-full"
             style={{ backgroundColor: pocColor }}
           />
-          Point of control
+          {t("poc")}
         </dt>
         <dd className="font-mono font-medium tabular-nums">{poc ? formatPrice(poc.price) : "—"}</dd>
       </div>
@@ -39,12 +39,14 @@ export function VolumeProfileSummary({ className }: { className?: string }) {
               className="size-1.5 rounded-full"
               style={{ backgroundColor: color }}
             />
-            Value area · {Math.round(valueArea.target * 100)}% target
+            {t("valueArea", { target: Math.round(valueArea.target * 100) })}
           </dt>
           <dd className="font-mono font-medium tabular-nums">
             {formatPrice(valueArea.priceLow)} – {formatPrice(valueArea.priceHigh)}
           </dd>
-          <dd className="text-muted-foreground">{(valueArea.share * 100).toFixed(1)}% of volume</dd>
+          <dd className="text-muted-foreground">
+            {t("shareOfVolume", { share: `${(valueArea.share * 100).toFixed(1)}%` })}
+          </dd>
         </div>
       ) : null}
     </dl>

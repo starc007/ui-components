@@ -49,6 +49,7 @@ export function LineChartTooltip({ children, className, side = "auto" }: LineCha
     formatValue,
     reduce,
     touching,
+    xy,
   } = useLineChart();
   const panelRef = useRef<HTMLDivElement>(null);
   // Kept between openings: the panel's size barely changes from one point to the next.
@@ -133,7 +134,7 @@ export function LineChartTooltip({ children, className, side = "auto" }: LineCha
             {typeof children === "function"
               ? children({ category, index: activeIndex, rows })
               : (children ?? (
-                  <XYTooltipContent title={category} rows={rows} formatValue={formatValue} />
+                  <XYTooltipContent title={category} rows={rows} formatValue={formatValue} t={xy} />
                 ))}
           </TooltipSurface>
         </motion.div>

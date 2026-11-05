@@ -7,7 +7,7 @@ import { usePriceTargetFan } from "./context";
 import { ink, LOW, UP } from "./utils";
 
 export function PriceTargetFanHeader({ children, className }: { children?: ReactNode; className?: string }) {
-  const { head, headPct } = usePriceTargetFan();
+  const { head, headPct, t } = usePriceTargetFan();
   return (
     <div className={cn("mb-1 flex items-end justify-between px-1", className)}>
       {children ?? (
@@ -31,7 +31,7 @@ export function PriceTargetFanHeader({ children, className }: { children?: React
               duration={0.5}
             />
           </span>
-          <span className="text-xs text-muted-foreground">{head.key} target</span>
+          <span className="text-xs text-muted-foreground">{t("target", { key: head.key })}</span>
         </div>
       )}
     </div>

@@ -4,6 +4,8 @@ import { ArrowDownToLine, ArrowUp, CreditCard, Repeat } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import type { ComponentType } from "react";
 import { SPRING_PRESS } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
+import { type WalletCardMessages, walletCardMessages } from "./messages";
 
 type WalletAction = {
   key: string;
@@ -20,19 +22,22 @@ export function WalletActions({
   onDeposit,
   onSwap,
   onBuy,
+  labels,
 }: {
   onSend?: () => void;
   onDeposit?: () => void;
   onSwap?: () => void;
   onBuy?: () => void;
+  labels?: Partial<WalletCardMessages>;
 }) {
   const reduce = useReducedMotion();
+  const t = useMessages("walletCard", walletCardMessages, labels);
 
   const actions: WalletAction[] = [
-    { key: "send", label: "Send", icon: ArrowUp, onClick: onSend },
-    { key: "deposit", label: "Deposit", icon: ArrowDownToLine, onClick: onDeposit },
-    { key: "swap", label: "Swap", icon: Repeat, onClick: onSwap },
-    { key: "buy", label: "Buy", icon: CreditCard, onClick: onBuy },
+    { key: "send", label: t("send"), icon: ArrowUp, onClick: onSend },
+    { key: "deposit", label: t("deposit"), icon: ArrowDownToLine, onClick: onDeposit },
+    { key: "swap", label: t("swap"), icon: Repeat, onClick: onSwap },
+    { key: "buy", label: t("buy"), icon: CreditCard, onClick: onBuy },
   ];
 
   return (

@@ -74,7 +74,9 @@
   },
   "notFound": {
     "title": "Seite nicht gefunden",
-    "description": "Die gesuchte Seite existiert nicht."
+    "description": "Die gesuchte Seite existiert nicht.",
+    "homeLabel": "Zur Startseite",
+    "browseLabel": "Komponenten ansehen"
   },
   "theme": {
     "lightTheme": "Helles Theme",

@@ -120,12 +120,16 @@ const nextConfig = {
     ],
   },
   async rewrites() {
-    return [
-      { source: "/charts/:slug.md", destination: "/r/:slug.md?category=charts" },
+    // Markdown is English only; a language prefix serves the same file.
+    const markdown = ["", LOCALE_PREFIX].flatMap((prefix) => [
+      { source: `${prefix}/charts/:slug.md`, destination: "/r/:slug.md?category=charts" },
       {
-        source: "/components/:category/:slug.md",
+        source: `${prefix}/components/:category/:slug.md`,
         destination: "/r/:slug.md?category=:category",
       },
+    ]);
+    return [
+      ...markdown,
       // shadcn directory items (/{slug}.json). A root [slug] route would clash
       // with app/[locale], so the handler lives under /registry-item.
       { source: "/:slug([^/]+\\.json)", destination: "/registry-item/:slug" },
@@ -194,18 +198,13 @@ const nextConfig = {
       "./components/charts/**/*",
       "./components/previews/**/*",
     ],
-    "/charts/*": [
-      "./components/charts/**/*",
-      "./components/motion/**/*",
-      "./components/previews/charts/**/*",
-      "./lib/**/*",
-    ],
-    "/components/*": [
+    "/r/*": [
       "./components/motion/**/*",
       "./components/charts/**/*",
       "./components/previews/**/*",
+      "./lib/**/*",
     ],
-    "/r/*": [
+    "/registry-item/*": [
       "./components/motion/**/*",
       "./components/charts/**/*",
       "./components/previews/**/*",

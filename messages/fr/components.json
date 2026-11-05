@@ -1,4 +1,807 @@
 {
+  "adaptiveStepper": {
+    "label": "Quantité",
+    "summary": "{label}. Valeur actuelle : {value}",
+    "decrease": "Diminuer la valeur",
+    "increase": "Augmenter la valeur"
+  },
+  "agentActivity": {
+    "thinking": "Réflexion…",
+    "searching": "Recherche sur le web…",
+    "runningTools": "Exécution des outils…",
+    "workingTrace": "Traitement de l’exécution…",
+    "workingMixed": "Travail en cours…",
+    "thoughtFor": "Réflexion pendant {duration}",
+    "seconds": "{seconds} s",
+    "minutes": "{minutes} min",
+    "minutesSeconds": "{minutes} min {seconds} s",
+    "searched": "Recherche web effectuée",
+    "ranToolsOne": "{count} outil exécuté",
+    "ranToolsOther": "{count} outils exécutés",
+    "traceSummary": "{toolCalls}, {messages}",
+    "toolCallsOne": "{count} appel d’outil",
+    "toolCallsOther": "{count} appels d’outils",
+    "messagesOne": "{count} message",
+    "messagesOther": "{count} messages",
+    "completedStepsOne": "{count} étape terminée",
+    "completedStepsOther": "{count} étapes terminées",
+    "moreResults": "+{count} de plus",
+    "read": "Lire",
+    "edit": "Modifier",
+    "write": "Écrire",
+    "run": "Exécuter"
+  },
+  "aiSidebar": {
+    "label": "Ressources",
+    "rename": "Renommer",
+    "renameItem": "Renommer {item}",
+    "actions": "Actions pour {item}",
+    "moveUp": "Monter",
+    "moveDown": "Descendre",
+    "moveInto": "Déplacer dans {target}",
+    "moveOut": "Sortir",
+    "moveToTop": "Déplacer au niveau supérieur",
+    "movePending": "Attendez la fin du déplacement en cours.",
+    "movedBefore": "{item} déplacé avant {target}.",
+    "movedInside": "{item} déplacé dans {target}.",
+    "movedAfter": "{item} déplacé après {target}.",
+    "movedToTop": "{item} déplacé au niveau supérieur.",
+    "moveFailed": "Échec du déplacement. {item} a été restauré.",
+    "renameFailed": "Échec du renommage. {item} a été restauré.",
+    "unnamedItem": "élément"
+  },
+  "alert": {
+    "dismiss": "Fermer l’alerte"
+  },
+  "animatedSidebar": {
+    "label": "Barre latérale",
+    "toggle": "Afficher ou masquer la barre latérale",
+    "close": "Fermer la barre latérale"
+  },
+  "animatedToastStack": {
+    "dismiss": "Fermer la notification"
+  },
+  "approvalCard": {
+    "title": "Approbation requise",
+    "approve": "Approuver",
+    "submit": "Envoyer la réponse",
+    "requestChanges": "Demander des modifications",
+    "reject": "Refuser",
+    "dismiss": "Ignorer",
+    "previousQuestion": "Question précédente",
+    "nextQuestion": "Question suivante",
+    "customPlaceholder": "Ajouter une autre réponse…",
+    "questionProgress": "Question {current} sur {total}",
+    "stepCount": "{current}/{total}",
+    "inputRequired": "Réponse requise",
+    "submitting": "Envoi en cours",
+    "approved": "Approuvé",
+    "rejected": "Refusé",
+    "changesRequested": "Modifications demandées",
+    "answered": "Réponse envoyée"
+  },
+  "arcPicker": {
+    "label": "Choisir une option",
+    "instructionsHorizontal": "Faites glisser horizontalement ou défilez pour choisir. Utilisez les flèches pour vous déplacer, Début et Fin pour sauter.",
+    "instructionsVertical": "Faites glisser verticalement ou défilez pour choisir. Utilisez les flèches pour vous déplacer, Début et Fin pour sauter.",
+    "empty": "Aucune option"
+  },
+  "attachmentUpload": {
+    "title": "Glissez-déposez ou parcourez vos fichiers",
+    "description": "Taille maximale : {size}",
+    "attachments": "Pièces jointes",
+    "input": "Importer des pièces jointes",
+    "limitTitle": "Limite de pièces jointes atteinte",
+    "limitDescription": "Pièces jointes ajoutées : {count} sur {max}",
+    "uploading": "Envoi de {name}",
+    "uploadComplete": "Envoi terminé",
+    "uploadCompleteFor": "Envoi de {name} terminé",
+    "removingAttachment": "Suppression de la pièce jointe",
+    "removing": "Suppression de {name}",
+    "uploadFailed": "Échec de l’envoi",
+    "uploadFailedFor": "Échec de l’envoi de {name}",
+    "retryUpload": "Réessayer l’envoi",
+    "retry": "Réessayer {name}",
+    "removeAttachment": "Retirer la pièce jointe",
+    "remove": "Retirer {name}",
+    "clickToPreview": "Cliquez pour prévisualiser",
+    "preview": "Prévisualiser {name}",
+    "previewOf": "Aperçu de {name}",
+    "closePreview": "Fermer l’aperçu de l’image",
+    "play": "Lire {name}",
+    "pause": "Mettre {name} en pause",
+    "open": "Ouvrir {name}",
+    "web": "Web"
+  },
+  "availabilityScheduler": {
+    "toggleDay": "Activer ou désactiver la disponibilité du {day}",
+    "unavailable": "Indisponible",
+    "addTime": "Ajouter un horaire",
+    "addRange": "Ajouter une plage horaire au {day}",
+    "remove": "Retirer",
+    "removeRange": "Retirer la plage horaire",
+    "copyTimes": "Copier les horaires",
+    "copyDay": "Copier les horaires du {day} vers d’autres jours",
+    "copyTo": "Copier les horaires vers",
+    "everyDay": "Tous les jours",
+    "apply": "Appliquer"
+  },
+  "avatarGroup": {
+    "label": "Membres",
+    "showFewer": "Afficher moins de membres",
+    "showMore": "Afficher {count} membres de plus"
+  },
+  "barChart": {
+    "label": "Graphique à barres",
+    "inspect": "{label} : voir les catégories"
+  },
+  "bloomMenu": {
+    "create": "Créer",
+    "close": "Fermer le menu",
+    "doc": "Document",
+    "board": "Kanban",
+    "table": "Tableau",
+    "folder": "Dossier",
+    "reminder": "Rappel",
+    "link": "Lien"
+  },
+  "bottomSheet": {
+    "label": "Feuille inférieure",
+    "close": "Fermer la feuille inférieure"
+  },
+  "bounceSidebar": {
+    "label": "Navigation latérale"
+  },
+  "breadcrumb": {
+    "label": "Fil d’Ariane",
+    "showHidden": "Afficher les chemins masqués"
+  },
+  "bumpChart": {
+    "label": "Classements dans le temps",
+    "empty": "Aucun classement pour l’instant",
+    "plot": "Graphique {label}, faites défiler horizontalement pour voir plus de périodes",
+    "description": "Les rangs vont du meilleur en haut au plus bas en bas. Utilisez la légende pour mettre en évidence ou épingler une série. Les valeurs exactes figurent dans un tableau.",
+    "caption": "{label} — rangs exacts",
+    "series": "Série",
+    "noData": "Aucune donnée",
+    "highlight": "Mettre en évidence {name}",
+    "changeUnavailable": "Évolution indisponible",
+    "unchanged": "Inchangé",
+    "noPrevious": "Aucun rang précédent",
+    "noChange": "Aucun changement",
+    "upOne": "Gagne 1 place",
+    "up": "Gagne {count} places",
+    "downOne": "Perd 1 place",
+    "down": "Perd {count} places",
+    "previously": "Auparavant #{rank} en {period}",
+    "point": "{name}, {period} : rang {rank}"
+  },
+  "candlestickChart": {
+    "label": "Graphique en chandeliers",
+    "candle": "Bougie",
+    "open": "O",
+    "high": "H",
+    "low": "B",
+    "close": "C",
+    "volume": "Vol",
+    "valueText": "{label} : ouverture {open}, plus haut {high}, plus bas {low}, clôture {close}"
+  },
+  "cardDealer": {
+    "label": "Table de cartes"
+  },
+  "cardFolder": {
+    "open": "Ouvrir {title}, carte se terminant par {lastFour}, expire le {expiry}",
+    "close": "Fermer {title}, carte se terminant par {lastFour}, expire le {expiry}",
+    "showDetails": "Afficher les données de la carte",
+    "hideDetails": "Masquer les données de la carte",
+    "expiry": "Expiration",
+    "cvv": "CVV",
+    "actions": "Ouvrir les actions pour {title}"
+  },
+  "centerMorphModal": {
+    "close": "Fermer la fenêtre",
+    "dismiss": "Ignorer la fenêtre"
+  },
+  "checkbox": {
+    "checked": "Sélectionné",
+    "indeterminate": "Partiellement sélectionné"
+  },
+  "citations": {
+    "title": "Sources",
+    "viewCitation": "Voir la citation {index}"
+  },
+  "codeBlock": {
+    "writing": "Rédaction",
+    "ready": "Prêt",
+    "copy": "Copier le code",
+    "copied": "Copié"
+  },
+  "colorPicker": {
+    "dialog": "Sélecteur de couleur",
+    "area": "Saturation et luminosité",
+    "areaRole": "Curseur 2D",
+    "areaValue": "Saturation {saturation} %, luminosité {brightness} %",
+    "hue": "Teinte",
+    "hueValue": "{value} degrés",
+    "opacity": "Opacité",
+    "opacityValue": "{value} %",
+    "hex": "Couleur hexadécimale",
+    "saturation": "Saturation",
+    "lightness": "Luminosité",
+    "red": "Rouge",
+    "green": "Vert",
+    "blue": "Bleu",
+    "opacityPercent": "Opacité en pourcentage",
+    "eyeDropper": "Prélever une couleur à l’écran"
+  },
+  "combobox": {
+    "valuePlaceholder": "Sélectionnez une option",
+    "inputLabel": "Rechercher des options",
+    "inputPlaceholder": "Rechercher…",
+    "listLabel": "Options",
+    "empty": "Aucune option trouvée."
+  },
+  "commandPalette": {
+    "placeholder": "Saisissez une commande ou recherchez…",
+    "empty": "Aucun résultat.",
+    "close": "Fermer la palette de commandes",
+    "dialog": "Palette de commandes",
+    "list": "Commandes",
+    "results": "Résultats"
+  },
+  "compositionChart": {
+    "label": "Composition dans le temps",
+    "empty": "Aucune donnée de composition",
+    "noData": "Aucune donnée",
+    "inspect": "Inspecter la période",
+    "highlight": "Mettre en évidence {name}",
+    "missingValue": "Valeur manquante",
+    "incomplete": "Aucune donnée complète pour cette période."
+  },
+  "contextMenu": {
+    "label": "Menu contextuel"
+  },
+  "cylinderCarousel": {
+    "roleDescription": "carrousel"
+  },
+  "dateRangePicker": {
+    "label": "Choisir une période",
+    "placeholder": "Choisir des dates",
+    "triggerLabel": "{label} : {summary}",
+    "selectEnd": "Choisir la fin",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "selectDate": "Choisir une date",
+    "chooseMonth": "Choisir le mois",
+    "chooseYear": "Choisir l’année",
+    "previousMonth": "Mois précédent",
+    "nextMonth": "Mois suivant",
+    "previousYear": "Année précédente",
+    "nextYear": "Année suivante",
+    "previousYears": "Années précédentes",
+    "nextYears": "Années suivantes",
+    "monthChoices": "Choisir un mois de {year}",
+    "yearChoices": "Choisir une année de {start} à {end}",
+    "help": "Utilisez les flèches pour parcourir les dates, Début et Fin pour la semaine, Page précédente et Page suivante pour les mois, et Maj avec Page précédente ou Page suivante pour les années. Entrée ou Espace sélectionne une date. Utilisez les boutons du mois et de l’année pour y accéder directement. Dans le choix du mois ou de l’année, utilisez les flèches pour vous déplacer et Échap pour revenir.",
+    "daySelected": "{count} jour sélectionné",
+    "daysSelected": "{count} jours sélectionnés",
+    "chooseStartDate": "Choisissez une date de début",
+    "chooseEndDate": "Choisissez une date de fin",
+    "clear": "Effacer",
+    "clearLabel": "Effacer la période",
+    "startSelected": "Date de début : {date}. Choisissez une date de fin.",
+    "rangeUnavailable": "Cette période contient des dates indisponibles. Choisissez une autre date de fin.",
+    "rangeSelected": "Du {from} au {to} sélectionné.",
+    "cleared": "Période effacée.",
+    "presetSelected": "{name} sélectionné."
+  },
+  "donutChart": {
+    "label": "Graphique en anneau",
+    "total": "Total"
+  },
+  "drawer": {
+    "close": "Fermer"
+  },
+  "expandableTabs": {
+    "label": "Onglets de navigation"
+  },
+  "feedbackWidget": {
+    "title": "Aidez-nous à nous améliorer",
+    "placeholder": "Partagez une idée ou signalez un bug",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "submit": "Envoyer",
+    "sending": "Envoi",
+    "sentTitle": "Merci !",
+    "sentDescription": "Vos retours nous aident à construire quelque chose de mieux.",
+    "errorTitle": "Une erreur s’est produite",
+    "errorDescription": "Impossible d’envoyer vos retours. Veuillez réessayer.",
+    "retry": "Réessayer"
+  },
+  "fileDiff": {
+    "applying": "Application des modifications",
+    "applied": "Modifications appliquées",
+    "changes": "Modifications du fichier",
+    "copy": "Copier le diff",
+    "copied": "Copié"
+  },
+  "fileTree": {
+    "label": "Fichiers"
+  },
+  "fileUpload": {
+    "title": "Déposez les fichiers ici",
+    "description": "Ajoutez des fichiers à la file d’envoi",
+    "browse": "Parcourir",
+    "input": "Importer des fichiers",
+    "limitTitle": "Limite d’envoi atteinte",
+    "limitDescription": "Fichiers ajoutés : {count} sur {max}",
+    "queued": "En attente",
+    "uploading": "Envoi en cours",
+    "success": "Envoyé",
+    "error": "Échec",
+    "retry": "Réessayer {name}",
+    "remove": "Retirer {name}",
+    "progress": "Progression de l’envoi de {name}"
+  },
+  "funnelChart": {
+    "label": "Entonnoir de conversion",
+    "unit": "personnes",
+    "empty": "Aucune donnée d’entonnoir",
+    "stages": "Étapes de l’entonnoir",
+    "fromPrevious": "{percent} de l’étape précédente",
+    "gained": "{value} gagnés",
+    "dropped": "{value} perdus",
+    "ofStart": "{percent} du total initial",
+    "stage": "{stage} : {value} {unit}, {percent} du total initial",
+    "range": "{first} → {last} {unit}",
+    "overall": "Conversion globale"
+  },
+  "heatCalendar": {
+    "unit": "commits",
+    "cell": "{count} {unit} le {date}",
+    "cellUndated": "{count} {unit}",
+    "range": "{start} – {end}",
+    "days": "{days} jours",
+    "less": "moins",
+    "more": "plus",
+    "level": "Afficher le niveau d’activité {level}"
+  },
+  "holdActionButton": {
+    "holding": "Maintenez appuyé",
+    "complete": "Terminé"
+  },
+  "imageGeneration": {
+    "queued": "En attente de génération",
+    "generating": "Génération de l’image",
+    "refining": "Affinage des détails",
+    "complete": "Image prête",
+    "error": "Échec de la génération",
+    "labelWithPrompt": "{status} : {prompt}",
+    "quotedPrompt": "« {prompt} »",
+    "retry": "Réessayer"
+  },
+  "imageViewer": {
+    "label": "Galerie d’images",
+    "open": "Ouvrir {alt}",
+    "counter": "{current} / {total}",
+    "close": "Fermer la visionneuse",
+    "previous": "Image précédente",
+    "next": "Image suivante",
+    "loadError": "Impossible de charger cette image.",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "panHelp": "En mode zoom, faites glisser l’image pour la déplacer, ou gardez le focus sur ce contrôle et utilisez les flèches du clavier."
+  },
+  "infiniteMasonry": {
+    "label": "Flux en mosaïque infini",
+    "emptyTitle": "Aucun élément pour l’instant",
+    "emptyDescription": "Les nouveaux éléments apparaîtront ici dès qu’ils seront disponibles.",
+    "loadError": "Impossible d’en charger davantage",
+    "retry": "Réessayer",
+    "loadingMore": "Chargement d’autres éléments"
+  },
+  "knockoutBracket": {
+    "label": "Tableau du tournoi",
+    "previousRound": "Tour précédent",
+    "nextRound": "Tour suivant",
+    "showing": "Affichage : {rounds}",
+    "thirdPlace": "Match pour la troisième place",
+    "tbd": "À déterminer",
+    "fullTime": "Terminé",
+    "fullTimePenalties": "T.a.b.",
+    "sideScore": "{team} {score}",
+    "sideScorePenalties": "{team} {score} ({penalties} aux tirs au but)",
+    "matchResult": "{round} : {home}, {away}",
+    "matchVersus": "{round} : {home} contre {away}",
+    "winner": "Victoire de {team}"
+  },
+  "knockoutWheel": {
+    "label": "Roue du tournoi",
+    "labelWithChampion": "Roue du tournoi, remporté par {team}",
+    "tbd": "À déterminer",
+    "versus": "{home} c. {away}",
+    "result": "{teams} · {home}–{away}",
+    "resultPenalties": "{teams} · {home}–{away} ({homePenalties}–{awayPenalties} t.a.b.)",
+    "caption": "{round} · {match}"
+  },
+  "lineChart": {
+    "label": "Graphique linéaire",
+    "loading": "Chargement des données",
+    "loadingStatus": "Chargement",
+    "inspect": "{label} : voir les valeurs"
+  },
+  "liquidityHeatmap": {
+    "label": "Carte de chaleur de liquidité",
+    "unit": "unités",
+    "empty": "Aucune donnée de liquidité",
+    "table": "Liquidité par prix et par heure",
+    "cell": "{time}, {price} : {size} {unit}",
+    "cellEmpty": "{time}, {price} : aucune donnée",
+    "noData": "Aucune donnée",
+    "market": "Marché {price}",
+    "legend": "Liquidité en attente · {unit}"
+  },
+  "loader": {
+    "label": "Chargement",
+    "scramble": "CHARGEMENT"
+  },
+  "loadingStates": {
+    "thinking": "Réflexion…",
+    "churning": "Traitement",
+    "inProgress": "{label}, en cours",
+    "reasoning": "Raisonnement",
+    "phraseThinking": "Réflexion",
+    "phraseReading": "Lecture du contexte",
+    "phraseConnecting": "Mise en relation des détails",
+    "phraseForming": "Rédaction d’une réponse"
+  },
+  "message": {
+    "user": "message de l’utilisateur",
+    "assistant": "message de l’assistant",
+    "typing": "Réponse en cours"
+  },
+  "messageBubble": {
+    "showMore": "Afficher plus",
+    "showLess": "Afficher moins"
+  },
+  "messageScroller": {
+    "label": "Conversation",
+    "navigationLabel": "Navigation des messages",
+    "preview": "Message",
+    "goToUser": "Aller au message de l’utilisateur {index} sur {total}",
+    "goToAssistant": "Aller au message de l’assistant {index} sur {total}",
+    "goToMessage": "Aller au message {index} sur {total}"
+  },
+  "morphingModal": {
+    "close": "Fermer la fenêtre"
+  },
+  "morphingSearch": {
+    "placeholder": "Rechercher",
+    "empty": "Aucun résultat.",
+    "close": "Fermer la recherche",
+    "dialog": "Recherche",
+    "results": "Résultats de recherche"
+  },
+  "morphingSearchChips": {
+    "placeholder": "Rechercher",
+    "label": "Rechercher",
+    "suggestions": "Suggestions",
+    "recent": "Récentes",
+    "recentSearches": "Recherches récentes",
+    "clear": "Effacer",
+    "searching": "Recherche…",
+    "removeFilter": "Retirer le filtre {term}",
+    "hint": "Entrée ajoute un filtre. Retour arrière au début du champ sélectionne le dernier filtre, puis le retire à la pression suivante. Suppr retire la recherche récente en surbrillance.",
+    "filterLimit": "Filtres maximum : {max}",
+    "filterAdded": "Filtre {term} ajouté",
+    "filterRemoved": "Filtre {term} retiré",
+    "recentRemoved": "{term} retiré des recherches récentes",
+    "recentsCleared": "Recherches récentes effacées",
+    "filterMarked": "{term} sélectionné. Appuyez à nouveau sur Retour arrière pour le retirer."
+  },
+  "morphingTabs": {
+    "label": "Onglets",
+    "close": "Fermer {label}"
+  },
+  "multiSelect": {
+    "valuePlaceholder": "Sélectionnez des options",
+    "removeValue": "Retirer {label}",
+    "inputLabel": "Rechercher des options",
+    "inputPlaceholder": "Rechercher…",
+    "listLabel": "Options",
+    "empty": "Aucune option trouvée."
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "La page que vous cherchez a été déplacée, a disparu ou n’a jamais existé.",
+    "homeLabel": "Retour à l’accueil",
+    "browseLabel": "Parcourir les composants",
+    "stackedCaption": "hors du paquet",
+    "terminalError": "cd: aucun fichier ou dossier de ce type : /page"
+  },
+  "notificationStack": {
+    "collapsedLabel": "Notifications",
+    "expandedLabel": "Tout afficher",
+    "emptyLabel": "Vous êtes à jour",
+    "collapsedAria": "Notifications : {count}. Développer les notifications.",
+    "expandedAria": "Notifications : {count}. {label}."
+  },
+  "orderBook": {
+    "label": "Carnet d’ordres",
+    "price": "Prix",
+    "size": "Quantité",
+    "total": "Total",
+    "cumulativeTotal": "Total cumulé",
+    "asksTable": "Ventes · ordres de vente",
+    "bidsTable": "Achats · ordres d’achat",
+    "noAsks": "Aucun ordre de vente",
+    "noBids": "Aucun ordre d’achat",
+    "referencePrice": "Prix de référence :",
+    "spreadUnavailable": "Écart indisponible",
+    "crossedBook": "Carnet croisé",
+    "spread": "Écart {spread} · {percent} %",
+    "bids": "Achats",
+    "asks": "Ventes",
+    "visibleDepth": "Profondeur visible",
+    "depthPlaceholder": "Survolez un niveau pour voir le coût d’exécution jusqu’à celui-ci",
+    "average": "Moy."
+  },
+  "otpInput": {
+    "label": "Code à usage unique",
+    "progress": "{entered} chiffres saisis sur {total}.",
+    "entered": "{digit}. {progress}",
+    "maskedDigit": "Chiffre",
+    "deleted": "Supprimé. {progress}",
+    "position": "{slot}, chiffre {position} sur {total}.",
+    "filled": "Rempli",
+    "empty": "Vide",
+    "verified": "Vérifié"
+  },
+  "overflowActions": {
+    "open": "Afficher plus d’actions",
+    "close": "Masquer les actions supplémentaires"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Page précédente",
+    "next": "Page suivante",
+    "back": "Reculer de {count} pages",
+    "forward": "Avancer de {count} pages",
+    "page": "Page {page}"
+  },
+  "predictionMarket": {
+    "buy": "Acheter",
+    "sell": "Vendre",
+    "orderType": "Marché",
+    "amount": "Montant",
+    "shares": "Parts",
+    "max": "Max",
+    "toWin": "Gain potentiel",
+    "toReceive": "À recevoir",
+    "avgPrice": "Prix moyen {price}",
+    "trade": "Trader",
+    "trading": "Exécution…",
+    "tradeFilled": "Ordre exécuté",
+    "connect": "Connexion",
+    "enterAmount": "Saisissez un montant",
+    "minimum": "Minimum {amount}",
+    "insufficientBalance": "Solde insuffisant",
+    "notEnoughShares": "Pas assez de parts"
+  },
+  "predictionMarketCard": {
+    "payoutHint": "Gain potentiel par 1 $ si ce résultat l’emporte, mise comprise. Avant frais ; selon le prix affiché.",
+    "payoutFor": "Gain potentiel pour {outcome}",
+    "volume": "{volume} de vol.",
+    "bookmark": "Enregistrer {title}",
+    "trade": "Trader {outcome} à {percent} %",
+    "percent": "{percent} %",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "previewRail": {
+    "label": "Navigation par section"
+  },
+  "priceTargetFan": {
+    "label": "Objectif de cours · 12 mois",
+    "chart": "{label} : moyenne {mean}, actuel {current}",
+    "target": "Objectif {key}",
+    "targetButton": "Objectif {key} {price}, analystes : {analysts}",
+    "history": "Historique des cours",
+    "price": "Cours",
+    "analysts": "Analystes",
+    "vsNow": "vs actuel",
+    "now": "Actuel",
+    "horizon": "Objectif"
+  },
+  "projectFolder": {
+    "description": "Mis à jour récemment",
+    "countOne": "{count} fichier",
+    "countOther": "{count} fichiers",
+    "closeOverlay": "Fermer l’aperçu des fichiers",
+    "close": "Fermer {title}"
+  },
+  "promptInput": {
+    "placeholder": "Demandez quelque chose à l’agent…",
+    "label": "Prompt",
+    "addToPrompt": "Ajouter au prompt",
+    "chooseModel": "Choisir un modèle",
+    "send": "Envoyer le prompt",
+    "stop": "Arrêter la génération"
+  },
+  "pullToRefresh": {
+    "pulling": "Tirez pour actualiser",
+    "release": "Relâchez pour actualiser",
+    "refreshing": "Actualisation",
+    "label": "Contenu actualisable"
+  },
+  "returnsCalendar": {
+    "year": "Année",
+    "monthCell": "{month} {year} {value} %",
+    "yearCell": "{year} {value} % sur l’année",
+    "years": "Années : {count}",
+    "months": "Mois : {count}",
+    "forYear": "sur l’année"
+  },
+  "sankeyChart": {
+    "label": "Diagramme de Sankey",
+    "tableCaption": "Données : {label}",
+    "flow": "Flux",
+    "value": "Valeur",
+    "shareOfSource": "Part de la source",
+    "flowRow": "{source} vers {target}",
+    "nodes": "Nœuds : {label}",
+    "nodeFlows": "entrée {in}, sortie {out}",
+    "tooltipFlows": "Entrée {in} · Sortie {out}",
+    "from": "Depuis",
+    "to": "Vers",
+    "more": "{count} de plus",
+    "linkShare": "{share} de {source}",
+    "noFlows": "Aucun flux à afficher",
+    "empty": "Aucune donnée Sankey"
+  },
+  "signUpForm": {
+    "title": "Créez votre compte",
+    "description": "Commencez en moins d’une minute.",
+    "submit": "Créer un compte",
+    "submitting": "Création du compte",
+    "submitted": "Compte créé",
+    "retry": "Réessayer",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Ada Lovelace",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "vous@exemple.fr",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "Au moins {count} caractères",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "confirmPasswordLabel": "Confirmer le mot de passe",
+    "confirmPasswordPlaceholder": "Saisissez à nouveau votre mot de passe",
+    "terms": "J’accepte les Conditions et la Politique de confidentialité",
+    "strength": "Robustesse du mot de passe : {level}",
+    "strengthTooShort": "Trop court",
+    "strengthWeak": "Faible",
+    "strengthFair": "Moyen",
+    "strengthGood": "Bon",
+    "strengthStrong": "Fort",
+    "nameRequired": "Saisissez votre nom.",
+    "emailRequired": "Saisissez votre e-mail.",
+    "emailInvalid": "Cela ne ressemble pas à une adresse e-mail.",
+    "passwordRequired": "Choisissez un mot de passe.",
+    "passwordTooShort": "Utilisez au moins {count} caractères.",
+    "confirmPasswordRequired": "Confirmez votre mot de passe.",
+    "passwordMismatch": "Les mots de passe ne correspondent pas.",
+    "termsRequired": "Acceptez les conditions pour continuer."
+  },
+  "slideActionButton": {
+    "complete": "Terminé",
+    "thumbLabel": "Glisser pour valider"
+  },
+  "sortableList": {
+    "label": "Éléments triables",
+    "instructions": "Faites glisser une poignée pour réordonner. Poignée active, utilisez Haut et Bas pour déplacer, Début et Fin pour aller aux extrémités.",
+    "moved": "{item} déplacé en position {position} sur {total}.",
+    "restored": "Ordre précédent rétabli.",
+    "reorder": "Réordonner {item}",
+    "undo": "Annuler le tri"
+  },
+  "sparkline": {
+    "inspect": "{label} : voir les échantillons",
+    "sample": "Échantillon {index}",
+    "sampleValue": "{name} : {value}",
+    "range": "de {first} à {last}",
+    "up": "en hausse de {percent} %",
+    "down": "en baisse de {percent} %"
+  },
+  "statefulButton": {
+    "loading": "Chargement",
+    "success": "Terminé",
+    "error": "Réessayer"
+  },
+  "statusBar": {
+    "label": "Historique d’état",
+    "tableCaption": "Données : {label}",
+    "period": "Période",
+    "status": "État",
+    "details": "Détails",
+    "legend": "Légende des états",
+    "inspect": "{label} : inspecter la période",
+    "empty": "Aucune donnée d’état",
+    "operational": "Opérationnel",
+    "degraded": "Dégradé",
+    "outage": "Panne",
+    "maintenance": "Maintenance",
+    "unknown": "Aucune donnée"
+  },
+  "streamingResponse": {
+    "copy": "Copier la réponse",
+    "copied": "Copié",
+    "retry": "Régénérer la réponse",
+    "helpful": "Utile",
+    "notHelpful": "Pas utile",
+    "source": "{count} source",
+    "sources": "{count} sources"
+  },
+  "swap": {
+    "title": "Échanger",
+    "settings": "Paramètres",
+    "reverse": "Inverser le sens",
+    "enterAmount": "Saisissez un montant",
+    "insufficient": "{symbol} insuffisant",
+    "swapAndSend": "Échanger + envoyer à {address}",
+    "swapTokens": "Échanger {from} → {to}",
+    "sendToOther": "Envoyer à une autre adresse",
+    "sendTo": "À : {address}",
+    "addressPlaceholder": "0x... ou nom.eth",
+    "clearAddress": "Effacer l’adresse",
+    "close": "Fermer",
+    "selectFromToken": "Choisir le jeton de départ",
+    "selectToToken": "Choisir le jeton d’arrivée",
+    "searchPlaceholder": "Rechercher un nom ou coller une adresse",
+    "allChains": "Toutes",
+    "popular": "Les plus populaires",
+    "results": "Résultats",
+    "trending": "Tendances",
+    "tokens": "Jetons",
+    "empty": "Aucun jeton trouvé",
+    "youPay": "Vous payez",
+    "youGet": "Vous recevez",
+    "rate": "Taux",
+    "networkFee": "Frais de réseau",
+    "slippage": "Glissement",
+    "eta": "Délai estimé"
+  },
+  "swipeableList": {
+    "actionsFor": "Actions pour {title}",
+    "showActions": "Afficher les actions"
+  },
+  "table": {
+    "empty": "Aucune donnée",
+    "selectAll": "Sélectionner toutes les lignes",
+    "selectRow": "Sélectionner la ligne {row}",
+    "cellLabel": "{column} de la ligne {row}",
+    "cellPlaceholder": "Vide",
+    "columnOptions": "Options de la colonne {column}",
+    "reorderColumn": "Déplacer la colonne {column}",
+    "renameColumn": "Renommer la colonne {column}",
+    "resizeColumn": "Redimensionner la colonne {column}",
+    "rowOptions": "Options de la ligne {row}",
+    "insertBefore": "Insérer avant",
+    "insertAfter": "Insérer après",
+    "deleteColumn": "Supprimer la colonne",
+    "deleteRow": "Supprimer la ligne"
+  },
+  "tabs": {
+    "scrollLeft": "Faire défiler les onglets vers la gauche",
+    "scrollRight": "Faire défiler les onglets vers la droite"
+  },
+  "themeToggle": {
+    "switchToLight": "Passer en mode clair",
+    "switchToDark": "Passer en mode sombre"
+  },
+  "timeline": {
+    "label": "Chronologie",
+    "hint": "Utilisez les flèches gauche et droite pour passer d’un événement à l’autre."
+  },
   "todoList": {
     "title": "Tâches",
     "label": "Liste des tâches de l’agent",
@@ -8,5 +811,89 @@
     "inProgress": "En cours",
     "completed": "Terminée",
     "cancelled": "Annulée"
+  },
+  "toolApproval": {
+    "title": "Autoriser l’exécution de cet outil ?",
+    "viewDetails": "Voir les détails",
+    "allowOnce": "Autoriser une fois",
+    "alwaysAllow": "Toujours autoriser",
+    "deny": "Refuser",
+    "pending": "Approbation requise",
+    "approving": "Approbation…",
+    "approved": "Approuvé",
+    "denied": "Refusé",
+    "running": "En cours",
+    "complete": "Terminé",
+    "error": "Échec"
+  },
+  "toolResult": {
+    "running": "En cours",
+    "success": "Terminé",
+    "error": "Échec",
+    "cancelled": "Annulé",
+    "copy": "Copier le résultat",
+    "copied": "Copié",
+    "retry": "Relancer"
+  },
+  "treemap": {
+    "label": "Treemap",
+    "tableCaption": "Données : {label}",
+    "item": "Élément",
+    "value": "Valeur",
+    "share": "Part du total",
+    "details": "Détails",
+    "legend": "Légende du treemap",
+    "tiles": "Tuiles du treemap",
+    "ofTotal": "{share} % du total",
+    "noPositive": "Aucune valeur positive",
+    "empty": "Aucune donnée de treemap"
+  },
+  "volumeProfile": {
+    "label": "Profil de volume",
+    "unit": "unités",
+    "empty": "Aucune donnée de volume",
+    "inspect": "{label} : examiner un niveau de prix",
+    "caption": "Données : {label}",
+    "priceRange": "Fourchette de prix",
+    "volume": "Volume ({unit})",
+    "share": "Part",
+    "level": "Niveau",
+    "range": "{low} à {high}",
+    "amount": "{volume} {unit}",
+    "shareOfTotal": "{share} du volume total",
+    "poc": "Point de contrôle",
+    "pocBadge": "POC",
+    "inside": "Dans la zone de valeur",
+    "outside": "Hors de la zone de valeur",
+    "totalVolume": "Volume total",
+    "valueArea": "Zone de valeur · objectif {target} %",
+    "shareOfVolume": "{share} du volume"
+  },
+  "walletCard": {
+    "notifications": "Notifications",
+    "balance": "Solde",
+    "showBalance": "Afficher le solde",
+    "hideBalance": "Masquer le solde",
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher",
+    "noMatches": "Aucun résultat",
+    "noRecent": "Aucune recherche récente",
+    "selectAccount": "Choisir un compte",
+    "send": "Envoyer",
+    "deposit": "Déposer",
+    "swap": "Échanger",
+    "buy": "Acheter",
+    "copied": "Copié",
+    "copyAddress": "Copier l’adresse"
+  },
+  "xyChart": {
+    "noData": "Aucune donnée",
+    "missing": "aucune donnée",
+    "dataCaption": "Données de {label}",
+    "category": "Catégorie",
+    "total": "Total",
+    "series": "Séries",
+    "seriesValue": "{name} {value}",
+    "totalValue": "Total {value}"
   }
 }

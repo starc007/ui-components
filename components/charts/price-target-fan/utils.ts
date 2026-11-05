@@ -1,12 +1,13 @@
 import type { PriceHistoryPoint } from "./types";
 
-/** e.g. "Mon, Jul 15" — the scrub read-out's date. */
-export const fmtScrubDate = new Intl.DateTimeFormat("en-US", {
-  timeZone: "UTC",
-  weekday: "short",
-  month: "short",
-  day: "numeric",
-});
+/** e.g. "Mon, Jul 15" — the scrub read-out's date. English without a locale. */
+export const fmtScrubDate = (date: string, locale?: string) =>
+  new Intl.DateTimeFormat(locale ?? "en-US", {
+    timeZone: "UTC",
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).format(new Date(date));
 
 export const UP = "var(--success)";
 
@@ -25,7 +26,9 @@ export const ink = (c: string) => `oklch(from ${c} min(l, var(--ink-l, 1)) c h)`
 
 export const EMPTY_HISTORY: PriceHistoryPoint[] = [];
 
-export const fmtAxisDate = (date: string) =>
-  new Intl.DateTimeFormat("en-US", { timeZone: "UTC", month: "short", year: "numeric" }).format(
-    new Date(date),
-  );
+export const fmtAxisDate = (date: string, locale?: string) =>
+  new Intl.DateTimeFormat(locale ?? "en-US", {
+    timeZone: "UTC",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(date));

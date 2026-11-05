@@ -3,7 +3,9 @@
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import { ActionSwapIcon } from "@/components/motion/action-swap";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { type WalletCardMessages, walletCardMessages } from "./messages";
 
 /**
  * Copies `value` to the clipboard and swaps the copy icon for a check via the
@@ -13,10 +15,13 @@ import { cn } from "@/lib/utils";
 export function CopyButton({
   value,
   className,
+  labels,
 }: {
   value: string;
   className?: string;
+  labels?: Partial<WalletCardMessages>;
 }) {
+  const t = useMessages("walletCard", walletCardMessages, labels);
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -32,7 +37,7 @@ export function CopyButton({
   return (
     <button
       type="button"
-      aria-label={copied ? "Copied" : "Copy address"}
+      aria-label={copied ? t("copied") : t("copyAddress")}
       onClick={(e) => {
         e.stopPropagation();
         copy();

@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { useRef, type PointerEvent, type ReactNode } from "react";
+import { type PointerEvent, type ReactNode, useRef } from "react";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { useStatusBar } from "./context";
@@ -35,6 +35,7 @@ export function StatusBarPlot({
     setTooltipOpen,
     reduce,
     canHover,
+    t,
   } = useStatusBar();
   const pointerDriven = useRef(false);
   const focused = useRef(false);
@@ -51,7 +52,7 @@ export function StatusBarPlot({
     lastPointerId.current = id;
   };
   if (!rows.length)
-    return <p className={cn("py-4 text-sm text-muted-foreground", className)}>No status data</p>;
+    return <p className={cn("py-4 text-sm text-muted-foreground", className)}>{t("empty")}</p>;
   return (
     <div data-slot="status-bar-plot" className={cn("min-w-0 space-y-1.5", className)}>
       <div
@@ -103,7 +104,7 @@ export function StatusBarPlot({
         </div>
         <input
           type="range"
-          aria-label={`${label}: inspect period`}
+          aria-label={t("inspect", { label })}
           min={0}
           max={rows.length - 1}
           step={1}

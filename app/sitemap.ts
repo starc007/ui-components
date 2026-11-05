@@ -17,9 +17,13 @@ import { LANGUAGES, localizedPath, routing } from "@/i18n/routing";
 function withLanguages(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
   return entries.flatMap((entry) => {
     const path = entry.url.slice(SITE.length) || "/";
-    const languages = Object.fromEntries(
-      routing.locales.map((locale) => [LANGUAGES[locale].hreflang, `${SITE}${localizedPath(path, locale)}`]),
-    );
+    const languages = {
+      ...Object.fromEntries(
+        routing.locales.map((locale) => [LANGUAGES[locale].hreflang, `${SITE}${localizedPath(path, locale)}`]),
+      ),
+      // Matches the page <head> alternates (localeAlternates).
+      "x-default": `${SITE}${path}`,
+    };
     return routing.locales.map((locale) => ({
       ...entry,
       url: `${SITE}${localizedPath(path, locale)}`,

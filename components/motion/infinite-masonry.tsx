@@ -11,7 +11,20 @@ import {
   type ReactNode,
 } from "react";
 import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const infiniteMasonryMessages = {
+  label: "Infinite masonry feed",
+  emptyTitle: "No items yet",
+  emptyDescription: "New items will appear here when they become available.",
+  loadError: "Couldn't load more",
+  retry: "Try again",
+  loadingMore: "Loading more items",
+};
+
+export type InfiniteMasonryMessages = typeof infiniteMasonryMessages;
 
 export type InfiniteMasonryKey = string | number | bigint;
 
@@ -38,6 +51,8 @@ export interface InfiniteMasonryProps<T> {
   className?: string;
   contentClassName?: string;
   itemClassName?: string;
+  /** Override any built-in string. */
+  labels?: Partial<InfiniteMasonryMessages>;
 }
 
 type MasonryMetrics = {
@@ -105,13 +120,19 @@ function DefaultLoadingItem({ index }: { index: number }) {
   );
 }
 
-function DefaultEmptyState() {
+function DefaultEmptyState({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
   return (
     <div className="flex h-full min-h-64 flex-col items-center justify-center px-6 text-center">
       <Inbox className="size-8 text-muted-foreground" aria-hidden="true" />
-      <p className="mt-3 text-sm font-medium text-foreground">No items yet</p>
+      <p className="mt-3 text-sm font-medium text-foreground">{title}</p>
       <p className="mt-1 max-w-xs text-xs leading-5 text-muted-foreground">
-        New items will appear here when they become available.
+        {description}
       </p>
     </div>
   );
@@ -165,7 +186,7 @@ export function InfiniteMasonry<T>({
   onRetry,
   estimateSize = () => 240,
   renderLoadingItem = (index) => <DefaultLoadingItem index={index} />,
-  emptyState = <DefaultEmptyState />,
+  emptyState,
   endState,
   minColumnWidth = 208,
   maxColumns = 4,
@@ -173,11 +194,14 @@ export function InfiniteMasonry<T>({
   overscan = 4,
   prefetch = 3,
   animateItems = true,
-  ariaLabel = "Infinite masonry feed",
+  ariaLabel,
   className,
   contentClassName,
   itemClassName,
+  labels,
 }: InfiniteMasonryProps<T>) {
+  const t = useMessages("infiniteMasonry", infiniteMasonryMessages, labels);
+  const label = ariaLabel ?? t("label");
   const reduceMotion = useReducedMotion();
   const scrollRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -247,13 +271,18 @@ export function InfiniteMasonry<T>({
   if (items.length === 0 && !hasMore && !loading && !hasError) {
     return (
       <section
-        aria-label={ariaLabel}
+        aria-label={label}
         className={cn(
           "w-full overflow-hidden rounded-3xl border border-border bg-background",
           className,
         )}
       >
-        {emptyState}
+        {emptyState ?? (
+          <DefaultEmptyState
+            title={t("emptyTitle")}
+            description={t("emptyDescription")}
+          />
+        )}
       </section>
     );
   }
@@ -264,7 +293,7 @@ export function InfiniteMasonry<T>({
   return (
     <section
       ref={scrollRef}
-      aria-label={ariaLabel}
+      aria-label={label}
       aria-busy={loading}
       className={cn(
         "w-full contain-[layout_paint] overflow-y-auto overscroll-none rounded-3xl border border-border bg-background p-3 [overflow-anchor:none] [scrollbar-gutter:stable]",
@@ -299,7 +328,7 @@ export function InfiniteMasonry<T>({
                   <div className="flex min-h-36 flex-col items-start justify-center rounded-2xl border border-destructive/20 bg-destructive/5 p-4">
                     <div className="flex items-center gap-2 text-destructive">
                       <AlertCircle className="size-4" aria-hidden="true" />
-                      <p className="text-sm font-medium">Couldn&apos;t load more</p>
+                      <p className="text-sm font-medium">{t("loadError")}</p>
                     </div>
                     <div className="mt-2 text-xs leading-5 text-muted-foreground">
                       {error}
@@ -310,7 +339,7 @@ export function InfiniteMasonry<T>({
                         onClick={onRetry}
                         className="mt-3 min-h-10 rounded-full border border-border bg-background px-4 text-xs font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       >
-                        Try again
+                        {t("retry")}
                       </button>
                     ) : null}
                   </div>
@@ -342,7 +371,7 @@ export function InfiniteMasonry<T>({
         </div>
       ) : null}
       <span className="sr-only" aria-live="polite">
-        {loading ? "Loading more items" : null}
+        {loading ? t("loadingMore") : null}
       </span>
     </section>
   );

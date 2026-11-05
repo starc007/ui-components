@@ -74,7 +74,9 @@
   },
   "notFound": {
     "title": "Page introuvable",
-    "description": "La page que vous cherchez n’existe pas."
+    "description": "La page que vous cherchez n’existe pas.",
+    "homeLabel": "Retour à l’accueil",
+    "browseLabel": "Parcourir les composants"
   },
   "theme": {
     "lightTheme": "Thème clair",

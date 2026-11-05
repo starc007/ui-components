@@ -1,21 +1,30 @@
 "use client";
 
-import { motion, useReducedMotion, type HTMLMotionProps } from "motion/react";
+import { type HTMLMotionProps, motion, useReducedMotion } from "motion/react";
 import {
   forwardRef,
-  useRef,
-  useState,
   type KeyboardEvent,
   type PointerEvent,
   type ReactNode,
+  useRef,
+  useState,
 } from "react";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import {
   capturePointer,
   releasePointer,
   TOUCH_GESTURE_CLASS,
 } from "@/lib/touch";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const holdActionButtonMessages = {
+  holding: "Keep holding",
+  complete: "Done",
+};
+
+export type HoldActionButtonMessages = typeof holdActionButtonMessages;
 
 export interface HoldActionButtonProps extends Omit<
   HTMLMotionProps<"button">,
@@ -38,6 +47,8 @@ export interface HoldActionButtonProps extends Omit<
   onHoldComplete?: () => void;
   fillClassName?: string;
   labelClassName?: string;
+  /** Override any built-in string. */
+  labels?: Partial<HoldActionButtonMessages>;
 }
 
 export const HoldActionButton = forwardRef<
@@ -47,18 +58,20 @@ export const HoldActionButton = forwardRef<
   {
     children,
     type = "vertical",
-    holdingLabel = "Keep holding",
-    completeLabel = "Done",
+    holdingLabel,
+    completeLabel,
     holdDuration = 1600,
     onHoldComplete,
     fillClassName,
     labelClassName,
     className,
     disabled,
+    labels,
     ...rest
   },
   ref,
 ) {
+  const t = useMessages("holdActionButton", holdActionButtonMessages, labels);
   const reduce = useReducedMotion();
   const completedRef = useRef(false);
   const [holding, setHolding] = useState(false);
@@ -135,6 +148,7 @@ export const HoldActionButton = forwardRef<
     onHoldComplete?.();
   };
 
+  const accessibleName = typeof children === "string" ? children : undefined;
   const active = holding || completed;
   const activeTransform =
     type === "horizontal" ? "translateX(0%)" : "translateY(0%)";
@@ -146,7 +160,7 @@ export const HoldActionButton = forwardRef<
       ref={ref}
       type="button"
       disabled={disabled}
-      aria-label={typeof children === "string" ? children : undefined}
+      aria-label={accessibleName}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -263,7 +277,7 @@ export const HoldActionButton = forwardRef<
           transition={{ duration: reduce ? 0 : 0.12, ease: EASE_OUT }}
           className="col-start-1 row-start-1"
         >
-          {holdingLabel}
+          {holdingLabel ?? t("holding")}
         </motion.span>
         <motion.span
           aria-hidden={!completed}
@@ -271,7 +285,7 @@ export const HoldActionButton = forwardRef<
           transition={{ duration: reduce ? 0 : 0.12, ease: EASE_OUT }}
           className="col-start-1 row-start-1"
         >
-          {completeLabel}
+          {completeLabel ?? t("complete")}
         </motion.span>
       </span>
     </motion.button>
