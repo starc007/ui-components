@@ -12,7 +12,7 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
-        "text": "Crash flies a paper plane up a live multiplier curve until the round crashes at a random point and the plane tumbles out of the sky. Cash out by hand or at an auto target and a parachute opens where you bailed, while the plane flies on to show where it would have crashed. Recent rounds collect in a history strip, getCrashPoint can return a Promise so your server decides each round, crashAt runs live rounds whose crash point the server reveals only when it happens, crashPoint takes a house edge and your own random draw for provably fair hashes, and optional sound chimes a step higher at each milestone you hold through. It ships in three designs that play the same game: the plane, a hot-air balloon climbing an altimeter that pops on a crash, and a stacking tower that sways as it grows and topples. Each marks your auto target ahead of the flight, the multiplier warms in colour as it climbs, and at the crash the readout turns into the round's result.",
+        "text": "Crash is a multiplier game: cash out before the round crashes. It ships as a paper plane, a hot-air balloon and a stacking tower.",
         "component": "crash"
       },
       {
