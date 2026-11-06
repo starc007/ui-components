@@ -237,6 +237,9 @@ export const previews: Record<string, ComponentType> = {
   "casino/plinko": dynamic(() =>
     import("./casino/plinko.preview").then((m) => m.PlinkoPreview),
   ),
+  "casino/slide-game": dynamic(() =>
+    import("./casino/slide-game.preview").then((m) => m.SlideGamePreview),
+  ),
   "blocks/card-dealer": dynamic(() =>
     import("./blocks/card-dealer.preview").then((m) => m.CardDealerPreview),
   ),
