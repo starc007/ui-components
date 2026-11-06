@@ -1,31 +1,34 @@
 "use client";
 
-import { useRef } from "react";
 import {
   motion,
   useMotionTemplate,
   useMotionValue,
   useReducedMotion,
 } from "motion/react";
+import { useRef } from "react";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { cn } from "@/lib/utils";
 import {
   NOT_FOUND_DEFAULTS,
   NotFoundActions,
-  NotFoundStage,
   type NotFoundProps,
+  NotFoundStage,
+  useNotFoundMessages,
 } from "./shared";
 
 export function NotFoundSpotlight({
   className,
   code = NOT_FOUND_DEFAULTS.code,
-  title = NOT_FOUND_DEFAULTS.title,
-  description = NOT_FOUND_DEFAULTS.description,
+  title,
+  description,
   homeHref,
   homeLabel,
   browseHref,
   browseLabel,
+  labels,
 }: NotFoundProps) {
+  const t = useNotFoundMessages(labels);
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
@@ -71,8 +74,8 @@ export function NotFoundSpotlight({
       </motion.div>
 
       <div className="flex flex-col items-center gap-2">
-        <p className="text-lg font-semibold text-foreground">{title}</p>
-        <p className="max-w-sm text-sm text-muted-foreground">{description}</p>
+        <p className="text-lg font-semibold text-foreground">{title ?? t("title")}</p>
+        <p className="max-w-sm text-sm text-muted-foreground">{description ?? t("description")}</p>
       </div>
 
       <NotFoundActions
@@ -80,6 +83,7 @@ export function NotFoundSpotlight({
         homeLabel={homeLabel}
         browseHref={browseHref}
         browseLabel={browseLabel}
+        labels={labels}
       />
     </NotFoundStage>
   );

@@ -10,23 +10,32 @@ import {
 } from "@/components/motion/popover-morph";
 import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PRESS } from "@/lib/ease";
+import { useLocale } from "@/lib/i18n";
 import { IconButton } from "./icon-button";
-import { type DayKey, WEEKDAYS } from "./types";
+import type { AvailabilitySchedulerTranslate } from "./messages";
+import { type DayKey, WEEKDAYS, weekdayLabel } from "./types";
 
 // Copy this day's hours to other days: a morph popover with a day picker.
 export function CopyMenu({
+  from,
   fromLabel,
+  t,
   reduce,
   onApply,
 }: {
+  from: DayKey;
   fromLabel: string;
+  t: AvailabilitySchedulerTranslate;
   reduce: boolean;
   onApply: (targets: DayKey[]) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [picked, setPicked] = useState<Set<DayKey>>(new Set());
-  const others = WEEKDAYS.filter((d) => d.label !== fromLabel);
+  const { locale } = useLocale();
+  const others = WEEKDAYS.flatMap((d, index) =>
+    d.key === from ? [] : [{ key: d.key, label: weekdayLabel(index, locale) }],
+  );
 
   const toggle = (k: DayKey) =>
     setPicked((prev) => {
@@ -47,9 +56,9 @@ export function CopyMenu({
 
   return (
     <MorphPopover open={open} onOpenChange={setOpen}>
-      <Tooltip content="Copy times">
+      <Tooltip content={t("copyTimes")}>
         <IconButton
-          label={`Copy ${fromLabel} hours to other days`}
+          label={t("copyDay", { day: fromLabel })}
           reduce={reduce}
           expanded={open}
           onClick={() => setOpen(!open)}
@@ -83,7 +92,7 @@ export function CopyMenu({
 
       <MorphPopoverContent align="end" className="w-52 p-2">
         <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-          Copy times to
+          {t("copyTo")}
         </p>
         <div className="flex flex-col">
           {others.map((d) => (
@@ -102,7 +111,7 @@ export function CopyMenu({
             onClick={() => apply(others.map((d) => d.key))}
             className="flex-1 rounded-lg px-2 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:bg-muted"
           >
-            Every day
+            {t("everyDay")}
           </button>
           <button
             type="button"
@@ -110,7 +119,7 @@ export function CopyMenu({
             disabled={picked.size === 0}
             className="flex-1 rounded-lg bg-primary px-2 py-1.5 text-xs font-semibold text-primary-foreground outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40"
           >
-            Apply
+            {t("apply")}
           </button>
         </div>
       </MorphPopoverContent>

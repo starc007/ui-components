@@ -15,7 +15,7 @@ export function CandlestickChartLegend({
   children,
   className,
 }: CandlestickChartLegendProps) {
-  const { candles, active, formatPrice, formatVolume } = useCandlestickChart();
+  const { candles, active, formatPrice, formatVolume, t } = useCandlestickChart();
   const candle = active !== null ? candles[active] : candles.at(-1);
   if (!candle) return null;
   const change = candle.open
@@ -26,13 +26,13 @@ export function CandlestickChartLegend({
     change >= 0
       ? "text-emerald-600 dark:text-emerald-400"
       : "text-rose-600 dark:text-rose-400";
-  const items: [string, string][] = [
-    ["O", formatPrice(candle.open)],
-    ["H", formatPrice(candle.high)],
-    ["L", formatPrice(candle.low)],
-    ["C", formatPrice(candle.close)],
-    ["Vol", formatVolume(candle.volume)],
-  ];
+  const items = [
+    ["open", formatPrice(candle.open)],
+    ["high", formatPrice(candle.high)],
+    ["low", formatPrice(candle.low)],
+    ["close", formatPrice(candle.close)],
+    ["volume", formatVolume(candle.volume)],
+  ] as const;
   return (
     <dl
       className={cn(
@@ -40,12 +40,12 @@ export function CandlestickChartLegend({
         className,
       )}
     >
-      <dt className="sr-only">Candle</dt>
+      <dt className="sr-only">{t("candle")}</dt>
       <dd className="text-muted-foreground">{candle.label}</dd>
       {items.map(([term, value]) => (
         <div key={term} className="flex gap-1">
-          <dt className="text-muted-foreground">{term}</dt>
-          <dd className={term === "Vol" ? undefined : tone}>{value}</dd>
+          <dt className="text-muted-foreground">{t(term)}</dt>
+          <dd className={term === "volume" ? undefined : tone}>{value}</dd>
         </div>
       ))}
       <dd className={tone}>

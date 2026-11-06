@@ -27,6 +27,10 @@ export function PriceTargetFan({ children, className, ...props }: PriceTargetFan
 
 export { usePriceTargetFan } from "./price-target-fan/context";
 export { PriceTargetFanHeader } from "./price-target-fan/header";
+export {
+  type PriceTargetFanMessages,
+  priceTargetFanMessages,
+} from "./price-target-fan/messages";
 export { PriceTargetFanAxes, PriceTargetFanPlot, PriceTargetFanSvg } from "./price-target-fan/plot";
 export {
   PriceTargetFanCursor,

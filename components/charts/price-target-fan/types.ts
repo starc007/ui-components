@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { PriceTargetFanMessages } from "./messages";
 
 export interface PriceTarget {
   key: string;
@@ -30,5 +31,7 @@ export interface PriceTargetFanProps {
   active?: PriceTargetFanActive | null;
   defaultActive?: PriceTargetFanActive | null;
   onActiveChange?: (active: PriceTargetFanActive | null) => void;
+  /** Override any built-in string. */
+  labels?: Partial<PriceTargetFanMessages>;
   className?: string;
 }

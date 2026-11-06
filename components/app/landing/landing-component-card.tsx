@@ -2,14 +2,15 @@
 
 import { componentPath } from "@/lib/component-paths";
 
-import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { useInView } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import type { ComponentEntry } from "@/lib/registry";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { PreviewFit } from "@/components/app/landing/preview-fit";
 import { getPreview, previews } from "@/components/previews";
+import { Link } from "@/i18n/navigation";
 import { EASE_OUT_CSS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -32,6 +33,7 @@ export function LandingComponentCard({
   variant?: CardVariant;
   previewKey?: string;
 }) {
+  const t = useTranslations("Landing.card");
   const cardRef = useRef<HTMLElement>(null);
   const shouldRenderPreview = useInView(cardRef, {
     once: true,
@@ -58,7 +60,7 @@ export function LandingComponentCard({
       <Link
         href={componentPath(category, component.slug)}
         prefetch={false}
-        aria-label={`View ${component.name}`}
+        aria-label={t("view", { name: component.name })}
         className="absolute inset-0 z-20 rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       />
       <div

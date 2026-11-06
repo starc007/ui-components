@@ -24,6 +24,7 @@ import {
 } from "@/components/agents/agent-code";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import { SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { formatNumber, useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export type FileDiffStatus = "streaming" | "complete";
@@ -37,6 +38,17 @@ export interface FileDiffLine {
   content: string;
 }
 
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const fileDiffMessages = {
+  applying: "Applying changes",
+  applied: "Changes applied",
+  changes: "File changes",
+  copy: "Copy diff",
+  copied: "Copied",
+};
+
+export type FileDiffMessages = typeof fileDiffMessages;
+
 export interface FileDiffProps {
   file: ReactNode;
   lines: FileDiffLine[];
@@ -49,10 +61,13 @@ export interface FileDiffProps {
   language?: AgentCodeLanguage;
   copyText?: string;
   onCopy?: () => void | Promise<void>;
+  /** Override any built-in string. */
+  labels?: Partial<FileDiffMessages>;
   className?: string;
 }
 
 function ChangeCount({ value, type }: { value: number; type: "added" | "removed" }) {
+  const { locale } = useLocale();
   if (!value) return null;
   return (
     <span
@@ -64,7 +79,7 @@ function ChangeCount({ value, type }: { value: number; type: "added" | "removed"
       )}
     >
       {type === "added" ? "+" : "−"}
-      {value}
+      {formatNumber(value, locale)}
     </span>
   );
 }
@@ -81,8 +96,10 @@ export function FileDiff({
   language = "typescript",
   copyText,
   onCopy,
+  labels,
   className,
 }: FileDiffProps) {
+  const t = useMessages("fileDiff", fileDiffMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const baseId = useId();
   const triggerId = `${baseId}-trigger`;
@@ -184,11 +201,11 @@ export function FileDiff({
         <span className="grid size-4 shrink-0 place-items-center text-muted-foreground/60">
           {streaming ? (
             <LoaderCircle
-              aria-label="Applying changes"
+              aria-label={t("applying")}
               className={cn("size-3.5", !reduce && "animate-spin")}
             />
           ) : (
-            <Check aria-label="Changes applied" className="size-3.5" />
+            <Check aria-label={t("applied")} className="size-3.5" />
           )}
         </span>
         <motion.span
@@ -217,7 +234,7 @@ export function FileDiff({
               style={{ maxHeight }}
             >
               <div className="font-mono text-xs leading-5">
-                <span className="sr-only">File changes</span>
+                <span className="sr-only">{t("changes")}</span>
                 {lines.map((line, index) => {
                   const type = line.type ?? "context";
                   return (
@@ -265,8 +282,8 @@ export function FileDiff({
               <div className="flex justify-end px-2 pb-1.5 pt-1">
                 <motion.button
                   type="button"
-                  aria-label={copied ? "Copied" : "Copy diff"}
-                  title={copied ? "Copied" : "Copy diff"}
+                  aria-label={copied ? t("copied") : t("copy")}
+                  title={copied ? t("copied") : t("copy")}
                   onClick={handleCopy}
                   whileTap={reduce ? undefined : { scale: 0.9 }}
                   transition={SPRING_PRESS}

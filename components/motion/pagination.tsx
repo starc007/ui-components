@@ -10,8 +10,21 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { PresenceGate, type PresenceGateRenderProps } from "@/lib/presence-gate";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const paginationMessages = {
+  label: "Pagination",
+  previous: "Previous page",
+  next: "Next page",
+  back: "Back {count} pages",
+  forward: "Forward {count} pages",
+  page: "Page {page}",
+};
+
+export type PaginationMessages = typeof paginationMessages;
 
 type PaginationItem = number | "ellipsis-start" | "ellipsis-end";
 
@@ -80,6 +93,8 @@ export interface PaginationProps
   getHref?: (page: number) => string;
   /** Render your router's Link, spreading these props onto it. */
   renderLink?: (props: ComponentPropsWithRef<"a">) => ReactElement;
+  /** Override any built-in string. `{count}` fills `back`/`forward`, `{page}` fills `page`. */
+  labels?: Partial<PaginationMessages>;
 }
 
 const CONTROL =
@@ -96,9 +111,11 @@ export function Pagination({
   getHref,
   renderLink,
   className,
-  "aria-label": ariaLabel = "Pagination",
+  "aria-label": ariaLabel,
+  labels,
   ...props
 }: PaginationProps) {
+  const t = useMessages("pagination", paginationMessages, labels);
   const id = useId();
   const reduce = useReducedMotion();
   const total = Math.max(1, Math.floor(totalPages));
@@ -161,12 +178,12 @@ export function Pagination({
   const fade = { duration: reduce ? 0.12 : 0.16, ease: EASE_OUT };
 
   return (
-    <nav {...props} aria-label={ariaLabel} className={cn("flex", className)}>
+    <nav {...props} aria-label={ariaLabel ?? t("label")} className={cn("flex", className)}>
       <LayoutGroup id={id}>
         <ul className="relative flex items-center gap-0.5 sm:gap-1">
           <li>
             {control(current - 1, {
-              label: "Previous page",
+              label: t("previous"),
               disabled: current === 1,
               className:
                 "text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-40",
@@ -190,7 +207,7 @@ export function Pagination({
                     <PresenceGate>
                     {({ gate }) => control(current + (back ? -jump : jump), {
                       gate,
-                      label: back ? `Back ${jump} pages` : `Forward ${jump} pages`,
+                      label: t(back ? "back" : "forward", { count: jump }),
                       className: "group text-muted-foreground hover:text-foreground",
                       children: (
                         <>
@@ -227,7 +244,7 @@ export function Pagination({
                   <PresenceGate>
                   {({ gate }) => control(item, {
                     gate,
-                    label: `Page ${item}`,
+                    label: t("page", { page: item }),
                     current: isCurrent,
                     className: isCurrent
                       ? "font-medium text-background"
@@ -253,7 +270,7 @@ export function Pagination({
           </AnimatePresence>
           <li>
             {control(current + 1, {
-              label: "Next page",
+              label: t("next"),
               disabled: current === total,
               className:
                 "text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-40",

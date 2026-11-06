@@ -17,7 +17,26 @@ import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const knockoutWheelMessages = {
+  label: "Tournament wheel",
+  labelWithChampion: "Tournament wheel, won by {team}",
+  tbd: "TBD",
+  versus: "{home} v {away}",
+  result: "{teams} · {home}–{away}",
+  resultPenalties: "{teams} · {home}–{away} ({homePenalties}–{awayPenalties} pens)",
+  caption: "{round} · {match}",
+};
+
+export type KnockoutWheelMessages = typeof knockoutWheelMessages;
+
+type Translate = (
+  key: keyof KnockoutWheelMessages,
+  values?: Record<string, string | number>,
+) => string;
 
 export type Team = {
   name: string;
@@ -70,6 +89,8 @@ export interface KnockoutWheelProps {
    */
   initialRound?: number;
   className?: string;
+  /** Override any built-in string. */
+  labels?: Partial<KnockoutWheelMessages>;
 }
 
 const SIZE = 760;
@@ -148,7 +169,8 @@ type WheelLink = {
 // "Round of 16" strands a lone "16" on the next line.
 const keepTogether = (text: string) => text.replace(/ /g, " ");
 
-const teamName = (side: MatchSide) => keepTogether(side.team?.name ?? "TBD");
+const teamName = (side: MatchSide, t: Translate) =>
+  keepTogether(side.team?.name ?? t("tbd"));
 
 /** A `logo` is used as given; a country `code` loads a flag from flagcdn.com. */
 const crestSrc = (team: Team) =>
@@ -167,19 +189,25 @@ const initials = (name: string) =>
 
 /** Teams · score, in the order they were played. The round is prepended by the
  * caller that has it, so the round list can reuse this without repeating it. */
-function matchLabel(match: Match) {
-  const teams = `${teamName(match.home)} v ${teamName(match.away)}`;
+function matchLabel(match: Match, t: Translate) {
+  const teams = t("versus", {
+    home: teamName(match.home, t),
+    away: teamName(match.away, t),
+  });
   if (match.home.score == null || match.away.score == null) return teams;
-  const pens =
-    match.home.penalties != null && match.away.penalties != null
-      ? ` (${match.home.penalties}–${match.away.penalties} pens)`
-      : "";
-  return `${teams} · ${match.home.score}–${match.away.score}${pens}`;
+  const score = { teams, home: match.home.score, away: match.away.score };
+  return match.home.penalties != null && match.away.penalties != null
+    ? t("resultPenalties", {
+        ...score,
+        homePenalties: match.home.penalties,
+        awayPenalties: match.away.penalties,
+      })
+    : t("result", score);
 }
 
 /** Walks the match tree from the final outward, laying every node on a ring and
  * splitting each parent's wedge between its two feeders. */
-function buildWheel(rounds: Round[]) {
+function buildWheel(rounds: Round[], t: Translate) {
   const nodes: WheelNode[] = [];
   const links: WheelLink[] = [];
   const layers = rounds.length;
@@ -201,7 +229,7 @@ function buildWheel(rounds: Round[]) {
     y: CENTER,
     r: HUB_R,
     team: champion,
-    label: matchLabel(final),
+    label: matchLabel(final, t),
     round: rounds[layers - 1].name,
   });
 
@@ -240,7 +268,7 @@ function buildWheel(rounds: Round[]) {
             y,
             r,
             team: feeder.winner ? feeder[feeder.winner].team : null,
-            label: matchLabel(feeder),
+            label: matchLabel(feeder, t),
             round: rounds[roundIndex - 1].name,
           }
         : {
@@ -252,7 +280,7 @@ function buildWheel(rounds: Round[]) {
             y,
             r,
             team: match[sides[side]].team,
-            label: match[sides[side]].team?.name ?? "TBD",
+            label: match[sides[side]].team?.name ?? t("tbd"),
             round: null,
           };
       nodes.push(node);
@@ -562,7 +590,9 @@ export function KnockoutWheel({
   rounds,
   initialRound = 0,
   className,
+  labels,
 }: KnockoutWheelProps) {
+  const t = useMessages("knockoutWheel", knockoutWheelMessages, labels);
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
   const uid = useId().replace(/:/g, "");
@@ -587,8 +617,8 @@ export function KnockoutWheel({
   }, [rounds, initialRound]);
 
   const { nodes, links, champion } = useMemo(
-    () => buildWheel(visible),
-    [visible],
+    () => buildWheel(visible, t),
+    [visible, t],
   );
   const winners = useMemo(() => championPath(visible), [visible]);
   const activeNode = useMemo(
@@ -713,13 +743,13 @@ export function KnockoutWheel({
         nodes.map((node) => [
           node.id,
           node.team == null
-            ? "TBD"
+            ? t("tbd")
             : node.round
-              ? `${keepTogether(node.round)} · ${node.label}`
+              ? t("caption", { round: keepTogether(node.round), match: node.label })
               : node.team.name,
         ]),
       ),
-    [nodes],
+    [nodes, t],
   );
 
   return (
@@ -741,7 +771,11 @@ export function KnockoutWheel({
           ref={ref}
           viewBox={`0 0 ${SIZE} ${SIZE}`}
           role="img"
-          aria-label={`Tournament wheel${champion ? `, won by ${champion.name}` : ""}`}
+          aria-label={
+            champion
+              ? t("labelWithChampion", { team: champion.name })
+              : t("label")
+          }
           className="h-auto w-full touch-manipulation"
         >
           <defs>
@@ -843,7 +877,7 @@ export function KnockoutWheel({
           .map((round) => (
             <ul key={round.name} aria-label={round.name}>
               {round.matches.map((match) => (
-                <li key={match.id}>{matchLabel(match)}</li>
+                <li key={match.id}>{matchLabel(match, t)}</li>
               ))}
             </ul>
           ))}

@@ -1,0 +1,22 @@
+export const volumeProfileMessages = {
+  label: "Volume profile",
+  unit: "units",
+  empty: "No volume data",
+  inspect: "{label}: inspect price level",
+  caption: "{label} data",
+  priceRange: "Price range",
+  volume: "Volume ({unit})",
+  share: "Share",
+  level: "Level",
+  range: "{low} to {high}",
+  amount: "{volume} {unit}",
+  shareOfTotal: "{share} of total volume",
+  poc: "Point of control",
+  pocBadge: "POC",
+  inside: "Inside value area",
+  outside: "Outside value area",
+  totalVolume: "Total volume",
+  valueArea: "Value area · {target}% target",
+  shareOfVolume: "{share} of volume",
+};
+export type VolumeProfileMessages = typeof volumeProfileMessages;

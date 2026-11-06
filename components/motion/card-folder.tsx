@@ -17,6 +17,7 @@ import {
   SPRING_LAYOUT,
   SPRING_PRESS,
 } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 // The two purse layers collapse as one material surface after the card starts
@@ -29,6 +30,19 @@ const PURSE_REDUCED_TRANSITION = {
   duration: 0.16,
   ease: EASE_OUT,
 } as const;
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const cardFolderMessages = {
+  open: "Open {title}, card ending in {lastFour}, expires {expiry}",
+  close: "Close {title}, card ending in {lastFour}, expires {expiry}",
+  showDetails: "Show card details",
+  hideDetails: "Hide card details",
+  expiry: "Expiry",
+  cvv: "CVV",
+  actions: "Open actions for {title}",
+};
+
+export type CardFolderMessages = typeof cardFolderMessages;
 
 export interface CardFolderProps {
   title: string;
@@ -49,6 +63,8 @@ export interface CardFolderProps {
   disabled?: boolean;
   className?: string;
   cardClassName?: string;
+  /** Override any built-in string. `{title}`, `{lastFour}` and `{expiry}` fill `open`, `close` and `actions`. */
+  labels?: Partial<CardFolderMessages>;
 }
 
 /**
@@ -75,7 +91,9 @@ export function CardFolder({
   disabled = false,
   className,
   cardClassName,
+  labels,
 }: CardFolderProps) {
+  const t = useMessages("cardFolder", cardFolderMessages, labels);
   const reduce = useReducedMotion();
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [internalDetailsVisible, setInternalDetailsVisible] = useState(
@@ -91,7 +109,11 @@ export function CardFolder({
   const revealedCardNumber =
     normalizedCardNumber.match(/.{1,4}/g)?.join(" ") ?? visibleLastFour;
   const maskedCvv = "•".repeat(Math.max(3, cvv.length));
-  const defaultAriaLabel = `${isOpen ? "Close" : "Open"} ${title}, card ending in ${visibleLastFour}, expires ${expiry}`;
+  const defaultAriaLabel = t(isOpen ? "close" : "open", {
+    title,
+    lastFour: visibleLastFour,
+    expiry,
+  });
   const progress = useMotionValue(isOpen ? 1 : 0);
   const cardTransform = useTransform(progress, (value) => {
     const boundedProgress = Math.min(1, Math.max(0, value));
@@ -234,9 +256,7 @@ export function CardFolder({
                 disabled={disabled}
                 tabIndex={isOpen ? -1 : undefined}
                 aria-label={
-                  areDetailsVisible
-                    ? "Hide card details"
-                    : "Show card details"
+                  areDetailsVisible ? t("hideDetails") : t("showDetails")
                 }
                 aria-pressed={areDetailsVisible}
                 onClick={toggleDetails}
@@ -280,7 +300,7 @@ export function CardFolder({
               <span className="flex shrink-0 items-end gap-3.5 pt-2">
                 <span className="flex flex-col gap-0.5">
                   <span className="text-[9px] font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
-                    Expiry
+                    {t("expiry")}
                   </span>
                   <span className="text-xs font-medium text-foreground tabular-nums">
                     {expiry}
@@ -288,7 +308,7 @@ export function CardFolder({
                 </span>
                 <span className="flex flex-col gap-0.5">
                   <span className="text-[9px] font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
-                    CVV
+                    {t("cvv")}
                   </span>
                   <DigitSwap
                     value={areDetailsVisible ? cvv : maskedCvv}
@@ -330,7 +350,7 @@ export function CardFolder({
         <motion.button
           type="button"
           disabled={disabled}
-          aria-label={actionLabel ?? `Open actions for ${title}`}
+          aria-label={actionLabel ?? t("actions", { title })}
           onClick={onAction}
           animate={{ y: isOpen && !reduce ? -14 : 0 }}
           whileTap={reduce || disabled ? undefined : { scale: 0.96 }}

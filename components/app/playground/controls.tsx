@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { RangeSlider } from "@/components/motion/range-slider";
 import {
@@ -28,6 +29,8 @@ export function Controls({
   values: Values;
   onChange: (key: string, value: ControlValue) => void;
 }) {
+  const t = useTranslations("Pages.playground.controls");
+
   return (
     <div className="flex flex-col gap-5">
       {controls.map((c) => {
@@ -114,12 +117,11 @@ export function Controls({
                   <div key={i}>
                     <span className="flex items-baseline justify-between text-xs">
                       <span className="font-medium text-muted-foreground">
-                        Checkpoint {i + 1}
                         {i === 0
-                          ? " (start)"
+                          ? t("checkpointStart", { index: i + 1 })
                           : i === list.length - 1
-                            ? " (end)"
-                            : ""}
+                            ? t("checkpointEnd", { index: i + 1 })
+                            : t("checkpoint", { index: i + 1 })}
                       </span>
                       <span className="flex items-center gap-1.5">
                         <span className="font-mono text-muted-foreground tabular-nums">
@@ -129,7 +131,7 @@ export function Controls({
                           <button
                             type="button"
                             onClick={() => removeAt(i)}
-                            aria-label={`Remove checkpoint ${i + 1}`}
+                            aria-label={t("removeCheckpoint", { index: i + 1 })}
                             className="flex h-4 w-4 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
                           >
                             <X className="h-2.5 w-2.5" />
@@ -139,7 +141,7 @@ export function Controls({
                     </span>
                     <RangeSlider
                       className="mt-1.5"
-                      aria-label={`Checkpoint ${i + 1}`}
+                      aria-label={t("checkpoint", { index: i + 1 })}
                       min={b.min}
                       max={b.max}
                       step={b.step}
@@ -160,7 +162,7 @@ export function Controls({
                     className="inline-flex items-center gap-1.5 self-start rounded-full border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
                   >
                     <Plus className="h-3.5 w-3.5" />
-                    Add checkpoint
+                    {t("addCheckpoint")}
                   </button>
                 ) : null}
               </div>

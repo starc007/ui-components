@@ -2,8 +2,8 @@
 
 import { cn } from "@/lib/utils";
 import {
-  VolumeProfileContext,
   useVolumeProfileModel,
+  VolumeProfileContext,
   type VolumeProfileProps,
 } from "./volume-profile/context";
 import { VolumeProfilePlot } from "./volume-profile/plot";
@@ -23,6 +23,7 @@ export function VolumeProfile({
   activeId,
   defaultActiveId,
   onActiveChange,
+  labels,
   className,
   children,
   ...props
@@ -39,6 +40,7 @@ export function VolumeProfile({
     activeId,
     defaultActiveId,
     onActiveChange,
+    labels,
   });
   return (
     <VolumeProfileContext.Provider value={model}>
@@ -59,30 +61,33 @@ export function VolumeProfile({
         )}
         <div className="sr-only">
           <table>
-            <caption>{model.label} data</caption>
+            <caption>{model.t("caption", { label: model.label })}</caption>
             <thead>
               <tr>
-                <th scope="col">Price range</th>
-                <th scope="col">Volume ({model.unit})</th>
-                <th scope="col">Share</th>
-                <th scope="col">Level</th>
+                <th scope="col">{model.t("priceRange")}</th>
+                <th scope="col">{model.t("volume", { unit: model.unit })}</th>
+                <th scope="col">{model.t("share")}</th>
+                <th scope="col">{model.t("level")}</th>
               </tr>
             </thead>
             <tbody>
               {model.rows.map((row) => (
                 <tr key={row.id}>
                   <th scope="row">
-                    {model.formatPrice(row.priceLow)} to {model.formatPrice(row.priceHigh)}
+                    {model.t("range", {
+                      low: model.formatPrice(row.priceLow),
+                      high: model.formatPrice(row.priceHigh),
+                    })}
                   </th>
                   <td>{model.formatVolume(row.volume)}</td>
                   <td>{(row.share * 100).toFixed(1)}%</td>
                   <td>
                     {row.isPoc
-                      ? "Point of control"
+                      ? model.t("poc")
                       : row.inValueArea
-                        ? "Inside value area"
+                        ? model.t("inside")
                         : model.valueArea
-                          ? "Outside value area"
+                          ? model.t("outside")
                           : "—"}
                   </td>
                 </tr>
@@ -95,11 +100,12 @@ export function VolumeProfile({
   );
 }
 
-export { useVolumeProfile } from "./volume-profile/context";
 export type { VolumeProfileProps } from "./volume-profile/context";
+export { useVolumeProfile } from "./volume-profile/context";
+export { type VolumeProfileMessages, volumeProfileMessages } from "./volume-profile/messages";
 export type { VolumeProfileBin, VolumeProfileRow } from "./volume-profile/model";
-export { VolumeProfilePlot } from "./volume-profile/plot";
 export type { VolumeProfilePlotProps } from "./volume-profile/plot";
+export { VolumeProfilePlot } from "./volume-profile/plot";
 export { VolumeProfileSummary } from "./volume-profile/summary";
-export { VolumeProfileTooltip } from "./volume-profile/tooltip";
 export type { VolumeProfileTooltipProps } from "./volume-profile/tooltip";
+export { VolumeProfileTooltip } from "./volume-profile/tooltip";

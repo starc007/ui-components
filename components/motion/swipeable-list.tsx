@@ -4,21 +4,30 @@ import { Ellipsis } from "lucide-react";
 import {
   animate,
   motion,
+  type PanInfo,
   useMotionValue,
   useReducedMotion,
-  type PanInfo,
 } from "motion/react";
 import {
   type KeyboardEvent,
+  type ReactNode,
   useCallback,
   useEffect,
   useId,
   useRef,
   useState,
-  type ReactNode,
 } from "react";
+import { useMessages } from "@/lib/i18n";
 import { TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const swipeableListMessages = {
+  actionsFor: "Actions for {title}",
+  showActions: "Show actions",
+};
+
+export type SwipeableListMessages = typeof swipeableListMessages;
 
 export type SwipeSide = "left" | "right";
 
@@ -84,6 +93,8 @@ export interface SwipeableListProps {
   className?: string;
   classNames?: SwipeableListClassNames;
   renderItem?: (item: SwipeableListItem) => ReactNode;
+  /** Override any built-in string. */
+  labels?: Partial<SwipeableListMessages>;
 }
 
 // Distance-based release spring keeps short rebounds and full reveals feeling
@@ -202,6 +213,7 @@ function SwipeableListRow({
   onAction,
   classNames,
   renderItem,
+  labels,
 }: {
   item: SwipeableListItem;
   actionWidth: number;
@@ -212,7 +224,9 @@ function SwipeableListRow({
   onAction?: SwipeableListProps["onAction"];
   classNames?: SwipeableListClassNames;
   renderItem?: (item: SwipeableListItem) => ReactNode;
+  labels?: Partial<SwipeableListMessages>;
 }) {
+  const t = useMessages("swipeableList", swipeableListMessages, labels);
   const reduce = useReducedMotion();
   const railId = useId();
   const railRef = useRef<HTMLDivElement>(null);
@@ -531,8 +545,8 @@ function SwipeableListRow({
             type="button"
             aria-label={
               typeof item.title === "string"
-                ? `Actions for ${item.title}`
-                : "Show actions"
+                ? t("actionsFor", { title: item.title })
+                : t("showActions")
             }
             aria-expanded={openSide !== null}
             aria-controls={railId}
@@ -567,6 +581,7 @@ export function SwipeableList({
   className,
   classNames,
   renderItem,
+  labels,
 }: SwipeableListProps) {
   const [openValue, setOpenValue] = useControllableSwipeValue({
     value,
@@ -588,6 +603,7 @@ export function SwipeableList({
           onAction={onAction}
           classNames={classNames}
           renderItem={renderItem}
+          labels={labels}
         />
       ))}
     </div>

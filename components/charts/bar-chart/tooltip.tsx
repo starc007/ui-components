@@ -39,6 +39,7 @@ export function BarChartTooltip({ children, className, side = "top" }: BarChartT
     plotRef,
     tooltipId,
     formatValue,
+    xy,
   } = useBarChart();
   const category = categories[activeIndex];
   const rows: XYTooltipRow[] = visibleRows.map((row) => ({
@@ -74,6 +75,7 @@ export function BarChartTooltip({ children, className, side = "top" }: BarChartT
               formatValue={formatValue}
               total={layout === "stacked" && rows.length > 1 ? total : undefined}
               compact
+              t={xy}
             />
           ))
         )

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { BumpChartContext, useBumpChartModel, type BumpChartProps } from "./bump-chart/context";
+import { BumpChartContext, type BumpChartProps, useBumpChartModel } from "./bump-chart/context";
 import { BumpChartLegend } from "./bump-chart/legend";
 import { BumpChartPlot } from "./bump-chart/plot";
 
@@ -24,8 +24,9 @@ export function BumpChart({ children, className, ...props }: BumpChartProps) {
   );
 }
 
-export { BumpChartLegend } from "./bump-chart/legend";
-export { BumpChartPlot } from "./bump-chart/plot";
-export { useBumpChart } from "./bump-chart/context";
 export type { BumpChartProps } from "./bump-chart/context";
+export { useBumpChart } from "./bump-chart/context";
+export { BumpChartLegend } from "./bump-chart/legend";
+export { type BumpChartMessages, bumpChartMessages } from "./bump-chart/messages";
+export { BumpChartPlot } from "./bump-chart/plot";
 export type BumpChartSeries = import("./bump-chart/model").BumpSeries;

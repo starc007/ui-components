@@ -15,7 +15,13 @@ import {
   useState,
 } from "react";
 import { useActiveOption } from "@/components/motion/combobox/use-active-option";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import {
+  type MultiSelectMessages,
+  type MultiSelectTranslate,
+  multiSelectMessages,
+} from "./messages";
 
 export type RegisteredMultiSelectItem = {
   value: string;
@@ -74,6 +80,7 @@ export type MultiSelectContextValue = {
   contentRef: MutableRefObject<HTMLDivElement | null>;
   inputRef: MutableRefObject<HTMLInputElement | null>;
   activeLayoutId: string;
+  t: MultiSelectTranslate;
 };
 
 export const MultiSelectContext =
@@ -113,6 +120,8 @@ export interface MultiSelectProps {
   filter?: MultiSelectFilter;
   disabled?: boolean;
   className?: string;
+  /** Override any built-in string. `{label}` fills the option label. */
+  labels?: Partial<MultiSelectMessages>;
 }
 
 export function MultiSelect({
@@ -129,7 +138,9 @@ export function MultiSelect({
   filter = defaultFilter,
   disabled = false,
   className,
+  labels,
 }: MultiSelectProps) {
+  const t = useMessages("multiSelect", multiSelectMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const baseId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -344,6 +355,7 @@ export function MultiSelect({
       contentRef,
       inputRef,
       activeLayoutId: `${baseId}-active`,
+      t,
     }),
     [
       activeItem?.id,
@@ -359,6 +371,7 @@ export function MultiSelect({
       registerItem,
       remove,
       setActiveValue,
+      t,
       toggle,
       toggleActive,
       unregisterItem,

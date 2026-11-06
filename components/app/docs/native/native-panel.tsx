@@ -1,9 +1,10 @@
 import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { InstallTabs } from "@/components/app/docs/install-tabs";
 import { NativePreview } from "@/components/app/docs/native/native-preview";
+import { Link } from "@/i18n/navigation";
 import {
   native,
   nativeInstallCommands,
@@ -46,6 +47,12 @@ function Files({ files }: { files: NativeFile[] }) {
   ));
 }
 
+const code = (chunks: React.ReactNode) => (
+  <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
+    {chunks}
+  </code>
+);
+
 const external =
   "inline-flex items-center gap-1 text-foreground underline underline-offset-4";
 
@@ -54,11 +61,12 @@ const external =
  * steps from beUI Native.
  */
 export function NativePanel({ component }: { component: NativeComponent }) {
+  const t = useTranslations("Native.panel");
 
   return (
     <div className="mt-8 flex flex-col gap-12">
       <section id="native-preview" className="scroll-mt-24">
-        <h2 className="sr-only">Preview</h2>
+        <h2 className="sr-only">{t("preview")}</h2>
         <NativePreview clips={component.clips} title={component.title} />
       </section>
 
@@ -67,26 +75,28 @@ export function NativePanel({ component }: { component: NativeComponent }) {
         className="scroll-mt-24 border-t border-border pt-8"
       >
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-sm font-semibold text-foreground">Install</h2>
+          <h2 className="text-sm font-semibold text-foreground">{t("install")}</h2>
           <a
             href={component.repository}
             target="_blank"
             rel="noreferrer noopener"
             className={external}
           >
-            Source on GitHub
+            {t("source")}
             <ArrowUpRight className="h-3 w-3" />
           </a>
         </div>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          It works in Expo and in bare React Native. New to beUI Native?{" "}
-          <Link
-            href="/docs/native-setup"
-            className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
-          >
-            Set up your app first
-          </Link>
-          .
+          {t.rich("worksIn", {
+            link: (chunks) => (
+              <Link
+                href="/docs/native-setup"
+                className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
         </p>
         <div className="mt-6">
           <InstallTabs
@@ -94,12 +104,7 @@ export function NativePanel({ component }: { component: NativeComponent }) {
               <div className="flex flex-col gap-3">
                 <InstallCommand tool="beui-native" slug={component.slug} />
                 <p className="max-w-2xl text-sm text-muted-foreground">
-                  Copies the component and the shared files it needs into{" "}
-                  <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-                    src/
-                  </code>
-                  , adds the theme tokens if they&apos;re missing, and installs
-                  its libraries. Files you&apos;ve changed are kept.
+                  {t.rich("cli", { code })}
                 </p>
               </div>
             }
@@ -115,32 +120,27 @@ export function NativePanel({ component }: { component: NativeComponent }) {
 function ManualSteps({ component }: { component: NativeComponent }) {
   const commands = nativeInstallCommands(component);
   const gestures = component.libraries.includes("react-native-gesture-handler");
+  const t = useTranslations("Native.panel");
   let step = 0;
 
   return (
     <div className="flex flex-col gap-8">
       <p className="max-w-2xl text-sm text-muted-foreground">
-        Keep the folder layout, since the component imports the shared files by
-        relative path.
+        {t("manualIntro")}
       </p>
       {commands.length > 0 ? (
-        <Step number={++step} title="Install the libraries">
+        <Step number={++step} title={t("stepLibraries")}>
           <CodeBlock code={commands.join("\n")} lang="bash" />
           {gestures ? (
             <p className="text-sm text-muted-foreground">
-              Wrap your app in{" "}
-              <code className="rounded bg-foreground/5 px-1.5 py-0.5 font-mono text-xs text-foreground">
-                GestureHandlerRootView
-              </code>{" "}
-              if it isn't already.
+              {t.rich("gestureRoot", { code })}
             </p>
           ) : null}
         </Step>
       ) : null}
-      <Step number={++step} title="Add the theme tokens">
+      <Step number={++step} title={t("stepTheme")}>
         <p className="text-sm text-muted-foreground">
-          Once per app. Import it from the CSS file Uniwind reads, after
-          Tailwind and Uniwind, and change the values to match your brand.
+          {t("themeBody")}
         </p>
         <CodeBlock
           code={native.theme.content}
@@ -149,11 +149,11 @@ function ManualSteps({ component }: { component: NativeComponent }) {
         />
       </Step>
       {component.shared.length > 0 ? (
-        <Step number={++step} title="Copy the shared files">
+        <Step number={++step} title={t("stepShared")}>
           <Files files={component.shared} />
         </Step>
       ) : null}
-      <Step number={++step} title="Copy the component">
+      <Step number={++step} title={t("stepComponent")}>
         <Files files={component.files} />
       </Step>
     </div>

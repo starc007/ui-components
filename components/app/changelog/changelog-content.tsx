@@ -1,8 +1,7 @@
 import { Rss } from "lucide-react";
-import Link from "next/link";
+import { useFormatter, useLocale, useMessages, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
-  CHANGE_LABELS,
-  CHANGELOG_DESCRIPTION,
   CHANGELOG_FEED_PATH,
   changelogAnchor,
   changelogEntries,
@@ -17,29 +16,35 @@ const BADGE_CLASS: Record<ChangelogItem["type"], string> = {
   fixed: "border-border bg-muted text-muted-foreground",
 };
 
-const formatWeek = (date: string) =>
-  new Intl.DateTimeFormat("en", { dateStyle: "long", timeZone: "UTC" }).format(
-    new Date(`${date}T00:00:00Z`),
-  );
-
-/** The changelog page body: header, feed link and the list of weeks. */
+/**
+ * The changelog page body: header, feed link and the list of weeks. The chrome
+ * follows the locale; entries stay English, marked `lang="en"`.
+ */
 export function ChangelogContent() {
+  const t = useTranslations("Native.changelog");
+  const format = useFormatter();
+  const locale = useLocale();
+  const messages = useMessages();
+  const english = locale === "en" ? undefined : "en";
+  const componentName = (slug?: string) =>
+    slug ? messages.Catalog.components[slug]?.name : undefined;
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
       <header className="max-w-2xl">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Changelog
+          {t("title")}
         </p>
         <h1 className="mt-2 text-4xl font-semibold tracking-tight text-foreground">
-          What&apos;s new in beUI
+          {t("heading")}
         </h1>
-        <p className="mt-3 text-muted-foreground">{CHANGELOG_DESCRIPTION}</p>
+        <p className="mt-3 text-muted-foreground">{t("description")}</p>
         <a
           href={CHANGELOG_FEED_PATH}
           className="mt-8 inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
         >
           <Rss aria-hidden="true" className="size-4" />
-          RSS feed
+          {t("rss")}
         </a>
       </header>
 
@@ -51,13 +56,16 @@ export function ChangelogContent() {
             className="scroll-mt-24 border-t border-border py-8 sm:grid sm:grid-cols-[9rem_1fr] sm:gap-6"
           >
             <p className="text-sm text-muted-foreground">
-              Week of{" "}
+              {t("weekOf")}{" "}
               <time dateTime={entry.date} className="block text-foreground">
-                {formatWeek(entry.date)}
+                {format.dateTime(new Date(`${entry.date}T00:00:00Z`), {
+                  dateStyle: "long",
+                  timeZone: "UTC",
+                })}
               </time>
             </p>
             <div className="mt-2 min-w-0 sm:mt-0">
-              <h2 className="text-lg font-medium tracking-tight text-foreground">
+              <h2 lang={english} className="text-lg font-medium tracking-tight text-foreground">
                 <a
                   href={`#${changelogAnchor(entry.date)}`}
                   className="rounded-sm hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -66,7 +74,9 @@ export function ChangelogContent() {
                 </a>
               </h2>
               {entry.summary ? (
-                <p className="mt-2 leading-7 text-muted-foreground">{entry.summary}</p>
+                <p lang={english} className="mt-2 leading-7 text-muted-foreground">
+                  {entry.summary}
+                </p>
               ) : null}
               <ul className="mt-4 space-y-3">
                 {entry.items.map((item) => {
@@ -79,10 +89,10 @@ export function ChangelogContent() {
                           BADGE_CLASS[item.type],
                         )}
                       >
-                        {CHANGE_LABELS[item.type]}
+                        {t(item.type)}
                       </span>
                       <span className="min-w-0 text-muted-foreground">
-                        {item.text}
+                        <span lang={english}>{item.text}</span>
                         {link ? (
                           <>
                             {" "}
@@ -90,7 +100,9 @@ export function ChangelogContent() {
                               href={link.href}
                               className="whitespace-nowrap text-foreground underline decoration-border underline-offset-2 hover:decoration-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                             >
-                              {link.label ? `View ${link.label}` : "Learn more"}
+                              {link.label
+                                ? t("view", { name: componentName(item.component) ?? link.label })
+                                : t("learnMore")}
                             </Link>
                           </>
                         ) : null}

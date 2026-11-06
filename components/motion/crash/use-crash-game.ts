@@ -4,6 +4,8 @@ import { useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { createGameSounds, type GameSounds } from "@/lib/game-sounds";
+import { useMessages } from "@/lib/i18n";
+import { type CrashMessages, crashMessages } from "./messages";
 
 // The game every Crash design shares: the clock, the crash point, cashing out,
 // milestones, history, sound and announcements. A design only draws it.
@@ -56,6 +58,8 @@ export interface CrashProps {
   onSoundChange?: (sound: boolean) => void;
   /** Accessible name for the game. Default "Crash". */
   "aria-label"?: string;
+  /** Override built-in text for this instance. */
+  labels?: Partial<CrashMessages>;
   className?: string;
 }
 
@@ -145,7 +149,9 @@ export function useCrashGame({
   sound,
   defaultSound = false,
   onSoundChange,
+  labels,
 }: Omit<CrashProps, "aria-label" | "className">) {
+  const text = useMessages("crash", crashMessages, labels);
   // Live rounds: the crash point arrives through `crashAt` while flying.
   const live = crashAt !== undefined;
   const reduce = useReducedMotion() ?? false;
@@ -232,7 +238,7 @@ export function useCrashGame({
     cashedRef.current = value;
     setCashed(value);
     setCashedT(time);
-    setAnnouncement(`Cashed out at ${formatMultiplier(value)}.`);
+    setAnnouncement(text("announceCashedOut", { multiplier: formatMultiplier(value) }));
     if (soundOn) getPlayer().cashOut();
     // A live cash out stands only if the crash point turns out above it.
     if (Number.isFinite(flight.current.crash)) onCashOut?.(value);
@@ -255,7 +261,11 @@ export function useCrashGame({
       held: false,
     };
     setPhase("running");
-    setAnnouncement(auto === null ? "Round started." : `Round started. Auto cash out at ${formatMultiplier(auto)}.`);
+    setAnnouncement(
+      auto === null
+        ? text("announceStarted")
+        : text("announceStartedAuto", { multiplier: formatMultiplier(auto) }),
+    );
   };
 
   const start = () => {
@@ -300,7 +310,7 @@ export function useCrashGame({
       return;
     }
     setPhase("starting");
-    setAnnouncement("Starting round.");
+    setAnnouncement(text("announceStarting"));
     // Promise.resolve: a plain-JS caller may hand back something else.
     Promise.resolve(point).then(
       (value) => {
@@ -310,7 +320,7 @@ export function useCrashGame({
         if (!alive.current) return;
         busy.current = false;
         setPhase("idle");
-        setAnnouncement("The round couldn't start. Try again.");
+        setAnnouncement(text("announceStartFailed"));
       },
     );
   };
@@ -390,10 +400,10 @@ export function useCrashGame({
     setHistory((current) => [{ id: f.round, value: f.crash }, ...current].slice(0, HISTORY));
     setAnnouncement(
       cashedRef.current === null
-        ? `Crashed at ${formatMultiplier(f.crash)}. The round is lost.`
+        ? text("announceLost", { multiplier: formatMultiplier(f.crash) })
         : // A cash out on this same frame (a target at the crash point, a
           // long frame) would otherwise never be heard.
-          `${wasIn ? `Cashed out at ${formatMultiplier(cashedRef.current)}. ` : ""}Crashed at ${formatMultiplier(f.crash)}.`,
+          `${wasIn ? `${text("announceCashedOut", { multiplier: formatMultiplier(cashedRef.current) })} ` : ""}${text("announceCrashed", { multiplier: formatMultiplier(f.crash) })}`,
     );
     if (soundOn) getPlayer().mine();
     onCrash?.(f.crash, cashedRef.current);
@@ -452,18 +462,18 @@ export function useCrashGame({
     } else skip();
   };
   const actionLabel = starting
-    ? "Starting…"
+    ? text("starting")
     : running
       ? cashed === null
         ? overtaken
-          ? "Crashing…"
-          : `Cash out ${formatMultiplier(multiplier)}`
+          ? text("crashing")
+          : text("cashOut", { multiplier: formatMultiplier(multiplier) })
         : crashKnown
-          ? "Skip to crash"
-          : "Waiting for crash"
+          ? text("skip")
+          : text("waiting")
       : crashed
-        ? "Play again"
-        : "Start";
+        ? text("playAgain")
+        : text("start");
   /** The main action can't act right now: the crash point is still coming, or a live round is already over. */
   const actionBusy = starting || (running && cashed !== null && !crashKnown) || (overtaken && cashed === null);
 
@@ -471,23 +481,25 @@ export function useCrashGame({
   const lost = crashed && cashed === null;
   // At the end of a round the readout becomes the result: won or lost, the
   // number that counts, and one line of context.
-  const eyebrow = lost ? "Crashed" : crashed ? "Cashed out" : running ? "In flight" : starting ? "Starting" : "Ready";
+  const eyebrow = text(
+    lost ? "stateCrashed" : crashed ? "stateCashedOut" : running ? "stateFlying" : starting ? "stateStarting" : "stateReady",
+  );
   // In flight the round's locked target, not a menu change made since.
   const shownAuto = running ? roundAuto : auto;
   const status = crashed
     ? cashed !== null
       ? // Within 10% of the crash is a close call.
         multiplier / cashed < 1.1
-        ? `Crashed at ${formatMultiplier(multiplier)}, a close call`
-        : `It flew on to ${formatMultiplier(multiplier)}`
+        ? text("statusCloseCall", { multiplier: formatMultiplier(multiplier) })
+        : text("statusFlewOn", { multiplier: formatMultiplier(multiplier) })
       : roundAuto !== null
-        ? `Short of your ${formatShort(roundAuto)} target`
-        : "You were still in"
+        ? text("statusShort", { target: formatShort(roundAuto) })
+        : text("statusStillIn")
     : shownAuto !== null
-      ? `Auto cash out at ${formatMultiplier(shownAuto)}`
+      ? text("statusAuto", { multiplier: formatMultiplier(shownAuto) })
       : running
-        ? "Cash out before it crashes"
-        : "Start a round";
+        ? text("statusFlying")
+        : text("statusIdle");
 
   // What a design marks ahead of the flight: the auto target until it pays
   // (the menu's choice while idle, the locked one in flight), and the last
@@ -530,6 +542,8 @@ export function useCrashGame({
     eyebrow,
     status,
     announcement,
+    /** The game's built-in text, resolved for the current locale and `labels`. */
+    text,
   };
 }
 

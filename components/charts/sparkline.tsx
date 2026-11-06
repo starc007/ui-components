@@ -10,11 +10,25 @@ import { type ComponentProps, useId, useState } from "react";
 import { NumberTicker } from "@/components/motion/number-ticker";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { XYInspector } from "./xy/inspector";
+import { type XYChartMessages, xyChartMessages } from "./xy/messages";
 import { areaPath, linePath, type XYCurve } from "./xy/path";
 import { useAnimatedPoints, type XYPointTarget } from "./xy/use-points";
 import { useElementWidth } from "./xy/use-width";
+
+/** English defaults. Override per instance with `messages`, or app-wide with `LocaleProvider`. */
+export const sparklineMessages = {
+  inspect: "{label}: inspect samples",
+  sample: "Sample {index}",
+  sampleValue: "{name}: {value}",
+  range: "from {first} to {last}",
+  up: "up {percent}%",
+  down: "down {percent}%",
+};
+
+export type SparklineMessages = typeof sparklineMessages;
 
 export interface SparklineProps extends Omit<ComponentProps<"div">, "children"> {
   /** Samples in display order. Missing or non-finite values leave a gap. */
@@ -37,6 +51,11 @@ export interface SparklineProps extends Omit<ComponentProps<"div">, "children"> 
   /** Hover, drag or arrow keys to read individual samples. Adds one tab stop. */
   interactive?: boolean;
   formatValue?: (value: number) => string;
+  /**
+   * Override any built-in string, including the shared `xyChart` ones.
+   * Named `messages` because `labels` already holds the sample labels.
+   */
+  messages?: Partial<SparklineMessages & XYChartMessages>;
 }
 
 const number = new Intl.NumberFormat("en", { maximumFractionDigits: 2 });
@@ -55,9 +74,12 @@ export function Sparkline({
   invertDelta = false,
   interactive = false,
   formatValue = (value) => number.format(value),
+  messages,
   className,
   ...props
 }: SparklineProps) {
+  const t = useMessages<SparklineMessages>("sparkline", sparklineMessages, messages);
+  const xy = useMessages<XYChartMessages>("xyChart", xyChartMessages, messages);
   const reduce = useReducedMotion() ?? false;
   const canHover = useHoverCapable();
   const gradientId = useId();
@@ -117,11 +139,15 @@ export function Sparkline({
   const inspecting = interactive && open && active !== null && values[active] !== null;
   const dotIndex = inspecting ? (active as number) : lastIndex;
   const dotValue = dotIndex >= 0 ? values[dotIndex] : null;
-  const name = (i: number) => labels?.[i] ?? `Sample ${i + 1}`;
+  const name = (i: number) => labels?.[i] ?? t("sample", { index: i + 1 });
   const summary = [
     label,
-    first !== null && last !== null ? `from ${formatValue(first)} to ${formatValue(last)}` : "no data",
-    delta !== null && trend !== "flat" ? `${trend} ${Math.abs(delta).toFixed(1)}%` : null,
+    first !== null && last !== null
+      ? t("range", { first: formatValue(first), last: formatValue(last) })
+      : xy("missing"),
+    delta !== null && trend !== "flat"
+      ? t(trend, { percent: Math.abs(delta).toFixed(1) })
+      : null,
   ]
     .filter(Boolean)
     .join(", ");
@@ -179,10 +205,13 @@ export function Sparkline({
               count={n}
               activeIndex={active ?? -1}
               onActive={setActive}
-              label={`${label}: inspect samples`}
+              label={t("inspect", { label })}
               valueText={(i) => {
                 const value = values[i];
-                return `${name(i)}: ${value === null ? "no data" : formatValue(value)}`;
+                return t("sampleValue", {
+                  name: name(i),
+                  value: value === null ? xy("missing") : formatValue(value),
+                });
               }}
               mode="point"
               open={open}
@@ -212,7 +241,7 @@ export function Sparkline({
                 className="whitespace-pre"
               />
             ) : (
-              "No data"
+              xy("noData")
             )}
           </span>
           <motion.span
@@ -242,3 +271,6 @@ export function Sparkline({
     </div>
   );
 }
+
+export type { XYChartMessages } from "./xy/messages";
+export { xyChartMessages } from "./xy/messages";

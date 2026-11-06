@@ -1,22 +1,14 @@
 "use client";
 
 export {
+  MultiSelectContent,
+  type MultiSelectContentProps,
+} from "./content";
+export {
   MultiSelect,
   type MultiSelectFilter,
   type MultiSelectProps,
 } from "./context";
-export {
-  MultiSelectInput,
-  type MultiSelectInputProps,
-  MultiSelectTrigger,
-  type MultiSelectTriggerProps,
-  MultiSelectValue,
-  type MultiSelectValueProps,
-} from "./trigger";
-export {
-  MultiSelectContent,
-  type MultiSelectContentProps,
-} from "./content";
 export {
   MultiSelectEmpty,
   type MultiSelectEmptyProps,
@@ -31,3 +23,15 @@ export {
   MultiSelectSeparator,
   type MultiSelectSeparatorProps,
 } from "./list";
+export {
+  type MultiSelectMessages,
+  multiSelectMessages,
+} from "./messages";
+export {
+  MultiSelectInput,
+  type MultiSelectInputProps,
+  MultiSelectTrigger,
+  type MultiSelectTriggerProps,
+  MultiSelectValue,
+  type MultiSelectValueProps,
+} from "./trigger";

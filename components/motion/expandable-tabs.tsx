@@ -15,7 +15,15 @@ import {
   type ReactNode,
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const expandableTabsMessages = {
+  label: "Navigation tabs",
+};
+
+export type ExpandableTabsMessages = typeof expandableTabsMessages;
 
 export type ExpandableTabsItem = {
   id: string;
@@ -45,6 +53,8 @@ export interface ExpandableTabsProps {
   onValueChange?: (id: string | null) => void;
   className?: string;
   classNames?: ExpandableTabsClassNames;
+  /** Override any built-in string. */
+  labels?: Partial<ExpandableTabsMessages>;
 }
 
 type Size = { width: number; height: number };
@@ -200,7 +210,9 @@ export function ExpandableTabs({
   onValueChange,
   className,
   classNames,
+  labels,
 }: ExpandableTabsProps) {
+  const t = useMessages("expandableTabs", expandableTabsMessages, labels);
   const reduce = useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const [sizerRef, size] = useContentSize();
@@ -332,7 +344,7 @@ export function ExpandableTabs({
 
         <div
           role="tablist"
-          aria-label="Navigation tabs"
+          aria-label={t("label")}
           aria-orientation="horizontal"
           className={cn(
             "absolute bottom-0 left-0 z-20 flex w-full items-center justify-between gap-1 p-2",

@@ -8,7 +8,7 @@ import { BumpChartSeriesPath } from "./series";
 import { pointKey, useBumpGeometry } from "./use-geometry";
 
 export function BumpChartPlot({ className }: { className?: string }) {
-  const { rows, ranks, height, x, y, periods, label, reduce } = useBumpChart();
+  const { rows, ranks, height, x, y, periods, label, reduce, t } = useBumpChart();
   const positions = useBumpGeometry(
     rows.flatMap((row) =>
       row.ranks.flatMap((rank, index) =>
@@ -20,14 +20,14 @@ export function BumpChartPlot({ className }: { className?: string }) {
   if (!periods.length || !ranks.length)
     return (
       <div className={cn("py-16 text-center text-sm text-muted-foreground", className)}>
-        No rankings yet
+        {t("empty")}
       </div>
     );
   // Keep labels and rank dots readable inside narrow preview containers.
   const width = Math.max(PLOT.width, periods.length * 64);
   return (
     <section
-      aria-label={`${label} plot, scroll horizontally for more periods`}
+      aria-label={t("plot", { label })}
       // biome-ignore lint/a11y/noNoninteractiveTabindex: Keyboard users need to scroll this overflow region.
       tabIndex={0}
       className={cn(
@@ -43,10 +43,7 @@ export function BumpChartPlot({ className }: { className?: string }) {
           className="block w-full overflow-visible"
         >
           <title>{label}</title>
-          <desc>
-            Ranks run from best at the top to lowest at the bottom. Use the legend to highlight or
-            pin a series. Exact values follow in a table.
-          </desc>
+          <desc>{t("description")}</desc>
           {ranks.map((rank) => (
             <line
               key={rank}
@@ -95,10 +92,10 @@ export function BumpChartPlot({ className }: { className?: string }) {
         </div>
       </div>
       <table className="sr-only">
-        <caption>{label} — exact ranks</caption>
+        <caption>{t("caption", { label })}</caption>
         <thead>
           <tr>
-            <th scope="col">Series</th>
+            <th scope="col">{t("series")}</th>
             {periods.map((period) => (
               <th key={period} scope="col">
                 {period}
@@ -111,7 +108,7 @@ export function BumpChartPlot({ className }: { className?: string }) {
             <tr key={row.id}>
               <th scope="row">{row.name}</th>
               {row.ranks.map((rank, index) => (
-                <td key={periods[index]}>{rank ?? "No data"}</td>
+                <td key={periods[index]}>{rank ?? t("noData")}</td>
               ))}
             </tr>
           ))}

@@ -3,6 +3,7 @@ import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react
 import { axe } from "jest-axe";
 import { useState } from "react";
 import { SidebarCategoryTabs } from "@/components/app/chrome/site-sidebar";
+import { withIntl } from "./intl";
 
 afterEach(cleanup);
 
@@ -19,7 +20,7 @@ function CategoryTabs() {
 }
 
 test("icon category tabs retain accessible names, one tab stop, and a labelled panel", async () => {
-  const { container, getByRole } = render(<CategoryTabs />);
+  const { container, getByRole } = render(withIntl(<CategoryTabs />));
   expect(getByRole("tablist", { name: "Component categories" })).toBeTruthy();
   for (const name of ["All", "Agents", "Components", "Blocks"]) {
     expect(getByRole("tab", { name }).getAttribute("tabindex")).toBe(name === "All" ? "0" : "-1");
@@ -29,7 +30,7 @@ test("icon category tabs retain accessible names, one tab stop, and a labelled p
 });
 
 test("arrow and boundary keys move category selection and focus together", async () => {
-  const { container, getByRole } = render(<CategoryTabs />);
+  const { container, getByRole } = render(withIntl(<CategoryTabs />));
   const all = getByRole("tab", { name: "All" });
   await act(async () => {
     all.focus();
@@ -51,7 +52,7 @@ test("arrow and boundary keys move category selection and focus together", async
 });
 
 test("inactive icon tabs expose a tooltip description that clears on selection", async () => {
-  const { container, getByRole, queryByRole } = render(<CategoryTabs />);
+  const { container, getByRole, queryByRole } = render(withIntl(<CategoryTabs />));
   const agents = getByRole("tab", { name: "Agents" });
   await act(async () => { agents.focus(); });
   await waitFor(() => expect(getByRole("tooltip").textContent).toBe("Agents"));

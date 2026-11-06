@@ -1,8 +1,10 @@
 import { ArrowUpRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { RainbowCta } from "@/components/app/rainbow-cta";
 
 /** Sidebar promo on React Native pages for beUI Pro for mobile. */
 export function ProMobileCard() {
+  const t = useTranslations("Docs.proMobileCard");
   return (
     <section
       aria-labelledby="beui-pro-mobile-card-title"
@@ -23,11 +25,10 @@ export function ProMobileCard() {
           id="beui-pro-mobile-card-title"
           className="text-lg font-semibold leading-tight tracking-tight text-foreground"
         >
-          Need full screens?
+          {t("title")}
         </h2>
         <p className="mt-2 text-sm leading-5 text-muted-foreground">
-          50 React Native blocks and screens, from onboarding and paywalls to
-          profile and checkout, are live in beUI Pro for mobile.
+          {t("description")}
         </p>
       </div>
       <RainbowCta
@@ -38,7 +39,7 @@ export function ProMobileCard() {
         className="w-full"
         innerClassName="py-2"
       >
-        Explore beUI Pro Mobile
+        {t("cta")}
         <ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0" />
       </RainbowCta>
     </section>

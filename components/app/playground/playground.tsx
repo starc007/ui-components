@@ -4,6 +4,7 @@ import { ThreeColumnLayout } from "@/components/app/chrome/three-column-layout";
 import { RightSidebar } from "@/components/app/chrome/right-sidebar";
 
 import { RotateCw } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/motion/button";
 import {
@@ -21,10 +22,12 @@ import { PLAYGROUND_ITEMS, PLAYGROUND_SOON } from "./items";
 
 /** Plain-English decode of the current code — the teaching layer. */
 function ExplainPanel({ points }: { points: ExplainPoint[] }) {
+  const t = useTranslations("Pages.playground");
+
   return (
     <div className="rounded-2xl border border-border p-5">
       <span className="text-[11px] font-medium uppercase tracking-wider text-foreground">
-        How it works
+        {t("howItWorks")}
       </span>
       <ul className="mt-3 flex flex-col gap-3.5">
         {points.map((p) => (
@@ -51,11 +54,13 @@ function PresetSection({
   presets: Preset[];
   onApply: (values: Values) => void;
 }) {
+  const t = useTranslations("Pages.playground");
+
   if (presets.length === 0) return null;
   return (
     <div>
       <span className="text-[11px] font-medium uppercase tracking-wider text-foreground">
-        Try
+        {t("try")}
       </span>
       <div className="mt-2 flex flex-wrap gap-1.5">
         {presets.map((p) => (
@@ -74,20 +79,19 @@ function PresetSection({
 }
 
 export function Playground() {
-  const [activeSlug, setActiveSlug] = useState(PLAYGROUND_ITEMS[0].slug);
+  const t = useTranslations("Pages.playground");
+  // items carry translated copy, so they are built per translator
+  const items = useMemo(() => PLAYGROUND_ITEMS.map((make) => make(t)), [t]);
+  const [activeSlug, setActiveSlug] = useState(items[0].slug);
   const [replayKey, setReplayKey] = useState(0);
   // per-type values so switching types preserves each one's tweaks
   const [valuesByType, setValuesByType] = useState<Record<string, Values>>(() =>
-    Object.fromEntries(
-      PLAYGROUND_ITEMS.map((it) => [it.slug, { ...it.defaults }]),
-    ),
+    Object.fromEntries(items.map((it) => [it.slug, { ...it.defaults }])),
   );
 
   const active = useMemo(
-    () =>
-      PLAYGROUND_ITEMS.find((it) => it.slug === activeSlug) ??
-      PLAYGROUND_ITEMS[0],
-    [activeSlug],
+    () => items.find((it) => it.slug === activeSlug) ?? items[0],
+    [items, activeSlug],
   );
   const values = valuesByType[active.slug];
 
@@ -124,9 +128,9 @@ export function Playground() {
   return (
     <ThreeColumnLayout
       leftSidebar={
-        <nav aria-label="Motion types">
+        <nav aria-label={t("motionTypes")}>
           <ul className="flex flex-col gap-0.5">
-            {PLAYGROUND_ITEMS.map((it) => (
+            {items.map((it) => (
               <li key={it.slug}>
                 <button
                   type="button"
@@ -144,7 +148,7 @@ export function Playground() {
             ))}
             {PLAYGROUND_SOON.length > 0 ? (
               <li className="mt-3 px-3 text-[11px] font-medium uppercase tracking-wider text-foreground">
-                Soon
+                {t("soon")}
               </li>
             ) : null}
             {PLAYGROUND_SOON.map((it) => (
@@ -161,11 +165,10 @@ export function Playground() {
     >
       <header className="mb-8">
         <h1 className="font-display text-3xl font-semibold text-foreground md:text-4xl">
-          Playground
+          {t("header.title")}
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-          Learn motion by playing. Tweak a property, watch it run, read what the
-          code is doing line by line, then copy it.
+          {t("header.body")}
         </p>
       </header>
 
@@ -176,7 +179,7 @@ export function Playground() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {PLAYGROUND_ITEMS.map((it) => (
+            {items.map((it) => (
               <SelectItem key={it.slug} value={it.slug}>
                 {it.label}
               </SelectItem>
@@ -204,7 +207,7 @@ export function Playground() {
               <div className="flex flex-col rounded-2xl border border-border">
                 <div className="flex items-center justify-between border-b border-border px-5 py-3">
                   <span className="text-sm font-medium text-foreground">
-                    Preview
+                    {t("preview")}
                   </span>
                   <Button
                     variant="secondary"
@@ -213,7 +216,7 @@ export function Playground() {
                     className="gap-1.5"
                   >
                     <RotateCw className="h-3.5 w-3.5" />
-                    Replay
+                    {t("replay")}
                   </Button>
                 </div>
                 <div className="overflow-hidden px-6 py-10">

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useRef, type PointerEvent, type ReactNode } from "react";
+import { type PointerEvent, type ReactNode, useRef } from "react";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { useVolumeProfile } from "./context";
@@ -40,6 +40,7 @@ export function VolumeProfilePlot({
     describe,
     reduce,
     canHover,
+    t,
   } = useVolumeProfile();
   const pointerDriven = useRef(false);
   const focused = useRef(false);
@@ -63,7 +64,7 @@ export function VolumeProfilePlot({
   if (!rows.length)
     return (
       <p className={cn("py-12 text-center text-sm text-muted-foreground", className)}>
-        No volume data
+        {t("empty")}
       </p>
     );
   return (
@@ -138,7 +139,7 @@ export function VolumeProfilePlot({
                     style={{ borderColor: pocColor }}
                   >
                     <span className="absolute right-0 -translate-y-1/2 rounded bg-background px-1.5 py-0.5 font-mono text-[10px] font-medium text-foreground">
-                      POC
+                      {t("pocBadge")}
                     </span>
                   </span>
                 ) : null}
@@ -151,7 +152,7 @@ export function VolumeProfilePlot({
             max={rows.length - 1}
             step={1}
             value={index}
-            aria-label={`${label}: inspect price level`}
+            aria-label={t("inspect", { label })}
             aria-orientation="vertical"
             aria-valuetext={describe(row)}
             aria-describedby={tooltipOpen && activeIndex >= 0 ? tooltipId : undefined}

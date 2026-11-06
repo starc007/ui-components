@@ -2,6 +2,7 @@
 
 import { Pause, Play, RotateCcw } from "lucide-react";
 import { useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { NativeClip, NativeTheme } from "@/lib/native";
@@ -22,6 +23,7 @@ export function NativePreview({
   clips: Record<NativeTheme, NativeClip | null>;
   title: string;
 }) {
+  const t = useTranslations("Native.preview");
   const { resolvedTheme } = useTheme();
   const reduce = useReducedMotion();
   const [mounted, setMounted] = useState(false);
@@ -97,7 +99,7 @@ export function NativePreview({
               loop
               playsInline
               preload="metadata"
-              aria-label={`${title} running on iOS`}
+              aria-label={t("videoLabel", { name: title })}
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
               className="absolute inset-0 h-full w-full object-cover"
@@ -126,7 +128,7 @@ export function NativePreview({
             <button
               type="button"
               onClick={togglePlay}
-              aria-label={playing ? "Pause" : "Play"}
+              aria-label={playing ? t("pause") : t("play")}
               className={control}
             >
               {playing ? (
@@ -138,7 +140,7 @@ export function NativePreview({
             <button
               type="button"
               onClick={replay}
-              aria-label="Replay"
+              aria-label={t("replay")}
               className={control}
             >
               <RotateCcw aria-hidden="true" className="size-4" />

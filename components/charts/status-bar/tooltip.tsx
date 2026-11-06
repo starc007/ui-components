@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { Tooltip } from "@/components/motion/tooltip";
 import { cn } from "@/lib/utils";
-import { useStatusBar, type StatusBarDatum, type StatusBarStatus } from "./context";
+import { type StatusBarDatum, type StatusBarStatus, useStatusBar } from "./context";
 
 export interface StatusBarTooltipData {
   datum: StatusBarDatum;

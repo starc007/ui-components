@@ -15,6 +15,8 @@ import {
 } from "react";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
+import { useMessages } from "@/lib/i18n";
+import { type SankeyChartMessages, sankeyChartMessages } from "./messages";
 import {
   cleanSankey,
   layoutSankey,
@@ -41,6 +43,8 @@ export interface SankeyChartProps extends ComponentProps<"section"> {
   activeId?: string | null;
   defaultActiveId?: string | null;
   onActiveChange?: (id: string | null) => void;
+  /** Override any built-in string. */
+  labels?: Partial<SankeyChartMessages>;
 }
 
 export type SankeyActive =
@@ -53,7 +57,7 @@ const defaultFormat = (value: number) =>
 export function useSankeyModel({
   nodes,
   links,
-  label = "Sankey chart",
+  label: customLabel,
   formatValue = defaultFormat,
   colors = SANKEY_COLORS,
   nodeWidth = 12,
@@ -61,7 +65,10 @@ export function useSankeyModel({
   activeId,
   defaultActiveId = null,
   onActiveChange,
+  labels,
 }: SankeyChartProps) {
+  const t = useMessages("sankeyChart", sankeyChartMessages, labels);
+  const label = customLabel ?? t("label");
   const data = useMemo(() => cleanSankey(nodes, links), [nodes, links]);
   useEffect(() => {
     if (process.env.NODE_ENV === "production") return;
@@ -135,18 +142,18 @@ export function useSankeyModel({
   }
   const incoming = new Map<string, number>();
   for (const l of data.links) incoming.set(l.target, (incoming.get(l.target) ?? 0) + l.value);
-  const labels = new Map(data.nodes.map((n) => [n.id, n.label]));
+  const nodeLabels = new Map(data.nodes.map((n) => [n.id, n.label]));
   const flows = data.links.map((l) => {
     const sourceValue = Math.max(totals.get(l.source) ?? 0, incoming.get(l.source) ?? 0);
     return {
       id: l.id ?? `${l.source}:${l.target}`,
-      source: labels.get(l.source) ?? l.source,
-      target: labels.get(l.target) ?? l.target,
+      source: nodeLabels.get(l.source) ?? l.source,
+      target: nodeLabels.get(l.target) ?? l.target,
       value: l.value,
       share: sourceValue ? l.value / sourceValue : 0,
     };
   });
-  const empty = !data.links.length ? (nodes.length ? "No flows to show" : "No sankey data") : null;
+  const empty = !data.links.length ? (nodes.length ? t("noFlows") : t("empty")) : null;
 
   return {
     ...layout,
@@ -157,6 +164,7 @@ export function useSankeyModel({
     setSize,
     nodeWidth,
     label,
+    t,
     formatValue,
     active,
     setActive,

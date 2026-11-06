@@ -36,7 +36,7 @@ export function CandlestickChartPlot({
   height = 320,
   className,
 }: CandlestickChartPlotProps) {
-  const { candles, lastPrice, active, setActive, scale, formatPrice, label, reduce } =
+  const { candles, lastPrice, active, setActive, scale, formatPrice, label, reduce, t } =
     useCandlestickChart();
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
@@ -101,7 +101,13 @@ export function CandlestickChartPlot({
       aria-valuenow={active ?? Math.max(0, candles.length - 1)}
       aria-valuetext={
         focus
-          ? `${focus.label}: open ${formatPrice(focus.open)}, high ${formatPrice(focus.high)}, low ${formatPrice(focus.low)}, close ${formatPrice(focus.close)}`
+          ? t("valueText", {
+              label: focus.label,
+              open: formatPrice(focus.open),
+              high: formatPrice(focus.high),
+              low: formatPrice(focus.low),
+              close: formatPrice(focus.close),
+            })
           : undefined
       }
       onPointerMove={onPointerMove}

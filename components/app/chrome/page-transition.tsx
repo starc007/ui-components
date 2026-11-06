@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { isTopLevelPath } from "@/lib/component-paths";
 import { EASE_OUT } from "@/lib/ease";

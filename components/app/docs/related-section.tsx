@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { ComponentCard } from "@/components/app/docs/component-card";
 
 export type RelatedItem = {
@@ -13,13 +14,14 @@ export type RelatedItem = {
 
 /** A component page's related components, as cards. */
 export function RelatedSection({ related }: { related: RelatedItem[] }) {
+  const t = useTranslations("Docs.component");
   if (related.length === 0) return null;
   return (
     <section
       id="related-components"
       className="mt-12 scroll-mt-24 border-t border-border pt-8"
     >
-      <h2 className="text-sm font-semibold text-foreground">Related components</h2>
+      <h2 className="text-sm font-semibold text-foreground">{t("relatedComponents")}</h2>
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {related.map((rel) => (
           <ComponentCard

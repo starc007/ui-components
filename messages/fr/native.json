@@ -1,0 +1,64 @@
+{
+  "index": {
+    "metaTitle": "Composants React Native animés",
+    "metaDescription": "Composants animés gratuits et open source pour React Native et Expo, conçus pour le tactile avec Reanimated, Gesture Handler et Uniwind. Copiez le code ou installez avec npx beui-native.",
+    "breadcrumb": "Fil d’Ariane",
+    "heading": "Composants React Native animés",
+    "intro": "Conçus pour le tactile avec Reanimated, Gesture Handler et Uniwind. Copiez le code source dans votre app Expo ou React Native.",
+    "setup": "Nouveau ici ? <link>Configurez votre app</link> une fois, puis ajoutez n’importe quel composant avec la CLI."
+  },
+  "component": {
+    "metaTitle": "{name} · Composant React Native animé",
+    "metaDescription": "{description} Un composant React Native animé et accessible pour Expo et les apps bare, conçu avec Reanimated.",
+    "ogAlt": "{name} pour React Native",
+    "documentation": "Documentation",
+    "webTitle": "Aussi sur le web.",
+    "webDescription": "La version React de {name}, conçue avec Motion et Tailwind CSS."
+  },
+  "panel": {
+    "preview": "Aperçu",
+    "install": "Installation",
+    "source": "Code source sur GitHub",
+    "worksIn": "Fonctionne avec Expo et avec React Native bare. Vous découvrez beUI Native ? <link>Configurez d’abord votre app</link>.",
+    "cli": "Copie le composant et les fichiers partagés dont il a besoin dans <code>src/</code>, ajoute les tokens de thème s’ils manquent et installe ses bibliothèques. Les fichiers que vous avez modifiés sont conservés.",
+    "manualIntro": "Conservez l’arborescence des dossiers : le composant importe les fichiers partagés par chemin relatif.",
+    "stepLibraries": "Installer les bibliothèques",
+    "gestureRoot": "Enveloppez votre app dans <code>GestureHandlerRootView</code> si ce n’est pas déjà fait.",
+    "stepTheme": "Ajouter les tokens de thème",
+    "themeBody": "Une seule fois par app. Importez-le depuis le fichier CSS lu par Uniwind, après Tailwind et Uniwind, puis adaptez les valeurs à votre marque.",
+    "stepShared": "Copier les fichiers partagés",
+    "stepComponent": "Copier le composant"
+  },
+  "preview": {
+    "videoLabel": "{name} sur iOS",
+    "play": "Lecture",
+    "pause": "Pause",
+    "replay": "Rejouer"
+  },
+  "platform": {
+    "label": "Plateforme",
+    "web": "Web"
+  },
+  "changelog": {
+    "title": "Journal des modifications",
+    "heading": "Quoi de neuf dans beUI",
+    "description": "Chaque semaine de beUI : nouveaux composants React et React Native animés, améliorations et correctifs d’accessibilité et d’animation.",
+    "rss": "Flux RSS",
+    "weekOf": "Semaine du",
+    "new": "Nouveau",
+    "improved": "Amélioré",
+    "fixed": "Corrigé",
+    "view": "Voir {name}",
+    "learnMore": "En savoir plus"
+  },
+  "article": {
+    "guide": "Guide",
+    "comparison": "Comparatif",
+    "versus": "beUI vs {competitor}",
+    "feature": "Fonctionnalité",
+    "officialSite": "Site officiel de {competitor}",
+    "components": "Composants de ce guide",
+    "faq": "FAQ",
+    "updated": "Mis à jour le <time></time>"
+  }
+}

@@ -20,6 +20,7 @@ import {
 } from "./crash-parts";
 import {
   BURST,
+  type CrashGame,
   type CrashProps,
   EXIT,
   formatShort,
@@ -58,10 +59,10 @@ const rise = cubicBezier(...EASE_IN_OUT);
  * altitude. The balloon lifts off and holds while the tape and clouds scroll
  * past; cash out to bail before the envelope pops.
  */
-export function CrashBalloon({ "aria-label": ariaLabel = "Crash", className, ...options }: CrashProps) {
+export function CrashBalloon({ "aria-label": ariaLabel, className, ...options }: CrashProps) {
   const game = useCrashGame(options);
   return (
-    <CrashShell game={game} aria-label={ariaLabel} className={className} miniature={(props) => <MiniAltitude {...props} />}>
+    <CrashShell game={game} aria-label={ariaLabel ?? game.text("region")} className={className} miniature={(props) => <MiniAltitude {...props} />}>
       <Stage
         t={game.t}
         cashed={game.cashed}
@@ -73,6 +74,7 @@ export function CrashBalloon({ "aria-label": ariaLabel = "Crash", className, ...
         ghost={game.ghost}
         reduce={game.reduce}
         skipping={game.skipping}
+        text={game.text}
       />
     </CrashShell>
   );
@@ -89,9 +91,10 @@ interface StageProps {
   ghost: number | null;
   reduce: boolean;
   skipping: boolean;
+  text: CrashGame["text"];
 }
 
-function Stage({ t, cashed, crashed, lost, round, pulse, target, ghost, reduce, skipping }: StageProps) {
+function Stage({ t, cashed, crashed, lost, round, pulse, target, ghost, reduce, skipping, text }: StageProps) {
   const id = `crash-balloon-${useId().replace(/:/g, "")}`;
   const m = growth(t);
   // Everything that scrolls derives from ln(m), so a skip just scrolls faster.
@@ -206,7 +209,7 @@ function Stage({ t, cashed, crashed, lost, round, pulse, target, ghost, reduce, 
               )}
               <path d="M0,0V-10L8,-7L0,-4" fill="none" stroke="currentColor" strokeLinejoin="round" opacity={0.7} />
               <text x={-12} dy="0.32em" textAnchor="end" className={cn("fill-current", STAGE_LABEL, PRIMARY_TEXT)}>
-                {at(target) < TARGET_PIN ? `target ${formatShort(target)} ↑` : "target"}
+                {at(target) < TARGET_PIN ? `${text("targetMarkValue", { multiplier: formatShort(target) })} ↑` : text("targetMark")}
               </text>
             </g>
           </motion.g>

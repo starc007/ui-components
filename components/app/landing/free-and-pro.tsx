@@ -1,56 +1,51 @@
 import { ArrowRight, ArrowUpRight, Check } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { PressLink } from "@/components/app/press-link";
 import { cn } from "@/lib/utils";
 import styles from "./landing.module.css";
 
 const OPTIONS = [
   {
+    key: "free",
     name: "beUI",
-    eyebrow: "Free & open source",
-    title: "Build with the essentials.",
-    description:
-      "Animated components you can install, customize, and keep in your codebase.",
     features: [
-      "Components, blocks, charts, and AI interfaces",
-      "Public shadcn registry and copy-paste source",
-      "MIT licensed for personal and commercial projects",
+      "free.features.components",
+      "free.features.registry",
+      "free.features.license",
     ],
     href: "/components/motion",
-    label: "Browse free components",
   },
   {
+    key: "pro",
     name: "beUI Pro",
-    eyebrow: "Go further with Pro",
-    title: "Start with more built for you.",
-    description:
-      "350+ premium blocks to build your next product faster. Get the complete collection with Lifetime, including full templates and animated illustrations.",
     features: [
-      "350+ premium blocks and animated components",
-      "Full landing-page templates · Lifetime",
-      "Animated illustrations · Lifetime",
-      "Agent Skill, MCP access, and one-command installs",
-      "Private registry and downloadable source",
-      "Unlimited personal and client projects",
-      "All future updates · Lifetime",
+      "pro.features.blocks",
+      "pro.features.templates",
+      "pro.features.illustrations",
+      "pro.features.agents",
+      "pro.features.registry",
+      "pro.features.projects",
+      "pro.features.updates",
     ],
     href: "https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=landing_comparison",
-    label: "Explore Pro",
   },
-];
+] as const;
 
 export function FreeAndPro() {
+  const t = useTranslations("Landing.plans");
+  const tHero = useTranslations("Landing.hero");
   return (
     <section
       aria-labelledby="landing-plans"
       className="mx-auto max-w-5xl px-4 pt-20 pb-8 sm:pt-28"
     >
       <div className="mb-10 text-center">
-        <p className="text-sm text-muted-foreground">Free and Pro</p>
+        <p className="text-sm text-muted-foreground">{t("eyebrow")}</p>
         <h2
           id="landing-plans"
           className="mt-4 text-balance font-display text-3xl font-medium tracking-tight md:text-4xl"
         >
-          Choose your starting point
+          {t("title")}
         </h2>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
@@ -78,14 +73,14 @@ export function FreeAndPro() {
                     : "bg-muted text-muted-foreground",
                 )}
               >
-                {option.eyebrow}
+                {t(`${option.key}.badge`)}
               </span>
             </div>
             <p className="mt-7 text-xl font-medium tracking-tight">
-              {option.title}
+              {t(`${option.key}.title`)}
             </p>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              {option.description}
+              {t(`${option.key}.description`)}
             </p>
             <ul className="my-7 space-y-3">
               {option.features.map((feature) => (
@@ -97,7 +92,7 @@ export function FreeAndPro() {
                       index ? "text-primary" : "text-muted-foreground",
                     )}
                   />
-                  {feature}
+                  {t(feature)}
                 </li>
               ))}
             </ul>
@@ -108,7 +103,9 @@ export function FreeAndPro() {
                 ? { target: "_blank", rel: "noreferrer noopener" }
                 : {})}
             >
-              {option.label}
+              {option.key === "free"
+                ? t("free.cta")
+                : tHero("explorePro")}
               {index ? (
                 <ArrowUpRight aria-hidden="true" className="size-4" />
               ) : (

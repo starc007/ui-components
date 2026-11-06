@@ -1,109 +1,87 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 import { BouncyAccordion } from "@/components/motion/bouncy-accordion";
+import { Link } from "@/i18n/navigation";
 
-const FAQS = [
-  {
-    id: "free",
-    title: "Is beUI free for commercial projects?",
-    description: (
-      <>
-        Yes. The public beUI library is MIT licensed, including commercial use
-        and modification. Keep the copyright and license notice in copies or
-        substantial portions of the source.{" "}
+const FAQ_IDS = [
+  "free",
+  "install",
+  "stack",
+  "reactNative",
+  "customize",
+  "pro",
+] as const;
+
+const linkClass = "underline underline-offset-4";
+
+const code = (chunks: ReactNode) => (
+  <code className="rounded bg-muted px-1 py-0.5 text-xs">{chunks}</code>
+);
+
+export function LandingFaq() {
+  const t = useTranslations("Landing.faq");
+  const answers: Record<(typeof FAQ_IDS)[number], ReactNode> = {
+    free: t.rich("free.answer", {
+      link: (chunks) => (
         <a
-          className="underline underline-offset-4"
+          className={linkClass}
           href="https://github.com/starc007/ui-components/blob/main/LICENSE"
           target="_blank"
           rel="noreferrer noopener"
         >
-          Read the license
+          {chunks}
         </a>
-        . beUI Pro has a separate paid license.
-      </>
-    ),
-  },
-  {
-    id: "install",
-    title: "How do I install a component?",
-    description: (
-      <>
-        Open a component page and copy its shadcn CLI command, such as{" "}
-        <code className="rounded bg-muted px-1 py-0.5 text-xs">
-          bunx --bun shadcn add @beui/button
-        </code>
-        . You can also use npm, pnpm, or yarn, or copy the source from the
-        Manual tab.
-      </>
-    ),
-  },
-  {
-    id: "stack",
-    title: "What does my project need?",
-    description: (
-      <>
-        The components are built for React 19, Tailwind CSS 4, and Motion.
-        Individual components may use additional dependencies listed on their
-        pages. Start with the{" "}
-        <Link className="underline underline-offset-4" href="/docs/theme">
-          theme setup guide
-        </Link>{" "}
-        to add the shared CSS tokens.
-      </>
-    ),
-  },
-  {
-    id: "react-native",
-    title: "Does beUI work with React Native?",
-    description: (
-      <>
-        Yes. beUI Native brings beUI&apos;s components to Expo and bare React
-        Native apps, built with Reanimated, Gesture Handler, and Uniwind.
-        After the{" "}
-        <Link className="underline underline-offset-4" href="/docs/native-setup">
-          one-time setup
+      ),
+    }),
+    install: t.rich("install.answer", {
+      command: "bunx --bun shadcn add @beui/button",
+      code,
+    }),
+    stack: t.rich("stack.answer", {
+      link: (chunks) => (
+        <Link className={linkClass} href="/docs/theme">
+          {chunks}
         </Link>
-        , add one with{" "}
-        <code className="rounded bg-muted px-1 py-0.5 text-xs">
-          npx beui-native add button
-        </code>
-        . Every{" "}
-        <Link className="underline underline-offset-4" href="/react-native">
-          React Native component
-        </Link>{" "}
-        page has a recording to watch it in motion first.
-      </>
-    ),
-  },
-  {
-    id: "customize",
-    title: "Can I change the design and animations?",
-    description:
-      "Yes. The source lives in your project. You can change the styles, motion, and behavior directly, and use your own theme tokens to match your product.",
-  },
-  {
-    id: "pro",
-    title: "Do I need Pro to use the free components?",
-    description:
-      "No. The public library works independently of Pro. Pro is a separate collection of premium components and animated blocks; the Lifetime plan also includes full templates and animated illustrations.",
-  },
-];
+      ),
+    }),
+    reactNative: t.rich("reactNative.answer", {
+      command: "npx beui-native add button",
+      code,
+      setup: (chunks) => (
+        <Link className={linkClass} href="/docs/native-setup">
+          {chunks}
+        </Link>
+      ),
+      components: (chunks) => (
+        <Link className={linkClass} href="/react-native">
+          {chunks}
+        </Link>
+      ),
+    }),
+    customize: t("customize.answer"),
+    pro: t("pro.answer"),
+  };
+  const items = FAQ_IDS.map((id) => ({
+    id,
+    title: t(`${id}.question`),
+    description: answers[id],
+  }));
 
-export function LandingFaq() {
   return (
     <section
       aria-labelledby="landing-faq"
       className="mx-auto max-w-3xl px-4 pt-20 pb-8 sm:pt-28"
     >
       <div className="mb-10 text-center">
-        <p className="text-sm text-muted-foreground">FAQ</p>
+        <p className="text-sm text-muted-foreground">{t("eyebrow")}</p>
         <h2
           id="landing-faq"
           className="mt-4 font-display text-3xl font-medium tracking-tight md:text-4xl"
         >
-          A few things to know
+          {t("title")}
         </h2>
       </div>
-      <BouncyAccordion items={FAQS} className="w-full" />
+      <BouncyAccordion items={items} className="w-full" />
     </section>
   );
 }

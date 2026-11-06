@@ -130,8 +130,14 @@ export function CrashShell({
         <div className="flex h-8 items-center gap-2 pl-1">
           <HistoryIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" strokeWidth={2} />
           {/* The game changes every frame; these take only what they show, so they skip those renders. */}
-          <CrashHistory history={game.history} reduce={game.reduce} className="min-w-0 flex-1" />
-          <SoundToggle on={game.soundOn} onToggle={game.toggleSound} />
+          <CrashHistory
+            history={game.history}
+            reduce={game.reduce}
+            label={game.text("recentCrashes")}
+            emptyLabel={game.text("recentEmpty")}
+            className="min-w-0 flex-1"
+          />
+          <SoundToggle on={game.soundOn} onToggle={game.toggleSound} label={game.text("sound")} />
         </div>
         {/* A 10:7 stage in every design, so switching between them never
             jumps. A container: its width also fixes its height. */}
@@ -196,7 +202,7 @@ function ResultTicket({
     <>
       <motion.button
         type="button"
-        aria-label="Hide result and show the flight"
+        aria-label={game.text("hideResult")}
         onClick={onClose}
         {...gate}
         className="absolute inset-0 z-20 cursor-default bg-background/55 outline-none backdrop-blur-[2px] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
@@ -208,7 +214,7 @@ function ResultTicket({
       <div inert={gate.inert} className="pointer-events-none absolute inset-0 z-20 grid place-items-center p-4">
         <motion.div
           role="group"
-          aria-label="Round result"
+          aria-label={game.text("result")}
           // Sized here: the ticket is a size container, so it can't take its
           // width from its contents.
           className={cn("w-full max-w-[17rem]", TICKET_SHADOW)}
@@ -238,7 +244,7 @@ function Chunk({ delay, reduce, className, children }: { delay: number; reduce: 
 }
 
 function Ticket({ game, miniature }: { game: CrashGame; miniature?: (props: CrashMiniatureProps) => ReactNode }) {
-  const { cashed, multiplier: crash, roundAuto, reduce, t } = game;
+  const { cashed, multiplier: crash, roundAuto, reduce, t, text } = game;
   const won = cashed !== null;
   return (
     <div
@@ -256,7 +262,7 @@ function Ticket({ game, miniature }: { game: CrashGame; miniature?: (props: Cras
       >
         <Chunk delay={0.05} reduce={reduce}>
           <p className={cn("text-xs font-medium tracking-wide uppercase", won ? PRIMARY_TEXT : "text-rose-700 dark:text-rose-400")}>
-            {won ? "Cashed out" : "Crashed"}
+            {text(won ? "stateCashedOut" : "stateCrashed")}
           </p>
         </Chunk>
         <Chunk delay={0.1} reduce={reduce}>
@@ -283,16 +289,16 @@ function Ticket({ game, miniature }: { game: CrashGame; miniature?: (props: Cras
       <div className="flex items-center gap-4 px-5 pt-4 pb-5">
         <Chunk delay={0.18} reduce={reduce} className="flex-1">
           <dl className="grid gap-1.5 text-xs">
-            <Row label="Crashed at" value={formatMultiplier(crash)} />
-            <Row label="Flight" value={`${t.toFixed(1)}s`} />
+            <Row label={text("crashedAt")} value={formatMultiplier(crash)} />
+            <Row label={text("flight")} value={text("seconds", { seconds: t.toFixed(1) })} />
             {won && game.fair ? (
               // The built-in round reaches m with a chance of 1 in m, as with
               // Mines' odds; a custom crash point makes no such promise.
-              <Row label="Odds beaten" value={`1 in ${formatMultiplier(cashed).slice(0, -1)}`} />
+              <Row label={text("oddsBeaten")} value={text("odds", { odds: formatMultiplier(cashed).slice(0, -1) })} />
             ) : won ? (
-              <Row label="You left at" value={formatMultiplier(cashed)} />
+              <Row label={text("leftAt")} value={formatMultiplier(cashed)} />
             ) : (
-              <Row label="Auto target" value={roundAuto === null ? "Off" : formatShort(roundAuto)} />
+              <Row label={text("autoTarget")} value={roundAuto === null ? text("autoOff") : formatShort(roundAuto)} />
             )}
           </dl>
         </Chunk>
@@ -364,15 +370,23 @@ export const MINI = { width: 88, height: 48 } as const;
 export const MINI_REPLAY = { delay: 0.3, duration: 0.6, ease: EASE_OUT } as const;
 
 /** The sound toggle: a quiet 32px icon button in the card's header. */
-const SoundToggle = memo(function SoundToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+const SoundToggle = memo(function SoundToggle({
+  on,
+  onToggle,
+  label,
+}: {
+  on: boolean;
+  onToggle: () => void;
+  label: string;
+}) {
   return (
     // aria-label names the button; the tooltip shows the same label on hover
     // and focus. Tooltip's asLabel would hydrate differently from the server.
-    <Tooltip content="Sound" side="top">
+    <Tooltip content={label} side="top">
       <Button
         variant="ghost"
         onClick={onToggle}
-        aria-label="Sound"
+        aria-label={label}
         aria-pressed={on}
         pressScale={0.96}
         className={cn("size-8 shrink-0 rounded-xl px-0", on && "text-foreground")}
@@ -398,6 +412,8 @@ function CrashControls({ game, mainRef }: { game: CrashGame; mainRef: Ref<HTMLBu
         options={game.autoOptions}
         onChange={game.setAuto}
         disabled={game.running || game.starting}
+        label={game.text("auto")}
+        offLabel={game.text("autoOff")}
       />
 
       <Button
@@ -439,23 +455,27 @@ const AutoMenu = memo(function AutoMenu({
   options,
   onChange,
   disabled,
+  label,
+  offLabel,
 }: {
   auto: number | null;
   options: number[];
   onChange: (value: string) => void;
   disabled: boolean;
+  label: string;
+  offLabel: string;
 }) {
   return (
     <Select value={auto === null ? "off" : String(auto)} onValueChange={onChange} disabled={disabled} className="w-32 shrink-0">
       <SelectTrigger className="h-10 tabular-nums">
         <span className="flex items-baseline gap-1.5">
-          <span className="text-xs text-muted-foreground">Auto</span>
+          <span className="text-xs text-muted-foreground">{label}</span>
           {/* Options register after mount; the placeholder covers the server render. */}
-          <SelectValue placeholder={auto === null ? "Off" : formatShort(auto)} />
+          <SelectValue placeholder={auto === null ? offLabel : formatShort(auto)} />
         </span>
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="off">Off</SelectItem>
+        <SelectItem value="off">{offLabel}</SelectItem>
         {options.map((step) => (
           <SelectItem key={step} value={String(step)}>
             {formatShort(step)}
@@ -470,15 +490,19 @@ const AutoMenu = memo(function AutoMenu({
 const CrashHistory = memo(function CrashHistory({
   history,
   reduce,
+  label,
+  emptyLabel,
   className,
 }: {
   history: CrashGame["history"];
   reduce: boolean;
+  label: string;
+  emptyLabel: string;
   className?: string;
 }) {
   return (
     <ul
-      aria-label="Recent crashes"
+      aria-label={label}
       className={cn(
         "flex items-center gap-1.5 overflow-hidden [mask-image:linear-gradient(to_right,black_85%,transparent)]",
         className,
@@ -487,7 +511,7 @@ const CrashHistory = memo(function CrashHistory({
       <AnimatePresence initial={false} mode="popLayout">
         {history.length === 0 ? (
           <motion.li key="empty" className="text-xs text-muted-foreground" initial={false} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: EXIT }}>
-            Recent rounds show here
+            {emptyLabel}
           </motion.li>
         ) : (
           history.map((entry) => (
@@ -576,7 +600,7 @@ function CrashStatus({ game, className }: { game: CrashGame; className?: string 
             transition={SWAP}
           >
             <Check aria-hidden="true" className="size-3.5" strokeWidth={2.5} />
-            Cashed out {formatMultiplier(cashed)}
+            {game.text("cashedBadge", { multiplier: formatMultiplier(cashed) })}
           </motion.p>
         ) : (
           <motion.p

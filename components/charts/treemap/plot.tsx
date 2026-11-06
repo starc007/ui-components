@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, LayoutGroup } from "motion/react";
-import { useId, useLayoutEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
+import { type KeyboardEvent, type ReactNode, useId, useLayoutEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useTreemap } from "./context";
 import type { TreemapTile } from "./model";
@@ -16,7 +16,7 @@ export interface TreemapPlotProps {
 }
 
 export function TreemapPlot({ className, tileClassName, renderTile }: TreemapPlotProps) {
-  const { tiles, items, plotRef, setSize, cursor, buttons, setActive, setTooltipOpen } =
+  const { tiles, items, plotRef, setSize, cursor, buttons, setActive, setTooltipOpen, t } =
     useTreemap();
   const layoutId = useId();
   const focusedId = useRef<string | null>(null);
@@ -89,7 +89,7 @@ export function TreemapPlot({ className, tileClassName, renderTile }: TreemapPlo
       <div
         ref={plotRef}
         role="group"
-        aria-label="Treemap tiles"
+        aria-label={t("tiles")}
         tabIndex={-1}
         data-slot="treemap-plot"
         className={cn(
@@ -121,7 +121,7 @@ export function TreemapPlot({ className, tileClassName, renderTile }: TreemapPlo
         </AnimatePresence>
         {!tiles.length ? (
           <p className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            {items.length ? "No positive values" : "No treemap data"}
+            {items.length ? t("noPositive") : t("empty")}
           </p>
         ) : null}
       </div>

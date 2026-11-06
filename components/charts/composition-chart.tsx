@@ -2,12 +2,12 @@
 
 import { cn } from "@/lib/utils";
 import {
+  type CompositionChartProps,
   CompositionContext,
   useCompositionModel,
-  type CompositionChartProps,
 } from "./composition-chart/context";
-import { CompositionChartPlot } from "./composition-chart/plot";
 import { CompositionChartLegend } from "./composition-chart/legend";
+import { CompositionChartPlot } from "./composition-chart/plot";
 
 /** Normalized stacked shares. Zero-total or incomplete periods are shown as gaps. */
 export function CompositionChart({ className, children, ...props }: CompositionChartProps) {
@@ -28,8 +28,12 @@ export function CompositionChart({ className, children, ...props }: CompositionC
   );
 }
 
-export { CompositionChartPlot } from "./composition-chart/plot";
-export { CompositionChartLegend } from "./composition-chart/legend";
-export { useCompositionChart } from "./composition-chart/context";
 export type { CompositionChartProps } from "./composition-chart/context";
+export { useCompositionChart } from "./composition-chart/context";
+export { CompositionChartLegend } from "./composition-chart/legend";
+export {
+  type CompositionChartMessages,
+  compositionChartMessages,
+} from "./composition-chart/messages";
 export type { CompositionSeries as CompositionChartSeries } from "./composition-chart/model";
+export { CompositionChartPlot } from "./composition-chart/plot";

@@ -1,0 +1,696 @@
+{
+  "theme": {
+    "meta": {
+      "title": "Configuration du thème",
+      "description": "Configuration unique du thème pour les composants beUI : installez la couche de tokens shadcn, ou collez le CSS du thème beUI dans votre globals.css.",
+      "ogDescription": "Configuration unique du thème pour les composants beUI : tokens shadcn ou CSS du thème beUI."
+    },
+    "eyebrow": "Configuration",
+    "title": "Configuration du thème",
+    "intro": "Les composants beUI se stylisent avec les tokens sémantiques de shadcn (<code>bg-primary</code>, <code>text-muted-foreground</code>, border, ring). Configurez ces tokens une fois et tous les composants fonctionnent. Deux options :",
+    "option1": {
+      "title": "Option 1 — shadcn init (recommandé)",
+      "body": "Si votre projet utilise shadcn, vous avez déjà ces tokens. Sinon, lancez init une fois ; la commande écrit la couche de tokens dans votre CSS."
+    },
+    "option2": {
+      "title": "Option 2 — coller le CSS du thème",
+      "body": "Vous n’utilisez pas shadcn ? Collez ceci dans votre <code>globals.css</code>, juste sous <code>@import \"tailwindcss\";</code>. Il définit les tokens, les animations et les utilitaires de surface utilisés par les composants. Nécessite Tailwind CSS v4.",
+      "alsoAvailable": "Également disponible sur <link>/theme.css</link>."
+    }
+  },
+  "aiAgents": {
+    "meta": {
+      "title": "Agents IA",
+      "description": "Installez le skill d’agent beUI, connectez le serveur MCP ou utilisez les endpoints adaptés aux agents (llms.txt, registre JSON, code source brut) pour consommer les composants par programmation."
+    },
+    "header": {
+      "eyebrow": "Guide des agents",
+      "title": "Pour les agents IA",
+      "intro": "beUI expose une surface statique adaptée aux agents. Installez le skill beUI, connectez le serveur MCP ci-dessous ou appelez directement les endpoints bruts. Les agents de code (Claude, Codex, Cursor, Amp) peuvent lister les composants, récupérer le code source avec toutes ses dépendances et déposer les fichiers dans le projet de l’utilisateur."
+    },
+    "agentSkill": {
+      "title": "Skill d’agent",
+      "body": "Le skill apprend aux agents de code à récupérer d’abord le registre en ligne, à choisir le slug d’installation <code>items[].name</code> le plus proche, à l’inspecter avec shadcn, puis à installer et composer à partir du code généré. Utilisez-le pour que les agents choisissent des composants beUI existants au lieu d’inventer des widgets animés sur mesure."
+    },
+    "mcpServer": {
+      "title": "Serveur MCP",
+      "body": "Le plus rapide : connectez le serveur MCP beUI et votre agent peut lister, rechercher et installer des composants directement. Hébergé sur <code>{url}</code>.",
+      "manual": "Pour tout autre client : ajoutez-le manuellement à votre configuration MCP.",
+      "toolsWithNative": "Outils : <code>list_components</code>, <code>search_components</code>, <code>get_component</code>, <code>get_install_command</code>. Pour les apps React Native, <code>list_native_components</code> et <code>get_native_component</code> renvoient les composants beUI Native avec tous les fichiers à copier."
+    },
+    "endpoints": {
+      "title": "Endpoints",
+      "open": "Ouvrir",
+      "llmsTxt": {
+        "label": "llms.txt",
+        "desc": "Index Markdown au format llmstxt.org."
+      },
+      "registryIndex": {
+        "label": "Index du registre",
+        "desc": "Catalogue JSON de tous les composants."
+      },
+      "componentDetail": {
+        "label": "Détail d’un composant",
+        "desc": "JSON avec fichiers, dépendances et code source."
+      },
+      "shadcnCatalog": {
+        "label": "Catalogue shadcn",
+        "desc": "Catalogue de registre compatible avec l’annuaire."
+      },
+      "shadcnItem": {
+        "label": "Item shadcn",
+        "desc": "Item d’installation avec le contenu des fichiers intégré et les classes de couleur sémantiques de shadcn."
+      },
+      "rawSource": {
+        "label": "Code source brut",
+        "desc": "Fichier .tsx en texte brut, prêt à déposer."
+      }
+    },
+    "agentFlow": {
+      "title": "Flux agent",
+      "body": "Quatre appels, puis l’installation. Les composants sont autonomes et possèdent leurs propres fichiers."
+    },
+    "shadcnFlow": {
+      "title": "Flux shadcn",
+      "body": "L’item shadcn installe les fichiers source et les dépendances de paquets. Les composants utilisent directement les utilitaires de couleur sémantiques de shadcn : ils héritent donc du thème de l’app cible sans variables de couleur propres à beUI."
+    },
+    "entryShape": {
+      "title": "Format des entrées",
+      "body": "Les helpers internes (p. ex. <code>@/lib/utils</code>) sont livrés en ligne avec <code>type: util</code>, pour que l’agent n’ait pas à suivre les imports."
+    },
+    "generativeUi": {
+      "title": "UI générative",
+      "body": "Vous voulez que le modèle compose ces composants en une interface vivante ? Suivez le <link>guide d’intégration OpenUI</link> pour enregistrer une bibliothèque de composants personnalisée, générer son prompt système et afficher l’OpenUI Lang interactif au fil du streaming."
+    }
+  },
+  "openui": {
+    "meta": {
+      "title": "Guide d’intégration OpenUI",
+      "description": "Créez une intégration OpenUI React avec beUI. Enregistrez des composants animés, générez le prompt système, streamez l’OpenUI Lang et affichez une UI interactive.",
+      "imageAlt": "Utiliser beUI avec OpenUI"
+    },
+    "breadcrumb": {
+      "home": "Accueil",
+      "page": "Intégration OpenUI"
+    },
+    "about": {
+      "integration": "Intégration OpenUI React",
+      "library": "Bibliothèque de composants OpenUI personnalisée",
+      "generativeUi": "UI générative"
+    },
+    "header": {
+      "eyebrow": "Guide d’intégration",
+      "title": "Utiliser beUI avec OpenUI",
+      "intro": "<link>OpenUI</link> est un framework d’UI générative : au lieu de renvoyer du Markdown, le modèle émet un arbre d’UI abstrait (OpenUI Lang) et un runtime React associe chaque nœud à un composant que <em>vous</em> enregistrez. Cette intégration OpenUI React fait de beUI une bibliothèque de composants OpenUI personnalisée : chaque réponse générée utilise de vrais composants animés, et uniquement ceux que vous autorisez."
+    },
+    "install": {
+      "title": "Installation",
+      "body": "Il vous faut le runtime React d’OpenUI et les composants beUI que vous voulez exposer. Récupérez le code beUI avec le registre shadcn (voir le guide <link>Agents IA</link> pour les autres méthodes d’installation).",
+      "scaffold": "Vous partez de zéro ? Lancez <code>{command}</code> pour obtenir une app de streaming fonctionnelle, puis remplacez sa bibliothèque par défaut par celle de beUI ci-dessous."
+    },
+    "registerComponents": {
+      "title": "Enregistrer les composants",
+      "body": "<code>defineComponent</code> associe un nœud OpenUI Lang à un composant beUI. Le schéma Zod <code>props</code> valide la sortie du modèle pendant le streaming, la <code>description</code> est injectée dans le prompt système pour que le modèle comprenne le rôle de chaque composant, et <code>useTriggerAction</code> garde les contrôles affichés interactifs. Décrivez les enfants d’un conteneur comme une union des schémas <code>.ref</code> enregistrés : l’imbrication est ainsi à la fois validée et annoncée au modèle."
+    },
+    "assembleLibrary": {
+      "title": "Assembler la bibliothèque",
+      "body": "<code>createLibrary</code> rassemble les définitions, nomme le nœud <code>root</code> et organise le prompt en <code>componentGroups</code>, avec des notes qui orientent la façon dont le modèle utilise chacun d’eux."
+    },
+    "generatePrompt": {
+      "title": "Générer le prompt",
+      "body": "Le client affiche l’OpenUI Lang, mais c’est le modèle qui doit le produire. Dans la CLI, lancez <code>{command}</code> pour générer la spec de la bibliothèque. Le backend combine les signatures, descriptions et contraintes d’imbrication des composants avec la grammaire OpenUI Lang, puis streame la réponse du modèle vers le navigateur.",
+      "note": "Relancez cette commande quand la bibliothèque change. Elle sérialise la bibliothèque en JSON au build, et la route importe ce fichier généré via le même chemin <code>@/lib/generated</code> : le bundle serveur n’importe donc jamais vos composants client."
+    },
+    "renderStream": {
+      "title": "Afficher le flux",
+      "body": "Passez la bibliothèque à <code>{renderer}</code> côté client. Il parse l’OpenUI Lang streamé par votre serveur et affiche les composants beUI progressivement, à mesure que les tokens arrivent. Branchez <code>onAction</code> pour renvoyer au modèle le message du bouton cliqué et poursuivre la boucle."
+    },
+    "whyBeui": {
+      "title": "Pourquoi beUI convient",
+      "body": "Les composants beUI possèdent leurs propres fichiers et sont distribués via le registre : aucun runtime à greffer, la bibliothèque ci-dessus <em>est</em> l’intégration. Ils utilisent des contrôles sémantiques et les tokens shadcn, donc les UI générées par le modèle héritent du thème de l’app hôte sans configuration supplémentaire."
+    },
+    "resources": {
+      "title": "Ressources",
+      "open": "Ouvrir",
+      "openui": {
+        "label": "OpenUI",
+        "desc": "Le framework d’UI générative et son OpenUI Lang."
+      },
+      "definingComponents": {
+        "label": "Définir des composants",
+        "desc": "Référence complète de defineComponent / createLibrary."
+      },
+      "shadcnChat": {
+        "label": "Exemple de chat shadcn",
+        "desc": "Le modèle de bibliothèque de registre suivi par ce guide."
+      },
+      "more": "Les autres frameworks d’UI générative qui consomment des registres shadcn peuvent récupérer beUI de la même façon — d’autres guides d’intégration arrivent."
+    }
+  },
+  "motionPatterns": {
+    "meta": {
+      "title": "Guides d’animation",
+      "description": "Conseils pratiques d’animation pour les interfaces React : quand animer, quel token beUI utiliser, plages de durée, mouvement réduit et modèles prêts à copier.",
+      "ogDescription": "Conseils pratiques pour une animation utile, le timing, les courbes d’easing, les ressorts et un mouvement accessible dans les interfaces React."
+    },
+    "header": {
+      "eyebrow": "Guide d’animation",
+      "title": "Une animation qui explique, pas qui distrait",
+      "intro": "Un guide pratique pour décider quand un élément doit bouger, choisir le bon token et livrer des animations rapides, cohérentes et accessibles."
+    },
+    "sections": {
+      "decisionFramework": {
+        "eyebrow": "Cadre de décision",
+        "title": "Quatre questions avant d’animer",
+        "description": "La meilleure décision d’animation se prend souvent avant de toucher à une durée ou à un ressort."
+      },
+      "motionTokens": {
+        "eyebrow": "Tokens d’animation",
+        "title": "Un seul langage partout",
+        "description": "beUI regroupe les animations intentionnelles dans des tokens partagés. Choisissez selon l’intention : les composants paraissent liés sans bouger tous de la même façon."
+      },
+      "timing": {
+        "eyebrow": "Timing",
+        "title": "Assez rapide pour paraître immédiat",
+        "description": "La durée dépend de la taille, de la distance et de la fréquence. Ces plages sont des points de départ, pas des cibles à atteindre mécaniquement."
+      },
+      "recipes": {
+        "eyebrow": "Recettes",
+        "title": "Des modèles à copier",
+        "description": "Chaque recette relie une intention à un token de production, à un état en mouvement réduit et à un écueil concret."
+      },
+      "accessibility": {
+        "eyebrow": "Accessibilité",
+        "title": "Le mouvement réduit est un état conçu",
+        "description": "Ne supprimez pas toutes les transitions. Gardez les retours qui aident à comprendre et retirez les mouvements qui peuvent gêner."
+      }
+    },
+    "decisions": {
+      "frequency": {
+        "title": "Vérifier la fréquence",
+        "body": "Les actions répétées doivent paraître quasi instantanées. Réservez les animations expressives aux moments que l’utilisateur voit rarement.",
+        "note": "100 fois par jour : aucune chorégraphie. Moments rares : plus de fantaisie permise."
+      },
+      "purpose": {
+        "title": "Nommer l’intention",
+        "body": "Une animation doit expliquer l’espace, confirmer une saisie, montrer un état ou adoucir un changement. La décoration seule ne suffit pas.",
+        "note": "Si vous ne pouvez pas expliquer pourquoi ça bouge, supprimez le mouvement."
+      },
+      "physics": {
+        "title": "Choisir la physique",
+        "body": "Utilisez ease-out pour les entrées, ease-in-out pour les déplacements, linear pour la progression et des ressorts pour les gestes.",
+        "note": "La courbe doit correspondre à ce que fait l’objet, pas à vos goûts personnels."
+      },
+      "fallback": {
+        "title": "Concevoir l’alternative",
+        "body": "Le mouvement réduit conserve les retours utiles d’opacité et de couleur, et retire les déplacements, les changements d’échelle et la parallaxe.",
+        "note": "L’accessibilité est un état de l’animation, pas une réflexion après coup."
+      }
+    },
+    "timing": {
+      "interaction": "Interaction",
+      "range": "Plage",
+      "desiredFeel": "Ressenti visé",
+      "note": "Moins de 300 ms est la règle par défaut pour les animations d’interface. Les animations plus longues sont réservées aux démos explicatives, aux gestes délibérés et aux grands changements spatiaux.",
+      "rows": {
+        "press": {
+          "use": "Retour à la pression",
+          "range": "100–160 ms",
+          "feel": "Immédiat et physique"
+        },
+        "tooltip": {
+          "use": "Infobulle / popover",
+          "range": "125–200 ms",
+          "feel": "Rapide, ancré à son origine"
+        },
+        "dropdown": {
+          "use": "Menu déroulant / select",
+          "range": "150–250 ms",
+          "feel": "Réactif, sans attente"
+        },
+        "modal": {
+          "use": "Modale / tiroir",
+          "range": "200–500 ms",
+          "feel": "Le temps d’expliquer l’espace"
+        },
+        "marketing": {
+          "use": "Démo marketing",
+          "range": "Variable",
+          "feel": "La clarté prime sur la vitesse"
+        }
+      }
+    },
+    "easing": {
+      "title": "Comparer les courbes",
+      "subtitle": "Même distance, même durée. Des rôles différents.",
+      "easeOut": "Les entrées et sorties réagissent immédiatement, puis se posent en douceur.",
+      "easeInOut": "Les objets déjà à l’écran accélèrent et ralentissent naturellement.",
+      "springPress": "Retour rapide et lesté pour les boutons et autres surfaces pressables.",
+      "springLayout": "Surfaces partagées et indicateurs qui ont besoin d’un déplacement spatial continu."
+    },
+    "recipes": {
+      "purpose": "Intention",
+      "avoid": "À éviter",
+      "viewRecipe": "Voir la recette",
+      "press": {
+        "title": "Retour à la pression",
+        "eyebrow": "Retour",
+        "description": "Une pression doit accuser réception avant la fin de l’action. Gardez une échelle faible et une réponse immédiate.",
+        "purpose": "Confirme que l’interface a bien reçu l’action de l’utilisateur.",
+        "avoid": "De grands changements d’échelle, des rebonds lents ou un ressort sur chaque enfant."
+      },
+      "icon": {
+        "title": "Animation d’icône sémantique",
+        "eyebrow": "Sens",
+        "description": "Laissez l’icône imiter son action réelle. Une cloche oscille depuis son attache ; une flèche de téléchargement descend vers son bac.",
+        "purpose": "Renforce ce que fait l’action sans ajouter de libellé.",
+        "avoid": "Le même rebond générique sur chaque icône, ou une animation au survol sur écran tactile."
+      },
+      "reveal": {
+        "title": "Révélation de contenu",
+        "eyebrow": "Entrée",
+        "description": "Révélez une seule surface pertinente avec une légère élévation et un flou mesuré. L’animation doit se terminer avant de capter l’attention.",
+        "purpose": "Évite que le nouveau contenu apparaisse comme une coupure visuelle brutale.",
+        "avoid": "Des entrées d’UI d’une demi-seconde ou un long décalage sur chaque petit enfant."
+      },
+      "layout": {
+        "title": "Continuité du layout",
+        "eyebrow": "Déplacement",
+        "description": "Gardez la même surface visible pendant que son emprise change. Déplacez d’abord la forme, puis faites apparaître son libellé.",
+        "purpose": "Préserve l’identité de l’objet pendant qu’un contrôle compact s’agrandit.",
+        "avoid": "Des interpolations directes de largeur, ou un texte qui apparaît avant que la surface ait fait de la place."
+      },
+      "swap": {
+        "title": "Échange de contenu",
+        "eyebrow": "Changement d’état",
+        "description": "Pour les petits changements de vue, faites sortir l’ancien contenu plus vite que le nouveau n’arrive. Limitez le déplacement à quelques pixels.",
+        "purpose": "Montre que le contenu a changé tandis que le contexte autour est resté en place.",
+        "avoid": "De grandes transitions façon changement de page pour des onglets, des filtres ou des vues souvent modifiées."
+      }
+    },
+    "accessibility": {
+      "title": "Garder le sens. Retirer le déplacement.",
+      "body": "Conservez l’opacité, la couleur et les changements d’état instantanés. Supprimez la parallaxe, les grandes transformations, les changements d’échelle répétés et le dépassement des ressorts."
+    },
+    "demos": {
+      "replay": "Rejouer",
+      "pressMe": "Appuyez",
+      "hoverBell": "Survolez la cloche",
+      "newSurface": "Nouvelle surface",
+      "readyBeforeFocus": "Prêt avant le focus.",
+      "expandPanel": "Déplier le panneau",
+      "collapsePanel": "Replier le panneau",
+      "openPanel": "Ouvrir le panneau",
+      "exampleViews": "Vues d’exemple",
+      "preview": "Aperçu",
+      "code": "Code",
+      "livePreview": "Aperçu du composant en direct",
+      "copyReadySource": "Code prêt à copier"
+    }
+  },
+  "sponsors": {
+    "meta": {
+      "title": "Sponsors",
+      "description": "Soutenez le développement de beUI avec des paliers de sponsoring mensuels via Dodo Payments, GitHub Sponsors ou en crypto."
+    },
+    "checkout": {
+      "title": "Paiement du sponsoring confirmé",
+      "body": "Merci de sponsoriser beUI. Je reviens vers vous pour les fichiers de logo et les détails d’emplacement."
+    },
+    "hero": {
+      "eyebrow": "Sponsors",
+      "title": "Soutenir beUI",
+      "body": "beUI est gratuit et open source. Sponsorisez un palier mensuel pour toucher des développeurs qui parcourent activement des composants animés, des blocs et des installations depuis le registre.",
+      "githubCta": "Sponsoriser sur GitHub"
+    },
+    "planCard": {
+      "highestImpact": "Impact maximal",
+      "perMonth": "/mois",
+      "sponsorAs": "Sponsoriser en {name}",
+      "requestLink": "Demander un lien de paiement",
+      "full": "Complet"
+    },
+    "plans": {
+      "diamond": {
+        "name": "Diamond",
+        "description": "Visibilité maximale pour les équipes qui veulent leur logo à l’emplacement sponsor le plus visible.",
+        "benefits": {
+          "sponsorsPage": "Logo le plus grand sur la page des sponsors",
+          "docsSidebar": "Logo le plus grand dans la barre latérale de la documentation",
+          "readme": "Logo le plus grand dans le README",
+          "shoutout": "Mention sur X après le sponsoring",
+          "priorityFeedback": "Canal prioritaire pour vos demandes",
+          "homePage": "Logo sur la page d’accueil, juste sous le hero"
+        }
+      },
+      "platinum": {
+        "name": "Platinum",
+        "description": "Un emplacement de premier plan pour les équipes produit qui soutiennent une UI open source soignée.",
+        "benefits": {
+          "sponsorsPage": "Logo plus grand sur la page des sponsors",
+          "docsSidebar": "Grand logo dans la barre latérale de la documentation",
+          "readme": "Logo plus grand dans le README",
+          "shoutout": "Mention sur X après le sponsoring"
+        }
+      },
+      "silver": {
+        "name": "Silver",
+        "description": "Une façon simple de soutenir le développement continu des composants et d’apparaître publiquement.",
+        "benefits": {
+          "sponsorsPage": "Logo sur la page des sponsors",
+          "docsSidebar": "Logo dans la barre latérale de la documentation",
+          "readme": "Logo dans le README",
+          "publicListing": "Mention publique comme sponsor"
+        }
+      }
+    },
+    "crypto": "Crypto",
+    "sponsorTaglines": {
+      "tracwell": "Transformez les insights visiteurs en croissance",
+      "illos": "Illustrations animées pour sites produit"
+    },
+    "slotsOpen": "{open} sur {slots} disponibles",
+    "allSlotsTaken": "Tous les emplacements sont pris",
+    "plansLabel": "Offres de sponsoring",
+    "audience": {
+      "title": "Audience",
+      "updated": "Statistiques par Tracwell, mises à jour le {date}",
+      "lastDays": "{days} derniers jours",
+      "visitors": "Visiteurs",
+      "pageViews": "Pages vues",
+      "moreThan": "Plus de {value}"
+    },
+    "openSlot": {
+      "title": "Votre logo ici",
+      "price": "{tier} · {price}/mois",
+      "viewPlan": "Voir l’offre"
+    }
+  },
+  "playground": {
+    "meta": {
+      "title": "Playground",
+      "description": "Ajustez les propriétés de ressort, d’interpolation et de décalage, regardez le résultat et copiez le code d’animation. Basé sur les tokens d’animation de beUI."
+    },
+    "header": {
+      "title": "Playground",
+      "body": "Apprenez l’animation en jouant. Modifiez une propriété, regardez-la s’exécuter, lisez ce que fait le code ligne par ligne, puis copiez-le."
+    },
+    "howItWorks": "Fonctionnement",
+    "try": "Essayer",
+    "soon": "Bientôt",
+    "preview": "Aperçu",
+    "replay": "Rejouer",
+    "controls": {
+      "checkpoint": "Point de passage {index}",
+      "checkpointStart": "Point de passage {index} (début)",
+      "checkpointEnd": "Point de passage {index} (fin)",
+      "removeCheckpoint": "Supprimer le point de passage {index}",
+      "addCheckpoint": "Ajouter un point de passage",
+      "curveEditor": "Éditeur de courbe d’easing"
+    },
+    "travel": {
+      "start": "départ",
+      "target": "cible"
+    },
+    "spring": {
+      "label": "Ressort",
+      "blurb": "Animation basée sur la physique. La raideur tire vers la cible, l’amortissement résiste, la masse ajoute du poids. Moins d’amortissement = dépassement.",
+      "controls": {
+        "stiffness": {
+          "label": "Raideur",
+          "hint": "Force d’attraction vers la cible. Plus haut = plus rapide, plus vif."
+        },
+        "damping": {
+          "label": "Amortissement",
+          "hint": "Résistance / friction. Plus bas = plus de rebond et de dépassement."
+        },
+        "mass": {
+          "label": "Masse",
+          "hint": "Poids de l’objet. Plus lourd = plus lent, plus pataud."
+        }
+      },
+      "presets": {
+        "gentle": "Doux",
+        "wobbly": "Élastique",
+        "stiff": "Raide",
+        "slow": "Lent"
+      },
+      "explain": {
+        "type": "Pas de durée ici. Au lieu de prendre un temps fixe, la boîte est tirée vers la cible comme par un vrai ressort. Les trois valeurs ci-dessous déterminent le ressenti.",
+        "stiffness": "La force avec laquelle le ressort tire. {value}, c’est {level, select, soft {souple : le mouvement est lent} medium {moyen} other {fort : il claque rapidement}}. Plus haut = plus rapide, plus pressant.",
+        "damping": "La friction qui ralentit le ressort. {level, select, low {{value}, c’est faible : la boîte dépasse la cible et rebondit avant de se poser.} medium {{value} donne un léger dépassement, puis se pose.} other {{value}, c’est élevé : elle arrive en douceur, sans rebond.}}",
+        "mass": "Le poids de la boîte. {level, select, light {{value}, c’est léger : elle réagit vite.} heavy {{value}, c’est lourd : elle paraît pataude et lente à démarrer.} other {{value}, c’est un poids moyen.}} Plus lourd = plus lent, plus d’inertie."
+      }
+    },
+    "tween": {
+      "label": "Interpolation / Easing",
+      "blurb": "Animation basée sur le temps. La durée fixe le temps total ; la courbe cubic-bezier fixe le rythme. Faites glisser les poignées pour la façonner.",
+      "controls": {
+        "duration": {
+          "label": "Durée",
+          "hint": "Temps que prend l’animation, du début à la fin."
+        },
+        "curve": {
+          "label": "Courbe d’easing",
+          "hint": "Rythme dans le temps. Faites glisser les poignées — pente forte = rapide, plate = lent."
+        }
+      },
+      "curves": {
+        "linear": "Vitesse constante du début à la fin. Mécanique, sans accélération.",
+        "easeIn": "Démarre lentement, accélère vers la fin. Idéal pour ce qui sort.",
+        "easeOut": "Démarre vite, ralentit vers la fin. Idéal pour ce qui arrive.",
+        "easeInOut": "Début et fin lents, rapide au milieu. Fluide et naturel.",
+        "customTitle": "personnalisée",
+        "custom": "Votre propre rythme. Les parties les plus pentues de la courbe vont plus vite."
+      },
+      "explain": {
+        "duration": "Un temps fixe, en secondes. Le mouvement prend toujours {value} s, quelle que soit la distance. (Les ressorts n’en ont pas — les interpolations, si.)",
+        "ease": "La courbe d’easing, écrite sous forme de cubic-bezier. Les quatre valeurs sont deux poignées de contrôle (x1, y1, x2, y2) qui modulent l’évolution de la vitesse dans le temps. On les tape rarement à la main — faites plutôt glisser les poignées de la courbe.",
+        "curve": "Cette courbe se lit comme « {title} » : {text} Les points de l’aperçu montrent la position de la boîte à intervalles de temps égaux : leur espacement indique la vitesse."
+      }
+    },
+    "stagger": {
+      "label": "Décalage",
+      "blurb": "Les enfants s’animent les uns après les autres. Le décalage fixe l’écart entre chacun ; le délai retient tout le groupe avant son départ.",
+      "controls": {
+        "count": {
+          "label": "Enfants",
+          "hint": "Nombre d’éléments qui s’animent."
+        },
+        "stagger": {
+          "label": "Décalage",
+          "hint": "Écart entre le départ de chaque enfant. Plus haut = effet de vague plus marqué."
+        },
+        "delayChildren": {
+          "label": "Délai",
+          "hint": "Pause avant le départ de tout le groupe."
+        },
+        "direction": {
+          "label": "Direction",
+          "hint": "Ordre de déclenchement des enfants.",
+          "forward": "Avant",
+          "reverse": "Inverse"
+        }
+      },
+      "presets": {
+        "tight": "Serré",
+        "relaxed": "Détendu",
+        "dramatic": "Spectaculaire"
+      },
+      "explain": {
+        "variants": "Deux états nommés. « hidden » est le départ (invisible, petit, légèrement abaissé), « show » est l’arrivée. Chaque enfant s’anime de hidden à show — vous décrivez des états, pas des étapes.",
+        "staggerChildren": "L’écart entre le départ de chaque enfant, en secondes. Ils ne partent pas tous en même temps — l’enfant 2 attend {value} s après l’enfant 1, et ainsi de suite, ce qui crée la vague.",
+        "delayChildren": "Le temps d’attente de tout le groupe avant le départ du premier enfant. {immediate, select, yes {0 = départ immédiat.} other {Ici, {value} s de temps mort au début.}}",
+        "summaryCode": "{count} éléments, {direction, select, reverse {sens inverse} other {sens normal}}",
+        "summary": "Avec {count} enfants espacés de {stagger} s{delayed, select, yes { après un délai de {delay} s} other {}}, le dernier démarre à {last} s. {direction, select, reverse {En sens inverse, le dernier enfant part en premier.} other {En sens normal, ils partent du premier au dernier.}}"
+      }
+    },
+    "keyframes": {
+      "label": "Keyframes",
+      "blurb": "Une propriété passe par une liste de valeurs dans l’ordre, réparties uniformément sur la durée. Modifiez la liste pour changer le trajet.",
+      "controls": {
+        "property": {
+          "label": "Propriété",
+          "hint": "La propriété pilotée par les keyframes. En changer réinitialise les valeurs."
+        },
+        "frames": {
+          "label": "Valeurs des keyframes",
+          "hint": "Chaque curseur est un point de passage que la boîte traverse, dans l’ordre. Faites-en glisser un, ou ajoutez/supprimez des points de passage."
+        },
+        "duration": {
+          "label": "Durée",
+          "hint": "Temps d’un passage complet par toutes les valeurs."
+        },
+        "repeat": {
+          "label": "Répétition",
+          "hint": "Une fois, en boucle depuis le début, ou en miroir dans les deux sens.",
+          "once": "Une fois",
+          "loop": "Boucle",
+          "mirror": "Miroir"
+        }
+      },
+      "presets": {
+        "pulse": "Pulsation",
+        "spin": "Rotation",
+        "blink": "Clignotement"
+      },
+      "describe": {
+        "scale": "{percent} % de la taille{trend, select, bigger {, plus grand} smaller {, plus petit} other {, normal}}",
+        "opacity": "{percent} % visible{state, select, invisible {, invisible} solid {, opaque} other {}}",
+        "rotate": "pivoté de {value}°{upright, select, yes {, droit} other {}}",
+        "x": "{value} px {side, select, right {à droite du} left {à gauche du} other {au}} départ"
+      },
+      "read": {
+        "scale": "{value} ({percent} % de la taille{trend, select, bigger {, plus grand} smaller {, plus petit} other {, normal}})",
+        "opacity": "{value} ({percent} % visible)"
+      },
+      "explain": {
+        "sequence": "Ce tableau est une liste de valeurs que la boîte traverse, dans l’ordre : {sequence}. Ce n’est pas « de A à B » — chaque valeur est un point de passage.",
+        "countCode": "{count} keyframes sur {duration} s",
+        "spacing": "Les valeurs sont réparties uniformément sur la durée. {count} valeurs sur {duration} s : chaque segment dure environ {leg} s. Ajoutez ou supprimez des valeurs pour changer le trajet.",
+        "loop": "Boucle : arrivée à la dernière valeur, elle revient à la première et recommence — d’où un possible à-coup à la jonction.",
+        "mirror": "Miroir : l’animation va vers l’avant, puis vers l’arrière, puis à nouveau vers l’avant — fluide, sans à-coup, comme une pulsation.",
+        "once": "Une fois : elle s’exécute une seule fois et s’arrête sur la dernière valeur."
+      }
+    },
+    "gestures": {
+      "label": "Gestes",
+      "blurb": "Motion réagit aux interactions du pointeur. whileHover et whileTap animent vers un état pendant le geste ; drag rend un élément lançable.",
+      "box": "glisser",
+      "controls": {
+        "hover": {
+          "label": "Échelle au survol",
+          "hint": "Taille quand le pointeur est dessus."
+        },
+        "tap": {
+          "label": "Échelle à l’appui",
+          "hint": "Taille pendant l’appui. Moins de 1 = effet enfoncé."
+        },
+        "drag": {
+          "label": "Glisser",
+          "hint": "Limiter le glisser à un axe, le laisser libre ou le désactiver.",
+          "off": "Désactivé",
+          "x": "X seulement",
+          "y": "Y seulement",
+          "free": "Libre"
+        }
+      },
+      "presets": {
+        "subtle": "Subtil",
+        "pop": "Pop"
+      },
+      "explain": {
+        "hover": "Quand le pointeur survole la boîte, elle s’anime à {value}× sa taille ({percent} %). Elle revient à la normale avec un ressort quand le pointeur s’en va — sans état ni gestionnaire.",
+        "tap": "Pendant l’appui, elle passe à {value}× sa taille. {pressIn, select, yes {Moins de 1 = effet enfoncé, le ressenti tactile d’un vrai bouton.} other {À 1, elle ne bouge pas à l’appui.}}",
+        "dragOff": "Le glisser est désactivé.",
+        "drag": "Rend la boîte déplaçable{mode, select, free { dans toutes les directions} other { sur l’axe {mode} uniquement}}. dragConstraints la garde dans son parent, et elle revient avec un ressort si on la lance au-delà du bord."
+      }
+    },
+    "layout": {
+      "label": "Layout",
+      "blurb": "Un layoutId partagé transforme un élément en un autre quand celui qui est monté change : un indicateur glisse d’une position à l’autre au lieu de sauter.",
+      "tab": "Onglet {index}",
+      "clickTab": "cliquez sur un onglet",
+      "controls": {
+        "feel": {
+          "label": "Ressenti",
+          "hint": "La transition avec laquelle la pilule se déplace.",
+          "snappy": "Vif",
+          "smooth": "Fluide",
+          "slow": "Lent"
+        }
+      },
+      "explain": {
+        "layoutId": "L’idée clé. Une seule pilule est rendue — sous l’onglet actif. Quand vous cliquez sur un autre onglet, React la démonte ici et la monte là, mais le layoutId partagé indique à Motion qu’il s’agit du même élément : il anime donc entre les deux positions au lieu de la faire apparaître d’un coup.",
+        "conditional": "La pilule n’existe que dans l’onglet actif. Vous ne calculez aucune position ni aucun décalage vous-même — Motion mesure l’ancien et le nouvel emplacement et interpole l’écart automatiquement.",
+        "transitionCode": "transition ({feel})",
+        "transition": "Contrôle la façon dont la pilule se déplace. {feel, select, Slow {Une interpolation temporelle — même durée à chaque déplacement.} Snappy {Un ressort — raide, donc il claque rapidement.} other {Un ressort — plus souple, donc il glisse.}}"
+      }
+    },
+    "scroll": {
+      "label": "Défilement",
+      "blurb": "Une animation liée au défilement associe une valeur à la position de défilement. useScroll renvoie une progression de 0→1 ; useTransform reporte cette plage sur une transformation.",
+      "scrollDown": "faites défiler ↓",
+      "controls": {
+        "effect": {
+          "label": "Effet",
+          "hint": "Ce que fait la boîte quand le panneau défile.",
+          "fade": "Fondu",
+          "scale": "Échelle",
+          "slide": "Glissement",
+          "rotate": "Rotation"
+        }
+      },
+      "range": {
+        "fadeStart": "15 % visible",
+        "fadeEnd": "entièrement visible",
+        "scaleStart": "60 % de la taille",
+        "scaleEnd": "taille réelle",
+        "slideStart": "70 px à gauche",
+        "slideEnd": "en place",
+        "rotateStart": "0°",
+        "rotateEnd": "180°"
+      },
+      "explain": {
+        "useScroll": "Surveille la position de défilement du panneau et renvoie scrollYProgress : une valeur de 0 (en haut) à 1 (en bas). Elle se met à jour à chaque frame de défilement.",
+        "useTransform": "Reporte cette progression 0→1 sur une plage de valeurs réelle. Quand la progression va de 0 à 1, {prop} parcourt {range} — en haut, c’est {start}, en bas, {end}.",
+        "style": "La valeur obtenue est une motion value vivante branchée directement sur le style de la boîte : elle suit exactement votre défilement — remontez et elle s’inverse."
+      }
+    },
+    "motionTypes": "Types d’animation"
+  },
+  "nativeSetup": {
+    "meta": {
+      "title": "Configurer beUI Native dans votre app React Native",
+      "description": "Configuration initiale de beUI Native : installez Reanimated, Gesture Handler et Uniwind, configurez Metro, ajoutez les tokens de thème, puis copiez n’importe quel composant.",
+      "imageAlt": "Configurer beUI Native"
+    },
+    "breadcrumb": {
+      "home": "Accueil",
+      "page": "Configuration React Native"
+    },
+    "header": {
+      "eyebrow": "React Native",
+      "title": "Configurer beUI Native",
+      "intro": "Les composants beUI Native sont du code source brut que vous copiez dans votre app, comme les composants web. Effectuez la configuration ci-dessous une fois par app. Ensuite, ajouter un composant revient à copier ses fichiers depuis sa page. Cela fonctionne avec Expo et avec React Native bare."
+    },
+    "requirements": {
+      "title": "Prérequis",
+      "body": "Les composants sont développés et testés avec ces versions."
+    },
+    "install": {
+      "title": "1. Installer les bibliothèques",
+      "body": "Dans une app Expo, <code>expo install</code> choisit les versions compatibles avec votre SDK. Uniwind et Tailwind viennent de npm.",
+      "babelNote": "Le preset Babel d’Expo inclut déjà le plugin Worklets dont Reanimated 4 a besoin. Dans une app React Native bare, ajoutez-le vous-même à <code>babel.config.js</code> :"
+    },
+    "uniwind": {
+      "title": "2. Configurer Uniwind",
+      "body": "Les composants sont stylés avec des classes Tailwind via <link>Uniwind</link>. Créez <code>global.css</code> à la racine du projet. Il charge Tailwind, Uniwind et le thème beUI que vous ajoutez à l’étape suivante.",
+      "metro": "Faites ensuite pointer Metro dessus. <code>withUniwindConfig</code> doit être le wrapper le plus externe si vous utilisez d’autres wrappers Metro, et <code>cssEntryFile</code> doit être un chemin relatif.",
+      "bareNote": "Dans une app React Native bare, la configuration par défaut vient plutôt de <code>@react-native/metro-config</code> :",
+      "typesNote": "Uniwind écrit les types des classes dans <code>dtsFile</code> au démarrage de Metro : lancez-le donc une fois avant de vérifier les types. Si TypeScript ne trouve toujours pas l’import de <code>global.css</code>, déclarez les fichiers CSS :"
+    },
+    "theme": {
+      "title": "3. Ajouter les tokens de thème",
+      "body": "Les composants utilisent des couleurs sémantiques comme <code>bg-primary</code> et <code>text-muted</code>, définies pour les modes clair et sombre, afin de suivre l’apparence du système. Enregistrez ce fichier sous <code>{path}</code>, le chemin importé par <code>global.css</code>, et adaptez les valeurs à votre marque."
+    },
+    "root": {
+      "title": "4. Envelopper votre app",
+      "body": "Importez <code>global.css</code> depuis votre composant racine, et non depuis le fichier qui enregistre l’app, sinon chaque changement de style recharge toute l’app. Enveloppez l’app dans <code>GestureHandlerRootView</code> pour que les composants à balayer et déplaçables reçoivent les gestes. Avec Expo Router, les deux vont dans le layout racine :",
+      "bareNote": "Dans une app bare, faites de même dans <code>App.tsx</code>. Pour les formulaires, enveloppez aussi l’app dans <code>KeyboardProvider</code> de <link>react-native-keyboard-controller</link> pour garder les champs actifs au-dessus du clavier."
+    },
+    "addComponent": {
+      "title": "5. Ajouter un composant",
+      "cli": "Lancez la CLI beUI Native depuis la racine de votre app. Elle copie le composant et les fichiers partagés dont il a besoin dans <code>src/</code> et installe les bibliothèques qui vous manquent.",
+      "manual": "Pour copier les fichiers à la main, ouvrez le composant depuis les <link>composants React Native</link> et suivez ses étapes manuelles. Dans les deux cas, conservez l’arborescence des dossiers, car les composants importent les fichiers partagés par chemin relatif. Pour Tabs, cela donne :",
+      "treeLabel": "votre app",
+      "usage": "Utilisez-le ensuite comme n’importe quel autre composant :",
+      "sourceNote": "Tailwind détecte les classes dans les fichiers situés sous le dossier qui contient <code>global.css</code>. S’il se trouve ailleurs, par exemple dans <code>app/</code>, ajoutez un <code>@source</code> pour les composants :"
+    },
+    "tryFirst": {
+      "title": "Essayez avant de copier",
+      "body": "Chaque page de <componentsLink>composant React Native</componentsLink> propose un enregistrement en clair et en sombre pour voir l’animation d’abord. Les agents de code peuvent récupérer n’importe quel composant avec ses commandes d’installation et ses fichiers depuis <code>{url}</code>, ou via le serveur MCP beUI. Consultez le <agentLink>Guide des agents</agentLink>.",
+      "note": "Chaque composant respecte le réglage système Réduire les animations et accepte une prop <code>disableAnimation</code>. Le code source est sur <link>GitHub</link>."
+    }
+  }
+}

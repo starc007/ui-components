@@ -1,0 +1,64 @@
+{
+  "index": {
+    "metaTitle": "Animierte React-Native-Komponenten",
+    "metaDescription": "Kostenlose, quelloffene animierte Komponenten für React Native und Expo, gebaut für Touch mit Reanimated, Gesture Handler und Uniwind. Quellcode kopieren oder mit npx beui-native installieren.",
+    "breadcrumb": "Breadcrumb",
+    "heading": "Animierte React-Native-Komponenten",
+    "intro": "Gebaut für Touch mit Reanimated, Gesture Handler und Uniwind. Den Quellcode in die eigene Expo- oder React-Native-App kopieren.",
+    "setup": "Neu hier? Die <link>App einmal einrichten</link>, dann jede Komponente per CLI hinzufügen."
+  },
+  "component": {
+    "metaTitle": "{name} · Animierte React-Native-Komponente",
+    "metaDescription": "{description} Eine animierte, barrierefreie React-Native-Komponente für Expo- und Bare-Apps, gebaut mit Reanimated.",
+    "ogAlt": "{name} für React Native",
+    "documentation": "Dokumentation",
+    "webTitle": "Auch fürs Web.",
+    "webDescription": "Die React-Version von {name}, gebaut mit Motion und Tailwind CSS."
+  },
+  "panel": {
+    "preview": "Vorschau",
+    "install": "Installation",
+    "source": "Quellcode auf GitHub",
+    "worksIn": "Funktioniert in Expo und in Bare React Native. Neu bei beUI Native? <link>Zuerst die App einrichten</link>.",
+    "cli": "Kopiert die Komponente und die benötigten gemeinsamen Dateien nach <code>src/</code>, ergänzt fehlende Theme-Tokens und installiert die Bibliotheken. Selbst geänderte Dateien bleiben erhalten.",
+    "manualIntro": "Die Ordnerstruktur beibehalten, da die Komponente die gemeinsamen Dateien über relative Pfade importiert.",
+    "stepLibraries": "Bibliotheken installieren",
+    "gestureRoot": "Die App in <code>GestureHandlerRootView</code> einbetten, falls noch nicht geschehen.",
+    "stepTheme": "Theme-Tokens hinzufügen",
+    "themeBody": "Einmal pro App. In der CSS-Datei importieren, die Uniwind liest, nach Tailwind und Uniwind, und die Werte an die eigene Marke anpassen.",
+    "stepShared": "Gemeinsame Dateien kopieren",
+    "stepComponent": "Komponente kopieren"
+  },
+  "preview": {
+    "videoLabel": "{name} unter iOS",
+    "play": "Abspielen",
+    "pause": "Pausieren",
+    "replay": "Wiederholen"
+  },
+  "platform": {
+    "label": "Plattform",
+    "web": "Web"
+  },
+  "changelog": {
+    "title": "Changelog",
+    "heading": "Neu in beUI",
+    "description": "Jede Woche beUI: neue animierte React- und React-Native-Komponenten, Verbesserungen sowie Fixes für Barrierefreiheit und Motion.",
+    "rss": "RSS-Feed",
+    "weekOf": "Woche vom",
+    "new": "Neu",
+    "improved": "Verbessert",
+    "fixed": "Behoben",
+    "view": "{name} ansehen",
+    "learnMore": "Mehr erfahren"
+  },
+  "article": {
+    "guide": "Leitfaden",
+    "comparison": "Vergleich",
+    "versus": "beUI vs. {competitor}",
+    "feature": "Funktion",
+    "officialSite": "Offizielle Website von {competitor}",
+    "components": "Komponenten in diesem Leitfaden",
+    "faq": "FAQ",
+    "updated": "Aktualisiert am <time></time>"
+  }
+}

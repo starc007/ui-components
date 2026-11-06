@@ -1,11 +1,13 @@
+import { useTranslations } from "next-intl";
 import type { Testimonial } from "@/components/app/landing/testimonials-data";
 import { cn } from "@/lib/utils";
 
 function VerifiedBadge() {
+  const t = useTranslations("Landing.testimonials");
   return (
     <svg
       viewBox="0 0 24 24"
-      aria-label="Verified account"
+      aria-label={t("verified")}
       className="h-[1.05em] w-[1.05em] shrink-0 text-[#1d9bf0]"
       fill="currentColor"
     >

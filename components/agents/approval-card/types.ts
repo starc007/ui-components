@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { ApprovalCardMessages } from "./messages";
 
 export type ApprovalCardStatus =
   | "pending"
@@ -54,5 +55,7 @@ export interface ApprovalCardProps {
   approveLabel?: ReactNode;
   submitLabel?: ReactNode;
   result?: ReactNode;
+  /** Override any built-in string. */
+  labels?: Partial<ApprovalCardMessages>;
   className?: string;
 }

@@ -40,6 +40,7 @@ export function SankeyChartTooltip({ className, side = "top", children }: Sankey
     tooltipOpen,
     setTooltipOpen,
     formatValue,
+    t,
   } = useSankeyChart();
   if (!nodes.length) return null;
   // Anchors keyboard focus to the top of the node, so the tooltip clears its
@@ -51,6 +52,11 @@ export function SankeyChartTooltip({ className, side = "top", children }: Sankey
         ? { x: (active.link.x0 + active.link.x1) / 2, y: (active.link.y0 + active.link.y1) / 2 }
         : { x: size.width / 2, y: size.height / 2 };
   const percent = (value: number) => `${(value * 100).toFixed(1)}%`;
+  // The ticker sits wherever the translation puts {share}.
+  const [shareBefore, shareAfter = ""] =
+    active?.type === "link"
+      ? t("linkShare", { source: active.link.source.label }).split("{share}")
+      : [];
   return (
     <Tooltip
       id={tooltipId}
@@ -83,8 +89,10 @@ export function SankeyChartTooltip({ className, side = "top", children }: Sankey
                     </span>
                     {active.node.inValue && active.node.outValue ? (
                       <span className="font-mono text-muted-foreground tabular-nums">
-                        In {formatValue(active.node.inValue)} · Out{" "}
-                        {formatValue(active.node.outValue)}
+                        {t("tooltipFlows", {
+                          in: formatValue(active.node.inValue),
+                          out: formatValue(active.node.outValue),
+                        })}
                       </span>
                     ) : null}
                     {(["in", "out"] as const).map((direction) => {
@@ -98,7 +106,7 @@ export function SankeyChartTooltip({ className, side = "top", children }: Sankey
                       return (
                         <span key={direction} className="flex flex-col gap-0.5">
                           <span className="text-muted-foreground">
-                            {direction === "in" ? "From" : "To"}
+                            {direction === "in" ? t("from") : t("to")}
                           </span>
                           {own.slice(0, MAX_FLOWS).map((l) => (
                             <span key={l.id} className="flex items-center justify-between gap-3">
@@ -112,7 +120,7 @@ export function SankeyChartTooltip({ className, side = "top", children }: Sankey
                           ))}
                           {own.length > MAX_FLOWS ? (
                             <span className="text-muted-foreground">
-                              {own.length - MAX_FLOWS} more
+                              {t("more", { count: own.length - MAX_FLOWS })}
                             </span>
                           ) : null}
                         </span>
@@ -131,8 +139,9 @@ export function SankeyChartTooltip({ className, side = "top", children }: Sankey
                       <Ticker value={active.link.value} format={formatValue} />
                       <span className="text-muted-foreground">·</span>
                       <span className="text-muted-foreground">
-                        <Ticker value={active.link.share} format={percent} /> of{" "}
-                        {active.link.source.label}
+                        {shareBefore}
+                        <Ticker value={active.link.share} format={percent} />
+                        {shareAfter}
                       </span>
                     </span>
                   </span>

@@ -1,0 +1,102 @@
+{
+  "hero": {
+    "headlineLine1": "Composants animés",
+    "explorePro": "Découvrir Pro",
+    "browseComponents": "Parcourir les composants",
+    "headlineLine2Native": "pour <react>React</react> et <native>React Native</native>",
+    "subtitleNative": "Des composants à copier-coller pour React et Next.js, conçus avec Motion et Tailwind CSS. Désormais aussi sur React Native. Gratuits, open source et entièrement personnalisables.",
+    "opensInNewTab": "(s’ouvre dans un nouvel onglet)",
+    "repoOnGitHub": "{name} sur GitHub",
+    "libraryCount": "<num>{count}</num> <muted>{library}</muted><sr> composants</sr>"
+  },
+  "home": {
+    "builtOn": "Basé sur Framer Motion. Distribué via shadcn.",
+    "newEyebrow": "Nouveau",
+    "newTitle": "Ajouts récents",
+    "componentsEyebrow": "Composants",
+    "componentsTitle": "Primitives d’animation",
+    "browseAll": "Parcourir les composants React animés",
+    "sponsoredBy": "Sponsorisé par",
+    "builtOnNative": "Basé sur Reanimated et Uniwind. Installé avec la CLI beUI Native.",
+    "installFor": "Installer pour",
+    "web": "Web"
+  },
+  "card": {
+    "view": "Voir {name}"
+  },
+  "testimonials": {
+    "eyebrow": "Témoignages",
+    "title": "Adopté par les développeurs",
+    "verified": "Compte vérifié"
+  },
+  "workCta": {
+    "eyebrow": "Travaillons ensemble",
+    "title": "Besoin de composants sur mesure pour votre produit ?",
+    "description": "Composants animés et systèmes frontend sur mesure, conçus selon vos specs. Réservez un appel ou écrivez-moi, comme vous préférez.",
+    "bookCall": "Réserver un appel",
+    "email": "M’écrire"
+  },
+  "native": {
+    "title": "Désormais sur React Native",
+    "description": "{count, plural, one {# composant repensé} other {# composants repensés}} pour le tactile avec Reanimated, Gesture Handler et Uniwind. Le même langage d’animation que beUI, pensé pour les doigts.",
+    "playClips": "Lire les clips",
+    "pauseClips": "Mettre les clips en pause"
+  },
+  "plans": {
+    "eyebrow": "Gratuit et Pro",
+    "title": "Choisissez votre point de départ",
+    "free": {
+      "badge": "Gratuit et open source",
+      "title": "Construisez avec l’essentiel.",
+      "description": "Des composants animés à installer, personnaliser et garder dans votre codebase.",
+      "features": {
+        "components": "Composants, blocs, graphiques et interfaces IA",
+        "registry": "Registre shadcn public et code à copier-coller",
+        "license": "Licence MIT pour projets personnels et commerciaux"
+      },
+      "cta": "Parcourir les composants gratuits"
+    },
+    "pro": {
+      "badge": "Allez plus loin avec Pro",
+      "title": "Démarrez avec plus de choses prêtes pour vous.",
+      "description": "Plus de 350 blocs premium pour construire votre prochain produit plus vite. Obtenez la collection complète avec Lifetime, templates complets et illustrations animées compris.",
+      "features": {
+        "blocks": "Plus de 350 blocs premium et composants animés",
+        "templates": "Templates de landing page complets · Lifetime",
+        "illustrations": "Illustrations animées · Lifetime",
+        "agents": "Agent Skill, accès MCP et installation en une commande",
+        "registry": "Registre privé et code source téléchargeable",
+        "projects": "Projets personnels et clients illimités",
+        "updates": "Toutes les mises à jour futures · Lifetime"
+      }
+    }
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Quelques points à connaître",
+    "free": {
+      "question": "beUI est-il gratuit pour les projets commerciaux ?",
+      "answer": "Oui. La bibliothèque publique beUI est sous licence MIT, usage commercial et modification compris. Conservez la mention de copyright et de licence dans les copies ou les parties substantielles du code. <link>Lire la licence</link>. beUI Pro dispose d’une licence payante distincte."
+    },
+    "install": {
+      "question": "Comment installer un composant ?",
+      "answer": "Ouvrez la page d’un composant et copiez sa commande CLI shadcn, par exemple <code>{command}</code>. Vous pouvez aussi utiliser npm, pnpm ou yarn, ou copier le code depuis l’onglet Manuel."
+    },
+    "stack": {
+      "question": "De quoi mon projet a-t-il besoin ?",
+      "answer": "Les composants sont conçus pour React 19, Tailwind CSS 4 et Motion. Certains composants peuvent utiliser des dépendances supplémentaires, indiquées sur leur page. Commencez par le <link>guide de configuration du thème</link> pour ajouter les tokens CSS partagés."
+    },
+    "reactNative": {
+      "question": "beUI fonctionne-t-il avec React Native ?",
+      "answer": "Oui. beUI Native apporte les composants de beUI aux apps Expo et React Native bare, avec Reanimated, Gesture Handler et Uniwind. Après la <setup>configuration initiale</setup>, ajoutez-en un avec <code>{command}</code>. Chaque page de <components>composant React Native</components> propose un enregistrement pour le voir en mouvement d’abord."
+    },
+    "customize": {
+      "question": "Puis-je modifier le design et les animations ?",
+      "answer": "Oui. Le code source vit dans votre projet. Vous pouvez modifier directement les styles, les animations et le comportement, et utiliser vos propres tokens de thème pour coller à votre produit."
+    },
+    "pro": {
+      "question": "Ai-je besoin de Pro pour utiliser les composants gratuits ?",
+      "answer": "Non. La bibliothèque publique fonctionne indépendamment de Pro. Pro est une collection distincte de composants premium et de blocs animés ; l’offre Lifetime inclut aussi des templates complets et des illustrations animées."
+    }
+  }
+}

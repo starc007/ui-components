@@ -1,11 +1,14 @@
-import type { Metadata } from "next";
-import { NotFoundGlitch } from "@/components/motion/not-found/glitch";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Page not found",
-  description: "The page you are looking for does not exist.",
-};
+import NextError from "next/error";
 
-export default function NotFound() {
-  return <NotFoundGlitch />;
+// Requests that never reach app/[locale] (no matching locale segment).
+export default function GlobalNotFound() {
+  return (
+    <html lang="en">
+      <body>
+        <NextError statusCode={404} />
+      </body>
+    </html>
+  );
 }

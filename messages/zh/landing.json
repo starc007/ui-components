@@ -1,0 +1,102 @@
+{
+  "hero": {
+    "headlineLine1": "动画组件",
+    "explorePro": "了解 Pro",
+    "browseComponents": "浏览组件",
+    "headlineLine2Native": "适用于 <react>React</react> 和 <native>React Native</native>",
+    "subtitleNative": "为 React 和 Next.js 打造的可复制粘贴组件，基于 Motion 和 Tailwind CSS 构建，现已支持 React Native。免费、开源，且完全可定制。",
+    "opensInNewTab": "（在新标签页中打开）",
+    "repoOnGitHub": "GitHub 上的 {name}",
+    "libraryCount": "<num>{count}</num> <muted>{library}</muted><sr> 个组件</sr>"
+  },
+  "home": {
+    "builtOn": "基于 Framer Motion 构建，通过 shadcn 分发。",
+    "newEyebrow": "新品",
+    "newTitle": "最新发布",
+    "componentsEyebrow": "组件",
+    "componentsTitle": "动效基础组件",
+    "browseAll": "浏览 React 动画组件",
+    "sponsoredBy": "赞助商",
+    "builtOnNative": "基于 Reanimated 和 Uniwind 构建，通过 beUI Native CLI 安装。",
+    "installFor": "安装平台",
+    "web": "Web"
+  },
+  "card": {
+    "view": "查看 {name}"
+  },
+  "testimonials": {
+    "eyebrow": "用户评价",
+    "title": "深受开发者喜爱",
+    "verified": "已认证账号"
+  },
+  "workCta": {
+    "eyebrow": "与我合作",
+    "title": "需要为你的产品定制组件？",
+    "description": "按需求定制动效组件和前端系统。预约通话或直接发邮件，哪种方便都行。",
+    "bookCall": "预约通话",
+    "email": "给我发邮件"
+  },
+  "native": {
+    "title": "现已支持 React Native",
+    "description": "{count, plural, one {# 个组件} other {# 个组件}}基于 Reanimated、Gesture Handler 和 Uniwind 为触控重新打造。与 beUI 相同的动效语言，专为手指操作设计。",
+    "playClips": "播放片段",
+    "pauseClips": "暂停片段"
+  },
+  "plans": {
+    "eyebrow": "免费版与 Pro",
+    "title": "选择你的起点",
+    "free": {
+      "badge": "免费且开源",
+      "title": "从核心组件开始构建。",
+      "description": "可安装、可定制，并能长期保留在你代码库中的动画组件。",
+      "features": {
+        "components": "组件、区块、图表和 AI 界面",
+        "registry": "公开的 shadcn 注册表和可复制粘贴的源码",
+        "license": "MIT 许可，可用于个人和商业项目"
+      },
+      "cta": "浏览免费组件"
+    },
+    "pro": {
+      "badge": "Pro 让你走得更远",
+      "title": "更多现成内容，起步更快。",
+      "description": "350+ 个高级区块，助你更快构建下一个产品。购买终身版即可获得完整合集，包括完整模板和动画插画。",
+      "features": {
+        "blocks": "350+ 个高级区块和动画组件",
+        "templates": "完整落地页模板 · 终身版",
+        "illustrations": "动画插画 · 终身版",
+        "agents": "智能体技能、MCP 访问和一键安装",
+        "registry": "私有注册表和可下载的源码",
+        "projects": "个人和客户项目数量不限",
+        "updates": "所有后续更新 · 终身版"
+      }
+    }
+  },
+  "faq": {
+    "eyebrow": "常见问题",
+    "title": "你需要了解的几件事",
+    "free": {
+      "question": "beUI 可以免费用于商业项目吗？",
+      "answer": "可以。公开的 beUI 组件库采用 MIT 许可，允许商业使用和修改。在源码的副本或主要部分中，请保留版权和许可声明。<link>阅读许可协议</link>。beUI Pro 采用单独的付费许可。"
+    },
+    "install": {
+      "question": "如何安装组件？",
+      "answer": "打开组件页面，复制其 shadcn CLI 命令，例如 <code>{command}</code>。你也可以使用 npm、pnpm 或 yarn，或从“手动”标签页复制源码。"
+    },
+    "stack": {
+      "question": "我的项目需要什么？",
+      "answer": "组件基于 React 19、Tailwind CSS 4 和 Motion 构建。个别组件可能使用额外的依赖，详见各自页面。先参照<link>主题配置指南</link>添加共享的 CSS 令牌。"
+    },
+    "reactNative": {
+      "question": "beUI 支持 React Native 吗？",
+      "answer": "支持。beUI Native 将 beUI 的组件带到 Expo 和纯 React Native 应用中，基于 Reanimated、Gesture Handler 和 Uniwind 构建。完成<setup>一次性配置</setup>后，使用 <code>{command}</code> 即可添加组件。每个 <components>React Native 组件</components>页面都附有录屏，可先查看实际动效。"
+    },
+    "customize": {
+      "question": "我可以修改设计和动画吗？",
+      "answer": "可以。源码就在你的项目中，你可以直接修改样式、动效和行为，并使用自己的主题令牌来匹配你的产品。"
+    },
+    "pro": {
+      "question": "使用免费组件需要 Pro 吗？",
+      "answer": "不需要。公开组件库独立于 Pro 运作。Pro 是一套单独的高级组件和动画区块合集；终身版方案还包括完整模板和动画插画。"
+    }
+  }
+}

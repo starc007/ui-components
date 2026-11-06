@@ -3,7 +3,9 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { EASE_IN_OUT } from "@/lib/ease";
+import { useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { type LoadingStatesMessages, loadingStatesMessages } from "./messages";
 
 const GRID_CELLS = [
   { id: "top-left", delay: 0 },
@@ -26,23 +28,49 @@ export interface AgentProgressProps {
   initialSeconds?: number;
   /** Whether the internal timer should advance. Ignored when elapsedSeconds is provided. */
   running?: boolean;
+  /** Override any built-in string. `{label}` fills `inProgress`. */
+  labels?: Partial<LoadingStatesMessages>;
   className?: string;
 }
 
-function formatElapsed(totalSeconds: number) {
+function formatElapsed(totalSeconds: number, locale?: string) {
   const safeSeconds = Math.max(0, totalSeconds);
   const minutes = Math.floor(safeSeconds / 60);
-  const seconds = (safeSeconds % 60).toFixed(1);
-  return minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+  const remainder = safeSeconds % 60;
+
+  // Without a locale keep the exact English text so server and client match.
+  if (!locale) {
+    const seconds = remainder.toFixed(1);
+    return minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+  }
+
+  const seconds = new Intl.NumberFormat(locale, {
+    style: "unit",
+    unit: "second",
+    unitDisplay: "narrow",
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(remainder);
+  if (minutes === 0) return seconds;
+  const minuteText = new Intl.NumberFormat(locale, {
+    style: "unit",
+    unit: "minute",
+    unitDisplay: "narrow",
+  }).format(minutes);
+  return `${minuteText} ${seconds}`;
 }
 
 export function AgentProgress({
-  label = "Churning",
+  label: labelProp,
   elapsedSeconds,
   initialSeconds = 0,
   running = true,
+  labels,
   className,
 }: AgentProgressProps) {
+  const t = useMessages("loadingStates", loadingStatesMessages, labels);
+  const { locale } = useLocale();
+  const label = labelProp ?? t("churning");
   const reduce = useReducedMotion() ?? false;
   const [internalSeconds, setInternalSeconds] = useState(initialSeconds);
 
@@ -62,7 +90,7 @@ export function AgentProgress({
   return (
     <span
       role="status"
-      aria-label={`${label}, in progress`}
+      aria-label={t("inProgress", { label })}
       className={cn(
         "inline-flex items-center gap-3 font-mono text-sm text-muted-foreground",
         className,
@@ -98,7 +126,7 @@ export function AgentProgress({
         aria-hidden="true"
         className="tabular-nums text-muted-foreground/70"
       >
-        {formatElapsed(elapsed)}
+        {formatElapsed(elapsed, locale)}
       </span>
     </span>
   );

@@ -14,7 +14,15 @@ import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const previewRailMessages = {
+  label: "Section navigation",
+};
+
+export type PreviewRailMessages = typeof previewRailMessages;
 
 export interface PreviewRailItem {
   id: string;
@@ -44,6 +52,8 @@ export interface PreviewRailProps {
   railClassName?: string;
   previewContainerClassName?: string;
   previewClassName?: string;
+  /** Override any built-in string. */
+  labels?: Partial<PreviewRailMessages>;
 }
 
 function DefaultPreview({ item }: { item: PreviewRailItem }) {
@@ -72,7 +82,7 @@ function DefaultPreview({ item }: { item: PreviewRailItem }) {
 
 export function PreviewRail({
   items,
-  label = "Section navigation",
+  label: labelProp,
   orientation = "vertical",
   activeId,
   defaultActiveId,
@@ -88,7 +98,10 @@ export function PreviewRail({
   railClassName,
   previewContainerClassName,
   previewClassName,
+  labels,
 }: PreviewRailProps) {
+  const t = useMessages("previewRail", previewRailMessages, labels);
+  const label = labelProp ?? t("label");
   const uid = useId();
   const reduce = useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);

@@ -24,8 +24,17 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_GLIDE, SPRING_PRESS } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { TOUCH_GESTURE_CLASS, capturePointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const morphingTabsMessages = {
+  label: "Tabs",
+  close: "Close {label}",
+};
+
+export type MorphingTabsMessages = typeof morphingTabsMessages;
 
 export type MorphingTabsItem = {
   id: string;
@@ -58,6 +67,8 @@ export interface MorphingTabsProps {
   ariaLabel?: string;
   className?: string;
   classNames?: MorphingTabsClassNames;
+  /** Override any built-in string. */
+  labels?: Partial<MorphingTabsMessages>;
 }
 
 type DragSession = {
@@ -289,10 +300,12 @@ export function MorphingTabs({
   onValueChange,
   onOrderChange,
   onClose,
-  ariaLabel = "Tabs",
+  ariaLabel,
   className,
   classNames,
+  labels,
 }: MorphingTabsProps) {
+  const t = useMessages("morphingTabs", morphingTabsMessages, labels);
   const reduce = Boolean(useReducedMotion());
   const uid = useId();
   const itemIds = useMemo(() => items.map((item) => item.id), [items]);
@@ -733,7 +746,7 @@ export function MorphingTabs({
         <div
           ref={railRef}
           role="tablist"
-          aria-label={ariaLabel}
+          aria-label={ariaLabel ?? t("label")}
           aria-orientation="horizontal"
           className={cn(
             "relative z-30 flex h-full gap-3 md:gap-4",
@@ -868,7 +881,7 @@ export function MorphingTabs({
                   {onClose ? (
                     <button
                       type="button"
-                      aria-label={`Close ${item.label}`}
+                      aria-label={t("close", { label: item.label })}
                       onPointerDown={(event) => event.stopPropagation()}
                       onClick={(event) => {
                         event.stopPropagation();

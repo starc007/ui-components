@@ -40,18 +40,35 @@ export const toValue = (mins: number) => {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 };
 
-export const label12 = (v: string) => {
+/** Without a locale, keeps the English `9:00 AM` form so server and client agree. */
+export const timeLabel = (v: string, locale?: string) => {
   const [h, m] = v.split(":").map(Number);
+  if (locale) {
+    return new Intl.DateTimeFormat(locale, {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: "UTC",
+    }).format(new Date(Date.UTC(2024, 0, 1, h, m)));
+  }
   const ap = h < 12 ? "AM" : "PM";
   const h12 = h % 12 === 0 ? 12 : h % 12;
   return `${h12}:${String(m).padStart(2, "0")} ${ap}`;
 };
 
-export function buildOptions(step: number): TimeOption[] {
+/** Weekday name for the locale; English `WEEKDAYS` labels without one. */
+export const weekdayLabel = (index: number, locale?: string) =>
+  locale
+    ? new Intl.DateTimeFormat(locale, { weekday: "long", timeZone: "UTC" }).format(
+        // 1 Jan 2024 was a Monday, matching WEEKDAYS order.
+        new Date(Date.UTC(2024, 0, 1 + index)),
+      )
+    : WEEKDAYS[index].label;
+
+export function buildOptions(step: number, locale?: string): TimeOption[] {
   const out: TimeOption[] = [];
   for (let m = 0; m < 24 * 60; m += step) {
     const value = toValue(m);
-    out.push({ value, label: label12(value) });
+    out.push({ value, label: timeLabel(value, locale) });
   }
   return out;
 }
@@ -68,11 +85,12 @@ function withCurrentOption(
   filtered: TimeOption[],
   all: TimeOption[],
   current?: string,
+  locale?: string,
 ) {
   if (!current || filtered.some((o) => o.value === current)) return filtered;
   const extra =
     all.find((o) => o.value === current) ??
-    ({ value: current, label: label12(current) } satisfies TimeOption);
+    ({ value: current, label: timeLabel(current, locale) } satisfies TimeOption);
   return [...filtered, extra].sort(
     (a, b) => toMinutes(a.value) - toMinutes(b.value),
   );
@@ -134,6 +152,7 @@ export function startOptions(
   options: TimeOption[],
   end: string,
   current?: string,
+  locale?: string,
 ) {
   const filtered = options.filter(
     (o) => toMinutes(o.value) < toMinutes(end),
@@ -145,6 +164,7 @@ export function startOptions(
     recovery,
     options,
     current,
+    locale,
   );
 }
 
@@ -152,6 +172,7 @@ export function endOptions(
   options: TimeOption[],
   start: string,
   current?: string,
+  locale?: string,
 ) {
   const filtered = options.filter(
     (o) => toMinutes(o.value) > toMinutes(start),
@@ -163,6 +184,7 @@ export function endOptions(
     recovery,
     options,
     current,
+    locale,
   );
 }
 

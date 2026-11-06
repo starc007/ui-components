@@ -1,7 +1,7 @@
 "use client";
 
 import { CircleDashed, FileText, Search, Smartphone } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useMessages, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -9,34 +9,38 @@ import {
   type CommandItem,
 } from "@/components/motion/command-palette";
 import { NewBadge } from "@/components/app/docs/new-badge";
+import { useRouter } from "@/i18n/navigation";
 import { nativeComponentPath } from "@/lib/component-paths";
 import nativeNav from "@/lib/native/nav.json";
 import { componentSearchEntries } from "@/lib/site-search";
 
+// `name` is a Chrome message key; OpenUI is a product name.
 const PAGES = [
-  { slug: "home", name: "Home", href: "/" },
-  { slug: "playground", name: "Playground", href: "/playground" },
-  { slug: "sponsors", name: "Sponsors", href: "/sponsors" },
-  { slug: "theme", name: "Theme setup", href: "/docs/theme" },
-  { slug: "ai-agents", name: "AI Agents", href: "/docs/ai-agents" },
+  { slug: "home", name: "sidebar.home", href: "/" },
+  { slug: "playground", name: "header.playground", href: "/playground" },
+  { slug: "sponsors", name: "header.sponsors", href: "/sponsors" },
+  { slug: "theme", name: "docsPages.themeSetup", href: "/docs/theme" },
+  { slug: "ai-agents", name: "docsPages.aiAgents", href: "/docs/ai-agents" },
   {
     slug: "motion-patterns",
-    name: "Motion Guides",
+    name: "docsPages.motionGuides",
     href: "/docs/motion-patterns",
   },
-  { slug: "openui", name: "OpenUI", href: "/docs/openui" },
-  { slug: "native-setup", name: "React Native Setup", href: "/docs/native-setup" },
-  { slug: "react-native", name: "React Native components", href: "/react-native" },
-];
+  { slug: "openui", name: null, href: "/docs/openui" },
+  { slug: "native-setup", name: "docsPages.nativeSetup", href: "/docs/native-setup" },
+  { slug: "react-native", name: "docsPages.nativeComponents", href: "/react-native" },
+] as const;
 
 /** Site search trigger backed by the library's own command palette. */
 export function SiteSearch({ className }: { className?: string }) {
+  const t = useTranslations("Chrome");
+  const messages = useMessages();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const items = useMemo<CommandItem[]>(
     () => [
-      ...componentSearchEntries.map((entry) => ({
+      ...componentSearchEntries(messages).map((entry) => ({
         ...entry,
         icon: CircleDashed,
         badge: entry.badge === "new" ? <NewBadge launchedAt={entry.launchedAt} /> : undefined,
@@ -52,21 +56,21 @@ export function SiteSearch({ className }: { className?: string }) {
       })),
       ...PAGES.map((page) => ({
         id: page.slug,
-        label: page.name,
-        group: "Pages",
+        label: page.name ? t(page.name) : "OpenUI",
+        group: t("search.pages"),
         keywords: [page.slug],
         icon: FileText,
         onSelect: () => router.push(page.href),
       })),
     ],
-    [router],
+    [router, t, messages],
   );
 
   return (
     <>
       <button
         type="button"
-        aria-label="Search components"
+        aria-label={t("search.label")}
         onClick={() => setOpen(true)}
         className={cn(
           "flex h-9 w-full items-center gap-2 rounded-full border border-border bg-transparent px-3 text-sm text-muted-foreground transition-colors hover:border-(--color-border-strong) hover:text-foreground",
@@ -74,7 +78,7 @@ export function SiteSearch({ className }: { className?: string }) {
         )}
       >
         <Search className="h-3.5 w-3.5 shrink-0" />
-        <span className="hidden flex-1 text-left sm:block">Search</span>
+        <span className="hidden flex-1 text-left sm:block">{t("search.trigger")}</span>
         <kbd className="hidden rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground md:inline-block">
           ⌘K
         </kbd>
@@ -83,7 +87,8 @@ export function SiteSearch({ className }: { className?: string }) {
         items={items}
         open={open}
         onOpenChange={setOpen}
-        placeholder="Search components…"
+        placeholder={t("search.placeholder")}
+        emptyMessage={t("search.empty")}
       />
     </>
   );

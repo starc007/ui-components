@@ -19,6 +19,7 @@ import {
 } from "./crash/crash-parts";
 import {
   BURST,
+  type CrashGame,
   type CrashProps,
   EXIT,
   formatShort,
@@ -50,12 +51,12 @@ const HEAD_Y = 0.72;
  * crashes at a random point. Cash out before it does. After a cash out the
  * flight keeps going, so the player sees what they left on the table.
  */
-export function Crash({ "aria-label": ariaLabel = "Crash", className, ...options }: CrashProps) {
+export function Crash({ "aria-label": ariaLabel, className, ...options }: CrashProps) {
   const game = useCrashGame(options);
   // The shell pins the readout top left: an exponential curve never reaches
   // that corner, so the flight can't run under the numbers.
   return (
-    <CrashShell game={game} aria-label={ariaLabel} className={className} miniature={(props) => <MiniFlight {...props} />}>
+    <CrashShell game={game} aria-label={ariaLabel ?? game.text("region")} className={className} miniature={(props) => <MiniFlight {...props} />}>
       <Graph
         t={game.t}
         cashed={game.cashed}
@@ -64,6 +65,7 @@ export function Crash({ "aria-label": ariaLabel = "Crash", className, ...options
         reduce={game.reduce}
         skipping={game.skipping}
         target={game.target}
+        text={game.text}
       />
     </CrashShell>
   );
@@ -77,10 +79,11 @@ interface GraphProps {
   reduce: boolean;
   skipping: boolean;
   target: number | null;
+  text: CrashGame["text"];
 }
 
 /** The flight: a curve from 1× at 0s to the current multiplier, on axes that grow with it. */
-function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphProps) {
+function Graph({ t, cashed, crashed, round, reduce, target, skipping, text }: GraphProps) {
   const fill = `crash-fill-${useId().replace(/:/g, "")}`;
   const m = growth(t);
   const xMax = Math.max(X_MIN, t / HEAD_X);
@@ -221,7 +224,7 @@ function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphPro
               transition={{ duration: 0.15, ease: EASE_OUT }}
             >
               <text x={x(value)} y={H - 8} textAnchor="middle" className="fill-current">
-                {`${+value.toFixed(1)}s`}
+                {text("seconds", { seconds: String(+value.toFixed(1)) })}
               </text>
             </motion.g>
           ))}
@@ -260,7 +263,7 @@ function Graph({ t, cashed, crashed, round, reduce, target, skipping }: GraphPro
               textAnchor="end"
               className={cn("fill-current font-medium tabular-nums", STAGE_LABEL, PRIMARY_TEXT)}
             >
-              {`Auto ${targetLine.label}${targetLine.above ? " ↑" : ""}`}
+              {`${text("autoMark", { multiplier: targetLine.label })}${targetLine.above ? " ↑" : ""}`}
             </text>
           </motion.g>
         ) : null}

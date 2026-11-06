@@ -1,0 +1,1121 @@
+{
+  "combobox": {
+    "seo": {
+      "title": "Combobox animado · Componente de React",
+      "description": "Un combobox de React componible con campo de búsqueda, listbox en portal, filtrado por grupos, navegación por teclado y estado controlado o no controlado."
+    },
+    "introduction": "Un combobox combina un campo de texto con un listbox filtrado sin sacar el foco del campo. Gestiona la búsqueda, la navegación por la opción activa, la selección y el posicionamiento en el portal, sin adueñarse de los datos de las opciones ni del formulario que lo rodea.",
+    "composition": {
+      "description": "Coloca el campo de búsqueda dentro del trigger y compón los primitivos del listbox dentro del contenido en portal."
+    },
+    "lifecycle": [
+      {
+        "title": "Abrir",
+        "description": "El foco o el puntero abren el listbox desacoplado y activan la opción seleccionada o la primera disponible."
+      },
+      {
+        "title": "Filtrar",
+        "description": "Al escribir se acotan las opciones registradas, las flechas mueven el descendiente activo sin mover el foco del DOM, y una nueva consulta o un nuevo conjunto de resultados devuelve el resaltado a la opción seleccionada o a la primera disponible."
+      },
+      {
+        "title": "Seleccionar",
+        "description": "Elegir una opción actualiza el valor, limpia la consulta, cierra el listbox y restaura la etiqueta seleccionada en el campo."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Mantener el foco en el campo",
+        "description": "Las opciones exponen su estado activo mediante aria-activedescendant, de modo que escribir y navegar con el teclado sean una sola interacción continua."
+      },
+      {
+        "title": "Separar datos y presentación",
+        "description": "Los primitivos componibles de elemento y grupo registran metadatos de búsqueda, mientras quien los usa conserva las etiquetas, los iconos y los datos de las opciones."
+      },
+      {
+        "title": "Mantener el popup anclado",
+        "description": "El listbox se renderiza en un portal del body y sigue la geometría del trigger al hacer scroll, al redimensionar y al cambiar de lado según las colisiones."
+      }
+    ],
+    "implementation": {
+      "title": "Usar el foco del campo como ancla de la interacción",
+      "description": "Mantén el foco del DOM en el campo desde la apertura hasta la selección. La interacción con el puntero sobre las opciones debe conservar ese foco, mientras el estado de la opción activa y el scroll se actualizan por separado."
+    },
+    "connections": [],
+    "contract": {
+      "owns": "Estado de la consulta, registro de opciones, filtrado, navegación por la opción activa, presentación de la selección, posicionamiento del popup y animación de apertura.",
+      "leaves": "Los datos de las opciones, el envío del formulario, la carga asíncrona, la validación y la persistencia del valor quedan en manos de la aplicación."
+    },
+    "guidance": {
+      "useWhen": "Una lista de selección es lo bastante larga como para que escribir, agrupar o buscar con el teclado aporte valor.",
+      "avoidWhen": "Una lista corta se recorre mejor con un select estándar, o el usuario introduce texto libre en lugar de elegir una opción conocida."
+    }
+  },
+  "animated-sidebar": {
+    "seo": {
+      "title": "Sidebar animado · Componente de React",
+      "description": "Un sidebar de aplicación en React, componible, con colapso responsive, navegación anidada, un rail de iconos animado y un sheet móvil con gestión del foco."
+    },
+    "introduction": "Un sidebar de aplicación es el contenedor responsive de la navegación persistente. Coordina el colapso en escritorio, la presentación en móvil, los destinos anidados y el inset del contenido, sin adueñarse de los datos que se renderizan en esas zonas.",
+    "composition": {
+      "description": "Compón los grupos de navegación dentro del sidebar y coloca la superficie de la aplicación en el inset hermano."
+    },
+    "lifecycle": [
+      {
+        "title": "Componer el contenedor",
+        "description": "El encabezado, los grupos de navegación, el pie, el rail y el inset forman un único marco de aplicación responsive."
+      },
+      {
+        "title": "Cambiar la presentación",
+        "description": "En escritorio, la navegación se pliega en un rail de iconos; en móvil, se convierte en un sheet con gestión del foco."
+      },
+      {
+        "title": "Conservar el destino",
+        "description": "El estado activo y expandido de la navegación sigue en manos de la aplicación mientras el contenedor cambia de forma a su alrededor."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Mantener el estado componible",
+        "description": "El estado del provider, controlado o no controlado, permite que el contenedor encaje tanto en layouts locales como en aplicaciones con rutas."
+      },
+      {
+        "title": "Mantener el contenido independiente",
+        "description": "El inset responde al ancho del sidebar sin acoplar el contenido de la página a los detalles de implementación del menú."
+      },
+      {
+        "title": "Proteger el foco en móvil",
+        "description": "El sheet móvil atrapa el foco, se cierra con Escape y devuelve el foco al trigger al descartarse."
+      }
+    ],
+    "implementation": {
+      "title": "Mantener el estado de navegación fuera de la animación",
+      "description": "Deja que las rutas o el estado de la aplicación decidan el destino activo. El sidebar debe animar los cambios de presentación sin reemplazar enlaces, volver a montar contenido ni deducir el estado de navegación a partir de la animación."
+    },
+    "connections": [
+      {
+        "name": "AI Sidebar",
+        "description": "Compone el contenedor con proyectos, carpetas, archivos y marcadores editables."
+      }
+    ],
+    "contract": {
+      "owns": "Presentación responsive del sidebar, colapso en escritorio, despliegue en móvil, composición de la navegación, comportamiento del rail y layout del inset.",
+      "leaves": "Las rutas, los datos de destino, la autorización, la edición de recursos y el contenido del inset quedan en manos de la aplicación o de los componentes compuestos."
+    },
+    "guidance": {
+      "useWhen": "Una aplicación necesita navegación persistente y responsive con un inset de contenido coordinado y un sheet móvil.",
+      "avoidWhen": "Una lista corta de enlaces estáticos no necesita contenedor responsive, rail colapsado, gestión del foco en móvil ni coordinación del inset."
+    }
+  },
+  "ai-sidebar": {
+    "seo": {
+      "title": "AI Sidebar para espacios de trabajo de agentes · Componente de React",
+      "description": "Un sidebar de IA plegable en React para carpetas, proyectos, archivos y marcadores arrastrables, con navegación por teclado, renombrado y rollback optimista."
+    },
+    "introduction": "Un sidebar de IA organiza recursos cambiantes del espacio de trabajo, en lugar de limitarse a navegar entre destinos fijos. Las filas de carpetas y proyectos despliegan sus hijos, mientras que los archivos y marcadores se convierten en el recurso activo y pueden moverse o renombrarse sin desestabilizar el resto del espacio de trabajo.",
+    "composition": {
+      "description": "Coloca el árbol de recursos dentro del contenido de Animated Sidebar y mantén la superficie del recurso seleccionado en el inset hermano."
+    },
+    "lifecycle": [
+      {
+        "title": "Desplegar",
+        "description": "Las carpetas y los proyectos muestran sus hijos sin convertirse en destinos activos."
+      },
+      {
+        "title": "Interactuar",
+        "description": "Los archivos se seleccionan, renombran y mueven mediante rutas distintas para puntero y teclado."
+      },
+      {
+        "title": "Persistir",
+        "description": "Los movimientos se renderizan al instante y luego se confirman o se revierten cuando responde la persistencia."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Separar despliegue y selección",
+        "description": "Hacer clic en una carpeta solo la expande o la contrae. Los archivos y marcadores se encargan de seleccionar el recurso activo."
+      },
+      {
+        "title": "Resolver conflictos de gestos",
+        "description": "Arrastrar la fila completa anula el clic siguiente, y el renombrado con doble clic solo se aplica a los recursos hoja."
+      },
+      {
+        "title": "Mantener el marco estable",
+        "description": "Solo hace scroll la lista de recursos; las acciones auxiliares, el encabezado de sección y el contenido del inset quedan fijos mientras se abren las carpetas."
+      }
+    ],
+    "implementation": {
+      "title": "Tratar los movimientos como una transacción optimista",
+      "description": "Actualiza primero el árbol local y persiste el origen, el destino y la posición normalizados. Si falla el guardado, restaura el árbol capturado y anuncia el rollback."
+    },
+    "connections": [
+      {
+        "name": "Message Scroller",
+        "description": "Puede llenar el inset con la conversación seleccionada."
+      },
+      {
+        "name": "Prompt Input",
+        "description": "Puede anclar el compositor bajo el contenido del recurso activo."
+      }
+    ],
+    "contract": {
+      "owns": "Despliegue de recursos, selección de hojas, foco de teclado, destinos de arrastre, presentación del renombrado, etiquetas desbordadas y rollback optimista.",
+      "leaves": "El comportamiento del contenedor del sidebar, la autorización, la persistencia, la carga de recursos y el contenido del inset quedan en manos de la aplicación."
+    },
+    "guidance": {
+      "useWhen": "Un espacio de trabajo de agentes necesita carpetas, proyectos, archivos, marcadores o conversaciones editables dentro de un sidebar plegable.",
+      "avoidWhen": "El sidebar solo contiene destinos fijos de la aplicación, sin jerarquía, edición, movimiento ni estado optimista."
+    }
+  },
+  "message-bubble": {
+    "seo": {
+      "title": "Burbuja de mensaje para chat con IA · Componente de React",
+      "description": "Una burbuja de mensaje animada en React para chats con IA, con alineación, tonos visuales, respuestas agrupadas, contenido interactivo y mensajes largos desplegables."
+    },
+    "introduction": "Una burbuja es la superficie visible de un mensaje, no la conversación en sí. Debe dar al contenido una forma clara de lectura sin adueñarse de la identidad del remitente, la entrega ni el comportamiento del scroll.",
+    "composition": {
+      "description": "Coloca la burbuja dentro del contenido del mensaje para que la identidad y el layout se mantengan separados de la superficie visible de la respuesta."
+    },
+    "lifecycle": [
+      {
+        "title": "Dar forma al contenido",
+        "description": "La superficie toma su ancho y alineación del mensaje que contiene."
+      },
+      {
+        "title": "Actualizar en su sitio",
+        "description": "El contenido en streaming crece dentro de la misma geometría sin repetir la entrada."
+      },
+      {
+        "title": "Desplegar el desbordamiento",
+        "description": "El contenido largo puede abrirse hacia abajo sin perder la posición de lectura original."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Ajustarse al contenido",
+        "description": "Las respuestas cortas se mantienen compactas y las largas ganan un ancho de lectura cómodo. La superficie nunca debe forzar el mismo ancho en todos los mensajes."
+      },
+      {
+        "title": "Mantener la geometría estable",
+        "description": "El texto en streaming se actualiza dentro de la superficie final. Los fondos y las filas vecinas no deben perseguir cada palabra que llega."
+      },
+      {
+        "title": "Desplegar con intención",
+        "description": "Contrae solo el contenido que se beneficia de una vista previa. Deja el control fuera del texto recortado para que abrir el mensaje siempre lo extienda hacia abajo."
+      }
+    ],
+    "implementation": {
+      "title": "No animar la burbuja en cada actualización de contenido",
+      "description": "La animación de montaje corresponde al evento de mensaje nuevo. El streaming solo debe actualizar el contenido interior; repetir la animación de escala o de layout en cada token hace parpadear la superficie y desplaza los mensajes cercanos."
+    },
+    "connections": [
+      {
+        "name": "Message",
+        "description": "Añade la alineación por remitente, los metadatos y la posición del avatar."
+      },
+      {
+        "name": "Streaming Response",
+        "description": "Aporta el ciclo de vida de la respuesta, activa y completada."
+      }
+    ],
+    "contract": {
+      "owns": "Tono de la superficie, ancho del contenido, alineación, agrupación y despliegue opcional.",
+      "leaves": "Los metadatos del remitente, el estado del streaming, el orden de la transcripción y el transporte de mensajes quedan en manos de los componentes que lo rodean."
+    },
+    "guidance": {
+      "useWhen": "Un elemento de la conversación necesita una superficie, alineación, tono o expansión opcional propios.",
+      "avoidWhen": "El contenido es un registro de ejecución, una solicitud de permiso o un evento estructurado del agente con su propia semántica."
+    }
+  },
+  "message": {
+    "seo": {
+      "title": "Mensaje para chat con IA · Componente de React",
+      "description": "Una fila de mensaje componible en React para chats con IA, con alineación por remitente, avatares, metadatos, mensajes agrupados, contenido en streaming y animación de llegada."
+    },
+    "introduction": "Un mensaje es una fila de la conversación. Coordina el avatar, los metadatos, la superficie del contenido y los detalles de entrega, y permite que el contenido sea una burbuja, una actividad del agente, un resultado de herramienta o una respuesta compuesta.",
+    "composition": {
+      "description": "Construye cada fila de la conversación a partir de primitivos independientes de identidad, contenido y metadatos."
+    },
+    "lifecycle": [
+      {
+        "title": "Identificar al remitente",
+        "description": "La alineación, el avatar y los metadatos sitúan la fila dentro de la conversación."
+      },
+      {
+        "title": "Componer el contenido",
+        "description": "Una burbuja, una respuesta, un flujo de actividad o una superficie de herramienta ocupa el hueco de contenido."
+      },
+      {
+        "title": "Mantener la posición",
+        "description": "La fila se mantiene estable mientras su contenido interior llega en streaming o cambia de estado."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Componer la fila",
+        "description": "Mantén la identidad y los metadatos fuera de la superficie del mensaje. Así se conserva la alineación cuando el contenido visible cambia de forma."
+      },
+      {
+        "title": "Agrupar por interlocutor",
+        "description": "Los mensajes consecutivos pueden compartir ritmo y posición del avatar sin perder sus límites semánticos individuales."
+      },
+      {
+        "title": "Animar solo las llegadas",
+        "description": "Una fila recién enviada puede aparecer con un pop una sola vez. Las filas existentes no se mueven cuando el texto llega en streaming o el compositor se actualiza."
+      }
+    ],
+    "implementation": {
+      "title": "Mantener estable la identidad de la fila",
+      "description": "Usa un id de mensaje duradero como key de React y separa el estado de llegada del estado de renderizado. Escribir en el compositor o añadir contenido en streaming no debe volver a montar un mensaje que ya existe."
+    },
+    "connections": [
+      {
+        "name": "Message Bubble",
+        "description": "Aporta la superficie visual dentro de la fila."
+      },
+      {
+        "name": "Message Scroller",
+        "description": "Sitúa las filas de mensajes dentro de una transcripción que respeta al lector."
+      },
+      {
+        "name": "Agent Activity",
+        "description": "Renderiza el trabajo progresivo del agente como contenido del mensaje."
+      }
+    ],
+    "contract": {
+      "owns": "Alineación de la fila, posición del avatar, huecos para metadatos, agrupación y animación de entrada única.",
+      "leaves": "El estilo de la burbuja, el scroll de la transcripción, el parseo de respuestas y la persistencia quedan en manos de los primitivos compuestos y del estado de la aplicación."
+    },
+    "guidance": {
+      "useWhen": "El contenido necesita alineación por remitente, identidad, metadatos o agrupación dentro de una conversación.",
+      "avoidWhen": "Solo necesitas una superficie visual para el contenido, sin identidad a nivel de conversación ni layout de fila."
+    }
+  },
+  "message-scroller": {
+    "seo": {
+      "title": "Message Scroller para chats de IA en streaming · Componente de React",
+      "description": "Un message scroller de React que sigue las respuestas de IA en streaming en el borde en vivo y suelta el scroll automático cuando el lector se aleja."
+    },
+    "introduction": "Una transcripción en streaming no es un desbordamiento cualquiera. Debe seguir la nueva salida mientras el lector permanece en el borde en vivo y dejar de moverse en cuanto decide revisar el trabajo anterior.",
+    "composition": {
+      "description": "Mantén el viewport con scroll fuera de los primitivos de mensaje que sigue."
+    },
+    "lifecycle": [
+      {
+        "title": "Seguir",
+        "description": "Mientras el lector permanece al final, cada actualización de contenido queda a la vista."
+      },
+      {
+        "title": "Soltar",
+        "description": "Un scroll deliberado o un salto desde el rail devuelve el control al lector de inmediato."
+      },
+      {
+        "title": "Reanudar",
+        "description": "Volver al borde en vivo restablece el seguimiento automático para la salida posterior."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Seguir el borde en vivo",
+        "description": "La nueva salida solo se mantiene visible mientras el lector ya la está siguiendo. Volver al final reactiva ese comportamiento."
+      },
+      {
+        "title": "Respetar la intención del lector",
+        "description": "La rueda, el gesto táctil y la navegación por teclado desactivan el seguimiento automático para que el contenido entrante nunca interfiera con una lectura deliberada."
+      },
+      {
+        "title": "Proteger la transcripción",
+        "description": "El comportamiento del scroll queda fuera del estado de los mensajes. Un rail opcional deriva la navegación y los extractos al pasar el cursor de las filas de Message sin reescribir su contenido en streaming."
+      }
+    ],
+    "implementation": {
+      "title": "Tratar el seguimiento automático como un estado del lector",
+      "description": "No llames a scroll-to-end en cada renderizado. Sigue solo mientras el viewport ya está cerca del borde en vivo, suelta ante una navegación deliberada y deja que un regreso explícito al final reanude el seguimiento."
+    },
+    "connections": [
+      {
+        "name": "Message",
+        "description": "Proporciona filas estables y semánticas para la transcripción."
+      },
+      {
+        "name": "Prompt Input",
+        "description": "Inicia nuevos turnos sin controlar el movimiento de la transcripción."
+      },
+      {
+        "name": "Streaming Response",
+        "description": "Aporta el contenido creciente que sigue el viewport."
+      }
+    ],
+    "contract": {
+      "owns": "El viewport con scroll, el seguimiento del borde en vivo, la navegación opcional entre mensajes, la liberación por el lector y el estado de accesibilidad de la transcripción.",
+      "leaves": "Los datos de los mensajes, el transporte, la persistencia, las ramificaciones y el renderizado del contenido quedan en manos de la aplicación."
+    },
+    "guidance": {
+      "useWhen": "Una transcripción crece con respuestas en streaming y debe seguir la salida sin atrapar al lector al final.",
+      "avoidWhen": "El contenido es una lista estática, un intercambio corto sin streaming o un feed virtualizado con su propio motor de scroll."
+    }
+  },
+  "prompt-input": {
+    "seo": {
+      "title": "Prompt Input para IA · Componente de React",
+      "description": "Un campo de prompt en React con altura automática para apps de IA, con selección de modelo, adjuntos, acciones de prompt, envío por teclado y estados de enviar o detener."
+    },
+    "introduction": "El compositor es el punto de traspaso entre una persona y un agente. Debe mantener editable la instrucción actual, hacer descubribles las capacidades disponibles y distinguir con claridad entre enviar y detener el trabajo en curso.",
+    "composition": {
+      "description": "Coloca el prompt junto a la transcripción para que la redacción nunca forme parte del historial de mensajes con scroll."
+    },
+    "lifecycle": [
+      {
+        "title": "Redactar",
+        "description": "El borrador crece dentro de un editor acotado mientras los controles secundarios siguen disponibles."
+      },
+      {
+        "title": "Enviar",
+        "description": "Enviar con el teclado o el botón manda una única instrucción recortada y limpia el borrador."
+      },
+      {
+        "title": "Continuar o detener",
+        "description": "El foco queda listo para el siguiente turno mientras la acción principal refleja el trabajo en curso."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Priorizar la escritura",
+        "description": "Los controles de modelo y adjuntos quedan en segundo plano frente al prompt. El área de texto recibe el espacio y el comportamiento de foco necesarios para escribir sin interrupciones."
+      },
+      {
+        "title": "Mostrar el modo actual",
+        "description": "El modelo seleccionado y las acciones de prompt disponibles se ven antes del envío, no se ocultan una vez iniciada la solicitud."
+      },
+      {
+        "title": "Conservar el ritmo",
+        "description": "Enviar limpia el borrador y devuelve el foco sin mover la conversación. Durante la carga, la acción cambia de enviar a detener."
+      }
+    ],
+    "implementation": {
+      "title": "Medir el crecimiento automático sin desplazar la página",
+      "description": "Un compositor con filas fijas debe saltarse por completo el ciclo de reinicio y medición. En un campo con altura automática, limita la altura medida y conserva el foco tras el envío para que la transcripción no salte al empezar el siguiente borrador."
+    },
+    "connections": [
+      {
+        "name": "Message Scroller",
+        "description": "Mantiene estable la conversación alrededor del compositor."
+      },
+      {
+        "name": "Tool Approval",
+        "description": "Sustituye temporalmente la entrada libre por un permiso acotado."
+      },
+      {
+        "name": "Approval Card",
+        "description": "Recoge información estructurada de una persona durante una ejecución en pausa."
+      }
+    ],
+    "contract": {
+      "owns": "Entrada del borrador, selección de modelo y de acción, envío por teclado, foco y controles de enviar o detener.",
+      "leaves": "Las subidas, el transporte de solicitudes, el estado de la conversación y la disponibilidad de modelos quedan en manos de los handlers y datos proporcionados."
+    },
+    "guidance": {
+      "useWhen": "Las personas necesitan redactar instrucciones para un agente con modelos, adjuntos o acciones de prompt opcionales.",
+      "avoidWhen": "La interacción es un comando fijo, un único campo estructurado o un formulario que requiere validar muchos campos."
+    }
+  },
+  "todo-list": {
+    "seo": {
+      "title": "Lista de tareas para agentes · Componente de React",
+      "description": "Una lista de tareas plegable en React para agentes de IA, con tareas pendientes, activas y completadas, marcas de estado animadas y un contador de progreso en vivo."
+    },
+    "introduction": "El plan de un agente debe explicar lo que queda sin fingir que cada pensamiento interno es una tarea. Usa una lista de tareas para trabajos duraderos cuyo estado importa a la persona que sigue la ejecución.",
+    "composition": {
+      "description": "Renderiza el plan como contenido del mensaje cuando pertenezca a una ejecución conversacional del agente."
+    },
+    "lifecycle": [
+      {
+        "title": "Planificar",
+        "description": "Las tareas duraderas aparecen en un orden legible, con un único elemento activo claro."
+      },
+      {
+        "title": "Ejecutar",
+        "description": "Las marcas de estado avanzan en su sitio a medida que el agente completa trabajo significativo."
+      },
+      {
+        "title": "Resumir",
+        "description": "El contador final y el icono de completado reducen el plan a un registro compacto."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Mostrar pasos duraderos",
+        "description": "Los elementos representan trabajo significativo que puede estar pendiente, activo o completado, no cada acción a nivel de token que realiza el agente."
+      },
+      {
+        "title": "Avanzar en su sitio",
+        "description": "Las marcas de estado se transforman sin reemplazar la fila, de modo que las etiquetas y los metadatos sean fáciles de seguir a medida que avanza el trabajo."
+      },
+      {
+        "title": "Resumir el progreso",
+        "description": "El encabezado muestra un contador compacto de completadas y la lista puede contraerse cuando el plan ya no requiere atención."
+      }
+    ],
+    "implementation": {
+      "title": "Actualizar el estado sin reemplazar la tarea",
+      "description": "Identifica cada tarea con un id duradero y transforma solo su marca de estado. Reemplazar la fila entera rompe la continuidad de lectura, repite la animación del texto y hace que el progreso resulte menos fiable."
+    },
+    "connections": [
+      {
+        "name": "Agent Activity",
+        "description": "Muestra los eventos cronológicos que ocurren entre tareas."
+      },
+      {
+        "name": "Agent Loading States",
+        "description": "Cubre el trabajo previo a que exista un plan duradero."
+      },
+      {
+        "name": "Tool Result",
+        "description": "Presenta la evidencia producida por una tarea activa."
+      }
+    ],
+    "contract": {
+      "owns": "Presentación de tareas, marcas de estado, contador de completadas, despliegue y transiciones de la lista.",
+      "leaves": "La lógica de planificación, la ejecución de tareas, las decisiones de orden y la persistencia quedan en manos del runtime del agente."
+    },
+    "guidance": {
+      "useWhen": "Una ejecución de varios pasos tiene tareas duraderas cuyo progreso ayuda al lector a entender lo que queda.",
+      "avoidWhen": "Los eventos son razonamiento transitorio, salida de herramientas o una traza de ejecución que se representa mejor en orden cronológico."
+    }
+  },
+  "code-block": {
+    "seo": {
+      "title": "Bloque de código en streaming para agentes de IA · Componente de React",
+      "description": "Un bloque de código en React con resaltado de sintaxis para salida de IA, con streaming estable, números de línea, rangos destacados, seguimiento suave y feedback al copiar."
+    },
+    "introduction": "El código generado cambia más rápido que un snippet estático convencional. La superficie debe seguir siendo legible mientras llegan las líneas, conservar la estructura sintáctica y hacer que copiar el resultado final sea predecible.",
+    "composition": {
+      "description": "Anida el código generado dentro de la respuesta que controla su ciclo de streaming."
+    },
+    "lifecycle": [
+      {
+        "title": "Recibir",
+        "description": "El código fuente puede llegar de forma incremental sin cambiar el bloque que lo rodea."
+      },
+      {
+        "title": "Resaltar",
+        "description": "Los tokens, los números de línea y los rangos destacados se actualizan como capas visuales estables."
+      },
+      {
+        "title": "Finalizar",
+        "description": "El seguimiento se detiene al completarse y el código completo queda listo para copiar."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Resaltar unidades completas",
+        "description": "Los colores de los tokens deben actualizarse sin hacer parpadear todo el bloque. La entrada parcial sigue siendo legible hasta que la estructura actual del lenguaje esté completa."
+      },
+      {
+        "title": "Mantener las líneas referenciables",
+        "description": "Los números de línea y los rangos destacados dan a las conversaciones una referencia estable aunque solo se resalte parte del archivo."
+      },
+      {
+        "title": "Seguir sin parpadeos",
+        "description": "Un viewport acotado sigue con suavidad las líneas añadidas mientras el fondo del código y las filas existentes permanecen fijos."
+      }
+    ],
+    "implementation": {
+      "title": "Separar las actualizaciones del código de la salida resaltada",
+      "description": "No reconstruyas ni hagas un fundido cruzado de todo el árbol resaltado en cada carácter. Conserva el contenedor y las líneas existentes, y actualiza la unidad de código completa más pequeña que el resaltador pueda renderizar de forma fiable."
+    },
+    "connections": [
+      {
+        "name": "File Diff",
+        "description": "Explica las adiciones y eliminaciones alrededor del código resaltado."
+      },
+      {
+        "name": "Tool Result",
+        "description": "Envuelve el código generado en el resultado de una ejecución."
+      },
+      {
+        "name": "Streaming Response",
+        "description": "Inserta código resaltado dentro de una respuesta enriquecida."
+      }
+    ],
+    "contract": {
+      "owns": "Presentación resaltada, números de línea, rangos destacados, comportamiento de seguimiento en streaming y feedback al copiar.",
+      "leaves": "La generación de código, la política de detección del lenguaje, la ejecución y la persistencia de archivos quedan en manos de la aplicación."
+    },
+    "guidance": {
+      "useWhen": "Código generado u obtenido necesita resaltado de sintaxis, referencias de línea, streaming o rangos destacados.",
+      "avoidWhen": "Necesitas explicar cambios en un archivo con adiciones y eliminaciones; para eso usa un file diff."
+    }
+  },
+  "approval-card": {
+    "seo": {
+      "title": "Tarjeta de aprobación human-in-the-loop · Componente de React",
+      "description": "Una tarjeta de aprobación en React para flujos de IA human-in-the-loop, con preguntas, respuestas personalizadas, revisión en varios pasos, correcciones, aprobación y rechazo."
+    },
+    "introduction": "El trabajo human-in-the-loop es una cesión temporal del control. La tarjeta debe plantear la decisión con claridad, recoger solo la información necesaria y devolver una respuesta duradera a la ejecución del agente en pausa.",
+    "composition": {
+      "description": "Coloca la superficie de aprobación dentro del mensaje que pone en pausa la ejecución del agente."
+    },
+    "lifecycle": [
+      {
+        "title": "Pausar",
+        "description": "La ejecución expone la pregunta o revisión exacta que impide continuar de forma segura."
+      },
+      {
+        "title": "Decidir",
+        "description": "La persona selecciona, escribe, corrige, aprueba o rechaza la información solicitada."
+      },
+      {
+        "title": "Reanudar",
+        "description": "La decisión tomada reemplaza los controles y devuelve un resultado estable a la ejecución."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Plantear una decisión a la vez",
+        "description": "Cada paso tiene una pregunta concreta y opciones claramente diferenciadas. Seleccionar una única respuesta puede avanzar de inmediato."
+      },
+      {
+        "title": "Mantener el contexto unido",
+        "description": "La solicitud, las opciones y el campo de respuesta personalizada están en una sola superficie para que la decisión nunca se separe de su motivo."
+      },
+      {
+        "title": "Registrar el resultado",
+        "description": "Al completarse, el estado de entrada se sustituye por un resumen conciso que sigue siendo legible en el historial de la conversación."
+      }
+    ],
+    "implementation": {
+      "title": "Modelar la pausa como estado duradero del flujo",
+      "description": "La respuesta seleccionada debe sobrevivir a remontajes y reconexiones, porque la ejecución del agente la está esperando. Registra la decisión antes de reanudar el trabajo y renderiza ese registro en lugar de los controles."
+    },
+    "connections": [
+      {
+        "name": "Tool Approval",
+        "description": "Cubre el caso más acotado de un permiso para una herramienta."
+      },
+      {
+        "name": "Message",
+        "description": "Sitúa la decisión dentro del historial de la conversación."
+      },
+      {
+        "name": "Todo List",
+        "description": "Muestra qué trabajo planificado queda en pausa por la decisión."
+      }
+    ],
+    "contract": {
+      "owns": "Flujo de preguntas, estado de las opciones, entrada libre, controles de revisión y resumen de la decisión tomada.",
+      "leaves": "La política de autorización, la suspensión del flujo, los efectos secundarios y la reanudación quedan en manos del runtime del agente."
+    },
+    "guidance": {
+      "useWhen": "Un agente no puede continuar de forma responsable sin una elección, aclaración, corrección o aprobación humana.",
+      "avoidWhen": "La pregunta es opcional, puede deducirse de forma segura o se trata del permiso para ejecutar una herramienta concreta."
+    }
+  },
+  "file-diff": {
+    "seo": {
+      "title": "File diff en streaming para agentes de IA · Componente de React",
+      "description": "Un file diff de React con resaltado de sintaxis para ediciones de IA, con números de línea antiguos y nuevos, filas en streaming, recuento de cambios en vivo y contracción al terminar."
+    },
+    "introduction": "Un file diff explica una edición propuesta o completada. Debe conservar la relación entre las líneas antiguas y las nuevas, y dejar ver de un vistazo el alcance y el estado del cambio.",
+    "composition": {
+      "description": "Coloca el parche dentro de la salida de la herramienta que produjo el cambio en el archivo."
+    },
+    "lifecycle": [
+      {
+        "title": "Abrir el cambio",
+        "description": "El nombre del archivo, el lenguaje y los recuentos en vivo establecen el alcance de la edición."
+      },
+      {
+        "title": "Añadir filas",
+        "description": "El contexto, las adiciones y las eliminaciones llegan sin volver a animar las líneas anteriores."
+      },
+      {
+        "title": "Reducir a un resumen",
+        "description": "Al completarse, el parche se contrae y el cambio completo queda a una acción de distancia."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Conservar ambas numeraciones",
+        "description": "Los números de línea antiguos y nuevos se mantienen separados para poder hablar con precisión de adiciones, eliminaciones y contexto sin cambios."
+      },
+      {
+        "title": "Hacer streaming por filas",
+        "description": "Las nuevas filas del diff llegan como unidades estables. La sintaxis y los fondos existentes no se vuelven a animar al añadir otra fila."
+      },
+      {
+        "title": "Contraer al resultado",
+        "description": "Tras completarse, el despliegue puede reducirse al nombre del archivo y los recuentos de cambios, sin perder el acceso al parche completo."
+      }
+    ],
+    "implementation": {
+      "title": "Añadir filas de diff completas",
+      "description": "Un parche en streaming debe mostrar una fila analizada cada vez. Las actualizaciones carácter a carácter pueden cambiar a mitad de fotograma los marcadores del diff, los números de línea y la clasificación sintáctica, lo que provoca parpadeos visibles y una alineación incorrecta."
+    },
+    "connections": [
+      {
+        "name": "Code Block",
+        "description": "Aporta la presentación sintáctica compartida para las líneas de código."
+      },
+      {
+        "name": "Tool Result",
+        "description": "Resume el comando o la edición que produjo el parche."
+      },
+      {
+        "name": "Agent Activity",
+        "description": "Registra la edición del archivo entre los demás eventos del agente."
+      }
+    ],
+    "contract": {
+      "owns": "Filas del diff, números de línea antiguos y nuevos, presentación sintáctica, recuentos de cambios y despliegue al completarse.",
+      "leaves": "La generación del diff, la aplicación del parche, la gestión de conflictos y el estado del repositorio quedan en manos de la aplicación."
+    },
+    "guidance": {
+      "useWhen": "Una persona necesita revisar cómo cambió un agente un archivo, incluida la relación entre líneas antiguas y nuevas.",
+      "avoidWhen": "El contenido es un snippet independiente, un archivo completo o salida de terminal en bruto sin estructura de antes y después."
+    }
+  },
+  "tool-result": {
+    "seo": {
+      "title": "Resultado de herramienta de IA · Componente de React",
+      "description": "Un panel desplegable de React para resultados de herramientas de agentes de IA, con salida de terminal o de solicitudes, estado en streaming, seguimiento acotado, reintento, copia y estados de finalización."
+    },
+    "introduction": "Un resultado de herramienta es evidencia de una ejecución, no otra burbuja de chat. Debe conectar un resumen compacto de la ejecución con la salida necesaria para revisarla, recuperarse o reutilizarla.",
+    "composition": {
+      "description": "Usa el primitivo de salida para texto de terminal, detalles de solicitudes, código generado u otro resultado estructurado."
+    },
+    "lifecycle": [
+      {
+        "title": "Ejecutar",
+        "description": "El encabezado identifica la acción, el objetivo, la duración y el estado actual de la ejecución."
+      },
+      {
+        "title": "Transmitir la evidencia",
+        "description": "La salida avanza dentro de un viewport acotado mientras el resumen sigue siendo legible."
+      },
+      {
+        "title": "Resolver",
+        "description": "El éxito o el error reemplaza el estado activo y muestra las acciones de recuperación pertinentes."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Empezar por el resultado",
+        "description": "El título y el estado con color explican el éxito, el error o el progreso antes de que el lector revise la salida en bruto."
+      },
+      {
+        "title": "Mantener la salida acotada",
+        "description": "Los cuerpos largos de terminal o de respuesta se transmiten dentro de un área limitada, en lugar de ampliar indefinidamente toda la conversación."
+      },
+      {
+        "title": "Mantener la recuperación a mano",
+        "description": "Las acciones de reintentar y copiar aparecen junto al resultado al que afectan, y después el panel completado puede volver a una fila compacta."
+      }
+    ],
+    "implementation": {
+      "title": "Separar el estado de la salida en bruto",
+      "description": "El estado de ejecución debe seguir siendo legible aunque la salida esté vacía, mal formada o sea extremadamente larga. Deriva el resumen del ciclo de vida de la herramienta, no de cadenas encontradas en el cuerpo del resultado."
+    },
+    "connections": [
+      {
+        "name": "Tool Approval",
+        "description": "Recoge el permiso antes de que empiece la ejecución."
+      },
+      {
+        "name": "Code Block",
+        "description": "Renderiza el código resaltado que devuelve una herramienta."
+      },
+      {
+        "name": "Agent Activity",
+        "description": "Resume la invocación de la herramienta dentro de una ejecución más larga."
+      }
+    ],
+    "contract": {
+      "owns": "Resumen de la ejecución, presentación del estado, viewport de salida en streaming, despliegue y acciones sobre el resultado.",
+      "leaves": "La invocación de herramientas, los reintentos, la cancelación, el parseo de respuestas y la política de errores quedan en manos de los callbacks proporcionados."
+    },
+    "guidance": {
+      "useWhen": "La ejecución de una herramienta produce una salida que puede requerir revisión, copia, reintento o un registro duradero de finalización.",
+      "avoidWhen": "La herramienta aún espera permiso, la salida es un parche de archivo o solo se necesita una etiqueta de actividad transitoria."
+    }
+  },
+  "streaming-response": {
+    "seo": {
+      "title": "Respuesta de IA en streaming · Componente de React",
+      "description": "Una superficie de respuesta en streaming para React que renderiza contenido enriquecido y, al completarse, muestra copiar, reintentar, feedback y citas desplegables."
+    },
+    "introduction": "Una respuesta tiene dos fases distintas: mientras el contenido sigue llegando y cuando la respuesta ya admite acciones. El layout debe mantenerse estable en esa transición mientras el contenido enriquecido se sigue renderizando con normalidad.",
+    "composition": {
+      "description": "Mantén el estado de la respuesta dentro de la superficie del mensaje mientras la fila exterior permanece estable."
+    },
+    "lifecycle": [
+      {
+        "title": "Recibir",
+        "description": "El contenido parcial entra en el mismo contenedor semántico de respuesta que usa la respuesta final."
+      },
+      {
+        "title": "Renderizar",
+        "description": "El Markdown, los enlaces, las listas y el código conservan su estilo a medida que crece el cuerpo."
+      },
+      {
+        "title": "Completar",
+        "description": "La respuesta ya asentada muestra solo las acciones y fuentes que ahora se pueden usar."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Renderizar contenido real",
+        "description": "Los enlaces, las listas, el código y el resto del Markdown renderizado siguen formando parte de la respuesta, en lugar de aplanarse en un efecto de texto exclusivo del streaming."
+      },
+      {
+        "title": "Separar la fase del contenido",
+        "description": "El estado de streaming controla los anuncios y las opciones de finalización sin reemplazar el cuerpo de la respuesta ni añadir un cursor artificial."
+      },
+      {
+        "title": "Mostrar las acciones al completarse",
+        "description": "Copiar, reintentar, feedback y fuentes aparecen solo cuando tienen sentido, y la respuesta activa se mantiene visualmente tranquila."
+      }
+    ],
+    "implementation": {
+      "title": "Transmitir el contenido fuente, no fragmentos de presentación",
+      "description": "Mantén un único valor canónico de la respuesta y pasa su fragmento actual por el mismo renderizador que se usa al completarse. Alternar entre árboles distintos para el streaming y el resultado final hace que el Markdown, los enlaces y los fondos se desplacen en el cambio de fase."
+    },
+    "connections": [
+      {
+        "name": "Message",
+        "description": "Sitúa la respuesta en una fila estable del asistente."
+      },
+      {
+        "name": "Citations",
+        "description": "Conecta las afirmaciones completadas con sus fuentes."
+      },
+      {
+        "name": "Code Block",
+        "description": "Renderiza código estructurado dentro de una respuesta enriquecida."
+      }
+    ],
+    "contract": {
+      "owns": "Fase de la respuesta, estilo del contenido renderizado, acciones al completarse, estado del feedback y despliegue de fuentes.",
+      "leaves": "El transporte de tokens, el parseo de Markdown, la implementación del reintento y los datos de las citas quedan en manos de la aplicación."
+    },
+    "guidance": {
+      "useWhen": "La respuesta de un asistente llega de forma incremental y puede terminar con acciones, feedback o fuentes de apoyo.",
+      "avoidWhen": "El contenido es un estado de carga opaco, un evento estructurado de una herramienta o un mensaje corto sin ciclo de vida de respuesta."
+    }
+  },
+  "image-generation": {
+    "seo": {
+      "title": "Animación de generación de imágenes con IA · Componente de React",
+      "description": "Una superficie de generación de imágenes en React con relación de aspecto estable, estados en cola y de refinado, revelado progresivo, feedback al completarse y recuperación con reintento."
+    },
+    "introduction": "El contenido generado debe ocupar su espacio final antes de que los píxeles estén listos. La superficie mantiene un único lienzo estable mientras el estado de generación revela el resultado de forma progresiva, y luego se asienta en una imagen corriente que sigue siendo fácil de examinar.",
+    "composition": {
+      "description": "Coloca el contenido generado dentro de la fila de respuesta que controla su prompt y su estado de finalización."
+    },
+    "lifecycle": [
+      {
+        "title": "Reservar",
+        "description": "La relación de aspecto final está presente antes de que el contenido generado esté disponible."
+      },
+      {
+        "title": "Resolver",
+        "description": "Un único cúmulo de tramado responde al movimiento de un puntero preciso mientras el resultado se resuelve."
+      },
+      {
+        "title": "Asentar",
+        "description": "El velo y el desenfoque desaparecen sin volver a montar ni redimensionar la imagen terminada."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Mantener un único lienzo",
+        "description": "Las fases de generación actualizan el tratamiento visual dentro de una relación de aspecto fija para que el contenido cercano de la transcripción nunca se desplace."
+      },
+      {
+        "title": "Revelar de forma progresiva",
+        "description": "El campo de partículas interactivo, el enfoque y la saturación comunican el refinado sin fingir que muestran el progreso del modelo como un porcentaje."
+      },
+      {
+        "title": "Conservar el resultado",
+        "description": "Al completarse, se eliminan los efectos de generación y el contenido proporcionado queda como el contenido principal y estable."
+      }
+    ],
+    "implementation": {
+      "title": "Mantener montado el contenido generado entre cambios de estado",
+      "description": "Controla el velo y el tratamiento del contenido a partir del estado de generación, en lugar de reemplazar el lienzo en cada fase. Volver a montarlo puede repetir la animación de carga, hacer parpadear el fondo y desplazar la conversación."
+    },
+    "connections": [
+      {
+        "name": "Message",
+        "description": "Mantiene el resultado generado unido a su turno del asistente."
+      },
+      {
+        "name": "Streaming Response",
+        "description": "Transporta el texto que acompaña al resultado antes o después."
+      },
+      {
+        "name": "Prompt Input",
+        "description": "Recoge la instrucción que inicia la generación."
+      }
+    ],
+    "contract": {
+      "owns": "Geometría del lienzo, presentación del estado de generación, revelado progresivo, mensajes de estado y opción de reintento.",
+      "leaves": "El envío del prompt, el transporte de la generación, la interpretación del progreso, la carga del contenido, la persistencia y la moderación quedan en manos de la aplicación."
+    },
+    "guidance": {
+      "useWhen": "El contenido visual generado necesita un lugar estable en una conversación mientras pasa por los estados en cola, activo, refinando, completado o con error.",
+      "avoidWhen": "El resultado ya está disponible, el contenido no tiene ciclo de generación o la aplicación necesita un espacio editable para imágenes en lugar de una superficie de estado."
+    }
+  },
+  "tool-approval": {
+    "seo": {
+      "title": "Aprobación de herramientas de IA · Componente de React",
+      "description": "Una tarjeta de permisos en React para revisar llamadas a herramientas de IA: permitir una sola ejecución, recordar el acceso o denegar la acción solicitada."
+    },
+    "introduction": "La aprobación de herramientas es una frontera de permisos. La persona debe entender qué se va a ejecutar, qué acceso necesita y si su elección se aplica una sola vez o cambia el comportamiento futuro.",
+    "composition": {
+      "description": "Incluye el código ejecutable dentro de la solicitud de aprobación cuando la decisión depende de revisarlo."
+    },
+    "lifecycle": [
+      {
+        "title": "Revisar",
+        "description": "La tarjeta pendiente muestra la herramienta, el comando, el objetivo y el contexto de riesgo relevante."
+      },
+      {
+        "title": "Elegir el alcance",
+        "description": "La persona permite una vez, recuerda el acceso o deniega la ejecución solicitada."
+      },
+      {
+        "title": "Resolver",
+        "description": "La tarjeta registra el resultado del permiso antes de que el host decida qué se ejecuta a continuación."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Nombrar la acción",
+        "description": "Muestra la herramienta, el comando, el objetivo o los detalles de la solicitud antes de presentar los controles de aprobación."
+      },
+      {
+        "title": "Separar el alcance del permiso",
+        "description": "Permitir una vez y recordar el acceso son compromisos distintos. Sus etiquetas y resultados nunca deben ser intercambiables."
+      },
+      {
+        "title": "Hacer de la denegación una respuesta completa",
+        "description": "Denegar es un resultado de primera clase, con la misma claridad que la aprobación, no un simple descarte silencioso de la tarjeta."
+      }
+    ],
+    "implementation": {
+      "title": "Devolver una decisión de permiso, no un evento de botón",
+      "description": "Modela permitir una vez, recordar el acceso y denegar como resultados explícitos. Así el host puede aplicar el alcance de forma coherente, en lugar de deducir la política de seguridad del control que se haya pulsado."
+    },
+    "connections": [
+      {
+        "name": "Approval Card",
+        "description": "Cubre preguntas más amplias y decisiones de revisión."
+      },
+      {
+        "name": "Agent Activity",
+        "description": "Muestra el contexto de ejecución pendiente y reanudado."
+      },
+      {
+        "name": "Tool Result",
+        "description": "Muestra el resultado después de ejecutar una herramienta aprobada."
+      }
+    ],
+    "contract": {
+      "owns": "Detalles del permiso, estados pendiente y resuelto, opciones de alcance y controles de aprobación o denegación.",
+      "leaves": "La política de seguridad, el acceso a credenciales, la ejecución de herramientas y los permisos recordados quedan en manos de la aplicación host."
+    },
+    "guidance": {
+      "useWhen": "Una llamada a una herramienta cruza una frontera de permisos y la persona debe revisar su alcance exacto antes de la ejecución.",
+      "avoidWhen": "El flujo necesita una decisión de producto, una aclaración o una revisión en varios pasos en lugar de un permiso de ejecución."
+    }
+  },
+  "citations": {
+    "seo": {
+      "title": "Citas para IA · Componente de React",
+      "description": "Componentes de citas en React para respuestas de IA fundamentadas, con marcadores de referencia en línea, destinos reales, favicons y una lista de fuentes plegable."
+    },
+    "introduction": "Las citas conectan una afirmación con el material que la respalda sin interrumpir la respuesta. Los marcadores en línea deben ser ligeros, mientras que la colección de fuentes ofrece información suficiente para revisar la evidencia.",
+    "composition": {
+      "description": "Combina los marcadores de cita en línea con un desplegable de fuentes que pertenezca a la misma respuesta."
+    },
+    "lifecycle": [
+      {
+        "title": "Marcar la afirmación",
+        "description": "Una referencia compacta en línea permanece junto a la afirmación que respalda."
+      },
+      {
+        "title": "Reunir las fuentes",
+        "description": "Las referencias repetidas se agrupan en un resumen conciso de fuentes bajo la respuesta."
+      },
+      {
+        "title": "Revisar la evidencia",
+        "description": "El desplegable abre destinos reales sin reemplazar ni tapar la respuesta."
+      }
+    ],
+    "implementation": {
+      "title": "Usar identidades de fuente estables",
+      "description": "Deduplica las citas por un id de fuente normalizado, no por su índice renderizado. Los números de los marcadores en línea pueden cambiar durante el streaming, pero el vínculo entre una afirmación y su destino debe mantenerse estable."
+    },
+    "connections": [
+      {
+        "name": "Streaming Response",
+        "description": "Muestra el resumen de fuentes cuando se completa la respuesta."
+      },
+      {
+        "name": "Message",
+        "description": "Mantiene las respuestas citadas dentro de una fila semántica de la conversación."
+      }
+    ],
+    "contract": {
+      "owns": "Marcadores en línea, presentación de la identidad de las fuentes, resolución de favicons y despliegue de la colección.",
+      "leaves": "La recuperación, la ordenación, la exactitud de las citas y las decisiones de confianza en las URL quedan en manos de la aplicación."
+    },
+    "guidance": {
+      "useWhen": "Una respuesta generada contiene afirmaciones fundamentadas que el lector puede querer verificar con las URL proporcionadas.",
+      "avoidWhen": "Los enlaces son navegación corriente, las fuentes no pueden vincularse a afirmaciones o la aplicación no ha validado los destinos."
+    },
+    "principles": [
+      {
+        "title": "Mantén legibles las afirmaciones",
+        "description": "Los marcadores se sitúan junto al texto correspondiente y son lo bastante compactos como para no convertirse en el elemento visual dominante."
+      },
+      {
+        "title": "Usa destinos reales",
+        "description": "Las etiquetas de las fuentes, los dominios y los favicons se obtienen de las URL proporcionadas, no de un catálogo fijo de sitios conocidos. Las fuentes que no son web, como documentos o registros, pueden pasar su propio icono."
+      },
+      {
+        "title": "Muestra la colección bajo demanda",
+        "description": "Un resumen compacto de las fuentes se abre en la lista completa sin alterar el layout de la respuesta que tiene encima."
+      }
+    ]
+  },
+  "agent-activity": {
+    "seo": {
+      "title": "Actividad de agentes de IA · Componente de React",
+      "description": "Un flujo de actividad en React para agentes de IA que renderiza de forma progresiva razonamiento, búsquedas, llamadas a herramientas, mensajes y eventos de ejecución mixtos."
+    },
+    "introduction": "La actividad del agente explica cómo avanza el trabajo sin exponer una transcripción interna sin filtrar. Los eventos deben llegar en orden cronológico, ser fáciles de recorrer y reducirse a un resumen útil cuando termina la ejecución.",
+    "composition": {
+      "description": "Renderiza el trabajo progresivo como contenido del mensaje para que siga unido al turno que lo produjo."
+    },
+    "lifecycle": [
+      {
+        "title": "Empezar con la intención",
+        "description": "La etiqueta activa explica el tipo de trabajo antes de que llegue el primer evento."
+      },
+      {
+        "title": "Añadir evidencia",
+        "description": "El razonamiento, las búsquedas, las herramientas y los mensajes entran en su orden real de ejecución."
+      },
+      {
+        "title": "Contraer la ejecución",
+        "description": "Al completarse, la etiqueta en vivo se sustituye por un resumen del trabajo registrado que se puede volver a abrir."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Empezar por el principio",
+        "description": "El razonamiento, las búsquedas, los mensajes y las llamadas a herramientas se añaden en orden de ejecución. Una reproducción nunca parece empezar a mitad de la ejecución."
+      },
+      {
+        "title": "Adaptarse al evento",
+        "description": "El texto libre, los pasos estructurados, los resultados de búsqueda y las llamadas a herramientas conservan su propia forma legible dentro de un único desplegable compartido."
+      },
+      {
+        "title": "Resumir el trabajo completado",
+        "description": "El viewport activo sigue los nuevos eventos y luego se contrae en una etiqueta que se puede volver a abrir y que describe lo que realmente ocurrió."
+      }
+    ],
+    "implementation": {
+      "title": "Normalizar los eventos antes de renderizar",
+      "description": "Convierte primero los fragmentos específicos del transporte en eventos duraderos de texto, paso, búsqueda, herramienta y mensaje. Un modelo cronológico compartido permite que la actividad mixta se renderice de forma coherente y evita que la interfaz empiece a mitad de una reproducción."
+    },
+    "connections": [
+      {
+        "name": "Agent Loading States",
+        "description": "Cubre el intervalo previo al primer evento estructurado."
+      },
+      {
+        "name": "Todo List",
+        "description": "Separa el trabajo planificado duradero de los eventos transitorios."
+      },
+      {
+        "name": "Tool Result",
+        "description": "Despliega una ejecución completada en una salida que se puede revisar."
+      }
+    ],
+    "contract": {
+      "owns": "Presentación cronológica de eventos, resumen en vivo, seguimiento acotado, contracción al completarse y comportamiento de reproducción.",
+      "leaves": "La generación del razonamiento, el transporte de eventos, la ejecución de herramientas y el almacenamiento de trazas quedan en manos del runtime del agente."
+    },
+    "guidance": {
+      "useWhen": "Una ejecución contiene varios eventos progresivos cuyo orden y finalización ayudan a explicar lo que está haciendo el agente.",
+      "avoidWhen": "Solo necesitas una señal de espera sencilla, un plan de tareas duradero o la salida final de una única invocación de herramienta."
+    }
+  },
+  "loading-states": {
+    "seo": {
+      "title": "Estados de carga para agentes de IA · Componentes de React",
+      "description": "Estados de carga animados en React para agentes de IA, con un shimmer de pensamiento legible, progreso por tiempo transcurrido y frases de razonamiento que respetan el movimiento reducido."
+    },
+    "introduction": "Un estado de carga de un agente debe comunicar que hay trabajo en curso sin inventarse el progreso. Elige la señal más pequeña que corresponda a lo que el sistema sabe de verdad y mantén estable el texto mientras el trabajo continúa.",
+    "composition": {
+      "description": "Elige un primitivo de carga según la cantidad de información de progreso que el agente puede exponer con veracidad."
+    },
+    "lifecycle": [
+      {
+        "title": "Señalar",
+        "description": "Aparece una etiqueta veraz en cuanto empieza el trabajo o la interfaz tiene que esperar."
+      },
+      {
+        "title": "Sostener",
+        "description": "Una animación discreta confirma la actividad sin sugerir progreso ni pasos que no están disponibles."
+      },
+      {
+        "title": "Resolver",
+        "description": "El indicador desaparece limpiamente cuando lo reemplaza el contenido, un error o un estado de progreso más completo."
+      }
+    ],
+    "principles": [
+      {
+        "title": "Ajustarse a la señal disponible",
+        "description": "Usa un shimmer para una espera de duración desconocida, el tiempo transcurrido para un trabajo prolongado y frases cambiantes solo cuando la etiqueta refleja una fase real."
+      },
+      {
+        "title": "Mantener la animación en segundo plano",
+        "description": "La animación confirma la actividad, pero nunca dificulta la lectura del estado. Con movimiento reducido se mantiene el mismo significado con un tratamiento más sereno."
+      },
+      {
+        "title": "Evitar la falsa precisión",
+        "description": "No muestres porcentajes, pasos ni promesas que el proceso subyacente no pueda medir de forma fiable."
+      }
+    ],
+    "implementation": {
+      "title": "Elegir las etiquetas a partir del estado conocido",
+      "description": "Una frase como «Buscando» debe proceder de una fase o un evento reales, no de un temporizador decorativo. Cuando solo se conoce el tiempo transcurrido, mantén un lenguaje general y deja que la animación comunique que la actividad continúa."
+    },
+    "connections": [
+      {
+        "name": "Agent Activity",
+        "description": "Toma el relevo en cuanto existen eventos de ejecución estructurados."
+      },
+      {
+        "name": "Todo List",
+        "description": "Muestra el progreso duradero cuando hay un plan disponible."
+      },
+      {
+        "name": "Streaming Response",
+        "description": "Reemplaza la carga en cuanto empieza a llegar el contenido de la respuesta."
+      }
+    ],
+    "contract": {
+      "owns": "Señales de actividad legibles, presentación del tiempo transcurrido, transiciones de frases y comportamiento con movimiento reducido.",
+      "leaves": "El cálculo del progreso, la selección de fases, la política de tiempos de espera y la cancelación quedan en manos de la aplicación."
+    },
+    "guidance": {
+      "useWhen": "La interfaz sabe que hay trabajo activo, pero todavía tiene poca o ninguna información estructurada de progreso que mostrar.",
+      "avoidWhen": "Hay tareas reales, eventos de ejecución, fases con tiempo o salida de herramientas disponibles que pueden comunicar el progreso con más honestidad."
+    }
+  }
+}

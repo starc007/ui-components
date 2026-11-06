@@ -21,6 +21,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useLocale, useMessages } from "@/lib/i18n";
 import { capturePointer, releasePointer, TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
@@ -76,6 +77,14 @@ export type TimelineEvent = {
   meta?: ReactNode;
 };
 
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const timelineMessages = {
+  label: "Timeline",
+  hint: "Use the left and right arrow keys to move between events.",
+};
+
+export type TimelineMessages = typeof timelineMessages;
+
 export interface TimelineProps {
   events: TimelineEvent[];
   /** Focused event id (controlled). */
@@ -96,6 +105,8 @@ export interface TimelineProps {
   formatDate?: (date: Date) => string;
   formatYear?: (date: Date) => string;
   "aria-label"?: string;
+  /** Override any built-in string. */
+  labels?: Partial<TimelineMessages>;
   className?: string;
 }
 
@@ -384,12 +395,27 @@ export function Timeline({
   years = true,
   ruler = true,
   cables = true,
-  formatDate = defaultFormatDate,
+  formatDate,
   formatYear = defaultFormatYear,
-  "aria-label": ariaLabel = "Timeline",
+  "aria-label": ariaLabel,
+  labels,
   className,
 }: TimelineProps) {
   const reduce = useReducedMotion() ?? false;
+  const t = useMessages("timeline", timelineMessages, labels);
+  const { locale } = useLocale();
+  // Without a locale keep the English "Mar 4 ’24" so server and client match.
+  const formatDateLabel = useMemo(() => {
+    if (formatDate) return formatDate;
+    if (!locale) return defaultFormatDate;
+    const format = new Intl.DateTimeFormat(locale, {
+      day: "numeric",
+      month: "short",
+      year: "2-digit",
+      timeZone: "UTC",
+    });
+    return (date: Date) => format.format(date);
+  }, [formatDate, locale]);
   const hintId = useId();
   const count = events.length;
   const last = Math.max(0, count - 1);
@@ -655,7 +681,7 @@ export function Timeline({
   return (
     <section
       ref={stageRef}
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? t("label")}
       aria-describedby={hintId}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
@@ -673,7 +699,7 @@ export function Timeline({
       style={{ height }}
     >
       <p id={hintId} className="sr-only">
-        Use the left and right arrow keys to move between events.
+        {t("hint")}
       </p>
       {years
         ? yearMarks.map((mark) => (
@@ -734,7 +760,7 @@ export function Timeline({
             index={i}
             geometry={geometry}
             event={event}
-            dateLabel={formatDate(dates[i])}
+            dateLabel={formatDateLabel(dates[i])}
             active={i === activeIndex}
             onSelect={select}
             onKeyDown={onKeyDown}

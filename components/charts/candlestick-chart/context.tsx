@@ -11,6 +11,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useMessages } from "@/lib/i18n";
 
 export type Candle = {
   /** Stable id, such as the open timestamp. */
@@ -23,6 +24,20 @@ export type Candle = {
   close: number;
   volume: number;
 };
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const candlestickChartMessages = {
+  label: "Candlestick chart",
+  candle: "Candle",
+  open: "O",
+  high: "H",
+  low: "L",
+  close: "C",
+  volume: "Vol",
+  valueText: "{label}: open {open}, high {high}, low {low}, close {close}",
+};
+
+export type CandlestickChartMessages = typeof candlestickChartMessages;
 
 export interface CandlestickChartProps {
   candles: readonly Candle[];
@@ -39,6 +54,8 @@ export interface CandlestickChartProps {
   formatVolume?: (value: number) => string;
   /** Accessible name for the chart. */
   label?: string;
+  /** Override any built-in string. */
+  labels?: Partial<CandlestickChartMessages>;
   className?: string;
   children?: ReactNode;
 }
@@ -59,8 +76,10 @@ export function useCandlestickModel({
   onActiveIdChange,
   formatPrice = defaultPrice,
   formatVolume = defaultVolume,
-  label = "Candlestick chart",
+  label,
+  labels,
 }: CandlestickChartProps) {
+  const t = useMessages("candlestickChart", candlestickChartMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const [internalActive, setInternalActive] = useState(defaultActiveId);
   const rawActive = activeId === undefined ? internalActive : activeId;
@@ -102,7 +121,8 @@ export function useCandlestickModel({
     scale,
     formatPrice,
     formatVolume,
-    label,
+    label: label ?? t("label"),
+    t,
     reduce,
   };
 }

@@ -1,4 +1,6 @@
 import { Loader2 } from "lucide-react";
+import { useMessages } from "@/lib/i18n";
+import { type SwapMessages, swapMessages } from "./messages";
 import type { Token } from "./types";
 import { formatAmount } from "./utils";
 
@@ -10,6 +12,7 @@ export function QuoteRow({
   slippage,
   eta,
   quoting,
+  labels,
 }: {
   from: Token;
   to: Token;
@@ -18,10 +21,12 @@ export function QuoteRow({
   slippage: number;
   eta: string;
   quoting: boolean;
+  labels?: Partial<SwapMessages>;
 }) {
+  const t = useMessages("swap", swapMessages, labels);
   return (
     <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 rounded-xl border border-border/50 bg-background/40 px-3.5 py-2.5 text-[11px]">
-      <span className="text-muted-foreground">Rate</span>
+      <span className="text-muted-foreground">{t("rate")}</span>
       <span className="text-right tabular-nums text-foreground">
         {quoting ? (
           <Loader2 className="ml-auto inline h-3 w-3 animate-spin text-muted-foreground" />
@@ -31,15 +36,15 @@ export function QuoteRow({
           </>
         )}
       </span>
-      <span className="text-muted-foreground">Network fee</span>
+      <span className="text-muted-foreground">{t("networkFee")}</span>
       <span className="text-right tabular-nums text-foreground">
         ${fee.toFixed(2)}
       </span>
-      <span className="text-muted-foreground">Slippage</span>
+      <span className="text-muted-foreground">{t("slippage")}</span>
       <span className="text-right tabular-nums text-foreground">
         {slippage.toFixed(2)}%
       </span>
-      <span className="text-muted-foreground">ETA</span>
+      <span className="text-muted-foreground">{t("eta")}</span>
       <span className="text-right text-foreground">{eta}</span>
     </div>
   );

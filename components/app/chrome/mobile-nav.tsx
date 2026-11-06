@@ -1,13 +1,13 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { SidebarNav } from "@/components/app/chrome/site-sidebar";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { Button } from "@/components/motion/button";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
+import { Link, usePathname } from "@/i18n/navigation";
 import {
   categoryPath,
   hasPlatformSwitch,
@@ -17,11 +17,11 @@ import {
   TOP_LEVEL_CATEGORIES,
   topLevelCategory,
 } from "@/lib/component-paths";
-import { findCategory } from "@/lib/registry";
 import { cn } from "@/lib/utils";
 
 /** Mobile nav: a header hamburger that opens the sidebar list in beUI's own bottom sheet. */
 export function MobileNav() {
+  const t = useTranslations("Chrome");
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const sidebarPage = hasSiteSidebar(pathname);
@@ -50,7 +50,7 @@ export function MobileNav() {
         size="icon"
         className="rounded-full"
         onClick={() => setOpen(true)}
-        aria-label="Open navigation"
+        aria-label={t("mobileNav.open")}
         aria-haspopup="dialog"
         aria-expanded={open}
       >
@@ -59,7 +59,7 @@ export function MobileNav() {
       <BottomSheet
         open={open}
         onOpenChange={setOpen}
-        title="Menu"
+        title={t("mobileNav.title")}
         snapPoints={[0.85]}
       >
         <div className="flex flex-col gap-5 pt-2">
@@ -76,7 +76,7 @@ export function MobileNav() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Components
+              {t("header.components")}
             </Link>
             <Link
               href="/components/blocks"
@@ -88,7 +88,7 @@ export function MobileNav() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Blocks
+              {t("header.blocks")}
             </Link>
             <Link
               href="/components/agents"
@@ -100,7 +100,7 @@ export function MobileNav() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Agents
+              {t("header.agents")}
             </Link>
             {TOP_LEVEL_CATEGORIES.map((slug) => (
               <Link
@@ -114,7 +114,7 @@ export function MobileNav() {
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                {findCategory(slug)?.name}
+                {t(`header.${slug as "charts" | "casino"}`)}
               </Link>
             ))}
             <Link
@@ -139,7 +139,7 @@ export function MobileNav() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Playground
+              {t("header.playground")}
             </Link>
             <Link
               href="/sponsors"
@@ -151,7 +151,7 @@ export function MobileNav() {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              Sponsors
+              {t("header.sponsors")}
             </Link>
           </nav>
           <SidebarNav onNavigate={() => setOpen(false)} />

@@ -22,7 +22,7 @@ export interface ComboboxListProps {
 
 export function ComboboxList({
   children,
-  ariaLabel = "Options",
+  ariaLabel,
   className,
 }: ComboboxListProps) {
   const context = useComboboxContext("ComboboxList");
@@ -30,7 +30,7 @@ export function ComboboxList({
     <div
       id={context.listId}
       role="listbox"
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? context.t("listLabel")}
       className={cn(
         "relative isolate max-h-64 overflow-y-auto overscroll-contain p-1.5 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden",
         className,
@@ -194,7 +194,7 @@ export interface ComboboxEmptyProps {
 }
 
 export function ComboboxEmpty({
-  children = "No options found.",
+  children,
   className,
 }: ComboboxEmptyProps) {
   const context = useComboboxContext("ComboboxEmpty");
@@ -206,7 +206,7 @@ export function ComboboxEmpty({
         "px-3 py-8 text-center text-sm text-muted-foreground",
         className,
       )}>
-      {children}
+      {children ?? context.t("empty")}
     </div>
   );
 }

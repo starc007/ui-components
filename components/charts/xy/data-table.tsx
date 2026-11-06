@@ -1,3 +1,4 @@
+import type { XYChartT } from "./messages";
 import type { XYRow } from "./model";
 
 /** Every value stays readable by screen readers without a tab stop per mark. */
@@ -6,19 +7,21 @@ export function XYDataTable({
   rows,
   categories,
   formatValue,
+  t,
 }: {
   label: string;
   rows: readonly XYRow[];
   categories: readonly string[];
   formatValue: (value: number) => string;
+  t: XYChartT;
 }) {
   return (
     <div className="sr-only">
       <table>
-        <caption>{label} data</caption>
+        <caption>{t("dataCaption", { label })}</caption>
         <thead>
           <tr>
-            <th scope="col">Category</th>
+            <th scope="col">{t("category")}</th>
             {rows.map((row) => (
               <th key={row.id} scope="col">
                 {row.name}
@@ -32,7 +35,7 @@ export function XYDataTable({
               <th scope="row">{category}</th>
               {rows.map((row) => {
                 const value = row.values[i];
-                return <td key={row.id}>{value === null ? "No data" : formatValue(value)}</td>;
+                return <td key={row.id}>{value === null ? t("noData") : formatValue(value)}</td>;
               })}
             </tr>
           ))}

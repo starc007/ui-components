@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useCompositionChart } from "./context";
 
 export function CompositionChartLegend({ className }: { className?: string }) {
-  const { column, highlight, pinned, setPinned, setHovered, setFocused, canHover, formatValue } =
+  const { column, highlight, pinned, setPinned, setHovered, setFocused, canHover, formatValue, t } =
     useCompositionChart();
   if (!column) return null;
   return (
@@ -18,7 +18,7 @@ export function CompositionChartLegend({ className }: { className?: string }) {
         <button
           key={row.id}
           type="button"
-          aria-label={`Highlight ${row.name}`}
+          aria-label={t("highlight", { name: row.name })}
           aria-pressed={pinned === row.id}
           onClick={() => setPinned(pinned === row.id ? null : row.id)}
           onPointerEnter={() => {
@@ -48,7 +48,7 @@ export function CompositionChartLegend({ className }: { className?: string }) {
           <span className="grid min-w-0 gap-0.5">
             <span className="truncate text-muted-foreground">{row.name}</span>
             <span
-              title={row.value === null ? "Missing value" : formatValue(row.value)}
+              title={row.value === null ? t("missingValue") : formatValue(row.value)}
               className="shrink-0 font-mono tabular-nums"
             >
               {column.valid ? `${row.share.toFixed(1)}%` : "—"}

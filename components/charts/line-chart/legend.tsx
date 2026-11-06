@@ -9,7 +9,7 @@ export interface LineChartLegendProps {
 
 /** Toggle a series to hide it; the axis rescales to what is left. */
 export function LineChartLegend({ className }: LineChartLegendProps) {
-  const { rows, hidden, toggle, setHovered, canHover } = useLineChart();
+  const { rows, hidden, toggle, setHovered, canHover, xy } = useLineChart();
   return (
     <XYLegend
       rows={rows}
@@ -17,7 +17,7 @@ export function LineChartLegend({ className }: LineChartLegendProps) {
       onToggle={toggle}
       onHover={setHovered}
       canHover={canHover}
-      label="Series"
+      label={xy("series")}
       className={className}
     />
   );

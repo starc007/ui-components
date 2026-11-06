@@ -5,20 +5,23 @@ import { cn } from "@/lib/utils";
 import {
   NOT_FOUND_DEFAULTS,
   NotFoundActions,
-  NotFoundStage,
   type NotFoundProps,
+  NotFoundStage,
+  useNotFoundMessages,
 } from "./shared";
 
 export function NotFoundMagnetic({
   className,
   code = NOT_FOUND_DEFAULTS.code,
-  title = NOT_FOUND_DEFAULTS.title,
-  description = NOT_FOUND_DEFAULTS.description,
+  title,
+  description,
   homeHref,
   homeLabel,
   browseHref,
   browseLabel,
+  labels,
 }: NotFoundProps) {
+  const t = useNotFoundMessages(labels);
   const chars = code.split("");
 
   return (
@@ -42,8 +45,8 @@ export function NotFoundMagnetic({
       </h1>
 
       <div className="flex flex-col items-center gap-2">
-        <p className="text-lg font-semibold text-foreground">{title}</p>
-        <p className="max-w-sm text-sm text-muted-foreground">{description}</p>
+        <p className="text-lg font-semibold text-foreground">{title ?? t("title")}</p>
+        <p className="max-w-sm text-sm text-muted-foreground">{description ?? t("description")}</p>
       </div>
 
       <NotFoundActions
@@ -51,6 +54,7 @@ export function NotFoundMagnetic({
         homeLabel={homeLabel}
         browseHref={browseHref}
         browseLabel={browseLabel}
+        labels={labels}
       />
     </NotFoundStage>
   );

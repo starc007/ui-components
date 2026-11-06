@@ -1,0 +1,1320 @@
+{
+  "categories": {
+    "motion": {
+      "name": "Komponenten",
+      "description": "Kostenlose, quelloffene animierte React-Komponenten, gebaut mit Motion und Tailwind CSS, als Quellcode zum Kopieren über die shadcn-Registry verfügbar."
+    },
+    "agents": {
+      "name": "KI-Agents",
+      "description": "Animierte React-Komponenten für Agent-Reasoning, Fortschritt, Tool-Aktivität und konversationelle KI-Interfaces."
+    },
+    "blocks": {
+      "name": "Blöcke",
+      "description": "Produktreife animierte React-UI-Blöcke, gebaut mit Motion und Tailwind CSS, als anpassbarer Quellcode zum Kopieren verfügbar."
+    },
+    "charts": {
+      "name": "Charts",
+      "description": "Animierte React-Charts für Aktivität, Renditen, Kursziele und Orderbücher, gebaut mit Motion und Tailwind CSS als anpassbarer Quellcode zum Kopieren."
+    },
+    "casino": {
+      "name": "Casino",
+      "description": "Animierte React-Casinospiele wie Crash, Mines und Plinko, gebaut mit Motion und Tailwind CSS als anpassbarer Quellcode zum Kopieren."
+    }
+  },
+  "components": {
+    "tilt-card": {
+      "name": "Tilt Card",
+      "description": "3D-Perspektivneigung beim Hover mit Lichtreflex, der dem Cursor folgt.",
+      "seo": {
+        "title": "3D-Tilt-Card für React mit Lichtreflex",
+        "description": "React-3D-Tilt-Card mit Perspektivneigung und einem Lichtreflex, der beim Hover dem Cursor folgt, deaktiviert bei Touch und Reduced Motion. Kostenlos, quelloffen."
+      }
+    },
+    "button": {
+      "name": "Button",
+      "examples": {
+        "base": {
+          "name": "Button",
+          "description": "Skalierung beim Drücken, Anheben beim Hover, Varianten und Größen."
+        },
+        "stateful": {
+          "name": "Stateful Button",
+          "description": "Idle → loading → success / error mit Blur-Swap-Slots und sich anpassender Breite."
+        },
+        "magnetic": {
+          "name": "Magnetic Button",
+          "description": "Button, kombiniert mit dem Magnetic-Wrapper für eine Anziehung zum Cursor."
+        },
+        "metallic": {
+          "name": "Metallic Button",
+          "description": "Eine neutrale Button-Fläche, gerahmt von einem markanten Chromrand mit gerade wandernder Spiegelung."
+        }
+      },
+      "description": "Federnd gedrückter Button plus die Varianten StatefulButton, MagneticButton und MetallicButton.",
+      "seo": {
+        "title": "Animierte Button-Komponenten für React",
+        "description": "Federnd gedrückte React-Buttons: Ripple, Lade- und Erfolgszustände, magnetischer Sog und ein Metall-Finish. Mit Tailwind gestylt, kostenlos, per shadcn."
+      }
+    },
+    "expanding-arrow-button": {
+      "name": "Animierte CTA-Buttons",
+      "description": "Ausdrucksstarke Call-to-Action-Buttons mit Expand-, Halte- und Slide-Interaktionen.",
+      "examples": {
+        "expanding-arrow": {
+          "name": "Expanding Arrow Button",
+          "description": "Eine Akzentfläche, die sich bei Hover oder Fokus zu einer gepunkteten Pfeilspur ausdehnt."
+        },
+        "hold-action": {
+          "name": "Hold Action Button",
+          "description": "Gedrückt halten, bis eine vertikale oder horizontale Flüssigkeitsfüllung abschließt; vorzeitiges Loslassen bricht ab."
+        },
+        "slide-action": {
+          "name": "Slide Action Button",
+          "description": "Den Regler bis zum Ende ziehen, um eine Aktion zu bestätigen; vorzeitiges Loslassen lässt ihn zurückfedern."
+        }
+      },
+      "seo": {
+        "title": "Animierte Call-to-Action-Buttons für React",
+        "description": "Drei animierte CTA-Buttons für React: ein Pfeil, der sich beim Hover erweitert, Halten zum Bestätigen mit flüssiger Füllung und Wischen zum Bestätigen. Kostenlos."
+      }
+    },
+    "expandable-control": {
+      "name": "Expandable Control",
+      "description": "Button- und Chip-Controls, die sich per Klick erweitern und über federnde Layout-Kontinuität ein Label oder eine nachgestellte Aktion einblenden.",
+      "seo": {
+        "title": "Erweiterbare Buttons und Chips für React",
+        "description": "React-Button und -Chip, die sich per Klick erweitern und mit federnder Layout-Animation ein Label oder eine Aktion einblenden. Kontrolliert oder unkontrolliert."
+      }
+    },
+    "marquee": {
+      "name": "Marquee",
+      "description": "Endloses horizontales oder vertikales Scrollen mit Pause beim Hover.",
+      "seo": {
+        "title": "React-Marquee: Endlos-Scroll-Loop",
+        "description": "Endloses horizontales oder vertikales React-Marquee für Logos und Testimonials, mit Pause beim Hover und einstellbarer Geschwindigkeit. Kostenlos, per shadcn."
+      }
+    },
+    "tabs": {
+      "name": "Tabs",
+      "description": "Pill-, Segment- oder Underline-Tabs mit federndem layoutId-Indikator und optionalen Icons.",
+      "seo": {
+        "title": "Animierte Tabs für React mit Framer Motion",
+        "description": "Barrierefreie React-Tabs mit gleitendem, federndem Indikator in Pill-, Segment- und Underline-Stil, optionalen Icons und scrollbarem Overflow. Kostenlos, shadcn."
+      }
+    },
+    "switch": {
+      "name": "Switch",
+      "description": "Schalter mit federgetriebenem Thumb und Feedback beim Drücken.",
+      "seo": {
+        "title": "Animierter Toggle-Switch für React und Tailwind",
+        "description": "React-Toggle-Switch mit federgetriebenem Thumb und Feedback beim Drücken, barrierefreier Switch-Semantik und Reduced Motion. Quellcode kopieren oder shadcn."
+      }
+    },
+    "input": {
+      "name": "Input",
+      "description": "Texteingabe mit Label, Icons links und rechts, optionaler stabiler Fehlerzeile, Schüttel-Animation bei Fehlern und gezeichnetem Erfolgshäkchen.",
+      "seo": {
+        "title": "Animiertes Eingabefeld für React mit Validierung",
+        "description": "React-Texteingabe mit Label, Icons, stabiler Fehlerzeile, Schütteln bei Fehlern und gezeichnetem Erfolgshäkchen. Mit Tailwind, barrierefrei, kostenlos, per shadcn."
+      }
+    },
+    "select": {
+      "name": "Select",
+      "examples": {
+        "default": {
+          "name": "Select",
+          "description": "Kombinierbare Primitives (Select, SelectTrigger, SelectValue, SelectContent, SelectItem); das Panel schnürt sich vom Trigger ab und löst sich, mit kurzem, gemeinsamem Zeilen-Reveal. Positionsbewusst (öffnet bei Bedarf nach oben)."
+        },
+        "morph": {
+          "name": "Morph Select",
+          "description": "Kombinierbare Primitives (MorphSelect, MorphSelectTrigger, MorphSelectValue, MorphSelectContent, MorphSelectItem), bei denen der Trigger über eine gemeinsame layoutId zum Panel morpht – eine durchgehende Fläche, die auf- und wieder zuwächst, ohne sich je abzulösen."
+        }
+      },
+      "description": "Kombinierbare Select-Primitives, deren Panel sich auf einer Feder aus dem Trigger entfaltet und als eigene Pill ablöst, plus eine Morph-Variante, bei der der Trigger per Shared Layout zum Panel wächst.",
+      "seo": {
+        "title": "Animiertes Select-Dropdown für React (shadcn)",
+        "description": "Kombinierbares React-Select, dessen Panel sich federnd aus dem Trigger entfaltet, plus eine Morph-Variante, bei der der Trigger zur Liste wächst. Kostenlos."
+      }
+    },
+    "combobox": {
+      "name": "Combobox",
+      "description": "Durchsuchbare Combobox mit morphendem Portal, gruppierter Filterung, Tastaturnavigation und kontrolliertem oder unkontrolliertem State.",
+      "seo": {
+        "title": "Animierte Combobox für React: durchsuchbares Select",
+        "description": "React-Combobox mit Suche, gruppierter Filterung, Tastaturnavigation und federnd animierter Liste, die sich aus dem Input öffnet. Kontrolliert oder unkontrolliert."
+      }
+    },
+    "checkbox": {
+      "name": "Checkbox",
+      "description": "Auswahlelement für Formulare mit gezeichnetem Häkchen, federndem Feedback beim Drücken und Unterstützung für den unbestimmten Zustand.",
+      "seo": {
+        "title": "Animierte Checkbox für React und Tailwind",
+        "description": "React-Checkbox mit gezeichnetem Häkchen, federndem Feedback beim Drücken, unbestimmtem Zustand und optionaler Beschreibung. Barrierefrei, kostenlos, per shadcn."
+      },
+      "examples": {
+        "default": {
+          "name": "Checkbox",
+          "description": "Gezeichnetes Häkchen, federndes Feedback beim Drücken und unbestimmter Zustand."
+        },
+        "description": {
+          "name": "Mit Beschreibung",
+          "description": "Optionaler Hilfstext unter jedem Label, für assistive Technologien als Beschreibung verfügbar."
+        }
+      }
+    },
+    "radio": {
+      "name": "Radio Group",
+      "description": "Einfachauswahl mit gleitendem layoutId-Indikatorpunkt und federndem Feedback beim Drücken.",
+      "seo": {
+        "title": "Animierte Radio Group für React und Tailwind",
+        "description": "React-Radio-Group mit gleitendem Indikatorpunkt, Feedback beim Drücken, Beschreibungen und nativer Tastaturnavigation. Kostenlos, quelloffen, per shadcn."
+      },
+      "examples": {
+        "default": {
+          "name": "Radio Group",
+          "description": "Gleitender Indikatorpunkt mit federndem Feedback beim Drücken."
+        },
+        "description": {
+          "name": "Mit Beschreibung",
+          "description": "Optionaler Hilfstext unter jedem Options-Label, für assistive Technologien als Beschreibung verfügbar."
+        }
+      }
+    },
+    "bottom-sheet": {
+      "name": "Bottom Sheet",
+      "description": "Von Vaul inspiriertes, ziehbares Bottom Sheet mit Snap-Punkten, Trägheit und Glasoberfläche.",
+      "seo": {
+        "title": "React-Bottom-Sheet mit Snap-Punkten (wie Vaul)",
+        "description": "Ziehbares React-Bottom-Sheet mit Snap-Punkten, Trägheit, unscharfem Backdrop und Schließen per Esc, im Stil von Vaul. Kostenlos, per shadcn-CLI installierbar."
+      }
+    },
+    "pull-to-refresh": {
+      "name": "Pull to Refresh",
+      "description": "Pull-to-Refresh-Container mit nativem Gefühl, Zugwiderstand, Schwellen-Feedback und asynchronem Aktualisieren.",
+      "seo": {
+        "title": "Pull-to-Refresh-Komponente für React",
+        "description": "React-Pull-to-Refresh mit nativem Gefühl, Zugwiderstand für Touch und Maus, Schwellen-Feedback und asynchronem Aktualisieren. Kostenlos, per shadcn."
+      }
+    },
+    "shared-layout-bg": {
+      "name": "Shared Layout Background",
+      "description": "Eine Pill, die per Shared Layout von Motion zwischen gehoverten Elementen gleitet, mit Blur beim Ein- und Ausblenden.",
+      "seo": {
+        "title": "Animierter Hover-Hintergrund für React-Navigation",
+        "description": "Eine Highlight-Pill, die per Shared Layout von Framer Motion zwischen gehoverten React-Menüpunkten gleitet, mit Blur beim Ein- und Ausblenden. Kostenlos."
+      }
+    },
+    "bounce-sidebar": {
+      "name": "Bounce Sidebar",
+      "description": "Eine vertikale Sidebar, deren aktiver Punkt auf einer gekrümmten, federnden Bahn zwischen den Zielen springt.",
+      "seo": {
+        "title": "Animierte Sidebar-Navigation mit springendem Indikator",
+        "description": "Vertikale React-Navigation, deren aktiver Punkt auf einer gekrümmten, federnden Bahn springt. Mit Links oder Buttons, kontrolliert oder unkontrolliert, kostenlos."
+      }
+    },
+    "animated-sidebar": {
+      "name": "Animated Sidebar",
+      "description": "Eine kombinierbare App-Sidebar mit morphender, verschachtelter Navigation, die sich auf dem Desktop zu einer animierten Icon-Leiste einklappt und auf Mobilgeräten zu einem Sheet mit Fokusverwaltung wird.",
+      "seo": {
+        "title": "Animierte Sidebar für React und Next.js (shadcn)",
+        "description": "Einklappbare React-Sidebar mit animierter Icon-Leiste, morphenden verschachtelten Menüs, Tastenkürzel und mobilem Sheet mit Fokusverwaltung. Kostenlos, shadcn."
+      }
+    },
+    "preview-rail": {
+      "name": "Preview Rail",
+      "description": "Von der Codex-App inspirierte Navigationsleiste mit kompakten Markierungen, die beim Hover eine Pyramide bilden und eine schwebende Vorschau des Ziels einblenden.",
+      "seo": {
+        "title": "Navigationsleiste mit Hover-Vorschau für React",
+        "description": "Kompakte React-Navigationsleiste, deren Markierungen um den gehoverten Eintrag eine Pyramide bilden und eine schwebende Vorschau zeigen. Vertikal oder horizontal."
+      }
+    },
+    "dock": {
+      "name": "Dock",
+      "description": "Dock im macOS-Stil mit gruppierten Aktionen und gleitender aktiver Pill.",
+      "seo": {
+        "title": "macOS-Dock-Komponente für React",
+        "description": "React-Dock im macOS-Stil mit gruppierten Aktionen und gleitender aktiver Pill, gebaut mit Framer Motion und Tailwind CSS. Kostenlos, quelloffen, per shadcn."
+      }
+    },
+    "tooltip": {
+      "name": "Tooltip",
+      "description": "Kombinierbarer Tooltip für Hover, Fokus und Tippen mit dezenter Skalierung und Einblendung, kollisionsbewusster Seite und Ausrichtung, optionalem Pfeil, einem Zeigerkorridor zu hoverbarem Inhalt, jeweils nur einem Label, Fokus-Reveal nur per Tastatur und optionalem Cursor-Tracking.",
+      "seo": {
+        "title": "Animierter Tooltip für React mit Floating UI",
+        "description": "Kombinierbarer React-Tooltip mit kollisionsbewusster Platzierung, optionalem Pfeil, hoverbarem Inhalt, Tastatur-Fokus, Touch-Support und Cursor-Tracking. Kostenlos."
+      },
+      "examples": {
+        "default": {
+          "name": "Tooltip",
+          "description": "Einzeilige Kurzform: `content` übergeben und das Trigger-Element umschließen. Vier Seiten mit Pfeil."
+        },
+        "toolbar": {
+          "name": "Toolbar",
+          "description": "Kombinierbare Teile unter einem gemeinsamen Provider. Reine Icon-Buttons erhalten ihren barrierefreien Namen vom Tooltip, spätere Labels überspringen die Verzögerung, und ein deaktiviertes Control zeigt keinen."
+        }
+      }
+    },
+    "context-menu": {
+      "name": "Animiertes Kontextmenü",
+      "description": "Kombinierbare Kontextmenü-Primitives mit Clip-Morph ab dem Zeigerursprung, gleitender aktiver Zeile, Checkbox- und Radio-Optionen, Tastaturnavigation, Typeahead und Long-Press-Unterstützung.",
+      "seo": {
+        "title": "Animiertes Kontextmenü für React (Rechtsklick)",
+        "description": "React-Menü für Rechtsklick und langes Drücken, das sich vom Zeiger aus morphend öffnet, mit Checkbox- und Radio-Einträgen, Tastaturnavigation und Typeahead."
+      }
+    },
+    "popover": {
+      "name": "Popover",
+      "examples": {
+        "gooey": {
+          "name": "Gooey Popover",
+          "description": "Kombinierbare Popover, PopoverTrigger, PopoverContent; das Panel quillt über einen SVG-Goo-Filter mit flüssigem Hals aus dem Trigger, scharfer Inhalt wird darüber eingeblendet. Klick oder Hover, kontrolliert oder unkontrolliert."
+        },
+        "morph": {
+          "name": "Morph Popover",
+          "description": "Kombinierbare MorphPopover, MorphPopoverTrigger, MorphPopoverContent. Das Panel in voller Größe erscheint aus der Ecke, die dem Trigger am nächsten liegt, auf einem synchronisierten Feder-Clip, ohne Inhalt und Rahmen zu skalieren, und zieht den Clip beim Schließen wieder zurück. Clip-Path und Drop-Shadow werden gezeichnet. Seiten- und ausrichtungsbewusst, kontrolliert oder unkontrolliert."
+        }
+      },
+      "description": "Gooey-Popover, dessen Panel über einen SVG-Goo-Filter aus dem Trigger quillt, mit einem flüssigen Hals, der sich dehnt und abschnürt, bevor scharfer Inhalt darüber einblendet. Die Morph-Variante enthüllt ihr Panel in voller Größe aus der Ecke, die dem Trigger am nächsten liegt, auf einem synchronisierten Feder-Clip. Trigger per Klick oder Hover, kontrolliert oder unkontrolliert.",
+      "seo": {
+        "title": "Animiertes Popover für React: Gooey und Morph",
+        "description": "Zwei React-Popover: ein Gooey-Panel, das aus dem Trigger quillt, und ein Morph-Panel, das sich federnd aus seiner Ecke entfaltet. Per Portal gerendert, kostenlos."
+      }
+    },
+    "morphing-modal": {
+      "name": "Morphing Modal",
+      "description": "Modal im Stil der Family-App. Ein einzelnes Panel, das beim Wechsel zwischen inneren Ansichten seine Höhe morpht, mit Blur-Überblendung des Inhalts.",
+      "seo": {
+        "title": "Morphing Modal für React mit animierter Höhe",
+        "description": "React-Modal, das seine Höhe zwischen inneren Ansichten mit Blur-Überblendung morpht, im Stil der Family-Wallet. Kostenlos, per shadcn-CLI installierbar."
+      }
+    },
+    "center-morph-modal": {
+      "name": "Center Morph Modal",
+      "description": "Ein kombinierbares Modal, dessen Fläche in voller Größe sich von ihrer exakten Mitte zu allen Rändern entfaltet und sich auf demselben Weg mit einem eingelassenen Schließen-Button wieder zusammenfaltet.",
+      "seo": {
+        "title": "Animierter Modal-Dialog für React (aus der Mitte)",
+        "description": "Kombinierbarer React-Modal-Dialog, der sich aus der Mitte zu allen Rändern entfaltet und beim Schließen zurückfaltet, mit Fokusverwaltung. Kostenlos, per shadcn."
+      }
+    },
+    "text-animation": {
+      "name": "Textanimation",
+      "description": "Animierte Text-Primitives für federnde Reveals, chromatische Sweeps, Shimmer-Ladezustände, Buchstaben-Kaskaden und Zeichen-Scrambles.",
+      "examples": {
+        "text-scramble": {
+          "name": "Text Scramble",
+          "description": "Ein kontrollierter Zeichen-Scramble, der geänderten Text auflöst und dabei den endgültigen Wert barrierefrei zugänglich hält."
+        },
+        "chromatic-reveal": {
+          "name": "Dia Text Animation",
+          "description": "Ein von Dia inspirierter Texteffekt mit festem Satzanfang und wechselndem Schlusswort, das durch einen farbigen Sweep enthüllt wird."
+        },
+        "reveal": {
+          "name": "Text Reveal",
+          "description": "Wort- oder zeichenweises Einblenden mit federndem Hochgleiten und Blur."
+        },
+        "shimmer": {
+          "name": "Text Shimmer",
+          "description": "Farbverlauf, der über den Text streicht – für Ladezustände oder zur Hervorhebung."
+        },
+        "cascade": {
+          "name": "Text Cascade",
+          "description": "Buchstabenweiser Slot-Roll für eigenständigen Text – alte Buchstaben fallen weg, während neue von links nach rechts landen."
+        }
+      },
+      "seo": {
+        "title": "React-Textanimationen: Reveal, Shimmer, Scramble",
+        "description": "Fünf React-Textanimationen: federnder Wort-Reveal, schimmernder Ladetext, Buchstaben-Kaskade, Zeichen-Scramble und ein wechselnder Farb-Sweep. Kostenlos."
+      }
+    },
+    "number": {
+      "name": "Zahlenanimation",
+      "examples": {
+        "ticker": {
+          "name": "Number Ticker",
+          "description": "Rollende Ziffern wie bei einem Spielautomaten, mit gestaffeltem Einstieg."
+        },
+        "animated": {
+          "name": "Animated Number",
+          "description": "Federgetriebenes Hochzählen, ausgelöst beim Erscheinen im Viewport."
+        },
+        "digit-swap": {
+          "name": "Digit Swap",
+          "description": "Ziffern und Maskenzeichen in festen Slots, die bei Änderungen rollen, mit steuerbarer Richtung, Staffelung, Wiederholung und Hervorhebung des Suffixes."
+        }
+      },
+      "description": "Animierte Zahlen-Primitives für hochzählende Werte, rollende Ticker und Ziffernwechsel in festen Slots.",
+      "seo": {
+        "title": "Animierter Zahlenzähler und Ticker für React",
+        "description": "React-Zahlenanimationen: Hochzählen beim Scrollen, rollender Spielautomaten-Ticker und Ziffernwechsel in festen Slots. Framer Motion und Tailwind, per shadcn."
+      }
+    },
+    "animated-badge": {
+      "name": "Animated Badge",
+      "description": "Status-Badge mit animierten Zustandsicons, Puls-Feedback und kompakten Größenvarianten.",
+      "seo": {
+        "title": "Animiertes Status-Badge für React",
+        "description": "React-Status-Badge mit animierten Zustandsicons, Puls-Feedback und kompakten Größen für Live-, Erfolgs-, Warn- und Fehlerzustände. Kostenlos, per shadcn."
+      }
+    },
+    "action-swap": {
+      "name": "Action Swap",
+      "description": "CTA-Button- und Slot-Primitives zum Austauschen von Text und Icons mit Blur-Animation.",
+      "examples": {
+        "cascade": {
+          "name": "Cascade",
+          "description": "Buchstabenweiser Slot-Roll – die Buchstaben des alten Labels fallen weg, während die neuen von links nach rechts landen."
+        },
+        "blur": {
+          "name": "Blur",
+          "description": "Austausch im Stil eines Kopieren-Buttons mit Blur, Deckkraft und Skalierung."
+        },
+        "roll": {
+          "name": "Roll",
+          "description": "Der nächste Text oder das nächste Icon rollt mit Blur von unten herein."
+        }
+      },
+      "seo": {
+        "title": "Animierter Text- und Icon-Wechsel für Buttons",
+        "description": "React-Primitives, die Button-Labels und Icons per Blur, Roll oder Buchstaben-Kaskade wechseln, für Kopieren-, Speichern- und Senden-Zustände. Kostenlos, shadcn."
+      }
+    },
+    "animated-toast-stack": {
+      "name": "Animated Toast Stack",
+      "description": "Gestapelte Toasts mit Status-Morphs, Wischen zum Schließen, Aktionen und layoutbewusster Animation.",
+      "seo": {
+        "title": "Animierte Toast-Benachrichtigungen für React",
+        "description": "Gestapelte React-Toasts mit Status-Morphs, Wischen zum Schließen, Aktionen und layoutbewusster Animation. Mit Tailwind gestylt, kostenlos, per shadcn."
+      }
+    },
+    "theme-toggle": {
+      "name": "Theme Toggle",
+      "description": "Theme-Umschalter, der die gesamte Seite über die View Transition API neu zeichnet – als rechteckiges oder kreisförmiges Clip-Path-Reveal oder mit Lamellen, die sich wie eine Jalousie über den Bildschirm öffnen.",
+      "seo": {
+        "title": "Animierter Theme-Toggle für React (View Transitions)",
+        "description": "Dark-Mode-Toggle für React und Next.js, der die Seite per View Transition API mit Kreis-, Rechteck- oder Jalousie-Reveal neu zeichnet. Kostenlos, quelloffen."
+      }
+    },
+    "bouncy-accordion": {
+      "name": "Bouncy Accordion",
+      "description": "Accordion mit jeweils einem geöffneten Eintrag, gewichtetem Feder-Layout, Icon-Zeilen und Reveals, die Reduced Motion respektieren.",
+      "seo": {
+        "title": "Animierte Accordion-Komponente für React",
+        "description": "React-Accordion mit jeweils einem offenen Eintrag, gewichtetem Feder-Layout, Icon-Zeilen und Reveals, die Reduced Motion respektieren. Kostenlos, per shadcn."
+      }
+    },
+    "drawer": {
+      "name": "Drawer",
+      "description": "Seitenpanel, das federnd von links oder rechts hereingleitet, mit Backdrop-Blur, Scroll-Sperre für den Body und Schließen per Esc.",
+      "seo": {
+        "title": "Animierter Side-Drawer für React und Tailwind",
+        "description": "React-Seitenpanel, das federnd von links oder rechts hereingleitet, mit Backdrop-Blur, Scroll-Sperre und Schließen per Esc. Kostenlos, quelloffen, per shadcn."
+      }
+    },
+    "scroll-animation": {
+      "name": "Scroll-Animation",
+      "description": "Scrollgesteuerte Animation: ein Lenis-Smooth-Scroll-Provider und eine Lesefortschrittsanzeige, die ihre Werte daraus bezieht.",
+      "examples": {
+        "smooth-scroll": {
+          "name": "Smooth Scroll",
+          "description": "Smooth-Scroll-Provider auf Basis von Lenis mit einem useSmoothScroll-Hook, der Scroll-Offset, Fortschritt und Geschwindigkeit bereitstellt. Reduced-Motion-sicher."
+        },
+        "scroll-progress": {
+          "name": "Scroll Progress",
+          "description": "Lesefortschrittsanzeige – fixierter Balken oder kreisförmiger Ring –, gesteuert von der Scrollposition über useSmoothScroll, mit Federglättung."
+        },
+        "parallax": {
+          "name": "Parallax",
+          "description": "Wrapper, der seine Kinder beim Durchqueren des Viewports mit einem Geschwindigkeitsfaktor auf einer der beiden Achsen verschiebt. Reduced-Motion-sicher."
+        },
+        "scroll-to": {
+          "name": "Scroll To",
+          "description": "Button, der über den aktiven SmoothScroll-Provider sanft zu einem Ziel scrollt (Offset, Selektor oder Element); bei Reduced Motion wird sofort gesprungen."
+        },
+        "scroll-reveal": {
+          "name": "Scroll Reveal",
+          "description": "Blendet seine Kinder beim Eintritt in den Viewport mit federndem Gleiten und Blur ein, einmalig oder jedes Mal. Bei Reduced Motion bleibt eine Überblendung."
+        }
+      },
+      "seo": {
+        "title": "React-Scroll-Animationen: Smooth Scroll, Parallax",
+        "description": "React-Kit für Scroll-Animationen: Lenis-Smooth-Scroll, Lesefortschritt, Parallax, Scroll-to und Reveal beim Scrollen. Framer Motion, kostenlos, per shadcn."
+      }
+    },
+    "range-slider": {
+      "name": "Range Slider",
+      "description": "Slider mit Markierungspunkten und einem senkrechten Balken als Thumb, der beim Einrasten auf jedem Schritt federt. Ziehen oder Tastatur, Reduced-Motion-sicher.",
+      "examples": {
+        "stepped": {
+          "name": "Range Slider",
+          "description": "Markierungspunkte und ein senkrechter Balken als Thumb, der beim Einrasten auf jedem Schritt federt."
+        },
+        "fluid": {
+          "name": "Fluid Slider",
+          "description": "Kein Thumb. Die Füllung gleitet hinter einer abgerundeten Flüssigkeitskappe, und das Label wechselt die Farbe, wo die Füllung es überdeckt."
+        },
+        "wave": {
+          "name": "Wave Slider",
+          "description": "Equalizer-Balken steigen rund um den Griff an und fallen zurück, sobald er vorbeizieht – so wandert der Wert als Welle über die Spur."
+        },
+        "bubble": {
+          "name": "Bubble Slider",
+          "description": "Beim Greifen des Thumbs springt eine Wertblase heraus. Sie neigt und staucht sich je nach Ziehgeschwindigkeit und richtet sich dann wieder auf."
+        },
+        "ruler": {
+          "name": "Ruler Slider",
+          "description": "Die Nadel bleibt stehen, die Skala scrollt darunter. Ein Wisch läuft weiter und rastet auf der nächsten Markierung ein. Bruchteilschritte werden mit der Genauigkeit des Schritts angezeigt."
+        },
+        "inline": {
+          "name": "Inline Slider",
+          "description": "Eine eingelassene Füllung mit Label und Wert direkt im Track. Zehn gleichmäßig verteilte Stufen überspannen die Spur; Markierungen unter dem Text bleiben verborgen, aber bedienbar, und der Thumb teilt sich um jedes Label, an dem er vorbeigleitet."
+        }
+      },
+      "seo": {
+        "title": "React-Range-Slider: 6 animierte Slider-Designs",
+        "description": "Sechs animierte React-Range-Slider: Raststufen, Inline-Label, flüssige Füllung, Wellenbalken, Wertblase und Lineal. Tastaturbedienbar, kostenlos, per shadcn."
+      }
+    },
+    "wheel-picker": {
+      "name": "Wheel Picker",
+      "description": "Auswahlrad im iOS-Stil: eine 3D-Trommel mit nativem Momentum-Scrolling, die auf der nächsten Raste einrastet, steuerbar per Mausrad, Ziehen und Tastatur. Lässt sich für Datums- und Zeitauswahl nebeneinander kombinieren, Reduced-Motion-sicher.",
+      "seo": {
+        "title": "React-Wheel-Picker: Scroll-Picker im iOS-Stil",
+        "description": "React-Auswahlrad im iOS-Stil mit 3D-Trommel, Momentum, Einrasten, Tastatur und optionalem Klickgeräusch. Kombinierbar zu Datums- und Zeitpickern."
+      }
+    },
+    "table": {
+      "name": "Tabelle",
+      "description": "Virtualisierte Datentabelle, die auch bei über 10.000 Zeilen flüssig bleibt, mit sortierbaren Spaltenköpfen, Zeilenauswahl, Größenänderung und Umsortieren von Spalten sowie fixiertem Header. Minimale Animation, Reduced-Motion-sicher.",
+      "examples": {
+        "data": {
+          "name": "Datentabelle",
+          "description": "10.000 virtualisierte Zeilen mit sortierbaren Spaltenköpfen, Zeilenauswahl, Größenänderung und Umsortieren von Spalten."
+        },
+        "editable": {
+          "name": "Bearbeitbare Tabelle",
+          "description": "Zellen inline bearbeiten und Zeilen oder Spalten über Randgriffe einfügen oder löschen; die Tabelle rendert anhand der aktualisierten Daten und Spaltendefinitionen neu."
+        },
+        "async": {
+          "name": "Asynchrone Tabelle",
+          "description": "Lädt Seiten bei Bedarf – Skeleton-Zeilen beim ersten Laden, danach Infinite Scroll über onEndReached, sobald sich die virtualisierte Liste dem Ende nähert."
+        }
+      },
+      "seo": {
+        "title": "React-Datentabelle: virtualisiert, sortierbar",
+        "description": "Virtualisierte React-Datentabelle, flüssig ab 10.000 Zeilen, mit Sortierung, Auswahl, Spaltenbreite und -reihenfolge, Inline-Bearbeitung und asynchronem Laden."
+      }
+    },
+    "shader-background": {
+      "name": "Shader Background",
+      "description": "Canvas-Shader-Hintergründe (Mesh-Gradient, Grain, Warp, Wellen, Voronoi, Dot Orbit und mehr) über eine einzige typisierte variant-Prop. Bei Reduced Motion werden animierte Varianten eingefroren.",
+      "seo": {
+        "title": "React-Shader-Hintergrund: WebGL-Mesh-Gradients",
+        "description": "Animierte WebGL-Shader-Hintergründe für React: Mesh-Gradient, Grain, Warp, Wellen, Voronoi, Dithering und 15 weitere über eine variant-Prop. Kostenlos, quelloffen."
+      }
+    },
+    "cylinder-carousel": {
+      "name": "Cylinder Carousel",
+      "description": "Ein Karussell, dessen Elemente die Innenseite eines Zylinders auskleiden, zur Mitte hin zurückweichen und zu den Rändern hin wachsen. Per Ziehen, Scrollen oder Pfeiltasten drehbar, mit federndem Gleiten und Einrasten. Bei Reduced Motion entfällt das Gleiten.",
+      "seo": {
+        "title": "3D-Zylinder-Karussell für React",
+        "description": "React-3D-Karussell, dessen Elemente die Innenseite eines Zylinders auskleiden, mit Ziehen, Scrollen, Pfeiltasten und federndem Einrasten. Kostenlos, per shadcn."
+      }
+    },
+    "loader": {
+      "name": "Loader",
+      "description": "Ladeanzeige mit siebzehn Varianten: Spinner, Dots, Bars, Dot-Matrix, Dither, Morph, Comet, Scramble, Metaballs, Newton, Helix, Percent und fünf ASCII-Spinner im Terminal-Stil. Skaliert über eine einzige size-Prop, nutzt currentColor, und bei Reduced Motion wird jede Transformation durch ein ruhiges Pulsieren der Deckkraft ersetzt.",
+      "seo": {
+        "title": "React-Loader: 17 animierte Lade-Spinner",
+        "description": "Siebzehn React-Lade-Spinner: Dots, Bars, Dot-Matrix, Dither, Metaballs, Helix, Prozent und Terminal-ASCII. Eine size-Prop, currentColor, kostenlos und quelloffen."
+      }
+    },
+    "message-bubble": {
+      "name": "Message Bubble",
+      "description": "Eine fokussierte Konversationsfläche mit visuellen Tönen, unabhängiger Ausrichtung, gruppierten Nachrichten, ausklappbarem Inhalt und Unterstützung für interaktive Links oder Buttons.",
+      "examples": {
+        "surfaces": {
+          "name": "Animierte Flächen",
+          "description": "Eine interaktive Konversation, in der jede neu gesendete Nutzerzeile einmal aufpoppt, während der Assistent in eine stabile Zeile streamt."
+        },
+        "avatars": {
+          "name": "Mit Avataren",
+          "description": "Nach und nach eintreffende Nachrichten mit Absender-Avataren, Metadaten, Zustellstatus und gruppierter Ausrichtung für Folgenachrichten."
+        },
+        "show-more": {
+          "name": "Mehr anzeigen",
+          "description": "Eine lange Assistenten-Nachricht mit kompakter, zeilenbegrenzter Vorschau und animiertem Aufklapp-Control."
+        }
+      },
+      "seo": {
+        "title": "Chat-Message-Bubble-Komponente für React",
+        "description": "React-Chat-Bubbles für KI- und Messaging-Apps, mit sechs Stilen, Ausrichtung, Gruppierung, Links und einklappbaren langen Antworten. Kostenlos, per shadcn."
+      }
+    },
+    "message": {
+      "name": "Message",
+      "description": "Kombinierbare Konversations-Primitives für Nachrichtenzeilen, gruppierte Bubbles, Avatare, Metadaten, Live-Markierungen und ein einmaliges Aufpoppen an der Endkante für neu gesendete Zeilen.",
+      "seo": {
+        "title": "React-Chat-Message-Komponente für KI-Apps",
+        "description": "Kombinierbare React-Chatzeilen mit Bubbles, Avataren, Headern, Tipp-Indikatoren und Pop-in-Animation für neue Nachrichten. Kostenlos, per shadcn installierbar."
+      }
+    },
+    "message-scroller": {
+      "name": "Message Scroller",
+      "description": "Ein Konversations-Viewport, der die Lesenden berücksichtigt: Er folgt gestreamter Ausgabe am Live-Rand und gibt die Kontrolle ab, sobald weggescrollt wird.",
+      "seo": {
+        "title": "Auto-Scroll-Chat-Container für KI-Streaming",
+        "description": "React-Chat-Container, der gestreamter KI-Ausgabe am unteren Rand folgt und stoppt, sobald nach oben gescrollt wird, mit optionaler Nachrichtenleiste. Kostenlos."
+      }
+    },
+    "prompt-input": {
+      "name": "Prompt Input",
+      "description": "Ein automatisch wachsendes Eingabefeld für Agents mit Prompt-Aktionen, Modellauswahl, Absenden per Tastatur und animierten Senden- und Stopp-Zuständen.",
+      "seo": {
+        "title": "KI-Prompt-Eingabe für React-Chats",
+        "description": "Automatisch wachsende React-Chateingabe für KI-Apps mit Modellauswahl, Aktionsmenü, Senden per Enter und animierten Senden- und Stopp-Zuständen. Kostenlos, shadcn."
+      }
+    },
+    "todo-list": {
+      "name": "Todo List",
+      "description": "Ein einklappbarer Aufgabenplan für Agents mit morphenden Statusmarkierungen, Fortschrittszähler, kompakten Metadaten und flüssigen Listenaktualisierungen.",
+      "seo": {
+        "title": "Aufgabenliste für KI-Agents in React",
+        "description": "Einklappbare React-Todo-Liste für Pläne von KI-Agents, mit offenen, laufenden und erledigten Zuständen, morphenden Häkchen und Fortschrittszähler. Kostenlos."
+      }
+    },
+    "code-block": {
+      "name": "Code Block",
+      "description": "Eine Codefläche mit Syntax-Highlighting, stabilen Streaming-Updates, Zeilennummern, hervorgehobenen Zeilen, sanftem Mitlaufen und Kopier-Feedback.",
+      "seo": {
+        "title": "Streaming-Codeblock für React-KI-Chats",
+        "description": "React-Codeblock mit Syntax-Highlighting, der sich beim Streamen von KI-Code flüssig aktualisiert, mit Zeilennummern, hervorgehobenen Zeilen und Kopieren."
+      }
+    },
+    "approval-card": {
+      "name": "Approval Card",
+      "description": "Eine Human-in-the-Loop-Entscheidungsfläche für Freigaben, Einfach- oder Mehrfachauswahlfragen, eigene Antworten und mehrstufige Prüfabläufe.",
+      "examples": {
+        "questions": {
+          "name": "Fragen",
+          "description": "Führt durch Einfachauswahl-, Mehrfachauswahl- und Freitextfragen, bevor die vollständige Antwort an den Agent zurückgegeben wird."
+        },
+        "review": {
+          "name": "Prüfen und freigeben",
+          "description": "Pausiert einen Agent-Workflow für Freigabe, Überarbeitung oder Ablehnung und klappt zur festgehaltenen Entscheidung zusammen."
+        }
+      },
+      "seo": {
+        "title": "Human-in-the-Loop-Freigabe-UI für React-Agents",
+        "description": "React-Freigabekarte für KI-Agents: freigeben, ablehnen oder überarbeiten, plus Einfach-, Mehrfachauswahl- und mehrstufige Fragen. Kostenlos, per shadcn."
+      }
+    },
+    "file-diff": {
+      "name": "File Diff",
+      "description": "Eine aufklappbare Ansicht von Dateiänderungen mit Syntax-Highlighting, nach und nach erscheinenden Zeilen, Zeilennummern, Live-Änderungszählern, sanftem Mitlaufen und Einklappen nach Abschluss.",
+      "seo": {
+        "title": "React-Diff-Viewer für KI-Codeänderungen",
+        "description": "React-Diff-Viewer mit Syntax-Highlighting, der KI-Codeänderungen Zeile für Zeile streamt, mit Live-Zählern für Hinzufügungen und Löschungen und Kopieren."
+      }
+    },
+    "tool-result": {
+      "name": "Tool Result",
+      "description": "Eine schlanke, aufklappbare Ausführungsansicht für Terminalausgaben mit Syntax-Highlighting und Request-Antworten, die nach Abschluss zu einem kompakten Zustand zusammenklappt.",
+      "examples": {
+        "terminal-output": {
+          "name": "Terminalausgabe",
+          "description": "Streamt Befehlsausgaben in einen begrenzten Viewport, folgt neuen Zeilen und klappt dann zur Zusammenfassung des abgeschlossenen Laufs zusammen."
+        },
+        "request-result": {
+          "name": "Request-Ergebnis",
+          "description": "Zeigt einen laufenden Request und seine hervorgehobene Antwort-Payload mit Aktionen zum Wiederholen und Kopieren."
+        }
+      },
+      "seo": {
+        "title": "Ergebnis-Komponente für KI-Tool-Calls in React",
+        "description": "Aufklappbare React-Ansicht für KI-Tool-Calls mit Terminalausgabe und API-Antworten samt Syntax-Highlighting, Erfolgs- und Fehlerzuständen, Kopieren und Wiederholen."
+      }
+    },
+    "streaming-response": {
+      "name": "Streaming Response",
+      "description": "Eine stabile Antwortfläche mit Abschlussaktionen, gerendertem Inhalt und einer aufklappbaren Quellenübersicht.",
+      "seo": {
+        "title": "Streaming-KI-Antwort-Komponente für React",
+        "description": "React-Fläche für gestreamte KI-Antworten mit Kopieren, Wiederholen, Feedback und aufklappbarer Quellenliste nach Abschluss. Für jeden Renderer, kostenlos."
+      }
+    },
+    "image-generation": {
+      "name": "Bildgenerierung",
+      "description": "Eine stabile Fläche für generierte Bilder, die ohne Layoutverschiebung von der Warteschlange über schrittweise Verfeinerung bis zum fertigen Ergebnis führt.",
+      "seo": {
+        "title": "Lade-UI für KI-Bildgenerierung in React",
+        "description": "React-Komponente für KI-Bildgenerierung mit Zuständen für Warteschlange, Generierung, Verfeinerung, Abschluss und Fehler, ohne Layoutverschiebung. Per shadcn."
+      }
+    },
+    "tool-approval": {
+      "name": "Tool Approval",
+      "description": "Eine Human-in-the-Loop-Berechtigungskarte, um Tool-Details zu prüfen und die Ausführung einmalig zu erlauben, dauerhaft zu erlauben oder abzulehnen.",
+      "seo": {
+        "title": "Berechtigungsabfrage für KI-Tools in React",
+        "description": "React-Berechtigungskarte für Tool-Calls von KI-Agents: Parameter prüfen, dann einmal erlauben, immer erlauben oder ablehnen. Kostenlos, quelloffen, per shadcn."
+      }
+    },
+    "citations": {
+      "name": "Citations",
+      "description": "Inline-Quellenmarkierungen, kombiniert mit einer einklappbaren, schrittweise gerenderten Quellensammlung für belegte Agent-Antworten.",
+      "seo": {
+        "title": "KI-Zitate und Quellen-Komponente für React",
+        "description": "Inline-Quellenlinks für React mit einklappbarer, nummerierter Quellenliste und echten Favicons, für belegte KI-Antworten. Kostenlos, per shadcn installierbar."
+      }
+    },
+    "agent-activity": {
+      "name": "Agent Activity",
+      "description": "Ein adaptiver Aktivitätsstream für Reasoning, Suchen, Tool-Aufrufe, strukturierte Ausführungs-Traces oder eine chronologische Mischung.",
+      "examples": {
+        "streaming-text": {
+          "name": "Streaming-Text",
+          "description": "Streamt frei formulierten Reasoning-Text in den begrenzten Viewport und hält das abgeschlossene Protokoll hinter einer zeitgestempelten Ausklappansicht verfügbar."
+        },
+        "reasoning-steps": {
+          "name": "Reasoning-Schritte",
+          "description": "Zeigt abgeschlossene, aktive und ausstehende Reasoning-Schritte mit optionalen nachgestellten Metadaten."
+        },
+        "web-search": {
+          "name": "Websuche",
+          "description": "Zeigt eine Suchanfrage, nach und nach gerenderte Ergebniszeilen und einen Überlaufzähler."
+        },
+        "tool-calls": {
+          "name": "Tool-Aufrufe",
+          "description": "Fasst Lese-, Bearbeitungs- und Ausführungsereignisse mit Monospace-Zielen und optionalen Zeilenänderungszählern zusammen."
+        },
+        "mixed-activity": {
+          "name": "Gemischte Aktivität",
+          "description": "Streamt Reasoning-, Such- und Tool-Ereignisse in einem chronologischen Lauf, während der Viewport neuer Arbeit sanft folgt."
+        },
+        "agent-trace": {
+          "name": "Agent Trace",
+          "description": "Streamt Nachrichten und strukturierte Aktionen in ein kompaktes Ausführungsprotokoll und fasst den abgeschlossenen Lauf anschließend nach Anzahl der Tool-Aufrufe und Nachrichten zusammen."
+        }
+      },
+      "seo": {
+        "title": "Aktivitäts-Feed für KI-Agents in React",
+        "description": "React-Aktivitäts-Feed für KI-Agents, der Reasoning, Websuchen, Tool-Calls und Traces in einem Stream zeigt, der nach Abschluss einklappt. Kostenlos, quelloffen."
+      }
+    },
+    "loading-states": {
+      "name": "Agent-Ladezustände",
+      "description": "Drei durchdachte Ladezustände für KI-Interfaces: schimmernder Statustext, Live-Fortschritt des Agents und wechselnde Reasoning-Phrasen.",
+      "examples": {
+        "reasoning-text": {
+          "name": "Reasoning Text",
+          "description": "Schimmernder Reasoning-Text mit ASCII-Loader und Übergängen per Kaskade, Phrasenwechsel oder buchstabenweisem Scramble."
+        },
+        "thinking-shimmer": {
+          "name": "Thinking Shimmer",
+          "description": "Ein dezenter Shimmer, der den aktuellen Status des Agents lesbar hält, während die Arbeit weiterläuft."
+        },
+        "agent-progress": {
+          "name": "Agent Progress",
+          "description": "Ein kompaktes Aktivitätssymbol, ein Aktionsverb und ein tabellarischer Live-Timer für länger laufende Agent-Arbeit."
+        }
+      },
+      "seo": {
+        "title": "KI-Ladezustände: Thinking-Animationen für React",
+        "description": "Drei KI-Ladezustände für React: schimmernder Thinking-Text, Live-Fortschritt des Agents mit Timer und wechselnde Reasoning-Phrasen. Kostenlos, per shadcn."
+      }
+    },
+    "ai-sidebar": {
+      "name": "AI Sidebar",
+      "description": "Eine einklappbare Sidebar für KI-Workspaces mit Ordnern, Projekten, Dateien und Lesezeichen, mit Tastaturnavigation, optimistischem Verschieben, Inline-Umbenennung und überlaufbewussten Labels.",
+      "seo": {
+        "title": "KI-Workspace-Sidebar für React-Chat-Apps",
+        "description": "React-Sidebar für KI-Chat-Apps mit Ordnern, Projekten, Dateien und Lesezeichen, Verschieben per Drag, Umbenennen inline und Tastatursteuerung. Kostenlos."
+      }
+    },
+    "chat-app": {
+      "name": "Chat App",
+      "description": "Ein vollständiger Workspace für Agent-Konversationen, der Navigation, Nachrichten, Streaming, Planung, Freigaben, Tools, Code, Diffs, generierte Medien, Quellen und Prompt-Eingabe kombiniert.",
+      "seo": {
+        "title": "React-Template für KI-Chat-Apps (shadcn)",
+        "description": "Komplettes React-KI-Chat-Interface mit Sidebar, Nachrichten, Streaming, Planung, Freigaben, Tool-Ergebnissen, Code, Diffs und Prompt-Eingabe. Kostenlos."
+      }
+    },
+    "infinite-masonry": {
+      "name": "Infinite Masonry",
+      "description": "Responsives, virtualisiertes Masonry-Layout, das Karten mit variabler Höhe misst und weitere Daten lädt, sobald das Ende näher rückt.",
+      "seo": {
+        "title": "React-Masonry-Grid mit Infinite Scroll",
+        "description": "Virtualisiertes React-Masonry-Layout mit Karten variabler Höhe, responsiven Spalten und Nachladen kurz vor dem Ende. Kostenlos, per shadcn installierbar."
+      }
+    },
+    "notification-stack": {
+      "name": "Notification Stack",
+      "description": "Kompakte Benachrichtigungskarten, die bei Hover, Fokus oder Tippen federnd von einer gestapelten Übersicht in eine lesbare Liste übergehen.",
+      "seo": {
+        "title": "Gestapelte Benachrichtigungen für React",
+        "description": "React-Benachrichtigungsstapel, der bei Hover, Fokus oder Tippen federnd von einer Übersicht zur lesbaren Liste wird. Framer Motion, kostenlos, per shadcn."
+      }
+    },
+    "project-folder": {
+      "name": "Project Folder",
+      "description": "Ein interaktiver Projektordner, der bei Hover oder Fokus seinen Dateifächer öffnet, sich zu einem Overlay mit Fokusverwaltung erweitert und beim Schließen den gesamten Weg zurückverfolgt.",
+      "seo": {
+        "title": "Animierte Ordner-Komponente für React",
+        "description": "React-Projektordner, der beim Hover seine Dateien auffächert, sich zu einem Overlay mit Fokusverwaltung erweitert und beim Schließen zurückfaltet. Per shadcn."
+      }
+    },
+    "knockout-bracket": {
+      "name": "Spielpläne",
+      "description": "Animierte Turnier-Spielpläne in zwei Stilen: ein K.-o.-Baum, der Runde für Runde durchblättert, und ein Rad, das denselben Baum um den Sieger legt. Beide lesen dasselbe Array von Runden, sodass ein Datensatz beide Darstellungen speist.",
+      "examples": {
+        "knockout-wheel": {
+          "name": "Knockout Wheel",
+          "description": "Das Turnier radial dargestellt. Der Sieger bildet die Nabe, jede Runde ist ein Ring weiter außen, und die Teams selbst bilden den Rand. Die Knoten federn Ring für Ring herein, und Hover über einen Knoten hebt dieses Team hervor, während der Rest zurücktritt. Teams zeigen eine Flagge, ein Logo oder ihre Initialen, und ein größeres Teilnehmerfeld fügt einen weiteren Ring hinzu."
+        },
+        "knockout-bracket": {
+          "name": "Knockout Bracket",
+          "description": "Blättert Runde für Runde. Die linke Runde stapelt sich in festem Rhythmus, jede spätere Runde zentriert sich zwischen ihren beiden Vorspielen, und Karten, Winkelverbinder, Kopfzeilen und Bühnenhöhe animieren in jedes neue Layout. Ein Spiel um Platz drei sitzt unter dem Baum, abgesetzt durch eine eigene Linie. Rundennamen, Team-Grafiken, Termine und Ergebnis-Chips stammen alle aus den übergebenen Daten."
+        }
+      },
+      "seo": {
+        "title": "React-Turnierbaum und Spielplan-Komponente",
+        "description": "Animierter Turnierbaum für React mit rundenweisem Blättern und radialem Rad-Layout, beide aus einem rounds-Array. Kostenlos, per shadcn installierbar."
+      }
+    },
+    "availability-scheduler": {
+      "name": "Availability Scheduler",
+      "description": "Wochen-Verfügbarkeitseditor, in dem jeder Tag federnd zwischen verfügbar und nicht verfügbar wechselt, Zeiträume mit Blur-Slide-Animation hinzukommen und verschwinden, Zeiten aus einem scrollbaren Dropdown gewählt werden und ein Kopiermenü Zeiten auf andere Tage überträgt.",
+      "seo": {
+        "title": "Wöchentlicher Verfügbarkeitsplaner für React",
+        "description": "React-Editor für wöchentliche Verfügbarkeit mit Tages-Toggles, Zeitspannen, Zeit-Dropdown und Übertragen der Zeiten auf andere Tage. Kostenlos, per shadcn."
+      }
+    },
+    "swap": {
+      "name": "Multi-chain Swap",
+      "description": "Cross-Chain-Swap-Widget mit Chain- und Token-Auswahl, morphenden Ansichten, animiertem Tausch und Kursangebot.",
+      "seo": {
+        "title": "Krypto-Swap-Widget für React (Multi-Chain)",
+        "description": "Animiertes Cross-Chain-Token-Swap-Widget für React mit Chain- und Token-Auswahl, morphenden Ansichten, Tausch-Button und Quote. Kostenlos, quelloffen."
+      }
+    },
+    "dynamic-island": {
+      "name": "Dynamic Island",
+      "description": "Island-Pill im iOS-Stil, die zwischen Live-Activity-Ansichten morpht, mit federnder Größenänderung und Blur-Überblendungen.",
+      "seo": {
+        "title": "Dynamic-Island-Komponente für React (iOS-Stil)",
+        "description": "Dynamic Island im iPhone-Stil für React, die mit federnder Größenänderung und Blur-Überblendung zwischen Live-Activity-Ansichten morpht. Kostenlos, per shadcn."
+      }
+    },
+    "command-palette": {
+      "name": "Command Palette",
+      "description": "⌘K-Palette mit Fuzzy-Filter, federnd animierter aktiver Zeile und Glasoberfläche.",
+      "seo": {
+        "title": "React-Command-Palette (Cmd-K-Menü)",
+        "description": "Cmd-K-Command-Palette für React mit Fuzzy-Suche, federnd animierter aktiver Zeile, Tastaturnavigation und Glasoberfläche. Kostenlos, per shadcn installierbar."
+      }
+    },
+    "morphing-search": {
+      "name": "Morphing Search",
+      "description": "Suchfeld oder kompaktes Icon, das zu einer gläsernen Ergebnisfläche morpht – ob per Klick oder Tastenkürzel geöffnet.",
+      "seo": {
+        "title": "Animierte Suchleiste für React mit Ergebnissen",
+        "description": "Zwei React-Suchleisten: eine morpht in ein Ergebnis-Panel, eine dockt als Pill mit Chips, letzten Suchen und Vorschlägen an. Tastaturbedienbar, kostenlos."
+      },
+      "examples": {
+        "chips": {
+          "name": "Chip-Suche",
+          "description": "Angedockte Suchleiste, die sich beim Fokus federnd verbreitert und aus ihrer eigenen Kante ein Panel mit letzten Suchen entfaltet. Begriffe werden zu entfernbaren Chips, die Leiste wächst mit, und Vorschläge filtern sich bei der Eingabe."
+        },
+        "overlay": {
+          "name": "Morphing Search",
+          "description": "Suchfeld oder kompaktes Icon, das in eine gläserne Ergebnisfläche morpht, egal ob per Klick oder Tastenkürzel geöffnet."
+        }
+      }
+    },
+    "expandable-action-bar": {
+      "name": "Expandable Action Bar",
+      "description": "Kompakte Icon-Aktionen, die sich bei Hover oder Fokus per Shared-Layout-Animation zu beschrifteten Controls erweitern.",
+      "seo": {
+        "title": "Erweiterbare Icon-Aktionsleiste für React",
+        "description": "React-Toolbar, deren Icon-Buttons sich bei Hover oder Fokus per Shared-Layout-Animation zu beschrifteten Controls erweitern. Kostenlos, quelloffen, per shadcn."
+      }
+    },
+    "overflow-actions": {
+      "name": "Overflow Actions",
+      "description": "Verbundene Pill-Leiste für Hauptaktionen, die sich federnd öffnet und zusätzliche Controls einblendet.",
+      "seo": {
+        "title": "Overflow-Aktionsmenü-Button für React",
+        "description": "Verbundene React-Pill-Leiste für Hauptaktionen, die sich federnd öffnet und weitere Controls zeigt. Framer Motion und Tailwind, kostenlos, per shadcn."
+      }
+    },
+    "expandable-tabs": {
+      "name": "Expandable Tabs",
+      "description": "Icon-Tableiste, in der sich der aktive Tab zu einer beschrifteten Pill erweitert, mit einem darüberliegenden Panel, das beim Wechsel seine Höhe morpht und den Inhalt richtungsabhängig gleiten lässt.",
+      "seo": {
+        "title": "Erweiterbare Icon-Tabs für React",
+        "description": "React-Icon-Tableiste, in der sich der aktive Tab zur beschrifteten Pill erweitert und das Panel darüber seine Höhe zwischen Ansichten morpht. Kostenlos, shadcn."
+      }
+    },
+    "morphing-tabs": {
+      "name": "Morphing Tabs",
+      "description": "Umsortierbare Tabs, deren ausgewähltes Element zu einer weißen Inhaltsfläche wächst; die aktive Form gleitet beim Verschieben der Tabs mit, und zwischen den Räumen läuft ein gemeinsamer Morph.",
+      "seo": {
+        "title": "Morphing-Tabs-Komponente für React",
+        "description": "Umsortierbare React-Tabs, deren ausgewählter Tab zu seiner Inhaltsfläche wächst, mit gleitender aktiver Form und gemeinsamen Morphs. Kostenlos, quelloffen."
+      }
+    },
+    "swipeable-list": {
+      "name": "Swipeable List",
+      "description": "Listenzeilen im Mobile-Stil, die sich nach links oder rechts wischen lassen, um kontextbezogene Aktions-Buttons freizulegen.",
+      "seo": {
+        "title": "Wischbare React-Liste mit Swipe-Aktionen",
+        "description": "React-Listenzeilen im Mobile-Stil, die per Wischen nach links oder rechts Aktionen wie Löschen und Archivieren zeigen. Touch und Maus, kostenlos, per shadcn."
+      }
+    },
+    "file-upload": {
+      "name": "Datei-Upload",
+      "description": "Zwei Upload-Muster: ein Anhangs-Workspace für gemischte Dateien, Links, Audio und Medien sowie eine Fortschrittswarteschlange mit Wiederholen und Entfernen.",
+      "examples": {
+        "attachment-upload": {
+          "name": "Attachment Upload",
+          "description": "Ein gemischter Anhangs-Workspace mit Dropzone, gestaffelten Datei- und Bildzeilen, animiertem Feedback für Upload, Erfolg, Fehler, Wiederholen und Entfernen, Bildvorschauen per Shared Layout und einer Audio-Wellenform."
+        },
+        "upload-queue": {
+          "name": "Upload Queue",
+          "description": "Eine Upload-Warteschlange per Drag-and-drop mit Fortschrittszeilen, Upload-Zuständen, Wiederholen und Entfernen."
+        }
+      },
+      "seo": {
+        "title": "React-Datei-Upload mit Fortschritt und Vorschau",
+        "description": "Zwei React-Upload-Komponenten: ein Anhangsbereich mit Bildvorschauen und Audio sowie eine Fortschritts-Warteschlange mit Wiederholen und Entfernen. Kostenlos."
+      }
+    },
+    "prediction-market": {
+      "name": "Prediction Market",
+      "description": "Animierte Marktkarten mit Outcome-CTAs, Wahrscheinlichkeiten und Lesezeichen, plus ein Trade-Ticket mit Kauf- und Verkaufsmodus und rollender Betragseingabe.",
+      "seo": {
+        "title": "Prediction-Market-UI-Komponenten für React",
+        "description": "React-Karten für Prediction Markets mit Outcome-Preisen und Wahrscheinlichkeiten, plus Trade-Ticket für Kauf und Verkauf mit rollender Betragseingabe. Kostenlos."
+      },
+      "examples": {
+        "market-cards": {
+          "name": "Marktkarten",
+          "description": "Kompakte Marktübersichten mit einheitlichen Outcome-Zeilen, animierten Quoten-CTAs, Auszahlungsfaktoren und Lesezeichen. Quoten-CTAs haben grüne bzw. rote Hintergründe und rollen bei Hover oder Tastaturfokus zu Yes/No-Labels. Mit „Update odds“ lassen sich animierte Preisänderungen ansehen."
+        },
+        "trade-ticket": {
+          "name": "Trade Ticket",
+          "description": "Outcomes kaufen und verkaufen mit rollender Betragseingabe, Schnellauswahl-Chips und Trade-Zuständen."
+        }
+      }
+    },
+    "wallet-card": {
+      "name": "Wallet Card",
+      "description": "Wallet-Übersichtskarte mit Kontowechsler und Suche, die sich aus ihren Triggern heraus öffnen, einem kaskadierenden Saldo mit Live-Änderungs-Pill und Privatsphäre-Schalter, Adresse kopieren sowie Aktionen für Send / Deposit / Swap / Buy.",
+      "seo": {
+        "title": "Krypto-Wallet-Card-Komponente für React",
+        "description": "React-Krypto-Wallet-Card mit Kontowechsel, Suche, animiertem Guthaben, Privatsphäre-Schalter, Adresse kopieren sowie Senden, Tauschen und Kaufen. Kostenlos."
+      }
+    },
+    "otp-input": {
+      "name": "OTP Input",
+      "description": "Eingabe für Einmalcodes mit gleitendem Fokusring, Ziffern, die pro Feld hereinrollen, Schüttel-Animation bei Fehlern und gezeichnetem Häkchen bei Erfolg.",
+      "seo": {
+        "title": "Animierte OTP-Eingabe für React (Einmalcode)",
+        "description": "React-Eingabe für OTP und Bestätigungscodes mit gleitendem Fokusring, rollenden Ziffern, Schütteln bei Fehlern und Erfolgshäkchen. Einfügen möglich, per shadcn."
+      }
+    },
+    "signup-form": {
+      "name": "Registrierungsformular",
+      "description": "Zusammengesetztes Registrierungsformular, das ein Feld erst nach dem Verlassen markiert und den Fehler sofort nach der Korrektur entfernt, mit längengewichteter Stärkeanzeige, Passwort-Einblendung und animiertem Absendeablauf.",
+      "seo": {
+        "title": "React-Registrierungsformular mit Validierung",
+        "description": "Animiertes React-Registrierungsformular mit Validierung beim Verlassen des Felds, Passwortstärke-Anzeige, Passwort-Anzeige sowie Lade- und Erfolgszuständen."
+      }
+    },
+    "bloom-menu": {
+      "name": "Bloom Menu",
+      "description": "Ein Button, der sich zu einem Menü öffnet und irisartig aus der Mitte aufblüht – das Raster entfaltet sich in alle Richtungen mit radial gestaffelten Einträgen.",
+      "seo": {
+        "title": "Animierter Bloom-Menü-Button für React",
+        "description": "React-Button, der zum Menü morpht und sich aus seiner Mitte mit radial gestaffelten Einträgen öffnet. Framer Motion, kostenlos, per shadcn installierbar."
+      }
+    },
+    "feedback-widget": {
+      "name": "Feedback Widget",
+      "description": "Trigger in der Ecke, der zu einem Feedback-Popup morpht, mit Nachrichteneingabe und animierten Zuständen für Senden, Erfolg und erneuten Versuch.",
+      "seo": {
+        "title": "Feedback-Widget-Komponente für React",
+        "description": "React-Feedback-Widget, das von einem Eck-Button zum Formular morpht, mit Sende-, Erfolgs- und Wiederholen-Zuständen. Kostenlos, per shadcn-CLI installierbar."
+      }
+    },
+    "not-found": {
+      "name": "404 / Not Found",
+      "description": "Animierte 404-Seiten in fünf Stilen: Glitch-Scramble, magnetische Ziffern, Cursor-Spotlight, ein aufgefächerter Kartenstapel und ein getipptes Terminal.",
+      "examples": {
+        "glitch": {
+          "name": "Glitch",
+          "description": "Die Ziffern durchlaufen zufällige Glyphen, bevor sie sich auflösen, mit chromatischer Aufspaltung beim Hover."
+        },
+        "magnetic": {
+          "name": "Magnetic",
+          "description": "Jede Ziffer wird über den Magnetic-Wrapper vom Cursor angezogen und federt beim Verlassen zurück."
+        },
+        "spotlight": {
+          "name": "Spotlight",
+          "description": "Ein dunkles Panel, in dem ein Spotlight, das dem Cursor folgt, den hellen Code aus einer gedimmten Basis enthüllt."
+        },
+        "stacked": {
+          "name": "Stacked",
+          "description": "Eine Code-Karte über einem verborgenen Stapel, der sich beim Hover federnd auffächert."
+        },
+        "terminal": {
+          "name": "Terminal",
+          "description": "Ein Terminalfenster, das einen fehlgeschlagenen cd-Befehl und einen 404-Status tippt, mit blinkendem Cursor."
+        }
+      },
+      "seo": {
+        "title": "Animierte 404-Seiten-Templates für React",
+        "description": "Fünf animierte 404-Seiten für React und Next.js: Glitch, magnetische Ziffern, Cursor-Spotlight, Kartenstapel und Terminal. Kostenlos, per shadcn installierbar."
+      }
+    },
+    "timeline": {
+      "name": "Timeline",
+      "description": "Eine ziehbare Timeline datierter Ereignisse rund um eine fokussierte Karte.",
+      "seo": {
+        "title": "Animierte horizontale Timeline für React",
+        "description": "React-Timeline, deren zentriertes Ereignis wächst, während Nachbarn verblassen, mit Teilstrichen, Parallax-Jahreszahlen, Drag-Momentum und Tastatursteuerung."
+      }
+    },
+    "alert": {
+      "name": "Animated Alert",
+      "description": "Kombinierbares Feedback mit sanften Übergängen.",
+      "seo": {
+        "title": "Animierte Alert-Komponente für React und Tailwind",
+        "description": "Schließbarer React-Alert mit fünf Varianten, Icon, Titel, Aktion und Schließen-Button, höflichen oder dringenden Ansagen und federndem Exit. Kostenlos, shadcn."
+      }
+    },
+    "collapsible": {
+      "name": "Animated Collapsible",
+      "description": "Aufklappbarer Inhalt mit sanftem Reveal.",
+      "seo": {
+        "title": "Animiertes Collapsible für React (Framer Motion)",
+        "description": "Kombinierbares React-Collapsible mit federnder Höhenanimation, eigenen Triggern, kontrolliertem oder unkontrolliertem State und Fokusübergabe. Kostenlos."
+      }
+    },
+    "aspect-ratio": {
+      "name": "Aspect Ratio",
+      "description": "Responsive Medien mit sanften Übergängen zwischen Seitenverhältnissen.",
+      "seo": {
+        "title": "React-Aspect-Ratio-Komponente mit sanftem Resize",
+        "description": "Responsiver React-Rahmen für Seitenverhältnisse und Bilder, der federnd zwischen Formaten morpht, mit Cover-Zuschnitt. Kostenlos, quelloffen, per shadcn."
+      }
+    },
+    "arc-picker": {
+      "name": "Arc Picker",
+      "description": "Radiale Textauswahl mit Bögen nach oben, unten, links oder rechts, sanfter Bewegung per Mausrad und Live-Auswahl bei jedem Scrollschritt. Ein durchgehender Klammerrahmen wächst und schrumpft um jedes Label. Unterstützt Drag-Momentum, Tastatureingabe, deaktivierte Optionen, kontrollierte oder unkontrollierte Werte, Formulare und Reduced Motion.",
+      "seo": {
+        "title": "Arc Picker: radialer Scroll-Picker für React",
+        "description": "Gebogener React-Picker, der Labels beim Passieren der Mitte auswählt, mit Mausrad, Drag-Momentum, Tastatur und einem Klammerrahmen, der zu jeder Option morpht."
+      }
+    },
+    "sortable-stack": {
+      "name": "Sortierbare Liste",
+      "description": "Kombinierbare sortierbare Liste mit Gruppe, Eintrag, Ziehgriff, Inhalt und Rückgängig-Teilen sowie einem gemeinsamen State-Hook. Federndes Layout, Umsortieren per Tastatur, barrierefreie Positionsansagen und kontrollierte oder unkontrollierte Einträge.",
+      "seo": {
+        "title": "Animierte sortierbare Liste für React (Drag & Drop)",
+        "description": "Sortierbare React-Liste mit Ziehgriffen, federndem Layout, Umsortieren per Tastatur, Positionsansagen für Screenreader und Rückgängig. Kostenlos, per shadcn."
+      }
+    },
+    "image-viewer": {
+      "name": "Image Viewer",
+      "description": "Ein kombinierbarer React-Bildbetrachter für Galerien und Anhangsvorschauen, mit animierten Lightbox-Varianten, eigenen Thumbnails und Steuerelementen, Wisch- und Tastaturnavigation, Zoom und Verschieben, barrierefreier Fokusverwaltung und kontrollierter oder unkontrollierter Auswahl.",
+      "seo": {
+        "title": "React-Bildbetrachter und Lightbox mit Zoom",
+        "description": "Animierter React-Bildbetrachter und Lightbox mit morphenden Thumbnails, Wisch- und Tastaturnavigation, Zoom, Verschieben und Fokusverwaltung. Kostenlos."
+      },
+      "examples": {
+        "morphing": {
+          "name": "Morphing",
+          "description": "Ein mit dem Thumbnail verbundener Bildbetrachter mit kombinierbaren Teilen für Galerie, Thumbnail, Inhalt, Bildunterschrift und Navigation sowie einem gemeinsamen State-Hook. Erweitert sich zum Bild in voller Größe und kehrt beim Schließen zum Thumbnail zurück, mit Wischnavigation, Zoom und Verschieben."
+        }
+      }
+    },
+    "date-range-picker": {
+      "name": "Date Range Picker",
+      "description": "Kombinierbarer Datumsbereichs-Picker mit Root-, Trigger-, Popover-Inhalt-, Kalender-, Header-, Raster-, Zusammenfassungs-, Footer-, Zurücksetzen- und Preset-Teilen sowie einem gemeinsamen State-Hook. Kompakte Inline- und Dropdown-Varianten, direkte Monats- und Jahresauswahl und vollständige Tastaturnavigation.",
+      "seo": {
+        "title": "React-Datumsbereichsauswahl (Tailwind)",
+        "description": "Kombinierbarer React-Datumsbereichs-Picker mit Inline- und Dropdown-Layout, Presets, Monats- und Jahresauswahl und voller Tastaturnavigation. Kostenlos, shadcn."
+      }
+    },
+    "card": {
+      "name": "Card",
+      "description": "Kombinierbare Card mit Header-, Titel-, Beschreibungs-, Aktions-, Inhalts- und Footer-Teilen. Umrandete oder gedämpfte Flächen, normale oder kompakte Abstände und ein optionaler auswählbarer Zustand mit Feedback beim Drücken, kombinierbar mit Checkbox, Radio und Button.",
+      "seo": {
+        "title": "React-Card-Komponente für Tailwind und shadcn",
+        "description": "Kombinierbare React-Card mit Header, Titel, Aktion, Inhalt und Footer, kompakten Abständen und optional auswählbarem Zustand mit Feedback beim Drücken. Kostenlos."
+      }
+    },
+    "color-picker": {
+      "name": "Color Picker",
+      "description": "Kombinierbarer Farbwähler, dessen Trigger-Chip zur Sättigungs- und Helligkeitsfläche morpht. Beim Ziehen hebt sich eine Lupe von jedem Thumb ab. Mit Farbton- und Deckkraft-Slidern, Hex-, RGB- und HSL-Feldern, Pipette, Presets, voller Tastatursteuerung und kontrolliertem oder unkontrolliertem Wert.",
+      "seo": {
+        "title": "React-Farbwähler mit Hex, RGB und HSL",
+        "description": "Animierter React-Farbwähler mit Sättigungsfläche, Farbton- und Alpha-Slidern, Hex-, RGB- und HSL-Feldern, Pipette, Presets und Tastatursteuerung. Kostenlos."
+      }
+    },
+    "color-selector": {
+      "name": "Animated Color Selector",
+      "description": "Kombinierbare Farbfelder mit federnd gleitendem Auswahlring, Feedback beim Drücken, nativer Radio-Tastaturnavigation und kontrolliertem oder unkontrolliertem State.",
+      "seo": {
+        "title": "Animierte Farbfeld-Auswahl für React",
+        "description": "React-Farbfeld-Auswahl auf Basis nativer Radio-Inputs, mit gleitendem Auswahlring, Feedback beim Drücken und Tastaturnavigation. Quellcode kopieren oder shadcn."
+      }
+    },
+    "pagination": {
+      "name": "Animated Pagination",
+      "description": "Seitennavigation mit gleitender Pill für die aktuelle Seite, Seitenzahlen, die mit dem Ausschnitt mitgleiten, und Auslassungspunkten, die mehrere Seiten überspringen.",
+      "seo": {
+        "title": "Animierte Paginierung für React",
+        "description": "React-Paginierung mit gleitender Pill für die aktuelle Seite, gleitenden Seitenzahlen, Sprüngen per Auslassungspunkt, Router-Links und Tastaturzugriff. Kostenlos."
+      }
+    },
+    "avatar-group": {
+      "name": "Animated Avatar Group",
+      "description": "Überlappende Avatare, die sich beim Hover auffächern, mit Namens-Tooltip anheben und sich von einem +N-Zähler aus auf alle erweitern.",
+      "seo": {
+        "title": "Animierte Avatar-Gruppe für React",
+        "description": "React-Avatar-Stapel, der sich beim Hover auffächert, Namen in Tooltips zeigt, auf Initialen zurückfällt und sich von +N aus erweitert. Kostenlos, per shadcn."
+      }
+    },
+    "breadcrumb": {
+      "name": "Animated Breadcrumb",
+      "description": "Kombinierbare Breadcrumb-Navigation mit weichen Pfadübergängen, einem Overflow-Dropdown per Hover für lange Pfade, eigenen Trennzeichen und Unterstützung für Router-Links.",
+      "seo": {
+        "title": "Animierte Breadcrumb-Komponente für React",
+        "description": "React-Breadcrumb, die lange Pfade in ein Overflow-Dropdown einklappt, mit Slide-und-Fade-Übergängen, eigenen Trennzeichen und Unterstützung für Router-Links."
+      }
+    },
+    "adaptive-stepper": {
+      "name": "Adaptive Stepper",
+      "description": "Kombinierbarer Zahlen-Stepper, dessen feste Grundfläche sich an Minimum und Maximum anpasst, während der Wert zwischen den Schritten rollt.",
+      "seo": {
+        "title": "Animierter Zahlen-Stepper für React",
+        "description": "React-Zahlen-Stepper, dessen Wert zwischen Schritten rollt und dessen Controls sich an Min und Max anpassen, ohne das Layout zu verschieben. Tastatursicher."
+      }
+    },
+    "multi-select": {
+      "name": "Multi Select",
+      "description": "Kombinierbare Multi-Select-Primitives mit durchsuchbaren Optionen, entfernbaren animierten Tokens und einem morphenden, kollisionsbewussten Panel.",
+      "seo": {
+        "title": "React-Multi-Select mit Suche und Tags",
+        "description": "Durchsuchbares React-Multi-Select mit entfernbaren animierten Tags und einem kollisionsbewussten Panel, das sich morphend öffnet. Barrierefrei, kostenlos, shadcn."
+      }
+    },
+    "file-tree": {
+      "name": "Dateibaum",
+      "description": "Kombinierbare Datei- und Ordner-Primitives mit federnden Zweigen, gleitender Auswahl und vollständiger Tastaturnavigation.",
+      "seo": {
+        "title": "Animierter Dateibaum für React",
+        "description": "React-Datei- und Ordnerbaum mit federnden Zweigen, gleitender Auswahl und voller Tastaturnavigation. Kombinierbare Teile, kostenlos, per shadcn installierbar."
+      }
+    },
+    "line-chart": {
+      "name": "Liniendiagramm",
+      "description": "Linien- und Flächendiagramme, die mit den Daten morphen, mit einrastendem Fadenkreuz und Wert-Tooltips.",
+      "seo": {
+        "title": "Animiertes Linien- und Flächendiagramm für React",
+        "description": "React-Linien- und Flächendiagramm mit Linien, die bei neuen Daten morphen, einrastendem Fadenkreuz, animierten Tooltips, Serien-Toggles und Tastaturzugriff."
+      }
+    },
+    "bar-chart": {
+      "name": "Balkendiagramm",
+      "description": "Gruppierte, gestapelte und horizontale Balken, die federnd einwachsen, neu skalieren und sich neu sortieren.",
+      "seo": {
+        "title": "Animiertes Balkendiagramm für React",
+        "description": "React-Balkendiagramm mit gruppierten, gestapelten und horizontalen Layouts, federnd einwachsenden und umsortierenden Balken, Tooltips und Tastaturzugriff. Kostenlos."
+      }
+    },
+    "sparkline": {
+      "name": "Sparkline",
+      "description": "Ein kompakter Inline-Trend für Stat-Cards und Tabellen, mit Änderungs-Badge und optionaler Wertanzeige.",
+      "seo": {
+        "title": "React-Sparkline-Chart-Komponente",
+        "description": "React-Sparkline für Stat-Cards und Tabellen: kompakte Trendlinie oder -fläche mit Änderungs-Badge, Live-Morphing und optionaler Wertanzeige beim Hover. Kostenlos."
+      }
+    },
+    "sankey-chart": {
+      "name": "Sankey-Diagramm",
+      "description": "Gewichtete Flüsse zwischen Stufen, die sich einzeichnen und mit den Daten morphen.",
+      "seo": {
+        "title": "Animiertes Sankey-Diagramm für React",
+        "description": "React-Sankey-Diagramm mit Flüssen, die sich einzeichnen und bei neuen Daten morphen, verknüpften Hervorhebungen, Tooltips und Tastaturzugriff. Kostenlos, shadcn."
+      }
+    },
+    "treemap": {
+      "name": "Treemap",
+      "description": "Proportionale Kacheln, die mit den Daten morphen, mit Tooltips für Wert und Anteil.",
+      "seo": {
+        "title": "Animierte Treemap-Chart-Komponente für React",
+        "description": "React-Treemap mit Kacheln, die bei Datenänderungen morphen, verschachtelten Hierarchien, Tooltips, Tastaturnavigation und barrierefreier Datentabelle. Kostenlos."
+      }
+    },
+    "candlestick-chart": {
+      "name": "Candlestick-Chart",
+      "description": "Live-OHLC-Kerzen mit Volumen, einer Linie für den letzten Kurs und Fadenkreuz-Anzeige.",
+      "seo": {
+        "title": "React-Candlestick-Chart für Live-OHLC-Daten",
+        "description": "Animierter React-Candlestick-Chart mit Volumenbalken, Live-Linie für den letzten Kurs und OHLC-Fadenkreuz für Echtzeit-Tradingdaten. Kostenlos, quelloffen."
+      }
+    },
+    "donut-chart": {
+      "name": "Donut-Diagramm",
+      "description": "Abgerundete Anteilssegmente mit verknüpfter Anzeige in der Mitte und Legende.",
+      "seo": {
+        "title": "Animiertes Donut-Diagramm für React",
+        "description": "React-Donut-Diagramm mit abgerundeten Segmenten, verknüpfter Mittelanzeige, Legende mit Anteilsbalken, Tastaturfokus und optionaler Auswahl. Kostenlos, shadcn."
+      }
+    },
+    "volume-profile": {
+      "name": "Volume Profile",
+      "description": "Animiertes Volumen nach Preis, mit hervorgehobenem Point of Control und Value Area.",
+      "seo": {
+        "title": "React-Volume-Profile-Chart (Volumen nach Preis)",
+        "description": "Animierter Volume-Profile-Chart für React mit Point of Control, Value Area, Tooltips und Tastaturinspektion für Trading-Interfaces. Kostenlos, quelloffen."
+      }
+    },
+    "status-bar": {
+      "name": "Statusleiste",
+      "description": "Animierter Statusverlauf mit abgerundeten Balken und Tooltips pro Zeitraum.",
+      "seo": {
+        "title": "React-Uptime-Statusleiste als Chart",
+        "description": "Animierte Uptime- und Statusverlaufsbalken für React-Statusseiten, mit eigenen Status, Tooltips pro Zeitraum und Tastaturinspektion. Kostenlos, per shadcn."
+      }
+    },
+    "composition-chart": {
+      "name": "Composition Chart",
+      "description": "Gestapelte Balken- und Flächenanteile mit Tooltips pro Zeitraum und kompakter interaktiver Legende.",
+      "seo": {
+        "title": "Gestapeltes Balken- und Flächendiagramm (100 %)",
+        "description": "Normalisiertes gestapeltes Balken- und Flächendiagramm für React mit Tooltips pro Zeitraum, Serien-Pinning, interaktiver Legende und Tastaturinspektion."
+      }
+    },
+    "funnel-chart": {
+      "name": "Trichterdiagramm",
+      "description": "Vertikale und horizontale Trichter mit geschwungenen Stufen und animierten Zahlen-Tooltips.",
+      "seo": {
+        "title": "Animiertes Funnel-Chart für React",
+        "description": "React-Funnel-Chart mit geschwungenen Stufen, vertikal oder horizontal, Tooltips für Conversion und Absprung und animierten Zahlen. Kostenlos, per shadcn."
+      }
+    },
+    "liquidity-heatmap": {
+      "name": "Liquiditäts-Heatmap",
+      "description": "Animierte Liquiditätsbänder über Preis und Zeit, mit Kursverlauf und Tiefen-Tooltips.",
+      "seo": {
+        "title": "React-Liquiditäts-Heatmap für Orderbücher",
+        "description": "Animierte Liquiditäts-Heatmap für React, die Markttiefe über Preis und Zeit zeigt, mit Kursverlauf, Tooltips und Tastaturinspektion. Kostenlos, quelloffen."
+      }
+    },
+    "bump-chart": {
+      "name": "Bump Chart",
+      "description": "Animierte Rankings mit geschwungenen Pfaden, interaktiven Rangpunkten und Tooltips.",
+      "seo": {
+        "title": "React-Bump-Chart: animiertes Ranking-Diagramm",
+        "description": "Animierter React-Bump-Chart für Rankings im Zeitverlauf, mit geschwungenen Pfaden, interaktiven Rangpunkten, Tooltips und Serien-Pinning. Kostenlos, per shadcn."
+      }
+    },
+    "order-book": {
+      "name": "Orderbuch",
+      "description": "Animiertes Orderbuch mit Bid- und Ask-Tiefe, Spread und Volumenverhältnis.",
+      "seo": {
+        "title": "React-Orderbuch mit Tiefenbalken",
+        "description": "Animiertes React-Orderbuch mit Tiefenbalken für Bid und Ask, Spread, Volumenverhältnis und Anzeige des Durchschnittskurses für Trading-UIs. Kostenlos, quelloffen."
+      }
+    },
+    "heat-calendar": {
+      "name": "Heat Calendar",
+      "description": "Kombinierbarer Aktivitätskalender mit Grid-, Legend- und Tooltip-Teilen, kontrollierter Bereichsauswahl und UTC-Kalenderdaten. Wöchentliche Intensitäten übergeben, um Aktivität darzustellen und einen gewählten Zeitraum zu summieren.",
+      "seo": {
+        "title": "React-Kalender-Heatmap für Contributions",
+        "description": "Aktivitäts-Heatmap-Kalender im GitHub-Stil für React mit Tooltips, Bereichsauswahl, filterbarer Legende und Wellenanimationen. Kostenlos, per shadcn."
+      }
+    },
+    "returns-calendar": {
+      "name": "Renditekalender",
+      "description": "Kombinierbarer Kalender für Monatsrenditen mit Grid- und Tooltip-Teilen, kontrollierter Monats- oder Jahresauswahl und kumulierten Summen. Eigene Jahre und monatliche Prozentwerte übergeben.",
+      "seo": {
+        "title": "React-Heatmap für Monatsrenditen",
+        "description": "Kalender-Heatmap für Monatsrenditen von React-Portfolios, mit Tooltips, Jahressummen und kumulierten Renditen über einen gewählten Zeitraum. Kostenlos, quelloffen."
+      }
+    },
+    "price-target-fan": {
+      "name": "Price Target Fan",
+      "description": "Kombinierbarer Kursziel-Chart mit Header-, Plot-, SVG-, Axes-, History-, Targets-, Now-, Cursor- und Tooltip-Teilen. Datierte Kurshistorie und Kursziele übergeben; per Zeiger oder Tastatur scrubben und die aktive Anzeige anpassen.",
+      "seo": {
+        "title": "React-Kursziel-Chart für Analystenprognosen",
+        "description": "Fächer-Chart für Analysten-Kursziele in React mit datierter Kurshistorie, hohen, mittleren und niedrigen Zielen und scrubbarem Tooltip. Kostenlos, per shadcn."
+      }
+    },
+    "voice-orb": {
+      "name": "Voice Orb",
+      "description": "Atmende, flüssige Sprachvisualisierung mit fließenden Glanzlichtern, eigenen Farbpigmenten und einer weichen, auf Stimme reagierenden Silhouette. Akzeptiert einen normalisierten Pegel, einen MotionValue oder einen eigenen Audio-Analyser, pausiert außerhalb des Viewports und unterstützt Reduced Motion.",
+      "seo": {
+        "title": "KI-Voice-Orb für React: audioreaktive Kugel",
+        "description": "Animierter KI-Voice-Orb für React: eine flüssige Shader-Kugel, die auf Mikrofon- oder Audiopegel reagiert, mit eigenen Farben und Reduced Motion. Kostenlos."
+      }
+    },
+    "card-folder": {
+      "name": "Card Folder",
+      "description": "Eine Karte im Querformat, die in einer genähten Geldbörsentasche steckt und sich nach vorn hebt, während die Tasche zur unteren Naht zusammengedrückt wird, mit kontrolliertem Öffnen, steuerbarer Sichtbarkeit der Kartendetails und separater Overflow-Aktion.",
+      "seo": {
+        "title": "Animierte Wallet-Kartentasche für React",
+        "description": "React-Kartenmappe, in der sich eine Karte aus einer genähten Tasche hebt, während die Tasche sich zusammendrückt, mit kontrolliertem Öffnen und Detailzustand."
+      }
+    },
+    "card-dealer": {
+      "name": "Card Dealer",
+      "description": "Ein Kartentisch mit verdecktem Stapel, aufgefächerter Hand und Ablagestapel. Karten fliegen im Bogen über den Tisch und drehen sich im Flug, springen beim Sortieren der Hand übereinander und heben sich beim Hover. Datengetrieben über die Zone jeder Karte, mit eigenen Vorder- und Rückseiten, per Tastatur spielbaren Handkarten und Unterstützung für Reduced Motion.",
+      "seo": {
+        "title": "Animierter Kartengeber und Kartenhand für React",
+        "description": "React-Kartentisch mit Stapel, aufgefächerter Hand und Ablagestapel. Karten fliegen im Bogen, drehen sich im Flug und springen beim Sortieren. Framer Motion, shadcn."
+      }
+    },
+    "crash": {
+      "name": "Crash",
+      "description": "Ein Crash-Spiel: Der Multiplikator steigt eine Kurve hinauf, bis die Runde an einem fairen Zufallspunkt abstürzt. Steige von Hand oder bei einem Auto-Ziel aus und sieh, wo die Runde geendet hätte. Drei Designs, vom Server entschiedene Crash-Punkte, optionaler Ton, sicher bei reduzierter Bewegung.",
+      "seo": {
+        "title": "Animiertes Crash-Spiel für React",
+        "description": "React-Crash-Spiel: Ein Multiplikator steigt eine Live-Kurve hinauf, bis er abstürzt. Steige von Hand oder automatisch aus. Framer Motion, Installation mit shadcn."
+      },
+      "examples": {
+        "plane": {
+          "name": "Flugzeug",
+          "description": "Ein Papierflieger trägt den Multiplikator eine Kurve hinauf; beim Auszahlen öffnet sich ein Fallschirm, beim Crash stürzt der Flieger ab."
+        },
+        "balloon": {
+          "name": "Ballon",
+          "description": "Ein Heißluftballon steigt an einem Höhenmesser hinauf; beim Auszahlen springt ein Fallschirmspringer ab, beim Crash platzt die Hülle."
+        },
+        "tower": {
+          "name": "Turm",
+          "description": "Blöcke stapeln sich mit dem Multiplikator und der Turm schwankt immer stärker; dein Auszahlungsblock trägt einen Wimpel, ein Crash wirft die Spitze um."
+        }
+      }
+    },
+    "mines": {
+      "name": "Mines",
+      "description": "Ein Mines-Spielfeld: Decke Felder auf, um Edelsteine zu finden, die den Multiplikator erhöhen, und zahle aus, bevor du eine Mine triffst. Nummerierte Funde, ein Quotenring, eine Ergebniskarte mit Mini-Karte deiner Runde, optionaler Ton, per Tastatur spielbar, sicher bei reduzierter Bewegung.",
+      "seo": {
+        "title": "Animiertes Mines-Spielfeld für React",
+        "description": "React-Mines-Spielfeld: Decke Felder für Edelsteine auf, sieh den Multiplikator steigen und zahle vor einer Mine aus. Framer Motion, Installation mit shadcn."
+      }
+    },
+    "plinko": {
+      "name": "Plinko",
+      "description": "Ein Plinko-Brett: Kugeln fallen durch Reihen von Stiften, prallen links oder rechts ab und landen in einem Fach. Stifte blinken beim Treffer, das Fach pulsiert bei der Landung, mehrere Kugeln können gleichzeitig fallen.",
+      "seo": {
+        "title": "Animiertes Plinko-Brett für React",
+        "description": "React-Plinko-Brett: Kugeln prallen durch Stifte in Punktefächer, Stifte blinken beim Treffer und Fächer pulsieren bei der Landung. Framer Motion, Installation mit shadcn."
+      }
+    }
+  }
+}
