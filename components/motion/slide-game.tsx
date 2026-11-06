@@ -10,12 +10,14 @@ import { createGameSounds } from "@/lib/game-sounds";
 import { createTickPlayer } from "@/lib/tick-sound";
 import { cn } from "@/lib/utils";
 import {
+  floor2,
   formatMultiplier,
   formatShort,
   GameEyebrow,
   GameHistory,
   type GameHistoryEntry,
   heat,
+  PRESS_GUARD,
   SoundToggle,
 } from "./casino/game-parts";
 
@@ -75,16 +77,13 @@ export function slideResult(random: () => number = Math.random, houseEdge = 0.01
 
 const TARGETS = [1.5, 2, 3, 5, 10, 25, 100];
 const HISTORY = 12;
-// Presses this soon after a round ends are the same press repeated (a double
-// tap, a held key), not the next round (ms).
-const PRESS_GUARD = 400;
 // Round numbers, unique on the page.
 let rounds = 0;
 
 type Phase = "idle" | "starting" | "sliding" | "settled";
 type Round = { id: number; result: number; target: number; bet: number };
 
-const settleValue = (value: number) => (Number.isFinite(value) ? Math.max(1, Math.floor(value * 100 + 1e-9) / 100) : 1);
+const settleValue = (value: number) => (Number.isFinite(value) ? Math.max(1, floor2(value)) : 1);
 const parseBet = (text: string) => {
   const value = Number.parseFloat(text);
   return Number.isFinite(value) && value > 0 ? value : 0;

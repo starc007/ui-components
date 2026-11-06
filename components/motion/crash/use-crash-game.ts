@@ -4,7 +4,7 @@ import { useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { createGameSounds, type GameSounds } from "@/lib/game-sounds";
-import { EXIT, formatMultiplier, formatShort, heat, PULSE, SHAKE, SWAP } from "../casino/game-parts";
+import { EXIT, floor2, formatMultiplier, formatShort, heat, PRESS_GUARD, PULSE, SHAKE, SWAP } from "../casino/game-parts";
 
 export { EXIT, formatMultiplier, formatShort, heat, PULSE, SHAKE, SWAP };
 
@@ -117,9 +117,6 @@ export const AUTO_STEPS = [1.5, 2, 3, 5, 10, 25, 100];
 
 // Skipping after a cash out runs the rest of the flight in at most this long.
 const SKIP_TIME = 0.8;
-// Presses this soon after a start, a cash-out press or a crash are the same
-// press repeated (a double tap, a mash), not the next action (ms).
-const PRESS_GUARD = 400;
 // Round numbers, unique on the page, so a live reveal kept by the parent
 // across a remount can't match a fresh round.
 let rounds = 0;
@@ -541,9 +538,5 @@ export function useStable<A extends unknown[], R>(fn: (...args: A) => R) {
     ref.current = fn;
   });
   return useCallback((...args: A) => ref.current(...args), []);
-}
-
-export function floor2(value: number) {
-  return Math.floor(value * 100 + 1e-9) / 100;
 }
 

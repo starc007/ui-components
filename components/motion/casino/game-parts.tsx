@@ -13,6 +13,10 @@ import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
+// Presses this soon after a round starts or ends are the same press repeated
+// (a double tap, a held key), not the next action (ms).
+export const PRESS_GUARD = 400;
+
 // Status lines and markers swap on a spring with no bounce.
 export const SWAP = { type: "spring", duration: 0.3, bounce: 0 } as const;
 // Exits are shorter than entrances.
@@ -64,6 +68,11 @@ function formatLarge(multiplier: number) {
   // From toExponential, not log10: 1e100 / 10 ** 100 is 0.999….
   const [mantissa, exponent] = multiplier.toExponential(6).split("e");
   return `${Math.floor(Number(mantissa) * 10) / 10}e${Number(exponent)}`;
+}
+
+/** Floors to two decimals, the precision every game settles at. The 1e-9 keeps 2.3 from flooring to 2.29. */
+export function floor2(value: number) {
+  return Math.floor(value * 100 + 1e-9) / 100;
 }
 
 /** A multiplier as the games show it: 2.50×, or shortened when large (12.5K×, 1.4e20×). */
