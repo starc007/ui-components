@@ -6,6 +6,8 @@ import {
   isNativePath,
   NATIVE_PATH,
   nativeComponentPath,
+  TOP_LEVEL_CATEGORIES,
+  topLevelCategory,
 } from "@/lib/component-paths";
 
 import { Blocks, Bot, LayoutGrid, Shapes } from "lucide-react";
@@ -41,8 +43,6 @@ const INTRO: NavLink[] = [
   { slug: "changelog", key: "docsPages.changelog", href: "/changelog" },
 ];
 
-const CHARTS_INTRO: NavLink[] = [{ slug: "home", key: "sidebar.home", href: "/charts" }];
-
 const PATTERNS: NavLink[] = [
   { slug: "motion-patterns", key: "docsPages.motionGuides", href: "/docs/motion-patterns" },
   { slug: "ai-agents", key: "docsPages.agentGuide", href: "/docs/ai-agents" },
@@ -56,7 +56,7 @@ const SIDEBAR_CATEGORY_ORDER: Record<string, number> = {
   blocks: 2,
 };
 
-const SIDEBAR_CATEGORIES = registry.filter((category) => category.slug !== "charts").sort(
+const SIDEBAR_CATEGORIES = registry.filter((category) => !TOP_LEVEL_CATEGORIES.includes(category.slug)).sort(
   (a, b) =>
     (SIDEBAR_CATEGORY_ORDER[a.slug] ?? Number.MAX_SAFE_INTEGER) -
     (SIDEBAR_CATEGORY_ORDER[b.slug] ?? Number.MAX_SAFE_INTEGER),
@@ -392,17 +392,21 @@ function WebSidebarNav({
   if (filter.routeCategory !== routeCategory) {
     setFilter({ routeCategory, value: filter.value === "all" ? "all" : (routeCategory ?? "all") });
   }
-  const isCharts = pathname === "/charts" || pathname.startsWith("/charts/");
+  // Charts and Casino are their own sections: the sidebar lists only that section.
+  const section = topLevelCategory(pathname);
+  const isSection = section !== undefined;
   const categoryFilter = filter.value;
   const now = Date.now();
   const categories = (
-    isCharts ? registry.filter((category) => category.slug === "charts") : SIDEBAR_CATEGORIES
+    isSection ? registry.filter((category) => category.slug === section) : SIDEBAR_CATEGORIES
   ).map((category) => localizeCategory(category, messages));
-  const intro = isCharts ? CHARTS_INTRO : INTRO;
+  const intro: NavLink[] = isSection
+    ? [{ slug: "home", key: "sidebar.home", href: categoryPath(section) }]
+    : INTRO;
 
   return (
     <nav ref={navRef} aria-label={t("sidebar.browseComponents")} className="flex flex-col gap-6">
-      {!isCharts ? (
+      {!isSection ? (
         <div className="sticky -top-4 z-20 -mt-4 -mb-4 bg-background pt-4">
           <SidebarCategoryTabs
             id={tabsId}
@@ -418,10 +422,10 @@ function WebSidebarNav({
       ) : null}
       <div
         id={panelId}
-        {...(isCharts ? {} : { role: "tabpanel", "aria-labelledby": `${tabsId}-${categoryFilter}` })}
+        {...(isSection ? {} : { role: "tabpanel", "aria-labelledby": `${tabsId}-${categoryFilter}` })}
         className="flex flex-col gap-6"
       >
-        <div hidden={!isCharts && categoryFilter !== "all"}>
+        <div hidden={!isSection && categoryFilter !== "all"}>
           <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             {t("sidebar.intro")}
           </p>
@@ -439,7 +443,7 @@ function WebSidebarNav({
             ))}
           </SharedLayoutBg>
         </div>
-        {!isCharts ? (
+        {!isSection ? (
           <div hidden={categoryFilter !== "all"}>
             <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               {t("sidebar.guides")}
@@ -462,7 +466,7 @@ function WebSidebarNav({
         {categories.map((cat) => (
           <div
             key={cat.slug}
-            hidden={!isCharts && categoryFilter !== "all" && categoryFilter !== cat.slug}
+            hidden={!isSection && categoryFilter !== "all" && categoryFilter !== cat.slug}
           >
             <Link
               href={categoryPath(cat.slug)}

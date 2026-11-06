@@ -15,6 +15,10 @@
     "charts": {
       "name": "Graphiques",
       "description": "Graphiques React animés pour l’activité, les rendements, les objectifs de cours et les carnets d’ordres, conçus avec Motion et Tailwind CSS en code personnalisable à copier-coller."
+    },
+    "casino": {
+      "name": "Casino",
+      "description": "Jeux de casino animés pour React, dont crash, mines et plinko, construits avec Motion et Tailwind CSS en code source personnalisable à copier-coller."
     }
   },
   "components": {
@@ -1272,6 +1276,44 @@
       "seo": {
         "title": "Donneur de cartes et main de cartes animés pour React",
         "description": "Table de cartes React avec paquet, main en éventail et défausse. Les cartes traversent la table en arc, se retournent en vol et sautent au tri. Framer Motion."
+      }
+    },
+    "crash": {
+      "name": "Crash",
+      "description": "Un jeu de crash : le multiplicateur grimpe le long d’une courbe jusqu’à ce que la manche s’écrase à un point aléatoire équitable. Encaissez à la main ou à un objectif automatique et voyez où la manche se serait arrêtée. Trois designs, points de crash décidés par le serveur, son optionnel, compatible avec le mouvement réduit.",
+      "seo": {
+        "title": "Jeu de crash animé pour React",
+        "description": "Jeu de crash React : un multiplicateur grimpe une courbe en direct jusqu’au crash. Encaissez à la main ou automatiquement. Framer Motion, installation avec shadcn."
+      },
+      "examples": {
+        "plane": {
+          "name": "Avion",
+          "description": "Un avion en papier fait grimper le multiplicateur ; un parachute s’ouvre à l’encaissement et le crash fait tomber l’avion du ciel."
+        },
+        "balloon": {
+          "name": "Montgolfière",
+          "description": "Une montgolfière monte le long d’un altimètre ; un parachutiste saute à l’encaissement et le crash fait éclater l’enveloppe."
+        },
+        "tower": {
+          "name": "Tour",
+          "description": "Les blocs s’empilent avec le multiplicateur et la tour oscille de plus en plus ; votre bloc d’encaissement garde un fanion et le crash renverse le sommet."
+        }
+      }
+    },
+    "mines": {
+      "name": "Mines",
+      "description": "Un plateau de mines : retournez des cases pour trouver des gemmes qui augmentent le multiplicateur, et encaissez avant de tomber sur une mine. Gemmes numérotées, anneau de probabilité, carte de résultat avec une miniature de votre manche, son optionnel, jouable au clavier, compatible avec le mouvement réduit.",
+      "seo": {
+        "title": "Plateau de mines animé pour React",
+        "description": "Plateau de mines React : retournez des cases pour trouver des gemmes, regardez le multiplicateur monter et encaissez avant une mine. Framer Motion, installation avec shadcn."
+      }
+    },
+    "plinko": {
+      "name": "Plinko",
+      "description": "Un plateau de Plinko : les billes tombent à travers des rangées de picots, rebondissent à gauche ou à droite et atterrissent dans une case. Les picots s’illuminent au contact, la case pulse à l’arrivée et plusieurs billes peuvent tomber à la fois.",
+      "seo": {
+        "title": "Plateau de Plinko animé pour React",
+        "description": "Plateau de Plinko React : les billes rebondissent sur les picots jusqu’aux cases de score, les picots s’illuminent et les cases pulsent à l’arrivée. Framer Motion, installation avec shadcn."
       }
     }
   }

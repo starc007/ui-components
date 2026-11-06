@@ -2,13 +2,15 @@ import {
   categoryPath,
   componentPath,
   nativeComponentPath,
+  TOP_LEVEL_CATEGORIES,
 } from "@/lib/component-paths";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowRight, ChevronRight, Smartphone } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronRight, Smartphone } from "lucide-react";
 import { hasLocale } from "next-intl";
 import {
   getFormatter,
+  getLocale,
   getMessages,
   getTranslations,
   setRequestLocale,
@@ -23,9 +25,11 @@ import { localeAlternates } from "@/i18n/metadata";
 import { Link } from "@/i18n/navigation";
 import { LANGUAGES, type Locale, localizedPath, routing } from "@/i18n/routing";
 import {
+  BLOCK_CATEGORIES,
   findCategory,
   findComponent,
   registry,
+  type ComponentCredit,
   type ComponentEntry,
   type ComponentExample,
 } from "@/lib/registry";
@@ -54,6 +58,8 @@ import { pageUrlFor, withSignature } from "@/lib/signature";
 import { readSourceFile } from "@/lib/source-files";
 import { getComponentProps } from "@/lib/props-extractor";
 import { componentDates } from "@/lib/component-dates";
+import { EASE_OUT_CSS } from "@/lib/ease";
+import { cn } from "@/lib/utils";
 import { findNativeComponent } from "@/lib/native";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { RelatedSection } from "@/components/app/docs/related-section";
@@ -69,7 +75,7 @@ export const dynamic = "force-static";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return registry.filter((c) => c.slug !== "charts").flatMap((c) =>
+  return registry.filter((c) => !TOP_LEVEL_CATEGORIES.includes(c.slug)).flatMap((c) =>
     c.components.map((comp) => ({ category: c.slug, slug: comp.slug })),
   );
 }
@@ -226,8 +232,27 @@ export default async function ComponentPage({
     return text ? { ...rel, name: text.name, description: text.description ?? rel.description } : rel;
   });
   const propsDocs = comp.examples?.length ? [] : getComponentProps(comp.file);
-  const creditUrl = comp.credit ? new URL(comp.credit.url) : null;
-  creditUrl?.searchParams.set("ref", "beui");
+  // One contributor for every example: credit them once, under the title.
+  const exampleCredits = comp.examples?.map((example) => example.credit) ?? [];
+  const sharedCredit =
+    exampleCredits.length > 0 &&
+    exampleCredits.every((credit) => credit && credit.url === exampleCredits[0]?.url)
+      ? exampleCredits[0]
+      : undefined;
+  const pageCredit = comp.credit ?? sharedCredit;
+  const creditGroups = pageCredit
+    ? []
+    : Object.values(
+        (comp.examples ?? []).reduce<
+          Record<string, { credit: ComponentCredit; examples: ComponentExample[] }>
+        >((groups, example) => {
+          if (!example.credit) return groups;
+          const key = example.credit.url;
+          groups[key] ??= { credit: example.credit, examples: [] };
+          groups[key].examples.push(example);
+          return groups;
+        }, {}),
+      );
 
   const nativeComponent = findNativeComponent(comp.slug);
   const webContent = (
@@ -241,6 +266,7 @@ export default async function ComponentPage({
               pageSlug={comp.slug}
               example={ex}
               showApiReference={shouldShowExampleApi(index)}
+              showCredit={!sharedCredit}
             />
           ))}
         </div>
@@ -318,12 +344,19 @@ export default async function ComponentPage({
           <span className="font-medium text-foreground">{comp.name}</span>
         </nav>
         <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-medium tracking-tight text-foreground">
-              {comp.name}
-            </h1>
-            {comp.badge === "new" ? (
-              <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
+          <div className="min-w-0">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-medium tracking-tight text-foreground">
+                {comp.name}
+              </h1>
+              {comp.badge === "new" ? (
+                <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
+              ) : null}
+            </div>
+            {pageCredit ? (
+              <CreditLink credit={pageCredit} className="mt-3" />
+            ) : creditGroups.length ? (
+              <CreditSummary groups={creditGroups} className="mt-3" />
             ) : null}
           </div>
           <CopyPage
@@ -360,20 +393,7 @@ export default async function ComponentPage({
       ) : null}
       <RelatedSection related={related} />
 
-      {comp.credit ? (
-        <section className="mt-12 border-t border-border pt-8">
-          <h2 className="text-sm font-semibold text-foreground">{t("contributedBy")}</h2>
-          <a
-            href={creditUrl?.toString()}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-foreground"
-          >
-            <span className="underline underline-offset-2">{comp.credit.name}</span>
-          </a>
-        </section>
-      ) : null}
-      {cat.slug === "blocks" ? <KeepInMind /> : null}
+      {BLOCK_CATEGORIES.includes(cat.slug) ? <KeepInMind /> : null}
       <p className="mt-6 text-xs text-muted-foreground">
         {t.rich("updated", {
           date: format.dateTime(new Date(`${dates.updatedAt}T00:00:00Z`), {
@@ -388,16 +408,127 @@ export default async function ComponentPage({
   );
 }
 
+const AVATAR_CLASS =
+  "size-5 shrink-0 rounded-full object-cover outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10";
+const FOCUS_RING =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+/** "Includes" so the title line doesn't claim designs others built. */
+async function CreditSummary({
+  groups,
+  className,
+}: {
+  groups: { credit: ComponentCredit; examples: ComponentExample[] }[];
+  className?: string;
+}) {
+  const [t, locale] = await Promise.all([getTranslations("Docs.component"), getLocale()]);
+  const parts = new Intl.ListFormat(locale, { type: "conjunction" }).formatToParts(
+    groups.map(({ credit }) => credit.name),
+  );
+  let next = 0;
+  return (
+    <p className={cn("flex items-center gap-2 text-sm text-muted-foreground", className)}>
+      <span aria-hidden="true" className="flex shrink-0">
+        {groups.slice(0, 2).map(({ credit }, index) =>
+          credit.avatar ? (
+            // biome-ignore lint/performance/noImgElement: 20px contributor avatar from any host, not worth next/image
+            <img
+              key={credit.url}
+              src={credit.avatar}
+              alt=""
+              width={20}
+              height={20}
+              className={cn(AVATAR_CLASS, "ring-2 ring-background", index > 0 && "-ml-1.5")}
+            />
+          ) : null,
+        )}
+      </span>
+      <span>
+        {t("includesDesignsBy")}{" "}
+        {parts.map((part, index) => {
+          if (part.type !== "element") {
+            // biome-ignore lint/suspicious/noArrayIndexKey: parts are positional
+            return <span key={index}>{part.value}</span>;
+          }
+          const group = groups[next++];
+          return (
+            <a
+              key={group.credit.url}
+              href={`#${group.examples[0].slug}`}
+              className={cn(
+                "rounded-sm font-medium text-foreground underline decoration-border underline-offset-4 transition-colors duration-150 hover:decoration-foreground",
+                FOCUS_RING,
+              )}
+              style={{ transitionTimingFunction: EASE_OUT_CSS }}
+            >
+              {part.value}
+            </a>
+          );
+        })}
+      </span>
+    </p>
+  );
+}
+
+async function CreditLink({
+  credit,
+  className,
+}: {
+  credit: ComponentCredit;
+  className?: string;
+}) {
+  const t = await getTranslations("Docs.component");
+  const url = new URL(credit.url);
+  url.searchParams.set("ref", "beui");
+  return (
+    <a
+      href={url.toString()}
+      target="_blank"
+      rel="noreferrer noopener"
+      className={cn(
+        "group -ml-1 inline-flex items-center gap-2 rounded-full py-1 pr-2.5 pl-1 text-sm text-muted-foreground transition-colors duration-150 hover:bg-foreground/[0.06] hover:text-foreground",
+        FOCUS_RING,
+        className,
+      )}
+      style={{ transitionTimingFunction: EASE_OUT_CSS }}
+    >
+      {credit.avatar ? (
+        // biome-ignore lint/performance/noImgElement: 20px contributor avatar from any host, not worth next/image
+        <img
+          src={credit.avatar}
+          alt=""
+          width={20}
+          height={20}
+          className={AVATAR_CLASS}
+        />
+      ) : null}
+      <span>
+        {t("contributedBy")}{" "}
+        <span className="font-medium text-foreground">{credit.name}</span>
+      </span>
+      <ArrowUpRight
+        aria-hidden="true"
+        strokeWidth={1.5}
+        className="size-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-px group-hover:translate-x-px motion-reduce:transition-none"
+        style={{ transitionTimingFunction: EASE_OUT_CSS }}
+      />
+      <span className="sr-only">{t("opensInNewTab")}</span>
+    </a>
+  );
+}
+
 async function ExampleBlock({
   category,
   pageSlug,
   example,
   showApiReference,
+  showCredit,
 }: {
   category: string;
   pageSlug: string;
   example: ComponentExample;
   showApiReference: boolean;
+  showCredit: boolean;
 }) {
   const Preview = previews[example.previewKey];
   const usageFile = example.usageFile ?? example.previewFile;
@@ -424,6 +555,9 @@ async function ExampleBlock({
           {example.file.split("/").pop()}
         </code>
       </div>
+      {example.credit && showCredit ? (
+        <CreditLink credit={example.credit} className="-mt-2 mb-4" />
+      ) : null}
       <div id={`${example.slug}-preview`} className="scroll-mt-24">
         <PreviewExpand stageId={`${example.slug}-stage`}>
         <Tabs defaultValue="preview" variant="pill">

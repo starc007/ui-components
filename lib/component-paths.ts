@@ -1,6 +1,21 @@
-/** Public documentation routes; charts have their own top-level section. */
+/** Categories with their own top-level section instead of /components/<category>. */
+export const TOP_LEVEL_CATEGORIES = ["charts", "casino"];
+
+/** The top-level section a path is in, if any. */
+export function topLevelCategory(pathname: string) {
+  return TOP_LEVEL_CATEGORIES.find((slug) => {
+    const path = categoryPath(slug);
+    return pathname === path || pathname.startsWith(`${path}/`);
+  });
+}
+
+export function isTopLevelPath(pathname: string) {
+  return topLevelCategory(pathname) !== undefined;
+}
+
+/** Public documentation routes. */
 export function categoryPath(category: string) {
-  return category === "charts" ? "/charts" : `/components/${category}`;
+  return TOP_LEVEL_CATEGORIES.includes(category) ? `/${category}` : `/components/${category}`;
 }
 
 export function componentPath(category: string, slug: string) {
@@ -21,9 +36,8 @@ export function isNativePath(pathname: string) {
 /** Pages whose catalog navigation is visible from the md breakpoint. */
 export function hasSiteSidebar(pathname: string) {
   return (
-    ["/components", "/docs", "/charts", "/guides", "/alternatives"].some((path) =>
-      pathname.startsWith(path),
-    ) ||
+    ["/components", "/docs", "/guides", "/alternatives"].some((path) => pathname.startsWith(path)) ||
+    isTopLevelPath(pathname) ||
     isNativePath(pathname)
   );
 }

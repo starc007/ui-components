@@ -576,6 +576,21 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Animated React sign up form with on-blur validation, a password strength meter, password reveal and loading and success states. Free, open source.",
   },
+  crash: {
+    title: "Animated Crash Game for React",
+    description:
+      "React crash game: a multiplier climbs a live curve until it crashes. Cash out by hand or automatically, see what you missed. Framer Motion, install with shadcn.",
+  },
+  mines: {
+    title: "Animated Mines Game Board for React",
+    description:
+      "React mines board: pick tiles for gems, watch the multiplier roll up, cash out before a mine. Ripple reveals and keyboard play. Framer Motion, install with shadcn.",
+  },
+  plinko: {
+    title: "Animated Plinko Board for React",
+    description:
+      "React Plinko board: balls bounce through pegs into scoring slots, pegs flash on hit and slots pulse on landing. Framer Motion, install with shadcn.",
+  },
   "card-dealer": {
     title: "Animated Card Dealer and Card Hand for React",
     description:

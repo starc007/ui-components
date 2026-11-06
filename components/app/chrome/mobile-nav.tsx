@@ -8,7 +8,15 @@ import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { Button } from "@/components/motion/button";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { Link, usePathname } from "@/i18n/navigation";
-import { hasPlatformSwitch, hasSiteSidebar, isNativePath, NATIVE_PATH } from "@/lib/component-paths";
+import {
+  categoryPath,
+  hasPlatformSwitch,
+  hasSiteSidebar,
+  isNativePath,
+  NATIVE_PATH,
+  TOP_LEVEL_CATEGORIES,
+  topLevelCategory,
+} from "@/lib/component-paths";
 import { cn } from "@/lib/utils";
 
 /** Mobile nav: a header hamburger that opens the sidebar list in beUI's own bottom sheet. */
@@ -94,18 +102,21 @@ export function MobileNav() {
             >
               {t("header.agents")}
             </Link>
-            <Link
-              href="/charts"
-              onClick={() => setOpen(false)}
-              className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
-                pathname.startsWith("/charts")
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t("header.charts")}
-            </Link>
+            {TOP_LEVEL_CATEGORIES.map((slug) => (
+              <Link
+                key={slug}
+                href={categoryPath(slug)}
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-sm transition-colors",
+                  topLevelCategory(pathname) === slug
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {t(`header.${slug as "charts" | "casino"}`)}
+              </Link>
+            ))}
             <Link
               href={NATIVE_PATH}
               onClick={() => setOpen(false)}

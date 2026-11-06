@@ -59,6 +59,16 @@ for (const target of allShadcnTargets()) {
   }
 }
 
+// A page with examples credits each example, so a byline under the title can't
+// claim designs its contributor didn't build.
+for (const component of allComponents()) {
+  if (component.credit && component.examples?.length) {
+    errors.push(
+      `${component.category.slug}/${component.slug}: move credit onto the examples the contributor built`,
+    );
+  }
+}
+
 // Every component page needs About notes plus a search title and description
 // within the limits search results display, all written without em dashes.
 for (const component of allComponents()) {

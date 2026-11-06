@@ -49,6 +49,12 @@
       "heading": "Gráficos animados de React",
       "description": "Explora mapas de calor de actividad interactivos, rentabilidades mensuales y gráficos de precio objetivo. Copia el código fuente de React y adáptalo a tus datos.",
       "allLabel": "Todos los gráficos"
+    },
+    "casino": {
+      "title": "Juegos de casino animados en React: Crash, Mines y Plinko",
+      "heading": "Juegos de casino animados en React",
+      "description": "Explora juegos animados de crash, mines y plinko con resultados justos integrados o decididos por el servidor. Copia el código fuente de React y conéctalo a tu propia lógica de juego.",
+      "allLabel": "Todos los juegos de casino"
     }
   },
   "component": {
@@ -67,6 +73,8 @@
     "updated": "Actualizado el <time>{date}</time>",
     "seoTitle": "{name} animado para React",
     "contributedBy": "Contribución de",
+    "includesDesignsBy": "Incluye diseños de",
+    "opensInNewTab": "(se abre en una pestaña nueva)",
     "alsoOnNative": "También en React Native."
   },
   "install": {

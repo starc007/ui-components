@@ -49,6 +49,12 @@
       "heading": "Animierte React-Charts",
       "description": "Interaktive Aktivitäts-Heatmaps, Monatsrenditen und Kursziel-Charts entdecken. Den React-Quellcode kopieren und an die eigenen Daten anpassen.",
       "allLabel": "Alle Charts"
+    },
+    "casino": {
+      "title": "Animierte React-Casinospiele: Crash, Mines und Plinko",
+      "heading": "Animierte React-Casinospiele",
+      "description": "Entdecke animierte Crash-, Mines- und Plinko-Spiele mit fairen eingebauten Ergebnissen oder vom Server entschiedenen Runden. Kopiere den React-Quellcode und verbinde ihn mit deiner eigenen Spiellogik.",
+      "allLabel": "Alle Casinospiele"
     }
   },
   "component": {
@@ -67,6 +73,8 @@
     "updated": "Aktualisiert am <time>{date}</time>",
     "seoTitle": "{name}: animierte Komponente für React",
     "contributedBy": "Beigetragen von",
+    "includesDesignsBy": "Enthält Designs von",
+    "opensInNewTab": "(öffnet in neuem Tab)",
     "alsoOnNative": "Auch für React Native."
   },
   "install": {

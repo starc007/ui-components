@@ -3245,6 +3245,117 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  crash: {
+    overview:
+      "Crash is a React multiplier game built with Framer Motion. Start a round and a paper plane takes off, flying the multiplier up a curve, slowly at first and then faster, while the axes grow to keep it in view and a field of dots and streaks rushes past to show its speed. At a random point the round crashes and the plane tumbles out of the sky in a burst of paper shreds. Cash out before it does to keep the multiplier, either by hand or automatically at a target you pick from the Auto menu; a parachute opens where you bailed out. After you cash out the plane keeps flying on a dashed trail, so you can see how far it would have gone (the trail clears at the crash), and the main button can skip the rest. Recent crash points collect along the top of the card. Two more designs play the same game: Crash Balloon climbs an altimeter whose tape and clouds scroll past, drops a parachutist when you cash out and pops on a crash; Crash Tower stacks a block for every 8% the multiplier gains, sways more as it grows, flags your cash-out block and topples on a crash. All three share the same controls, props and callbacks, and each marks your auto target ahead of the flight (the main button fills toward it too). The balloon and tower also mark where the last round crashed. The multiplier warms from neutral to the primary colour at 2× and amber at 10×, and so do the history pills. The balloon passes birds, a jet and a satellite on the way up, and the tower's lower blocks crack as it grows. When a round ends, once the crash has played out a ticket rises over the stage, the same receipt Mines ends on: whether you cashed out, the multiplier that counts, where it crashed, how long it flew and, when the built-in crash point decided the round, the odds you beat, with a miniature of the flight. Tap the stage or press Escape to put it away and look at the round.",
+    useWhen: [
+      "A game, rewards screen or giveaway wants a push-your-luck mechanic where timing is the whole decision.",
+      "A demo or landing page wants a live, data-driven animation that people want to replay.",
+      "A probability lesson wants to show that every multiplier is reached with a chance of one over that multiplier.",
+    ],
+    accessibility:
+      "The game is a labelled region and is played with one button that changes from Start to Cash out, then Skip to crash or Play again, so keyboard focus never moves. The graph, balloon or tower is decorative; the current multiplier is shown as text and in the button's name. A polite live region announces the start of a round, milestones while you are still in (2× to 5×, then 10×, 20×, 50× and on, so a long flight doesn't flood it), the cash out and the crash. Recent crash points are a labelled list. With reduced motion the readout still climbs, since it is the game, but the plane points along the curve without bobbing or a take-off swing, the balloon and tower hold steady, all three fade instead of tumbling, popping or toppling, the speed field and clouds stand still, the balloon's landmarks are left out, and the shake, shreds, parachute, milestone pulse and sliding history are replaced by fades or left out, and skipping jumps straight to the crash.",
+    faq: [
+      {
+        question: "How is the crash point chosen?",
+        answer:
+          "Three ways, so any algorithm or server can drive it. By default the exported crashPoint() picks a fair point in the browser: the round reaches any multiplier m with a chance of 1 in m, floored to two decimals and capped at 1,000,000×; crashPoint(random, houseEdge) takes your own random draw and a house edge, so a provably fair round is crashPoint(() => parseInt(hash.slice(0, 13), 16) / 2 ** 52, 0.01) for a round hash. Pass getCrashPoint to decide each round yourself; it can return a Promise, so the round can come from your server, and the main button shows Starting… until it settles. For a server that keeps the crash point secret until it happens, onStart gives each round a number; pass crashAt as { round, value } when the server reveals that round's crash point. The flight runs open-ended until then. A value behind the plane crashes at once at that value; one still ahead means the display is running late, so the flight runs out to it and takes no more hand cash outs. onCashOut waits for the reveal, so it only reports cash outs that stand.",
+      },
+      {
+        question: "How does auto cash out work?",
+        answer:
+          "Pick a target from the Auto menu, or control it with autoCashOut and onAutoCashOutChange. If the round reaches the target you cash out at exactly that multiplier. It can't be changed while a round is running.",
+      },
+      {
+        question: "How fast does the multiplier grow?",
+        answer:
+          "Exponentially: it doubles about every 5.8 seconds, so 2× takes about 6 seconds and 10× about 19.",
+      },
+      {
+        question: "Does it make sound?",
+        answer:
+          "Only when you turn it on with the sound button, or the sound prop. Each milestone you hold through (2× to 5×, then 10×, 20×, 50× and on) chimes a step higher, cashing out plays a rising arpeggio and the crash plays a low blast. Everything is synthesized in the browser, so there are no audio files.",
+      },
+      {
+        question: "Does it handle money or betting?",
+        answer:
+          "No. It only reports multipliers through onCashOut and onCrash, so any scoring, points or rewards are up to your app.",
+      },
+    ],
+  },
+
+  mines: {
+    overview:
+      "Mines is a React tile game built with Framer Motion. Pick a mine count and start a round, then reveal tiles one at a time. Each gem raises the multiplier, shown as rolling digits with the next step beside it, and a mine ends the round. Cash out whenever you like; clearing every gem cashes out for you. Each gem you find is numbered in the order you picked it, so the board shows your run at a glance. A small ring beside the multiplier shows the chance your next pick is safe. When a round ends the rest of the board reveals in a ripple spreading from your last pick, with the tiles you never touched shown faded.",
+    useWhen: [
+      "A game, rewards screen or giveaway wants a push-your-luck mechanic with a clear, growing reward.",
+      "A demo or landing page wants a tactile grid interaction with satisfying reveals.",
+      "A probability lesson wants to show how risk compounds with every safe pick.",
+    ],
+    accessibility:
+      "The game is a labelled region. The board is one tab stop: arrow keys move between tiles, Home and End jump to the ends of a row, and Enter or Space reveals. Each tile is a button named by its row, column and what it shows (a found gem gives its pick number, and revealed tiles you never picked say so), and every gem, mine and cash out is announced in a polite live region. With reduced motion, reveals fade in without scaling, blurring or shaking.",
+    faq: [
+      {
+        question: "How is the multiplier calculated?",
+        answer:
+          "It is the fair payout for the risk taken: the inverse of the chance of picking that many gems in a row on a board with that many mines. The exported minesMultiplier(tiles, mines, gems) returns the same number if you need it elsewhere.",
+      },
+      {
+        question: "Can I change the board size or mine count?",
+        answer:
+          "Yes. size sets the tiles per side, 5 by default for a 5 by 5 board. The mine count comes from the built-in stepper and can be controlled with mines and onMinesChange, or set once with defaultMines.",
+      },
+      {
+        question: "What happens when a round ends?",
+        answer:
+          "The rest of the board reveals, then a result ticket rises over it with the outcome, your multiplier, the gems you found, the odds you beat and a miniature map of your run. The main Play again button starts the next round, and tapping the board or pressing Escape puts the ticket away so you can study the board. Pass showResult={false} to use your own result screen with onCashOut and onReveal, which reports a mine with a multiplier of 0.",
+      },
+      {
+        question: "Does it make sound?",
+        answer:
+          "Only when you turn it on with the sound button, or the sound prop. Gems chime and climb a musical scale as your streak grows, with a sparkle from the third gem and a short run every fifth; a mine plays a low blast and cashing out plays a rising arpeggio. Everything is synthesized in the browser, so there are no audio files.",
+      },
+      {
+        question: "Does it handle money or betting?",
+        answer:
+          "No. It only reports the multiplier through onReveal and onCashOut, so any scoring, points or rewards are up to your app.",
+      },
+    ],
+  },
+
+  plinko: {
+    overview:
+      "Plinko is a React ball drop board built with Framer Motion. Each press of the drop button sends a ball through rows of pegs; at every peg it hops and falls left or right at random, so most balls land near the middle and few reach the edges. Pegs flash as the ball strikes them and the slot it lands in pulses. Several balls can fall at once, and onLand reports the slot and its value so you can keep score. The board is dynamic: the slot values you pass set how many rows of pegs it has.",
+    useWhen: [
+      "A game, giveaway or rewards screen needs a playful way to pick a prize with visible chance.",
+      "A statistics lesson or landing page wants to show a bell curve forming one ball at a time.",
+      "A demo wants a satisfying physics-style showcase without a physics engine.",
+    ],
+    accessibility:
+      "The board is a labelled region and the drawing is hidden from screen readers. Balls drop from a real button, and every landing is announced in a polite live region. With reduced motion the ball skips the fall and lands at once; the slot still highlights with a fade.",
+    faq: [
+      {
+        question: "How do I keep score?",
+        answer:
+          "Pass onLand. It receives the slot index of each ball that lands, so you can add the slot's value to your own score state.",
+      },
+      {
+        question: "Can I change the slot values or the number of rows?",
+        answer:
+          "Yes. Pass slots, an array of numbers or strings from left to right, and the board sizes itself: n values make n - 1 rows of pegs, so 13 values give a 12-row board. Without slots, rows sets the size (12 by default). To generate values for any size, call plinkoSlots(rows), which runs from 1 in the middle to 100 at the edges, or plinkoSlots(rows, { center, edge }) for your own range. onLand receives the slot index and its value.",
+      },
+      {
+        question: "Does it make sound?",
+        answer:
+          "Only when you turn it on with the sound button, or the sound prop. Each peg hit clicks and the landing plays a lower thunk that gets brighter toward the rarer edge slots. The sound is synthesized in the browser, so there are no audio files to load.",
+      },
+      {
+        question: "Does it use a physics engine?",
+        answer:
+          "No. Each drop picks its left and right bounces up front and plays them as keyframes, with an accelerating fall between pegs and a short hop after each hit. That keeps it light and smooth on phones.",
+      },
+    ],
+  },
   "card-dealer": {
     overview:
       "Card Dealer is a React card table built with Framer Motion. It lays out a face-down deck, a fanned hand and a tilted discard pile, and you move a card by changing its zone. Every card stays mounted, so the change becomes a flight: the card arcs across the table on motion's arc() path and flips face up or down in 3D on the way. Several cards moving at once leave one after another, and reordering the hand makes cards hop over each other into their new slots. Faces and backs are yours to render.",

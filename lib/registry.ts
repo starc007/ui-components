@@ -1,9 +1,32 @@
 import { type AgentGuide, agentGuides } from "@/lib/agent-guides";
 
+/** Contributor credit shown on the website only. */
+export type ComponentCredit = {
+  name: string;
+  url: string;
+  avatar?: string;
+};
+
+// github.com/<user>.png redirects to avatars.githubusercontent.com; link there directly.
+const contributors = {
+  avinit: {
+    name: "Avinit",
+    url: "https://x.com/0xvntr",
+    avatar: "https://avatars.githubusercontent.com/u/70722540?s=64&v=4",
+  },
+  savva: {
+    name: "Savva",
+    url: "https://ssych.com",
+    avatar: "https://avatars.githubusercontent.com/u/117964765?s=64&v=4",
+  },
+} satisfies Record<string, ComponentCredit>;
+
 export type ComponentExample = {
   slug: string;
   name: string;
   description?: string;
+  /** Contributor credit for this variant, shown on the website only. */
+  credit?: ComponentCredit;
   badge?: "new";
   /** ISO date this variant shipped. */
   launchedAt?: string;
@@ -24,13 +47,12 @@ export type ComponentEntry = {
   name: string;
   description: string;
   file: string;
-  /** Optional contributor credit shown on the website only. */
-  credit?: {
-    name: string;
-    url: string;
-    /** Optional avatar shown before the name. */
-    avatar?: string;
-  };
+  /**
+   * Contributor credit for a page without `examples`, shown on the website
+   * only. Pages with examples credit each example instead; when every example
+   * shares one contributor, the page shows that credit under the title once.
+   */
+  credit?: ComponentCredit;
   badge?: "new";
   /** ISO date the component shipped. Drives newest-first order in the landing
    * "Recently launched" section. Set it when adding a "new" component. */
@@ -53,6 +75,12 @@ export type CategoryEntry = {
   description: string;
   components: ComponentEntry[];
 };
+
+/**
+ * Categories whose items install as `registry:block`. Part of the public
+ * install contract: moving an item between these must not change its type.
+ */
+export const BLOCK_CATEGORIES = ["blocks", "casino"];
 
 export const registry: CategoryEntry[] = [
   {
@@ -1012,6 +1040,7 @@ export const registry: CategoryEntry[] = [
             description:
               "No thumb. The fill slides behind a rounded liquid cap, and the label flips color wherever the fill covers it.",
             installSlug: "range-slider-fluid",
+            credit: contributors.avinit,
             badge: "new",
             launchedAt: "2026-07-31",
             file: "components/motion/range-slider-fluid.tsx",
@@ -1024,6 +1053,7 @@ export const registry: CategoryEntry[] = [
             description:
               "Equalizer bars peak around the handle and drop back once it passes, so the value moves down the track as a wave.",
             installSlug: "range-slider-wave",
+            credit: contributors.avinit,
             badge: "new",
             launchedAt: "2026-07-31",
             file: "components/motion/range-slider-wave.tsx",
@@ -1036,6 +1066,7 @@ export const registry: CategoryEntry[] = [
             description:
               "Grab the thumb and a value bubble pops out of it. The bubble tilts and squashes with how fast you drag, then settles upright.",
             installSlug: "range-slider-bubble",
+            credit: contributors.avinit,
             badge: "new",
             launchedAt: "2026-07-31",
             file: "components/motion/range-slider-bubble.tsx",
@@ -1048,6 +1079,7 @@ export const registry: CategoryEntry[] = [
             description:
               "The needle stays put and the scale scrolls under it. A flick keeps going and settles on the nearest tick. Fractional steps read at the step's own precision.",
             installSlug: "range-slider-ruler",
+            credit: contributors.avinit,
             badge: "new",
             launchedAt: "2026-07-31",
             file: "components/motion/range-slider-ruler.tsx",
@@ -1326,11 +1358,7 @@ export const registry: CategoryEntry[] = [
         file: "components/charts/heat-calendar.tsx",
         badge: "new",
         launchedAt: "2026-09-11",
-        credit: {
-          name: "Savva",
-          url: "https://ssych.com",
-          avatar: "https://github.com/savvasicevs.png?size=112",
-        },
+        credit: contributors.savva,
         keywords: [
           "heatmap react",
           "activity calendar",
@@ -1347,11 +1375,7 @@ export const registry: CategoryEntry[] = [
         file: "components/charts/returns-calendar.tsx",
         badge: "new",
         launchedAt: "2026-09-11",
-        credit: {
-          name: "Savva",
-          url: "https://ssych.com",
-          avatar: "https://github.com/savvasicevs.png?size=112",
-        },
+        credit: contributors.savva,
         keywords: [
           "monthly returns heatmap",
           "returns calendar",
@@ -1368,11 +1392,7 @@ export const registry: CategoryEntry[] = [
         file: "components/charts/price-target-fan.tsx",
         badge: "new",
         launchedAt: "2026-09-11",
-        credit: {
-          name: "Savva",
-          url: "https://ssych.com",
-          avatar: "https://github.com/savvasicevs.png?size=112",
-        },
+        credit: contributors.savva,
         keywords: [
           "price target chart",
           "analyst targets",
@@ -1380,6 +1400,84 @@ export const registry: CategoryEntry[] = [
           "svg line chart react",
           "stock projection chart",
         ],
+      },
+    ],
+  },
+  {
+    slug: "casino",
+    name: "Casino",
+    description:
+      "Animated React casino games, including crash, mines and plinko, built with Motion and Tailwind CSS as customizable copy-paste source.",
+    components: [
+      {
+        slug: "crash",
+        name: "Crash",
+        description: "A crash game: a paper plane flies the multiplier up a curve, banking with its slope through a speed field that streams faster as it climbs, until the round crashes at a fair random point. Cash out by hand or at an auto target and a parachute pops open at the cash point while the plane flies on, so you see where it would have crashed. On a crash the plane tumbles out of the sky in a burst of paper shreds, milestones pulse the readout, and recent rounds slide into a history strip. Server-decided crash points, optional synthesized sound, reduced-motion safe.",
+        file: "components/motion/crash.tsx",
+        badge: "new",
+        launchedAt: "2026-11-05",
+        keywords: ["crash game", "crash game react", "rocket multiplier game", "cash out game ui", "multiplier curve animation"],
+        examples: [
+          {
+            slug: "plane",
+            name: "Plane",
+            description:
+              "A paper plane flies the multiplier up a curve through a speed field; a parachute opens where you cash out, and a crash tumbles the plane out of the sky.",
+            installSlug: "crash",
+            credit: contributors.avinit,
+            badge: "new",
+            launchedAt: "2026-11-05",
+            file: "components/motion/crash.tsx",
+            previewKey: "casino/crash",
+            previewFile: "components/previews/casino/crash.preview.tsx",
+          },
+          {
+            slug: "balloon",
+            name: "Balloon",
+            description:
+              "A hot-air balloon climbs an altimeter: the tape and clouds scroll past as the multiplier rises, a parachutist bails at your cash out, and a crash pops the envelope.",
+            installSlug: "crash-balloon",
+            credit: contributors.avinit,
+            badge: "new",
+            launchedAt: "2026-11-05",
+            file: "components/motion/crash/crash-balloon.tsx",
+            previewKey: "casino/crash-balloon",
+            previewFile: "components/previews/casino/crash-balloon.preview.tsx",
+          },
+          {
+            slug: "tower",
+            name: "Tower",
+            description:
+              "Blocks stack higher with the multiplier and the tower sways more the taller it grows; your cash-out block keeps a pennant, and a crash topples the top of the stack.",
+            installSlug: "crash-tower",
+            credit: contributors.avinit,
+            badge: "new",
+            launchedAt: "2026-11-05",
+            file: "components/motion/crash/crash-tower.tsx",
+            previewKey: "casino/crash-tower",
+            previewFile: "components/previews/casino/crash-tower.preview.tsx",
+          },
+        ],
+      },
+      {
+        slug: "mines",
+        name: "Mines",
+        description: "A mines board: pick tiles to find gems, each one raising the multiplier, and cash out before you hit a mine. Each gem you find is numbered in pick order, an odds ring shows the chance the next pick is safe, and the round's end reveals every tile in a ripple from your last pick before a ticket-stub result card rises with the outcome, stats and a miniature of your run. Distinct synthesized sounds for gems, streaks, mines and cash outs; keyboard playable, reduced-motion safe.",
+        file: "components/motion/mines.tsx",
+        credit: contributors.avinit,
+        badge: "new",
+        launchedAt: "2026-11-05",
+        keywords: ["mines game", "minesweeper react", "gem mines", "reveal tiles game", "multiplier game ui"],
+      },
+      {
+        slug: "plinko",
+        name: "Plinko",
+        description: "A Plinko board where balls drop through rows of pegs, bounce left or right off each one and land in a slot. Pegs flash when hit, the slot pulses on landing, several balls can fall at once, and reduced motion lands a ball instantly.",
+        file: "components/motion/plinko.tsx",
+        credit: contributors.avinit,
+        badge: "new",
+        launchedAt: "2026-11-03",
+        keywords: ["plinko", "pachinko", "galton board", "ball drop game react", "peg board animation"],
       },
     ],
   },
@@ -1998,6 +2096,7 @@ export const registry: CategoryEntry[] = [
             badge: "new",
             launchedAt: "2026-07-27",
             installSlug: "knockout-wheel",
+            credit: contributors.avinit,
             file: "components/motion/knockout-wheel.tsx",
             previewKey: "blocks/knockout-wheel",
             previewFile: "components/previews/blocks/knockout-wheel.preview.tsx",
@@ -2008,6 +2107,7 @@ export const registry: CategoryEntry[] = [
             description:
               "Pages one round at a time. The leftmost round stacks at a fixed rhythm, each later round centers between its two feeder matches, and cards, elbow connectors, headers and stage height animate into every new layout. A third place play-off sits below the tree under its own rule. Round names, team artwork, dates and result chips all come from the data you pass.",
             installSlug: "knockout-bracket",
+            credit: contributors.avinit,
             file: "components/motion/knockout-bracket.tsx",
             previewKey: "blocks/knockout-bracket",
             previewFile:

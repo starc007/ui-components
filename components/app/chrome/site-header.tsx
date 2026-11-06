@@ -8,12 +8,20 @@ import { MobileNav } from "@/components/app/chrome/mobile-nav";
 import { SiteSearch } from "@/components/app/chrome/site-search";
 import { ThemeToggle } from "@/components/app/chrome/theme-toggle";
 import { LanguageSwitcher } from "@/components/app/chrome/language-switcher";
-import { HalloweenMark } from "@/components/app/halloween-mark";
+import { DiwaliMark } from "@/components/app/diwali-mark";
+import { DiwaliRockets } from "@/components/app/diwali-rockets";
 import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { RainbowCta } from "@/components/app/rainbow-cta";
 import { Link, usePathname } from "@/i18n/navigation";
-import { hasSiteSidebar, isNativePath, NATIVE_PATH } from "@/lib/component-paths";
+import {
+  categoryPath,
+  hasSiteSidebar,
+  isNativePath,
+  NATIVE_PATH,
+  TOP_LEVEL_CATEGORIES,
+  topLevelCategory,
+} from "@/lib/component-paths";
 import { cn } from "@/lib/utils";
 
 function formatStarCount(count: number) {
@@ -43,12 +51,13 @@ export function SiteHeader() {
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const [markHovered, setMarkHovered] = useState(false);
+  const [rocketLaunches, setRocketLaunches] = useState(0);
   const pathname = usePathname();
   const sidebarPage = hasSiteSidebar(pathname);
   const isComponents = pathname.startsWith("/components/motion");
   const isBlocks = pathname.startsWith("/components/blocks");
   const isAgents = pathname.startsWith("/components/agents");
-  const isCharts = pathname.startsWith("/charts");
+  const section = topLevelCategory(pathname);
   const isNative = isNativePath(pathname);
   const isPlayground = pathname.startsWith("/playground");
   const isSponsors = pathname.startsWith("/sponsors");
@@ -82,16 +91,18 @@ export function SiteHeader() {
             onPointerLeave={() => setMarkHovered(false)}
             onFocus={(e) => setMarkHovered(e.currentTarget.matches(":focus-visible"))}
             onBlur={() => setMarkHovered(false)}
+            onClick={() => setRocketLaunches((n) => n + 1)}
           >
-            <HalloweenMark hovered={markHovered} className="h-6 w-6" />
+            <DiwaliMark hovered={markHovered} className="h-6 w-6" />
             <span>beUI</span>
           </Link>
+          <DiwaliRockets launches={rocketLaunches} />
           <nav className={cn("hidden items-center gap-0.5", sidebarPage ? "md:flex" : "xl:flex")}>
             <Link
               href="/components/motion"
               className={cn(
                 "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
-                isCharts ? "inline-flex" : "hidden xl:inline-flex",
+                section ? "inline-flex" : "hidden xl:inline-flex",
                 isComponents
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -121,18 +132,23 @@ export function SiteHeader() {
             >
               {t("agents")}
             </Link>
-            <Link
-              href="/charts"
-              className={cn(
-                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
-                isCharts ? "hidden xl:inline-flex" : "inline-flex",
-                isCharts
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t("charts")}
-            </Link>
+            {/* Each section's link hides below xl on its own pages, where
+                Components takes its place, so the other section stays one click away. */}
+            {TOP_LEVEL_CATEGORIES.map((slug) => (
+              <Link
+                key={slug}
+                href={categoryPath(slug)}
+                className={cn(
+                  "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                  section === slug ? "hidden xl:inline-flex" : "inline-flex",
+                  section === slug
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {t(slug as "charts" | "casino")}
+              </Link>
+            ))}
             <Link
               href={NATIVE_PATH}
               className={cn(
@@ -157,8 +173,9 @@ export function SiteHeader() {
             </Link>
             <Link
               href="/sponsors"
+              // From 2xl only, to leave room for Charts and Casino; the footer links it too.
               className={cn(
-                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                "hidden rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3 2xl:inline-flex",
                 isSponsors
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",

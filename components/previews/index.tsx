@@ -222,6 +222,21 @@ export const previews: Record<string, ComponentType> = {
   "blocks/feedback-widget": dynamic(() =>
     import("./blocks/feedback-widget.preview").then((m) => m.FeedbackWidgetPreview),
   ),
+  "casino/crash": dynamic(() =>
+    import("./casino/crash.preview").then((m) => m.CrashPreview),
+  ),
+  "casino/crash-balloon": dynamic(() =>
+    import("./casino/crash-balloon.preview").then((m) => m.CrashBalloonPreview),
+  ),
+  "casino/crash-tower": dynamic(() =>
+    import("./casino/crash-tower.preview").then((m) => m.CrashTowerPreview),
+  ),
+  "casino/mines": dynamic(() =>
+    import("./casino/mines.preview").then((m) => m.MinesPreview),
+  ),
+  "casino/plinko": dynamic(() =>
+    import("./casino/plinko.preview").then((m) => m.PlinkoPreview),
+  ),
   "blocks/card-dealer": dynamic(() =>
     import("./blocks/card-dealer.preview").then((m) => m.CardDealerPreview),
   ),

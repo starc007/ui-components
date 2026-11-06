@@ -15,6 +15,10 @@
     "charts": {
       "name": "Charts",
       "description": "Animierte React-Charts für Aktivität, Renditen, Kursziele und Orderbücher, gebaut mit Motion und Tailwind CSS als anpassbarer Quellcode zum Kopieren."
+    },
+    "casino": {
+      "name": "Casino",
+      "description": "Animierte React-Casinospiele wie Crash, Mines und Plinko, gebaut mit Motion und Tailwind CSS als anpassbarer Quellcode zum Kopieren."
     }
   },
   "components": {
@@ -1272,6 +1276,44 @@
       "seo": {
         "title": "Animierter Kartengeber und Kartenhand für React",
         "description": "React-Kartentisch mit Stapel, aufgefächerter Hand und Ablagestapel. Karten fliegen im Bogen, drehen sich im Flug und springen beim Sortieren. Framer Motion, shadcn."
+      }
+    },
+    "crash": {
+      "name": "Crash",
+      "description": "Ein Crash-Spiel: Der Multiplikator steigt eine Kurve hinauf, bis die Runde an einem fairen Zufallspunkt abstürzt. Steige von Hand oder bei einem Auto-Ziel aus und sieh, wo die Runde geendet hätte. Drei Designs, vom Server entschiedene Crash-Punkte, optionaler Ton, sicher bei reduzierter Bewegung.",
+      "seo": {
+        "title": "Animiertes Crash-Spiel für React",
+        "description": "React-Crash-Spiel: Ein Multiplikator steigt eine Live-Kurve hinauf, bis er abstürzt. Steige von Hand oder automatisch aus. Framer Motion, Installation mit shadcn."
+      },
+      "examples": {
+        "plane": {
+          "name": "Flugzeug",
+          "description": "Ein Papierflieger trägt den Multiplikator eine Kurve hinauf; beim Auszahlen öffnet sich ein Fallschirm, beim Crash stürzt der Flieger ab."
+        },
+        "balloon": {
+          "name": "Ballon",
+          "description": "Ein Heißluftballon steigt an einem Höhenmesser hinauf; beim Auszahlen springt ein Fallschirmspringer ab, beim Crash platzt die Hülle."
+        },
+        "tower": {
+          "name": "Turm",
+          "description": "Blöcke stapeln sich mit dem Multiplikator und der Turm schwankt immer stärker; dein Auszahlungsblock trägt einen Wimpel, ein Crash wirft die Spitze um."
+        }
+      }
+    },
+    "mines": {
+      "name": "Mines",
+      "description": "Ein Mines-Spielfeld: Decke Felder auf, um Edelsteine zu finden, die den Multiplikator erhöhen, und zahle aus, bevor du eine Mine triffst. Nummerierte Funde, ein Quotenring, eine Ergebniskarte mit Mini-Karte deiner Runde, optionaler Ton, per Tastatur spielbar, sicher bei reduzierter Bewegung.",
+      "seo": {
+        "title": "Animiertes Mines-Spielfeld für React",
+        "description": "React-Mines-Spielfeld: Decke Felder für Edelsteine auf, sieh den Multiplikator steigen und zahle vor einer Mine aus. Framer Motion, Installation mit shadcn."
+      }
+    },
+    "plinko": {
+      "name": "Plinko",
+      "description": "Ein Plinko-Brett: Kugeln fallen durch Reihen von Stiften, prallen links oder rechts ab und landen in einem Fach. Stifte blinken beim Treffer, das Fach pulsiert bei der Landung, mehrere Kugeln können gleichzeitig fallen.",
+      "seo": {
+        "title": "Animiertes Plinko-Brett für React",
+        "description": "React-Plinko-Brett: Kugeln prallen durch Stifte in Punktefächer, Stifte blinken beim Treffer und Fächer pulsieren bei der Landung. Framer Motion, Installation mit shadcn."
       }
     }
   }

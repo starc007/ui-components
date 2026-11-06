@@ -8,8 +8,33 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
 export const changelogEntries: ChangelogEntry[] = [
   {
     "date": "2026-11-02",
-    "title": "beUI in five languages",
+    "title": "Casino games, and beUI in five languages",
     "items": [
+      {
+        "type": "new",
+        "text": "Crash, Mines and Plinko now have their own Casino section.",
+        "href": "/casino"
+      },
+      {
+        "type": "new",
+        "text": "Crash is a multiplier game: cash out before the round crashes. It ships as a paper plane, a hot-air balloon and a stacking tower.",
+        "component": "crash"
+      },
+      {
+        "type": "new",
+        "text": "Plinko drops balls through rows of pegs into scoring slots. Pass your own slot values and the board sizes itself, or let plinkoSlots build a curve for any number of rows. Pegs flash as they're hit, the winning slot stays marked, and optional sound clicks on every peg and lands with a thunk that brightens toward the rarer edges.",
+        "component": "plinko"
+      },
+      {
+        "type": "new",
+        "text": "Mines is a tile game: choose how many mines to hide, reveal tiles to find gems that raise the multiplier, and cash out before you hit a mine. Found gems are numbered in pick order, an odds ring shows how safe the next pick is, a result ticket sums up each round with a miniature map of your run, and optional sound gives gems, streaks, mines and cash outs their own voice. It plays fully from the keyboard.",
+        "component": "mines"
+      },
+      {
+        "type": "fixed",
+        "text": "Bouncy Accordion has its original weighted bounce back on every open, close and switch.",
+        "component": "bouncy-accordion"
+      },
       {
         "type": "new",
         "text": "The site is now available in Chinese, Spanish, French and German. Pick a language from the menu in the header.",

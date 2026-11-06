@@ -49,6 +49,12 @@
       "heading": "React 动画图表",
       "description": "探索交互式活动热力图、月度收益图和目标价图表。复制 React 源码，并根据你的数据进行定制。",
       "allLabel": "全部图表"
+    },
+    "casino": {
+      "title": "React 动画娱乐场游戏：Crash、Mines 和 Plinko",
+      "heading": "React 动画娱乐场游戏",
+      "description": "探索带动画的 Crash、Mines 和 Plinko 游戏，结果可由内置的公平算法生成，也可由服务器决定。复制 React 源码，接入你自己的游戏逻辑。",
+      "allLabel": "全部娱乐场游戏"
     }
   },
   "component": {
@@ -67,6 +73,8 @@
     "updated": "更新于 <time>{date}</time>",
     "seoTitle": "{name} — React 动画组件",
     "contributedBy": "贡献者",
+    "includesDesignsBy": "包含以下作者的设计：",
+    "opensInNewTab": "（在新标签页中打开）",
     "alsoOnNative": "也提供 React Native 版本。"
   },
   "install": {

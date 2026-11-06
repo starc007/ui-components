@@ -1,4 +1,4 @@
-import { categoryPath } from "@/lib/component-paths";
+import { categoryPath, TOP_LEVEL_CATEGORIES } from "@/lib/component-paths";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
@@ -14,7 +14,7 @@ import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 
 /** Copy per category in messages Docs.category; unknown categories read as motion. */
-const CONTENT_KEYS = ["motion", "blocks", "charts", "agents"] as const;
+const CONTENT_KEYS = ["motion", "blocks", "charts", "casino", "agents"] as const;
 type ContentKey = (typeof CONTENT_KEYS)[number];
 
 function contentKey(slug: string): ContentKey {
@@ -52,7 +52,7 @@ const AGENT_CATEGORY_GROUPS = [
 type CategoryParams = Promise<{ locale: string; category: string }>;
 
 export function generateStaticParams() {
-  return registry.filter((c) => c.slug !== "charts").map((c) => ({ category: c.slug }));
+  return registry.filter((c) => !TOP_LEVEL_CATEGORIES.includes(c.slug)).map((c) => ({ category: c.slug }));
 }
 
 export async function generateMetadata({

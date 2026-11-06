@@ -123,6 +123,7 @@ const nextConfig = {
     // Markdown is English only; a language prefix serves the same file.
     const markdown = ["", LOCALE_PREFIX].flatMap((prefix) => [
       { source: `${prefix}/charts/:slug.md`, destination: "/r/:slug.md?category=charts" },
+      { source: `${prefix}/casino/:slug.md`, destination: "/r/:slug.md?category=casino" },
       {
         source: `${prefix}/components/:category/:slug.md`,
         destination: "/r/:slug.md?category=:category",
@@ -146,6 +147,19 @@ const nextConfig = {
           destination: `/charts/${slug}${extension}`,
           permanent: true,
         })),
+      ),
+      { source: "/components/casino", destination: "/casino", permanent: true },
+      { source: "/components/casino/:path+", destination: "/casino/:path+", permanent: true },
+      // Casino games shipped under Blocks before they got their own section,
+      // and their source still lives in components/motion.
+      ...["crash", "mines", "plinko"].flatMap((slug) =>
+        ["blocks", "motion"].flatMap((category) =>
+          ["", ".md"].map((extension) => ({
+            source: `/components/${category}/${slug}${extension}`,
+            destination: `/casino/${slug}${extension}`,
+            permanent: true,
+          })),
+        ),
       ),
       ...BLOCK_COMPONENTS.map((slug) => ({
         source: `/components/motion/${slug}`,
@@ -191,6 +205,11 @@ const nextConfig = {
       "./components/charts/**/*",
       "./components/motion/**/*",
       "./components/previews/charts/**/*",
+      "./lib/**/*",
+    ],
+    "/[locale]/casino/*": [
+      "./components/motion/**/*",
+      "./components/previews/casino/**/*",
       "./lib/**/*",
     ],
     "/[locale]/components/*": [

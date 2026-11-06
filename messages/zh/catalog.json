@@ -15,6 +15,10 @@
     "charts": {
       "name": "图表",
       "description": "基于 Motion 和 Tailwind CSS 构建的 React 动画图表，涵盖活动、收益、目标价和订单簿，以可定制的复制粘贴源码形式提供。"
+    },
+    "casino": {
+      "name": "娱乐场",
+      "description": "带动画的 React 娱乐场游戏，包括 Crash、Mines 和 Plinko，基于 Motion 和 Tailwind CSS 构建，源码可复制粘贴并自由定制。"
     }
   },
   "components": {
@@ -1272,6 +1276,44 @@
       "seo": {
         "title": "React 动画发牌与手牌组件",
         "description": "React 牌桌组件，包含牌堆、扇形手牌和弃牌堆。纸牌沿弧线飞过牌桌、空中翻转，排序时跳跃换位。基于 Framer Motion，支持 shadcn 安装。"
+      }
+    },
+    "crash": {
+      "name": "Crash",
+      "description": "Crash 游戏：倍数沿曲线不断攀升，直到本局在一个公平的随机点崩盘。可以手动兑现或设置自动目标，并看到本局原本会在哪里结束。提供三种设计，支持服务器决定崩盘点、可选音效，并兼容减少动态效果。",
+      "seo": {
+        "title": "React 动画 Crash 游戏",
+        "description": "React Crash 游戏：倍数沿实时曲线攀升直至崩盘。可手动或自动兑现。基于 Framer Motion，可通过 shadcn 安装。"
+      },
+      "examples": {
+        "plane": {
+          "name": "纸飞机",
+          "description": "纸飞机带着倍数沿曲线攀升；兑现时降落伞打开，崩盘时纸飞机从空中坠落。"
+        },
+        "balloon": {
+          "name": "热气球",
+          "description": "热气球沿高度计上升；兑现时跳伞者跃出，崩盘时气球爆裂。"
+        },
+        "tower": {
+          "name": "高塔",
+          "description": "方块随倍数越叠越高，塔越高摇晃越厉害；兑现的方块会插上小旗，崩盘时塔顶倒塌。"
+        }
+      }
+    },
+    "mines": {
+      "name": "Mines",
+      "description": "Mines 棋盘：翻开格子寻找宝石，每颗宝石都会提高倍数，在踩到地雷前兑现。宝石按翻开顺序编号，概率环显示下一步的安全几率，结果卡展示本局的缩略图。可选音效，支持键盘操作，并兼容减少动态效果。",
+      "seo": {
+        "title": "React 动画 Mines 棋盘",
+        "description": "React Mines 棋盘：翻开格子寻找宝石，看着倍数上涨，在踩雷前兑现。基于 Framer Motion，可通过 shadcn 安装。"
+      }
+    },
+    "plinko": {
+      "name": "Plinko",
+      "description": "Plinko 弹珠板：小球穿过一排排钉子，左右弹跳后落入槽位。钉子被击中时闪烁，落槽时槽位跳动，可同时落下多颗小球。",
+      "seo": {
+        "title": "React 动画 Plinko 弹珠板",
+        "description": "React Plinko 弹珠板：小球在钉子间弹跳落入计分槽，钉子被击中时闪烁，槽位落球时跳动。基于 Framer Motion，可通过 shadcn 安装。"
       }
     }
   }

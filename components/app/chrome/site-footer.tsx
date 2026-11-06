@@ -6,7 +6,7 @@ import { categoryPath, componentPath } from "@/lib/component-paths";
 import { registry } from "@/lib/registry";
 
 const FOOTER_LIMIT = 7;
-const COLUMNS = ["motion", "blocks", "agents", "charts"].flatMap((slug) => {
+const COLUMNS = ["motion", "blocks", "agents", "charts", "casino"].flatMap((slug) => {
   const category = registry.find((entry) => entry.slug === slug);
   return category ? [category] : [];
 });
@@ -21,6 +21,7 @@ const PRODUCTS = [
     label: "Pulse",
   },
   { href: "https://usemarkd.app", label: "Markd" },
+  { href: "https://dotsafe.dev", label: "Dotsafe" },
 ];
 
 export function SiteFooter() {
@@ -46,7 +47,7 @@ export function SiteFooter() {
 
   return (
     <footer className="relative isolate overflow-hidden border-border/60 border-t">
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-x-6 gap-y-12 px-4 pt-16 pb-48 sm:pb-64 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.4fr_repeat(6,minmax(0,1fr))]">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-x-6 gap-y-12 px-4 pt-16 pb-48 sm:pb-64 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-[1.4fr_repeat(7,minmax(0,1fr))]">
         {/* Brand. */}
         <div className="max-w-xs">
           <Link

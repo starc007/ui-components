@@ -15,6 +15,10 @@
     "charts": {
       "name": "Gráficos",
       "description": "Gráficos animados de React para actividad, rentabilidades, precios objetivo y libros de órdenes, creados con Motion y Tailwind CSS como código personalizable para copiar y pegar."
+    },
+    "casino": {
+      "name": "Casino",
+      "description": "Juegos de casino animados para React, como crash, mines y plinko, creados con Motion y Tailwind CSS como código fuente personalizable para copiar y pegar."
     }
   },
   "components": {
@@ -1272,6 +1276,44 @@
       "seo": {
         "title": "Repartidor de cartas y mano de cartas animados en React",
         "description": "Mesa de cartas para React con mazo, mano en abanico y pila de descartes. Las cartas viajan en arco, se voltean en el aire y saltan al ordenarse. Framer Motion."
+      }
+    },
+    "crash": {
+      "name": "Crash",
+      "description": "Un juego de crash: el multiplicador sube por una curva hasta que la ronda se estrella en un punto aleatorio justo. Retira a mano o con un objetivo automático y mira dónde habría terminado la ronda. Tres diseños, puntos de crash decididos por el servidor, sonido opcional y compatible con movimiento reducido.",
+      "seo": {
+        "title": "Juego de crash animado para React",
+        "description": "Juego de crash en React: un multiplicador sube por una curva en vivo hasta estrellarse. Retira a mano o automáticamente. Framer Motion, instalación con shadcn."
+      },
+      "examples": {
+        "plane": {
+          "name": "Avión",
+          "description": "Un avión de papel lleva el multiplicador curva arriba; al retirar se abre un paracaídas y en el crash el avión cae del cielo."
+        },
+        "balloon": {
+          "name": "Globo",
+          "description": "Un globo aerostático sube por un altímetro; al retirar salta un paracaidista y en el crash la envoltura revienta."
+        },
+        "tower": {
+          "name": "Torre",
+          "description": "Los bloques se apilan con el multiplicador y la torre se balancea más cuanto más crece; tu bloque de retiro lleva un banderín y el crash derriba la cima."
+        }
+      }
+    },
+    "mines": {
+      "name": "Mines",
+      "description": "Un tablero de mines: descubre casillas para encontrar gemas que suben el multiplicador y retira antes de dar con una mina. Gemas numeradas, un anillo de probabilidades, una tarjeta de resultado con un mapa en miniatura de tu ronda, sonido opcional, jugable con teclado y compatible con movimiento reducido.",
+      "seo": {
+        "title": "Tablero de mines animado para React",
+        "description": "Tablero de mines en React: descubre casillas para encontrar gemas, mira subir el multiplicador y retira antes de una mina. Framer Motion, instalación con shadcn."
+      }
+    },
+    "plinko": {
+      "name": "Plinko",
+      "description": "Un tablero de Plinko: las bolas caen entre filas de clavos, rebotan a izquierda o derecha y aterrizan en una casilla. Los clavos destellan al golpearlos, la casilla late al aterrizar y pueden caer varias bolas a la vez.",
+      "seo": {
+        "title": "Tablero de Plinko animado para React",
+        "description": "Tablero de Plinko en React: las bolas rebotan entre clavos hasta casillas de puntos, los clavos destellan y las casillas laten al aterrizar. Framer Motion, instalación con shadcn."
       }
     }
   }
