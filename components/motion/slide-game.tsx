@@ -371,8 +371,9 @@ export function SlideGame({
           {/* The stage is the reel alone, so the edge tabs can hang from its edges. */}
           <Reel
             round={round}
-            // Pips mark the playing round's target, and the next one between rounds.
-            goal={busy && round ? round.target : target}
+            // Pips mark the sliding round's target, and the next one otherwise
+            // (while starting, `round` is still the last one).
+            goal={phase === "sliding" && round ? round.target : target}
             duration={duration}
             reduce={reduce}
             busy={busy}
