@@ -31,10 +31,10 @@ const categoryContent = {
     allLabel: "All charts",
   },
   casino: {
-    title: "Animated React Casino Games: Crash, Mines and Plinko",
+    title: "Animated React Casino Games: Crash, Mines, Plinko and Slide",
     heading: "Animated React casino games",
     description:
-      "Explore animated crash, mines and plinko games with fair built-in outcomes or server-decided results. Copy the React source and wire it to your own game logic.",
+      "Explore animated crash, mines, plinko and slide games with fair built-in outcomes or server-decided results. Copy the React source and wire it to your own game logic.",
     allLabel: "All casino games",
   },
   agents: {
