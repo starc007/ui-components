@@ -26,7 +26,7 @@ export function ProMobileCard() {
           Need full screens?
         </h2>
         <p className="mt-2 text-sm leading-5 text-muted-foreground">
-          50 React Native blocks and screens, from onboarding and paywalls to
+          60+ React Native blocks and screens, from onboarding and paywalls to
           profile and checkout, are live in beUI Pro for mobile.
         </p>
       </div>

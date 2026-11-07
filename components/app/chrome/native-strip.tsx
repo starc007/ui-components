@@ -57,7 +57,7 @@ export function NativeStrip() {
         <span className="hidden sm:inline">
           , with{" "}
           <strong className="font-medium text-primary-foreground">
-            50 React Native blocks and screens
+            60+ React Native blocks and screens
           </strong>
         </span>
       </p>
