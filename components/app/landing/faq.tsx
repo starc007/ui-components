@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { BouncyAccordion } from "@/components/motion/bouncy-accordion";
 
-const FAQS = [
+export const FAQS = [
   {
     id: "free",
     title: "Is beUI free for commercial projects?",
@@ -87,23 +86,3 @@ const FAQS = [
       "No. The public library works independently of Pro. Pro is a separate collection of premium components and animated blocks; the Lifetime plan also includes full templates and animated illustrations.",
   },
 ];
-
-export function LandingFaq() {
-  return (
-    <section
-      aria-labelledby="landing-faq"
-      className="mx-auto max-w-3xl px-4 pt-20 pb-8 sm:pt-28"
-    >
-      <div className="mb-10 text-center">
-        <p className="text-sm text-muted-foreground">FAQ</p>
-        <h2
-          id="landing-faq"
-          className="mt-4 font-display text-3xl font-medium tracking-tight md:text-4xl"
-        >
-          A few things to know
-        </h2>
-      </div>
-      <BouncyAccordion items={FAQS} className="w-full" />
-    </section>
-  );
-}
