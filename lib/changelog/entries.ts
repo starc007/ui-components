@@ -8,11 +8,11 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
 export const changelogEntries: ChangelogEntry[] = [
   {
     "date": "2026-11-02",
-    "title": "Plinko, Mines and Crash",
+    "title": "Plinko, Mines, Crash and Slide",
     "items": [
       {
         "type": "new",
-        "text": "Crash, Mines and Plinko now have their own Casino section.",
+        "text": "Crash, Mines, Plinko and Slide now have their own Casino section.",
         "href": "/casino"
       },
       {
@@ -29,6 +29,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "new",
         "text": "Mines is a tile game: choose how many mines to hide, reveal tiles to find gems that raise the multiplier, and cash out before you hit a mine. Found gems are numbered in pick order, an odds ring shows how safe the next pick is, a result ticket sums up each round with a miniature map of your run, and optional sound gives gems, streaks, mines and cash outs their own voice. It plays fully from the keyboard.",
         "component": "mines"
+      },
+      {
+        "type": "new",
+        "text": "Slide is a multiplier game: set a bet and a target, then a reel of colour-coded cards races past two tabs at the center of the stage, turning in 3D as they pass, and clicks the round's result into place between them. Cards that would beat your target are marked as they fly past, recent rounds collect in a history strip, and optional sound ticks each card and chimes on a win.",
+        "component": "slide-game"
       },
       {
         "type": "fixed",

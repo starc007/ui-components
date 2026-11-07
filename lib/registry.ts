@@ -1407,7 +1407,7 @@ export const registry: CategoryEntry[] = [
     slug: "casino",
     name: "Casino",
     description:
-      "Animated React casino games, including crash, mines and plinko, built with Motion and Tailwind CSS as customizable copy-paste source.",
+      "Animated React casino games, including crash, mines, plinko and slide, built with Motion and Tailwind CSS as customizable copy-paste source.",
     components: [
       {
         slug: "crash",
@@ -1478,6 +1478,16 @@ export const registry: CategoryEntry[] = [
         badge: "new",
         launchedAt: "2026-11-03",
         keywords: ["plinko", "pachinko", "galton board", "ball drop game react", "peg board animation"],
+      },
+      {
+        slug: "slide-game",
+        name: "Slide",
+        description: "A slide game: set a bet and a target, then a reel of colour-coded multiplier cards races past two tabs at the center of the stage, turning in 3D as they pass, slows through the last few and clicks the round's result into place between them. Cards that would beat your target carry a pip, the tabs turn primary on a win and red on a miss, and recent rounds collect in a history strip. Server-decided results, optional tick and win sounds, reduced-motion safe.",
+        file: "components/motion/slide-game.tsx",
+        credit: contributors.avinit,
+        badge: "new",
+        launchedAt: "2026-11-06",
+        keywords: ["slide game react", "casino slide", "multiplier reel", "stake slide game", "casino game component"],
       },
     ],
   },
