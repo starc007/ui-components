@@ -12,6 +12,160 @@ export type Testimonial = {
 
 export const TESTIMONIALS = [
   {
+    id: "2080032340529611136",
+    text: "I use beUI + beUI Pro in all my client projects: beautifully crafted, production-ready React components with purposeful motion and true “less is more” design. @saurra3h is incredibly responsive—I casually suggested a component, and he shipped it the same day. Exceptional craft.",
+    user: {
+      name: "Sébastien",
+      username: "sbstngrs",
+      avatar:
+        "https://pbs.twimg.com/profile_images/1381626879506063372/3bGEVIBi_normal.jpg",
+      verified: false,
+    },
+  },
+  {
+    id: "2100644974203400534",
+    text: "The only motion component library you need for product interfaces.\n\nLink : beui.dev",
+    user: {
+      name: "Dhruv",
+      username: "dhruvtwt_",
+      avatar:
+        "https://pbs.twimg.com/profile_images/2061383930922803200/djUhafPA_normal.jpg",
+      verified: true,
+    },
+  },
+  {
+    id: "2116990920683868518",
+    text: "Bro, you’ve been working really hard. I’ve been following your work for the past four months, and I’ve been using the beui free version to build components for my interviews. It has genuinely helped me a lot. Really appreciate what you’re doing. Keep going, bro! ❤",
+    user: {
+      name: "Nithin",
+      username: "x414423",
+      avatar:
+        "https://pbs.twimg.com/profile_images/2111959327263039488/FEgh-aOr_normal.jpg",
+      verified: false,
+    },
+  },
+  {
+    id: "2106671760599138486",
+    text: "The best UI Library out there beui.dev",
+    user: {
+      name: "Abdullah Mukadam",
+      username: "abd_mukadam",
+      avatar:
+        "https://pbs.twimg.com/profile_images/2105652830690492416/jTqtySNn_normal.jpg",
+      verified: true,
+    },
+  },
+  {
+    id: "2100035100675301477",
+    text: "Stumbled upon beUI today, an open-source React animation component library\n\nThings like 3D tilt cards, magnetic buttons, sliding Tabs, and even a navigation bar with mouse-over previews mimicking the Codex sidebar—tuned to feel super smooth",
+    user: {
+      name: "Ian (伊恩)",
+      username: "ianneo_ai",
+      avatar:
+        "https://pbs.twimg.com/profile_images/1891533502811865088/TGLd-ENY_normal.jpg",
+      verified: true,
+    },
+  },
+  {
+    id: "2113234001439690831",
+    text: "Hey love beui, currently using in some parts for storio.ink. Nice library!",
+    user: {
+      name: "Jhornan Colina",
+      username: "jhornancolina",
+      avatar:
+        "https://pbs.twimg.com/profile_images/1729658981948297216/Wak7qnpl_normal.jpg",
+      verified: true,
+    },
+  },
+  {
+    id: "2116995007265878430",
+    text: "If any of y'all are building any SaaS platform or any personal tool, must checkout beui.dev",
+    user: {
+      name: "YAMA",
+      username: "kshimate",
+      avatar:
+        "https://pbs.twimg.com/profile_images/1932115467625250816/GoMqArnP_normal.jpg",
+      verified: true,
+    },
+  },
+  {
+    id: "2094070766363111683",
+    text: "Bro, I came across this and seriously loved it! The animations, graphics, and overall execution are 🔥 Really great work, man. 👏",
+    user: {
+      name: "Pixels",
+      username: "madebypixels3",
+      avatar:
+        "https://pbs.twimg.com/profile_images/1995066913173708800/DXdpccI__normal.jpg",
+      verified: true,
+    },
+  },
+  {
+    id: "2098071203931971692",
+    text: "Looking for cool, animated UI components? 👀\n\nBeUI is an awesome collection featuring super smooth interactions built with Motion and Tailwind. Just copy the code easily, customize it, and use it in your projects. 🪄",
+    user: {
+      name: "negahUi",
+      username: "negahUi_tech",
+      avatar:
+        "https://pbs.twimg.com/profile_images/2096917878301757441/DP7Gx7a7_normal.jpg",
+      verified: false,
+    },
+  },
+  {
+    id: "2100585576575758798",
+    text: "It's been few days, I found lot's of tweets on beui.dev. Checked it -> launched it on #SoftRankings\n\n@09_cyruz implemented the smooth animation transitions to website itself. Now SoftRankings website has beui.dev vitamins 😉",
+    user: {
+      name: "Ayush Shakya",
+      username: "AyushShakya",
+      avatar:
+        "https://pbs.twimg.com/profile_images/1528622370034171906/bZ410I3W_normal.jpg",
+      verified: false,
+    },
+  },
+  {
+    id: "2097553238396407823",
+    text: "Found some really nice Motion components👀\n\nBuilt with Motion + Tailwind CSS, with smooth interactions you can copy, customize, and use in your own projects.\n\nCheck it out → beui.dev",
+    user: {
+      name: "Nero",
+      username: "neropursue",
+      avatar:
+        "https://pbs.twimg.com/profile_images/2044050048720195584/2igILgnd_normal.jpg",
+      verified: true,
+    },
+  },
+  {
+    id: "2105826859258937571",
+    text: "Cooking the feature intro page. Nice bouncy accordion beui.dev",
+    user: {
+      name: "Keithan Lee",
+      username: "Keithanlkk",
+      avatar:
+        "https://pbs.twimg.com/profile_images/2055977544445509632/J4stXtey_normal.jpg",
+      verified: false,
+    },
+  },
+  {
+    id: "2100639681092153839",
+    text: "Those animations are beautiful",
+    user: {
+      name: "Avia",
+      username: "avia_chen",
+      avatar:
+        "https://pbs.twimg.com/profile_images/2001649168801009664/MTKkbyC6_normal.jpg",
+      verified: true,
+    },
+  },
+  {
+    id: "2113863374945874358",
+    text: "beui.dev is cool",
+    user: {
+      name: "Naved",
+      username: "Navedux",
+      avatar:
+        "https://pbs.twimg.com/profile_images/2024929770715447300/6_d0j4NL_normal.jpg",
+      verified: true,
+    },
+  },
+  {
     id: "2077284160578941335",
     text: "@saurra3h crazy sick ser.",
     user: {

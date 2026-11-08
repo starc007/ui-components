@@ -11,10 +11,13 @@ export function TestimonialAvatar({
   src,
   name,
   className,
+  fallback = "initials",
 }: {
   src: string;
   name: string;
   className?: string;
+  /** `none` drops a dead photo entirely, for decorative stacks of faces. */
+  fallback?: "initials" | "none";
 }) {
   const [failed, setFailed] = useState(false);
   const initials = name
@@ -25,6 +28,7 @@ export function TestimonialAvatar({
     .join("");
 
   if (failed) {
+    if (fallback === "none") return null;
     return (
       <span
         aria-hidden="true"
