@@ -30,10 +30,6 @@ export function resolveEntries(keys: readonly string[]): LandingEntry[] {
   });
 }
 
-function variantCount(component: ComponentEntry) {
-  return (component.examples ?? []).filter((example) => example.installSlug).length || 1;
-}
-
 const CATEGORY_ORDER = ["motion", "blocks", "agents", "charts", "casino"] as const;
 
 const CATEGORY_BLURBS: Record<(typeof CATEGORY_ORDER)[number], string> = {
@@ -44,7 +40,10 @@ const CATEGORY_BLURBS: Record<(typeof CATEGORY_ORDER)[number], string> = {
   casino: "Crash, mines and plinko with fair odds.",
 };
 
-/** Each library section with its install count, variants included. */
+/**
+ * Each library section with its number of component pages, matching what its
+ * page and the footer list (Casino is three games, not five designs).
+ */
 export const CATEGORIES = CATEGORY_ORDER.flatMap((slug) => {
   const category = registry.find((entry) => entry.slug === slug);
   if (!category) return [];
@@ -54,7 +53,7 @@ export const CATEGORIES = CATEGORY_ORDER.flatMap((slug) => {
       name: category.name,
       blurb: CATEGORY_BLURBS[slug],
       href: categoryPath(slug),
-      count: category.components.reduce((n, c) => n + variantCount(c), 0),
+      count: category.components.length,
       entries: category.components.map((component) => ({
         category: slug,
         component: toTile(component),
