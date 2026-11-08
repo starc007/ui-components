@@ -6,7 +6,8 @@ import { EASE_OUT } from "@/lib/ease";
 import { createGameSounds, type GameSounds } from "@/lib/game-sounds";
 import { EXIT, floor2, formatMultiplier, formatShort, heat, PRESS_GUARD, PULSE, SHAKE, SWAP } from "../casino/game-parts";
 
-export { EXIT, formatMultiplier, formatShort, heat, PULSE, SHAKE, SWAP };
+// Re-exported for installs that import these from here.
+export { EXIT, floor2, formatMultiplier, formatShort, heat, PULSE, SHAKE, SWAP };
 
 // The game every Crash design shares: the clock, the crash point, cashing out,
 // milestones, history, sound and announcements. A design only draws it.

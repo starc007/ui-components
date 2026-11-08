@@ -17,6 +17,9 @@ import { EASE_OUT } from "@/lib/ease";
 import { createGameSounds, type GameSounds } from "@/lib/game-sounds";
 import { PresenceGate, type PresenceGateRenderProps } from "@/lib/presence-gate";
 import { cn } from "@/lib/utils";
+import { formatMultiplier, formatOdds } from "./casino/game-parts";
+
+export { formatMultiplier } from "./casino/game-parts";
 
 export type MinesTile = "gem" | "mine";
 
@@ -323,7 +326,7 @@ export function Mines({
                 {formatMultiplier(multiplier)}
               </span>
             ) : (
-              <NumberTicker value={multiplier} decimals={2} format={compact} suffix="×" startOnView={false} duration={0.35} />
+              <NumberTicker value={multiplier} decimals={2} format={formatOdds} suffix="×" startOnView={false} duration={0.35} />
             )}
           </div>
           <p className="flex items-center justify-end gap-1.5 text-xs text-muted-foreground tabular-nums">
@@ -651,7 +654,7 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
         <Stage delay={0.1} reduce={reduce}>
           <p className={cn("text-3xl font-semibold", !cashed && "text-muted-foreground line-through decoration-2")}>
             {cashed ? (
-              <NumberTicker value={multiplier} decimals={2} format={compact} suffix="×" startOnView={false} duration={0.6} stagger={0.05} />
+              <NumberTicker value={multiplier} decimals={2} format={formatOdds} suffix="×" startOnView={false} duration={0.6} stagger={0.05} />
             ) : (
               <span className="tabular-nums">{formatMultiplier(multiplier)}</span>
             )}
@@ -664,7 +667,7 @@ function Ticket({ outcome, multiplier, gems, safeTiles, mines, size, picked, min
           <dl className="grid gap-1.5 text-xs">
             <Row label="Gems" value={`${gems} of ${safeTiles}`} />
             <Row label="Mines" value={mines} />
-            <Row label={cashed ? "Odds beaten" : "Lost on pick"} value={cashed ? `1 in ${compact(multiplier)}` : picked.length} />
+            <Row label={cashed ? "Odds beaten" : "Lost on pick"} value={cashed ? `1 in ${formatOdds(multiplier)}` : picked.length} />
           </dl>
         </Stage>
         {/* A narrow ticket keeps the stats on one line each and drops the map. */}
@@ -752,17 +755,3 @@ function ringFrom(from: number, tile: number, size: number) {
   );
 }
 
-// Payouts grow without limit (a cleared 5 × 5 board with 12 mines pays over
-// five million), so big ones are shortened to fit: 5.2M, then 1.3E29.
-const SHORT = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
-const SCIENTIFIC = new Intl.NumberFormat("en", { notation: "scientific", maximumFractionDigits: 1 });
-
-function compact(multiplier: number) {
-  if (multiplier < 10_000) return multiplier.toFixed(2);
-  return (multiplier < 1e15 ? SHORT : SCIENTIFIC).format(multiplier);
-}
-
-/** A multiplier as Mines shows it: 2.50×, or shortened when large (5.2M×). */
-export function formatMultiplier(multiplier: number) {
-  return `${compact(multiplier)}×`;
-}

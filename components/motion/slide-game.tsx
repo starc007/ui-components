@@ -2,7 +2,7 @@
 
 import { History as HistoryIcon } from "lucide-react";
 import { animate, type MotionValue, motion, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from "motion/react";
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { memo, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "@/components/motion/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/motion/select";
 import { EASE_OUT } from "@/lib/ease";
@@ -185,7 +185,9 @@ export function SlideGame({
           setAnnouncement(`Sliding. Target ${formatShort(roundTarget)}.`);
         },
         () => {
-          if (pending.current === id) setPhase(before);
+          if (pending.current !== id) return;
+          setPhase(before);
+          setAnnouncement("Couldn't start the round. Try again.");
         },
       );
   };
@@ -237,8 +239,8 @@ export function SlideGame({
   };
 
   const roundTarget = formatShort(round?.target ?? target);
-  // Matches slideResult's default 1% edge.
-  const chance = `${Math.min(99, 99 / target).toFixed(2)}%`;
+  // Matches slideResult's default 1% edge. Results never land below 1×, so a target at or below it always wins.
+  const chance = `${(target <= 1 ? 100 : Math.min(99, 99 / target)).toFixed(2)}%`;
 
   return (
     <section aria-label={ariaLabel} className={cn("@container w-full max-w-3xl", className)}>
@@ -631,8 +633,11 @@ function Reel({
   );
 }
 
-/** One card. Its turn, size and fade follow its distance from the center, read straight off the reel's offset. */
-function Card({
+/**
+ * One card. Its turn, size and fade follow its distance from the center, read straight off the reel's offset.
+ * Memoized: the reel holds dozens of cards and every bet keystroke re-renders the stage.
+ */
+const Card = memo(function Card({
   multiplier,
   center,
   x,
@@ -685,7 +690,7 @@ function Card({
       </motion.div>
     </motion.div>
   );
-}
+});
 
 /** A notch on the stage edge, pointing at the center card. */
 function EdgeTab({ side, tone }: { side: "top" | "bottom"; tone: string }) {

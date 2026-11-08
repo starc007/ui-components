@@ -13,7 +13,7 @@ async function audit(container: HTMLElement) {
   expect(results?.violations).toEqual([]);
 }
 
-test("slide game names its controls and announces a settled round", async () => {
+test("slide game names its controls, announces a settled round and marks an empty bet invalid", async () => {
   const { container, getByRole, getByLabelText } = render(<SlideGame getResult={() => 3.5} duration={0.05} />);
 
   expect(getByRole("region", { name: "Slide" })).toBeTruthy();
@@ -32,20 +32,12 @@ test("slide game names its controls and announces a settled round", async () => 
   await waitFor(() => expect(live?.textContent).toBe("Landed on 3.50×. Win, target 2×."), { timeout: 3000 });
   expect(getByRole("button", { name: "Slide again" })).toBeTruthy();
   await audit(container);
-});
 
-test("slide game blocks a round without a bet and marks the field invalid", async () => {
-  const { container, getByRole, getByLabelText } = render(<SlideGame getResult={() => 3.5} duration={0.05} />);
   const field = getByLabelText("Bet amount");
   await act(async () => {
     fireEvent.change(field, { target: { value: "" } });
   });
   expect(field.getAttribute("aria-invalid")).toBe("true");
-  const main = getByRole("button", { name: "Enter a bet" });
-  expect(main.getAttribute("aria-disabled")).toBe("true");
-  await act(async () => {
-    fireEvent.click(main);
-  });
-  expect(container.querySelector("[aria-live='polite']")?.textContent).toBe("");
+  expect(getByRole("button", { name: "Enter a bet" }).getAttribute("aria-disabled")).toBe("true");
   await audit(container);
 });

@@ -12,25 +12,22 @@ import { EASE_IN_OUT, EASE_OUT } from "@/lib/ease";
 import { PresenceGate, type PresenceGateRenderProps } from "@/lib/presence-gate";
 import { cn } from "@/lib/utils";
 import {
-  GameEyebrow,
-  GameHistory,
-  HEAT_TEXT,
-  PRIMARY_TEXT,
-  SoundToggle,
-} from "../casino/game-parts";
-import {
-  type CrashGame,
   EXIT,
   formatMultiplier,
   formatShort,
-  growth,
+  GameEyebrow,
+  GameHistory,
+  HEAT_TEXT,
   heat,
+  PRIMARY_TEXT,
   PULSE,
   SHAKE,
+  SoundToggle,
   SWAP,
-  useStable,
-} from "./use-crash-game";
+} from "../casino/game-parts";
+import { type CrashGame, growth, useStable } from "./use-crash-game";
 
+// Re-exported for installs that import it from here.
 export { PRIMARY_TEXT };
 
 /** The width of the viewBox an SVG stage draws in. */

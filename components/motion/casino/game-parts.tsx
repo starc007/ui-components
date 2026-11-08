@@ -75,9 +75,14 @@ export function floor2(value: number) {
   return Math.floor(value * 100 + 1e-9) / 100;
 }
 
+/** A multiplier's number without the sign: 2.50, or shortened when large (12.5K, 1.4e20). */
+export function formatOdds(multiplier: number) {
+  return multiplier < 10_000 ? multiplier.toFixed(2) : formatLarge(multiplier);
+}
+
 /** A multiplier as the games show it: 2.50×, or shortened when large (12.5K×, 1.4e20×). */
 export function formatMultiplier(multiplier: number) {
-  return `${multiplier < 10_000 ? multiplier.toFixed(2) : formatLarge(multiplier)}×`;
+  return `${formatOdds(multiplier)}×`;
 }
 
 /** Scale and menu labels: 1.5×, 2×, 1.2K×. */
