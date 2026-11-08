@@ -14,6 +14,8 @@ const COLUMNS = [
   { direction: "down", speed: 58, show: "hidden xl:block" },
 ] as const;
 
+const BUILDER_COUNT = "200k+";
+
 /** Deal posts round-robin so long and short quotes mix in every column. */
 function columnsOf<T>(items: readonly T[], count: number) {
   return Array.from({ length: count }, (_, column) =>
@@ -28,20 +30,28 @@ function columnsOf<T>(items: readonly T[], count: number) {
  */
 export function TestimonialRows({ className }: { className?: string }) {
   const columns = columnsOf(TESTIMONIALS, COLUMNS.length);
-  const faces = TESTIMONIALS.slice(0, 5);
+  const faces = TESTIMONIALS.slice(0, 7);
 
   return (
     <section aria-labelledby="landing-testimonials" className={cn("mx-auto max-w-6xl px-4", className)}>
       <div className="mb-8 flex flex-col items-center text-center">
-        <div className="flex -space-x-2">
-          {faces.map((testimonial) => (
-            <TestimonialAvatar
-              key={testimonial.id}
-              src={testimonial.user.avatar}
-              name={testimonial.user.name}
-              className="size-7 ring-2 ring-background"
-            />
-          ))}
+        <div className="inline-flex h-9 items-center gap-2.5 rounded-full border border-border py-1 pr-3.5 pl-1">
+          {/* A few spare faces: dead photos drop out instead of showing initials. */}
+          <div className="flex -space-x-2">
+            {faces.map((testimonial) => (
+              <TestimonialAvatar
+                key={testimonial.id}
+                src={testimonial.user.avatar}
+                name={testimonial.user.name}
+                fallback="none"
+                className="size-7 ring-2 ring-background"
+              />
+            ))}
+          </div>
+          <p className="text-[13px] text-muted-foreground">
+            <span className="font-medium text-foreground">{BUILDER_COUNT}</span> builders use
+            beUI
+          </p>
         </div>
         <h2
           id="landing-testimonials"
