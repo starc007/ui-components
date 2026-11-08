@@ -19,18 +19,19 @@ import {
   heat,
   PRESS_GUARD,
   SoundToggle,
+  useStable,
 } from "./casino/game-parts";
 
 export { formatMultiplier } from "./casino/game-parts";
 
 export interface SlideGameProps {
-  /** Target multiplier (controlled). A result at or above it wins. Applies from the next round. */
+  /** Target multiplier (controlled). A result at or above it wins. Applies from the next round. Values below 1.01× play as 1.01×. */
   target?: number;
   /** Initial target when uncontrolled. Default 2. */
   defaultTarget?: number;
   /** Called when the Target menu changes between rounds. */
   onTargetChange?: (target: number) => void;
-  /** Targets offered in the menu. Default 1.5×, 2×, 3×, 5×, 10×, 25×, 100×. */
+  /** Targets offered in the menu. Default 1.5×, 2×, 3×, 5×, 10×, 25×, 100×. Values below 1.01× are left out. */
   targets?: number[];
   /** Bet amount (controlled), used for the profit readout and passed to `onResult`. */
   bet?: number;
@@ -50,7 +51,10 @@ export interface SlideGameProps {
    * The win chance shown assumes its 1% edge.
    */
   getResult?: () => number | Promise<number>;
-  /** Called when the reel stops, with the result, the round's target and its bet. The round wins when result >= target. */
+  /**
+   * Called when the reel stops, with the result, the round's target and its bet. The round wins when result >= target.
+   * Not called for a round still sliding when the game unmounts; settle those from your own record of `getResult`.
+   */
   onResult?: (result: number, target: number, bet: number) => void;
   /** Slide length in seconds. Default 4. */
   duration?: number;
@@ -76,12 +80,19 @@ export function slideResult(random: () => number = Math.random, houseEdge = 0.01
 }
 
 const TARGETS = [1.5, 2, 3, 5, 10, 25, 100];
+// Results never land below 1×, so a lower target would always win and pay nothing.
+const MIN_TARGET = 1.01;
+// The ½ and 2× buttons stop here, so the field never fills with exponent notation.
+const MAX_BET = 1_000_000_000;
 const HISTORY = 12;
 // Round numbers, unique on the page.
 let rounds = 0;
 
 type Phase = "idle" | "starting" | "sliding" | "settled";
 type Round = { id: number; result: number; target: number; bet: number };
+
+// Grouped, two decimals, never exponent notation: $1,234,567.50.
+const AMOUNT = new Intl.NumberFormat("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const settleValue = (value: number) => (Number.isFinite(value) ? Math.max(1, floor2(value)) : 1);
 const parseBet = (text: string) => {
@@ -118,7 +129,8 @@ export function SlideGame({
   const reduce = useReducedMotion() ?? false;
   const betId = useId();
   const [internalTarget, setInternalTarget] = useState(defaultTarget);
-  const target = targetProp ?? internalTarget;
+  const rawTarget = targetProp ?? internalTarget;
+  const target = Number.isFinite(rawTarget) ? Math.max(MIN_TARGET, rawTarget) : MIN_TARGET;
   // The field keeps what the player typed ("1." mid-edit); a controlled bet
   // that disagrees with it replaces it in the same render.
   const [draft, setDraft] = useState(() => String(betProp ?? defaultBet));
@@ -157,7 +169,8 @@ export function SlideGame({
   // An empty or zero bet can't start a round.
   const noBet = bet <= 0;
   const blocked = busy || noBet;
-  const options = targets.includes(target) ? targets : [...targets, target].sort((a, b) => a - b);
+  const valid = targets.filter((step) => step >= MIN_TARGET);
+  const options = valid.includes(target) ? valid : [...valid, target].sort((a, b) => a - b);
   const settled = phase === "settled" && round !== null;
   const won = settled ? round.result >= round.target : undefined;
 
@@ -219,7 +232,7 @@ export function SlideGame({
     onBetChange?.(parseBet(text));
   };
   const scaleBet = (factor: number) => {
-    const next = Math.max(0.01, Math.round(bet * factor * 100) / 100);
+    const next = Math.min(MAX_BET, Math.max(0.01, Math.round(bet * factor * 100) / 100));
     setDraft(next.toFixed(2));
     onBetChange?.(next);
   };
@@ -228,7 +241,8 @@ export function SlideGame({
     if (targetProp === undefined) setInternalTarget(next);
     onTargetChange?.(next);
   };
-  const toggleSound = () => {
+  // Stable, so the memoized SoundToggle skips bet keystrokes.
+  const toggleSound = useStable(() => {
     const next = !soundOn;
     if (next) {
       sounds.current?.tick.prepare();
@@ -236,11 +250,13 @@ export function SlideGame({
     }
     if (sound === undefined) setInternalSound(next);
     onSoundChange?.(next);
-  };
+  });
 
   const roundTarget = formatShort(round?.target ?? target);
-  // Matches slideResult's default 1% edge. Results never land below 1×, so a target at or below it always wins.
-  const chance = `${(target <= 1 ? 100 : Math.min(99, 99 / target)).toFixed(2)}%`;
+  // Matches slideResult's default 1% edge.
+  const odds = 99 / target;
+  const chance = odds < 0.01 ? "<0.01%" : `${odds.toFixed(2)}%`;
+  const profit = bet * (target - 1);
 
   return (
     <section aria-label={ariaLabel} className={cn("@container w-full max-w-3xl", className)}>
@@ -327,7 +343,7 @@ export function SlideGame({
             <div className="flex items-center justify-between gap-2">
               <dt className="text-muted-foreground">Profit on win</dt>
               <dd className="font-medium tabular-nums">
-                {formatAmount ? formatAmount(bet * (target - 1)) : `${currency}${(bet * (target - 1)).toFixed(2)}`}
+                {formatAmount ? formatAmount(profit) : `${currency}${AMOUNT.format(profit)}`}
               </dd>
             </div>
           </dl>

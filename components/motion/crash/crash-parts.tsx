@@ -24,8 +24,9 @@ import {
   SHAKE,
   SoundToggle,
   SWAP,
+  useStable,
 } from "../casino/game-parts";
-import { type CrashGame, growth, useStable } from "./use-crash-game";
+import { type CrashGame, growth } from "./use-crash-game";
 
 // Re-exported for installs that import it from here.
 export { PRIMARY_TEXT };

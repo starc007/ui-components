@@ -41,3 +41,15 @@ test("slide game names its controls, announces a settled round and marks an empt
   expect(getByRole("button", { name: "Enter a bet" }).getAttribute("aria-disabled")).toBe("true");
   await audit(container);
 });
+
+test("slide game announces a round that couldn't start", async () => {
+  const { container, getByRole } = render(<SlideGame getResult={() => Promise.reject(new Error("offline"))} />);
+  await act(async () => {
+    fireEvent.click(getByRole("button", { name: "Slide" }));
+  });
+  await waitFor(() =>
+    expect(container.querySelector("[aria-live='polite']")?.textContent).toBe("Couldn't start the round. Try again."),
+  );
+  expect(getByRole("button", { name: "Slide" }).getAttribute("aria-disabled")).toBeNull();
+  await audit(container);
+});

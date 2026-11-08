@@ -6,7 +6,7 @@
 
 import { Check, Volume2, VolumeX, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { memo } from "react";
+import { memo, useCallback, useLayoutEffect, useRef } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
 import { Tooltip } from "@/components/motion/tooltip";
@@ -68,6 +68,18 @@ function formatLarge(multiplier: number) {
   // From toExponential, not log10: 1e100 / 10 ** 100 is 0.999….
   const [mantissa, exponent] = multiplier.toExponential(6).split("e");
   return `${Math.floor(Number(mantissa) * 10) / 10}e${Number(exponent)}`;
+}
+
+/**
+ * A callback with one identity for the component's life that runs the latest
+ * render's code. Stands in for useEffectEvent, which needs React 19.2.
+ */
+export function useStable<A extends unknown[], R>(fn: (...args: A) => R) {
+  const ref = useRef(fn);
+  useLayoutEffect(() => {
+    ref.current = fn;
+  });
+  return useCallback((...args: A) => ref.current(...args), []);
 }
 
 /** Floors to two decimals, the precision every game settles at. The 1e-9 keeps 2.3 from flooring to 2.29. */

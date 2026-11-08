@@ -1,13 +1,24 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { createGameSounds, type GameSounds } from "@/lib/game-sounds";
-import { EXIT, floor2, formatMultiplier, formatShort, heat, PRESS_GUARD, PULSE, SHAKE, SWAP } from "../casino/game-parts";
+import {
+  EXIT,
+  floor2,
+  formatMultiplier,
+  formatShort,
+  heat,
+  PRESS_GUARD,
+  PULSE,
+  SHAKE,
+  SWAP,
+  useStable,
+} from "../casino/game-parts";
 
 // Re-exported for installs that import these from here.
-export { EXIT, floor2, formatMultiplier, formatShort, heat, PULSE, SHAKE, SWAP };
+export { EXIT, floor2, formatMultiplier, formatShort, heat, PULSE, SHAKE, SWAP, useStable };
 
 // The game every Crash design shares: the clock, the crash point, cashing out,
 // milestones, history, sound and announcements. A design only draws it.
@@ -528,16 +539,4 @@ export function useCrashGame({
 }
 
 export type CrashGame = ReturnType<typeof useCrashGame>;
-
-/**
- * A callback with one identity for the component's life that runs the latest
- * render's code. Stands in for useEffectEvent, which needs React 19.2.
- */
-export function useStable<A extends unknown[], R>(fn: (...args: A) => R) {
-  const ref = useRef(fn);
-  useLayoutEffect(() => {
-    ref.current = fn;
-  });
-  return useCallback((...args: A) => ref.current(...args), []);
-}
 
