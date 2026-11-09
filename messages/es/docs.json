@@ -51,9 +51,9 @@
       "allLabel": "Todos los gráficos"
     },
     "casino": {
-      "title": "Juegos de casino animados en React: Crash, Mines y Plinko",
+      "title": "Juegos de casino animados en React: Crash, Mines, Plinko y Slide",
       "heading": "Juegos de casino animados en React",
-      "description": "Explora juegos animados de crash, mines y plinko con resultados justos integrados o decididos por el servidor. Copia el código fuente de React y conéctalo a tu propia lógica de juego.",
+      "description": "Explora juegos animados de crash, mines, plinko y slide con resultados justos integrados o decididos por el servidor. Copia el código fuente de React y conéctalo a tu propia lógica de juego.",
       "allLabel": "Todos los juegos de casino"
     }
   },
@@ -113,7 +113,7 @@
   },
   "proMobileCard": {
     "title": "¿Necesitas pantallas completas?",
-    "description": "50 bloques y pantallas de React Native, desde onboarding y paywalls hasta perfil y checkout, ya disponibles en beUI Pro para móvil.",
+    "description": "Más de 60 bloques y pantallas de React Native, desde onboarding y paywalls hasta perfil y checkout, ya disponibles en beUI Pro para móvil.",
     "cta": "Explorar beUI Pro Mobile"
   },
   "sponsorCard": {

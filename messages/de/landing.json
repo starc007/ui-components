@@ -1,74 +1,71 @@
 {
   "hero": {
-    "headlineLine1": "Animierte Komponenten",
-    "explorePro": "Pro entdecken",
+    "headline": "Animierte Komponenten für <react>React</react> und <native>React Native</native>",
+    "subtitle": "Komponenten zum Kopieren, gebaut mit Framer Motion und Tailwind CSS. Mit der shadcn CLI installieren, und der Quellcode gehört dir.",
     "browseComponents": "Komponenten ansehen",
-    "headlineLine2Native": "für <react>React</react> und <native>React Native</native>",
-    "subtitleNative": "Komponenten zum Kopieren für React und Next.js, gebaut mit Motion und Tailwind CSS. Jetzt auch für React Native. Kostenlos, quelloffen und vollständig anpassbar.",
+    "explorePro": "Pro entdecken",
     "opensInNewTab": "(öffnet in neuem Tab)",
     "repoOnGitHub": "{name} auf GitHub",
     "libraryCount": "<num>{count}</num> <muted>{library}</muted><sr> Komponenten</sr>"
   },
   "home": {
-    "builtOn": "Basiert auf Framer Motion. Verteilt über shadcn.",
-    "newEyebrow": "Neu",
-    "newTitle": "Neu erschienen",
-    "componentsEyebrow": "Komponenten",
-    "componentsTitle": "Motion-Primitives",
-    "browseAll": "Animierte React-Komponenten ansehen",
+    "featured": "Ausgewählte Komponenten",
+    "installHint": "Ein Befehl. Der Quellcode gehört dir.",
+    "stats": {
+      "web": "React-Komponenten",
+      "native": "React-Native-Komponenten",
+      "sections": "Bibliotheksbereiche",
+      "license": "Kostenlos für kommerzielle Nutzung"
+    },
     "sponsoredBy": "Gesponsert von",
-    "builtOnNative": "Basiert auf Reanimated und Uniwind. Installiert mit der beUI Native CLI.",
-    "installFor": "Installieren für",
-    "web": "Web"
+    "newLabel": "Neu",
+    "newTitle": "Neu erschienen",
+    "changelog": "Changelog",
+    "exploreLabel": "Entdecken",
+    "exploreTitle": "Alles in der Bibliothek",
+    "sections": "Bibliotheksbereiche",
+    "allInSection": "Alle {count} in {name}"
   },
   "card": {
     "view": "{name} ansehen"
   },
-  "testimonials": {
-    "eyebrow": "Stimmen",
-    "title": "Beliebt bei Entwicklern",
-    "verified": "Verifiziertes Konto"
-  },
-  "workCta": {
-    "eyebrow": "Zusammenarbeit",
-    "title": "Komponenten für das eigene Produkt gesucht?",
-    "description": "Individuelle Motion-Komponenten und Frontend-Systeme, exakt nach Vorgabe gebaut. Einfach einen Termin buchen oder eine Nachricht schreiben – wie es besser passt.",
-    "bookCall": "Termin buchen",
-    "email": "E-Mail schreiben"
-  },
   "native": {
-    "title": "Jetzt für React Native",
-    "description": "{count, plural, one {# Komponente} other {# Komponenten}}, neu gebaut für Touch mit Reanimated, Gesture Handler und Uniwind. Dieselbe Motion-Sprache wie beUI, gemacht für Finger.",
+    "eyebrow": "beUI Native",
+    "title": "Dieselbe Motion, auf React Native",
+    "description": "{count} Komponenten, neu gebaut für Touch mit Reanimated, Gesture Handler und Uniwind.",
+    "browse": "Native Komponenten ansehen",
     "playClips": "Clips abspielen",
     "pauseClips": "Clips pausieren"
   },
+  "testimonials": {
+    "builders": "<strong>{count}</strong> Entwickler nutzen beUI",
+    "title": "Beliebt bei Entwicklern",
+    "subtitle": "Was Leute auf X über beUI sagen.",
+    "verified": "Verifiziertes Konto",
+    "opensPost": "(öffnet den Post auf X in neuem Tab)"
+  },
   "plans": {
-    "eyebrow": "Free und Pro",
-    "title": "Den passenden Einstieg wählen",
-    "free": {
-      "badge": "Kostenlos & quelloffen",
-      "title": "Mit dem Wesentlichen bauen.",
-      "description": "Animierte Komponenten zum Installieren, Anpassen und Behalten in der eigenen Codebasis.",
-      "features": {
-        "components": "Komponenten, Blöcke, Charts und KI-Interfaces",
-        "registry": "Öffentliche shadcn-Registry und Quellcode zum Kopieren",
-        "license": "MIT-lizenziert für private und kommerzielle Projekte"
-      },
-      "cta": "Kostenlose Komponenten ansehen"
-    },
-    "pro": {
-      "badge": "Mehr mit Pro",
-      "title": "Mit mehr Fertigem starten.",
-      "description": "350+ Premium-Blöcke, um das nächste Produkt schneller zu bauen. Die komplette Sammlung gibt es mit Lifetime, inklusive vollständiger Templates und animierter Illustrationen.",
-      "features": {
-        "blocks": "350+ Premium-Blöcke und animierte Komponenten",
-        "templates": "Vollständige Landingpage-Templates · Lifetime",
-        "illustrations": "Animierte Illustrationen · Lifetime",
-        "agents": "Agent-Skill, MCP-Zugang und Installation per Befehl",
-        "registry": "Private Registry und Quellcode zum Download",
-        "projects": "Unbegrenzt viele eigene und Kundenprojekte",
-        "updates": "Alle künftigen Updates · Lifetime"
-      }
+    "label": "Free und Pro",
+    "title": "Kostenlos starten. Mit Pro weiter gehen.",
+    "caption": "Was beUI und beUI Pro enthalten",
+    "feature": "Funktion",
+    "free": "Kostenlos",
+    "lifetime": "Lifetime",
+    "included": "Enthalten",
+    "notIncluded": "Nicht enthalten",
+    "browse": "Ansehen",
+    "getPro": "Pro holen",
+    "rows": {
+      "components": "Komponenten, Blöcke, Charts und KI-Interfaces",
+      "registry": "shadcn-Registry und Quellcode zum Kopieren",
+      "native": "React-Native-Komponenten (beUI Native)",
+      "license": "MIT-Lizenz, kommerzielle Nutzung",
+      "blocks": "350+ Premium-Blöcke und animierte Komponenten",
+      "mobile": "60+ React-Native-Blöcke und -Screens (Pro Mobile)",
+      "templates": "Vollständige Landingpage-Templates (Lifetime)",
+      "illustrations": "Animierte Illustrationen (Lifetime)",
+      "agents": "Agent-Skill, MCP und Installation per Befehl",
+      "projects": "Unbegrenzt viele eigene und Kundenprojekte"
     }
   },
   "faq": {
@@ -98,5 +95,12 @@
       "question": "Ist Pro für die kostenlosen Komponenten nötig?",
       "answer": "Nein. Die öffentliche Bibliothek funktioniert unabhängig von Pro. Pro ist eine separate Sammlung von Premium-Komponenten und animierten Blöcken; der Lifetime-Plan enthält zusätzlich vollständige Templates und animierte Illustrationen."
     }
+  },
+  "contact": {
+    "eyebrow": "Zusammenarbeit",
+    "title": "Komponenten für das eigene Produkt gesucht?",
+    "description": "Individuelle Motion-Komponenten und Frontend-Systeme, exakt nach Vorgabe gebaut. Einfach einen Termin buchen oder eine Nachricht schreiben – wie es besser passt.",
+    "bookCall": "Termin buchen",
+    "email": "E-Mail schreiben"
   }
 }

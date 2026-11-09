@@ -61,10 +61,18 @@ export function useMessages<T extends Messages>(
 ) {
   const { locale, messages } = useContext(LocaleContext);
   const provided = messages[namespace];
+  // Inline `labels={{ … }}` is a new object every render. Keying it by content
+  // keeps `t` one identity until a label changes, so effects and memos that
+  // depend on `t` don't re-run per render, and render-time reads never lag.
+  const labelsKey = labels ? JSON.stringify(labels) : "";
+  const stableLabels = useMemo(
+    () => (labelsKey ? (JSON.parse(labelsKey) as Partial<T>) : undefined),
+    [labelsKey],
+  );
 
   return useCallback(
     (key: keyof T & string, values?: Record<string, string | number>) => {
-      const template = labels?.[key] ?? provided?.[key] ?? defaults[key];
+      const template = stableLabels?.[key] ?? provided?.[key] ?? defaults[key];
       if (!values) return template;
       return template.replace(/\{(\w+)\}/g, (match, name: string) => {
         const value = values[name];
@@ -72,6 +80,6 @@ export function useMessages<T extends Messages>(
         return typeof value === "number" ? formatNumber(value, locale) : value;
       });
     },
-    [defaults, labels, locale, provided],
+    [defaults, stableLabels, locale, provided],
   );
 }

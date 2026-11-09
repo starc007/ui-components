@@ -1,67 +1,71 @@
 {
   "hero": {
-    "headlineLine1": "Animated components",
-    "headlineLine2Native": "for <react>React</react> and <native>React Native</native>",
-    "subtitleNative": "Copy-paste components for React and Next.js, built with Motion and Tailwind CSS. Now on React Native too. Free, open source, and fully customizable.",
+    "headline": "Animated components for <react>React</react> and <native>React Native</native>",
+    "subtitle": "Copy-paste components built with Framer Motion and Tailwind CSS. Install one with the shadcn CLI and the source is yours.",
+    "browseComponents": "Browse components",
     "explorePro": "Explore Pro",
     "opensInNewTab": "(opens in a new tab)",
-    "browseComponents": "Browse components",
     "repoOnGitHub": "{name} on GitHub",
     "libraryCount": "<num>{count}</num> <muted>{library}</muted><sr> components</sr>"
   },
   "home": {
+    "featured": "Featured components",
+    "installHint": "One command. The source is yours.",
+    "stats": {
+      "web": "React components",
+      "native": "React Native components",
+      "sections": "Library sections",
+      "license": "Free for commercial use"
+    },
     "sponsoredBy": "Sponsored by",
-    "builtOn": "Built on Framer Motion. Distributed via shadcn.",
-    "builtOnNative": "Built on Reanimated and Uniwind. Installed with the beUI Native CLI.",
-    "installFor": "Install for",
-    "web": "Web",
-    "newEyebrow": "New",
+    "newLabel": "New",
     "newTitle": "Recently launched",
-    "componentsEyebrow": "Components",
-    "componentsTitle": "Motion primitives",
-    "browseAll": "Browse animated React components"
+    "changelog": "Changelog",
+    "exploreLabel": "Explore",
+    "exploreTitle": "Everything in the library",
+    "sections": "Library sections",
+    "allInSection": "All {count} in {name}"
   },
   "card": {
     "view": "View {name}"
   },
   "native": {
-    "title": "Now on React Native",
-    "description": "{count, plural, one {# component} other {# components}} rebuilt for touch with Reanimated, Gesture Handler and Uniwind. The same motion language as beUI, designed for fingers.",
+    "eyebrow": "beUI Native",
+    "title": "Same motion, on React Native",
+    "description": "{count} components rebuilt for touch with Reanimated, Gesture Handler and Uniwind.",
+    "browse": "Browse native components",
     "playClips": "Play clips",
     "pauseClips": "Pause clips"
   },
   "testimonials": {
-    "eyebrow": "Testimonials",
+    "builders": "<strong>{count}</strong> builders use beUI",
     "title": "Loved by builders",
-    "verified": "Verified account"
+    "subtitle": "What people say about beUI on X.",
+    "verified": "Verified account",
+    "opensPost": "(opens the post on X in a new tab)"
   },
   "plans": {
-    "eyebrow": "Free and Pro",
-    "title": "Choose your starting point",
-    "free": {
-      "badge": "Free & open source",
-      "title": "Build with the essentials.",
-      "description": "Animated components you can install, customize, and keep in your codebase.",
-      "features": {
-        "components": "Components, blocks, charts, and AI interfaces",
-        "registry": "Public shadcn registry and copy-paste source",
-        "license": "MIT licensed for personal and commercial projects"
-      },
-      "cta": "Browse free components"
-    },
-    "pro": {
-      "badge": "Go further with Pro",
-      "title": "Start with more built for you.",
-      "description": "350+ premium blocks to build your next product faster. Get the complete collection with Lifetime, including full templates and animated illustrations.",
-      "features": {
-        "blocks": "350+ premium blocks and animated components",
-        "templates": "Full landing-page templates · Lifetime",
-        "illustrations": "Animated illustrations · Lifetime",
-        "agents": "Agent Skill, MCP access, and one-command installs",
-        "registry": "Private registry and downloadable source",
-        "projects": "Unlimited personal and client projects",
-        "updates": "All future updates · Lifetime"
-      }
+    "label": "Free and Pro",
+    "title": "Start free. Go further with Pro.",
+    "caption": "What beUI and beUI Pro include",
+    "feature": "Feature",
+    "free": "Free",
+    "lifetime": "Lifetime",
+    "included": "Included",
+    "notIncluded": "Not included",
+    "browse": "Browse",
+    "getPro": "Get Pro",
+    "rows": {
+      "components": "Components, blocks, charts and AI interfaces",
+      "registry": "shadcn registry and copy-paste source",
+      "native": "React Native components (beUI Native)",
+      "license": "MIT license, commercial use",
+      "blocks": "350+ premium blocks and animated components",
+      "mobile": "60+ React Native blocks and screens (Pro Mobile)",
+      "templates": "Full landing-page templates (Lifetime)",
+      "illustrations": "Animated illustrations (Lifetime)",
+      "agents": "Agent Skill, MCP and one-command installs",
+      "projects": "Unlimited personal and client projects"
     }
   },
   "faq": {
@@ -92,10 +96,10 @@
       "answer": "No. The public library works independently of Pro. Pro is a separate collection of premium components and animated blocks; the Lifetime plan also includes full templates and animated illustrations."
     }
   },
-  "workCta": {
+  "contact": {
     "eyebrow": "Work with me",
     "title": "Need components built for your product?",
-    "description": "Custom motion components and frontend systems, built to spec. Book a call or drop a line, whichever's easier.",
+    "description": "Custom motion components and frontend systems, built to spec. Book a call or drop a line, whichever is easier.",
     "bookCall": "Book a call",
     "email": "Email me"
   }

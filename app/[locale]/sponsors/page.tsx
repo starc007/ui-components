@@ -253,10 +253,10 @@ function SponsorTier({
 
 // Updated by hand from the Tracwell dashboard. Values are rounded down and
 // shown as "at least", so the page never overstates traffic.
-const TRAFFIC_UPDATED_AT = new Date("2026-10-23T00:00:00Z");
+const TRAFFIC_UPDATED_AT = new Date("2026-11-08T00:00:00Z");
 const TRAFFIC_STATS = [
-  { days: 30, visitors: 54_000, pageViews: 800_000 },
-  { days: 90, visitors: 175_000, pageViews: 2_400_000 },
+  { days: 30, visitors: 59_500, pageViews: 800_000 },
+  { days: 90, visitors: 178_000, pageViews: 2_450_000 },
 ];
 
 function TrafficStat({
@@ -272,7 +272,8 @@ function TrafficStat({
 }) {
   const compactNumber = new Intl.NumberFormat(locale, {
     notation: "compact",
-    maximumFractionDigits: 1,
+    // Two fraction digits so 2.45M doesn't round up to 2.5M.
+    maximumFractionDigits: 2,
   });
   return (
     <div className="rounded-2xl border border-border bg-background px-4 py-4">

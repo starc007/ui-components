@@ -22,16 +22,25 @@
   ·
   <a href="https://beui.dev/components/motion">Components</a>
   ·
+  <a href="https://beui.dev/react-native">React Native</a>
+  ·
+  <a href="https://beui.dev/changelog">Changelog</a>
+  ·
   <a href="https://beui.dev/llms.txt">llms.txt</a>
 </p>
 
 <p align="center">
-  <a href="https://beui.dev"><img src="./public/readme-preview.png" alt="beUI component showcase with breadcrumbs, color swatches, tabs, a chart, task progress, and a prompt input in a light theme" width="960" /></a>
+  <a href="https://beui.dev">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./public/readme-preview-dark.png" />
+      <img src="./public/readme-preview.png" alt="beUI components: pill tabs, a switch, an area line chart, an agent task list, chat messages with a prompt input, and the Slide casino game" width="960" />
+    </picture>
+  </a>
 </p>
 
 ## Interfaces that move with intent
 
-beUI brings motion to everyday product interfaces: buttons, navigation, menus, charts, and AI conversations. Built with React, TypeScript, Tailwind CSS, and Motion, with live previews and copyable usage examples.
+beUI brings motion to everyday product interfaces: buttons, navigation, menus, charts, AI conversations, and games. Built with React, TypeScript, Tailwind CSS, and Framer Motion, with live previews and copyable usage examples.
 
 - **Own the source.** Install individual components into your app and change them to fit your product.
 - **Compose your interface.** Combine focused primitives or start with a complete block.
@@ -46,7 +55,8 @@ beUI brings motion to everyday product interfaces: buttons, navigation, menus, c
 | [Blocks](https://beui.dev/components/blocks) | Command palettes, file uploads, signup forms, and composed widgets |
 | [AI agents](https://beui.dev/components/agents) | Chat layouts, prompt inputs, messages, approvals, and tool results |
 | [Charts](https://beui.dev/charts) | Composition, ranking, funnel, calendar, and financial visualizations |
-| [Casino](https://beui.dev/casino) | Crash, Mines, and Plinko games with fair or server-decided outcomes |
+| [Casino](https://beui.dev/casino) | Crash, Mines, Plinko, and Slide games with fair or server-decided outcomes |
+| [React Native](https://beui.dev/react-native) | beUI Native components for Expo and React Native, each with a clip and an Expo Go preview |
 
 ## Install a component
 

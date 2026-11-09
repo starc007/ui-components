@@ -4,8 +4,9 @@ import { AnimatePresence, motion, type Transition } from "motion/react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { EASE_IN, EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import { type CrashMiniatureProps, CrashShell, clamp01, MINI, MINI_REPLAY, PRIMARY_TEXT } from "./crash-parts";
-import { type CrashGame, type CrashProps, EXIT, formatShort, GROWTH, SWAP, useCrashGame } from "./use-crash-game";
+import { EXIT, formatShort, PRIMARY_TEXT, SWAP } from "../casino/game-parts";
+import { type CrashMiniatureProps, CrashShell, clamp01, MINI, MINI_REPLAY } from "./crash-parts";
+import { type CrashGame, type CrashProps, GROWTH, useCrashGame } from "./use-crash-game";
 
 export { type CrashProps, type CrashReveal, crashPoint, formatMultiplier } from "./use-crash-game";
 
