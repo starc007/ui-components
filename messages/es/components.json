@@ -807,7 +807,7 @@
     "stateSliding": "Deslizando · necesita {target}",
     "stateWon": "Ganada · superó {target}",
     "stateMissed": "Fallada · necesitaba {target}",
-    "stateIdle": "{chance} de probabilidad de {target} · las cartas marcadas ganan",
+    "stateIdle": "{chance} de lograr {target} · ganan las marcadas",
     "announceSliding": "Deslizando. Objetivo {target}.",
     "announceFailed": "No se pudo empezar la ronda. Inténtalo de nuevo.",
     "announceWin": "Cayó en {result}. Ganada, objetivo {target}.",

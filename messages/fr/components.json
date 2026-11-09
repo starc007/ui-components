@@ -807,7 +807,7 @@
     "stateSliding": "En cours · il faut {target}",
     "stateWon": "Gagné · {target} dépassé",
     "stateMissed": "Manqué · il fallait {target}",
-    "stateIdle": "{chance} de chance d’atteindre {target} · les cartes marquées gagnent",
+    "stateIdle": "{chance} pour {target} · les marquées gagnent",
     "announceSliding": "En cours. Objectif {target}.",
     "announceFailed": "La manche n’a pas pu démarrer. Réessayez.",
     "announceWin": "Arrêt sur {result}. Gagné, objectif {target}.",

@@ -18,7 +18,7 @@
     },
     "casino": {
       "name": "Casino",
-      "description": "Jeux de casino animés pour React, dont crash, mines et plinko, construits avec Motion et Tailwind CSS en code source personnalisable à copier-coller."
+      "description": "Jeux de casino animés pour React, dont crash, mines, plinko et slide, construits avec Motion et Tailwind CSS en code source personnalisable à copier-coller."
     }
   },
   "components": {
@@ -1314,6 +1314,14 @@
       "seo": {
         "title": "Plateau de Plinko animé pour React",
         "description": "Plateau de Plinko React : les billes rebondissent sur les picots jusqu’aux cases de score, les picots s’illuminent et les cases pulsent à l’arrivée. Framer Motion, installation avec shadcn."
+      }
+    },
+    "slide-game": {
+      "name": "Slide",
+      "description": "Un jeu de slide : choisissez une mise et un objectif, puis une bande de cartes multiplicateur colorées défile à toute vitesse devant deux languettes au centre de la scène, pivotant en 3D à leur passage, ralentit sur les dernières cartes et cale le résultat de la manche entre elles. Les cartes qui battraient votre objectif portent un repère, les languettes passent à la couleur principale en cas de gain et au rouge en cas d’échec, et les manches récentes s’accumulent dans un historique. Résultats décidés par le serveur, sons de tic et de gain optionnels, compatible avec la réduction des animations.",
+      "seo": {
+        "title": "Jeu de casino Slide animé pour React",
+        "description": "Jeu de slide React : choisissez mise et objectif, et regardez des cartes multiplicateur en 3D défiler devant deux languettes jusqu’à un résultat décidé par le serveur. Framer Motion, installation avec shadcn."
       }
     }
   }

@@ -14,7 +14,7 @@ const FAQ_IDS = [
 const linkClass = "underline underline-offset-4";
 
 const code = (chunks: ReactNode) => (
-  <code className="rounded bg-muted px-1 py-0.5 text-xs">{chunks}</code>
+  <code className="rounded bg-muted px-1 py-0.5 text-xs [overflow-wrap:anywhere]">{chunks}</code>
 );
 
 /** The landing FAQ as accordion items, in the page's language. */

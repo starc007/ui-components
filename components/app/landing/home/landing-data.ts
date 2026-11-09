@@ -45,43 +45,43 @@ const CATEGORY_ORDER = ["motion", "blocks", "agents", "charts", "casino"] as con
  */
 export function landingCategories(source: CategoryEntry[]) {
   return CATEGORY_ORDER.flatMap((slug) => {
-  const category = source.find((entry) => entry.slug === slug);
-  if (!category) return [];
-  return [
-    {
-      slug,
-      name: category.name,
-      href: categoryPath(slug),
-      count: category.components.length,
-      entries: category.components.map((component) => ({
-        category: slug,
-        component: toTile(component),
-      })),
-    },
-  ];
+    const category = source.find((entry) => entry.slug === slug);
+    if (!category) return [];
+    return [
+      {
+        slug,
+        name: category.name,
+        href: categoryPath(slug),
+        count: category.components.length,
+        entries: category.components.map((component) => ({
+          category: slug,
+          component: toTile(component),
+        })),
+      },
+    ];
   });
 }
 
 /** Components still marked new, newest first, named after their newest variant. */
 export function newEntries(source: CategoryEntry[]): (LandingEntry & { previewKey?: string })[] {
   return source
-  .flatMap((category) =>
-    category.components.filter((c) => isComponentNew(c)).map((component) => {
-      const variant = component.examples
-        ?.filter((e) => isComponentNew(e))
-        .sort((a, b) => (b.launchedAt ?? "").localeCompare(a.launchedAt ?? ""))[0];
-      return {
-        category: category.slug,
-        previewKey: variant?.previewKey,
-        component: toTile(
-          variant ? { ...component, name: variant.name, launchedAt: variant.launchedAt } : component,
-        ),
-      };
-    }),
-  )
-  .sort((a, b) =>
-    (b.component.launchedAt ?? "").localeCompare(a.component.launchedAt ?? ""),
-  );
+    .flatMap((category) =>
+      category.components
+        .filter((c) => isComponentNew(c))
+        .map((component) => {
+          const variant = component.examples
+            ?.filter((e) => isComponentNew(e))
+            .sort((a, b) => (b.launchedAt ?? "").localeCompare(a.launchedAt ?? ""))[0];
+          return {
+            category: category.slug,
+            previewKey: variant?.previewKey,
+            component: toTile(
+              variant ? { ...component, name: variant.name, launchedAt: variant.launchedAt } : component,
+            ),
+          };
+        }),
+    )
+    .sort((a, b) => (b.component.launchedAt ?? "").localeCompare(a.component.launchedAt ?? ""));
 }
 
 export const WEB_COUNT = INSTALLABLE_COUNT;
