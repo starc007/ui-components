@@ -13,22 +13,12 @@ import {
   MINI_REPLAY,
   niceAtLeast,
   Parachute,
-  PRIMARY_TEXT,
   STAGE_LABEL,
   STAGE_W,
   wrap,
 } from "./crash-parts";
-import {
-  BURST,
-  type CrashProps,
-  EXIT,
-  formatShort,
-  growth,
-  PULSE,
-  SWAP,
-  timeAt,
-  useCrashGame,
-} from "./use-crash-game";
+import { EXIT, formatShort, PRIMARY_TEXT, PULSE, SWAP } from "../casino/game-parts";
+import { BURST, type CrashProps, growth, timeAt, useCrashGame } from "./use-crash-game";
 
 export { type CrashProps, type CrashReveal, crashPoint, formatMultiplier } from "./use-crash-game";
 

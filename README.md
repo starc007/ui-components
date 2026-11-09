@@ -46,7 +46,7 @@ beUI brings motion to everyday product interfaces: buttons, navigation, menus, c
 | [Blocks](https://beui.dev/components/blocks) | Command palettes, file uploads, signup forms, and composed widgets |
 | [AI agents](https://beui.dev/components/agents) | Chat layouts, prompt inputs, messages, approvals, and tool results |
 | [Charts](https://beui.dev/charts) | Composition, ranking, funnel, calendar, and financial visualizations |
-| [Casino](https://beui.dev/casino) | Crash, Mines, and Plinko games with fair or server-decided outcomes |
+| [Casino](https://beui.dev/casino) | Crash, Mines, Plinko, and Slide games with fair or server-decided outcomes |
 
 ## Install a component
 

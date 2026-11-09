@@ -1,9 +1,24 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { createGameSounds, type GameSounds } from "@/lib/game-sounds";
+import {
+  EXIT,
+  floor2,
+  formatMultiplier,
+  formatShort,
+  heat,
+  PRESS_GUARD,
+  PULSE,
+  SHAKE,
+  SWAP,
+  useStable,
+} from "../casino/game-parts";
+
+// Re-exported for installs that import these from here.
+export { EXIT, floor2, formatMultiplier, formatShort, heat, PULSE, SHAKE, SWAP, useStable };
 
 // The game every Crash design shares: the clock, the crash point, cashing out,
 // milestones, history, sound and announcements. A design only draws it.
@@ -114,24 +129,14 @@ export const AUTO_STEPS = [1.5, 2, 3, 5, 10, 25, 100];
 
 // Skipping after a cash out runs the rest of the flight in at most this long.
 const SKIP_TIME = 0.8;
-// Presses this soon after a start, a cash-out press or a crash are the same
-// press repeated (a double tap, a mash), not the next action (ms).
-const PRESS_GUARD = 400;
 // Round numbers, unique on the page, so a live reveal kept by the parent
 // across a remount can't match a fresh round.
 let rounds = 0;
 const HISTORY = 12;
 
 // Motion shared by every design.
-// A loss shakes the readout once, quickly; a burst spreads from the crash.
-export const SHAKE = { duration: 0.3, ease: EASE_OUT } as const;
+// A burst spreads from the crash.
 export const BURST = { duration: 0.45, ease: EASE_OUT } as const;
-// Status lines and markers swap on a spring with no bounce.
-export const SWAP = { type: "spring", duration: 0.3, bounce: 0 } as const;
-// A milestone swells the readout and lets it settle with a little give.
-export const PULSE = { type: "spring", duration: 0.35, bounce: 0.3 } as const;
-// Exits are shorter than entrances.
-export const EXIT = { duration: 0.12, ease: EASE_OUT } as const;
 
 export function useCrashGame({
   autoCashOut: autoProp,
@@ -535,50 +540,3 @@ export function useCrashGame({
 
 export type CrashGame = ReturnType<typeof useCrashGame>;
 
-/**
- * A callback with one identity for the component's life that runs the latest
- * render's code. Stands in for useEffectEvent, which needs React 19.2.
- */
-export function useStable<A extends unknown[], R>(fn: (...args: A) => R) {
-  const ref = useRef(fn);
-  useLayoutEffect(() => {
-    ref.current = fn;
-  });
-  return useCallback((...args: A) => ref.current(...args), []);
-}
-
-/**
- * How hot a multiplier reads: cool under 2×, warm to 10×, hot beyond. The
- * readout and the history colour by it, so size reads without the digits.
- */
-export function heat(multiplier: number) {
-  return multiplier >= 10 ? "hot" : multiplier >= 2 ? "warm" : "cool";
-}
-
-export function floor2(value: number) {
-  return Math.floor(value * 100 + 1e-9) / 100;
-}
-
-// Truncated, never rounded up: a 10,960× payout reads 10.9K×, not 11K×.
-const COMPACT = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1, roundingMode: "trunc" });
-
-/**
- * Large values: compact up to trillions, then scientific (1.4e100), since
- * compact notation stops at T and would print 1e100 as a 100-digit string.
- */
-function formatLarge(multiplier: number) {
-  if (multiplier < 1e15) return COMPACT.format(multiplier);
-  // From toExponential, not log10: 1e100 / 10 ** 100 is 0.999….
-  const [mantissa, exponent] = multiplier.toExponential(6).split("e");
-  return `${Math.floor(Number(mantissa) * 10) / 10}e${Number(exponent)}`;
-}
-
-/** A multiplier as Crash shows it: 2.50×, or shortened when large (12.5K×, 1.4e20×). */
-export function formatMultiplier(multiplier: number) {
-  return `${multiplier < 10_000 ? multiplier.toFixed(2) : formatLarge(multiplier)}×`;
-}
-
-/** Scale and menu labels: 1.5×, 2×, 1.2K×. */
-export function formatShort(multiplier: number) {
-  return `${multiplier < 1000 ? +multiplier.toFixed(2) : formatLarge(multiplier)}×`;
-}

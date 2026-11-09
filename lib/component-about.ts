@@ -3323,6 +3323,34 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  "slide-game": {
+    overview:
+      "Slide is a React casino slide game built with Framer Motion. A bet and target panel sits beside the stage, or below it on narrow screens, with the win chance and profit on win kept up to date. Each round races a reel of multiplier cards past two tabs that hang from the stage's top and bottom edges: cards turn toward the center in 3D as they pass, colour-coded from slate under 2× through primary and amber to fuchsia at 100× and up. The reel slows through the last few cards and clicks the result into place between the tabs, which turn primary on a win or red on a miss. Results come from getResult, so a server can decide every round.",
+    useWhen: [
+      "A casino or crypto gaming site needs a slide or multiplier game with a suspenseful reveal.",
+      "A rewards or loyalty flow wants to reveal a multiplier or bonus with a short reel spin.",
+      "A demo or landing page wants a tactile showcase of a long deceleration curve.",
+    ],
+    accessibility:
+      "The game is a labelled region. The Target menu and the main button are native controls, and the main button keeps keyboard focus through a round with aria-disabled instead of disabled. The bet field is a labelled text input with Halve and Double buttons. The reel is decorative and hidden from assistive technology; a polite live region announces each start and the landed multiplier with its win or loss. The sound toggle is a pressed-state button. With reduced motion enabled, the reel jumps straight to the result and the landed card does not swell; colour still marks the outcome.",
+    faq: [
+      {
+        question: "Where does the result come from?",
+        answer:
+          "From getResult, called once when a round starts. Return a number or a Promise for one, so a server or provably fair hash can decide the round; the button reads Starting… until it resolves. The default is slideResult(), a 1% house-edge draw. The filler tiles are seeded per round and only decorate.",
+      },
+      {
+        question: "How does a round win?",
+        answer:
+          "When the result is at or above the target picked before the round. onResult receives the result, that target and the round's bet, so you can pay out bet × target on a win.",
+      },
+      {
+        question: "Can I change the targets, speed or sound?",
+        answer:
+          "Yes. targets sets the menu options, target or defaultTarget picks one, bet or defaultBet sets the stake, currency sets the symbol shown with it ($ by default) and formatAmount the profit display, duration sets the slide length in seconds (default 4), and sound or defaultSound turns on a tick per card and a chime on a win.",
+      },
+    ],
+  },
   plinko: {
     overview:
       "Plinko is a React ball drop board built with Framer Motion. Each press of the drop button sends a ball through rows of pegs; at every peg it hops and falls left or right at random, so most balls land near the middle and few reach the edges. Pegs flash as the ball strikes them and the slot it lands in pulses. Several balls can fall at once, and onLand reports the slot and its value so you can keep score. The board is dynamic: the slot values you pass set how many rows of pegs it has.",

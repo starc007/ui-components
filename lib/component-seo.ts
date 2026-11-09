@@ -586,6 +586,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "React mines board: pick tiles for gems, watch the multiplier roll up, cash out before a mine. Ripple reveals and keyboard play. Framer Motion, install with shadcn.",
   },
+  "slide-game": {
+    title: "Animated Slide Casino Game for React",
+    description:
+      "React slide game: set a bet and target, watch 3D multiplier cards race past two center tabs to a server-decided result. Framer Motion, install with shadcn.",
+  },
   plinko: {
     title: "Animated Plinko Board for React",
     description:
