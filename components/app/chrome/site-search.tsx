@@ -1,7 +1,7 @@
 "use client";
 
 import { CircleDashed, FileText, Search, Smartphone } from "lucide-react";
-import { useMessages, useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -9,7 +9,7 @@ import {
   type CommandItem,
 } from "@/components/motion/command-palette";
 import { NewBadge } from "@/components/app/docs/new-badge";
-import { useRouter } from "@/i18n/navigation";
+import { useRouter } from "@/lib/navigation";
 import { nativeComponentPath } from "@/lib/component-paths";
 import nativeNav from "@/lib/native/nav.json";
 import { componentSearchEntries } from "@/lib/site-search";
@@ -34,13 +34,12 @@ const PAGES = [
 /** Site search trigger backed by the library's own command palette. */
 export function SiteSearch({ className }: { className?: string }) {
   const t = useTranslations("Chrome");
-  const messages = useMessages();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const items = useMemo<CommandItem[]>(
     () => [
-      ...componentSearchEntries(messages).map((entry) => ({
+      ...componentSearchEntries().map((entry) => ({
         ...entry,
         icon: CircleDashed,
         badge: entry.badge === "new" ? <NewBadge launchedAt={entry.launchedAt} /> : undefined,
@@ -63,7 +62,7 @@ export function SiteSearch({ className }: { className?: string }) {
         onSelect: () => router.push(page.href),
       })),
     ],
-    [router, t, messages],
+    [router, t],
   );
 
   return (

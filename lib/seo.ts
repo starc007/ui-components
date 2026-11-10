@@ -1,9 +1,9 @@
-import { LANGUAGES, type Locale, localizedPath, routing } from "@/i18n/routing";
 import { categoryPath, componentPath } from "@/lib/component-paths";
 import type { JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { componentDates } from "@/lib/component-dates";
 import type { ComponentFaq } from "@/lib/component-about";
 import { componentSeo } from "@/lib/component-seo";
+import { ogImagePath } from "@/lib/og-paths";
 import {
   type CategoryEntry,
   type ComponentEntry,
@@ -107,7 +107,7 @@ export function siteJsonLd(): JsonLdSchema[] {
       url: SITE,
       name: SITE_NAME,
       description: SITE_DESCRIPTION,
-      inLanguage: routing.locales.map((locale) => LANGUAGES[locale].hreflang),
+      inLanguage: "en",
       publisher: { "@id": `${SITE}/#org` },
     },
     {
@@ -159,8 +159,6 @@ type DocsArticleJsonLdOptions = {
   datePublished: string;
   dateModified: string;
   about?: string[];
-  /** Page language; `path` should already be the localized path. */
-  locale?: Locale;
 };
 
 /** Documentation guide: TechArticle metadata with stable site authorship. */
@@ -172,7 +170,6 @@ export function docsArticleJsonLd({
   datePublished,
   dateModified,
   about,
-  locale = "en",
 }: DocsArticleJsonLdOptions): JsonLdSchema {
   const url = abs(path);
   return {
@@ -183,7 +180,7 @@ export function docsArticleJsonLd({
     description,
     url,
     image: abs(image),
-    inLanguage: LANGUAGES[locale].hreflang,
+    inLanguage: "en",
     isPartOf: { "@id": `${SITE}/#website` },
     datePublished,
     dateModified,
@@ -210,10 +207,9 @@ export function componentJsonLd(
   {
     headline = componentSeoTitle(comp),
     description = componentMetaDescription(comp),
-    locale = "en",
-  }: { headline?: string; description?: string; locale?: Locale } = {},
+  }: { headline?: string; description?: string } = {},
 ): JsonLdSchema {
-  const url = abs(localizedPath(componentPath(cat.slug, comp.slug), locale));
+  const url = abs(componentPath(cat.slug, comp.slug));
   const dates = componentDates(cat.slug, comp.slug);
   return {
     "@context": "https://schema.org",
@@ -223,8 +219,8 @@ export function componentJsonLd(
     name: comp.name,
     description,
     url,
-    image: abs(`/api/og?component=${comp.slug}`),
-    inLanguage: LANGUAGES[locale].hreflang,
+    image: abs(ogImagePath("component", comp.slug)),
+    inLanguage: "en",
     isPartOf: { "@id": `${SITE}/#website` },
     datePublished: dates.publishedAt,
     dateModified: dates.updatedAt,
@@ -262,9 +258,9 @@ export function faqJsonLd(path: string, faq: ComponentFaq[]): JsonLdSchema {
   };
 }
 
-/** Category landing page: CollectionPage listing its (localized) components. */
-export function categoryJsonLd(cat: CategoryEntry, locale: Locale = "en"): JsonLdSchema {
-  const url = abs(localizedPath(categoryPath(cat.slug), locale));
+/** Category landing page: CollectionPage listing its components. */
+export function categoryJsonLd(cat: CategoryEntry): JsonLdSchema {
+  const url = abs(categoryPath(cat.slug));
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -272,7 +268,7 @@ export function categoryJsonLd(cat: CategoryEntry, locale: Locale = "en"): JsonL
     name: `${cat.name} · ${SITE_NAME}`,
     description: cat.description,
     url,
-    inLanguage: LANGUAGES[locale].hreflang,
+    inLanguage: "en",
     isPartOf: { "@id": `${SITE}/#website` },
     mainEntity: {
       "@type": "ItemList",
@@ -281,7 +277,7 @@ export function categoryJsonLd(cat: CategoryEntry, locale: Locale = "en"): JsonL
         "@type": "ListItem",
         position: i + 1,
         name: comp.name,
-        url: abs(localizedPath(componentPath(cat.slug, comp.slug), locale)),
+        url: abs(componentPath(cat.slug, comp.slug)),
       })),
     },
   };

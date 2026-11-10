@@ -1,31 +1,12 @@
-import { codeToHtml } from "@/lib/docs-highlighter";
-import {
-  transformerNotationHighlight,
-  transformerNotationDiff,
-  transformerNotationFocus,
-  transformerStyleToClass,
-} from "@shikijs/transformers";
+import { FileIcon } from "lucide-react";
+import type { HighlightedCode } from "@/lib/highlight";
+import { cn } from "@/lib/utils";
 import { CopyButton } from "./copy-button";
 import { ExpandableCode } from "./expandable-code";
-import { cn } from "@/lib/utils";
-import { FileIcon } from "lucide-react";
 
-type Props = {
-  code: string;
-  lang?: string;
-  filename?: string;
+/** Pass a block from `highlight()` (lib/highlight.ts), run in the page's loader. */
+type Props = HighlightedCode & {
   className?: string;
-};
-
-const LANG_MAP: Record<string, string> = {
-  tsx: "tsx",
-  ts: "typescript",
-  js: "javascript",
-  jsx: "jsx",
-  css: "css",
-  json: "json",
-  bash: "bash",
-  sh: "bash",
 };
 
 const LANG_LABELS: Record<string, string> = {
@@ -38,36 +19,8 @@ const LANG_LABELS: Record<string, string> = {
   bash: "Shell",
 };
 
-export async function CodeBlock({
-  code,
-  lang = "tsx",
-  filename,
-  className,
-}: Props) {
-  const shikiLang = LANG_MAP[lang.toLowerCase()] ?? lang;
-  const langLabel =
-    LANG_LABELS[shikiLang] ?? LANG_LABELS[lang] ?? lang.toUpperCase();
-
-  // Token colors become short shared classes instead of an inline style on
-  // every span. Pages that bundle many files (the Manual install tab) otherwise
-  // ship megabytes of repeated style attributes, twice: in the HTML and again
-  // in the RSC payload. Class names hash the colors, so blocks agree.
-  const styleToClass = transformerStyleToClass({ classPrefix: "k" });
-  const highlighted = await codeToHtml(code, {
-    lang: shikiLang,
-    themes: {
-      light: "github-light-high-contrast",
-      dark: "github-dark-high-contrast",
-    },
-    defaultColor: false,
-    transformers: [
-      transformerNotationHighlight(),
-      transformerNotationDiff(),
-      transformerNotationFocus(),
-      styleToClass,
-    ],
-  });
-  const html = `<style>${styleToClass.getCSS()}</style>${highlighted}`;
+export function CodeBlock({ code, html, lang, filename, className }: Props) {
+  const langLabel = LANG_LABELS[lang] ?? lang.toUpperCase();
 
   const fileDir = filename ? filename.split("/").slice(0, -1).join("/") : null;
   const fileName = filename ? filename.split("/").pop() : null;

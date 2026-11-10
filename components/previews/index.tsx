@@ -1,8 +1,19 @@
-import dynamic from "next/dynamic";
-import type { ComponentType } from "react";
+import { type ComponentType, lazy, Suspense } from "react";
 
 // Every preview is a client component dragging the library + motion with it.
 // Lazy chunks keep a page's JS limited to the previews it actually renders.
+// Prerendering waits for each chunk, so the HTML still has the preview.
+function dynamic(load: () => Promise<ComponentType>): ComponentType {
+  const Lazy = lazy(() => load().then((component) => ({ default: component })));
+  return function Preview() {
+    return (
+      <Suspense fallback={null}>
+        <Lazy />
+      </Suspense>
+    );
+  };
+}
+
 export const previews: Record<string, ComponentType> = {
   "motion/alert": dynamic(() =>
     import("./motion/alert.preview").then((m) => m.AlertPreview),

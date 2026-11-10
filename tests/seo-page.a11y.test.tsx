@@ -1,23 +1,20 @@
 import { afterEach, expect, test } from "bun:test";
 import { cleanup, render } from "@testing-library/react";
 import { axe } from "jest-axe";
-import { NextIntlClientProvider } from "next-intl";
-import { englishMessages } from "@/i18n/messages";
 import { SeoPage } from "@/components/app/docs/seo-page";
 import { findSeoPage } from "@/lib/seo-pages";
 import type { AlternativePage } from "@/lib/seo-pages/types";
+import { withIntl } from "./intl";
 
 afterEach(cleanup);
 
 test("comparison page exposes one heading outline, a labelled comparison table and an FAQ list", async () => {
   const source = findSeoPage("alternatives", "magic-ui") as AlternativePage | undefined;
   if (!source) throw new Error("magic-ui comparison page is missing");
-  // Code blocks are async server components, so this render covers the prose and table.
+  // Code blocks are highlighted at build time, so this render covers the prose and table.
   const page = { ...source, sections: source.sections.map(({ code: _code, ...section }) => section) };
   const { container, getAllByRole, getByRole } = render(
-    <NextIntlClientProvider locale="en" messages={englishMessages} timeZone="UTC">
-      <SeoPage kind="alternatives" page={page} />
-    </NextIntlClientProvider>,
+    withIntl(<SeoPage kind="alternatives" page={page} />),
   );
 
   expect(getAllByRole("heading", { level: 1 })).toHaveLength(1);

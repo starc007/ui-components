@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { arr, num, type PlaygroundItem, type PlaygroundT, type Values } from "../core";
 import { TravelPreview } from "./travel-preview";
 

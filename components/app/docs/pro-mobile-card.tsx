@@ -1,5 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { RainbowCta } from "@/components/app/rainbow-cta";
 
 /** Sidebar promo on React Native pages for beUI Pro for mobile. */

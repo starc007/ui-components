@@ -1,10 +1,11 @@
 import { ArrowUpRight } from "lucide-react";
-import { useFormatter, useLocale, useMessages, useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "use-intl";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { ComponentCard } from "@/components/app/docs/component-card";
 import { GuideShell } from "@/components/app/docs/guide-shell";
-import { localizeComponent } from "@/i18n/catalog";
+import type { HighlightedCode } from "@/lib/highlight";
+import { ogImagePath } from "@/lib/og-paths";
 import { allComponents } from "@/lib/registry";
 import { breadcrumbJsonLd, docsArticleJsonLd, faqJsonLd } from "@/lib/seo";
 import { seoPagePath } from "@/lib/seo-pages";
@@ -18,26 +19,26 @@ export function sectionId(heading: string) {
 }
 
 /**
- * Shared body for alternatives and guides landing pages. The chrome follows
- * the locale; the article itself is English only, marked `lang="en"`.
+ * Shared body for alternatives and guides landing pages.
+ * `codes` holds each section's highlighted code sample by section index
+ * (null when the section has none), from the page's server function.
  */
 export function SeoPage({
   kind,
   page,
+  codes = [],
 }: {
   kind: SeoPageKind;
   page: SeoPageData | AlternativePage;
+  codes?: (HighlightedCode | null)[];
 }) {
   const t = useTranslations("Native.article");
   const format = useFormatter();
-  const locale = useLocale();
-  const messages = useMessages();
-  const english = locale === "en" ? undefined : "en";
   const path = seoPagePath(kind, page.slug);
   const comparison = "comparison" in page ? page : null;
   const components = page.components.flatMap((slug) => {
     const component = allComponents().find((item) => item.slug === slug);
-    return component ? [localizeComponent(component, messages)] : [];
+    return component ? [component] : [];
   });
 
   return (
@@ -52,7 +53,7 @@ export function SeoPage({
             path,
             headline: page.title,
             description: page.description,
-            image: `/api/og?${kind === "guides" ? "guide" : "alternative"}=${page.slug}`,
+            image: ogImagePath(kind === "guides" ? "guide" : "alternative", page.slug),
             datePublished: page.publishedAt,
             dateModified: page.updatedAt,
           }),
@@ -63,8 +64,8 @@ export function SeoPage({
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {kind === "guides" ? t("guide") : t("comparison")}
         </p>
-        <h1 lang={english} className="mt-2 text-3xl font-medium tracking-tight text-foreground">{page.heading}</h1>
-        <p lang={english} className="mt-3 max-w-2xl text-muted-foreground">
+        <h1 className="mt-2 text-3xl font-medium tracking-tight text-foreground">{page.heading}</h1>
+        <p className="mt-3 max-w-2xl text-muted-foreground">
           {page.intro}
         </p>
       </header>
@@ -85,7 +86,7 @@ export function SeoPage({
                   <th scope="col" className="px-4 py-3 font-medium">{comparison.competitor}</th>
                 </tr>
               </thead>
-              <tbody lang={english} className="divide-y divide-border text-muted-foreground">
+              <tbody className="divide-y divide-border text-muted-foreground">
                 {comparison.comparison.map((row) => (
                   <tr key={row.label}>
                     <th scope="row" className="px-4 py-3 align-top font-medium text-foreground">
@@ -110,8 +111,8 @@ export function SeoPage({
         </section>
       ) : null}
 
-      <div lang={english}>
-      {page.sections.map((section) => (
+      <div>
+      {page.sections.map((section, index) => (
         <section key={section.heading} id={sectionId(section.heading)} className="mt-10 scroll-mt-24">
           <h2 className="text-xl font-medium tracking-tight text-foreground">{section.heading}</h2>
           {section.paragraphs.map((paragraph) => (
@@ -126,9 +127,9 @@ export function SeoPage({
               ))}
             </ul>
           ) : null}
-          {section.code ? (
+          {codes[index] ? (
             <div className="mt-4">
-              <CodeBlock code={section.code.code} lang={section.code.lang} filename={section.code.filename} />
+              <CodeBlock {...codes[index]} />
             </div>
           ) : null}
         </section>
@@ -154,7 +155,7 @@ export function SeoPage({
 
       <section id="faq" className="mt-12 scroll-mt-24 border-t border-border pt-8">
         <h2 className="text-xl font-medium tracking-tight text-foreground">{t("faq")}</h2>
-        <dl lang={english} className="mt-4 space-y-5">
+        <dl className="mt-4 space-y-5">
           {page.faq.map((item) => (
             <div key={item.question}>
               <dt className="font-medium text-foreground">{item.question}</dt>

@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "@/i18n/navigation";
+import { usePathname } from "@/lib/navigation";
 import type { ReactNode } from "react";
 import { SiteSidebar } from "@/components/app/chrome/site-sidebar";
 import { PageTransition } from "@/components/app/chrome/page-transition";

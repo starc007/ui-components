@@ -4,7 +4,7 @@ import { ThreeColumnLayout } from "@/components/app/chrome/three-column-layout";
 import { RightSidebar } from "@/components/app/chrome/right-sidebar";
 
 import { RotateCw } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/motion/button";
 import {

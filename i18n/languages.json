@@ -1,7 +1,0 @@
-{
-  "en": { "name": "English", "hreflang": "en", "og": "en_US" },
-  "zh": { "name": "中文", "hreflang": "zh-Hans", "og": "zh_CN" },
-  "es": { "name": "Español", "hreflang": "es", "og": "es_ES" },
-  "fr": { "name": "Français", "hreflang": "fr", "og": "fr_FR" },
-  "de": { "name": "Deutsch", "hreflang": "de", "og": "de_DE" }
-}

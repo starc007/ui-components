@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { TESTIMONIALS } from "@/components/app/landing/testimonials-data";
 import { Marquee } from "@/components/motion/marquee";
 import { cn } from "@/lib/utils";

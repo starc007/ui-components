@@ -2,18 +2,17 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useMotionValueEvent, useScroll } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useEffect, useState } from "react";
 import { MobileNav } from "@/components/app/chrome/mobile-nav";
 import { SiteSearch } from "@/components/app/chrome/site-search";
 import { ThemeToggle } from "@/components/app/chrome/theme-toggle";
-import { LanguageSwitcher } from "@/components/app/chrome/language-switcher";
 import { DiwaliMark } from "@/components/app/diwali-mark";
 import { DiwaliRockets } from "@/components/app/diwali-rockets";
 import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { RainbowCta } from "@/components/app/rainbow-cta";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname } from "@/lib/navigation";
 import {
   categoryPath,
   hasSiteSidebar,
@@ -189,8 +188,6 @@ export function SiteHeader() {
         <nav className="flex items-center gap-2">
           <SiteSearch className="w-9 shrink-0 justify-center px-0 lg:w-48 lg:justify-start lg:px-3 xl:w-60 [&>span]:hidden lg:[&>span]:block [&>kbd]:hidden lg:[&>kbd]:inline-block" />
           <ThemeToggle />
-          {/* Icon-less on phones so the right-side controls still fit at 360px. */}
-          <LanguageSwitcher className="rounded-full px-2.5 [&>svg:first-child]:hidden sm:[&>svg:first-child]:block" />
           <PressLink
             href="https://github.com/starc007/ui-components"
             target="_blank"

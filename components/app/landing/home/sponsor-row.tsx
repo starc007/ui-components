@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { cn } from "@/lib/utils";
 import { SPONSORS } from "./landing-data";
 
@@ -32,14 +31,14 @@ export function SponsorRow({
           rel="noreferrer noopener"
           className="inline-flex items-center gap-2 rounded-lg px-1 py-1 text-foreground opacity-80 transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          <Image
+          <img
             src={`/sponsors/${sponsor.icon}-light.svg`}
             alt=""
             width={20}
             height={20}
             className="size-5 dark:hidden"
           />
-          <Image
+          <img
             src={`/sponsors/${sponsor.icon}-dark.svg`}
             alt=""
             width={20}

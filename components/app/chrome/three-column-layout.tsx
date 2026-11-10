@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import type { ReactNode } from "react";
 import { DocsFooter } from "@/components/app/chrome/docs-footer";
 import { cn } from "@/lib/utils";

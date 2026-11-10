@@ -1,10 +1,11 @@
 import { ArrowRight } from "lucide-react";
-import { getMessages, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
+import { useTranslations } from "use-intl";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { HeroEyebrow } from "@/components/app/landing/hero-eyebrow";
 import styles from "@/components/app/landing/landing.module.css";
+import { registry } from "@/lib/registry";
 import { cn } from "@/lib/utils";
 import { CategoryExplorer } from "./category-explorer";
 import { ContactStrip } from "./contact-strip";
@@ -12,7 +13,6 @@ import { FaqList } from "./faq-list";
 import { LandingButton } from "./landing-button";
 import {
   landingCategories,
-  localizedRegistry,
   NATIVE_COUNT,
   newEntries,
   PRO_URL,
@@ -57,12 +57,11 @@ const SPANS = [
  * board of live components right under the fold, the numbers, and a tabbed
  * explorer across every section.
  */
-export async function LandingShowcase() {
-  const t = await getTranslations("Landing");
-  const source = localizedRegistry(await getMessages());
-  const bento = resolveEntries(source, BENTO);
-  const categories = landingCategories(source);
-  const fresh = newEntries(source);
+export function LandingShowcase() {
+  const t = useTranslations("Landing");
+  const bento = resolveEntries(registry, BENTO);
+  const categories = landingCategories(registry);
+  const fresh = newEntries(registry);
   const stats = [
     { value: String(WEB_COUNT), label: t("home.stats.web") },
     { value: String(NATIVE_COUNT), label: t("home.stats.native") },

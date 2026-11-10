@@ -1,10 +1,8 @@
-import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { useTranslations } from "use-intl";
+import { Link } from "@/lib/navigation";
 import type { AgentGuide } from "@/lib/agent-guides";
 
-// German capitalizes nouns, so only lowercase the first letter elsewhere.
-function lowercaseFirst(value: string, locale: string) {
-  if (locale === "de") return value;
+function lowercaseFirst(value: string) {
   return value.charAt(0).toLowerCase() + value.slice(1);
 }
 
@@ -16,7 +14,6 @@ export function ComponentGuide({
   className?: string;
 }) {
   const t = useTranslations("Docs.component");
-  const locale = useLocale();
   return (
     <div className={className}>
       <section
@@ -44,7 +41,7 @@ export function ComponentGuide({
                 >
                   {connection.name}
                 </Link>{" "}
-                {lowercaseFirst(connection.description, locale)}
+                {lowercaseFirst(connection.description)}
               </span>
             ))}
           </p>

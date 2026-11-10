@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { NativePhones } from "@/components/app/landing/native-phones";
 import nativeSlugs from "@/lib/native/slugs.json";

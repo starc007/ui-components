@@ -1,6 +1,6 @@
 import { Rss } from "lucide-react";
-import { useFormatter, useLocale, useMessages, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { useFormatter, useTranslations } from "use-intl";
+import { Link } from "@/lib/navigation";
 import {
   CHANGELOG_FEED_PATH,
   changelogAnchor,
@@ -17,17 +17,11 @@ const BADGE_CLASS: Record<ChangelogItem["type"], string> = {
 };
 
 /**
- * The changelog page body: header, feed link and the list of weeks. The chrome
- * follows the locale; entries stay English, marked `lang="en"`.
+ * The changelog page body: header, feed link and the list of weeks.
  */
 export function ChangelogContent() {
   const t = useTranslations("Native.changelog");
   const format = useFormatter();
-  const locale = useLocale();
-  const messages = useMessages();
-  const english = locale === "en" ? undefined : "en";
-  const componentName = (slug?: string) =>
-    slug ? messages.Catalog.components[slug]?.name : undefined;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
@@ -65,7 +59,7 @@ export function ChangelogContent() {
               </time>
             </p>
             <div className="mt-2 min-w-0 sm:mt-0">
-              <h2 lang={english} className="text-lg font-medium tracking-tight text-foreground">
+              <h2 className="text-lg font-medium tracking-tight text-foreground">
                 <a
                   href={`#${changelogAnchor(entry.date)}`}
                   className="rounded-sm hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -74,7 +68,7 @@ export function ChangelogContent() {
                 </a>
               </h2>
               {entry.summary ? (
-                <p lang={english} className="mt-2 leading-7 text-muted-foreground">
+                <p className="mt-2 leading-7 text-muted-foreground">
                   {entry.summary}
                 </p>
               ) : null}
@@ -92,7 +86,7 @@ export function ChangelogContent() {
                         {t(item.type)}
                       </span>
                       <span className="min-w-0 text-muted-foreground">
-                        <span lang={english}>{item.text}</span>
+                        <span>{item.text}</span>
                         {link ? (
                           <>
                             {" "}
@@ -101,7 +95,7 @@ export function ChangelogContent() {
                               className="whitespace-nowrap text-foreground underline decoration-border underline-offset-2 hover:decoration-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                             >
                               {link.label
-                                ? t("view", { name: componentName(item.component) ?? link.label })
+                                ? t("view", { name: link.label })
                                 : t("learnMore")}
                             </Link>
                           </>

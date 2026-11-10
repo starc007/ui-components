@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 
 export function KeepInMind() {
   const t = useTranslations("Docs.keepInMind");

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, type Transition } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 
 const TRAVEL = 168;
 

@@ -5,14 +5,11 @@
       "**",
       "!node_modules",
       "!mcp",
-      "!.next",
-      "!.open-next",
-      "!.cloudflare",
+      "!dist",
+      "!.build",
       "!.wrangler",
-      "!build",
-      "!out",
       "!coverage",
-      "!next-env.d.ts"
+      "!src/routeTree.gen.ts"
     ]
   },
   "formatter": {
@@ -29,6 +26,9 @@
       "recommended": true,
       "complexity": {
         "noImportantStyles": "off"
+      },
+      "performance": {
+        "noImgElement": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml": "off"

@@ -2,7 +2,7 @@
 
 import { ArrowRight, Pause, Play } from "lucide-react";
 import { useReducedMotion } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useTheme } from "next-themes";
 import {
   useCallback,
@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@/lib/navigation";
 import type { NativeClip, NativeTheme } from "@/lib/native";
 import { cn } from "@/lib/utils";
 

@@ -1,7 +1,5 @@
-import Image from "next/image";
-import { useMessages, useTranslations } from "next-intl";
-import { localizeCategory } from "@/i18n/catalog";
-import { Link } from "@/i18n/navigation";
+import { useTranslations } from "use-intl";
+import { Link } from "@/lib/navigation";
 import { categoryPath, componentPath } from "@/lib/component-paths";
 import { registry } from "@/lib/registry";
 
@@ -26,9 +24,7 @@ const PRODUCTS = [
 
 export function SiteFooter() {
   const t = useTranslations("Chrome");
-  const messages = useMessages();
-  const columns = COLUMNS.map((category) => localizeCategory(category, messages));
-  // `page` links get the locale prefix; external URLs and llms.txt are plain anchors.
+  // `page` links go through the router; external URLs and llms.txt are plain anchors.
   const links = [
     { href: "/components/motion", label: t("footer.browseAll"), page: true },
     { href: "/playground", label: t("header.playground"), page: true },
@@ -55,7 +51,7 @@ export function SiteFooter() {
             href="/"
             className="inline-flex items-center gap-2.5"
           >
-            <Image
+            <img
               src="/beui-mark.png"
               alt=""
               width={30}
@@ -114,7 +110,7 @@ export function SiteFooter() {
         </div>
 
         {/* Registry item columns. */}
-        {columns.map((column) => (
+        {COLUMNS.map((column) => (
           <nav key={column.slug} aria-label={column.name}>
             <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
               {column.name}
@@ -203,12 +199,12 @@ export function SiteFooter() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-0 h-48 [mask-image:linear-gradient(to_bottom,transparent,black_80%)] sm:h-64"
       >
-        <Image
+        <img
           src="/landing/coastal-sketch.webp"
           alt=""
-          fill
-          sizes="100vw"
-          className="object-cover object-bottom dark:brightness-50"
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 size-full object-cover object-bottom dark:brightness-50"
         />
       </div>
     </footer>

@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { ComponentCard } from "@/components/app/docs/component-card";
 
 export type RelatedItem = {
