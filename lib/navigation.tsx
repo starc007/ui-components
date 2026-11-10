@@ -2,6 +2,7 @@ import {
   Link as RouterLink,
   redirect as routerRedirect,
   useLocation,
+  useRouterState,
   useRouter as useTanStackRouter,
 } from "@tanstack/react-router";
 import { type ComponentProps, forwardRef, useMemo } from "react";
@@ -39,9 +40,18 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   );
 });
 
-/** Current path, without a trailing slash. */
+/**
+ * Path of the page on screen, without a trailing slash. TanStack moves
+ * `location` as soon as a navigation starts, while the old page stays mounted
+ * until the new one has its data and code; `resolvedLocation` moves when the
+ * new page renders (like next/navigation's usePathname). Keying the page
+ * transition or layout on `location` would replay the old page under the new
+ * URL.
+ */
 export function usePathname() {
-  const pathname = useLocation({ select: (location) => location.pathname });
+  const pathname = useRouterState({
+    select: (state) => (state.resolvedLocation ?? state.location).pathname,
+  });
   return pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;
 }
 
