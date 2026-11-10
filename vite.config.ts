@@ -25,6 +25,10 @@ function prerenderPages(): { path: string }[] {
  */
 export default defineConfig({
   server: { port: 3000 },
+  // Prerendering fetches every page from a `vite preview` server. Pin it to
+  // IPv4: in build containers "localhost" can resolve to ::1 while the server
+  // listens elsewhere, and every request then times out.
+  preview: { host: "127.0.0.1" },
   resolve: { tsconfigPaths: true },
   envPrefix: ["VITE_", "NEXT_PUBLIC_"],
   plugins: [
