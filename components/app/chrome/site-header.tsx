@@ -7,8 +7,6 @@ import { useEffect, useState } from "react";
 import { MobileNav } from "@/components/app/chrome/mobile-nav";
 import { SiteSearch } from "@/components/app/chrome/site-search";
 import { ThemeToggle } from "@/components/app/chrome/theme-toggle";
-import { DiwaliMark } from "@/components/app/diwali-mark";
-import { DiwaliRockets } from "@/components/app/diwali-rockets";
 import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { RainbowCta } from "@/components/app/rainbow-cta";
@@ -49,8 +47,6 @@ export function SiteHeader() {
   }, []);
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
-  const [markHovered, setMarkHovered] = useState(false);
-  const [rocketLaunches, setRocketLaunches] = useState(0);
   const pathname = usePathname();
   const sidebarPage = hasSiteSidebar(pathname);
   const isComponents = pathname.startsWith("/components/motion");
@@ -84,18 +80,16 @@ export function SiteHeader() {
           <Link
             href="/"
             className="group flex items-center gap-2.5 text-sm font-semibold tracking-tight text-foreground"
-            onPointerEnter={(e) => {
-              if (e.pointerType === "mouse") setMarkHovered(true);
-            }}
-            onPointerLeave={() => setMarkHovered(false)}
-            onFocus={(e) => setMarkHovered(e.currentTarget.matches(":focus-visible"))}
-            onBlur={() => setMarkHovered(false)}
-            onClick={() => setRocketLaunches((n) => n + 1)}
           >
-            <DiwaliMark hovered={markHovered} className="h-6 w-6" />
+            <img
+              src="/beui-mark.png"
+              alt=""
+              width={24}
+              height={24}
+              className="h-6 w-6 rounded-lg"
+            />
             <span>beUI</span>
           </Link>
-          <DiwaliRockets launches={rocketLaunches} />
           <nav className={cn("hidden items-center gap-0.5", sidebarPage ? "md:flex" : "xl:flex")}>
             <Link
               href="/components/motion"
