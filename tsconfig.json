@@ -24,7 +24,6 @@
     ".build",
     "worker",
     ".wrangler",
-    "examples/shadcn-vite-install",
     "mcp",
     "node_modules"
   ]

@@ -26,9 +26,9 @@ The palette is intentionally near-monochrome. Cyan is the functional accent, vio
 
 ### Semantic tokens
 
-The source of truth is `app/globals.css`. Components must consume semantic utilities such as `bg-background`, `bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`, and `ring-accent` rather than repeating color values.
+The source of truth is `src/styles/globals.css`. Components must consume semantic utilities such as `bg-background`, `bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`, and `ring-accent` rather than repeating color values.
 
-The full light and dark token sets are applied to `:root` and `.dark`. The pre-brand backup is stored at `app/globals.css.bak`.
+The full light and dark token sets are applied to `:root` and `.dark`.
 
 ### Contrast
 
@@ -45,7 +45,7 @@ Borders are structural and intentionally subtle. Never rely on a border alone to
 - **Display and body:** Geist
 - **Code, commands, numbers:** Geist Mono
 
-Both are wired through `next/font/google` in `app/layout.tsx` and exposed through `--font-sans`, `--font-display`, and `--font-mono` in `app/globals.css`.
+Both are loaded from `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` and exposed through `--font-sans`, `--font-display`, and `--font-mono` in `src/styles/globals.css`.
 
 ### Type roles
 
@@ -119,7 +119,7 @@ Avoid hype and effort language: “revolutionary,” “powerful,” “seamless
 
 - `brand.md`: visual language, typography, layout character, and voice.
 - `AGENTS.md`: repository workflow, implementation standards, motion behavior, accessibility, and registry contracts.
-- `app/globals.css`: executable color, typography, gradient, and animation tokens.
+- `src/styles/globals.css`: executable color, typography, gradient, and animation tokens.
 
 ---
 

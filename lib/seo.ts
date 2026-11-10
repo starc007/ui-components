@@ -2,7 +2,6 @@ import { categoryPath, componentPath } from "@/lib/component-paths";
 import type { JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { componentDates } from "@/lib/component-dates";
 import type { ComponentFaq } from "@/lib/component-about";
-import { componentSeo } from "@/lib/component-seo";
 import { ogImagePath } from "@/lib/og-paths";
 import {
   type CategoryEntry,
@@ -14,7 +13,6 @@ import { SITE_URL } from "@/lib/site";
 
 export const SITE = SITE_URL;
 export const SITE_NAME = "beUI";
-export const SITE_TITLE = "Animated Components for React, Next.js and React Native";
 export const SITE_TAGLINE = "Animated components for React, Next.js and React Native";
 export const SITE_DESCRIPTION =
   "Free, open-source animated components for React, Next.js and React Native, built with Motion, Tailwind CSS and Reanimated. Copy the source or install via CLI.";
@@ -68,28 +66,7 @@ export function componentKeywords(
   );
 }
 
-/**
- * Meta/social description for a component: its own description plus a short,
- * keyword-bearing positioning tail. The on-page copy keeps the bare
- * description; only the SERP/social snippet carries the tail.
- */
-export function componentMetaDescription(comp: ComponentEntry): string {
-  const seo = componentSeo[comp.slug]?.description ?? comp.guide?.seo.description;
-  if (seo) return seo;
-
-  return `${comp.description} Free, open-source React and Next.js motion component. Copy-paste the source or install with shadcn.`;
-}
-
-/** Search title for a component page, before the site-wide " · beUI" suffix. */
-export function componentSeoTitle(comp: ComponentEntry): string {
-  return (
-    componentSeo[comp.slug]?.title ??
-    comp.guide?.seo.title ??
-    `Animated ${comp.name} for React`
-  );
-}
-
-/** Trim text to `limit` chars on a word boundary — for fixed-size surfaces
+/** Trim text to `limit` chars on a word boundary, for fixed-size surfaces
  * like the OG image where overflow would clip or overrun the layout. */
 export function clampText(text: string, limit: number): string {
   const s = text.replace(/\s+/g, " ").trim();
@@ -198,16 +175,13 @@ export function docsArticleJsonLd({
 }
 
 /**
- * Per-component page: SoftwareSourceCode + TechArticle. Pass the localized
- * entry; `headline` and `description` default to the English search copy.
+ * Per-component page: SoftwareSourceCode + TechArticle. `headline` and
+ * `description` are the page's search copy.
  */
 export function componentJsonLd(
   cat: CategoryEntry,
   comp: ComponentEntry,
-  {
-    headline = componentSeoTitle(comp),
-    description = componentMetaDescription(comp),
-  }: { headline?: string; description?: string } = {},
+  { headline, description }: { headline: string; description: string },
 ): JsonLdSchema {
   const url = abs(componentPath(cat.slug, comp.slug));
   const dates = componentDates(cat.slug, comp.slug);

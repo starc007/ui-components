@@ -201,7 +201,6 @@ export function SiteHeader() {
           >
             <GithubIcon className="h-3.5 w-3.5" />
             <span className="inline-flex items-center gap-0.5 text-muted-foreground">
-              {/*<Star className="h-3 w-3" />*/}
               {formattedStarCount ? <span>{formattedStarCount}</span> : null}
             </span>
           </PressLink>

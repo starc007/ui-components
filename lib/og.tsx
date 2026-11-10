@@ -25,9 +25,7 @@ export function ogImage({
 }: OgOptions = {}): ReactElement {
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", position: "relative", overflow: "hidden", background: "#f7f7f9", color: "#101116", fontFamily: "Manrope" }}>
-      {/* biome-ignore lint/performance/noImgElement: Satori renders this static artwork into the OG PNG. */}
       <img src={backgroundSrc} alt="" width={1200} height={630} style={{ position: "absolute", inset: 0, width: 1200, height: 630, objectFit: "cover" }} />
-      {/* biome-ignore lint/performance/noImgElement: Satori renders the brand asset into the OG PNG. */}
       <img src={logoSrc} alt="" width={52} height={52} style={{ position: "absolute", left: 72, top: 56, borderRadius: 14 }} />
       <div style={{ position: "absolute", left: 72, bottom: 76, width: 580, display: "flex", flexDirection: "column", gap: homepage ? 14 : 18 }}>
         {!homepage && <div style={{ display: "flex", fontSize: 19, color: "#636777" }}>beui / {label}</div>}

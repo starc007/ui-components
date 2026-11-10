@@ -6,7 +6,7 @@ GlobalRegistrator.register();
   globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }
 ).IS_REACT_ACT_ENVIRONMENT = true;
 
-// Browser APIs that motion + react-use-measure touch but happy-dom omits.
+// Browser APIs that motion touches but happy-dom omits.
 // Stubbed so components mount in the test DOM without throwing.
 if (typeof window.matchMedia !== "function") {
   window.matchMedia = (query: string) =>

@@ -1,6 +1,6 @@
 # beUI v2 — agent guide
 
-React motion component library plus its docs site, distributed as copy-paste source via shadcn-compatible registry endpoints. Stack: TanStack Start (Vite), React 19, Tailwind CSS 4, motion (framer-motion) v11, use-intl, TypeScript strict, Bun, Biome. Hosted on Cloudflare Workers as static assets. Live at beui.dev.
+React motion component library plus its docs site, distributed as copy-paste source via shadcn-compatible registry endpoints. Stack: TanStack Start (Vite), React 19, Tailwind CSS 4, motion (framer-motion) v12, use-intl, TypeScript strict, Bun, Biome. Hosted on Cloudflare Workers as static assets. Live at beui.dev.
 
 ## Commands
 
@@ -189,7 +189,7 @@ Before building a new component, check this list. If it exists, import it. If it
 
 | file | what it does |
 |---|---|
-| `components/app/copy-button.tsx` | Copy-to-clipboard button using `ActionSwapCascadeIcon` for the copy/check swap |
+| `components/app/docs/copy-button.tsx` | Copy-to-clipboard button using `ActionSwapCascadeIcon` for the copy/check swap |
 | `components/app/docs/code-block.tsx` | Code block with `CopyButton` and collapsible expand. Takes a `HighlightedCode` from `highlight()` (`lib/highlight.ts`, Shiki with diff/focus transformers), which must run in the page's server function |
 | `components/app/press-link.tsx` | `PressLink` — site CTA link with `SPRING_PRESS` feel, use instead of CSS `.press` on primary CTAs |
 

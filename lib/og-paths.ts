@@ -1,6 +1,6 @@
 /**
  * Social cards are PNGs rendered once at build time by scripts/build-static.ts
- * (see lib/og-cards.ts for the list). Pages link the static file.
+ * (see lib/og-cards.tsx for the list). Pages link the static file.
  */
 export type OgCardKind = "component" | "category" | "native" | "page" | "guide" | "alternative";
 
