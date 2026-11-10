@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, ChevronDown, Copy, FileDown, LoaderCircle, TriangleAlert } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import {
   MorphPopover,
@@ -65,6 +66,7 @@ export function CopyPage({
   markdownPath: string;
   componentName: string;
 }) {
+  const t = useTranslations("Docs.copyPage");
   const [open, setOpen] = useState(false);
   const [copyState, setCopyState] = useState<CopyState>("idle");
   const resetTimer = useRef<number | null>(null);
@@ -133,35 +135,34 @@ export function CopyPage({
 
   const actions = [
     {
-      label: "View as Markdown",
+      label: t("viewMarkdown"),
       href: markdownPath,
       icon: <FileDown className="h-4 w-4" aria-hidden="true" />,
     },
     {
-      label: "Open in v0",
+      label: t("openIn", { app: "v0" }),
       href: promptUrl("https://v0.dev", pageUrl),
       icon: <V0Icon className="h-4 w-4" />,
     },
     {
-      label: "Open in ChatGPT",
+      label: t("openIn", { app: "ChatGPT" }),
       href: promptUrl("https://chatgpt.com", pageUrl),
       icon: <ChatGPTIcon className="h-4 w-4" />,
     },
     {
-      label: "Open in Claude",
+      label: t("openIn", { app: "Claude" }),
       href: promptUrl("https://claude.ai/new", pageUrl),
       icon: <ClaudeIcon className="h-4 w-4" />,
     },
   ];
 
-  const copyLabel =
-    copyState === "error" ? "Try again" : "Copy Page";
+  const copyLabel = copyState === "error" ? t("tryAgain") : t("copy");
   const copyAriaLabel =
     copyState === "copied"
-      ? "Page copied"
+      ? t("copiedAria")
       : copyState === "error"
-        ? "Copy failed. Try again"
-        : "Copy page as Markdown";
+        ? t("errorAria")
+        : t("copyAria");
 
   return (
     <MorphPopover
@@ -194,7 +195,7 @@ export function CopyPage({
           <button
             ref={triggerRef}
             type="button"
-            aria-label="More page actions"
+            aria-label={t("moreActions")}
             onKeyDown={(event) => {
               if (event.key === "ArrowDown") {
                 event.preventDefault();
@@ -218,7 +219,7 @@ export function CopyPage({
         <div
           ref={menuRef}
           role="menu"
-          aria-label="Page actions"
+          aria-label={t("menu")}
           onKeyDown={handleMenuKeyDown}
         >
           {actions.map((action) => (

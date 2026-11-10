@@ -6,8 +6,10 @@ import { useRef, useState } from "react";
 import { Switch } from "@/components/motion/switch";
 import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_LAYOUT } from "@/lib/ease";
+import { useLocale } from "@/lib/i18n";
 import { CopyMenu } from "./copy-menu";
 import { IconButton } from "./icon-button";
+import type { AvailabilitySchedulerTranslate } from "./messages";
 import { TimeSelect } from "./time-select";
 import {
   clampRange,
@@ -25,6 +27,7 @@ import {
 export function DayRow({
   day,
   label,
+  t,
   state,
   options,
   reduce,
@@ -36,6 +39,7 @@ export function DayRow({
 }: {
   day: DayKey;
   label: string;
+  t: AvailabilitySchedulerTranslate;
   state: DayAvailability;
   options: TimeOption[];
   reduce: boolean;
@@ -51,6 +55,7 @@ export function DayRow({
   onCopy: (targets: DayKey[]) => void;
   onPanelOpenChange: (panelId: string, open: boolean) => void;
 }) {
+  const { locale } = useLocale();
   const idRef = useRef(0);
   const nextId = () => `${day}-n${idRef.current++}`;
   // Same rule one level down: ranges stack against each other inside the row.
@@ -111,16 +116,22 @@ export function DayRow({
 
   const actions = (
     <>
-      <Tooltip content="Add time">
+      <Tooltip content={t("addTime")}>
         <IconButton
-          label={`Add time range to ${label}`}
+          label={t("addRange", { day: label })}
           reduce={reduce}
           onClick={addRange}
         >
           <Plus className="h-4 w-4" />
         </IconButton>
       </Tooltip>
-      <CopyMenu fromLabel={label} reduce={reduce} onApply={onCopy} />
+      <CopyMenu
+        from={day}
+        fromLabel={label}
+        t={t}
+        reduce={reduce}
+        onApply={onCopy}
+      />
     </>
   );
 
@@ -137,7 +148,7 @@ export function DayRow({
           <Switch
             checked={state.enabled}
             onCheckedChange={setEnabled}
-            ariaLabel={`Toggle ${label} availability`}
+            ariaLabel={t("toggleDay", { day: label })}
             className="scale-90"
           />
           <span className="text-sm font-medium text-foreground">{label}</span>
@@ -175,7 +186,7 @@ export function DayRow({
                 <div className="min-w-0 flex-1 sm:max-w-[132px]">
                   <TimeSelect
                     value={r.start}
-                    options={startOptions(options, r.end, r.start)}
+                    options={startOptions(options, r.end, r.start, locale)}
                     onChange={(v) => updateRange(r.id, { start: v })}
                     open={openPanel === panelId(r.id, "start")}
                     onOpenChange={(open) =>
@@ -187,7 +198,7 @@ export function DayRow({
                 <div className="min-w-0 flex-1 sm:max-w-[132px]">
                   <TimeSelect
                     value={r.end}
-                    options={endOptions(options, r.start, r.end)}
+                    options={endOptions(options, r.start, r.end, locale)}
                     onChange={(v) => updateRange(r.id, { end: v })}
                     open={openPanel === panelId(r.id, "end")}
                     onOpenChange={(open) =>
@@ -195,9 +206,9 @@ export function DayRow({
                     }
                   />
                 </div>
-                <Tooltip content="Remove">
+                <Tooltip content={t("remove")}>
                   <IconButton
-                    label="Remove time range"
+                    label={t("removeRange")}
                     reduce={reduce}
                     onClick={() => removeRange(r.id)}
                   >
@@ -216,7 +227,7 @@ export function DayRow({
               transition={SPRING_LAYOUT}
               className="py-1 text-sm text-muted-foreground sm:py-2"
             >
-              Unavailable
+              {t("unavailable")}
             </motion.span>
           )}
         </AnimatePresence>

@@ -1,0 +1,35 @@
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const dateRangePickerMessages = {
+  label: "Choose a date range",
+  placeholder: "Select dates",
+  triggerLabel: "{label}: {summary}",
+  selectEnd: "Select end",
+  startDate: "Start date",
+  endDate: "End date",
+  selectDate: "Select date",
+  chooseMonth: "Choose month",
+  chooseYear: "Choose year",
+  previousMonth: "Previous month",
+  nextMonth: "Next month",
+  previousYear: "Previous year",
+  nextYear: "Next year",
+  previousYears: "Previous years",
+  nextYears: "Next years",
+  monthChoices: "Choose a month in {year}",
+  yearChoices: "Choose a year from {start} to {end}",
+  help: "Use arrow keys to navigate dates, Home and End for the week, Page Up and Page Down for months, Shift with Page Up or Page Down for years. Enter or Space selects a date. Use the month and year buttons to jump directly. In the month or year choices, use arrow keys to move and Escape to return.",
+  daySelected: "{count} day selected",
+  daysSelected: "{count} days selected",
+  chooseStartDate: "Choose a start date",
+  chooseEndDate: "Choose an end date",
+  clear: "Clear",
+  clearLabel: "Clear date range",
+  startSelected: "Start date {date}. Choose an end date.",
+  rangeUnavailable:
+    "This range includes unavailable dates. Choose another end date.",
+  rangeSelected: "{from} to {to} selected.",
+  cleared: "Date range cleared.",
+  presetSelected: "{name} selected.",
+};
+
+export type DateRangePickerMessages = typeof dateRangePickerMessages;

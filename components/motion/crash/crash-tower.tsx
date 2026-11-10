@@ -37,12 +37,12 @@ const DROP: Transition = { type: "spring", duration: 0.35, bounce: 0.25 };
  * sways harder the taller it gets, until the crash topples it. Cash out before
  * it does; your block keeps a flag as the tower carries on without you.
  */
-export function CrashTower({ "aria-label": ariaLabel = "Crash", className, ...options }: CrashProps) {
+export function CrashTower({ "aria-label": ariaLabel, className, ...options }: CrashProps) {
   const game = useCrashGame(options);
   // The tower stands at 72% across with its labels and pennant on its right, so
   // nothing reaches back under the shell's readout, even on a narrow stage.
   return (
-    <CrashShell game={game} aria-label={ariaLabel} className={className} miniature={(props) => <MiniTower {...props} />}>
+    <CrashShell game={game} aria-label={ariaLabel ?? game.text("region")} className={className} miniature={(props) => <MiniTower {...props} />}>
       <Tower game={game} />
     </CrashShell>
   );
@@ -131,7 +131,7 @@ function Tower({ game }: { game: CrashGame }) {
             key="ghost"
             rise={markRise(ghost, cam)}
             ceiling={ceiling}
-            label={`Last ${formatShort(ghost)}`}
+            label={game.text("lastMark", { multiplier: formatShort(ghost) })}
             className="border-muted-foreground/30 text-muted-foreground"
           />
         ) : null}
@@ -140,7 +140,7 @@ function Tower({ game }: { game: CrashGame }) {
             key="target"
             rise={markRise(target, cam)}
             ceiling={ceiling}
-            label={`Target ${formatShort(target)}`}
+            label={game.text("targetMarkTower", { multiplier: formatShort(target) })}
             className={cn("border-primary/70", PRIMARY_TEXT)}
           />
         ) : null}

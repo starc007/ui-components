@@ -1,5 +1,5 @@
 import { componentPath } from "@/lib/component-paths";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { NewBadge } from "@/components/app/docs/new-badge";
 
 export function ComponentCard({

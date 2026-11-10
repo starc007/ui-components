@@ -7,6 +7,7 @@ import { Button } from "@/components/motion/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/motion/select";
 import { EASE_OUT } from "@/lib/ease";
 import { createGameSounds } from "@/lib/game-sounds";
+import { useMessages } from "@/lib/i18n";
 import { createTickPlayer } from "@/lib/tick-sound";
 import { cn } from "@/lib/utils";
 import {
@@ -23,6 +24,36 @@ import {
 } from "./casino/game-parts";
 
 export { formatMultiplier } from "./casino/game-parts";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const slideGameMessages = {
+  label: "Slide",
+  betAmount: "Bet amount",
+  halveBet: "Halve bet",
+  doubleBet: "Double bet",
+  target: "Target",
+  winChance: "Win chance",
+  profitOnWin: "Profit on win",
+  slide: "Slide",
+  starting: "Starting…",
+  sliding: "Sliding…",
+  enterBet: "Enter a bet",
+  slideAgain: "Slide again",
+  recentSlides: "Recent slides",
+  recentEmpty: "Recent rounds show here",
+  sound: "Sound",
+  stateStarting: "Starting",
+  stateSliding: "Sliding · needs {target}",
+  stateWon: "Won · beat {target}",
+  stateMissed: "Missed · needed {target}",
+  stateIdle: "{chance} chance of {target} · marked cards win",
+  announceSliding: "Sliding. Target {target}.",
+  announceFailed: "Couldn't start the round. Try again.",
+  announceWin: "Landed on {result}. Win, target {target}.",
+  announceLoss: "Landed on {result}. Loss, target {target}.",
+};
+
+export type SlideGameMessages = typeof slideGameMessages;
 
 export interface SlideGameProps {
   /** Target multiplier (controlled). A result at or above it wins. Applies from the next round. Values below 1.01× play as 1.01×. */
@@ -66,6 +97,8 @@ export interface SlideGameProps {
   onSoundChange?: (sound: boolean) => void;
   /** Accessible name for the game. Default "Slide". */
   "aria-label"?: string;
+  /** Overrides for the built-in text, e.g. for another language. */
+  labels?: Partial<SlideGameMessages>;
   className?: string;
 }
 
@@ -123,9 +156,11 @@ export function SlideGame({
   sound,
   defaultSound = false,
   onSoundChange,
-  "aria-label": ariaLabel = "Slide",
+  "aria-label": ariaLabel,
+  labels,
   className,
 }: SlideGameProps) {
+  const t = useMessages("slideGame", slideGameMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const betId = useId();
   const [internalTarget, setInternalTarget] = useState(defaultTarget);
@@ -195,12 +230,12 @@ export function SlideGame({
           if (pending.current !== id) return;
           setRound({ id, result: settleValue(value), target: roundTarget, bet: roundBet });
           setPhase("sliding");
-          setAnnouncement(`Sliding. Target ${formatShort(roundTarget)}.`);
+          setAnnouncement(t("announceSliding", { target: formatShort(roundTarget) }));
         },
         () => {
           if (pending.current !== id) return;
           setPhase(before);
-          setAnnouncement("Couldn't start the round. Try again.");
+          setAnnouncement(t("announceFailed"));
         },
       );
   };
@@ -211,7 +246,10 @@ export function SlideGame({
     setPhase("settled");
     setHistory((items) => [{ id: ended.id, value: ended.result }, ...items].slice(0, HISTORY));
     setAnnouncement(
-      `Landed on ${formatMultiplier(ended.result)}. ${win ? "Win" : "Loss"}, target ${formatShort(ended.target)}.`,
+      t(win ? "announceWin" : "announceLoss", {
+        result: formatMultiplier(ended.result),
+        target: formatShort(ended.target),
+      }),
     );
     if (win && latest.current.soundOn) sounds.current?.game.cashOut();
     latest.current.onResult?.(ended.result, ended.target, ended.bet);
@@ -259,7 +297,7 @@ export function SlideGame({
   const profit = bet * (target - 1);
 
   return (
-    <section aria-label={ariaLabel} className={cn("@container w-full max-w-3xl", className)}>
+    <section aria-label={ariaLabel ?? t("label")} className={cn("@container w-full max-w-3xl", className)}>
       {/* 24px card corners = 12px panel and stage corners + 12px padding. Under
           36rem the stage stacks over the controls; at 36rem it keeps ~350px beside them. */}
       <div className="flex flex-col-reverse gap-3 rounded-3xl border border-border p-3 @min-[36rem]:flex-row">
@@ -267,7 +305,7 @@ export function SlideGame({
           <div className="grid grid-cols-2 gap-3 @min-[36rem]:grid-cols-1">
             <div className="flex min-w-0 flex-col gap-1.5">
               <label htmlFor={betId} className="text-xs font-medium text-muted-foreground">
-                Bet amount
+                {t("betAmount")}
               </label>
               <div
                 className={cn(
@@ -297,7 +335,7 @@ export function SlideGame({
                   className="h-8 rounded-lg px-2.5 tabular-nums"
                   onClick={() => scaleBet(0.5)}
                   disabled={busy}
-                  aria-label="Halve bet"
+                  aria-label={t("halveBet")}
                 >
                   ½
                 </Button>
@@ -308,7 +346,7 @@ export function SlideGame({
                   className="h-8 rounded-lg px-2.5 tabular-nums"
                   onClick={() => scaleBet(2)}
                   disabled={busy}
-                  aria-label="Double bet"
+                  aria-label={t("doubleBet")}
                 >
                   2×
                 </Button>
@@ -316,11 +354,11 @@ export function SlideGame({
             </div>
             <div className="flex min-w-0 flex-col gap-1.5">
               <span aria-hidden="true" className="text-xs font-medium text-muted-foreground">
-                Target
+                {t("target")}
               </span>
               <Select value={String(target)} onValueChange={changeTarget} disabled={busy}>
                 <SelectTrigger className="h-10 rounded-xl tabular-nums">
-                  <span className="sr-only">Target </span>
+                  <span className="sr-only">{t("target")} </span>
                   {/* Options register after mount; the placeholder covers the server render. */}
                   <SelectValue placeholder={formatShort(target)} />
                 </SelectTrigger>
@@ -337,11 +375,11 @@ export function SlideGame({
 
           <dl className="grid grid-cols-2 gap-3 rounded-xl bg-muted/40 px-3 py-2.5 text-xs @min-[36rem]:grid-cols-1 @min-[36rem]:gap-2">
             <div className="flex items-center justify-between gap-2">
-              <dt className="text-muted-foreground">Win chance</dt>
+              <dt className="text-muted-foreground">{t("winChance")}</dt>
               <dd className="font-medium tabular-nums">{chance}</dd>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <dt className="text-muted-foreground">Profit on win</dt>
+              <dt className="text-muted-foreground">{t("profitOnWin")}</dt>
               <dd className="font-medium tabular-nums">
                 {formatAmount ? formatAmount(profit) : `${currency}${AMOUNT.format(profit)}`}
               </dd>
@@ -366,23 +404,32 @@ export function SlideGame({
               if (event.repeat && event.key === "Enter") event.preventDefault();
             }}
           >
-            {phase === "starting"
-              ? "Starting…"
-              : phase === "sliding"
-                ? "Sliding…"
-                : noBet
-                  ? "Enter a bet"
-                  : settled
-                    ? "Slide again"
-                    : "Slide"}
+            {t(
+              phase === "starting"
+                ? "starting"
+                : phase === "sliding"
+                  ? "sliding"
+                  : noBet
+                    ? "enterBet"
+                    : settled
+                      ? "slideAgain"
+                      : "slide",
+            )}
           </Button>
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <div className="flex h-8 items-center gap-2 pl-1">
             <HistoryIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" strokeWidth={1.75} />
-            <GameHistory history={history} reduce={reduce} tier={face} aria-label="Recent slides" className="min-w-0 flex-1" />
-            <SoundToggle on={soundOn} onToggle={toggleSound} />
+            <GameHistory
+              history={history}
+              reduce={reduce}
+              tier={face}
+              aria-label={t("recentSlides")}
+              emptyLabel={t("recentEmpty")}
+              className="min-w-0 flex-1"
+            />
+            <SoundToggle on={soundOn} onToggle={toggleSound} label={t("sound")} />
           </div>
 
           {/* The stage is the reel alone, so the edge tabs can hang from its edges. */}
@@ -404,14 +451,14 @@ export function SlideGame({
             <GameEyebrow
               label={
                 phase === "starting"
-                  ? "Starting"
+                  ? t("stateStarting")
                   : phase === "sliding"
-                    ? `Sliding · needs ${roundTarget}`
+                    ? t("stateSliding", { target: roundTarget })
                     : won === true
-                      ? `Won · beat ${roundTarget}`
+                      ? t("stateWon", { target: roundTarget })
                       : won === false
-                        ? `Missed · needed ${roundTarget}`
-                        : `${chance} chance of ${formatShort(target)} · marked cards win`
+                        ? t("stateMissed", { target: roundTarget })
+                        : t("stateIdle", { chance, target: formatShort(target) })
               }
               state={busy ? "live" : won === true ? "won" : won === false ? "lost" : "idle"}
               reduce={reduce}

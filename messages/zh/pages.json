@@ -1,0 +1,696 @@
+{
+  "theme": {
+    "meta": {
+      "title": "主题配置",
+      "description": "beUI 组件的一次性主题配置：安装 shadcn 令牌层，或将 beUI 主题 CSS 粘贴到你的 globals.css 中。",
+      "ogDescription": "beUI 组件的一次性主题配置：使用 shadcn 令牌或 beUI 主题 CSS。"
+    },
+    "eyebrow": "配置",
+    "title": "主题配置",
+    "intro": "beUI 组件通过 shadcn 语义令牌（<code>bg-primary</code>、<code>text-muted-foreground</code>、border、ring）设置样式。只需配置一次这些令牌，所有组件即可正常工作。有两种方式：",
+    "option1": {
+      "title": "方式一：shadcn init（推荐）",
+      "body": "如果项目已在使用 shadcn，这些令牌已经就绪。否则请运行一次 init，它会将令牌层写入你的 CSS。"
+    },
+    "option2": {
+      "title": "方式二：粘贴主题 CSS",
+      "body": "没有使用 shadcn？请将以下内容粘贴到 <code>globals.css</code> 中，紧跟在 <code>@import \"tailwindcss\";</code> 之后。它定义了组件所用的令牌、动效动画和表面工具类。需要 Tailwind CSS v4。",
+      "alsoAvailable": "也可在 <link>/theme.css</link> 获取。"
+    }
+  },
+  "aiAgents": {
+    "meta": {
+      "title": "AI 智能体",
+      "description": "安装 beUI 智能体技能、连接 MCP 服务器，或使用面向智能体的端点（llms.txt、JSON 注册表、原始源码）以编程方式获取组件。"
+    },
+    "header": {
+      "eyebrow": "智能体指南",
+      "title": "面向 AI 智能体",
+      "intro": "beUI 提供一套静态、对智能体友好的接口。你可以安装 beUI 技能、连接下方的 MCP 服务器，或直接调用原始端点。编程智能体（Claude、Codex、Cursor、Amp）可以列出组件、获取包含全部依赖的源码，并将文件放入用户的项目中。"
+    },
+    "agentSkill": {
+      "title": "智能体技能",
+      "body": "该技能教编程智能体先获取实时注册表，选出最接近的 <code>items[].name</code> 安装标识，用 shadcn 查看它，然后安装并基于生成的源码进行组合。当你希望智能体选用现有的 beUI 组件、而不是自行编写动效控件时，就使用它。"
+    },
+    "mcpServer": {
+      "title": "MCP 服务器",
+      "body": "最快的方式：连接 beUI MCP 服务器后，你的智能体即可直接列出、搜索和安装组件。服务地址为 <code>{url}</code>。",
+      "manual": "其他客户端：手动将其添加到你的 MCP 配置中。",
+      "toolsWithNative": "工具：<code>list_components</code>、<code>search_components</code>、<code>get_component</code>、<code>get_install_command</code>。针对 React Native 应用，<code>list_native_components</code> 和 <code>get_native_component</code> 会返回 beUI Native 组件及需要复制的全部文件。"
+    },
+    "endpoints": {
+      "title": "端点",
+      "open": "打开",
+      "llmsTxt": {
+        "label": "llms.txt",
+        "desc": "llmstxt.org 格式的 Markdown 索引。"
+      },
+      "registryIndex": {
+        "label": "注册表索引",
+        "desc": "包含所有组件的 JSON 目录。"
+      },
+      "componentDetail": {
+        "label": "组件详情",
+        "desc": "包含文件、依赖和源码的 JSON。"
+      },
+      "shadcnCatalog": {
+        "label": "shadcn 目录",
+        "desc": "兼容目录格式的注册表目录。"
+      },
+      "shadcnItem": {
+        "label": "shadcn 条目",
+        "desc": "内联文件内容并使用 shadcn 语义颜色类的安装条目。"
+      },
+      "rawSource": {
+        "label": "原始源码",
+        "desc": "可直接放入项目的纯文本 .tsx。"
+      }
+    },
+    "agentFlow": {
+      "title": "智能体流程",
+      "body": "四次调用，然后安装。组件自成一体，自带所需文件。"
+    },
+    "shadcnFlow": {
+      "title": "shadcn 流程",
+      "body": "shadcn 条目会安装源文件和包依赖。组件直接使用 shadcn 语义颜色工具类，因此会继承目标应用的主题，无需 beUI 专用的颜色变量。"
+    },
+    "entryShape": {
+      "title": "条目结构",
+      "body": "内部辅助模块（例如 <code>@/lib/utils</code>）以 <code>type: util</code> 形式内联提供，智能体无需逐个追踪导入。"
+    },
+    "generativeUi": {
+      "title": "生成式 UI",
+      "body": "想让模型把这些组件组合成实时界面？按照 <link>OpenUI 集成指南</link>注册自定义组件库、生成系统提示词，并在 OpenUI Lang 流式输出时渲染可交互的界面。"
+    }
+  },
+  "openui": {
+    "meta": {
+      "title": "OpenUI 集成指南",
+      "description": "使用 beUI 构建 OpenUI React 集成。注册动画组件、生成系统提示词、流式输出 OpenUI Lang，并渲染可交互的 UI。",
+      "imageAlt": "在 OpenUI 中使用 beUI"
+    },
+    "breadcrumb": {
+      "home": "首页",
+      "page": "OpenUI 集成"
+    },
+    "about": {
+      "integration": "OpenUI React 集成",
+      "library": "自定义 OpenUI 组件库",
+      "generativeUi": "生成式 UI"
+    },
+    "header": {
+      "eyebrow": "集成指南",
+      "title": "在 OpenUI 中使用 beUI",
+      "intro": "<link>OpenUI</link> 是一个生成式 UI 框架：模型不再返回 Markdown，而是输出一棵抽象的 UI 树（OpenUI Lang），再由 React 运行时把每个节点映射到<em>你</em>注册的组件。这套 OpenUI React 集成将 beUI 变成自定义的 OpenUI 组件库，让每次生成的响应都使用真实的动画组件，并且只使用你允许的组件。"
+    },
+    "install": {
+      "title": "安装",
+      "body": "你需要 OpenUI 的 React 运行时，以及想要开放的 beUI 组件。通过 shadcn 注册表拉取 beUI 源码（其他安装方式请参阅 <link>AI 智能体</link>指南）。",
+      "scaffold": "从零开始搭建？运行 <code>{command}</code> 获得一个可用的流式应用，再把其默认组件库替换为下方的 beUI 组件库。"
+    },
+    "registerComponents": {
+      "title": "注册组件",
+      "body": "<code>defineComponent</code> 将一个 OpenUI Lang 节点映射到一个 beUI 组件。Zod <code>props</code> 模式会在流式输出时校验模型的输出，<code>description</code> 会注入系统提示词，让模型理解每个组件的用途，而 <code>useTriggerAction</code> 让渲染出的控件保持可交互。将容器的子元素描述为已注册 <code>.ref</code> 模式的联合类型，这样嵌套关系既能被校验，也能告知模型。"
+    },
+    "assembleLibrary": {
+      "title": "组装组件库",
+      "body": "<code>createLibrary</code> 汇总所有定义、指定 <code>root</code> 节点，并将提示词组织为 <code>componentGroups</code>，附带说明以引导模型如何使用每个组件。"
+    },
+    "generatePrompt": {
+      "title": "生成提示词",
+      "body": "客户端负责渲染 OpenUI Lang，但它得由模型生成。在 CLI 中调用 <code>{command}</code> 构建组件库规格。后端会将组件签名、描述和嵌套约束与 OpenUI Lang 语法结合，再把模型的回复流式传回浏览器。",
+      "note": "组件库变更时重新运行该命令。它会在构建时将组件库序列化为 JSON，路由则通过同一个 <code>@/lib/generated</code> 路径导入该生成文件，因此服务端包永远不会导入你的客户端组件。"
+    },
+    "renderStream": {
+      "title": "渲染流",
+      "body": "在客户端将组件库传给 <code>{renderer}</code>。它会解析服务端流式输出的 OpenUI Lang，并随着 token 到达逐步渲染 beUI 组件。为 <code>onAction</code> 绑定处理函数，把按钮被按下时的消息发回模型，让循环继续。"
+    },
+    "whyBeui": {
+      "title": "为什么选择 beUI",
+      "body": "beUI 组件拥有自己的文件并通过注册表分发，因此无需额外接入运行时——上面的组件库<em>本身</em>就是集成。它们使用语义化控件和 shadcn 令牌，因此模型生成的 UI 会继承宿主应用的主题，无需额外配置。"
+    },
+    "resources": {
+      "title": "资源",
+      "open": "打开",
+      "openui": {
+        "label": "OpenUI",
+        "desc": "生成式 UI 框架及其 OpenUI Lang。"
+      },
+      "definingComponents": {
+        "label": "定义组件",
+        "desc": "完整的 defineComponent / createLibrary 参考。"
+      },
+      "shadcnChat": {
+        "label": "shadcn 聊天示例",
+        "desc": "本指南所遵循的注册表组件库模式。"
+      },
+      "more": "其他使用 shadcn 注册表的生成式 UI 框架也能以同样方式拉取 beUI——更多集成指南即将推出。"
+    }
+  },
+  "motionPatterns": {
+    "meta": {
+      "title": "动效指南",
+      "description": "面向 React 界面的实用动效指南：何时使用动画、选用哪个 beUI 令牌、时长范围、减弱动效，以及可直接复制的模式。",
+      "ogDescription": "关于 React 界面中有目的的动画、时长、缓动、弹簧和无障碍动效的实用指南。"
+    },
+    "header": {
+      "eyebrow": "动效指南",
+      "title": "动效用于说明，而非干扰",
+      "intro": "一份实用指南：判断何时该让元素动起来，选择合适的令牌，并交付快速、连贯且无障碍的动效。"
+    },
+    "sections": {
+      "decisionFramework": {
+        "eyebrow": "决策框架",
+        "title": "添加动效前的四个问题",
+        "description": "最好的动画决策，往往在调整时长或弹簧参数之前就已做出。"
+      },
+      "motionTokens": {
+        "eyebrow": "动效令牌",
+        "title": "处处使用同一种语言",
+        "description": "beUI 将有意设计的动效统一存放在共享令牌中。按用途选择令牌，让组件彼此协调，又不会动得一模一样。"
+      },
+      "timing": {
+        "eyebrow": "时长",
+        "title": "快到让人感觉即时",
+        "description": "时长取决于尺寸、距离和频率。这些范围只是起点，而不是需要机械套用的目标。"
+      },
+      "recipes": {
+        "eyebrow": "实践方案",
+        "title": "可直接复制的模式",
+        "description": "每个方案都将一个用途与一个生产级令牌、一种减弱动效状态以及一种具体的失败情形对应起来。"
+      },
+      "accessibility": {
+        "eyebrow": "无障碍",
+        "title": "减弱动效也是一种设计状态",
+        "description": "不要移除所有过渡。保留有助于理解的反馈，移除可能引起不适的位移。"
+      }
+    },
+    "decisions": {
+      "frequency": {
+        "title": "看频率",
+        "body": "重复操作应几乎即时。富有表现力的动效留给用户偶尔才会看到的时刻。",
+        "note": "一天 100 次：不要编排动画。少见的时刻：可以多些惊喜。"
+      },
+      "purpose": {
+        "title": "说清用途",
+        "body": "动效应当说明空间关系、确认输入、展示状态或柔化变化。仅仅为了装饰是不够的。",
+        "note": "如果说不清它为什么要动，就去掉这个动效。"
+      },
+      "physics": {
+        "title": "选择物理特性",
+        "body": "入场用 ease-out，移动用 ease-in-out，进度用 linear，手势用弹簧。",
+        "note": "曲线应匹配对象正在做的事，而不是个人喜好。"
+      },
+      "fallback": {
+        "title": "设计降级方案",
+        "body": "减弱动效时保留有用的透明度和颜色反馈，同时移除位移、缩放和视差。",
+        "note": "无障碍是一种动效状态，而不是事后补救。"
+      }
+    },
+    "timing": {
+      "interaction": "交互",
+      "range": "范围",
+      "desiredFeel": "预期感受",
+      "note": "界面动效默认应低于 300ms。更长的动效适用于讲解演示、有意为之的手势以及大范围的空间变化。",
+      "rows": {
+        "press": {
+          "use": "按压反馈",
+          "range": "100–160ms",
+          "feel": "即时且有实感"
+        },
+        "tooltip": {
+          "use": "工具提示 / 弹出层",
+          "range": "125–200ms",
+          "feel": "迅速，感知触发源"
+        },
+        "dropdown": {
+          "use": "下拉菜单 / 选择器",
+          "range": "150–250ms",
+          "feel": "响应迅速，无需等待"
+        },
+        "modal": {
+          "use": "模态框 / 抽屉",
+          "range": "200–500ms",
+          "feel": "留出足够时间说明空间关系"
+        },
+        "marketing": {
+          "use": "营销演示",
+          "range": "灵活",
+          "feel": "清晰比速度更重要"
+        }
+      }
+    },
+    "easing": {
+      "title": "对比曲线",
+      "subtitle": "距离和时长相同，用途不同。",
+      "easeOut": "入场和退场立即响应，然后安静地停稳。",
+      "easeInOut": "已在屏幕上的对象自然地加速和减速。",
+      "springPress": "为按钮和其他可按压表面提供快速、有分量的反馈。",
+      "springLayout": "适用于需要连续空间移动的共享表面和指示器。"
+    },
+    "recipes": {
+      "purpose": "用途",
+      "avoid": "避免",
+      "viewRecipe": "查看方案",
+      "press": {
+        "title": "按压反馈",
+        "eyebrow": "反馈",
+        "description": "按压应在操作完成前就确认输入。缩放幅度要小，响应要即时。",
+        "purpose": "确认界面接收到了用户的操作。",
+        "avoid": "大幅缩放、缓慢回弹，或给每个子元素都加弹簧。"
+      },
+      "icon": {
+        "title": "语义化图标动效",
+        "eyebrow": "含义",
+        "description": "让图标模仿它真实的动作。铃铛绕铰链摆动；下载箭头落向托盘。",
+        "purpose": "无需额外标签即可强化操作的含义。",
+        "avoid": "所有图标都用同一种通用弹跳，或在触摸悬停时触发动效。"
+      },
+      "reveal": {
+        "title": "内容显现",
+        "eyebrow": "入场",
+        "description": "用短距离上浮和克制的模糊显现一个有意义的表面。动效应在成为焦点之前结束。",
+        "purpose": "避免新内容以突兀的硬切方式出现。",
+        "avoid": "长达半秒的界面入场，或给每个小子元素都加上长时间的交错。"
+      },
+      "layout": {
+        "title": "布局连续性",
+        "eyebrow": "移动",
+        "description": "在表面尺寸变化时保持同一表面可见。先移动形状，再引入标签。",
+        "purpose": "在紧凑控件展开时保留对象的身份。",
+        "avoid": "直接对宽度做补间，或文字在表面腾出空间前就出现。"
+      },
+      "swap": {
+        "title": "内容切换",
+        "eyebrow": "状态变化",
+        "description": "对于小范围的视图变化，让旧内容离开得比新内容进入更快。位移控制在几个像素以内。",
+        "purpose": "表明内容已变化，而周围的上下文保持不动。",
+        "avoid": "在标签页、筛选器或频繁切换的视图上使用类似整页切换的大幅过渡。"
+      }
+    },
+    "accessibility": {
+      "title": "保留含义，去掉位移。",
+      "body": "保留透明度、颜色和即时状态变化。去掉视差、大幅变换、重复缩放和弹簧过冲。"
+    },
+    "demos": {
+      "replay": "重播",
+      "pressMe": "按我",
+      "hoverBell": "悬停铃铛",
+      "newSurface": "新表面",
+      "readyBeforeFocus": "在获得焦点前就绪。",
+      "expandPanel": "展开面板",
+      "collapsePanel": "收起面板",
+      "openPanel": "打开面板",
+      "exampleViews": "示例视图",
+      "preview": "预览",
+      "code": "代码",
+      "livePreview": "实时组件视图",
+      "copyReadySource": "可直接复制的源码"
+    }
+  },
+  "sponsors": {
+    "meta": {
+      "title": "赞助商",
+      "description": "通过 Dodo Payments、GitHub Sponsors 或加密货币按月赞助，支持 beUI 的开发。"
+    },
+    "checkout": {
+      "title": "赞助付款已完成",
+      "body": "感谢你赞助 beUI。我会尽快联系你，获取 Logo 素材并确认展示位置。"
+    },
+    "hero": {
+      "eyebrow": "赞助商",
+      "title": "支持 beUI",
+      "body": "beUI 免费且开源。按月赞助一个档位，即可触达正在浏览动效组件、区块和注册表安装的活跃开发者。",
+      "githubCta": "在 GitHub 上赞助"
+    },
+    "planCard": {
+      "highestImpact": "影响力最高",
+      "perMonth": "/月",
+      "sponsorAs": "以 {name} 身份赞助",
+      "requestLink": "申请付款链接",
+      "full": "已满"
+    },
+    "plans": {
+      "diamond": {
+        "name": "钻石",
+        "description": "为希望 Logo 出现在最醒目赞助位的团队提供最高曝光。",
+        "benefits": {
+          "sponsorsPage": "赞助商页面上最大的 Logo 展示位",
+          "docsSidebar": "文档侧边栏中最大的 Logo 展示位",
+          "readme": "README 中最大的 Logo 展示位",
+          "shoutout": "赞助后在 X 上公开致谢",
+          "priorityFeedback": "需求优先反馈渠道",
+          "homePage": "首页 Logo 展示位，紧邻首屏下方"
+        }
+      },
+      "platinum": {
+        "name": "铂金",
+        "description": "为支持精致开源 UI 的产品团队提供醒目的展示位。",
+        "benefits": {
+          "sponsorsPage": "赞助商页面上较大的 Logo 展示位",
+          "docsSidebar": "文档侧边栏中的大尺寸 Logo 展示位",
+          "readme": "README 中较大的 Logo 展示位",
+          "shoutout": "赞助后在 X 上公开致谢"
+        }
+      },
+      "silver": {
+        "name": "白银",
+        "description": "以简单的方式支持持续的组件开发，并公开列名。",
+        "benefits": {
+          "sponsorsPage": "赞助商页面上的 Logo",
+          "docsSidebar": "文档侧边栏中的 Logo 展示位",
+          "readme": "README 中的 Logo",
+          "publicListing": "公开赞助商名单"
+        }
+      }
+    },
+    "crypto": "加密货币",
+    "sponsorTaglines": {
+      "tracwell": "将访客洞察转化为增长",
+      "illos": "为产品网站打造的动画插画"
+    },
+    "slotsOpen": "剩余 {open}/{slots} 个名额",
+    "allSlotsTaken": "名额已满",
+    "plansLabel": "赞助方案",
+    "audience": {
+      "title": "受众",
+      "updated": "数据来自 Tracwell，更新于 {date}",
+      "lastDays": "最近 {days} 天",
+      "visitors": "访客",
+      "pageViews": "页面浏览量",
+      "moreThan": "超过 {value}"
+    },
+    "openSlot": {
+      "title": "你的 Logo 展示位",
+      "price": "{tier} · {price}/月",
+      "viewPlan": "查看方案"
+    }
+  },
+  "playground": {
+    "meta": {
+      "title": "演练场",
+      "description": "调整弹簧、补间和交错属性，观看播放效果，并复制动效代码。基于 beUI 的动效令牌构建。"
+    },
+    "header": {
+      "title": "演练场",
+      "body": "在动手中学习动效。调整一个属性，观看运行效果，逐行了解代码在做什么，然后复制它。"
+    },
+    "howItWorks": "工作原理",
+    "try": "试一试",
+    "soon": "即将推出",
+    "preview": "预览",
+    "replay": "重播",
+    "controls": {
+      "checkpoint": "检查点 {index}",
+      "checkpointStart": "检查点 {index}（起点）",
+      "checkpointEnd": "检查点 {index}（终点）",
+      "removeCheckpoint": "移除检查点 {index}",
+      "addCheckpoint": "添加检查点",
+      "curveEditor": "缓动曲线编辑器"
+    },
+    "travel": {
+      "start": "起点",
+      "target": "目标"
+    },
+    "spring": {
+      "label": "弹簧",
+      "blurb": "基于物理的动效。刚度将对象拉向目标，阻尼产生阻力，质量增加分量。阻尼越低，越容易过冲。",
+      "controls": {
+        "stiffness": {
+          "label": "刚度",
+          "hint": "拉向目标的力度。越高 = 越快、越干脆。"
+        },
+        "damping": {
+          "label": "阻尼",
+          "hint": "阻力 / 摩擦。越低 = 弹跳和过冲越多。"
+        },
+        "mass": {
+          "label": "质量",
+          "hint": "对象的重量。越重 = 越慢、越迟缓。"
+        }
+      },
+      "presets": {
+        "gentle": "柔和",
+        "wobbly": "摇晃",
+        "stiff": "紧绷",
+        "slow": "缓慢"
+      },
+      "explain": {
+        "type": "这里没有时长。方块不是在固定时间内移动，而是像挂在真实弹簧上一样被拉向目标。下面三个数值决定了它的手感。",
+        "stiffness": "弹簧拉动的力度。{value} {level, select, soft {偏软，因此移动缓慢} medium {适中} other {较强，因此会迅速弹到位}}。越高 = 越快、越急促。",
+        "damping": "让弹簧减速的摩擦力。{level, select, low {{value} 较低，因此方块会冲过目标并来回弹跳后才停稳。} medium {{value} 会带来轻微过冲，然后停稳。} other {{value} 较高，因此会平缓地到位，没有弹跳。}}",
+        "mass": "方块的重量。{level, select, light {{value} 较轻，因此反应迅速。} heavy {{value} 较重，因此显得迟缓、启动慢。} other {{value} 是中等重量。}}越重 = 越慢、惯性越大。"
+      }
+    },
+    "tween": {
+      "label": "补间 / 缓动",
+      "blurb": "基于时间的动效。时长决定持续多久；cubic-bezier 曲线决定节奏。拖动手柄来调整曲线形状。",
+      "controls": {
+        "duration": {
+          "label": "时长",
+          "hint": "动画从开始到结束所需的时间。"
+        },
+        "curve": {
+          "label": "缓动曲线",
+          "hint": "随时间变化的节奏。拖动手柄——陡峭 = 快，平缓 = 慢。"
+        }
+      },
+      "curves": {
+        "linear": "全程匀速。机械感，没有加速。",
+        "easeIn": "开始慢，越到结尾越快。适合离场的元素。",
+        "easeOut": "开始快，结尾逐渐放慢。适合入场的元素。",
+        "easeInOut": "开头和结尾慢，中间快。顺滑自然。",
+        "customTitle": "自定义",
+        "custom": "你自己的节奏。曲线越陡的部分移动越快。"
+      },
+      "explain": {
+        "duration": "固定的时间，单位为秒。无论距离多远，整个移动始终耗时 {value}s。（弹簧没有这个参数，补间才有。）",
+        "ease": "缓动曲线，以 cubic-bezier 形式表示。四个数值是两个控制手柄（x1, y1, x2, y2），决定速度随时间如何变化。你很少需要手动输入，直接拖动曲线手柄即可。",
+        "curve": "这条曲线属于“{title}”：{text} 预览中的圆点是方块在等间隔时间片上的位置，间距反映了速度。"
+      }
+    },
+    "stagger": {
+      "label": "交错",
+      "blurb": "子元素依次播放动画。交错值设定每个子元素之间的间隔；延迟让整组在开始前先等待。",
+      "controls": {
+        "count": {
+          "label": "子元素",
+          "hint": "参与入场动画的元素数量。"
+        },
+        "stagger": {
+          "label": "交错",
+          "hint": "相邻子元素开始的间隔。越高 = 波浪感越强。"
+        },
+        "delayChildren": {
+          "label": "延迟",
+          "hint": "整组开始前的停顿。"
+        },
+        "direction": {
+          "label": "方向",
+          "hint": "子元素触发的顺序。",
+          "forward": "正向",
+          "reverse": "反向"
+        }
+      },
+      "presets": {
+        "tight": "紧凑",
+        "relaxed": "舒缓",
+        "dramatic": "夸张"
+      },
+      "explain": {
+        "variants": "两个命名状态。“hidden” 是起点（不可见、缩小、略微下移），“show” 是终点。每个子元素都从 hidden 动画到 show——你描述的是状态，而不是步骤。",
+        "staggerChildren": "相邻子元素开始的间隔，单位为秒。它们不会同时触发——第 2 个子元素会在第 1 个之后等待 {value}s，依此类推，形成波浪。",
+        "delayChildren": "整组在第一个子元素开始前等待的时间。{immediate, select, yes {0 = 立即开始。} other {这里开头有 {value}s 的空白时间。}}",
+        "summaryCode": "{count} 个元素，{direction, select, reverse {反向} other {正向}}",
+        "summary": "{count} 个子元素，间隔 {stagger}s{delayed, select, yes {，延迟 {delay}s 后开始} other {}}，最后一个在 {last}s 时开始。{direction, select, reverse {反向表示最后一个子元素最先触发。} other {正向表示从第一个到最后一个依次触发。}}"
+      }
+    },
+    "keyframes": {
+      "label": "关键帧",
+      "blurb": "属性按顺序经过一组值，在整个时长内均匀分布。编辑这组值即可改变它的路径。",
+      "controls": {
+        "property": {
+          "label": "属性",
+          "hint": "关键帧驱动的属性。切换属性会重置数值。"
+        },
+        "frames": {
+          "label": "关键帧数值",
+          "hint": "每个滑块都是方块依次经过的一个检查点。拖动滑块，或添加/移除检查点。"
+        },
+        "duration": {
+          "label": "时长",
+          "hint": "完整经过所有数值一次所需的时间。"
+        },
+        "repeat": {
+          "label": "重复",
+          "hint": "播放一次、从头循环，或来回镜像播放。",
+          "once": "一次",
+          "loop": "循环",
+          "mirror": "镜像"
+        }
+      },
+      "presets": {
+        "pulse": "脉冲",
+        "spin": "旋转",
+        "blink": "闪烁"
+      },
+      "describe": {
+        "scale": "{percent}% 大小{trend, select, bigger {，变大} smaller {，变小} other {，正常}}",
+        "opacity": "{percent}% 可见{state, select, invisible {，不可见} solid {，完全不透明} other {}}",
+        "rotate": "旋转 {value}°{upright, select, yes {，正立} other {}}",
+        "x": "{side, select, right {起点右侧 {value}px} left {起点左侧 {value}px} other {起点位置（{value}px）}}"
+      },
+      "read": {
+        "scale": "{value}（{percent}% 大小{trend, select, bigger {，变大} smaller {，变小} other {，正常}}）",
+        "opacity": "{value}（{percent}% 可见）"
+      },
+      "explain": {
+        "sequence": "这个数组是方块依次经过的一组值：{sequence}。它不是“从 A 到 B”——而是把每个值都当作检查点逐一经过。",
+        "countCode": "{count} 个关键帧，历时 {duration}s",
+        "spacing": "这些值在整个时长内均匀分布。{count} 个值历时 {duration}s，意味着每段约 {leg}s。添加或移除数值即可改变路径。",
+        "loop": "循环：到达最后一个值后跳回第一个值重新运行——因此衔接处可能会突然跳变。",
+        "mirror": "镜像：先正向播放，再反向，再正向——平滑无跳变，像脉冲一样。",
+        "once": "一次：只运行一次，并停在最后一个值上。"
+      }
+    },
+    "gestures": {
+      "label": "手势",
+      "blurb": "动效响应指针输入。whileHover 和 whileTap 会在手势期间动画到某个状态；drag 让元素可以被拖拽抛出。",
+      "box": "拖动",
+      "controls": {
+        "hover": {
+          "label": "悬停缩放",
+          "hint": "指针悬停时的大小。"
+        },
+        "tap": {
+          "label": "点按缩放",
+          "hint": "按下时的大小。小于 1 = 按入效果。"
+        },
+        "drag": {
+          "label": "拖动",
+          "hint": "将拖动限制在某个轴上、自由拖动或关闭。",
+          "off": "关闭",
+          "x": "仅 X 轴",
+          "y": "仅 Y 轴",
+          "free": "自由"
+        }
+      },
+      "presets": {
+        "subtle": "细微",
+        "pop": "弹出"
+      },
+      "explain": {
+        "hover": "指针悬停在方块上时，动画到 {value}× 大小（{percent}%）。指针离开后它会弹回正常大小——无需状态或事件处理函数。",
+        "tap": "按下时变为 {value}× 大小。{pressIn, select, yes {小于 1 = 按入效果，带来真实按钮的触感。} other {为 1 时按下不会变化。}}",
+        "dragOff": "拖动已关闭。",
+        "drag": "让方块可拖动{mode, select, free {，可朝任意方向} other {，仅限 {mode} 轴}}。dragConstraints 将它限制在父元素内，被抛出边界时会弹回。"
+      }
+    },
+    "layout": {
+      "label": "布局",
+      "blurb": "当挂载的元素发生变化时，共享的 layoutId 会让一个元素变形为另一个，使指示器在位置之间滑动，而不是跳变。",
+      "tab": "标签 {index}",
+      "clickTab": "点击一个标签",
+      "controls": {
+        "feel": {
+          "label": "手感",
+          "hint": "胶囊移动时使用的过渡。",
+          "snappy": "干脆",
+          "smooth": "顺滑",
+          "slow": "缓慢"
+        }
+      },
+      "explain": {
+        "layoutId": "核心思路。只渲染一个胶囊——位于当前激活的标签下。点击另一个标签时，React 会在这里卸载它、在那里挂载它，但共享的 layoutId 告诉 Motion 它们是同一个元素，因此会在两个位置之间做动画，而不是突然出现。",
+        "conditional": "胶囊只存在于当前激活的标签内。你无需自己计算任何位置或偏移——Motion 会测量新旧位置并自动补间其间的距离。",
+        "transitionCode": "过渡（{feel}）",
+        "transition": "控制胶囊如何移动。{feel, select, Slow {定时补间——每次移动时长相同。} Snappy {弹簧——刚度高，因此迅速到位。} other {弹簧——更柔和，因此平滑滑动。}}"
+      }
+    },
+    "scroll": {
+      "label": "滚动",
+      "blurb": "滚动联动动效将某个值与滚动位置绑定。useScroll 报告 0→1 的进度；useTransform 将该范围映射到变换上。",
+      "scrollDown": "向下滚动 ↓",
+      "controls": {
+        "effect": {
+          "label": "效果",
+          "hint": "面板滚动时方块的变化。",
+          "fade": "淡入",
+          "scale": "缩放",
+          "slide": "滑动",
+          "rotate": "旋转"
+        }
+      },
+      "range": {
+        "fadeStart": "15% 可见",
+        "fadeEnd": "完全可见",
+        "scaleStart": "60% 大小",
+        "scaleEnd": "原始大小",
+        "slideStart": "偏左 70px",
+        "slideEnd": "原位",
+        "rotateStart": "0°",
+        "rotateEnd": "180°"
+      },
+      "explain": {
+        "useScroll": "监听面板的滚动距离，并返回 scrollYProgress：一个从 0（滚动到顶部）到 1（滚动到底部）的数值。它在每一帧滚动时更新。",
+        "useTransform": "将 0→1 的进度重新映射到实际的数值范围。进度从 0 变到 1 时，{prop} 在 {range} 范围内随之变化——因此在顶部是 {start}，在底部是 {end}。",
+        "style": "映射后的值是一个实时 motion value，直接绑定到方块的 style 上，因此会精确跟随你的滚动——向上滚动时它会反向运行。"
+      }
+    },
+    "motionTypes": "动效类型"
+  },
+  "nativeSetup": {
+    "meta": {
+      "title": "在 React Native 应用中配置 beUI Native",
+      "description": "beUI Native 的一次性配置：安装 Reanimated、Gesture Handler 和 Uniwind，配置 Metro，添加主题令牌，然后复制任意组件。",
+      "imageAlt": "配置 beUI Native"
+    },
+    "breadcrumb": {
+      "home": "首页",
+      "page": "React Native 配置"
+    },
+    "header": {
+      "eyebrow": "React Native",
+      "title": "配置 beUI Native",
+      "intro": "与 Web 组件一样，beUI Native 组件是复制到你应用中的普通源码。每个应用只需完成一次下方的配置，之后添加组件只需从其页面复制文件。可在 Expo 和纯 React Native 中使用。"
+    },
+    "requirements": {
+      "title": "环境要求",
+      "body": "组件基于以下版本构建和测试。"
+    },
+    "install": {
+      "title": "1. 安装依赖库",
+      "body": "在 Expo 应用中，<code>expo install</code> 会选择与你的 SDK 匹配的版本。Uniwind 和 Tailwind 从 npm 安装。",
+      "babelNote": "Expo 的 Babel 预设已包含 Reanimated 4 所需的 Worklets 插件。在纯 React Native 应用中，需要自行将其添加到 <code>babel.config.js</code>："
+    },
+    "uniwind": {
+      "title": "2. 配置 Uniwind",
+      "body": "组件通过 <link>Uniwind</link> 使用 Tailwind 类名设置样式。在项目根目录创建 <code>global.css</code>，它会加载 Tailwind、Uniwind 以及你将在下一步添加的 beUI 主题。",
+      "metro": "然后让 Metro 指向它。如果你还使用了其他 Metro 包装器，<code>withUniwindConfig</code> 必须位于最外层，且 <code>cssEntryFile</code> 必须是相对路径。",
+      "bareNote": "在纯 React Native 应用中，默认配置改为来自 <code>@react-native/metro-config</code>：",
+      "typesNote": "Uniwind 会在 Metro 启动时将类名类型写入 <code>dtsFile</code>，因此在检查类型前先启动一次 Metro。如果之后 TypeScript 仍找不到 <code>global.css</code> 的导入，请声明 CSS 文件："
+    },
+    "theme": {
+      "title": "3. 添加主题令牌",
+      "body": "组件使用 <code>bg-primary</code>、<code>text-muted</code> 等语义颜色，并为浅色和深色模式分别定义，因此会跟随系统外观。将此文件保存为 <code>{path}</code>，即 <code>global.css</code> 导入的路径，并修改其中的值以匹配你的品牌。"
+    },
+    "root": {
+      "title": "4. 包裹你的应用",
+      "body": "在根组件中导入 <code>global.css</code>，而不是在注册应用的文件中导入，否则每次修改样式都会重新加载整个应用。用 <code>GestureHandlerRootView</code> 包裹应用，让可滑动和可拖拽的组件能够接收手势。使用 Expo Router 时，两者都放在根布局中：",
+      "bareNote": "在纯 React Native 应用中，在 <code>App.tsx</code> 中进行同样的操作。如果有表单，还需用 <link>react-native-keyboard-controller</link> 的 <code>KeyboardProvider</code> 包裹应用，让获得焦点的输入框保持在键盘上方。"
+    },
+    "addComponent": {
+      "title": "5. 添加组件",
+      "cli": "在应用根目录运行 beUI Native CLI。它会将组件及其所需的共享文件复制到 <code>src/</code>，并安装你尚未安装的库。",
+      "manual": "如果想手动复制文件，请在 <link>React Native 组件</link>中打开对应组件，按其手动步骤操作。无论哪种方式，都请保持目录结构不变，因为组件通过相对路径导入共享文件。以 Tabs 为例，最终结构如下：",
+      "treeLabel": "你的应用",
+      "usage": "然后像使用其他组件一样使用它：",
+      "sourceNote": "Tailwind 会在 <code>global.css</code> 所在目录下的文件中查找类名。如果组件位于其他位置，例如 <code>app/</code>，请为组件添加一条 <code>@source</code>："
+    },
+    "tryFirst": {
+      "title": "复制前先试用",
+      "body": "每个 <componentsLink>React Native 组件</componentsLink>页面都有浅色和深色模式的录屏，让你先看到动效。编程智能体可以从 <code>{url}</code> 或通过 beUI MCP 服务器获取任意组件及其安装命令和文件。详见<agentLink>智能体指南</agentLink>。",
+      "note": "所有组件都会遵循系统的“减少动态效果”设置，并支持 <code>disableAnimation</code> 属性。源码托管在 <link>GitHub</link> 上。"
+    }
+  }
+}

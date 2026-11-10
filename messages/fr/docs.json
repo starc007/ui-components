@@ -1,0 +1,144 @@
+{
+  "breadcrumb": "Fil d’Ariane",
+  "newBadge": "Nouveau",
+  "category": {
+    "new": "Nouveau",
+    "ogImageAlt": "Composants {name} par beUI",
+    "motion": {
+      "title": "Composants React animés — UI animée à copier-coller",
+      "heading": "Composants React animés",
+      "description": "Découvrez des composants React animés, gratuits et open source, conçus avec Motion et Tailwind CSS. Copiez le code TypeScript dans votre app et personnalisez chaque interaction.",
+      "allLabel": "Tous les composants animés"
+    },
+    "blocks": {
+      "title": "Blocs d’UI React animés — prêts pour la production",
+      "heading": "Blocs d’UI React animés",
+      "description": "Découvrez des blocs React animés prêts pour la production, conçus avec Motion et Tailwind CSS. Copiez des interactions complètes dans votre app et adaptez le code à votre produit.",
+      "allLabel": "Tous les blocs animés"
+    },
+    "agents": {
+      "title": "Composants pour agents IA — interfaces IA animées en React",
+      "heading": "Composants animés pour agents IA",
+      "description": "Créez des expériences IA claires et réactives avec des composants React open source pour le raisonnement, la progression, l’activité des outils et les états de conversation des agents.",
+      "allLabel": "Tous les composants pour agents"
+    },
+    "agentGroups": {
+      "conversation": {
+        "title": "Composants de conversation",
+        "description": "Rédigez des prompts, organisez les messages selon leur expéditeur, façonnez les surfaces de conversation et gardez les tours streamés stables pendant que le lecteur parcourt la transcription."
+      },
+      "responses": {
+        "title": "Composants de réponse et de sources",
+        "description": "Affichez des réponses riches au fil de leur arrivée, révélez les actions de fin au bon moment et reliez les affirmations générées à des sources vérifiables."
+      },
+      "progress": {
+        "title": "Composants de progression et de planification",
+        "description": "Signalez les attentes de durée inconnue, les plans de tâches persistants et l’activité chronologique de l’agent, sans inventer de précision ni exposer une trace brute."
+      },
+      "tools": {
+        "title": "Composants d’outils et de code",
+        "description": "Présentez les résultats d’exécution, le code généré et les modifications de fichiers avec un streaming borné, une coloration stable et des états de fin inspectables."
+      },
+      "humanControl": {
+        "title": "Composants human-in-the-loop",
+        "description": "Mettez le travail de l’agent en pause pour une autorisation ciblée, une clarification, une revue ou une décision, puis conservez le résultat dans l’historique d’exécution."
+      }
+    },
+    "charts": {
+      "title": "Graphiques React animés — heatmaps et objectifs de cours",
+      "heading": "Graphiques React animés",
+      "description": "Découvrez des heatmaps d’activité, des rendements mensuels et des graphiques d’objectifs de cours interactifs. Copiez le code React et adaptez-le à vos données.",
+      "allLabel": "Tous les graphiques"
+    },
+    "casino": {
+      "title": "Jeux de casino animés en React : Crash, Mines, Plinko et Slide",
+      "heading": "Jeux de casino animés en React",
+      "description": "Découvrez des jeux animés de crash, mines, plinko et slide avec des résultats équitables intégrés ou décidés par le serveur. Copiez le code source React et branchez-le sur votre propre logique de jeu.",
+      "allLabel": "Tous les jeux de casino"
+    }
+  },
+  "component": {
+    "metaDescription": "{description} Composant d’animation gratuit et open source pour React et Next.js. Copiez-collez le code source ou installez-le avec shadcn.",
+    "ogImageAlt": "Aperçu du composant {name}",
+    "preview": "Aperçu",
+    "usage": "Utilisation",
+    "code": "Code",
+    "install": "Installation",
+    "installDescription": "Ajoutez-le avec la CLI shadcn, ou copiez le code source manuellement.",
+    "apiReference": "Référence de l’API",
+    "composition": "Composition",
+    "howItWorks": "Fonctionnement",
+    "note": "Remarque :",
+    "relatedComponents": "Composants associés",
+    "updated": "Mis à jour le <time>{date}</time>",
+    "seoTitle": "{name} animé pour React",
+    "contributedBy": "Proposé par",
+    "includesDesignsBy": "Inclut des designs de",
+    "opensInNewTab": "(s’ouvre dans un nouvel onglet)",
+    "alsoOnNative": "Aussi disponible sur React Native."
+  },
+  "install": {
+    "cli": "CLI",
+    "manual": "Manuel",
+    "themeNotice": "Nécessite les tokens du thème une seule fois. Vous avez déjà lancé <code>shadcn init</code> ? Tout est prêt. <link>Configuration du thème</link>",
+    "dependencies": "Installer les dépendances",
+    "utilFiles": "{count, plural, one {Ajouter le fichier utilitaire} other {Ajouter les fichiers utilitaires}}",
+    "sourceCode": "Copier le code source"
+  },
+  "copyButton": {
+    "copy": "Copier le code",
+    "copied": "Copié"
+  },
+  "expandCode": "Afficher le code",
+  "copyPage": {
+    "copy": "Copier la page",
+    "tryAgain": "Réessayer",
+    "copyAria": "Copier la page en Markdown",
+    "copiedAria": "Page copiée",
+    "errorAria": "Échec de la copie. Réessayez",
+    "moreActions": "Autres actions sur la page",
+    "menu": "Actions sur la page",
+    "viewMarkdown": "Voir en Markdown",
+    "openIn": "Ouvrir dans {app}"
+  },
+  "keepInMind": {
+    "title": "À noter",
+    "body": "Certains composants de ce site s’inspirent de travaux existants sur le web ou les recréent. Je ne cherche pas à m’en attribuer le mérite : juste à apprendre, expérimenter et parfois aller un peu plus loin. Si quelque chose vous semble familier et que j’ai oublié de vous citer, <link>contactez-moi</link> et je corrigerai ça tout de suite."
+  },
+  "proCard": {
+    "heading": "Offre limitée",
+    "summary": "Plus de 350 blocs et composants animés premium pour React et Next.js.",
+    "price": "179 $ en accès à vie",
+    "explore": "Découvrir beUI Pro"
+  },
+  "proMobileCard": {
+    "title": "Besoin d’écrans complets ?",
+    "description": "Plus de 60 blocs et écrans React Native, de l’onboarding aux paywalls en passant par le profil et le paiement, sont disponibles dans beUI Pro pour mobile.",
+    "cta": "Découvrir beUI Pro Mobile"
+  },
+  "sponsorCard": {
+    "title": "Sponsors",
+    "tier": "Diamond",
+    "become": "Devenir sponsor",
+    "taglines": {
+      "tracwell": "Des insights visiteurs pour votre croissance",
+      "illos": "Illustrations animées pour sites produit"
+    }
+  },
+  "pager": {
+    "label": "Composants précédent et suivant",
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+  "previewExpand": {
+    "expand": "Agrandir l’aperçu",
+    "replay": "Rejouer l’aperçu",
+    "exit": "Quitter l’aperçu agrandi",
+    "exitTitle": "Quitter (Échap)"
+  },
+  "propsTable": {
+    "prop": "Prop",
+    "type": "Type",
+    "default": "Défaut"
+  }
+}

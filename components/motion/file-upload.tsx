@@ -19,6 +19,7 @@ import {
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useId, useRef, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export type FileUploadStatus = "queued" | "uploading" | "success" | "error";
@@ -63,19 +64,38 @@ export interface FileUploadProps {
   title?: string;
   description?: string;
   browseLabel?: string;
+  /** Override any built-in string. `{name}` fills the per-file labels; `{count}` and `{max}` fill `limitDescription`. */
+  labels?: Partial<FileUploadMessages>;
   className?: string;
   classNames?: FileUploadClassNames;
 }
 
-const ROW_TRANSITION = { duration: 0.22, ease: EASE_OUT } as const;
-const FAST_TRANSITION = { duration: 0.16, ease: EASE_OUT } as const;
-
-const STATUS_LABEL: Record<FileUploadStatus, string> = {
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const fileUploadMessages = {
+  title: "Drop files here",
+  description: "Add files to the upload queue",
+  browse: "Browse",
+  input: "Upload files",
+  limitTitle: "Upload limit reached",
+  limitDescription: "{count} of {max} files added",
   queued: "Queued",
   uploading: "Uploading",
   success: "Uploaded",
   error: "Failed",
+  retry: "Retry {name}",
+  remove: "Remove {name}",
+  progress: "{name} upload progress",
 };
+
+export type FileUploadMessages = typeof fileUploadMessages;
+
+type Translate = (
+  key: keyof FileUploadMessages,
+  values?: Record<string, string | number>,
+) => string;
+
+const ROW_TRANSITION = { duration: 0.22, ease: EASE_OUT } as const;
+const FAST_TRANSITION = { duration: 0.16, ease: EASE_OUT } as const;
 
 const STATUS_TONE: Record<FileUploadStatus, string> = {
   queued: "text-muted-foreground",
@@ -117,19 +137,26 @@ function clampProgress(value: number | undefined, status: FileUploadStatus) {
   return Math.max(0, Math.min(100, value));
 }
 
-function formatBytes(bytes: number) {
-  if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
+const UNITS = ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"] as const;
 
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  const exponent = Math.min(
-    Math.floor(Math.log(bytes) / Math.log(1024)),
-    units.length - 1,
-  );
-  const value = bytes / 1024 ** exponent;
+/** `locale` localizes digits and unit names; without it the English `KB`/`MB` form stays. */
+function formatBytes(bytes: number, locale?: string) {
+  const positive = Number.isFinite(bytes) && bytes > 0;
+  const exponent = positive
+    ? Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), UNITS.length - 1)
+    : 0;
+  const value = positive ? bytes / 1024 ** exponent : 0;
+  const digits = value >= 10 || exponent === 0 ? 0 : 1;
 
-  return `${value >= 10 || exponent === 0 ? value.toFixed(0) : value.toFixed(1)} ${
-    units[exponent]
-  }`;
+  if (!locale) {
+    return `${value.toFixed(digits)} ${["B", "KB", "MB", "GB", "TB"][exponent]}`;
+  }
+  return new Intl.NumberFormat(locale, {
+    style: "unit",
+    unit: UNITS[exponent],
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value);
 }
 
 function fileKind(item: FileUploadItem) {
@@ -208,9 +235,11 @@ export function createFileUploadItem(file: File, index = 0): FileUploadItem {
 function StatusIcon({
   status,
   reduce,
+  t,
 }: {
   status: FileUploadStatus;
   reduce: boolean;
+  t: Translate;
 }) {
   const iconClassName = "h-4 w-4";
 
@@ -247,7 +276,7 @@ function StatusIcon({
         ) : (
           <FileIcon className={iconClassName} />
         )}
-        <span className="sr-only">{STATUS_LABEL[status]}</span>
+        <span className="sr-only">{t(status)}</span>
       </motion.span>
     </AnimatePresence>
   );
@@ -258,13 +287,16 @@ function FileUploadRow({
   onRemove,
   onRetry,
   classNames,
+  t,
 }: {
   item: FileUploadItem;
   onRemove: (item: FileUploadItem) => void;
   onRetry: (item: FileUploadItem) => void;
   classNames?: FileUploadClassNames;
+  t: Translate;
 }) {
   const reduce = useReducedMotion() ?? false;
+  const { locale } = useLocale();
   const status = item.status ?? "queued";
   const progress = clampProgress(item.progress, status);
   const progressRatio = progress / 100;
@@ -314,18 +346,18 @@ function FileUploadRow({
                   classNames?.meta,
                 )}
               >
-                {fileKind(item)} · {formatBytes(item.size)}
+                {fileKind(item)} · {formatBytes(item.size, locale)}
                 {status === "error" && item.error ? ` · ${item.error}` : null}
               </p>
             </div>
 
             <div className="flex shrink-0 items-center gap-1">
-              <StatusIcon status={status} reduce={reduce} />
+              <StatusIcon status={status} reduce={reduce} t={t} />
               {status === "error" ? (
                 <button
                   type="button"
                   onClick={() => onRetry(item)}
-                  aria-label={`Retry ${item.name}`}
+                  aria-label={t("retry", { name: item.name })}
                   className={cn(
                     "grid h-7 w-7 place-items-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground active:scale-95",
                     classNames?.action,
@@ -337,7 +369,7 @@ function FileUploadRow({
               <button
                 type="button"
                 onClick={() => onRemove(item)}
-                aria-label={`Remove ${item.name}`}
+                aria-label={t("remove", { name: item.name })}
                 className={cn(
                   "grid h-7 w-7 place-items-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground active:scale-95",
                   classNames?.action,
@@ -354,7 +386,7 @@ function FileUploadRow({
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={Math.round(progress)}
-              aria-label={`${item.name} upload progress`}
+              aria-label={t("progress", { name: item.name })}
               className={cn(
                 "mt-3 h-1.5 overflow-hidden rounded-full bg-muted",
                 classNames?.progress,
@@ -397,12 +429,14 @@ export function FileUpload({
   maxFiles,
   disabled = false,
   variant = "default",
-  title = "Drop files here",
-  description = "Add files to the upload queue",
-  browseLabel = "Browse",
+  title,
+  description,
+  browseLabel,
+  labels,
   className,
   classNames,
 }: FileUploadProps) {
+  const t = useMessages("fileUpload", fileUploadMessages, labels);
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const dragDepthRef = useRef(0);
@@ -482,7 +516,7 @@ export function FileUpload({
         ref={inputRef}
         id={inputId}
         type="file"
-        aria-label="Upload files"
+        aria-label={t("input")}
         accept={accept}
         multiple={multiple}
         disabled={disabled || maxReached}
@@ -564,7 +598,7 @@ export function FileUpload({
               centered ? "text-base" : "text-sm",
             )}
           >
-            {maxReached ? "Upload limit reached" : title}
+            {maxReached ? t("limitTitle") : (title ?? t("title"))}
           </span>
           <span
             className={cn(
@@ -573,8 +607,8 @@ export function FileUpload({
             )}
           >
             {maxReached
-              ? `${items.length} of ${maxFiles} files added`
-              : description}
+              ? t("limitDescription", { count: items.length, max: maxFiles ?? 0 })
+              : (description ?? t("description"))}
           </span>
         </span>
 
@@ -584,7 +618,7 @@ export function FileUpload({
             centered ? "mt-1 px-4 py-2" : "px-3.5 py-2",
           )}
         >
-          {browseLabel}
+          {browseLabel ?? t("browse")}
         </span>
       </button>
 
@@ -597,6 +631,7 @@ export function FileUpload({
               onRemove={removeItem}
               onRetry={retryItem}
               classNames={classNames}
+              t={t}
             />
           ))}
         </AnimatePresence>

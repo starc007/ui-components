@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from "motion/react";
 import {
+  type ComponentProps,
   createContext,
   useCallback,
   useContext,
@@ -10,9 +11,10 @@ import {
   useMemo,
   useRef,
   useState,
-  type ComponentProps,
 } from "react";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useMessages } from "@/lib/i18n";
+import { type VolumeProfileMessages, volumeProfileMessages } from "./messages";
 import { buildVolumeProfile, type VolumeProfileBin } from "./model";
 
 const formatNumber = (value: number) => value.toLocaleString("en-US", { maximumFractionDigits: 2 });
@@ -32,12 +34,14 @@ export interface VolumeProfileProps extends ComponentProps<"section"> {
   activeId?: string | null;
   defaultActiveId?: string | null;
   onActiveChange?: (id: string | null) => void;
+  /** Override any built-in string. */
+  labels?: Partial<VolumeProfileMessages>;
 }
 
 export function useVolumeProfileModel({
   data,
-  label = "Volume profile",
-  unit = "units",
+  label: labelProp,
+  unit: unitProp,
   formatPrice = formatNumber,
   formatVolume = formatNumber,
   valueArea = 0.7,
@@ -46,7 +50,11 @@ export function useVolumeProfileModel({
   activeId,
   defaultActiveId = null,
   onActiveChange,
+  labels,
 }: VolumeProfileProps) {
+  const t = useMessages("volumeProfile", volumeProfileMessages, labels);
+  const label = labelProp ?? t("label");
+  const unit = unitProp ?? t("unit");
   const model = useMemo(() => buildVolumeProfile(data, valueArea), [data, valueArea]);
   const [internalId, setInternalId] = useState(defaultActiveId);
   if (internalId !== null && !model.rows.some((row) => row.id === internalId)) setInternalId(null);
@@ -67,10 +75,10 @@ export function useVolumeProfileModel({
   }, []);
   const describe = (row: (typeof model.rows)[number]) =>
     [
-      `${formatPrice(row.priceLow)} to ${formatPrice(row.priceHigh)}`,
-      `${formatVolume(row.volume)} ${unit}`,
-      `${(row.share * 100).toFixed(1)}% of total volume`,
-      row.isPoc ? "Point of control" : row.inValueArea ? "Inside value area" : null,
+      t("range", { low: formatPrice(row.priceLow), high: formatPrice(row.priceHigh) }),
+      t("amount", { volume: formatVolume(row.volume), unit }),
+      t("shareOfTotal", { share: `${(row.share * 100).toFixed(1)}%` }),
+      row.isPoc ? t("poc") : row.inValueArea ? t("inside") : null,
     ]
       .filter(Boolean)
       .join(". ");
@@ -78,6 +86,7 @@ export function useVolumeProfileModel({
     ...model,
     label,
     unit,
+    t,
     formatPrice,
     formatVolume,
     color,

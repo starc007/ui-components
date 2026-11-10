@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import { num, type PlaygroundItem, type Values } from "../core";
+import { num, type PlaygroundItem, type PlaygroundT, type Values } from "../core";
 import { TravelPreview } from "./travel-preview";
 
 function SpringPreview({
@@ -29,17 +29,16 @@ function SpringPreview({
   );
 }
 
-export const springItem: PlaygroundItem = {
+export const springItem = (t: PlaygroundT): PlaygroundItem => ({
   slug: "spring",
-  label: "Spring",
-  blurb:
-    "Physics-based motion. Stiffness pulls toward the target, damping resists, mass adds weight. Lower damping overshoots.",
+  label: t("spring.label"),
+  blurb: t("spring.blurb"),
   controls: [
     {
       kind: "slider",
       key: "stiffness",
-      label: "Stiffness",
-      hint: "Pull toward the target. Higher = faster, snappier.",
+      label: t("spring.controls.stiffness.label"),
+      hint: t("spring.controls.stiffness.hint"),
       min: 1,
       max: 1000,
       step: 1,
@@ -47,8 +46,8 @@ export const springItem: PlaygroundItem = {
     {
       kind: "slider",
       key: "damping",
-      label: "Damping",
-      hint: "Resistance / friction. Lower = more bounce and overshoot.",
+      label: t("spring.controls.damping.label"),
+      hint: t("spring.controls.damping.hint"),
       min: 1,
       max: 100,
       step: 1,
@@ -56,8 +55,8 @@ export const springItem: PlaygroundItem = {
     {
       kind: "slider",
       key: "mass",
-      label: "Mass",
-      hint: "Weight of the object. Heavier = slower, more sluggish.",
+      label: t("spring.controls.mass.label"),
+      hint: t("spring.controls.mass.hint"),
       min: 0.1,
       max: 5,
       step: 0.1,
@@ -65,32 +64,42 @@ export const springItem: PlaygroundItem = {
   ],
   defaults: { stiffness: 500, damping: 30, mass: 0.6 },
   presets: [
-    { name: "Gentle", values: { stiffness: 120, damping: 14, mass: 1 } },
-    { name: "Wobbly", values: { stiffness: 180, damping: 8, mass: 1 } },
-    { name: "Stiff", values: { stiffness: 700, damping: 40, mass: 0.8 } },
-    { name: "Slow", values: { stiffness: 80, damping: 20, mass: 1.5 } },
+    { name: t("spring.presets.gentle"), values: { stiffness: 120, damping: 14, mass: 1 } },
+    { name: t("spring.presets.wobbly"), values: { stiffness: 180, damping: 8, mass: 1 } },
+    { name: t("spring.presets.stiff"), values: { stiffness: 700, damping: 40, mass: 0.8 } },
+    { name: t("spring.presets.slow"), values: { stiffness: 80, damping: 20, mass: 1.5 } },
   ],
   Preview: SpringPreview,
   explain: (v) => {
     const s = num(v, "stiffness", 500);
     const d = num(v, "damping", 30);
     const m = num(v, "mass", 0.6);
+    // values go in as strings so ICU prints them exactly as the code does
     return [
       {
         code: 'type: "spring"',
-        text: "No duration here. Instead of taking a fixed time, the box is pulled to the target like it's on a real spring. The three numbers below decide how that feels.",
+        text: t("spring.explain.type"),
       },
       {
         code: `stiffness: ${s}`,
-        text: `How hard the spring pulls. ${s} is ${s < 200 ? "soft, so it moves slowly" : s < 500 ? "medium" : "strong, so it snaps fast"}. Higher = faster, more urgent.`,
+        text: t("spring.explain.stiffness", {
+          value: String(s),
+          level: s < 200 ? "soft" : s < 500 ? "medium" : "strong",
+        }),
       },
       {
         code: `damping: ${d}`,
-        text: `Friction that slows the spring down. ${d < 18 ? `${d} is low, so the box overshoots the target and bounces before settling.` : d < 35 ? `${d} gives a little overshoot, then settles.` : `${d} is high, so it eases in with no bounce.`}`,
+        text: t("spring.explain.damping", {
+          value: String(d),
+          level: d < 18 ? "low" : d < 35 ? "medium" : "high",
+        }),
       },
       {
         code: `mass: ${m}`,
-        text: `The box's weight. ${m < 0.6 ? `${m} is light, so it reacts quickly.` : m > 1.2 ? `${m} is heavy, so it feels sluggish and slow to start.` : `${m} is medium weight.`} Heavier = slower, more inertia.`,
+        text: t("spring.explain.mass", {
+          value: String(m),
+          level: m < 0.6 ? "light" : m > 1.2 ? "heavy" : "medium",
+        }),
       },
     ];
   },
@@ -109,4 +118,4 @@ export function Demo() {
     />
   );
 }`,
-};
+});

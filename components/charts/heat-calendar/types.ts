@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { HeatCalendarMessages } from "./messages";
 
 export type HeatCalendarCell = { w: number; d: number };
 
@@ -26,4 +27,6 @@ export interface HeatCalendarProps {
   selection?: HeatCalendarSelection | null;
   defaultSelection?: HeatCalendarSelection | null;
   onSelectionChange?: (selection: HeatCalendarSelection | null) => void;
+  /** Override any built-in string. */
+  labels?: Partial<HeatCalendarMessages>;
 }

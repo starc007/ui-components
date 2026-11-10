@@ -1,9 +1,11 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 export function ExpandableCode({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("Docs");
   const [expanded, setExpanded] = useState(false);
   const [canExpand, setCanExpand] = useState<boolean | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -49,7 +51,7 @@ export function ExpandableCode({ children }: { children: React.ReactNode }) {
             onClick={() => setExpanded(true)}
             className="rounded-full bg-background/80 px-4 py-1.5 text-xs font-medium text-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-background border border-border"
           >
-            Expand Code
+            {t("expandCode")}
           </button>
         </div>
       )}

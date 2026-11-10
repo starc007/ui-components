@@ -1,7 +1,10 @@
-import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import type { AgentGuide } from "@/lib/agent-guides";
 
-function lowercaseFirst(value: string) {
+// German capitalizes nouns, so only lowercase the first letter elsewhere.
+function lowercaseFirst(value: string, locale: string) {
+  if (locale === "de") return value;
   return value.charAt(0).toLowerCase() + value.slice(1);
 }
 
@@ -12,6 +15,8 @@ export function ComponentGuide({
   guide: AgentGuide;
   className?: string;
 }) {
+  const t = useTranslations("Docs.component");
+  const locale = useLocale();
   return (
     <div className={className}>
       <section
@@ -19,7 +24,7 @@ export function ComponentGuide({
         className="mt-12 scroll-mt-24 border-t border-border pt-8"
       >
         <h2 className="text-xl font-semibold tracking-tight text-foreground">
-          Composition
+          {t("composition")}
         </h2>
         <p className="mt-3 text-base leading-7 text-muted-foreground">
           {guide.composition.description}
@@ -29,7 +34,7 @@ export function ComponentGuide({
         </pre>
         {guide.connections.length ? (
           <p className="mt-5 text-base leading-7 text-muted-foreground">
-            <span className="font-medium text-foreground">Note:</span>{" "}
+            <span className="font-medium text-foreground">{t("note")}</span>{" "}
             {guide.connections.map((connection, index) => (
               <span key={connection.slug}>
                 {index > 0 ? " " : null}
@@ -39,7 +44,7 @@ export function ComponentGuide({
                 >
                   {connection.name}
                 </Link>{" "}
-                {lowercaseFirst(connection.description)}
+                {lowercaseFirst(connection.description, locale)}
               </span>
             ))}
           </p>
@@ -51,7 +56,7 @@ export function ComponentGuide({
         className="mt-12 scroll-mt-24 border-t border-border pt-8"
       >
         <h2 className="text-xl font-semibold tracking-tight text-foreground">
-          How it works
+          {t("howItWorks")}
         </h2>
         <p className="mt-3 text-base leading-7 text-muted-foreground">
           {guide.introduction}

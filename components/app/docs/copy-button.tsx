@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
@@ -20,6 +21,7 @@ export function CopyButton({
   /** What was copied (component slug, filename, install command). */
   eventLabel?: string;
 }) {
+  const t = useTranslations("Docs.copyButton");
   const [copied, setCopied] = useState(false);
 
   return (
@@ -33,7 +35,7 @@ export function CopyButton({
         setTimeout(() => setCopied(false), 1500);
         trackEvent(eventName, { label: eventLabel, chars: text.length });
       }}
-      aria-label={copied ? "Copied" : "Copy code"}
+      aria-label={copied ? t("copied") : t("copy")}
       className={cn(
         "rounded-full text-muted-foreground hover:text-foreground",
         className,

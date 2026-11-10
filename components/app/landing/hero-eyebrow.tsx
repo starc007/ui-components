@@ -2,8 +2,9 @@
 
 import { BorderBeam } from "border-beam";
 import { useReducedMotion } from "motion/react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { GithubIcon } from "@/components/app/icons";
+import { Link } from "@/i18n/navigation";
 
 const LIBRARIES = [
   {
@@ -36,6 +37,7 @@ export function HeroEyebrow({
   count: number;
   nativeCount: number;
 }) {
+  const t = useTranslations("Landing.hero");
   const reduceMotion = useReducedMotion();
   const counts = { web: count, native: nativeCount };
 
@@ -61,7 +63,7 @@ export function HeroEyebrow({
               href={library.repo}
               target="_blank"
               rel="noreferrer noopener"
-              aria-label={`${library.repoName} on GitHub`}
+              aria-label={t("repoOnGitHub", { name: library.repoName })}
               className={`inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground ${focus}`}
             >
               <GithubIcon className="size-4" />
@@ -72,9 +74,17 @@ export function HeroEyebrow({
             >
               {/* One text run: flex would drop the space between items. */}
               <span>
-                <span className="font-medium">{counts[library.platform]}</span>{" "}
-                <span className="text-muted-foreground">{library.label}</span>
-                <span className="sr-only"> components</span>
+                {t.rich("libraryCount", {
+                  count: counts[library.platform],
+                  library: library.label,
+                  num: (chunks) => (
+                    <span className="font-medium">{chunks}</span>
+                  ),
+                  muted: (chunks) => (
+                    <span className="text-muted-foreground">{chunks}</span>
+                  ),
+                  sr: (chunks) => <span className="sr-only">{chunks}</span>,
+                })}
               </span>
             </Link>
           </div>

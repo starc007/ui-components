@@ -1,5 +1,7 @@
 import { type NextFetchEvent, type NextRequest, NextResponse } from "next/server";
+import createMiddleware from "next-intl/middleware";
 import { trackAiCrawler } from "tracwell/server";
+import { routing } from "./i18n/routing";
 
 /**
  * Registry installs happen via the shadcn CLI fetching `/r/{slug}.json`. That
@@ -12,8 +14,15 @@ export const config = {
   matcher: ["/((?!api(?:/|$)|_next/|favicon.ico$).*)"],
 };
 
+const localize = createMiddleware(routing);
+
+// Machine endpoints keep one English URL: registry (/r, /native/r) and any
+// path with a file extension (*.json, *.md, *.xml, llms.txt).
+const UNLOCALIZED = /^\/(?:r|native\/r)(?:\/|$)|\.[^/]+$/;
+
 export function proxy(req: NextRequest, event: NextFetchEvent) {
-  const pass = NextResponse.next();
+  const { pathname } = req.nextUrl;
+  const pass = UNLOCALIZED.test(pathname) ? NextResponse.next() : localize(req);
 
   const serverKey = process.env.TRACWELL_SERVER_KEY;
   if (serverKey) {
@@ -28,7 +37,6 @@ export function proxy(req: NextRequest, event: NextFetchEvent) {
 
   const GA_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
   const GA_SECRET = process.env.GA_API_SECRET;
-  const { pathname } = req.nextUrl;
   // Only the shadcn item endpoints (`/r/<slug>.json`) are real installs.
   // Skip the catalog and the raw-source / non-json sub-paths.
   if (

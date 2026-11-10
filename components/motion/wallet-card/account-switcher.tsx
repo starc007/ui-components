@@ -4,10 +4,12 @@ import { Check, ChevronDown } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { AccountAvatar } from "./account-avatar";
 import { HEAD, ITEM, LIST, MORPH } from "./constants";
 import { CopyButton } from "./copy-button";
+import { type WalletCardMessages, walletCardMessages } from "./messages";
 import type { WalletAccount } from "./types";
 import { truncateAddress } from "./utils";
 
@@ -20,11 +22,14 @@ export function AccountSwitcher({
   accounts,
   activeAccount,
   onSelect,
+  labels,
 }: {
   accounts: WalletAccount[];
   activeAccount: WalletAccount | undefined;
   onSelect: (id: string) => void;
+  labels?: Partial<WalletCardMessages>;
 }) {
+  const t = useMessages("walletCard", walletCardMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const layoutId = `${useId()}-account`;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -126,7 +131,7 @@ export function AccountSwitcher({
                 layout="position"
                 className="min-w-0 flex-1 truncate text-sm font-medium text-foreground"
               >
-                {activeAccount?.name ?? "Select account"}
+                {activeAccount?.name ?? t("selectAccount")}
               </motion.span>
               <motion.span
                 layout="position"
@@ -186,7 +191,7 @@ export function AccountSwitcher({
                         <Check className="h-4 w-4 shrink-0 text-foreground" />
                       ) : null}
                     </button>
-                    <CopyButton value={account.address} />
+                    <CopyButton value={account.address} labels={labels} />
                   </motion.li>
                 );
               })}

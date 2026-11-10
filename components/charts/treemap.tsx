@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { TreemapContext, useTreemapModel, type TreemapProps } from "./treemap/context";
+import { TreemapContext, type TreemapProps, useTreemapModel } from "./treemap/context";
 import { TreemapLegend } from "./treemap/legend";
 import { TreemapPlot } from "./treemap/plot";
 import { TreemapTooltip } from "./treemap/tooltip";
@@ -16,6 +16,7 @@ export function Treemap({
   activeId,
   defaultActiveId,
   onActiveChange,
+  labels,
   className,
   children,
   ...props
@@ -29,7 +30,9 @@ export function Treemap({
     activeId,
     defaultActiveId,
     onActiveChange,
+    labels,
   });
+  const { t } = model;
   return (
     <TreemapContext.Provider value={model}>
       <section
@@ -49,13 +52,13 @@ export function Treemap({
         )}
         <div className="sr-only">
           <table>
-            <caption>{model.label} data</caption>
+            <caption>{t("tableCaption", { label: model.label })}</caption>
             <thead>
               <tr>
-                <th scope="col">Item</th>
-                <th scope="col">Value</th>
-                <th scope="col">Share of total</th>
-                <th scope="col">Details</th>
+                <th scope="col">{t("item")}</th>
+                <th scope="col">{t("value")}</th>
+                <th scope="col">{t("share")}</th>
+                <th scope="col">{t("details")}</th>
               </tr>
             </thead>
             <tbody>
@@ -75,18 +78,19 @@ export function Treemap({
   );
 }
 
-export { useTreemap } from "./treemap/context";
 export type { TreemapProps } from "./treemap/context";
+export { useTreemap } from "./treemap/context";
+export type { TreemapLegendProps } from "./treemap/legend";
+export { TreemapLegend } from "./treemap/legend";
+export { type TreemapMessages, treemapMessages } from "./treemap/messages";
 export type {
-  TreemapNode,
-  TreemapLeaf,
   TreemapGroup,
   TreemapItem,
+  TreemapLeaf,
+  TreemapNode,
   TreemapTile,
 } from "./treemap/model";
-export { TreemapPlot } from "./treemap/plot";
 export type { TreemapPlotProps } from "./treemap/plot";
-export { TreemapTooltip } from "./treemap/tooltip";
+export { TreemapPlot } from "./treemap/plot";
 export type { TreemapTooltipProps } from "./treemap/tooltip";
-export { TreemapLegend } from "./treemap/legend";
-export type { TreemapLegendProps } from "./treemap/legend";
+export { TreemapTooltip } from "./treemap/tooltip";

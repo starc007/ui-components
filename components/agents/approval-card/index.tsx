@@ -18,7 +18,9 @@ import { Checkbox } from "@/components/motion/checkbox";
 import { Input } from "@/components/motion/input";
 import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { type ApprovalCardMessages, approvalCardMessages } from "./messages";
 import type {
   ApprovalCardAnswer,
   ApprovalCardAnswers,
@@ -27,6 +29,7 @@ import type {
   ApprovalCardStatus,
 } from "./types";
 
+export { type ApprovalCardMessages, approvalCardMessages } from "./messages";
 export type {
   ApprovalCardAnswer,
   ApprovalCardAnswers,
@@ -38,14 +41,14 @@ export type {
 
 const EMPTY_ANSWER: ApprovalCardAnswer = { selected: [], custom: "" };
 
-function getStatusLabel(status: ApprovalCardStatus) {
-  if (status === "submitting") return "Submitting";
-  if (status === "approved") return "Approved";
-  if (status === "rejected") return "Rejected";
-  if (status === "changes-requested") return "Changes requested";
-  if (status === "answered") return "Response submitted";
-  return "Input required";
-}
+const STATUS_MESSAGE = {
+  pending: "inputRequired",
+  submitting: "submitting",
+  approved: "approved",
+  rejected: "rejected",
+  "changes-requested": "changesRequested",
+  answered: "answered",
+} as const satisfies Record<ApprovalCardStatus, keyof ApprovalCardMessages>;
 
 function getStatusClass(status: ApprovalCardStatus) {
   if (status === "approved" || status === "answered") {
@@ -79,12 +82,14 @@ function QuestionOptions({
   question,
   answer,
   disabled,
+  placeholder,
   onChange,
   onSingleSelect,
 }: {
   question: ApprovalCardQuestion;
   answer: ApprovalCardAnswer;
   disabled: boolean;
+  placeholder: string;
   onChange: (answer: ApprovalCardAnswer) => void;
   onSingleSelect?: () => void;
 }) {
@@ -141,7 +146,7 @@ function QuestionOptions({
         <Input
           value={custom}
           disabled={disabled}
-          placeholder={question.customPlaceholder ?? "Add another response…"}
+          placeholder={question.customPlaceholder ?? placeholder}
           onChange={(value) =>
             onChange({
               selected: question.multiple ? answer.selected : [],
@@ -160,12 +165,18 @@ function QuestionOptions({
   );
 }
 
-function ProgressDots({ current, ids }: { current: number; ids: string[] }) {
+function ProgressDots({
+  current,
+  ids,
+  label,
+}: {
+  current: number;
+  ids: string[];
+  label: string;
+}) {
   return (
     <span className="flex gap-1.5">
-      <span className="sr-only">
-        Question {current + 1} of {ids.length}
-      </span>
+      <span className="sr-only">{label}</span>
       {ids.map((id, index) => (
         <motion.span
           key={id}
@@ -187,7 +198,7 @@ function ProgressDots({ current, ids }: { current: number; ids: string[] }) {
 }
 
 export function ApprovalCard({
-  title = "Approval required",
+  title,
   description,
   children,
   questions = [],
@@ -203,11 +214,13 @@ export function ApprovalCard({
   onReject,
   onRequestChanges,
   onDismiss,
-  approveLabel = "Approve",
-  submitLabel = "Submit response",
+  approveLabel,
+  submitLabel,
   result,
+  labels,
   className,
 }: ApprovalCardProps) {
+  const t = useMessages("approvalCard", approvalCardMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const [internalAnswers, setInternalAnswers] =
     useState<ApprovalCardAnswers>(defaultAnswers);
@@ -227,9 +240,9 @@ export function ApprovalCard({
   const currentAnswer = question
     ? (currentAnswers[question.id] ?? EMPTY_ANSWER)
     : EMPTY_ANSWER;
-  const displayTitle = question?.title ?? title;
+  const displayTitle = question?.title ?? title ?? t("title");
   const titleKey = question?.id ?? String(status);
-  const statusLabel = getStatusLabel(status);
+  const statusLabel = t(STATUS_MESSAGE[status]);
 
   const clearAutoAdvance = useCallback(() => {
     if (autoAdvanceTimer.current === undefined) return;
@@ -325,7 +338,10 @@ export function ApprovalCard({
             {questionMode && interactive ? (
               multipleQuestions ? (
                 <span className="shrink-0 text-xs tabular-nums text-muted-foreground/65">
-                  {currentStep + 1}/{questions.length}
+                  {t("stepCount", {
+                    current: currentStep + 1,
+                    total: questions.length,
+                  })}
                 </span>
               ) : null
             ) : (
@@ -341,7 +357,7 @@ export function ApprovalCard({
             {onDismiss ? (
               <button
                 type="button"
-                aria-label="Dismiss"
+                aria-label={t("dismiss")}
                 onClick={onDismiss}
                 className="grid size-5 shrink-0 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               >
@@ -369,6 +385,7 @@ export function ApprovalCard({
                     question={question}
                     answer={currentAnswer}
                     disabled={busy}
+                    placeholder={t("customPlaceholder")}
                     onChange={updateCurrentAnswer}
                     onSingleSelect={queueAutoAdvance}
                   />
@@ -392,7 +409,7 @@ export function ApprovalCard({
                     <Button
                       variant="ghost"
                       size="icon"
-                      aria-label="Previous question"
+                      aria-label={t("previousQuestion")}
                       disabled={busy || currentStep === 0}
                       onClick={() => setStep(currentStep - 1)}
                       className="rounded-full"
@@ -402,6 +419,10 @@ export function ApprovalCard({
                     <ProgressDots
                       current={currentStep}
                       ids={questions.map((item) => item.id)}
+                      label={t("questionProgress", {
+                        current: currentStep + 1,
+                        total: questions.length,
+                      })}
                     />
                   </>
                 ) : null}
@@ -409,8 +430,8 @@ export function ApprovalCard({
                   size={currentStep === questions.length - 1 ? "sm" : "icon"}
                   aria-label={
                     currentStep === questions.length - 1
-                      ? "Submit response"
-                      : "Next question"
+                      ? t("submit")
+                      : t("nextQuestion")
                   }
                   disabled={busy || !isAnswered(currentAnswer)}
                   onClick={continueQuestion}
@@ -420,7 +441,7 @@ export function ApprovalCard({
                     <LoaderCircle className={cn("size-4", !reduce && "animate-spin")} />
                   ) : currentStep === questions.length - 1 ? (
                     <>
-                      {submitLabel}
+                      {submitLabel ?? t("submit")}
                       <ArrowRight className="size-3.5" />
                     </>
                   ) : (
@@ -436,7 +457,7 @@ export function ApprovalCard({
                   onClick={onApprove}
                   className="rounded-full"
                 >
-                  {approveLabel}
+                  {approveLabel ?? t("approve")}
                 </Button>
                 {onRequestChanges ? (
                   <Button
@@ -446,7 +467,7 @@ export function ApprovalCard({
                     onClick={onRequestChanges}
                     className="rounded-full"
                   >
-                    Request changes
+                    {t("requestChanges")}
                   </Button>
                 ) : null}
                 {onReject ? (
@@ -457,7 +478,7 @@ export function ApprovalCard({
                     onClick={onReject}
                     className="rounded-full text-muted-foreground hover:text-rose-600 dark:hover:text-rose-400"
                   >
-                    Reject
+                    {t("reject")}
                   </Button>
                 ) : null}
               </div>

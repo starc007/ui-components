@@ -15,6 +15,7 @@ import {
 } from "react";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 type FileTreeItem = {
@@ -51,6 +52,13 @@ export type FileTreeClassNames = {
   label?: string;
 };
 
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const fileTreeMessages = {
+  label: "Files",
+};
+
+export type FileTreeMessages = typeof fileTreeMessages;
+
 export interface FileTreeProps {
   children: ReactNode;
   value?: string | null;
@@ -60,6 +68,8 @@ export interface FileTreeProps {
   defaultExpandedIds?: string[];
   onExpandedChange?: (expandedIds: string[]) => void;
   ariaLabel?: string;
+  /** Override any built-in string. */
+  labels?: Partial<FileTreeMessages>;
   indent?: number;
   className?: string;
   classNames?: FileTreeClassNames;
@@ -204,12 +214,14 @@ export function FileTree({
   expandedIds,
   defaultExpandedIds = [],
   onExpandedChange,
-  ariaLabel = "Files",
+  ariaLabel,
+  labels,
   indent = 18,
   className,
   classNames,
 }: FileTreeProps) {
   const reduce = useReducedMotion() ?? false;
+  const t = useMessages("fileTree", fileTreeMessages, labels);
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [internalExpandedIds, setInternalExpandedIds] = useState(
     defaultExpandedIds,
@@ -311,7 +323,7 @@ export function FileTree({
   return (
     <SharedLayoutBg
       role="tree"
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? t("label")}
       aria-multiselectable="false"
       inset={0}
       pillClassName="rounded-xl bg-muted"

@@ -2,6 +2,7 @@
 
 import { ArrowUpRight, Mail } from "lucide-react";
 import { useInView } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useRef } from "react";
 import { ShaderBackground } from "@/components/motion/shader-background";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,8 @@ const GRAIN =
  * readable wherever the gradient drifts.
  */
 export function ContactStrip({ className }: { className?: string }) {
+  const t = useTranslations("Landing.contact");
+  const tHero = useTranslations("Landing.hero");
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "300px 0px" });
 
@@ -54,26 +57,25 @@ export function ContactStrip({ className }: { className?: string }) {
             <Mail aria-hidden="true" className="size-4" />
           </span>
           <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-white/70">
-            Work with me
+            {t("eyebrow")}
           </p>
           <h2
             id="landing-contact"
             className="mt-2 text-balance text-2xl font-medium leading-tight tracking-tight text-white md:text-[2rem]"
           >
-            Need components built for your product?
+            {t("title")}
           </h2>
           <p className="mt-3 max-w-sm text-pretty text-[13px] leading-5 text-white/75">
-            Custom motion components and frontend systems, built to spec. Book a call or drop a
-            line, whichever is easier.
+            {t("description")}
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
             <LandingButton href={CAL_URL} target="_blank" rel="noreferrer noopener" variant="inverse">
-              Book a call
+              {t("bookCall")}
               <ArrowUpRight aria-hidden="true" />
-              <span className="sr-only"> (opens in a new tab)</span>
+              <span className="sr-only"> {tHero("opensInNewTab")}</span>
             </LandingButton>
             <LandingButton href={`mailto:${EMAIL}`} variant="glass">
-              Email me
+              {t("email")}
             </LandingButton>
           </div>
         </div>

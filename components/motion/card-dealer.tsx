@@ -15,7 +15,15 @@ import {
   useState,
 } from "react";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const cardDealerMessages = {
+  label: "Card table",
+};
+
+export type CardDealerMessages = typeof cardDealerMessages;
 
 export type CardDealerZone = "deck" | "hand" | "pile";
 
@@ -44,6 +52,8 @@ export interface CardDealerProps<T extends CardDealerCard> {
   angle?: number;
   /** Accessible name for the table. Default "Card table". */
   "aria-label"?: string;
+  /** Override any built-in string. */
+  labels?: Partial<CardDealerMessages>;
   className?: string;
 }
 
@@ -95,9 +105,11 @@ export function CardDealer<T extends CardDealerCard>({
   cardHeight = 120,
   spread = 46,
   angle = 5,
-  "aria-label": ariaLabel = "Card table",
+  "aria-label": ariaLabel,
+  labels,
   className,
 }: CardDealerProps<T>) {
+  const t = useMessages("cardDealer", cardDealerMessages, labels);
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
   const stageRef = useRef<HTMLElement>(null);
@@ -254,7 +266,7 @@ export function CardDealer<T extends CardDealerCard>({
   return (
     <section
       ref={stageRef}
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? t("label")}
       // isolate: card z-indices only order cards against each other, so the
       // table never draws over sticky page chrome such as a header.
       className={cn("relative isolate h-80 w-full touch-manipulation select-none", className)}

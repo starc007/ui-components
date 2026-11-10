@@ -1,41 +1,15 @@
 import Image from "next/image";
-import Link from "next/link";
+import { useMessages, useTranslations } from "next-intl";
+import { localizeCategory } from "@/i18n/catalog";
+import { Link } from "@/i18n/navigation";
 import { categoryPath, componentPath } from "@/lib/component-paths";
 import { registry } from "@/lib/registry";
 
 const FOOTER_LIMIT = 7;
-const COLUMNS = [
-  { category: "motion", title: "Components" },
-  { category: "blocks", title: "Blocks" },
-  { category: "agents", title: "AI Agents" },
-  { category: "charts", title: "Charts" },
-  { category: "casino", title: "Casino" },
-].map(({ category, title }) => {
-  const components =
-    registry.find((entry) => entry.slug === category)?.components ?? [];
-  return {
-    category,
-    title,
-    total: components.length,
-    items: components.slice(0, FOOTER_LIMIT),
-  };
+const COLUMNS = ["motion", "blocks", "agents", "charts", "casino"].flatMap((slug) => {
+  const category = registry.find((entry) => entry.slug === slug);
+  return category ? [category] : [];
 });
-
-const LINKS = [
-  { href: "/components/motion", label: "Browse all" },
-  { href: "/playground", label: "Playground" },
-  { href: "/changelog", label: "Changelog" },
-  { href: "https://github.com/starc007/ui-components", label: "GitHub" },
-  { href: "/docs/ai-agents", label: "For coding agents" },
-  { href: "/docs/theme", label: "Theming" },
-  { href: "/docs/motion-patterns", label: "Motion patterns" },
-  { href: "/sponsors", label: "Sponsor" },
-  { href: "/llms.txt", label: "llms.txt" },
-  {
-    href: "https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=footer",
-    label: "beUI Pro",
-  },
-];
 
 const PRODUCTS = [
   {
@@ -51,6 +25,26 @@ const PRODUCTS = [
 ];
 
 export function SiteFooter() {
+  const t = useTranslations("Chrome");
+  const messages = useMessages();
+  const columns = COLUMNS.map((category) => localizeCategory(category, messages));
+  // `page` links get the locale prefix; external URLs and llms.txt are plain anchors.
+  const links = [
+    { href: "/components/motion", label: t("footer.browseAll"), page: true },
+    { href: "/playground", label: t("header.playground"), page: true },
+    { href: "/changelog", label: t("docsPages.changelog"), page: true },
+    { href: "https://github.com/starc007/ui-components", label: "GitHub" },
+    { href: "/docs/ai-agents", label: t("docsPages.forCodingAgents"), page: true },
+    { href: "/docs/theme", label: t("docsPages.theming"), page: true },
+    { href: "/docs/motion-patterns", label: t("docsPages.motionPatterns"), page: true },
+    { href: "/sponsors", label: t("footer.sponsor"), page: true },
+    { href: "/llms.txt", label: "llms.txt" },
+    {
+      href: "https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=footer",
+      label: "beUI Pro",
+    },
+  ];
+
   return (
     <footer className="relative isolate overflow-hidden border-border/60 border-t">
       <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-x-6 gap-y-12 px-4 pt-16 pb-48 sm:pb-64 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-[1.4fr_repeat(7,minmax(0,1fr))]">
@@ -73,11 +67,12 @@ export function SiteFooter() {
             </span>
           </Link>
           <p className="mt-4 text-muted-foreground text-sm leading-6">
-            Animated components for React, Next.js and React Native. Copy the
-            source or install with a CLI.
+            {t("footer.description")}
           </p>
           <p className="mt-4 text-muted-foreground text-sm">
-            Created by <span className="text-foreground">Saurabh</span>
+            {t.rich("footer.createdBy", {
+              link: (chunks) => <span className="text-foreground">{chunks}</span>,
+            })}
           </p>
           <div className="mt-4 flex items-center gap-1.5">
             <a
@@ -101,7 +96,7 @@ export function SiteFooter() {
               href="mailto:saurabh10102@gmail.com"
               className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
-              <span className="sr-only">Email</span>
+              <span className="sr-only">{t("dock.email")}</span>
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -119,31 +114,31 @@ export function SiteFooter() {
         </div>
 
         {/* Registry item columns. */}
-        {COLUMNS.map((column) => (
-          <nav key={column.title} aria-label={column.title}>
+        {columns.map((column) => (
+          <nav key={column.slug} aria-label={column.name}>
             <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-              {column.title}
+              {column.name}
             </p>
             <ul className="mt-4 space-y-2.5">
-              {column.items.map((item) => (
+              {column.components.slice(0, FOOTER_LIMIT).map((item) => (
                 <li key={item.slug}>
                   <Link
                     prefetch={false}
-                    href={componentPath(column.category, item.slug)}
+                    href={componentPath(column.slug, item.slug)}
                     className="text-muted-foreground text-sm transition-colors hover:text-foreground"
                   >
                     {item.name}
                   </Link>
                 </li>
               ))}
-              {column.total > column.items.length ? (
+              {column.components.length > FOOTER_LIMIT ? (
                 <li>
                   <Link
                     prefetch={false}
-                    href={categoryPath(column.category)}
+                    href={categoryPath(column.slug)}
                     className="font-medium text-foreground text-sm transition-colors hover:text-muted-foreground"
                   >
-                    View all ({column.total})
+                    {t("footer.viewAll", { count: column.components.length })}
                   </Link>
                 </li>
               ) : null}
@@ -152,46 +147,51 @@ export function SiteFooter() {
         ))}
 
         {/* Links. */}
-        <nav aria-label="Links">
+        <nav aria-label={t("footer.links")}>
           <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-            Links
+            {t("footer.links")}
           </p>
           <ul className="mt-4 space-y-2.5">
-            {LINKS.map((item) => {
+            {links.map((item) => {
               const external = item.href.startsWith("http");
+              const className = "text-muted-foreground text-sm transition-colors hover:text-foreground";
               return (
                 <li key={item.href}>
-                  <Link
-                    prefetch={false}
-                    href={item.href}
-                    target={external ? "_blank" : undefined}
-                    rel={external ? "noreferrer noopener" : undefined}
-                    className="text-muted-foreground text-sm transition-colors hover:text-foreground"
-                  >
-                    {item.label}
-                  </Link>
+                  {item.page ? (
+                    <Link prefetch={false} href={item.href} className={className}>
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={item.href}
+                      target={external ? "_blank" : undefined}
+                      rel={external ? "noreferrer noopener" : undefined}
+                      className={className}
+                    >
+                      {item.label}
+                    </a>
+                  )}
                 </li>
               );
             })}
           </ul>
         </nav>
 
-        <nav aria-label="Also by us">
+        <nav aria-label={t("footer.alsoByUs")}>
           <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-            Also by us
+            {t("footer.alsoByUs")}
           </p>
           <ul className="mt-4 space-y-2.5">
             {PRODUCTS.map((item) => (
               <li key={item.href}>
-                <Link
-                  prefetch={false}
+                <a
                   href={item.href}
                   target="_blank"
                   rel="noreferrer noopener"
                   className="text-muted-foreground text-sm transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                 >
                   {item.label}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>

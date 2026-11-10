@@ -14,7 +14,19 @@ import {
   PreviewRail,
   type PreviewRailItem,
 } from "@/components/motion/preview-rail";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+export const messageScrollerMessages = {
+  label: "Conversation",
+  navigationLabel: "Message navigation",
+  preview: "Message",
+  goToUser: "Go to user message {index} of {total}",
+  goToAssistant: "Go to assistant message {index} of {total}",
+  goToMessage: "Go to conversation message {index} of {total}",
+};
+
+export type MessageScrollerMessages = typeof messageScrollerMessages;
 
 const PREVIEW_TITLE_LENGTH = 56;
 const PREVIEW_DESCRIPTION_LENGTH = 88;
@@ -36,11 +48,12 @@ function getMessageText(message: HTMLElement) {
 
 function getMessagePreview(
   message: HTMLElement,
+  emptyLabel: string,
   assistantResponse?: HTMLElement,
 ) {
   const text = getMessageText(message);
   if (!text) {
-    return { label: "Message", description: undefined };
+    return { label: emptyLabel, description: undefined };
   }
 
   if (text.length <= PREVIEW_TITLE_LENGTH) {
@@ -102,6 +115,8 @@ export interface MessageScrollerProps extends ComponentPropsWithRef<"div"> {
     ComponentPropsWithRef<"div">,
     "children" | "className" | "ref"
   >;
+  /** Override any built-in string. */
+  labels?: Partial<MessageScrollerMessages>;
 }
 
 export function MessageScroller({
@@ -109,10 +124,10 @@ export function MessageScroller({
   followThreshold = 56,
   smooth = true,
   onFollowChange,
-  label = "Conversation",
+  label,
   busy,
   navigation,
-  navigationLabel = "Message navigation",
+  navigationLabel,
   viewportClassName,
   contentClassName,
   railClassName,
@@ -121,9 +136,13 @@ export function MessageScroller({
   contentProps,
   className,
   children,
+  labels,
   ...props
 }: MessageScrollerProps) {
   const reduce = useReducedMotion() ?? false;
+  const t = useMessages("messageScroller", messageScrollerMessages, labels);
+  // Read by the stable rail sync so inline `labels` don't rebuild it each render.
+  const tRef = useRef(t);
   const viewportRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const followingRef = useRef(followOutput);
@@ -231,13 +250,24 @@ export function MessageScroller({
               .slice(index + 1)
               .find((candidate) => candidate.dataset.from === "assistant")
           : undefined;
-      const preview = getMessagePreview(message, assistantResponse);
+      const preview = getMessagePreview(
+        message,
+        tRef.current("preview"),
+        assistantResponse,
+      );
 
       return {
         id,
         label: preview.label,
         description: preview.description,
-        ariaLabel: `Go to ${sender} message ${index + 1} of ${messages.length}`,
+        ariaLabel: tRef.current(
+          sender === "user"
+            ? "goToUser"
+            : sender === "assistant"
+              ? "goToAssistant"
+              : "goToMessage",
+          { index: index + 1, total: messages.length },
+        ),
       };
     });
 
@@ -267,6 +297,11 @@ export function MessageScroller({
       updateActiveRailItem();
     });
   }, [navigation, syncRailItems, updateActiveRailItem]);
+
+  useLayoutEffect(() => {
+    tRef.current = t;
+    scheduleRailSync();
+  }, [t, scheduleRailSync]);
 
   const scrollToEnd = useCallback((behavior: ScrollBehavior) => {
     const viewport = viewportRef.current;
@@ -408,7 +443,7 @@ export function MessageScroller({
   const viewport = (
     <section
       ref={setViewportRef}
-      aria-label={label}
+      aria-label={label ?? t("label")}
       {...restViewportProps}
       onScroll={(event) => {
         handleScroll();
@@ -460,7 +495,7 @@ export function MessageScroller({
       {navigation === "rail" ? (
         <PreviewRail
           items={railOverflowing ? railItems : []}
-          label={navigationLabel}
+          label={navigationLabel ?? t("navigationLabel")}
           activeId={activeRailId}
           onItemSelect={scrollToRailItem}
           previewSide="before"

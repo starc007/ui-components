@@ -1,16 +1,18 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
+import { usePathname, useRouter } from "@/i18n/navigation";
 
 const SPACES = [
-  { value: "components", label: "Components", href: "/components/motion" },
-  { value: "blocks", label: "Blocks", href: "/components/blocks" },
-  { value: "agents", label: "Agents", href: "/components/agents" },
-];
+  { value: "components", href: "/components/motion" },
+  { value: "blocks", href: "/components/blocks" },
+  { value: "agents", href: "/components/agents" },
+] as const;
 
 /** Top-level space switcher — the library's own Tabs in controlled mode, driven by the route. */
 export function HeaderTabs({ onNavigate }: { onNavigate?: () => void }) {
+  const t = useTranslations("Chrome.header");
   const pathname = usePathname();
   const router = useRouter();
   const active = pathname.startsWith("/components/blocks")
@@ -35,7 +37,7 @@ export function HeaderTabs({ onNavigate }: { onNavigate?: () => void }) {
       <TabsList>
         {SPACES.map((s) => (
           <TabsTrigger key={s.value} value={s.value} className="text-xs">
-            {s.label}
+            {t(s.value)}
           </TabsTrigger>
         ))}
       </TabsList>

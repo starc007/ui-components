@@ -17,17 +17,31 @@ import {
   useRef,
   useState,
 } from "react";
+import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import {
   type CitationItem,
   CitationList,
   CitationStack,
 } from "@/components/agents/citations";
-import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export type StreamingResponseStatus = "streaming" | "complete" | "error";
 export type StreamingResponseFeedback = "up" | "down" | null;
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const streamingResponseMessages = {
+  copy: "Copy response",
+  copied: "Copied",
+  retry: "Retry response",
+  helpful: "Helpful",
+  notHelpful: "Not helpful",
+  source: "{count} source",
+  sources: "{count} sources",
+};
+
+export type StreamingResponseMessages = typeof streamingResponseMessages;
 
 export interface StreamingResponseProps {
   /** Rendered response content. Pass plain text or the output of a Markdown renderer. */
@@ -51,6 +65,8 @@ export interface StreamingResponseProps {
   announce?: boolean;
   /** Hides the built-in completion actions without changing response status. */
   showActions?: boolean;
+  /** Override any built-in string. `{count}` fills `source` (one) and `sources` (many). */
+  labels?: Partial<StreamingResponseMessages>;
   className?: string;
   contentClassName?: string;
   actionsClassName?: string;
@@ -58,11 +74,12 @@ export interface StreamingResponseProps {
 
 function ResponseAction({
   label,
-  active = false,
+  active,
   onClick,
   children,
 }: {
   label: string;
+  /** Set for toggle actions; exposed as `aria-pressed`. */
   active?: boolean;
   onClick: () => void;
   children: ReactNode;
@@ -74,7 +91,7 @@ function ResponseAction({
       type="button"
       aria-label={label}
       title={label}
-      aria-pressed={label === "Helpful" || label === "Not helpful" ? active : undefined}
+      aria-pressed={active}
       onClick={onClick}
       whileTap={reduce ? undefined : { scale: 0.9 }}
       transition={SPRING_PRESS}
@@ -104,10 +121,12 @@ export function StreamingResponse({
   onFeedbackChange,
   announce = true,
   showActions = true,
+  labels,
   className,
   contentClassName,
   actionsClassName,
 }: StreamingResponseProps) {
+  const t = useMessages("streamingResponse", streamingResponseMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const baseId = useId();
   const [copied, setCopied] = useState(false);
@@ -186,7 +205,7 @@ export function StreamingResponse({
             <div className={cn("flex items-center gap-0.5", actionsClassName)}>
               {canCopy ? (
                 <ResponseAction
-                  label={copied ? "Copied" : "Copy response"}
+                  label={copied ? t("copied") : t("copy")}
                   onClick={handleCopy}
                 >
                   {copied ? (
@@ -197,21 +216,21 @@ export function StreamingResponse({
                 </ResponseAction>
               ) : null}
               {onRetry ? (
-                <ResponseAction label="Retry response" onClick={onRetry}>
+                <ResponseAction label={t("retry")} onClick={onRetry}>
                   <RotateCcw className="size-3.5" />
                 </ResponseAction>
               ) : null}
               {complete ? (
                 <>
                   <ResponseAction
-                    label="Helpful"
+                    label={t("helpful")}
                     active={currentFeedback === "up"}
                     onClick={() => setFeedback("up")}
                   >
                     <ThumbsUp className="size-3.5" />
                   </ResponseAction>
                   <ResponseAction
-                    label="Not helpful"
+                    label={t("notHelpful")}
                     active={currentFeedback === "down"}
                     onClick={() => setFeedback("down")}
                   >
@@ -229,7 +248,9 @@ export function StreamingResponse({
                 >
                   <CitationStack citations={sources} />
                   <span className="tabular-nums">
-                    {sources.length} {sources.length === 1 ? "source" : "sources"}
+                    {t(sources.length === 1 ? "source" : "sources", {
+                      count: sources.length,
+                    })}
                   </span>
                   <motion.span
                     aria-hidden="true"

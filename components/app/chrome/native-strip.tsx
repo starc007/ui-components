@@ -3,6 +3,7 @@
 import { BorderBeam } from "border-beam";
 import { ArrowRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useId } from "react";
 import { ButtonLink } from "@/components/motion/button";
 import styles from "./native-strip.module.css";
@@ -16,12 +17,13 @@ const PRO_MOBILE_URL =
  * header, so it scrolls away with the page.
  */
 export function NativeStrip() {
+  const t = useTranslations("Chrome.nativeStrip");
   const waveGradientId = useId();
   const reduceMotion = useReducedMotion();
 
   return (
     <aside
-      aria-label="beUI Pro for mobile"
+      aria-label={t("label")}
       className="relative isolate flex h-(--announcement-h) items-center justify-center gap-x-2 border-b border-transparent bg-primary px-3 text-sm text-primary-foreground/80 sm:gap-x-3"
     >
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
@@ -53,13 +55,12 @@ export function NativeStrip() {
         </svg>
       </div>
       <p className="truncate">
-        beUI Pro for mobile is live
-        <span className="hidden sm:inline">
-          , with{" "}
-          <strong className="font-medium text-primary-foreground">
-            60+ React Native blocks and screens
-          </strong>
-        </span>
+        {t.rich("announcement", {
+          more: (chunks) => <span className="hidden sm:inline">{chunks}</span>,
+          strong: (chunks) => (
+            <strong className="font-medium text-primary-foreground">{chunks}</strong>
+          ),
+        })}
       </p>
       <BorderBeam
         active={!reduceMotion}
@@ -77,7 +78,7 @@ export function NativeStrip() {
           size="sm"
           className="h-7 gap-1 rounded-full bg-background px-2.5 text-xs text-foreground hover:bg-background/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-foreground"
         >
-          Explore<span className="sr-only"> beUI Pro for mobile</span>
+          {t("explore")}<span className="sr-only"> {t("label")}</span>
           <ArrowRight aria-hidden className="size-3 shrink-0" />
         </ButtonLink>
       </BorderBeam>

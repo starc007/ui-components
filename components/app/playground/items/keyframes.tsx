@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, type Transition, useReducedMotion } from "motion/react";
-import { arr, num, type PlaygroundItem, str, type Values } from "../core";
+import { arr, num, type PlaygroundItem, type PlaygroundT, str, type Values } from "../core";
 
 // Sensible starting values per property — used as defaults and when the
 // animated property switches (so a scale list doesn't linger on a rotate).
@@ -21,14 +21,26 @@ const BOUNDS: Record<string, { min: number; max: number; step: number }> = {
 };
 
 // What a single value means, in plain English, for the chosen property.
-function describeValue(n: number, prop: string) {
+const trend = (n: number) => (n > 1 ? "bigger" : n < 1 ? "smaller" : "normal");
+
+function describeValue(n: number, prop: string, t: PlaygroundT) {
+  const percent = String(Math.round(n * 100));
   if (prop === "scale")
-    return `${Math.round(n * 100)}% size${n > 1 ? ", bigger" : n < 1 ? ", smaller" : ", normal"}`;
+    return t("keyframes.describe.scale", { percent, trend: trend(n) });
   if (prop === "opacity")
-    return `${Math.round(n * 100)}% visible${n === 0 ? ", invisible" : n === 1 ? ", solid" : ""}`;
+    return t("keyframes.describe.opacity", {
+      percent,
+      state: n === 0 ? "invisible" : n === 1 ? "solid" : "partial",
+    });
   if (prop === "rotate")
-    return `rotated ${n}°${n === 0 ? ", upright" : ""}`;
-  return `${n}px ${n > 0 ? "right of" : n < 0 ? "left of" : "at"} start`;
+    return t("keyframes.describe.rotate", {
+      value: String(n),
+      upright: n === 0 ? "yes" : "no",
+    });
+  return t("keyframes.describe.x", {
+    value: String(n),
+    side: n > 0 ? "right" : n < 0 ? "left" : "at",
+  });
 }
 
 function repeatOf(rep: string): Transition {
@@ -74,17 +86,16 @@ function repeatCode(rep: string) {
   return "";
 }
 
-export const keyframesItem: PlaygroundItem = {
+export const keyframesItem = (t: PlaygroundT): PlaygroundItem => ({
   slug: "keyframes",
-  label: "Keyframes",
-  blurb:
-    "A property steps through a list of values in order, evenly spaced across the duration. Edit the list to change where it goes.",
+  label: t("keyframes.label"),
+  blurb: t("keyframes.blurb"),
   controls: [
     {
       kind: "select",
       key: "property",
-      label: "Property",
-      hint: "Which property the keyframes drive. Switching it resets the values.",
+      label: t("keyframes.controls.property.label"),
+      hint: t("keyframes.controls.property.hint"),
       options: [
         { label: "x", value: "x" },
         { label: "scale", value: "scale" },
@@ -95,18 +106,18 @@ export const keyframesItem: PlaygroundItem = {
     {
       kind: "numberlist",
       key: "frames",
-      label: "Keyframe values",
-      hint: "Each slider is a checkpoint the box passes through, in order. Drag one, or add/remove checkpoints.",
+      label: t("keyframes.controls.frames.label"),
+      hint: t("keyframes.controls.frames.hint"),
       minItems: 2,
       maxItems: 8,
       bounds: (v) => BOUNDS[str(v, "property", "scale")] ?? BOUNDS.scale,
-      describe: (n, v) => describeValue(n, str(v, "property", "scale")),
+      describe: (n, v) => describeValue(n, str(v, "property", "scale"), t),
     },
     {
       kind: "slider",
       key: "duration",
-      label: "Duration",
-      hint: "Time for one pass through all the values.",
+      label: t("keyframes.controls.duration.label"),
+      hint: t("keyframes.controls.duration.hint"),
       min: 0.4,
       max: 4,
       step: 0.1,
@@ -115,12 +126,12 @@ export const keyframesItem: PlaygroundItem = {
     {
       kind: "select",
       key: "repeat",
-      label: "Repeat",
-      hint: "Once, loop from the start, or mirror back and forth.",
+      label: t("keyframes.controls.repeat.label"),
+      hint: t("keyframes.controls.repeat.hint"),
       options: [
-        { label: "Once", value: "once" },
-        { label: "Loop", value: "loop" },
-        { label: "Mirror", value: "mirror" },
+        { label: t("keyframes.controls.repeat.once"), value: "once" },
+        { label: t("keyframes.controls.repeat.loop"), value: "loop" },
+        { label: t("keyframes.controls.repeat.mirror"), value: "mirror" },
       ],
     },
   ],
@@ -131,9 +142,9 @@ export const keyframesItem: PlaygroundItem = {
       ? { ...next, frames: SEQ[str(next, "property", "scale")] ?? SEQ.scale }
       : next,
   presets: [
-    { name: "Pulse", values: { property: "scale", frames: [1, 1.4, 1], duration: 1.4, repeat: "mirror" } },
-    { name: "Spin", values: { property: "rotate", frames: [0, 360], duration: 2, repeat: "loop" } },
-    { name: "Blink", values: { property: "opacity", frames: [1, 0.2, 1], duration: 1.2, repeat: "mirror" } },
+    { name: t("keyframes.presets.pulse"), values: { property: "scale", frames: [1, 1.4, 1], duration: 1.4, repeat: "mirror" } },
+    { name: t("keyframes.presets.spin"), values: { property: "rotate", frames: [0, 360], duration: 2, repeat: "loop" } },
+    { name: t("keyframes.presets.blink"), values: { property: "opacity", frames: [1, 0.2, 1], duration: 1.2, repeat: "mirror" } },
   ],
   Preview: KeyframesPreview,
   explain: (v) => {
@@ -143,9 +154,11 @@ export const keyframesItem: PlaygroundItem = {
     const seq = arr(v, "frames", SEQ.scale);
 
     const read = (n: number) => {
+      const percent = String(Math.round(n * 100));
       if (prop === "scale")
-        return `${n} (${Math.round(n * 100)}% size${n > 1 ? ", bigger" : n < 1 ? ", smaller" : ", normal"})`;
-      if (prop === "opacity") return `${n} (${Math.round(n * 100)}% visible)`;
+        return t("keyframes.read.scale", { value: String(n), percent, trend: trend(n) });
+      if (prop === "opacity")
+        return t("keyframes.read.opacity", { value: String(n), percent });
       if (prop === "rotate") return `${n}°`;
       return `${n}px`;
     };
@@ -153,20 +166,27 @@ export const keyframesItem: PlaygroundItem = {
     return [
       {
         code: `${prop}: [${seq.join(", ")}]`,
-        text: `This array is a list of values the box passes through, in order: ${seq.map(read).join(" → ")}. It's not "from A to B" — it hits every value as a checkpoint.`,
+        text: t("keyframes.explain.sequence", { sequence: seq.map(read).join(" → ") }),
       },
       {
-        code: `${seq.length} keyframes over ${dur}s`,
-        text: `The values are spaced evenly across the duration. ${seq.length} values over ${dur}s means each leg takes about ${seq.length > 1 ? +(dur / (seq.length - 1)).toFixed(2) : dur}s. Add or remove values to change the path.`,
+        code: t("keyframes.explain.countCode", {
+          count: String(seq.length),
+          duration: String(dur),
+        }),
+        text: t("keyframes.explain.spacing", {
+          count: String(seq.length),
+          duration: String(dur),
+          leg: String(seq.length > 1 ? +(dur / (seq.length - 1)).toFixed(2) : dur),
+        }),
       },
       {
         code: `repeat: ${rep}`,
         text:
           rep === "loop"
-            ? "Loop: when it reaches the last value it jumps back to the first and runs again — so it can snap at the seam."
+            ? t("keyframes.explain.loop")
             : rep === "mirror"
-              ? "Mirror: it plays forward, then backward, then forward — smooth, no snap, like a pulse."
-              : "Once: it runs a single time and stops on the last value.",
+              ? t("keyframes.explain.mirror")
+              : t("keyframes.explain.once"),
       },
     ];
   },
@@ -187,4 +207,4 @@ export function Demo() {
   );
 }`;
   },
-};
+});

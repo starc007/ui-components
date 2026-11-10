@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { SPONSORS } from "./landing-data";
 
@@ -11,6 +12,7 @@ export function SponsorRow({
   placement: string;
   className?: string;
 }) {
+  const t = useTranslations("Landing.home");
   return (
     <section
       aria-labelledby={`sponsors-${placement}`}
@@ -20,7 +22,7 @@ export function SponsorRow({
         id={`sponsors-${placement}`}
         className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
       >
-        Sponsored by
+        {t("sponsoredBy")}
       </h2>
       {SPONSORS.map((sponsor) => (
         <a

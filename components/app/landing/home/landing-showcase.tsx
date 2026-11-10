@@ -1,4 +1,6 @@
 import { ArrowRight } from "lucide-react";
+import { getMessages, getTranslations } from "next-intl/server";
+import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { HeroEyebrow } from "@/components/app/landing/hero-eyebrow";
@@ -9,9 +11,10 @@ import { ContactStrip } from "./contact-strip";
 import { FaqList } from "./faq-list";
 import { LandingButton } from "./landing-button";
 import {
-  CATEGORIES,
+  landingCategories,
+  localizedRegistry,
   NATIVE_COUNT,
-  NEW_ENTRIES,
+  newEntries,
   PRO_URL,
   resolveEntries,
   WEB_COUNT,
@@ -30,7 +33,7 @@ const reactNative =
 
 // Bento order and spans for a four-column, three-row board. The first tile
 // takes a 2x2 block so the board leads with one rich interaction.
-const BENTO = resolveEntries([
+const BENTO = [
   "blocks/command-palette",
   "blocks/dynamic-island",
   "motion/tabs",
@@ -38,7 +41,7 @@ const BENTO = resolveEntries([
   "motion/animated-toast-stack",
   "motion/action-swap",
   "blocks/otp-input",
-]);
+];
 const SPANS = [
   "sm:col-span-2 lg:row-span-2",
   "sm:col-span-2",
@@ -49,34 +52,43 @@ const SPANS = [
   "",
 ];
 
-const STATS = [
-  { value: String(WEB_COUNT), label: "React components" },
-  { value: String(NATIVE_COUNT), label: "React Native components" },
-  { value: String(CATEGORIES.length), label: "Library sections" },
-  { value: "MIT", label: "Free for commercial use" },
-];
-
 /**
  * The home page, gallery first. A compact centered hero, then a bento
  * board of live components right under the fold, the numbers, and a tabbed
  * explorer across every section.
  */
-export function LandingShowcase() {
+export async function LandingShowcase() {
+  const t = await getTranslations("Landing");
+  const source = localizedRegistry(await getMessages());
+  const bento = resolveEntries(source, BENTO);
+  const categories = landingCategories(source);
+  const fresh = newEntries(source);
+  const stats = [
+    { value: String(WEB_COUNT), label: t("home.stats.web") },
+    { value: String(NATIVE_COUNT), label: t("home.stats.native") },
+    { value: String(categories.length), label: t("home.stats.sections") },
+    { value: "MIT", label: t("home.stats.license") },
+  ];
+  const mark = {
+    react: (chunks: ReactNode) => <mark className={cn(styles.mark, react)}>{chunks}</mark>,
+    native: (chunks: ReactNode) => (
+      <mark className={cn(styles.mark, styles.markNative, reactNative)}>{chunks}</mark>
+    ),
+  };
+
   return (
     <div className="relative">
       <section className="mx-auto max-w-2xl px-4 pt-14 pb-10 text-center sm:pt-20">
         <HeroEyebrow count={WEB_COUNT} nativeCount={NATIVE_COUNT} />
         <h1 className="mt-5 text-balance text-[2.25rem] font-medium leading-[1.08] tracking-tight sm:text-5xl">
-          Animated components for <mark className={cn(styles.mark, react)}>React</mark> and{" "}
-          <mark className={cn(styles.mark, styles.markNative, reactNative)}>React Native</mark>
+          {t.rich("hero.headline", mark)}
         </h1>
         <p className="mx-auto mt-5 max-w-md text-pretty text-sm leading-6 text-muted-foreground">
-          Copy-paste components built with Framer Motion and Tailwind CSS. Install one with the
-          shadcn CLI and the source is yours.
+          {t("hero.subtitle")}
         </p>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
           <LandingButton href="/components/motion">
-            Browse components
+            {t("hero.browseComponents")}
             <ArrowRight aria-hidden="true" />
           </LandingButton>
           <LandingButton
@@ -85,15 +97,15 @@ export function LandingShowcase() {
             rel="noreferrer noopener"
             variant="outline"
           >
-            Explore Pro
-            <span className="sr-only"> (opens in a new tab)</span>
+            {t("hero.explorePro")}
+            <span className="sr-only"> {t("hero.opensInNewTab")}</span>
           </LandingButton>
         </div>
       </section>
 
-      <section aria-label="Featured components" className="mx-auto max-w-6xl px-4">
+      <section aria-label={t("home.featured")} className="mx-auto max-w-6xl px-4">
         <div className="grid grid-cols-1 gap-3 [grid-auto-rows:14rem] sm:grid-cols-2 lg:grid-cols-4">
-          {BENTO.map(({ category, component }, index) => (
+          {bento.map(({ category, component }, index) => (
             <PreviewTile
               key={component.slug}
               category={category}
@@ -107,13 +119,13 @@ export function LandingShowcase() {
       </section>
 
       <div className="mx-auto mt-10 flex max-w-xl flex-col items-center gap-3 px-4">
-        <p className="text-[13px] text-muted-foreground">One command. The source is yours.</p>
+        <p className="text-[13px] text-muted-foreground">{t("home.installHint")}</p>
         <InstallCommand className="w-full" />
       </div>
 
       <div className="mx-auto mt-14 max-w-6xl px-4">
         <dl className="grid grid-cols-2 overflow-hidden rounded-2xl border border-border lg:grid-cols-4">
-          {STATS.map((stat, index) => (
+          {stats.map((stat, index) => (
             <div
               key={stat.label}
               className={cn(
@@ -130,19 +142,19 @@ export function LandingShowcase() {
             </div>
           ))}
         </dl>
-        <SponsorRow placement="landing_hero"className="mt-6 justify-center" />
+        <SponsorRow placement="landing_hero" className="mt-6 justify-center" />
       </div>
 
-      {NEW_ENTRIES.length ? (
+      {fresh.length ? (
         <section aria-labelledby="landing-new" className="mx-auto max-w-6xl px-4 pt-16 sm:pt-24">
           <SectionTitle
             id="landing-new"
-            label="New"
-            title="Recently launched"
-            link={{ href: "/changelog", label: "Changelog" }}
+            label={t("home.newLabel")}
+            title={t("home.newTitle")}
+            link={{ href: "/changelog", label: t("home.changelog") }}
           />
           <div className="grid grid-cols-1 gap-3 [grid-auto-rows:15rem] sm:grid-cols-2 lg:grid-cols-4">
-            {NEW_ENTRIES.slice(0, 8).map(({ category, component, previewKey }) => (
+            {fresh.slice(0, 8).map(({ category, component, previewKey }) => (
               <PreviewTile
                 key={`${category}-${component.slug}`}
                 category={category}
@@ -157,11 +169,11 @@ export function LandingShowcase() {
       <section aria-labelledby="landing-explore" className="mx-auto max-w-6xl px-4 pt-16 sm:pt-24">
         <SectionTitle
           id="landing-explore"
-          label="Explore"
-          title="Everything in the library"
+          label={t("home.exploreLabel")}
+          title={t("home.exploreTitle")}
           align="center"
         />
-        <CategoryExplorer categories={CATEGORIES} />
+        <CategoryExplorer categories={categories} />
       </section>
 
       <TestimonialRows className="pt-16 sm:pt-24" />

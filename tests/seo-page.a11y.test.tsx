@@ -1,6 +1,8 @@
 import { afterEach, expect, test } from "bun:test";
 import { cleanup, render } from "@testing-library/react";
 import { axe } from "jest-axe";
+import { NextIntlClientProvider } from "next-intl";
+import { englishMessages } from "@/i18n/messages";
 import { SeoPage } from "@/components/app/docs/seo-page";
 import { findSeoPage } from "@/lib/seo-pages";
 import type { AlternativePage } from "@/lib/seo-pages/types";
@@ -12,7 +14,11 @@ test("comparison page exposes one heading outline, a labelled comparison table a
   if (!source) throw new Error("magic-ui comparison page is missing");
   // Code blocks are async server components, so this render covers the prose and table.
   const page = { ...source, sections: source.sections.map(({ code: _code, ...section }) => section) };
-  const { container, getAllByRole, getByRole } = render(<SeoPage kind="alternatives" page={page} />);
+  const { container, getAllByRole, getByRole } = render(
+    <NextIntlClientProvider locale="en" messages={englishMessages} timeZone="UTC">
+      <SeoPage kind="alternatives" page={page} />
+    </NextIntlClientProvider>,
+  );
 
   expect(getAllByRole("heading", { level: 1 })).toHaveLength(1);
   const table = getByRole("table");

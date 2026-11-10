@@ -31,5 +31,6 @@ export function HeatCalendar({ children, className, ...props }: HeatCalendarProp
 export { useHeatCalendar } from "./heat-calendar/context";
 export { HeatCalendarGrid } from "./heat-calendar/grid";
 export { HeatCalendarLegend } from "./heat-calendar/legend";
+export { type HeatCalendarMessages, heatCalendarMessages } from "./heat-calendar/messages";
 export { HeatCalendarTooltip } from "./heat-calendar/tooltip";
 export type { HeatCalendarCell, HeatCalendarProps, HeatCalendarSelection } from "./heat-calendar/types";

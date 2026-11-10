@@ -2,11 +2,12 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useInView } from "motion/react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { PreviewFit } from "@/components/app/landing/preview-fit";
 import { getPreview, previews } from "@/components/previews";
+import { Link } from "@/i18n/navigation";
 import { componentPath } from "@/lib/component-paths";
 import type { ComponentEntry } from "@/lib/registry";
 import { cn } from "@/lib/utils";
@@ -40,6 +41,7 @@ export function PreviewTile({
   /** A specific variant's preview, e.g. the newest one. */
   previewKey?: string;
 }) {
+  const t = useTranslations("Landing.card");
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "200px 0px" });
   const [hover, setHover] = useState(false);
@@ -60,7 +62,7 @@ export function PreviewTile({
       <Link
         href={componentPath(category, component.slug)}
         prefetch={false}
-        aria-label={`View ${component.name}`}
+        aria-label={t("view", { name: component.name })}
         className="absolute inset-0 z-20 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       />
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border transition-colors duration-200 ease-out group-hover/tile:border-border-strong">

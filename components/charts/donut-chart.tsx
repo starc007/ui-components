@@ -37,7 +37,12 @@ export function DonutChart({ className, children, ...props }: DonutChartProps) {
 }
 
 export { DonutChartCenter, type DonutChartCenterProps } from "./donut-chart/center";
-export { type DonutChartProps, useDonutChart } from "./donut-chart/context";
+export {
+  type DonutChartMessages,
+  type DonutChartProps,
+  donutChartMessages,
+  useDonutChart,
+} from "./donut-chart/context";
 export { DonutChartLegend, type DonutChartLegendProps } from "./donut-chart/legend";
 export type { DonutSegment, PlacedSegment as DonutPlacedSegment } from "./donut-chart/model";
 export { DonutChartPlot, type DonutChartPlotProps } from "./donut-chart/plot";

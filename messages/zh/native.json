@@ -1,0 +1,64 @@
+{
+  "index": {
+    "metaTitle": "React Native 动画组件",
+    "metaDescription": "免费开源的 React Native 和 Expo 动画组件，基于 Reanimated、Gesture Handler 和 Uniwind 为触控打造。复制源码，或通过 npx beui-native 安装。",
+    "breadcrumb": "面包屑导航",
+    "heading": "React Native 动画组件",
+    "intro": "基于 Reanimated、Gesture Handler 和 Uniwind 为触控打造。将源码复制到你的 Expo 或 React Native 应用中。",
+    "setup": "第一次使用？先<link>配置你的应用</link>，之后即可通过 CLI 添加任意组件。"
+  },
+  "component": {
+    "metaTitle": "{name} · React Native 动画组件",
+    "metaDescription": "{description} 一个适用于 Expo 和纯 React Native 应用的无障碍 React Native 动画组件，基于 Reanimated 构建。",
+    "ogAlt": "React Native 版{name}",
+    "documentation": "文档",
+    "webTitle": "也提供 Web 版本。",
+    "webDescription": "{name} 的 React 版本，基于 Motion 和 Tailwind CSS 构建。"
+  },
+  "panel": {
+    "preview": "预览",
+    "install": "安装",
+    "source": "GitHub 上的源码",
+    "worksIn": "可在 Expo 和纯 React Native 中使用。初次使用 beUI Native？<link>请先配置你的应用</link>。",
+    "cli": "将组件及其所需的共享文件复制到 <code>src/</code>，在缺少主题令牌时自动添加，并安装所需的库。你修改过的文件会被保留。",
+    "manualIntro": "请保持目录结构不变，因为组件通过相对路径导入共享文件。",
+    "stepLibraries": "安装依赖库",
+    "gestureRoot": "如果还没有，请用 <code>GestureHandlerRootView</code> 包裹你的应用。",
+    "stepTheme": "添加主题令牌",
+    "themeBody": "每个应用只需一次。在 Uniwind 读取的 CSS 文件中，于 Tailwind 和 Uniwind 之后导入它，并修改其中的值以匹配你的品牌。",
+    "stepShared": "复制共享文件",
+    "stepComponent": "复制组件"
+  },
+  "preview": {
+    "videoLabel": "{name} 在 iOS 上运行",
+    "play": "播放",
+    "pause": "暂停",
+    "replay": "重播"
+  },
+  "platform": {
+    "label": "平台",
+    "web": "Web"
+  },
+  "changelog": {
+    "title": "更新日志",
+    "heading": "beUI 新动态",
+    "description": "beUI 的每周更新：新的 React 和 React Native 动画组件、功能改进，以及无障碍和动效修复。",
+    "rss": "RSS 订阅",
+    "weekOf": "周起始日",
+    "new": "新增",
+    "improved": "改进",
+    "fixed": "修复",
+    "view": "查看{name}",
+    "learnMore": "了解更多"
+  },
+  "article": {
+    "guide": "指南",
+    "comparison": "对比",
+    "versus": "beUI 与 {competitor} 对比",
+    "feature": "功能",
+    "officialSite": "{competitor} 官网",
+    "components": "本指南中的组件",
+    "faq": "常见问题",
+    "updated": "更新于 <time></time>"
+  }
+}

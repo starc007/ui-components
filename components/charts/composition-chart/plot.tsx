@@ -10,7 +10,7 @@ import { compositionArea } from "./model";
 import { CompositionTooltipContent } from "./tooltip-content";
 
 export function CompositionChartPlot({ className }: { className?: string }) {
-  const { columns, rows, column, index, select, view, highlight, reduce, canHover } =
+  const { columns, rows, column, index, select, view, highlight, reduce, canHover, t } =
     useCompositionChart();
   const anchorRef = useRef<HTMLDivElement>(null);
   const tooltipId = useId();
@@ -32,7 +32,7 @@ export function CompositionChartPlot({ className }: { className?: string }) {
           className,
         )}
       >
-        No composition data
+        {t("empty")}
       </p>
     );
   return (
@@ -40,7 +40,7 @@ export function CompositionChartPlot({ className }: { className?: string }) {
       <div className="flex justify-between text-[11px] text-muted-foreground">
         <span>
           {column?.id}
-          {column?.valid ? "" : " · No data"}
+          {column?.valid ? "" : ` · ${t("noData")}`}
         </span>
         <span className="font-mono">100%</span>
       </div>
@@ -144,7 +144,7 @@ export function CompositionChartPlot({ className }: { className?: string }) {
         </svg>
         <input
           type="range"
-          aria-label="Inspect period"
+          aria-label={t("inspect")}
           min={0}
           max={columns.length - 1}
           step={1}

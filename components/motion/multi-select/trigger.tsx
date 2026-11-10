@@ -67,7 +67,7 @@ export interface MultiSelectValueProps {
 }
 
 export function MultiSelectValue({
-  placeholder = "Select options",
+  placeholder,
   children,
   className,
   chipClassName,
@@ -80,7 +80,7 @@ export function MultiSelectValue({
       <AnimatePresence initial={false} mode="popLayout">
         {showPlaceholder ? (
           <span key="multi-select-placeholder" className="text-muted-foreground">
-            {placeholder}
+            {placeholder ?? context.t("valuePlaceholder")}
           </span>
         ) : null}
         {context.values.map((value) => {
@@ -138,7 +138,7 @@ export function MultiSelectValue({
               <button
                 type="button"
                 data-multi-select-remove=""
-                aria-label={`Remove ${label}`}
+                aria-label={context.t("removeValue", { label })}
                 disabled={context.disabled}
                 onPointerDown={(event) => event.stopPropagation()}
                 onClick={(event) => {
@@ -170,13 +170,13 @@ export interface MultiSelectInputProps
 export function MultiSelectInput({
   ref,
   className,
-  "aria-label": ariaLabel = "Search options",
+  "aria-label": ariaLabel,
   onChange,
   onClick,
   onFocus,
   onKeyDown,
   onPointerDown,
-  placeholder = "Search…",
+  placeholder,
   showIcon = false,
   ...props
 }: MultiSelectInputProps) {
@@ -222,7 +222,7 @@ export function MultiSelectInput({
         ref={mergeRefs(ref, context.inputRef)}
         id={context.inputId}
         role="combobox"
-        aria-label={ariaLabel}
+        aria-label={ariaLabel ?? context.t("inputLabel")}
         aria-autocomplete="list"
         aria-expanded={context.open}
         aria-controls={context.listId}
@@ -232,7 +232,11 @@ export function MultiSelectInput({
         autoComplete="off"
         disabled={context.disabled}
         value={context.query}
-        placeholder={context.values.length ? "" : placeholder}
+        placeholder={
+          context.values.length
+            ? ""
+            : (placeholder ?? context.t("inputPlaceholder"))
+        }
         onPointerDown={(event) => {
           onPointerDown?.(event);
           if (event.defaultPrevented || context.open) return;

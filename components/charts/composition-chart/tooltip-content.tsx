@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useCompositionChart } from "./context";
 
 export function CompositionTooltipContent({ className }: { className?: string }) {
-  const { column, formatValue } = useCompositionChart();
+  const { column, formatValue, t } = useCompositionChart();
   if (!column) return null;
   return (
     <span className={cn("block w-72 max-w-full min-w-0", className)}>
@@ -47,7 +47,7 @@ export function CompositionTooltipContent({ className }: { className?: string })
         </span>
       ) : (
         <span className="block text-xs text-muted-foreground">
-          No complete data for this period.
+          {t("incomplete")}
         </span>
       )}
     </span>

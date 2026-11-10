@@ -1,0 +1,106 @@
+{
+  "hero": {
+    "headline": "Animated components for <react>React</react> and <native>React Native</native>",
+    "subtitle": "Copy-paste components built with Framer Motion and Tailwind CSS. Install one with the shadcn CLI and the source is yours.",
+    "browseComponents": "Browse components",
+    "explorePro": "Explore Pro",
+    "opensInNewTab": "(opens in a new tab)",
+    "repoOnGitHub": "{name} on GitHub",
+    "libraryCount": "<num>{count}</num> <muted>{library}</muted><sr> components</sr>"
+  },
+  "home": {
+    "featured": "Featured components",
+    "installHint": "One command. The source is yours.",
+    "stats": {
+      "web": "React components",
+      "native": "React Native components",
+      "sections": "Library sections",
+      "license": "Free for commercial use"
+    },
+    "sponsoredBy": "Sponsored by",
+    "newLabel": "New",
+    "newTitle": "Recently launched",
+    "changelog": "Changelog",
+    "exploreLabel": "Explore",
+    "exploreTitle": "Everything in the library",
+    "sections": "Library sections",
+    "allInSection": "All {count} in {name}"
+  },
+  "card": {
+    "view": "View {name}"
+  },
+  "native": {
+    "eyebrow": "beUI Native",
+    "title": "Same motion, on React Native",
+    "description": "{count} components rebuilt for touch with Reanimated, Gesture Handler and Uniwind.",
+    "browse": "Browse native components",
+    "playClips": "Play clips",
+    "pauseClips": "Pause clips"
+  },
+  "testimonials": {
+    "builders": "<strong>{count}</strong> builders use beUI",
+    "title": "Loved by builders",
+    "subtitle": "What people say about beUI on X.",
+    "verified": "Verified account",
+    "opensPost": "(opens the post on X in a new tab)"
+  },
+  "plans": {
+    "label": "Free and Pro",
+    "title": "Start free. Go further with Pro.",
+    "caption": "What beUI and beUI Pro include",
+    "feature": "Feature",
+    "free": "Free",
+    "lifetime": "Lifetime",
+    "included": "Included",
+    "notIncluded": "Not included",
+    "browse": "Browse",
+    "getPro": "Get Pro",
+    "rows": {
+      "components": "Components, blocks, charts and AI interfaces",
+      "registry": "shadcn registry and copy-paste source",
+      "native": "React Native components (beUI Native)",
+      "license": "MIT license, commercial use",
+      "blocks": "350+ premium blocks and animated components",
+      "mobile": "60+ React Native blocks and screens (Pro Mobile)",
+      "templates": "Full landing-page templates (Lifetime)",
+      "illustrations": "Animated illustrations (Lifetime)",
+      "agents": "Agent Skill, MCP and one-command installs",
+      "projects": "Unlimited personal and client projects"
+    }
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "A few things to know",
+    "free": {
+      "question": "Is beUI free for commercial projects?",
+      "answer": "Yes. The public beUI library is MIT licensed, including commercial use and modification. Keep the copyright and license notice in copies or substantial portions of the source. <link>Read the license</link>. beUI Pro has a separate paid license."
+    },
+    "install": {
+      "question": "How do I install a component?",
+      "answer": "Open a component page and copy its shadcn CLI command, such as <code>{command}</code>. You can also use npm, pnpm, or yarn, or copy the source from the Manual tab."
+    },
+    "stack": {
+      "question": "What does my project need?",
+      "answer": "The components are built for React 19, Tailwind CSS 4, and Motion. Individual components may use additional dependencies listed on their pages. Start with the <link>theme setup guide</link> to add the shared CSS tokens."
+    },
+    "reactNative": {
+      "question": "Does beUI work with React Native?",
+      "answer": "Yes. beUI Native brings beUI's components to Expo and bare React Native apps, built with Reanimated, Gesture Handler, and Uniwind. After the <setup>one-time setup</setup>, add one with <code>{command}</code>. Every <components>React Native component</components> page has a recording to watch it in motion first."
+    },
+    "customize": {
+      "question": "Can I change the design and animations?",
+      "answer": "Yes. The source lives in your project. You can change the styles, motion, and behavior directly, and use your own theme tokens to match your product."
+    },
+    "pro": {
+      "question": "Do I need Pro to use the free components?",
+      "answer": "No. The public library works independently of Pro. Pro is a separate collection of premium components and animated blocks; the Lifetime plan also includes full templates and animated illustrations."
+    }
+  },
+  "contact": {
+    "eyebrow": "Work with me",
+    "title": "Need components built for your product?",
+    "description": "Custom motion components and frontend systems, built to spec. Book a call or drop a line, whichever is easier.",
+    "bookCall": "Book a call",
+    "email": "Email me"
+  }
+}

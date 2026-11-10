@@ -1,6 +1,7 @@
 "use client";
 
 import { Maximize2, Minimize2, RotateCcw } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   createContext,
   Fragment,
@@ -59,6 +60,7 @@ export function PreviewExpand({
 
 /** Button at the right of the tab row that expands the preview. */
 export function PreviewExpandToggle({ className }: { className?: string }) {
+  const t = useTranslations("Docs.previewExpand");
   const { stageId, expanded, setExpanded, toggleRef } = useExpand();
   const open = () => {
     // Inactive tab panels are hidden; show the Preview tab first so the stage
@@ -96,10 +98,10 @@ export function PreviewExpandToggle({ className }: { className?: string }) {
       ref={toggleRef}
       type="button"
       onClick={open}
-      aria-label="Expand preview"
+      aria-label={t("expand")}
       aria-expanded={expanded}
       aria-controls={stageId}
-      title="Expand preview"
+      title={t("expand")}
       className={cn(ICON_BUTTON_CLASS, className)}
     >
       <Maximize2 aria-hidden="true" className="size-4" />
@@ -113,6 +115,7 @@ export function PreviewExpandToggle({ className }: { className?: string }) {
  * tab is open.
  */
 export function PreviewReplayToggle({ className }: { className?: string }) {
+  const t = useTranslations("Docs.previewExpand");
   const { stageId, replay } = useExpand();
   const onClick = () => {
     const panel = document
@@ -129,8 +132,8 @@ export function PreviewReplayToggle({ className }: { className?: string }) {
     <button
       type="button"
       onClick={onClick}
-      aria-label="Replay preview"
-      title="Replay preview"
+      aria-label={t("replay")}
+      title={t("replay")}
       className={cn(ICON_BUTTON_CLASS, className)}
     >
       <RotateCcw aria-hidden="true" className="size-4" />
@@ -152,6 +155,7 @@ export function PreviewExpandStage({
 }) {
   const { stageId, expanded, setExpanded, toggleRef, replayKey, replay } =
     useExpand();
+  const t = useTranslations("Docs.previewExpand");
   const exitRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -189,8 +193,8 @@ export function PreviewExpandStage({
           <button
             type="button"
             onClick={replay}
-            aria-label="Replay preview"
-            title="Replay preview"
+            aria-label={t("replay")}
+            title={t("replay")}
             className={ICON_BUTTON_CLASS}
           >
             <RotateCcw aria-hidden="true" className="size-4" />
@@ -199,8 +203,8 @@ export function PreviewExpandStage({
             ref={exitRef}
             type="button"
             onClick={() => setExpanded(false)}
-            aria-label="Exit expanded preview"
-            title="Exit (Esc)"
+            aria-label={t("exit")}
+            title={t("exitTitle")}
             className={ICON_BUTTON_CLASS}
           >
             <Minimize2 aria-hidden="true" className="size-4" />

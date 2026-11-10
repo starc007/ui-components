@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import {
   Tabs,
@@ -19,6 +20,7 @@ export function InstallTabs({
   cli: ReactNode;
   manual: ReactNode;
 }) {
+  const t = useTranslations("Docs.install");
   return (
     <Tabs defaultValue="cli" variant="pill">
       <TabsList>
@@ -27,14 +29,14 @@ export function InstallTabs({
           indicatorClassName="bg-background"
           className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
         >
-          CLI
+          {t("cli")}
         </TabsTrigger>
         <TabsTrigger
           value="manual"
           indicatorClassName="bg-background"
           className="aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground"
         >
-          Manual
+          {t("manual")}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="cli" className="mt-4">

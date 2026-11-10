@@ -1,0 +1,144 @@
+{
+  "breadcrumb": "Ruta de navegación",
+  "newBadge": "Nuevo",
+  "category": {
+    "new": "Nuevo",
+    "ogImageAlt": "Componentes de {name} de beUI",
+    "motion": {
+      "title": "Componentes animados de React — UI con Motion para copiar y pegar",
+      "heading": "Componentes animados de React",
+      "description": "Explora componentes animados de React gratuitos y de código abierto, creados con Motion y Tailwind CSS. Copia el código fuente en TypeScript a tu app y personaliza cada interacción.",
+      "allLabel": "Todos los componentes animados"
+    },
+    "blocks": {
+      "title": "Bloques de UI animados para React — Animación lista para producción",
+      "heading": "Bloques de UI animados para React",
+      "description": "Explora bloques animados de React listos para producción, creados con Motion y Tailwind CSS. Copia interacciones completas a tu app y adapta el código fuente a tu producto.",
+      "allLabel": "Todos los bloques animados"
+    },
+    "agents": {
+      "title": "Componentes para agentes de IA — Interfaces de IA animadas en React",
+      "heading": "Componentes animados para agentes de IA",
+      "description": "Crea experiencias de IA claras y fluidas con componentes de React de código abierto para el razonamiento del agente, el progreso, la actividad de herramientas y los estados de conversación.",
+      "allLabel": "Todos los componentes para agentes"
+    },
+    "agentGroups": {
+      "conversation": {
+        "title": "Componentes de conversación",
+        "description": "Compón prompts, organiza mensajes según el remitente, da forma a las superficies conversacionales y mantén estables los turnos en streaming mientras el lector recorre la transcripción."
+      },
+      "responses": {
+        "title": "Componentes de respuestas y evidencias",
+        "description": "Renderiza respuestas enriquecidas a medida que llegan, muestra las acciones de finalización en el momento adecuado y vincula las afirmaciones generadas con fuentes verificables."
+      },
+      "progress": {
+        "title": "Componentes de progreso y planificación",
+        "description": "Comunica esperas de duración desconocida, planes de tareas persistentes y la actividad cronológica del agente sin inventar precisión ni exponer una traza sin filtrar."
+      },
+      "tools": {
+        "title": "Componentes de herramientas y código",
+        "description": "Presenta resultados de ejecución, código generado y cambios en archivos con streaming acotado, resaltado estable y estados de finalización inspeccionables."
+      },
+      "humanControl": {
+        "title": "Componentes con intervención humana",
+        "description": "Pausa el trabajo del agente para pedir un permiso concreto, una aclaración, una revisión o una decisión, y conserva el resultado en el historial de la ejecución."
+      }
+    },
+    "charts": {
+      "title": "Gráficos animados de React — Mapas de calor y precios objetivo",
+      "heading": "Gráficos animados de React",
+      "description": "Explora mapas de calor de actividad interactivos, rentabilidades mensuales y gráficos de precio objetivo. Copia el código fuente de React y adáptalo a tus datos.",
+      "allLabel": "Todos los gráficos"
+    },
+    "casino": {
+      "title": "Juegos de casino animados en React: Crash, Mines, Plinko y Slide",
+      "heading": "Juegos de casino animados en React",
+      "description": "Explora juegos animados de crash, mines, plinko y slide con resultados justos integrados o decididos por el servidor. Copia el código fuente de React y conéctalo a tu propia lógica de juego.",
+      "allLabel": "Todos los juegos de casino"
+    }
+  },
+  "component": {
+    "metaDescription": "{description} Componente animado gratuito y de código abierto para React y Next.js. Copia y pega el código fuente o instálalo con shadcn.",
+    "ogImageAlt": "Vista previa del componente {name}",
+    "preview": "Vista previa",
+    "usage": "Uso",
+    "code": "Código",
+    "install": "Instalación",
+    "installDescription": "Añádelo con la CLI de shadcn o copia el código fuente manualmente.",
+    "apiReference": "Referencia de la API",
+    "composition": "Composición",
+    "howItWorks": "Cómo funciona",
+    "note": "Nota:",
+    "relatedComponents": "Componentes relacionados",
+    "updated": "Actualizado el <time>{date}</time>",
+    "seoTitle": "{name} animado para React",
+    "contributedBy": "Contribución de",
+    "includesDesignsBy": "Incluye diseños de",
+    "opensInNewTab": "(se abre en una pestaña nueva)",
+    "alsoOnNative": "También en React Native."
+  },
+  "install": {
+    "cli": "CLI",
+    "manual": "Manual",
+    "themeNotice": "Necesita los tokens del tema una sola vez. ¿Ya ejecutaste <code>shadcn init</code>? Entonces está listo. <link>Configuración del tema</link>",
+    "dependencies": "Instala las dependencias",
+    "utilFiles": "{count, plural, one {Añade el archivo de utilidades} other {Añade los archivos de utilidades}}",
+    "sourceCode": "Copia el código fuente"
+  },
+  "copyButton": {
+    "copy": "Copiar código",
+    "copied": "Copiado"
+  },
+  "expandCode": "Expandir código",
+  "copyPage": {
+    "copy": "Copiar página",
+    "tryAgain": "Reintentar",
+    "copyAria": "Copiar la página como Markdown",
+    "copiedAria": "Página copiada",
+    "errorAria": "No se pudo copiar. Inténtalo de nuevo",
+    "moreActions": "Más acciones de la página",
+    "menu": "Acciones de la página",
+    "viewMarkdown": "Ver como Markdown",
+    "openIn": "Abrir en {app}"
+  },
+  "keepInMind": {
+    "title": "Ten en cuenta",
+    "body": "Algunos componentes de este sitio están inspirados en trabajos existentes en la web o los recrean. No pretendo atribuirme el mérito; solo quiero aprender, experimentar y, a veces, llevar las cosas un poco más lejos. Si algo te resulta familiar y olvidé mencionarte, <link>escríbeme</link> y lo corregiré enseguida."
+  },
+  "proCard": {
+    "heading": "Oferta limitada",
+    "summary": "Más de 350 bloques y componentes de animación premium para React y Next.js.",
+    "price": "Acceso de por vida por 179 $",
+    "explore": "Explorar beUI Pro"
+  },
+  "proMobileCard": {
+    "title": "¿Necesitas pantallas completas?",
+    "description": "Más de 60 bloques y pantallas de React Native, desde onboarding y paywalls hasta perfil y checkout, ya disponibles en beUI Pro para móvil.",
+    "cta": "Explorar beUI Pro Mobile"
+  },
+  "sponsorCard": {
+    "title": "Patrocinadores",
+    "tier": "Diamante",
+    "become": "Hazte patrocinador",
+    "taglines": {
+      "tracwell": "Analítica de visitantes para crecer",
+      "illos": "Ilustraciones animadas para sitios de producto"
+    }
+  },
+  "pager": {
+    "label": "Componentes anterior y siguiente",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "previewExpand": {
+    "expand": "Ampliar vista previa",
+    "replay": "Repetir vista previa",
+    "exit": "Salir de la vista previa ampliada",
+    "exitTitle": "Salir (Esc)"
+  },
+  "propsTable": {
+    "prop": "Prop",
+    "type": "Tipo",
+    "default": "Predeterminado"
+  }
+}

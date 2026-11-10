@@ -4,7 +4,32 @@ import { ChevronLeft, ChevronRight, Shield } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { useMemo, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const knockoutBracketMessages = {
+  label: "Tournament bracket",
+  previousRound: "Previous round",
+  nextRound: "Next round",
+  showing: "Showing {rounds}",
+  thirdPlace: "Third place play-off",
+  tbd: "TBD",
+  fullTime: "FT",
+  fullTimePenalties: "FT (P)",
+  sideScore: "{team} {score}",
+  sideScorePenalties: "{team} {score} ({penalties} on penalties)",
+  matchResult: "{round}: {home}, {away}",
+  matchVersus: "{round}: {home} versus {away}",
+  winner: "{team} won",
+};
+
+export type KnockoutBracketMessages = typeof knockoutBracketMessages;
+
+type Translate = (
+  key: keyof KnockoutBracketMessages,
+  values?: Record<string, string | number>,
+) => string;
 
 export type Team = {
   name: string;
@@ -60,8 +85,10 @@ export interface KnockoutBracketProps {
   initialRound?: number;
   /** Third place play-off, rendered under the bracket instead of inside it. */
   thirdPlace?: Match;
-  /** Heading over `thirdPlace`. Defaults to "Third place play-off". */
+  /** Heading over `thirdPlace`. Defaults to the `thirdPlace` message ("Third place play-off"). */
   thirdPlaceLabel?: string;
+  /** Override any built-in string. */
+  labels?: Partial<KnockoutBracketMessages>;
   className?: string;
 }
 
@@ -231,10 +258,12 @@ function TeamRow({
   side,
   isWinner,
   decided,
+  tbd,
 }: {
   side: MatchSide;
   isWinner: boolean;
   decided: boolean;
+  tbd: string;
 }) {
   const dim = decided && !isWinner;
   return (
@@ -246,7 +275,7 @@ function TeamRow({
           dim && "text-muted-foreground",
         )}
       >
-        {side.team?.name ?? "TBD"}
+        {side.team?.name ?? tbd}
       </span>
       {side.score != null && (
         <span
@@ -269,40 +298,44 @@ function TeamRow({
   );
 }
 
-function sideLabel(side: MatchSide) {
-  const name = side.team?.name ?? "TBD";
-  if (side.score == null) return name;
-  const pen =
-    side.penalties != null ? ` (${side.penalties} on penalties)` : "";
-  return `${name} ${side.score}${pen}`;
+function sideLabel(side: MatchSide, t: Translate) {
+  const team = side.team?.name ?? t("tbd");
+  if (side.score == null) return team;
+  return side.penalties != null
+    ? t("sideScorePenalties", { team, score: side.score, penalties: side.penalties })
+    : t("sideScore", { team, score: side.score });
 }
 
 /** `status` is optional, so a decided match reads as finished without it. */
 const isFinished = (m: Match) =>
   m.status ? m.status === "finished" : m.winner != null;
 
-function matchLabel(roundName: string, m: Match) {
+function matchLabel(roundName: string, m: Match, t: Translate) {
   const finished = isFinished(m);
-  const sides = finished
-    ? `${sideLabel(m.home)}, ${sideLabel(m.away)}`
-    : `${sideLabel(m.home)} versus ${sideLabel(m.away)}`;
+  const sides = t(finished ? "matchResult" : "matchVersus", {
+    round: roundName,
+    home: sideLabel(m.home, t),
+    away: sideLabel(m.away, t),
+  });
   // Same pair the card's header row shows, so a time-only match isn't announced
   // without its kick-off.
   const schedule = finished ? [] : [m.date, m.time].filter(Boolean);
   const when = schedule.length ? `, ${schedule.join(", ")}` : "";
   const winnerName = m.winner ? m[m.winner].team?.name : undefined;
-  const outcome = winnerName ? `, ${winnerName} won` : "";
-  return `${roundName}: ${sides}${when}${outcome}`;
+  const outcome = winnerName ? `, ${t("winner", { team: winnerName })}` : "";
+  return `${sides}${when}${outcome}`;
 }
 
-function MatchCard({ match }: { match: Match }) {
+function MatchCard({ match, t }: { match: Match; t: Translate }) {
   const finished = isFinished(match);
   const decided = finished && match.winner != null;
   const shootout =
     match.home.penalties != null || match.away.penalties != null;
   // A per-match `badge` wins, so a draw that isn't football can label its own
   // result ("AET", "BO5", "Forfeit") instead of the derived full-time chip.
-  const badge = match.badge ?? (finished ? (shootout ? "FT (P)" : "FT") : null);
+  const badge =
+    match.badge ??
+    (finished ? t(shootout ? "fullTimePenalties" : "fullTime") : null);
 
   return (
     <div
@@ -326,11 +359,13 @@ function MatchCard({ match }: { match: Match }) {
           side={match.home}
           decided={decided}
           isWinner={decided && match.winner === "home"}
+          tbd={t("tbd")}
         />
         <TeamRow
           side={match.away}
           decided={decided}
           isWinner={decided && match.winner === "away"}
+          tbd={t("tbd")}
         />
       </div>
     </div>
@@ -341,9 +376,13 @@ export function KnockoutBracket({
   rounds,
   initialRound = 1,
   thirdPlace,
-  thirdPlaceLabel = "Third place play-off",
+  thirdPlaceLabel: thirdPlaceProp,
+  labels,
   className,
 }: KnockoutBracketProps) {
+  const t = useMessages("knockoutBracket", knockoutBracketMessages, labels);
+  const { locale } = useLocale();
+  const thirdPlaceLabel = thirdPlaceProp ?? t("thirdPlace");
   const reduce = useReducedMotion();
   const visibleCols = Math.min(VISIBLE_COLS, rounds.length);
   // The last page shows the final two rounds (semi-finals + final), not a full
@@ -358,14 +397,15 @@ export function KnockoutBracket({
     ? { duration: 0 }
     : { ...REFLOW, opacity: REFLOW_OPACITY };
 
+  // "en" without a provider so server and client join the names the same way.
   const pageStatus = useMemo(() => {
     const names = rounds
       .slice(page, page + visibleCols)
       .map((round) => round.name);
-    if (names.length <= 1) return `Showing ${names[0] ?? "rounds"}`;
-    if (names.length === 2) return `Showing ${names[0]} and ${names[1]}`;
-    return `Showing ${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
-  }, [rounds, page, visibleCols]);
+    return t("showing", {
+      rounds: new Intl.ListFormat(locale ?? "en").format(names),
+    });
+  }, [rounds, page, visibleCols, t, locale]);
 
   // Layout is computed, not scrolled. The leftmost visible round (`page`) is the
   // base and stacks at a fixed rhythm; every later match centers on its feeders,
@@ -448,7 +488,7 @@ export function KnockoutBracket({
       )}
     >
       <section
-        aria-label="Tournament bracket"
+        aria-label={t("label")}
         className="relative mx-auto"
         style={{ width: containerWidth }}
       >
@@ -481,7 +521,7 @@ export function KnockoutBracket({
             <button
               type="button"
               onClick={() => setPage((p) => clamp(p - 1, 0, maxPage))}
-              aria-label="Previous round"
+              aria-label={t("previousRound")}
               // Inset by PAD_X so the hover fill clears the scroll clip; 44px
               // button is the tap target, the inner circle the visible affordance.
               style={{ left: PAD_X }}
@@ -496,7 +536,7 @@ export function KnockoutBracket({
             <button
               type="button"
               onClick={() => setPage((p) => clamp(p + 1, 0, maxPage))}
-              aria-label="Next round"
+              aria-label={t("nextRound")}
               style={{ right: PAD_X }}
               className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"
             >
@@ -536,7 +576,7 @@ export function KnockoutBracket({
                 {round.matches.map((match, k) => (
                   <motion.li
                     key={match.id}
-                    aria-label={matchLabel(round.name, match)}
+                    aria-label={matchLabel(round.name, match, t)}
                     initial={false}
                     animate={{
                       x: colX(r, page),
@@ -547,7 +587,7 @@ export function KnockoutBracket({
                     className="absolute left-0 top-0"
                     style={{ willChange: "transform" }}
                   >
-                    <MatchCard match={match} />
+                    <MatchCard match={match} t={t} />
                   </motion.li>
                 ))}
               </ul>
@@ -563,11 +603,11 @@ export function KnockoutBracket({
             style={{ paddingLeft: PAD_X }}
           >
             <ul aria-label={thirdPlaceLabel} className="m-0 list-none p-0">
-              <li aria-label={matchLabel(thirdPlaceLabel, thirdPlace)}>
+              <li aria-label={matchLabel(thirdPlaceLabel, thirdPlace, t)}>
                 <p className="mb-2 text-sm leading-5 text-muted-foreground/70">
                   {thirdPlaceLabel}
                 </p>
-                <MatchCard match={thirdPlace} />
+                <MatchCard match={thirdPlace} t={t} />
               </li>
             </ul>
           </div>

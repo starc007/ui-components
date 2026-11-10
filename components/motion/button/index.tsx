@@ -9,5 +9,9 @@ export type { MagneticButtonProps } from "./magnetic";
 export { MagneticButton } from "./magnetic";
 export type { MetallicButtonProps } from "./metallic";
 export { MetallicButton } from "./metallic";
-export type { ButtonState, StatefulButtonProps } from "./stateful";
-export { StatefulButton } from "./stateful";
+export type {
+  ButtonState,
+  StatefulButtonMessages,
+  StatefulButtonProps,
+} from "./stateful";
+export { StatefulButton, statefulButtonMessages } from "./stateful";

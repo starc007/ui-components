@@ -1,11 +1,12 @@
+import { useTranslations } from "next-intl";
 import type { Testimonial } from "@/components/app/landing/testimonials-data";
 import { TestimonialAvatar } from "./testimonial-avatar";
 
-function VerifiedBadge() {
+function VerifiedBadge({ label }: { label: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      aria-label="Verified account"
+      aria-label={label}
       className="size-3.5 shrink-0 text-[#1d9bf0]"
       fill="currentColor"
     >
@@ -29,6 +30,7 @@ export function quoteText(text: string) {
 
 /** One post on X as a quiet bordered quote: words first, author underneath. */
 export function TestimonialTile({ testimonial }: { testimonial: Testimonial }) {
+  const t = useTranslations("Landing.testimonials");
   const href =
     testimonial.url ?? `https://x.com/${testimonial.user.username}/status/${testimonial.id}`;
 
@@ -52,14 +54,14 @@ export function TestimonialTile({ testimonial }: { testimonial: Testimonial }) {
             <span className="truncate text-xs font-medium text-foreground">
               {testimonial.user.name}
             </span>
-            {testimonial.user.verified ? <VerifiedBadge /> : null}
+            {testimonial.user.verified ? <VerifiedBadge label={t("verified")} /> : null}
           </div>
           <span className="block truncate text-xs text-muted-foreground">
             @{testimonial.user.username}
           </span>
         </div>
       </div>
-      <span className="sr-only"> (opens the post on X in a new tab)</span>
+      <span className="sr-only"> {t("opensPost")}</span>
     </a>
   );
 }

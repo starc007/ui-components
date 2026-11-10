@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { LandingButton } from "./landing-button";
@@ -21,13 +22,14 @@ export type ExplorerCategory = {
  * page height and the tab bar never jumps.
  */
 export function CategoryExplorer({ categories }: { categories: ExplorerCategory[] }) {
+  const t = useTranslations("Landing.home");
   const [active, setActive] = useState(categories[0]?.slug ?? "");
 
   return (
     <Tabs value={active} onValueChange={setActive} variant="pill">
       <div className="flex flex-col items-center gap-4">
         <div className="max-w-full overflow-x-auto">
-          <TabsList aria-label="Library sections">
+          <TabsList aria-label={t("sections")}>
             {categories.map((category) => (
               <TabsTrigger key={category.slug} value={category.slug} className="text-[13px]">
                 {category.name}
@@ -49,7 +51,7 @@ export function CategoryExplorer({ categories }: { categories: ExplorerCategory[
           </div>
           <div className="mt-5 flex justify-center">
             <LandingButton href={category.href} variant="outline">
-              All {category.count} in {category.name}
+              {t("allInSection", { count: category.count, name: category.name })}
               <ArrowRight aria-hidden="true" />
             </LandingButton>
           </div>

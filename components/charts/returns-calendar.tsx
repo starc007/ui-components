@@ -26,6 +26,10 @@ export function ReturnsCalendar({ children, className, ...props }: ReturnsCalend
 
 export { useReturnsCalendar } from "./returns-calendar/context";
 export { ReturnsCalendarGrid } from "./returns-calendar/grid";
+export {
+  type ReturnsCalendarMessages,
+  returnsCalendarMessages,
+} from "./returns-calendar/messages";
 export { ReturnsCalendarTooltip } from "./returns-calendar/tooltip";
 export type {
   ReturnsCalendarProps,

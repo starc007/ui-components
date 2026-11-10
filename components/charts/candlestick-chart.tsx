@@ -41,7 +41,9 @@ export function CandlestickChart({
 
 export {
   type Candle,
+  type CandlestickChartMessages,
   type CandlestickChartProps,
+  candlestickChartMessages,
   useCandlestickChart,
 } from "./candlestick-chart/context";
 export {

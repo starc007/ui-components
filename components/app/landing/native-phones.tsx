@@ -2,7 +2,7 @@
 
 import { ArrowRight, Pause, Play } from "lucide-react";
 import { useReducedMotion } from "motion/react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import {
   useCallback,
@@ -10,6 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { Link } from "@/i18n/navigation";
 import type { NativeClip, NativeTheme } from "@/lib/native";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,7 @@ export type NativePhone = {
  * paused on their posters.
  */
 export function NativePhones({ phones }: { phones: NativePhone[] }) {
+  const t = useTranslations("Landing.native");
   const reduce = useReducedMotion();
   const [paused, setPaused] = useState(false);
   // Reduced motion starts paused; the control can still play them.
@@ -45,7 +47,7 @@ export function NativePhones({ phones }: { phones: NativePhone[] }) {
         ) : (
           <Pause aria-hidden="true" className="size-3.5" />
         )}
-        {paused ? "Play clips" : "Pause clips"}
+        {paused ? t("playClips") : t("pauseClips")}
       </button>
       {/* The phones rise out of the panel's bottom edge, staggered. */}
       <ul className="flex h-[17rem] items-start justify-center gap-3 overflow-hidden px-4 pt-12 [mask-image:linear-gradient(to_bottom,black_85%,transparent)] sm:h-[22rem] sm:gap-5 lg:h-[26rem] lg:gap-8">

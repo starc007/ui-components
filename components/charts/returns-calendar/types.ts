@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { ReturnsCalendarMessages } from "./messages";
 
 /** Zero-based row and month; month 12 selects the year total. */
 export type ReturnsCalendarCell = { y: number; m: number };
@@ -18,6 +19,8 @@ export interface ReturnsCalendarProps {
   selection?: ReturnsCalendarSelection | null;
   defaultSelection?: ReturnsCalendarSelection | null;
   onSelectionChange?: (selection: ReturnsCalendarSelection | null) => void;
+  /** Override any built-in string. */
+  labels?: Partial<ReturnsCalendarMessages>;
 }
 
 export interface ReturnsCalendarTooltipData {

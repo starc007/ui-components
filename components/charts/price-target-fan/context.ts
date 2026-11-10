@@ -3,6 +3,8 @@
 import { useReducedMotion } from "motion/react";
 import { createContext, useCallback, useContext, useId, useMemo, useRef, useState } from "react";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useLocale, useMessages } from "@/lib/i18n";
+import { priceTargetFanMessages } from "./messages";
 import type { PriceTargetFanActive, PriceTargetFanProps } from "./types";
 import { EMPTY_HISTORY, fmtScrubDate, H, LOW, MID, PAD, UP, W } from "./utils";
 
@@ -18,7 +20,7 @@ import { EMPTY_HISTORY, fmtScrubDate, H, LOW, MID, PAD, UP, W } from "./utils";
  * moves the card without travel, and drops the ring.
  */
 export function usePriceTargetFanModel({
-  label = "Price target · 12 months",
+  label: customLabel,
   current,
   targets,
   dates = {},
@@ -26,7 +28,11 @@ export function usePriceTargetFanModel({
   active: controlledActive,
   defaultActive = null,
   onActiveChange,
+  labels,
 }: PriceTargetFanProps) {
+  const t = useMessages("priceTargetFan", priceTargetFanMessages, labels);
+  const { locale } = useLocale();
+  const label = customLabel ?? t("label");
   const reduce = useReducedMotion();
   const clipId = useId();
   const fadeId = `${clipId}-fade`;
@@ -168,26 +174,26 @@ export function usePriceTargetFanModel({
         px: geo.endX,
         py: p.ty,
         // the horizon rides in the faint header so the target has a date without a row
-        title: `${p.key} target${dates.horizon ? ` · ${dates.horizon}` : ""}`,
+        title: `${t("target", { key: p.key })}${dates.horizon ? ` · ${dates.horizon}` : ""}`,
         // one metric per row, label against value; the move sits alone under a hairline
         metrics: [
-          { label: "Price", value: fmt(p.price) },
-          { label: "Analysts", value: String(p.analysts) },
+          { label: t("price"), value: fmt(p.price) },
+          { label: t("analysts"), value: String(p.analysts) },
         ],
         accent: {
-          label: "vs now",
+          label: t("vsNow"),
           value: `${up ? "+" : "−"}${Math.abs(pct(p.price)).toFixed(1)}%`,
           color: p.color as string,
         } as { label: string; value: string; color: string } | null,
       };
     }
     if (scrub !== null) {
-      const title = fmtScrubDate.format(new Date(history[scrub].date));
+      const title = fmtScrubDate(history[scrub].date, locale);
       return {
         px: geo.hx(scrub),
         py: y(hist[scrub]),
         title,
-        metrics: [{ label: "Price", value: fmt(hist[scrub]) }],
+        metrics: [{ label: t("price"), value: fmt(hist[scrub]) }],
         accent: null as { label: string; value: string; color: string } | null,
       };
     }
@@ -227,6 +233,8 @@ export function usePriceTargetFanModel({
     targets,
     dates,
     label,
+    locale,
+    t,
     y,
     pct,
     fmt,

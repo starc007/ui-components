@@ -91,6 +91,8 @@ export function LineChartPlot({
     tooltipId,
     reduce,
     canHover,
+    t,
+    xy,
   } = useLineChart();
   const { ref, width } = useElementWidth<HTMLDivElement>();
   const inView = useInView(ref, { once: true, amount: 0.3 });
@@ -146,7 +148,7 @@ export function LineChartPlot({
         className={cn("flex items-center justify-center text-sm text-muted-foreground", className)}
         style={{ height }}
       >
-        No data
+        {xy("noData")}
       </p>
     );
 
@@ -358,7 +360,7 @@ export function LineChartPlot({
               {loadingLabel ? (
                 <TextShimmer>{loadingLabel}</TextShimmer>
               ) : (
-                <span className="sr-only">Loading</span>
+                <span className="sr-only">{t("loadingStatus")}</span>
               )}
             </motion.output>
           ) : null}
@@ -373,13 +375,16 @@ export function LineChartPlot({
               count={n}
               activeIndex={activeIndex}
               onActive={(i) => setActive(categories[i])}
-              label={`${label}: inspect values`}
+              label={t("inspect", { label })}
               valueText={(i) =>
                 [
                   categories[i],
                   ...visibleRows.map((row) => {
                     const value = row.values[i];
-                    return `${row.name} ${value === null ? "no data" : formatValue(value)}`;
+                    return xy("seriesValue", {
+                      name: row.name,
+                      value: value === null ? xy("missing") : formatValue(value),
+                    });
                   }),
                 ].join(". ")
               }

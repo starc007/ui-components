@@ -75,6 +75,7 @@ export function SankeyChartPlot({ className, showValues = true }: SankeyChartPlo
     registerButton,
     formatValue,
     label,
+    t,
     empty,
     reduce,
     canHover,
@@ -212,7 +213,7 @@ export function SankeyChartPlot({ className, showValues = true }: SankeyChartPlo
       <div
         ref={plotRef}
         role="group"
-        aria-label={`${label} nodes`}
+        aria-label={t("nodes", { label })}
         tabIndex={-1}
         data-slot="sankey-chart-plot"
         className={cn("relative h-80 w-full min-w-[32rem] outline-none", className)}
@@ -404,7 +405,10 @@ export function SankeyChartPlot({ className, showValues = true }: SankeyChartPlo
                 node.label,
                 formatValue(node.value),
                 node.inValue && node.outValue
-                  ? `in ${formatValue(node.inValue)}, out ${formatValue(node.outValue)}`
+                  ? t("nodeFlows", {
+                      in: formatValue(node.inValue),
+                      out: formatValue(node.outValue),
+                    })
                   : null,
                 node.description,
               ]

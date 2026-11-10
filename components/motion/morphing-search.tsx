@@ -22,6 +22,7 @@ import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 // Keeps the Wallet Card feel with a little more time to read the morph.
@@ -47,6 +48,17 @@ export type MorphingSearchItem = {
 	onSelect?: () => void;
 };
 
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const morphingSearchMessages = {
+	placeholder: "Search",
+	empty: "No results found.",
+	close: "Close search",
+	dialog: "Search",
+	results: "Search results",
+};
+
+export type MorphingSearchMessages = typeof morphingSearchMessages;
+
 export interface MorphingSearchProps {
 	items: MorphingSearchItem[];
 	placeholder?: string;
@@ -59,6 +71,8 @@ export interface MorphingSearchProps {
 	onOpenChange?: (open: boolean) => void;
 	onQueryChange?: (query: string) => void;
 	onSelect?: (item: MorphingSearchItem) => void;
+	/** Override any built-in string. */
+	labels?: Partial<MorphingSearchMessages>;
 	className?: string;
 }
 
@@ -80,17 +94,21 @@ function isEditableTarget(target: EventTarget | null) {
 
 export function MorphingSearch({
 	items,
-	placeholder = "Search",
+	placeholder: placeholderProp,
 	shortcut = "f",
 	iconOnly = false,
-	emptyMessage = "No results found.",
+	emptyMessage: emptyMessageProp,
 	open: controlledOpen,
 	defaultOpen = false,
 	onOpenChange,
 	onQueryChange,
 	onSelect,
+	labels,
 	className,
 }: MorphingSearchProps) {
+	const t = useMessages("morphingSearch", morphingSearchMessages, labels);
+	const placeholder = placeholderProp ?? t("placeholder");
+	const emptyMessage = emptyMessageProp ?? t("empty");
 	const [internalOpen, setInternalOpen] = useState(defaultOpen);
 	const [query, setQuery] = useState("");
 	const [mounted, setMounted] = useState(false);
@@ -384,7 +402,7 @@ export function MorphingSearch({
 							>
 								<button
 									type="button"
-									aria-label="Close search"
+									aria-label={t("close")}
 									className="pointer-events-auto fixed inset-0 cursor-default bg-transparent"
 									onClick={closeSearch}
 								/>
@@ -407,7 +425,7 @@ export function MorphingSearch({
 									ref={dialogRef}
 									role="dialog"
 									aria-modal="true"
-									aria-label="Search"
+									aria-label={t("dialog")}
 									onKeyDown={handleDialogKeyDown}
 									initial={
 										reduce
@@ -477,7 +495,7 @@ export function MorphingSearch({
 										ref={listRef}
 										id={listboxId}
 										role="listbox"
-										aria-label="Search results"
+										aria-label={t("results")}
 										transition={reduce ? { duration: 0 } : undefined}
 										variants={
 											reduce

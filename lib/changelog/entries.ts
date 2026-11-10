@@ -7,6 +7,31 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
  */
 export const changelogEntries: ChangelogEntry[] = [
   {
+    "date": "2026-11-09",
+    "title": "beUI in five languages",
+    "items": [
+      {
+        "type": "new",
+        "text": "The site is now available in Chinese, Spanish, French and German. Pick a language from the menu in the header.",
+        "href": "/"
+      },
+      {
+        "type": "new",
+        "text": "Every component and chart with built-in text, such as close buttons, placeholders, empty states, validation errors and screen-reader labels, can now be translated. Wrap your app in LocaleProvider from lib/i18n with your strings, or override any string on one instance with the new labels prop. Dates, weekdays, file sizes and counts follow the provider's language."
+      },
+      {
+        "type": "improved",
+        "text": "Todo List takes a labels prop for its title, progress and status text, and formats its counts for the current language.",
+        "component": "todo-list"
+      },
+      {
+        "type": "improved",
+        "text": "Number Ticker's locale prop accepts a language tag such as de-DE, and otherwise follows the LocaleProvider language.",
+        "component": "number"
+      }
+    ]
+  },
+  {
     "date": "2026-11-02",
     "title": "Plinko, Mines, Crash and Slide",
     "items": [

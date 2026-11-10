@@ -1,15 +1,16 @@
 "use client";
 
-import { createContext, useContext, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { createContext, type ReactNode, useContext, useId, useMemo, useRef, useState } from "react";
 import { NumberTicker } from "@/components/motion/number-ticker";
 import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   buildLiquidityHeatmap,
-  pricePosition,
   type LiquiditySnapshot,
+  pricePosition,
 } from "./liquidity-heatmap/model";
 
 const formatPrice = (value: number) => value.toLocaleString("en-US", { maximumFractionDigits: 2 });
@@ -21,6 +22,20 @@ function heatColor(value: number, max: number) {
     Math.min(colors.length - 1, Math.floor((max > 0 ? value / max : 0) * colors.length))
   ];
 }
+
+export const liquidityHeatmapMessages = {
+  label: "Liquidity heatmap",
+  unit: "units",
+  empty: "No liquidity data",
+  table: "Liquidity by price and time",
+  cell: "{time}, {price}: {size} {unit}",
+  cellEmpty: "{time}, {price}: No data",
+  noData: "No data",
+  market: "Market {price}",
+  legend: "Resting liquidity · {unit}",
+};
+export type LiquidityHeatmapMessages = typeof liquidityHeatmapMessages;
+
 interface LiquidityHeatmapProps {
   /** Time-ordered snapshots; use consistent price buckets and stable IDs. */
   snapshots: readonly LiquiditySnapshot[];
@@ -30,6 +45,8 @@ interface LiquidityHeatmapProps {
   label?: string;
   formatPrice?: (price: number) => string;
   formatSize?: (size: number) => string;
+  /** Override any built-in string. */
+  labels?: Partial<LiquidityHeatmapMessages>;
   children?: ReactNode;
   className?: string;
 }
@@ -39,6 +56,7 @@ const Context = createContext<
       unit: string;
       formatPrice: (value: number) => string;
       formatSize: (value: number) => string;
+      t: ReturnType<typeof useMessages<LiquidityHeatmapMessages>>;
     })
   | null
 >(null);
@@ -50,21 +68,30 @@ export function useLiquidityHeatmap() {
 export function LiquidityHeatmap({
   snapshots,
   maxSize,
-  unit = "units",
-  label = "Liquidity heatmap",
+  unit,
+  label,
   formatPrice: priceFormatter = formatPrice,
   formatSize: sizeFormatter = formatSize,
+  labels,
   children,
   className,
 }: LiquidityHeatmapProps) {
+  const t = useMessages("liquidityHeatmap", liquidityHeatmapMessages, labels);
   const model = useMemo(() => buildLiquidityHeatmap(snapshots), [snapshots]);
   const ceiling =
     maxSize !== undefined && Number.isFinite(maxSize) && maxSize > 0 ? maxSize : model.maximum;
   return (
     <Context.Provider
-      value={{ ...model, ceiling, unit, formatPrice: priceFormatter, formatSize: sizeFormatter }}
+      value={{
+        ...model,
+        ceiling,
+        unit: unit ?? t("unit"),
+        formatPrice: priceFormatter,
+        formatSize: sizeFormatter,
+        t,
+      }}
     >
-      <section aria-label={label} className={cn("w-full space-y-4", className)}>
+      <section aria-label={label ?? t("label")} className={cn("w-full space-y-4", className)}>
         {children ?? (
           <>
             <LiquidityHeatmapPlot />
@@ -77,7 +104,7 @@ export function LiquidityHeatmap({
 }
 
 export function LiquidityHeatmapPlot({ className }: { className?: string }) {
-  const { columns, prices, ceiling, unit, formatPrice, formatSize } = useLiquidityHeatmap();
+  const { columns, prices, ceiling, unit, formatPrice, formatSize, t } = useLiquidityHeatmap();
   const reduced = useReducedMotion();
   const root = useRef<HTMLDivElement>(null);
   const anchor = useRef<HTMLButtonElement>(null);
@@ -111,7 +138,7 @@ export function LiquidityHeatmapPlot({ className }: { className?: string }) {
   if (!prices.length || !columns.length)
     return (
       <p className={cn("py-16 text-center text-sm text-muted-foreground", className)}>
-        No liquidity data
+        {t("empty")}
       </p>
     );
   return (
@@ -122,7 +149,7 @@ export function LiquidityHeatmapPlot({ className }: { className?: string }) {
       >
         <div className="relative">
           <table
-            aria-label="Liquidity by price and time"
+            aria-label={t("table")}
             className="w-full table-fixed border-separate border-spacing-[2px]"
           >
             <thead className="sr-only">
@@ -147,7 +174,16 @@ export function LiquidityHeatmapPlot({ className }: { className?: string }) {
                           type="button"
                           data-cell={index}
                           tabIndex={key === validCursor ? 0 : -1}
-                          aria-label={`${column.label}, ${formatPrice(price)}: ${value === undefined ? "No data" : `${formatSize(value)} ${unit}`}`}
+                          aria-label={
+                            value === undefined
+                              ? t("cellEmpty", { time: column.label, price: formatPrice(price) })
+                              : t("cell", {
+                                  time: column.label,
+                                  price: formatPrice(price),
+                                  size: formatSize(value),
+                                  unit,
+                                })
+                          }
                           aria-describedby={key === active ? tooltipId : undefined}
                           className="relative block h-6 w-full rounded-[2px] bg-muted/30 outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:z-10"
                           onPointerEnter={(event) => {
@@ -289,7 +325,7 @@ export function LiquidityHeatmapPlot({ className }: { className?: string }) {
                 {selected.label} · {formatPrice(prices[row])}
               </span>
               <span className="inline-flex items-center tabular-nums">
-                {size === undefined ? "No data" : (
+                {size === undefined ? t("noData") : (
                   <NumberTicker
                     value={size}
                     // Format the original amount so fractional liquidity is preserved.
@@ -301,7 +337,9 @@ export function LiquidityHeatmapPlot({ className }: { className?: string }) {
                 )}
               </span>
               {selected.price !== undefined && Number.isFinite(selected.price) && (
-                <span className="text-muted-foreground">Market {formatPrice(selected.price)}</span>
+                <span className="text-muted-foreground">
+                  {t("market", { price: formatPrice(selected.price) })}
+                </span>
               )}
             </span>
           )
@@ -312,7 +350,7 @@ export function LiquidityHeatmapPlot({ className }: { className?: string }) {
 }
 
 export function LiquidityHeatmapLegend({ className }: { className?: string }) {
-  const { ceiling, formatSize, unit } = useLiquidityHeatmap();
+  const { ceiling, formatSize, unit, t } = useLiquidityHeatmap();
   return (
     <div
       className={cn(
@@ -320,7 +358,7 @@ export function LiquidityHeatmapLegend({ className }: { className?: string }) {
         className,
       )}
     >
-      <span>Resting liquidity · {unit}</span>
+      <span>{t("legend", { unit })}</span>
       <span className="flex items-center gap-2">
         <span>0</span>
         <span aria-hidden="true" className="flex gap-0.5">
@@ -337,4 +375,4 @@ export function LiquidityHeatmapLegend({ className }: { className?: string }) {
     </div>
   );
 }
-export type { LiquiditySnapshot, LiquidityHeatmapProps };
+export type { LiquidityHeatmapProps, LiquiditySnapshot };

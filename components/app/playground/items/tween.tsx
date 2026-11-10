@@ -1,7 +1,8 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import { arr, num, type PlaygroundItem, type Values } from "../core";
+import { useTranslations } from "next-intl";
+import { arr, num, type PlaygroundItem, type PlaygroundT, type Values } from "../core";
 import { TravelPreview } from "./travel-preview";
 
 const FALLBACK = [0, 0, 0.58, 1];
@@ -34,22 +35,19 @@ function bezierEasing([x1, y1, x2, y2]: number[]) {
 // nine equal time slices — the box's eased position at each
 const SLICES = Array.from({ length: 9 }, (_, i) => (i + 1) / 10);
 
-// Named curves and what they feel like, matched to the current handles.
-const NAMED: { curve: number[]; title: string; text: string }[] = [
-  { curve: [0, 0, 1, 1], title: "linear", text: "Constant speed the whole way. Mechanical, no acceleration." },
-  { curve: [0.42, 0, 1, 1], title: "easeIn", text: "Starts slow, speeds up into the end. Good for things leaving." },
-  { curve: [0, 0, 0.58, 1], title: "easeOut", text: "Starts fast, slows into the end. Good for things arriving." },
-  { curve: [0.42, 0, 0.58, 1], title: "easeInOut", text: "Slow start and finish, fast through the middle. Smooth and natural." },
-];
+// Named curves (titles are the Motion easing names), matched to the current handles.
+const NAMED = [
+  { curve: [0, 0, 1, 1], title: "linear" },
+  { curve: [0.42, 0, 1, 1], title: "easeIn" },
+  { curve: [0, 0, 0.58, 1], title: "easeOut" },
+  { curve: [0.42, 0, 0.58, 1], title: "easeInOut" },
+] as const;
 
-const matchCaption = (c: number[]) => {
+const matchCaption = (c: number[], t: PlaygroundT) => {
   const hit = NAMED.find((n) => n.curve.every((v, i) => Math.abs(v - c[i]) < 0.02));
-  return (
-    hit ?? {
-      title: "custom",
-      text: "Your own pacing. Steeper parts of the curve move faster.",
-    }
-  );
+  return hit
+    ? { title: hit.title, text: t(`tween.curves.${hit.title}`) }
+    : { title: t("tween.curves.customTitle"), text: t("tween.curves.custom") };
 };
 
 function TweenPreview({
@@ -60,13 +58,14 @@ function TweenPreview({
   replayKey: number;
 }) {
   const reduce = useReducedMotion();
+  const t = useTranslations("Pages.playground");
   const curve = arr(values, "curve", FALLBACK);
   const ease = bezierEasing(curve);
   return (
     <TravelPreview
       replayKey={replayKey}
       strobe={reduce ? undefined : SLICES.map(ease)}
-      caption={matchCaption(curve)}
+      caption={matchCaption(curve, t)}
       transition={
         reduce
           ? { duration: 0 }
@@ -82,17 +81,16 @@ function TweenPreview({
 
 const fmt = (e: number[]) => `[${e.map((n) => +n.toFixed(3)).join(", ")}]`;
 
-export const tweenItem: PlaygroundItem = {
+export const tweenItem = (t: PlaygroundT): PlaygroundItem => ({
   slug: "tween",
-  label: "Tween / Ease",
-  blurb:
-    "Time-based motion. Duration sets how long; the cubic-bezier curve sets the pacing. Drag the handles to shape it.",
+  label: t("tween.label"),
+  blurb: t("tween.blurb"),
   controls: [
     {
       kind: "slider",
       key: "duration",
-      label: "Duration",
-      hint: "How long the animation takes, start to finish.",
+      label: t("tween.controls.duration.label"),
+      hint: t("tween.controls.duration.hint"),
       min: 0.1,
       max: 3,
       step: 0.05,
@@ -101,8 +99,8 @@ export const tweenItem: PlaygroundItem = {
     {
       kind: "curve",
       key: "curve",
-      label: "Easing curve",
-      hint: "Pacing over time. Drag the handles — steep = fast, flat = slow.",
+      label: t("tween.controls.curve.label"),
+      hint: t("tween.controls.curve.hint"),
     },
   ],
   defaults: { duration: 0.6, curve: [0, 0, 0.58, 1] },
@@ -116,19 +114,19 @@ export const tweenItem: PlaygroundItem = {
   explain: (v) => {
     const dur = num(v, "duration", 0.6);
     const curve = arr(v, "curve", FALLBACK);
-    const cap = matchCaption(curve);
+    const cap = matchCaption(curve, t);
     return [
       {
         code: `duration: ${dur}`,
-        text: `A fixed time, in seconds. The whole move always takes ${dur}s, no matter the distance. (Springs don't have this — tweens do.)`,
+        text: t("tween.explain.duration", { value: String(dur) }),
       },
       {
         code: `ease: [${curve.map((n) => +n.toFixed(2)).join(", ")}]`,
-        text: "The easing curve, written as a cubic-bezier. The four numbers are two control handles (x1, y1, x2, y2) that bend how speed changes over time. You rarely type these by hand — drag the curve handles instead.",
+        text: t("tween.explain.ease"),
       },
       {
         code: cap.title,
-        text: `This curve reads as "${cap.title}": ${cap.text} The dots in the preview are the box's position at equal time slices, so spacing shows speed.`,
+        text: t("tween.explain.curve", { title: cap.title, text: cap.text }),
       },
     ];
   },
@@ -145,4 +143,4 @@ export function Demo() {
     />
   );
 }`,
-};
+});

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, type Transition } from "motion/react";
+import { useTranslations } from "next-intl";
 
 const TRAVEL = 168;
 
@@ -23,6 +24,8 @@ export function TravelPreview({
   /** Plain-English meaning of the current motion (e.g. what "easeOut" does). */
   caption?: { title: string; text: string };
 }) {
+  const t = useTranslations("Pages.playground.travel");
+
   return (
     <div className="flex min-h-[200px] flex-col items-center justify-center gap-8">
       <div className="relative h-12" style={{ width: TRAVEL + 48 }}>
@@ -43,7 +46,7 @@ export function TravelPreview({
         {/* start ghost */}
         <div className="absolute left-0 top-0 h-12 w-12 rounded-xl border border-dashed border-border" />
         <span className="absolute left-0 top-full mt-2 text-[11px] text-muted-foreground">
-          start
+          {t("start")}
         </span>
 
         {/* target guide */}
@@ -55,7 +58,7 @@ export function TravelPreview({
           className="absolute top-full mt-2 -translate-x-1/2 text-[11px] text-muted-foreground"
           style={{ left: TRAVEL + 24 }}
         >
-          target
+          {t("target")}
         </span>
 
         {/* moving box */}

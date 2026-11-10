@@ -5,20 +5,21 @@ import {
   AnimatePresence,
   LayoutGroup,
   motion,
-  useReducedMotion,
   type Transition,
+  useReducedMotion,
 } from "motion/react";
 import {
+  type ReactNode,
   useCallback,
   useEffect,
   useId,
   useRef,
   useState,
-  type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
 import { SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export type ProjectFolderPreview = {
@@ -26,11 +27,27 @@ export type ProjectFolderPreview = {
   content: ReactNode;
 };
 
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const projectFolderMessages = {
+  description: "Updated recently",
+  countOne: "{count} file",
+  countOther: "{count} files",
+  closeOverlay: "Close file overlay",
+  close: "Close {title}",
+};
+
+export type ProjectFolderMessages = typeof projectFolderMessages;
+
 export interface ProjectFolderProps {
   title: string;
   description?: string;
   previews?: ProjectFolderPreview[];
   count?: number;
+  /**
+   * Singular noun for the count, e.g. `"file"`. Pluralized the English way by
+   * appending `s` (`3 files`), so only pass it for English copy. Leave it
+   * unset to use the localizable `countOne`/`countOther` messages.
+   */
   itemLabel?: string;
   open?: boolean;
   defaultOpen?: boolean;
@@ -41,6 +58,8 @@ export interface ProjectFolderProps {
   onClick?: () => void;
   disabled?: boolean;
   ariaLabel?: string;
+  /** Override any built-in string. `{count}` fills `countOne`/`countOther`; `{title}` fills `close`. */
+  labels?: Partial<ProjectFolderMessages>;
   className?: string;
 }
 
@@ -71,10 +90,10 @@ function getPreviewTransform(index: number, count: number) {
 
 export function ProjectFolder({
   title,
-  description = "Updated recently",
+  description: descriptionProp,
   previews = [],
   count = previews.length,
-  itemLabel = "file",
+  itemLabel,
   open,
   defaultOpen = false,
   onOpenChange,
@@ -84,8 +103,11 @@ export function ProjectFolder({
   onClick,
   disabled = false,
   ariaLabel,
+  labels,
   className,
 }: ProjectFolderProps) {
+  const t = useMessages("projectFolder", projectFolderMessages, labels);
+  const description = descriptionProp ?? t("description");
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
   const layoutGroupId = useId();
@@ -106,7 +128,11 @@ export function ProjectFolder({
   const isOpen = (open ?? internalOpen) || isExpanded;
   const previewItems = previews.slice(0, MAX_PREVIEWS);
   const transition: Transition = reduce ? { duration: 0 } : SPRING_LAYOUT;
-  const countText = `${count} ${itemLabel}${count === 1 ? "" : "s"}`;
+  // `itemLabel` keeps its English suffix plural; without it the count comes from messages.
+  const countText =
+    itemLabel !== undefined
+      ? `${count} ${itemLabel}${count === 1 ? "" : "s"}`
+      : t(count === 1 ? "countOne" : "countOther", { count });
 
   const setOpen = useCallback(
     (next: boolean) => {
@@ -209,7 +235,7 @@ export function ProjectFolder({
             key="project-files-backdrop"
             type="button"
             tabIndex={-1}
-            aria-label="Close file overlay"
+            aria-label={t("closeOverlay")}
             onClick={closeOverlay}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -262,7 +288,7 @@ export function ProjectFolder({
                   ref={closeButtonRef}
                   type="button"
                   onClick={closeOverlay}
-                  aria-label={`Close ${title}`}
+                  aria-label={t("close", { title })}
                   className="flex size-10 items-center justify-center rounded-full border border-foreground/10 bg-background/50 text-muted-foreground backdrop-blur-xl transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <X className="size-4" aria-hidden="true" />

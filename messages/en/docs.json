@@ -1,0 +1,144 @@
+{
+  "breadcrumb": "Breadcrumb",
+  "newBadge": "New",
+  "category": {
+    "new": "New",
+    "ogImageAlt": "{name} components by beUI",
+    "motion": {
+      "title": "Animated React Components — Copy-Paste Motion UI",
+      "heading": "Animated React components",
+      "description": "Explore free, open-source animated React components built with Motion and Tailwind CSS. Copy the TypeScript source into your app and customize every interaction.",
+      "allLabel": "All animated components"
+    },
+    "blocks": {
+      "title": "Animated React UI Blocks — Product-Ready Motion",
+      "heading": "Animated React UI blocks",
+      "description": "Explore product-ready animated React blocks built with Motion and Tailwind CSS. Copy complete interactions into your app and adapt the source to your product.",
+      "allLabel": "All animated blocks"
+    },
+    "charts": {
+      "title": "Animated React Charts — Heatmaps and Price Targets",
+      "heading": "Animated React charts",
+      "description": "Explore interactive activity heatmaps, monthly returns, and price target charts. Copy the React source and customize it for your data.",
+      "allLabel": "All charts"
+    },
+    "casino": {
+      "title": "Animated React Casino Games: Crash, Mines, Plinko and Slide",
+      "heading": "Animated React casino games",
+      "description": "Explore animated crash, mines, plinko and slide games with fair built-in outcomes or server-decided results. Copy the React source and wire it to your own game logic.",
+      "allLabel": "All casino games"
+    },
+    "agents": {
+      "title": "AI Agent Components — Animated React AI Interfaces",
+      "heading": "Animated AI agent components",
+      "description": "Build clear, responsive AI experiences with open-source React components for agent reasoning, progress, tool activity, and conversation states.",
+      "allLabel": "All agent components"
+    },
+    "agentGroups": {
+      "conversation": {
+        "title": "Conversation components",
+        "description": "Compose prompts, arrange sender-aware messages, shape conversational surfaces, and keep streamed turns stable while the reader moves through the transcript."
+      },
+      "responses": {
+        "title": "Response and evidence components",
+        "description": "Render rich answers as they arrive, reveal completion actions at the right time, and connect generated claims to inspectable sources."
+      },
+      "progress": {
+        "title": "Progress and planning components",
+        "description": "Communicate unknown waits, durable task plans, and chronological agent activity without inventing precision or exposing an unfiltered trace."
+      },
+      "tools": {
+        "title": "Tool and code components",
+        "description": "Present execution outcomes, generated source, and file changes with bounded streaming, stable highlighting, and inspectable completion states."
+      },
+      "humanControl": {
+        "title": "Human-in-the-loop components",
+        "description": "Pause agent work for a scoped permission, clarification, review, or decision, then preserve the resolved outcome in the run history."
+      }
+    }
+  },
+  "component": {
+    "seoTitle": "Animated {name} for React",
+    "metaDescription": "{description} Free, open-source React and Next.js motion component. Copy-paste the source or install with shadcn.",
+    "ogImageAlt": "{name} component preview",
+    "preview": "Preview",
+    "usage": "Usage",
+    "code": "Code",
+    "install": "Install",
+    "installDescription": "Add it with the shadcn CLI, or copy the source manually.",
+    "apiReference": "API Reference",
+    "composition": "Composition",
+    "howItWorks": "How it works",
+    "note": "Note:",
+    "relatedComponents": "Related components",
+    "updated": "Updated <time>{date}</time>",
+    "contributedBy": "Contributed by",
+    "includesDesignsBy": "Includes designs by",
+    "opensInNewTab": "(opens in a new tab)",
+    "alsoOnNative": "Also on React Native."
+  },
+  "install": {
+    "cli": "CLI",
+    "manual": "Manual",
+    "themeNotice": "Needs the theme tokens once. Already ran <code>shadcn init</code>? You are set. <link>Theme setup</link>",
+    "dependencies": "Install dependencies",
+    "utilFiles": "{count, plural, one {Add util file} other {Add util files}}",
+    "sourceCode": "Copy the source code"
+  },
+  "copyButton": {
+    "copy": "Copy code",
+    "copied": "Copied"
+  },
+  "expandCode": "Expand Code",
+  "copyPage": {
+    "copy": "Copy Page",
+    "tryAgain": "Try again",
+    "copyAria": "Copy page as Markdown",
+    "copiedAria": "Page copied",
+    "errorAria": "Copy failed. Try again",
+    "moreActions": "More page actions",
+    "menu": "Page actions",
+    "viewMarkdown": "View as Markdown",
+    "openIn": "Open in {app}"
+  },
+  "keepInMind": {
+    "title": "Keep in mind",
+    "body": "Some components on this site are inspired by or recreated from existing work across the web. I'm not here to take credit; just to learn, experiment, and sometimes push things a bit further. If something looks familiar and I forgot to mention you, <link>reach out</link> and I'll fix that right away."
+  },
+  "proCard": {
+    "heading": "Limited Offer",
+    "summary": "350+ blocks and premium motion components for React and Next.js.",
+    "price": "$179 lifetime access",
+    "explore": "Explore beUI Pro"
+  },
+  "proMobileCard": {
+    "title": "Need full screens?",
+    "description": "60+ React Native blocks and screens, from onboarding and paywalls to profile and checkout, are live in beUI Pro for mobile.",
+    "cta": "Explore beUI Pro Mobile"
+  },
+  "sponsorCard": {
+    "title": "Sponsors",
+    "tier": "Diamond",
+    "become": "Become a sponsor",
+    "taglines": {
+      "tracwell": "Visitor insights for growth",
+      "illos": "Animated illustrations for product sites"
+    }
+  },
+  "pager": {
+    "label": "Previous and next components",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "previewExpand": {
+    "expand": "Expand preview",
+    "replay": "Replay preview",
+    "exit": "Exit expanded preview",
+    "exitTitle": "Exit (Esc)"
+  },
+  "propsTable": {
+    "prop": "Prop",
+    "type": "Type",
+    "default": "Default"
+  }
+}

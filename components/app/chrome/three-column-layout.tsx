@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { DocsFooter } from "@/components/app/chrome/docs-footer";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,7 @@ export function ThreeColumnLayout({
   rightSidebar: ReactNode;
   className?: string;
 }) {
+  const t = useTranslations("Chrome.sidebar");
   return (
     <div
       className={cn(
@@ -29,7 +31,7 @@ export function ThreeColumnLayout({
         {children}
         <DocsFooter />
       </div>
-      <aside aria-label="Sponsors and resources" className="hidden min-w-0 pt-4 xl:block">
+      <aside aria-label={t("resources")} className="hidden min-w-0 pt-4 xl:block">
         {/* 16px under the 56px header, matching the other two columns. */}
         <div className="sticky top-[4.5rem] z-10 max-h-[calc(100dvh-5.5rem)] overflow-y-auto pb-1 scrollbar-hide">
           {rightSidebar}

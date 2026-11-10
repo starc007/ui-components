@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { getNewBadgeRemainingMs } from "@/lib/component-status";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,7 @@ export function NewBadge({
   launchedAt?: string;
   className?: string;
 }) {
+  const t = useTranslations("Docs");
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -32,7 +34,7 @@ export function NewBadge({
         className,
       )}
     >
-      New
+      {t("newBadge")}
     </span>
   );
 }

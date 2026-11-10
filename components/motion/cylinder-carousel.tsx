@@ -24,7 +24,15 @@ import {
   releasePointer,
   TOUCH_GESTURE_CLASS,
 } from "@/lib/touch";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const cylinderCarouselMessages = {
+  roleDescription: "carousel",
+};
+
+export type CylinderCarouselMessages = typeof cylinderCarouselMessages;
 
 // Carousel-specific: a soft spring that receives the release velocity, so a
 // flick keeps rolling freely, drifts past the snap point and eases back.
@@ -66,6 +74,8 @@ export interface CylinderCarouselProps {
   onIndexChange?: (index: number) => void;
   /** Stage height in px. Defaults to `itemSize`. */
   height?: number;
+  /** Override any built-in string. */
+  labels?: Partial<CylinderCarouselMessages>;
   className?: string;
 }
 
@@ -190,9 +200,11 @@ export function CylinderCarousel({
   defaultIndex = 0,
   onIndexChange,
   height,
+  labels,
   className,
 }: CylinderCarouselProps) {
   const reduce = useReducedMotion() ?? false;
+  const t = useMessages("cylinderCarousel", cylinderCarouselMessages, labels);
   const items = Children.toArray(children);
   const count = items.length;
 
@@ -398,7 +410,7 @@ export function CylinderCarousel({
       <div
         ref={stageRef}
         role="application"
-        aria-roledescription="carousel"
+        aria-roledescription={t("roleDescription")}
         // biome-ignore lint/a11y/noNoninteractiveTabindex: focusable custom carousel widget
         tabIndex={0}
         onKeyDown={(e) => {

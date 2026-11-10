@@ -1,0 +1,32 @@
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const swapMessages = {
+  title: "Swap",
+  settings: "Settings",
+  reverse: "Reverse direction",
+  enterAmount: "Enter an amount",
+  insufficient: "Insufficient {symbol}",
+  swapAndSend: "Swap + Send to {address}",
+  swapTokens: "Swap {from} → {to}",
+  sendToOther: "Send to different address",
+  sendTo: "To: {address}",
+  addressPlaceholder: "0x... or name.eth",
+  clearAddress: "Clear address",
+  close: "Close",
+  selectFromToken: "Select from token",
+  selectToToken: "Select to token",
+  searchPlaceholder: "Search name or paste address",
+  allChains: "All",
+  popular: "Most popular",
+  results: "Results",
+  trending: "Trending",
+  tokens: "Tokens",
+  empty: "No tokens found",
+  youPay: "You pay",
+  youGet: "You get",
+  rate: "Rate",
+  networkFee: "Network fee",
+  slippage: "Slippage",
+  eta: "ETA",
+};
+
+export type SwapMessages = typeof swapMessages;

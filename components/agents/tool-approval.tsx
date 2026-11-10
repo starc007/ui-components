@@ -23,6 +23,7 @@ import {
 } from "@/components/agents/agent-code";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export type ToolApprovalStatus =
@@ -33,6 +34,24 @@ export type ToolApprovalStatus =
   | "running"
   | "complete"
   | "error";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const toolApprovalMessages = {
+  title: "Allow this tool to run?",
+  viewDetails: "View details",
+  allowOnce: "Allow once",
+  alwaysAllow: "Always allow",
+  deny: "Deny",
+  pending: "Approval required",
+  approving: "Approving",
+  approved: "Approved",
+  denied: "Denied",
+  running: "Running",
+  complete: "Completed",
+  error: "Failed",
+};
+
+export type ToolApprovalMessages = typeof toolApprovalMessages;
 
 export interface ToolApprovalParameter {
   id: string;
@@ -58,17 +77,9 @@ export interface ToolApprovalProps {
   onApprove?: () => void;
   onAlwaysAllow?: () => void;
   onDeny?: () => void;
+  /** Override any built-in string. */
+  labels?: Partial<ToolApprovalMessages>;
   className?: string;
-}
-
-function getStatusCopy(status: ToolApprovalStatus) {
-  if (status === "approving") return "Approving";
-  if (status === "approved") return "Approved";
-  if (status === "denied") return "Denied";
-  if (status === "running") return "Running";
-  if (status === "complete") return "Completed";
-  if (status === "error") return "Failed";
-  return "Approval required";
 }
 
 function getStatusBadgeClass(status: ToolApprovalStatus) {
@@ -105,7 +116,7 @@ export function ToolApprovalCode({
 
 export function ToolApproval({
   tool,
-  title = "Allow this tool to run?",
+  title,
   description,
   parameters = [],
   status = "pending",
@@ -115,9 +126,11 @@ export function ToolApproval({
   onApprove,
   onAlwaysAllow,
   onDeny,
+  labels,
   className,
 }: ToolApprovalProps) {
   const reduce = useReducedMotion() ?? false;
+  const t = useMessages("toolApproval", toolApprovalMessages, labels);
   const baseId = useId();
   const detailsId = `${baseId}-details`;
   const previousStatus = useRef(status);
@@ -174,7 +187,7 @@ export function ToolApproval({
         <div className="min-w-0 flex-1">
           <div className="flex min-w-0 items-start justify-between gap-3">
             <div className="min-w-0">
-              <div className="font-medium text-foreground">{title}</div>
+              <div className="font-medium text-foreground">{title ?? t("title")}</div>
               <div className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
                 {tool}
               </div>
@@ -185,7 +198,7 @@ export function ToolApproval({
                 getStatusBadgeClass(status),
               )}
             >
-              {getStatusCopy(status)}
+              {t(status)}
             </span>
           </div>
           {description ? (
@@ -200,7 +213,7 @@ export function ToolApproval({
               onClick={() => setOpen(!currentOpen)}
               className="mt-2 inline-flex items-center gap-1 rounded-md text-xs font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
             >
-              View details
+              {t("viewDetails")}
               <motion.span
                 aria-hidden="true"
                 animate={{ rotate: currentOpen ? 180 : 0 }}
@@ -248,7 +261,7 @@ export function ToolApproval({
               transition={SPRING_PRESS}
               className="rounded-xl bg-foreground px-3 py-1.5 text-xs font-medium text-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              Allow once
+              {t("allowOnce")}
             </motion.button>
             {onAlwaysAllow ? (
               <motion.button
@@ -258,7 +271,7 @@ export function ToolApproval({
                 transition={SPRING_PRESS}
                 className="rounded-xl border border-border/60 bg-background px-3 py-1.5 text-xs font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
               >
-                Always allow
+                {t("alwaysAllow")}
               </motion.button>
             ) : null}
             <button
@@ -266,7 +279,7 @@ export function ToolApproval({
               onClick={onDeny}
               className="rounded-xl px-3 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
             >
-              Deny
+              {t("deny")}
             </button>
           </motion.div>
         ) : null}

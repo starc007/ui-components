@@ -14,10 +14,10 @@ export function StatusBarLegend({
   children,
   ...props
 }: StatusBarLegendProps) {
-  const { statuses, rows } = useStatusBar();
+  const { statuses, rows, t } = useStatusBar();
   return (
     <ul
-      aria-label="Status legend"
+      aria-label={t("legend")}
       {...props}
       data-slot="status-bar-legend"
       className={cn(

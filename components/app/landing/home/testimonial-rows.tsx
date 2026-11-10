@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { TESTIMONIALS } from "@/components/app/landing/testimonials-data";
 import { Marquee } from "@/components/motion/marquee";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ function columnsOf<T>(items: readonly T[], count: number) {
  * edges. Hovering a column pauses it; reduced motion holds every column still.
  */
 export function TestimonialRows({ className }: { className?: string }) {
+  const t = useTranslations("Landing.testimonials");
   const columns = columnsOf(TESTIMONIALS, COLUMNS.length);
   const faces = TESTIMONIALS.slice(0, 7);
 
@@ -49,18 +51,20 @@ export function TestimonialRows({ className }: { className?: string }) {
             ))}
           </div>
           <p className="text-[13px] text-muted-foreground">
-            <span className="font-medium text-foreground">{BUILDER_COUNT}</span> builders use
-            beUI
+            {t.rich("builders", {
+              count: BUILDER_COUNT,
+              strong: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
+            })}
           </p>
         </div>
         <h2
           id="landing-testimonials"
           className="mt-4 text-2xl font-medium tracking-tight text-foreground md:text-[1.75rem]"
         >
-          Loved by builders
+          {t("title")}
         </h2>
         <p className="mt-2 text-[13px] text-muted-foreground">
-          What people say about beUI on X.
+          {t("subtitle")}
         </p>
       </div>
 

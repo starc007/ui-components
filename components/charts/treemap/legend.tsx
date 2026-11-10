@@ -9,11 +9,11 @@ export interface TreemapLegendProps {
 }
 
 export function TreemapLegend({ className, showValues = false }: TreemapLegendProps) {
-  const { nodes, formatValue } = useTreemap();
+  const { nodes, formatValue, t } = useTreemap();
   if (!nodes.length) return null;
   return (
     <ul
-      aria-label="Treemap legend"
+      aria-label={t("legend")}
       className={cn("flex flex-wrap gap-x-5 gap-y-2 text-xs", className)}
     >
       {nodes.map((node) => (

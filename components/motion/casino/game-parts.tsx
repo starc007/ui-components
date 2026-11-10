@@ -103,15 +103,24 @@ export function formatShort(multiplier: number) {
 }
 
 /** The sound toggle: a quiet 32px icon button in a game card's header. */
-export const SoundToggle = memo(function SoundToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+export const SoundToggle = memo(function SoundToggle({
+  on,
+  onToggle,
+  label,
+}: {
+  on: boolean;
+  onToggle: () => void;
+  /** The button's name and tooltip, e.g. "Sound". */
+  label: string;
+}) {
   return (
     // aria-label names the button; the tooltip shows the same label on hover
     // and focus. Tooltip's asLabel would hydrate differently from the server.
-    <Tooltip content="Sound" side="top">
+    <Tooltip content={label} side="top">
       <Button
         variant="ghost"
         onClick={onToggle}
-        aria-label="Sound"
+        aria-label={label}
         aria-pressed={on}
         pressScale={0.96}
         className={cn("size-8 shrink-0 rounded-xl px-0", on && "text-foreground")}
@@ -135,6 +144,7 @@ export const GameHistory = memo(function GameHistory({
   reduce,
   tier = heat,
   "aria-label": ariaLabel,
+  emptyLabel,
   className,
 }: {
   history: GameHistoryEntry[];
@@ -142,6 +152,8 @@ export const GameHistory = memo(function GameHistory({
   /** Pill colour per value. Default `heat`; return "jackpot" to mark a top tier. */
   tier?: (value: number) => keyof typeof HEAT_PILL;
   "aria-label": string;
+  /** Shown before the first round, e.g. "Recent rounds show here". */
+  emptyLabel: string;
   className?: string;
 }) {
   return (
@@ -155,7 +167,7 @@ export const GameHistory = memo(function GameHistory({
       <AnimatePresence initial={false} mode="popLayout">
         {history.length === 0 ? (
           <motion.li key="empty" className="text-xs text-muted-foreground" initial={false} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: EXIT }}>
-            Recent rounds show here
+            {emptyLabel}
           </motion.li>
         ) : (
           history.map((entry) => (
@@ -200,7 +212,7 @@ export function GameEyebrow({
   return (
     <p
       className={cn(
-        "flex h-4 items-center gap-1.5 text-[11px] font-medium tracking-[0.08em] uppercase transition-colors duration-150",
+        "flex h-4 min-w-0 max-w-full items-center gap-1.5 text-[11px] font-medium tracking-[0.08em] uppercase transition-colors duration-150",
         state === "lost" ? "text-rose-700 dark:text-rose-400" : state === "won" ? PRIMARY_TEXT : "text-muted-foreground",
         className,
       )}
@@ -210,7 +222,7 @@ export function GameEyebrow({
           <motion.span
             key={icon}
             aria-hidden="true"
-            className="grid size-3.5 place-items-center"
+            className="grid size-3.5 shrink-0 place-items-center"
             initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.25, filter: "blur(4px)" }}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, transition: EXIT }}
@@ -226,7 +238,8 @@ export function GameEyebrow({
           </motion.span>
         ) : null}
       </AnimatePresence>
-      {label}
+      {/* Longer translations truncate on one line instead of wrapping out of the 16px row. */}
+      <span className="min-w-0 truncate">{label}</span>
     </p>
   );
 }

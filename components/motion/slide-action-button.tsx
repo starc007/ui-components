@@ -8,17 +8,26 @@ import {
   useTransform,
 } from "motion/react";
 import {
+  type HTMLAttributes,
+  type KeyboardEvent,
+  type ReactNode,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
-  type HTMLAttributes,
-  type KeyboardEvent,
-  type ReactNode,
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { TOUCH_GESTURE_CLASS, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const slideActionButtonMessages = {
+  complete: "Complete",
+  thumbLabel: "Slide action",
+};
+
+export type SlideActionButtonMessages = typeof slideActionButtonMessages;
 
 export interface SlideActionButtonProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
@@ -31,19 +40,23 @@ export interface SlideActionButtonProps extends Omit<
   onComplete?: () => void;
   thumbClassName?: string;
   fillClassName?: string;
+  /** Override any built-in string. */
+  labels?: Partial<SlideActionButtonMessages>;
 }
 
 export function SlideActionButton({
   children,
-  completeLabel = "Complete",
+  completeLabel,
   threshold = 0.82,
   resetDelay = 1200,
   onComplete,
   thumbClassName,
   fillClassName,
   className,
+  labels,
   ...rest
 }: SlideActionButtonProps) {
+  const t = useMessages("slideActionButton", slideActionButtonMessages, labels);
   const reduce = useReducedMotion();
   const trackRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLButtonElement>(null);
@@ -160,13 +173,13 @@ export function SlideActionButton({
         transition={{ duration: reduce ? 0 : 0.15, ease: EASE_OUT }}
         className="pointer-events-none absolute inset-0 grid place-items-center text-sm font-medium text-primary-foreground"
       >
-        {completed ? completeLabel : null}
+        {completed ? (completeLabel ?? t("complete")) : null}
       </motion.span>
 
       <motion.button
         ref={thumbRef}
         type="button"
-        aria-label={typeof children === "string" ? children : "Slide action"}
+        aria-label={typeof children === "string" ? children : t("thumbLabel")}
         drag={completed ? false : "x"}
         dragConstraints={{ left: 0, right: maxDistance }}
         dragElastic={0}

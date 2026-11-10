@@ -1,34 +1,36 @@
 import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 const SIDEBAR_SPONSORS = [
   {
     name: "Tracwell",
-    tagline: "Visitor insights for growth",
+    tagline: "tracwell",
     domain: "tracwell.app",
     icon: "tracwell-icon",
   },
   {
     name: "Illos",
-    tagline: "Animated illustrations for product sites",
+    tagline: "illos",
     domain: "illos.dev",
     icon: "illos-icon",
   },
-];
+] as const;
 
 export function SponsorCard() {
+  const t = useTranslations("Docs.sponsorCard");
   return (
-    <section aria-label="Sponsors" className="mt-4 rounded-2xl border border-border p-3">
+    <section aria-label={t("title")} className="mt-4 rounded-2xl border border-border p-3">
       <h2 className="text-base font-semibold tracking-tight text-foreground">
-        Sponsors
+        {t("title")}
       </h2>
       <p className="mt-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-        Diamond
+        {t("tier")}
       </p>
       <div className="mt-2 flex flex-col gap-3">
         {SIDEBAR_SPONSORS.map((sponsor) => (
-          <Link
+          <a
             key={sponsor.domain}
             href={`https://${sponsor.domain}/?utm_source=beui&utm_medium=referral&utm_campaign=sponsorship&utm_content=right_sidebar`}
             target="_blank"
@@ -54,17 +56,17 @@ export function SponsorCard() {
                 <span className="font-display text-xl font-semibold tracking-tight text-foreground">
                   {sponsor.name}
                 </span>
-                <p className="mt-0.5 text-xs text-muted-foreground">{sponsor.tagline}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{t(`taglines.${sponsor.tagline}`)}</p>
               </div>
             </div>
-          </Link>
+          </a>
         ))}
       </div>
       <Link
         href="/sponsors"
         className="mt-4 flex items-center justify-between gap-2 rounded-sm text-xs font-medium text-foreground decoration-accent underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
       >
-        Become a sponsor
+        {t("become")}
         <ArrowRight aria-hidden="true" className="size-4 text-accent" />
       </Link>
     </section>

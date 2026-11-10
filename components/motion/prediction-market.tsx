@@ -8,21 +8,49 @@ import {
   useReducedMotion,
 } from "motion/react";
 import {
+  type CSSProperties,
   useCallback,
   useEffect,
   useId,
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { StatefulButton, type ButtonState } from "./button/stateful";
+import { type ButtonState, StatefulButton } from "./button/stateful";
 import { NumberTicker } from "./number-ticker";
 import { Tabs, TabsList, TabsTrigger } from "./tabs";
 
 export type PredictionMarketMode = "buy" | "sell";
+
+/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
+export const predictionMarketMessages = {
+  buy: "Buy",
+  sell: "Sell",
+  orderType: "Market",
+  amount: "Amount",
+  shares: "Shares",
+  max: "Max",
+  toWin: "To win",
+  toReceive: "To receive",
+  avgPrice: "Avg. Price {price}",
+  trade: "Trade",
+  trading: "Trading",
+  tradeFilled: "Trade filled",
+  connect: "Connect",
+  enterAmount: "Enter an amount",
+  minimum: "Minimum {amount}",
+  insufficientBalance: "Insufficient balance",
+  notEnoughShares: "Not enough shares",
+};
+
+export type PredictionMarketMessages = typeof predictionMarketMessages;
+type Translate = (
+  key: keyof PredictionMarketMessages,
+  values?: Record<string, string | number>,
+) => string;
 
 export type PredictionMarketOutcome = {
   id: string;
@@ -72,6 +100,8 @@ export interface PredictionMarketProps {
   positions?: Record<string, number>;
   quickAmounts?: number[];
   minTrade?: number;
+  /** Override any built-in string. `{price}` fills `avgPrice`, `{amount}` fills `minimum`. */
+  labels?: Partial<PredictionMarketMessages>;
   className?: string;
   classNames?: PredictionMarketClassNames;
 }
@@ -81,10 +111,7 @@ const DEFAULT_OUTCOMES: PredictionMarketOutcome[] = [
   { id: "down", label: "Down", price: 0.91 },
 ];
 
-const MODES: { id: PredictionMarketMode; label: string }[] = [
-  { id: "buy", label: "Buy" },
-  { id: "sell", label: "Sell" },
-];
+const MODES: PredictionMarketMode[] = ["buy", "sell"];
 
 const DEFAULT_QUICK_AMOUNTS = [10, 50, 100, 500];
 const DIGIT_TRANSITION = { duration: 0.18, ease: EASE_OUT } as const;
@@ -163,12 +190,14 @@ function buildQuote({
   balance,
   position,
   minTrade,
+  t,
 }: {
   order: PredictionMarketOrderValue;
   outcome: PredictionMarketOutcome;
   balance: number;
   position: number;
   minTrade: number;
+  t: Translate;
 }): PredictionMarketQuote {
   const amount = parseAmount(order.amount);
   const price = Math.max(0.01, Math.min(0.99, outcome.price));
@@ -182,7 +211,7 @@ function buildQuote({
       price,
       shares: 0,
       payout: 0,
-      error: "Enter an amount",
+      error: t("enterAmount"),
     };
   }
 
@@ -193,7 +222,7 @@ function buildQuote({
       price,
       shares,
       payout,
-      error: `Minimum ${formatCompactCurrency(minTrade)}`,
+      error: t("minimum", { amount: formatCompactCurrency(minTrade) }),
     };
   }
 
@@ -204,7 +233,7 @@ function buildQuote({
       price,
       shares,
       payout,
-      error: "Insufficient balance",
+      error: t("insufficientBalance"),
     };
   }
 
@@ -215,7 +244,7 @@ function buildQuote({
       price,
       shares,
       payout,
-      error: "Not enough shares",
+      error: t("notEnoughShares"),
     };
   }
 
@@ -260,6 +289,7 @@ function AnimatedAmountInput({
   inputSize,
   disabled,
   reduce,
+  label,
   onChange,
 }: {
   id: string;
@@ -268,6 +298,7 @@ function AnimatedAmountInput({
   inputSize: string;
   disabled: boolean;
   reduce: boolean;
+  label: string;
   onChange: (value: string) => void;
 }) {
   const displayValue = value || "0";
@@ -275,7 +306,6 @@ function AnimatedAmountInput({
   const inputStyle = {
     "--amount-chars": String(chars.length),
   } as AmountInputStyle;
-  const label = mode === "buy" ? "Amount" : "Shares";
 
   return (
     <div className="flex min-w-0 items-center justify-center overflow-hidden">
@@ -358,14 +388,16 @@ export function PredictionMarket({
   onTrade,
   onSignIn,
   authenticated = true,
-  orderTypeLabel = "Market",
+  orderTypeLabel,
   balance = 500,
   positions = { up: 24, down: 16 },
   quickAmounts = DEFAULT_QUICK_AMOUNTS,
   minTrade = 1,
+  labels,
   className,
   classNames,
 }: PredictionMarketProps) {
+  const t = useMessages("predictionMarket", predictionMarketMessages, labels);
   const inputId = useId();
   const reduce = useReducedMotion() ?? false;
   const amountRef = useRef<HTMLDivElement>(null);
@@ -390,8 +422,9 @@ export function PredictionMarket({
         balance,
         position,
         minTrade,
+        t,
       }),
-    [balance, minTrade, order, position, selectedOutcome],
+    [balance, minTrade, order, position, selectedOutcome, t],
   );
 
   const setOrderValue = useCallback(
@@ -465,6 +498,7 @@ export function PredictionMarket({
           ? "idle"
           : "error";
   const showFooter = authenticated;
+  const amountLabel = order.mode === "buy" ? t("amount") : t("shares");
 
   return (
     <div
@@ -495,12 +529,12 @@ export function PredictionMarket({
             <TabsList className="gap-5 border-b-0 bg-transparent p-0">
               {MODES.map((mode) => (
                 <TabsTrigger
-                  key={mode.id}
-                  value={mode.id}
+                  key={mode}
+                  value={mode}
                   className="px-0 pb-3 pt-0 text-2xl font-semibold"
                   indicatorClassName="h-0.5 bg-foreground"
                 >
-                  {mode.label}
+                  {t(mode)}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -511,7 +545,7 @@ export function PredictionMarket({
             disabled={status === "placing"}
             className="mb-3 inline-flex items-center gap-2 text-xl font-semibold text-foreground transition-opacity disabled:opacity-50"
           >
-            {orderTypeLabel}
+            {orderTypeLabel ?? t("orderType")}
             <ChevronDown className="h-5 w-5" />
           </button>
         </div>
@@ -567,7 +601,7 @@ export function PredictionMarket({
               htmlFor={inputId}
               className="text-xl font-medium text-foreground mr-6"
             >
-              {order.mode === "buy" ? "Amount" : "Shares"}
+              {amountLabel}
             </label>
 
             <div className="w-full min-w-0">
@@ -578,6 +612,7 @@ export function PredictionMarket({
                 disabled={status === "placing"}
                 inputSize={inputSize}
                 reduce={reduce}
+                label={amountLabel}
                 onChange={(amount) => setOrderValue({ amount })}
               />
             </div>
@@ -606,7 +641,7 @@ export function PredictionMarket({
               onClick={setMax}
               className="h-9 rounded-xl bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
             >
-              Max
+              {t("max")}
             </button>
           </div>
         </div>
@@ -622,11 +657,11 @@ export function PredictionMarket({
           <div className="mb-4 flex items-end justify-between gap-3">
             <div className="min-w-0 shrink">
               <div className="flex items-center gap-2 text-xl font-semibold text-foreground">
-                {order.mode === "buy" ? "To win" : "To receive"}
+                {order.mode === "buy" ? t("toWin") : t("toReceive")}
                 <Banknote className="h-5 w-5 text-emerald-500" />
               </div>
               <p className="text-sm font-medium text-muted-foreground">
-                Avg. Price {formatCents(quote.price)}
+                {t("avgPrice", { price: formatCents(quote.price) })}
               </p>
             </div>
             <NumberTicker
@@ -649,15 +684,15 @@ export function PredictionMarket({
             size="lg"
             pressScale={0.98}
             onClick={submit}
-            loadingText="Trading"
-            successText="Trade filled"
-            errorText={quote.error ?? "Enter an amount"}
+            loadingText={t("trading")}
+            successText={t("tradeFilled")}
+            errorText={quote.error ?? t("enterAmount")}
             className={cn(
               "h-12 w-full rounded-2xl text-base font-semibold",
               classNames?.action,
             )}
           >
-            Trade
+            {t("trade")}
           </StatefulButton>
         </div>
       ) : (
@@ -673,7 +708,7 @@ export function PredictionMarket({
               classNames?.action,
             )}
           >
-            Connect
+            {t("connect")}
           </StatefulButton>
         </div>
       )}

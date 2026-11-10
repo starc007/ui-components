@@ -1,0 +1,1328 @@
+{
+  "categories": {
+    "motion": {
+      "name": "组件",
+      "description": "基于 Motion 和 Tailwind CSS 构建的免费开源 React 动画组件，通过 shadcn registry 以可复制粘贴的源码形式提供。"
+    },
+    "agents": {
+      "name": "AI 智能体",
+      "description": "用于智能体推理、进度、工具活动和对话式 AI 界面的 React 动画组件。"
+    },
+    "blocks": {
+      "name": "区块",
+      "description": "基于 Motion 和 Tailwind CSS 构建、可直接用于产品的 React 动画 UI 区块，以可定制的复制粘贴源码形式提供。"
+    },
+    "charts": {
+      "name": "图表",
+      "description": "基于 Motion 和 Tailwind CSS 构建的 React 动画图表，涵盖活动、收益、目标价和订单簿，以可定制的复制粘贴源码形式提供。"
+    },
+    "casino": {
+      "name": "娱乐场",
+      "description": "带动画的 React 娱乐场游戏，包括 Crash、Mines、Plinko 和 Slide，基于 Motion 和 Tailwind CSS 构建，源码可复制粘贴并自由定制。"
+    }
+  },
+  "components": {
+    "tilt-card": {
+      "name": "倾斜卡片",
+      "description": "悬停时呈现 3D 透视倾斜，并带有跟随光标的高光。",
+      "seo": {
+        "title": "React 3D 倾斜卡片，带悬停高光",
+        "description": "React 3D 倾斜卡片，悬停时透视旋转并带跟随光标的高光，在触屏设备和减少动态效果模式下自动禁用。免费开源，可复制粘贴。"
+      }
+    },
+    "button": {
+      "name": "按钮",
+      "examples": {
+        "base": {
+          "name": "按钮",
+          "description": "按压缩放、悬停抬升，支持多种变体和尺寸。"
+        },
+        "stateful": {
+          "name": "状态按钮",
+          "description": "idle → loading → success / error，带模糊切换插槽和变形宽度。"
+        },
+        "magnetic": {
+          "name": "磁吸按钮",
+          "description": "与 Magnetic 包装器组合，产生被光标吸引的拉拽效果。"
+        },
+        "metallic": {
+          "name": "金属按钮",
+          "description": "中性色按钮表面，外围是醒目的镀铬边框，并有一道笔直移动的反光。"
+        }
+      },
+      "description": "弹簧按压的 Button，以及 StatefulButton、MagneticButton 和 MetallicButton 变体。",
+      "seo": {
+        "title": "React 动画按钮组件（Framer Motion）",
+        "description": "弹簧按压的 React 按钮：涟漪效果、加载与成功状态、磁吸效果和金属质感。使用 Tailwind 样式，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "expanding-arrow-button": {
+      "name": "动画 CTA 按钮",
+      "description": "富有表现力的行动号召按钮，支持展开、长按和滑动交互。",
+      "examples": {
+        "expanding-arrow": {
+          "name": "展开箭头按钮",
+          "description": "强调色方块在悬停或聚焦时展开为点状箭头轨迹。"
+        },
+        "hold-action": {
+          "name": "长按操作按钮",
+          "description": "长按以垂直或水平液体填充完成操作；提前松开即可取消。"
+        },
+        "slide-action": {
+          "name": "滑动操作按钮",
+          "description": "将滑块拖到末端以确认操作；提前松开会弹回原位。"
+        }
+      },
+      "seo": {
+        "title": "React 动画 CTA 按钮",
+        "description": "三款 React 动画 CTA 按钮：悬停展开的箭头、长按以液体填充确认，以及滑动确认。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "expandable-control": {
+      "name": "可展开控件",
+      "description": "点击展开的按钮和标签控件，借助弹簧布局的连续过渡显示文字标签或尾部操作。",
+      "seo": {
+        "title": "React 可展开按钮与标签控件",
+        "description": "点击即可展开的 React 按钮和标签，以弹簧布局动画显示文字标签或尾部操作。支持受控或非受控，免费开源。"
+      }
+    },
+    "marquee": {
+      "name": "跑马灯",
+      "description": "无限水平或垂直滚动，悬停时暂停。",
+      "seo": {
+        "title": "React 跑马灯组件：无限循环滚动",
+        "description": "适用于 Logo 墙和用户评价的 React 无限横向或纵向跑马灯，悬停暂停，速度可调。Tailwind 样式，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "tabs": {
+      "name": "标签页",
+      "description": "胶囊、分段或下划线样式的标签页，带弹簧 layoutId 指示器，可选图标。",
+      "seo": {
+        "title": "React 动画标签页（Framer Motion）",
+        "description": "无障碍 React 标签页，带弹簧滑动指示器，提供胶囊、分段和下划线样式，可选图标并支持滚动溢出。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "switch": {
+      "name": "开关",
+      "description": "带弹簧驱动滑块和按压反馈的切换开关。",
+      "seo": {
+        "title": "React 与 Tailwind 动画开关",
+        "description": "React 切换开关，带弹簧驱动的滑块和按压反馈，具备无障碍 switch 语义并支持减少动态效果。可复制源码或通过 shadcn 安装。"
+      }
+    },
+    "input": {
+      "name": "输入框",
+      "description": "文本输入框，带标签、左右图标、可选的固定错误行、错误抖动和成功对勾描绘动画。",
+      "seo": {
+        "title": "React 动画输入框，支持表单校验",
+        "description": "React 文本输入框，带标签、图标、固定错误行、错误抖动和成功对勾动画。Tailwind 样式，无障碍，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "select": {
+      "name": "选择器",
+      "examples": {
+        "default": {
+          "name": "选择器",
+          "description": "可组合原语（Select、SelectTrigger、SelectValue、SelectContent、SelectItem）；面板从触发器中收窄脱离，并带有简短统一的行显现动画。可感知位置（必要时向上展开）。"
+        },
+        "morph": {
+          "name": "变形选择器",
+          "description": "可组合原语（MorphSelect、MorphSelectTrigger、MorphSelectValue、MorphSelectContent、MorphSelectItem），触发器通过共享 layoutId 变形为面板——同一个连续表面展开再收回，始终不分离。"
+        }
+      },
+      "description": "可组合的选择器原语，面板借一个弹簧从触发器中展开，并分离成独立的胶囊；另有 Morph 变体，触发器通过共享布局扩展为面板。",
+      "seo": {
+        "title": "React 动画下拉选择器（shadcn）",
+        "description": "可组合的 React 选择器，面板借弹簧从触发器展开；另有变形变体，触发器直接扩展为列表。免费开源。"
+      }
+    },
+    "combobox": {
+      "name": "组合框",
+      "description": "可搜索的组合框，带变形 portal、分组筛选、键盘导航，支持受控和非受控状态。",
+      "seo": {
+        "title": "React 动画组合框：可搜索的选择器",
+        "description": "React 组合框，支持搜索、分组筛选、键盘导航，列表以弹簧动画从输入框展开。支持受控或非受控，免费源码。"
+      }
+    },
+    "checkbox": {
+      "name": "复选框",
+      "description": "表单选择控件，带描绘式对勾、弹簧按压反馈，并支持半选状态。",
+      "seo": {
+        "title": "React 与 Tailwind 动画复选框",
+        "description": "React 复选框，带描绘式对勾、弹簧按压反馈、半选状态和可选描述。无障碍，免费源码，支持 shadcn 安装。"
+      },
+      "examples": {
+        "default": {
+          "name": "复选框",
+          "description": "描绘式对勾、弹簧按压反馈和半选状态。"
+        },
+        "description": {
+          "name": "带描述",
+          "description": "每个标签下方可添加辅助说明文字，并作为描述提供给辅助技术。"
+        }
+      }
+    },
+    "radio": {
+      "name": "单选组",
+      "description": "单选控件，带滑动的 layoutId 指示圆点和弹簧按压反馈。",
+      "seo": {
+        "title": "React 与 Tailwind 动画单选组",
+        "description": "React 单选组，带滑动指示圆点、按压反馈、描述文字和原生键盘导航。免费开源，可复制粘贴或通过 shadcn 安装。"
+      },
+      "examples": {
+        "default": {
+          "name": "单选组",
+          "description": "滑动的指示圆点，带弹簧按压反馈。"
+        },
+        "description": {
+          "name": "带描述",
+          "description": "每个选项标签下方可添加辅助说明文字，并作为描述提供给辅助技术。"
+        }
+      }
+    },
+    "bottom-sheet": {
+      "name": "底部抽屉",
+      "description": "受 Vaul 启发的可拖拽底部抽屉，支持吸附点、惯性和玻璃质感表面。",
+      "seo": {
+        "title": "React 底部抽屉，支持吸附点（Vaul 风格）",
+        "description": "Vaul 风格的可拖拽 React 底部抽屉，支持吸附点、惯性、模糊背景和 Esc 关闭。免费源码，可通过 shadcn CLI 安装。"
+      }
+    },
+    "pull-to-refresh": {
+      "name": "下拉刷新",
+      "description": "原生手感的下拉刷新容器，带拖拽阻尼、阈值反馈和异步刷新处理。",
+      "seo": {
+        "title": "React 下拉刷新组件",
+        "description": "原生手感的 React 下拉刷新，支持触摸和鼠标拖拽阻尼、阈值反馈和异步刷新处理。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "shared-layout-bg": {
+      "name": "共享布局背景",
+      "description": "借助 Motion 的共享布局在悬停项之间滑动的胶囊背景，进出时带模糊效果。",
+      "seo": {
+        "title": "React 导航项动画悬停背景",
+        "description": "借助 Framer Motion 共享布局，在悬停的 React 菜单项之间滑动的高亮胶囊，进出时带模糊效果。免费开源，可复制粘贴。"
+      }
+    },
+    "bounce-sidebar": {
+      "name": "弹跳侧边栏",
+      "description": "垂直侧边栏，激活圆点沿弹簧驱动的弧线路径在各目标之间跳跃。",
+      "seo": {
+        "title": "带弹跳指示器的 React 动画侧边导航",
+        "description": "纵向 React 导航，激活圆点沿弧形弹簧路径在各项之间跳跃。支持链接或按钮，受控或非受控，免费源码。"
+      }
+    },
+    "animated-sidebar": {
+      "name": "动画侧边栏",
+      "description": "可组合的应用侧边栏，嵌套导航带变形效果；桌面端可折叠为动画图标栏，移动端变为可管理焦点的抽屉。",
+      "seo": {
+        "title": "React 与 Next.js 动画侧边栏（shadcn）",
+        "description": "可折叠的 React 侧边栏，带动画图标栏、变形嵌套菜单、键盘快捷键和可管理焦点的移动端抽屉。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "preview-rail": {
+      "name": "预览导航栏",
+      "description": "受 Codex 应用启发的导航栏，紧凑刻度在悬停时形成金字塔，并显示浮动的目标预览。",
+      "seo": {
+        "title": "React 悬停预览导航栏",
+        "description": "紧凑的 React 导航栏，刻度在悬停项周围形成金字塔，并显示浮动预览卡片。支持纵向或横向，免费源码。"
+      }
+    },
+    "dock": {
+      "name": "Dock 栏",
+      "description": "macOS 风格的 Dock 栏，支持操作分组和滑动的激活胶囊。",
+      "seo": {
+        "title": "React macOS Dock 栏组件",
+        "description": "macOS 风格的 React Dock 栏，支持操作分组和滑动的激活胶囊，基于 Framer Motion 和 Tailwind CSS 构建。免费开源，可复制粘贴或通过 shadcn 安装。"
+      }
+    },
+    "tooltip": {
+      "name": "工具提示",
+      "description": "可组合的工具提示，支持悬停、聚焦和点按触发，带轻微缩放和淡入淡出、能感知碰撞的方向与对齐、可选箭头、通往可悬停内容的指针通道、同一时间仅显示一个标签、仅键盘聚焦时显示，以及可选的光标跟随。",
+      "seo": {
+        "title": "React 动画工具提示（Floating UI）",
+        "description": "可组合的 React 工具提示，支持碰撞感知定位、可选箭头、可悬停内容、键盘聚焦显示、触屏支持和光标跟随。免费源码。"
+      },
+      "examples": {
+        "default": {
+          "name": "工具提示",
+          "description": "一行简写：传入 `content` 并包裹触发元素。支持四个方向并带箭头。"
+        },
+        "toolbar": {
+          "name": "工具栏",
+          "description": "在共享 provider 下使用可组合部件。纯图标按钮从工具提示获取无障碍名称，后续标签跳过延迟，禁用的控件不显示提示。"
+        }
+      }
+    },
+    "context-menu": {
+      "name": "动画右键菜单",
+      "description": "可组合的右键菜单原语，从指针位置裁剪变形展开，带滑动的激活行、复选和单选选项、键盘导航、输入预选和长按支持。",
+      "seo": {
+        "title": "React 动画右键菜单",
+        "description": "从指针位置变形展开的 React 右键和长按菜单，支持复选和单选项、键盘导航和输入预选。免费源码。"
+      }
+    },
+    "popover": {
+      "name": "弹出框",
+      "examples": {
+        "gooey": {
+          "name": "黏液弹出框",
+          "description": "可组合的 Popover、PopoverTrigger、PopoverContent；面板通过带液态颈部的 SVG goo 滤镜从触发器中渗出，清晰的内容在上层淡入。支持点击或悬停，受控或非受控。"
+        },
+        "morph": {
+          "name": "变形弹出框",
+          "description": "可组合的 MorphPopover、MorphPopoverTrigger、MorphPopoverContent。完整尺寸的面板以一个同步的弹簧裁剪动画，从最靠近触发器的角落显现，内容和边框不会被缩放，关闭时沿原路径收回裁剪。clip-path 及其投影可正常绘制。可感知方向和对齐，支持受控或非受控。"
+        }
+      },
+      "description": "黏液弹出框：面板通过带液态颈部的 SVG goo 滤镜从触发器中渗出，颈部会拉伸和收窄，随后清晰的内容在上层淡入。Morph 变体则以一个同步的弹簧裁剪动画，从最靠近触发器的角落显现完整尺寸的面板。支持点击或悬停触发，受控或非受控。",
+      "seo": {
+        "title": "React 动画弹出框：黏液与变形",
+        "description": "两款 React 弹出框：一款从触发器中渗出的黏液面板，一款借弹簧从角落展开的变形面板。通过 portal 渲染，免费源码。"
+      }
+    },
+    "morphing-modal": {
+      "name": "变形模态框",
+      "description": "Family 应用风格的模态框。在内部视图间切换时，单个面板随之变形高度，内容以模糊交叉淡入淡出。",
+      "seo": {
+        "title": "React 变形模态框，高度动画过渡",
+        "description": "Family 钱包风格的 React 模态框，在内部视图间切换时变形高度，内容以模糊交叉淡入淡出。免费源码，可通过 shadcn CLI 安装。"
+      }
+    },
+    "center-morph-modal": {
+      "name": "中心变形模态框",
+      "description": "可组合的模态框，完整尺寸的表面从正中心向各边展开，关闭时按原路收回，并带内嵌的关闭控件。",
+      "seo": {
+        "title": "React 动画模态对话框（中心展开）",
+        "description": "可组合的 React 模态对话框，从中心向各边展开，关闭时原路收回，并带焦点管理。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "text-animation": {
+      "name": "文字动画",
+      "description": "文字动画原语，涵盖弹簧显现、彩色扫光、微光加载状态、逐字母级联切换和字符乱码效果。",
+      "examples": {
+        "text-scramble": {
+          "name": "文字乱码",
+          "description": "受控的字符乱码效果，逐步解析出变化后的文字，同时保持最终值的可访问性。"
+        },
+        "chromatic-reveal": {
+          "name": "Dia 文字动画",
+          "description": "受 Dia 启发的文字效果：句子前缀固定，结尾词循环切换，并以彩色扫光显现。"
+        },
+        "reveal": {
+          "name": "文字显现",
+          "description": "按单词或字符显现，带弹簧上滑和模糊。"
+        },
+        "shimmer": {
+          "name": "文字微光",
+          "description": "在文字上扫过的渐变光，用于加载或强调。"
+        },
+        "cascade": {
+          "name": "文字级联",
+          "description": "适用于独立文字的逐字母滚动——旧字母掉落、新字母落位，从左到右依次进行。"
+        }
+      },
+      "seo": {
+        "title": "React 文字动画：显现、微光、乱码",
+        "description": "五种 React 文字动画：弹簧逐词显现、微光加载文字、字母级联、字符乱码和循环色彩扫光。免费开源。"
+      }
+    },
+    "number": {
+      "name": "数字动画",
+      "examples": {
+        "ticker": {
+          "name": "数字滚动",
+          "description": "老虎机式滚动数字，依次错开进入。"
+        },
+        "animated": {
+          "name": "动画数字",
+          "description": "进入视口时触发的弹簧驱动递增计数。"
+        },
+        "digit-swap": {
+          "name": "数字切换",
+          "description": "固定槽位的数字和遮罩字形在变化时滚动切换，可控制方向、错开、重播和后缀强调。"
+        }
+      },
+      "description": "数字动画原语，涵盖递增计数、滚动数字和固定槽位的数字切换。",
+      "seo": {
+        "title": "React 数字计数与滚动动画",
+        "description": "React 数字动画：滚动到视口时递增计数、老虎机式滚动数字和固定槽位数字切换。基于 Framer Motion 和 Tailwind，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "animated-badge": {
+      "name": "动画徽章",
+      "description": "状态徽章，带动画状态图标、脉冲反馈和紧凑尺寸变体。",
+      "seo": {
+        "title": "React 动画状态徽章组件",
+        "description": "React 状态徽章，带动画状态图标、脉冲反馈和紧凑尺寸，适用于在线、成功、警告和错误状态。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "action-swap": {
+      "name": "操作切换",
+      "description": "CTA 按钮和插槽原语，以模糊动效切换文字与图标。",
+      "examples": {
+        "cascade": {
+          "name": "级联",
+          "description": "逐字母滚动——旧标签的字母掉落、新字母落位，从左到右依次进行。"
+        },
+        "blur": {
+          "name": "模糊",
+          "description": "复制按钮式切换，结合模糊、透明度和缩放。"
+        },
+        "roll": {
+          "name": "滚动",
+          "description": "下一段文字或图标带着模糊从下方滚入。"
+        }
+      },
+      "seo": {
+        "title": "React 按钮文字与图标切换动画",
+        "description": "以模糊、滚动或字母级联动效切换按钮文字和图标的 React 原语，适用于复制、保存和发送等状态。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "animated-toast-stack": {
+      "name": "动画 Toast 堆叠",
+      "description": "堆叠式 Toast 通知，支持状态变形、滑动关闭、操作按钮和布局感知动效。",
+      "seo": {
+        "title": "React 动画 Toast 通知",
+        "description": "堆叠式 React Toast 通知，带状态变形、滑动关闭、操作按钮和布局感知动效。Tailwind 样式，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "theme-toggle": {
+      "name": "主题切换",
+      "description": "通过 View Transition API 重绘整个页面的主题切换按钮——矩形或圆形 clip-path 显现，或像百叶窗一样在屏幕上展开的叶片。",
+      "seo": {
+        "title": "React 动画主题切换（View Transitions）",
+        "description": "适用于 React 和 Next.js 的深色模式切换，通过 View Transition API 以圆形、矩形或百叶窗效果重绘页面。免费源码。"
+      }
+    },
+    "bouncy-accordion": {
+      "name": "弹性手风琴",
+      "description": "单项展开的手风琴，带有分量感的弹簧布局、图标行和兼顾减弱动效的内容显现。",
+      "seo": {
+        "title": "React 动画手风琴组件",
+        "description": "单项展开的 React 手风琴，带有分量感的弹簧布局、图标行和兼顾减少动态效果的展开动画。Tailwind 样式，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "drawer": {
+      "name": "抽屉",
+      "description": "从左侧或右侧以弹簧滑入的侧边面板，带背景模糊、页面滚动锁定和 Esc 关闭。",
+      "seo": {
+        "title": "React 与 Tailwind 动画侧边抽屉",
+        "description": "从左侧或右侧弹入的 React 侧边抽屉，带背景模糊、滚动锁定和 Esc 关闭。免费开源，可复制粘贴或通过 shadcn 安装。"
+      }
+    },
+    "scroll-animation": {
+      "name": "滚动动画",
+      "description": "滚动驱动的动效：Lenis 平滑滚动 provider，以及读取其数据的阅读进度指示器。",
+      "examples": {
+        "smooth-scroll": {
+          "name": "平滑滚动",
+          "description": "基于 Lenis 的平滑滚动 provider，配合 useSmoothScroll hook 提供滚动偏移、进度和速度。兼容减弱动效。"
+        },
+        "scroll-progress": {
+          "name": "滚动进度",
+          "description": "阅读进度指示器——固定进度条或圆环——通过 useSmoothScroll 由滚动位置驱动，并带弹簧平滑。"
+        },
+        "parallax": {
+          "name": "视差",
+          "description": "包装器，子元素穿过视口时按速度系数在任一轴向上漂移。兼容减弱动效。"
+        },
+        "scroll-to": {
+          "name": "滚动到",
+          "description": "通过当前的 SmoothScroll provider 平滑滚动到目标（偏移量、选择器或元素）的按钮；减弱动效时直接跳转。"
+        },
+        "scroll-reveal": {
+          "name": "滚动显现",
+          "description": "子元素进入视口时以弹簧滑动和模糊显现，可仅一次或每次触发。减弱动效时保留淡入。"
+        }
+      },
+      "seo": {
+        "title": "React 滚动动画：平滑滚动、视差",
+        "description": "React 滚动动画套件：Lenis 平滑滚动、阅读进度条、视差、滚动到指定位置和滚动显现。基于 Framer Motion，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "range-slider": {
+      "name": "范围滑块",
+      "description": "带刻度圆点的滑块，竖条形滑块落在每个刻度上时会弹跳。支持拖拽或键盘，兼容减弱动效。",
+      "examples": {
+        "stepped": {
+          "name": "范围滑块",
+          "description": "刻度圆点，以及落在每个刻度上时会弹跳的竖条形滑块。"
+        },
+        "fluid": {
+          "name": "流体滑块",
+          "description": "没有滑块手柄。填充在圆角液态端帽后滑动，标签被填充覆盖的部分会反转颜色。"
+        },
+        "wave": {
+          "name": "波浪滑块",
+          "description": "均衡器柱条在手柄附近升起，经过后回落，数值沿轨道如波浪般移动。"
+        },
+        "bubble": {
+          "name": "气泡滑块",
+          "description": "按住滑块，数值气泡随即弹出。气泡会随拖拽速度倾斜、挤压，随后恢复直立。"
+        },
+        "ruler": {
+          "name": "标尺滑块",
+          "description": "指针保持不动，刻度在其下方滚动。快速拨动会继续滑行，并停在最近的刻度上。小数步长按步长自身的精度显示。"
+        },
+        "inline": {
+          "name": "内联滑块",
+          "description": "内嵌填充，标签和数值内联显示。十个等距刻度贯穿轨道；位于文字下方的刻度隐藏但仍可交互，滑块经过任一标签时会让开。"
+        }
+      },
+      "seo": {
+        "title": "React 范围滑块：6 种动画滑块设计",
+        "description": "六款 React 动画范围滑块：步进刻度、内联标签、流体填充、波浪柱、数值气泡和标尺。支持键盘访问，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "wheel-picker": {
+      "name": "滚轮选择器",
+      "description": "iOS 风格的滚轮选择器：基于原生惯性滚动的 3D 滚筒，吸附到最近的档位，支持滚轮、拖拽和键盘操作。可并排组合成日期和时间选择器，兼容减弱动效。",
+      "seo": {
+        "title": "React 滚轮选择器：iOS 风格",
+        "description": "iOS 风格的 React 滚轮选择器，带 3D 滚筒、惯性滑动、吸附、键盘控制和可选的滴答音效。可组合多个滚轮实现日期和时间选择。"
+      }
+    },
+    "table": {
+      "name": "表格",
+      "description": "虚拟化数据表格，在 1 万行以上依然流畅，支持表头排序、行选择、列宽调整和列重排，以及固定表头。动效克制，兼容减弱动效。",
+      "examples": {
+        "data": {
+          "name": "数据表格",
+          "description": "1 万行虚拟化数据，支持表头排序、行选择、列宽调整和列重排。"
+        },
+        "editable": {
+          "name": "可编辑表格",
+          "description": "行内编辑单元格，并通过边框手柄插入或删除行和列；表格根据更新后的数据和列定义重新渲染。"
+        },
+        "async": {
+          "name": "异步表格",
+          "description": "按需加载分页——首次加载显示骨架行，之后在虚拟列表接近底部时通过 onEndReached 无限滚动。"
+        }
+      },
+      "seo": {
+        "title": "React 数据表格：虚拟化、可排序、可编辑",
+        "description": "虚拟化的 React 数据表格，万行以上依旧流畅，支持排序、选择、列宽调整与重排、行内编辑和异步加载。免费源码。"
+      }
+    },
+    "shader-background": {
+      "name": "着色器背景",
+      "description": "Canvas 着色器背景（网格渐变、颗粒、扭曲、波浪、voronoi、点轨道等），由单个带类型的 variant prop 控制。减弱动效时冻结动画变体。",
+      "seo": {
+        "title": "React 着色器背景：WebGL 网格渐变",
+        "description": "React WebGL 动画着色器背景：网格渐变、颗粒、扭曲、波浪、Voronoi、抖动等 20 余种效果，一个 variant 属性即可切换。免费开源。"
+      }
+    },
+    "cylinder-carousel": {
+      "name": "圆柱轮播",
+      "description": "项目排列在圆柱内壁的轮播，中间向内退缩、边缘逐渐放大。可拖拽、滚动或用方向键转动，带弹性滑行和吸附。减弱动效时取消滑行。",
+      "seo": {
+        "title": "React 3D 圆柱轮播组件",
+        "description": "React 3D 轮播，内容排列在圆柱内壁，支持拖拽、滚动和方向键控制，并带弹性吸附。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "loader": {
+      "name": "加载器",
+      "description": "提供十七种变体的加载指示器：spinner、dots、bars、dot-matrix、dither、morph、comet、scramble、metaballs、newton、helix、percent，以及五种终端风格的 ASCII spinner。通过单个 size prop 缩放，使用 currentColor，减弱动效时将所有变换替换为平缓的透明度脉冲。",
+      "seo": {
+        "title": "React 加载器：17 种动画加载图标",
+        "description": "十七种 React 加载动画：圆点、条形、点阵、抖动、融球、螺旋、百分比和终端 ASCII 风格。一个 size 属性，使用 currentColor，免费源码。"
+      }
+    },
+    "message-bubble": {
+      "name": "消息气泡",
+      "description": "专注的对话表面，支持多种视觉色调、独立对齐、消息分组、可展开内容，以及可交互的链接或按钮。",
+      "examples": {
+        "surfaces": {
+          "name": "动画表面",
+          "description": "可交互的对话：用户新发送的每一行只弹出一次，助手则流式输出到稳定的行中。"
+        },
+        "avatars": {
+          "name": "带头像",
+          "description": "逐步到达的消息，带发送者头像、元数据、送达状态和分组后续消息的对齐。"
+        },
+        "show-more": {
+          "name": "显示更多",
+          "description": "较长的助手消息，带紧凑的行截断预览和动画展开控件。"
+        }
+      },
+      "seo": {
+        "title": "React 聊天消息气泡组件",
+        "description": "适用于 AI 和即时通讯应用的 React 聊天消息气泡，提供六种样式、对齐、分组、链接和可折叠的长回复。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "message": {
+      "name": "消息",
+      "description": "可组合的对话原语，涵盖消息行、分组气泡、头像、元数据、实时标记，以及仅在挂载时为新发送行触发的尾缘弹出效果。",
+      "seo": {
+        "title": "AI 应用 React 聊天消息组件",
+        "description": "可组合的 React 聊天消息行，带气泡、头像、头部、输入中指示器和新消息弹出动画。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "message-scroller": {
+      "name": "消息滚动区",
+      "description": "感知阅读状态的对话视口，在实时边缘跟随流式输出，读者离开时交出控制权。",
+      "seo": {
+        "title": "流式 AI 聊天自动滚动容器",
+        "description": "React 聊天滚动容器，在底部时跟随 AI 流式输出，读者向上滚动时停止跟随，可选消息导航栏。免费源码。"
+      }
+    },
+    "prompt-input": {
+      "name": "提示词输入框",
+      "description": "自动增高的智能体输入框，支持提示词操作、模型选择、键盘提交，以及动画化的发送和停止状态。",
+      "seo": {
+        "title": "React AI 聊天提示词输入框组件",
+        "description": "适用于 AI 应用的自动增高 React 聊天输入框，带模型选择器、操作菜单、Enter 发送，以及发送与停止状态动画。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "todo-list": {
+      "name": "待办列表",
+      "description": "可折叠的智能体任务计划，带变形状态标记、完成计数、紧凑元数据和平滑的列表更新。",
+      "seo": {
+        "title": "React AI 智能体任务列表组件",
+        "description": "用于 AI 智能体计划的可折叠 React 待办列表，带待处理、进行中和已完成状态、变形对勾和进度计数。免费源码。"
+      }
+    },
+    "code-block": {
+      "name": "代码块",
+      "description": "语法高亮的代码表面，支持稳定的流式更新、行号、聚焦行、平滑跟随和复制反馈。",
+      "seo": {
+        "title": "React AI 聊天流式代码块",
+        "description": "语法高亮的 React 代码块，在 AI 流式输出代码时平滑更新，带行号、高亮行和复制功能。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "approval-card": {
+      "name": "审批卡片",
+      "description": "人机协同的决策表面，用于审批、单选或多选问题、自定义回复和多步审查流程。",
+      "examples": {
+        "questions": {
+          "name": "问题",
+          "description": "引导用户完成单选、多选和自由回答问题，再将完整回复返回给智能体。"
+        },
+        "review": {
+          "name": "审查与批准",
+          "description": "暂停智能体工作流以等待批准、修改或拒绝，随后折叠为已记录的决定。"
+        }
+      },
+      "seo": {
+        "title": "React 智能体人机协同审批界面",
+        "description": "面向 AI 智能体的 React 审批卡片：批准、拒绝或要求修改，并支持单选、多选和多步骤问题。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "file-diff": {
+      "name": "文件差异",
+      "description": "语法高亮的文件变更展开面板，支持渐进式行、行号、实时变更计数、平滑跟随和完成后折叠。",
+      "seo": {
+        "title": "React AI 代码改动文件差异查看器",
+        "description": "语法高亮的 React 差异查看器，逐行流式展示 AI 代码编辑，带实时增删计数和复制功能。免费开源。"
+      }
+    },
+    "tool-result": {
+      "name": "工具结果",
+      "description": "轻量的执行展开面板，用于语法高亮的终端输出和请求响应，完成后折叠为紧凑状态。",
+      "examples": {
+        "terminal-output": {
+          "name": "终端输出",
+          "description": "将命令输出流式写入限高视口，跟随新行，完成后折叠为运行摘要。"
+        },
+        "request-result": {
+          "name": "请求结果",
+          "description": "展示进行中的请求及其高亮的响应内容，支持重试和复制操作。"
+        }
+      },
+      "seo": {
+        "title": "React AI 工具调用结果组件",
+        "description": "用于 AI 工具调用的 React 折叠面板，展示语法高亮的终端输出和 API 响应，带成功与错误状态、复制和重试。免费源码。"
+      }
+    },
+    "streaming-response": {
+      "name": "流式响应",
+      "description": "稳定的响应表面，带完成后操作、渲染内容和可展开的来源摘要。",
+      "seo": {
+        "title": "React 流式 AI 回复组件",
+        "description": "用于流式 AI 回答的 React 界面，完成后提供复制、重试、反馈和可展开的来源列表。适配任意渲染器，免费源码。"
+      }
+    },
+    "image-generation": {
+      "name": "图像生成",
+      "description": "稳定的生成图像表面，从排队、渐进细化到最终结果，全程无布局偏移。",
+      "seo": {
+        "title": "React AI 图片生成加载界面",
+        "description": "React AI 图片生成组件，支持排队、生成中、优化中、完成和错误状态，无布局偏移。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "tool-approval": {
+      "name": "工具审批",
+      "description": "人机协同的权限卡片，用于查看工具详情，并选择允许一次、记住授权或拒绝执行。",
+      "seo": {
+        "title": "React 智能体工具权限确认",
+        "description": "用于 AI 智能体工具调用的 React 权限卡片：查看参数后选择允许一次、始终允许或拒绝。免费开源，可复制粘贴或通过 shadcn 安装。"
+      }
+    },
+    "citations": {
+      "name": "引用",
+      "description": "行内引用标记，搭配可折叠、渐进渲染的参考来源列表，让智能体回答有据可查。",
+      "seo": {
+        "title": "React AI 引用与来源组件",
+        "description": "React 行内引用链接，带可折叠的编号来源列表和真实网站图标，适用于有据可查的 AI 回答。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "agent-activity": {
+      "name": "智能体活动",
+      "description": "单个自适应活动流，可展示推理、搜索、工具调用、结构化执行轨迹或按时间顺序的混合内容。",
+      "examples": {
+        "streaming-text": {
+          "name": "流式文本",
+          "description": "将自由格式的推理文本流式写入限高视口，并在带计时的展开面板中保留完整日志。"
+        },
+        "reasoning-steps": {
+          "name": "推理步骤",
+          "description": "展示已完成、进行中和待处理的推理步骤，可附带尾部元数据。"
+        },
+        "web-search": {
+          "name": "网页搜索",
+          "description": "展示搜索词、渐进渲染的结果行和溢出计数。"
+        },
+        "tool-calls": {
+          "name": "工具调用",
+          "description": "汇总读取、编辑和运行事件，目标以等宽字体显示，可附带行变更计数。"
+        },
+        "mixed-activity": {
+          "name": "混合活动",
+          "description": "在一次按时间顺序的运行中流式展示推理、搜索和工具事件，视口平滑跟随新进展。"
+        },
+        "agent-trace": {
+          "name": "智能体轨迹",
+          "description": "将消息和结构化操作流式写入紧凑的执行记录，完成后按工具调用数和消息数汇总本次运行。"
+        }
+      },
+      "seo": {
+        "title": "React AI 智能体活动流",
+        "description": "面向 AI 智能体的 React 活动流，在同一信息流中展示推理、网页搜索、工具调用和执行追踪，完成后自动折叠。免费开源。"
+      }
+    },
+    "loading-states": {
+      "name": "智能体加载状态",
+      "description": "三种为 AI 界面精心设计的加载状态：微光状态文字、实时智能体进度和循环切换的推理短语。",
+      "examples": {
+        "reasoning-text": {
+          "name": "推理文本",
+          "description": "带 ASCII 加载器的微光推理文案，支持级联、短语切换或逐字母乱码过渡。"
+        },
+        "thinking-shimmer": {
+          "name": "思考微光",
+          "description": "安静的微光效果，在工作进行时保持智能体当前状态清晰可读。"
+        },
+        "agent-progress": {
+          "name": "智能体进度",
+          "description": "紧凑的活动图标、动作动词和实时等宽计时器，适用于耗时较长的智能体任务。"
+        }
+      },
+      "seo": {
+        "title": "AI 加载状态：React 思考动画",
+        "description": "三种 React AI 加载状态：微光“思考中”文字、带计时器的实时智能体进度，以及循环切换的推理短语。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "ai-sidebar": {
+      "name": "AI 侧边栏",
+      "description": "可折叠的 AI 工作区侧边栏，管理文件夹、项目、文件和书签，支持键盘导航、乐观移动、行内重命名和感知溢出的标签。",
+      "seo": {
+        "title": "React AI 聊天应用工作区侧边栏",
+        "description": "适用于 AI 聊天应用的 React 侧边栏，包含文件夹、项目、文件和书签，支持拖拽移动、行内重命名和键盘控制。免费开源。"
+      }
+    },
+    "chat-app": {
+      "name": "聊天应用",
+      "description": "完整的智能体对话工作区，组合了导航、消息、流式输出、计划、审批、工具、代码、差异、生成媒体、来源和提示词输入。",
+      "seo": {
+        "title": "React AI 聊天应用模板（shadcn）",
+        "description": "完整的 React AI 聊天界面，包含侧边栏、消息、流式输出、任务规划、审批、工具结果、代码、差异和提示词输入。免费源码。"
+      }
+    },
+    "infinite-masonry": {
+      "name": "无限瀑布流",
+      "description": "响应式虚拟化瀑布流，测量不同高度的卡片，并在用户接近末尾时加载更多数据。",
+      "seo": {
+        "title": "React 无限滚动瀑布流布局",
+        "description": "虚拟化的 React 瀑布流布局，支持不等高卡片、响应式列数和接近末尾时无限加载。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "notification-stack": {
+      "name": "通知堆叠",
+      "description": "紧凑的通知卡片，在悬停、聚焦或点按时从堆叠摘要弹性展开为可读列表。",
+      "seo": {
+        "title": "React 堆叠通知组件",
+        "description": "React 通知堆叠，悬停、聚焦或点按时以弹簧动画从堆叠摘要展开为易读的列表。基于 Framer Motion，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "project-folder": {
+      "name": "项目文件夹",
+      "description": "可交互的项目文件夹，悬停或聚焦时展开文件扇面，点击后扩展为可管理焦点的浮层，关闭时沿完整路径收回。",
+      "seo": {
+        "title": "React 动画文件夹组件",
+        "description": "React 项目文件夹，悬停时文件扇形展开，点击后扩展为可管理焦点的浮层，关闭时折叠收回。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "knockout-bracket": {
+      "name": "赛程",
+      "description": "两种样式的动画赛程：按轮次翻页的淘汰赛对阵图，以及围绕冠军环绕同一棵树的轮盘。两者读取相同的轮次数组，一份数据即可绘制任一样式。",
+      "examples": {
+        "knockout-wheel": {
+          "name": "淘汰赛轮盘",
+          "description": "以径向方式绘制的赛事。冠军位于中心，每一轮向外多一圈，各支球队构成外圈。节点逐圈弹入，悬停某个节点会突出该队，其余淡出。球队显示国旗、徽标或首字母缩写，签表越深，圈数越多。"
+        },
+        "knockout-bracket": {
+          "name": "淘汰赛对阵图",
+          "description": "每次翻页显示一轮。最左侧一轮按固定节奏排列，之后每一轮居中于其两场来源比赛之间，卡片、折线连接线、标题和舞台高度都会以动画过渡到新布局。季军赛位于对阵树下方，以单独的分隔线隔开。轮次名称、球队图片、日期和结果标签全部来自你传入的数据。"
+        }
+      },
+      "seo": {
+        "title": "React 赛事对阵图与赛程组件",
+        "description": "React 动画赛事对阵图，支持逐轮翻页和径向轮盘布局，两者共用同一个 rounds 数组。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "availability-scheduler": {
+      "name": "可用时间设置",
+      "description": "每周可用时间编辑器：每天可在可用与不可用之间弹性切换，时间段以模糊滑动动效添加和删除，时间从可滚动下拉列表中选择，复制菜单可将时段复制到其他日期。",
+      "seo": {
+        "title": "React 每周可用时间编辑器",
+        "description": "React 每周可用时间编辑器，支持按天开关、时间段、时间下拉选择，并可将时间复制到其他日期。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "swap": {
+      "name": "多链兑换",
+      "description": "跨链兑换组件，带链和代币选择器、变形视图、动画翻转和报价。",
+      "seo": {
+        "title": "React 加密货币兑换组件（多链）",
+        "description": "React 跨链代币兑换动画组件，带链与代币选择器、变形视图、翻转按钮和报价。免费开源。"
+      }
+    },
+    "dynamic-island": {
+      "name": "Dynamic Island",
+      "description": "iOS 风格的灵动岛胶囊，在实时活动视图之间变形，外壳弹性缩放并以模糊交叉淡入淡出。",
+      "seo": {
+        "title": "React 灵动岛组件（iOS 风格）",
+        "description": "iPhone 风格的 React 灵动岛，在实时活动视图之间变形切换，带弹性尺寸变化和模糊交叉淡入淡出。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "command-palette": {
+      "name": "命令面板",
+      "description": "⌘K 命令面板，带模糊搜索、弹簧动画的激活行和玻璃质感表面。",
+      "seo": {
+        "title": "React 命令面板（Cmd K 菜单）",
+        "description": "React Cmd K 命令面板，带模糊搜索、弹簧动画的激活行、键盘导航和玻璃质感表面。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "morphing-search": {
+      "name": "变形搜索",
+      "description": "搜索框或紧凑图标，无论通过点击还是键盘快捷键打开，都会变形为玻璃质感的结果面板。",
+      "seo": {
+        "title": "React 动画搜索栏，带搜索结果",
+        "description": "两款 React 搜索栏：一款变形为结果面板，一款以胶囊形式停靠，带标签、最近搜索和建议。支持键盘访问，免费源码。"
+      },
+      "examples": {
+        "chips": {
+          "name": "标签搜索",
+          "description": "停靠式搜索栏，聚焦时以弹簧动画变宽，并从自身边缘展开最近搜索面板。搜索词会变成可移除的标签，搜索栏随之变宽，建议会随输入实时筛选。"
+        },
+        "overlay": {
+          "name": "变形搜索",
+          "description": "搜索框或紧凑的图标，无论通过点击还是键盘快捷键打开，都会变形为玻璃质感的结果面板。"
+        }
+      }
+    },
+    "expandable-action-bar": {
+      "name": "可展开操作栏",
+      "description": "紧凑的图标操作在悬停或聚焦时展开为带标签的控件，使用共享布局动效。",
+      "seo": {
+        "title": "React 可展开图标操作栏",
+        "description": "React 工具栏，图标按钮在悬停或聚焦时以共享布局动画展开为带文字的控件。免费开源，可复制粘贴或通过 shadcn 安装。"
+      }
+    },
+    "overflow-actions": {
+      "name": "溢出操作",
+      "description": "承载主要操作的连体胶囊栏，弹性展开以显示更多控件。",
+      "seo": {
+        "title": "React 溢出操作菜单按钮",
+        "description": "用于主要操作的相连 React 胶囊栏，以弹簧动画展开显示更多控件。基于 Framer Motion 和 Tailwind，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "expandable-tabs": {
+      "name": "可展开标签页",
+      "description": "图标标签栏，激活的标签展开为带文字的胶囊，上方面板在切换时变形高度，并按方向滑动内容。",
+      "seo": {
+        "title": "React 可展开图标标签页",
+        "description": "React 图标标签栏，激活标签展开为带文字的胶囊，上方面板在视图间变形高度。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "morphing-tabs": {
+      "name": "变形标签页",
+      "description": "可重排的标签页，选中项扩展为白色内容表面，标签移动时激活形状随之滑动，各房间之间共享变形过渡。",
+      "seo": {
+        "title": "React 变形标签页组件",
+        "description": "可重新排序的 React 标签页，选中的标签会扩展为内容区域，带滑动的激活形状和共享变形。免费开源。"
+      }
+    },
+    "swipeable-list": {
+      "name": "可滑动列表",
+      "description": "移动端风格的列表行，向左或向右滑动以显示上下文操作按钮。",
+      "seo": {
+        "title": "React 滑动操作列表",
+        "description": "移动端风格的 React 列表，向左或向右滑动行即可显示删除、归档等操作按钮。支持触摸和鼠标，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "file-upload": {
+      "name": "文件上传",
+      "description": "两种文件上传模式：可混合文件、链接、音频和媒体的附件工作区，以及支持重试和移除的进度队列。",
+      "examples": {
+        "attachment-upload": {
+          "name": "附件上传",
+          "description": "混合附件工作区，带拖放区、依次错开的文件和图片行，上传、成功、失败、重试和移除的动画反馈，共享布局的图片预览，以及音频波形。"
+        },
+        "upload-queue": {
+          "name": "上传队列",
+          "description": "拖放上传队列，带进度行、上传状态、重试和移除。"
+        }
+      },
+      "seo": {
+        "title": "React 文件上传，带进度与预览",
+        "description": "两款 React 文件上传组件：带图片预览和音频的附件区域，以及支持重试和移除的进度队列。免费源码。"
+      }
+    },
+    "prediction-market": {
+      "name": "预测市场",
+      "description": "动画市场列表卡片，带结果 CTA、概率和收藏，另有支持买入/卖出模式和滚动金额输入的交易单。",
+      "seo": {
+        "title": "React 预测市场 UI 组件",
+        "description": "React 预测市场卡片，展示结果价格和概率，另有带滚动金额输入的买入卖出交易单。免费开源。"
+      },
+      "examples": {
+        "market-cards": {
+          "name": "市场卡片",
+          "description": "紧凑的市场列表，结果行样式统一，带动画赔率 CTA、赔付倍数和收藏。赔率 CTA 使用绿色/红色背景，在悬停或键盘聚焦时滚动切换为 Yes/No 标签。点击“更新赔率”可预览价格变化动画。"
+        },
+        "trade-ticket": {
+          "name": "交易单",
+          "description": "买入和卖出结果，带滚动金额输入、快捷添加标签和交易状态。"
+        }
+      }
+    },
+    "wallet-card": {
+      "name": "钱包卡片",
+      "description": "钱包概览卡片：账户切换器和搜索从各自的触发器变形展开，余额以级联方式显示并带实时涨跌标签和隐私开关，支持复制地址，以及 Send / Deposit / Swap / Buy 操作。",
+      "seo": {
+        "title": "React 加密钱包卡片组件",
+        "description": "React 加密钱包卡片，带账户切换、搜索、动画余额、隐私开关、复制地址，以及发送、兑换和购买操作。免费源码。"
+      }
+    },
+    "otp-input": {
+      "name": "验证码输入框",
+      "description": "一次性验证码输入框，带滑动的焦点环、逐格滚入的数字、错误抖动和成功对勾绘制动画。",
+      "seo": {
+        "title": "React 动画 OTP 验证码输入框",
+        "description": "React OTP 验证码输入框，带滑动聚焦环、滚动数字、错误抖动和成功对勾。支持粘贴，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "signup-form": {
+      "name": "注册表单",
+      "description": "组合式注册表单：字段仅在离开后才标记错误，一旦修正立即清除；带按长度加权的强度指示、密码显示切换和动画化的提交流程。",
+      "seo": {
+        "title": "React 注册表单，带表单校验",
+        "description": "React 动画注册表单，失焦时校验，带密码强度指示、显示密码，以及加载和成功状态。免费开源。"
+      }
+    },
+    "bloom-menu": {
+      "name": "绽放菜单",
+      "description": "按钮变形展开为菜单，并从中心以光圈方式绽放，网格向四周显现，选项呈放射状依次出现。",
+      "seo": {
+        "title": "React 动画绽放菜单按钮",
+        "description": "React 按钮变形为菜单，从中心绽放展开，菜单项径向错开出现。基于 Framer Motion，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "feedback-widget": {
+      "name": "反馈组件",
+      "description": "角落的触发器变形展开为反馈弹窗，支持输入消息，并带动画化的发送、成功和重试状态。",
+      "seo": {
+        "title": "React 反馈组件",
+        "description": "React 反馈组件，从角落按钮变形为表单，带发送中、成功和重试状态。免费源码，可通过 shadcn CLI 安装。"
+      }
+    },
+    "not-found": {
+      "name": "404 / 页面未找到",
+      "description": "五种风格的 404 动画页面：故障乱码、磁吸数字、光标聚光灯、扇形展开的卡片堆叠和打字终端。",
+      "examples": {
+        "glitch": {
+          "name": "故障",
+          "description": "数字在随机字形间乱码跳动后定格，悬停时出现色彩分离。"
+        },
+        "magnetic": {
+          "name": "磁吸",
+          "description": "每个数字都通过 Magnetic 包装器被光标吸引，离开后弹回原位。"
+        },
+        "spotlight": {
+          "name": "聚光灯",
+          "description": "暗色面板中，跟随光标的聚光灯从昏暗底色中照亮明亮的错误码。"
+        },
+        "stacked": {
+          "name": "堆叠",
+          "description": "错误码卡片覆盖在隐藏的卡片堆上，悬停时以弹簧扇形展开。"
+        },
+        "terminal": {
+          "name": "终端",
+          "description": "终端窗口逐字输入一条失败的 cd 命令和 404 状态，并带闪烁光标。"
+        }
+      },
+      "seo": {
+        "title": "React 动画 404 页面模板",
+        "description": "五款适用于 React 和 Next.js 的动画 404 页面：故障风、磁吸数字、光标聚光灯、卡片堆叠和终端。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "timeline": {
+      "name": "时间轴",
+      "description": "围绕聚焦卡片展开、可拖拽的带日期事件时间轴。",
+      "seo": {
+        "title": "React 横向时间轴动画组件",
+        "description": "React 时间轴组件：居中事件放大、两侧渐暗，带刻度分隔、视差年份数字、拖拽惯性和键盘控制。免费，支持 shadcn 安装。"
+      }
+    },
+    "alert": {
+      "name": "动画警告提示",
+      "description": "可组合的反馈提示，带流畅的过渡效果。",
+      "seo": {
+        "title": "React 与 Tailwind 动画警告提示组件",
+        "description": "可关闭的 React 警告提示，提供五种变体，包含图标、标题、操作和关闭部件，支持礼貌或紧急播报及弹簧退出动画。可复制源码或通过 shadcn 安装。"
+      }
+    },
+    "collapsible": {
+      "name": "动画折叠面板",
+      "description": "以流畅展开效果显示的可折叠内容。",
+      "seo": {
+        "title": "React 动画折叠面板（Framer Motion）",
+        "description": "可组合的 React 折叠面板，带弹簧高度展开、自定义触发器、受控或非受控状态及焦点移交。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "aspect-ratio": {
+      "name": "宽高比",
+      "description": "宽高比可平滑过渡的响应式媒体容器。",
+      "seo": {
+        "title": "React 宽高比组件，平滑缩放过渡",
+        "description": "响应式 React 宽高比容器和图片，以弹簧动画在不同比例间变形，支持 cover 裁剪。免费开源，可复制粘贴或通过 shadcn 安装。"
+      }
+    },
+    "arc-picker": {
+      "name": "弧形选择器",
+      "description": "径向文字选择器，可选上、下、左、右四种弧形，滚轮移动流畅，每次滚动都会实时选中。一个常驻的括号框会围绕每个标签伸缩变形。支持拖拽惯性、键盘输入、禁用选项、受控或非受控值、表单和减少动态效果。",
+      "seo": {
+        "title": "弧形选择器：React 径向滚动选择器",
+        "description": "弧形 React 选择器，标签经过中心时即被选中，支持滚轮、拖拽惯性和键盘输入，括号框会变形贴合每个选项。"
+      }
+    },
+    "sortable-stack": {
+      "name": "可排序列表",
+      "description": "可组合的可排序列表，包含分组、列表项、拖拽手柄、内容和撤销部件，并提供共享状态 hook。支持弹簧布局、键盘重新排序、无障碍位置播报，以及受控或非受控的列表项。",
+      "seo": {
+        "title": "React 动画可排序列表（拖放排序）",
+        "description": "React 可排序列表，带拖拽手柄、弹簧布局、键盘重新排序、屏幕阅读器位置播报和撤销。可复制源码或通过 shadcn 安装。"
+      }
+    },
+    "image-viewer": {
+      "name": "图片查看器",
+      "description": "可组合的 React 图片查看器，适用于图库和附件预览，提供多种动画灯箱变体、自定义缩略图和控件、滑动与键盘导航、缩放与平移、无障碍焦点管理，以及受控或非受控的选择状态。",
+      "seo": {
+        "title": "React 图片查看器与灯箱，支持缩放",
+        "description": "React 动画图片查看器和灯箱，缩略图变形展开，支持滑动与键盘导航、缩放平移和焦点管理。免费开源。"
+      },
+      "examples": {
+        "morphing": {
+          "name": "变形",
+          "description": "与缩略图相连的图片查看器，包含可组合的图库、缩略图、内容、说明文字和导航部件，并提供共享状态 hook。从缩略图展开为全尺寸图片，关闭时收回缩略图，支持滑动导航、缩放和平移。"
+        }
+      }
+    },
+    "date-range-picker": {
+      "name": "日期范围选择器",
+      "description": "可组合的日期范围选择器，包含根容器、触发器、弹出内容、日历、头部、网格、摘要、底部、清除和预设部件，并提供共享状态 hook。提供紧凑的内联和下拉两种组合方式，可直接选择月份和年份，支持完整键盘导航。",
+      "seo": {
+        "title": "React 日期范围选择器组件（Tailwind）",
+        "description": "可组合的 React 日期范围选择器，支持内联和下拉布局、预设、月份与年份选择及完整键盘导航。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "card": {
+      "name": "卡片",
+      "description": "可组合的卡片，包含头部、标题、描述、操作、内容和底部部件。提供描边或柔和底色两种表面、标准或紧凑间距，以及可选的可选中状态，带按压反馈，可与 Checkbox、Radio 和 Button 组合使用。",
+      "seo": {
+        "title": "适用于 Tailwind 和 shadcn 的 React 卡片组件",
+        "description": "可组合的 React 卡片，包含头部、标题、操作、内容和底部部件，支持紧凑间距和可选的选中状态及按压反馈。免费源码。"
+      }
+    },
+    "color-picker": {
+      "name": "颜色选择器",
+      "description": "可组合的颜色选择器，触发色块会变形为饱和度与亮度区域。拖拽时每个滑块上方会浮起放大镜。包含色相和不透明度滑块、Hex、RGB 和 HSL 输入框、取色器、预设、完整键盘控制，以及受控或非受控的值。",
+      "seo": {
+        "title": "React 颜色选择器，支持 Hex、RGB、HSL",
+        "description": "React 动画颜色选择器，含饱和度区域、色相与透明度滑块、Hex/RGB/HSL 输入、取色器、预设和键盘控制。免费开源。"
+      }
+    },
+    "color-selector": {
+      "name": "动画色板选择器",
+      "description": "可组合的色板，带弹簧滑动的选中环、按压反馈、原生单选框键盘导航，以及受控或非受控状态。",
+      "seo": {
+        "title": "React 动画色板选择器",
+        "description": "基于原生单选输入的 React 色板选择器，带滑动选中环、按压反馈和键盘导航。可复制源码或通过 shadcn 安装。"
+      }
+    },
+    "pagination": {
+      "name": "动画分页",
+      "description": "页面导航，当前页胶囊平滑滑动，页码随窗口移动而滑动，省略号可一次跳转多页。",
+      "seo": {
+        "title": "React 动画分页组件",
+        "description": "React 分页组件，带滑动的当前页胶囊、滑动页码、省略号跳页、路由链接支持和键盘访问。可复制源码或通过 shadcn 安装。"
+      }
+    },
+    "avatar-group": {
+      "name": "动画头像组",
+      "description": "重叠的头像在悬停时散开，抬起并显示名称提示，还可从 +N 计数展开以显示所有人。",
+      "seo": {
+        "title": "React 动画头像组组件",
+        "description": "React 头像堆叠组件，悬停时扇形散开，在工具提示中显示名称，回退显示姓名首字母，并可从 +N 计数展开。可复制源码或通过 shadcn 安装。"
+      }
+    },
+    "breadcrumb": {
+      "name": "动画面包屑",
+      "description": "可组合的面包屑导航，路径过渡柔和，长路径可收起为可悬停的溢出下拉菜单，支持自定义分隔符和路由链接。",
+      "seo": {
+        "title": "React 动画面包屑组件",
+        "description": "React 面包屑导航，将长路径折叠为溢出下拉菜单，带滑动淡入淡出过渡、自定义分隔符和路由链接支持。"
+      }
+    },
+    "adaptive-stepper": {
+      "name": "自适应步进器",
+      "description": "可组合的数字步进器，占位尺寸固定，在最小值和最大值处自适应变化，数值在步进间滚动切换。",
+      "seo": {
+        "title": "React 动画数字步进输入框",
+        "description": "React 数字步进器，数值在步进间滚动切换，控件在最小值和最大值处自适应且不引起布局偏移。键盘友好，免费源码。"
+      }
+    },
+    "multi-select": {
+      "name": "多项选择器",
+      "description": "可组合的多选原语，支持选项搜索、可移除的动画标签，以及可变形、能感知碰撞的面板。",
+      "seo": {
+        "title": "React 多项选择器，支持搜索和标签",
+        "description": "可搜索的 React 多选组件，带可移除的动画标签和能感知碰撞、变形展开的面板。支持键盘访问，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "file-tree": {
+      "name": "文件树",
+      "description": "可组合的文件和文件夹原语，分支以弹簧动画展开，选中项平滑滑动，并支持完整键盘导航。",
+      "seo": {
+        "title": "React 动画文件树组件",
+        "description": "React 文件与文件夹树，分支弹簧展开，选中项平滑滑动，支持完整键盘导航。可组合部件，免费源码，支持 shadcn 安装。"
+      }
+    },
+    "line-chart": {
+      "name": "折线图",
+      "description": "随数据变化而变形的折线图和面积图，带吸附十字准线和数值提示。",
+      "seo": {
+        "title": "React 动画折线图与面积图",
+        "description": "React 折线图与面积图，新数据到来时线条变形，带吸附十字准线、动画数值提示、系列切换和键盘访问。免费源码。"
+      }
+    },
+    "bar-chart": {
+      "name": "柱状图",
+      "description": "分组、堆叠和横向柱状图，柱子以弹簧动画生长、重新缩放和重新排序。",
+      "seo": {
+        "title": "React 动画柱状图组件",
+        "description": "React 柱状图，支持分组、堆叠和横向布局，柱子以弹簧动画生长和重排，带提示和键盘访问。免费源码，支持 shadcn。"
+      }
+    },
+    "sparkline": {
+      "name": "迷你图",
+      "description": "适用于统计卡片和表格的紧凑内联趋势图，带变化徽章和可选数值读数。",
+      "seo": {
+        "title": "React 迷你趋势图组件",
+        "description": "适用于统计卡片和表格的 React 迷你图：紧凑的趋势线或面积图，带变化徽章、实时变形和可选的悬停读数。免费源码。"
+      }
+    },
+    "sankey-chart": {
+      "name": "桑基图",
+      "description": "各阶段之间的加权流向，随数据绘入并变形。",
+      "seo": {
+        "title": "React 动画桑基图组件",
+        "description": "React 桑基图，流向随新数据绘入并变形，节点与流向联动高亮，带提示和键盘访问。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "treemap": {
+      "name": "矩形树图",
+      "description": "按比例划分的矩形块随数据变形，带数值和占比提示。",
+      "seo": {
+        "title": "React 动画矩形树图组件",
+        "description": "React 矩形树图，矩形块随数据更新而变形，支持嵌套层级、提示、键盘导航和无障碍数据表。免费源码。"
+      }
+    },
+    "candlestick-chart": {
+      "name": "K 线图",
+      "description": "实时 OHLC K 线，带成交量、最新价格线和十字准线读数。",
+      "seo": {
+        "title": "React K 线图，支持实时 OHLC 数据",
+        "description": "React 动画 K 线图，带成交量柱、实时最新价格线和十字准线 OHLC 读数，适用于实时交易数据。免费开源。"
+      }
+    },
+    "donut-chart": {
+      "name": "环形图",
+      "description": "圆角占比分段，带联动的中心读数和图例。",
+      "seo": {
+        "title": "React 动画环形图组件",
+        "description": "React 环形图，带圆角分段、联动中心读数、含占比条的图例、键盘聚焦和可选的选中功能。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "volume-profile": {
+      "name": "成交量分布图",
+      "description": "按价格分布的动画成交量，突出显示控制点和价值区域。",
+      "seo": {
+        "title": "React 成交量分布图（按价格成交量）",
+        "description": "适用于交易界面的 React 动画成交量分布图，带控制点、价值区域、提示和键盘查看。免费开源。"
+      }
+    },
+    "status-bar": {
+      "name": "状态条",
+      "description": "以圆角条形展示的动画状态历史，带时段提示。",
+      "seo": {
+        "title": "React 可用性状态条组件",
+        "description": "适用于 React 状态页的动画可用性与状态历史条，支持自定义状态、时段提示和键盘查看。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "composition-chart": {
+      "name": "构成图",
+      "description": "堆叠柱状图和面积图展示占比，带时段提示和紧凑的交互式图例。",
+      "seo": {
+        "title": "React 百分比堆叠柱状图与面积图",
+        "description": "React 百分比堆叠柱状图与面积图，带时段提示、系列固定、交互式图例和键盘查看。免费开源。"
+      }
+    },
+    "funnel-chart": {
+      "name": "漏斗图",
+      "description": "纵向和横向漏斗，阶段呈弧形过渡，带动画数字提示。",
+      "seo": {
+        "title": "React 动画漏斗图组件",
+        "description": "React 漏斗图，支持纵向或横向布局的弧形阶段，带转化与流失提示和动画数字。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "liquidity-heatmap": {
+      "name": "流动性热力图",
+      "description": "跨价格和时间的动画流动性带，带价格轨迹和深度提示。",
+      "seo": {
+        "title": "React 订单簿流动性热力图",
+        "description": "React 动画流动性热力图，展示价格与时间维度上的深度，带价格轨迹、提示和键盘查看。免费开源。"
+      }
+    },
+    "bump-chart": {
+      "name": "凹凸图",
+      "description": "以弧形路径展示的动画排名，带可交互的排名圆点和提示。",
+      "seo": {
+        "title": "React 凹凸图：动画排名图表",
+        "description": "展示排名随时间变化的 React 动画凹凸图，带弧形路径、可交互排名圆点、提示和系列固定。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "order-book": {
+      "name": "订单簿",
+      "description": "动画订单簿，展示买卖盘深度、价差和成交量平衡。",
+      "seo": {
+        "title": "React 订单簿组件，带深度条",
+        "description": "适用于交易界面的 React 动画订单簿，带买卖盘深度条、价差、成交量平衡和平均成交价查看。免费开源，可复制粘贴。"
+      }
+    },
+    "heat-calendar": {
+      "name": "热力日历",
+      "description": "可组合的活动日历，包含 Grid、Legend 和 Tooltip 部件，支持受控的范围选择，使用 UTC 日历日期。传入每周强度数据即可可视化活动，并统计所选区间的总量。",
+      "seo": {
+        "title": "React 贡献热力图日历组件",
+        "description": "GitHub 风格的 React 活动热力图日历，带提示、范围选择、可筛选图例和波浪动画。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "returns-calendar": {
+      "name": "收益日历",
+      "description": "可组合的月度收益日历，包含 Grid 和 Tooltip 部件，支持受控的月份或年份选择以及复合总收益。传入你自己的年份和月度百分比即可。",
+      "seo": {
+        "title": "React 月度收益日历热力图",
+        "description": "适用于 React 投资组合的月度收益日历热力图，带提示、年度合计和所选区间的复合收益。免费开源。"
+      }
+    },
+    "price-target-fan": {
+      "name": "目标价扇形图",
+      "description": "可组合的目标价图表，包含 Header、Plot、SVG、Axes、History、Targets、Now、Cursor 和 Tooltip 部件。传入带日期的价格历史和目标价，可用指针或键盘拖动查看，并自定义当前读数。",
+      "seo": {
+        "title": "React 分析师目标价预测图",
+        "description": "React 分析师目标价扇形图，带日期价格历史、最高、平均和最低目标价，以及可拖动查看的提示。免费源码，支持 shadcn 安装。"
+      }
+    },
+    "voice-orb": {
+      "name": "语音光球",
+      "description": "会呼吸的液态语音可视化，带流动高光、自定义颜料和随语音反应的柔和轮廓。可接收归一化音量、MotionValue 或由调用方持有的音频分析器，离开屏幕时暂停，并支持减少动态效果。",
+      "seo": {
+        "title": "React AI 语音光球：音频响应球体",
+        "description": "React AI 语音光球动画：随麦克风或音频音量变化的液态着色器球体，支持自定义颜色和减少动态效果。免费源码。"
+      }
+    },
+    "card-folder": {
+      "name": "卡夹",
+      "description": "一张横向卡片收在带缝线的钱包口袋中，口袋向底部缝线压缩时卡片向前抬起；支持受控的打开状态和卡片详情显示，并带独立的更多操作按钮。",
+      "seo": {
+        "title": "React 动画钱包卡夹",
+        "description": "React 卡夹组件，口袋压缩时卡片从带缝线的口袋中抬起，支持受控的打开和详情状态。免费开源。"
+      }
+    },
+    "card-dealer": {
+      "name": "发牌器",
+      "description": "一张牌桌，包含背面朝上的牌堆、扇形展开的手牌和弃牌堆。纸牌在三者之间沿弧线飞过牌桌并在空中翻转，整理手牌时相互跳过，悬停时抬起。由每张牌所在区域驱动数据，支持自定义正面和背面、可用键盘操作的手牌，以及减少动态效果。",
+      "seo": {
+        "title": "React 动画发牌与手牌组件",
+        "description": "React 牌桌组件，包含牌堆、扇形手牌和弃牌堆。纸牌沿弧线飞过牌桌、空中翻转，排序时跳跃换位。基于 Framer Motion，支持 shadcn 安装。"
+      }
+    },
+    "crash": {
+      "name": "Crash",
+      "description": "Crash 游戏：倍数沿曲线不断攀升，直到本局在一个公平的随机点崩盘。可以手动兑现或设置自动目标，并看到本局原本会在哪里结束。提供三种设计，支持服务器决定崩盘点、可选音效，并兼容减少动态效果。",
+      "seo": {
+        "title": "React 动画 Crash 游戏",
+        "description": "React Crash 游戏：倍数沿实时曲线攀升直至崩盘。可手动或自动兑现。基于 Framer Motion，可通过 shadcn 安装。"
+      },
+      "examples": {
+        "plane": {
+          "name": "纸飞机",
+          "description": "纸飞机带着倍数沿曲线攀升；兑现时降落伞打开，崩盘时纸飞机从空中坠落。"
+        },
+        "balloon": {
+          "name": "热气球",
+          "description": "热气球沿高度计上升；兑现时跳伞者跃出，崩盘时气球爆裂。"
+        },
+        "tower": {
+          "name": "高塔",
+          "description": "方块随倍数越叠越高，塔越高摇晃越厉害；兑现的方块会插上小旗，崩盘时塔顶倒塌。"
+        }
+      }
+    },
+    "mines": {
+      "name": "Mines",
+      "description": "Mines 棋盘：翻开格子寻找宝石，每颗宝石都会提高倍数，在踩到地雷前兑现。宝石按翻开顺序编号，概率环显示下一步的安全几率，结果卡展示本局的缩略图。可选音效，支持键盘操作，并兼容减少动态效果。",
+      "seo": {
+        "title": "React 动画 Mines 棋盘",
+        "description": "React Mines 棋盘：翻开格子寻找宝石，看着倍数上涨，在踩雷前兑现。基于 Framer Motion，可通过 shadcn 安装。"
+      }
+    },
+    "plinko": {
+      "name": "Plinko",
+      "description": "Plinko 弹珠板：小球穿过一排排钉子，左右弹跳后落入槽位。钉子被击中时闪烁，落槽时槽位跳动，可同时落下多颗小球。",
+      "seo": {
+        "title": "React 动画 Plinko 弹珠板",
+        "description": "React Plinko 弹珠板：小球在钉子间弹跳落入计分槽，钉子被击中时闪烁，槽位落球时跳动。基于 Framer Motion，可通过 shadcn 安装。"
+      }
+    },
+    "slide-game": {
+      "name": "Slide",
+      "description": "一款 Slide 游戏：设置下注金额和目标，一排按颜色区分的倍数卡牌会从舞台中央的两个标签旁飞速掠过，经过时以 3D 方式转动，在最后几张时减速，并把本回合结果卡入两个标签之间。会超过目标的卡牌带有标记，获胜时标签变为主色，未中时变为红色，最近的回合会收入历史条。结果可由服务器决定，可选滴答声和获胜音效，支持减弱动态效果。",
+      "seo": {
+        "title": "React 动画 Slide 娱乐场游戏",
+        "description": "React Slide 游戏：设置下注金额和目标，3D 倍数卡牌从两个中央标签旁掠过，停在服务器决定的结果上。基于 Framer Motion，可通过 shadcn 安装。"
+      }
+    }
+  }
+}
