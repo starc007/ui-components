@@ -33,6 +33,7 @@
       "devDependencies": {
         "@biomejs/biome": "^2.4.16",
         "@cloudflare/workers-types": "^5.20261110.1",
+        "@formatjs/icu-messageformat-parser": "^3.5.22",
         "@happy-dom/global-registrator": "^20.10.6",
         "@resvg/resvg-js": "^2.6.2",
         "@tailwindcss/vite": "^4.3.5",

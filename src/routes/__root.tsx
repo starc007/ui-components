@@ -1,8 +1,6 @@
 /// <reference types="vite/client" />
-import { createRootRoute, HeadContent, Outlet, Scripts, useRouterState } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { stripLocale } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
 import globalsCss from "../styles/globals.css?url";
 
 export const Route = createRootRoute({
@@ -41,15 +39,8 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: ReactNode }) {
-  // <html lang> follows the URL's language prefix.
-  const lang = useRouterState({
-    select: ({ location }) => {
-      const first = location.pathname.split("/")[1];
-      return stripLocale(location.pathname) !== location.pathname ? first : routing.defaultLocale;
-    },
-  });
   return (
-    <html lang={lang} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>

@@ -3,7 +3,7 @@
 import { Globe, Smartphone } from "lucide-react";
 import { useTranslations } from "use-intl";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@/lib/navigation";
 import {
   componentPath,
   isNativePath,
@@ -55,7 +55,6 @@ export function PlatformSwitch({
   className?: string;
 }) {
   const t = useTranslations("Native.platform");
-  // Locale-free path; the locale-aware router puts the prefix back.
   const pathname = usePathname();
   const router = useRouter();
   const platform = isNativePath(pathname) ? "native" : "web";

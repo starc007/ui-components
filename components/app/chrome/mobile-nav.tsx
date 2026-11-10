@@ -7,7 +7,7 @@ import { SidebarNav } from "@/components/app/chrome/site-sidebar";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { Button } from "@/components/motion/button";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname } from "@/lib/navigation";
 import {
   categoryPath,
   hasPlatformSwitch,

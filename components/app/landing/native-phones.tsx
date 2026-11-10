@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@/lib/navigation";
 import type { NativeClip, NativeTheme } from "@/lib/native";
 import { cn } from "@/lib/utils";
 

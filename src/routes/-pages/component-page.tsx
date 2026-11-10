@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 import { ArrowRight, ArrowUpRight, ChevronRight, Smartphone } from "lucide-react";
 import { useFormatter, useLocale, useTranslations } from "use-intl";
-import { type JsonLdSchema, JsonLd } from "@/components/app/analytics/json-ld";
+import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { ComponentGuide } from "@/components/app/docs/component-guide";
 import { CopyPage } from "@/components/app/docs/copy-page";
@@ -22,18 +22,16 @@ import { PropsTable } from "@/components/app/docs/props-table";
 import { type RelatedItem, RelatedSection } from "@/components/app/docs/related-section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { getPreview, previews } from "@/components/previews";
-import { localizeCategory, localizeComponent, localizeGuide } from "@/i18n/catalog";
-import { localeAlternates } from "@/i18n/metadata";
-import { Link } from "@/i18n/navigation";
-import { LANGUAGES, type Locale, localizedPath } from "@/i18n/routing";
-import { getMessages, getTranslations } from "@/i18n/server";
+import { getTranslations } from "@/i18n/server";
 import { componentDates } from "@/lib/component-dates";
 import { categoryPath, componentPath, nativeComponentPath } from "@/lib/component-paths";
+import { componentSeo } from "@/lib/component-seo";
 import { EASE_OUT_CSS } from "@/lib/ease";
 import type { Metadata } from "@/lib/head";
 import { type HighlightedCode, highlight } from "@/lib/highlight";
 import { buildManualInstall, type ManualInstallData } from "@/lib/manual-install";
 import { findNativeComponent } from "@/lib/native";
+import { Link } from "@/lib/navigation";
 import { ogImagePath } from "@/lib/og-paths";
 import { type ComponentPropsDoc, getComponentProps } from "@/lib/props-extractor";
 import {
@@ -54,7 +52,7 @@ import { pageUrlFor, withSignature } from "@/lib/signature";
 import { readSourceFile } from "@/lib/source-files";
 import { cn } from "@/lib/utils";
 
-type ComponentPageInput = { locale: Locale; category: string; slug: string };
+type ComponentPageInput = { category: string; slug: string };
 
 type ExampleData = {
   example: ComponentExample;
@@ -74,24 +72,17 @@ type CreditGroup = { credit: ComponentCredit; examples: ComponentExample[] };
 export const getComponentPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .validator((input: ComponentPageInput) => input)
-  .handler(async ({ data: { locale, category, slug } }) => {
+  .handler(async ({ data: { category, slug } }) => {
     const cat = findCategory(category);
-    const rawComp = findComponent(category, slug);
-    if (!cat || !rawComp) return null;
+    const comp = findComponent(category, slug);
+    if (!cat || !comp) return null;
 
-    const [messages, t] = await Promise.all([
-      getMessages({ locale }),
-      getTranslations({ locale, namespace: "Docs.component" }),
-    ]);
-    const comp = {
-      ...localizeComponent(rawComp, messages),
-      guide: rawComp.guide && localizeGuide(rawComp.slug, rawComp.guide, messages),
-    };
-    const seo = messages.Catalog.components[comp.slug]?.seo;
+    const t = getTranslations("Docs.component");
+    const seo = componentSeo[comp.slug];
     const title = seo?.title ?? t("seoTitle", { name: comp.name });
     const description =
       seo?.description ?? t("metaDescription", { description: comp.description });
-    const catName = localizeCategory(cat, messages).name;
+    const catName = cat.name;
     const pageUrl = pageUrlFor(cat.slug, comp.slug);
 
     const examples: ExampleData[] = [];
@@ -130,12 +121,7 @@ export const getComponentPage = createServerFn({ method: "GET" })
     }
     const hasVariantInstallCommands = examples.some(({ example }) => example.installSlug);
 
-    const related: RelatedItem[] = relatedComponents(cat.slug, comp.slug, 3).map((rel) => {
-      const text = messages.Catalog.components[rel.slug];
-      return text
-        ? { ...rel, name: text.name, description: text.description ?? rel.description }
-        : rel;
-    });
+    const related: RelatedItem[] = relatedComponents(cat.slug, comp.slug, 3);
 
     // One contributor for every example: credit them once, under the title.
     const exampleCredits = comp.examples?.map((example) => example.credit) ?? [];
@@ -160,19 +146,18 @@ export const getComponentPage = createServerFn({ method: "GET" })
     const native = findNativeComponent(comp.slug);
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([
-        { name: "beUI", path: localizedPath("/", locale) },
-        { name: catName, path: localizedPath(categoryPath(cat.slug), locale) },
-        { name: comp.name, path: localizedPath(componentPath(cat.slug, comp.slug), locale) },
+        { name: "beUI", path: "/" },
+        { name: catName, path: categoryPath(cat.slug) },
+        { name: comp.name, path: componentPath(cat.slug, comp.slug) },
       ]),
-      componentJsonLd(cat, comp, { headline: title, description, locale }),
+      componentJsonLd(cat, comp, { headline: title, description }),
     ];
 
     return {
       metadata: componentMetadata({
-        locale,
         catSlug: cat.slug,
         comp,
-        keywords: componentKeywords(cat, rawComp),
+        keywords: componentKeywords(cat, comp),
         title,
         description,
         imageAlt: t("ogImageAlt", { name: comp.name }),
@@ -181,7 +166,7 @@ export const getComponentPage = createServerFn({ method: "GET" })
       catSlug: cat.slug,
       catName,
       comp,
-      englishName: rawComp.name,
+      englishName: comp.name,
       examples,
       sharedCredit: Boolean(sharedCredit),
       pageCredit: pageCredit ?? null,
@@ -206,7 +191,6 @@ export async function loadComponentPage(input: ComponentPageInput) {
 }
 
 function componentMetadata({
-  locale,
   catSlug,
   comp,
   keywords,
@@ -214,7 +198,6 @@ function componentMetadata({
   description,
   imageAlt,
 }: {
-  locale: Locale;
   catSlug: string;
   comp: ComponentEntry;
   keywords: string[];
@@ -228,7 +211,7 @@ function componentMetadata({
   const registryItem = installSlugs[0] ? `/r/${installSlugs[0]}.json` : `/r/${comp.slug}.json`;
   const directoryItem = installSlugs[0] ? `/${installSlugs[0]}.json` : `/${comp.slug}.json`;
   const ogTitle = `${title} · beUI`;
-  const alternates = localeAlternates(componentPath(catSlug, comp.slug), locale);
+  const path = componentPath(catSlug, comp.slug);
   const imageUrl = ogImagePath("component", comp.slug);
 
   return {
@@ -238,15 +221,15 @@ function componentMetadata({
     openGraph: {
       title: ogTitle,
       description,
-      url: alternates.canonical,
+      url: path,
       type: "article",
       siteName: "beUI",
-      locale: LANGUAGES[locale].og,
+      locale: "en_US",
       images: [{ url: imageUrl, width: 1200, height: 630, alt: imageAlt }],
     },
     twitter: { card: "summary_large_image", title: ogTitle, description, images: [imageUrl] },
     alternates: {
-      ...alternates,
+      canonical: path,
       types: {
         "application/json":
           installSlugs.length > 0 ? `/r/${comp.slug}` : `/r/${comp.slug}.json`,

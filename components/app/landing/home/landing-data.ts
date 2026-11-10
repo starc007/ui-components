@@ -1,10 +1,8 @@
-import { localizeCategory } from "@/i18n/catalog";
-import type { SiteMessages } from "@/i18n/messages";
 import { categoryPath, nativeComponentPath } from "@/lib/component-paths";
 import { isComponentNew } from "@/lib/component-status";
 import { native } from "@/lib/native";
 import summary from "@/lib/native/summary.json";
-import { type CategoryEntry, type ComponentEntry, INSTALLABLE_COUNT, registry } from "@/lib/registry";
+import { type CategoryEntry, type ComponentEntry, INSTALLABLE_COUNT } from "@/lib/registry";
 import type { TileComponent } from "./preview-tile";
 
 export type LandingEntry = { category: string; component: TileComponent };
@@ -19,11 +17,6 @@ export function toTile(component: ComponentEntry): TileComponent {
     examples: component.examples?.slice(0, 1).map(({ previewKey }) => ({ previewKey })),
     installSlug: component.examples?.find((example) => example.installSlug)?.installSlug ?? component.slug,
   };
-}
-
-/** The registry with names in the page's language. Slugs and counts don't change. */
-export function localizedRegistry(messages: Pick<SiteMessages, "Catalog">) {
-  return registry.map((category) => localizeCategory(category, messages));
 }
 
 /** Resolves `category/slug` keys to registry entries, dropping unknown ones. */

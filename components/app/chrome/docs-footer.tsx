@@ -1,10 +1,10 @@
 import { useTranslations } from "use-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@/lib/navigation";
 
 /** Slim footer that closes the content column on docs pages. */
 export function DocsFooter() {
   const t = useTranslations("Chrome");
-  // `page` links get the locale prefix; external URLs and machine endpoints
+  // `page` links go through the router; external URLs and machine endpoints
   // (RSS, llms.txt) are plain anchors.
   const links = [
     { href: "https://github.com/starc007/ui-components", label: "GitHub" },

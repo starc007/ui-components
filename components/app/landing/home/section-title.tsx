@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
 /** Small section heading: a mono label, a 28px title and an optional link. */

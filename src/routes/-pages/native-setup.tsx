@@ -6,10 +6,8 @@ import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
-import { localeAlternates } from "@/i18n/metadata";
-import { Link } from "@/i18n/navigation";
-import { LANGUAGES, type Locale, localizedPath } from "@/i18n/routing";
-import { getMessages, getTranslations } from "@/i18n/server";
+import { messages } from "@/i18n/messages";
+import { getTranslations } from "@/i18n/server";
 import type { Metadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
 import { native } from "@/lib/native";
@@ -28,6 +26,7 @@ import {
   SOURCE_SNIPPET,
   USAGE_SNIPPET,
 } from "@/lib/native-setup";
+import { Link } from "@/lib/navigation";
 import { ogImagePath } from "@/lib/og-paths";
 import { breadcrumbJsonLd, docsArticleJsonLd } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -37,27 +36,22 @@ const PAGE_IMAGE = ogImagePath("page", "native-setup");
 
 export const getNativeSetupPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
-  .validator((locale: Locale) => locale)
-  .handler(async ({ data: locale }) => {
-    const [messages, t] = await Promise.all([
-      getMessages({ locale }),
-      getTranslations({ locale, namespace: "Pages.nativeSetup" }),
-    ]);
-    const alternates = localeAlternates(PAGE_PATH, locale);
+  .handler(async () => {
+    const t = getTranslations("Pages.nativeSetup");
     const title = t("meta.title");
     const description = t("meta.description");
     const metadata: Metadata = {
       title,
       description,
       alternates: {
-        ...alternates,
+        canonical: PAGE_PATH,
         types: { "text/markdown": `${PAGE_PATH}.md` },
       },
       openGraph: {
         title: `${title} · beUI`,
         description,
-        url: alternates.canonical,
-        locale: LANGUAGES[locale].og,
+        url: PAGE_PATH,
+        locale: "en_US",
         type: "article",
         siteName: "beUI",
         images: [{ url: PAGE_IMAGE, width: 1200, height: 630, alt: t("meta.imageAlt") }],
@@ -70,24 +64,20 @@ export const getNativeSetupPage = createServerFn({ method: "GET" })
       },
     };
 
-    const localPath = localizedPath(PAGE_PATH, locale);
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([
-        { name: t("breadcrumb.home"), path: localizedPath("/", locale) },
-        { name: t("breadcrumb.page"), path: localPath },
+        { name: t("breadcrumb.home"), path: "/" },
+        { name: t("breadcrumb.page"), path: PAGE_PATH },
       ]),
-      {
-        ...docsArticleJsonLd({
-          path: localPath,
-          headline: title,
-          description,
-          image: PAGE_IMAGE,
-          datePublished: "2026-10-16",
-          dateModified: "2026-10-16",
-          about: ["React Native", "Expo", "Uniwind", "Reanimated", "beUI Native"],
-        }),
-        inLanguage: LANGUAGES[locale].hreflang,
-      },
+      docsArticleJsonLd({
+        path: PAGE_PATH,
+        headline: title,
+        description,
+        image: PAGE_IMAGE,
+        datePublished: "2026-10-16",
+        dateModified: "2026-10-16",
+        about: ["React Native", "Expo", "Uniwind", "Reanimated", "beUI Native"],
+      }),
     ];
 
     const [

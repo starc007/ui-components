@@ -11,10 +11,6 @@
     "starOnGithubCount": "Star on GitHub, {count} stars",
     "getPro": "Get Pro"
   },
-  "language": {
-    "label": "Language: {language}",
-    "menu": "Choose language"
-  },
   "mobileNav": {
     "open": "Open navigation",
     "title": "Menu"

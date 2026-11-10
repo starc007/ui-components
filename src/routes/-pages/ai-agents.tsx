@@ -6,12 +6,11 @@ import { useTranslations } from "use-intl";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
-import { localeAlternates } from "@/i18n/metadata";
-import { Link } from "@/i18n/navigation";
-import { LANGUAGES, type Locale } from "@/i18n/routing";
-import { getMessages, getTranslations } from "@/i18n/server";
+import { messages } from "@/i18n/messages";
+import { getTranslations } from "@/i18n/server";
 import type { Metadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
+import { Link } from "@/lib/navigation";
 import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import { SITE_URL } from "@/lib/site";
 import { PageMessages } from "./page-messages";
@@ -88,25 +87,20 @@ const ENTRY_SHAPE = `{
 
 export const getAIAgentsPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
-  .validator((locale: Locale) => locale)
-  .handler(async ({ data: locale }) => {
-    const [messages, t] = await Promise.all([
-      getMessages({ locale }),
-      getTranslations({ locale, namespace: "Pages.aiAgents.meta" }),
-    ]);
-    const alternates = localeAlternates(PAGE_PATH, locale);
+  .handler(async () => {
+    const t = getTranslations("Pages.aiAgents.meta");
     const metadata: Metadata = {
       title: t("title"),
       description: t("description"),
       alternates: {
-        ...alternates,
+        canonical: PAGE_PATH,
         types: { "text/markdown": `${PAGE_PATH}.md` },
       },
       openGraph: {
         title: `${t("title")} · beUI`,
         description: t("description"),
-        url: alternates.canonical,
-        locale: LANGUAGES[locale].og,
+        url: PAGE_PATH,
+        locale: "en_US",
         type: "article",
         siteName: "beUI",
         images: [DEFAULT_OG_IMAGE],
@@ -232,7 +226,7 @@ function AIAgentsContent({ data }: { data: AIAgentsPageData }) {
               </p>
             </div>
             {!e.url.includes("{") ? (
-              // Machine endpoints keep one unprefixed URL, so no locale-aware Link.
+              // Machine endpoints are not site routes, so a plain anchor.
               <a
                 href={e.url}
                 target="_blank"

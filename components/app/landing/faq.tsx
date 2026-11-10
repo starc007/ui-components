@@ -1,6 +1,6 @@
 import { useTranslations } from "use-intl";
 import type { ReactNode } from "react";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@/lib/navigation";
 
 const FAQ_IDS = [
   "free",

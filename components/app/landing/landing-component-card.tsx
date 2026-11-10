@@ -10,7 +10,7 @@ import type { ComponentEntry } from "@/lib/registry";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { PreviewFit } from "@/components/app/landing/preview-fit";
 import { getPreview, previews } from "@/components/previews";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@/lib/navigation";
 import { EASE_OUT_CSS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 

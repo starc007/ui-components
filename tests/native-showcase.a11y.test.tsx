@@ -8,8 +8,8 @@ import { withIntl } from "./intl";
 let pathname = "/";
 const push = mock((_href: string) => {});
 // Bun module mocks are process-wide, so keep the real exports other test files use.
-const realNavigation = { ...(await import("@/i18n/navigation")) };
-mock.module("@/i18n/navigation", () => ({
+const realNavigation = { ...(await import("@/lib/navigation")) };
+mock.module("@/lib/navigation", () => ({
   ...realNavigation,
   usePathname: () => pathname,
   useRouter: () => ({ push }),

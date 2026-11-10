@@ -7,9 +7,7 @@ import type { SeoPageKind } from "@/lib/seo-pages/types";
 
 /**
  * An alternatives or guides landing page: the English article, its metadata
- * and its highlighted code samples. The article is English only, so the
- * metadata (English canonical, no hreflang alternates) is the same for every
- * locale and the page data doesn't depend on it.
+ * and its highlighted code samples.
  */
 export const getSeoLandingPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { IntlProvider, useLocale, useMessages } from "use-intl";
-import type { SiteMessages } from "@/i18n/messages";
+import { IntlProvider, useMessages } from "use-intl";
+import { LOCALE, type SiteMessages } from "@/i18n/messages";
 
 type PageKey = keyof SiteMessages["Pages"];
 
@@ -18,11 +18,10 @@ export function PageMessages<Page extends PageKey>({
   messages: SiteMessages["Pages"][Page];
   children: ReactNode;
 }) {
-  const locale = useLocale();
   const base = useMessages();
   return (
     <IntlProvider
-      locale={locale}
+      locale={LOCALE}
       messages={{ ...base, Pages: { ...base.Pages, [page]: messages } }}
       timeZone="UTC"
     >

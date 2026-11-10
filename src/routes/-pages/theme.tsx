@@ -4,9 +4,8 @@ import { ArrowUpRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslations } from "use-intl";
 import { CodeBlock } from "@/components/app/docs/code-block";
-import { localeAlternates } from "@/i18n/metadata";
-import { LANGUAGES, type Locale } from "@/i18n/routing";
-import { getMessages, getTranslations } from "@/i18n/server";
+import { messages } from "@/i18n/messages";
+import { getTranslations } from "@/i18n/server";
 import type { Metadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
 import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
@@ -19,22 +18,17 @@ const SHADCN_INIT = `npx shadcn@latest init`;
 
 export const getThemePage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
-  .validator((locale: Locale) => locale)
-  .handler(async ({ data: locale }) => {
-    const [messages, t] = await Promise.all([
-      getMessages({ locale }),
-      getTranslations({ locale, namespace: "Pages.theme.meta" }),
-    ]);
-    const alternates = localeAlternates(PAGE_PATH, locale);
+  .handler(async () => {
+    const t = getTranslations("Pages.theme.meta");
     const metadata: Metadata = {
       title: t("title"),
       description: t("description"),
-      alternates,
+      alternates: { canonical: PAGE_PATH },
       openGraph: {
         title: `${t("title")} · beUI`,
         description: t("ogDescription"),
-        url: alternates.canonical,
-        locale: LANGUAGES[locale].og,
+        url: PAGE_PATH,
+        locale: "en_US",
         type: "article",
         siteName: "beUI",
         images: [DEFAULT_OG_IMAGE],

@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "use-intl";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@/lib/navigation";
 
 const SIDEBAR_SPONSORS = [
   {

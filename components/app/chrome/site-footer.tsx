@@ -1,6 +1,5 @@
-import { useMessages, useTranslations } from "use-intl";
-import { localizeCategory } from "@/i18n/catalog";
-import { Link } from "@/i18n/navigation";
+import { useTranslations } from "use-intl";
+import { Link } from "@/lib/navigation";
 import { categoryPath, componentPath } from "@/lib/component-paths";
 import { registry } from "@/lib/registry";
 
@@ -25,9 +24,7 @@ const PRODUCTS = [
 
 export function SiteFooter() {
   const t = useTranslations("Chrome");
-  const messages = useMessages();
-  const columns = COLUMNS.map((category) => localizeCategory(category, messages));
-  // `page` links get the locale prefix; external URLs and llms.txt are plain anchors.
+  // `page` links go through the router; external URLs and llms.txt are plain anchors.
   const links = [
     { href: "/components/motion", label: t("footer.browseAll"), page: true },
     { href: "/playground", label: t("header.playground"), page: true },
@@ -113,7 +110,7 @@ export function SiteFooter() {
         </div>
 
         {/* Registry item columns. */}
-        {columns.map((column) => (
+        {COLUMNS.map((column) => (
           <nav key={column.slug} aria-label={column.name}>
             <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
               {column.name}

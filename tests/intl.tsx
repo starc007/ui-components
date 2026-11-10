@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-router";
 import type { ReactElement } from "react";
 import { IntlProvider } from "use-intl";
-import { englishMessages } from "@/i18n/messages";
+import { LOCALE, messages } from "@/i18n/messages";
 
 // Site components link and read the location through TanStack Router. One
 // loaded router at "/" gives them that context without rendering routes.
@@ -20,7 +20,7 @@ await router.load();
 export function withIntl(ui: ReactElement) {
   return (
     <RouterContextProvider router={router}>
-      <IntlProvider locale="en" messages={englishMessages} timeZone="UTC">
+      <IntlProvider locale={LOCALE} messages={messages} timeZone="UTC">
         {ui}
       </IntlProvider>
     </RouterContextProvider>

@@ -12,11 +12,9 @@ import {
 
 import { Blocks, Bot, LayoutGrid, Shapes } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import { useLocale, useMessages, useTranslations } from "use-intl";
+import { useMessages, useTranslations } from "use-intl";
 import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
-import { localizeCategory } from "@/i18n/catalog";
-import { Link, usePathname } from "@/i18n/navigation";
-import { type Locale, localizedPath } from "@/i18n/routing";
+import { Link, usePathname } from "@/lib/navigation";
 import { registry } from "@/lib/registry";
 import nativeNav from "@/lib/native/nav.json";
 import { NewBadge } from "@/components/app/docs/new-badge";
@@ -253,10 +251,8 @@ const STICKY_CLEARANCE = 64;
  * start the list at the top, far from the reader's place. A visible link is
  * left alone, so clicking an item never moves the list.
  */
-function useRevealActiveLink(pathname: string) {
+function useRevealActiveLink(href: string) {
   const ref = useRef<HTMLElement>(null);
-  // Rendered hrefs carry the locale prefix; `pathname` does not.
-  const href = localizedPath(pathname, useLocale() as Locale);
   useLayoutEffect(() => {
     const nav = ref.current;
     if (!nav) return;
@@ -378,7 +374,6 @@ function WebSidebarNav({
   onNavigate?: () => void;
 }) {
   const t = useTranslations("Chrome");
-  const messages = useMessages();
   const tabsId = useId();
   const panelId = useId();
   const navRef = useRevealActiveLink(pathname);
@@ -397,9 +392,9 @@ function WebSidebarNav({
   const isSection = section !== undefined;
   const categoryFilter = filter.value;
   const now = Date.now();
-  const categories = (
-    isSection ? registry.filter((category) => category.slug === section) : SIDEBAR_CATEGORIES
-  ).map((category) => localizeCategory(category, messages));
+  const categories = isSection
+    ? registry.filter((category) => category.slug === section)
+    : SIDEBAR_CATEGORIES;
   const intro: NavLink[] = isSection
     ? [{ slug: "home", key: "sidebar.home", href: categoryPath(section) }]
     : INTRO;

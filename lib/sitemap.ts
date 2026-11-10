@@ -10,14 +10,12 @@ import { native } from "@/lib/native";
 import { seoPagePath, seoPages } from "@/lib/seo-pages";
 import { changelogEntries } from "@/lib/changelog";
 import { SITE_URL as SITE } from "@/lib/site";
-import { LANGUAGES, localizedPath, routing } from "@/i18n/routing";
 
 type SitemapEntry = {
   url: string;
   lastModified?: string;
   changeFrequency?: "weekly" | "monthly";
   priority?: number;
-  alternates?: { languages: Record<string, string> };
 };
 
 // The Next.js MetadataRoute names, kept so the entries below read the same.
@@ -25,42 +23,16 @@ declare namespace MetadataRoute {
   type Sitemap = SitemapEntry[];
 }
 
-/** One entry per language, each listing every language as an alternate. */
-function withLanguages(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
-  return entries.flatMap((entry) => {
-    const path = entry.url.slice(SITE.length) || "/";
-    const languages = {
-      ...Object.fromEntries(
-        routing.locales.map((locale) => [LANGUAGES[locale].hreflang, `${SITE}${localizedPath(path, locale)}`]),
-      ),
-      // Matches the page <head> alternates (localeAlternates).
-      "x-default": `${SITE}${path}`,
-    };
-    return routing.locales.map((locale) => ({
-      ...entry,
-      url: `${SITE}${localizedPath(path, locale)}`,
-      alternates: { languages },
-    }));
-  });
-}
-
 const escapeXml = (value: string) =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-/** sitemap.xml with hreflang alternates, written by scripts/build-static.ts. */
+/** sitemap.xml, written by scripts/build-static.ts. */
 export function sitemapXml() {
   const urls = sitemap()
     .map((entry) => {
-      const alternates = Object.entries(entry.alternates?.languages ?? {})
-        .map(
-          ([hreflang, href]) =>
-            `<xhtml:link rel="alternate" hreflang="${hreflang}" href="${escapeXml(href)}"/>`,
-        )
-        .join("");
       return [
         "<url>",
         `<loc>${escapeXml(entry.url)}</loc>`,
-        alternates,
         entry.lastModified ? `<lastmod>${entry.lastModified}</lastmod>` : "",
         entry.changeFrequency ? `<changefreq>${entry.changeFrequency}</changefreq>` : "",
         entry.priority !== undefined ? `<priority>${entry.priority}</priority>` : "",
@@ -68,7 +40,7 @@ export function sitemapXml() {
       ].join("");
     })
     .join("\n");
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls}\n</urlset>\n`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
 }
 
 export function sitemap(): MetadataRoute.Sitemap {
@@ -85,8 +57,7 @@ export function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/docs/native-setup`, lastModified: "2026-10-16", changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE}/docs/theme`, lastModified: "2026-07-04", changeFrequency: "monthly", priority: 0.6 },
   ];
-  // English-only content (articles stay English in every language) and machine endpoints.
-  const englishOnlyPages: MetadataRoute.Sitemap = [
+  const feedPages: MetadataRoute.Sitemap = [
     { url: `${SITE}/changelog`, lastModified: changelogEntries[0]?.date, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE}/llms.txt`, lastModified: newestComponentDate, changeFrequency: "weekly", priority: 0.5 },
   ];
@@ -138,8 +109,11 @@ export function sitemap(): MetadataRoute.Sitemap {
   );
 
   return [
-    ...withLanguages([...staticPages, ...categoryPages, ...componentPages, ...nativePages]),
-    ...englishOnlyPages,
+    ...staticPages,
+    ...categoryPages,
+    ...componentPages,
+    ...nativePages,
+    ...feedPages,
     ...landingPages,
   ];
 }

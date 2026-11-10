@@ -1,6 +1,6 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useMessages, useTranslations } from "use-intl";
-import { Link } from "@/i18n/navigation";
+import { useTranslations } from "use-intl";
+import { Link } from "@/lib/navigation";
 import { componentPath } from "@/lib/component-paths";
 import { moveNewItemsToTop } from "@/lib/component-status";
 import { findCategory } from "@/lib/registry";
@@ -12,7 +12,6 @@ const LINK_CLASS =
 /** Previous and next components in the category, in the sidebar's order. */
 export function PagePager({ category, slug }: { category: string; slug: string }) {
   const t = useTranslations("Docs.pager");
-  const names = useMessages().Catalog.components;
   const cat = findCategory(category);
   if (!cat) return null;
   const items = moveNewItemsToTop(cat.components);
@@ -33,7 +32,7 @@ export function PagePager({ category, slug }: { category: string; slug: string }
             />
             {t("previous")}
           </span>
-          <span className="truncate text-sm font-medium text-foreground">{names[prev.slug]?.name ?? prev.name}</span>
+          <span className="truncate text-sm font-medium text-foreground">{prev.name}</span>
         </Link>
       ) : (
         <span aria-hidden="true" className="hidden flex-1 sm:block" />
@@ -47,7 +46,7 @@ export function PagePager({ category, slug }: { category: string; slug: string }
               className="size-3.5 transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none"
             />
           </span>
-          <span className="max-w-full truncate text-sm font-medium text-foreground">{names[next.slug]?.name ?? next.name}</span>
+          <span className="max-w-full truncate text-sm font-medium text-foreground">{next.name}</span>
         </Link>
       ) : (
         <span aria-hidden="true" className="hidden flex-1 sm:block" />

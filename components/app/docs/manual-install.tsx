@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "use-intl";
 import { CodeBlock } from "@/components/app/docs/code-block";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@/lib/navigation";
 import type { ManualInstallData } from "@/lib/manual-install";
 
 /**

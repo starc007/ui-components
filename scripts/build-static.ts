@@ -7,7 +7,6 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 import satori from "satori";
-import { localizedPath, routing } from "../i18n/routing";
 import { CHANGE_LABELS, CHANGELOG_PATH, changelogAnchor, changelogEntries, changelogItemLink } from "../lib/changelog";
 import { buildComponentMarkdown } from "../lib/component-markdown";
 import { componentPath } from "../lib/component-paths";
@@ -141,15 +140,11 @@ async function buildRegistry() {
 // Plain static files.
 
 async function buildMarkdownPages() {
-  // Component Markdown at the page URL plus ".md". English only; a language
-  // prefix serves the same file, as before.
+  // Component Markdown at the page URL plus ".md".
   for (const component of allComponents()) {
     const markdown = await buildComponentMarkdown(component.category.slug, component.slug);
     if (!markdown) continue;
-    const pagePath = componentPath(component.category.slug, component.slug);
-    for (const locale of routing.locales) {
-      await write(`${localizedPath(pagePath, locale)}.md`, markdown);
-    }
+    await write(`${componentPath(component.category.slug, component.slug)}.md`, markdown);
   }
   for (const slug of GUIDE_SLUGS) {
     const markdown = buildGuideMarkdown(slug);

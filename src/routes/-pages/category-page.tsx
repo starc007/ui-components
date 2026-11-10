@@ -2,13 +2,10 @@ import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 import { useTranslations } from "use-intl";
-import { type JsonLdSchema, JsonLd } from "@/components/app/analytics/json-ld";
+import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
-import { localizeCategory } from "@/i18n/catalog";
-import { localeAlternates } from "@/i18n/metadata";
-import { LANGUAGES, type Locale, localizedPath } from "@/i18n/routing";
-import { getMessages, getTranslations } from "@/i18n/server";
+import { getTranslations } from "@/i18n/server";
 import { categoryPath } from "@/lib/component-paths";
 import { isComponentNew } from "@/lib/component-status";
 import type { Metadata } from "@/lib/head";
@@ -52,7 +49,7 @@ const AGENT_CATEGORY_GROUPS = [
   },
 ] as const;
 
-type CategoryPageInput = { locale: Locale; category: string };
+type CategoryPageInput = { category: string };
 
 type AgentGroup = {
   id: string;
@@ -62,37 +59,32 @@ type AgentGroup = {
 };
 
 /**
- * A category listing: localized cards, the new/all split (decided at build
+ * A category listing: cards, the new/all split (decided at build
  * time, like the old static pages), agent groups, metadata and JSON-LD.
  */
 export const getCategoryPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .validator((input: CategoryPageInput) => input)
-  .handler(async ({ data: { locale, category } }) => {
+  .handler(async ({ data: { category } }) => {
     const rawCat = findCategory(category);
     if (!rawCat) return null;
 
-    const [messages, t] = await Promise.all([
-      getMessages({ locale }),
-      getTranslations({ locale, namespace: "Docs.category" }),
-    ]);
-    const localized = localizeCategory(rawCat, messages);
+    const t = getTranslations("Docs.category");
     // Cards never show the guide; keep it out of the page data.
     const cat = {
-      ...localized,
-      components: localized.components.map(({ guide: _guide, ...comp }) => comp),
+      ...rawCat,
+      components: rawCat.components.map(({ guide: _guide, ...comp }) => comp),
     };
     const key = contentKey(cat.slug);
     const title = t(`${key}.title`);
     const description = t(`${key}.description`);
     const ogTitle = `${title} · beUI`;
-    const alternates = localeAlternates(categoryPath(cat.slug), locale);
+    const path = categoryPath(cat.slug);
     const imageUrl = ogImagePath("category", cat.slug);
 
     const metadata: Metadata = {
       title,
       description,
-      // Search keywords stay English.
       keywords: [
         `${rawCat.name} components`,
         "React motion components",
@@ -111,10 +103,10 @@ export const getCategoryPage = createServerFn({ method: "GET" })
       openGraph: {
         title: ogTitle,
         description,
-        url: alternates.canonical,
+        url: path,
         type: "website",
         siteName: "beUI",
-        locale: LANGUAGES[locale].og,
+        locale: "en_US",
         images: [
           {
             url: imageUrl,
@@ -131,17 +123,17 @@ export const getCategoryPage = createServerFn({ method: "GET" })
         images: [imageUrl],
       },
       alternates: {
-        ...alternates,
+        canonical: path,
         types: { "application/json": "/registry.json" },
       },
     };
 
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([
-        { name: "beUI", path: localizedPath("/", locale) },
-        { name: cat.name, path: localizedPath(categoryPath(cat.slug), locale) },
+        { name: "beUI", path: "/" },
+        { name: cat.name, path },
       ]),
-      categoryJsonLd(localized, locale),
+      categoryJsonLd(rawCat),
     ];
 
     const now = Date.now();

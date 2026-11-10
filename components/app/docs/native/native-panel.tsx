@@ -4,7 +4,7 @@ import { CodeBlock } from "@/components/app/docs/code-block";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { InstallTabs } from "@/components/app/docs/install-tabs";
 import { NativePreview } from "@/components/app/docs/native/native-preview";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@/lib/navigation";
 import type { HighlightedCode } from "@/lib/highlight";
 import type { NativeComponent } from "@/lib/native";
 

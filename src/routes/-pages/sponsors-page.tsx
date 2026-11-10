@@ -4,7 +4,7 @@ import { staticFunctionMiddleware } from "@tanstack/start-static-server-function
 import type { LucideIcon } from "lucide-react";
 import { ArrowRight, ArrowUpRight, Check, CircleCheck, Gem, Medal, Trophy } from "lucide-react";
 import type { ReactNode } from "react";
-import { useLocale, useTranslations } from "use-intl";
+import { useTranslations } from "use-intl";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { CopyButton } from "@/components/app/docs/copy-button";
 import { PressLink } from "@/components/app/press-link";
@@ -13,11 +13,10 @@ import {
   type OpenSponsorSlotSize,
 } from "@/components/app/sponsors/open-sponsor-slot";
 import { SponsorPlanBeam } from "@/components/app/sponsors/sponsor-plan-beam";
-import { localeAlternates } from "@/i18n/metadata";
-import { useSearchParams } from "@/i18n/navigation";
-import { LANGUAGES, type Locale } from "@/i18n/routing";
+import { LOCALE } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
 import type { Metadata } from "@/lib/head";
+import { useSearchParams } from "@/lib/navigation";
 import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import {
   SPONSOR_CHECKOUT_URLS,
@@ -32,19 +31,17 @@ type PagesT = ReturnType<typeof useTranslations<"Pages.sponsors">>;
 
 export const getSponsorsPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
-  .validator((locale: Locale) => locale)
-  .handler(async ({ data: locale }) => {
-    const t = await getTranslations({ locale, namespace: "Pages.sponsors.meta" });
-    const alternates = localeAlternates(PAGE_PATH, locale);
+  .handler(async () => {
+    const t = getTranslations("Pages.sponsors.meta");
     const metadata: Metadata = {
       title: t("title"),
       description: t("description"),
-      alternates,
+      alternates: { canonical: PAGE_PATH },
       openGraph: {
         title: `${t("title")} · beUI`,
         description: t("description"),
-        url: alternates.canonical,
-        locale: LANGUAGES[locale].og,
+        url: PAGE_PATH,
+        locale: "en_US",
         type: "website",
         siteName: "beUI",
         images: [DEFAULT_OG_IMAGE],
@@ -265,15 +262,13 @@ const TRAFFIC_STATS = [
 function TrafficStat({
   label,
   value,
-  locale,
   t,
 }: {
   label: string;
   value: number;
-  locale: Locale;
   t: PagesT;
 }) {
-  const compactNumber = new Intl.NumberFormat(locale, {
+  const compactNumber = new Intl.NumberFormat(LOCALE, {
     notation: "compact",
     // Two fraction digits so 2.45M doesn't round up to 2.5M.
     maximumFractionDigits: 2,
@@ -283,7 +278,7 @@ function TrafficStat({
       <dt className="text-sm text-muted-foreground">{label}</dt>
       <dd
         className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-foreground"
-        title={t("audience.moreThan", { value: value.toLocaleString(locale) })}
+        title={t("audience.moreThan", { value: value.toLocaleString(LOCALE) })}
       >
         {compactNumber.format(value)}+
       </dd>
@@ -411,7 +406,6 @@ function SponsorPlanCard({
 }
 
 export function SponsorsPage() {
-  const locale = useLocale() as Locale;
   const t = useTranslations("Pages.sponsors");
   // The page is prerendered without a query, so the checkout banner waits for
   // hydration to read ?success=true and keeps the first render matching.
@@ -516,7 +510,7 @@ export function SponsorsPage() {
             </h2>
             <p className="text-xs text-muted-foreground">
               {t("audience.updated", {
-                date: new Intl.DateTimeFormat(locale, {
+                date: new Intl.DateTimeFormat(LOCALE, {
                   dateStyle: "medium",
                   timeZone: "UTC",
                 }).format(TRAFFIC_UPDATED_AT),
@@ -536,13 +530,11 @@ export function SponsorsPage() {
                   <TrafficStat
                     label={t("audience.visitors")}
                     value={stat.visitors}
-                    locale={locale}
                     t={t}
                   />
                   <TrafficStat
                     label={t("audience.pageViews")}
                     value={stat.pageViews}
-                    locale={locale}
                     t={t}
                   />
                 </dl>

@@ -1,5 +1,3 @@
-import languages from "@/i18n/languages.json";
-
 const CHART_COMPONENTS = ["heat-calendar", "returns-calendar", "price-target-fan"];
 
 // Block source files still live under components/motion. Keep inferred and
@@ -133,27 +131,10 @@ const REDIRECTS: Redirect[] = [
 
 /** The `_redirects` file, written by scripts/build-static.ts. */
 export function redirectsFile() {
-  const prefixes = Object.keys(languages).filter((locale) => locale !== "en");
-  const all = [
-    ...REDIRECTS,
-    // Same redirects inside each language prefix (/de/components/motion/swap).
-    // Markdown, the favicon and external targets stay unprefixed.
-    ...prefixes.flatMap((locale) =>
-      REDIRECTS.filter(
-        (redirect) =>
-          redirect.destination.startsWith("/") &&
-          !redirect.destination.endsWith(".md") &&
-          redirect.source !== "/favicon.ico",
-      ).map((redirect) => ({
-        source: `/${locale}${redirect.source}`,
-        destination: `/${locale}${redirect.destination}`,
-      })),
-    ),
-  ];
   // Cloudflare reads static rules before dynamic ones regardless of order,
   // but list them that way so the file reads the way it runs.
   const isDynamic = (redirect: Redirect) => /[*:]/.test(redirect.source);
-  return [...all.filter((r) => !isDynamic(r)), ...all.filter(isDynamic)]
+  return [...REDIRECTS.filter((r) => !isDynamic(r)), ...REDIRECTS.filter(isDynamic)]
     .map((redirect) => `${redirect.source} ${redirect.destination} 301`)
     .join("\n")
     .concat("\n");

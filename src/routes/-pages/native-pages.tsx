@@ -3,21 +3,19 @@ import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 import { ArrowRight, ChevronRight, Globe } from "lucide-react";
 import { useTranslations } from "use-intl";
-import { type JsonLdSchema, JsonLd } from "@/components/app/analytics/json-ld";
+import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { ComponentCard } from "@/components/app/docs/component-card";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { NativePanel, type NativePanelCode } from "@/components/app/docs/native/native-panel";
 import {
-  type NativeReadmeBlock,
   NativeReadme,
+  type NativeReadmeBlock,
   parseNativeReadme,
 } from "@/components/app/docs/native/native-readme";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { type RelatedItem, RelatedSection } from "@/components/app/docs/related-section";
-import { localeAlternates } from "@/i18n/metadata";
-import { Link } from "@/i18n/navigation";
-import { LANGUAGES, type Locale } from "@/i18n/routing";
-import { getMessages, getTranslations } from "@/i18n/server";
+import { messages } from "@/i18n/messages";
+import { getTranslations } from "@/i18n/server";
 import {
   componentPath,
   NATIVE_PATH,
@@ -29,6 +27,7 @@ import { highlight } from "@/lib/highlight";
 import { findNativeComponent, type NativeComponent, native, nativeInstallCommands } from "@/lib/native";
 import nativeSlugs from "@/lib/native/slugs.json";
 import { nativeComponentJsonLd, nativeIndexJsonLd } from "@/lib/native-seo";
+import { Link } from "@/lib/navigation";
 import { ogImagePath } from "@/lib/og-paths";
 import { registry } from "@/lib/registry";
 import { breadcrumbJsonLd, clampText, relatedComponents } from "@/lib/seo";
@@ -49,12 +48,8 @@ const groupId = (name: string) => `native-${name.toLowerCase().replace(/[^a-z0-9
  */
 export const getNativeIndexPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
-  .validator((locale: Locale) => locale)
-  .handler(async ({ data: locale }) => {
-    const [messages, t] = await Promise.all([
-      getMessages({ locale }),
-      getTranslations({ locale, namespace: "Native.index" }),
-    ]);
+  .handler(async () => {
+    const t = getTranslations("Native.index");
     const groupNames: Record<string, string> = messages.Chrome.sidebar.nativeGroups;
     const byName = new Map<string, NativeCard[]>();
     for (const { slug, title, description, group } of native.components) {
@@ -70,7 +65,6 @@ export const getNativeIndexPage = createServerFn({ method: "GET" })
 
     const title = t("metaTitle");
     const description = t("metaDescription");
-    const alternates = localeAlternates(NATIVE_PATH, locale);
     const image = ogImagePath("page", "react-native");
     const metadata: Metadata = {
       title,
@@ -86,8 +80,8 @@ export const getNativeIndexPage = createServerFn({ method: "GET" })
       openGraph: {
         title: `${title} · beUI`,
         description,
-        url: alternates.canonical,
-        locale: LANGUAGES[locale].og,
+        url: NATIVE_PATH,
+        locale: "en_US",
         siteName: "beUI",
         images: [{ url: image, width: 1200, height: 630, alt: title }],
       },
@@ -98,7 +92,7 @@ export const getNativeIndexPage = createServerFn({ method: "GET" })
         images: [image],
       },
       alternates: {
-        ...alternates,
+        canonical: NATIVE_PATH,
         types: { "application/json": "/native/r" },
       },
     };
@@ -221,18 +215,18 @@ async function readmeBlocks(markdown: string): Promise<NativeReadmeBlock[]> {
 
 export const getNativeComponentPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
-  .validator((input: { locale: Locale; slug: string }) => input)
-  .handler(async ({ data: { locale, slug } }) => {
+  .validator((input: { slug: string }) => input)
+  .handler(async ({ data: { slug } }) => {
     const component = findNativeComponent(slug);
     if (!component) return null;
-    const t = await getTranslations({ locale, namespace: "Native.component" });
+    const t = getTranslations("Native.component");
 
     const title = t("metaTitle", { name: component.title });
     const description = clampText(
       t("metaDescription", { description: component.description }),
       160,
     );
-    const alternates = localeAlternates(nativeComponentPath(slug), locale);
+    const path = nativeComponentPath(slug);
     const image = ogImagePath("native", slug);
     const metadata: Metadata = {
       title,
@@ -248,8 +242,8 @@ export const getNativeComponentPage = createServerFn({ method: "GET" })
       openGraph: {
         title: `${title} · beUI`,
         description,
-        url: alternates.canonical,
-        locale: LANGUAGES[locale].og,
+        url: path,
+        locale: "en_US",
         type: "article",
         siteName: "beUI",
         images: [
@@ -263,7 +257,7 @@ export const getNativeComponentPage = createServerFn({ method: "GET" })
         images: [image],
       },
       alternates: {
-        ...alternates,
+        canonical: path,
         types: { "application/json": `/native/r/${slug}` },
       },
     };
@@ -324,7 +318,7 @@ export type NativeComponentPageData = NonNullable<
   Awaited<ReturnType<typeof getNativeComponentPage>>
 >;
 
-export async function loadNativeComponentPage(input: { locale: Locale; slug: string }) {
+export async function loadNativeComponentPage(input: { slug: string }) {
   const data = await getNativeComponentPage({ data: input });
   if (!data) throw notFound();
   return data;

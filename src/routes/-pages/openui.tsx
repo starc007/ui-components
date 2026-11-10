@@ -7,12 +7,11 @@ import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
-import { localeAlternates } from "@/i18n/metadata";
-import { Link } from "@/i18n/navigation";
-import { LANGUAGES, type Locale, localizedPath } from "@/i18n/routing";
-import { getMessages, getTranslations } from "@/i18n/server";
+import { messages } from "@/i18n/messages";
+import { getTranslations } from "@/i18n/server";
 import type { Metadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
+import { Link } from "@/lib/navigation";
 import { ogImagePath } from "@/lib/og-paths";
 import { breadcrumbJsonLd, docsArticleJsonLd } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -219,27 +218,22 @@ const RESOURCES = [
 
 export const getOpenUIPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
-  .validator((locale: Locale) => locale)
-  .handler(async ({ data: locale }) => {
-    const [messages, t] = await Promise.all([
-      getMessages({ locale }),
-      getTranslations({ locale, namespace: "Pages.openui" }),
-    ]);
-    const alternates = localeAlternates(PAGE_PATH, locale);
+  .handler(async () => {
+    const t = getTranslations("Pages.openui");
     const title = t("meta.title");
     const description = t("meta.description");
     const metadata: Metadata = {
       title,
       description,
       alternates: {
-        ...alternates,
+        canonical: PAGE_PATH,
         types: { "text/markdown": `${PAGE_PATH}.md` },
       },
       openGraph: {
         title: `${title} · beUI`,
         description,
-        url: alternates.canonical,
-        locale: LANGUAGES[locale].og,
+        url: PAGE_PATH,
+        locale: "en_US",
         type: "article",
         siteName: "beUI",
         images: [
@@ -259,24 +253,20 @@ export const getOpenUIPage = createServerFn({ method: "GET" })
       },
     };
 
-    const localPath = localizedPath(PAGE_PATH, locale);
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([
-        { name: t("breadcrumb.home"), path: localizedPath("/", locale) },
-        { name: t("breadcrumb.page"), path: localPath },
+        { name: t("breadcrumb.home"), path: "/" },
+        { name: t("breadcrumb.page"), path: PAGE_PATH },
       ]),
-      {
-        ...docsArticleJsonLd({
-          path: localPath,
-          headline: title,
-          description,
-          image: PAGE_IMAGE,
-          datePublished: "2026-07-27",
-          dateModified: "2026-08-14",
-          about: [t("about.integration"), t("about.library"), t("about.generativeUi"), "beUI"],
-        }),
-        inLanguage: LANGUAGES[locale].hreflang,
-      },
+      docsArticleJsonLd({
+        path: PAGE_PATH,
+        headline: title,
+        description,
+        image: PAGE_IMAGE,
+        datePublished: "2026-07-27",
+        dateModified: "2026-08-14",
+        about: [t("about.integration"), t("about.library"), t("about.generativeUi"), "beUI"],
+      }),
     ];
 
     const [install, define, library, prompt, render] = await Promise.all([

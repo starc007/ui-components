@@ -44,13 +44,17 @@ export default defineConfig({
         crawlLinks: true,
         failOnError: true,
         // Link crawling only finds pages; machine files come from build-static.
-        // /components (any language) is a redirect, served from _redirects.
+        // /components is a redirect, served from _redirects. Trailing-slash
+        // duplicates the crawler finds ("/charts/") would write a second
+        // charts/index.html that competes with charts.html for the same URL.
         filter: ({ path }) => {
-          const pathname = path.split(/[?#]/)[0].replace(/\/$/, "");
+          const raw = path.split(/[?#]/)[0];
+          if (raw.length > 1 && raw.endsWith("/")) return false;
+          const pathname = raw;
           return (
             !/\.[a-z]+$/i.test(pathname) &&
             !/^\/(?:r|native\/r)(?:\/|$)/.test(pathname) &&
-            !/^(?:\/[a-z]{2})?\/components$/.test(pathname)
+            pathname !== "/components"
           );
         },
       },

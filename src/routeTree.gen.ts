@@ -9,557 +9,523 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
-import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
-import { Route as Char123LocaleChar125SplatRouteImport } from './routes/{-$locale}/$'
-import { Route as Char123LocaleChar125404RouteImport } from './routes/{-$locale}/404'
-import { Route as Char123LocaleChar125ChangelogRouteImport } from './routes/{-$locale}/changelog'
-import { Route as Char123LocaleChar125PlaygroundRouteImport } from './routes/{-$locale}/playground'
-import { Route as Char123LocaleChar125SponsorsRouteImport } from './routes/{-$locale}/sponsors'
-import { Route as Char123LocaleChar125AlternativesSlugRouteImport } from './routes/{-$locale}/alternatives/$slug'
-import { Route as Char123LocaleChar125CasinoIndexRouteImport } from './routes/{-$locale}/casino/index'
-import { Route as Char123LocaleChar125CasinoSlugRouteImport } from './routes/{-$locale}/casino/$slug'
-import { Route as Char123LocaleChar125ChartsIndexRouteImport } from './routes/{-$locale}/charts/index'
-import { Route as Char123LocaleChar125ChartsSlugRouteImport } from './routes/{-$locale}/charts/$slug'
-import { Route as Char123LocaleChar125ComponentsIndexRouteImport } from './routes/{-$locale}/components/index'
-import { Route as Char123LocaleChar125DocsAiAgentsRouteImport } from './routes/{-$locale}/docs/ai-agents'
-import { Route as Char123LocaleChar125DocsMotionPatternsRouteImport } from './routes/{-$locale}/docs/motion-patterns'
-import { Route as Char123LocaleChar125DocsNativeSetupRouteImport } from './routes/{-$locale}/docs/native-setup'
-import { Route as Char123LocaleChar125DocsOpenuiRouteImport } from './routes/{-$locale}/docs/openui'
-import { Route as Char123LocaleChar125DocsThemeRouteImport } from './routes/{-$locale}/docs/theme'
-import { Route as Char123LocaleChar125GuidesSlugRouteImport } from './routes/{-$locale}/guides/$slug'
-import { Route as Char123LocaleChar125ReactNativeIndexRouteImport } from './routes/{-$locale}/react-native/index'
-import { Route as Char123LocaleChar125ReactNativeSlugRouteImport } from './routes/{-$locale}/react-native/$slug'
-import { Route as Char123LocaleChar125ComponentsCategoryIndexRouteImport } from './routes/{-$locale}/components/$category/index'
-import { Route as Char123LocaleChar125ComponentsCategorySlugRouteImport } from './routes/{-$locale}/components/$category/$slug'
+import { Route as SiteRouteRouteImport } from './routes/_site/route'
+import { Route as SiteIndexRouteImport } from './routes/_site/index'
+import { Route as SiteSplatRouteImport } from './routes/_site/$'
+import { Route as Site404RouteImport } from './routes/_site/404'
+import { Route as SiteChangelogRouteImport } from './routes/_site/changelog'
+import { Route as SitePlaygroundRouteImport } from './routes/_site/playground'
+import { Route as SiteSponsorsRouteImport } from './routes/_site/sponsors'
+import { Route as SiteAlternativesSlugRouteImport } from './routes/_site/alternatives/$slug'
+import { Route as SiteCasinoIndexRouteImport } from './routes/_site/casino/index'
+import { Route as SiteCasinoSlugRouteImport } from './routes/_site/casino/$slug'
+import { Route as SiteChartsIndexRouteImport } from './routes/_site/charts/index'
+import { Route as SiteChartsSlugRouteImport } from './routes/_site/charts/$slug'
+import { Route as SiteComponentsIndexRouteImport } from './routes/_site/components/index'
+import { Route as SiteDocsAiAgentsRouteImport } from './routes/_site/docs/ai-agents'
+import { Route as SiteDocsMotionPatternsRouteImport } from './routes/_site/docs/motion-patterns'
+import { Route as SiteDocsNativeSetupRouteImport } from './routes/_site/docs/native-setup'
+import { Route as SiteDocsOpenuiRouteImport } from './routes/_site/docs/openui'
+import { Route as SiteDocsThemeRouteImport } from './routes/_site/docs/theme'
+import { Route as SiteGuidesSlugRouteImport } from './routes/_site/guides/$slug'
+import { Route as SiteReactNativeIndexRouteImport } from './routes/_site/react-native/index'
+import { Route as SiteReactNativeSlugRouteImport } from './routes/_site/react-native/$slug'
+import { Route as SiteComponentsCategoryIndexRouteImport } from './routes/_site/components/$category/index'
+import { Route as SiteComponentsCategorySlugRouteImport } from './routes/_site/components/$category/$slug'
 
-const Char123LocaleChar125RouteRoute =
-  Char123LocaleChar125RouteRouteImport.update({
-    id: '/{-$locale}',
-    path: '/{-$locale}',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char123LocaleChar125IndexRoute =
-  Char123LocaleChar125IndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125SplatRoute =
-  Char123LocaleChar125SplatRouteImport.update({
-    id: '/$',
-    path: '/$',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125404Route = Char123LocaleChar125404RouteImport.update({
+const SiteRouteRoute = SiteRouteRouteImport.update({
+  id: '/_site',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SiteIndexRoute = SiteIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteSplatRoute = SiteSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const Site404Route = Site404RouteImport.update({
   id: '/404',
   path: '/404',
-  getParentRoute: () => Char123LocaleChar125RouteRoute,
+  getParentRoute: () => SiteRouteRoute,
 } as any)
-const Char123LocaleChar125ChangelogRoute =
-  Char123LocaleChar125ChangelogRouteImport.update({
-    id: '/changelog',
-    path: '/changelog',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125PlaygroundRoute =
-  Char123LocaleChar125PlaygroundRouteImport.update({
-    id: '/playground',
-    path: '/playground',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125SponsorsRoute =
-  Char123LocaleChar125SponsorsRouteImport.update({
-    id: '/sponsors',
-    path: '/sponsors',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125AlternativesSlugRoute =
-  Char123LocaleChar125AlternativesSlugRouteImport.update({
-    id: '/alternatives/$slug',
-    path: '/alternatives/$slug',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125CasinoIndexRoute =
-  Char123LocaleChar125CasinoIndexRouteImport.update({
-    id: '/casino/',
-    path: '/casino/',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125CasinoSlugRoute =
-  Char123LocaleChar125CasinoSlugRouteImport.update({
-    id: '/casino/$slug',
-    path: '/casino/$slug',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125ChartsIndexRoute =
-  Char123LocaleChar125ChartsIndexRouteImport.update({
-    id: '/charts/',
-    path: '/charts/',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125ChartsSlugRoute =
-  Char123LocaleChar125ChartsSlugRouteImport.update({
-    id: '/charts/$slug',
-    path: '/charts/$slug',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125ComponentsIndexRoute =
-  Char123LocaleChar125ComponentsIndexRouteImport.update({
-    id: '/components/',
-    path: '/components/',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125DocsAiAgentsRoute =
-  Char123LocaleChar125DocsAiAgentsRouteImport.update({
-    id: '/docs/ai-agents',
-    path: '/docs/ai-agents',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125DocsMotionPatternsRoute =
-  Char123LocaleChar125DocsMotionPatternsRouteImport.update({
-    id: '/docs/motion-patterns',
-    path: '/docs/motion-patterns',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125DocsNativeSetupRoute =
-  Char123LocaleChar125DocsNativeSetupRouteImport.update({
-    id: '/docs/native-setup',
-    path: '/docs/native-setup',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125DocsOpenuiRoute =
-  Char123LocaleChar125DocsOpenuiRouteImport.update({
-    id: '/docs/openui',
-    path: '/docs/openui',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125DocsThemeRoute =
-  Char123LocaleChar125DocsThemeRouteImport.update({
-    id: '/docs/theme',
-    path: '/docs/theme',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125GuidesSlugRoute =
-  Char123LocaleChar125GuidesSlugRouteImport.update({
-    id: '/guides/$slug',
-    path: '/guides/$slug',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125ReactNativeIndexRoute =
-  Char123LocaleChar125ReactNativeIndexRouteImport.update({
-    id: '/react-native/',
-    path: '/react-native/',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125ReactNativeSlugRoute =
-  Char123LocaleChar125ReactNativeSlugRouteImport.update({
-    id: '/react-native/$slug',
-    path: '/react-native/$slug',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125ComponentsCategoryIndexRoute =
-  Char123LocaleChar125ComponentsCategoryIndexRouteImport.update({
+const SiteChangelogRoute = SiteChangelogRouteImport.update({
+  id: '/changelog',
+  path: '/changelog',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SitePlaygroundRoute = SitePlaygroundRouteImport.update({
+  id: '/playground',
+  path: '/playground',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteSponsorsRoute = SiteSponsorsRouteImport.update({
+  id: '/sponsors',
+  path: '/sponsors',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteAlternativesSlugRoute = SiteAlternativesSlugRouteImport.update({
+  id: '/alternatives/$slug',
+  path: '/alternatives/$slug',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteCasinoIndexRoute = SiteCasinoIndexRouteImport.update({
+  id: '/casino/',
+  path: '/casino/',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteCasinoSlugRoute = SiteCasinoSlugRouteImport.update({
+  id: '/casino/$slug',
+  path: '/casino/$slug',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteChartsIndexRoute = SiteChartsIndexRouteImport.update({
+  id: '/charts/',
+  path: '/charts/',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteChartsSlugRoute = SiteChartsSlugRouteImport.update({
+  id: '/charts/$slug',
+  path: '/charts/$slug',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteComponentsIndexRoute = SiteComponentsIndexRouteImport.update({
+  id: '/components/',
+  path: '/components/',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteDocsAiAgentsRoute = SiteDocsAiAgentsRouteImport.update({
+  id: '/docs/ai-agents',
+  path: '/docs/ai-agents',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteDocsMotionPatternsRoute = SiteDocsMotionPatternsRouteImport.update({
+  id: '/docs/motion-patterns',
+  path: '/docs/motion-patterns',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteDocsNativeSetupRoute = SiteDocsNativeSetupRouteImport.update({
+  id: '/docs/native-setup',
+  path: '/docs/native-setup',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteDocsOpenuiRoute = SiteDocsOpenuiRouteImport.update({
+  id: '/docs/openui',
+  path: '/docs/openui',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteDocsThemeRoute = SiteDocsThemeRouteImport.update({
+  id: '/docs/theme',
+  path: '/docs/theme',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteGuidesSlugRoute = SiteGuidesSlugRouteImport.update({
+  id: '/guides/$slug',
+  path: '/guides/$slug',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteReactNativeIndexRoute = SiteReactNativeIndexRouteImport.update({
+  id: '/react-native/',
+  path: '/react-native/',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteReactNativeSlugRoute = SiteReactNativeSlugRouteImport.update({
+  id: '/react-native/$slug',
+  path: '/react-native/$slug',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteComponentsCategoryIndexRoute =
+  SiteComponentsCategoryIndexRouteImport.update({
     id: '/components/$category/',
     path: '/components/$category/',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
+    getParentRoute: () => SiteRouteRoute,
   } as any)
-const Char123LocaleChar125ComponentsCategorySlugRoute =
-  Char123LocaleChar125ComponentsCategorySlugRouteImport.update({
+const SiteComponentsCategorySlugRoute =
+  SiteComponentsCategorySlugRouteImport.update({
     id: '/components/$category/$slug',
     path: '/components/$category/$slug',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
+    getParentRoute: () => SiteRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
-  '/{-$locale}/$': typeof Char123LocaleChar125SplatRoute
-  '/{-$locale}/404': typeof Char123LocaleChar125404Route
-  '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
-  '/{-$locale}/playground': typeof Char123LocaleChar125PlaygroundRoute
-  '/{-$locale}/sponsors': typeof Char123LocaleChar125SponsorsRoute
-  '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
-  '/{-$locale}/alternatives/$slug': typeof Char123LocaleChar125AlternativesSlugRoute
-  '/{-$locale}/casino/$slug': typeof Char123LocaleChar125CasinoSlugRoute
-  '/{-$locale}/charts/$slug': typeof Char123LocaleChar125ChartsSlugRoute
-  '/{-$locale}/docs/ai-agents': typeof Char123LocaleChar125DocsAiAgentsRoute
-  '/{-$locale}/docs/motion-patterns': typeof Char123LocaleChar125DocsMotionPatternsRoute
-  '/{-$locale}/docs/native-setup': typeof Char123LocaleChar125DocsNativeSetupRoute
-  '/{-$locale}/docs/openui': typeof Char123LocaleChar125DocsOpenuiRoute
-  '/{-$locale}/docs/theme': typeof Char123LocaleChar125DocsThemeRoute
-  '/{-$locale}/guides/$slug': typeof Char123LocaleChar125GuidesSlugRoute
-  '/{-$locale}/react-native/$slug': typeof Char123LocaleChar125ReactNativeSlugRoute
-  '/{-$locale}/casino/': typeof Char123LocaleChar125CasinoIndexRoute
-  '/{-$locale}/charts/': typeof Char123LocaleChar125ChartsIndexRoute
-  '/{-$locale}/components/': typeof Char123LocaleChar125ComponentsIndexRoute
-  '/{-$locale}/react-native/': typeof Char123LocaleChar125ReactNativeIndexRoute
-  '/{-$locale}/components/$category/$slug': typeof Char123LocaleChar125ComponentsCategorySlugRoute
-  '/{-$locale}/components/$category/': typeof Char123LocaleChar125ComponentsCategoryIndexRoute
+  '/': typeof SiteIndexRoute
+  '/$': typeof SiteSplatRoute
+  '/404': typeof Site404Route
+  '/changelog': typeof SiteChangelogRoute
+  '/playground': typeof SitePlaygroundRoute
+  '/sponsors': typeof SiteSponsorsRoute
+  '/alternatives/$slug': typeof SiteAlternativesSlugRoute
+  '/casino/$slug': typeof SiteCasinoSlugRoute
+  '/charts/$slug': typeof SiteChartsSlugRoute
+  '/docs/ai-agents': typeof SiteDocsAiAgentsRoute
+  '/docs/motion-patterns': typeof SiteDocsMotionPatternsRoute
+  '/docs/native-setup': typeof SiteDocsNativeSetupRoute
+  '/docs/openui': typeof SiteDocsOpenuiRoute
+  '/docs/theme': typeof SiteDocsThemeRoute
+  '/guides/$slug': typeof SiteGuidesSlugRoute
+  '/react-native/$slug': typeof SiteReactNativeSlugRoute
+  '/casino/': typeof SiteCasinoIndexRoute
+  '/charts/': typeof SiteChartsIndexRoute
+  '/components/': typeof SiteComponentsIndexRoute
+  '/react-native/': typeof SiteReactNativeIndexRoute
+  '/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
+  '/components/$category/': typeof SiteComponentsCategoryIndexRoute
 }
 export interface FileRoutesByTo {
-  '/{-$locale}/$': typeof Char123LocaleChar125SplatRoute
-  '/{-$locale}/404': typeof Char123LocaleChar125404Route
-  '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
-  '/{-$locale}/playground': typeof Char123LocaleChar125PlaygroundRoute
-  '/{-$locale}/sponsors': typeof Char123LocaleChar125SponsorsRoute
-  '/{-$locale}': typeof Char123LocaleChar125IndexRoute
-  '/{-$locale}/alternatives/$slug': typeof Char123LocaleChar125AlternativesSlugRoute
-  '/{-$locale}/casino/$slug': typeof Char123LocaleChar125CasinoSlugRoute
-  '/{-$locale}/charts/$slug': typeof Char123LocaleChar125ChartsSlugRoute
-  '/{-$locale}/docs/ai-agents': typeof Char123LocaleChar125DocsAiAgentsRoute
-  '/{-$locale}/docs/motion-patterns': typeof Char123LocaleChar125DocsMotionPatternsRoute
-  '/{-$locale}/docs/native-setup': typeof Char123LocaleChar125DocsNativeSetupRoute
-  '/{-$locale}/docs/openui': typeof Char123LocaleChar125DocsOpenuiRoute
-  '/{-$locale}/docs/theme': typeof Char123LocaleChar125DocsThemeRoute
-  '/{-$locale}/guides/$slug': typeof Char123LocaleChar125GuidesSlugRoute
-  '/{-$locale}/react-native/$slug': typeof Char123LocaleChar125ReactNativeSlugRoute
-  '/{-$locale}/casino': typeof Char123LocaleChar125CasinoIndexRoute
-  '/{-$locale}/charts': typeof Char123LocaleChar125ChartsIndexRoute
-  '/{-$locale}/components': typeof Char123LocaleChar125ComponentsIndexRoute
-  '/{-$locale}/react-native': typeof Char123LocaleChar125ReactNativeIndexRoute
-  '/{-$locale}/components/$category/$slug': typeof Char123LocaleChar125ComponentsCategorySlugRoute
-  '/{-$locale}/components/$category': typeof Char123LocaleChar125ComponentsCategoryIndexRoute
+  '/$': typeof SiteSplatRoute
+  '/404': typeof Site404Route
+  '/changelog': typeof SiteChangelogRoute
+  '/playground': typeof SitePlaygroundRoute
+  '/sponsors': typeof SiteSponsorsRoute
+  '/': typeof SiteIndexRoute
+  '/alternatives/$slug': typeof SiteAlternativesSlugRoute
+  '/casino/$slug': typeof SiteCasinoSlugRoute
+  '/charts/$slug': typeof SiteChartsSlugRoute
+  '/docs/ai-agents': typeof SiteDocsAiAgentsRoute
+  '/docs/motion-patterns': typeof SiteDocsMotionPatternsRoute
+  '/docs/native-setup': typeof SiteDocsNativeSetupRoute
+  '/docs/openui': typeof SiteDocsOpenuiRoute
+  '/docs/theme': typeof SiteDocsThemeRoute
+  '/guides/$slug': typeof SiteGuidesSlugRoute
+  '/react-native/$slug': typeof SiteReactNativeSlugRoute
+  '/casino': typeof SiteCasinoIndexRoute
+  '/charts': typeof SiteChartsIndexRoute
+  '/components': typeof SiteComponentsIndexRoute
+  '/react-native': typeof SiteReactNativeIndexRoute
+  '/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
+  '/components/$category': typeof SiteComponentsCategoryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
-  '/{-$locale}/$': typeof Char123LocaleChar125SplatRoute
-  '/{-$locale}/404': typeof Char123LocaleChar125404Route
-  '/{-$locale}/changelog': typeof Char123LocaleChar125ChangelogRoute
-  '/{-$locale}/playground': typeof Char123LocaleChar125PlaygroundRoute
-  '/{-$locale}/sponsors': typeof Char123LocaleChar125SponsorsRoute
-  '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
-  '/{-$locale}/alternatives/$slug': typeof Char123LocaleChar125AlternativesSlugRoute
-  '/{-$locale}/casino/$slug': typeof Char123LocaleChar125CasinoSlugRoute
-  '/{-$locale}/charts/$slug': typeof Char123LocaleChar125ChartsSlugRoute
-  '/{-$locale}/docs/ai-agents': typeof Char123LocaleChar125DocsAiAgentsRoute
-  '/{-$locale}/docs/motion-patterns': typeof Char123LocaleChar125DocsMotionPatternsRoute
-  '/{-$locale}/docs/native-setup': typeof Char123LocaleChar125DocsNativeSetupRoute
-  '/{-$locale}/docs/openui': typeof Char123LocaleChar125DocsOpenuiRoute
-  '/{-$locale}/docs/theme': typeof Char123LocaleChar125DocsThemeRoute
-  '/{-$locale}/guides/$slug': typeof Char123LocaleChar125GuidesSlugRoute
-  '/{-$locale}/react-native/$slug': typeof Char123LocaleChar125ReactNativeSlugRoute
-  '/{-$locale}/casino/': typeof Char123LocaleChar125CasinoIndexRoute
-  '/{-$locale}/charts/': typeof Char123LocaleChar125ChartsIndexRoute
-  '/{-$locale}/components/': typeof Char123LocaleChar125ComponentsIndexRoute
-  '/{-$locale}/react-native/': typeof Char123LocaleChar125ReactNativeIndexRoute
-  '/{-$locale}/components/$category/$slug': typeof Char123LocaleChar125ComponentsCategorySlugRoute
-  '/{-$locale}/components/$category/': typeof Char123LocaleChar125ComponentsCategoryIndexRoute
+  '/_site': typeof SiteRouteRouteWithChildren
+  '/_site/$': typeof SiteSplatRoute
+  '/_site/404': typeof Site404Route
+  '/_site/changelog': typeof SiteChangelogRoute
+  '/_site/playground': typeof SitePlaygroundRoute
+  '/_site/sponsors': typeof SiteSponsorsRoute
+  '/_site/': typeof SiteIndexRoute
+  '/_site/alternatives/$slug': typeof SiteAlternativesSlugRoute
+  '/_site/casino/$slug': typeof SiteCasinoSlugRoute
+  '/_site/charts/$slug': typeof SiteChartsSlugRoute
+  '/_site/docs/ai-agents': typeof SiteDocsAiAgentsRoute
+  '/_site/docs/motion-patterns': typeof SiteDocsMotionPatternsRoute
+  '/_site/docs/native-setup': typeof SiteDocsNativeSetupRoute
+  '/_site/docs/openui': typeof SiteDocsOpenuiRoute
+  '/_site/docs/theme': typeof SiteDocsThemeRoute
+  '/_site/guides/$slug': typeof SiteGuidesSlugRoute
+  '/_site/react-native/$slug': typeof SiteReactNativeSlugRoute
+  '/_site/casino/': typeof SiteCasinoIndexRoute
+  '/_site/charts/': typeof SiteChartsIndexRoute
+  '/_site/components/': typeof SiteComponentsIndexRoute
+  '/_site/react-native/': typeof SiteReactNativeIndexRoute
+  '/_site/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
+  '/_site/components/$category/': typeof SiteComponentsCategoryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/{-$locale}'
-    | '/{-$locale}/$'
-    | '/{-$locale}/404'
-    | '/{-$locale}/changelog'
-    | '/{-$locale}/playground'
-    | '/{-$locale}/sponsors'
-    | '/{-$locale}/'
-    | '/{-$locale}/alternatives/$slug'
-    | '/{-$locale}/casino/$slug'
-    | '/{-$locale}/charts/$slug'
-    | '/{-$locale}/docs/ai-agents'
-    | '/{-$locale}/docs/motion-patterns'
-    | '/{-$locale}/docs/native-setup'
-    | '/{-$locale}/docs/openui'
-    | '/{-$locale}/docs/theme'
-    | '/{-$locale}/guides/$slug'
-    | '/{-$locale}/react-native/$slug'
-    | '/{-$locale}/casino/'
-    | '/{-$locale}/charts/'
-    | '/{-$locale}/components/'
-    | '/{-$locale}/react-native/'
-    | '/{-$locale}/components/$category/$slug'
-    | '/{-$locale}/components/$category/'
+    | '/'
+    | '/$'
+    | '/404'
+    | '/changelog'
+    | '/playground'
+    | '/sponsors'
+    | '/alternatives/$slug'
+    | '/casino/$slug'
+    | '/charts/$slug'
+    | '/docs/ai-agents'
+    | '/docs/motion-patterns'
+    | '/docs/native-setup'
+    | '/docs/openui'
+    | '/docs/theme'
+    | '/guides/$slug'
+    | '/react-native/$slug'
+    | '/casino/'
+    | '/charts/'
+    | '/components/'
+    | '/react-native/'
+    | '/components/$category/$slug'
+    | '/components/$category/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/{-$locale}/$'
-    | '/{-$locale}/404'
-    | '/{-$locale}/changelog'
-    | '/{-$locale}/playground'
-    | '/{-$locale}/sponsors'
-    | '/{-$locale}'
-    | '/{-$locale}/alternatives/$slug'
-    | '/{-$locale}/casino/$slug'
-    | '/{-$locale}/charts/$slug'
-    | '/{-$locale}/docs/ai-agents'
-    | '/{-$locale}/docs/motion-patterns'
-    | '/{-$locale}/docs/native-setup'
-    | '/{-$locale}/docs/openui'
-    | '/{-$locale}/docs/theme'
-    | '/{-$locale}/guides/$slug'
-    | '/{-$locale}/react-native/$slug'
-    | '/{-$locale}/casino'
-    | '/{-$locale}/charts'
-    | '/{-$locale}/components'
-    | '/{-$locale}/react-native'
-    | '/{-$locale}/components/$category/$slug'
-    | '/{-$locale}/components/$category'
+    | '/$'
+    | '/404'
+    | '/changelog'
+    | '/playground'
+    | '/sponsors'
+    | '/'
+    | '/alternatives/$slug'
+    | '/casino/$slug'
+    | '/charts/$slug'
+    | '/docs/ai-agents'
+    | '/docs/motion-patterns'
+    | '/docs/native-setup'
+    | '/docs/openui'
+    | '/docs/theme'
+    | '/guides/$slug'
+    | '/react-native/$slug'
+    | '/casino'
+    | '/charts'
+    | '/components'
+    | '/react-native'
+    | '/components/$category/$slug'
+    | '/components/$category'
   id:
     | '__root__'
-    | '/{-$locale}'
-    | '/{-$locale}/$'
-    | '/{-$locale}/404'
-    | '/{-$locale}/changelog'
-    | '/{-$locale}/playground'
-    | '/{-$locale}/sponsors'
-    | '/{-$locale}/'
-    | '/{-$locale}/alternatives/$slug'
-    | '/{-$locale}/casino/$slug'
-    | '/{-$locale}/charts/$slug'
-    | '/{-$locale}/docs/ai-agents'
-    | '/{-$locale}/docs/motion-patterns'
-    | '/{-$locale}/docs/native-setup'
-    | '/{-$locale}/docs/openui'
-    | '/{-$locale}/docs/theme'
-    | '/{-$locale}/guides/$slug'
-    | '/{-$locale}/react-native/$slug'
-    | '/{-$locale}/casino/'
-    | '/{-$locale}/charts/'
-    | '/{-$locale}/components/'
-    | '/{-$locale}/react-native/'
-    | '/{-$locale}/components/$category/$slug'
-    | '/{-$locale}/components/$category/'
+    | '/_site'
+    | '/_site/$'
+    | '/_site/404'
+    | '/_site/changelog'
+    | '/_site/playground'
+    | '/_site/sponsors'
+    | '/_site/'
+    | '/_site/alternatives/$slug'
+    | '/_site/casino/$slug'
+    | '/_site/charts/$slug'
+    | '/_site/docs/ai-agents'
+    | '/_site/docs/motion-patterns'
+    | '/_site/docs/native-setup'
+    | '/_site/docs/openui'
+    | '/_site/docs/theme'
+    | '/_site/guides/$slug'
+    | '/_site/react-native/$slug'
+    | '/_site/casino/'
+    | '/_site/charts/'
+    | '/_site/components/'
+    | '/_site/react-native/'
+    | '/_site/components/$category/$slug'
+    | '/_site/components/$category/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
+  SiteRouteRoute: typeof SiteRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/{-$locale}': {
-      id: '/{-$locale}'
-      path: '/{-$locale}'
-      fullPath: '/{-$locale}'
-      preLoaderRoute: typeof Char123LocaleChar125RouteRouteImport
+    '/_site': {
+      id: '/_site'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof SiteRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/{-$locale}/': {
-      id: '/{-$locale}/'
+    '/_site/': {
+      id: '/_site/'
       path: '/'
-      fullPath: '/{-$locale}/'
-      preLoaderRoute: typeof Char123LocaleChar125IndexRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/'
+      preLoaderRoute: typeof SiteIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/$': {
-      id: '/{-$locale}/$'
+    '/_site/$': {
+      id: '/_site/$'
       path: '/$'
-      fullPath: '/{-$locale}/$'
-      preLoaderRoute: typeof Char123LocaleChar125SplatRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/$'
+      preLoaderRoute: typeof SiteSplatRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/404': {
-      id: '/{-$locale}/404'
+    '/_site/404': {
+      id: '/_site/404'
       path: '/404'
-      fullPath: '/{-$locale}/404'
-      preLoaderRoute: typeof Char123LocaleChar125404RouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/404'
+      preLoaderRoute: typeof Site404RouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/changelog': {
-      id: '/{-$locale}/changelog'
+    '/_site/changelog': {
+      id: '/_site/changelog'
       path: '/changelog'
-      fullPath: '/{-$locale}/changelog'
-      preLoaderRoute: typeof Char123LocaleChar125ChangelogRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/changelog'
+      preLoaderRoute: typeof SiteChangelogRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/playground': {
-      id: '/{-$locale}/playground'
+    '/_site/playground': {
+      id: '/_site/playground'
       path: '/playground'
-      fullPath: '/{-$locale}/playground'
-      preLoaderRoute: typeof Char123LocaleChar125PlaygroundRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/playground'
+      preLoaderRoute: typeof SitePlaygroundRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/sponsors': {
-      id: '/{-$locale}/sponsors'
+    '/_site/sponsors': {
+      id: '/_site/sponsors'
       path: '/sponsors'
-      fullPath: '/{-$locale}/sponsors'
-      preLoaderRoute: typeof Char123LocaleChar125SponsorsRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/sponsors'
+      preLoaderRoute: typeof SiteSponsorsRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/alternatives/$slug': {
-      id: '/{-$locale}/alternatives/$slug'
+    '/_site/alternatives/$slug': {
+      id: '/_site/alternatives/$slug'
       path: '/alternatives/$slug'
-      fullPath: '/{-$locale}/alternatives/$slug'
-      preLoaderRoute: typeof Char123LocaleChar125AlternativesSlugRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/alternatives/$slug'
+      preLoaderRoute: typeof SiteAlternativesSlugRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/casino/': {
-      id: '/{-$locale}/casino/'
+    '/_site/casino/': {
+      id: '/_site/casino/'
       path: '/casino'
-      fullPath: '/{-$locale}/casino/'
-      preLoaderRoute: typeof Char123LocaleChar125CasinoIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/casino/'
+      preLoaderRoute: typeof SiteCasinoIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/casino/$slug': {
-      id: '/{-$locale}/casino/$slug'
+    '/_site/casino/$slug': {
+      id: '/_site/casino/$slug'
       path: '/casino/$slug'
-      fullPath: '/{-$locale}/casino/$slug'
-      preLoaderRoute: typeof Char123LocaleChar125CasinoSlugRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/casino/$slug'
+      preLoaderRoute: typeof SiteCasinoSlugRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/charts/': {
-      id: '/{-$locale}/charts/'
+    '/_site/charts/': {
+      id: '/_site/charts/'
       path: '/charts'
-      fullPath: '/{-$locale}/charts/'
-      preLoaderRoute: typeof Char123LocaleChar125ChartsIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/charts/'
+      preLoaderRoute: typeof SiteChartsIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/charts/$slug': {
-      id: '/{-$locale}/charts/$slug'
+    '/_site/charts/$slug': {
+      id: '/_site/charts/$slug'
       path: '/charts/$slug'
-      fullPath: '/{-$locale}/charts/$slug'
-      preLoaderRoute: typeof Char123LocaleChar125ChartsSlugRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/charts/$slug'
+      preLoaderRoute: typeof SiteChartsSlugRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/components/': {
-      id: '/{-$locale}/components/'
+    '/_site/components/': {
+      id: '/_site/components/'
       path: '/components'
-      fullPath: '/{-$locale}/components/'
-      preLoaderRoute: typeof Char123LocaleChar125ComponentsIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/components/'
+      preLoaderRoute: typeof SiteComponentsIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/docs/ai-agents': {
-      id: '/{-$locale}/docs/ai-agents'
+    '/_site/docs/ai-agents': {
+      id: '/_site/docs/ai-agents'
       path: '/docs/ai-agents'
-      fullPath: '/{-$locale}/docs/ai-agents'
-      preLoaderRoute: typeof Char123LocaleChar125DocsAiAgentsRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/docs/ai-agents'
+      preLoaderRoute: typeof SiteDocsAiAgentsRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/docs/motion-patterns': {
-      id: '/{-$locale}/docs/motion-patterns'
+    '/_site/docs/motion-patterns': {
+      id: '/_site/docs/motion-patterns'
       path: '/docs/motion-patterns'
-      fullPath: '/{-$locale}/docs/motion-patterns'
-      preLoaderRoute: typeof Char123LocaleChar125DocsMotionPatternsRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/docs/motion-patterns'
+      preLoaderRoute: typeof SiteDocsMotionPatternsRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/docs/native-setup': {
-      id: '/{-$locale}/docs/native-setup'
+    '/_site/docs/native-setup': {
+      id: '/_site/docs/native-setup'
       path: '/docs/native-setup'
-      fullPath: '/{-$locale}/docs/native-setup'
-      preLoaderRoute: typeof Char123LocaleChar125DocsNativeSetupRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/docs/native-setup'
+      preLoaderRoute: typeof SiteDocsNativeSetupRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/docs/openui': {
-      id: '/{-$locale}/docs/openui'
+    '/_site/docs/openui': {
+      id: '/_site/docs/openui'
       path: '/docs/openui'
-      fullPath: '/{-$locale}/docs/openui'
-      preLoaderRoute: typeof Char123LocaleChar125DocsOpenuiRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/docs/openui'
+      preLoaderRoute: typeof SiteDocsOpenuiRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/docs/theme': {
-      id: '/{-$locale}/docs/theme'
+    '/_site/docs/theme': {
+      id: '/_site/docs/theme'
       path: '/docs/theme'
-      fullPath: '/{-$locale}/docs/theme'
-      preLoaderRoute: typeof Char123LocaleChar125DocsThemeRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/docs/theme'
+      preLoaderRoute: typeof SiteDocsThemeRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/guides/$slug': {
-      id: '/{-$locale}/guides/$slug'
+    '/_site/guides/$slug': {
+      id: '/_site/guides/$slug'
       path: '/guides/$slug'
-      fullPath: '/{-$locale}/guides/$slug'
-      preLoaderRoute: typeof Char123LocaleChar125GuidesSlugRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/guides/$slug'
+      preLoaderRoute: typeof SiteGuidesSlugRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/react-native/': {
-      id: '/{-$locale}/react-native/'
+    '/_site/react-native/': {
+      id: '/_site/react-native/'
       path: '/react-native'
-      fullPath: '/{-$locale}/react-native/'
-      preLoaderRoute: typeof Char123LocaleChar125ReactNativeIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/react-native/'
+      preLoaderRoute: typeof SiteReactNativeIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/react-native/$slug': {
-      id: '/{-$locale}/react-native/$slug'
+    '/_site/react-native/$slug': {
+      id: '/_site/react-native/$slug'
       path: '/react-native/$slug'
-      fullPath: '/{-$locale}/react-native/$slug'
-      preLoaderRoute: typeof Char123LocaleChar125ReactNativeSlugRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/react-native/$slug'
+      preLoaderRoute: typeof SiteReactNativeSlugRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/components/$category/': {
-      id: '/{-$locale}/components/$category/'
+    '/_site/components/$category/': {
+      id: '/_site/components/$category/'
       path: '/components/$category'
-      fullPath: '/{-$locale}/components/$category/'
-      preLoaderRoute: typeof Char123LocaleChar125ComponentsCategoryIndexRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/components/$category/'
+      preLoaderRoute: typeof SiteComponentsCategoryIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
-    '/{-$locale}/components/$category/$slug': {
-      id: '/{-$locale}/components/$category/$slug'
+    '/_site/components/$category/$slug': {
+      id: '/_site/components/$category/$slug'
       path: '/components/$category/$slug'
-      fullPath: '/{-$locale}/components/$category/$slug'
-      preLoaderRoute: typeof Char123LocaleChar125ComponentsCategorySlugRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
+      fullPath: '/components/$category/$slug'
+      preLoaderRoute: typeof SiteComponentsCategorySlugRouteImport
+      parentRoute: typeof SiteRouteRoute
     }
   }
 }
 
-interface Char123LocaleChar125RouteRouteChildren {
-  Char123LocaleChar125SplatRoute: typeof Char123LocaleChar125SplatRoute
-  Char123LocaleChar125404Route: typeof Char123LocaleChar125404Route
-  Char123LocaleChar125ChangelogRoute: typeof Char123LocaleChar125ChangelogRoute
-  Char123LocaleChar125PlaygroundRoute: typeof Char123LocaleChar125PlaygroundRoute
-  Char123LocaleChar125SponsorsRoute: typeof Char123LocaleChar125SponsorsRoute
-  Char123LocaleChar125IndexRoute: typeof Char123LocaleChar125IndexRoute
-  Char123LocaleChar125AlternativesSlugRoute: typeof Char123LocaleChar125AlternativesSlugRoute
-  Char123LocaleChar125CasinoSlugRoute: typeof Char123LocaleChar125CasinoSlugRoute
-  Char123LocaleChar125ChartsSlugRoute: typeof Char123LocaleChar125ChartsSlugRoute
-  Char123LocaleChar125DocsAiAgentsRoute: typeof Char123LocaleChar125DocsAiAgentsRoute
-  Char123LocaleChar125DocsMotionPatternsRoute: typeof Char123LocaleChar125DocsMotionPatternsRoute
-  Char123LocaleChar125DocsNativeSetupRoute: typeof Char123LocaleChar125DocsNativeSetupRoute
-  Char123LocaleChar125DocsOpenuiRoute: typeof Char123LocaleChar125DocsOpenuiRoute
-  Char123LocaleChar125DocsThemeRoute: typeof Char123LocaleChar125DocsThemeRoute
-  Char123LocaleChar125GuidesSlugRoute: typeof Char123LocaleChar125GuidesSlugRoute
-  Char123LocaleChar125ReactNativeSlugRoute: typeof Char123LocaleChar125ReactNativeSlugRoute
-  Char123LocaleChar125CasinoIndexRoute: typeof Char123LocaleChar125CasinoIndexRoute
-  Char123LocaleChar125ChartsIndexRoute: typeof Char123LocaleChar125ChartsIndexRoute
-  Char123LocaleChar125ComponentsIndexRoute: typeof Char123LocaleChar125ComponentsIndexRoute
-  Char123LocaleChar125ReactNativeIndexRoute: typeof Char123LocaleChar125ReactNativeIndexRoute
-  Char123LocaleChar125ComponentsCategorySlugRoute: typeof Char123LocaleChar125ComponentsCategorySlugRoute
-  Char123LocaleChar125ComponentsCategoryIndexRoute: typeof Char123LocaleChar125ComponentsCategoryIndexRoute
+interface SiteRouteRouteChildren {
+  SiteSplatRoute: typeof SiteSplatRoute
+  Site404Route: typeof Site404Route
+  SiteChangelogRoute: typeof SiteChangelogRoute
+  SitePlaygroundRoute: typeof SitePlaygroundRoute
+  SiteSponsorsRoute: typeof SiteSponsorsRoute
+  SiteIndexRoute: typeof SiteIndexRoute
+  SiteAlternativesSlugRoute: typeof SiteAlternativesSlugRoute
+  SiteCasinoSlugRoute: typeof SiteCasinoSlugRoute
+  SiteChartsSlugRoute: typeof SiteChartsSlugRoute
+  SiteDocsAiAgentsRoute: typeof SiteDocsAiAgentsRoute
+  SiteDocsMotionPatternsRoute: typeof SiteDocsMotionPatternsRoute
+  SiteDocsNativeSetupRoute: typeof SiteDocsNativeSetupRoute
+  SiteDocsOpenuiRoute: typeof SiteDocsOpenuiRoute
+  SiteDocsThemeRoute: typeof SiteDocsThemeRoute
+  SiteGuidesSlugRoute: typeof SiteGuidesSlugRoute
+  SiteReactNativeSlugRoute: typeof SiteReactNativeSlugRoute
+  SiteCasinoIndexRoute: typeof SiteCasinoIndexRoute
+  SiteChartsIndexRoute: typeof SiteChartsIndexRoute
+  SiteComponentsIndexRoute: typeof SiteComponentsIndexRoute
+  SiteReactNativeIndexRoute: typeof SiteReactNativeIndexRoute
+  SiteComponentsCategorySlugRoute: typeof SiteComponentsCategorySlugRoute
+  SiteComponentsCategoryIndexRoute: typeof SiteComponentsCategoryIndexRoute
 }
 
-const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChildren =
-  {
-    Char123LocaleChar125SplatRoute: Char123LocaleChar125SplatRoute,
-    Char123LocaleChar125404Route: Char123LocaleChar125404Route,
-    Char123LocaleChar125ChangelogRoute: Char123LocaleChar125ChangelogRoute,
-    Char123LocaleChar125PlaygroundRoute: Char123LocaleChar125PlaygroundRoute,
-    Char123LocaleChar125SponsorsRoute: Char123LocaleChar125SponsorsRoute,
-    Char123LocaleChar125IndexRoute: Char123LocaleChar125IndexRoute,
-    Char123LocaleChar125AlternativesSlugRoute:
-      Char123LocaleChar125AlternativesSlugRoute,
-    Char123LocaleChar125CasinoSlugRoute: Char123LocaleChar125CasinoSlugRoute,
-    Char123LocaleChar125ChartsSlugRoute: Char123LocaleChar125ChartsSlugRoute,
-    Char123LocaleChar125DocsAiAgentsRoute:
-      Char123LocaleChar125DocsAiAgentsRoute,
-    Char123LocaleChar125DocsMotionPatternsRoute:
-      Char123LocaleChar125DocsMotionPatternsRoute,
-    Char123LocaleChar125DocsNativeSetupRoute:
-      Char123LocaleChar125DocsNativeSetupRoute,
-    Char123LocaleChar125DocsOpenuiRoute: Char123LocaleChar125DocsOpenuiRoute,
-    Char123LocaleChar125DocsThemeRoute: Char123LocaleChar125DocsThemeRoute,
-    Char123LocaleChar125GuidesSlugRoute: Char123LocaleChar125GuidesSlugRoute,
-    Char123LocaleChar125ReactNativeSlugRoute:
-      Char123LocaleChar125ReactNativeSlugRoute,
-    Char123LocaleChar125CasinoIndexRoute: Char123LocaleChar125CasinoIndexRoute,
-    Char123LocaleChar125ChartsIndexRoute: Char123LocaleChar125ChartsIndexRoute,
-    Char123LocaleChar125ComponentsIndexRoute:
-      Char123LocaleChar125ComponentsIndexRoute,
-    Char123LocaleChar125ReactNativeIndexRoute:
-      Char123LocaleChar125ReactNativeIndexRoute,
-    Char123LocaleChar125ComponentsCategorySlugRoute:
-      Char123LocaleChar125ComponentsCategorySlugRoute,
-    Char123LocaleChar125ComponentsCategoryIndexRoute:
-      Char123LocaleChar125ComponentsCategoryIndexRoute,
-  }
+const SiteRouteRouteChildren: SiteRouteRouteChildren = {
+  SiteSplatRoute: SiteSplatRoute,
+  Site404Route: Site404Route,
+  SiteChangelogRoute: SiteChangelogRoute,
+  SitePlaygroundRoute: SitePlaygroundRoute,
+  SiteSponsorsRoute: SiteSponsorsRoute,
+  SiteIndexRoute: SiteIndexRoute,
+  SiteAlternativesSlugRoute: SiteAlternativesSlugRoute,
+  SiteCasinoSlugRoute: SiteCasinoSlugRoute,
+  SiteChartsSlugRoute: SiteChartsSlugRoute,
+  SiteDocsAiAgentsRoute: SiteDocsAiAgentsRoute,
+  SiteDocsMotionPatternsRoute: SiteDocsMotionPatternsRoute,
+  SiteDocsNativeSetupRoute: SiteDocsNativeSetupRoute,
+  SiteDocsOpenuiRoute: SiteDocsOpenuiRoute,
+  SiteDocsThemeRoute: SiteDocsThemeRoute,
+  SiteGuidesSlugRoute: SiteGuidesSlugRoute,
+  SiteReactNativeSlugRoute: SiteReactNativeSlugRoute,
+  SiteCasinoIndexRoute: SiteCasinoIndexRoute,
+  SiteChartsIndexRoute: SiteChartsIndexRoute,
+  SiteComponentsIndexRoute: SiteComponentsIndexRoute,
+  SiteReactNativeIndexRoute: SiteReactNativeIndexRoute,
+  SiteComponentsCategorySlugRoute: SiteComponentsCategorySlugRoute,
+  SiteComponentsCategoryIndexRoute: SiteComponentsCategoryIndexRoute,
+}
 
-const Char123LocaleChar125RouteRouteWithChildren =
-  Char123LocaleChar125RouteRoute._addFileChildren(
-    Char123LocaleChar125RouteRouteChildren,
-  )
+const SiteRouteRouteWithChildren = SiteRouteRoute._addFileChildren(
+  SiteRouteRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
-  Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
+  SiteRouteRoute: SiteRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

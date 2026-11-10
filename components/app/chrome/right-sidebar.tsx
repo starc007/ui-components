@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "@/i18n/navigation";
+import { usePathname } from "@/lib/navigation";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { ProCard } from "@/components/app/docs/pro-card";
 import { ProMobileCard } from "@/components/app/docs/pro-mobile-card";
