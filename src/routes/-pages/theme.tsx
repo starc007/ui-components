@@ -91,7 +91,7 @@ function ThemeContent({ data }: { data: ThemePageData }) {
       </p>
       <p className="mt-2 text-sm text-muted-foreground">
         {t.rich("option2.alsoAvailable", {
-          // A static file, not a page: keep one unprefixed URL.
+          // A static file, not a page, so a plain anchor.
           link: (chunks) => (
             <a
               href="/theme.css"

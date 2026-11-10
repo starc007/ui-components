@@ -612,7 +612,7 @@ export const agentGuides = {
       {
         title: "Show durable steps",
         description:
-          "Items represent meaningful work that can be pending, active, or complete—not every token-level action the agent performs.",
+          "Items represent meaningful work that can be pending, active, or complete, not every token-level action the agent performs.",
       },
       {
         title: "Advance in place",

@@ -1,6 +1,5 @@
-import { categoryPath, nativeComponentPath } from "@/lib/component-paths";
+import { categoryPath } from "@/lib/component-paths";
 import { isComponentNew } from "@/lib/component-status";
-import { native } from "@/lib/native";
 import summary from "@/lib/native/summary.json";
 import { type CategoryEntry, type ComponentEntry, INSTALLABLE_COUNT } from "@/lib/registry";
 import type { TileComponent } from "./preview-tile";
@@ -79,16 +78,6 @@ export function newEntries(source: CategoryEntry[]): (LandingEntry & { previewKe
 
 export const WEB_COUNT = INSTALLABLE_COUNT;
 export const NATIVE_COUNT = summary.variants;
-
-/** Native components whose clips show the most in a few seconds. */
-export function nativePhones(slugs: readonly string[]) {
-  return slugs.flatMap((slug) => {
-    const component = native.components.find((c) => c.slug === slug);
-    return component
-      ? [{ slug, title: component.title, href: nativeComponentPath(slug), clips: component.clips }]
-      : [];
-  });
-}
 
 export const PRO_URL = (content: string) =>
   `https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=${content}`;

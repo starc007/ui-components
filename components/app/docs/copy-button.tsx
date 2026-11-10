@@ -2,7 +2,7 @@
 
 import { Check, Copy } from "lucide-react";
 import { useTranslations } from "use-intl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";
 import { trackEvent } from "@/lib/analytics";
@@ -23,6 +23,13 @@ export function CopyButton({
 }) {
   const t = useTranslations("Docs.copyButton");
   const [copied, setCopied] = useState(false);
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (resetTimer.current) clearTimeout(resetTimer.current);
+    },
+    [],
+  );
 
   return (
     <Button
@@ -30,9 +37,15 @@ export function CopyButton({
       size="icon"
       pressScale={0.85}
       onClick={async () => {
-        await navigator.clipboard.writeText(text);
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          // Clipboard blocked (permission denied or insecure context).
+          return;
+        }
         setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
+        if (resetTimer.current) clearTimeout(resetTimer.current);
+        resetTimer.current = setTimeout(() => setCopied(false), 1500);
         trackEvent(eventName, { label: eventLabel, chars: text.length });
       }}
       aria-label={copied ? t("copied") : t("copy")}

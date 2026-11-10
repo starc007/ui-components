@@ -1,16 +1,14 @@
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "use-intl";
 import { InstallCommand } from "@/components/app/docs/install-command";
-import { NativePhones } from "@/components/app/landing/native-phones";
+import { type NativePhone, NativePhones } from "@/components/app/landing/native-phones";
 import nativeSlugs from "@/lib/native/slugs.json";
 import { cn } from "@/lib/utils";
 import { LandingButton } from "./landing-button";
-import { NATIVE_COUNT, nativePhones } from "./landing-data";
-
-const FEATURED = ["tabs", "color-picker", "alert", "swipeable-list"];
+import { NATIVE_COUNT } from "./landing-data";
 
 /** beUI Native in a bordered panel: pitch and install on the left, phones below. */
-export function NativeBand({ className }: { className?: string }) {
+export function NativeBand({ phones, className }: { phones: NativePhone[]; className?: string }) {
   const t = useTranslations("Landing.native");
   return (
     <section aria-labelledby="landing-native" className={cn("mx-auto max-w-6xl px-4", className)}>
@@ -39,7 +37,7 @@ export function NativeBand({ className }: { className?: string }) {
           </div>
         </div>
         <div className="-mt-6 border-t border-border bg-card">
-          <NativePhones phones={nativePhones(FEATURED)} />
+          <NativePhones phones={phones} />
         </div>
       </div>
     </section>

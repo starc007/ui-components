@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { CopyButton } from "@/components/app/docs/copy-button";
 import { ActionSwapCascadeText } from "@/components/motion/action-swap-cascade";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
-import { registry } from "@/lib/registry";
+import { INSTALL_SLUGS } from "@/lib/registry";
 import { cn } from "@/lib/utils";
 
 const PM_COMMANDS = {
@@ -30,20 +30,11 @@ const TOOLS = {
 } as const;
 const CYCLE_MS = 1800;
 
-const COMPONENT_SLUGS = registry.flatMap((cat) =>
-  cat.components.flatMap((comp) =>
-    comp.examples
-      ? comp.examples.flatMap((example) =>
-          example.installSlug ? [example.installSlug] : [],
-        )
-      : [comp.slug],
-  ),
-);
 
 export function InstallCommand({
   className,
   slug,
-  slugs = COMPONENT_SLUGS,
+  slugs = INSTALL_SLUGS,
   tool = "shadcn",
 }: {
   className?: string;

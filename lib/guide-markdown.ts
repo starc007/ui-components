@@ -192,7 +192,7 @@ To let a model compose beUI components into a live interface, follow the [OpenUI
 \`\`\`bash
 npm install @openuidev/react-lang @openuidev/lang-core zod
 npm install openai
-npx shadcn@latest add @beui/button @beui/animated-badge @beui/animated-number
+npx shadcn@latest add @beui/button-base @beui/animated-badge @beui/animated-number
 \`\`\`
 
 ## Register components

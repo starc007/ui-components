@@ -422,7 +422,7 @@ export const registry: CategoryEntry[] = [
           {
             slug: "morph",
             name: "Morph Select",
-            description: "Composable primitives (MorphSelect, MorphSelectTrigger, MorphSelectValue, MorphSelectContent, MorphSelectItem) where the trigger morphs into the panel via a shared layoutId — one continuous surface that grows open and shrinks back, never detaching.",
+            description: "Composable primitives (MorphSelect, MorphSelectTrigger, MorphSelectValue, MorphSelectContent, MorphSelectItem) where the trigger morphs into the panel via a shared layoutId: one continuous surface that grows open and shrinks back, never detaching.",
             installSlug: "select-morph",
             file: "components/motion/select-morph.tsx",
             previewKey: "motion/select-morph",
@@ -800,7 +800,7 @@ export const registry: CategoryEntry[] = [
           {
             slug: "cascade",
             name: "Text Cascade",
-            description: "Letter-by-letter slot roll for standalone text — old letters drop away as new ones land, left to right.",
+            description: "Letter-by-letter slot roll for standalone text: old letters drop away as new ones land, left to right.",
             installSlug: "text-cascade",
             file: "components/motion/text-cascade.tsx",
             previewKey: "motion/text-cascade",
@@ -868,7 +868,7 @@ export const registry: CategoryEntry[] = [
           {
             slug: "cascade",
             name: "Cascade",
-            description: "Letter-by-letter slot roll — the old label's letters drop away as the new ones land, left to right.",
+            description: "Letter-by-letter slot roll: the old label's letters drop away as the new ones land, left to right.",
             installSlug: "action-swap-cascade",
             file: "components/motion/action-swap-cascade.tsx",
             previewKey: "motion/action-swap-cascade",
@@ -903,7 +903,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "theme-toggle",
         name: "Theme Toggle",
-        description: "Theme toggle button that repaints the whole page through the View Transition API — a rectangle or circle clip-path reveal, or slats that open across the screen like a shutter.",
+        description: "Theme toggle button that repaints the whole page through the View Transition API: a rectangle or circle clip-path reveal, or slats that open across the screen like a shutter.",
         file: "components/motion/theme-toggle.tsx",
         badge: "new",
         launchedAt: "2026-08-01",
@@ -959,7 +959,7 @@ export const registry: CategoryEntry[] = [
           {
             slug: "scroll-progress",
             name: "Scroll Progress",
-            description: "Reading-progress indicator — fixed bar or circular ring — driven by scroll position via useSmoothScroll, with spring smoothing.",
+            description: "Reading-progress indicator (fixed bar or circular ring) driven by scroll position via useSmoothScroll, with spring smoothing.",
             installSlug: "scroll-progress",
             file: "components/motion/scroll-progress.tsx",
             previewKey: "motion/scroll-progress",
@@ -1138,7 +1138,7 @@ export const registry: CategoryEntry[] = [
             slug: "async",
             name: "Async Table",
             description:
-              "Loads pages on demand — skeleton rows on first load, then infinite scroll via onEndReached as the virtualized list nears the bottom.",
+              "Loads pages on demand: skeleton rows on first load, then infinite scroll via onEndReached as the virtualized list nears the bottom.",
             installSlug: "table-async",
             file: "components/motion/table/index.tsx",
             previewKey: "motion/table-async",
@@ -2472,18 +2472,18 @@ export function allComponents() {
   );
 }
 
-/** Top-level components and total installable targets (counting variants). */
-export const COMPONENT_COUNT = registry.reduce(
-  (n, c) => n + c.components.length,
-  0,
+/**
+ * Every slug that installs: a page's variants when any has its own
+ * `installSlug`, otherwise the page itself.
+ */
+export const INSTALL_SLUGS = registry.flatMap((c) =>
+  c.components.flatMap((comp) => {
+    const variants = (comp.examples ?? []).flatMap((e) =>
+      e.installSlug ? [e.installSlug] : [],
+    );
+    return variants.length ? variants : [comp.slug];
+  }),
 );
 
-export const INSTALLABLE_COUNT = registry.reduce(
-  (n, c) =>
-    n +
-    c.components.reduce((m, comp) => {
-      const variants = (comp.examples ?? []).filter((e) => e.installSlug).length;
-      return m + (variants || 1);
-    }, 0),
-  0,
-);
+/** Total installable targets (counting variants). */
+export const INSTALLABLE_COUNT = INSTALL_SLUGS.length;
