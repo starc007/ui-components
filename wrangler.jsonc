@@ -14,5 +14,11 @@
     "not_found_handling": "404-page",
     "run_worker_first": ["/r", "/r/*", "/native/r", "/native/r/*", "/api/*"]
   },
+  // v1 created OpenNext's ISR revalidation queue. The static site has no
+  // queue, so v2 deletes that Durable Object class and its stored data.
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] },
+    { "tag": "v2", "deleted_classes": ["DOQueueHandler"] }
+  ],
   "observability": { "enabled": true }
 }
