@@ -6,7 +6,7 @@
   "compatibility_flags": ["nodejs_compat"],
   // The whole site is prerendered into dist/client (bun run build) and served
   // as static assets, which never invoke the Worker. The Worker runs only for
-  // the paths below: registry endpoints (install analytics) and /api.
+  // the paths below: registry endpoints (exact headers) and /api.
   "assets": {
     "directory": "dist/client",
     "binding": "ASSETS",

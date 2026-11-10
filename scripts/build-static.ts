@@ -52,8 +52,8 @@ async function write(file: string, body: string | Uint8Array) {
 const json = (data: unknown) => JSON.stringify(data);
 
 // ---------------------------------------------------------------------------
-// /r and /native/r: served by the Worker (install analytics), with the exact
-// headers the old route handlers sent.
+// /r and /native/r: served by the Worker with the exact headers the old route
+// handlers sent.
 
 type WorkerRoute = { asset: string; headers: Record<string, string> };
 const workerRoutes: Record<string, WorkerRoute> = {};
