@@ -193,7 +193,7 @@ async function buildLlmsTxt() {
     `- [Motion Guides](${SITE_URL}/docs/motion-patterns.md): Purposeful motion, timing, easing, recipes, and reduced motion.`,
     `- [Agent Guide](${SITE_URL}/docs/ai-agents.md): Agent skill, MCP server, registry endpoints, and install flows.`,
     `- [OpenUI Guide](${SITE_URL}/docs/openui.md): Register beUI components and render streamed generative interfaces.`,
-    `- [Changelog](${SITE_URL}/changelog/rss.xml): Weekly new components, improvements and fixes, as an RSS feed.`,
+    `- [Changelog](${SITE_URL}/changelog/rss.xml): New components, improvements and fixes by release date, as an RSS feed.`,
     `- [React Native Setup](${SITE_URL}/docs/native-setup.md): One-time app setup for beUI Native: libraries, Uniwind, theme tokens and folder layout.`,
     "",
     "## Components",
@@ -235,7 +235,7 @@ const escapeXml = (value: string) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
 
-/** RSS 2.0 feed of the changelog, one item per week. */
+/** RSS 2.0 feed of the changelog, one item per release. */
 async function buildRss() {
   const items = changelogEntries
     .map((entry) => {

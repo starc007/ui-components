@@ -25,7 +25,7 @@ export function changelogItemLink(item: ChangelogItem) {
   return item.href ? { href: item.href, label: undefined } : null;
 }
 
-/** Stable anchor for an entry, so a week can be linked directly. */
+/** Stable anchor for an entry, so a release can be linked directly. */
 export function changelogAnchor(date: string) {
-  return `week-${date}`;
+  return date;
 }

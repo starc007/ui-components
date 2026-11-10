@@ -8,7 +8,7 @@ export type ChangelogItem = {
   href?: string;
 };
 
-/** One week of changes, dated by the Monday it starts on. */
+/** One release: everything that shipped on `date` (YYYY-MM-DD). */
 export type ChangelogEntry = {
   date: string;
   title: string;

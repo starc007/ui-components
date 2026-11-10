@@ -7,7 +7,7 @@ import { withIntl } from "./intl";
 
 afterEach(cleanup);
 
-test("changelog lists dated weeks under one heading outline with named item links", async () => {
+test("changelog lists dated releases under one heading outline with named item links", async () => {
   const { container, getAllByRole, getByRole } = render(withIntl(<ChangelogContent />));
 
   expect(getAllByRole("heading", { level: 1 })).toHaveLength(1);

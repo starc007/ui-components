@@ -1,34 +1,16 @@
 import type { ChangelogEntry } from "@/lib/changelog/types";
 
 /**
- * Public changelog, newest week first. Add a line for every user-facing
- * feat or fix: new components and variants, visible behavior changes,
- * accessibility and reduced-motion fixes. Leave out internal work.
+ * Public changelog, newest release first, one entry per ship date. Add a line
+ * for every user-facing feat or fix: new components and variants, visible
+ * behavior changes, accessibility and reduced-motion fixes. Leave out
+ * internal work.
  */
 export const changelogEntries: ChangelogEntry[] = [
   {
-    "date": "2026-11-09",
-    "title": "beUI in five languages",
+    "date": "2026-11-10",
+    "title": "Fixes and improvements",
     "items": [
-      {
-        "type": "new",
-        "text": "The site is now available in Chinese, Spanish, French and German. Pick a language from the menu in the header.",
-        "href": "/"
-      },
-      {
-        "type": "new",
-        "text": "Every component and chart with built-in text, such as close buttons, placeholders, empty states, validation errors and screen-reader labels, can now be translated. Wrap your app in LocaleProvider from lib/i18n with your strings, or override any string on one instance with the new labels prop. Dates, weekdays, file sizes and counts follow the provider's language."
-      },
-      {
-        "type": "improved",
-        "text": "Todo List takes a labels prop for its title, progress and status text, and formats its counts for the current language.",
-        "component": "todo-list"
-      },
-      {
-        "type": "improved",
-        "text": "Number Ticker's locale prop accepts a language tag such as de-DE, and otherwise follows the LocaleProvider language.",
-        "component": "number"
-      },
       {
         "type": "fixed",
         "text": "Line Chart and Bar Chart now draw when data arrives after an empty first render.",
@@ -107,28 +89,33 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-11-02",
-    "title": "Plinko, Mines, Crash and Slide",
+    "date": "2026-11-09",
+    "title": "Translatable components",
+    "items": [
+      {
+        "type": "new",
+        "text": "Every component and chart with built-in text, such as close buttons, placeholders, empty states, validation errors and screen-reader labels, can now be translated. Wrap your app in LocaleProvider from lib/i18n with your strings, or override any string on one instance with the new labels prop. Dates, weekdays, file sizes and counts follow the provider's language."
+      },
+      {
+        "type": "improved",
+        "text": "Todo List takes a labels prop for its title, progress and status text, and formats its counts for the current language.",
+        "component": "todo-list"
+      },
+      {
+        "type": "improved",
+        "text": "Number Ticker's locale prop accepts a language tag such as de-DE, and otherwise follows the LocaleProvider language.",
+        "component": "number"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-06",
+    "title": "Slide",
     "items": [
       {
         "type": "new",
         "text": "Crash, Mines, Plinko and Slide now have their own Casino section.",
         "href": "/casino"
-      },
-      {
-        "type": "new",
-        "text": "Crash is a multiplier game: cash out before the round crashes. It ships as a paper plane, a hot-air balloon and a stacking tower.",
-        "component": "crash"
-      },
-      {
-        "type": "new",
-        "text": "Plinko drops balls through rows of pegs into scoring slots. Pass your own slot values and the board sizes itself, or let plinkoSlots build a curve for any number of rows. Pegs flash as they're hit, the winning slot stays marked, and optional sound clicks on every peg and lands with a thunk that brightens toward the rarer edges.",
-        "component": "plinko"
-      },
-      {
-        "type": "new",
-        "text": "Mines is a tile game: choose how many mines to hide, reveal tiles to find gems that raise the multiplier, and cash out before you hit a mine. Found gems are numbered in pick order, an odds ring shows how safe the next pick is, a result ticket sums up each round with a miniature map of your run, and optional sound gives gems, streaks, mines and cash outs their own voice. It plays fully from the keyboard.",
-        "component": "mines"
       },
       {
         "type": "new",
@@ -143,8 +130,35 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-10-26",
-    "title": "Line, bar and sparkline charts",
+    "date": "2026-11-05",
+    "title": "Crash and Mines",
+    "items": [
+      {
+        "type": "new",
+        "text": "Crash is a multiplier game: cash out before the round crashes. It ships as a paper plane, a hot-air balloon and a stacking tower.",
+        "component": "crash"
+      },
+      {
+        "type": "new",
+        "text": "Mines is a tile game: choose how many mines to hide, reveal tiles to find gems that raise the multiplier, and cash out before you hit a mine. Found gems are numbered in pick order, an odds ring shows how safe the next pick is, a result ticket sums up each round with a miniature map of your run, and optional sound gives gems, streaks, mines and cash outs their own voice. It plays fully from the keyboard.",
+        "component": "mines"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-03",
+    "title": "Plinko",
+    "items": [
+      {
+        "type": "new",
+        "text": "Plinko drops balls through rows of pegs into scoring slots. Pass your own slot values and the board sizes itself, or let plinkoSlots build a curve for any number of rows. Pegs flash as they're hit, the winning slot stays marked, and optional sound clicks on every peg and lands with a thunk that brightens toward the rarer edges.",
+        "component": "plinko"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-31",
+    "title": "Animated Pagination and Animated Avatar Group",
     "items": [
       {
         "type": "new",
@@ -155,7 +169,24 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "new",
         "text": "Avatar Group fans its avatars apart on hover, lifts the one under your pointer with its name, and expands from a +N count to show everyone.",
         "component": "avatar-group"
-      },
+      }
+    ]
+  },
+  {
+    "date": "2026-10-28",
+    "title": "Fixes and improvements",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Morphing Modal no longer stretches upward for a moment when you switch views. The panel now moves straight to the new view's height.",
+        "component": "morphing-modal"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-27",
+    "title": "Line Chart, Bar Chart and Sparkline",
+    "items": [
       {
         "type": "new",
         "text": "Line Chart draws line and area charts that morph when the data changes. Inspecting rolls a pill along the category axis, recedes the line past the crosshair and springs a tooltip beside the values, and a loading status holds a pulsing placeholder until your data draws in.",
@@ -178,18 +209,63 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "fixed",
-        "text": "Card Dealer cards stay inside their table and no longer draw over a sticky page header when you scroll.",
-        "component": "card-dealer"
-      },
-      {
-        "type": "fixed",
         "text": "Loader's Morph and Metaballs styles no longer log SVG attribute errors in the console when they mount.",
         "component": "loader"
-      },
+      }
+    ]
+  },
+  {
+    "date": "2026-10-26",
+    "title": "Fixes and improvements",
+    "items": [
       {
         "type": "fixed",
-        "text": "Morphing Modal no longer stretches upward for a moment when you switch views. The panel now moves straight to the new view's height.",
-        "component": "morphing-modal"
+        "text": "Card Dealer cards stay inside their table and no longer draw over a sticky page header when you scroll.",
+        "component": "card-dealer"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-24",
+    "title": "Card Dealer",
+    "items": [
+      {
+        "type": "new",
+        "text": "Card Dealer lays out a deck, a fanned hand and a discard pile. Cards arc across the table and flip in flight, and hop over each other when you sort the hand.",
+        "component": "card-dealer"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-23",
+    "title": "Fixes and improvements",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Morph Popover moves focus into the panel when you open it with Enter or Space, so keyboard users land on its first control instead of tabbing through the page. A new initialFocus prop picks a different target.",
+        "component": "popover"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-22",
+    "title": "Sankey Chart",
+    "items": [
+      {
+        "type": "new",
+        "text": "Sankey Chart shows weighted flows between stages: bands draw in from left to right, morph when the data changes, and light up with everything a node or flow connects.",
+        "component": "sankey-chart"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-20",
+    "title": "Timeline",
+    "items": [
+      {
+        "type": "new",
+        "text": "Timeline lays dated events along a draggable track: the centered event grows while its neighbours dim, with tick dividers between cards and year numerals drifting behind.",
+        "component": "timeline"
       }
     ]
   },
@@ -199,32 +275,40 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
-        "text": "Card Dealer lays out a deck, a fanned hand and a discard pile. Cards arc across the table and flip in flight, and hop over each other when you sort the hand.",
-        "component": "card-dealer"
-      },
-      {
-        "type": "new",
-        "text": "Sankey Chart shows weighted flows between stages: bands draw in from left to right, morph when the data changes, and light up with everything a node or flow connects.",
-        "component": "sankey-chart"
-      },
-      {
-        "type": "new",
-        "text": "Timeline lays dated events along a draggable track: the centered event grows while its neighbours dim, with tick dividers between cards and year numerals drifting behind.",
-        "component": "timeline"
-      },
-      {
-        "type": "new",
         "text": "This changelog lists each week's new components, improvements and fixes, with an RSS feed to follow along."
-      },
-      {
-        "type": "fixed",
-        "text": "Morph Popover moves focus into the panel when you open it with Enter or Space, so keyboard users land on its first control instead of tabbing through the page. A new initialFocus prop picks a different target.",
-        "component": "popover"
       }
     ]
   },
   {
-    "date": "2026-10-12",
+    "date": "2026-10-18",
+    "title": "Fixes and improvements",
+    "items": [
+      {
+        "type": "improved",
+        "text": "Select now unfolds from the trigger on a single spring, staying anchored with rows that never scale.",
+        "component": "select"
+      },
+      {
+        "type": "improved",
+        "text": "Tabs accept an icon per trigger, and can show icons only on the selected tab, springing them open as selection moves.",
+        "component": "tabs"
+      },
+      {
+        "type": "fixed",
+        "text": "Closed keyboard and focus gaps: arrow keys in Select, Radio Group and Tabs, focus trapping in Drawer, Bottom Sheet, Morphing Modal and Bloom Menu, keyboard-openable Swipeable List rows, and a Shader Background that stays still under reduced motion."
+      },
+      {
+        "type": "improved",
+        "text": "Every component page now has a collapsible About section with use cases, accessibility notes and an FAQ."
+      },
+      {
+        "type": "improved",
+        "text": "Code blocks ship much lighter markup, so pages that bundle many source files load faster."
+      }
+    ]
+  },
+  {
+    "date": "2026-10-16",
     "title": "React Native components arrive",
     "summary": "beUI Native brings React Native versions of beUI components to the site, alongside two new charts and a broad keyboard and focus pass.",
     "items": [
@@ -242,7 +326,24 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "new",
         "text": "The AI agent components are now available for React Native, with a setup guide for adding beUI Native to an Expo project.",
         "href": "/docs/native-setup"
-      },
+      }
+    ]
+  },
+  {
+    "date": "2026-10-14",
+    "title": "Fixes and improvements",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Morph popovers reveal without shifting or stretching their content, and popover exits play through even when content remounts.",
+        "component": "popover"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-12",
+    "title": "Donut Chart and Candlestick Chart",
+    "items": [
       {
         "type": "new",
         "text": "Donut Chart shows shares as a round-capped ring with a sweep-in, a focused segment pop, a cross-fading center readout and keyboard-navigable legend rows.",
@@ -257,69 +358,17 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "improved",
         "text": "Order Book can inspect depth to a hovered or focused level, with an average-fill summary and optional price selection.",
         "component": "order-book"
-      },
-      {
-        "type": "improved",
-        "text": "Select now unfolds from the trigger on a single spring, staying anchored with rows that never scale.",
-        "component": "select"
-      },
-      {
-        "type": "improved",
-        "text": "Tabs accept an icon per trigger, and can show icons only on the selected tab, springing them open as selection moves.",
-        "component": "tabs"
-      },
-      {
-        "type": "fixed",
-        "text": "Closed keyboard and focus gaps: arrow keys in Select, Radio Group and Tabs, focus trapping in Drawer, Bottom Sheet, Morphing Modal and Bloom Menu, keyboard-openable Swipeable List rows, and a Shader Background that stays still under reduced motion."
-      },
-      {
-        "type": "fixed",
-        "text": "Morph popovers reveal without shifting or stretching their content, and popover exits play through even when content remounts.",
-        "component": "popover"
-      },
-      {
-        "type": "improved",
-        "text": "Every component page now has a collapsible About section with use cases, accessibility notes and an FAQ."
-      },
-      {
-        "type": "improved",
-        "text": "Code blocks ship much lighter markup, so pages that bundle many source files load faster."
       }
     ]
   },
   {
-    "date": "2026-10-05",
-    "title": "Color Picker, Card and new charts",
+    "date": "2026-10-11",
+    "title": "Morphing Search",
     "items": [
-      {
-        "type": "new",
-        "text": "Animated Alert adds composable inline feedback with five variants, dismissible exits and polite or urgent announcements.",
-        "component": "alert"
-      },
-      {
-        "type": "new",
-        "text": "Animated Collapsible adds a composable disclosure with a spring reveal, custom triggers and controlled or uncontrolled state.",
-        "component": "collapsible"
-      },
-      {
-        "type": "new",
-        "text": "Aspect Ratio adds a responsive frame and image that morph smoothly between ratios.",
-        "component": "aspect-ratio"
-      },
       {
         "type": "new",
         "text": "Treemap, Volume Profile and Status Bar charts join the charts collection, each with tooltips, keyboard inspection and an exact-data table.",
         "href": "/charts"
-      },
-      {
-        "type": "new",
-        "text": "Color Picker opens from a trigger chip that morphs into the saturation area, with hue and alpha sliders, a drag loupe, hex and channel inputs, presets and an eyedropper.",
-        "component": "color-picker"
-      },
-      {
-        "type": "new",
-        "text": "Card is a composable card with header, action, content and footer parts, plus optional press feedback and a selected ring.",
-        "component": "card"
       },
       {
         "type": "new",
@@ -342,8 +391,45 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-09-28",
-    "title": "Voice Orb, Arc Picker and more",
+    "date": "2026-10-10",
+    "title": "Color Picker and Card",
+    "items": [
+      {
+        "type": "new",
+        "text": "Color Picker opens from a trigger chip that morphs into the saturation area, with hue and alpha sliders, a drag loupe, hex and channel inputs, presets and an eyedropper.",
+        "component": "color-picker"
+      },
+      {
+        "type": "new",
+        "text": "Card is a composable card with header, action, content and footer parts, plus optional press feedback and a selected ring.",
+        "component": "card"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Animated Alert, Animated Collapsible and Aspect Ratio",
+    "items": [
+      {
+        "type": "new",
+        "text": "Animated Alert adds composable inline feedback with five variants, dismissible exits and polite or urgent announcements.",
+        "component": "alert"
+      },
+      {
+        "type": "new",
+        "text": "Animated Collapsible adds a composable disclosure with a spring reveal, custom triggers and controlled or uncontrolled state.",
+        "component": "collapsible"
+      },
+      {
+        "type": "new",
+        "text": "Aspect Ratio adds a responsive frame and image that morph smoothly between ratios.",
+        "component": "aspect-ratio"
+      }
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Voice Orb and Arc Picker",
     "items": [
       {
         "type": "new",
@@ -354,7 +440,13 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "new",
         "text": "Arc Picker is a radial text picker that curves from any edge and selects as labels cross the center, with drag momentum and keyboard support.",
         "component": "arc-picker"
-      },
+      }
+    ]
+  },
+  {
+    "date": "2026-10-02",
+    "title": "Sortable List, Image Viewer and Date Range Picker",
+    "items": [
       {
         "type": "new",
         "text": "Sortable List adds a composable reorderable list with drag handles, keyboard reordering, undo and position announcements.",
@@ -369,7 +461,13 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "new",
         "text": "Date Range Picker adds a composable range picker with inline and dropdown layouts, presets and full keyboard navigation, whose trigger morphs open.",
         "component": "date-range-picker"
-      },
+      }
+    ]
+  },
+  {
+    "date": "2026-10-01",
+    "title": "Fixes and improvements",
+    "items": [
       {
         "type": "fixed",
         "text": "The gooey popover now hides its closed layer once the close animation settles.",
@@ -378,14 +476,9 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-09-21",
-    "title": "Composition charts and breadcrumbs",
+    "date": "2026-09-27",
+    "title": "Animated Breadcrumb and Animated Color Selector",
     "items": [
-      {
-        "type": "new",
-        "text": "Composition Chart shows normalized stacked bars or areas with a compact legend, series pinning and shared tooltips.",
-        "component": "composition-chart"
-      },
       {
         "type": "new",
         "text": "Animated Breadcrumb collapses long paths into an overflow dropdown, with matching slide and fade transitions.",
@@ -402,11 +495,6 @@ export const changelogEntries: ChangelogEntry[] = [
         "href": "/charts"
       },
       {
-        "type": "fixed",
-        "text": "The morph popover no longer flashes when it opens.",
-        "component": "popover"
-      },
-      {
         "type": "improved",
         "text": "The landing page and site styling were refreshed with clearer navigation and theme controls in the navbar.",
         "href": "/"
@@ -414,7 +502,29 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-09-14",
+    "date": "2026-09-26",
+    "title": "Fixes and improvements",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "The morph popover no longer flashes when it opens.",
+        "component": "popover"
+      }
+    ]
+  },
+  {
+    "date": "2026-09-25",
+    "title": "Composition Chart",
+    "items": [
+      {
+        "type": "new",
+        "text": "Composition Chart shows normalized stacked bars or areas with a compact legend, series pinning and shared tooltips.",
+        "component": "composition-chart"
+      }
+    ]
+  },
+  {
+    "date": "2026-09-20",
     "title": "Charts get their own home",
     "summary": "Data visualizations moved to a dedicated charts section, with five new charts in one week.",
     "items": [
@@ -442,7 +552,13 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "new",
         "text": "Funnel Chart draws connected curved stages in vertical or horizontal directions, with conversion and drop-off tooltips.",
         "component": "funnel-chart"
-      },
+      }
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "title": "Fixes and improvements",
+    "items": [
       {
         "type": "improved",
         "text": "Tabs can show integrated overflow controls when there are more tabs than fit.",
@@ -456,24 +572,9 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-09-07",
-    "title": "Inline Slider and market cards",
+    "date": "2026-09-12",
+    "title": "Fixes and improvements",
     "items": [
-      {
-        "type": "new",
-        "text": "Range Slider gains an Inline Slider design that keeps its label and value inside the track.",
-        "component": "range-slider"
-      },
-      {
-        "type": "new",
-        "text": "Prediction Market adds Market Cards with odds buttons, payout tooltips, volume sparklines and bookmarks.",
-        "component": "prediction-market"
-      },
-      {
-        "type": "improved",
-        "text": "The base Range Slider handle and fill now match the inline design, without focus borders during pointer use.",
-        "component": "range-slider"
-      },
       {
         "type": "fixed",
         "text": "Title-only toasts now center their content.",
@@ -487,14 +588,36 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-08-31",
-    "title": "Adaptive Stepper and Card Folder",
+    "date": "2026-09-10",
+    "title": "Prediction Market",
     "items": [
       {
         "type": "new",
-        "text": "Adaptive Stepper is a numeric stepper that grows its value into the space of an unavailable action at its bounds.",
-        "component": "adaptive-stepper"
+        "text": "Prediction Market adds Market Cards with odds buttons, payout tooltips, volume sparklines and bookmarks.",
+        "component": "prediction-market"
+      }
+    ]
+  },
+  {
+    "date": "2026-09-09",
+    "title": "Range Slider",
+    "items": [
+      {
+        "type": "new",
+        "text": "Range Slider gains an Inline Slider design that keeps its label and value inside the track.",
+        "component": "range-slider"
       },
+      {
+        "type": "improved",
+        "text": "The base Range Slider handle and fill now match the inline design, without focus borders during pointer use.",
+        "component": "range-slider"
+      }
+    ]
+  },
+  {
+    "date": "2026-09-04",
+    "title": "Card Folder and Number Animation",
+    "items": [
       {
         "type": "new",
         "text": "Card Folder tucks a card into a stitched purse pocket that lifts forward as the purse compresses.",
@@ -508,28 +631,24 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-08-24",
-    "title": "File Tree and Multi Select",
+    "date": "2026-08-31",
+    "title": "Adaptive Stepper",
     "items": [
       {
         "type": "new",
-        "text": "Button gains a Metallic Button variant.",
-        "component": "button"
-      },
-      {
-        "type": "new",
-        "text": "File Tree adds composable files and folders with springing branches, a gliding selection and full keyboard navigation.",
-        "component": "file-tree"
-      },
+        "text": "Adaptive Stepper is a numeric stepper that grows its value into the space of an unavailable action at its bounds.",
+        "component": "adaptive-stepper"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-29",
+    "title": "Multi Select",
+    "items": [
       {
         "type": "new",
         "text": "Multi Select adds searchable options, removable animated tokens and a morphing panel.",
         "component": "multi-select"
-      },
-      {
-        "type": "fixed",
-        "text": "Input validation messages no longer shift the surrounding layout.",
-        "component": "input"
       },
       {
         "type": "fixed",
@@ -539,14 +658,42 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-08-17",
-    "title": "Morphing Search and iOS fixes",
+    "date": "2026-08-28",
+    "title": "Fixes and improvements",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Input validation messages no longer shift the surrounding layout.",
+        "component": "input"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-27",
+    "title": "File Tree",
     "items": [
       {
         "type": "new",
-        "text": "Morphing Search is a search field that morphs into a focus-managed results surface and back.",
-        "component": "morphing-search"
-      },
+        "text": "File Tree adds composable files and folders with springing branches, a gliding selection and full keyboard navigation.",
+        "component": "file-tree"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-25",
+    "title": "Button",
+    "items": [
+      {
+        "type": "new",
+        "text": "Button gains a Metallic Button variant.",
+        "component": "button"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-22",
+    "title": "Expandable Control",
+    "items": [
       {
         "type": "new",
         "text": "Expandable Control adds click-to-expand buttons and chips that reveal a label or trailing action.",
@@ -577,38 +724,24 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-08-10",
-    "title": "Combobox and Project Folder",
+    "date": "2026-08-19",
+    "title": "Morphing Search",
     "items": [
       {
         "type": "new",
-        "text": "Combobox adds searchable selection where the input is the trigger, with grouped filtering, keyboard navigation and a gliding active row.",
-        "component": "combobox"
-      },
-      {
-        "type": "new",
-        "text": "Project Folder fans its files open on hover and morphs into a focus-managed overlay on click.",
-        "component": "project-folder"
-      },
-      {
-        "type": "new",
-        "text": "Text Animation gains a Text Scramble variant that resolves changed text while keeping a stable accessible value.",
-        "component": "text-animation"
-      },
-      {
-        "type": "improved",
-        "text": "Agent Activity accepts custom working and completed status renderers.",
-        "component": "agent-activity"
-      },
+        "text": "Morphing Search is a search field that morphs into a focus-managed results surface and back.",
+        "component": "morphing-search"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "title": "OpenUI guide and fixes",
+    "items": [
       {
         "type": "fixed",
         "text": "Bottom Sheet accessibility was improved.",
         "component": "bottom-sheet"
-      },
-      {
-        "type": "fixed",
-        "text": "The gooey popover trigger stays visible in Safari.",
-        "component": "popover"
       },
       {
         "type": "new",
@@ -618,15 +751,97 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-08-03",
-    "title": "Agent Interfaces components launch",
-    "summary": "A new category of AI and agent interface primitives, from messages and prompt input to approvals, tool results and citations.",
+    "date": "2026-08-15",
+    "title": "Project Folder",
+    "items": [
+      {
+        "type": "new",
+        "text": "Project Folder fans its files open on hover and morphs into a focus-managed overlay on click.",
+        "component": "project-folder"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-14",
+    "title": "Text Animation",
+    "items": [
+      {
+        "type": "new",
+        "text": "Text Animation gains a Text Scramble variant that resolves changed text while keeping a stable accessible value.",
+        "component": "text-animation"
+      },
+      {
+        "type": "improved",
+        "text": "Agent Activity accepts custom working and completed status renderers.",
+        "component": "agent-activity"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-13",
+    "title": "Fixes and improvements",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "The gooey popover trigger stays visible in Safari.",
+        "component": "popover"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-11",
+    "title": "Combobox",
+    "items": [
+      {
+        "type": "new",
+        "text": "Combobox adds searchable selection where the input is the trigger, with grouped filtering, keyboard navigation and a gliding active row.",
+        "component": "combobox"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-08",
+    "title": "Sign Up Form and the AI agents guide",
     "items": [
       {
         "type": "new",
         "text": "Agent Interfaces adds a full set of AI interface components, including Message, Message Scroller, Prompt Input, Todo List, Code Block, File Diff, Tool Result, Streaming Response, Image Generation and Citations.",
         "href": "/docs/ai-agents"
       },
+      {
+        "type": "new",
+        "text": "Sign Up Form adds a composed sign-up flow with forgiving validation, a password strength meter and animated submit states.",
+        "component": "signup-form"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-06",
+    "title": "Morphing Tabs",
+    "items": [
+      {
+        "type": "new",
+        "text": "Morphing Tabs adds liquid, spring-driven tabs that can be reordered by dragging.",
+        "component": "morphing-tabs"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-05",
+    "title": "Fixes and improvements",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Command Palette scrolling stays contained inside the palette.",
+        "component": "command-palette"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-03",
+    "title": "Agent Interfaces components launch",
+    "summary": "A new category of AI and agent interface primitives, from messages and prompt input to approvals, tool results and citations.",
+    "items": [
       {
         "type": "new",
         "text": "Chat App combines navigation, messages, streaming, approvals, tool results and prompt input into one agent workspace shell.",
@@ -646,27 +861,61 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "new",
         "text": "Agent Loading States adds Thinking Shimmer, Agent Progress and Reasoning Text.",
         "component": "loading-states"
+      }
+    ]
+  },
+  {
+    "date": "2026-08-01",
+    "title": "Theme Toggle",
+    "items": [
+      {
+        "type": "improved",
+        "text": "Knockout Bracket adds an optional third-place match, team logos or country flags, and optional match metadata.",
+        "component": "knockout-bracket"
       },
       {
         "type": "new",
-        "text": "Morphing Tabs adds liquid, spring-driven tabs that can be reordered by dragging.",
-        "component": "morphing-tabs"
-      },
+        "text": "Theme Toggle gains a blinds reveal.",
+        "component": "theme-toggle"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-31",
+    "title": "Range Slider",
+    "items": [
       {
         "type": "new",
-        "text": "Sign Up Form adds a composed sign-up flow with forgiving validation, a password strength meter and animated submit states.",
-        "component": "signup-form"
-      },
+        "text": "Range Slider gains Fluid, Wave, Bubble and Ruler designs.",
+        "component": "range-slider"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-30",
+    "title": "File Upload",
+    "items": [
       {
-        "type": "fixed",
-        "text": "Command Palette scrolling stays contained inside the palette.",
-        "component": "command-palette"
+        "type": "new",
+        "text": "File Upload gains an Attachment Upload variant with image previews, upload states, retry and an audio waveform.",
+        "component": "file-upload"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-29",
+    "title": "Animated Sidebar",
+    "items": [
+      {
+        "type": "new",
+        "text": "Animated Sidebar adds an application sidebar with icon or off-canvas collapse, nested menus and a mobile sheet.",
+        "component": "animated-sidebar"
       }
     ]
   },
   {
     "date": "2026-07-27",
-    "title": "Context Menu and Animated Sidebar",
+    "title": "Animated Context Menu and Fixtures",
     "items": [
       {
         "type": "new",
@@ -675,33 +924,8 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "new",
-        "text": "Animated Sidebar adds an application sidebar with icon or off-canvas collapse, nested menus and a mobile sheet.",
-        "component": "animated-sidebar"
-      },
-      {
-        "type": "new",
-        "text": "File Upload gains an Attachment Upload variant with image previews, upload states, retry and an audio waveform.",
-        "component": "file-upload"
-      },
-      {
-        "type": "new",
         "text": "Fixtures gains a Knockout Wheel that draws the tournament radially with the champion at the hub.",
         "component": "knockout-bracket"
-      },
-      {
-        "type": "improved",
-        "text": "Knockout Bracket adds an optional third-place match, team logos or country flags, and optional match metadata.",
-        "component": "knockout-bracket"
-      },
-      {
-        "type": "new",
-        "text": "Range Slider gains Fluid, Wave, Bubble and Ruler designs.",
-        "component": "range-slider"
-      },
-      {
-        "type": "new",
-        "text": "Theme Toggle gains a blinds reveal.",
-        "component": "theme-toggle"
       },
       {
         "type": "improved",
@@ -711,23 +935,24 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-07-20",
-    "title": "Center Morph Modal and Bounce Sidebar",
+    "date": "2026-07-25",
+    "title": "Text Animation",
     "items": [
-      {
-        "type": "new",
-        "text": "Center Morph Modal unfolds from its center toward every edge and folds back the same way.",
-        "component": "center-morph-modal"
-      },
-      {
-        "type": "new",
-        "text": "Bounce Sidebar is vertical navigation whose active dot jumps between rows on a curved spring path.",
-        "component": "bounce-sidebar"
-      },
       {
         "type": "new",
         "text": "Text Animation gains a Dia Text Animation variant that cycles a final word with a chromatic sweep.",
         "component": "text-animation"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-22",
+    "title": "Bounce Sidebar",
+    "items": [
+      {
+        "type": "new",
+        "text": "Bounce Sidebar is vertical navigation whose active dot jumps between rows on a curved spring path.",
+        "component": "bounce-sidebar"
       },
       {
         "type": "improved",
@@ -742,24 +967,35 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-07-13",
-    "title": "Masonry, notifications and CTA buttons",
+    "date": "2026-07-21",
+    "title": "Center Morph Modal",
     "items": [
       {
         "type": "new",
-        "text": "Notification Stack springs compact cards from a stacked summary into a readable list.",
-        "component": "notification-stack"
-      },
-      {
-        "type": "new",
-        "text": "Infinite Masonry adds a virtualized masonry grid with variable-height cards and infinite loading.",
-        "component": "infinite-masonry"
-      },
+        "text": "Center Morph Modal unfolds from its center toward every edge and folds back the same way.",
+        "component": "center-morph-modal"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-17",
+    "title": "Pull to Refresh",
+    "items": [
       {
         "type": "new",
         "text": "Pull to Refresh adds a native-feeling refresh container for touch and mouse.",
         "component": "pull-to-refresh"
       },
+      {
+        "type": "new",
+        "text": "Every component page now has an AI-friendly Markdown version."
+      }
+    ]
+  },
+  {
+    "date": "2026-07-16",
+    "title": "Animated CTA Buttons",
+    "items": [
       {
         "type": "new",
         "text": "Animated CTA Buttons adds Expanding Arrow, Hold Action and Slide Action buttons.",
@@ -769,42 +1005,40 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "improved",
         "text": "Wheel Picker can play an optional tick sound for each row crossed.",
         "component": "wheel-picker"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-15",
+    "title": "Infinite Masonry",
+    "items": [
+      {
+        "type": "new",
+        "text": "Infinite Masonry adds a virtualized masonry grid with variable-height cards and infinite loading.",
+        "component": "infinite-masonry"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-14",
+    "title": "Notification Stack",
+    "items": [
+      {
+        "type": "new",
+        "text": "Notification Stack springs compact cards from a stacked summary into a readable list.",
+        "component": "notification-stack"
       },
       {
         "type": "improved",
         "text": "The Action Swap roll motion was refined.",
         "component": "action-swap"
-      },
-      {
-        "type": "new",
-        "text": "Every component page now has an AI-friendly Markdown version."
       }
     ]
   },
   {
-    "date": "2026-07-06",
-    "title": "Wheel Picker and Gooey Popover",
+    "date": "2026-07-12",
+    "title": "Fixtures",
     "items": [
-      {
-        "type": "new",
-        "text": "Popover adds a gooey variant whose panel oozes out of the trigger.",
-        "component": "popover"
-      },
-      {
-        "type": "new",
-        "text": "Wheel Picker adds an iOS-style picker wheel with momentum, drag, wheel and keyboard input.",
-        "component": "wheel-picker"
-      },
-      {
-        "type": "new",
-        "text": "Availability Scheduler adds a weekly availability editor with time ranges and copy-to-days.",
-        "component": "availability-scheduler"
-      },
-      {
-        "type": "new",
-        "text": "Preview Rail adds navigation ticks that form a pyramid around the hovered item with a gliding preview card.",
-        "component": "preview-rail"
-      },
       {
         "type": "new",
         "text": "Fixtures launches with a Knockout Bracket that pages through a tournament one round at a time.",
@@ -822,43 +1056,57 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-06-29",
-    "title": "Table, Loader and Shader Background",
+    "date": "2026-07-11",
+    "title": "Preview Rail",
+    "items": [
+      {
+        "type": "new",
+        "text": "Preview Rail adds navigation ticks that form a pyramid around the hovered item with a gliding preview card.",
+        "component": "preview-rail"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-10",
+    "title": "Availability Scheduler",
+    "items": [
+      {
+        "type": "new",
+        "text": "Availability Scheduler adds a weekly availability editor with time ranges and copy-to-days.",
+        "component": "availability-scheduler"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-09",
+    "title": "Wheel Picker",
+    "items": [
+      {
+        "type": "new",
+        "text": "Wheel Picker adds an iOS-style picker wheel with momentum, drag, wheel and keyboard input.",
+        "component": "wheel-picker"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-07",
+    "title": "Popover",
+    "items": [
+      {
+        "type": "new",
+        "text": "Popover adds a gooey variant whose panel oozes out of the trigger.",
+        "component": "popover"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-05",
+    "title": "Input",
     "items": [
       {
         "type": "new",
         "text": "Input adds an animated text field with customization slots and the native caret.",
         "component": "input"
-      },
-      {
-        "type": "new",
-        "text": "Feedback Widget morphs a corner trigger into a feedback popup with animated sending, success and retry states.",
-        "component": "feedback-widget"
-      },
-      {
-        "type": "new",
-        "text": "Table adds a virtualized table with data, editable and async variants, plus column resize and reorder.",
-        "component": "table"
-      },
-      {
-        "type": "new",
-        "text": "Shader Background adds 21 shader variants.",
-        "component": "shader-background"
-      },
-      {
-        "type": "new",
-        "text": "Wallet Card adds a wallet overview with a morphing account switcher, a cascading balance, a privacy toggle and quick actions.",
-        "component": "wallet-card"
-      },
-      {
-        "type": "new",
-        "text": "Cylinder Carousel adds concave and convex 3D carousels.",
-        "component": "cylinder-carousel"
-      },
-      {
-        "type": "new",
-        "text": "Loader adds a loading indicator with seventeen variants.",
-        "component": "loader"
       },
       {
         "type": "fixed",
@@ -868,33 +1116,73 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-06-22",
-    "title": "Scroll animations and an MCP server",
+    "date": "2026-07-04",
+    "title": "Cylinder Carousel and Loader",
     "items": [
       {
         "type": "new",
-        "text": "Scroll Animation adds Smooth Scroll, Scroll Progress, Parallax, Scroll To and Scroll Reveal.",
-        "component": "scroll-animation"
+        "text": "Cylinder Carousel adds concave and convex 3D carousels.",
+        "component": "cylinder-carousel"
       },
       {
         "type": "new",
-        "text": "Range Slider adds a stepped slider with tick marks.",
-        "component": "range-slider"
-      },
+        "text": "Loader adds a loading indicator with seventeen variants.",
+        "component": "loader"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-03",
+    "title": "Wallet Card",
+    "items": [
       {
         "type": "new",
-        "text": "Checkbox and Radio Group add animated choice controls with fully clickable rows.",
-        "component": "checkbox"
-      },
+        "text": "Wallet Card adds a wallet overview with a morphing account switcher, a cascading balance, a privacy toggle and quick actions.",
+        "component": "wallet-card"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-02",
+    "title": "Shader Background",
+    "items": [
+      {
+        "type": "new",
+        "text": "Shader Background adds 21 shader variants.",
+        "component": "shader-background"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "title": "Table",
+    "items": [
+      {
+        "type": "new",
+        "text": "Table adds a virtualized table with data, editable and async variants, plus column resize and reorder.",
+        "component": "table"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-29",
+    "title": "Feedback Widget",
+    "items": [
+      {
+        "type": "new",
+        "text": "Feedback Widget morphs a corner trigger into a feedback popup with animated sending, success and retry states.",
+        "component": "feedback-widget"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-28",
+    "title": "Drawer and Select",
+    "items": [
       {
         "type": "new",
         "text": "Drawer adds a side panel that springs in from the left or right with scroll lock and Escape to close.",
         "component": "drawer"
-      },
-      {
-        "type": "new",
-        "text": "Bloom Menu morphs a button open into a menu that blooms out from the center.",
-        "component": "bloom-menu"
       },
       {
         "type": "new",
@@ -915,6 +1203,33 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "improved",
         "text": "Every component can be installed manually without shadcn, and a theme guide covers setting up tokens.",
         "href": "/docs/theme"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-26",
+    "title": "Bloom Menu",
+    "items": [
+      {
+        "type": "new",
+        "text": "Bloom Menu morphs a button open into a menu that blooms out from the center.",
+        "component": "bloom-menu"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-24",
+    "title": "Scroll Animation and Range Slider",
+    "items": [
+      {
+        "type": "new",
+        "text": "Scroll Animation adds Smooth Scroll, Scroll Progress, Parallax, Scroll To and Scroll Reveal.",
+        "component": "scroll-animation"
+      },
+      {
+        "type": "new",
+        "text": "Range Slider adds a stepped slider with tick marks.",
+        "component": "range-slider"
       },
       {
         "type": "improved",
@@ -924,39 +1239,20 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-06-15",
-    "title": "Theme Toggle, 404 pages and more blocks",
+    "date": "2026-06-23",
+    "title": "Checkbox",
     "items": [
       {
         "type": "new",
-        "text": "Swipeable List rows swipe left or right to reveal actions.",
-        "component": "swipeable-list"
-      },
-      {
-        "type": "new",
-        "text": "Theme Toggle reveals the new theme across the page with rectangle and circle transitions.",
-        "component": "theme-toggle"
-      },
-      {
-        "type": "new",
-        "text": "Bouncy Accordion adds a single-open accordion with connected spring motion.",
-        "component": "bouncy-accordion"
-      },
-      {
-        "type": "new",
-        "text": "File Upload adds an upload queue with progress, retry and remove actions.",
-        "component": "file-upload"
-      },
-      {
-        "type": "new",
-        "text": "Prediction Market adds a trade ticket with buy and sell modes and rolling amount entry.",
-        "component": "prediction-market"
-      },
-      {
-        "type": "new",
-        "text": "Overflow Actions adds a pill rail that springs open to reveal extra controls.",
-        "component": "overflow-actions"
-      },
+        "text": "Checkbox and Radio Group add animated choice controls with fully clickable rows.",
+        "component": "checkbox"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-21",
+    "title": "404 / Not Found",
+    "items": [
       {
         "type": "new",
         "text": "404 / Not Found adds five animated not-found page styles.",
@@ -973,8 +1269,62 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-06-08",
-    "title": "shadcn registry and Dynamic Island",
+    "date": "2026-06-19",
+    "title": "Overflow Actions",
+    "items": [
+      {
+        "type": "new",
+        "text": "Overflow Actions adds a pill rail that springs open to reveal extra controls.",
+        "component": "overflow-actions"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-18",
+    "title": "File Upload and Prediction Market",
+    "items": [
+      {
+        "type": "new",
+        "text": "File Upload adds an upload queue with progress, retry and remove actions.",
+        "component": "file-upload"
+      },
+      {
+        "type": "new",
+        "text": "Prediction Market adds a trade ticket with buy and sell modes and rolling amount entry.",
+        "component": "prediction-market"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-16",
+    "title": "Bouncy Accordion",
+    "items": [
+      {
+        "type": "new",
+        "text": "Bouncy Accordion adds a single-open accordion with connected spring motion.",
+        "component": "bouncy-accordion"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-15",
+    "title": "Swipeable List and Theme Toggle",
+    "items": [
+      {
+        "type": "new",
+        "text": "Swipeable List rows swipe left or right to reveal actions.",
+        "component": "swipeable-list"
+      },
+      {
+        "type": "new",
+        "text": "Theme Toggle reveals the new theme across the page with rectangle and circle transitions.",
+        "component": "theme-toggle"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-14",
+    "title": "Expandable Tabs",
     "items": [
       {
         "type": "new",
@@ -982,28 +1332,8 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "new",
-        "text": "Dynamic Island adds an iOS-style pill that morphs between live activity views.",
-        "component": "dynamic-island"
-      },
-      {
-        "type": "new",
-        "text": "OTP Input adds a one-time-code field with a gliding focus ring, error shake and success state.",
-        "component": "otp-input"
-      },
-      {
-        "type": "new",
         "text": "Expandable Tabs adds an icon tab bar whose active tab expands into a labeled pill.",
         "component": "expandable-tabs"
-      },
-      {
-        "type": "new",
-        "text": "Action Swap adds Blur, Roll and Cascade swap variants.",
-        "component": "action-swap"
-      },
-      {
-        "type": "new",
-        "text": "Text Animation gains a letter-by-letter Text Cascade.",
-        "component": "text-animation"
       },
       {
         "type": "improved",
@@ -1013,6 +1343,28 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "new",
         "text": "A motion patterns guide explains the motion conventions behind beUI.",
         "href": "/docs/motion-patterns"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-13",
+    "title": "OTP Input",
+    "items": [
+      {
+        "type": "new",
+        "text": "OTP Input adds a one-time-code field with a gliding focus ring, error shake and success state.",
+        "component": "otp-input"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-11",
+    "title": "Text Animation",
+    "items": [
+      {
+        "type": "new",
+        "text": "Text Animation gains a letter-by-letter Text Cascade.",
+        "component": "text-animation"
       },
       {
         "type": "fixed",
@@ -1027,7 +1379,23 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-06-01",
+    "date": "2026-06-10",
+    "title": "Dynamic Island and Action Swap",
+    "items": [
+      {
+        "type": "new",
+        "text": "Dynamic Island adds an iOS-style pill that morphs between live activity views.",
+        "component": "dynamic-island"
+      },
+      {
+        "type": "new",
+        "text": "Action Swap adds Blur, Roll and Cascade swap variants.",
+        "component": "action-swap"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-05",
     "title": "Badges, toasts and action bars",
     "items": [
       {
@@ -1048,7 +1416,7 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-05-18",
+    "date": "2026-05-19",
     "title": "Multi-chain Swap and motion tokens",
     "items": [
       {
@@ -1067,7 +1435,7 @@ export const changelogEntries: ChangelogEntry[] = [
     ]
   },
   {
-    "date": "2026-05-11",
+    "date": "2026-05-17",
     "title": "beUI v2 launches",
     "summary": "beUI v2 is a rewrite on Next.js 15, React 19, Tailwind CSS 4 and Framer Motion.",
     "items": [

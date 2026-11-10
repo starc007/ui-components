@@ -127,19 +127,21 @@ for (const kind of ["alternatives", "guides"] as const) {
   }
 }
 
-// Changelog: Monday-dated weeks, newest first, each item tied to a real
+// Changelog: one entry per ship date, newest first, each item tied to a real
 // component when it names one.
 changelogEntries.forEach((entry, index) => {
   const label = `changelog ${entry.date}`;
   const day = new Date(`${entry.date}T00:00:00Z`);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.date) || Number.isNaN(day.getTime())) {
-    errors.push(`${label}: date must be YYYY-MM-DD`);
-  } else if (day.getUTCDay() !== 1) {
-    errors.push(`${label}: date must be the Monday that starts the week`);
+  if (
+    !/^\d{4}-\d{2}-\d{2}$/.test(entry.date) ||
+    Number.isNaN(day.getTime()) ||
+    day.toISOString().slice(0, 10) !== entry.date
+  ) {
+    errors.push(`${label}: date must be a real YYYY-MM-DD day`);
   }
   const previous = changelogEntries[index - 1];
   if (previous && previous.date <= entry.date) {
-    errors.push(`${label}: entries must be newest first with one per week`);
+    errors.push(`${label}: entries must be newest first with one per date`);
   }
   if (entry.items.length === 0) errors.push(`${label}: has no items`);
   if (new Set(entry.items.map((item) => item.text)).size !== entry.items.length) {
