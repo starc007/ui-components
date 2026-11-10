@@ -177,6 +177,7 @@ export function CommandPalette({
       e.preventDefault();
       moveActive(-1);
     } else if (e.key === "Enter") {
+      if (e.nativeEvent.isComposing || e.keyCode === 229) return;
       e.preventDefault();
       const it = rows[active];
       if (it) {

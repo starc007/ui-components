@@ -14,9 +14,11 @@ import { cn } from "@/lib/utils";
 export function BalanceDelta({
   balance,
   initialChange,
+  prefix = "$",
 }: {
   balance: number;
   initialChange?: number;
+  prefix?: string;
 }) {
   const reduce = useReducedMotion();
   const prevRef = useRef(balance);
@@ -56,7 +58,8 @@ export function BalanceDelta({
             ) : (
               <TrendingDown className="h-3.5 w-3.5" />
             )}
-            {up ? "+" : "-"}$
+            {up ? "+" : "-"}
+            {prefix}
             {Math.abs(delta.amount).toLocaleString(undefined, {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,

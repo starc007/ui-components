@@ -28,7 +28,6 @@ export function Switch({
   const thumbRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const [isPressed, setIsPressed] = useState(false);
-  const [isPointer, setIsPointer] = useState(false);
 
   // Disabled shake feedback when pressed.
   useEffect(() => {
@@ -42,7 +41,7 @@ export function Switch({
     }
   }, [disabled, isPressed, reduce]);
 
-  const squish = !disabled && isPointer && isPressed && !reduce;
+  const squish = !disabled && isPressed && !reduce;
 
   return (
     <MotionConfig transition={reduce ? { duration: 0 } : THUMB_SPRING}>
@@ -55,10 +54,7 @@ export function Switch({
           aria-label={ariaLabel}
           disabled={disabled}
           onClick={() => !disabled && onCheckedChange(!checked)}
-          onPointerDown={(e) => {
-            setIsPressed(true);
-            setIsPointer(e.type.startsWith("pointer"));
-          }}
+          onPointerDown={() => setIsPressed(true)}
           onPointerUp={() => setIsPressed(false)}
           onPointerLeave={() => setIsPressed(false)}
           initial={false}

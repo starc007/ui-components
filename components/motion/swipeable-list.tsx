@@ -133,7 +133,7 @@ function useControllableSwipeValue({
 }) {
   const [internalValue, setInternalValue] = useState(defaultValue ?? null);
   const isControlled = value !== undefined;
-  const currentValue = value ?? internalValue;
+  const currentValue = isControlled ? value : internalValue;
 
   const setValue = useCallback(
     (next: SwipeableListValue | null) => {

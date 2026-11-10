@@ -43,7 +43,7 @@ const VARIANTS: {
   {
     id: "grain-sunset",
     value: "grain-gradient",
-    label: "Grain — Sunset",
+    label: "Grain: Sunset",
     props: {
       colors: ["#ff7a00", "#ff2e93", "#ffce54", "#8a2be2"],
       colorBack: "#1a0500",
@@ -54,7 +54,7 @@ const VARIANTS: {
   {
     id: "grain-pastel",
     value: "grain-gradient",
-    label: "Grain — Pastel",
+    label: "Grain: Pastel",
     props: {
       colors: ["#ffd6e8", "#c9e4ff", "#fff3c4", "#d9c9ff"],
       colorBack: "#ffffff",
@@ -65,7 +65,7 @@ const VARIANTS: {
   {
     id: "mesh-aurora",
     value: "mesh-gradient",
-    label: "Mesh — Aurora",
+    label: "Mesh: Aurora",
     props: {
       colors: ["#00ffb2", "#0072ff", "#a200ff", "#001a2c"],
       distortion: 0.6,
@@ -76,7 +76,7 @@ const VARIANTS: {
   {
     id: "mesh-citrus",
     value: "mesh-gradient",
-    label: "Mesh — Citrus",
+    label: "Mesh: Citrus",
     props: {
       colors: ["#fff200", "#ff8a00", "#ff3d00", "#ffe08a"],
       distortion: 0.7,
@@ -225,13 +225,13 @@ const VARIANTS: {
   {
     id: "static-mesh-dusk",
     value: "static-mesh-gradient",
-    label: "Static Mesh — Dusk",
+    label: "Static Mesh: Dusk",
     props: { colors: ["#2b1055", "#7597de", "#f6a1c8", "#0d0221"] },
   },
   {
     id: "radial-ember",
     value: "static-radial-gradient",
-    label: "Radial — Ember",
+    label: "Radial: Ember",
     props: { colorBack: "#0a0000", colors: ["#ff5100", "#ffce00", "#4a0000"] },
   },
   {

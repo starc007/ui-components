@@ -259,6 +259,7 @@ export function TableHeader<T>({
                     onPointerDown={(e) => onReorderStart(column.key, e)}
                     onPointerMove={onReorderMove}
                     onPointerUp={onReorderEnd}
+                    onPointerCancel={onReorderEnd}
                     className={cn(
                       "flex h-full w-6 cursor-grab touch-none items-center justify-center text-muted-foreground/60 transition-colors hover:text-foreground active:cursor-grabbing",
                       // The grip owns the whole press, so iOS must not open its
@@ -330,6 +331,7 @@ export function TableHeader<T>({
                   onPointerDown={(e) => onResizeStart(column.key, e)}
                   onPointerMove={onResizeMove}
                   onPointerUp={onResizeEnd}
+                  onPointerCancel={onResizeEnd}
                   className={cn(
                     "absolute top-0 right-0 h-full w-1.5 cursor-col-resize touch-none bg-transparent transition-colors hover:bg-muted",
                     // Same for the resize drag: the handle drives it end to end.

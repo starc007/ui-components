@@ -27,6 +27,7 @@ export const swapMessages = {
   networkFee: "Network fee",
   slippage: "Slippage",
   eta: "ETA",
+  max: "Max",
 };
 
 export type SwapMessages = typeof swapMessages;

@@ -35,7 +35,7 @@ export function RulerSlider({
   // Decimal places the step implies, so 0.5 reads "72.5" and 1 reads "72".
   // Fixed width keeps the readout from jittering as the value rolls; tick
   // labels stay trimmed so a whole-number scale is not littered with ".0".
-  // ponytail: reads 0 decimals for an exponential step (1e-7) — no such scale
+  // Reads 0 decimals for an exponential step (1e-7) — no such scale
   // is legible on a ruler anyway, so no parsing beyond this.
   const decimals = String(options.step ?? 1).split(".")[1]?.length ?? 0;
   const readout = (value: number) => value.toFixed(decimals);
@@ -66,7 +66,7 @@ export function RulerSlider({
   // clear interacting underneath an active drag.
   const gesture = useRef(0);
 
-  // ponytail: every tick is in the DOM — fine to a few hundred (80 units at
+  // Every tick is in the DOM — fine to a few hundred (80 units at
   // step 0.5 is 161). Window to the visible span if a finer step is ever needed.
   // Each tick carries an offset because max sits `remainder` of a step past the
   // last whole tick. Whenever remainder is under 0.5 that point falls inside

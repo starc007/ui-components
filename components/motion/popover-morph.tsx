@@ -543,7 +543,7 @@ function MorphPopoverSurface({
         className={cn(
           // The panel holds focus when nothing inside it can. An inset ring
           // stays inside the clip that would cut off an outline.
-          "overflow-hidden border border-border bg-background outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+          "border border-border bg-background outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
           className,
         )}
       >

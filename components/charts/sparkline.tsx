@@ -85,7 +85,9 @@ export function Sparkline({
   const gradientId = useId();
   const tooltipId = useId();
   const { ref, width } = useElementWidth<HTMLDivElement>();
-  const [active, setActive] = useState<number | null>(null);
+  const [activeIndex, setActive] = useState<number | null>(null);
+  // A sample inspected before the data shrank no longer exists.
+  const active = activeIndex !== null && activeIndex < data.length ? activeIndex : null;
   const [open, setOpen] = useState(false);
   // Under a finger the readout dot tracks the touch directly instead of gliding.
   const [touching, setTouching] = useState(false);

@@ -14,7 +14,6 @@ import {
   type Ref,
   useCallback,
   useContext,
-  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -148,7 +147,6 @@ export function AdaptiveStepper({
   const { locale } = useLocale();
   const ariaLabel = ariaLabelProp ?? t("label");
   const reduce = useReducedMotion() ?? false;
-  const labelId = useId();
   const decrementRef = useRef<HTMLButtonElement>(null);
   const incrementRef = useRef<HTMLButtonElement>(null);
   const lower = Number.isFinite(min) ? min : 0;
@@ -253,7 +251,7 @@ export function AdaptiveStepper({
           className,
         )}
       >
-        <legend id={labelId} className="sr-only">
+        <legend className="sr-only">
           {t("summary", { label: ariaLabel, value: valueText })}
         </legend>
         <Liquid

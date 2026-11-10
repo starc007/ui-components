@@ -23,6 +23,7 @@ import {
 } from "react";
 import { SPRING_GLIDE, SPRING_LAYOUT } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { capturePointer } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 export type ArcPickerOption = {
@@ -802,7 +803,8 @@ export function ArcPicker({
         tracking.current = true;
         instant.current = false;
         activity.set(reducedMotion ? 0 : 1);
-        root.current?.setPointerCapture(event.pointerId);
+        if (root.current && !root.current.hasPointerCapture(event.pointerId))
+          capturePointer(root.current, event.pointerId);
         const now = performance.now();
         const elapsed = Math.max(8, now - current.time);
         current.velocity =

@@ -4,7 +4,7 @@ export const bumpChartMessages = {
   plot: "{label} plot, scroll horizontally for more periods",
   description:
     "Ranks run from best at the top to lowest at the bottom. Use the legend to highlight or pin a series. Exact values follow in a table.",
-  caption: "{label} — exact ranks",
+  caption: "{label}: exact ranks",
   series: "Series",
   noData: "No data",
   highlight: "Highlight {name}",

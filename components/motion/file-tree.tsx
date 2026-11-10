@@ -388,7 +388,6 @@ export function FileTree({
                     aria-hidden="true"
                     initial={reduce ? false : { opacity: 0, scaleY: 0 }}
                     animate={{ opacity: 1, scaleY: 1 }}
-                    exit={{ opacity: 0, scaleY: 0 }}
                     transition={reduce ? { duration: 0 } : BRANCH_DRAW}
                     className="absolute top-0 bottom-0 w-px origin-top bg-border/70"
                     style={{ left: 16 + (row.depth - 1) * indent }}

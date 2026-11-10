@@ -28,6 +28,81 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "improved",
         "text": "Number Ticker's locale prop accepts a language tag such as de-DE, and otherwise follows the LocaleProvider language.",
         "component": "number"
+      },
+      {
+        "type": "fixed",
+        "text": "Line Chart and Bar Chart now draw when data arrives after an empty first render.",
+        "component": "line-chart"
+      },
+      {
+        "type": "fixed",
+        "text": "Sparkline drops a stale readout when its data shrinks, Liquidity Heatmap arrow keys stop at the grid edges, Candlestick hover dimming no longer lags on later candles, and Price Target Fan labels fractional axis steps correctly.",
+        "href": "/charts"
+      },
+      {
+        "type": "fixed",
+        "text": "Combobox, Multi Select, Command Palette and Morphing Search no longer commit a row when Enter confirms an IME composition.",
+        "component": "combobox"
+      },
+      {
+        "type": "fixed",
+        "text": "Combobox and Multi Select call onOpenChange only when the open state changes.",
+        "component": "combobox"
+      },
+      {
+        "type": "fixed",
+        "text": "Morphing Tabs never makes a disabled tab active, and arrow keys skip disabled tabs.",
+        "component": "morphing-tabs"
+      },
+      {
+        "type": "fixed",
+        "text": "Hold Action Button cancels a keyboard hold when focus leaves the button.",
+        "component": "expanding-arrow-button"
+      },
+      {
+        "type": "fixed",
+        "text": "Knockout Bracket renders nothing for an empty rounds array instead of throwing, and stays in range when rounds shrink.",
+        "component": "knockout-bracket"
+      },
+      {
+        "type": "fixed",
+        "text": "Swipeable List respects a controlled value of null, and Morphing Search releases page scroll when a controlled parent declines to open.",
+        "component": "swipeable-list"
+      },
+      {
+        "type": "fixed",
+        "text": "Table column resize and reorder end cleanly when the pointer is cancelled.",
+        "component": "table"
+      },
+      {
+        "type": "fixed",
+        "text": "Swap clears its quote spinner when the amount is emptied, its Max label is translatable, and the send-to toggle announces its expanded state.",
+        "component": "swap"
+      },
+      {
+        "type": "fixed",
+        "text": "Wallet Card handles an empty accounts list and shows balancePrefix on the balance change.",
+        "component": "wallet-card"
+      },
+      {
+        "type": "fixed",
+        "text": "Availability Scheduler gives new time ranges ids that cannot collide with saved ones.",
+        "component": "availability-scheduler"
+      },
+      {
+        "type": "fixed",
+        "text": "Expandable Button and Color Picker content keep a style prop you pass.",
+        "component": "expandable-control"
+      },
+      {
+        "type": "fixed",
+        "text": "Reduced motion: Image Generation keeps its dot field, Approval Card progress dots stop resizing, attachment rows drop the press scale, and useSmoothScroll jumps instead of gliding when used without a provider.",
+        "href": "/components/agents"
+      },
+      {
+        "type": "improved",
+        "text": "Voice Orb takes a labels prop for its fallback text.",
+        "component": "voice-orb"
       }
     ]
   },

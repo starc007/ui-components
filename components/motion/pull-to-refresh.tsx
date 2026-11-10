@@ -14,6 +14,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -265,9 +266,11 @@ export function PullToRefresh({
   const indicatorScale = useTransform(y, [0, pullThreshold], [0.86, 1]);
   const isRefreshing = refreshing || internalRefreshing;
 
-  disabledRef.current = disabled;
-  externalRefreshingRef.current = refreshing;
-  refreshingRef.current = isRefreshing;
+  useLayoutEffect(() => {
+    disabledRef.current = disabled;
+    externalRefreshingRef.current = refreshing;
+    refreshingRef.current = isRefreshing;
+  });
 
   const setStatus = useCallback((next: PullToRefreshStatus) => {
     if (statusRef.current === next) return;

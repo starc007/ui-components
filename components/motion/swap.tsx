@@ -61,8 +61,13 @@ export function MultiChainSwap({
   const toAmount = numericAmount * rate;
 
   useEffect(() => {
+    // Never falsy. Reading it keeps the token pair a dependency, so a new
+    // pair requotes.
     if (!quoteKey) return;
-    if (numericAmount === 0) return;
+    if (numericAmount === 0) {
+      setQuoting(false);
+      return;
+    }
     setQuoting(true);
     const id = setTimeout(() => setQuoting(false), 450);
     return () => clearTimeout(id);

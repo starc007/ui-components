@@ -63,7 +63,6 @@ export function BottomSheet({
   const dragControls = useDragControls();
   const sheetRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  const heightRef = useRef(0);
   const uid = useId();
   const titleId = `${uid}-title`;
   const descriptionId = `${uid}-description`;
@@ -200,10 +199,6 @@ export function BottomSheet({
               animate={reduce ? { y: 0, opacity: 1 } : { y: 0 }}
               exit={reduce ? { y: 0, opacity: 0 } : { y: "100%" }}
               transition={reduce ? { duration: 0.18, ease: EASE_DRAWER } : DRAWER}
-              onAnimationComplete={() => {
-                if (sheetRef.current)
-                  heightRef.current = sheetRef.current.offsetHeight;
-              }}
               {...gate}
               style={{ ...heightStyle, ...gate.style }}
               className={cn(

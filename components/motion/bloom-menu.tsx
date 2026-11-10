@@ -271,8 +271,8 @@ export function BloomMenu({
                       // inner content animates.
                       className={cn(
                         "flex items-center justify-center px-3 py-6 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:bg-muted/60 focus-visible:text-foreground",
-                        i % 3 !== 2 && "border-r border-border",
-                        i < 3 && "border-b border-border",
+                        col !== cols - 1 && "border-r border-border",
+                        row < rows - 1 && "border-b border-border",
                       )}
                     >
                       <motion.span

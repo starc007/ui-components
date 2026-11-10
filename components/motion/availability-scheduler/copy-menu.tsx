@@ -2,7 +2,7 @@
 
 import { Check, Copy } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Checkbox } from "@/components/motion/checkbox";
 import {
   MorphPopover,
@@ -33,6 +33,8 @@ export function CopyMenu({
   const [copied, setCopied] = useState(false);
   const [picked, setPicked] = useState<Set<DayKey>>(new Set());
   const { locale } = useLocale();
+  const copiedTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(copiedTimer.current), []);
   const others = WEEKDAYS.flatMap((d, index) =>
     d.key === from ? [] : [{ key: d.key, label: weekdayLabel(index, locale) }],
   );
@@ -51,7 +53,8 @@ export function CopyMenu({
     setOpen(false);
     setPicked(new Set());
     setCopied(true);
-    window.setTimeout(() => setCopied(false), 1200);
+    window.clearTimeout(copiedTimer.current);
+    copiedTimer.current = window.setTimeout(() => setCopied(false), 1200);
   };
 
   return (

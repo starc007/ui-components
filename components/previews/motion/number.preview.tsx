@@ -40,7 +40,7 @@ export function NumberPreview() {
               <NumberTicker
                 value={value}
                 className="text-3xl font-semibold tracking-tight text-foreground tabular-nums"
-                format={(number) => number.toLocaleString()}
+                format={(number) => number.toLocaleString("en-US")}
               />
             </div>
           ) : (
@@ -49,7 +49,7 @@ export function NumberPreview() {
               <div className="text-3xl font-semibold tracking-tight text-foreground tabular-nums">
                 <AnimatedNumber
                   value={129480}
-                  format={(number) => `$${Math.round(number).toLocaleString()}`}
+                  format={(number) => `$${Math.round(number).toLocaleString("en-US")}`}
                 />
               </div>
             </div>

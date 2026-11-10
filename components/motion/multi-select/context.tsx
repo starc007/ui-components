@@ -172,8 +172,10 @@ export function MultiSelect({
   const updateOpen = useCallback(
     (next: boolean, restoreFocus = false) => {
       if (disabled && next) return;
-      if (!openControlled) setInternalOpen(next);
-      onOpenChange?.(next);
+      if (next !== open) {
+        if (!openControlled) setInternalOpen(next);
+        onOpenChange?.(next);
+      }
       if (!next) updateQuery("");
       if (restoreFocus) {
         requestAnimationFrame(() =>
@@ -181,7 +183,7 @@ export function MultiSelect({
         );
       }
     },
-    [disabled, onOpenChange, openControlled, updateQuery],
+    [disabled, onOpenChange, open, openControlled, updateQuery],
   );
 
   const registerItem = useCallback((item: RegisteredMultiSelectItem) => {

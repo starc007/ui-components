@@ -148,7 +148,6 @@ export function MorphingModal({
               )}
             >
               <motion.div
-                key="panel"
                 ref={panelRef}
                 role="dialog"
                 aria-modal="true"

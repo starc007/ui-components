@@ -251,6 +251,13 @@ export function Table<T>({
     if (rowTimer.current) clearTimeout(rowTimer.current);
     rowTimer.current = setTimeout(() => setActiveRow(null), 100);
   }, []);
+  useEffect(
+    () => () => {
+      if (deactivateTimer.current) clearTimeout(deactivateTimer.current);
+      if (rowTimer.current) clearTimeout(rowTimer.current);
+    },
+    [],
+  );
   const activeRowEl = activeRow ? rowRefs.current[activeRow.id] : null;
   // Real columns + checkbox; the trailing spacer adds one more in colSpans.
   const leadColumns = columns.length + (selectable ? 1 : 0);
@@ -351,7 +358,8 @@ export function Table<T>({
                     <tr
                       key={entry.id}
                       ref={(el) => {
-                        rowRefs.current[entry.id] = el;
+                        if (el) rowRefs.current[entry.id] = el;
+                        else delete rowRefs.current[entry.id];
                       }}
                       data-selected={isSelected}
                       style={{ height: rowHeight }}

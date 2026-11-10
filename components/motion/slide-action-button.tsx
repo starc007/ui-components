@@ -67,7 +67,6 @@ export function SlideActionButton({
   const [completed, setCompleted] = useState(false);
   const safeDistance = Math.max(maxDistance, 1);
   const dragProgress = useTransform(x, [0, safeDistance], [0, 1]);
-  const fillProgress = useTransform(x, [0, safeDistance], [0, 1]);
   const labelOpacity = useTransform(
     x,
     [0, safeDistance * 0.35, safeDistance * 0.65],
@@ -152,7 +151,7 @@ export function SlideActionButton({
     >
       <motion.span
         aria-hidden="true"
-        style={{ scaleX: fillProgress }}
+        style={{ scaleX: dragProgress }}
         className={cn(
           "absolute inset-0 origin-left bg-primary will-change-transform",
           fillClassName,

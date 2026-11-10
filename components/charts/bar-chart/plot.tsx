@@ -86,13 +86,16 @@ export function BarChartPlot({
   const height = heightProp ?? (vertical ? 288 : Math.max(160, n * 36));
 
   if (!n || !rows.length)
+    // Same wrapper shape as the plot below, so the measured node survives
+    // until data arrives; the width and in-view hooks attach only once.
     return (
-      <p
-        className={cn("flex items-center justify-center text-sm text-muted-foreground", className)}
-        style={{ height }}
-      >
-        {xy("noData")}
-      </p>
+      <div className={cn("min-w-0 select-none", className)}>
+        <div ref={ref} className="relative w-full" style={{ height }}>
+          <p className="flex h-full items-center justify-center text-sm text-muted-foreground">
+            {xy("noData")}
+          </p>
+        </div>
+      </div>
     );
 
   // Band axis runs along categories; value axis along magnitudes.

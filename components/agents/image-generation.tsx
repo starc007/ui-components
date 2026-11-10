@@ -153,6 +153,8 @@ function DitherField({
       pointer.y = height / 2;
       pointer.targetX = pointer.x;
       pointer.targetY = pointer.y;
+      // Sizing the canvas clears it, and reduced motion has no frame loop to repaint.
+      if (reduce) draw(0);
     };
 
     const draw = (time: number) => {

@@ -681,7 +681,7 @@ function AttachmentRow({
               type="button"
               aria-label={t(playing ? "pause" : "play", { name: item.name })}
               onClick={() => onAudioToggle?.(item)}
-              whileTap={{ scale: 0.94 }}
+              whileTap={reduce ? undefined : { scale: 0.94 }}
               transition={SPRING_PRESS}
               className="grid size-9 shrink-0 place-items-center rounded-full bg-foreground text-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >

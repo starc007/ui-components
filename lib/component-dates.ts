@@ -26,9 +26,8 @@ const COMPONENT_DATES = {
   "motion/collapsible": { publishedAt: "2026-10-05", updatedAt: "2026-10-18" },
   "motion/aspect-ratio": { publishedAt: "2026-10-05", updatedAt: "2026-11-10" },
   "motion/arc-picker": { publishedAt: "2026-10-04", updatedAt: "2026-11-10" },
-  "agents/voice-orb": { publishedAt: "2026-10-04", updatedAt: "2026-10-18" },
+  "agents/voice-orb": { publishedAt: "2026-10-04", updatedAt: "2026-11-10" },
   "motion/sortable-stack": { publishedAt: "2026-10-02", updatedAt: "2026-11-10" },
-  "motion/morphing-lightbox": { publishedAt: "2026-10-02", updatedAt: "2026-10-02" },
   "motion/image-viewer": { publishedAt: "2026-10-02", updatedAt: "2026-11-10" },
   "motion/date-range-picker": { publishedAt: "2026-10-02", updatedAt: "2026-11-10" },
   "motion/color-selector": { publishedAt: "2026-09-27", updatedAt: "2026-10-18" },
@@ -39,7 +38,7 @@ const COMPONENT_DATES = {
   "motion/button": { publishedAt: "2026-05-17", updatedAt: "2026-11-10" },
   "motion/expandable-control": {
     publishedAt: "2026-08-22",
-    updatedAt: "2026-10-18",
+    updatedAt: "2026-11-10",
   },
   "motion/adaptive-stepper": {
     publishedAt: "2026-08-31",
@@ -60,7 +59,7 @@ const COMPONENT_DATES = {
   "motion/radio": { publishedAt: "2026-06-23", updatedAt: "2026-10-18" },
   "motion/bottom-sheet": { publishedAt: "2026-05-17", updatedAt: "2026-11-10" },
   "motion/pull-to-refresh": { publishedAt: "2026-07-17", updatedAt: "2026-11-10" },
-  "motion/shared-layout-bg": { publishedAt: "2026-05-17", updatedAt: "2026-10-18" },
+  "motion/shared-layout-bg": { publishedAt: "2026-05-17", updatedAt: "2026-11-10" },
   "motion/bounce-sidebar": { publishedAt: "2026-07-22", updatedAt: "2026-11-10" },
   "motion/animated-sidebar": {
     publishedAt: "2026-07-29",
@@ -85,7 +84,7 @@ const COMPONENT_DATES = {
   "motion/theme-toggle": { publishedAt: "2026-06-15", updatedAt: "2026-11-10" },
   "motion/bouncy-accordion": { publishedAt: "2026-06-16", updatedAt: "2026-11-06" },
   "motion/drawer": { publishedAt: "2026-06-22", updatedAt: "2026-11-10" },
-  "motion/scroll-animation": { publishedAt: "2026-06-24", updatedAt: "2026-10-18" },
+  "motion/scroll-animation": { publishedAt: "2026-06-24", updatedAt: "2026-11-10" },
   "motion/range-slider": { publishedAt: "2026-06-24", updatedAt: "2026-10-18" },
   "motion/wheel-picker": { publishedAt: "2026-07-09", updatedAt: "2026-11-05" },
   "motion/table": { publishedAt: "2026-07-01", updatedAt: "2026-11-10" },

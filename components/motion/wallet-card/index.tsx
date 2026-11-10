@@ -146,7 +146,11 @@ export function WalletCard({
             </span>
           </div>
         ) : (
-          <BalanceDelta balance={balance} initialChange={defaultChange} />
+          <BalanceDelta
+            balance={balance}
+            initialChange={defaultChange}
+            prefix={balancePrefix}
+          />
         )}
       </div>
 

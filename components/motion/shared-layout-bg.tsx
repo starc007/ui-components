@@ -78,7 +78,7 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
       .map((child, index) => {
         const el = child as ReactElement<{
           className?: string;
-          onMouseEnter?: () => void;
+          onMouseEnter?: (event: MouseEvent<HTMLElement>) => void;
           onFocus?: (event: FocusEvent<HTMLElement>) => void;
           children?: ReactNode;
         }>;
@@ -88,8 +88,8 @@ export const SharedLayoutBg = forwardRef<HTMLElement, SharedLayoutBgProps>(
           {
             key: childKey,
             className: cn("relative", el.props.className),
-            onMouseEnter: () => {
-              el.props.onMouseEnter?.();
+            onMouseEnter: (event: MouseEvent<HTMLElement>) => {
+              el.props.onMouseEnter?.(event);
               hovering.current = true;
               setActiveId(childKey);
             },
