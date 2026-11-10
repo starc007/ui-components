@@ -212,7 +212,7 @@ export function GameEyebrow({
   return (
     <p
       className={cn(
-        "flex h-4 items-center gap-1.5 text-[11px] font-medium tracking-[0.08em] uppercase transition-colors duration-150",
+        "flex h-4 min-w-0 max-w-full items-center gap-1.5 text-[11px] font-medium tracking-[0.08em] uppercase transition-colors duration-150",
         state === "lost" ? "text-rose-700 dark:text-rose-400" : state === "won" ? PRIMARY_TEXT : "text-muted-foreground",
         className,
       )}
@@ -222,7 +222,7 @@ export function GameEyebrow({
           <motion.span
             key={icon}
             aria-hidden="true"
-            className="grid size-3.5 place-items-center"
+            className="grid size-3.5 shrink-0 place-items-center"
             initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.25, filter: "blur(4px)" }}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, transition: EXIT }}
@@ -238,7 +238,8 @@ export function GameEyebrow({
           </motion.span>
         ) : null}
       </AnimatePresence>
-      {label}
+      {/* Longer translations truncate on one line instead of wrapping out of the 16px row. */}
+      <span className="min-w-0 truncate">{label}</span>
     </p>
   );
 }
