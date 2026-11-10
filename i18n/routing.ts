@@ -1,4 +1,3 @@
-import { defineRouting } from "next-intl/routing";
 import languages from "./languages.json";
 
 /**
@@ -11,17 +10,25 @@ export const LANGUAGES = languages;
 
 export type Locale = keyof typeof LANGUAGES;
 
-export const routing = defineRouting({
+/**
+ * English keeps today's URLs; other languages get a prefix (/de/...). The URL
+ * alone picks the language (no detection, no cookie), so a shared link renders
+ * the same for everyone and every page can be static HTML.
+ */
+export const routing = {
   locales: Object.keys(LANGUAGES) as Locale[],
-  defaultLocale: "en",
-  // English keeps today's URLs; other languages get a prefix (/de/...).
-  localePrefix: "as-needed",
-  // The URL alone picks the language, so a shared link renders the same for everyone.
-  localeDetection: false,
-  // Detection is off, so the cookie is never read. Skipping it keeps static
-  // HTML cacheable (no Set-Cookie).
-  localeCookie: false,
-});
+  defaultLocale: "en" as Locale,
+};
+
+export function hasLocale(locale: unknown): locale is Locale {
+  return typeof locale === "string" && Object.hasOwn(LANGUAGES, locale);
+}
+
+/** The `{-$locale}` route param, which is undefined for English. */
+export function localeFromParam(param: string | undefined): Locale | undefined {
+  if (param === undefined) return routing.defaultLocale;
+  return param !== routing.defaultLocale && hasLocale(param) ? param : undefined;
+}
 
 /** Path for `pathname` ("/components/motion") in `locale`. */
 export function localizedPath(pathname: string, locale: Locale) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { LandingButton } from "./landing-button";

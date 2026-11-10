@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useCallback, useState } from "react";
 import { InfiniteMasonry } from "@/components/motion/infinite-masonry";
 
@@ -115,12 +114,12 @@ export function InfiniteMasonryPreview() {
               className="relative w-full overflow-hidden"
               style={{ height: item.imageHeight }}
             >
-              <Image
+              <img
                 src={item.image}
                 alt={item.title}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                className="object-cover"
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover"
               />
             </div>
             <figcaption className="flex items-start justify-between gap-3 p-3">

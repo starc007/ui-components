@@ -1,7 +1,7 @@
 "use client";
 
 import { Globe, Smartphone } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import {

@@ -1,5 +1,5 @@
 import { ArrowRight, ArrowUpRight, Check, Minus } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { cn } from "@/lib/utils";
 import { LandingButton } from "./landing-button";
 import { PRO_URL } from "./landing-data";

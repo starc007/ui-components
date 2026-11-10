@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, ChevronDown, Copy, FileDown, LoaderCircle, TriangleAlert } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import {
   MorphPopover,

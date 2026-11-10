@@ -4,7 +4,7 @@ import { componentPath } from "@/lib/component-paths";
 
 import { ArrowUpRight } from "lucide-react";
 import { useInView } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useRef, useState } from "react";
 import type { ComponentEntry } from "@/lib/registry";
 import { NewBadge } from "@/components/app/docs/new-badge";

@@ -2,7 +2,7 @@
 
 import { Pause, Play, RotateCcw } from "lucide-react";
 import { useReducedMotion } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useTheme } from "next-themes";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { NativeClip, NativeTheme } from "@/lib/native";

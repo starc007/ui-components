@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata } from "@/lib/head";
+import { ogImagePath } from "@/lib/og-paths";
 import { alternativePages } from "@/lib/seo-pages/alternatives";
 import { guidePages } from "@/lib/seo-pages/guides";
 import type { AlternativePage, SeoPage, SeoPageKind } from "@/lib/seo-pages/types";
@@ -20,7 +21,7 @@ export function findSeoPage(kind: SeoPageKind, slug: string) {
 
 export function seoPageMetadata(kind: SeoPageKind, page: SeoPage): Metadata {
   const path = seoPagePath(kind, page.slug);
-  const image = `/api/og?${kind === "guides" ? "guide" : "alternative"}=${page.slug}`;
+  const image = ogImagePath(kind === "guides" ? "guide" : "alternative", page.slug);
   const ogTitle = `${page.title} · beUI`;
   return {
     title: page.title,

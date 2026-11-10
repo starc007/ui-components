@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useFaqItems } from "@/components/app/landing/faq";
 import { BouncyAccordion } from "@/components/motion/bouncy-accordion";
 import { cn } from "@/lib/utils";

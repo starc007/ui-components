@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import type { MouseEvent } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";

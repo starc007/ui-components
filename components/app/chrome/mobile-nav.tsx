@@ -1,7 +1,7 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useEffect, useState } from "react";
 import { SidebarNav } from "@/components/app/chrome/site-sidebar";
 import { BottomSheet } from "@/components/motion/bottom-sheet";

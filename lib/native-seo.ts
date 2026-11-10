@@ -2,6 +2,7 @@
 // /react-native. Reads the catalog, so import from server code only.
 import { NATIVE_PATH, nativeComponentPath } from "@/lib/component-paths";
 import { type NativeComponent, native } from "@/lib/native";
+import { ogImagePath } from "@/lib/og-paths";
 import { AUTHOR, clampText, SITE_NAME } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
@@ -36,7 +37,7 @@ export function nativeComponentJsonLd(component: NativeComponent) {
     name: component.title,
     description: component.description,
     url,
-    image: abs(`/api/og?native=${component.slug}`),
+    image: abs(ogImagePath("native", component.slug)),
     inLanguage: "en",
     isPartOf: { "@id": `${SITE_URL}/#website` },
     datePublished: NATIVE_PUBLISHED,

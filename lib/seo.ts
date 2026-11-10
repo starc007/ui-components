@@ -4,6 +4,7 @@ import type { JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { componentDates } from "@/lib/component-dates";
 import type { ComponentFaq } from "@/lib/component-about";
 import { componentSeo } from "@/lib/component-seo";
+import { ogImagePath } from "@/lib/og-paths";
 import {
   type CategoryEntry,
   type ComponentEntry,
@@ -223,7 +224,7 @@ export function componentJsonLd(
     name: comp.name,
     description,
     url,
-    image: abs(`/api/og?component=${comp.slug}`),
+    image: abs(ogImagePath("component", comp.slug)),
     inLanguage: LANGUAGES[locale].hreflang,
     isPartOf: { "@id": `${SITE}/#website` },
     datePublished: dates.publishedAt,

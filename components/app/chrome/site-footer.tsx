@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { useMessages, useTranslations } from "next-intl";
+import { useMessages, useTranslations } from "use-intl";
 import { localizeCategory } from "@/i18n/catalog";
 import { Link } from "@/i18n/navigation";
 import { categoryPath, componentPath } from "@/lib/component-paths";
@@ -55,7 +54,7 @@ export function SiteFooter() {
             href="/"
             className="inline-flex items-center gap-2.5"
           >
-            <Image
+            <img
               src="/beui-mark.png"
               alt=""
               width={30}
@@ -203,12 +202,12 @@ export function SiteFooter() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-0 h-48 [mask-image:linear-gradient(to_bottom,transparent,black_80%)] sm:h-64"
       >
-        <Image
+        <img
           src="/landing/coastal-sketch.webp"
           alt=""
-          fill
-          sizes="100vw"
-          className="object-cover object-bottom dark:brightness-50"
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 size-full object-cover object-bottom dark:brightness-50"
         />
       </div>
     </footer>

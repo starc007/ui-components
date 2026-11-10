@@ -43,10 +43,3 @@ if (typeof window.scrollTo !== "function") {
 
 URL.createObjectURL ??= () => "blob:test-upload";
 URL.revokeObjectURL ??= () => {};
-
-// next-intl's ESM build imports `permanentRedirect` from next/navigation,
-// which Bun can't see statically in that CommonJS module. Re-export the
-// evaluated module so named imports resolve.
-import { mock } from "bun:test";
-import * as nextNavigation from "next/navigation";
-mock.module("next/navigation", () => ({ ...nextNavigation }));

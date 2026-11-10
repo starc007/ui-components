@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
-import { getMessages, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
+import { useMessages, useTranslations } from "use-intl";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { HeroEyebrow } from "@/components/app/landing/hero-eyebrow";
@@ -57,9 +57,9 @@ const SPANS = [
  * board of live components right under the fold, the numbers, and a tabbed
  * explorer across every section.
  */
-export async function LandingShowcase() {
-  const t = await getTranslations("Landing");
-  const source = localizedRegistry(await getMessages());
+export function LandingShowcase() {
+  const t = useTranslations("Landing");
+  const source = localizedRegistry(useMessages());
   const bento = resolveEntries(source, BENTO);
   const categories = landingCategories(source);
   const fresh = newEntries(source);

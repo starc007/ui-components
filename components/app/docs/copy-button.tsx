@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useState } from "react";
 import { ActionSwapCascadeIcon } from "@/components/motion/action-swap-cascade";
 import { Button } from "@/components/motion/button";

@@ -10,16 +10,12 @@
 /coverage
 /examples/shadcn-vite-install/
 
-# next.js
-/.next/
-/out/
-/.open-next/
-/.cloudflare/
+# build output (vite + scripts/build-static.ts) and wrangler state
+/dist/
+/.build/
+/.tanstack/
 /.wrangler/
 .dev.vars*
-
-# production
-/build
 
 # misc
 .DS_Store

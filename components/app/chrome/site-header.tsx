@@ -2,7 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useMotionValueEvent, useScroll } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useEffect, useState } from "react";
 import { MobileNav } from "@/components/app/chrome/mobile-nav";
 import { SiteSearch } from "@/components/app/chrome/site-search";

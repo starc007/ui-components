@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useRef, useState } from "react";
 import { capturePointer, TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";

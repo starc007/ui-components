@@ -2,7 +2,7 @@
 
 import { ArrowUpRight, Mail } from "lucide-react";
 import { useInView } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { useRef } from "react";
 import { ShaderBackground } from "@/components/motion/shader-background";
 import { cn } from "@/lib/utils";

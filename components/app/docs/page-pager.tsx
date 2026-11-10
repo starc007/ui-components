@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useMessages, useTranslations } from "next-intl";
+import { useMessages, useTranslations } from "use-intl";
 import { Link } from "@/i18n/navigation";
 import { componentPath } from "@/lib/component-paths";
 import { moveNewItemsToTop } from "@/lib/component-status";

@@ -1,4 +1,4 @@
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "use-intl";
 import { Link } from "@/i18n/navigation";
 import type { AgentGuide } from "@/lib/agent-guides";
 

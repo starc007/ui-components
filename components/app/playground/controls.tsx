@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus, X } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import type { ReactNode } from "react";
 import { RangeSlider } from "@/components/motion/range-slider";
 import {

@@ -26,5 +26,7 @@ jobs:
       - name: Accessibility tests
         run: bun test
 
-      - name: Validate Cloudflare registry snapshot
-        run: bun run check:cloudflare
+      # Prerenders every page and writes the registry, feeds and social cards,
+      # so a page or endpoint that fails to build fails CI.
+      - name: Build static site
+        run: bun run build

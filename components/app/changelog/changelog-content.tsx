@@ -1,5 +1,5 @@
 import { Rss } from "lucide-react";
-import { useFormatter, useLocale, useMessages, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useMessages, useTranslations } from "use-intl";
 import { Link } from "@/i18n/navigation";
 import {
   CHANGELOG_FEED_PATH,

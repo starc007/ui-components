@@ -1,15 +1,37 @@
 "use client";
 
-import Script from "next/script";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 type GoogleAnalyticsProps = {
   measurementId?: string;
 };
 
-export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
-  const [ready, setReady] = useState(false);
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+  }
+}
 
+/** Loads gtag on the first interaction (or after 8s), once per document. */
+function loadGtag(measurementId: string) {
+  if (document.getElementById("google-analytics-src")) return;
+  window.dataLayer = window.dataLayer || [];
+  const dataLayer = window.dataLayer;
+  // gtag.js only reads Arguments objects from the data layer, not arrays.
+  function gtag(..._args: unknown[]) {
+    // biome-ignore lint/complexity/noArguments: gtag.js requires the Arguments object.
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+  gtag("config", measurementId);
+  const script = document.createElement("script");
+  script.id = "google-analytics-src";
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+  document.head.appendChild(script);
+}
+
+export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
   useEffect(() => {
     if (!measurementId) return;
 
@@ -20,7 +42,7 @@ export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
       started = true;
       window.clearTimeout(fallback);
       for (const event of events) window.removeEventListener(event, start);
-      setReady(true);
+      loadGtag(measurementId);
     };
     const fallback = window.setTimeout(start, 8000);
     for (const event of events) {
@@ -33,29 +55,5 @@ export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
     };
   }, [measurementId]);
 
-  if (!measurementId || !ready) return null;
-
-  const safeMeasurementId = JSON.stringify(measurementId);
-
-  return (
-    <>
-      <Script
-        id="google-analytics-src"
-        src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`}
-        strategy="afterInteractive"
-      />
-      <Script
-        id="google-analytics-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag("js", new Date());
-            gtag("config", ${safeMeasurementId});
-          `,
-        }}
-      />
-    </>
-  );
+  return null;
 }

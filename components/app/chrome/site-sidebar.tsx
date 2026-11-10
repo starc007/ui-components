@@ -12,7 +12,7 @@ import {
 
 import { Blocks, Bot, LayoutGrid, Shapes } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import { useLocale, useMessages, useTranslations } from "next-intl";
+import { useLocale, useMessages, useTranslations } from "use-intl";
 import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
 import { localizeCategory } from "@/i18n/catalog";
 import { Link, usePathname } from "@/i18n/navigation";

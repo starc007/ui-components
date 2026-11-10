@@ -1,6 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { useTranslations } from "next-intl";
-import Image from "next/image";
+import { useTranslations } from "use-intl";
 import { Link } from "@/i18n/navigation";
 
 const SIDEBAR_SPONSORS = [
@@ -38,14 +37,14 @@ export function SponsorCard() {
             className="block rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
           >
             <div className="flex items-center gap-2">
-              <Image
+              <img
                 src={`/sponsors/${sponsor.icon}-light.svg`}
                 alt=""
                 width={40}
                 height={40}
                 className="size-10 shrink-0 dark:hidden"
               />
-              <Image
+              <img
                 src={`/sponsors/${sponsor.icon}-dark.svg`}
                 alt=""
                 width={40}

@@ -1,7 +1,7 @@
 "use client";
 
 import { CircleDashed, FileText, Search, Smartphone } from "lucide-react";
-import { useMessages, useTranslations } from "next-intl";
+import { useMessages, useTranslations } from "use-intl";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import {

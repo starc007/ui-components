@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { CodeBlock } from "@/components/app/docs/code-block";
+import type { HighlightedCode } from "@/lib/highlight";
 
 /**
  * A beUI Native README as page content, so each React Native page carries its
@@ -7,20 +8,34 @@ import { CodeBlock } from "@/components/app/docs/code-block";
  * headings, paragraphs, bullet lists, fenced code, and inline bold, code and
  * links. This renders that subset as elements, never as raw HTML. The title
  * heading is dropped; the page has its own.
+ *
+ * The page's server function parses the README with `parseNativeReadme` and
+ * highlights its code blocks, then passes the result as `blocks`.
  */
-export function NativeReadme({ markdown }: { markdown: string }) {
+export function NativeReadme({ blocks }: { blocks: NativeReadmeBlock[] }) {
   return (
     <div className="flex flex-col gap-4 text-sm leading-6 text-muted-foreground">
-      {parse(markdown).map((block, index) => render(block, index))}
+      {blocks.map((block, index) => render(block, index))}
     </div>
   );
 }
 
-type Block =
+type TextBlock =
   | { type: "heading"; level: number; text: string }
   | { type: "paragraph"; text: string }
-  | { type: "list"; items: string[] }
-  | { type: "code"; lang: string; code: string };
+  | { type: "list"; items: string[] };
+
+/** A parsed README block; code blocks still hold raw source. */
+export type ParsedReadmeBlock = TextBlock | { type: "code"; lang: string; code: string };
+
+/** A README block ready to render; code blocks are highlighted. */
+export type NativeReadmeBlock = TextBlock | { type: "code"; code: HighlightedCode };
+
+export function parseNativeReadme(markdown: string): ParsedReadmeBlock[] {
+  return parse(markdown);
+}
+
+type Block = ParsedReadmeBlock;
 
 function parse(markdown: string): Block[] {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
@@ -73,7 +88,7 @@ function parse(markdown: string): Block[] {
   return blocks;
 }
 
-function render(block: Block, key: number) {
+function render(block: NativeReadmeBlock, key: number) {
   switch (block.type) {
     case "heading":
       // The README's own title duplicates the page heading.
@@ -99,7 +114,7 @@ function render(block: Block, key: number) {
         </ul>
       );
     case "code":
-      return <CodeBlock key={key} code={block.code} lang={block.lang || "tsx"} />;
+      return <CodeBlock key={key} {...block.code} />;
   }
 }
 

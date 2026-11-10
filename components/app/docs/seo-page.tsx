@@ -1,10 +1,12 @@
 import { ArrowUpRight } from "lucide-react";
-import { useFormatter, useLocale, useMessages, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useMessages, useTranslations } from "use-intl";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { ComponentCard } from "@/components/app/docs/component-card";
 import { GuideShell } from "@/components/app/docs/guide-shell";
 import { localizeComponent } from "@/i18n/catalog";
+import type { HighlightedCode } from "@/lib/highlight";
+import { ogImagePath } from "@/lib/og-paths";
 import { allComponents } from "@/lib/registry";
 import { breadcrumbJsonLd, docsArticleJsonLd, faqJsonLd } from "@/lib/seo";
 import { seoPagePath } from "@/lib/seo-pages";
@@ -20,13 +22,17 @@ export function sectionId(heading: string) {
 /**
  * Shared body for alternatives and guides landing pages. The chrome follows
  * the locale; the article itself is English only, marked `lang="en"`.
+ * `codes` holds each section's highlighted code sample by section index
+ * (null when the section has none), from the page's server function.
  */
 export function SeoPage({
   kind,
   page,
+  codes = [],
 }: {
   kind: SeoPageKind;
   page: SeoPageData | AlternativePage;
+  codes?: (HighlightedCode | null)[];
 }) {
   const t = useTranslations("Native.article");
   const format = useFormatter();
@@ -52,7 +58,7 @@ export function SeoPage({
             path,
             headline: page.title,
             description: page.description,
-            image: `/api/og?${kind === "guides" ? "guide" : "alternative"}=${page.slug}`,
+            image: ogImagePath(kind === "guides" ? "guide" : "alternative", page.slug),
             datePublished: page.publishedAt,
             dateModified: page.updatedAt,
           }),
@@ -111,7 +117,7 @@ export function SeoPage({
       ) : null}
 
       <div lang={english}>
-      {page.sections.map((section) => (
+      {page.sections.map((section, index) => (
         <section key={section.heading} id={sectionId(section.heading)} className="mt-10 scroll-mt-24">
           <h2 className="text-xl font-medium tracking-tight text-foreground">{section.heading}</h2>
           {section.paragraphs.map((paragraph) => (
@@ -126,9 +132,9 @@ export function SeoPage({
               ))}
             </ul>
           ) : null}
-          {section.code ? (
+          {codes[index] ? (
             <div className="mt-4">
-              <CodeBlock code={section.code.code} lang={section.code.lang} filename={section.code.filename} />
+              <CodeBlock {...codes[index]} />
             </div>
           ) : null}
         </section>

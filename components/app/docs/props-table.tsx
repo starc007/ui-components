@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import type { ComponentPropsDoc } from "@/lib/props-extractor";
 
 const COLUMNS = "sm:grid-cols-[140px_minmax(160px,0.75fr)_minmax(240px,2fr)]";

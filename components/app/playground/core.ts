@@ -1,4 +1,4 @@
-import type { useTranslations } from "next-intl";
+import type { useTranslations } from "use-intl";
 import type { FC } from "react";
 
 /** Translator scoped to `Pages.playground`; items build their copy from it. */

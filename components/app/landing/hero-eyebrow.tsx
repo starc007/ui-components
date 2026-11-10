@@ -2,7 +2,7 @@
 
 import { BorderBeam } from "border-beam";
 import { useReducedMotion } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { GithubIcon } from "@/components/app/icons";
 import { Link } from "@/i18n/navigation";
 

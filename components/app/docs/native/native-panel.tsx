@@ -1,18 +1,31 @@
 import { ArrowUpRight } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { InstallTabs } from "@/components/app/docs/install-tabs";
 import { NativePreview } from "@/components/app/docs/native/native-preview";
 import { Link } from "@/i18n/navigation";
-import {
-  native,
-  nativeInstallCommands,
-  type NativeComponent,
-  type NativeFile,
-} from "@/lib/native";
+import type { HighlightedCode } from "@/lib/highlight";
+import type { NativeComponent } from "@/lib/native";
 
-const langFor = (file: string) => (file.endsWith(".tsx") ? "tsx" : "ts");
+/** The fields of a native component the panel shows. */
+export type NativePanelComponent = Pick<
+  NativeComponent,
+  "slug" | "title" | "clips" | "repository"
+>;
+
+/**
+ * The manual install steps' code, highlighted in the page's server function:
+ * library install commands (null when none), the theme file, shared files and
+ * the component's own files. `gestures` adds the gesture root note.
+ */
+export type NativePanelCode = {
+  libraries: HighlightedCode | null;
+  gestures: boolean;
+  theme: HighlightedCode;
+  shared: HighlightedCode[];
+  files: HighlightedCode[];
+};
 
 function Step({
   number,
@@ -36,15 +49,8 @@ function Step({
   );
 }
 
-function Files({ files }: { files: NativeFile[] }) {
-  return files.map((file) => (
-    <CodeBlock
-      key={file.path}
-      code={file.content}
-      lang={langFor(file.path)}
-      filename={file.path}
-    />
-  ));
+function Files({ files }: { files: HighlightedCode[] }) {
+  return files.map((file) => <CodeBlock key={file.filename} {...file} />);
 }
 
 const code = (chunks: React.ReactNode) => (
@@ -60,7 +66,13 @@ const external =
  * The React Native version of a component: a recording and copy-paste install
  * steps from beUI Native.
  */
-export function NativePanel({ component }: { component: NativeComponent }) {
+export function NativePanel({
+  component,
+  code: highlighted,
+}: {
+  component: NativePanelComponent;
+  code: NativePanelCode;
+}) {
   const t = useTranslations("Native.panel");
 
   return (
@@ -108,7 +120,7 @@ export function NativePanel({ component }: { component: NativeComponent }) {
                 </p>
               </div>
             }
-            manual={<ManualSteps component={component} />}
+            manual={<ManualSteps code={highlighted} />}
           />
         </div>
       </section>
@@ -117,9 +129,7 @@ export function NativePanel({ component }: { component: NativeComponent }) {
 }
 
 /** Copy-paste install: libraries, theme, shared files, then the component. */
-function ManualSteps({ component }: { component: NativeComponent }) {
-  const commands = nativeInstallCommands(component);
-  const gestures = component.libraries.includes("react-native-gesture-handler");
+function ManualSteps({ code: highlighted }: { code: NativePanelCode }) {
   const t = useTranslations("Native.panel");
   let step = 0;
 
@@ -128,10 +138,10 @@ function ManualSteps({ component }: { component: NativeComponent }) {
       <p className="max-w-2xl text-sm text-muted-foreground">
         {t("manualIntro")}
       </p>
-      {commands.length > 0 ? (
+      {highlighted.libraries ? (
         <Step number={++step} title={t("stepLibraries")}>
-          <CodeBlock code={commands.join("\n")} lang="bash" />
-          {gestures ? (
+          <CodeBlock {...highlighted.libraries} />
+          {highlighted.gestures ? (
             <p className="text-sm text-muted-foreground">
               {t.rich("gestureRoot", { code })}
             </p>
@@ -142,19 +152,15 @@ function ManualSteps({ component }: { component: NativeComponent }) {
         <p className="text-sm text-muted-foreground">
           {t("themeBody")}
         </p>
-        <CodeBlock
-          code={native.theme.content}
-          lang="css"
-          filename={native.theme.path}
-        />
+        <CodeBlock {...highlighted.theme} />
       </Step>
-      {component.shared.length > 0 ? (
+      {highlighted.shared.length > 0 ? (
         <Step number={++step} title={t("stepShared")}>
-          <Files files={component.shared} />
+          <Files files={highlighted.shared} />
         </Step>
       ) : null}
       <Step number={++step} title={t("stepComponent")}>
-        <Files files={component.files} />
+        <Files files={highlighted.files} />
       </Step>
     </div>
   );
