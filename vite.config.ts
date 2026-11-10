@@ -41,16 +41,26 @@ export default defineConfig({
         // extensionless URL. A `button/index.html` would make Cloudflare
         // redirect every canonical URL to a trailing slash.
         autoSubfolderIndex: false,
+        // The page list comes from .build/pages.json (scripts/list-pages.ts).
+        // Start's own route discovery would add index routes by their full
+        // path, "/charts/", and write a charts/index.html next to charts.html.
+        autoStaticPathsDiscovery: false,
         crawlLinks: true,
         failOnError: true,
+        // The preview server drops keep-alive sockets idle for 5s; while a slow
+        // page renders, the next fetch can reuse one and get ECONNRESET. A
+        // retry opens a new connection. Real render errors still fail after 3.
+        retryCount: 3,
+        retryDelay: 500,
+        // Build machines report many cores; fewer parallel renders keep each
+        // page fast enough that sockets don't sit idle.
+        concurrency: 6,
         // Link crawling only finds pages; machine files come from build-static.
-        // /components is a redirect, served from _redirects. Trailing-slash
-        // duplicates the crawler finds ("/charts/") would write a second
-        // charts/index.html that competes with charts.html for the same URL.
+        // /components is a redirect, served from _redirects. A trailing-slash
+        // path would write a second index.html for the same URL, so skip it.
         filter: ({ path }) => {
-          const raw = path.split(/[?#]/)[0];
-          if (raw.length > 1 && raw.endsWith("/")) return false;
-          const pathname = raw;
+          const pathname = path.split(/[?#]/)[0];
+          if (pathname.length > 1 && pathname.endsWith("/")) return false;
           return (
             !/\.[a-z]+$/i.test(pathname) &&
             !/^\/(?:r|native\/r)(?:\/|$)/.test(pathname) &&
