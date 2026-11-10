@@ -99,7 +99,7 @@ export function TableAsyncPreview() {
         header: "MRR",
         align: "right",
         width: "100px",
-        cell: (r) => <span className="tabular-nums">${r.mrr.toLocaleString()}</span>,
+        cell: (r) => <span className="tabular-nums">${r.mrr.toLocaleString("en-US")}</span>,
       },
     ],
     [],
@@ -111,7 +111,7 @@ export function TableAsyncPreview() {
     <div className="flex w-full justify-center p-4">
       <div className="flex w-full flex-col gap-2">
         <div className="flex items-center justify-between px-1 text-muted-foreground text-xs">
-          <span>{rows.length.toLocaleString()} loaded</span>
+          <span>{rows.length.toLocaleString("en-US")} loaded</span>
           <span>{loading ? "Loading…" : done ? "All loaded" : "Scroll for more"}</span>
         </div>
         <Table

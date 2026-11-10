@@ -108,7 +108,6 @@ export function NativePreview({
             // Before hydration the theme is unknown; CSS picks the poster.
             (["light", "dark"] as const).map((name) =>
               clips[name] ? (
-                // biome-ignore lint/performance/noImgElement: static poster frame, sized by its container
                 <img
                   key={name}
                   src={clips[name].poster}

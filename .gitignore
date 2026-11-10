@@ -2,13 +2,9 @@
 
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
 
 # testing
 /coverage
-/examples/shadcn-vite-install/
 
 # build output (vite + scripts/build-static.ts) and wrangler state
 /dist/
@@ -21,25 +17,14 @@
 .DS_Store
 *.pem
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
 # local env files
 .env*.local
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
 # local working notes
 /docs/
-/.brand-preview/
-/app/globals.css.bak
 
 # editor / local agent config
 .claude/

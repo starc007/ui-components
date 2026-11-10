@@ -8,15 +8,10 @@
  * no fade or spring; values update in place. */
 
 import { motion, type Transition } from "motion/react";
-import {
-  type KeyboardEvent,
-  type PointerEvent,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { type KeyboardEvent, type PointerEvent, useState } from "react";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
+import { useElementWidth } from "../xy/use-width";
 import { useCandlestickChart } from "./context";
 
 /** Right gutter reserved for price labels, in px. */
@@ -38,19 +33,10 @@ export function CandlestickChartPlot({
 }: CandlestickChartPlotProps) {
   const { candles, lastPrice, active, setActive, scale, formatPrice, label, reduce, t } =
     useCandlestickChart();
-  const ref = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(0);
+  const { ref, width } = useElementWidth<HTMLDivElement>();
   const [pointerY, setPointerY] = useState<number | null>(null);
-
-  useLayoutEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    const update = () => setWidth(node.clientWidth);
-    update();
-    const observer = new ResizeObserver(update);
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+  // Stagger candles only for the first draw, not when the hover dim changes.
+  const [entered, setEntered] = useState(false);
 
   const plotWidth = Math.max(0, width - AXIS);
   const priceHeight = height * (1 - VOLUME_SHARE) - GAP;
@@ -164,8 +150,9 @@ export function CandlestickChartPlot({
                 transition={{
                   duration: 0.3,
                   ease: EASE_OUT,
-                  delay: reduce ? 0 : Math.min(index * 0.012, 0.6),
+                  delay: reduce || entered ? 0 : Math.min(index * 0.012, 0.6),
                 }}
+                onAnimationComplete={() => setEntered(true)}
               >
                 <motion.line
                   x1={cx}

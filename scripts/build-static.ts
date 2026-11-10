@@ -2,7 +2,7 @@
 // page into dist/client: registry JSON and Markdown, feeds, sitemap,
 // robots.txt, social cards, `_redirects` and `_headers`. Cloudflare serves the
 // folder as static assets; worker/index.ts serves the /r and /native/r
-// endpoints from .build/worker-routes.json so their headers stay exact.
+// endpoints from dist/client/__worker/routes.json so their headers stay exact.
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Resvg } from "@resvg/resvg-js";
@@ -50,6 +50,27 @@ async function write(file: string, body: string | Uint8Array) {
 
 const json = (data: unknown) => JSON.stringify(data);
 
+// Several outputs share these, and each one reads and bundles source files.
+function once<T>(build: () => Promise<T>) {
+  let result: Promise<T> | undefined;
+  return () => {
+    result ??= build();
+    return result;
+  };
+}
+const registryIndex = once(buildIndex);
+const shadcnRegistry = once(buildShadcnRegistry);
+const markdownCache = new Map<string, ReturnType<typeof buildComponentMarkdown>>();
+function componentMarkdown(categorySlug: string, slug: string) {
+  const key = `${categorySlug}/${slug}`;
+  let markdown = markdownCache.get(key);
+  if (!markdown) {
+    markdown = buildComponentMarkdown(categorySlug, slug);
+    markdownCache.set(key, markdown);
+  }
+  return markdown;
+}
+
 // ---------------------------------------------------------------------------
 // /r and /native/r: served by the Worker with the exact headers the old route
 // handlers sent.
@@ -64,13 +85,13 @@ async function workerRoute(urlPath: string, body: string, headers: Record<string
 }
 
 async function buildRegistry() {
-  await workerRoute("/r", json(await buildIndex()), {
+  await workerRoute("/r", json(await registryIndex()), {
     ...JSON_TYPE,
     ...CACHE,
     ...CORS,
     link: '</llms.txt>; rel="describedby"; type="text/plain"',
   });
-  await workerRoute("/r/registry.json", json(await buildShadcnRegistry()), {
+  await workerRoute("/r/registry.json", json(await shadcnRegistry()), {
     ...JSON_TYPE,
     ...CACHE,
     ...CORS,
@@ -95,7 +116,7 @@ async function buildRegistry() {
       "x-robots-tag": "noindex",
       link: `</r/${slug}>; rel="alternate"; type="application/json"`,
     });
-    const markdown = await buildComponentMarkdown(categorySlug, pageSlug);
+    const markdown = await componentMarkdown(categorySlug, pageSlug);
     if (markdown) {
       await workerRoute(`/r/${slug}.md`, markdown, {
         "content-type": "text/markdown; charset=utf-8",
@@ -142,7 +163,7 @@ async function buildRegistry() {
 async function buildMarkdownPages() {
   // Component Markdown at the page URL plus ".md".
   for (const component of allComponents()) {
-    const markdown = await buildComponentMarkdown(component.category.slug, component.slug);
+    const markdown = await componentMarkdown(component.category.slug, component.slug);
     if (!markdown) continue;
     await write(`${componentPath(component.category.slug, component.slug)}.md`, markdown);
   }
@@ -153,7 +174,7 @@ async function buildMarkdownPages() {
 }
 
 async function buildLlmsTxt() {
-  const idx = await buildIndex();
+  const idx = await registryIndex();
   const nativeIndex = buildNativeIndex();
   const lines = [
     `# ${idx.name}`,
@@ -172,7 +193,7 @@ async function buildLlmsTxt() {
     `- [Motion Guides](${SITE_URL}/docs/motion-patterns.md): Purposeful motion, timing, easing, recipes, and reduced motion.`,
     `- [Agent Guide](${SITE_URL}/docs/ai-agents.md): Agent skill, MCP server, registry endpoints, and install flows.`,
     `- [OpenUI Guide](${SITE_URL}/docs/openui.md): Register beUI components and render streamed generative interfaces.`,
-    `- [Changelog](${SITE_URL}/changelog/rss.xml): Weekly new components, improvements and fixes, as an RSS feed.`,
+    `- [Changelog](${SITE_URL}/changelog/rss.xml): New components, improvements and fixes by release date, as an RSS feed.`,
     `- [React Native Setup](${SITE_URL}/docs/native-setup.md): One-time app setup for beUI Native: libraries, Uniwind, theme tokens and folder layout.`,
     "",
     "## Components",
@@ -214,7 +235,7 @@ const escapeXml = (value: string) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
 
-/** RSS 2.0 feed of the changelog, one item per week. */
+/** RSS 2.0 feed of the changelog, one item per release. */
 async function buildRss() {
   const items = changelogEntries
     .map((entry) => {
@@ -320,7 +341,7 @@ await buildMarkdownPages();
 await Promise.all([
   buildLlmsTxt(),
   buildRss(),
-  write("/registry.json", json(await buildShadcnRegistry())),
+  write("/registry.json", json(await shadcnRegistry())),
   write("/theme.css", THEME_CSS),
   write("/sitemap.xml", sitemapXml()),
   write("/robots.txt", robotsTxt()),

@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActionSwapIcon } from "@/components/motion/action-swap";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -23,6 +23,9 @@ export function CopyButton({
 }) {
   const t = useMessages("walletCard", walletCardMessages, labels);
   const [copied, setCopied] = useState(false);
+  const timer = useRef<number | undefined>(undefined);
+
+  useEffect(() => () => window.clearTimeout(timer.current), []);
 
   const copy = async () => {
     try {
@@ -31,7 +34,8 @@ export function CopyButton({
       // clipboard may be unavailable (insecure context) — swap anyway
     }
     setCopied(true);
-    window.setTimeout(() => setCopied(false), 1400);
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setCopied(false), 1400);
   };
 
   return (

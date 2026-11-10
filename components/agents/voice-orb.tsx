@@ -18,7 +18,14 @@ import {
 } from "react";
 import { createOrbRenderer } from "@/components/agents/voice-orb/renderer";
 import { SPRING_GLIDE } from "@/lib/ease";
+import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+export const voiceOrbMessages = {
+  unavailable: "Orb rendering unavailable",
+};
+
+export type VoiceOrbMessages = typeof voiceOrbMessages;
 
 export type VoiceOrbProps = Omit<
   ComponentProps<"div">,
@@ -34,6 +41,8 @@ export type VoiceOrbProps = Omit<
   active?: boolean;
   speed?: number;
   onError?: (error: Error) => void;
+  /** Override any built-in string. */
+  labels?: Partial<VoiceOrbMessages>;
 };
 
 const DEFAULT_COLORS = ["#e8754d", "#ffe0ac", "#346b52"] as const;
@@ -51,8 +60,10 @@ export function VoiceOrb({
   className,
   style,
   "aria-label": label,
+  labels,
   ...props
 }: VoiceOrbProps) {
+  const t = useMessages("voiceOrb", voiceOrbMessages, labels);
   const reducedMotion = useReducedMotion();
   const canvas = useRef<HTMLCanvasElement>(null);
   const renderer = useRef<ReturnType<typeof createOrbRenderer> | null>(null);
@@ -178,7 +189,7 @@ export function VoiceOrb({
     >
       {error ? (
         <div className="flex size-full items-center justify-center rounded-full border border-border bg-card p-8 text-center text-xs text-muted-foreground">
-          Orb rendering unavailable
+          {t("unavailable")}
         </div>
       ) : (
         <motion.div

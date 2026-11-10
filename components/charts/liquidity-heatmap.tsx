@@ -208,20 +208,20 @@ export function LiquidityHeatmapPlot({ className }: { className?: string }) {
                               setActive(null);
                               return;
                             }
-                            const offsets: Record<string, number> = {
-                              ArrowRight: 1,
-                              ArrowLeft: -1,
-                              ArrowDown: columns.length,
-                              ArrowUp: -columns.length,
-                              Home: -columnIndex,
-                              End: columns.length - 1 - columnIndex,
+                            const moves: Record<string, [row: number, column: number]> = {
+                              ArrowRight: [rowIndex, columnIndex + 1],
+                              ArrowLeft: [rowIndex, columnIndex - 1],
+                              ArrowDown: [rowIndex + 1, columnIndex],
+                              ArrowUp: [rowIndex - 1, columnIndex],
+                              Home: [rowIndex, 0],
+                              End: [rowIndex, columns.length - 1],
                             };
-                            if (!(event.key in offsets)) return;
+                            if (!(event.key in moves)) return;
                             event.preventDefault();
-                            const next = Math.max(
-                              0,
-                              Math.min(keys.length - 1, index + offsets[event.key]),
-                            );
+                            const [row, column] = moves[event.key];
+                            if (row < 0 || row >= prices.length) return;
+                            if (column < 0 || column >= columns.length) return;
+                            const next = row * columns.length + column;
                             root.current
                               ?.querySelector<HTMLButtonElement>(`[data-cell="${next}"]`)
                               ?.focus();

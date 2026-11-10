@@ -51,6 +51,7 @@ export function AccountSwitcher({
   }, [open, reduce]);
 
   const morph = reduce ? { duration: 0 } : MORPH;
+  const sizerAccount = activeAccount ?? accounts[0];
 
   return (
     // static (not relative) so the absolute trigger + panel anchor to the
@@ -61,7 +62,7 @@ export function AccountSwitcher({
           changes — neither when the trigger leaves the flow nor when a shorter
           account name is selected. */}
       <div aria-hidden className={cn(HEAD, "pointer-events-none opacity-0")}>
-        <AccountAvatar account={activeAccount ?? accounts[0]} />
+        {sizerAccount ? <AccountAvatar account={sizerAccount} /> : null}
         <span className="grid">
           {accounts.map((account) => (
             <span

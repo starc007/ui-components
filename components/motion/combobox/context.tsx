@@ -171,15 +171,17 @@ export function Combobox({
   const updateOpen = useCallback(
     (next: boolean, restoreFocus = false) => {
       if (disabled && next) return;
-      if (!openControlled) setInternalOpen(next);
-      onOpenChange?.(next);
+      if (next !== open) {
+        if (!openControlled) setInternalOpen(next);
+        onOpenChange?.(next);
+      }
       if (!next) updateQuery("");
       if (restoreFocus)
         requestAnimationFrame(() =>
           inputRef.current?.focus({ preventScroll: true }),
         );
     },
-    [disabled, onOpenChange, openControlled, updateQuery],
+    [disabled, onOpenChange, open, openControlled, updateQuery],
   );
 
   const registerItem = useCallback((item: RegisteredItem) => {

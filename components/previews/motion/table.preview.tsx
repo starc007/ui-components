@@ -105,7 +105,7 @@ export function TablePreview() {
         align: "right",
         width: "110px",
         cell: (row) => (
-          <span className="tabular-nums">${row.mrr.toLocaleString()}</span>
+          <span className="tabular-nums">${row.mrr.toLocaleString("en-US")}</span>
         ),
       },
     ],
@@ -116,9 +116,9 @@ export function TablePreview() {
     <div className="flex w-full justify-center p-4">
       <div className="flex w-full flex-col gap-2">
         <div className="flex items-center justify-between px-1 text-muted-foreground text-xs">
-          <span>{data.length.toLocaleString()} rows</span>
+          <span>{data.length.toLocaleString("en-US")} rows</span>
           {selected.length > 0 ? (
-            <span>{selected.length.toLocaleString()} selected</span>
+            <span>{selected.length.toLocaleString("en-US")} selected</span>
           ) : null}
         </div>
         <Table

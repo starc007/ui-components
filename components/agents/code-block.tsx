@@ -31,6 +31,9 @@ export type CodeBlockMessages = typeof codeBlockMessages;
 
 export type CodeBlockStatus = "streaming" | "complete";
 
+/** One identity for the default, so the highlighted-line Set stays memoized. */
+const NO_LINES: number[] = [];
+
 export interface CodeBlockProps {
   code: string;
   language?: AgentCodeLanguage;
@@ -53,7 +56,7 @@ export function CodeBlock({
   filename,
   status = "complete",
   showLineNumbers = true,
-  highlightLines = [],
+  highlightLines = NO_LINES,
   maxHeight = 280,
   wrap = false,
   copyable = true,

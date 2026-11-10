@@ -17,7 +17,7 @@ const code = (chunks: ReactNode) => (
   <code className="rounded bg-muted px-1 py-0.5 text-xs [overflow-wrap:anywhere]">{chunks}</code>
 );
 
-/** The landing FAQ as accordion items, in the page's language. */
+/** The landing FAQ as accordion items. */
 export function useFaqItems() {
   const t = useTranslations("Landing.faq");
   const answers: Record<(typeof FAQ_IDS)[number], ReactNode> = {
@@ -34,7 +34,7 @@ export function useFaqItems() {
       ),
     }),
     install: t.rich("install.answer", {
-      command: "bunx --bun shadcn add @beui/button",
+      command: "bunx --bun shadcn add @beui/button-base",
       code,
     }),
     stack: t.rich("stack.answer", {

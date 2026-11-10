@@ -4,7 +4,7 @@ import viteReact from "@vitejs/plugin-react";
 import { readFileSync } from "node:fs";
 import { defineConfig } from "vite";
 
-// Every page path in every language, written by `scripts/list-pages.ts`
+// Every page path, written by `scripts/list-pages.ts`
 // (it needs the `@/` imports the config bundler can't resolve).
 function prerenderPages(): { path: string }[] {
   try {

@@ -396,8 +396,3 @@ export async function buildIndex() {
     }),
   };
 }
-
-export function findCategoryBySlug(slug: string) {
-  const target = findRegistryTarget(slug);
-  return target ? registry.find((c) => c.slug === target.categorySlug) : undefined;
-}

@@ -22,6 +22,8 @@ function loadGtag(measurementId: string) {
     // biome-ignore lint/complexity/noArguments: gtag.js requires the Arguments object.
     dataLayer.push(arguments);
   }
+  // trackEvent (lib/analytics.ts) sends events through the global.
+  window.gtag = gtag;
   gtag("js", new Date());
   gtag("config", measurementId);
   const script = document.createElement("script");

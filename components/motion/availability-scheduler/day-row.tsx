@@ -57,7 +57,14 @@ export function DayRow({
 }) {
   const { locale } = useLocale();
   const idRef = useRef(0);
-  const nextId = () => `${day}-n${idRef.current++}`;
+  // The counter restarts per mount, so skip ids a saved value already holds.
+  const nextId = () => {
+    let id = `${day}-n${idRef.current++}`;
+    while (state.ranges.some((r) => r.id === id)) {
+      id = `${day}-n${idRef.current++}`;
+    }
+    return id;
+  };
   // Same rule one level down: ranges stack against each other inside the row.
   const [openRangeId, setOpenRangeId] = useState<string | null>(null);
 

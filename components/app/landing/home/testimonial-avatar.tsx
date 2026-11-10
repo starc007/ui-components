@@ -43,7 +43,6 @@ export function TestimonialAvatar({
   }
 
   return (
-    // biome-ignore lint/performance/noImgElement: external X avatar, not worth a next/image remotePatterns entry
     <img
       src={src.replace("_normal", "_bigger")}
       alt=""

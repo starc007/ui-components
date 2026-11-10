@@ -117,7 +117,7 @@ bun run check
 bun test
 ```
 
-`bun run check` runs TypeScript, Biome lint, and registry source validation. `bun test` runs the accessibility-only test suite. See [CONTRIBUTING.md](./CONTRIBUTING.md#testing-policy) for the testing policy.
+`bun run check` runs TypeScript, Biome lint, registry source validation, and message validation. `bun test` runs the accessibility-only test suite. See [CONTRIBUTING.md](./CONTRIBUTING.md#testing-policy) for the testing policy.
 
 ## Contributing
 

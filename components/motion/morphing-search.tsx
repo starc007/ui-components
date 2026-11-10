@@ -149,7 +149,6 @@ export function MorphingSearch({
 
 	const openSearch = useCallback(() => {
 		measureAnchor();
-		setBackgroundScrollLocked(true);
 		previousFocusRef.current =
 			document.activeElement instanceof HTMLElement
 				? document.activeElement
@@ -336,6 +335,7 @@ export function MorphingSearch({
 		}
 
 		if (event.key === "Enter") {
+			if (event.nativeEvent.isComposing || event.keyCode === 229) return;
 			event.preventDefault();
 			const item = filteredItems[activeIndex];
 			if (item) selectItem(item);
@@ -548,7 +548,9 @@ export function MorphingSearch({
 														role="option"
 														aria-selected={active}
 														data-index={index}
-														onMouseMove={() => moveTo(item.id)}
+														onMouseMove={() => {
+															if (!active) moveTo(item.id);
+														}}
 														onFocus={() => moveTo(item.id)}
 														onClick={() => selectItem(item)}
 														className="relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
@@ -604,7 +606,6 @@ export function MorphingSearch({
 				{!open ? (
 					<motion.button
 						ref={triggerRef}
-						key="morphing-search-trigger"
 						layoutId={shellLayoutId}
 						type="button"
 						aria-haspopup="dialog"

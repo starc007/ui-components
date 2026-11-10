@@ -67,6 +67,7 @@ export const HoldActionButton = forwardRef<
     className,
     disabled,
     labels,
+    onBlur,
     ...rest
   },
   ref,
@@ -168,6 +169,11 @@ export const HoldActionButton = forwardRef<
       onPointerLeave={handlePointerLeave}
       onKeyDown={handleKeyDown}
       onKeyUp={handleKeyUp}
+      onBlur={(event) => {
+        // A key held while focus leaves never delivers its keyup here.
+        cancelHold();
+        onBlur?.(event);
+      }}
       onContextMenu={(event) => event.preventDefault()}
       whileTap={reduce || disabled ? undefined : { scale: 0.98 }}
       transition={SPRING_PRESS}

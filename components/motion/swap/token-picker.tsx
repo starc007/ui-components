@@ -69,12 +69,12 @@ export function TokenPicker({
     return tokens.filter((token) => {
       if (chainFilter !== "all" && token.chainId !== chainFilter) return false;
       if (!needle) return true;
-      const chain = chains.find((c) => c.id === token.chainId);
+      const chain = chainById.get(token.chainId);
       return [token.symbol, token.name, chain?.name, token.address].some((h) =>
         h?.toLowerCase().includes(needle),
       );
     });
-  }, [q, chainFilter, tokens, chains]);
+  }, [q, chainFilter, tokens, chainById]);
 
   return (
     <AnimatePresence>

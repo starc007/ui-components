@@ -203,6 +203,7 @@ export function MultiSelectInput({
       event.preventDefault();
       context.moveActive("last");
     } else if (event.key === "Enter") {
+      if (event.nativeEvent.isComposing || event.keyCode === 229) return;
       event.preventDefault();
       if (context.open) context.toggleActive();
       else context.setOpen(true);

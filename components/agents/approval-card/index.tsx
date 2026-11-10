@@ -174,6 +174,7 @@ function ProgressDots({
   ids: string[];
   label: string;
 }) {
+  const reduce = useReducedMotion() ?? false;
   return (
     <span className="flex gap-1.5">
       <span className="sr-only">{label}</span>
@@ -182,11 +183,11 @@ function ProgressDots({
           key={id}
           aria-hidden="true"
           initial={{
-            scale: index === current ? 1 : 0.75,
+            scale: reduce || index === current ? 1 : 0.75,
             opacity: index <= current ? 1 : 0.35,
           }}
           animate={{
-            scale: index === current ? 1 : 0.75,
+            scale: reduce || index === current ? 1 : 0.75,
             opacity: index <= current ? 1 : 0.35,
           }}
           transition={SPRING_SWAP}

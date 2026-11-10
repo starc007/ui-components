@@ -9,11 +9,11 @@
     "title": "Theme setup",
     "intro": "beUI components style themselves with shadcn semantic tokens (<code>bg-primary</code>, <code>text-muted-foreground</code>, border, ring). Set those tokens up once and every component works. Two ways:",
     "option1": {
-      "title": "Option 1 — shadcn init (recommended)",
+      "title": "Option 1: shadcn init (recommended)",
       "body": "If your project uses shadcn, you already have these tokens. Otherwise run init once; it writes the token layer into your CSS."
     },
     "option2": {
-      "title": "Option 2 — paste the theme CSS",
+      "title": "Option 2: paste the theme CSS",
       "body": "Not using shadcn? Paste this into your <code>globals.css</code> directly below <code>@import \"tailwindcss\";</code>. It defines the tokens, motion animations and surface utilities the components use. Requires Tailwind CSS v4.",
       "alsoAvailable": "Also available at <link>/theme.css</link>."
     }
@@ -101,7 +101,7 @@
     "header": {
       "eyebrow": "Integration guide",
       "title": "Use beUI with OpenUI",
-      "intro": "<link>OpenUI</link> is a generative UI framework: instead of returning markdown, the model emits an abstract UI tree (OpenUI Lang) and a React runtime maps every node to a component <em>you</em> register. This OpenUI React integration turns beUI into a custom OpenUI component library, so each generated response uses real, animated components—and only the components you allow."
+      "intro": "<link>OpenUI</link> is a generative UI framework: instead of returning markdown, the model emits an abstract UI tree (OpenUI Lang) and a React runtime maps every node to a component <em>you</em> register. This OpenUI React integration turns beUI into a custom OpenUI component library, so each generated response uses real, animated components, and only the components you allow."
     },
     "install": {
       "title": "Install",
@@ -127,7 +127,7 @@
     },
     "whyBeui": {
       "title": "Why beUI fits",
-      "body": "beUI components own their files and ship through the registry, so there's no runtime to bolt on — the library above <em>is</em> the integration. They use semantic controls and shadcn tokens, so model-generated UIs inherit the host app's theme without extra wiring."
+      "body": "beUI components own their files and ship through the registry, so there's no runtime to bolt on: the library above <em>is</em> the integration. They use semantic controls and shadcn tokens, so model-generated UIs inherit the host app's theme without extra wiring."
     },
     "resources": {
       "title": "Resources",
@@ -144,7 +144,7 @@
         "label": "shadcn chat example",
         "desc": "The registry-library pattern this guide follows."
       },
-      "more": "Other generative UI frameworks that consume shadcn registries can pull beUI the same way — more integration guides to come."
+      "more": "Other generative UI frameworks that consume shadcn registries can pull beUI the same way. More integration guides to come."
     }
   },
   "motionPatterns": {
@@ -452,7 +452,7 @@
         },
         "curve": {
           "label": "Easing curve",
-          "hint": "Pacing over time. Drag the handles — steep = fast, flat = slow."
+          "hint": "Pacing over time. Drag the handles: steep = fast, flat = slow."
         }
       },
       "curves": {
@@ -464,8 +464,8 @@
         "custom": "Your own pacing. Steeper parts of the curve move faster."
       },
       "explain": {
-        "duration": "A fixed time, in seconds. The whole move always takes {value}s, no matter the distance. (Springs don't have this — tweens do.)",
-        "ease": "The easing curve, written as a cubic-bezier. The four numbers are two control handles (x1, y1, x2, y2) that bend how speed changes over time. You rarely type these by hand — drag the curve handles instead.",
+        "duration": "A fixed time, in seconds. The whole move always takes {value}s, no matter the distance. (Springs don't have this, tweens do.)",
+        "ease": "The easing curve, written as a cubic-bezier. The four numbers are two control handles (x1, y1, x2, y2) that bend how speed changes over time. You rarely type these by hand. Drag the curve handles instead.",
         "curve": "This curve reads as \"{title}\": {text} The dots in the preview are the box's position at equal time slices, so spacing shows speed."
       }
     },
@@ -498,8 +498,8 @@
         "dramatic": "Dramatic"
       },
       "explain": {
-        "variants": "Two named states. \"hidden\" is the start (invisible, small, nudged down), \"show\" is the end. Every child animates from hidden to show — you describe states, not steps.",
-        "staggerChildren": "The gap between each child starting, in seconds. They don't all fire at once — child 2 waits {value}s after child 1, and so on, making the wave.",
+        "variants": "Two named states. \"hidden\" is the start (invisible, small, nudged down), \"show\" is the end. Every child animates from hidden to show. You describe states, not steps.",
+        "staggerChildren": "The gap between each child starting, in seconds. They don't all fire at once: child 2 waits {value}s after child 1, and so on, making the wave.",
         "delayChildren": "How long the whole group waits before the first child starts. {immediate, select, yes {0 = starts immediately.} other {Here, {value}s of dead time up front.}}",
         "summaryCode": "{count} items, {direction, select, reverse {reverse} other {forward}}",
         "summary": "With {count} children at {stagger}s apart{delayed, select, yes { after a {delay}s delay} other {}}, the last one begins {last}s in. {direction, select, reverse {Reverse means the last child fires first.} other {Forward fires them first-to-last.}}"
@@ -545,11 +545,11 @@
         "opacity": "{value} ({percent}% visible)"
       },
       "explain": {
-        "sequence": "This array is a list of values the box passes through, in order: {sequence}. It's not \"from A to B\" — it hits every value as a checkpoint.",
+        "sequence": "This array is a list of values the box passes through, in order: {sequence}. It's not \"from A to B\". It hits every value as a checkpoint.",
         "countCode": "{count} keyframes over {duration}s",
         "spacing": "The values are spaced evenly across the duration. {count} values over {duration}s means each leg takes about {leg}s. Add or remove values to change the path.",
-        "loop": "Loop: when it reaches the last value it jumps back to the first and runs again — so it can snap at the seam.",
-        "mirror": "Mirror: it plays forward, then backward, then forward — smooth, no snap, like a pulse.",
+        "loop": "Loop: when it reaches the last value it jumps back to the first and runs again, so it can snap at the seam.",
+        "mirror": "Mirror: it plays forward, then backward, then forward: smooth, no snap, like a pulse.",
         "once": "Once: it runs a single time and stops on the last value."
       }
     },
@@ -580,7 +580,7 @@
         "pop": "Pop"
       },
       "explain": {
-        "hover": "While the pointer is over the box, animate to {value}× size ({percent}%). It springs back to normal when the pointer leaves — no state or handlers needed.",
+        "hover": "While the pointer is over the box, animate to {value}× size ({percent}%). It springs back to normal when the pointer leaves, no state or handlers needed.",
         "tap": "While it's being pressed, go to {value}× size. {pressIn, select, yes {Under 1 = a press-in, the tactile feel of a real button.} other {At 1 it stays put on press.}}",
         "dragOff": "Dragging is off.",
         "drag": "Makes the box draggable{mode, select, free { in any direction} other { on the {mode}-axis only}}. dragConstraints keeps it inside its parent, and it springs back if thrown past the edge."
@@ -601,10 +601,10 @@
         }
       },
       "explain": {
-        "layoutId": "The key idea. Only one pill is rendered — under the active tab. When you click another tab, React unmounts it here and mounts it there, but the shared layoutId tells Motion they're the same element, so it animates between the two positions instead of popping.",
-        "conditional": "The pill only exists inside the active tab. You don't compute any positions or offsets yourself — Motion measures the old and new spots and tweens the gap automatically.",
+        "layoutId": "The key idea. Only one pill is rendered, under the active tab. When you click another tab, React unmounts it here and mounts it there, but the shared layoutId tells Motion they're the same element, so it animates between the two positions instead of popping.",
+        "conditional": "The pill only exists inside the active tab. You don't compute any positions or offsets yourself. Motion measures the old and new spots and tweens the gap automatically.",
         "transitionCode": "transition ({feel})",
-        "transition": "Controls how the pill travels. {feel, select, Slow {A timed tween — same duration every move.} Snappy {A spring — stiff, so it snaps over quickly.} other {A spring — softer, so it glides.}}"
+        "transition": "Controls how the pill travels. {feel, select, Slow {A timed tween, same duration every move.} Snappy {A stiff spring, so it snaps over quickly.} other {A softer spring, so it glides.}}"
       }
     },
     "scroll": {
@@ -633,8 +633,8 @@
       },
       "explain": {
         "useScroll": "Watches how far the panel is scrolled and gives back scrollYProgress: a number from 0 (scrolled to top) to 1 (scrolled to bottom). It updates on every scroll frame.",
-        "useTransform": "Remaps that 0→1 progress onto a real value range. As progress goes 0→1, {prop} goes {range} — so at the top it's {start}, at the bottom {end}.",
-        "style": "The mapped value is a live motion value wired straight into the box's style, so it tracks your scroll exactly — scroll up and it runs in reverse."
+        "useTransform": "Remaps that 0→1 progress onto a real value range. As progress goes 0→1, {prop} goes {range}, so at the top it's {start}, at the bottom {end}.",
+        "style": "The mapped value is a live motion value wired straight into the box's style, so it tracks your scroll exactly: scroll up and it runs in reverse."
       }
     },
     "motionTypes": "Motion types"

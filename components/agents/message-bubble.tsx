@@ -240,13 +240,7 @@ export function MessageBubbleContent({
       ) : null}
       <MessageBubbleLayoutContext.Provider value={notifyLayout}>
         <motion.div
-          initial={
-            animateIn
-              ? reduce
-                ? { opacity: 0 }
-                : { opacity: 0 }
-              : false
-          }
+          initial={animateIn ? { opacity: 0 } : false}
           animate={{ opacity: 1 }}
           transition={
             reduce ? { duration: 0.12, ease: EASE_OUT } : BUBBLE_CONTENT_REVEAL

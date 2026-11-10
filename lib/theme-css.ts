@@ -3,7 +3,7 @@
  * right without shadcn. Paste it into your globals.css (below `@import
  * "tailwindcss";`), or run `npx shadcn init` which sets up the same tokens.
  *
- * Keep in sync with app/globals.css (this is the consumer-facing subset:
+ * Keep in sync with src/styles/globals.css (this is the consumer-facing subset:
  * tokens, @theme mappings, animations and the utilities components rely on,
  * minus site-only bits like grid-noise and shiki).
  */

@@ -255,7 +255,6 @@ export function CylinderCarousel({
   // pointer velocity to a soft spring so the roll glides on and settles free.
   const scroll = useMotionValue(defaultIndex);
   const indexRef = useRef(defaultIndex);
-  const [, setActiveIndex] = useState(defaultIndex);
   const glideRef = useRef<AnimationPlaybackControls | null>(null);
   const draggingRef = useRef(false);
   const hoverRef = useRef(false);
@@ -266,7 +265,6 @@ export function CylinderCarousel({
       const idx = ((Math.round(v) % count) + count) % count;
       if (idx !== indexRef.current) {
         indexRef.current = idx;
-        setActiveIndex(idx);
         onIndexChange?.(idx);
       }
     });
@@ -386,6 +384,14 @@ export function CylinderCarousel({
       );
     },
     [scroll, gap, settle, stopGlide],
+  );
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(wheelSettleRef.current);
+      stopGlide();
+    },
+    [stopGlide],
   );
 
   useEffect(() => {

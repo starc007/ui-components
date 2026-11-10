@@ -56,7 +56,7 @@ export function pageTitle(title: NonNullable<Metadata["title"]>) {
 
 /**
  * Tags for one route. Nested routes override their parents' title and named
- * meta, so a page only sets what differs from the language layout's defaults.
+ * meta, so a page only sets what differs from the site layout's defaults.
  */
 export function metadataToHead(metadata: Metadata) {
   const meta: MetaTag[] = metadata.title ? [{ title: pageTitle(metadata.title) }] : [];

@@ -31,7 +31,7 @@ npm install @openuidev/react-lang @openuidev/lang-core zod
 npm install openai
 
 # Pull the beUI components you want to expose (shadcn registry)
-npx shadcn@latest add @beui/button @beui/animated-badge @beui/animated-number`;
+npx shadcn@latest add @beui/button-base @beui/animated-badge @beui/animated-number`;
 
 const DEFINE_SNIPPET = `import { defineComponent, useTriggerAction } from "@openuidev/react-lang";
 import { z } from "zod/v4";

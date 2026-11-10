@@ -5,8 +5,6 @@ import type { ChangelogItem } from "@/lib/changelog/types";
 
 export const CHANGELOG_PATH = "/changelog";
 export const CHANGELOG_FEED_PATH = "/changelog/rss.xml";
-export const CHANGELOG_DESCRIPTION =
-  "Every week of beUI: new animated React and React Native components, improvements, and accessibility and motion fixes.";
 
 export { changelogEntries };
 
@@ -27,7 +25,7 @@ export function changelogItemLink(item: ChangelogItem) {
   return item.href ? { href: item.href, label: undefined } : null;
 }
 
-/** Stable anchor for an entry, so a week can be linked directly. */
+/** Stable anchor for an entry, so a release can be linked directly. */
 export function changelogAnchor(date: string) {
-  return `week-${date}`;
+  return date;
 }

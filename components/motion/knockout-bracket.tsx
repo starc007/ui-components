@@ -388,7 +388,9 @@ export function KnockoutBracket({
   // The last page shows the final two rounds (semi-finals + final), not a full
   // window — so paging continues past the QF/SF/Final view down to SF + Final.
   const maxPage = Math.max(0, rounds.length - Math.min(2, rounds.length));
-  const [page, setPage] = useState(() => clamp(initialRound, 0, maxPage));
+  const [rawPage, setPage] = useState(initialRound);
+  // Clamped in render: `rounds` can shrink after mount.
+  const page = clamp(rawPage, 0, maxPage);
 
   // Shared reflow — cards, connectors, headers and stage height page together.
   // Height springs with the same token (layout morph is the product feel for
@@ -414,6 +416,7 @@ export function KnockoutBracket({
   const { cy, containerHeight, connectors } = useMemo(() => {
     const centers: number[][] = new Array(rounds.length);
     const base = rounds[page];
+    if (!base) return { cy: centers, containerHeight: 0, connectors: [] };
     centers[page] = base.matches.map((_, i) => PAD_Y + i * ROW + CARD_H / 2);
     for (let r = page + 1; r < rounds.length; r++) {
       const feeders = centers[r - 1];
@@ -480,6 +483,8 @@ export function KnockoutBracket({
   const containerWidth =
     visibleCols * CARD_W + (visibleCols - 1) * GAP_X + 2 * PAD_X;
 
+  if (rounds.length === 0) return null;
+
   return (
     <div
       className={cn(
@@ -520,7 +525,7 @@ export function KnockoutBracket({
           {page > 0 && (
             <button
               type="button"
-              onClick={() => setPage((p) => clamp(p - 1, 0, maxPage))}
+              onClick={() => setPage((p) => clamp(clamp(p, 0, maxPage) - 1, 0, maxPage))}
               aria-label={t("previousRound")}
               // Inset by PAD_X so the hover fill clears the scroll clip; 44px
               // button is the tap target, the inner circle the visible affordance.
@@ -535,7 +540,7 @@ export function KnockoutBracket({
           {page < maxPage && (
             <button
               type="button"
-              onClick={() => setPage((p) => clamp(p + 1, 0, maxPage))}
+              onClick={() => setPage((p) => clamp(clamp(p, 0, maxPage) + 1, 0, maxPage))}
               aria-label={t("nextRound")}
               style={{ right: PAD_X }}
               className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"

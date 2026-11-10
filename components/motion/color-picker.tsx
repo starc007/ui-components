@@ -23,6 +23,7 @@ import {
   type PointerEvent,
   type ReactNode,
   type RefObject,
+  useCallback,
   useContext,
   useEffect,
   useId,
@@ -1190,9 +1191,18 @@ export function ColorPickerContent({ align = "start", className, children, ...pr
     if (rect.left + shift < VIEWPORT_GUTTER) shift = VIEWPORT_GUTTER - rect.left;
     panel.style.marginLeft = `${shift}px`;
   }, [open]);
-  useDismiss(open, () => setOpen(false), panelRef, {
-    ignore: (target) => Boolean(triggerRef.current?.contains(target)),
+  // Stable callbacks: the panel re-renders on every drag frame, and useDismiss
+  // re-binds its listeners whenever either identity changes.
+  const setOpenRef = useRef(setOpen);
+  useLayoutEffect(() => {
+    setOpenRef.current = setOpen;
   });
+  const dismiss = useCallback(() => setOpenRef.current(false), []);
+  const ignoreTrigger = useCallback(
+    (target: Element) => Boolean(triggerRef.current?.contains(target)),
+    [triggerRef],
+  );
+  useDismiss(open, dismiss, panelRef, { ignore: ignoreTrigger });
 
   // Hand focus in on open, and back to the trigger when it closes from inside.
   // Skipped on mount, so a picker that starts open does not steal page focus.
@@ -1225,6 +1235,7 @@ export function ColorPickerContent({ align = "start", className, children, ...pr
             <motion.div
               {...(props as React.ComponentProps<typeof motion.div>)}
               {...gate}
+              style={{ ...props.style, ...gate.style }}
               ref={panelRef}
               id={`${id}-content`}
               role="dialog"

@@ -127,6 +127,7 @@ export function DestinationRow({
       <button
         type="button"
         onClick={onToggle}
+        aria-expanded={show}
         className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-[12px] text-muted-foreground hover:text-foreground"
       >
         <span className="flex items-center gap-2">

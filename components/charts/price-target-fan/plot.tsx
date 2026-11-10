@@ -14,6 +14,13 @@ import {
 import { PriceTargetFanTooltip } from "./tooltip";
 import { fmtAxisDate, H, PAD, W } from "./utils";
 
+/** Decimals the grid step needs, so 2.5 labels as "152.5" and 0.25 as "0.25". */
+function stepDecimals(step: number) {
+  let decimals = 0;
+  while (decimals < 8 && !Number.isInteger(Number((step * 10 ** decimals).toFixed(6)))) decimals++;
+  return decimals;
+}
+
 /** HTML positioning container. Place Tooltip beside SVG, never inside SVG. */
 export function PriceTargetFanPlot({ children, className }: { children?: ReactNode; className?: string }) {
   return (
@@ -97,7 +104,7 @@ export function PriceTargetFanAxes({ className }: { className?: string }) {
             fill="var(--muted-foreground)"
             className="font-mono tabular-nums"
           >
-            {gridVals.step >= 1 ? Math.round(v) : v.toFixed(1)}
+            {v.toFixed(stepDecimals(gridVals.step))}
           </text>
         </g>
       ))}

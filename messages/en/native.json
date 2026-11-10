@@ -42,9 +42,8 @@
   "changelog": {
     "title": "Changelog",
     "heading": "What's new in beUI",
-    "description": "Every week of beUI: new animated React and React Native components, improvements, and accessibility and motion fixes.",
+    "description": "Every beUI release by date: new animated React and React Native components, improvements, and accessibility and motion fixes.",
     "rss": "RSS feed",
-    "weekOf": "Week of",
     "new": "New",
     "improved": "Improved",
     "fixed": "Fixed",

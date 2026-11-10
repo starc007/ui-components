@@ -315,10 +315,15 @@ export function MorphingTabs({
   );
   const [order, setOrder] = useState(itemIds);
   const orderRef = useRef(order);
-  orderRef.current = order;
+  useLayoutEffect(() => {
+    orderRef.current = order;
+  }, [order]);
 
   const [internalValue, setInternalValue] = useState<string | null>(
-    defaultValue ?? itemIds[0] ?? null,
+    defaultValue ??
+      items.find((item) => !item.disabled)?.id ??
+      itemIds[0] ??
+      null,
   );
   const controlled = value !== undefined;
   const currentValue = controlled ? (value ?? null) : internalValue;
@@ -363,10 +368,9 @@ export function MorphingTabs({
 
   const firstEnabledItem =
     orderedItems.find((item) => !item.disabled) ?? orderedItems[0] ?? null;
+  const currentItem = currentValue ? itemMap.get(currentValue) : undefined;
   const activeItem =
-    currentValue && itemMap.has(currentValue)
-      ? itemMap.get(currentValue) ?? null
-      : firstEnabledItem;
+    currentItem && !currentItem.disabled ? currentItem : firstEnabledItem;
   const activeId = activeItem?.id ?? null;
 
   // The rail cannot scroll: the liquid surface is one continuous shape spanning
@@ -461,11 +465,11 @@ export function MorphingTabs({
   );
 
   useEffect(() => {
-    if (currentValue && itemMap.has(currentValue)) return;
+    if (currentItem && !currentItem.disabled) return;
     if (firstEnabledItem && firstEnabledItem.id !== currentValue) {
       setActive(firstEnabledItem.id);
     }
-  }, [currentValue, firstEnabledItem, itemMap, setActive]);
+  }, [currentItem, currentValue, firstEnabledItem, setActive]);
 
   const activeOrderIndex = activeId ? order.indexOf(activeId) : -1;
   const activeVisualIndex =
@@ -722,13 +726,21 @@ export function MorphingTabs({
 
       event.preventDefault();
       const direction = event.key === "ArrowLeft" ? -1 : 1;
-      const nextIndex =
-        (index + direction + orderRef.current.length) % orderRef.current.length;
+      const count = orderRef.current.length;
+      let nextIndex = index;
+      for (let step = 1; step < count; step++) {
+        const candidate = (index + direction * step + count * step) % count;
+        if (!itemMap.get(orderRef.current[candidate])?.disabled) {
+          nextIndex = candidate;
+          break;
+        }
+      }
+      if (nextIndex === index) return;
       const nextId = orderRef.current[nextIndex];
       setActive(nextId);
       requestAnimationFrame(() => tabButtonRefs.current[nextId]?.focus());
     },
-    [moveBy, setActive],
+    [itemMap, moveBy, setActive],
   );
 
   if (!orderedItems.length) return null;

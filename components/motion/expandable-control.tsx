@@ -121,7 +121,7 @@ export function ExpandableButton({
           "relative inline-flex h-11 min-w-11 items-center overflow-hidden rounded-full border border-border bg-transparent p-1 pr-1 text-sm font-medium text-foreground outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
           className,
         )}
-        style={{ borderRadius: 9999 }}
+        style={{ ...props.style, borderRadius: 9999 }}
         onClick={handleClick}
         whileTap={reduce || disabled ? undefined : { scale: 0.97 }}
         transition={transition}

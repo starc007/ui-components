@@ -17,7 +17,7 @@ const BADGE_CLASS: Record<ChangelogItem["type"], string> = {
 };
 
 /**
- * The changelog page body: header, feed link and the list of weeks.
+ * The changelog page body: header, feed link and one entry per release date.
  */
 export function ChangelogContent() {
   const t = useTranslations("Native.changelog");
@@ -49,9 +49,8 @@ export function ChangelogContent() {
             id={changelogAnchor(entry.date)}
             className="scroll-mt-24 border-t border-border py-8 sm:grid sm:grid-cols-[9rem_1fr] sm:gap-6"
           >
-            <p className="text-sm text-muted-foreground">
-              {t("weekOf")}{" "}
-              <time dateTime={entry.date} className="block text-foreground">
+            <p className="text-sm text-muted-foreground sm:pt-0.5">
+              <time dateTime={entry.date}>
                 {format.dateTime(new Date(`${entry.date}T00:00:00Z`), {
                   dateStyle: "long",
                   timeZone: "UTC",

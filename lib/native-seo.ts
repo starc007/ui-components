@@ -3,7 +3,7 @@
 import { NATIVE_PATH, nativeComponentPath } from "@/lib/component-paths";
 import { type NativeComponent, native } from "@/lib/native";
 import { ogImagePath } from "@/lib/og-paths";
-import { AUTHOR, clampText, SITE_NAME } from "@/lib/seo";
+import { AUTHOR, SITE_NAME } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 // When beUI Native launched on beui.dev; the components share this date.
@@ -18,13 +18,6 @@ export const NATIVE_INDEX_DESCRIPTION =
 /** A component page's title, without the site name. */
 export function nativeTitle(component: NativeComponent) {
   return `${component.title} · Animated React Native component`;
-}
-
-export function nativeMetaDescription(component: NativeComponent) {
-  return clampText(
-    `${component.description} An animated, accessible React Native component for Expo and bare apps, built with Reanimated.`,
-    160,
-  );
 }
 
 export function nativeComponentJsonLd(component: NativeComponent) {

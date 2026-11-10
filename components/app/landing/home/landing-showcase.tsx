@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { HeroEyebrow } from "@/components/app/landing/hero-eyebrow";
 import styles from "@/components/app/landing/landing.module.css";
+import type { NativePhone } from "@/components/app/landing/native-phones";
 import { registry } from "@/lib/registry";
 import { cn } from "@/lib/utils";
 import { CategoryExplorer } from "./category-explorer";
@@ -57,7 +58,7 @@ const SPANS = [
  * board of live components right under the fold, the numbers, and a tabbed
  * explorer across every section.
  */
-export function LandingShowcase() {
+export function LandingShowcase({ phones }: { phones: NativePhone[] }) {
   const t = useTranslations("Landing");
   const bento = resolveEntries(registry, BENTO);
   const categories = landingCategories(registry);
@@ -176,7 +177,7 @@ export function LandingShowcase() {
       </section>
 
       <TestimonialRows className="pt-16 sm:pt-24" />
-      <NativeBand className="pt-16 sm:pt-24" />
+      <NativeBand phones={phones} className="pt-16 sm:pt-24" />
       <PlansCompare placement="landing_comparison" className="pt-16 sm:pt-24" />
       <FaqList className="pt-16 sm:pt-24" />
       <ContactStrip className="py-16 sm:py-24" />
