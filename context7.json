@@ -1,0 +1,15 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "beUI",
+  "description": "Free, MIT-licensed animated React components built on Framer Motion and Tailwind CSS 4. Motion primitives, charts, AI agent interface components and composed blocks, installed as source through the shadcn CLI (@beui namespace). Also has a React Native version, beUI Native.",
+  "folders": ["skills", "mcp"],
+  "excludeFiles": ["AGENTS.md", "CLAUDE.md", "CONTRIBUTING.md", "brand.md"],
+  "rules": [
+    "Install components with the shadcn CLI: npx shadcn@latest add @beui/<slug>. The slug list is at https://beui.dev/r.",
+    "Components are copied into the project as source, so edit them in place instead of wrapping them.",
+    "Components use the motion package (Framer Motion v12) imported from motion/react, and Tailwind CSS 4.",
+    "Pass className to any component; it is merged with cn() from @/lib/utils.",
+    "Components respect prefers-reduced-motion through useReducedMotion; keep that gate when you change their motion.",
+    "User-facing strings can be translated through each component's labels prop or LocaleProvider."
+  ]
+}

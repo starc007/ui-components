@@ -173,6 +173,21 @@ async function buildMarkdownPages() {
   }
 }
 
+/** Every guide and component page's Markdown in one file, so an agent can load the docs in one fetch. */
+async function buildLlmsFullTxt() {
+  const idx = await registryIndex();
+  const sections: string[] = [`# ${idx.name}`, "", `> ${idx.description}`, "", `Index: ${SITE_URL}/llms.txt`, ""];
+  for (const slug of GUIDE_SLUGS) {
+    const markdown = buildGuideMarkdown(slug);
+    if (markdown) sections.push(markdown.trim(), "", "---", "");
+  }
+  for (const component of allComponents()) {
+    const markdown = await componentMarkdown(component.category.slug, component.slug);
+    if (markdown) sections.push(markdown.trim(), "", "---", "");
+  }
+  await write("/llms-full.txt", sections.join("\n"));
+}
+
 async function buildLlmsTxt() {
   const idx = await registryIndex();
   const nativeIndex = buildNativeIndex();
@@ -187,6 +202,7 @@ async function buildLlmsTxt() {
     `- Component detail (JSON): ${idx.endpoints.detail}`,
     `- Raw source (text/plain): ${idx.endpoints.raw}`,
     `- Component Markdown: ${idx.endpoints.markdown}`,
+    `- Full docs in one file (guides, then every component's install, usage and props): ${SITE_URL}/llms-full.txt`,
     "",
     "## Guides",
     "",
@@ -321,6 +337,12 @@ const HEADERS = `/assets/*
   Access-Control-Allow-Methods: GET, OPTIONS
   Cache-Control: public, max-age=300, s-maxage=3600
 
+/llms-full.txt
+  Content-Type: text/plain; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, OPTIONS
+  Cache-Control: public, max-age=300, s-maxage=3600
+
 /theme.css
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET, OPTIONS
@@ -340,6 +362,7 @@ await buildRegistry();
 await buildMarkdownPages();
 await Promise.all([
   buildLlmsTxt(),
+  buildLlmsFullTxt(),
   buildRss(),
   write("/registry.json", json(await shadcnRegistry())),
   write("/theme.css", THEME_CSS),
