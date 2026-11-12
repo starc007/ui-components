@@ -17,7 +17,6 @@ import {
   NATIVE_COUNT,
   newEntries,
   PRO_URL,
-  resolveEntries,
   WEB_COUNT,
 } from "./landing-data";
 import { NativeBand } from "./native-band";
@@ -32,35 +31,12 @@ const react =
 const reactNative =
   "[--mark-bg:#f8dcc4] [--mark-fg:#4a2310] dark:[--mark-bg:rgb(244_178_124/0.2)] dark:[--mark-fg:#fbdcc3]";
 
-// Bento order and spans for a four-column, three-row board. The first tile
-// takes a 2x2 block so the board leads with one rich interaction.
-const BENTO = [
-  "blocks/command-palette",
-  "blocks/dynamic-island",
-  "motion/tabs",
-  "motion/switch",
-  "motion/animated-toast-stack",
-  "motion/action-swap",
-  "blocks/otp-input",
-];
-const SPANS = [
-  "sm:col-span-2 lg:row-span-2",
-  "sm:col-span-2",
-  "",
-  "",
-  "sm:col-span-2",
-  "",
-  "",
-];
-
 /**
- * The home page, gallery first. A compact centered hero, then a bento
- * board of live components right under the fold, the numbers, and a tabbed
- * explorer across every section.
+ * The home page. A compact centered hero with the install command, the
+ * numbers, new components, and a tabbed explorer across every section.
  */
 export function LandingShowcase({ phones }: { phones: NativePhone[] }) {
   const t = useTranslations("Landing");
-  const bento = resolveEntries(registry, BENTO);
   const categories = landingCategories(registry);
   const fresh = newEntries(registry);
   const stats = [
@@ -103,22 +79,7 @@ export function LandingShowcase({ phones }: { phones: NativePhone[] }) {
         </div>
       </section>
 
-      <section aria-label={t("home.featured")} className="mx-auto max-w-6xl px-4">
-        <div className="grid grid-cols-1 gap-3 [grid-auto-rows:14rem] sm:grid-cols-2 lg:grid-cols-4">
-          {bento.map(({ category, component }, index) => (
-            <PreviewTile
-              key={component.slug}
-              category={category}
-              component={component}
-              caption="overlay"
-              maxScale={index === 0 ? 1 : 0.8}
-              className={SPANS[index]}
-            />
-          ))}
-        </div>
-      </section>
-
-      <div className="mx-auto mt-10 flex max-w-xl flex-col items-center gap-3 px-4">
+      <div className="mx-auto flex max-w-xl flex-col items-center gap-3 px-4">
         <p className="text-[13px] text-muted-foreground">{t("home.installHint")}</p>
         <InstallCommand className="w-full" />
       </div>

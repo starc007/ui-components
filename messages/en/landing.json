@@ -9,7 +9,6 @@
     "libraryCount": "<num>{count}</num> <muted>{library}</muted><sr> components</sr>"
   },
   "home": {
-    "featured": "Featured components",
     "installHint": "One command. The source is yours.",
     "stats": {
       "web": "React components",

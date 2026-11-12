@@ -18,17 +18,6 @@ export function toTile(component: ComponentEntry): TileComponent {
   };
 }
 
-/** Resolves `category/slug` keys to registry entries, dropping unknown ones. */
-export function resolveEntries(source: CategoryEntry[], keys: readonly string[]): LandingEntry[] {
-  return keys.flatMap((key) => {
-    const [category, slug] = key.split("/");
-    const component = source
-      .find((entry) => entry.slug === category)
-      ?.components.find((entry) => entry.slug === slug);
-    return component ? [{ category, component: toTile(component) }] : [];
-  });
-}
-
 const CATEGORY_ORDER = ["motion", "blocks", "agents", "charts", "casino"] as const;
 
 /**
