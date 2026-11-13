@@ -16,19 +16,19 @@ export const SEO_DESCRIPTION_MAX = 165;
 export const componentSeo: Record<string, ComponentSeo> = {
   // Components
   timeline: {
-    title: "Animated Horizontal Timeline Component for React",
+    title: "React Timeline Component: Animated and Draggable",
     description:
-      "React timeline whose centered event grows while neighbours dim, with tick dividers, parallax year numerals, drag momentum and keyboard control. Free, shadcn install.",
+      "Free React timeline component: the centered event grows while neighbours dim, with drag momentum, tick dividers and keyboard control. Tailwind, shadcn install.",
   },
   alert: {
-    title: "Animated Alert Component for React and Tailwind",
+    title: "React Alert Component: Animated and Dismissible",
     description:
-      "Dismissible React alert with five variants, icon, title, action and close parts, polite or urgent announcements and a spring exit. Copy the source or use shadcn.",
+      "Free React alert component with five variants, icon, title, action and close parts, screen reader announcements and a spring exit. Tailwind, shadcn install.",
   },
   collapsible: {
-    title: "Animated Collapsible for React (Framer Motion)",
+    title: "React Collapsible Component with Smooth Animation",
     description:
-      "Composable React collapsible with a spring height reveal, custom triggers, controlled or uncontrolled state and focus handoff. Free source, shadcn install.",
+      "Free React collapsible with a smooth spring expand and collapse, custom triggers, controlled or uncontrolled state and focus handoff. Framer Motion, shadcn install.",
   },
   "aspect-ratio": {
     title: "React Aspect Ratio Component with Smooth Resizing",
@@ -91,9 +91,9 @@ export const componentSeo: Record<string, ComponentSeo> = {
       "React 3D tilt card with perspective rotation and a cursor-tracked glare on hover, disabled on touch and for reduced motion. Free, open source, copy-paste.",
   },
   button: {
-    title: "Animated Button Components for React (Framer Motion)",
+    title: "Animated Button React Components: Ripple, Loading",
     description:
-      "Spring-pressed React buttons: ripple, loading and success states, magnetic pull and a metallic finish. Tailwind styled, free source, install with shadcn.",
+      "Free animated React buttons with spring press, ripple, loading and success states, magnetic pull and a metallic finish. Framer Motion, Tailwind, shadcn install.",
   },
   "expanding-arrow-button": {
     title: "Animated Call to Action Buttons for React",
@@ -116,9 +116,9 @@ export const componentSeo: Record<string, ComponentSeo> = {
       "Infinite horizontal or vertical React marquee for logos and testimonials, with pause on hover and adjustable speed. Tailwind styled, free source, shadcn install.",
   },
   tabs: {
-    title: "Animated Tabs for React with Framer Motion",
+    title: "Animated Tabs React Component with Sliding Indicator",
     description:
-      "Accessible React tabs with a sliding spring indicator in pill, segment and underline styles, optional icons and scrollable overflow. Free source, shadcn install.",
+      "Free animated tabs for React with a sliding indicator in pill, segment and underline styles, icons and scroll overflow. Accessible, Framer Motion, shadcn install.",
   },
   switch: {
     title: "Animated Toggle Switch for React and Tailwind",
@@ -385,14 +385,14 @@ export const componentSeo: Record<string, ComponentSeo> = {
 
   // AI agents
   "voice-orb": {
-    title: "AI Voice Orb for React: Audio Reactive Sphere",
+    title: "AI Voice Orb React Component: Audio Reactive",
     description:
-      "Animated AI voice orb for React: a liquid shader sphere that reacts to microphone or audio levels, with custom colors and reduced motion. Free source.",
+      "Free animated AI voice orb for React: a liquid shader sphere that reacts to microphone or audio levels, for voice agent UIs. Custom colors, reduced motion support.",
   },
   "message-bubble": {
-    title: "Chat Message Bubble Component for React",
+    title: "React Chat Bubble Component for AI Chat UI",
     description:
-      "React chat message bubbles for AI and messaging apps, with six styles, alignment, grouping, links and a collapsible long reply. Free source, shadcn install.",
+      "Free React chat bubble component for AI chat and messaging apps, with six styles, alignment, grouping, links and a collapsible long reply. Tailwind, shadcn install.",
   },
   message: {
     title: "React Chat Message Component for AI Apps",
