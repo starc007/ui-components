@@ -4,6 +4,7 @@ import { staticFunctionMiddleware } from "@tanstack/start-static-server-function
 import { useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
+import { ProBlocksSection } from "@/components/app/docs/pro-blocks-section";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
 import { getTranslations } from "@/i18n/server";
 import { categoryPath } from "@/lib/component-paths";
@@ -228,6 +229,8 @@ export function CategoryPage({ data }: { data: CategoryPageData }) {
                 </div>
               </section>
             ) : null}
+
+            <ProBlocksSection pageKey={slug} heading="builtWith" className="mt-10" />
 
             {components.length ? (
               <section className="mt-10">
