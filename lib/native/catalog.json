@@ -379,7 +379,7 @@
       "description": "A number pad to use as is or build key by key.",
       "group": "Forms",
       "variants": 2,
-      "launchedAt": "2026-11-12",
+      "launchedAt": "2026-11-13",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/keypad",
       "libraries": [
         "react",
@@ -451,7 +451,7 @@
       "description": "Drag a thumb across to confirm, then watch it spin and check.",
       "group": "Forms",
       "variants": 1,
-      "launchedAt": "2026-11-12",
+      "launchedAt": "2026-11-13",
       "repository": "https://github.com/starc007/beui-native/tree/main/src/components/slide-button",
       "libraries": [
         "react",
