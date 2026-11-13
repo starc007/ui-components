@@ -3,8 +3,8 @@ import type { AlternativePage } from "@/lib/seo-pages/types";
 export const alternativePages: AlternativePage[] = [
   {
     "slug": "aceternity-ui",
-    "title": "Aceternity UI Alternative: Free Animated React Components",
-    "description": "Comparing Aceternity UI and beUI: license, pricing, shadcn CLI installs, Framer Motion and Tailwind CSS, plus when each library is the better pick.",
+    "title": "Aceternity UI vs beUI: Free Animated React Alternative",
+    "description": "Aceternity UI vs beUI compared: license, pricing, shadcn CLI installs, Framer Motion and Tailwind CSS, plus when each library is the better pick.",
     "heading": "An Aceternity UI alternative for animated React components",
     "intro": "Aceternity UI is a popular collection of animated React components, blocks and templates built with Tailwind CSS and Framer Motion, aimed at standout landing pages. beUI covers similar ground with a different emphasis: free, MIT-licensed interface primitives, charts and AI agent components that install through the same shadcn CLI. This page compares the two fairly so you can pick the right one, or use both.",
     "competitor": "Aceternity UI",
@@ -143,7 +143,7 @@ export const alternativePages: AlternativePage[] = [
   },
   {
     "slug": "magic-ui",
-    "title": "Magic UI Alternative: Free Animated React Components",
+    "title": "Magic UI vs beUI: Free Animated React Alternative",
     "description": "Magic UI vs beUI: both free, open source and shadcn-compatible. Compare stacks, install, charts, AI agent components and React Native support.",
     "heading": "A Magic UI alternative for animated React components",
     "intro": "Magic UI is a free, open-source library of animated components and effects built with React, TypeScript, Tailwind CSS and Framer Motion, positioned as a companion to shadcn/ui. beUI shares that stack and install path but spends its effort on application primitives, charts and AI agent interfaces. Here is how the two compare and when each one fits.",

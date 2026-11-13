@@ -70,6 +70,8 @@
     "viewAll": "View all ({count})",
     "browseAll": "Browse all",
     "sponsor": "Sponsor",
+    "guides": "Guides",
+    "compare": "Compare",
     "alsoByUs": "Also by us",
     "docsTagline": "The motion toolkit for React & Next.js",
     "label": "Footer"

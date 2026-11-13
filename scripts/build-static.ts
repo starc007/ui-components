@@ -26,6 +26,8 @@ import {
   buildShadcnRegistry,
 } from "../lib/registry-server";
 import { robotsTxt } from "../lib/robots";
+import { seoPagePath, seoPages } from "../lib/seo-pages";
+import { seoPageMarkdown } from "../lib/seo-pages/markdown";
 import { SITE_URL } from "../lib/site";
 import { sitemapXml } from "../lib/sitemap";
 import { readSourceFile } from "../lib/source-files";
@@ -171,6 +173,11 @@ async function buildMarkdownPages() {
     const markdown = buildGuideMarkdown(slug);
     if (markdown) await write(`/docs/${slug}.md`, markdown);
   }
+  for (const kind of ["guides", "alternatives"] as const) {
+    for (const page of seoPages(kind)) {
+      await write(`${seoPagePath(kind, page.slug)}.md`, seoPageMarkdown(kind, page));
+    }
+  }
 }
 
 /** Every guide and component page's Markdown in one file, so an agent can load the docs in one fetch. */
@@ -180,6 +187,11 @@ async function buildLlmsFullTxt() {
   for (const slug of GUIDE_SLUGS) {
     const markdown = buildGuideMarkdown(slug);
     if (markdown) sections.push(markdown.trim(), "", "---", "");
+  }
+  for (const kind of ["guides", "alternatives"] as const) {
+    for (const page of seoPages(kind)) {
+      sections.push(seoPageMarkdown(kind, page).trim(), "", "---", "");
+    }
   }
   for (const component of allComponents()) {
     const markdown = await componentMarkdown(component.category.slug, component.slug);
@@ -202,7 +214,7 @@ async function buildLlmsTxt() {
     `- Component detail (JSON): ${idx.endpoints.detail}`,
     `- Raw source (text/plain): ${idx.endpoints.raw}`,
     `- Component Markdown: ${idx.endpoints.markdown}`,
-    `- Full docs in one file (guides, then every component's install, usage and props): ${SITE_URL}/llms-full.txt`,
+    `- Full docs in one file (docs guides, how-to guides and comparisons, then every component's install, usage and props): ${SITE_URL}/llms-full.txt`,
     "",
     "## Guides",
     "",
@@ -211,6 +223,17 @@ async function buildLlmsTxt() {
     `- [OpenUI Guide](${SITE_URL}/docs/openui.md): Register beUI components and render streamed generative interfaces.`,
     `- [Changelog](${SITE_URL}/changelog/rss.xml): New components, improvements and fixes by release date, as an RSS feed.`,
     `- [React Native Setup](${SITE_URL}/docs/native-setup.md): One-time app setup for beUI Native: libraries, Uniwind, theme tokens and folder layout.`,
+    "",
+    "## Comparisons and guides",
+    "",
+    `- [All guides](${SITE_URL}/guides)`,
+    `- [All comparisons](${SITE_URL}/alternatives)`,
+    ...(["guides", "alternatives"] as const).flatMap((kind) =>
+      seoPages(kind).map(
+        (page) =>
+          `- [${page.title}](${SITE_URL}${seoPagePath(kind, page.slug)}.md): ${page.description}`,
+      ),
+    ),
     "",
     "## Components",
     "",

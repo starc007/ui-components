@@ -33,6 +33,8 @@ export function SiteFooter() {
     { href: "/docs/ai-agents", label: t("docsPages.forCodingAgents"), page: true },
     { href: "/docs/theme", label: t("docsPages.theming"), page: true },
     { href: "/docs/motion-patterns", label: t("docsPages.motionPatterns"), page: true },
+    { href: "/guides", label: t("footer.guides"), page: true },
+    { href: "/alternatives", label: t("footer.compare"), page: true },
     { href: "/sponsors", label: t("footer.sponsor"), page: true },
     { href: "/llms.txt", label: "llms.txt" },
     {

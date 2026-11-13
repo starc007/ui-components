@@ -96,16 +96,26 @@ export function sitemap(): MetadataRoute.Sitemap {
     })),
   ];
 
-  // Comparison and tutorial pages. Nothing on the site links to them, so the
-  // sitemap is how crawlers find them.
+  // Comparison and tutorial pages, with their /guides and /alternatives lists
+  // (linked from the footer).
   const landingPages: MetadataRoute.Sitemap = (["alternatives", "guides"] as const).flatMap(
-    (kind) =>
-      seoPages(kind).map((page) => ({
+    (kind) => [
+      {
+        url: `${SITE}/${kind}`,
+        lastModified: seoPages(kind)
+          .map((page) => page.updatedAt)
+          .sort()
+          .at(-1),
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+      ...seoPages(kind).map((page) => ({
         url: `${SITE}${seoPagePath(kind, page.slug)}`,
         lastModified: page.updatedAt,
         changeFrequency: "monthly" as const,
         priority: 0.6,
       })),
+    ],
   );
 
   return [

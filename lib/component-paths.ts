@@ -36,7 +36,7 @@ export function isNativePath(pathname: string) {
 /** Pages whose catalog navigation is visible from the md breakpoint. */
 export function hasSiteSidebar(pathname: string) {
   return (
-    ["/components", "/docs", "/guides", "/alternatives"].some((path) => pathname.startsWith(path)) ||
+    ["/components", "/docs"].some((path) => pathname.startsWith(path)) ||
     isTopLevelPath(pathname) ||
     isNativePath(pathname)
   );
