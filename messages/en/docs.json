@@ -5,7 +5,7 @@
     "new": "New",
     "ogImageAlt": "{name} components by beUI",
     "motion": {
-      "title": "Animated React Components — Copy-Paste Motion UI",
+      "title": "Animated React Components: Free Framer Motion UI",
       "heading": "Animated React components",
       "description": "Explore free, open-source animated React components built with Motion and Tailwind CSS. Copy the TypeScript source into your app and customize every interaction.",
       "allLabel": "All animated components"
