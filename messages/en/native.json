@@ -3,6 +3,7 @@
     "metaTitle": "Animated React Native Components",
     "metaDescription": "Free, open-source animated components for React Native and Expo, built for touch with Reanimated, Gesture Handler and Uniwind. Copy the source or install with npx beui-native.",
     "breadcrumb": "Breadcrumb",
+    "new": "New",
     "heading": "Animated React Native components",
     "intro": "Built for touch with Reanimated, Gesture Handler and Uniwind. Copy the source into your Expo or React Native app.",
     "setup": "New here? <link>Set up your app</link> once, then add any component with the CLI."

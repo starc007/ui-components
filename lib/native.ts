@@ -14,6 +14,8 @@ export type NativeComponent = {
   title: string;
   description: string;
   group: string;
+  /** Ship date (`YYYY-MM-DD`); marks the component new for a week. */
+  launchedAt?: string;
   variants: number;
   /** The component's folder on GitHub. */
   repository: string;
