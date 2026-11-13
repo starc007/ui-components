@@ -3,7 +3,8 @@ import { useFormatter, useTranslations } from "use-intl";
 import { JsonLd } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { ComponentCard } from "@/components/app/docs/component-card";
-import { GuideShell } from "@/components/app/docs/guide-shell";
+import { SeoPageCta } from "@/components/app/docs/seo-page-cta";
+import { categoryPath } from "@/lib/component-paths";
 import type { HighlightedCode } from "@/lib/highlight";
 import { ogImagePath } from "@/lib/og-paths";
 import { allComponents } from "@/lib/registry";
@@ -40,9 +41,22 @@ export function SeoPage({
     const component = allComponents().find((item) => item.slug === slug);
     return component ? [component] : [];
   });
+  // Browse the section most of the page's components come from.
+  const categoryCounts = new Map<string, number>();
+  for (const component of components) {
+    const slug = component.category.slug;
+    categoryCounts.set(slug, (categoryCounts.get(slug) ?? 0) + 1);
+  }
+  const browseCategory =
+    [...categoryCounts].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "motion";
+  const cta = {
+    browseHref: categoryPath(browseCategory),
+    campaign: `${kind === "guides" ? "guide" : "alternative"}_${page.slug.replace(/-/g, "_")}`,
+  };
 
   return (
-    <GuideShell>
+    // Marketing pages: no docs sidebars, a centered column like the changelog.
+    <article className="mx-auto min-w-0 max-w-3xl px-4 py-16">
       <JsonLd
         data={[
           breadcrumbJsonLd([
@@ -68,6 +82,7 @@ export function SeoPage({
         <p className="mt-3 max-w-2xl text-muted-foreground">
           {page.intro}
         </p>
+        <SeoPageCta layout="inline" {...cta} className="mt-4" />
       </header>
 
       {comparison ? (
@@ -195,6 +210,8 @@ export function SeoPage({
         </dl>
       </section>
 
+      <SeoPageCta layout="card" {...cta} className="mt-12" />
+
       <p className="mt-10 text-xs text-muted-foreground">
         {t.rich("updated", {
           time: () => (
@@ -207,6 +224,6 @@ export function SeoPage({
           ),
         })}
       </p>
-    </GuideShell>
+    </article>
   );
 }

@@ -59,6 +59,11 @@
     "officialSite": "{competitor} official site",
     "components": "Components in this guide",
     "faq": "FAQ",
-    "updated": "Updated <time></time>"
+    "updated": "Updated <time></time>",
+    "browse": "Browse free components",
+    "explorePro": "Explore beUI Pro",
+    "opensInNewTab": "(opens in a new tab)",
+    "ctaHeading": "Build it with beUI",
+    "ctaBody": "Free animated React components you install with the shadcn CLI. Need full blocks and pages? beUI Pro has them."
   }
 }
