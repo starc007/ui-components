@@ -22,6 +22,7 @@ import {
   nativeComponentPath,
   TOP_LEVEL_CATEGORIES,
 } from "@/lib/component-paths";
+import { isComponentNew } from "@/lib/component-status";
 import type { Metadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
 import { findNativeComponent, type NativeComponent, native, nativeInstallCommands } from "@/lib/native";
@@ -36,27 +37,36 @@ import { breadcrumbJsonLd, clampText, relatedComponents } from "@/lib/seo";
 // /react-native
 // ---------------------------------------------------------------------------
 
-type NativeCard = { slug: string; title: string; description: string };
+type NativeCard = { slug: string; title: string; description: string; launchedAt?: string };
 type NativeGroup = { id: string; label: string; components: NativeCard[] };
 
 const groupId = (name: string) => `native-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
 /**
- * The index lists native components as the catalog groups them, in catalog
- * order. The catalog holds every file's source, so only the cards' text
- * leaves the server function.
+ * The index leads with components still marked new (newest first), like the
+ * web category pages, then lists the rest as the catalog groups them, in
+ * catalog order. The catalog holds every file's source, so only the cards'
+ * text leaves the server function.
  */
 export const getNativeIndexPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .handler(async () => {
     const t = getTranslations("Native.index");
     const groupNames: Record<string, string> = messages.Chrome.sidebar.nativeGroups;
+    const now = Date.now();
+    const isNew = (launchedAt?: string) => isComponentNew({ badge: "new", launchedAt }, now);
+    const newComponents: NativeCard[] = [];
     const byName = new Map<string, NativeCard[]>();
-    for (const { slug, title, description, group } of native.components) {
+    for (const { slug, title, description, group, launchedAt } of native.components) {
+      if (isNew(launchedAt)) {
+        newComponents.push({ slug, title, description, launchedAt });
+        continue;
+      }
       const cards = byName.get(group) ?? [];
       cards.push({ slug, title, description });
       byName.set(group, cards);
     }
+    newComponents.sort((a, b) => (b.launchedAt ?? "").localeCompare(a.launchedAt ?? ""));
     const groups: NativeGroup[] = [...byName.entries()].map(([name, components]) => ({
       id: groupId(name),
       label: groupNames[name] ?? name,
@@ -103,7 +113,7 @@ export const getNativeIndexPage = createServerFn({ method: "GET" })
       ]),
       nativeIndexJsonLd(),
     ];
-    return { metadata, jsonLd, groups };
+    return { metadata, jsonLd, newComponents, groups };
   });
 
 export type NativeIndexPageData = Awaited<ReturnType<typeof getNativeIndexPage>>;
@@ -138,6 +148,30 @@ export function NativeIndexPage({ data }: { data: NativeIndexPageData }) {
       <InstallCommand tool="beui-native" slugs={nativeSlugs} className="mt-6 max-w-2xl" />
 
       <div className="mt-12 space-y-12">
+        {data.newComponents.length ? (
+          <section aria-labelledby="native-new">
+            <h2
+              id="native-new"
+              className="font-display text-xs font-medium uppercase text-muted-foreground"
+            >
+              {t("new")}
+            </h2>
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {data.newComponents.map((component) => (
+                <ComponentCard
+                  key={component.slug}
+                  categorySlug="motion"
+                  slug={component.slug}
+                  name={component.title}
+                  description={component.description}
+                  href={nativeComponentPath(component.slug)}
+                  badge="new"
+                  launchedAt={component.launchedAt}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
         {data.groups.map((group) => (
           <section key={group.id} aria-labelledby={group.id}>
             <h2

@@ -20,6 +20,7 @@ import {
   WEB_COUNT,
 } from "./landing-data";
 import { NativeBand } from "./native-band";
+import { NativeTile, type NativeTileComponent } from "./native-tile";
 import { PlansCompare } from "./plans-compare";
 import { PreviewTile } from "./preview-tile";
 import { SectionTitle } from "./section-title";
@@ -35,10 +36,28 @@ const reactNative =
  * The home page. A compact centered hero with the install command, the
  * numbers, new components, and a tabbed explorer across every section.
  */
-export function LandingShowcase({ phones }: { phones: NativePhone[] }) {
+export function LandingShowcase({
+  phones,
+  freshNative,
+}: {
+  phones: NativePhone[];
+  freshNative: NativeTileComponent[];
+}) {
   const t = useTranslations("Landing");
   const categories = landingCategories(registry);
-  const fresh = newEntries(registry);
+  // Web and React Native launches in one row, newest first.
+  const fresh = [
+    ...newEntries(registry).map((entry) => ({
+      key: `${entry.category}-${entry.component.slug}`,
+      launchedAt: entry.component.launchedAt,
+      web: entry,
+    })),
+    ...freshNative.map((component) => ({
+      key: `native-${component.slug}`,
+      launchedAt: component.launchedAt,
+      native: component,
+    })),
+  ].sort((a, b) => (b.launchedAt ?? "").localeCompare(a.launchedAt ?? ""));
   const stats = [
     { value: String(WEB_COUNT), label: t("home.stats.web") },
     { value: String(NATIVE_COUNT), label: t("home.stats.native") },
@@ -115,14 +134,18 @@ export function LandingShowcase({ phones }: { phones: NativePhone[] }) {
             link={{ href: "/changelog", label: t("home.changelog") }}
           />
           <div className="grid grid-cols-1 gap-3 [grid-auto-rows:15rem] sm:grid-cols-2 lg:grid-cols-4">
-            {fresh.slice(0, 8).map(({ category, component, previewKey }) => (
-              <PreviewTile
-                key={`${category}-${component.slug}`}
-                category={category}
-                component={component}
-                previewKey={previewKey}
-              />
-            ))}
+            {fresh.slice(0, 8).map((item) =>
+              "web" in item && item.web ? (
+                <PreviewTile
+                  key={item.key}
+                  category={item.web.category}
+                  component={item.web.component}
+                  previewKey={item.web.previewKey}
+                />
+              ) : "native" in item && item.native ? (
+                <NativeTile key={item.key} component={item.native} />
+              ) : null,
+            )}
           </div>
         </section>
       ) : null}

@@ -10,6 +10,6 @@ export const Route = createFileRoute("/_site/")({
 });
 
 function HomePage() {
-  const { phones } = Route.useLoaderData();
-  return <LandingShowcase phones={phones} />;
+  const { phones, freshNative } = Route.useLoaderData();
+  return <LandingShowcase phones={phones} freshNative={freshNative} />;
 }
