@@ -27,6 +27,7 @@ import {
 } from "../lib/registry-server";
 import { robotsTxt } from "../lib/robots";
 import { seoPagePath, seoPages } from "../lib/seo-pages";
+import { seoPageMarkdown } from "../lib/seo-pages/markdown";
 import { SITE_URL } from "../lib/site";
 import { sitemapXml } from "../lib/sitemap";
 import { readSourceFile } from "../lib/source-files";
@@ -182,6 +183,11 @@ async function buildLlmsFullTxt() {
     const markdown = buildGuideMarkdown(slug);
     if (markdown) sections.push(markdown.trim(), "", "---", "");
   }
+  for (const kind of ["guides", "alternatives"] as const) {
+    for (const page of seoPages(kind)) {
+      sections.push(seoPageMarkdown(kind, page).trim(), "", "---", "");
+    }
+  }
   for (const component of allComponents()) {
     const markdown = await componentMarkdown(component.category.slug, component.slug);
     if (markdown) sections.push(markdown.trim(), "", "---", "");
@@ -203,7 +209,7 @@ async function buildLlmsTxt() {
     `- Component detail (JSON): ${idx.endpoints.detail}`,
     `- Raw source (text/plain): ${idx.endpoints.raw}`,
     `- Component Markdown: ${idx.endpoints.markdown}`,
-    `- Full docs in one file (guides, then every component's install, usage and props): ${SITE_URL}/llms-full.txt`,
+    `- Full docs in one file (docs guides, how-to guides and comparisons, then every component's install, usage and props): ${SITE_URL}/llms-full.txt`,
     "",
     "## Guides",
     "",
