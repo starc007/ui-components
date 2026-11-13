@@ -1,7 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
+import type { NativeTileComponent } from "@/components/app/landing/home/native-tile";
 import type { NativePhone } from "@/components/app/landing/native-phones";
 import { nativeComponentPath } from "@/lib/component-paths";
+import { isComponentNew } from "@/lib/component-status";
 import { native } from "@/lib/native";
 
 /** Native components whose clips show the most in a few seconds. */
@@ -18,5 +20,15 @@ export const getHomePage = createServerFn({ method: "GET" })
         ? [{ slug, title: component.title, href: nativeComponentPath(slug), clips: component.clips }]
         : [];
     });
-    return { phones };
+    const now = Date.now();
+    const freshNative: NativeTileComponent[] = native.components
+      .filter(({ launchedAt }) => isComponentNew({ badge: "new", launchedAt }, now))
+      .map(({ slug, title, launchedAt, clips }) => ({
+        slug,
+        title,
+        href: nativeComponentPath(slug),
+        launchedAt,
+        clips,
+      }));
+    return { phones, freshNative };
   });
