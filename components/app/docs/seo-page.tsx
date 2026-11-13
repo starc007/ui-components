@@ -127,6 +127,36 @@ export function SeoPage({
               ))}
             </ul>
           ) : null}
+          {section.table ? (
+            <div className="mt-4 overflow-x-auto rounded-2xl border border-border">
+              <table className="w-full min-w-[40rem] text-left text-sm">
+                <thead className="border-b border-border text-foreground">
+                  <tr>
+                    {section.table.columns.map((column) => (
+                      <th key={column} scope="col" className="px-4 py-3 font-medium">
+                        {column}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border text-muted-foreground">
+                  {section.table.rows.map(([head, ...cells]) => (
+                    <tr key={head}>
+                      <th scope="row" className="px-4 py-3 align-top font-medium text-foreground">
+                        {head}
+                      </th>
+                      {cells.map((cell, cellIndex) => (
+                        // biome-ignore lint/suspicious/noArrayIndexKey: cells are fixed columns
+                        <td key={cellIndex} className="px-4 py-3 align-top">
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
           {codes[index] ? (
             <div className="mt-4">
               <CodeBlock {...codes[index]} />

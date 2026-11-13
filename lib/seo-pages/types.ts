@@ -11,6 +11,8 @@ export type SeoPageSection = {
   paragraphs: string[];
   list?: string[];
   code?: { code: string; lang: string; filename?: string };
+  /** A comparison table; the first cell of each row is its header. */
+  table?: { columns: string[]; rows: string[][] };
 };
 
 export type SeoPage = {

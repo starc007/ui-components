@@ -835,5 +835,203 @@ export const guidePages: SeoPage[] = [
     ],
     "publishedAt": "2026-10-18",
     "updatedAt": "2026-10-18"
+  },
+  {
+    "slug": "best-react-animation-libraries-2027",
+    "title": "Best React Animation Libraries 2027, Compared",
+    "description": "The best React animation libraries for 2027: Motion, GSAP, React Spring and AutoAnimate, plus beUI, Magic UI, Aceternity UI and more, compared on license and use.",
+    "heading": "The best React animation libraries for 2027",
+    "intro": "For most React apps in 2027, use Motion (formerly Framer Motion) as the animation engine, then add a component library on top when you want ready-made pieces. beUI, Magic UI, Aceternity UI, Motion Primitives, React Bits and Animata all copy source into your project. GSAP, React Spring and AutoAnimate are engines you build with yourself. beUI is our library, so we list it next to the others and say plainly where each one fits better.",
+    "sections": [
+      {
+        "heading": "Quick answer: which one to pick",
+        "paragraphs": [
+          "Pick by what you are building, not by how many components a library has. Each of these is a good choice for one kind of work."
+        ],
+        "list": [
+          "Product UI, charts or AI agent interfaces: beUI",
+          "Landing page effects and text animations: Magic UI or Aceternity UI",
+          "Small, clean motion building blocks: Motion Primitives",
+          "Creative backgrounds and text effects in JavaScript or TypeScript: React Bits",
+          "Effects to add to a design you already have: Animata",
+          "Complex timelines and scroll-driven sequences: GSAP",
+          "Spring physics without Motion: React Spring",
+          "One-line list and layout transitions: AutoAnimate"
+        ]
+      },
+      {
+        "heading": "Component libraries compared",
+        "paragraphs": [
+          "These libraries give you finished components. Most install through the shadcn CLI and copy the source into your project, so you own and can edit every file. Prices and plans are as of November 2026."
+        ],
+        "table": {
+          "columns": ["Library", "License", "Price", "Install", "Best for"],
+          "rows": [
+            ["beUI", "MIT", "Free; beUI Pro sells blocks and templates", "shadcn CLI as @beui, or copy", "Product UI, charts, AI agent UI, React Native ports"],
+            ["Magic UI", "MIT", "Free; Magic UI Pro sells blocks and templates", "shadcn CLI as @magicui", "Landing page effects, text animations, mockups"],
+            ["Aceternity UI", "Free components; paid items under the Aceternity License", "Free plan plus paid one-time plans", "shadcn CLI as @aceternity, or copy", "Standout landing pages, backgrounds, templates"],
+            ["Motion Primitives", "MIT", "Free; a Pro tier sells premium sections", "Own CLI or shadcn as @motion-primitives", "Text effects, docks, dialogs, toolbars"],
+            ["React Bits", "MIT + Commons Clause", "Free", "shadcn CLI as @react-bits, or copy", "Backgrounds, text effects, micro interactions"],
+            ["Animata", "MIT", "Free", "shadcn CLI with a URL, or copy", "Hand-made effects for an existing design"]
+          ]
+        }
+      },
+      {
+        "heading": "Animation engines compared",
+        "paragraphs": [
+          "Engines do not ship finished components. You use them to animate your own markup, and most component libraries above are built on one of them, usually Motion."
+        ],
+        "table": {
+          "columns": ["Engine", "License", "How you use it", "Best for"],
+          "rows": [
+            ["Motion (Framer Motion)", "MIT", "Declarative motion components, layout and exit animations, gestures", "Most React interfaces"],
+            ["GSAP", "Free to use under its own license (not MIT)", "Imperative timelines, ScrollTrigger and plugins", "Long sequences and scroll storytelling"],
+            ["React Spring", "MIT", "Spring physics through hooks", "Physical, interruptible motion without Motion"],
+            ["AutoAnimate", "MIT", "One hook or directive on a parent element", "Adding motion to lists with no setup"]
+          ]
+        }
+      },
+      {
+        "heading": "How we compared them",
+        "paragraphs": [
+          "We looked at the license, the price, how you install it, whether you own the source, React Native support and how each one handles reduced motion. Facts come from each project's own site and docs. If something has changed since this page was updated, the project's site wins."
+        ]
+      },
+      {
+        "heading": "Where beUI fits, and where it does not",
+        "paragraphs": [
+          "beUI is a free, MIT-licensed set of over 100 animated React components built on Motion and Tailwind CSS. It focuses on the parts of an app people use every day: tabs, buttons, inputs, pickers, charts and AI agent interfaces such as streaming replies, tool approvals and a voice orb. Many components also have React Native versions in beUI Native.",
+          "It is not the best pick for every job. If you want a large collection of hero effects and landing page backgrounds, Magic UI and Aceternity UI have more of them. If you need long scroll-driven sequences, GSAP is the stronger tool. beUI does not cover 3D scenes."
+        ]
+      },
+      {
+        "heading": "Can you use more than one?",
+        "paragraphs": [
+          "Yes. The component libraries copy source into your project, and most share Motion and Tailwind CSS, so you can take a landing page effect from one and app components from another. Keep to one animation engine where you can, so you ship one runtime and your motion feels the same across the app."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "question": "What is the best React animation library in 2027?",
+        "answer": "For most apps, Motion (formerly Framer Motion) is the best engine. For ready-made components, pick by use case: beUI for product UI, charts and AI agent interfaces, Magic UI or Aceternity UI for landing pages."
+      },
+      {
+        "question": "Is Framer Motion the same as Motion?",
+        "answer": "Yes. Framer Motion became Motion in late 2024. The React API ships in the motion package, and you import it from motion/react."
+      },
+      {
+        "question": "Is GSAP free?",
+        "answer": "Yes. Since 2025, GSAP and its former paid plugins are free to use, under GSAP's own license rather than MIT. Check its license page for the exact terms."
+      },
+      {
+        "question": "Are these libraries free for commercial use?",
+        "answer": "Most are MIT, which allows commercial use. React Bits uses MIT with the Commons Clause, so you can use it in apps but not resell the components. Aceternity UI's paid items use its own license."
+      },
+      {
+        "question": "Which React animation libraries work with React Native?",
+        "answer": "beUI has React Native versions of many components in beUI Native, built with Reanimated and Gesture Handler. The other component libraries here do not list React Native support as of November 2026."
+      }
+    ],
+    "components": [
+      "tabs",
+      "timeline",
+      "streaming-response",
+      "voice-orb"
+    ],
+    "publishedAt": "2026-11-13",
+    "updatedAt": "2026-11-13"
+  },
+  {
+    "slug": "ai-chat-animations-react",
+    "title": "Animations for AI Chat Interfaces in React",
+    "description": "How to animate an AI chat interface in React: thinking states, streamed replies without layout jumps, message entry, tool calls, voice and reduced motion.",
+    "heading": "How to animate an AI chat interface in React",
+    "intro": "Good AI chat animation does three jobs: it shows the model is working, it reveals the reply without making the page jump, and it confirms what the user just did. Use short opacity and transform transitions for new messages, a shimmer or progress line while the model thinks, a stable surface for streamed text, and turn movement off for people who ask for reduced motion. This guide covers each part with the beUI agent components.",
+    "sections": [
+      {
+        "heading": "What to animate, and what to keep still",
+        "paragraphs": [
+          "A chat changes all the time, so motion has to earn its place. Animate the moments that need feedback and keep everything else still."
+        ],
+        "list": [
+          "Animate: new messages entering, the thinking state, the send button, tool calls opening and closing, and a voice orb reacting to sound.",
+          "Keep still: each streamed token, the scroll position while the user reads, and anything that would bounce or shift text the user is reading."
+        ]
+      },
+      {
+        "heading": "Thinking and loading states",
+        "paragraphs": [
+          "Between sending a prompt and the first token, the user needs to see that something is happening. A shimmer across a short status line, such as Thinking or Searching, works better than a spinner because it says what the model is doing.",
+          "For longer agent runs, show progress as steps. The beUI Loading States page has three variants: Thinking Shimmer for a single status line, Reasoning Text for cycling messages, and Agent Progress for live steps."
+        ],
+        "code": {
+          "code": "npx shadcn@latest add @beui/thinking-shimmer @beui/agent-progress",
+          "lang": "bash"
+        }
+      },
+      {
+        "heading": "Streaming the reply without layout jumps",
+        "paragraphs": [
+          "Do not animate each token. Render streamed text into a surface that only grows downward, so lines above never move. beUI Streaming Response keeps its size stable while content arrives and shows actions only when the reply is done.",
+          "Scrolling matters as much as the text. Message Scroller follows the live edge while the reply streams, and stops following the moment the reader scrolls up, so the page never pulls them away from what they are reading."
+        ]
+      },
+      {
+        "heading": "Message entry and grouping",
+        "paragraphs": [
+          "New messages should fade in and rise a few pixels with an ease-out curve in about 200ms. Exits should be faster than entries. Group consecutive messages from the same sender so only the new bubble moves, not the whole list. beUI Message and Message Bubble handle grouping, alignment and long replies that collapse."
+        ]
+      },
+      {
+        "heading": "Agent steps: plans, tool calls and approvals",
+        "paragraphs": [
+          "Agents do work between messages. Show a plan as a list whose items change state in place, so nothing jumps. Tool calls and their output read best as a short summary that expands on click. When the agent needs permission, use a clear card with allow and deny actions instead of a modal.",
+          "beUI Todo List, Agent Activity, Tool Result and Tool Approval cover these, each with motion that stays in place."
+        ]
+      },
+      {
+        "heading": "Voice agents",
+        "paragraphs": [
+          "In a voice chat there is no text to watch, so the visual has to show who is talking. beUI Voice Orb is a shader sphere that reacts to microphone or audio levels, so it moves when the user or the agent speaks and rests when nobody does."
+        ]
+      },
+      {
+        "heading": "Reduced motion and accessibility",
+        "paragraphs": [
+          "Read the user's setting with useReducedMotion from motion/react. When it is on, keep opacity and color changes and drop movement, including the shimmer sweep and message rise.",
+          "Announce replies to screen readers with a polite live region, and announce the finished reply rather than each token. Keep focus in the prompt input after sending so keyboard users can type the next message right away."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "question": "Should I animate each token as it streams in?",
+        "answer": "No. Animating every token makes the text flicker and costs performance. Let text appear as it arrives in a surface that only grows downward."
+      },
+      {
+        "question": "How long should chat animations be?",
+        "answer": "Keep most under 300ms. About 200ms for a message entering, faster for exits, and 100 to 160ms for button press feedback."
+      },
+      {
+        "question": "What should a thinking state show?",
+        "answer": "Say what the model is doing, such as Thinking or Searching, with a subtle shimmer. For long agent runs, show the steps as they happen."
+      },
+      {
+        "question": "How do I respect reduced motion in an AI chat?",
+        "answer": "Use useReducedMotion from motion/react. Keep fades and color changes, and remove movement such as slides, shimmers and orb motion."
+      }
+    ],
+    "components": [
+      "loading-states",
+      "streaming-response",
+      "message-scroller",
+      "message",
+      "todo-list",
+      "tool-approval",
+      "voice-orb"
+    ],
+    "publishedAt": "2026-11-13",
+    "updatedAt": "2026-11-13"
   }
 ];
