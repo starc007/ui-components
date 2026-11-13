@@ -111,6 +111,13 @@
     "price": "$249 lifetime access",
     "explore": "Explore beUI Pro"
   },
+  "proBlocks": {
+    "usedIn": "Used in these Pro blocks",
+    "builtWith": "Popular beUI Pro blocks",
+    "mobile": "Full screens in Pro",
+    "pro": "Pro",
+    "opensInNewTab": "(opens in a new tab)"
+  },
   "proMobileCard": {
     "title": "Need full screens?",
     "description": "70+ React Native blocks and screens, from onboarding and paywalls to profile and checkout, are live in beUI Pro for mobile.",

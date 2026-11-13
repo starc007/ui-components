@@ -18,6 +18,7 @@ import {
   PreviewExpandToggle,
   PreviewReplayToggle,
 } from "@/components/app/docs/preview-fullscreen";
+import { ProBlocksSection } from "@/components/app/docs/pro-blocks-section";
 import { PropsTable } from "@/components/app/docs/props-table";
 import { type RelatedItem, RelatedSection } from "@/components/app/docs/related-section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
@@ -350,6 +351,10 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
           />
         </Link>
       ) : null}
+      <ProBlocksSection
+        pageKey={`${catSlug}/${comp.slug}`}
+        className="mt-12 border-t border-border pt-8"
+      />
       <RelatedSection related={data.related} />
 
       {BLOCK_CATEGORIES.includes(catSlug) ? <KeepInMind /> : null}

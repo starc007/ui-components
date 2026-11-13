@@ -13,6 +13,7 @@ import {
   parseNativeReadme,
 } from "@/components/app/docs/native/native-readme";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
+import { ProBlocksSection } from "@/components/app/docs/pro-blocks-section";
 import { type RelatedItem, RelatedSection } from "@/components/app/docs/related-section";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
@@ -172,6 +173,7 @@ export function NativeIndexPage({ data }: { data: NativeIndexPageData }) {
             </div>
           </section>
         ) : null}
+        <ProBlocksSection pageKey="react-native" heading="mobile" />
         {data.groups.map((group) => (
           <section key={group.id} aria-labelledby={group.id}>
             <h2
