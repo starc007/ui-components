@@ -107,13 +107,13 @@
   },
   "proCard": {
     "heading": "Limited Offer",
-    "summary": "350+ blocks and premium motion components for React and Next.js.",
-    "price": "$179 lifetime access",
+    "summary": "436+ blocks and premium motion components for React, Next.js and React Native.",
+    "price": "$249 lifetime access",
     "explore": "Explore beUI Pro"
   },
   "proMobileCard": {
     "title": "Need full screens?",
-    "description": "60+ React Native blocks and screens, from onboarding and paywalls to profile and checkout, are live in beUI Pro for mobile.",
+    "description": "70+ React Native blocks and screens, from onboarding and paywalls to profile and checkout, are live in beUI Pro for mobile.",
     "cta": "Explore beUI Pro Mobile"
   },
   "sponsorCard": {
