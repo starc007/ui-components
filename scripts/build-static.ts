@@ -173,6 +173,11 @@ async function buildMarkdownPages() {
     const markdown = buildGuideMarkdown(slug);
     if (markdown) await write(`/docs/${slug}.md`, markdown);
   }
+  for (const kind of ["guides", "alternatives"] as const) {
+    for (const page of seoPages(kind)) {
+      await write(`${seoPagePath(kind, page.slug)}.md`, seoPageMarkdown(kind, page));
+    }
+  }
 }
 
 /** Every guide and component page's Markdown in one file, so an agent can load the docs in one fetch. */
@@ -225,7 +230,8 @@ async function buildLlmsTxt() {
     `- [All comparisons](${SITE_URL}/alternatives)`,
     ...(["guides", "alternatives"] as const).flatMap((kind) =>
       seoPages(kind).map(
-        (page) => `- [${page.title}](${SITE_URL}${seoPagePath(kind, page.slug)}): ${page.description}`,
+        (page) =>
+          `- [${page.title}](${SITE_URL}${seoPagePath(kind, page.slug)}.md): ${page.description}`,
       ),
     ),
     "",

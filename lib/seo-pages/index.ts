@@ -26,7 +26,7 @@ export function seoPageMetadata(kind: SeoPageKind, page: SeoPage): Metadata {
   return {
     title: page.title,
     description: page.description,
-    alternates: { canonical: path },
+    alternates: { canonical: path, types: { "text/markdown": `${path}.md` } },
     openGraph: {
       title: ogTitle,
       description: page.description,
