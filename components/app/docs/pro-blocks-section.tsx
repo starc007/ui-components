@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "use-intl";
 import { proBlocksFor } from "@/lib/pro-blocks";
+import { cn } from "@/lib/utils";
 
 /**
  * Links from a free page to related beUI Pro blocks. Renders nothing when
@@ -21,10 +22,23 @@ export function ProBlocksSection({
   const id = `pro-blocks-${pageKey.replace(/\//g, "-")}`;
   return (
     <section aria-labelledby={id} className={className}>
-      <h2 id={id} className="text-sm font-semibold text-foreground">
+      {/* Listing pages label their sections in small caps; component pages use sentence case. */}
+      <h2
+        id={id}
+        className={
+          heading === "usedIn"
+            ? "text-sm font-semibold text-foreground"
+            : "font-display text-xs font-medium uppercase text-muted-foreground"
+        }
+      >
         {t(heading)}
       </h2>
-      <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      <ul
+        className={cn(
+          "grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3",
+          heading === "usedIn" ? "mt-3" : "mt-4",
+        )}
+      >
         {blocks.map((block) => (
           <li key={block.href}>
             <a
