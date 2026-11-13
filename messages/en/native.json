@@ -51,6 +51,20 @@
     "view": "View {name}",
     "learnMore": "Learn more"
   },
+  "seoIndex": {
+    "guides": {
+      "title": "React Animation Guides",
+      "description": "Guides for building animated React interfaces: tabs, sidebars, AI chat, counters, shaders and reduced motion, with beUI components.",
+      "heading": "Guides",
+      "intro": "How to build common animated React interfaces, step by step, with beUI components."
+    },
+    "alternatives": {
+      "title": "Compare beUI with Other React Animation Libraries",
+      "description": "How beUI compares with Magic UI, Aceternity UI, Motion Primitives, React Bits, Animata and shadcn/ui: license, price, install and use.",
+      "heading": "Compare",
+      "intro": "How beUI compares with other animated React component libraries, and when each one is the better pick."
+    }
+  },
   "article": {
     "guide": "Guide",
     "comparison": "Comparison",

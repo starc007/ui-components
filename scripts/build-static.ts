@@ -26,6 +26,7 @@ import {
   buildShadcnRegistry,
 } from "../lib/registry-server";
 import { robotsTxt } from "../lib/robots";
+import { seoPagePath, seoPages } from "../lib/seo-pages";
 import { SITE_URL } from "../lib/site";
 import { sitemapXml } from "../lib/sitemap";
 import { readSourceFile } from "../lib/source-files";
@@ -211,6 +212,16 @@ async function buildLlmsTxt() {
     `- [OpenUI Guide](${SITE_URL}/docs/openui.md): Register beUI components and render streamed generative interfaces.`,
     `- [Changelog](${SITE_URL}/changelog/rss.xml): New components, improvements and fixes by release date, as an RSS feed.`,
     `- [React Native Setup](${SITE_URL}/docs/native-setup.md): One-time app setup for beUI Native: libraries, Uniwind, theme tokens and folder layout.`,
+    "",
+    "## Comparisons and guides",
+    "",
+    `- [All guides](${SITE_URL}/guides)`,
+    `- [All comparisons](${SITE_URL}/alternatives)`,
+    ...(["guides", "alternatives"] as const).flatMap((kind) =>
+      seoPages(kind).map(
+        (page) => `- [${page.title}](${SITE_URL}${seoPagePath(kind, page.slug)}): ${page.description}`,
+      ),
+    ),
     "",
     "## Components",
     "",

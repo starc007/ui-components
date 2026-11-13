@@ -16,6 +16,7 @@ import { Route as Site404RouteImport } from './routes/_site/404'
 import { Route as SiteChangelogRouteImport } from './routes/_site/changelog'
 import { Route as SitePlaygroundRouteImport } from './routes/_site/playground'
 import { Route as SiteSponsorsRouteImport } from './routes/_site/sponsors'
+import { Route as SiteAlternativesIndexRouteImport } from './routes/_site/alternatives/index'
 import { Route as SiteAlternativesSlugRouteImport } from './routes/_site/alternatives/$slug'
 import { Route as SiteCasinoIndexRouteImport } from './routes/_site/casino/index'
 import { Route as SiteCasinoSlugRouteImport } from './routes/_site/casino/$slug'
@@ -27,6 +28,7 @@ import { Route as SiteDocsMotionPatternsRouteImport } from './routes/_site/docs/
 import { Route as SiteDocsNativeSetupRouteImport } from './routes/_site/docs/native-setup'
 import { Route as SiteDocsOpenuiRouteImport } from './routes/_site/docs/openui'
 import { Route as SiteDocsThemeRouteImport } from './routes/_site/docs/theme'
+import { Route as SiteGuidesIndexRouteImport } from './routes/_site/guides/index'
 import { Route as SiteGuidesSlugRouteImport } from './routes/_site/guides/$slug'
 import { Route as SiteReactNativeIndexRouteImport } from './routes/_site/react-native/index'
 import { Route as SiteReactNativeSlugRouteImport } from './routes/_site/react-native/$slug'
@@ -65,6 +67,11 @@ const SitePlaygroundRoute = SitePlaygroundRouteImport.update({
 const SiteSponsorsRoute = SiteSponsorsRouteImport.update({
   id: '/sponsors',
   path: '/sponsors',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteAlternativesIndexRoute = SiteAlternativesIndexRouteImport.update({
+  id: '/alternatives/',
+  path: '/alternatives/',
   getParentRoute: () => SiteRouteRoute,
 } as any)
 const SiteAlternativesSlugRoute = SiteAlternativesSlugRouteImport.update({
@@ -122,6 +129,11 @@ const SiteDocsThemeRoute = SiteDocsThemeRouteImport.update({
   path: '/docs/theme',
   getParentRoute: () => SiteRouteRoute,
 } as any)
+const SiteGuidesIndexRoute = SiteGuidesIndexRouteImport.update({
+  id: '/guides/',
+  path: '/guides/',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
 const SiteGuidesSlugRoute = SiteGuidesSlugRouteImport.update({
   id: '/guides/$slug',
   path: '/guides/$slug',
@@ -167,9 +179,11 @@ export interface FileRoutesByFullPath {
   '/docs/theme': typeof SiteDocsThemeRoute
   '/guides/$slug': typeof SiteGuidesSlugRoute
   '/react-native/$slug': typeof SiteReactNativeSlugRoute
+  '/alternatives/': typeof SiteAlternativesIndexRoute
   '/casino/': typeof SiteCasinoIndexRoute
   '/charts/': typeof SiteChartsIndexRoute
   '/components/': typeof SiteComponentsIndexRoute
+  '/guides/': typeof SiteGuidesIndexRoute
   '/react-native/': typeof SiteReactNativeIndexRoute
   '/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
   '/components/$category/': typeof SiteComponentsCategoryIndexRoute
@@ -191,9 +205,11 @@ export interface FileRoutesByTo {
   '/docs/theme': typeof SiteDocsThemeRoute
   '/guides/$slug': typeof SiteGuidesSlugRoute
   '/react-native/$slug': typeof SiteReactNativeSlugRoute
+  '/alternatives': typeof SiteAlternativesIndexRoute
   '/casino': typeof SiteCasinoIndexRoute
   '/charts': typeof SiteChartsIndexRoute
   '/components': typeof SiteComponentsIndexRoute
+  '/guides': typeof SiteGuidesIndexRoute
   '/react-native': typeof SiteReactNativeIndexRoute
   '/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
   '/components/$category': typeof SiteComponentsCategoryIndexRoute
@@ -217,9 +233,11 @@ export interface FileRoutesById {
   '/_site/docs/theme': typeof SiteDocsThemeRoute
   '/_site/guides/$slug': typeof SiteGuidesSlugRoute
   '/_site/react-native/$slug': typeof SiteReactNativeSlugRoute
+  '/_site/alternatives/': typeof SiteAlternativesIndexRoute
   '/_site/casino/': typeof SiteCasinoIndexRoute
   '/_site/charts/': typeof SiteChartsIndexRoute
   '/_site/components/': typeof SiteComponentsIndexRoute
+  '/_site/guides/': typeof SiteGuidesIndexRoute
   '/_site/react-native/': typeof SiteReactNativeIndexRoute
   '/_site/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
   '/_site/components/$category/': typeof SiteComponentsCategoryIndexRoute
@@ -243,9 +261,11 @@ export interface FileRouteTypes {
     | '/docs/theme'
     | '/guides/$slug'
     | '/react-native/$slug'
+    | '/alternatives/'
     | '/casino/'
     | '/charts/'
     | '/components/'
+    | '/guides/'
     | '/react-native/'
     | '/components/$category/$slug'
     | '/components/$category/'
@@ -267,9 +287,11 @@ export interface FileRouteTypes {
     | '/docs/theme'
     | '/guides/$slug'
     | '/react-native/$slug'
+    | '/alternatives'
     | '/casino'
     | '/charts'
     | '/components'
+    | '/guides'
     | '/react-native'
     | '/components/$category/$slug'
     | '/components/$category'
@@ -292,9 +314,11 @@ export interface FileRouteTypes {
     | '/_site/docs/theme'
     | '/_site/guides/$slug'
     | '/_site/react-native/$slug'
+    | '/_site/alternatives/'
     | '/_site/casino/'
     | '/_site/charts/'
     | '/_site/components/'
+    | '/_site/guides/'
     | '/_site/react-native/'
     | '/_site/components/$category/$slug'
     | '/_site/components/$category/'
@@ -353,6 +377,13 @@ declare module '@tanstack/react-router' {
       path: '/sponsors'
       fullPath: '/sponsors'
       preLoaderRoute: typeof SiteSponsorsRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/alternatives/': {
+      id: '/_site/alternatives/'
+      path: '/alternatives'
+      fullPath: '/alternatives/'
+      preLoaderRoute: typeof SiteAlternativesIndexRouteImport
       parentRoute: typeof SiteRouteRoute
     }
     '/_site/alternatives/$slug': {
@@ -432,6 +463,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteDocsThemeRouteImport
       parentRoute: typeof SiteRouteRoute
     }
+    '/_site/guides/': {
+      id: '/_site/guides/'
+      path: '/guides'
+      fullPath: '/guides/'
+      preLoaderRoute: typeof SiteGuidesIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
     '/_site/guides/$slug': {
       id: '/_site/guides/$slug'
       path: '/guides/$slug'
@@ -487,9 +525,11 @@ interface SiteRouteRouteChildren {
   SiteDocsThemeRoute: typeof SiteDocsThemeRoute
   SiteGuidesSlugRoute: typeof SiteGuidesSlugRoute
   SiteReactNativeSlugRoute: typeof SiteReactNativeSlugRoute
+  SiteAlternativesIndexRoute: typeof SiteAlternativesIndexRoute
   SiteCasinoIndexRoute: typeof SiteCasinoIndexRoute
   SiteChartsIndexRoute: typeof SiteChartsIndexRoute
   SiteComponentsIndexRoute: typeof SiteComponentsIndexRoute
+  SiteGuidesIndexRoute: typeof SiteGuidesIndexRoute
   SiteReactNativeIndexRoute: typeof SiteReactNativeIndexRoute
   SiteComponentsCategorySlugRoute: typeof SiteComponentsCategorySlugRoute
   SiteComponentsCategoryIndexRoute: typeof SiteComponentsCategoryIndexRoute
@@ -512,9 +552,11 @@ const SiteRouteRouteChildren: SiteRouteRouteChildren = {
   SiteDocsThemeRoute: SiteDocsThemeRoute,
   SiteGuidesSlugRoute: SiteGuidesSlugRoute,
   SiteReactNativeSlugRoute: SiteReactNativeSlugRoute,
+  SiteAlternativesIndexRoute: SiteAlternativesIndexRoute,
   SiteCasinoIndexRoute: SiteCasinoIndexRoute,
   SiteChartsIndexRoute: SiteChartsIndexRoute,
   SiteComponentsIndexRoute: SiteComponentsIndexRoute,
+  SiteGuidesIndexRoute: SiteGuidesIndexRoute,
   SiteReactNativeIndexRoute: SiteReactNativeIndexRoute,
   SiteComponentsCategorySlugRoute: SiteComponentsCategorySlugRoute,
   SiteComponentsCategoryIndexRoute: SiteComponentsCategoryIndexRoute,

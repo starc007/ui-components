@@ -24,6 +24,20 @@ const PAGE_CARDS = {
     label: "React Native",
     command: "beui.dev/docs/native-setup",
   },
+  guides: {
+    title: "React animation guides",
+    description:
+      "How to build common animated React interfaces, step by step, with beUI components.",
+    label: "Guides",
+    command: "beui.dev/guides",
+  },
+  alternatives: {
+    title: "Compare beUI",
+    description:
+      "How beUI compares with other animated React component libraries, and when each one is the better pick.",
+    label: "Comparison",
+    command: "beui.dev/alternatives",
+  },
   "react-native": {
     title: "Animated React Native components",
     description:

@@ -2,9 +2,9 @@ import type { ComponentFaq } from "@/lib/component-about";
 
 /**
  * Search landing pages: comparison pages at /alternatives/<slug> and tutorials
- * at /guides/<slug>. Nothing in the site's navigation, search or catalog links
- * to them; the sitemap is how crawlers find them. They link out to component
- * pages through `components`.
+ * at /guides/<slug>, listed at /guides and /alternatives (linked from the
+ * footer), in the sitemap and in llms.txt. They link out to component pages
+ * through `components`.
  */
 export type SeoPageSection = {
   heading: string;
