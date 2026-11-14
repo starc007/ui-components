@@ -369,6 +369,35 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  "before-after-slider": {
+    overview:
+      "Before After Slider is a React image comparison component. It stacks two layers, usually two photos of the same size, and reveals the before layer up to a draggable divider. Drag the handle or anywhere on the frame, click to glide the divider to that point on a Framer Motion spring, or use the keyboard. The before layer is clipped rather than resized, so both layers stay aligned at every position.",
+    useWhen: [
+      "A photo editor, filter or retouching tool shows the original next to the result.",
+      "A renovation, design or redesign case study compares two states of the same scene.",
+      "A landing page demonstrates what a product changes about an image or a screen.",
+    ],
+    accessibility:
+      "The handle is a focusable slider with a translatable name and a value read as a percent of the before layer. Arrow keys move it by 1 percent, Shift with an arrow or Page Up and Page Down by 10, and Home and End jump to the edges. Pass alt text on your images; the Before and After corner labels are decorative. On touch, a vertical swipe still scrolls the page. With reduced motion the divider moves without the glide and the handle does not grow while dragged.",
+    faq: [
+      {
+        question: "How do I make a before and after image slider in React?",
+        answer:
+          "Render BeforeAfterSlider with a before and an after element, usually two img tags with h-full w-full object-cover. Set the frame's size with className; it defaults to a full-width 3:2 box.",
+      },
+      {
+        question: "Can I control the divider position?",
+        answer:
+          "Yes. Pass value and onValueChange with a number from 0 to 100, or defaultValue to set where an uncontrolled slider starts.",
+      },
+      {
+        question: "Does it work on phones?",
+        answer:
+          "Yes. A sideways drag moves the divider and a tap glides it to the tap, while an up or down swipe scrolls the page as usual.",
+      },
+    ],
+  },
+
   "arc-picker": {
     overview:
       "Arc Picker is a radial text picker for React that lays its options along a curve bowed toward the top, bottom, left or right. The selection changes live as each label crosses the center, and one persistent bracket frame grows and squeezes to fit each label. It is built with Framer Motion and supports smooth mouse wheel and trackpad scrolling, drag with momentum, disabled choices and controlled or uncontrolled values.",

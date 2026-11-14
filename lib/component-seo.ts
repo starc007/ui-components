@@ -30,6 +30,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Free React collapsible with a smooth spring expand and collapse, custom triggers, controlled or uncontrolled state and focus handoff. Framer Motion, shadcn install.",
   },
+  "before-after-slider": {
+    title: "React Before After Slider for Image Comparison",
+    description:
+      "Free React before and after image slider with a draggable divider, click to glide, keyboard control and touch scroll. Framer Motion, shadcn install.",
+  },
   "aspect-ratio": {
     title: "React Aspect Ratio Component with Smooth Resizing",
     description:
