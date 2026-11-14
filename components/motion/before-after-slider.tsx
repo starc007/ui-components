@@ -322,7 +322,12 @@ export function BeforeAfterSlider({
       onPointerMove={onPointerMove}
       onPointerUp={end}
       onPointerCancel={end}
-      onLostPointerCapture={end}
+      onLostPointerCapture={(event) => {
+        // A touch is implicitly captured by the child it landed on; taking
+        // capture for the frame makes that child lose it, and the event
+        // bubbles here. Only the frame's own capture ends the drag.
+        if (event.target === event.currentTarget) end(event);
+      }}
       // Images inside are the consumer's; stop the browser dragging them out.
       onDragStart={(event) => event.preventDefault()}
       className={cn(
