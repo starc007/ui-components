@@ -9,6 +9,7 @@
       "!.build",
       "!.wrangler",
       "!coverage",
+      "!!.claude/worktrees",
       "!src/routeTree.gen.ts"
     ]
   },
