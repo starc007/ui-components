@@ -13,7 +13,7 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
-        "text": "Before After Slider compares two images with a draggable divider. Click to glide it, use the arrow keys, and swipe up or down on touch to scroll past it.",
+        "text": "Before After Slider compares two images with a draggable divider that bends as it moves. Click to glide it, use the arrow keys, and swipe up or down on touch to scroll past it.",
         "component": "before-after-slider"
       }
     ]

@@ -1,7 +1,17 @@
 "use client";
 
-import { ChevronsLeftRight } from "lucide-react";
-import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  type AnimationPlaybackControls,
+  animate,
+  motion,
+  useInView,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+  useVelocity,
+} from "motion/react";
 import {
   type KeyboardEvent,
   type PointerEvent,
@@ -11,7 +21,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { SPRING_GLIDE, SPRING_PRESS } from "@/lib/ease";
+import { EASE_IN_OUT, SPRING_GLIDE, SPRING_MOUSE, SPRING_PRESS } from "@/lib/ease";
+import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
 import { capturePointer, releasePointer, TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
@@ -38,6 +49,8 @@ export interface BeforeAfterSliderProps {
   onValueChange?: (value: number) => void;
   /** Show the Before and After labels in the top corners. */
   showLabels?: boolean;
+  /** Sweep the divider once when the slider first scrolls into view, to show it moves. */
+  hint?: boolean;
   disabled?: boolean;
   labels?: Partial<BeforeAfterSliderMessages>;
   /** Size the frame here; it defaults to a 3:2 box at full width. */
@@ -51,6 +64,15 @@ const round = (value: number) => Math.round(value * 100) / 100;
 const TOUCH_SLOP = 6;
 // Half the handle, so grabbing it keeps the grab point instead of jumping.
 const HANDLE_RADIUS = 20;
+// How far, in percent, the first-view hint sweeps each way, and how long.
+const HINT_REACH = 10;
+const HINT_DURATION = 1.6;
+// Divider speed (percent of the width per second) that reaches the full bend.
+const BEND_SPEED = 250;
+// How far the line's ends trail its middle at full bend, as a share of the height.
+const BEND_MAX = 0.12;
+// How far each chevron moves out from the center, in pixels.
+const CHEVRON_SPLIT = { rest: 0, hover: 1.5, drag: 3 };
 
 type Gesture = {
   id: number;
@@ -76,6 +98,7 @@ export function BeforeAfterSlider({
   defaultValue = 50,
   onValueChange,
   showLabels = true,
+  hint = true,
   disabled = false,
   labels,
   className,
@@ -86,16 +109,45 @@ export function BeforeAfterSlider({
   const controlled = value !== undefined;
   const current = clamp(controlled ? value : internal);
   const [dragging, setDragging] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const hoverCapable = useHoverCapable();
   const gesture = useRef<Gesture | null>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(frameRef, { once: true, amount: 0.6 });
+  // The hint plays once per mount and never after the user has touched it.
+  const hintState = useRef<"pending" | "done">(hint ? "pending" : "done");
+  const hintRun = useRef<AnimationPlaybackControls | null>(null);
   // The next position change glides (a click or a key) instead of following
   // the pointer exactly.
   const glide = useRef(false);
 
   const position = useMotionValue(current);
+  const width = useMotionValue(0);
+  const height = useMotionValue(0);
+  // The line bends like a rope held at the handle: its middle follows the
+  // divider and its ends trail behind, more the faster it moves, then it
+  // wobbles straight when it stops. Velocity covers drags, glides and the hint.
+  const velocity = useVelocity(position);
+  const pull = useTransform(velocity, [-BEND_SPEED, 0, BEND_SPEED], [-1, 0, 1]);
+  const bend = useSpring(useTransform(pull, (amount) => (reduce ? 0 : amount)), SPRING_MOUSE);
   // clip-path, not a resize: the before layer keeps its full size, so the
-  // two layers stay aligned pixel for pixel at every position.
-  const clipPath = useTransform(position, (p) => `inset(0 ${100 - p}% 0 0)`);
+  // two layers stay aligned pixel for pixel at every position. The cut follows
+  // the line's curve. Until the frame is measured it is a plain straight cut.
+  const clipPath = useTransform([position, bend, width, height], ([p, amount, w, h]: number[]) => {
+    if (!w || !h) return `inset(0 ${100 - p}% 0 0)`;
+    const middle = (p / 100) * w;
+    const trail = amount * BEND_MAX * h;
+    // The control point sits past the middle by as much as the ends trail,
+    // so the curve passes exactly through the divider at half height.
+    return `path("M0 0 L${middle - trail} 0 Q${middle + trail} ${h / 2} ${middle - trail} ${h} L0 ${h} Z")`;
+  });
+  // The same curve for the drawn line, in a 100 by 100 box stretched over the
+  // frame, so it needs no measuring for its straight resting shape.
+  const lineD = useTransform([position, bend, width, height], ([p, amount, w, h]: number[]) => {
+    const trail = w ? ((amount * BEND_MAX * h) / w) * 100 : 0;
+    return `M${p - trail} 0 Q${p + trail} 50 ${p - trail} 100`;
+  });
   const dividerX = useTransform(position, (p) => `${p}%`);
   // Each label fades as the divider comes close, so neither is cut in half.
   const beforeOpacity = useTransform(position, [8, 22], [0, 1]);
@@ -104,13 +156,68 @@ export function BeforeAfterSlider({
   useLayoutEffect(() => {
     if (reduce || !glide.current) {
       position.stop();
-      position.jump(current);
+      // set, not jump: jump zeroes the velocity the drag bend is read from.
+      if (reduce) position.jump(current);
+      else position.set(current);
       return;
     }
     glide.current = false;
     animate(position, current, { type: "spring", ...SPRING_GLIDE });
   }, [current, position, reduce]);
   useEffect(() => () => position.stop(), [position]);
+
+  // The curved cut is drawn in pixels, so it needs the frame's size.
+  useLayoutEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    const measure = () => {
+      const rect = frame.getBoundingClientRect();
+      width.set(rect.width);
+      height.set(rect.height);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, [width, height]);
+
+  // The hint moves only the picture, never the value, so assistive tech hears
+  // nothing and a controlled parent sees no change.
+  useEffect(() => {
+    if (!inView || reduce || disabled || hintState.current !== "pending") return;
+    const from = position.get();
+    const right = Math.min(100, from + HINT_REACH);
+    const left = Math.max(0, from - HINT_REACH);
+    const run = animate(position, [from, right, left, from], {
+      duration: HINT_DURATION,
+      ease: EASE_IN_OUT,
+      times: [0, 0.3, 0.7, 1],
+      delay: 0.25,
+    });
+    hintRun.current = run;
+    // Done only once it finishes or the user cuts in (stopHint), so a cleanup
+    // that stopped it early lets the next run play it from the start.
+    run.then(() => {
+      if (hintRun.current !== run) return;
+      hintRun.current = null;
+      hintState.current = "done";
+    });
+    return () => {
+      if (hintRun.current !== run) return;
+      run.stop();
+      hintRun.current = null;
+      position.jump(from);
+    };
+  }, [inView, reduce, disabled, position]);
+
+  // Any input ends the hint where the value says the divider is.
+  const stopHint = () => {
+    hintState.current = "done";
+    if (!hintRun.current) return;
+    hintRun.current.stop();
+    hintRun.current = null;
+    position.jump(current);
+  };
 
   const commit = (next: number, smooth: boolean) => {
     const clean = round(clamp(next));
@@ -132,6 +239,7 @@ export function BeforeAfterSlider({
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (disabled || event.button !== 0 || gesture.current) return;
+    stopHint();
     const rect = event.currentTarget.getBoundingClientRect();
     if (!rect.width) return;
     const dividerPx = (position.get() / 100) * rect.width;
@@ -199,6 +307,7 @@ export function BeforeAfterSlider({
     }[event.key];
     if (next === undefined) return;
     event.preventDefault();
+    stopHint();
     commit(next, true);
   };
 
@@ -208,6 +317,7 @@ export function BeforeAfterSlider({
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: a pointer surface for the slider below, which owns focus, keys and the accessible value.
     <div
+      ref={frameRef}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={end}
@@ -238,9 +348,37 @@ export function BeforeAfterSlider({
         </div>
       ) : null}
 
-      {/* Full width so a percent translate moves the divider by a percent of the frame. */}
+      {/* The stroke stays its pixel width however the box is stretched. */}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+      >
+        <motion.path
+          d={lineD}
+          fill="none"
+          stroke="rgb(0 0 0 / 0.14)"
+          strokeLinecap="square"
+          vectorEffect="non-scaling-stroke"
+          initial={false}
+          animate={{ strokeWidth: dragging && !reduce ? 5.5 : 4 }}
+          transition={SPRING_PRESS}
+        />
+        <motion.path
+          d={lineD}
+          fill="none"
+          stroke="white"
+          strokeLinecap="square"
+          vectorEffect="non-scaling-stroke"
+          initial={false}
+          animate={{ strokeWidth: dragging && !reduce ? 3.5 : 2 }}
+          transition={SPRING_PRESS}
+        />
+      </svg>
+
+      {/* Full width so a percent translate moves the handle by a percent of the frame. */}
       <motion.div className="pointer-events-none absolute inset-0" style={{ x: dividerX }}>
-        <div className="absolute inset-y-0 left-0 w-0.5 -translate-x-1/2 bg-white shadow-[0_0_0_1px_rgb(0_0_0/0.12)]" />
         <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2">
           <motion.div
             ref={handleRef}
@@ -254,11 +392,31 @@ export function BeforeAfterSlider({
             aria-orientation="horizontal"
             aria-disabled={disabled || undefined}
             onKeyDown={onKeyDown}
-            animate={{ scale: dragging && !reduce ? 1.08 : 1 }}
+            onPointerEnter={(event) => {
+              if (hoverCapable && event.pointerType !== "touch") setHovered(true);
+            }}
+            onPointerLeave={() => setHovered(false)}
+            animate={{ scale: reduce ? 1 : dragging ? 1.08 : hovered ? 1.04 : 1 }}
             transition={SPRING_PRESS}
-            className="pointer-events-auto grid size-10 place-items-center rounded-full bg-white text-neutral-900 shadow-[0_0_0_1px_rgb(0_0_0/0.12)] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-black/20"
+            className="pointer-events-auto flex size-10 items-center justify-center rounded-full bg-white text-neutral-900 shadow-[0_0_0_1px_rgb(0_0_0/0.12)] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-black/20"
           >
-            <ChevronsLeftRight aria-hidden="true" className="size-4" strokeWidth={2.25} />
+            {/* The chevrons part as the handle is hovered and grabbed. */}
+            {([ChevronLeft, ChevronRight] as const).map((Icon, index) => {
+              const split = reduce
+                ? 0
+                : CHEVRON_SPLIT[dragging ? "drag" : hovered ? "hover" : "rest"];
+              return (
+                <motion.span
+                  key={index === 0 ? "left" : "right"}
+                  aria-hidden="true"
+                  animate={{ x: index === 0 ? -split : split }}
+                  transition={SPRING_PRESS}
+                  className={cn("flex", index === 0 ? "-mr-1" : "-ml-1")}
+                >
+                  <Icon className="size-3.5" strokeWidth={2.5} />
+                </motion.span>
+              );
+            })}
           </motion.div>
         </div>
       </motion.div>

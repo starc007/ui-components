@@ -378,7 +378,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A landing page demonstrates what a product changes about an image or a screen.",
     ],
     accessibility:
-      "The handle is a focusable slider with a translatable name and a value read as a percent of the before layer. Arrow keys move it by 1 percent, Shift with an arrow or Page Up and Page Down by 10, and Home and End jump to the edges. Pass alt text on your images; the Before and After corner labels are decorative. On touch, a vertical swipe still scrolls the page. With reduced motion the divider moves without the glide and the handle does not grow while dragged.",
+      "The handle is a focusable slider with a translatable name and a value read as a percent of the before layer. Arrow keys move it by 1 percent, Shift with an arrow or Page Up and Page Down by 10, and Home and End jump to the edges. Pass alt text on your images; the Before and After corner labels are decorative. On touch, a vertical swipe still scrolls the page. With reduced motion the divider moves without the glide, the line stays straight, the first-view hint does not play and the handle does not grow or part its arrows. The hint only moves the picture, never the value, so screen readers announce nothing during it.",
     faq: [
       {
         question: "How do I make a before and after image slider in React?",
