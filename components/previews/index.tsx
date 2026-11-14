@@ -15,6 +15,9 @@ function dynamic(load: () => Promise<ComponentType>): ComponentType {
 }
 
 export const previews: Record<string, ComponentType> = {
+  "motion/before-after-slider": dynamic(() =>
+    import("./motion/before-after-slider.preview").then((m) => m.BeforeAfterSliderPreview),
+  ),
   "motion/alert": dynamic(() =>
     import("./motion/alert.preview").then((m) => m.AlertPreview),
   ),

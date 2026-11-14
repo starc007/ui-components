@@ -90,6 +90,23 @@ export const registry: CategoryEntry[] = [
       "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
+        slug: "before-after-slider",
+        name: "Before After Slider",
+        description:
+          "Compare two images with a draggable divider. Drag or click anywhere on the frame, use the arrow keys, and keep vertical page scroll on touch.",
+        file: "components/motion/before-after-slider.tsx",
+        badge: "new",
+        launchedAt: "2026-11-14",
+        keywords: [
+          "before after slider",
+          "image comparison slider",
+          "compare images",
+          "react before after",
+          "image compare",
+          "photo comparison",
+        ],
+      },
+      {
         slug: "timeline",
         name: "Timeline",
         description:

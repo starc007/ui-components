@@ -8,6 +8,17 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
  */
 export const changelogEntries: ChangelogEntry[] = [
   {
+    "date": "2026-11-14",
+    "title": "Before After Slider",
+    "items": [
+      {
+        "type": "new",
+        "text": "Before After Slider compares two images with a draggable divider that bends as it moves. Click to glide it, use the arrow keys, and swipe up or down on touch to scroll past it.",
+        "component": "before-after-slider"
+      }
+    ]
+  },
+  {
     "date": "2026-11-10",
     "title": "Fixes and improvements",
     "items": [
