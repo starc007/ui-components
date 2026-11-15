@@ -1,4 +1,182 @@
 {
+  "privacy": {
+    "meta": {
+      "title": "Privacy Policy",
+      "description": "What data beui.dev and beUI Pro collect, why, who processes it, and how to reach us about it."
+    },
+    "heading": "Privacy Policy",
+    "updated": "Last updated November 15, 2026",
+    "intro": "This policy covers beui.dev (the free beUI library), beUI Pro at pro.beui.dev, the API at api.beui.dev and the MCP server at mcp.beui.dev. beUI is run by [TODO: operator legal name and country]. Questions go to hi@beui.dev.",
+    "sections": [
+      {
+        "heading": "beui.dev",
+        "paragraphs": [
+          "You can browse beui.dev and install components without an account. We don't ask for your name or email here."
+        ],
+        "list": [
+          "Analytics: we use Tracwell to count page views, referring sites and campaign tags. It keeps an anonymous ID and a session ID in your browser's local storage and respects Do Not Track.",
+          "Theme: your light or dark choice is saved in local storage.",
+          "Registry requests: when an AI crawler fetches the component registry, we record the crawler's user agent and the path. We don't store IP addresses for this.",
+          "Hosting: Cloudflare serves the site and processes your IP address and request details to deliver it."
+        ]
+      },
+      {
+        "heading": "beUI Pro: what we collect",
+        "list": [
+          "Purchases: your name, email, plan, seat count, license expiry and the customer and payment IDs from Dodo Payments. Card details go to Dodo Payments; we never see them.",
+          "Sign-in: only license holders can sign in, with Google or an email link. With Google we receive your name, email and profile image and store the tokens Google returns. Each session stores your IP address and browser user agent.",
+          "License keys: we store your license key so your dashboard can show it, a SHA-256 hash of it to check registry requests, and when it was last used.",
+          "Teams: the owner's email, each member's email, invitation status and seat details.",
+          "Templates: your name, email and how many times you downloaded the template.",
+          "Agent purchases: if an agent buys a license with USDC on Solana, we store the wallet address, the payment receipt and reference, and an email if you claim the license with one. Payments on Solana are public on the blockchain.",
+          "Emails: who received a product update and whether you unsubscribed.",
+          "beUI Studio: media you upload stays in your browser. If you send a design to code, we receive the effect settings and the media's type and file name, not the file."
+        ]
+      },
+      {
+        "heading": "Who processes your data",
+        "list": [
+          "Dodo Payments, our merchant of record, handles checkout, payment and tax. At checkout we pass analytics IDs, campaign tags, your IP address and user agent so purchases can be attributed.",
+          "Cloudflare hosts the sites, the database and file storage, and sends sign-in and purchase emails.",
+          "Google provides Google sign-in if you choose it, and Google Analytics on pro.beui.dev. We send Google Analytics a purchase event with the order value and analytics IDs, not your email.",
+          "Meta: pro.beui.dev uses the Meta Pixel for page views, product views and checkout starts. After a purchase we send Meta your email and customer ID as SHA-256 hashes, plus Meta's browser IDs, your IP address, user agent and the order value.",
+          "Resend sends product update emails and receives your email and first name.",
+          "Tracwell runs analytics on both sites. After a purchase it receives the Dodo customer ID and order value, not your email.",
+          "The Solana network processes agent purchases paid in USDC."
+        ]
+      },
+      {
+        "heading": "Cookies and browser storage",
+        "paragraphs": [
+          "beui.dev sets no cookies of its own. pro.beui.dev uses these:"
+        ],
+        "list": [
+          "better-auth session cookies keep you signed in for up to 30 days.",
+          "beui_checkout_* holds your checkout session for one hour.",
+          "beui_tracwell_attribution (30 minutes) and beui_utm (20 days) remember where a visit came from so a purchase can be attributed.",
+          "Google Analytics (_ga) and Meta (_fbp, _fbc) cookies, set by their scripts.",
+          "Local storage for your theme, the sidebar state and Tracwell's anonymous and session IDs."
+        ]
+      },
+      {
+        "heading": "Emails",
+        "paragraphs": [
+          "We send purchase, sign-in and team invite emails from hi@beui.dev. Customers may also get product update emails from updates.beui.dev. Every update email has an unsubscribe link. Receipts and sign-in emails still arrive after you unsubscribe."
+        ]
+      },
+      {
+        "heading": "How long we keep data",
+        "paragraphs": [
+          "Sessions end after 30 days and sign-in links after 15 minutes. Purchase, license and team records stay while your license is valid and after that for [TODO: retention period, for example as long as tax and accounting rules require]."
+        ]
+      },
+      {
+        "heading": "Your choices",
+        "list": [
+          "Email hi@beui.dev to see, correct or delete the data we hold about you. We may keep purchase records that we need for tax and accounting.",
+          "Unsubscribe from product updates with the link in any update email.",
+          "Turn on Do Not Track or block scripts in your browser to stop analytics.",
+          "[TODO: add any rights and response times your jurisdiction requires, such as GDPR or CCPA.]"
+        ]
+      },
+      {
+        "heading": "Changes",
+        "paragraphs": [
+          "When this policy changes, we update this page and the date at the top."
+        ]
+      },
+      {
+        "heading": "Contact",
+        "paragraphs": [
+          "hi@beui.dev"
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "meta": {
+      "title": "Terms of Service",
+      "description": "Terms for using beui.dev, the free beUI library, and beUI Pro licenses, registry tokens and payments."
+    },
+    "heading": "Terms of Service",
+    "updated": "Last updated November 15, 2026",
+    "intro": "These terms cover beui.dev, beUI Pro at pro.beui.dev and the services around them: the component registries, the API and the MCP server. beUI is run by [TODO: operator legal name and country]. By using them or buying a license, you agree to these terms.",
+    "sections": [
+      {
+        "heading": "The free library",
+        "paragraphs": [
+          "The components on beui.dev are released under the MIT License. You can use, copy, change and ship them in personal and commercial projects, as long as you keep the license notice. The full text is in the LICENSE file on GitHub."
+        ]
+      },
+      {
+        "heading": "beUI Pro license",
+        "paragraphs": [
+          "Buying beUI Pro gives you a license to use the Pro source in unlimited personal and client projects. Plans and prices are shown on pro.beui.dev at checkout."
+        ],
+        "list": [
+          "Yearly: one year of access with no auto-renewal. It does not include illustrations or templates. [TODO: say whether code copied during the year may be used after it ends.]",
+          "Lifetime: one payment with no expiry. It includes web updates, animated illustrations and templates.",
+          "Mobile: beUI Pro for React Native is a separate library with its own license.",
+          "Templates bought on their own are a one-time purchase. You can customize and deploy the source."
+        ]
+      },
+      {
+        "heading": "Teams",
+        "paragraphs": [
+          "A team license has 2 to 100 seats. Each seat is for one person and is assigned when that person accepts the invite. An accepted seat cannot be removed or moved to someone else."
+        ]
+      },
+      {
+        "heading": "License keys and registry tokens",
+        "paragraphs": [
+          "Your license key and registry token are personal to you, or to the teammate who holds the seat. Don't share them, commit them to a public repository or use them in a shared build that people without a seat can reach. We may revoke a key that is shared or leaked."
+        ]
+      },
+      {
+        "heading": "What you can't do with Pro",
+        "paragraphs": [
+          "You can ship Pro components inside the products you build for yourself or your clients. You can't redistribute, resell or sublicense the Pro source on its own, or as part of a component library, UI kit, template or theme, and you can't publish it in a public or open-source repository."
+        ]
+      },
+      {
+        "heading": "Payments and refunds",
+        "paragraphs": [
+          "Dodo Payments is the merchant of record for card purchases and handles payment, tax and receipts. Agent purchases are paid in USDC on Solana.",
+          "[TODO: refund policy.] If a team purchase is refunded, the team's access is suspended."
+        ]
+      },
+      {
+        "heading": "Accounts",
+        "paragraphs": [
+          "Only license holders can sign in to pro.beui.dev. Keep access to your email and Google account secure, since they unlock your license."
+        ]
+      },
+      {
+        "heading": "No warranty",
+        "paragraphs": [
+          "beUI and beUI Pro are provided as is, without warranties of any kind. To the extent the law allows, we are not liable for indirect or consequential damages, and our total liability is limited to what you paid us in the 12 months before the claim."
+        ]
+      },
+      {
+        "heading": "Changes",
+        "paragraphs": [
+          "We may update these terms. When we do, we update this page and the date at the top. Using beUI after a change means you accept the new terms."
+        ]
+      },
+      {
+        "heading": "Governing law",
+        "paragraphs": [
+          "[TODO: governing law and where disputes are handled.]"
+        ]
+      },
+      {
+        "heading": "Contact",
+        "paragraphs": [
+          "hi@beui.dev"
+        ]
+      }
+    ]
+  },
   "theme": {
     "meta": {
       "title": "Theme setup",
