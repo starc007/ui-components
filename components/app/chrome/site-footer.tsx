@@ -23,6 +23,8 @@ const PRODUCTS = [
 ];
 
 const LEGAL_PAGES = ["privacy", "terms", "refunds"] as const;
+// A constant, not `new Date()`: prerendered HTML and the client must render the same year.
+const COPYRIGHT_YEAR = 2026;
 
 export function SiteFooter() {
   const t = useTranslations("Chrome");
@@ -177,39 +179,37 @@ export function SiteFooter() {
           </ul>
         </nav>
 
-        {/* The grid has one column per slot at xl, so Legal stacks under Also by us. */}
-        <div className="space-y-12">
-          <nav aria-label={t("footer.alsoByUs")}>
-            <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-              {t("footer.alsoByUs")}
-            </p>
-            <ul className="mt-4 space-y-2.5">
-              {PRODUCTS.map((item) => (
-                <li key={item.href}>
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="text-muted-foreground text-sm transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        <nav aria-label={t("footer.alsoByUs")}>
+          <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
+            {t("footer.alsoByUs")}
+          </p>
+          <ul className="mt-4 space-y-2.5">
+            {PRODUCTS.map((item) => (
+              <li key={item.href}>
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-muted-foreground text-sm transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
+        {/* Copyright and legal links: a full-width row under the columns. */}
+        <div className="col-span-full flex flex-wrap items-center gap-x-6 gap-y-2 border-border/60 border-t pt-8 text-muted-foreground text-sm">
+          <p>{t("footer.copyright", { year: COPYRIGHT_YEAR })}</p>
           <nav aria-label={t("footer.legal")}>
-            <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-              {t("footer.legal")}
-            </p>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="flex flex-wrap gap-x-6 gap-y-2">
               {LEGAL_PAGES.map((page) => (
                 <li key={page}>
                   <Link
                     prefetch={false}
                     href={`/${page}`}
-                    className="text-muted-foreground text-sm transition-colors hover:text-foreground"
+                    className="transition-colors hover:text-foreground"
                   >
                     {t(`footer.${page}`)}
                   </Link>

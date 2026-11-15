@@ -74,8 +74,9 @@
     "compare": "Compare",
     "alsoByUs": "Also by us",
     "legal": "Legal",
+    "copyright": "© {year} beUI",
     "privacy": "Privacy",
-    "terms": "Terms",
+    "terms": "Terms of service",
     "refunds": "Refunds",
     "docsTagline": "The motion toolkit for React & Next.js",
     "label": "Footer"
