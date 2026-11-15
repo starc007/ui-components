@@ -5,6 +5,8 @@ publishedAt: 2026-11-16
 tags: react, framermotion, animation, accessibility
 product: beui
 draft: false
+devto: https://dev.to/saurra3h/your-closing-modal-is-still-eating-clicks-kig
+medium: https://saurra3h.medium.com/your-closing-modal-is-still-eating-clicks-bbe8c01782bf
 ---
 
 You close a modal. The exit animation plays for 200ms. During those 200ms the user clicks the button behind it. Nothing happens.
@@ -95,7 +97,7 @@ Gate interaction on presence, not on `open`.
 
 `open` tells you what the user wants. Presence tells you what is actually on screen and still in charge. During an exit those two disagree, and the page should follow the user.
 
-Every overlay in [beUI](https://beui.dev) works this way: the [command palette](https://beui.dev/components/blocks/command-palette), [bottom sheet](https://beui.dev/components/motion/bottom-sheet) and [lightbox](https://beui.dev/components/motion/morphing-lightbox) all release the page the moment they start closing. Install any of them with the shadcn CLI and the gate comes with it:
+Every overlay in [beUI](https://beui.dev) works this way: the [command palette](https://beui.dev/components/blocks/command-palette), [bottom sheet](https://beui.dev/components/motion/bottom-sheet) and [image viewer](https://beui.dev/components/motion/image-viewer) all release the page the moment they start closing. Install any of them with the shadcn CLI and the gate comes with it:
 
 ```bash
 npx shadcn@latest add @beui/bottom-sheet
