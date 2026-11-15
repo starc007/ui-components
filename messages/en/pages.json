@@ -6,7 +6,7 @@
     },
     "heading": "Privacy Policy",
     "updated": "Last updated November 15, 2026",
-    "intro": "This policy covers beui.dev (the free beUI library), beUI Pro at pro.beui.dev, the API at api.beui.dev and the MCP server at mcp.beui.dev. beUI is run by [TODO: operator legal name and country]. Questions go to hi@beui.dev.",
+    "intro": "This policy covers beui.dev (the free beUI library), beUI Pro at pro.beui.dev, the API at api.beui.dev and the MCP server at mcp.beui.dev. beUI is built and run by an individual developer based in India (\"we\" on this page). Questions go to hi@beui.dev.",
     "sections": [
       {
         "heading": "beui.dev",
@@ -100,7 +100,7 @@
     },
     "heading": "Terms of Service",
     "updated": "Last updated November 15, 2026",
-    "intro": "These terms cover beui.dev, beUI Pro at pro.beui.dev and the services around them: the component registries, the API and the MCP server. beUI is run by [TODO: operator legal name and country]. By using them or buying a license, you agree to these terms.",
+    "intro": "These terms cover beui.dev, beUI Pro at pro.beui.dev and the services around them: the component registries, the API and the MCP server. beUI is built and run by an individual developer based in India (\"we\" on this page). By using them or buying a license, you agree to these terms.",
     "sections": [
       {
         "heading": "The free library",
@@ -166,7 +166,7 @@
       {
         "heading": "Governing law",
         "paragraphs": [
-          "[TODO: governing law and where disputes are handled.]"
+          "These terms are governed by the laws of India."
         ]
       },
       {
