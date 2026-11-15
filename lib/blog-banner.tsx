@@ -3,6 +3,7 @@ import path from "node:path";
 import { crc32, deflateSync } from "node:zlib";
 import { Resvg } from "@resvg/resvg-js";
 import type { ReactElement } from "react";
+import type { BlogProduct } from "@/lib/blog";
 import satori from "satori";
 
 /**
@@ -262,10 +263,10 @@ export async function loadBannerAssets() {
 
 /** Both banners for one post, as PNG buffers. */
 export async function renderBlogBanners(
-  post: { slug: string; title: string; product: "beui" | "pro" },
+  post: { slug: string; title: string; product: BlogProduct },
   assets: BannerAssets,
 ) {
-  const label = post.product === "pro" ? "beUI Pro" : "beUI blog";
+  const label = { beui: "beUI blog", pro: "beUI Pro", native: "beUI Native" }[post.product];
   const render = async (size: { width: number; height: number }) => {
     const cell = Math.max(3, Math.round((3 * size.height) / 630));
     const background = bannerFieldPng(size.width, size.height, post.slug, cell);

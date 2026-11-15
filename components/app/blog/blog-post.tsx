@@ -49,10 +49,10 @@ export function BlogPost({ post, blocks }: { post: BlogPostMeta; blocks: BlogBlo
               timeZone: "UTC",
             })}
           </time>
-          {post.product === "pro" ? (
+          {post.product !== "beui" ? (
             <>
               <span aria-hidden="true">·</span>
-              <span>{t("pro")}</span>
+              <span>{t(post.product)}</span>
             </>
           ) : null}
           {post.draft ? (
