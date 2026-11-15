@@ -22,6 +22,10 @@ const PRODUCTS = [
   { href: "https://dotsafe.dev", label: "Dotsafe" },
 ];
 
+const LEGAL_PAGES = ["privacy", "terms", "refunds"] as const;
+// A constant, not `new Date()`: prerendered HTML and the client must render the same year.
+const COPYRIGHT_YEAR = 2026;
+
 export function SiteFooter() {
   const t = useTranslations("Chrome");
   // `page` links go through the router; external URLs and llms.txt are plain anchors.
@@ -194,6 +198,26 @@ export function SiteFooter() {
             ))}
           </ul>
         </nav>
+
+        {/* Copyright and legal links: a full-width row under the columns. */}
+        <div className="col-span-full flex flex-wrap items-center gap-x-6 gap-y-2 border-border/60 border-t pt-8 text-muted-foreground text-sm">
+          <p>{t("footer.copyright", { year: COPYRIGHT_YEAR })}</p>
+          <nav aria-label={t("footer.legal")}>
+            <ul className="flex flex-wrap gap-x-6 gap-y-2">
+              {LEGAL_PAGES.map((page) => (
+                <li key={page}>
+                  <Link
+                    prefetch={false}
+                    href={`/${page}`}
+                    className="transition-colors hover:text-foreground"
+                  >
+                    {t(`footer.${page}`)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </div>
 
       {/* Match the artwork height to the grid’s bottom padding so it never sits behind links. */}

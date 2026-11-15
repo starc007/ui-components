@@ -1,7 +1,7 @@
 import { PressLink, type PressLinkProps } from "@/components/app/press-link";
 import { cn } from "@/lib/utils";
 
-type LandingButtonVariant = "primary" | "outline" | "ghost" | "inverse" | "glass";
+type LandingButtonVariant = "primary" | "outline" | "ghost";
 
 const VARIANTS: Record<LandingButtonVariant, string> = {
   primary:
@@ -9,10 +9,6 @@ const VARIANTS: Record<LandingButtonVariant, string> = {
   outline:
     "border border-border-strong bg-background text-foreground hover:bg-card focus-visible:outline-ring",
   ghost: "text-muted-foreground hover:text-foreground focus-visible:outline-ring",
-  // For dark, colored surfaces such as the shader CTA.
-  inverse: "bg-white text-[#0b1d33] hover:bg-white/90 focus-visible:outline-white",
-  glass:
-    "border border-white/25 bg-white/10 text-white backdrop-blur hover:bg-white/20 focus-visible:outline-white",
 };
 
 /**

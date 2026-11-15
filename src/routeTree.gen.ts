@@ -15,7 +15,10 @@ import { Route as SiteSplatRouteImport } from './routes/_site/$'
 import { Route as Site404RouteImport } from './routes/_site/404'
 import { Route as SiteChangelogRouteImport } from './routes/_site/changelog'
 import { Route as SitePlaygroundRouteImport } from './routes/_site/playground'
+import { Route as SitePrivacyRouteImport } from './routes/_site/privacy'
+import { Route as SiteRefundsRouteImport } from './routes/_site/refunds'
 import { Route as SiteSponsorsRouteImport } from './routes/_site/sponsors'
+import { Route as SiteTermsRouteImport } from './routes/_site/terms'
 import { Route as SiteAlternativesIndexRouteImport } from './routes/_site/alternatives/index'
 import { Route as SiteAlternativesSlugRouteImport } from './routes/_site/alternatives/$slug'
 import { Route as SiteCasinoIndexRouteImport } from './routes/_site/casino/index'
@@ -64,9 +67,24 @@ const SitePlaygroundRoute = SitePlaygroundRouteImport.update({
   path: '/playground',
   getParentRoute: () => SiteRouteRoute,
 } as any)
+const SitePrivacyRoute = SitePrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteRefundsRoute = SiteRefundsRouteImport.update({
+  id: '/refunds',
+  path: '/refunds',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
 const SiteSponsorsRoute = SiteSponsorsRouteImport.update({
   id: '/sponsors',
   path: '/sponsors',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteTermsRoute = SiteTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => SiteRouteRoute,
 } as any)
 const SiteAlternativesIndexRoute = SiteAlternativesIndexRouteImport.update({
@@ -168,7 +186,10 @@ export interface FileRoutesByFullPath {
   '/404': typeof Site404Route
   '/changelog': typeof SiteChangelogRoute
   '/playground': typeof SitePlaygroundRoute
+  '/privacy': typeof SitePrivacyRoute
+  '/refunds': typeof SiteRefundsRoute
   '/sponsors': typeof SiteSponsorsRoute
+  '/terms': typeof SiteTermsRoute
   '/alternatives/$slug': typeof SiteAlternativesSlugRoute
   '/casino/$slug': typeof SiteCasinoSlugRoute
   '/charts/$slug': typeof SiteChartsSlugRoute
@@ -193,7 +214,10 @@ export interface FileRoutesByTo {
   '/404': typeof Site404Route
   '/changelog': typeof SiteChangelogRoute
   '/playground': typeof SitePlaygroundRoute
+  '/privacy': typeof SitePrivacyRoute
+  '/refunds': typeof SiteRefundsRoute
   '/sponsors': typeof SiteSponsorsRoute
+  '/terms': typeof SiteTermsRoute
   '/': typeof SiteIndexRoute
   '/alternatives/$slug': typeof SiteAlternativesSlugRoute
   '/casino/$slug': typeof SiteCasinoSlugRoute
@@ -221,7 +245,10 @@ export interface FileRoutesById {
   '/_site/404': typeof Site404Route
   '/_site/changelog': typeof SiteChangelogRoute
   '/_site/playground': typeof SitePlaygroundRoute
+  '/_site/privacy': typeof SitePrivacyRoute
+  '/_site/refunds': typeof SiteRefundsRoute
   '/_site/sponsors': typeof SiteSponsorsRoute
+  '/_site/terms': typeof SiteTermsRoute
   '/_site/': typeof SiteIndexRoute
   '/_site/alternatives/$slug': typeof SiteAlternativesSlugRoute
   '/_site/casino/$slug': typeof SiteCasinoSlugRoute
@@ -250,7 +277,10 @@ export interface FileRouteTypes {
     | '/404'
     | '/changelog'
     | '/playground'
+    | '/privacy'
+    | '/refunds'
     | '/sponsors'
+    | '/terms'
     | '/alternatives/$slug'
     | '/casino/$slug'
     | '/charts/$slug'
@@ -275,7 +305,10 @@ export interface FileRouteTypes {
     | '/404'
     | '/changelog'
     | '/playground'
+    | '/privacy'
+    | '/refunds'
     | '/sponsors'
+    | '/terms'
     | '/'
     | '/alternatives/$slug'
     | '/casino/$slug'
@@ -302,7 +335,10 @@ export interface FileRouteTypes {
     | '/_site/404'
     | '/_site/changelog'
     | '/_site/playground'
+    | '/_site/privacy'
+    | '/_site/refunds'
     | '/_site/sponsors'
+    | '/_site/terms'
     | '/_site/'
     | '/_site/alternatives/$slug'
     | '/_site/casino/$slug'
@@ -372,11 +408,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitePlaygroundRouteImport
       parentRoute: typeof SiteRouteRoute
     }
+    '/_site/privacy': {
+      id: '/_site/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof SitePrivacyRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/refunds': {
+      id: '/_site/refunds'
+      path: '/refunds'
+      fullPath: '/refunds'
+      preLoaderRoute: typeof SiteRefundsRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
     '/_site/sponsors': {
       id: '/_site/sponsors'
       path: '/sponsors'
       fullPath: '/sponsors'
       preLoaderRoute: typeof SiteSponsorsRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/terms': {
+      id: '/_site/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof SiteTermsRouteImport
       parentRoute: typeof SiteRouteRoute
     }
     '/_site/alternatives/': {
@@ -513,7 +570,10 @@ interface SiteRouteRouteChildren {
   Site404Route: typeof Site404Route
   SiteChangelogRoute: typeof SiteChangelogRoute
   SitePlaygroundRoute: typeof SitePlaygroundRoute
+  SitePrivacyRoute: typeof SitePrivacyRoute
+  SiteRefundsRoute: typeof SiteRefundsRoute
   SiteSponsorsRoute: typeof SiteSponsorsRoute
+  SiteTermsRoute: typeof SiteTermsRoute
   SiteIndexRoute: typeof SiteIndexRoute
   SiteAlternativesSlugRoute: typeof SiteAlternativesSlugRoute
   SiteCasinoSlugRoute: typeof SiteCasinoSlugRoute
@@ -540,7 +600,10 @@ const SiteRouteRouteChildren: SiteRouteRouteChildren = {
   Site404Route: Site404Route,
   SiteChangelogRoute: SiteChangelogRoute,
   SitePlaygroundRoute: SitePlaygroundRoute,
+  SitePrivacyRoute: SitePrivacyRoute,
+  SiteRefundsRoute: SiteRefundsRoute,
   SiteSponsorsRoute: SiteSponsorsRoute,
+  SiteTermsRoute: SiteTermsRoute,
   SiteIndexRoute: SiteIndexRoute,
   SiteAlternativesSlugRoute: SiteAlternativesSlugRoute,
   SiteCasinoSlugRoute: SiteCasinoSlugRoute,

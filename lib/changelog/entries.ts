@@ -8,6 +8,17 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
  */
 export const changelogEntries: ChangelogEntry[] = [
   {
+    "date": "2026-11-15",
+    "title": "Fixes and improvements",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Bouncy Accordion now bounces on close like it does on open, with the panel and the rows below moving together instead of snapping shut. Opening grows the card with its content.",
+        "component": "bouncy-accordion"
+      }
+    ]
+  },
+  {
     "date": "2026-11-14",
     "title": "Before After Slider",
     "items": [
