@@ -29,3 +29,6 @@
 # editor / local agent config
 .claude/
 .env
+
+# blog banners rendered for local review (bun run blog:banners)
+/public/og/cards/
