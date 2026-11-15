@@ -62,13 +62,13 @@ const CONTENT_OPEN_TRANSITION: Transition = {
   bounce: 0.32,
 };
 
-// Closing settles without bounce, and the card, its panel and the rows below
-// share this one curve. A bouncy close let the next row overshoot into the
-// collapsed card and settle back, which read as a stutter at the end.
+// The card, its panel and the rows below all share this one curve on close,
+// so they bounce together. When the rows sprang on a different curve than the
+// card, the next row overshot into the collapsed card, which read as a stutter.
 const CLOSE_TRANSITION: Transition = {
   type: "spring",
-  duration: 0.4,
-  bounce: 0,
+  duration: 0.55,
+  bounce: 0.38,
 };
 
 const DESCRIPTION_TRANSITION: Transition = {

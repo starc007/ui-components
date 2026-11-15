@@ -13,7 +13,7 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "fixed",
-        "text": "Bouncy Accordion closes smoothly: the panel and the rows below now move together instead of snapping shut and settling back. Opening grows the card with its content.",
+        "text": "Bouncy Accordion now bounces on close like it does on open, with the panel and the rows below moving together instead of snapping shut. Opening grows the card with its content.",
         "component": "bouncy-accordion"
       }
     ]
