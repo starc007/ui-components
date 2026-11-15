@@ -7,6 +7,9 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 import satori from "satori";
+import { loadBannerAssets, renderBlogBanners } from "../lib/blog-banner";
+import { blogCoverPath, ogImagePath } from "../lib/og-paths";
+import { BLOG_FEED_PATH, BLOG_PATH, blogPostMarkdown, blogPostPath, blogPosts } from "../lib/blog";
 import { CHANGE_LABELS, CHANGELOG_PATH, changelogAnchor, changelogEntries, changelogItemLink } from "../lib/changelog";
 import { buildComponentMarkdown } from "../lib/component-markdown";
 import { componentPath } from "../lib/component-paths";
@@ -178,6 +181,9 @@ async function buildMarkdownPages() {
       await write(`${seoPagePath(kind, page.slug)}.md`, seoPageMarkdown(kind, page));
     }
   }
+  for (const post of blogPosts()) {
+    await write(`${blogPostPath(post.slug)}.md`, blogPostMarkdown(post, SITE_URL));
+  }
 }
 
 /** Every guide and component page's Markdown in one file, so an agent can load the docs in one fetch. */
@@ -192,6 +198,9 @@ async function buildLlmsFullTxt() {
     for (const page of seoPages(kind)) {
       sections.push(seoPageMarkdown(kind, page).trim(), "", "---", "");
     }
+  }
+  for (const post of blogPosts()) {
+    sections.push(blogPostMarkdown(post, SITE_URL).trim(), "", "---", "");
   }
   for (const component of allComponents()) {
     const markdown = await componentMarkdown(component.category.slug, component.slug);
@@ -233,6 +242,13 @@ async function buildLlmsTxt() {
         (page) =>
           `- [${page.title}](${SITE_URL}${seoPagePath(kind, page.slug)}.md): ${page.description}`,
       ),
+    ),
+    "",
+    "## Blog",
+    "",
+    `- [All posts](${SITE_URL}${BLOG_PATH}) (RSS: ${SITE_URL}${BLOG_FEED_PATH})`,
+    ...blogPosts().map(
+      (post) => `- [${post.title}](${SITE_URL}${blogPostPath(post.slug)}.md): ${post.description}`,
     ),
     "",
     "## Components",
@@ -305,6 +321,39 @@ async function buildRss() {
   await write(`${CHANGELOG_PATH}/rss.xml`, xml);
 }
 
+/** RSS 2.0 feed of the blog, one item per post with its description. */
+async function buildBlogRss() {
+  const items = blogPosts()
+    .map((post) => {
+      const url = `${SITE_URL}${blogPostPath(post.slug)}`;
+      return [
+        "<item>",
+        `<title>${escapeXml(post.title)}</title>`,
+        `<link>${url}</link>`,
+        `<guid isPermaLink="true">${url}</guid>`,
+        `<pubDate>${new Date(`${post.publishedAt}T00:00:00Z`).toUTCString()}</pubDate>`,
+        `<description>${escapeXml(post.description)}</description>`,
+        ...post.tags.map((tag) => `<category>${escapeXml(tag)}</category>`),
+        "</item>",
+      ].join("");
+    })
+    .join("");
+  const xml = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>beUI Blog</title><link>${SITE_URL}${BLOG_PATH}</link><description>Notes on building animated React interfaces with beUI.</description><language>en</language><atom:link href="${SITE_URL}${BLOG_FEED_PATH}" rel="self" type="application/rss+xml"/>${items}</channel></rss>`;
+  await write(BLOG_FEED_PATH, xml);
+}
+
+/** Each blog post's social card and cover, from lib/blog-banner.tsx. */
+async function buildBlogBanners() {
+  const assets = await loadBannerAssets();
+  const posts = blogPosts();
+  for (const post of posts) {
+    const { og, cover } = await renderBlogBanners(post, assets);
+    await write(ogImagePath("blog", post.slug), og);
+    await write(blogCoverPath(post.slug), cover);
+  }
+  return posts.length * 2;
+}
+
 async function buildOgCards() {
   const font = (file: string) => readFile(path.join("public/og/fonts", file));
   const dataUri = async (file: string) =>
@@ -375,6 +424,10 @@ const HEADERS = `/assets/*
   Content-Type: application/rss+xml; charset=utf-8
   Cache-Control: public, max-age=300, s-maxage=3600
 
+/blog/rss.xml
+  Content-Type: application/rss+xml; charset=utf-8
+  Cache-Control: public, max-age=300, s-maxage=3600
+
 /__worker/*
   X-Robots-Tag: noindex
 `;
@@ -387,6 +440,7 @@ await Promise.all([
   buildLlmsTxt(),
   buildLlmsFullTxt(),
   buildRss(),
+  buildBlogRss(),
   write("/registry.json", json(await shadcnRegistry())),
   write("/theme.css", THEME_CSS),
   write("/sitemap.xml", sitemapXml()),
@@ -394,7 +448,7 @@ await Promise.all([
   write("/_redirects", redirectsFile()),
   write("/_headers", HEADERS),
 ]);
-const cardCount = await buildOgCards();
+const cardCount = (await buildOgCards()) + (await buildBlogBanners());
 console.log(
   `Static build: ${Object.keys(workerRoutes).length} registry responses, ${cardCount} social cards, in ${((Date.now() - started) / 1000).toFixed(1)}s.`,
 );

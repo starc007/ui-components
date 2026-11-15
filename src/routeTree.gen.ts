@@ -21,6 +21,8 @@ import { Route as SiteSponsorsRouteImport } from './routes/_site/sponsors'
 import { Route as SiteTermsRouteImport } from './routes/_site/terms'
 import { Route as SiteAlternativesIndexRouteImport } from './routes/_site/alternatives/index'
 import { Route as SiteAlternativesSlugRouteImport } from './routes/_site/alternatives/$slug'
+import { Route as SiteBlogIndexRouteImport } from './routes/_site/blog/index'
+import { Route as SiteBlogSlugRouteImport } from './routes/_site/blog/$slug'
 import { Route as SiteCasinoIndexRouteImport } from './routes/_site/casino/index'
 import { Route as SiteCasinoSlugRouteImport } from './routes/_site/casino/$slug'
 import { Route as SiteChartsIndexRouteImport } from './routes/_site/charts/index'
@@ -95,6 +97,16 @@ const SiteAlternativesIndexRoute = SiteAlternativesIndexRouteImport.update({
 const SiteAlternativesSlugRoute = SiteAlternativesSlugRouteImport.update({
   id: '/alternatives/$slug',
   path: '/alternatives/$slug',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteBlogIndexRoute = SiteBlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteBlogSlugRoute = SiteBlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
   getParentRoute: () => SiteRouteRoute,
 } as any)
 const SiteCasinoIndexRoute = SiteCasinoIndexRouteImport.update({
@@ -191,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/sponsors': typeof SiteSponsorsRoute
   '/terms': typeof SiteTermsRoute
   '/alternatives/$slug': typeof SiteAlternativesSlugRoute
+  '/blog/$slug': typeof SiteBlogSlugRoute
   '/casino/$slug': typeof SiteCasinoSlugRoute
   '/charts/$slug': typeof SiteChartsSlugRoute
   '/docs/ai-agents': typeof SiteDocsAiAgentsRoute
@@ -201,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/guides/$slug': typeof SiteGuidesSlugRoute
   '/react-native/$slug': typeof SiteReactNativeSlugRoute
   '/alternatives/': typeof SiteAlternativesIndexRoute
+  '/blog/': typeof SiteBlogIndexRoute
   '/casino/': typeof SiteCasinoIndexRoute
   '/charts/': typeof SiteChartsIndexRoute
   '/components/': typeof SiteComponentsIndexRoute
@@ -220,6 +234,7 @@ export interface FileRoutesByTo {
   '/terms': typeof SiteTermsRoute
   '/': typeof SiteIndexRoute
   '/alternatives/$slug': typeof SiteAlternativesSlugRoute
+  '/blog/$slug': typeof SiteBlogSlugRoute
   '/casino/$slug': typeof SiteCasinoSlugRoute
   '/charts/$slug': typeof SiteChartsSlugRoute
   '/docs/ai-agents': typeof SiteDocsAiAgentsRoute
@@ -230,6 +245,7 @@ export interface FileRoutesByTo {
   '/guides/$slug': typeof SiteGuidesSlugRoute
   '/react-native/$slug': typeof SiteReactNativeSlugRoute
   '/alternatives': typeof SiteAlternativesIndexRoute
+  '/blog': typeof SiteBlogIndexRoute
   '/casino': typeof SiteCasinoIndexRoute
   '/charts': typeof SiteChartsIndexRoute
   '/components': typeof SiteComponentsIndexRoute
@@ -251,6 +267,7 @@ export interface FileRoutesById {
   '/_site/terms': typeof SiteTermsRoute
   '/_site/': typeof SiteIndexRoute
   '/_site/alternatives/$slug': typeof SiteAlternativesSlugRoute
+  '/_site/blog/$slug': typeof SiteBlogSlugRoute
   '/_site/casino/$slug': typeof SiteCasinoSlugRoute
   '/_site/charts/$slug': typeof SiteChartsSlugRoute
   '/_site/docs/ai-agents': typeof SiteDocsAiAgentsRoute
@@ -261,6 +278,7 @@ export interface FileRoutesById {
   '/_site/guides/$slug': typeof SiteGuidesSlugRoute
   '/_site/react-native/$slug': typeof SiteReactNativeSlugRoute
   '/_site/alternatives/': typeof SiteAlternativesIndexRoute
+  '/_site/blog/': typeof SiteBlogIndexRoute
   '/_site/casino/': typeof SiteCasinoIndexRoute
   '/_site/charts/': typeof SiteChartsIndexRoute
   '/_site/components/': typeof SiteComponentsIndexRoute
@@ -282,6 +300,7 @@ export interface FileRouteTypes {
     | '/sponsors'
     | '/terms'
     | '/alternatives/$slug'
+    | '/blog/$slug'
     | '/casino/$slug'
     | '/charts/$slug'
     | '/docs/ai-agents'
@@ -292,6 +311,7 @@ export interface FileRouteTypes {
     | '/guides/$slug'
     | '/react-native/$slug'
     | '/alternatives/'
+    | '/blog/'
     | '/casino/'
     | '/charts/'
     | '/components/'
@@ -311,6 +331,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/'
     | '/alternatives/$slug'
+    | '/blog/$slug'
     | '/casino/$slug'
     | '/charts/$slug'
     | '/docs/ai-agents'
@@ -321,6 +342,7 @@ export interface FileRouteTypes {
     | '/guides/$slug'
     | '/react-native/$slug'
     | '/alternatives'
+    | '/blog'
     | '/casino'
     | '/charts'
     | '/components'
@@ -341,6 +363,7 @@ export interface FileRouteTypes {
     | '/_site/terms'
     | '/_site/'
     | '/_site/alternatives/$slug'
+    | '/_site/blog/$slug'
     | '/_site/casino/$slug'
     | '/_site/charts/$slug'
     | '/_site/docs/ai-agents'
@@ -351,6 +374,7 @@ export interface FileRouteTypes {
     | '/_site/guides/$slug'
     | '/_site/react-native/$slug'
     | '/_site/alternatives/'
+    | '/_site/blog/'
     | '/_site/casino/'
     | '/_site/charts/'
     | '/_site/components/'
@@ -448,6 +472,20 @@ declare module '@tanstack/react-router' {
       path: '/alternatives/$slug'
       fullPath: '/alternatives/$slug'
       preLoaderRoute: typeof SiteAlternativesSlugRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/blog/': {
+      id: '/_site/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof SiteBlogIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/blog/$slug': {
+      id: '/_site/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof SiteBlogSlugRouteImport
       parentRoute: typeof SiteRouteRoute
     }
     '/_site/casino/': {
@@ -576,6 +614,7 @@ interface SiteRouteRouteChildren {
   SiteTermsRoute: typeof SiteTermsRoute
   SiteIndexRoute: typeof SiteIndexRoute
   SiteAlternativesSlugRoute: typeof SiteAlternativesSlugRoute
+  SiteBlogSlugRoute: typeof SiteBlogSlugRoute
   SiteCasinoSlugRoute: typeof SiteCasinoSlugRoute
   SiteChartsSlugRoute: typeof SiteChartsSlugRoute
   SiteDocsAiAgentsRoute: typeof SiteDocsAiAgentsRoute
@@ -586,6 +625,7 @@ interface SiteRouteRouteChildren {
   SiteGuidesSlugRoute: typeof SiteGuidesSlugRoute
   SiteReactNativeSlugRoute: typeof SiteReactNativeSlugRoute
   SiteAlternativesIndexRoute: typeof SiteAlternativesIndexRoute
+  SiteBlogIndexRoute: typeof SiteBlogIndexRoute
   SiteCasinoIndexRoute: typeof SiteCasinoIndexRoute
   SiteChartsIndexRoute: typeof SiteChartsIndexRoute
   SiteComponentsIndexRoute: typeof SiteComponentsIndexRoute
@@ -606,6 +646,7 @@ const SiteRouteRouteChildren: SiteRouteRouteChildren = {
   SiteTermsRoute: SiteTermsRoute,
   SiteIndexRoute: SiteIndexRoute,
   SiteAlternativesSlugRoute: SiteAlternativesSlugRoute,
+  SiteBlogSlugRoute: SiteBlogSlugRoute,
   SiteCasinoSlugRoute: SiteCasinoSlugRoute,
   SiteChartsSlugRoute: SiteChartsSlugRoute,
   SiteDocsAiAgentsRoute: SiteDocsAiAgentsRoute,
@@ -616,6 +657,7 @@ const SiteRouteRouteChildren: SiteRouteRouteChildren = {
   SiteGuidesSlugRoute: SiteGuidesSlugRoute,
   SiteReactNativeSlugRoute: SiteReactNativeSlugRoute,
   SiteAlternativesIndexRoute: SiteAlternativesIndexRoute,
+  SiteBlogIndexRoute: SiteBlogIndexRoute,
   SiteCasinoIndexRoute: SiteCasinoIndexRoute,
   SiteChartsIndexRoute: SiteChartsIndexRoute,
   SiteComponentsIndexRoute: SiteComponentsIndexRoute,

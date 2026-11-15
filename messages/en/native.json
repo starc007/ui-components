@@ -79,5 +79,18 @@
     "opensInNewTab": "(opens in a new tab)",
     "ctaHeading": "Build it with beUI",
     "ctaBody": "Free animated React components you install with the shadcn CLI. Need full blocks and pages? beUI Pro has them."
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Notes on building animated React interfaces: new beUI components, beUI Pro blocks, motion patterns and how they are made.",
+    "heading": "Blog",
+    "intro": "Notes on building animated React interfaces, new components and how they are made.",
+    "rss": "RSS feed",
+    "empty": "No posts yet.",
+    "label": "Blog",
+    "pro": "beUI Pro",
+    "draft": "Draft",
+    "back": "All posts",
+    "published": "<time></time>"
   }
 }

@@ -31,6 +31,13 @@ const PAGE_CARDS = {
     label: "Guides",
     command: "beui.dev/guides",
   },
+  blog: {
+    title: "beUI blog",
+    description:
+      "Notes on building animated React interfaces, new components and how they are made.",
+    label: "Blog",
+    command: "beui.dev/blog",
+  },
   alternatives: {
     title: "Compare beUI",
     description:
@@ -121,6 +128,7 @@ export function ogCards(): Card[] {
         }),
       ),
     ),
+    // Blog posts have their own banner art: lib/blog-banner.tsx.
   ];
 }
 

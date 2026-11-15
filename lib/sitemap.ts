@@ -9,6 +9,7 @@ import { componentDates } from "@/lib/component-dates";
 import { native } from "@/lib/native";
 import { seoPagePath, seoPages } from "@/lib/seo-pages";
 import { changelogEntries } from "@/lib/changelog";
+import { BLOG_PATH, blogPostPath, blogPosts } from "@/lib/blog";
 import { SITE_URL as SITE } from "@/lib/site";
 
 type SitemapEntry = {
@@ -121,8 +122,25 @@ export function sitemap(): MetadataRoute.Sitemap {
     ],
   );
 
+  const posts = blogPosts();
+  const blogPages: MetadataRoute.Sitemap = [
+    {
+      url: `${SITE}${BLOG_PATH}`,
+      lastModified: posts[0]?.publishedAt,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    ...posts.map((post) => ({
+      url: `${SITE}${blogPostPath(post.slug)}`,
+      lastModified: post.updatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+  ];
+
   return [
     ...staticPages,
+    ...blogPages,
     ...categoryPages,
     ...componentPages,
     ...nativePages,
