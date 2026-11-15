@@ -62,10 +62,13 @@ const CONTENT_OPEN_TRANSITION: Transition = {
   bounce: 0.32,
 };
 
-const CONTENT_CLOSE_TRANSITION: Transition = {
+// Closing settles without bounce, and the card, its panel and the rows below
+// share this one curve. A bouncy close let the next row overshoot into the
+// collapsed card and settle back, which read as a stutter at the end.
+const CLOSE_TRANSITION: Transition = {
   type: "spring",
-  duration: 0.46,
-  bounce: 0.26,
+  duration: 0.4,
+  bounce: 0,
 };
 
 const DESCRIPTION_TRANSITION: Transition = {
@@ -116,11 +119,13 @@ function BouncyAccordionRow({
   contentId,
   triggerId,
   reduce,
+  closing,
   classNames,
   onToggle,
 }: {
   item: BouncyAccordionItem;
   open: boolean;
+  closing: boolean;
   startsGroup: boolean;
   endsGroup: boolean;
   separatedFromPrevious: boolean;
@@ -151,14 +156,23 @@ function BouncyAccordionRow({
     };
   }, []);
 
+  const rowTransition = reduce ? { duration: 0 } : closing ? CLOSE_TRANSITION : ROW_TRANSITION;
+  const contentTransition = reduce
+    ? { duration: 0 }
+    : open
+      ? CONTENT_OPEN_TRANSITION
+      : CLOSE_TRANSITION;
+
   return (
     <motion.div
       layout="position"
       initial={false}
       style={{ marginTop: separatedFromPrevious ? 12 : 0 }}
-      transition={reduce ? { duration: 0 } : ROW_TRANSITION}
+      transition={rowTransition}
     >
       <motion.div
+        // The card resizes with its panel, so its fill never snaps ahead of it.
+        layout={!reduce}
         data-state={open ? "open" : "closed"}
         initial={false}
         animate={{
@@ -167,14 +181,18 @@ function BouncyAccordionRow({
           borderBottomLeftRadius: endsGroup ? 28 : 0,
           borderBottomRightRadius: endsGroup ? 28 : 0,
         }}
-        transition={reduce ? { duration: 0 } : ROW_TRANSITION}
+        transition={reduce ? { duration: 0 } : { ...ROW_TRANSITION, layout: contentTransition }}
         className={cn(
           "overflow-hidden bg-card text-card-foreground",
           item.disabled && "opacity-50",
           classNames?.item,
         )}
       >
-        <button
+        <motion.button
+          // The card scales while it resizes; layout here counter-scales the
+          // header so its icon, title and chevron never stretch.
+          layout={!reduce}
+          transition={reduce ? { duration: 0 } : { layout: contentTransition }}
           id={triggerId}
           type="button"
           disabled={item.disabled}
@@ -217,31 +235,35 @@ function BouncyAccordionRow({
           >
             <ChevronDown className="h-4 w-4" />
           </motion.span>
-        </button>
+        </motion.button>
 
         <motion.section
-          layout="size"
+          layout={!reduce}
           id={contentId}
           aria-labelledby={triggerId}
           aria-hidden={!open}
           inert={!open}
           initial={false}
-          style={{ height: open && item.description ? contentHeight : 0 }}
-          transition={
-            reduce
-              ? { duration: 0 }
-              : open
-                ? CONTENT_OPEN_TRANSITION
-                : CONTENT_CLOSE_TRANSITION
-          }
+          // Closed at 1px, not 0: a layout animation scales from the old size
+          // to the new one, and a 0px target has no finite scale, so the
+          // panel would snap shut instead of animating.
+          style={{
+            height: item.description ? (open ? contentHeight || "auto" : 1) : 0,
+            originY: 0,
+          }}
+          transition={contentTransition}
           className={cn("overflow-hidden", classNames?.content)}
         >
           <motion.div
             ref={contentRef}
+            // Layout here counter-scales the text so it stays sharp.
+            layout={!reduce}
             animate={{
               opacity: open ? 1 : 0,
             }}
-            transition={reduce ? { duration: 0 } : DESCRIPTION_TRANSITION}
+            transition={
+              reduce ? { duration: 0 } : { ...DESCRIPTION_TRANSITION, layout: contentTransition }
+            }
             className="px-5 pb-5"
           >
             <div
@@ -276,6 +298,16 @@ export function BouncyAccordion({
     onValueChange,
   });
   const activeIndex = items.findIndex((item) => item.id === activeValue);
+
+  // The item that closed in the latest change, tracked during render so the
+  // rows that move because of it pick the close curve in the same commit.
+  const [previousValue, setPreviousValue] = useState(activeValue);
+  const [closedValue, setClosedValue] = useState<string | null>(null);
+  if (previousValue !== activeValue) {
+    setPreviousValue(activeValue);
+    setClosedValue(previousValue);
+  }
+  const closedIndex = items.findIndex((item) => item.id === closedValue);
 
   const toggleItem = useCallback(
     (id: string) => {
@@ -314,6 +346,8 @@ export function BouncyAccordion({
             contentId={contentId}
             triggerId={triggerId}
             reduce={reduce}
+            // Rows at or below a closing item move with it, on its curve.
+            closing={closedIndex !== -1 && index >= closedIndex}
             classNames={classNames}
             onToggle={() => toggleItem(item.id)}
           />
