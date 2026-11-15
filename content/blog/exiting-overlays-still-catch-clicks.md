@@ -2,9 +2,9 @@
 title: "Your closing modal is still eating clicks"
 description: "An overlay animating out with AnimatePresence is still the top layer for its whole exit. Here is why gating on open misses it, and the fix with useIsPresent and inert."
 publishedAt: 2026-11-16
-tags: react, framer-motion, animation, accessibility
+tags: react, framermotion, animation, accessibility
 product: beui
-draft: true
+draft: false
 ---
 
 You close a modal. The exit animation plays for 200ms. During those 200ms the user clicks the button behind it. Nothing happens.
