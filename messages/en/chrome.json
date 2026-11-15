@@ -73,6 +73,10 @@
     "guides": "Guides",
     "compare": "Compare",
     "alsoByUs": "Also by us",
+    "legal": "Legal",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "refunds": "Refunds",
     "docsTagline": "The motion toolkit for React & Next.js",
     "label": "Footer"
   },

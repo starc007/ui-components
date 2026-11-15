@@ -58,6 +58,7 @@ export function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/docs/theme`, lastModified: "2026-07-04", changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE}/privacy`, lastModified: "2026-11-15", changeFrequency: "monthly", priority: 0.2 },
     { url: `${SITE}/terms`, lastModified: "2026-11-15", changeFrequency: "monthly", priority: 0.2 },
+    { url: `${SITE}/refunds`, lastModified: "2026-11-15", changeFrequency: "monthly", priority: 0.2 },
   ];
   const feedPages: MetadataRoute.Sitemap = [
     { url: `${SITE}/changelog`, lastModified: changelogEntries[0]?.date, changeFrequency: "weekly", priority: 0.6 },

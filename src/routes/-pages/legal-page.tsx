@@ -19,7 +19,7 @@ export type LegalPageData = {
   sections: LegalSection[];
 };
 
-type LegalKey = "privacy" | "terms";
+type LegalKey = "privacy" | "terms" | "refunds";
 
 /**
  * Legal copy lives in `Pages.privacy` and `Pages.terms`. It never reaches the
@@ -59,6 +59,10 @@ export const getPrivacyPage = createServerFn({ method: "GET" })
 export const getTermsPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .handler(async () => legalPage("terms"));
+
+export const getRefundsPage = createServerFn({ method: "GET" })
+  .middleware([staticFunctionMiddleware])
+  .handler(async () => legalPage("refunds"));
 
 export function LegalPage({ data }: { data: LegalPageData }) {
   return (

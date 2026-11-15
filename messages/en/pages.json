@@ -1,4 +1,49 @@
 {
+  "refunds": {
+    "meta": {
+      "title": "Refund Policy",
+      "description": "When beUI Pro purchases can be refunded, how to ask for a refund, and what happens to your license after one."
+    },
+    "heading": "Refund Policy",
+    "updated": "Last updated November 15, 2026",
+    "intro": "This policy covers purchases of beUI Pro, beUI Pro for React Native and templates at pro.beui.dev. The free beUI library costs nothing, so there is nothing to refund.",
+    "sections": [
+      {
+        "heading": "Our policy",
+        "paragraphs": [
+          "You get the full source as soon as you pay, so purchases are not refundable in general.",
+          "If something you bought doesn't work and we can't fix it, we will refund you. Ask within 14 days of purchase."
+        ]
+      },
+      {
+        "heading": "How to ask",
+        "paragraphs": [
+          "Email hi@beui.dev from the address you bought with. Include your order or payment ID and what isn't working. We will try to fix it first and reply within a few days."
+        ]
+      },
+      {
+        "heading": "How refunds are paid",
+        "list": [
+          "Card purchases: Dodo Payments, our merchant of record, sends the refund to the original payment method. How long it takes to show depends on your bank.",
+          "Agent purchases in USDC on Solana: include the paying wallet address and the payment receipt in your email."
+        ]
+      },
+      {
+        "heading": "After a refund",
+        "list": [
+          "The license ends and its license key and registry token stop working.",
+          "Remove the Pro code you added from your projects.",
+          "If a team purchase is refunded, the whole team's access is suspended."
+        ]
+      },
+      {
+        "heading": "Contact",
+        "paragraphs": [
+          "hi@beui.dev"
+        ]
+      }
+    ]
+  },
   "privacy": {
     "meta": {
       "title": "Privacy Policy",
@@ -144,7 +189,7 @@
         "heading": "Payments and refunds",
         "paragraphs": [
           "Dodo Payments is the merchant of record for card purchases and handles payment, tax and receipts. Agent purchases are paid in USDC on Solana.",
-          "You get the full source as soon as you pay, so purchases are not refundable in general. If something you bought doesn't work and we can't fix it, email hi@beui.dev within 14 days of purchase and we will refund you. A refund ends the license and its keys. If a team purchase is refunded, the whole team's access is suspended."
+          "Refunds follow the Refund Policy at beui.dev/refunds."
         ]
       },
       {

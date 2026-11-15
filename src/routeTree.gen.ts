@@ -16,6 +16,7 @@ import { Route as Site404RouteImport } from './routes/_site/404'
 import { Route as SiteChangelogRouteImport } from './routes/_site/changelog'
 import { Route as SitePlaygroundRouteImport } from './routes/_site/playground'
 import { Route as SitePrivacyRouteImport } from './routes/_site/privacy'
+import { Route as SiteRefundsRouteImport } from './routes/_site/refunds'
 import { Route as SiteSponsorsRouteImport } from './routes/_site/sponsors'
 import { Route as SiteTermsRouteImport } from './routes/_site/terms'
 import { Route as SiteAlternativesIndexRouteImport } from './routes/_site/alternatives/index'
@@ -69,6 +70,11 @@ const SitePlaygroundRoute = SitePlaygroundRouteImport.update({
 const SitePrivacyRoute = SitePrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteRefundsRoute = SiteRefundsRouteImport.update({
+  id: '/refunds',
+  path: '/refunds',
   getParentRoute: () => SiteRouteRoute,
 } as any)
 const SiteSponsorsRoute = SiteSponsorsRouteImport.update({
@@ -181,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/changelog': typeof SiteChangelogRoute
   '/playground': typeof SitePlaygroundRoute
   '/privacy': typeof SitePrivacyRoute
+  '/refunds': typeof SiteRefundsRoute
   '/sponsors': typeof SiteSponsorsRoute
   '/terms': typeof SiteTermsRoute
   '/alternatives/$slug': typeof SiteAlternativesSlugRoute
@@ -208,6 +215,7 @@ export interface FileRoutesByTo {
   '/changelog': typeof SiteChangelogRoute
   '/playground': typeof SitePlaygroundRoute
   '/privacy': typeof SitePrivacyRoute
+  '/refunds': typeof SiteRefundsRoute
   '/sponsors': typeof SiteSponsorsRoute
   '/terms': typeof SiteTermsRoute
   '/': typeof SiteIndexRoute
@@ -238,6 +246,7 @@ export interface FileRoutesById {
   '/_site/changelog': typeof SiteChangelogRoute
   '/_site/playground': typeof SitePlaygroundRoute
   '/_site/privacy': typeof SitePrivacyRoute
+  '/_site/refunds': typeof SiteRefundsRoute
   '/_site/sponsors': typeof SiteSponsorsRoute
   '/_site/terms': typeof SiteTermsRoute
   '/_site/': typeof SiteIndexRoute
@@ -269,6 +278,7 @@ export interface FileRouteTypes {
     | '/changelog'
     | '/playground'
     | '/privacy'
+    | '/refunds'
     | '/sponsors'
     | '/terms'
     | '/alternatives/$slug'
@@ -296,6 +306,7 @@ export interface FileRouteTypes {
     | '/changelog'
     | '/playground'
     | '/privacy'
+    | '/refunds'
     | '/sponsors'
     | '/terms'
     | '/'
@@ -325,6 +336,7 @@ export interface FileRouteTypes {
     | '/_site/changelog'
     | '/_site/playground'
     | '/_site/privacy'
+    | '/_site/refunds'
     | '/_site/sponsors'
     | '/_site/terms'
     | '/_site/'
@@ -401,6 +413,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof SitePrivacyRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/refunds': {
+      id: '/_site/refunds'
+      path: '/refunds'
+      fullPath: '/refunds'
+      preLoaderRoute: typeof SiteRefundsRouteImport
       parentRoute: typeof SiteRouteRoute
     }
     '/_site/sponsors': {
@@ -552,6 +571,7 @@ interface SiteRouteRouteChildren {
   SiteChangelogRoute: typeof SiteChangelogRoute
   SitePlaygroundRoute: typeof SitePlaygroundRoute
   SitePrivacyRoute: typeof SitePrivacyRoute
+  SiteRefundsRoute: typeof SiteRefundsRoute
   SiteSponsorsRoute: typeof SiteSponsorsRoute
   SiteTermsRoute: typeof SiteTermsRoute
   SiteIndexRoute: typeof SiteIndexRoute
@@ -581,6 +601,7 @@ const SiteRouteRouteChildren: SiteRouteRouteChildren = {
   SiteChangelogRoute: SiteChangelogRoute,
   SitePlaygroundRoute: SitePlaygroundRoute,
   SitePrivacyRoute: SitePrivacyRoute,
+  SiteRefundsRoute: SiteRefundsRoute,
   SiteSponsorsRoute: SiteSponsorsRoute,
   SiteTermsRoute: SiteTermsRoute,
   SiteIndexRoute: SiteIndexRoute,
