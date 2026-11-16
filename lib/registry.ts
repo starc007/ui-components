@@ -1622,6 +1622,17 @@ export const registry: CategoryEntry[] = [
         launchedAt: "2026-11-16",
         keywords: ["add to cart button react", "cart quantity stepper", "animated add to cart", "ecommerce button"],
       },
+      {
+        slug: "delete-button",
+        name: "Delete Button",
+        description:
+          "A bin button that opens into a cross and a tick to confirm, then a spinner while it deletes, then a drawn check with Deleted.",
+        file: "components/motion/delete-button.tsx",
+        usageFile: "components/previews/micro-interactions/delete-button.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-11-16",
+        keywords: ["delete button react", "confirm delete button", "animated trash icon", "two step delete"],
+      },
     ],
   },
   {

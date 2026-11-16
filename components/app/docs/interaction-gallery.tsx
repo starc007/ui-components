@@ -26,6 +26,7 @@ const CARDS: Record<string, { kind: Exclude<Filter, "all">; height: string }> = 
   "follow-button": { kind: "tap", height: "h-48" },
   "star-rating": { kind: "select", height: "h-56" },
   "add-to-cart": { kind: "tap", height: "h-64" },
+  "delete-button": { kind: "feedback", height: "h-56" },
 };
 
 /**

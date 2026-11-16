@@ -281,6 +281,9 @@ export const previews: Record<string, ComponentType> = {
   "micro-interactions/add-to-cart": dynamic(() =>
     import("./micro-interactions/add-to-cart.preview").then((m) => m.AddToCartPreview),
   ),
+  "micro-interactions/delete-button": dynamic(() =>
+    import("./micro-interactions/delete-button.preview").then((m) => m.DeleteButtonPreview),
+  ),
   "blocks/card-dealer": dynamic(() =>
     import("./blocks/card-dealer.preview").then((m) => m.CardDealerPreview),
   ),

@@ -18,7 +18,7 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "new",
-        "text": "Micro Interactions is a new section at /micro-interactions with eight small animated controls: Like Button, Bookmark Button, Upvote Button, Copy Button, Text Morph, Follow Button, Star Rating and Add to Cart."
+        "text": "Micro Interactions is a new section at /micro-interactions with nine small animated controls: Like Button, Bookmark Button, Upvote Button, Copy Button, Text Morph, Follow Button, Star Rating, Add to Cart and Delete Button."
       }
     ]
   },

@@ -3728,4 +3728,26 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       },
     ],
   },
+  "delete-button": {
+    overview:
+      "Delete Button is a delete with confirmation for React built with Framer Motion. It starts as a round bin button. Pressing it opens the pill into a cross and a red tick that spring out from the centre. The tick turns it into a spinner while the delete runs, then into a check that draws itself beside Deleted, before the bin comes back. The cross cancels. One pill springs to the width of each step, so the whole exchange happens in place.",
+    useWhen: [
+      "A list row, file or comment needs a delete that a stray click cannot trigger.",
+      "A settings page removes an API key, a member or a saved card.",
+      "A table action deletes in place without opening a dialog.",
+    ],
+    accessibility:
+      "Every step is a real button with its own name: Delete, then Cancel and Confirm delete. Opening the pair moves focus to Cancel, the safe choice, so Enter never deletes by accident. Escape or moving focus away cancels. The spinner is a status named Deleting and the result a status reading Deleted. With reduced motion the steps crossfade without scaling or sliding.",
+    faq: [
+      {
+        question: "How do I run the delete?",
+        answer:
+          "Pass onDelete. It runs when the tick is pressed; return a promise to keep the spinner up until the work finishes. If the promise rejects, the button goes back to the bin.",
+      },
+      {
+        question: "Can I rename the steps?",
+        answer: "Yes. Pass labels with delete, confirm, cancel, deleting and deleted, or provide them through LocaleProvider.",
+      },
+    ],
+  },
 };

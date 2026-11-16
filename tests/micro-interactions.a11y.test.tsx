@@ -4,6 +4,7 @@ import { axe } from "jest-axe";
 import { AddToCart } from "@/components/motion/add-to-cart";
 import { BookmarkButton } from "@/components/motion/bookmark-button";
 import { CopyButton } from "@/components/motion/copy-button";
+import { DeleteButton } from "@/components/motion/delete-button";
 import { FollowButton } from "@/components/motion/follow-button";
 import { LikeButton } from "@/components/motion/like-button";
 import { StarRating } from "@/components/motion/star-rating";
@@ -67,6 +68,21 @@ test("star rating is a radio group with one tab stop", async () => {
   await act(async () => fireEvent.keyDown(stars[1], { key: "ArrowRight" }));
   expect(getByRole("radio", { name: "3 of 5 stars" }).getAttribute("aria-checked")).toBe("true");
   expect((await axe(container)).violations).toEqual([]);
+});
+
+test("delete button asks with a cross and a tick, then deletes", async () => {
+  let deleted = 0;
+  const { container, getByRole } = render(<DeleteButton onDelete={() => deleted++} />);
+  await act(async () => fireEvent.click(getByRole("button", { name: "Delete" })));
+  expect(getByRole("button", { name: "Cancel" })).toBeTruthy();
+  expect(getByRole("button", { name: "Confirm delete" })).toBeTruthy();
+  expect((await axe(container)).violations).toEqual([]);
+  await act(async () => fireEvent.click(getByRole("button", { name: "Cancel" })));
+  expect(getByRole("button", { name: "Delete" })).toBeTruthy();
+  await act(async () => fireEvent.click(getByRole("button", { name: "Delete" })));
+  await act(async () => fireEvent.click(getByRole("button", { name: "Confirm delete" })));
+  expect(deleted).toBe(1);
+  expect(getByRole("status", { name: "Deleting" })).toBeTruthy();
 });
 
 test("add to cart swaps to a named stepper", async () => {

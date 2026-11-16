@@ -642,6 +642,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Free React add to cart button that turns into a quantity stepper with a rolling count, and back on the last remove. Tailwind, shadcn install.",
   },
+  "delete-button": {
+    title: "React Delete Button with Confirm Animation",
+    description:
+      "Free React delete button with confirm: the bin opens into a cross and a tick, then a spinner and a drawn Deleted check. Accessible, shadcn install.",
+  },
   plinko: {
     title: "Animated Plinko Board for React",
     description:

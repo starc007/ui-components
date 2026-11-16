@@ -13,6 +13,7 @@ const COMPONENT_DATES = {
   "micro-interactions/follow-button": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
   "micro-interactions/star-rating": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
   "micro-interactions/add-to-cart": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
+  "micro-interactions/delete-button": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
   "charts/line-chart": { publishedAt: "2026-10-27", updatedAt: "2026-11-10" },
   "charts/bar-chart": { publishedAt: "2026-10-27", updatedAt: "2026-11-10" },
   "charts/sparkline": { publishedAt: "2026-10-27", updatedAt: "2026-11-10" },
