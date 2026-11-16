@@ -3796,7 +3796,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "refresh-button": {
     overview:
-      "Refresh Button is a React refresh control built with Framer Motion. The arrows spin while the refresh runs, then ease to a stop on a full turn instead of freezing mid-spin, and hand over to a check as Refresh morphs to Refreshing and Updated with Text Morph. The spin runs on a single motion value, so it never jumps when the page re-renders.",
+      "Refresh Button is a React refresh control built with Framer Motion. Pressing it winds the arrows back a little, then they spin up from rest. While the refresh runs the arrowhead tucks away and the arc breathes long and short like a spinner. When it finishes the spin coasts to land upright instead of freezing mid-turn, the arc closes and the arrowhead clicks back in, and a check takes over as Refresh morphs to Refreshing and Updated with Text Morph. The spin runs on a single motion value, so it never jumps when the page re-renders.",
     useWhen: [
       "A feed, table or dashboard refetches its data on demand.",
       "A sync or status check runs from a toolbar.",

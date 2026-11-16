@@ -655,7 +655,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "refresh-button": {
     title: "React Refresh Button, Animated",
     description:
-      "Free React refresh button: the arrows spin, ease to a stop on a full turn, then hand over to a check as Refresh morphs to Updated. shadcn install.",
+      "Free React refresh button: the arrows wind back, spin up, coast to land upright, then hand over to a check as Refresh morphs to Updated. shadcn install.",
   },
   "message-status": {
     title: "React Message Status Ticks, Animated",

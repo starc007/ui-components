@@ -1659,7 +1659,7 @@ export const registry: CategoryEntry[] = [
         slug: "refresh-button",
         name: "Refresh Button",
         description:
-          "Arrows that spin while it works, then ease to a stop on a full turn and hand over to a check as Refresh morphs to Updated.",
+          "Arrows that wind back, spin up into a breathing spinner arc, then coast to land upright and hand over to a check as Refresh morphs to Updated.",
         file: "components/motion/refresh-button.tsx",
         usageFile: "components/previews/micro-interactions/refresh-button.usage.tsx",
         badge: "new",
