@@ -173,7 +173,15 @@ function placeVertical(
         : trigger.left + trigger.width / 2 - size.width / 2;
   const x = clamp(start, VIEWPORT_PADDING, viewWidth - size.width - VIEWPORT_PADDING);
   const y = used === "bottom" ? below : trigger.top - offset - height;
-  const originX = clamp(trigger.left + trigger.width / 2 - x, 0, size.width);
+  // Grow from the aligned edge, so that edge holds still while the panel
+  // scales in instead of sliding sideways into place.
+  const anchorX =
+    align === "start"
+      ? trigger.left
+      : align === "end"
+        ? trigger.left + trigger.width
+        : trigger.left + trigger.width / 2;
+  const originX = clamp(anchorX - x, 0, size.width);
   return {
     left: x,
     top: y,

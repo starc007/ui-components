@@ -12,7 +12,6 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/motion/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -38,13 +37,17 @@ export function DropdownMenuPreview() {
     <div className="flex min-h-[360px] w-full items-start justify-center pt-16">
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Button variant="secondary" size="md" className="group gap-1.5 pr-4">
+          {/* No press or hover scale: the menu measures the trigger as it opens. */}
+          <button
+            type="button"
+            className="group inline-flex h-10 items-center gap-1.5 rounded-full border border-border bg-card pl-5 pr-4 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring"
+          >
             Options
             <ChevronDown
               aria-hidden="true"
               className="size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180"
             />
-          </Button>
+          </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>My account</DropdownMenuLabel>
