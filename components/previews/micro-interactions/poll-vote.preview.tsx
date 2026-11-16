@@ -9,8 +9,8 @@ const OPTIONS = [
   { id: "curves", label: "Easing curves", votes: 27 },
   { id: "both", label: "Both, it depends", votes: 31 },
 ];
-// Vote, clear, vote for the next one.
-const STEPS = [null, "springs", null, "both", null, "curves"];
+// Vote, move the vote, clear; then vote again.
+const STEPS = [null, "springs", "both", null, "curves", null];
 
 export function PollVotePreview() {
   const [step, setStep] = useState(0);

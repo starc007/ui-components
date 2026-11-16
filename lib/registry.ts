@@ -1738,7 +1738,7 @@ export const registry: CategoryEntry[] = [
         slug: "poll-vote",
         name: "Poll Vote",
         description:
-          "A one-tap poll: voting fills every bar to its share in a wave, counts each percentage up and draws a check beside your pick.",
+          "A one-tap poll: your ring fills with a check, your bar leads a wave of bars to their shares, and the percentages and vote total count up.",
         file: "components/motion/poll-vote.tsx",
         usageFile: "components/previews/micro-interactions/poll-vote.usage.tsx",
         badge: "new",

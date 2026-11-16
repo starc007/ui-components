@@ -690,7 +690,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "poll-vote": {
     title: "React Poll Component with Animated Results",
     description:
-      "Free React poll: voting fills each bar to its share in a wave, counts the percentages up and checks your pick. Accessible, shadcn install.",
+      "Free React poll: your pick fills with a check, the bars fill in a wave and the percentages count up. Accessible, shadcn install.",
   },
   "delete-button": {
     title: "React Delete Button with Confirm Animation",

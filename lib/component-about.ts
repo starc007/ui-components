@@ -3948,14 +3948,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "poll-vote": {
     overview:
-      "Poll Vote is a React poll built with Framer Motion. Before you vote it is a list of options; one tap fills every bar to its share in a wave from the top, counts each percentage up from where it was, and draws a check beside your pick. Picking another option moves your vote and the bars settle to the new shares.",
+      "Poll Vote is a React poll built with Framer Motion. Before you vote it is a list of options with radio rings. One tap fills your ring with a pop and draws a check in it, fills your bar first and the rest after it in a wave, slides each percentage in as it counts up, and ticks the vote total over. Picking another option moves your vote: every bar shifts at once and the numbers count from their old shares to the new ones. Clearing the vote drains the bars quickly.",
     useWhen: [
       "A blog post, community or newsletter asks a quick question.",
       "A product page collects feedback with one tap.",
       "A team chooses between a few options.",
     ],
     accessibility:
-      "Each option is a button with aria-pressed; after voting its name includes its share, such as Springs, 43%. Your vote is announced in a polite live region. With reduced motion the bars and numbers jump to their values.",
+      "Each option is a button with aria-pressed; after voting its name includes its share, such as Springs, 43%. Your vote is announced in a polite live region. The vote total under the list is plain text. With reduced motion the bars and numbers jump to their values and the ring fades instead of popping.",
     faq: [
       {
         question: "How are the percentages worked out?",
