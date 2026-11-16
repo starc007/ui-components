@@ -685,7 +685,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "lock-toggle": {
     title: "React Lock Toggle with Padlock Animation",
     description:
-      "Free React lock toggle: the shackle lifts and swings open on its right leg, then drops home as Locked morphs to Unlocked. shadcn install.",
+      "Free React lock toggle: the shackle drops home with a knock, the body fills and the key turns, then it swings open on unlock. shadcn install.",
   },
   "poll-vote": {
     title: "React Poll Component with Animated Results",

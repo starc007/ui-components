@@ -3927,14 +3927,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "lock-toggle": {
     overview:
-      "Lock Toggle is a React padlock toggle built with Framer Motion. Unlocking lifts the shackle clear of the body and swings it open on its right leg; locking swings it back over the body and drops it home, while the label morphs between Locked and Unlocked with Text Morph.",
+      "Lock Toggle is a React padlock toggle built with Framer Motion. Locking swings the shackle back over the body and drops it in, a touch past home, so the body knocks as it seats. The body then fills solid around a cut-out keyhole and the key turns a quarter and back. Unlocking turns the key back, drains the fill, and pops the shackle up and open on its right leg, while the label morphs between Locked and Unlocked with Text Morph.",
     useWhen: [
       "A document, field or layer can be locked against edits.",
       "A privacy setting makes something public or private.",
       "A canvas or design tool locks an object in place.",
     ],
     accessibility:
-      "It renders a real button named Lock with aria-pressed showing the state, while the visible word changes. With reduced motion the shackle changes position without moving.",
+      "It renders a real button named Lock with aria-pressed showing the state, while the visible word changes. With reduced motion the shackle changes position without moving, the key does not turn, and only the fill fades.",
     faq: [
       {
         question: "Can I hide the label?",

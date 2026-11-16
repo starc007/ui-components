@@ -1727,7 +1727,7 @@ export const registry: CategoryEntry[] = [
         slug: "lock-toggle",
         name: "Lock Toggle",
         description:
-          "A padlock whose shackle lifts and swings open on its right leg, then swings back and drops home, as Locked morphs to Unlocked.",
+          "A padlock whose shackle drops home with a knock as the body fills solid and the key turns, then pops up and swings open on unlock.",
         file: "components/motion/lock-toggle.tsx",
         usageFile: "components/previews/micro-interactions/lock-toggle.usage.tsx",
         badge: "new",
