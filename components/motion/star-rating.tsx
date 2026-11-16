@@ -2,7 +2,7 @@
 
 import { Star } from "lucide-react";
 import { animate, motion, useReducedMotion } from "motion/react";
-import { type KeyboardEvent, useRef, useState } from "react";
+import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
@@ -72,13 +72,43 @@ export function StarRating({
   // The last change, so fills wave left to right and drains right to left.
   // A hover clears it: previews change at once.
   const [sweep, setSweep] = useState<Sweep | null>(null);
-  // The star that took the last rating, and a count to replay its burst.
-  const [burst, setBurst] = useState<{ star: number; id: number } | null>(null);
+  // Each change to play out: the wave, the pop and the sparks. Its id replays
+  // them even when the same star is chosen again.
+  const [play, setPlay] = useState<(Sweep & { id: number }) | null>(null);
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const interactive = !readOnly && !disabled;
 
   const previewing = interactive && canHover && hover !== null;
   const shown = previewing ? hover : value;
+
+  // Any change of value plays, whether it came from a click, a key, or a
+  // parent setting `value`. Detected during render, so the wave starts in
+  // the same commit as the new value.
+  const [seen, setSeen] = useState(value);
+  if (seen !== value) {
+    // Wave from what was lit: the hover preview when there was one.
+    const from = previewing ? Math.min(seen, shown) : seen;
+    setSeen(value);
+    setSweep({ from, to: value });
+    setPlay((current) => ({ from, to: value, id: (current?.id ?? 0) + 1 }));
+  }
+  const burst = play && play.to > 0 ? { star: play.to, id: play.id } : null;
+
+  // The hops and the pop are played on the star faces directly.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: plays once per change; `play.id` marks each one.
+  useEffect(() => {
+    if (!play || reduce || play.to === 0) return;
+    const face = (star: number) => buttons.current[star - 1]?.querySelector("[data-star-face]");
+    const { from, to } = play;
+    const start = to > from ? from + 1 : to;
+    for (let star = start; star < to; star++) {
+      const el = face(star);
+      if (el) animate(el, { y: [0, -6, 0], rotate: [0, -12, 0] }, { ...HOP, delay: (star - start) * STAGGER });
+    }
+    const chosen = face(to);
+    const delay = Math.max(0, to - start) * STAGGER;
+    if (chosen) animate(chosen, { scale: [0.6, 1], rotate: [-20, 0] }, { ...SPRING_PRESS, delay });
+  }, [play?.id]);
   // Roving tab stop: the checked star, or the first one when nothing is rated.
   const tabStop = Math.max(1, Math.min(value, max));
 
@@ -94,25 +124,14 @@ export function StarRating({
   const select = (next: number) => {
     if (!interactive) return;
     const clamped = Math.max(1, Math.min(max, next));
-    // Wave from what was lit: the hover preview when there was one.
-    const from = previewing ? Math.min(value, shown) : value;
-    if (valueProp === undefined) setInternal(clamped);
-    setSweep({ from, to: clamped });
-    setBurst((current) => ({ star: clamped, id: (current?.id ?? 0) + 1 }));
-    onValueChange?.(clamped);
-    if (reduce) return;
-
-    // Played from the event, so pressing the same star again replays it.
-    const face = (star: number) => buttons.current[star - 1]?.querySelector("[data-star-face]");
-    const start = clamped > from ? from + 1 : clamped;
-    for (let star = start; star < clamped; star++) {
-      const el = face(star);
-      const delay = (star - start) * STAGGER;
-      if (el) animate(el, { y: [0, -6, 0], rotate: [0, -12, 0] }, { ...HOP, delay });
+    // Choosing the star that is already set replays its pop; any other
+    // choice plays through the value change above.
+    if (clamped === value) {
+      setPlay((current) => ({ from: value, to: value, id: (current?.id ?? 0) + 1 }));
+      return;
     }
-    const chosen = face(clamped);
-    const delay = Math.max(0, clamped - start) * STAGGER;
-    if (chosen) animate(chosen, { scale: [0.6, 1], rotate: [-20, 0] }, { ...SPRING_PRESS, delay });
+    if (valueProp === undefined) setInternal(clamped);
+    onValueChange?.(clamped);
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, star: number) => {

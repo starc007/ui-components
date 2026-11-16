@@ -1538,6 +1538,7 @@ export const registry: CategoryEntry[] = [
         description:
           "A heart toggle that pops, throws a ring of sparks and rolls its count up when liked, and drains back quietly when unliked.",
         file: "components/motion/like-button.tsx",
+        usageFile: "components/previews/micro-interactions/like-button.usage.tsx",
         extraFiles: ["components/motion/digit-swap.tsx"],
         badge: "new",
         launchedAt: "2026-11-16",
@@ -1547,8 +1548,9 @@ export const registry: CategoryEntry[] = [
         slug: "bookmark-button",
         name: "Bookmark Button",
         description:
-          "A save toggle that drops a filled ribbon into the bookmark from above, cuts a check into it and rolls the label to Saved.",
+          "A save toggle that drops a filled ribbon into the bookmark from above, cuts a check into it and morphs the label to Saved.",
         file: "components/motion/bookmark-button.tsx",
+        usageFile: "components/previews/micro-interactions/bookmark-button.usage.tsx",
         badge: "new",
         launchedAt: "2026-11-16",
         keywords: ["bookmark button react", "save button animation", "animated bookmark icon", "save for later"],
@@ -1559,6 +1561,7 @@ export const registry: CategoryEntry[] = [
         description:
           "A vote toggle that fills with colour from the bottom as the arrow shoots out the top, a +1 floats away and the count rolls up.",
         file: "components/motion/upvote-button.tsx",
+        usageFile: "components/previews/micro-interactions/upvote-button.usage.tsx",
         extraFiles: ["components/motion/digit-swap.tsx"],
         badge: "new",
         launchedAt: "2026-11-16",
@@ -1568,7 +1571,7 @@ export const registry: CategoryEntry[] = [
         slug: "copy-button",
         name: "Copy Button",
         description:
-          "Copies text and confirms it: the pill tints, the icon blurs into a check that draws its stroke, and the label rolls to Copied as the pill resizes.",
+          "Copies text and confirms it: the pill tints, the icon blurs into a check that draws its stroke, and Copy morphs letter by letter into Copied.",
         file: "components/motion/copy-button.tsx",
         badge: "new",
         launchedAt: "2026-11-16",
@@ -1580,6 +1583,7 @@ export const registry: CategoryEntry[] = [
         description:
           "Text that morphs between strings: shared letters glide into place while new ones spring up one by one and old ones drop away. For button states.",
         file: "components/motion/text-morph.tsx",
+        usageFile: "components/previews/micro-interactions/text-morph.usage.tsx",
         badge: "new",
         launchedAt: "2026-11-16",
         keywords: ["text morph react", "morphing text animation", "animated button label", "shared letter animation"],
@@ -1590,6 +1594,7 @@ export const registry: CategoryEntry[] = [
         description:
           "Follow in three beats: the pill closes into a circle with a spinner, a check draws itself in, then it opens into Following.",
         file: "components/motion/follow-button.tsx",
+        usageFile: "components/previews/micro-interactions/follow-button.usage.tsx",
         badge: "new",
         launchedAt: "2026-11-16",
         keywords: ["follow button react", "follow unfollow button", "animated follow button", "subscribe button"],
@@ -1600,6 +1605,7 @@ export const registry: CategoryEntry[] = [
         description:
           "A star rating where a new score waves down the row: stars hop and fill in turn, the chosen one pops with sparks, and lowering it drains back.",
         file: "components/motion/star-rating.tsx",
+        usageFile: "components/previews/micro-interactions/star-rating.usage.tsx",
         badge: "new",
         launchedAt: "2026-11-16",
         keywords: ["star rating react", "rating component", "animated stars", "review stars input"],
@@ -1610,6 +1616,7 @@ export const registry: CategoryEntry[] = [
         description:
           "An add to cart button that morphs into a quantity stepper: the pill resizes, minus and plus open out from the centre, and the count rolls.",
         file: "components/motion/add-to-cart.tsx",
+        usageFile: "components/previews/micro-interactions/add-to-cart.usage.tsx",
         extraFiles: ["components/motion/digit-swap.tsx"],
         badge: "new",
         launchedAt: "2026-11-16",
