@@ -181,33 +181,41 @@ export function CategoryPage({ data }: { data: CategoryPageData }) {
   const tDocs = useTranslations("Docs");
   const { slug, contentKey: key, newComponents, components, agentGroups } = data;
 
+  // The gallery has its own layout: a narrower centred column with a
+  // centred heading and one line under it. No breadcrumb, and no platform
+  // switch (web only).
+  if (slug === "micro-interactions") {
+    return (
+      <div className="mx-auto w-full max-w-5xl pt-8 sm:pt-14">
+        <JsonLd data={data.jsonLd} />
+        <header className="mx-auto max-w-xl text-center">
+          <h1 className="text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+            {t("micro-interactions.heading")}
+          </h1>
+          <p className="mt-3 text-muted-foreground">{t("micro-interactions.subheading")}</p>
+        </header>
+        <InteractionGallery components={[...newComponents, ...components]} />
+      </div>
+    );
+  }
+
   return (
     <div>
       <JsonLd data={data.jsonLd} />
-      {slug === "micro-interactions" ? (
-        // The gallery speaks for itself: one heading, no breadcrumb, no
-        // description, and no platform switch (web only).
-        <h1 className="text-3xl font-medium tracking-tight text-foreground">{t(`${key}.heading`)}</h1>
-      ) : (
-        <>
-          <nav aria-label={tDocs("breadcrumb")} className="flex items-center gap-1.5 text-sm">
-            <span className="font-medium text-foreground">{data.name}</span>
-          </nav>
-          <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
-            {t(`${key}.heading`)}
-          </h1>
-          <p className="mt-2 max-w-2xl text-muted-foreground">{t(`${key}.description`)}</p>
-          {/* The right sidebar carries the switch from xl. */}
-          <div className="mt-6 xl:hidden">
-            <PlatformSwitch />
-          </div>
-        </>
-      )}
+      <nav aria-label={tDocs("breadcrumb")} className="flex items-center gap-1.5 text-sm">
+        <span className="font-medium text-foreground">{data.name}</span>
+      </nav>
+      <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
+        {t(`${key}.heading`)}
+      </h1>
+      <p className="mt-2 max-w-2xl text-muted-foreground">{t(`${key}.description`)}</p>
+      {/* The right sidebar carries the switch from xl. */}
+      <div className="mt-6 xl:hidden">
+        <PlatformSwitch />
+      </div>
 
       <div>
-        {slug === "micro-interactions" ? (
-          <InteractionGallery components={[...newComponents, ...components]} />
-        ) : agentGroups.length ? (
+        {agentGroups.length ? (
           <div className="mt-12 space-y-14">
             {agentGroups.map((group) => (
               <section key={group.id} id={group.id} className="scroll-mt-24">

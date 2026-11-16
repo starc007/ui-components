@@ -37,17 +37,19 @@ export function InteractionGallery({ components }: { components: ComponentEntry[
   const [filter, setFilter] = useState<Filter>("all");
 
   return (
-    <section className="mt-6">
-      <Tabs value={filter} onValueChange={(value) => setFilter(value as Filter)} variant="pill">
-        <TabsList aria-label={t("filterLabel")}>
-          {FILTERS.map((key) => (
-            <TabsTrigger key={key} value={key}>
-              {t(`filters.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
-      <div className="mt-4 columns-1 gap-3 sm:columns-2 lg:columns-3 2xl:columns-4">
+    <section className="mt-8">
+      <div className="flex justify-center">
+        <Tabs value={filter} onValueChange={(value) => setFilter(value as Filter)} variant="pill">
+          <TabsList aria-label={t("filterLabel")}>
+            {FILTERS.map((key) => (
+              <TabsTrigger key={key} value={key}>
+                {t(`filters.${key}`)}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
+      <div className="mt-6 columns-1 gap-3 sm:columns-2 lg:columns-3">
         {/* Filtered-out cards hide rather than unmount, so a card keeps
             what you did in it and never reloads its preview. */}
         {components.map((component) => (
