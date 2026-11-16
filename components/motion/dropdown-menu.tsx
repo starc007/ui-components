@@ -44,12 +44,6 @@ const EXIT = { duration: 0.12, ease: EASE_OUT };
 const OPEN_SCALE = 0.94;
 const OPEN_TRAVEL = 6;
 const OPEN = { duration: 0.2, ease: EASE_OUT };
-// Rows settle in one after another, a beat behind the panel. Kept tight so a
-// long menu still finishes inside ~300ms.
-const ROW_DELAY = 0.02;
-const ROW_STAGGER = 0.01;
-const ROW_TRAVEL = 3;
-const ROW_ENTER = { duration: 0.18, ease: EASE_OUT };
 
 type Side = "top" | "bottom" | "left" | "right";
 type Align = "start" | "center" | "end";
@@ -135,15 +129,6 @@ function insidePolygon(point: Point, polygon: Point[]) {
     }
   }
   return inside;
-}
-
-/** A row's part of the panel's entrance; the panel staggers them. */
-function rowVariants(reduce: boolean, opacity = 1) {
-  if (reduce) return { hidden: { opacity }, shown: { opacity } };
-  return {
-    hidden: { opacity: 0, y: -ROW_TRAVEL },
-    shown: { opacity, y: 0, transition: ROW_ENTER },
-  };
 }
 
 type Placement = {
@@ -533,8 +518,6 @@ function MenuPanel({
           transition: {
             ...OPEN,
             opacity: { duration: 0.12, ease: EASE_OUT },
-            delayChildren: ROW_DELAY,
-            staggerChildren: ROW_STAGGER,
           },
         },
         gone: { opacity: 0, scale: 0.97, ...offset(OPEN_TRAVEL / 2), transition: EXIT },
@@ -709,10 +692,8 @@ function ItemBase({
   const active = level.activeId === id;
 
   return (
-    <motion.button
+    <button
       type="button"
-      // Owns its opacity: a disabled row settles at half.
-      variants={rowVariants(root.reduce, disabled ? 0.5 : 1)}
       ref={(node) => {
         if (subTrigger) subTrigger.ref.current = node;
       }}
@@ -772,6 +753,7 @@ function ItemBase({
         "relative isolate flex w-full cursor-default select-none items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm outline-none",
         "[&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         inset && "pl-8",
+        disabled && "opacity-50",
         tone === "destructive" ? "text-destructive [&_svg]:text-destructive" : "[&_svg]:text-muted-foreground",
         className,
       )}
@@ -788,7 +770,7 @@ function ItemBase({
         />
       ) : null}
       {children}
-    </motion.button>
+    </button>
   );
 }
 
@@ -1085,14 +1067,10 @@ export interface DropdownMenuLabelProps {
 }
 
 export function DropdownMenuLabel({ children, inset, className }: DropdownMenuLabelProps) {
-  const root = useRoot("DropdownMenuLabel");
   return (
-    <motion.div
-      variants={rowVariants(root.reduce)}
-      className={cn("px-2 py-1.5 text-xs font-medium text-muted-foreground", inset && "pl-8", className)}
-    >
+    <div className={cn("px-2 py-1.5 text-xs font-medium text-muted-foreground", inset && "pl-8", className)}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -1101,13 +1079,7 @@ export interface DropdownMenuSeparatorProps {
 }
 
 export function DropdownMenuSeparator({ className }: DropdownMenuSeparatorProps) {
-  const root = useRoot("DropdownMenuSeparator");
-  return (
-    <motion.hr
-      variants={rowVariants(root.reduce)}
-      className={cn("-mx-1 my-1 h-px border-0 bg-border", className)}
-    />
-  );
+  return <hr className={cn("-mx-1 my-1 h-px border-0 bg-border", className)} />;
 }
 
 export interface DropdownMenuShortcutProps {
