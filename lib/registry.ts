@@ -1716,7 +1716,7 @@ export const registry: CategoryEntry[] = [
         slug: "mute-toggle",
         name: "Mute Toggle",
         description:
-          "A speaker whose sound waves wipe out from the outside in before a slash draws across, and draw back out from the speaker on unmute.",
+          "A speaker that recoils as its waves fold back in and a slash cuts through it, then pumps the waves back out with a ripple on unmute.",
         file: "components/motion/mute-toggle.tsx",
         usageFile: "components/previews/micro-interactions/mute-toggle.usage.tsx",
         badge: "new",

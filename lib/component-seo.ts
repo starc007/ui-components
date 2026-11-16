@@ -680,7 +680,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "mute-toggle": {
     title: "React Mute Toggle with Animated Speaker",
     description:
-      "Free React mute toggle: the sound waves wipe out before a slash draws across, and draw back out on unmute. Accessible toggle, shadcn install.",
+      "Free React mute toggle: the waves fold into the speaker as a slash cuts through, and spring back out on unmute. Accessible toggle, shadcn install.",
   },
   "lock-toggle": {
     title: "React Lock Toggle with Padlock Animation",

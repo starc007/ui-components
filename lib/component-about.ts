@@ -3906,14 +3906,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "mute-toggle": {
     overview:
-      "Mute Toggle is a React sound toggle built with Framer Motion. Muting wipes the sound waves away from the outside in, then draws a slash across the speaker; unmuting lifts the slash first and draws the waves back out from the speaker, so sound reads as leaving and returning.",
+      "Mute Toggle is a React sound toggle built with Framer Motion. Muting makes the speaker recoil and folds the sound waves back into it from the outside in, then a slash cuts through and leaves a clean gap in the speaker. Unmuting lifts the slash, the speaker pumps, the waves spring back out from the inside, and one pulse ripples past them, so sound reads as leaving and returning.",
     useWhen: [
       "A video, call or audio player needs a mute control.",
       "A game or app toggles sound effects.",
       "A notification setting silences alerts.",
     ],
     accessibility:
-      "It renders a real button named Mute with aria-pressed showing the state. With reduced motion the waves and slash change at once.",
+      "It renders a real button named Mute with aria-pressed showing the state. With reduced motion the waves fade instead of folding, the slash appears at once, and the speaker and ripple stay still.",
     faq: [
       {
         question: "Is it controlled?",
