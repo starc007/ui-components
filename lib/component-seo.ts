@@ -30,6 +30,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Free React collapsible with a smooth spring expand and collapse, custom triggers, controlled or uncontrolled state and focus handoff. Framer Motion, shadcn install.",
   },
+  "dropdown-menu": {
+    title: "Animated Dropdown Menu for React with Submenus",
+    description:
+      "Free React dropdown menu with a gliding highlight, submenus, checkbox and radio items, shortcuts, typeahead and full keyboard support. Framer Motion, shadcn install.",
+  },
   "before-after-slider": {
     title: "React Before After Slider for Image Comparison",
     description:

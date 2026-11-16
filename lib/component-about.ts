@@ -369,6 +369,35 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  "dropdown-menu": {
+    overview:
+      "Dropdown Menu is a composable menu button for React built with Framer Motion and Tailwind CSS. The menu scales out of its trigger, a highlight glides from row to row as you point or use the keys, and submenus open to the side. A pointer moving diagonally toward an open submenu can cross the rows below without closing it. It has plain items, checkbox and radio items, labels, separators, shortcut hints and a destructive tone, and it flips to stay on screen.",
+    useWhen: [
+      "An account button, a toolbar or a table row needs a short list of actions.",
+      "A view menu needs toggles and a single choice in one place.",
+      "Actions group naturally into a second level, such as Share with its targets.",
+    ],
+    accessibility:
+      "The trigger exposes aria-haspopup, aria-expanded and aria-controls, and the menu is labelled by the trigger. Items use the menuitem, menuitemcheckbox and menuitemradio roles and report aria-checked. Enter, Space or Arrow Down open the menu on its first item and Arrow Up on its last. Arrow keys move with wraparound, Home and End jump to the ends, typing jumps to a matching item, Arrow Right opens a submenu and Arrow Left closes it, Escape closes and returns focus to the trigger, and Tab closes the menu. Disabled items are skipped by the keys. With reduced motion the menu and its submenus fade without scaling or sliding.",
+    faq: [
+      {
+        question: "How do I add a dropdown menu to a button in React?",
+        answer:
+          "Wrap your button in DropdownMenuTrigger inside DropdownMenu, then add DropdownMenuContent with DropdownMenuItem children. Each item takes an onSelect callback, and the menu closes after a pick.",
+      },
+      {
+        question: "Can the dropdown menu have submenus?",
+        answer:
+          "Yes. Put a DropdownMenuSubTrigger and a DropdownMenuSubContent inside DropdownMenuSub. The submenu opens on hover, click or Arrow Right, and flips to the left when there is no room on the right.",
+      },
+      {
+        question: "Does it support checkboxes and radio options?",
+        answer:
+          "Yes. Use DropdownMenuCheckboxItem with checked and onCheckedChange, or DropdownMenuRadioGroup with value and onValueChange around DropdownMenuRadioItem children. These stay open after a pick by default; pass closeOnSelect to close instead.",
+      },
+    ],
+  },
+
   "before-after-slider": {
     overview:
       "Before After Slider is a React image comparison component. It stacks two layers, usually two photos of the same size, and reveals the before layer up to a draggable divider. Drag the handle or anywhere on the frame, click to glide the divider to that point on a Framer Motion spring, or use the keyboard. The before layer is clipped rather than resized, so both layers stay aligned at every position.",
