@@ -665,7 +665,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "notification-bell": {
     title: "React Notification Bell with Badge",
     description:
-      "Free React notification bell: it swings as the clapper lags, the badge pops and rolls its count, and clears when pressed. Accessible, shadcn install.",
+      "Free React notification bell: it swings with ring waves, the badge pops and bumps its count, and tucks away when read. Accessible, shadcn install.",
   },
   "reaction-picker": {
     title: "React Reaction Picker, Animated",

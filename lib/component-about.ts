@@ -3839,14 +3839,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "notification-bell": {
     overview:
-      "Notification Bell is a React notification control built with Framer Motion. Whenever the unread count goes up, the bell swings from its top while the clapper lags the other way, the badge pops in, and the count rolls digit by digit. Pressing it clears the count and the badge shrinks away. Counts above max show as 9+.",
+      "Notification Bell is a React notification control built with Framer Motion. Whenever the unread count goes up, the bell swings from its top while the clapper lags the other way and ring waves pulse out on both sides. The first notification pops the badge out of the bell's shoulder; later ones bump it as the count rolls digit by digit. Pressing it clears the count: the badge shrinks back into the bell and the bell gives a small nod. Counts above max show as 9+.",
     useWhen: [
       "An app header shows unread notifications.",
       "An inbox or activity feed signals new items.",
       "A support or chat widget shows waiting messages.",
     ],
     accessibility:
-      "It renders a real button named Notifications, or Notifications, 3 unread when there are some, so the count is read out. With reduced motion the bell does not swing and the badge appears without scaling.",
+      "It renders a real button named Notifications, or Notifications, 3 unread when there are some, so the count is read out. With reduced motion the bell does not swing or nod, there are no ring waves, and the badge fades in and out without scaling.",
     faq: [
       {
         question: "How do I control the count?",

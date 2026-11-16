@@ -1681,7 +1681,7 @@ export const registry: CategoryEntry[] = [
         slug: "notification-bell",
         name: "Notification Bell",
         description:
-          "A bell that swings from its top as the clapper lags behind, with a badge that pops and rolls its count, and clears when pressed.",
+          "A bell that swings from its top with ring waves and a lagging clapper; the badge pops from its shoulder, bumps on each new count, and tucks back in when read.",
         file: "components/motion/notification-bell.tsx",
         usageFile: "components/previews/micro-interactions/notification-bell.usage.tsx",
         extraFiles: ["components/motion/digit-swap.tsx"],
