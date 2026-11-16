@@ -615,7 +615,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "upvote-button": {
     title: "React Upvote Button with Rolling Count",
     description:
-      "Free React upvote button: the arrow kicks up and the vote count rolls digit by digit. Vertical or horizontal layout. Tailwind, shadcn install.",
+      "Free React upvote button: it fills from the bottom, the arrow shoots up, a +1 floats away and the count rolls. Vertical or pill layout, shadcn install.",
   },
   "copy-button": {
     title: "React Copy to Clipboard Button, Animated",

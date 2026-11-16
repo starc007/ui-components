@@ -1557,7 +1557,7 @@ export const registry: CategoryEntry[] = [
         slug: "upvote-button",
         name: "Upvote Button",
         description:
-          "A vote toggle where the arrow kicks up and the count rolls digit by digit, in a vertical or horizontal layout.",
+          "A vote toggle that fills with colour from the bottom as the arrow shoots out the top, a +1 floats away and the count rolls up.",
         file: "components/motion/upvote-button.tsx",
         extraFiles: ["components/motion/digit-swap.tsx"],
         badge: "new",

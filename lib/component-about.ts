@@ -3603,14 +3603,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "upvote-button": {
     overview:
-      "Upvote Button is a React vote toggle built with Framer Motion. Voting kicks the arrow up and rolls the count digit by digit with DigitSwap, and the button tints with the primary colour. It comes in a vertical layout for launch lists and a horizontal pill for inline use.",
+      "Upvote Button is a React vote toggle built with Framer Motion. A vote rises through the button: it fills with the primary colour from the bottom, the arrow shoots out the top as a filled one rises in behind it, a +1 floats away and the count rolls up digit by digit. Taking the vote back drains the fill and runs it all downward. It comes in a vertical layout for launch lists and a horizontal pill for inline use.",
     useWhen: [
       "A launch board, feature request list or forum ranks posts by votes.",
       "A roadmap lets users vote on what ships next.",
       "A Q and A page lets people upvote the best answer.",
     ],
     accessibility:
-      "It renders a button with aria-pressed named Upvote, and the count is read from screen reader text. Give each button a unique name in lists through labels. With reduced motion the arrow stays still and digits fade instead of rolling.",
+      "It renders a button with aria-pressed named Upvote, and the count is read from screen reader text. Give each button a unique name in lists through labels. With reduced motion the fill and arrow change at once, the +1 is skipped and digits fade instead of rolling.",
     faq: [
       {
         question: "Does count include the viewer's vote?",
