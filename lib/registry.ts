@@ -1637,7 +1637,7 @@ export const registry: CategoryEntry[] = [
         slug: "download-button",
         name: "Download Button",
         description:
-          "A download in three steps: the arrow drops into the tray, a ring fills with real progress, then a check as Download morphs to Downloaded.",
+          "A download where the whole button is the progress bar: colour sweeps across with drifting stripes, the label turns white as the fill passes, then it folds into a round check badge.",
         file: "components/motion/download-button.tsx",
         usageFile: "components/previews/micro-interactions/download-button.usage.tsx",
         badge: "new",

@@ -3752,19 +3752,19 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "download-button": {
     overview:
-      "Download Button is a React download control built with Framer Motion. Pressing it drops the arrow into the tray, then a ring fills around the icon as the file comes in and closes into a check, while Download morphs to Downloading and Downloaded with Text Morph. The ring follows real progress: onDownload receives a report function you call with a value from 0 to 1.",
+      "Download Button is a React download control built with Framer Motion where the whole button is the progress bar. As the file comes in, colour sweeps across the pill with a bright leading edge and drifting stripes, and the label and icon turn from ink to white exactly where the fill passes, because the content is drawn twice and the top copy is clipped to the progress. The label reads Downloading with a percentage, and an arrow keeps dropping into the tray while it works. When it finishes, the pill folds into a round badge where a check pops in, then opens back into the button as the colour drains away. The fill follows real progress: onDownload receives a report function you call with a value from 0 to 1. The percentage sits in a fixed slot, so the label never shifts while it counts.",
     useWhen: [
       "A file, export or invoice downloads and the wait should be visible.",
       "An app installs a model, plugin or offline pack in the background.",
       "A report is generated before it can be saved.",
     ],
     accessibility:
-      "It renders a real button that reports aria-busy while downloading. The ring is a progressbar named Download progress with its current value, so screen readers can follow it. With reduced motion the arrow does not drop and the steps crossfade.",
+      "It renders a real button that reports aria-busy while downloading, with a progressbar named Download progress carrying the current value so screen readers can follow it. The white copy of the label is hidden from assistive technology. When it finishes, the button is named Downloaded and a polite live region announces it. With reduced motion the arrow and stripes stay still, the fill tracks progress without easing, and the fold happens without a spring.",
     faq: [
       {
         question: "How do I show real progress?",
         answer:
-          "Pass onDownload. It receives report; call report(0.5) and so on as bytes arrive, and return a promise that settles when the download finishes. Without onDownload the ring fills on its own, which suits a demo.",
+          "Pass onDownload. It receives report; call report(0.5) and so on as bytes arrive, and return a promise that settles when the download finishes. Uneven reports are smoothed into a steady sweep. Without onDownload the fill runs on its own, which suits a demo.",
       },
       {
         question: "What if the download fails?",

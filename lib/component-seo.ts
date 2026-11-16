@@ -643,9 +643,9 @@ export const componentSeo: Record<string, ComponentSeo> = {
       "Free React add to cart button that turns into a quantity stepper with a rolling count, and back on the last remove. Tailwind, shadcn install.",
   },
   "download-button": {
-    title: "React Download Button with Progress Ring",
+    title: "React Download Button with Progress Fill",
     description:
-      "Free React download button: the arrow drops into the tray, a ring fills with real progress, then a check as Download morphs to Downloaded. shadcn install.",
+      "Free React download button where the button is the progress bar: colour sweeps across, the label inverts as it passes, then it folds into a check. shadcn install.",
   },
   "send-button": {
     title: "React Send Button with Paper Plane",
