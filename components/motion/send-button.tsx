@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, type HTMLMotionProps, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, type HTMLMotionProps, motion, type Transition, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { TextMorph } from "@/components/motion/text-morph";
 import { EASE_IN, EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
@@ -25,41 +25,32 @@ export interface SendButtonProps
 }
 
 // Sending shows at least this long, so the flight always reads.
-const SENDING_MS = 900;
-const SENT_MS = 2000;
+const SENDING_MS = 1000;
+const SENT_MS = 1800;
 
 const EXIT = { duration: 0.14, ease: EASE_OUT } as const;
-const FADE_IN = { duration: 0.12, ease: EASE_OUT } as const;
-const DRAW = { duration: 0.3, ease: EASE_OUT, delay: 0.06 } as const;
-// The plane accelerates away, the way a thrown thing leaves the hand.
-const FLIGHT = { duration: 0.5, ease: EASE_IN } as const;
-// One turn per 0.8s, evenly: a spinner should never ease.
-const SPIN = { duration: 0.8, ease: "linear", repeat: Number.POSITIVE_INFINITY } as const;
-
-const SWAP = {
-  initial: { opacity: 0, scale: 0.6, filter: "blur(3px)" },
-  animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
-  exit: { opacity: 0, scale: 0.6, filter: "blur(3px)", transition: EXIT },
-  transition: { ...SPRING_SWAP, opacity: FADE_IN },
-};
-
-// Three specks left behind along the flight path, fading in turn.
-const TRAIL = [
-  { x: 2, y: -2, delay: 0.06 },
-  { x: 6, y: -6, delay: 0.12 },
-  { x: 10, y: -10, delay: 0.18 },
-];
+const FADE = { duration: 0.16, ease: EASE_OUT } as const;
+const DRAW = { duration: 0.28, ease: EASE_OUT, delay: 0.08 } as const;
+// A short wind-up back and down, then away, accelerating like a throw.
+const LAUNCH: Transition = { duration: 0.55, times: [0, 0.22, 1], ease: [EASE_OUT, EASE_IN] };
+// The contrail starts as the plane leaves the wind-up and accelerates with
+// it, then erases from its tail.
+const TRAIL: Transition = { duration: 0.8, times: [0, 0.5, 1], ease: [EASE_IN, EASE_OUT], delay: 0.14 };
+// The dots bounce in a wave while it sends.
+const BOUNCE: Transition = { duration: 0.6, ease: "easeInOut", repeat: Number.POSITIVE_INFINITY, repeatDelay: 0.1 };
+const DOTS = [0, 1, 2];
 
 /**
- * A send that you can watch go. The paper plane takes off through the top
- * right of the pill and leaves a short trail, a spinner holds while it
- * sends, then a check draws in as Send morphs to Sending and Sent.
+ * A send that you can watch go. The paper plane winds up and takes off
+ * through the top right of the pill, drawing a contrail that erases from its
+ * tail; three dots bounce while it sends; a check pops in for Sent; then the
+ * plane flies back in from the bottom left, as if it had looped around.
  */
 export function SendButton({ onSend, labels, className, onClick, ...rest }: SendButtonProps) {
   const t = useMessages("SendButton", sendButtonMessages, labels);
   const reduce = Boolean(useReducedMotion());
   const [phase, setPhase] = useState<Phase>("idle");
-  // Counts sends, so each one replays the trail.
+  // Counts sends, so each one replays the contrail.
   const [flights, setFlights] = useState(0);
 
   useEffect(() => {
@@ -83,7 +74,7 @@ export function SendButton({ onSend, labels, className, onClick, ...rest }: Send
   };
 
   const instant = { duration: 0 };
-  const swap = reduce ? { ...SWAP, initial: { opacity: 0 }, exit: { opacity: 0, transition: EXIT } } : SWAP;
+  const fadeOnly = { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0, transition: EXIT } };
 
   return (
     <motion.button
@@ -97,8 +88,8 @@ export function SendButton({ onSend, labels, className, onClick, ...rest }: Send
         void send();
       }}
       className={cn(
-        // The pill clips the plane, so it leaves through the edge.
-        "relative inline-flex h-8 items-center overflow-hidden rounded-full border px-2 text-sm font-medium transition-colors duration-200",
+        // The pill clips the plane, so it leaves and returns through the edge.
+        "relative inline-flex h-9 items-center overflow-hidden rounded-full border pr-2.5 pl-3 text-sm font-medium transition-colors duration-200",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
         "disabled:pointer-events-none disabled:opacity-50",
         phase === "sent"
@@ -109,24 +100,30 @@ export function SendButton({ onSend, labels, className, onClick, ...rest }: Send
       {...rest}
     >
       <span className="relative inline-flex size-4 shrink-0">
-        {phase === "sending" && !reduce ? (
-          <span key={flights} aria-hidden="true" className="pointer-events-none absolute inset-0">
-            {TRAIL.map((speck) => (
-              <motion.span
-                key={speck.x}
-                className="absolute top-1/2 left-1/2 size-[3px] rounded-full bg-current"
-                style={{ x: speck.x, y: speck.y, translate: "-50% -50%" }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.8, 0] }}
-                transition={{ duration: 0.45, ease: EASE_OUT, delay: speck.delay }}
-              />
-            ))}
-          </span>
+        {/* The contrail, from the plane's tail up and out of the pill. */}
+        {flights > 0 && !reduce ? (
+          <svg
+            key={flights}
+            viewBox="0 0 40 40"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/2 left-1/2 size-10 -translate-x-1/2 -translate-y-1/2 overflow-visible"
+          >
+            <motion.path
+              d="M14 26 Q 22 22 40 4"
+              initial={{ pathLength: 0, pathOffset: 0, opacity: 0.5 }}
+              animate={{ pathLength: [0, 1, 1], pathOffset: [0, 0, 1], opacity: [0.5, 0.5, 0] }}
+              transition={TRAIL}
+            />
+          </svg>
         ) : null}
         <AnimatePresence initial={false}>
           {phase === "idle" ? (
             <motion.svg
-              key="idle"
+              key="plane"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -135,39 +132,40 @@ export function SendButton({ onSend, labels, className, onClick, ...rest }: Send
               strokeLinejoin="round"
               aria-hidden="true"
               className="absolute inset-0 size-4"
-              initial={swap.initial}
-              animate={swap.animate}
-              // Takes off up and to the right, tipping its nose as it climbs.
-              exit={reduce ? swap.exit : { x: 26, y: -26, rotate: -10, opacity: 0, transition: FLIGHT }}
-              transition={swap.transition}
+              // Comes back in from the bottom left, as if it looped around.
+              initial={reduce ? { opacity: 0 } : { x: -18, y: 18, opacity: 0 }}
+              animate={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
+              exit={
+                reduce
+                  ? { opacity: 0, transition: EXIT }
+                  : { x: [0, -2, 30], y: [0, 2, -30], rotate: [0, -12, 0], opacity: [1, 1, 0], transition: LAUNCH }
+              }
+              transition={reduce ? FADE : { ...SPRING_SWAP, opacity: FADE }}
             >
               <path d="M21 3L10.5 13.5" />
               <path d="M21 3l-6.5 18-4-7.5L3 9.5 21 3z" />
             </motion.svg>
           ) : phase === "sending" ? (
-            <motion.svg
-              key="sending"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2.5}
-              strokeLinecap="round"
+            <motion.span
+              key="dots"
               aria-hidden="true"
-              className="absolute inset-0 size-4"
-              initial={swap.initial}
-              animate={swap.animate}
-              exit={swap.exit}
-              // Waits for the plane to clear the pill before it shows.
-              transition={{ ...swap.transition, delay: reduce ? 0 : 0.3 }}
+              className="absolute inset-0 flex items-center justify-center gap-[2px]"
+              {...fadeOnly}
+              // Waits for the plane to clear the pill.
+              transition={{ ...FADE, delay: reduce ? 0 : 0.32 }}
             >
-              <motion.g animate={reduce ? undefined : { rotate: 360 }} transition={SPIN} style={{ originX: "12px", originY: "12px" }}>
-                <circle cx="12" cy="12" r="8" className="opacity-30" />
-                <path d="M12 4a8 8 0 0 1 8 8" />
-              </motion.g>
-            </motion.svg>
+              {DOTS.map((dot) => (
+                <motion.span
+                  key={dot}
+                  className="size-[3px] rounded-full bg-current"
+                  animate={reduce ? undefined : { y: [0, -3, 0] }}
+                  transition={{ ...BOUNCE, delay: 0.32 + dot * 0.12 }}
+                />
+              ))}
+            </motion.span>
           ) : (
             <motion.svg
-              key="sent"
+              key="check"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -176,7 +174,10 @@ export function SendButton({ onSend, labels, className, onClick, ...rest }: Send
               strokeLinejoin="round"
               aria-hidden="true"
               className="absolute inset-0 size-4"
-              {...swap}
+              initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={reduce ? { opacity: 0, transition: EXIT } : { opacity: 0, scale: 0.6, transition: EXIT }}
+              transition={reduce ? FADE : { scale: SPRING_PRESS, opacity: FADE }}
             >
               <motion.path
                 d="M4.5 12.5l5 5L19.5 7"

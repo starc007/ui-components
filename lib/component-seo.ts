@@ -650,7 +650,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "send-button": {
     title: "React Send Button with Paper Plane",
     description:
-      "Free React send button: the paper plane takes off through the edge of the pill, a spinner holds, then a check as Send morphs to Sent. shadcn install.",
+      "Free React send button: the paper plane takes off with a contrail, dots bounce, then a check as Send morphs to Sent. shadcn install.",
   },
   "refresh-button": {
     title: "React Refresh Button, Animated",

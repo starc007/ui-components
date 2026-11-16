@@ -3774,14 +3774,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "send-button": {
     overview:
-      "Send Button is a React submit button built with Framer Motion. Pressing it sends the paper plane up and out through the edge of the pill with a short trail behind it, a spinner holds while the message sends, then a check draws in as Send morphs to Sending and Sent with Text Morph.",
+      "Send Button is a React submit button built with Framer Motion. Pressing it makes the paper plane wind up, then take off up and out through the edge of the pill, drawing a contrail that erases from its tail. Three dots bounce while the message sends, a check pops in and draws as the label morphs from Send to Sending and Sent with Text Morph, and then the plane flies back in from the bottom left, as if it had looped around.",
     useWhen: [
       "A chat, comment or contact form sends a message.",
       "An invite, feedback or support request goes out.",
       "An email or newsletter is sent from a dashboard.",
     ],
     accessibility:
-      "It renders a real button whose name follows its label and reports aria-busy while sending. With reduced motion the plane does not fly and the steps crossfade.",
+      "It renders a real button whose name follows its label and reports aria-busy while sending. With reduced motion the plane does not fly, there is no contrail, the dots hold still and the steps crossfade.",
     faq: [
       {
         question: "How do I hook up the request?",

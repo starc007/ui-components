@@ -1648,7 +1648,7 @@ export const registry: CategoryEntry[] = [
         slug: "send-button",
         name: "Send Button",
         description:
-          "A send you can watch go: the paper plane takes off through the edge of the pill, a spinner holds, then a check as Send morphs to Sent.",
+          "A send you can watch go: the paper plane winds up and takes off with a contrail, dots bounce while it sends, a check pops in, and the plane loops back.",
         file: "components/motion/send-button.tsx",
         usageFile: "components/previews/micro-interactions/send-button.usage.tsx",
         badge: "new",
