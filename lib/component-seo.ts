@@ -658,9 +658,9 @@ export const componentSeo: Record<string, ComponentSeo> = {
       "Free React refresh button: the arrows wind back, spin up, coast to land upright, then hand over to a check as Refresh morphs to Updated. shadcn install.",
   },
   "message-status": {
-    title: "React Message Status Ticks, Animated",
+    title: "React Message Status Badges, Animated",
     description:
-      "Free React chat delivery ticks: a clock while sending, one tick when sent, two when delivered, both blue when read. Accessible, shadcn install.",
+      "Free React chat delivery status: a progress ring closes into a check badge, a second slides out, both fill blue when read. Accessible, shadcn install.",
   },
   "notification-bell": {
     title: "React Notification Bell with Badge",

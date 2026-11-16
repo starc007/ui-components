@@ -1670,7 +1670,7 @@ export const registry: CategoryEntry[] = [
         slug: "message-status",
         name: "Message Status",
         description:
-          "Delivery ticks for chat: a clock while sending, a tick that draws when sent, a second sliding in when delivered, both turning blue when read.",
+          "Delivery badges for chat: a progress ring closes into a check badge, a second badge slides out from behind it, and both fill blue when read.",
         file: "components/motion/message-status.tsx",
         usageFile: "components/previews/micro-interactions/message-status.usage.tsx",
         badge: "new",

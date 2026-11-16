@@ -1,8 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { TextMorph } from "@/components/motion/text-morph";
-import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
+import { EASE_IN, EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -19,112 +19,171 @@ export type MessageStatusValue = "sending" | "sent" | "delivered" | "read";
 
 export interface MessageStatusProps {
   status: MessageStatusValue;
-  /** Show the status as a word next to the ticks. */
+  /** Show the status as a word next to the badges. */
   showLabel?: boolean;
   labels?: Partial<MessageStatusMessages>;
   className?: string;
 }
 
-const EXIT = { duration: 0.14, ease: EASE_OUT } as const;
-const DRAW = { duration: 0.28, ease: EASE_OUT } as const;
-// One sweep of the clock hand per second while sending.
-const TICK = { duration: 1, ease: "linear", repeat: Number.POSITIVE_INFINITY } as const;
+const FADE = { duration: 0.16, ease: EASE_OUT } as const;
+const QUICK_OUT = { duration: 0.12, ease: EASE_IN } as const;
+// While it sends the ring creeps toward full and never quite gets there.
+const PROGRESS = { duration: 2.4, ease: EASE_OUT } as const;
+// On send the ring closes, then the badge fills and the check draws.
+const CLOSE = { duration: 0.18, ease: EASE_OUT } as const;
+const FILL = { ...SPRING_PRESS, delay: 0.14 } as const;
+const DRAW = { duration: 0.24, ease: EASE_OUT, delay: 0.24 } as const;
+const POP = { duration: 0.34, ease: EASE_OUT } as const;
+// For Read the colour lands on the back badge first, then the front.
+const READ_STAGGER = 0.1;
 
-// The second tick sits a little to the right of the first, its short leg
-// tucked behind the first tick's long one, the familiar double check.
-const FIRST = "M2 12.5l4.5 4.5L16 7.5";
-const SECOND = "M8.5 15.5l1.5 1.5L19.5 7.5";
+// Badge geometry, in px: two 20px badges overlap by half when delivered.
+const BADGE = 20;
+const WIDTH = 30;
+const CENTER = (WIDTH - BADGE) / 2;
+const FRONT = WIDTH - BADGE;
+
+const CHECK = "M6.4 10.3l2.4 2.4 4.8-5";
+
+/** One round badge: an optional progress ring, then a filled disc with a check. */
+function Badge({
+  filled,
+  ring,
+  progress,
+  read,
+  delay,
+  reduce,
+}: {
+  filled: boolean;
+  ring: boolean;
+  progress: number;
+  read: boolean;
+  delay: number;
+  reduce: boolean;
+}) {
+  const instant = { duration: 0 };
+  return (
+    <motion.svg
+      viewBox="0 0 20 20"
+      fill="none"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={cn("size-5 overflow-visible transition-colors duration-300", read ? "text-primary" : "text-muted-foreground")}
+      style={{ transitionDelay: read ? `${delay}s` : "0s" }}
+      initial={false}
+      // Read: a small pop as the colour lands.
+      animate={read && !reduce ? { scale: [1, 1.16, 1] } : { scale: 1 }}
+      transition={read ? { ...POP, delay } : FADE}
+    >
+      {ring ? (
+        <>
+          {/* The track, and the ring filling around it from the top. */}
+          <motion.circle
+            cx="10"
+            cy="10"
+            r="8"
+            stroke="currentColor"
+            initial={false}
+            animate={{ opacity: filled ? 0 : 0.25 }}
+            transition={FADE}
+          />
+          <motion.circle
+            cx="10"
+            cy="10"
+            r="8"
+            stroke="currentColor"
+            transform="rotate(-90 10 10)"
+            initial={{ pathLength: 0 }}
+            // Each new send restarts the ring from empty.
+            animate={{ pathLength: progress === 1 ? 1 : [0, progress] }}
+            transition={reduce ? instant : progress === 1 ? CLOSE : PROGRESS}
+          />
+        </>
+      ) : null}
+      <motion.g
+        style={{ transformBox: "fill-box", originX: 0.5, originY: 0.5 }}
+        initial={false}
+        animate={{ scale: filled || reduce ? 1 : 0, opacity: filled ? 1 : 0 }}
+        transition={filled ? { scale: reduce ? instant : FILL, opacity: { ...FADE, delay: 0.14 } } : QUICK_OUT}
+      >
+        {/* A halo in the page colour, so overlapping badges read as a stack. */}
+        <circle cx="10" cy="10" r="11.5" className="fill-background" />
+        <circle cx="10" cy="10" r="9.5" fill="currentColor" />
+        <motion.path
+          d={CHECK}
+          className="stroke-background"
+          initial={false}
+          animate={{ pathLength: filled ? 1 : 0 }}
+          transition={reduce ? instant : filled ? DRAW : QUICK_OUT}
+        />
+      </motion.g>
+    </motion.svg>
+  );
+}
 
 /**
- * The delivery state of a sent message. A clock while it sends, a tick
- * that draws once it is sent, a second tick that slides in when it is
- * delivered, and both turning the accent colour once it is read.
+ * The delivery state of a sent message, as round badges. A progress ring
+ * fills while it sends, then closes into a filled badge with a check for
+ * Sent; a second badge slides out from behind it for Delivered; and both
+ * fill with the accent colour, one after the other, when it is read.
  */
 export function MessageStatus({ status, showLabel = false, labels, className }: MessageStatusProps) {
   const t = useMessages("MessageStatus", messageStatusMessages, labels);
   const reduce = Boolean(useReducedMotion());
-  const instant = { duration: 0 };
-  const ticks = status === "delivered" || status === "read" ? 2 : status === "sent" ? 1 : 0;
+  const sending = status === "sending";
+  const read = status === "read";
+  const double = status === "delivered" || read;
 
-  const ticksIcon = (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "relative inline-flex h-4 w-[22px] shrink-0 transition-colors duration-300",
-        status === "read" && "text-primary",
-      )}
-    >
-      <AnimatePresence initial={false}>
-        {status === "sending" ? (
-          <motion.svg
-            key="clock"
-            viewBox="0 0 22 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            strokeLinecap="round"
-            className="absolute inset-0 h-4 w-[22px]"
-            initial={{ opacity: 0, scale: reduce ? 1 : 0.6 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: reduce ? 1 : 0.6, transition: EXIT }}
-            transition={SPRING_SWAP}
-          >
-            <circle cx="9" cy="12" r="7" />
-            <motion.path
-              d="M9 12V8"
-              style={{ originX: "9px", originY: "12px" }}
-              animate={reduce ? undefined : { rotate: 360 }}
-              transition={TICK}
-            />
-          </motion.svg>
-        ) : (
-          <motion.svg
-            key="ticks"
-            viewBox="0 0 22 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="absolute inset-0 h-4 w-[22px]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: EXIT }}
-            transition={EXIT}
-          >
-            <motion.path
-              d={FIRST}
-              initial={{ pathLength: reduce ? 1 : 0 }}
-              animate={{ pathLength: 1 }}
-              transition={reduce ? instant : DRAW}
-            />
-            {/* Delivered: the second tick slides in from behind the first and draws. */}
-            <motion.path
-              d={SECOND}
-              initial={false}
-              animate={
-                ticks === 2
-                  ? { pathLength: 1, opacity: 1, x: 0 }
-                  : { pathLength: 0, opacity: 0, x: reduce ? 0 : -4 }
-              }
-              transition={reduce ? instant : { ...SPRING_SWAP, pathLength: DRAW, opacity: EXIT }}
-            />
-          </motion.svg>
-        )}
-      </AnimatePresence>
+  const icon = (
+    <span aria-hidden="true" className="relative inline-flex h-5 shrink-0" style={{ width: WIDTH }}>
+      {/* The back badge: tucked behind the front one until delivered. */}
+      <motion.span
+        className="absolute top-0 left-0"
+        initial={false}
+        animate={
+          double
+            ? { x: 0, scale: 1, opacity: 1 }
+            : { x: reduce ? 0 : CENTER, scale: reduce ? 1 : 0.6, opacity: 0 }
+        }
+        transition={double ? (reduce ? FADE : { ...SPRING_SWAP, opacity: FADE }) : QUICK_OUT}
+      >
+        <Badge filled ring={false} progress={1} read={read} delay={0} reduce={reduce} />
+      </motion.span>
+      {/* The front badge: centred alone, moves aside for the second. */}
+      <motion.span
+        className="absolute top-0 left-0"
+        initial={false}
+        animate={{ x: double ? FRONT : CENTER }}
+        transition={reduce ? { duration: 0 } : SPRING_SWAP}
+      >
+        <Badge
+          filled={!sending}
+          ring
+          progress={sending ? 0.85 : 1}
+          read={read}
+          delay={READ_STAGGER}
+          reduce={reduce}
+        />
+      </motion.span>
     </span>
   );
-  const box = cn("inline-flex items-center gap-1 text-sm text-muted-foreground", className);
+  const box = cn(
+    "inline-flex items-center gap-1.5 text-sm transition-colors duration-300",
+    read ? "text-primary" : "text-muted-foreground",
+    className,
+  );
 
   // With a label the words name it; icon only, it is an image named for its status.
   return showLabel ? (
     <span className={box}>
-      {ticksIcon}
+      {icon}
       <TextMorph>{t(status)}</TextMorph>
     </span>
   ) : (
     <span role="img" aria-label={t(status)} className={box}>
-      {ticksIcon}
+      {icon}
     </span>
   );
 }

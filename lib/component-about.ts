@@ -3818,14 +3818,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "message-status": {
     overview:
-      "Message Status shows the delivery state of a chat message, built with Framer Motion. A small clock ticks while it sends, a tick draws when it is sent, a second tick slides in from behind the first when it is delivered, and both turn the accent colour when it is read. Set showLabel to add the state as a word that morphs with Text Morph.",
+      "Message Status shows the delivery state of a chat message, built with Framer Motion. A progress ring fills around a round badge while it sends. When it is sent the ring closes and the badge fills with a check drawn in it; when it is delivered the badge slides aside as a second one slides out from behind it, the pair cut apart by a halo like an avatar stack; and when it is read both fill with the accent colour, back badge first, each with a small pop. Set showLabel to add the state as a word that morphs with Text Morph.",
     useWhen: [
       "A chat or support inbox shows whether a message arrived and was read.",
       "An AI chat shows a message moving from sending to sent.",
       "A notification or email log shows delivery state per row.",
     ],
     accessibility:
-      "Without a label it is an image named after its state, such as Delivered. With showLabel the visible word names it. With reduced motion the clock is still and the ticks appear without drawing or sliding.",
+      "Without a label it is an image named after its state, such as Delivered. With showLabel the visible word names it. With reduced motion the ring and badges appear without filling, sliding or popping, and the colour simply changes.",
     faq: [
       {
         question: "Which states are there?",
