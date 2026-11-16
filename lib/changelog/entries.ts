@@ -8,6 +8,17 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
  */
 export const changelogEntries: ChangelogEntry[] = [
   {
+    "date": "2026-11-16",
+    "title": "Dropdown Menu",
+    "items": [
+      {
+        "type": "new",
+        "text": "Dropdown Menu opens from its trigger with a gliding highlight, submenus that stay open on a diagonal path, checkbox and radio items, shortcuts and full keyboard support.",
+        "component": "dropdown-menu"
+      }
+    ]
+  },
+  {
     "date": "2026-11-15",
     "title": "Fixes and improvements",
     "items": [

@@ -90,6 +90,24 @@ export const registry: CategoryEntry[] = [
       "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
+        slug: "dropdown-menu",
+        name: "Dropdown Menu",
+        description:
+          "Composable dropdown menu that opens from its trigger, with a gliding highlight, submenus that stay open on a diagonal path, checkbox and radio items, shortcuts and full keyboard support.",
+        file: "components/motion/dropdown-menu.tsx",
+        extraFiles: ["components/motion/popover-position.ts"],
+        badge: "new",
+        launchedAt: "2026-11-16",
+        keywords: [
+          "react dropdown menu",
+          "animated dropdown menu",
+          "shadcn dropdown menu",
+          "dropdown submenu react",
+          "accessible menu button",
+          "framer motion dropdown",
+        ],
+      },
+      {
         slug: "before-after-slider",
         name: "Before After Slider",
         description:

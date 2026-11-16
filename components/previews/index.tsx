@@ -15,6 +15,9 @@ function dynamic(load: () => Promise<ComponentType>): ComponentType {
 }
 
 export const previews: Record<string, ComponentType> = {
+  "motion/dropdown-menu": dynamic(() =>
+    import("./motion/dropdown-menu.preview").then((m) => m.DropdownMenuPreview),
+  ),
   "motion/before-after-slider": dynamic(() =>
     import("./motion/before-after-slider.preview").then((m) => m.BeforeAfterSliderPreview),
   ),
