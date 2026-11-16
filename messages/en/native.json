@@ -49,7 +49,9 @@
     "improved": "Improved",
     "fixed": "Fixed",
     "view": "View {name}",
-    "learnMore": "Learn more"
+    "learnMore": "Learn more",
+    "all": "All",
+    "filterLabel": "Filter changes by type"
   },
   "seoIndex": {
     "guides": {
