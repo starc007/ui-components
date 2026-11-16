@@ -3556,4 +3556,175 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       },
     ],
   },
+  "like-button": {
+    overview:
+      "Like Button is a React heart toggle built with Framer Motion. When liked, the heart fills, pops into place, and throws a ring and six sparks outward while the count rolls up one digit at a time. Unliking drains the fill and rolls the count down without the burst. Pass count for everyone else's likes and the viewer's own like is added on top.",
+    useWhen: [
+      "A social feed, comment thread or gallery needs a like or favorite action.",
+      "A product card wants a wishlist heart with a little delight.",
+      "A changelog or blog wants readers to react to a post.",
+    ],
+    accessibility:
+      "It renders a real button with aria-pressed, so screen readers announce it as a toggle named Like. The count has screen reader text. With reduced motion the burst and pop are skipped and only the colour and fill change.",
+    faq: [
+      {
+        question: "Does count include the viewer's like?",
+        answer:
+          "No. count is the number of likes from everyone else, and the button adds one while liked. That way toggling never needs you to recompute the total.",
+      },
+      {
+        question: "Can I control the liked state?",
+        answer:
+          "Yes. Pass liked and onLikedChange to control it, or defaultLiked to let the button keep its own state.",
+      },
+    ],
+  },
+  "bookmark-button": {
+    overview:
+      "Bookmark Button is a React save toggle built with Framer Motion. Saving dips the icon into place while a filled copy rises from the bottom of the outline, and removing drains the fill back down a little faster. It is icon only and uses the primary colour for the saved state.",
+    useWhen: [
+      "An article list or reader needs save for later.",
+      "A listings or job board lets people shortlist items.",
+      "A docs site lets readers pin pages.",
+    ],
+    accessibility:
+      "It renders a button with aria-pressed and an accessible name of Save, which you can extend per item through labels, for example \"Save Designing for reduced motion\". With reduced motion the fill changes at once and the icon does not move.",
+    faq: [
+      {
+        question: "How do I give each bookmark a unique name?",
+        answer:
+          "Pass a labels prop with a save string that includes the item, for example \"Save Designing for reduced motion\", so screen reader users can tell the buttons in a list apart.",
+      },
+      {
+        question: "Is it controlled or uncontrolled?",
+        answer: "Both. Use saved with onSavedChange, or defaultSaved.",
+      },
+    ],
+  },
+  "upvote-button": {
+    overview:
+      "Upvote Button is a React vote toggle built with Framer Motion. Voting kicks the arrow up and rolls the count digit by digit with DigitSwap, and the button tints with the primary colour. It comes in a vertical layout for launch lists and a horizontal pill for inline use.",
+    useWhen: [
+      "A launch board, feature request list or forum ranks posts by votes.",
+      "A roadmap lets users vote on what ships next.",
+      "A Q and A page lets people upvote the best answer.",
+    ],
+    accessibility:
+      "It renders a button with aria-pressed named Upvote, and the count is read from screen reader text. Give each button a unique name in lists through labels. With reduced motion the arrow stays still and digits fade instead of rolling.",
+    faq: [
+      {
+        question: "Does count include the viewer's vote?",
+        answer: "No. Pass the votes from everyone else; the button adds one while voted.",
+      },
+      {
+        question: "How do I switch to a horizontal layout?",
+        answer: "Set orientation=\"horizontal\" for a compact pill with the arrow and count side by side.",
+      },
+    ],
+  },
+  "copy-button": {
+    overview:
+      "Copy Button is a React copy to clipboard button built with Framer Motion. A click writes the value to the clipboard and confirms it: the button tints with the primary colour, the copy icon blurs away as a check scales in and draws its stroke, and with a label the word rolls to Copied while the pill resizes to fit. It settles back after a timeout.",
+    useWhen: [
+      "A code block, install command or API key needs a one-click copy.",
+      "A share sheet copies a link.",
+      "A contact card copies an email address.",
+    ],
+    accessibility:
+      "It renders a real button. Icon only, it is named Copy; with showLabel the visible text names it. A polite live region announces Copied after each copy. With reduced motion the icons crossfade without scaling or blur.",
+    faq: [
+      {
+        question: "Can the copied text be computed at click time?",
+        answer: "Yes. Pass a function as value and it runs on each click, so the button always copies the latest text.",
+      },
+      {
+        question: "What happens if the clipboard is blocked?",
+        answer: "The button stays in its copy state and onCopy does not fire, so you never show a false Copied.",
+      },
+    ],
+  },
+  "success-check": {
+    overview:
+      "Success Check is an animated React checkmark built with Framer Motion. A circle draws itself from the top, a check follows, and a ring fades out from the edge. It plays on mount and again whenever replayKey changes, and takes the current text colour, primary by default.",
+    useWhen: [
+      "A payment, signup or form submission needs a clear confirmation.",
+      "A settings page confirms a save.",
+      "An onboarding step marks itself complete.",
+    ],
+    accessibility:
+      "By default it is an image named Success. Set decorative when nearby text already says what happened, and it is hidden from screen readers. With reduced motion the circle and check fade in without drawing and the ring is skipped.",
+    faq: [
+      {
+        question: "How do I replay it?",
+        answer: "Change replayKey, for example by incrementing a counter each time the action succeeds.",
+      },
+      {
+        question: "How do I change its colour or size?",
+        answer: "Set size in pixels and a text colour class through className, for example text-emerald-500.",
+      },
+    ],
+  },
+  "follow-button": {
+    overview:
+      "Follow Button is a React toggle built with Framer Motion. Following plays in three beats: the label folds away and the pill closes into a circle with a spinner, the spinner gives way to a check that draws itself, then the circle opens into an outlined Following pill. The button reports aria-busy while the spinner shows. On devices that hover, pointing at Following turns the check into an × and previews Unfollow in the destructive colour. A fresh follow shows Following until the pointer leaves.",
+    useWhen: [
+      "A profile, creator page or people list needs follow and unfollow.",
+      "A newsletter or channel offers subscribe.",
+      "A team directory lets people watch a teammate's updates.",
+    ],
+    accessibility:
+      "It renders a button with aria-pressed and a steady name, Follow or Follow {name}, so screen readers announce the state rather than a changing label. With reduced motion labels and icons crossfade without rolling or blur.",
+    faq: [
+      {
+        question: "How do I name who is being followed?",
+        answer: "Pass name and the accessible name becomes \"Follow Maya Chen\".",
+      },
+      {
+        question: "Does the Unfollow preview show on touch?",
+        answer: "No. It only appears on devices that can hover, so a tap never leaves a stuck Unfollow label.",
+      },
+    ],
+  },
+  "star-rating": {
+    overview:
+      "Star Rating is a React rating input built with Framer Motion. Hovering lifts the star under the pointer and previews the score in a lighter tint. A new rating sends a wave down the row: each newly lit star hops and fills in turn, and the chosen star lands last with a pop and a burst of sparks. Lowering it drains the stars right to left, and arrow keys move the rating one star at a time. It also works read only for showing an average.",
+    useWhen: [
+      "A review form collects a score.",
+      "A product page shows its rating.",
+      "A feedback widget asks how a session went.",
+    ],
+    accessibility:
+      "It is a radio group named Rating with one radio per star, named like \"3 of 5 stars\". Only the checked star is in the tab order; arrow keys, Home and End change the rating. With reduced motion the fill changes without the sweep or pop.",
+    faq: [
+      {
+        question: "Can I change the number of stars?",
+        answer: "Yes. Set max, for example 10.",
+      },
+      {
+        question: "How do I show a rating without input?",
+        answer: "Set readOnly. The stars show value and ignore pointer and keyboard input.",
+      },
+    ],
+  },
+  "add-to-cart": {
+    overview:
+      "Add to Cart is a React button built with Framer Motion that turns into a quantity stepper once an item is in the cart. The pill resizes between the two faces, minus and plus open out from the centre around a rolling count, the minus becomes a trash icon on the last item, and removing it folds the stepper back into the button. To keep one size in both states, set morphWidth to false and give it a width, such as w-full.",
+    useWhen: [
+      "A product card or page adds items to a cart.",
+      "A food ordering menu lets people pick quantities inline.",
+      "A ticket or seat picker sets how many to buy.",
+    ],
+    accessibility:
+      "Every control is a real button with a clear name: Add to cart, Add one, Remove one and Remove from cart. The quantity is announced in a polite live region, and focus moves to the new face when a press swaps it, so keyboard users never lose their place. With reduced motion the faces crossfade without movement.",
+    faq: [
+      {
+        question: "How do I sync it with my cart?",
+        answer: "Pass quantity and onQuantityChange to control it from your cart state.",
+      },
+      {
+        question: "Can I limit the quantity?",
+        answer: "Yes. Set max; the plus button disables at the limit.",
+      },
+    ],
+  },
 };

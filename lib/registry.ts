@@ -1527,6 +1527,97 @@ export const registry: CategoryEntry[] = [
     ],
   },
   {
+    slug: "micro-interactions",
+    name: "Micro Interactions",
+    description:
+      "Animated React micro interactions, including like, bookmark, upvote, copy, follow, star rating and add to cart, built with Motion and Tailwind CSS as copy-paste source.",
+    components: [
+      {
+        slug: "like-button",
+        name: "Like Button",
+        description:
+          "A heart toggle that pops, throws a ring of sparks and rolls its count up when liked, and drains back quietly when unliked.",
+        file: "components/motion/like-button.tsx",
+        extraFiles: ["components/motion/digit-swap.tsx"],
+        badge: "new",
+        launchedAt: "2026-11-16",
+        keywords: ["like button react", "heart animation", "animated like button", "heart burst", "favorite button"],
+      },
+      {
+        slug: "bookmark-button",
+        name: "Bookmark Button",
+        description:
+          "A save toggle whose fill rises from the bottom of the bookmark as the icon dips into place, and drains out when removed.",
+        file: "components/motion/bookmark-button.tsx",
+        badge: "new",
+        launchedAt: "2026-11-16",
+        keywords: ["bookmark button react", "save button animation", "animated bookmark icon", "save for later"],
+      },
+      {
+        slug: "upvote-button",
+        name: "Upvote Button",
+        description:
+          "A vote toggle where the arrow kicks up and the count rolls digit by digit, in a vertical or horizontal layout.",
+        file: "components/motion/upvote-button.tsx",
+        extraFiles: ["components/motion/digit-swap.tsx"],
+        badge: "new",
+        launchedAt: "2026-11-16",
+        keywords: ["upvote button react", "vote button", "animated vote counter", "product hunt upvote"],
+      },
+      {
+        slug: "copy-button",
+        name: "Copy Button",
+        description:
+          "Copies text and confirms it: the pill tints, the icon blurs into a check that draws its stroke, and the label rolls to Copied as the pill resizes.",
+        file: "components/motion/copy-button.tsx",
+        badge: "new",
+        launchedAt: "2026-11-16",
+        keywords: ["copy button react", "copy to clipboard", "animated copy icon", "clipboard button"],
+      },
+      {
+        slug: "success-check",
+        name: "Success Check",
+        description:
+          "A circle that draws itself, a check that follows and a ring that fades out from the edge, for payments, forms and saved states.",
+        file: "components/motion/success-check.tsx",
+        badge: "new",
+        launchedAt: "2026-11-16",
+        keywords: ["animated checkmark react", "success animation", "check draw svg", "payment success"],
+      },
+      {
+        slug: "follow-button",
+        name: "Follow Button",
+        description:
+          "Follow in three beats: the pill closes into a circle with a spinner, a check draws itself in, then it opens into Following.",
+        file: "components/motion/follow-button.tsx",
+        badge: "new",
+        launchedAt: "2026-11-16",
+        keywords: ["follow button react", "follow unfollow button", "animated follow button", "subscribe button"],
+      },
+      {
+        slug: "star-rating",
+        name: "Star Rating",
+        description:
+          "A star rating where a new score waves down the row: stars hop and fill in turn, the chosen one pops with sparks, and lowering it drains back.",
+        file: "components/motion/star-rating.tsx",
+        badge: "new",
+        launchedAt: "2026-11-16",
+        keywords: ["star rating react", "rating component", "animated stars", "review stars input"],
+      },
+      {
+        slug: "add-to-cart",
+        name: "Add to Cart",
+        description:
+          "An add to cart button that morphs into a quantity stepper: the pill resizes, minus and plus open out from the centre, and the count rolls.",
+        file: "components/motion/add-to-cart.tsx",
+        extraFiles: ["components/motion/digit-swap.tsx"],
+        badge: "new",
+        launchedAt: "2026-11-16",
+        keywords: ["add to cart button react", "cart quantity stepper", "animated add to cart", "ecommerce button"],
+      },
+    ],
+  },
+  {
     slug: "agents",
     name: "AI Agents",
     description:

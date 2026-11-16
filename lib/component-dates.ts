@@ -5,6 +5,14 @@
  * maintenance should not refresh every component's public update date.
  */
 const COMPONENT_DATES = {
+  "micro-interactions/like-button": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
+  "micro-interactions/bookmark-button": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
+  "micro-interactions/upvote-button": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
+  "micro-interactions/copy-button": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
+  "micro-interactions/success-check": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
+  "micro-interactions/follow-button": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
+  "micro-interactions/star-rating": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
+  "micro-interactions/add-to-cart": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
   "charts/line-chart": { publishedAt: "2026-10-27", updatedAt: "2026-11-10" },
   "charts/bar-chart": { publishedAt: "2026-10-27", updatedAt: "2026-11-10" },
   "charts/sparkline": { publishedAt: "2026-10-27", updatedAt: "2026-11-10" },

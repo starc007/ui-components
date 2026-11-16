@@ -9,12 +9,16 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
 export const changelogEntries: ChangelogEntry[] = [
   {
     "date": "2026-11-16",
-    "title": "Dropdown Menu",
+    "title": "Dropdown Menu and Micro Interactions",
     "items": [
       {
         "type": "new",
         "text": "Dropdown Menu opens from its trigger with a gliding highlight, submenus that stay open on a diagonal path, checkbox and radio items, shortcuts and full keyboard support.",
         "component": "dropdown-menu"
+      },
+      {
+        "type": "new",
+        "text": "Micro Interactions is a new section at /micro-interactions with eight small animated controls: Like Button, Bookmark Button, Upvote Button, Copy Button, Success Check, Follow Button, Star Rating and Add to Cart."
       }
     ]
   },

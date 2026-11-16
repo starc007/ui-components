@@ -601,6 +601,47 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "React slide game: set a bet and target, watch 3D multiplier cards race past two center tabs to a server-decided result. Framer Motion, install with shadcn.",
   },
+  // Micro interactions
+  "like-button": {
+    title: "React Like Button with Heart Animation",
+    description:
+      "Free React like button: the heart pops, throws a ring of sparks and rolls its count up. Controlled or uncontrolled, reduced-motion safe. Tailwind, shadcn install.",
+  },
+  "bookmark-button": {
+    title: "React Bookmark Button with Fill Animation",
+    description:
+      "Free React bookmark button whose fill rises from the bottom as the icon dips into place. Toggle state with aria-pressed. Tailwind, shadcn install.",
+  },
+  "upvote-button": {
+    title: "React Upvote Button with Rolling Count",
+    description:
+      "Free React upvote button: the arrow kicks up and the vote count rolls digit by digit. Vertical or horizontal layout. Tailwind, shadcn install.",
+  },
+  "copy-button": {
+    title: "React Copy to Clipboard Button, Animated",
+    description:
+      "Free React copy button: copies text and swaps the icon to a check, announces Copied to screen readers, then settles back. Tailwind, shadcn install.",
+  },
+  "success-check": {
+    title: "Animated Success Checkmark for React",
+    description:
+      "Free React success checkmark: a circle draws itself, a check follows and a ring fades out. Replay on demand, reduced-motion safe. Tailwind, shadcn install.",
+  },
+  "follow-button": {
+    title: "React Follow Button with Unfollow Hover",
+    description:
+      "Free React follow button: the pill closes into a circle with a spinner, a check draws in, then it opens into Following. Accessible, shadcn install.",
+  },
+  "star-rating": {
+    title: "React Star Rating Component, Animated",
+    description:
+      "Free React star rating: a new score waves down the row, stars hop and fill, the chosen one pops with sparks. Accessible radio group, shadcn install.",
+  },
+  "add-to-cart": {
+    title: "React Add to Cart Button with Stepper",
+    description:
+      "Free React add to cart button that turns into a quantity stepper with a rolling count, and back on the last remove. Tailwind, shadcn install.",
+  },
   plinko: {
     title: "Animated Plinko Board for React",
     description:

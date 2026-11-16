@@ -257,6 +257,30 @@ export const previews: Record<string, ComponentType> = {
   "casino/slide-game": dynamic(() =>
     import("./casino/slide-game.preview").then((m) => m.SlideGamePreview),
   ),
+  "micro-interactions/like-button": dynamic(() =>
+    import("./micro-interactions/like-button.preview").then((m) => m.LikeButtonPreview),
+  ),
+  "micro-interactions/bookmark-button": dynamic(() =>
+    import("./micro-interactions/bookmark-button.preview").then((m) => m.BookmarkButtonPreview),
+  ),
+  "micro-interactions/upvote-button": dynamic(() =>
+    import("./micro-interactions/upvote-button.preview").then((m) => m.UpvoteButtonPreview),
+  ),
+  "micro-interactions/copy-button": dynamic(() =>
+    import("./micro-interactions/copy-button.preview").then((m) => m.CopyButtonPreview),
+  ),
+  "micro-interactions/success-check": dynamic(() =>
+    import("./micro-interactions/success-check.preview").then((m) => m.SuccessCheckPreview),
+  ),
+  "micro-interactions/follow-button": dynamic(() =>
+    import("./micro-interactions/follow-button.preview").then((m) => m.FollowButtonPreview),
+  ),
+  "micro-interactions/star-rating": dynamic(() =>
+    import("./micro-interactions/star-rating.preview").then((m) => m.StarRatingPreview),
+  ),
+  "micro-interactions/add-to-cart": dynamic(() =>
+    import("./micro-interactions/add-to-cart.preview").then((m) => m.AddToCartPreview),
+  ),
   "blocks/card-dealer": dynamic(() =>
     import("./blocks/card-dealer.preview").then((m) => m.CardDealerPreview),
   ),
