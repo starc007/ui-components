@@ -41,7 +41,9 @@
         "select": "Select",
         "feedback": "Feedback"
       },
-      "open": "Open {name}"
+      "open": "Open {name}",
+      "play": "Play {name}",
+      "pause": "Pause {name}"
     },
     "agents": {
       "title": "AI Agent Components — Animated React AI Interfaces",

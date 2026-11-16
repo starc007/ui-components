@@ -1,12 +1,15 @@
 "use client";
 
-import { useInView } from "motion/react";
-import { useRef, useState } from "react";
+import { Pause, Play } from "lucide-react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
+import { useMemo, useRef, useState } from "react";
 import { useTranslations } from "use-intl";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
+import { Tooltip } from "@/components/motion/tooltip";
 import { getPreview } from "@/components/previews";
+import { AutoplayContext } from "@/components/previews/micro-interactions/autoplay";
 import { componentPath } from "@/lib/component-paths";
-import { EASE_OUT_CSS } from "@/lib/ease";
+import { EASE_OUT, EASE_OUT_CSS } from "@/lib/ease";
 import { Link } from "@/lib/navigation";
 import type { ComponentEntry } from "@/lib/registry";
 import { cn } from "@/lib/utils";
@@ -75,11 +78,20 @@ export function InteractionGallery({ components }: { components: ComponentEntry[
   );
 }
 
+// Only devices that hover hide the controls until the card is hovered or focused.
+const REVEAL =
+  "[@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-focus-within/card:opacity-100 [@media(hover:hover)]:group-hover/card:opacity-100";
+
 function InteractionCard({ component, hidden }: { component: ComponentEntry; hidden: boolean }) {
   const t = useTranslations("Docs.category.micro-interactions");
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "200px" });
+  const reduce = useReducedMotion();
   const Preview = getPreview(CATEGORY, component.slug);
+  // Cards start still; the play button runs the preview's demo loop.
+  const [playing, setPlaying] = useState(false);
+  const autoplay = useMemo(() => ({ playing }), [playing]);
+  const playLabel = t(playing ? "pause" : "play", { name: component.name });
 
   return (
     <article
@@ -92,23 +104,60 @@ function InteractionCard({ component, hidden }: { component: ComponentEntry; hid
         hidden && "hidden",
       )}
     >
-      {inView && Preview ? <Preview /> : null}
-      <Link
-        href={componentPath(CATEGORY, component.slug)}
-        prefetch={false}
-        aria-label={t("open", { name: component.name })}
-        className={cn(
-          // A secondary pill: gray fill, no border, no icon.
-          "absolute bottom-3 left-3 inline-flex h-8 items-center rounded-full bg-muted px-3.5 text-xs font-medium text-foreground",
-          "transition-[opacity,background-color] duration-200 hover:bg-muted/70",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-          // Only devices that hover hide it until the card is hovered or focused.
-          "[@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-focus-within/card:opacity-100 [@media(hover:hover)]:group-hover/card:opacity-100",
+      <AutoplayContext.Provider value={autoplay}>{inView && Preview ? <Preview /> : null}</AutoplayContext.Provider>
+      <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
+        <Link
+          href={componentPath(CATEGORY, component.slug)}
+          prefetch={false}
+          aria-label={t("open", { name: component.name })}
+          className={cn(
+            // A secondary pill: gray fill, no border, no icon.
+            "inline-flex h-8 items-center rounded-full bg-muted px-3.5 text-xs font-medium text-foreground",
+            "transition-[opacity,background-color] duration-200 hover:bg-muted/70",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+            REVEAL,
+          )}
+          style={{ transitionTimingFunction: EASE_OUT_CSS }}
+        >
+          {component.name}
+        </Link>
+        {/* No demo loop with reduced motion, so no button for it. */}
+        {reduce ? null : (
+          <Tooltip content={playLabel} side="top">
+            <button
+              type="button"
+              aria-label={playLabel}
+              aria-pressed={playing}
+              onClick={() => setPlaying((value) => !value)}
+              className={cn(
+                "relative inline-flex size-8 items-center justify-center rounded-full bg-muted text-foreground",
+                "transition-[opacity,background-color] duration-200 hover:bg-muted/70",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+                // Stays up while it plays, so it can always be paused.
+                !playing && REVEAL,
+              )}
+              style={{ transitionTimingFunction: EASE_OUT_CSS }}
+            >
+              <AnimatePresence initial={false} mode="popLayout">
+                <motion.span
+                  key={playing ? "pause" : "play"}
+                  className="absolute inset-0 grid place-items-center"
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.6 }}
+                  transition={{ duration: 0.16, ease: EASE_OUT }}
+                >
+                  {playing ? (
+                    <Pause aria-hidden="true" className="size-3.5 fill-current" strokeWidth={0} />
+                  ) : (
+                    <Play aria-hidden="true" className="ml-px size-3.5 fill-current" strokeWidth={0} />
+                  )}
+                </motion.span>
+              </AnimatePresence>
+            </button>
+          </Tooltip>
         )}
-        style={{ transitionTimingFunction: EASE_OUT_CSS }}
-      >
-        {component.name}
-      </Link>
+      </div>
     </article>
   );
 }
