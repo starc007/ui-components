@@ -18,7 +18,7 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "new",
-        "text": "Micro Interactions is a new section at /micro-interactions with nine small animated controls: Like Button, Bookmark Button, Upvote Button, Copy Button, Text Morph, Follow Button, Star Rating, Add to Cart and Delete Button."
+        "text": "Micro Interactions is a new section at /micro-interactions with nineteen small animated controls: Like, Bookmark, Upvote, Copy, Follow, Send, Download, Refresh, Share, Delete and Add to Cart buttons, plus Text Morph, Star Rating, Poll Vote, Reaction Picker, Notification Bell, Message Status, Mute Toggle and Lock Toggle."
       }
     ]
   },

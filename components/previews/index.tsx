@@ -284,6 +284,36 @@ export const previews: Record<string, ComponentType> = {
   "micro-interactions/delete-button": dynamic(() =>
     import("./micro-interactions/delete-button.preview").then((m) => m.DeleteButtonPreview),
   ),
+  "micro-interactions/download-button": dynamic(() =>
+    import("./micro-interactions/download-button.preview").then((m) => m.DownloadButtonPreview),
+  ),
+  "micro-interactions/send-button": dynamic(() =>
+    import("./micro-interactions/send-button.preview").then((m) => m.SendButtonPreview),
+  ),
+  "micro-interactions/refresh-button": dynamic(() =>
+    import("./micro-interactions/refresh-button.preview").then((m) => m.RefreshButtonPreview),
+  ),
+  "micro-interactions/message-status": dynamic(() =>
+    import("./micro-interactions/message-status.preview").then((m) => m.MessageStatusPreview),
+  ),
+  "micro-interactions/notification-bell": dynamic(() =>
+    import("./micro-interactions/notification-bell.preview").then((m) => m.NotificationBellPreview),
+  ),
+  "micro-interactions/reaction-picker": dynamic(() =>
+    import("./micro-interactions/reaction-picker.preview").then((m) => m.ReactionPickerPreview),
+  ),
+  "micro-interactions/share-button": dynamic(() =>
+    import("./micro-interactions/share-button.preview").then((m) => m.ShareButtonPreview),
+  ),
+  "micro-interactions/mute-toggle": dynamic(() =>
+    import("./micro-interactions/mute-toggle.preview").then((m) => m.MuteTogglePreview),
+  ),
+  "micro-interactions/lock-toggle": dynamic(() =>
+    import("./micro-interactions/lock-toggle.preview").then((m) => m.LockTogglePreview),
+  ),
+  "micro-interactions/poll-vote": dynamic(() =>
+    import("./micro-interactions/poll-vote.preview").then((m) => m.PollVotePreview),
+  ),
   "blocks/card-dealer": dynamic(() =>
     import("./blocks/card-dealer.preview").then((m) => m.CardDealerPreview),
   ),

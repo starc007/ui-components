@@ -27,6 +27,16 @@ const CARDS: Record<string, { kind: Exclude<Filter, "all">; height: string }> = 
   "star-rating": { kind: "select", height: "h-56" },
   "add-to-cart": { kind: "tap", height: "h-64" },
   "delete-button": { kind: "feedback", height: "h-56" },
+  "download-button": { kind: "feedback", height: "h-48" },
+  "send-button": { kind: "feedback", height: "h-56" },
+  "refresh-button": { kind: "feedback", height: "h-48" },
+  "message-status": { kind: "feedback", height: "h-48" },
+  "notification-bell": { kind: "tap", height: "h-56" },
+  "reaction-picker": { kind: "select", height: "h-64" },
+  "share-button": { kind: "tap", height: "h-64" },
+  "mute-toggle": { kind: "tap", height: "h-48" },
+  "lock-toggle": { kind: "tap", height: "h-56" },
+  "poll-vote": { kind: "select", height: "h-72" },
 };
 
 /**

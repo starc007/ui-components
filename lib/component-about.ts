@@ -3750,4 +3750,221 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       },
     ],
   },
+  "download-button": {
+    overview:
+      "Download Button is a React download control built with Framer Motion. Pressing it drops the arrow into the tray, then a ring fills around the icon as the file comes in and closes into a check, while Download morphs to Downloading and Downloaded with Text Morph. The ring follows real progress: onDownload receives a report function you call with a value from 0 to 1.",
+    useWhen: [
+      "A file, export or invoice downloads and the wait should be visible.",
+      "An app installs a model, plugin or offline pack in the background.",
+      "A report is generated before it can be saved.",
+    ],
+    accessibility:
+      "It renders a real button that reports aria-busy while downloading. The ring is a progressbar named Download progress with its current value, so screen readers can follow it. With reduced motion the arrow does not drop and the steps crossfade.",
+    faq: [
+      {
+        question: "How do I show real progress?",
+        answer:
+          "Pass onDownload. It receives report; call report(0.5) and so on as bytes arrive, and return a promise that settles when the download finishes. Without onDownload the ring fills on its own, which suits a demo.",
+      },
+      {
+        question: "What if the download fails?",
+        answer: "Reject the promise and the button goes back to Download.",
+      },
+    ],
+  },
+  "send-button": {
+    overview:
+      "Send Button is a React submit button built with Framer Motion. Pressing it sends the paper plane up and out through the edge of the pill with a short trail behind it, a spinner holds while the message sends, then a check draws in as Send morphs to Sending and Sent with Text Morph.",
+    useWhen: [
+      "A chat, comment or contact form sends a message.",
+      "An invite, feedback or support request goes out.",
+      "An email or newsletter is sent from a dashboard.",
+    ],
+    accessibility:
+      "It renders a real button whose name follows its label and reports aria-busy while sending. With reduced motion the plane does not fly and the steps crossfade.",
+    faq: [
+      {
+        question: "How do I hook up the request?",
+        answer:
+          "Pass onSend and return a promise; Sending stays until it settles, for at least a moment so the flight always reads. If it rejects, the button goes back to Send.",
+      },
+      {
+        question: "Can I change the words?",
+        answer: "Yes. Pass labels with send, sending and sent.",
+      },
+    ],
+  },
+  "refresh-button": {
+    overview:
+      "Refresh Button is a React refresh control built with Framer Motion. The arrows spin while the refresh runs, then ease to a stop on a full turn instead of freezing mid-spin, and hand over to a check as Refresh morphs to Refreshing and Updated with Text Morph. The spin runs on a single motion value, so it never jumps when the page re-renders.",
+    useWhen: [
+      "A feed, table or dashboard refetches its data on demand.",
+      "A sync or status check runs from a toolbar.",
+      "A preview rebuilds after a change.",
+    ],
+    accessibility:
+      "It renders a real button whose name follows its label and reports aria-busy while refreshing. With reduced motion the arrows stay still and the steps crossfade.",
+    faq: [
+      {
+        question: "How long does it spin?",
+        answer:
+          "As long as the promise from onRefresh takes, and at least a second, so a fast refresh still reads. Then it eases out over one more turn.",
+      },
+      {
+        question: "What happens on an error?",
+        answer: "Reject the promise and the button goes straight back to Refresh.",
+      },
+    ],
+  },
+  "message-status": {
+    overview:
+      "Message Status shows the delivery state of a chat message, built with Framer Motion. A small clock ticks while it sends, a tick draws when it is sent, a second tick slides in from behind the first when it is delivered, and both turn the accent colour when it is read. Set showLabel to add the state as a word that morphs with Text Morph.",
+    useWhen: [
+      "A chat or support inbox shows whether a message arrived and was read.",
+      "An AI chat shows a message moving from sending to sent.",
+      "A notification or email log shows delivery state per row.",
+    ],
+    accessibility:
+      "Without a label it is an image named after its state, such as Delivered. With showLabel the visible word names it. With reduced motion the clock is still and the ticks appear without drawing or sliding.",
+    faq: [
+      {
+        question: "Which states are there?",
+        answer: "sending, sent, delivered and read. Pass the current one as status; each change animates from the last.",
+      },
+      {
+        question: "Can I change the read colour?",
+        answer: "Read uses the primary colour. Override it with a className on the component, for example [&_svg]:text-sky-500.",
+      },
+    ],
+  },
+  "notification-bell": {
+    overview:
+      "Notification Bell is a React notification control built with Framer Motion. Whenever the unread count goes up, the bell swings from its top while the clapper lags the other way, the badge pops in, and the count rolls digit by digit. Pressing it clears the count and the badge shrinks away. Counts above max show as 9+.",
+    useWhen: [
+      "An app header shows unread notifications.",
+      "An inbox or activity feed signals new items.",
+      "A support or chat widget shows waiting messages.",
+    ],
+    accessibility:
+      "It renders a real button named Notifications, or Notifications, 3 unread when there are some, so the count is read out. With reduced motion the bell does not swing and the badge appears without scaling.",
+    faq: [
+      {
+        question: "How do I control the count?",
+        answer:
+          "Pass count and onCountChange. The bell rings on every increase, however it happens, and pressing it calls onCountChange(0).",
+      },
+      {
+        question: "How do I change the cap?",
+        answer: "Set max. Above it the badge shows max+, 9+ by default.",
+      },
+    ],
+  },
+  "reaction-picker": {
+    overview:
+      "Reaction Picker is a React reaction control built with Framer Motion. Pressing the button grows a tray out of it with each reaction rising in turn, each in its own colour; hovering or focusing one lifts it and shows its name. The one you pick arcs down onto the button, which catches it with a pop and a burst of sparks in the reaction's colour while the pill takes on that colour and the count rolls. Picking it again takes it back. It ships with like, love, haha, fire and party, or takes your own icons and colours.",
+    useWhen: [
+      "A message, comment or post takes quick reactions.",
+      "A changelog or doc page asks how readers feel about it.",
+      "A team tool lets people acknowledge an update.",
+    ],
+    accessibility:
+      "The button reports aria-expanded and is named Add reaction, or Reacted with Love once you have. The tray is a group of named buttons with aria-pressed; arrow keys move between them, Escape or a click outside closes it, and focus returns to the button. With reduced motion nothing rises or flies.",
+    faq: [
+      {
+        question: "Can I use my own reactions?",
+        answer:
+          "Yes. Pass reactions, an array of { id, label, icon, color, tint }. color is the icon's text colour class and tint the classes the button takes once that reaction is picked. Any icon works, including your own SVGs.",
+      },
+      {
+        question: "Does count include the viewer?",
+        answer: "No. count is everyone else's reactions; the viewer's own is added while they have one.",
+      },
+    ],
+  },
+  "share-button": {
+    overview:
+      "Share Button is a React share control built with Framer Motion. Pressing the round button turns its share mark into a close mark and fans the actions out of it on an arc, each springing out a beat after the last: copy link, email and message by default. Hovering or focusing an action lifts it above its neighbours and shows its name on the outer side of the fan. Choosing one turns its bubble into a check, reading Copied for copy link, then the fan folds back into the button, last out first in. The button does no sharing itself: onAction receives the action's id and you decide what happens.",
+    useWhen: [
+      "A post, product or doc page offers sharing without a modal.",
+      "A dashboard shares a report or invite link.",
+      "Any small set of related actions should open from one button.",
+    ],
+    accessibility:
+      "The button reports aria-expanded and is named Share, or Close while open. Every action is a named button; opening by keyboard moves focus to the first, arrow keys walk the fan, and Escape closes and returns focus. While the fan folds home it stops taking input. With reduced motion the actions appear in place without flying.",
+    faq: [
+      {
+        question: "How do I make the actions do something?",
+        answer:
+          "Pass onAction. It is called with the action's id, such as copy, email or message; copy the link, open a composer or call your API there. Return a promise to show the check once it settles; if it rejects, the fan stays open.",
+      },
+      {
+        question: "Can I change the actions?",
+        answer:
+          "Yes. Pass actions, an array of { id, label, icon, doneLabel }. doneLabel replaces the name once the action is done, like Copied. Three to five actions fit the arc best.",
+      },
+    ],
+  },
+  "mute-toggle": {
+    overview:
+      "Mute Toggle is a React sound toggle built with Framer Motion. Muting wipes the sound waves away from the outside in, then draws a slash across the speaker; unmuting lifts the slash first and draws the waves back out from the speaker, so sound reads as leaving and returning.",
+    useWhen: [
+      "A video, call or audio player needs a mute control.",
+      "A game or app toggles sound effects.",
+      "A notification setting silences alerts.",
+    ],
+    accessibility:
+      "It renders a real button named Mute with aria-pressed showing the state. With reduced motion the waves and slash change at once.",
+    faq: [
+      {
+        question: "Is it controlled?",
+        answer: "Either way. Pass muted with onMutedChange, or defaultMuted.",
+      },
+      {
+        question: "Can I rename it?",
+        answer: "Yes. Pass labels with mute, for example Mute sound effects.",
+      },
+    ],
+  },
+  "lock-toggle": {
+    overview:
+      "Lock Toggle is a React padlock toggle built with Framer Motion. Unlocking lifts the shackle clear of the body and swings it open on its right leg; locking swings it back over the body and drops it home, while the label morphs between Locked and Unlocked with Text Morph.",
+    useWhen: [
+      "A document, field or layer can be locked against edits.",
+      "A privacy setting makes something public or private.",
+      "A canvas or design tool locks an object in place.",
+    ],
+    accessibility:
+      "It renders a real button named Lock with aria-pressed showing the state, while the visible word changes. With reduced motion the shackle changes position without moving.",
+    faq: [
+      {
+        question: "Can I hide the label?",
+        answer: "Yes. Set showLabel to false for a round icon-only toggle.",
+      },
+      {
+        question: "Is it locked by default?",
+        answer: "Yes. Pass defaultLocked={false} to start unlocked, or control it with locked and onLockedChange.",
+      },
+    ],
+  },
+  "poll-vote": {
+    overview:
+      "Poll Vote is a React poll built with Framer Motion. Before you vote it is a list of options; one tap fills every bar to its share in a wave from the top, counts each percentage up from where it was, and draws a check beside your pick. Picking another option moves your vote and the bars settle to the new shares.",
+    useWhen: [
+      "A blog post, community or newsletter asks a quick question.",
+      "A product page collects feedback with one tap.",
+      "A team chooses between a few options.",
+    ],
+    accessibility:
+      "Each option is a button with aria-pressed; after voting its name includes its share, such as Springs, 43%. Your vote is announced in a polite live region. With reduced motion the bars and numbers jump to their values.",
+    faq: [
+      {
+        question: "How are the percentages worked out?",
+        answer: "From each option's votes plus the viewer's own vote, out of the total, rounded to whole numbers.",
+      },
+      {
+        question: "Can I reset it?",
+        answer: "Control it with value and set it back to null; the bars drain and the list is ready for a vote again.",
+      },
+    ],
+  },
 };

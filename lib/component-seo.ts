@@ -642,6 +642,56 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Free React add to cart button that turns into a quantity stepper with a rolling count, and back on the last remove. Tailwind, shadcn install.",
   },
+  "download-button": {
+    title: "React Download Button with Progress Ring",
+    description:
+      "Free React download button: the arrow drops into the tray, a ring fills with real progress, then a check as Download morphs to Downloaded. shadcn install.",
+  },
+  "send-button": {
+    title: "React Send Button with Paper Plane",
+    description:
+      "Free React send button: the paper plane takes off through the edge of the pill, a spinner holds, then a check as Send morphs to Sent. shadcn install.",
+  },
+  "refresh-button": {
+    title: "React Refresh Button, Animated",
+    description:
+      "Free React refresh button: the arrows spin, ease to a stop on a full turn, then hand over to a check as Refresh morphs to Updated. shadcn install.",
+  },
+  "message-status": {
+    title: "React Message Status Ticks, Animated",
+    description:
+      "Free React chat delivery ticks: a clock while sending, one tick when sent, two when delivered, both blue when read. Accessible, shadcn install.",
+  },
+  "notification-bell": {
+    title: "React Notification Bell with Badge",
+    description:
+      "Free React notification bell: it swings as the clapper lags, the badge pops and rolls its count, and clears when pressed. Accessible, shadcn install.",
+  },
+  "reaction-picker": {
+    title: "React Reaction Picker, Animated",
+    description:
+      "Free React reaction picker: a colourful tray grows out of the button and your pick arcs onto it with a burst as the count rolls. Keyboard ready, shadcn install.",
+  },
+  "share-button": {
+    title: "React Share Button with Fan Out Menu",
+    description:
+      "Free React share button that fans its actions out on an arc, each springing out in turn, with names on hover and a check when chosen. shadcn install.",
+  },
+  "mute-toggle": {
+    title: "React Mute Toggle with Animated Speaker",
+    description:
+      "Free React mute toggle: the sound waves wipe out before a slash draws across, and draw back out on unmute. Accessible toggle, shadcn install.",
+  },
+  "lock-toggle": {
+    title: "React Lock Toggle with Padlock Animation",
+    description:
+      "Free React lock toggle: the shackle lifts and swings open on its right leg, then drops home as Locked morphs to Unlocked. shadcn install.",
+  },
+  "poll-vote": {
+    title: "React Poll Component with Animated Results",
+    description:
+      "Free React poll: voting fills each bar to its share in a wave, counts the percentages up and checks your pick. Accessible, shadcn install.",
+  },
   "delete-button": {
     title: "React Delete Button with Confirm Animation",
     description:
