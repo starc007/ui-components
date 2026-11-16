@@ -269,8 +269,8 @@ export const previews: Record<string, ComponentType> = {
   "micro-interactions/copy-button": dynamic(() =>
     import("./micro-interactions/copy-button.preview").then((m) => m.CopyButtonPreview),
   ),
-  "micro-interactions/success-check": dynamic(() =>
-    import("./micro-interactions/success-check.preview").then((m) => m.SuccessCheckPreview),
+  "micro-interactions/text-morph": dynamic(() =>
+    import("./micro-interactions/text-morph.preview").then((m) => m.TextMorphPreview),
   ),
   "micro-interactions/follow-button": dynamic(() =>
     import("./micro-interactions/follow-button.preview").then((m) => m.FollowButtonPreview),

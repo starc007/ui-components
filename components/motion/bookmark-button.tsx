@@ -1,49 +1,74 @@
 "use client";
 
-import { Bookmark } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
-import { type ComponentPropsWithRef, useState } from "react";
-import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
+import { type HTMLMotionProps, motion, useReducedMotion } from "motion/react";
+import { useState } from "react";
+import { MorphLabel } from "@/components/motion/morph-label";
+import { EASE_IN, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export const bookmarkButtonMessages = {
   save: "Save",
+  saved: "Saved",
+  saveName: "Save {name}",
 };
 
 export type BookmarkButtonMessages = typeof bookmarkButtonMessages;
 
 export interface BookmarkButtonProps
-  extends Omit<ComponentPropsWithRef<"button">, "children" | "onChange"> {
+  extends Omit<HTMLMotionProps<"button">, "children" | "onChange"> {
   saved?: boolean;
   defaultSaved?: boolean;
   onSavedChange?: (saved: boolean) => void;
+  /** Show "Save" / "Saved" next to the icon. Icon only when false. */
+  showLabel?: boolean;
+  /** What is being saved, for the accessible name ("Save {name}"). */
+  name?: string;
   labels?: Partial<BookmarkButtonMessages>;
 }
 
-const FILL_TRANSITION = { duration: 0.28, ease: EASE_OUT } as const;
-const DRAIN_TRANSITION = { duration: 0.18, ease: EASE_OUT } as const;
+const RIBBON = "M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v15.5L12 16.5l-6.5 4V5A1.5 1.5 0 0 1 7 3.5z";
+const CHECK = "M9 9.75l2.1 2.1L15 8";
 
-/** A bookmark toggle whose fill rises from the bottom as the icon dips in. */
+// The ribbon falls into the outline and lands on a light spring, a
+// physical drop rather than a fade. It lifts back out on an accelerating
+// curve, the way something pulled up leaves.
+const DROP = { type: "spring", stiffness: 520, damping: 26, mass: 0.7 } as const;
+const LIFT = { duration: 0.2, ease: EASE_IN } as const;
+const DRAW = { duration: 0.22, ease: EASE_OUT, delay: 0.16 } as const;
+const UNDRAW = { duration: 0.1, ease: EASE_OUT } as const;
+
+/**
+ * A save toggle. Saving drops a filled ribbon into the bookmark from above;
+ * it lands with a little spring and a check cuts into it while the label
+ * rolls to Saved. Unsaving lifts the ribbon back out the top.
+ */
 export function BookmarkButton({
   saved: savedProp,
   defaultSaved = false,
   onSavedChange,
+  showLabel = true,
+  name,
   labels,
   className,
   onClick,
   ...rest
 }: BookmarkButtonProps) {
   const t = useMessages("BookmarkButton", bookmarkButtonMessages, labels);
-  const reduce = useReducedMotion();
+  const reduce = Boolean(useReducedMotion());
   const [internal, setInternal] = useState(defaultSaved);
   const saved = savedProp ?? internal;
+  const instant = { duration: 0 };
 
   return (
-    <button
+    <motion.button
       type="button"
       aria-pressed={saved}
-      aria-label={t("save")}
+      // One steady name, so screen readers announce the state through
+      // aria-pressed instead of a label that changes under them.
+      aria-label={name ? t("saveName", { name }) : t("save")}
+      whileTap={reduce ? undefined : { scale: 0.94 }}
+      transition={SPRING_PRESS}
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
@@ -52,34 +77,51 @@ export function BookmarkButton({
         onSavedChange?.(next);
       }}
       className={cn(
-        "inline-flex size-8 items-center justify-center rounded-full transition-colors",
-        "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+        "inline-flex h-8 items-center rounded-full border px-2 text-sm font-medium transition-colors duration-200",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
         "disabled:pointer-events-none disabled:opacity-50",
-        saved && "text-primary hover:text-primary",
+        saved
+          ? "border-primary/30 bg-primary/10 text-primary"
+          : "border-border text-muted-foreground hover:bg-muted/60 hover:text-foreground",
         className,
       )}
       {...rest}
     >
-      <motion.span
+      {/* The svg clips to its box, so the ribbon is hidden above it until it falls in. */}
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         aria-hidden="true"
-        className="relative inline-flex"
-        // The ribbon drops into place as it fills. No remount, so the fill
-        // below animates from where it was.
-        initial={false}
-        animate={{ y: saved && !reduce ? [-3, 0] : 0 }}
-        transition={SPRING_PRESS}
+        className="size-4 shrink-0 overflow-hidden"
       >
-        <Bookmark className="size-4" />
-        <motion.span
-          className="absolute inset-0 inline-flex"
+        <path d={RIBBON} stroke="currentColor" strokeWidth={2} />
+        <motion.g
           initial={false}
-          animate={{ clipPath: saved ? "inset(0% 0 0 0)" : "inset(100% 0 0 0)" }}
-          transition={reduce ? { duration: 0 } : saved ? FILL_TRANSITION : DRAIN_TRANSITION}
+          animate={reduce ? { opacity: saved ? 1 : 0 } : { y: saved ? 0 : -24 }}
+          transition={reduce ? { duration: 0.15 } : saved ? DROP : LIFT}
         >
-          <Bookmark className="size-4 fill-current" />
-        </motion.span>
-      </motion.span>
-    </button>
+          <path d={RIBBON} fill="currentColor" stroke="currentColor" strokeWidth={2} />
+          <motion.path
+            d={CHECK}
+            className="stroke-background"
+            strokeWidth={2}
+            initial={false}
+            animate={{ pathLength: saved ? 1 : 0 }}
+            transition={reduce ? instant : saved ? DRAW : UNDRAW}
+          />
+        </motion.g>
+      </svg>
+      {showLabel ? (
+        <span aria-hidden="true" className="inline-flex h-full">
+          <MorphLabel
+            text={saved ? t("saved") : t("save")}
+            direction={saved ? 1 : -1}
+            className="pr-1.5 pl-1.5"
+          />
+        </span>
+      ) : null}
+    </motion.button>
   );
 }

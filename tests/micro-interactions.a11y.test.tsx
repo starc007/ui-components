@@ -7,7 +7,7 @@ import { CopyButton } from "@/components/motion/copy-button";
 import { FollowButton } from "@/components/motion/follow-button";
 import { LikeButton } from "@/components/motion/like-button";
 import { StarRating } from "@/components/motion/star-rating";
-import { SuccessCheck } from "@/components/motion/success-check";
+import { TextMorph } from "@/components/motion/text-morph";
 import { UpvoteButton } from "@/components/motion/upvote-button";
 
 afterEach(cleanup);
@@ -30,17 +30,31 @@ test("toggle buttons expose their pressed state", async () => {
   expect((await axe(container)).violations).toEqual([]);
 });
 
-test("copy button and success check have no violations", async () => {
-  const { container, getByRole, getAllByRole } = render(
+test("copy button has no violations", async () => {
+  const { container, getAllByRole } = render(
     <div>
       <CopyButton value="hello" />
       <CopyButton value="hello" showLabel />
-      <SuccessCheck />
     </div>,
   );
   // Icon only (aria-label) and labelled (visible text) both read "Copy".
   expect(getAllByRole("button", { name: "Copy" })).toHaveLength(2);
-  expect(getByRole("img", { name: "Success" })).toBeTruthy();
+  expect((await axe(container)).violations).toEqual([]);
+});
+
+test("text morph reads its whole string, not the animated letters", async () => {
+  const { container, getByRole, rerender } = render(
+    <button type="button">
+      <TextMorph>Subscribe</TextMorph>
+    </button>,
+  );
+  expect(getByRole("button", { name: "Subscribe" })).toBeTruthy();
+  rerender(
+    <button type="button">
+      <TextMorph>Subscribed</TextMorph>
+    </button>,
+  );
+  expect(getByRole("button", { name: "Subscribed" })).toBeTruthy();
   expect((await axe(container)).violations).toEqual([]);
 });
 

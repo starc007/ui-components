@@ -608,9 +608,9 @@ export const componentSeo: Record<string, ComponentSeo> = {
       "Free React like button: the heart pops, throws a ring of sparks and rolls its count up. Controlled or uncontrolled, reduced-motion safe. Tailwind, shadcn install.",
   },
   "bookmark-button": {
-    title: "React Bookmark Button with Fill Animation",
+    title: "React Bookmark Button, Animated Save",
     description:
-      "Free React bookmark button whose fill rises from the bottom as the icon dips into place. Toggle state with aria-pressed. Tailwind, shadcn install.",
+      "Free React bookmark button: a filled ribbon drops into the icon, a check cuts in and the label rolls to Saved. Accessible toggle, shadcn install.",
   },
   "upvote-button": {
     title: "React Upvote Button with Rolling Count",
@@ -622,10 +622,10 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Free React copy button: copies text and swaps the icon to a check, announces Copied to screen readers, then settles back. Tailwind, shadcn install.",
   },
-  "success-check": {
-    title: "Animated Success Checkmark for React",
+  "text-morph": {
+    title: "React Text Morph Animation",
     description:
-      "Free React success checkmark: a circle draws itself, a check follows and a ring fades out. Replay on demand, reduced-motion safe. Tailwind, shadcn install.",
+      "Free React text morph: letters two strings share glide into place while the rest shrink away or grow in. Built for button labels. shadcn install.",
   },
   "follow-button": {
     title: "React Follow Button with Unfollow Hover",

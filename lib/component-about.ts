@@ -3581,19 +3581,19 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "bookmark-button": {
     overview:
-      "Bookmark Button is a React save toggle built with Framer Motion. Saving dips the icon into place while a filled copy rises from the bottom of the outline, and removing drains the fill back down a little faster. It is icon only and uses the primary colour for the saved state.",
+      "Bookmark Button is a React save toggle built with Framer Motion. Saving drops a filled ribbon into the bookmark outline from above; it lands on a light spring, a check cuts into it, the pill tints with the primary colour and the label rolls to Saved. Unsaving lifts the ribbon back out the top. Set showLabel to false for an icon-only button.",
     useWhen: [
       "An article list or reader needs save for later.",
       "A listings or job board lets people shortlist items.",
       "A docs site lets readers pin pages.",
     ],
     accessibility:
-      "It renders a button with aria-pressed and an accessible name of Save, which you can extend per item through labels, for example \"Save Designing for reduced motion\". With reduced motion the fill changes at once and the icon does not move.",
+      "It renders a button with aria-pressed and a steady accessible name, Save or Save {name}, so screen readers announce the state rather than a changing label. With reduced motion the ribbon fades in and out instead of dropping.",
     faq: [
       {
         question: "How do I give each bookmark a unique name?",
         answer:
-          "Pass a labels prop with a save string that includes the item, for example \"Save Designing for reduced motion\", so screen reader users can tell the buttons in a list apart.",
+          "Pass name, for example name=\"Designing for reduced motion\", and the accessible name becomes \"Save Designing for reduced motion\", so screen reader users can tell the buttons in a list apart.",
       },
       {
         question: "Is it controlled or uncontrolled?",
@@ -3643,24 +3643,25 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       },
     ],
   },
-  "success-check": {
+  "text-morph": {
     overview:
-      "Success Check is an animated React checkmark built with Framer Motion. A circle draws itself from the top, a check follows, and a ring fades out from the edge. It plays on mount and again whenever replayKey changes, and takes the current text colour, primary by default.",
+      "Text Morph is a React text animation built with Framer Motion that morphs one string into another. Letters the two strings share, paired by their longest common subsequence, glide on a spring from where they are drawn to their new place. New letters spring up into place one at a time, left to right, and letters that leave drop away one by one from the end while riding along with their nearest neighbour that stays. The box springs to the new width. Subscribe, Subscribing and Subscribed read as one word changing rather than three labels swapping, and a change mid-morph retargets every spring from where it is.",
     useWhen: [
-      "A payment, signup or form submission needs a clear confirmation.",
-      "A settings page confirms a save.",
-      "An onboarding step marks itself complete.",
+      "A button label moves through states, such as Subscribe, Subscribing and Subscribed.",
+      "A toggle names its state in words, such as Show more and Show less.",
+      "A heading or tab title changes in place and should feel continuous.",
     ],
     accessibility:
-      "By default it is an image named Success. Set decorative when nearby text already says what happened, and it is hidden from screen readers. With reduced motion the circle and check fade in without drawing and the ring is skipped.",
+      "The full string sits in screen reader text while the animated letters are hidden from assistive technology, so the label is always read whole. With reduced motion the letters crossfade in place: nothing slides or scales.",
     faq: [
       {
-        question: "How do I replay it?",
-        answer: "Change replayKey, for example by incrementing a counter each time the action succeeds.",
+        question: "How are shared letters matched?",
+        answer:
+          "By their longest common subsequence: the longest run of characters, in order, that both strings contain stays and slides; everything else leaves or arrives. Matching is case sensitive.",
       },
       {
-        question: "How do I change its colour or size?",
-        answer: "Set size in pixels and a text colour class through className, for example text-emerald-500.",
+        question: "Can I use it outside a button?",
+        answer: "Yes. It renders an inline span that takes your className, so it fits any text: headings, tabs, badges or labels.",
       },
     ],
   },

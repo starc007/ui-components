@@ -22,7 +22,7 @@ const CARDS: Record<string, { kind: Exclude<Filter, "all">; height: string }> = 
   "bookmark-button": { kind: "tap", height: "h-48" },
   "upvote-button": { kind: "tap", height: "h-64" },
   "copy-button": { kind: "tap", height: "h-48" },
-  "success-check": { kind: "feedback", height: "h-64" },
+  "text-morph": { kind: "feedback", height: "h-64" },
   "follow-button": { kind: "tap", height: "h-48" },
   "star-rating": { kind: "select", height: "h-56" },
   "add-to-cart": { kind: "tap", height: "h-64" },

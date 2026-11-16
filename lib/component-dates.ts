@@ -9,7 +9,7 @@ const COMPONENT_DATES = {
   "micro-interactions/bookmark-button": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
   "micro-interactions/upvote-button": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
   "micro-interactions/copy-button": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
-  "micro-interactions/success-check": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
+  "micro-interactions/text-morph": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
   "micro-interactions/follow-button": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
   "micro-interactions/star-rating": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
   "micro-interactions/add-to-cart": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },

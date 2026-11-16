@@ -1547,7 +1547,7 @@ export const registry: CategoryEntry[] = [
         slug: "bookmark-button",
         name: "Bookmark Button",
         description:
-          "A save toggle whose fill rises from the bottom of the bookmark as the icon dips into place, and drains out when removed.",
+          "A save toggle that drops a filled ribbon into the bookmark from above, cuts a check into it and rolls the label to Saved.",
         file: "components/motion/bookmark-button.tsx",
         badge: "new",
         launchedAt: "2026-11-16",
@@ -1575,14 +1575,14 @@ export const registry: CategoryEntry[] = [
         keywords: ["copy button react", "copy to clipboard", "animated copy icon", "clipboard button"],
       },
       {
-        slug: "success-check",
-        name: "Success Check",
+        slug: "text-morph",
+        name: "Text Morph",
         description:
-          "A circle that draws itself, a check that follows and a ring that fades out from the edge, for payments, forms and saved states.",
-        file: "components/motion/success-check.tsx",
+          "Text that morphs between strings: shared letters glide into place while new ones spring up one by one and old ones drop away. For button states.",
+        file: "components/motion/text-morph.tsx",
         badge: "new",
         launchedAt: "2026-11-16",
-        keywords: ["animated checkmark react", "success animation", "check draw svg", "payment success"],
+        keywords: ["text morph react", "morphing text animation", "animated button label", "shared letter animation"],
       },
       {
         slug: "follow-button",

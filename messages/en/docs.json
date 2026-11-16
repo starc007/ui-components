@@ -31,7 +31,7 @@
     "micro-interactions": {
       "title": "React Micro Interactions",
       "heading": "Micro Interactions",
-      "description": "Small animated controls for React: like, bookmark, upvote, copy, success check, follow, star rating and add to cart. Copy the source and drop them in.",
+      "description": "Small animated controls for React: like, bookmark, upvote, copy, text morph, follow, star rating and add to cart. Copy the source and drop them in.",
       "allLabel": "All micro interactions",
       "filterLabel": "Filter by interaction",
       "filters": {
