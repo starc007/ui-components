@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 import { useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
+import { InteractionGallery } from "@/components/app/docs/interaction-gallery";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { ProBlocksSection } from "@/components/app/docs/pro-blocks-section";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
@@ -15,7 +16,7 @@ import { type ComponentEntry, findCategory } from "@/lib/registry";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
 
 /** Copy per category in messages Docs.category; unknown categories read as motion. */
-const CONTENT_KEYS = ["motion", "blocks", "charts", "casino", "agents"] as const;
+const CONTENT_KEYS = ["motion", "blocks", "charts", "casino", "micro-interactions", "agents"] as const;
 type ContentKey = (typeof CONTENT_KEYS)[number];
 
 function contentKey(slug: string): ContentKey {
@@ -183,19 +184,30 @@ export function CategoryPage({ data }: { data: CategoryPageData }) {
   return (
     <div>
       <JsonLd data={data.jsonLd} />
-      <nav aria-label={tDocs("breadcrumb")} className="flex items-center gap-1.5 text-sm">
-        <span className="font-medium text-foreground">{data.name}</span>
-      </nav>
-      <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
-        {t(`${key}.heading`)}
-      </h1>
-      <p className="mt-2 max-w-2xl text-muted-foreground">{t(`${key}.description`)}</p>
-      <div className="mt-6 xl:hidden">
-        <PlatformSwitch />
-      </div>
+      {slug === "micro-interactions" ? (
+        // The gallery speaks for itself: one heading, no breadcrumb, no
+        // description, and no platform switch (web only).
+        <h1 className="text-3xl font-medium tracking-tight text-foreground">{t(`${key}.heading`)}</h1>
+      ) : (
+        <>
+          <nav aria-label={tDocs("breadcrumb")} className="flex items-center gap-1.5 text-sm">
+            <span className="font-medium text-foreground">{data.name}</span>
+          </nav>
+          <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
+            {t(`${key}.heading`)}
+          </h1>
+          <p className="mt-2 max-w-2xl text-muted-foreground">{t(`${key}.description`)}</p>
+          {/* The right sidebar carries the switch from xl. */}
+          <div className="mt-6 xl:hidden">
+            <PlatformSwitch />
+          </div>
+        </>
+      )}
 
       <div>
-        {agentGroups.length ? (
+        {slug === "micro-interactions" ? (
+          <InteractionGallery components={[...newComponents, ...components]} />
+        ) : agentGroups.length ? (
           <div className="mt-12 space-y-14">
             {agentGroups.map((group) => (
               <section key={group.id} id={group.id} className="scroll-mt-24">

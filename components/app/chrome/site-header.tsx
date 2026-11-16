@@ -139,7 +139,7 @@ export function SiteHeader() {
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                {t(slug as "charts" | "casino")}
+                {t(slug as "charts" | "casino" | "micro-interactions")}
               </Link>
             ))}
             <Link

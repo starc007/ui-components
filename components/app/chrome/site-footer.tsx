@@ -4,7 +4,7 @@ import { categoryPath, componentPath } from "@/lib/component-paths";
 import { registry } from "@/lib/registry";
 
 const FOOTER_LIMIT = 7;
-const COLUMNS = ["motion", "blocks", "agents", "charts", "casino"].flatMap((slug) => {
+const COLUMNS = ["motion", "blocks", "agents", "micro-interactions", "charts", "casino"].flatMap((slug) => {
   const category = registry.find((entry) => entry.slug === slug);
   return category ? [category] : [];
 });

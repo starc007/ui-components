@@ -1,5 +1,5 @@
 /** Categories with their own top-level section instead of /components/<category>. */
-export const TOP_LEVEL_CATEGORIES = ["charts", "casino"];
+export const TOP_LEVEL_CATEGORIES = ["charts", "casino", "micro-interactions"];
 
 /** The top-level section a path is in, if any. */
 export function topLevelCategory(pathname: string) {
