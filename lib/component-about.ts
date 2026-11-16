@@ -3581,7 +3581,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "bookmark-button": {
     overview:
-      "Bookmark Button is a React save toggle built with Framer Motion. Saving drops a filled ribbon into the bookmark outline from above; it lands on a light spring, a check cuts into it, the pill tints with the primary colour and the label rolls to Saved. Unsaving lifts the ribbon back out the top. Set showLabel to false for an icon-only button.",
+      "Bookmark Button is a React save toggle built with Framer Motion. Saving drops a filled ribbon into the bookmark outline from above; it lands on a light spring, a check cuts into it, the pill tints with the primary colour and the label morphs from Save to Saved with Text Morph, a \"d\" springing onto the end. Unsaving lifts the ribbon back out the top. Set showLabel to false for an icon-only button.",
     useWhen: [
       "An article list or reader needs save for later.",
       "A listings or job board lets people shortlist items.",
@@ -3624,7 +3624,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "copy-button": {
     overview:
-      "Copy Button is a React copy to clipboard button built with Framer Motion. A click writes the value to the clipboard and confirms it: the button tints with the primary colour, the copy icon blurs away as a check scales in and draws its stroke, and with a label the word rolls to Copied while the pill resizes to fit. It settles back after a timeout.",
+      "Copy Button is a React copy to clipboard button built with Framer Motion. A click writes the value to the clipboard and confirms it: the button tints with the primary colour, the copy icon blurs away as a check scales in and draws its stroke, and with a label the word morphs with Text Morph: \"Cop\" stays while the rest of Copied springs in letter by letter and the pill resizes to fit. It settles back after a timeout.",
     useWhen: [
       "A code block, install command or API key needs a one-click copy.",
       "A share sheet copies a link.",

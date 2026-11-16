@@ -610,7 +610,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "bookmark-button": {
     title: "React Bookmark Button, Animated Save",
     description:
-      "Free React bookmark button: a filled ribbon drops into the icon, a check cuts in and the label rolls to Saved. Accessible toggle, shadcn install.",
+      "Free React bookmark button: a filled ribbon drops into the icon, a check cuts in and Save morphs to Saved. Accessible toggle, shadcn install.",
   },
   "upvote-button": {
     title: "React Upvote Button with Rolling Count",

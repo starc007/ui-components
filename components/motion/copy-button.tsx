@@ -8,7 +8,7 @@ import {
   useReducedMotion,
 } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { MorphLabel } from "@/components/motion/morph-label";
+import { TextMorph } from "@/components/motion/text-morph";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -146,12 +146,9 @@ export function CopyButton({
           </AnimatePresence>
         </span>
         {showLabel ? (
-          <span className="inline-flex h-full">
-            <MorphLabel
-              text={copied ? t("copied") : t("copy")}
-              direction={copied ? 1 : -1}
-              className="pr-1.5 pl-1.5"
-            />
+          // Copy → Copied keeps "Cop" and springs the rest in letter by letter.
+          <span className="px-1.5">
+            <TextMorph>{copied ? t("copied") : t("copy")}</TextMorph>
           </span>
         ) : null}
       </motion.button>

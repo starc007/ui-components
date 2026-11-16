@@ -2,7 +2,7 @@
 
 import { type HTMLMotionProps, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
-import { MorphLabel } from "@/components/motion/morph-label";
+import { TextMorph } from "@/components/motion/text-morph";
 import { EASE_IN, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -114,12 +114,9 @@ export function BookmarkButton({
         </motion.g>
       </svg>
       {showLabel ? (
-        <span aria-hidden="true" className="inline-flex h-full">
-          <MorphLabel
-            text={saved ? t("saved") : t("save")}
-            direction={saved ? 1 : -1}
-            className="pr-1.5 pl-1.5"
-          />
+        // Save → Saved keeps the word and springs a "d" onto the end.
+        <span aria-hidden="true" className="px-1.5">
+          <TextMorph>{saved ? t("saved") : t("save")}</TextMorph>
         </span>
       ) : null}
     </motion.button>

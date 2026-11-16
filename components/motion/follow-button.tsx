@@ -6,8 +6,8 @@ import {
   motion,
   useReducedMotion,
 } from "motion/react";
-import { useEffect, useRef, useState } from "react";
-import { MorphLabel } from "@/components/motion/morph-label";
+import { useEffect, useState } from "react";
+import { TextMorph } from "@/components/motion/text-morph";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
@@ -90,19 +90,30 @@ export function FollowButton({
   const [armed, setArmed] = useState(true);
   // The circle beats of a fresh follow; null once it reads Following.
   const [phase, setPhase] = useState<Phase | null>(null);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  // Counts follows, so each one schedules its own beats.
+  const [run, setRun] = useState(0);
 
-  const clearTimers = () => {
-    for (const id of timers.current) clearTimeout(id);
-    timers.current = [];
-  };
-  // Stop pending beats on unmount.
-  useEffect(
-    () => () => {
-      for (const id of timers.current) clearTimeout(id);
-    },
-    [],
-  );
+  // Any follow plays the beats, whether it came from a click or from a
+  // parent setting `following`. Detected during render, so the circle
+  // starts in the same commit as the new state, with no frame of Following.
+  const [seen, setSeen] = useState(following);
+  if (seen !== following) {
+    setSeen(following);
+    setPhase(following && !reduce ? "loading" : null);
+    if (following && !reduce) setRun((count) => count + 1);
+  }
+
+  // Loading gives way to the check, then the circle opens into Following.
+  useEffect(() => {
+    if (run === 0) return;
+    const ids = [
+      setTimeout(() => setPhase((current) => (current === "loading" ? "confirm" : current)), LOADING_MS),
+      setTimeout(() => setPhase(null), LOADING_MS + CONFIRM_MS),
+    ];
+    return () => {
+      for (const id of ids) clearTimeout(id);
+    };
+  }, [run]);
 
   const active = following ? phase : null;
   const face: Face =
@@ -132,18 +143,7 @@ export function FollowButton({
         if (event.defaultPrevented) return;
         const next = !following;
         if (followingProp === undefined) setInternal(next);
-        clearTimers();
-        setPhase(null);
-        if (next) {
-          setArmed(false);
-          if (!reduce) {
-            setPhase("loading");
-            timers.current = [
-              setTimeout(() => setPhase("confirm"), LOADING_MS),
-              setTimeout(() => setPhase(null), LOADING_MS + CONFIRM_MS),
-            ];
-          }
-        }
+        if (next) setArmed(false);
         onFollowingChange?.(next);
       }}
       className={cn(
@@ -215,12 +215,11 @@ export function FollowButton({
           )}
         </AnimatePresence>
       </span>
-      <span aria-hidden="true" className="inline-flex h-full">
-        <MorphLabel
-          text={face === "loading" || face === "confirm" ? null : t(face)}
-          direction={face === "follow" ? -1 : 1}
-          className="pr-1.5 pl-1.5"
-        />
+      {/* Follow → Following keeps "Follow" and springs "ing" in. The label is
+          padded with spaces rather than CSS padding, so the gap morphs with
+          the letters and an empty label folds the pill into a true circle. */}
+      <span aria-hidden="true">
+        <TextMorph>{face === "loading" || face === "confirm" ? "" : ` ${t(face)} `}</TextMorph>
       </span>
     </motion.button>
   );
