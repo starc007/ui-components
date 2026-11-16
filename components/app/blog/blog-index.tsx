@@ -37,7 +37,7 @@ export function BlogIndex({ posts }: { posts: BlogPostMeta[] }) {
                 dateStyle: "medium",
                 timeZone: "UTC",
               }),
-              post.product === "pro" ? t("pro") : null,
+              post.product === "beui" ? null : t(post.product),
               post.draft ? t("draft") : null,
             ].filter(Boolean);
             return (

@@ -14,7 +14,9 @@ import path from "node:path";
 export const BLOG_PATH = "/blog";
 export const BLOG_FEED_PATH = "/blog/rss.xml";
 
-export type BlogProduct = "beui" | "pro";
+export type BlogProduct = "beui" | "pro" | "native";
+
+const PRODUCTS: BlogProduct[] = ["beui", "pro", "native"];
 
 export type BlogPostMeta = {
   slug: string;
@@ -75,7 +77,7 @@ function readPost(file: string): BlogPost {
     publishedAt: fields.publishedAt,
     updatedAt: fields.updatedAt || fields.publishedAt,
     tags,
-    product: fields.product === "pro" ? "pro" : "beui",
+    product: PRODUCTS.find((product) => product === fields.product) ?? "beui",
     draft: fields.draft === "true",
     devto: fields.devto || undefined,
     medium: fields.medium || undefined,

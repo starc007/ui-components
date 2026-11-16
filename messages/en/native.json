@@ -89,6 +89,7 @@
     "empty": "No posts yet.",
     "label": "Blog",
     "pro": "beUI Pro",
+    "native": "React Native",
     "draft": "Draft",
     "back": "All posts",
     "published": "<time></time>"
