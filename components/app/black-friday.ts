@@ -21,9 +21,22 @@ export const blackFriday = {
   }).format(ENDS_AT - 1),
 } as const;
 
-/** pro.beui.dev pricing, tagged with where on beUI the link sits. */
-export function blackFridayProUrl(content: string) {
-  return `https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=black_friday&utm_content=${content}#pricing`;
+/**
+ * A pro.beui.dev page (pricing on the home page by default), tagged with
+ * where on beUI the link sits.
+ */
+export function blackFridayProUrl(content: string, path = "/#pricing") {
+  const [pathname, hash = ""] = path.split("#");
+  return `https://pro.beui.dev${pathname}?utm_source=beui&utm_medium=referral&utm_campaign=black_friday&utm_content=${content}${hash ? `#${hash}` : ""}`;
+}
+
+/** "$249" for whole dollars, "$199.20" otherwise. */
+export function formatUsd(dollars: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: Number.isInteger(dollars) ? 0 : 2,
+  }).format(dollars);
 }
 
 function isBlackFridayLive(now = Date.now()) {

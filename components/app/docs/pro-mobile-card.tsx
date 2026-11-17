@@ -1,10 +1,23 @@
+"use client";
+
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "use-intl";
+import { blackFriday, blackFridayProUrl, useBlackFridayLive } from "@/components/app/black-friday";
+import { ProSalePrice } from "@/components/app/docs/pro-sale-price";
 import { RainbowCta } from "@/components/app/rainbow-cta";
+
+/** Mobile lifetime on pro.beui.dev. */
+const PRO_MOBILE_PRICE_USD = 149;
+
+const PRO_MOBILE_URL =
+  "https://pro.beui.dev/mobile?utm_source=beui&utm_medium=referral&utm_campaign=mobile_launch&utm_content=native_sidebar";
 
 /** Sidebar promo on React Native pages for beUI Pro for mobile. */
 export function ProMobileCard() {
   const t = useTranslations("Docs.proMobileCard");
+  const tSale = useTranslations("Docs.proSale");
+  const onSale = useBlackFridayLive();
+
   return (
     <section
       aria-labelledby="beui-pro-mobile-card-title"
@@ -25,14 +38,15 @@ export function ProMobileCard() {
           id="beui-pro-mobile-card-title"
           className="text-lg font-semibold leading-tight tracking-tight text-foreground"
         >
-          {t("title")}
+          {onSale ? tSale("heading", { percent: blackFriday.percent }) : t("title")}
         </h2>
         <p className="mt-2 text-sm leading-5 text-muted-foreground">
           {t("description")}
         </p>
+        {onSale ? <ProSalePrice dollars={PRO_MOBILE_PRICE_USD} /> : null}
       </div>
       <RainbowCta
-        href="https://pro.beui.dev/mobile?utm_source=beui&utm_medium=referral&utm_campaign=mobile_launch&utm_content=native_sidebar"
+        href={onSale ? blackFridayProUrl("native_sidebar", "/mobile") : PRO_MOBILE_URL}
         target="_blank"
         rel="noreferrer noopener"
         shape="pill"
