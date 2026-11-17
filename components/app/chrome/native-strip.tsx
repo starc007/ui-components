@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useTranslations } from "use-intl";
 import { useId } from "react";
+import { blackFriday, blackFridayProUrl, useBlackFridayLive } from "@/components/app/black-friday";
 import { ButtonLink } from "@/components/motion/button";
 import styles from "./native-strip.module.css";
 
@@ -12,18 +13,21 @@ const PRO_MOBILE_URL =
   "https://pro.beui.dev/mobile?utm_source=beui&utm_medium=referral&utm_campaign=mobile_launch&utm_content=strip";
 
 /**
- * Site-wide announcement above the header: beUI Pro for mobile is live, and
- * the strip points to it. It sits in the page flow above the sticky
- * header, so it scrolls away with the page.
+ * Site-wide announcement above the header: the beUI Pro Black Friday sale
+ * while it runs, otherwise beUI Pro for mobile. It sits in the page flow
+ * above the sticky header, so it scrolls away with the page.
  */
 export function NativeStrip() {
   const t = useTranslations("Chrome.nativeStrip");
   const waveGradientId = useId();
   const reduceMotion = useReducedMotion();
+  const onSale = useBlackFridayLive();
+  const saleValues = { percent: blackFriday.percent, end: blackFriday.endLabel };
+  const label = onSale ? t("saleLabel") : t("label");
 
   return (
     <aside
-      aria-label={t("label")}
+      aria-label={label}
       className="relative isolate flex h-(--announcement-h) items-center justify-center gap-x-2 border-b border-transparent bg-primary px-3 text-sm text-primary-foreground/80 sm:gap-x-3"
     >
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
@@ -55,7 +59,8 @@ export function NativeStrip() {
         </svg>
       </div>
       <p className="truncate">
-        {t.rich("announcement", {
+        {t.rich(onSale ? "saleAnnouncement" : "announcement", {
+          ...saleValues,
           more: (chunks) => <span className="hidden sm:inline">{chunks}</span>,
           strong: (chunks) => (
             <strong className="font-medium text-primary-foreground">{chunks}</strong>
@@ -73,12 +78,13 @@ export function NativeStrip() {
         theme="auto"
       >
         <ButtonLink
-          href={PRO_MOBILE_URL}
+          href={onSale ? blackFridayProUrl("strip") : PRO_MOBILE_URL}
           variant="outline"
           size="sm"
           className="h-7 gap-1 rounded-full bg-background px-2.5 text-xs text-foreground hover:bg-background/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-foreground"
         >
-          {t("explore")}<span className="sr-only"> {t("label")}</span>
+          {onSale ? t("saleCta", saleValues) : t("explore")}
+          <span className="sr-only"> {label}</span>
           <ArrowRight aria-hidden className="size-3 shrink-0" />
         </ButtonLink>
       </BorderBeam>

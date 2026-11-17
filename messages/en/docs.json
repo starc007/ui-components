@@ -107,9 +107,12 @@
   },
   "proCard": {
     "heading": "Limited Offer",
-    "summary": "436+ blocks and premium motion components for React, Next.js and React Native.",
-    "price": "$249 lifetime access",
-    "explore": "Explore beUI Pro"
+    "summary": "450+ blocks and premium motion components for React, Next.js and React Native.",
+    "price": "{price} lifetime access",
+    "explore": "Explore beUI Pro",
+    "saleHeading": "Black Friday: {percent}% off",
+    "salePrice": "<del>{was}</del> {price} lifetime access",
+    "saleEnds": "Until {end}, applied at checkout"
   },
   "proBlocks": {
     "usedIn": "Used in these Pro blocks",
