@@ -369,6 +369,35 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  bookshelf: {
+    overview:
+      "Bookshelf is a React component that shows a row of book spines, each with its title and author set vertically on a colored cloth. Click a spine and the book slides out, turns in 3D on a Framer Motion tween and shows its front cover, while the books beside it move apart to make room. Covers can be an image or are typeset from the title and author. The shelf scales down to fit narrow containers, and when an open book no longer fits, the row pans to keep it in view.",
+    useWhen: [
+      "A publisher, author or newsletter site shows its books or issues.",
+      "A personal site lists a reading list or favorite books.",
+      "A product page groups guides, courses or collections as volumes on a shelf.",
+    ],
+    accessibility:
+      "The shelf is a named list of toggle buttons, one per book, named by title and author and marked pressed while open. Arrow keys move focus between books and, while a book is open, open the next one instead; Home and End jump to the ends, and Escape puts the open book back. With reduced motion the books do not slide or turn: the cover fades in over the spine.",
+    faq: [
+      {
+        question: "How do I add a book cover image?",
+        answer:
+          "Set coverImage on a book to an image URL. Without one, the cover is typeset from the title and author in the book's color.",
+      },
+      {
+        question: "Can I control which book is open?",
+        answer:
+          "Yes. Pass value and onValueChange with a book id or null, or defaultValue to open a book on first render.",
+      },
+      {
+        question: "Can I change the size of the books?",
+        answer:
+          "Set height for the book height, coverRatio for the cover width as a fraction of it, and thickness on each book for its spine width.",
+      },
+    ],
+  },
+
   "dropdown-menu": {
     overview:
       "Dropdown Menu is a composable menu button for React built with Framer Motion and Tailwind CSS. The menu scales out of its trigger, a highlight glides from row to row as you point or use the keys, and submenus open to the side. A pointer moving diagonally toward an open submenu can cross the rows below without closing it. It has plain items, checkbox and radio items, labels, separators, shortcut hints and a destructive tone, and it flips to stay on screen.",
