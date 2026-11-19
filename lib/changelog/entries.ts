@@ -8,6 +8,17 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
  */
 export const changelogEntries: ChangelogEntry[] = [
   {
+    "date": "2026-11-19",
+    "title": "Bookshelf",
+    "items": [
+      {
+        "type": "new",
+        "text": "Bookshelf shows a row of book spines. Click one and it comes off the shelf and turns to show its cover while the other books make room. Arrow keys browse the shelf, Escape puts the book back, and on phones you can swipe the row. Pass sound for a soft slide and spine taps.",
+        "component": "bookshelf"
+      }
+    ]
+  },
+  {
     "date": "2026-11-16",
     "title": "Dropdown Menu",
     "items": [

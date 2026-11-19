@@ -24,6 +24,7 @@ const COMPONENT_DATES = {
   "charts/status-bar": { publishedAt: "2026-10-07", updatedAt: "2026-11-10" },
   "motion/alert": { publishedAt: "2026-10-05", updatedAt: "2026-11-10" },
   "motion/collapsible": { publishedAt: "2026-10-05", updatedAt: "2026-10-18" },
+  "motion/bookshelf": { publishedAt: "2026-11-19", updatedAt: "2026-11-19" },
   "motion/dropdown-menu": { publishedAt: "2026-11-16", updatedAt: "2026-11-16" },
   "motion/before-after-slider": { publishedAt: "2026-11-14", updatedAt: "2026-11-14" },
   "motion/aspect-ratio": { publishedAt: "2026-10-05", updatedAt: "2026-11-10" },

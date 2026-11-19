@@ -90,6 +90,23 @@ export const registry: CategoryEntry[] = [
       "Free, open-source animated React components built with Motion and Tailwind CSS, available as copy-paste source through the shadcn registry.",
     components: [
       {
+        slug: "bookshelf",
+        name: "Bookshelf",
+        description:
+          "A shelf of book spines. Click one and it slides out and turns in 3D to show its cover while the others make room. Arrow keys browse, Escape puts it back, and reduced motion swaps the turn for a fade.",
+        file: "components/motion/bookshelf.tsx",
+        badge: "new",
+        launchedAt: "2026-11-19",
+        keywords: [
+          "react bookshelf",
+          "3d book component",
+          "book spine animation",
+          "book cover flip react",
+          "reading list component",
+          "framer motion 3d",
+        ],
+      },
+      {
         slug: "dropdown-menu",
         name: "Dropdown Menu",
         description:

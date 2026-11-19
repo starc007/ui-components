@@ -30,6 +30,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Free React collapsible with a smooth spring expand and collapse, custom triggers, controlled or uncontrolled state and focus handoff. Framer Motion, shadcn install.",
   },
+  bookshelf: {
+    title: "React Bookshelf: 3D Book Spines That Turn to Cover",
+    description:
+      "Free React bookshelf component: click a spine and the book slides out and turns in 3D to show its cover. Keyboard support, reduced motion. Framer Motion, shadcn.",
+  },
   "dropdown-menu": {
     title: "Animated Dropdown Menu for React with Submenus",
     description:
