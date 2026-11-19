@@ -13,7 +13,6 @@ import {
 import {
   type KeyboardEvent,
   type PointerEvent as ReactPointerEvent,
-  type RefObject,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -142,6 +141,11 @@ function layoutShelf(
   });
   return { slots, width: x };
 }
+
+// The focus outline is drawn on the book's faces, so it follows the 3D book
+// rather than the flat hit button that holds focus.
+const FOCUS_RING =
+  "group-has-[button:focus-visible]:outline-2 group-has-[button:focus-visible]:outline-offset-2 group-has-[button:focus-visible]:outline-ring";
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -504,11 +508,11 @@ function Book({
     tiltY.set(0);
   }, [canTilt, tiltX, tiltY]);
 
-  const coverRef = useRef<HTMLSpanElement>(null);
   const onPointerMove = (e: ReactPointerEvent<HTMLButtonElement>) => {
     if (!canTilt || e.pointerType !== "mouse") return;
-    const rect = coverRef.current?.getBoundingClientRect();
-    if (!rect?.width) return;
+    // The hit button lies flat over the open cover, so its box is the cover's.
+    const rect = e.currentTarget.getBoundingClientRect();
+    if (!rect.width) return;
     const px = clamp((e.clientX - rect.left) / rect.width, 0, 1);
     const py = clamp((e.clientY - rect.top) / rect.height, 0, 1);
     tiltY.set((px - 0.5) * 2 * MAX_TILT);
@@ -517,7 +521,7 @@ function Book({
 
   return (
     <motion.li
-      className="absolute top-0 left-0 [transform-style:preserve-3d]"
+      className="group absolute top-0 left-0 [transform-style:preserve-3d]"
       style={{ width: thickness, height, zIndex }}
       initial={false}
       animate={{ x }}
@@ -527,26 +531,16 @@ function Book({
         className="absolute inset-0 block [transform-style:preserve-3d]"
         style={{ x: pan }}
       >
-        <button
-          ref={buttonRef}
-          type="button"
-          aria-label={name}
-          aria-pressed={open}
-          onClick={onToggle}
-          onPointerEnter={(e) => {
-            if (e.pointerType === "mouse") onHover(true);
-          }}
-          onPointerLeave={() => {
-            onHover(false);
-            tiltX.set(0);
-            tiltY.set(0);
-          }}
-          onPointerMove={onPointerMove}
-          className="group absolute inset-0 cursor-pointer border-0 bg-transparent p-0 outline-none [transform-style:preserve-3d]"
+        {/* The book is picture only. A browser hit-tests a 3D-turned cover
+            only inside its parent's box, which is the spine's, so the open
+            cover would ignore most clicks. A flat button over the book's
+            footprint (spine closed, cover open) takes the input instead. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 block [transform-style:preserve-3d]"
         >
           {/* Pull: off the shelf toward the viewer, or a lift and tip on hover. */}
           <motion.span
-            aria-hidden
             className="absolute top-0 left-0 block [transform-style:preserve-3d]"
             style={{
               width: thickness,
@@ -608,7 +602,6 @@ function Book({
                   shade={reduce ? null : spineShade}
                 />
                 <Cover
-                  ref={coverRef}
                   book={book}
                   text={text}
                   thickness={thickness}
@@ -621,7 +614,25 @@ function Book({
               </motion.span>
             </motion.span>
           </motion.span>
-        </button>
+        </span>
+        <button
+          ref={buttonRef}
+          type="button"
+          aria-label={name}
+          aria-pressed={open}
+          onClick={onToggle}
+          onPointerEnter={(e) => {
+            if (e.pointerType === "mouse") onHover(true);
+          }}
+          onPointerLeave={() => {
+            onHover(false);
+            tiltX.set(0);
+            tiltY.set(0);
+          }}
+          onPointerMove={onPointerMove}
+          className="absolute top-0 left-0 cursor-pointer border-0 bg-transparent p-0 outline-none"
+          style={{ width: open ? cover : thickness, height }}
+        />
       </motion.span>
     </motion.li>
   );
@@ -682,7 +693,7 @@ function Spine({
     <motion.span
       className={cn(
         "absolute top-0 left-0 flex flex-col items-center overflow-hidden rounded-[2px] py-3 [backface-visibility:hidden]",
-        "group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-ring",
+        FOCUS_RING,
       )}
       style={{ width: thickness, height, backgroundColor: book.color, color: text }}
       initial={false}
@@ -707,7 +718,6 @@ function Spine({
 }
 
 function Cover({
-  ref,
   book,
   text,
   thickness,
@@ -717,7 +727,6 @@ function Cover({
   open,
   shade,
 }: {
-  ref: RefObject<HTMLSpanElement | null>;
   book: BookshelfBook;
   text: string;
   thickness: number;
@@ -734,10 +743,9 @@ function Cover({
   const flat = reduce;
   return (
     <motion.span
-      ref={ref}
       className={cn(
         "absolute top-0 left-0 flex flex-col justify-between overflow-hidden rounded-r-[3px] rounded-l-[2px] p-5 text-left [backface-visibility:hidden]",
-        "group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-ring",
+        FOCUS_RING,
       )}
       style={{
         width,
@@ -746,8 +754,6 @@ function Cover({
         color: text,
         transformOrigin: "0 50%",
         transform: flat ? "none" : `translateX(${thickness}px) rotateY(90deg)`,
-        // A hidden flat cover would still catch clicks meant for neighbours.
-        pointerEvents: flat && !open ? "none" : undefined,
       }}
       initial={false}
       animate={{ opacity: flat && !open ? 0 : 1 }}

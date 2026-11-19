@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { Bookshelf, type BookshelfBook } from "@/components/motion/bookshelf";
+import { Switch } from "@/components/motion/switch";
 
 const BOOKS: BookshelfBook[] = [
   { id: "walden", title: "Walden", author: "Henry David Thoreau", color: "#5b6248", thickness: 38 },
@@ -16,12 +18,25 @@ const BOOKS: BookshelfBook[] = [
 ];
 
 export function BookshelfPreview() {
+  const [sound, setSound] = useState(true);
+
   return (
     <div className="flex w-full flex-col items-center gap-3 p-6">
-      <Bookshelf books={BOOKS} defaultValue="middlemarch" sound className="w-full" />
+      <Bookshelf
+        books={BOOKS}
+        defaultValue="middlemarch"
+        sound={sound}
+        className="w-full"
+      />
       <p className="text-xs text-muted-foreground">
         Click a book to pull it out. Arrow keys browse the shelf.
       </p>
+      <Switch
+        checked={sound}
+        onCheckedChange={setSound}
+        label="Sound"
+        className="origin-center scale-[0.85] [&_label]:text-sm"
+      />
     </div>
   );
 }
