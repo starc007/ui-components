@@ -875,7 +875,12 @@ export function DateRangePickerContent({
       radius={16}
       shadow={false}
       {...props}
-      className={cn("w-80 max-w-[calc(100vw-1.5rem)]", className)}
+      className={cn(
+        // On phones, fade the full calendar in so the clip cannot hide controls
+        // or cut their tap targets while the panel is visible.
+        "w-80 max-w-[calc(100vw-1.5rem)] max-sm:[clip-path:none]!",
+        className,
+      )}
       onOpenAutoFocus={(content) => {
         ctx.content.current = content;
         if (autoFocus) focusCalendarDate(content);

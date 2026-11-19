@@ -20,6 +20,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "improved",
         "text": "Pass mode=\"single\" to Date Range Picker to choose one day. With closeOnSelect, the dropdown closes as soon as you choose it.",
         "component": "date-range-picker"
+      },
+      {
+        "type": "fixed",
+        "text": "Date Range Picker now reveals the full calendar on phones, so the opening animation keeps the header and footer visible.",
+        "component": "date-range-picker"
       }
     ]
   },
