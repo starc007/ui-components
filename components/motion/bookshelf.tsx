@@ -21,6 +21,7 @@ import {
   useState,
   type WheelEvent as ReactWheelEvent,
 } from "react";
+import { type BookSounds, createBookSounds } from "@/lib/book-sounds";
 import { EASE_OUT, SPRING_MOUSE } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
@@ -67,6 +68,9 @@ export interface BookshelfProps {
   openGap?: number;
   /** Tilt the open cover toward the mouse. Mouse only, off with reduced motion. */
   tilt?: boolean;
+  /** Play a slide as a book comes out or goes back, and a soft tap as the
+   * mouse runs along the spines. Default false. */
+  sound?: boolean;
   /** Override any built-in string. */
   labels?: Partial<BookshelfMessages>;
   className?: string;
@@ -87,7 +91,8 @@ const DEFAULT_THICKNESS = 40;
 const PERSPECTIVE = 1600;
 // How far the open book comes toward the viewer, past the spines.
 const PULL_DEPTH = 40;
-// Hover: a finger hooks the top of the spine and tips the book out a little.
+// Hover: a finger hooks the top of the spine, lifts it and tips it out a little.
+const HOVER_LIFT = 8;
 const HOVER_DEPTH = 10;
 const HOVER_TIP = 5;
 // Largest cursor tilt of the open cover, in degrees.
@@ -152,12 +157,28 @@ export function Bookshelf({
   gap = 3,
   openGap = 16,
   tilt = true,
+  sound = false,
   labels,
   className,
 }: BookshelfProps) {
   const t = useMessages("bookshelf", bookshelfMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const canHover = useHoverCapable();
+
+  // Created on first use, so a silent shelf never touches Web Audio.
+  const soundsRef = useRef<BookSounds | null>(null);
+  const sounds = useCallback(() => {
+    if (!sound) return null;
+    soundsRef.current ??= createBookSounds();
+    return soundsRef.current;
+  }, [sound]);
+  useEffect(
+    () => () => {
+      soundsRef.current?.dispose();
+      soundsRef.current = null;
+    },
+    [],
+  );
 
   const [uncontrolled, setUncontrolled] = useState<string | null>(defaultValue);
   const openId = value !== undefined ? value : uncontrolled;
@@ -173,8 +194,11 @@ export function Bookshelf({
       setClosingId(openId);
       if (value === undefined) setUncontrolled(id);
       onValueChange?.(id);
+      // A switch plays only the new book's slide; two at once is noise.
+      if (id === null) sounds()?.push();
+      else sounds()?.pull();
     },
-    [openId, value, onValueChange],
+    [openId, value, onValueChange, sounds],
   );
 
   const cover = Math.round(height * coverRatio);
@@ -239,6 +263,8 @@ export function Bookshelf({
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     swallowClick.current = false;
+    // Browsers only start audio from a gesture; unlock it on the first press.
+    sounds()?.prepare();
     if (!overflowing) return;
     pan.stop();
     drag.current = {
@@ -393,9 +419,10 @@ export function Bookshelf({
                 buttonsRef.current[i] = el;
               }}
               onToggle={() => setOpen(i === openIndex ? null : book.id)}
-              onHover={(over) =>
-                setHoverId((id) => (over ? book.id : id === book.id ? null : id))
-              }
+              onHover={(over) => {
+                setHoverId((id) => (over ? book.id : id === book.id ? null : id));
+                if (over && i !== openIndex) sounds()?.tap();
+              }}
               onSettled={() =>
                 setClosingId((id) => (id === book.id ? null : id))
               }
@@ -457,6 +484,17 @@ function Book({
   const coverShade = useTransform(angle, [-90, 0], [0, SIDE_SHADE]);
   const spineShade = useTransform(angle, [-90, 0], [SIDE_SHADE, 0]);
 
+  // Paint order follows the turn. While the cover is more than half turned
+  // toward the viewer the book is in front of its neighbours, so it paints
+  // over them (the open book over a closing one). Once it is side-on again,
+  // its cover runs back into the shelf; books left of centre show that side
+  // face, and it must stay behind the next spine instead of painting across
+  // it.
+  const frontZ = useTransform(angle, (a) => (a < -45 ? 3 : 1));
+  const backZ = useTransform(angle, (a) => (a < -45 ? 2 : 1));
+  // Reduced motion never turns: the flat open cover simply sits on top.
+  const zIndex = reduce ? (open ? 3 : 1) : open ? frontZ : closing ? backZ : 1;
+
   const tiltX = useSpring(0, SPRING_MOUSE);
   const tiltY = useSpring(0, SPRING_MOUSE);
   const canTilt = tilt && turned;
@@ -480,7 +518,7 @@ function Book({
   return (
     <motion.li
       className="absolute top-0 left-0 [transform-style:preserve-3d]"
-      style={{ width: thickness, height, zIndex: open ? 3 : closing ? 2 : 1 }}
+      style={{ width: thickness, height, zIndex }}
       initial={false}
       animate={{ x }}
       transition={slide}
@@ -506,7 +544,7 @@ function Book({
           onPointerMove={onPointerMove}
           className="group absolute inset-0 cursor-pointer border-0 bg-transparent p-0 outline-none [transform-style:preserve-3d]"
         >
-          {/* Pull: off the shelf toward the viewer, or a small tip on hover. */}
+          {/* Pull: off the shelf toward the viewer, or a lift and tip on hover. */}
           <motion.span
             aria-hidden
             className="absolute top-0 left-0 block [transform-style:preserve-3d]"
@@ -518,6 +556,7 @@ function Book({
             }}
             initial={false}
             animate={{
+              y: lifted ? -HOVER_LIFT : 0,
               z: turned ? PULL_DEPTH : lifted ? HOVER_DEPTH : 0,
               rotateX: lifted ? -HOVER_TIP : 0,
             }}

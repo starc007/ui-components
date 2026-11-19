@@ -13,7 +13,7 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
-        "text": "Bookshelf shows a row of book spines. Click one and it comes off the shelf and turns to show its cover while the other books make room. Arrow keys browse the shelf, Escape puts the book back, and on phones you can swipe the row.",
+        "text": "Bookshelf shows a row of book spines. Click one and it comes off the shelf and turns to show its cover while the other books make room. Arrow keys browse the shelf, Escape puts the book back, and on phones you can swipe the row. Pass sound for a soft slide and spine taps.",
         "component": "bookshelf"
       }
     ]

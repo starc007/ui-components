@@ -18,7 +18,7 @@ const BOOKS: BookshelfBook[] = [
 export function BookshelfPreview() {
   return (
     <div className="flex w-full flex-col items-center gap-3 p-6">
-      <Bookshelf books={BOOKS} defaultValue="middlemarch" className="w-full" />
+      <Bookshelf books={BOOKS} defaultValue="middlemarch" sound className="w-full" />
       <p className="text-xs text-muted-foreground">
         Click a book to pull it out. Arrow keys browse the shelf.
       </p>

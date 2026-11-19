@@ -395,6 +395,11 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
         answer:
           "Set height for the book height, coverRatio for the cover width as a fraction of it, and thickness on each book for its spine width.",
       },
+      {
+        question: "Can it play sounds?",
+        answer:
+          "Yes. Pass sound to hear a soft slide as a book comes out or goes back and a light tap as the mouse runs along the spines. The sounds are synthesized at runtime with Web Audio, so there are no audio files, and they start only after the first click or key press.",
+      },
     ],
   },
 
