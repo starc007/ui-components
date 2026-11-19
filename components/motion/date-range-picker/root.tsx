@@ -26,6 +26,11 @@ export function DateRangePicker({
         ) : (
           children
         )}
+        {ctx.single && (
+          <span role="status" className="sr-only">
+            {ctx.announcement}
+          </span>
+        )}
       </MorphPopover>
     </DateRangePickerContext.Provider>
   );

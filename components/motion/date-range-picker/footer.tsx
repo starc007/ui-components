@@ -21,7 +21,7 @@ export function DateRangePickerFooter({
         <>
           <div className="flex items-center justify-between gap-2">
             <DateRangePickerSelection />
-            <DateRangePickerClear />
+            <DateRangePickerClear className="ms-auto" />
           </div>
           <DateRangePickerPresets />
         </>

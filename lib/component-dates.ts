@@ -104,7 +104,7 @@ const COMPONENT_DATES = {
   "agents/voice-note": { publishedAt: "2026-11-25", updatedAt: "2026-11-25" },
   "motion/sortable-stack": { publishedAt: "2026-10-02", updatedAt: "2026-11-10" },
   "motion/image-viewer": { publishedAt: "2026-10-02", updatedAt: "2026-11-24" },
-  "motion/date-range-picker": { publishedAt: "2026-10-02", updatedAt: "2026-11-25" },
+  "motion/date-range-picker": { publishedAt: "2026-10-02", updatedAt: "2026-11-27" },
   "motion/color-selector": { publishedAt: "2026-09-27", updatedAt: "2026-10-18" },
   "motion/pagination": { publishedAt: "2026-10-31", updatedAt: "2026-11-10" },
   "motion/avatar-group": { publishedAt: "2026-10-31", updatedAt: "2026-11-25" },

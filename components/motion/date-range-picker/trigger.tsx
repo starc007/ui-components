@@ -24,7 +24,8 @@ export function DateRangePickerTrigger({
   ...props
 }: DateRangePickerTriggerProps) {
   const ctx = useDateRangePickerContext("DateRangePickerTrigger");
-  const placeholder = placeholderProp ?? ctx.t("placeholder");
+  const placeholder =
+    placeholderProp ?? ctx.t(ctx.single ? "singlePlaceholder" : "placeholder");
   const mergedRef = useCallback(
     (node: HTMLButtonElement | null) => {
       ctx.trigger.current = node;
@@ -37,7 +38,9 @@ export function DateRangePickerTrigger({
   const sameYear =
     ctx.value?.to && ctx.value.from.slice(0, 4) === ctx.value.to.slice(0, 4);
   const summary = ctx.value
-    ? `${(sameYear ? format : ctx.shortFormat).format(parse(ctx.value.from))} – ${ctx.value.to ? ctx.shortFormat.format(parse(ctx.value.to)) : ctx.t("selectEnd")}`
+    ? ctx.single
+      ? ctx.shortFormat.format(parse(ctx.value.from))
+      : `${(sameYear ? format : ctx.shortFormat).format(parse(ctx.value.from))} – ${ctx.value.to ? ctx.shortFormat.format(parse(ctx.value.to)) : ctx.t("selectEnd")}`
     : placeholder;
   return (
     <MorphPopoverTrigger>

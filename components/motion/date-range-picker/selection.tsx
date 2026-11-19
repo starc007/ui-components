@@ -10,9 +10,10 @@ export function DateRangePickerSelection({
   className,
   ...props
 }: DateRangePickerSelectionProps) {
-  const { value, dayCount, t } = useDateRangePickerContext(
+  const { value, dayCount, single, t } = useDateRangePickerContext(
     "DateRangePickerSelection",
   );
+  if (single && children == null) return null;
   return (
     <p {...props} className={cn("text-xs text-muted-foreground", className)}>
       {children ??

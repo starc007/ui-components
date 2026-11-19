@@ -22,7 +22,9 @@ export function DateRangePickerPreset({
   ...props
 }: DateRangePickerPresetProps) {
   const ctx = useDateRangePickerContext("DateRangePickerPreset");
-  const selected = ctx.value?.from === value.from && ctx.value?.to === value.to;
+  const selected =
+    ctx.value?.from === value.from &&
+    (ctx.single || ctx.value?.to === value.to);
   return (
     <button
       {...props}

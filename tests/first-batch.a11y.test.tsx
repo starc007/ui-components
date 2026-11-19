@@ -402,6 +402,49 @@ test("date range grid exposes selection, full date names, disabled dates and one
   expect((await axe(container)).violations).toEqual([]);
 });
 
+test("single date grid exposes exactly one selected date and announces selection", async () => {
+  const { container, getByRole } = render(
+    <DateRangePicker
+      mode="single"
+      defaultValue={{ from: "2026-10-05" }}
+      max="2026-10-12"
+    />,
+  );
+  const day = getByRole("button", { name: "Monday, October 12, 2026" });
+  fireEvent.click(day);
+  const selected = getByRole("gridcell", { selected: true });
+  expect(selected.contains(day)).toBe(true);
+  expect(getByRole("status").textContent).toBe(
+    "Monday, October 12, 2026 selected.",
+  );
+  expect((await axe(container)).violations).toEqual([]);
+});
+
+test("single date dropdown retains its selection announcement after closing", async () => {
+  const { container, getByRole, queryByRole } = render(
+    <DateRangePickerDropdown
+      mode="single"
+      defaultValue={{ from: "2026-10-05" }}
+      closeOnSelect
+    />,
+  );
+  const trigger = getByRole("button", { name: "Choose a date: Oct 5, 2026" });
+  const status = getByRole("status");
+  fireEvent.click(trigger);
+  const day = await waitFor(() =>
+    getByRole("button", { name: "Monday, October 12, 2026" }),
+  );
+  fireEvent.click(day);
+  await waitFor(() => expect(queryByRole("grid") === null).toBe(true));
+  expect(document.activeElement).toBe(trigger);
+  expect(trigger.getAttribute("aria-label")).toBe(
+    "Choose a date: Oct 12, 2026",
+  );
+  expect(getByRole("status")).toBe(status);
+  expect(status.textContent).toBe("Monday, October 12, 2026 selected.");
+  expect((await axe(container)).violations).toEqual([]);
+});
+
 test("fully unavailable calendar remains labelled and keyboard reachable", async () => {
   const { container, getByRole } = render(
     <DateRangePicker defaultMonth="2026-10-01" disabled />,
