@@ -6,6 +6,7 @@ import {
   DateRangePickerCalendar,
   DateRangePickerClear,
   DateRangePickerContent,
+  DateRangePickerDropdown,
   DateRangePickerFooter,
   DateRangePickerGrid,
   DateRangePickerHeader,
@@ -27,25 +28,33 @@ export function DateRangePickerPreview() {
     };
   });
   return (
-    <DateRangePicker
-      label="Reporting period"
-      defaultMonth={period.today}
-      defaultValue={{ from: period.weekStart, to: period.today }}
-      max={period.today}
-    >
-      <DateRangePickerTrigger />
-      <DateRangePickerContent>
-        <DateRangePickerCalendar className="w-full rounded-none border-0">
-          <DateRangePickerHeader />
-          <DateRangePickerGrid />
-          <DateRangePickerFooter>
-            <div className="flex items-center justify-between gap-2">
-              <DateRangePickerSelection />
-              <DateRangePickerClear />
-            </div>
-          </DateRangePickerFooter>
-        </DateRangePickerCalendar>
-      </DateRangePickerContent>
-    </DateRangePicker>
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <DateRangePickerDropdown
+        mode="single"
+        defaultValue={{ from: period.today }}
+        max={period.today}
+        closeOnSelect
+      />
+      <DateRangePicker
+        label="Reporting period"
+        defaultMonth={period.today}
+        defaultValue={{ from: period.weekStart, to: period.today }}
+        max={period.today}
+      >
+        <DateRangePickerTrigger />
+        <DateRangePickerContent>
+          <DateRangePickerCalendar className="w-full rounded-none border-0">
+            <DateRangePickerHeader />
+            <DateRangePickerGrid />
+            <DateRangePickerFooter>
+              <div className="flex items-center justify-between gap-2">
+                <DateRangePickerSelection />
+                <DateRangePickerClear />
+              </div>
+            </DateRangePickerFooter>
+          </DateRangePickerCalendar>
+        </DateRangePickerContent>
+      </DateRangePicker>
+    </div>
   );
 }

@@ -15,6 +15,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "new",
         "text": "Bookshelf shows a row of book spines. Click one and it comes off the shelf and turns to show its cover while the other books make room. Arrow keys browse the shelf, Escape puts the book back, and on phones you can swipe the row. Pass sound for a soft slide and spine taps.",
         "component": "bookshelf"
+      },
+      {
+        "type": "improved",
+        "text": "Pass mode=\"single\" to Date Range Picker to choose one day. With closeOnSelect, the dropdown closes as soon as you choose it.",
+        "component": "date-range-picker"
       }
     ]
   },
