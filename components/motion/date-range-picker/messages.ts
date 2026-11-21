@@ -1,3 +1,12 @@
+const singleDateMessages = {
+  singleLabel: "Choose a date",
+  singleSummaryLabel: "Date",
+  singlePlaceholder: "Select a date",
+  singleSelected: "{date} selected.",
+  singleClearLabel: "Clear date",
+  singleCleared: "Date cleared.",
+};
+
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
 export const dateRangePickerMessages = {
   label: "Choose a date range",
@@ -30,6 +39,11 @@ export const dateRangePickerMessages = {
   rangeSelected: "{from} to {to} selected.",
   cleared: "Date range cleared.",
   presetSelected: "{name} selected.",
+  ...singleDateMessages,
 };
 
-export type DateRangePickerMessages = typeof dateRangePickerMessages;
+export type DateRangePickerMessages = Omit<
+  typeof dateRangePickerMessages,
+  keyof typeof singleDateMessages
+> &
+  Partial<typeof singleDateMessages>;

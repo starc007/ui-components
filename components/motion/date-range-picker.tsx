@@ -111,6 +111,11 @@ export function DateRangePicker({
         ) : (
           children
         )}
+        {ctx.single && (
+          <span role="status" className="sr-only">
+            {ctx.announcement}
+          </span>
+        )}
       </MorphPopover>
     </DateRangePickerContext.Provider>
   );
@@ -154,9 +159,11 @@ export function DateRangePickerCalendar({
       <p id={ctx.help} className="sr-only">
         {ctx.t("help")}
       </p>
-      <span role="status" className="sr-only">
-        {ctx.announcement}
-      </span>
+      {!ctx.single && (
+        <span role="status" className="sr-only">
+          {ctx.announcement}
+        </span>
+      )}
     </section>
   );
 }
@@ -169,43 +176,50 @@ export function DateRangePickerSummary({
   className,
   ...props
 }: DateRangePickerSummaryProps) {
-  const { value, shortFormat, t } = useDateRangePickerContext(
+  const { value, shortFormat, single, t } = useDateRangePickerContext(
     "DateRangePickerSummary",
   );
   return (
     <div
       {...props}
       className={cn(
-        "mb-2.5 grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2",
+        "mb-2.5 grid items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2",
+        !single && "grid-cols-[1fr_auto_1fr]",
         className,
       )}
     >
       <div className="min-w-0">
         <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-          {t("startDate")}
+          {t(single ? "singleSummaryLabel" : "startDate")}
         </p>
         <p className="text-[13px] font-medium tabular-nums">
           {value ? shortFormat.format(parse(value.from)) : t("selectDate")}
         </p>
       </div>
-      <ArrowRight
-        size={14}
-        className="text-muted-foreground/60"
-        aria-hidden="true"
-      />
-      <div className="min-w-0">
-        <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-          {t("endDate")}
-        </p>
-        <p
-          className={cn(
-            "text-[13px] font-medium tabular-nums",
-            !value?.to && "text-muted-foreground",
-          )}
-        >
-          {value?.to ? shortFormat.format(parse(value.to)) : t("selectDate")}
-        </p>
-      </div>
+      {!single && (
+        <>
+          <ArrowRight
+            size={14}
+            className="text-muted-foreground/60"
+            aria-hidden="true"
+          />
+          <div className="min-w-0">
+            <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              {t("endDate")}
+            </p>
+            <p
+              className={cn(
+                "text-[13px] font-medium tabular-nums",
+                !value?.to && "text-muted-foreground",
+              )}
+            >
+              {value?.to
+                ? shortFormat.format(parse(value.to))
+                : t("selectDate")}
+            </p>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -588,9 +602,10 @@ export function DateRangePickerSelection({
   className,
   ...props
 }: DateRangePickerSelectionProps) {
-  const { value, dayCount, t } = useDateRangePickerContext(
+  const { value, dayCount, single, t } = useDateRangePickerContext(
     "DateRangePickerSelection",
   );
+  if (single && children == null) return null;
   return (
     <p {...props} className={cn("text-xs text-muted-foreground", className)}>
       {children ??
@@ -618,7 +633,10 @@ export function DateRangePickerClear({
     <button
       {...props}
       type="button"
-      aria-label={props["aria-label"] ?? ctx.t("clearLabel")}
+      aria-label={
+        props["aria-label"] ??
+        ctx.t(ctx.single ? "singleClearLabel" : "clearLabel")
+      }
       disabled={disabled || ctx.disabled || !ctx.value}
       className={cn(
         "rounded-md px-1.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-30",
@@ -649,7 +667,7 @@ export function DateRangePickerFooter({
         <>
           <div className="flex items-center justify-between gap-2">
             <DateRangePickerSelection />
-            <DateRangePickerClear />
+            <DateRangePickerClear className="ms-auto" />
           </div>
           <DateRangePickerPresets />
         </>
@@ -704,7 +722,9 @@ export function DateRangePickerPreset({
   ...props
 }: DateRangePickerPresetProps) {
   const ctx = useDateRangePickerContext("DateRangePickerPreset");
-  const selected = ctx.value?.from === value.from && ctx.value?.to === value.to;
+  const selected =
+    ctx.value?.from === value.from &&
+    (ctx.single || ctx.value?.to === value.to);
   return (
     <button
       {...props}
@@ -742,7 +762,8 @@ export function DateRangePickerTrigger({
   ...props
 }: DateRangePickerTriggerProps) {
   const ctx = useDateRangePickerContext("DateRangePickerTrigger");
-  const placeholder = placeholderProp ?? ctx.t("placeholder");
+  const placeholder =
+    placeholderProp ?? ctx.t(ctx.single ? "singlePlaceholder" : "placeholder");
   const mergedRef = useCallback(
     (node: HTMLButtonElement | null) => {
       ctx.trigger.current = node;
@@ -759,7 +780,9 @@ export function DateRangePickerTrigger({
   const sameYear =
     ctx.value?.to && ctx.value.from.slice(0, 4) === ctx.value.to.slice(0, 4);
   const summary = ctx.value
-    ? `${(sameYear ? format : ctx.shortFormat).format(parse(ctx.value.from))} – ${ctx.value.to ? ctx.shortFormat.format(parse(ctx.value.to)) : ctx.t("selectEnd")}`
+    ? ctx.single
+      ? ctx.shortFormat.format(parse(ctx.value.from))
+      : `${(sameYear ? format : ctx.shortFormat).format(parse(ctx.value.from))} – ${ctx.value.to ? ctx.shortFormat.format(parse(ctx.value.to)) : ctx.t("selectEnd")}`
     : placeholder;
   return (
     <MorphPopoverTrigger>
@@ -852,7 +875,12 @@ export function DateRangePickerContent({
       radius={16}
       shadow={false}
       {...props}
-      className={cn("w-80 max-w-[calc(100vw-1.5rem)]", className)}
+      className={cn(
+        // On phones, fade the full calendar in so the clip cannot hide controls
+        // or cut their tap targets while the panel is visible.
+        "w-80 max-w-[calc(100vw-1.5rem)] max-sm:[clip-path:none]!",
+        className,
+      )}
       onOpenAutoFocus={(content) => {
         ctx.content.current = content;
         if (autoFocus) focusCalendarDate(content);

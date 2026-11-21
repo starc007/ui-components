@@ -32,7 +32,7 @@ const COMPONENT_DATES = {
   "agents/voice-orb": { publishedAt: "2026-10-04", updatedAt: "2026-11-10" },
   "motion/sortable-stack": { publishedAt: "2026-10-02", updatedAt: "2026-11-10" },
   "motion/image-viewer": { publishedAt: "2026-10-02", updatedAt: "2026-11-10" },
-  "motion/date-range-picker": { publishedAt: "2026-10-02", updatedAt: "2026-11-10" },
+  "motion/date-range-picker": { publishedAt: "2026-10-02", updatedAt: "2026-11-19" },
   "motion/color-selector": { publishedAt: "2026-09-27", updatedAt: "2026-10-18" },
   "motion/pagination": { publishedAt: "2026-10-31", updatedAt: "2026-11-10" },
   "motion/avatar-group": { publishedAt: "2026-10-31", updatedAt: "2026-11-10" },
