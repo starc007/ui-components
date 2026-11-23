@@ -35,6 +35,10 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
       replace={replace}
       resetScroll={scroll}
       preload={prefetch === false ? false : "intent"}
+      // TanStack marks a link aria-current="page" when the URL is under it;
+      // only the page itself is current, so parents (a category home, a
+      // component over its variants) are not announced as the current page.
+      activeOptions={{ exact: true, includeSearch: false }}
       {...props}
     />
   );
