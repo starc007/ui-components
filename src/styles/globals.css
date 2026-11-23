@@ -256,7 +256,12 @@
     h2,
     h3 {
         font-family: var(--font-display);
-        /* Plus Jakarta Sans has a narrow word space; tracking-tight closes it further. */
+    }
+    /* Plus Jakarta Sans has a narrow word space; tracking-tight closes it further. */
+    h1,
+    h2,
+    h3,
+    .font-display {
         word-spacing: 0.08em;
     }
     ::selection {

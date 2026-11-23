@@ -13,6 +13,7 @@ import { Route as SiteRouteRouteImport } from './routes/_site/route'
 import { Route as SiteIndexRouteImport } from './routes/_site/index'
 import { Route as SiteSplatRouteImport } from './routes/_site/$'
 import { Route as Site404RouteImport } from './routes/_site/404'
+import { Route as SiteBrandRouteImport } from './routes/_site/brand'
 import { Route as SiteChangelogRouteImport } from './routes/_site/changelog'
 import { Route as SitePlaygroundRouteImport } from './routes/_site/playground'
 import { Route as SitePrivacyRouteImport } from './routes/_site/privacy'
@@ -59,6 +60,11 @@ const SiteSplatRoute = SiteSplatRouteImport.update({
 const Site404Route = Site404RouteImport.update({
   id: '/404',
   path: '/404',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteBrandRoute = SiteBrandRouteImport.update({
+  id: '/brand',
+  path: '/brand',
   getParentRoute: () => SiteRouteRoute,
 } as any)
 const SiteChangelogRoute = SiteChangelogRouteImport.update({
@@ -210,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
   '/$': typeof SiteSplatRoute
   '/404': typeof Site404Route
+  '/brand': typeof SiteBrandRoute
   '/changelog': typeof SiteChangelogRoute
   '/playground': typeof SitePlaygroundRoute
   '/privacy': typeof SitePrivacyRoute
@@ -242,6 +249,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/$': typeof SiteSplatRoute
   '/404': typeof Site404Route
+  '/brand': typeof SiteBrandRoute
   '/changelog': typeof SiteChangelogRoute
   '/playground': typeof SitePlaygroundRoute
   '/privacy': typeof SitePrivacyRoute
@@ -277,6 +285,7 @@ export interface FileRoutesById {
   '/_site': typeof SiteRouteRouteWithChildren
   '/_site/$': typeof SiteSplatRoute
   '/_site/404': typeof Site404Route
+  '/_site/brand': typeof SiteBrandRoute
   '/_site/changelog': typeof SiteChangelogRoute
   '/_site/playground': typeof SitePlaygroundRoute
   '/_site/privacy': typeof SitePrivacyRoute
@@ -313,6 +322,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/404'
+    | '/brand'
     | '/changelog'
     | '/playground'
     | '/privacy'
@@ -345,6 +355,7 @@ export interface FileRouteTypes {
   to:
     | '/$'
     | '/404'
+    | '/brand'
     | '/changelog'
     | '/playground'
     | '/privacy'
@@ -379,6 +390,7 @@ export interface FileRouteTypes {
     | '/_site'
     | '/_site/$'
     | '/_site/404'
+    | '/_site/brand'
     | '/_site/changelog'
     | '/_site/playground'
     | '/_site/privacy'
@@ -442,6 +454,13 @@ declare module '@tanstack/react-router' {
       path: '/404'
       fullPath: '/404'
       preLoaderRoute: typeof Site404RouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/brand': {
+      id: '/_site/brand'
+      path: '/brand'
+      fullPath: '/brand'
+      preLoaderRoute: typeof SiteBrandRouteImport
       parentRoute: typeof SiteRouteRoute
     }
     '/_site/changelog': {
@@ -646,6 +665,7 @@ declare module '@tanstack/react-router' {
 interface SiteRouteRouteChildren {
   SiteSplatRoute: typeof SiteSplatRoute
   Site404Route: typeof Site404Route
+  SiteBrandRoute: typeof SiteBrandRoute
   SiteChangelogRoute: typeof SiteChangelogRoute
   SitePlaygroundRoute: typeof SitePlaygroundRoute
   SitePrivacyRoute: typeof SitePrivacyRoute
@@ -680,6 +700,7 @@ interface SiteRouteRouteChildren {
 const SiteRouteRouteChildren: SiteRouteRouteChildren = {
   SiteSplatRoute: SiteSplatRoute,
   Site404Route: Site404Route,
+  SiteBrandRoute: SiteBrandRoute,
   SiteChangelogRoute: SiteChangelogRoute,
   SitePlaygroundRoute: SitePlaygroundRoute,
   SitePrivacyRoute: SitePrivacyRoute,
