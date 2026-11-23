@@ -33,6 +33,7 @@
     "test": "bun test",
     "check:messages": "bun scripts/check-messages.ts",
     "blog:banners": "bun scripts/blog-banners.ts",
+    "blog:export": "bun scripts/blog-export.ts",
     "check": "bun run typecheck && bun run lint && bun run check:registry && bun run check:messages"
   },
   "dependencies": {
