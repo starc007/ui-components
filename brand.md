@@ -82,7 +82,7 @@ Control heights on a 4px grid. Every control in a row shares one height.
 
 ## Color
 
-Near-monochrome neutrals, one blue for emphasis, semantic status colors. Source of truth: `src/styles/globals.css`. Use semantic utilities (`bg-background`, `bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-primary`), never raw values.
+Monochrome: neutrals, a near-black primary (white in dark mode) for emphasis, semantic status colors. Source of truth: `src/styles/globals.css`. Use semantic utilities (`bg-background`, `bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-primary`), never raw values.
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
@@ -92,13 +92,15 @@ Near-monochrome neutrals, one blue for emphasis, semantic status colors. Source 
 | `muted-foreground` | `oklch(50% 0 0)` | `oklch(62% 0 0)` | Secondary text |
 | `border` | `oklch(15% 0 0 / 0.06)` | `rgb(255 255 255 / 0.05)` | Hairlines |
 | `border-strong` | `oklch(15% 0 0 / 0.12)` | `rgb(255 255 255 / 0.1)` | Inputs, focus |
-| `primary` | `#0285f7` | `#0285f7` | Filled emphasis: primary buttons, selected tab, checked controls |
+| `primary` | `#171717` | `#f5f5f5` | Filled emphasis: primary buttons, selected tab, checked controls, emphasis text |
+| `primary-foreground` | `#fafafa` | `#151515` | Text and icons on a primary fill |
 | `accent` | `oklch(72% 0.18 195)` | `oklch(80% 0.18 195)` | Small highlights only |
 | `success`, `warning`, `danger` | | | Status only |
 
-- Filled emphasis is `primary` blue, never a black `bg-foreground` fill: primary buttons, selected chips and dates, active pagination, filled slider tracks, progress, the solid message bubble, chart value labels.
+- Filled emphasis goes through the `primary` token, never a raw `bg-foreground` or `bg-black`, so a theme can recolour it in one place: primary buttons, selected chips and dates, active pagination, filled slider tracks, progress, the solid message bubble, chart value labels.
 - Thin markers stay `foreground`: menu radio dots, text carets, slider handle lines. Neutral chips (avatar overflow, icon tiles, workspace marks) use `bg-muted text-foreground`. Things that depict a device (the dynamic island) keep their own color.
-- No purple, violet, indigo or fuchsia, in tokens, chart palettes or previews. `--gradient-accent` runs from the cyan accent to primary blue.
+- No purple, violet, indigo or fuchsia, in tokens, chart palettes or previews.
+- Where a tier or series needs a hue, use a real colour, not primary: casino heat goes neutral, green, amber, rose. Charts keep their own data palettes.
 
 ## Surfaces and elevation
 
@@ -138,11 +140,13 @@ Avoid: revolutionary, powerful, seamless, simply, just, unlock, supercharge, and
 
 > A spring-pressed button with loading, success, and error states. Copy the source or install it from the registry.
 
+## Contrast
+
+Primary passes WCAG AAA in both themes, as a fill and as text: `#171717` with `#fafafa` in light mode, `#f5f5f5` with `#151515` in dark mode (both above 15:1). Always pair `bg-primary` with `text-primary-foreground`, never `text-white`: the fill flips to white in dark mode.
+
 ## Off-system today
 
-The radius and type pass (2026-11-23) moved every control, menu row and floating panel in `components/motion` and `components/agents` onto this system, and every chart and component onto the type scale. What is left:
+Nothing. The 2026-11-23 passes moved every control, row and panel onto the radius system, every size onto the type scale, weights onto 400/500/600, emphasis fills onto primary, and removed violet. Two calls made along the way:
 
-| Area | Now | Target |
-|---|---|---|
-| Returns calendar cell numbers | `text-[9px]` | Cells are about 17px wide on mobile, so 11px overflows. Needs a layout decision. |
-| Swap chain sub-badge letter | `text-[7px]` | Larger badge, or drop the letter |
+- **Returns calendar** cells show their number at 11px only when the grid is 26.5rem or wider (cells of about 24px). Narrower grids keep the colour; the value stays in the tooltip and the cell's label.
+- **Swap token badge**: the chain sub-badge is a colour dot with no letter (it had to be 7px to fit). The token picker names the chain in each row instead ("USDC · Base").

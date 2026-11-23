@@ -23,7 +23,7 @@ export function RainbowCta({
   return (
     <PressLink
       className={cn(
-        "group inline-flex min-h-10 animate-rainbow-border items-stretch overflow-hidden bg-primary bg-[linear-gradient(90deg,var(--success),var(--warning),var(--accent),var(--primary),var(--success),var(--warning),var(--accent),var(--primary),var(--success))] bg-[length:200%_100%] p-0.5 text-sm font-medium text-primary-foreground motion-reduce:animate-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "group inline-flex min-h-10 animate-rainbow-border items-stretch overflow-hidden bg-primary bg-[linear-gradient(90deg,var(--success),var(--warning),var(--accent),var(--danger),var(--success),var(--warning),var(--accent),var(--danger),var(--success))] bg-[length:200%_100%] p-0.5 text-sm font-medium text-primary-foreground motion-reduce:animate-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         pill ? "rounded-full" : "rounded-lg",
         className,
       )}

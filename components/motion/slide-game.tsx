@@ -552,12 +552,12 @@ const INITIAL: ReelState = (() => {
   return { tiles, landed: CONTEXT, round: null, from: at, to: at, rest: at };
 })();
 
-// Card faces by value: slate under 2×, primary to 10×, amber to 100×, then
+// Card faces by value: slate under 2×, green to 10×, amber to 100×, then
 // rose; the history pills follow the same tiers. Cards are physical objects, so they keep their colours in both
 // themes.
 const FACE = {
   cool: "bg-zinc-700 text-white",
-  warm: "bg-primary text-primary-foreground",
+  warm: "bg-emerald-600 text-white",
   hot: "bg-amber-400 text-amber-950",
   jackpot: "bg-rose-600 text-white",
 } as const;

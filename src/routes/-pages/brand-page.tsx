@@ -89,11 +89,6 @@ const MOTION = [
   { token: "SPRING_LAYOUT", use: "Sliding pills and indicators", value: "360 / 32 / 0.6" },
 ];
 
-const OFF_SYSTEM = [
-  { area: "Returns calendar cells", now: "text-[9px]", target: "layout decision" },
-  { area: "Swap chain sub-badge", now: "text-[7px]", target: "larger badge or no letter" },
-];
-
 /** A floating panel drawn to the system: rounded-3xl, p-2, h-8 pill rows. */
 function PanelMock({ rows, active }: { rows: string[]; active: number }) {
   return (
@@ -264,7 +259,7 @@ export function BrandPage() {
         </Card>
       </Section>
 
-      <Section title="Color" rule="Neutrals, one blue for filled emphasis, status colors for status only. No purple.">
+      <Section title="Color" rule="Monochrome. Near-black primary (white in dark mode) for filled emphasis, status colors for status only. No purple.">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {COLORS.map((color) => (
             <div key={color.token} className="flex items-center gap-3 rounded-2xl border border-border p-3">
@@ -303,20 +298,6 @@ export function BrandPage() {
                 <span className="font-mono text-xs text-foreground">{m.token}</span>
                 <span className="text-sm text-muted-foreground">{m.use}</span>
                 <span className="font-mono text-[11px] text-muted-foreground">{m.value}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </Section>
-
-      <Section title="Off-system today" rule="What the consistency pass changes. Measured 2026-11-23.">
-        <Card>
-          <div className="flex flex-col divide-y divide-border">
-            {OFF_SYSTEM.map((row) => (
-              <div key={row.area} className="grid gap-2 py-2.5 sm:grid-cols-[12rem_1fr_1fr] sm:items-center sm:gap-4">
-                <span className="text-sm text-foreground">{row.area}</span>
-                <span className="font-mono text-[11px] text-destructive">{row.now}</span>
-                <span className="font-mono text-[11px] text-success">{row.target}</span>
               </div>
             ))}
           </div>

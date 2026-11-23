@@ -37,17 +37,13 @@
         oklch(99% 0 0) 0%,
         oklch(96% 0.008 210) 100%
     );
-    --gradient-accent: linear-gradient(
-        to right,
-        oklch(72% 0.18 195) 0%,
-        #0285f7 100%
-    );
     /* shadcn semantic tokens, mapped onto the base. */
     --card-foreground: var(--foreground);
     --popover: var(--card);
     --popover-foreground: var(--foreground);
-    --primary: #0285f7;
-    --primary-foreground: #ffffff;
+    /* Near-black emphasis; white in dark mode. */
+    --primary: #171717;
+    --primary-foreground: #fafafa;
     --secondary: var(--card);
     --secondary-foreground: var(--foreground);
     --muted: var(--card);
@@ -68,6 +64,8 @@
     --border-strong: rgb(255 255 255 / 0.1);
     --accent: oklch(80% 0.18 195);
     --accent-fg: #151515;
+    --primary: #f5f5f5;
+    --primary-foreground: #151515;
     --glass-bg: rgb(28 28 28 / 0.55);
     --glass-border: rgb(255 255 255 / 0.08);
     --glass-strong-bg: rgb(28 28 28 / 0.6);
@@ -76,11 +74,6 @@
         135deg,
         oklch(19% 0 0) 0%,
         oklch(22% 0.008 210) 100%
-    );
-    --gradient-accent: linear-gradient(
-        to right,
-        oklch(80% 0.18 195) 0%,
-        #0285f7 100%
     );
 }
 
@@ -121,7 +114,6 @@
 
 @theme {
     --background-image-brand-bg: var(--gradient-bg);
-    --background-image-brand-accent: var(--gradient-accent);
     --animate-marquee: marquee 30s linear infinite;
     --animate-marquee-vertical: marquee-vertical 30s linear infinite;
     --animate-rainbow-border: rainbow-border 3s linear infinite;
