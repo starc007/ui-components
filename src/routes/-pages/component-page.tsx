@@ -285,7 +285,7 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
       </div>
 
       {data.examples.length ? (
-        <div className="mt-10 flex flex-col gap-12">
+        <div className="mt-12 flex flex-col gap-20">
           {data.examples.map((example) => (
             <ExampleBlock
               key={example.example.slug}
@@ -466,7 +466,7 @@ function ExampleBlock({ data, showCredit }: { data: ExampleData; showCredit: boo
       <div id={`${example.slug}-preview`} className="scroll-mt-24">
         <PreviewCard
           stageId={`${example.slug}-stage`}
-          minHeight="min-h-[260px]"
+          minHeight="min-h-[320px]"
           preview={Preview ? <Preview /> : null}
           usage={usage}
           source={source}
@@ -475,7 +475,7 @@ function ExampleBlock({ data, showCredit }: { data: ExampleData; showCredit: boo
       {example.installSlug ? (
         <div
           id={`${example.slug}-install`}
-          className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
+          className="mt-8 min-w-0 scroll-mt-24 border-t border-border pt-8"
         >
           <h2 className="text-sm font-medium text-foreground">{t("install")}</h2>
           <div className="mt-3">
@@ -486,7 +486,7 @@ function ExampleBlock({ data, showCredit }: { data: ExampleData; showCredit: boo
       {propsDocs.length ? (
         <div
           id={`${example.slug}-api-reference`}
-          className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
+          className="mt-8 min-w-0 scroll-mt-24 border-t border-border pt-8"
         >
           <h2 className="text-sm font-medium text-foreground">{t("apiReference")}</h2>
           <div className="mt-3">
@@ -512,11 +512,11 @@ function DefaultTabs({
   const t = useTranslations("Docs.component");
   const Preview = getPreview(category, slug);
   return (
-    <section id="preview" className="mt-8 scroll-mt-24">
+    <section id="preview" className="mt-12 scroll-mt-24">
       <h2 className="sr-only">{t("preview")}</h2>
       <PreviewCard
         stageId="preview-stage"
-        minHeight="min-h-[320px]"
+        minHeight="min-h-[360px]"
         preview={Preview ? <Preview /> : null}
         usage={usage}
         source={source}

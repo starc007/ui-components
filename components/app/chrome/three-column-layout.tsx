@@ -23,7 +23,7 @@ export function ThreeColumnLayout({
   return (
     <div
       className={cn(
-        "grid min-w-0 grid-cols-[minmax(0,1fr)] px-4 [--left-sidebar-width:15rem] [--right-sidebar-width:20rem] md:gap-4 md:px-6 xl:gap-8 xl:px-8",
+        "grid min-w-0 grid-cols-[minmax(0,1fr)] px-4 [--left-sidebar-width:15rem] [--right-sidebar-width:16rem] md:gap-4 md:px-6 xl:gap-8 xl:px-8",
         leftSidebar && "md:grid-cols-[var(--left-sidebar-width)_minmax(0,1fr)]",
         leftSidebar && rightSidebar && "xl:grid-cols-[var(--left-sidebar-width)_minmax(0,1fr)_var(--right-sidebar-width)]",
         !leftSidebar && rightSidebar && "xl:grid-cols-[minmax(0,1fr)_var(--right-sidebar-width)]",
@@ -37,7 +37,7 @@ export function ThreeColumnLayout({
           </div>
         </div>
       ) : null}
-      <div className="min-w-0 pt-4 pb-8">
+      <div className="min-w-0 pt-8 pb-8 md:pt-12">
         {children}
         <DocsFooter />
       </div>

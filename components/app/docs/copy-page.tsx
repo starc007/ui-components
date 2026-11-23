@@ -168,7 +168,7 @@ export function CopyPage({
     <MorphPopover
       open={open}
       onOpenChange={setOpen}
-      className="hidden sm:inline-flex"
+      className="hidden shrink-0 whitespace-nowrap sm:inline-flex"
     >
       <div className="inline-flex rounded-full bg-muted/70">
         <button
