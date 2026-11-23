@@ -17,6 +17,7 @@ import { buildGuideMarkdown, GUIDE_SLUGS } from "../lib/guide-markdown";
 import { native } from "../lib/native";
 import { buildNativeEntry, buildNativeIndex, NATIVE_HEADERS } from "../lib/native-registry";
 import { OG_SIZE } from "../lib/og";
+import { loadCardFonts } from "../lib/og-fonts";
 import { ogCardElement, ogCards } from "../lib/og-cards";
 import { redirectsFile } from "../lib/redirects";
 import { allComponents } from "../lib/registry";
@@ -355,19 +356,13 @@ async function buildBlogBanners() {
 }
 
 async function buildOgCards() {
-  const font = (file: string) => readFile(path.join("public/og/fonts", file));
   const dataUri = async (file: string) =>
     `data:image/png;base64,${(await readFile(path.join("public", file))).toString("base64")}`;
-  const [regular, medium, backgroundSrc, logoSrc] = await Promise.all([
-    font("Manrope-Regular.ttf"),
-    font("Manrope-Medium.ttf"),
+  const [fonts, backgroundSrc, logoSrc] = await Promise.all([
+    loadCardFonts(),
     dataUri("og/component-gallery.png"),
     dataUri("beui-mark.png"),
   ]);
-  const fonts = [
-    { name: "Manrope", data: regular, weight: 400 as const, style: "normal" as const },
-    { name: "Manrope", data: medium, weight: 500 as const, style: "normal" as const },
-  ];
   const cards = ogCards();
   // A few at a time: each render holds the 1200x630 bitmap in memory.
   for (let index = 0; index < cards.length; index += 8) {
