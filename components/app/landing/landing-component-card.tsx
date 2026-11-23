@@ -83,7 +83,7 @@ export function LandingComponentCard({
             <div className="flex items-center gap-2">
               <h3
                 className={cn(
-                  "truncate font-display font-semibold tracking-tight text-foreground",
+                  "truncate font-display font-medium tracking-tight text-foreground",
                   feature ? "text-lg" : "text-[0.95rem]",
                 )}
               >

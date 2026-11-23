@@ -30,7 +30,7 @@ function RoomPanel({ id }: { id: string }) {
   return (
     <div className="relative min-h-64 overflow-hidden bg-[radial-gradient(circle_at_1px_1px,#dfe2e3_1px,transparent_1.5px)] bg-[size:4.8rem_4.8rem] px-7 py-8 md:px-12 md:py-10">
       <div className="relative max-w-xl">
-        <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-black/40">
+        <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-black/40">
           {room.eyebrow}
         </p>
         <h3 className="mt-3 text-3xl font-light tracking-[-0.055em] text-[#151515] md:text-5xl">

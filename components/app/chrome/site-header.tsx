@@ -79,7 +79,7 @@ export function SiteHeader() {
           <MobileNav />
           <Link
             href="/"
-            className="group flex items-center gap-2.5 text-sm font-semibold tracking-tight text-foreground"
+            className="group flex items-center gap-2.5 text-sm font-medium tracking-tight text-foreground"
           >
             <img
               src="/beui-mark.png"

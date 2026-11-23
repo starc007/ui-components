@@ -531,7 +531,7 @@ export function PredictionMarket({
                 <TabsTrigger
                   key={mode}
                   value={mode}
-                  className="px-0 pb-3 pt-0 text-2xl font-semibold"
+                  className="px-0 pb-3 pt-0 text-2xl font-medium"
                   indicatorClassName="h-0.5 bg-primary"
                 >
                   {t(mode)}
@@ -543,7 +543,7 @@ export function PredictionMarket({
           <button
             type="button"
             disabled={status === "placing"}
-            className="mb-3 inline-flex items-center gap-2 text-xl font-semibold text-foreground transition-opacity disabled:opacity-50"
+            className="mb-3 inline-flex items-center gap-2 text-xl font-medium text-foreground transition-opacity disabled:opacity-50"
           >
             {orderTypeLabel ?? t("orderType")}
             <ChevronDown className="h-5 w-5" />
@@ -575,7 +575,7 @@ export function PredictionMarket({
                       : "bg-emerald-500/20"
                   }
                   className={cn(
-                    "h-14 w-full rounded-full px-0 py-0 text-base font-semibold active:scale-[0.99]",
+                    "h-14 w-full rounded-full px-0 py-0 text-base font-medium active:scale-[0.99]",
                     isNo
                       ? selected
                         ? "text-red-300 dark:text-red-300"
@@ -630,7 +630,7 @@ export function PredictionMarket({
                 type="button"
                 disabled={status === "placing"}
                 onClick={() => addAmount(amount)}
-                className="h-9 rounded-full bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+                className="h-9 rounded-full bg-background px-3.5 text-sm font-medium text-foreground transition-[background-color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
               >
                 +{order.mode === "buy" ? formatCompactCurrency(amount) : amount}
               </button>
@@ -639,7 +639,7 @@ export function PredictionMarket({
               type="button"
               disabled={status === "placing"}
               onClick={setMax}
-              className="h-9 rounded-full bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+              className="h-9 rounded-full bg-background px-3.5 text-sm font-medium text-foreground transition-[background-color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
             >
               {t("max")}
             </button>
@@ -656,7 +656,7 @@ export function PredictionMarket({
         >
           <div className="mb-4 flex items-end justify-between gap-3">
             <div className="min-w-0 shrink">
-              <div className="flex items-center gap-2 text-xl font-semibold text-foreground">
+              <div className="flex items-center gap-2 text-xl font-medium text-foreground">
                 {order.mode === "buy" ? t("toWin") : t("toReceive")}
                 <Banknote className="h-5 w-5 text-emerald-500" />
               </div>
@@ -688,7 +688,7 @@ export function PredictionMarket({
             successText={t("tradeFilled")}
             errorText={quote.error ?? t("enterAmount")}
             className={cn(
-              "h-12 w-full rounded-full text-base font-semibold",
+              "h-12 w-full rounded-full text-base font-medium",
               classNames?.action,
             )}
           >
@@ -704,7 +704,7 @@ export function PredictionMarket({
             pressScale={0.98}
             onClick={submit}
             className={cn(
-              "h-14 w-full rounded-full text-base font-semibold",
+              "h-14 w-full rounded-full text-base font-medium",
               classNames?.action,
             )}
           >

@@ -40,7 +40,7 @@ export function ProCard() {
       <div className="px-2 pt-3 pb-3">
         <h2
           id="beui-pro-card-title"
-          className="text-lg font-semibold leading-tight tracking-tight text-foreground"
+          className="text-lg font-medium leading-tight tracking-tight text-foreground"
         >
           {onSale ? tSale("heading", { percent: blackFriday.percent }) : t("heading")}
         </h2>

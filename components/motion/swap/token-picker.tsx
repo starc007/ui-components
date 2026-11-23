@@ -147,7 +147,7 @@ export function TokenPicker({
             <div className="flex-1 overflow-y-auto px-3 pb-4 pt-3">
               {!q && chainFilter === "all" ? (
                 <>
-                  <p className="px-1 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <p className="px-1 pb-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                     {t("popular")}
                   </p>
                   <div className="[scrollbar-width:none] [&::-webkit-scrollbar]:hidden flex items-center gap-1.5 overflow-x-auto pb-3">
@@ -159,7 +159,7 @@ export function TokenPicker({
                           key={token.id}
                           type="button"
                           onClick={() => onPick(token.id)}
-                          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-background/50 py-1 pl-1 pr-3 text-sm font-semibold text-foreground transition-transform hover:border-border active:scale-[0.97]"
+                          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-background/50 py-1 pl-1 pr-3 text-sm font-medium text-foreground transition-transform hover:border-border active:scale-[0.97]"
                         >
                           <TokenDot token={token} chain={chain} size={22} />
                           {token.symbol}
@@ -170,7 +170,7 @@ export function TokenPicker({
                 </>
               ) : null}
 
-              <p className="px-1 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <p className="px-1 pb-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                 {q
                   ? t("results")
                   : chainFilter === "all"
@@ -202,7 +202,7 @@ export function TokenPicker({
                         <span className="flex min-w-0 items-center gap-2.5">
                           <TokenDot token={token} chain={chain} size={32} />
                           <span className="flex min-w-0 flex-col">
-                            <span className="truncate text-sm font-semibold text-foreground">
+                            <span className="truncate text-sm font-medium text-foreground">
                               {token.name}
                             </span>
                             <span className="truncate text-[11px] text-muted-foreground">

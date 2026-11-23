@@ -65,7 +65,7 @@ export function SiteFooter() {
               height={30}
               className="size-[30px] rounded-full"
             />
-            <span className="font-semibold text-lg text-foreground tracking-[-0.01em]">
+            <span className="font-medium text-lg text-foreground tracking-[-0.01em]">
               beUI
             </span>
           </Link>

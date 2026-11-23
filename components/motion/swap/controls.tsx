@@ -74,7 +74,7 @@ export function ActionButton({
       transition={SPRING_PRESS}
       disabled={disabled}
       className={cn(
-        "mt-3 inline-flex h-12 w-full items-center justify-center rounded-full text-sm font-semibold transition-colors",
+        "mt-3 inline-flex h-12 w-full items-center justify-center rounded-full text-sm font-medium transition-colors",
         disabled
           ? "cursor-not-allowed bg-muted text-muted-foreground"
           : "bg-primary text-primary-foreground hover:bg-primary/90",

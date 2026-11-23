@@ -316,7 +316,7 @@ export function SignUpForm({
           {title ? (
             <h2
               className={cn(
-                "text-xl font-semibold tracking-tight text-foreground",
+                "text-xl font-medium tracking-tight text-foreground",
                 classNames?.title,
               )}
             >

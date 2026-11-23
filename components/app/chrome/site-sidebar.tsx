@@ -240,7 +240,7 @@ const COUNT_CLASS =
   "inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground";
 
 const GROUP_LABEL =
-  "mb-1.5 flex items-center gap-2 rounded-full px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground";
+  "mb-1.5 flex items-center gap-2 rounded-full px-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground";
 
 // Clearance for the sticky category tabs at the top of the desktop sidebar.
 const STICKY_CLEARANCE = 64;
@@ -299,7 +299,7 @@ function NativeSidebarNav({
   return (
     <nav ref={navRef} aria-label={t("sidebar.browseNative")} className="flex flex-col gap-6">
       <div>
-        <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <p className="mb-1.5 block px-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
           React Native
         </p>
         <SharedLayoutBg inset={0} pillClassName="rounded-full bg-foreground/[0.05]">
@@ -421,7 +421,7 @@ function WebSidebarNav({
         className="flex flex-col gap-6"
       >
         <div hidden={!isSection && categoryFilter !== "all"}>
-          <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <p className="mb-1.5 block px-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
             {t("sidebar.intro")}
           </p>
           <SharedLayoutBg inset={0} pillClassName="rounded-full bg-foreground/[0.05]">
@@ -440,7 +440,7 @@ function WebSidebarNav({
         </div>
         {!isSection ? (
           <div hidden={categoryFilter !== "all"}>
-            <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <p className="mb-1.5 block px-2.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
               {t("sidebar.guides")}
             </p>
             <SharedLayoutBg inset={0} pillClassName="rounded-full bg-foreground/[0.05]">
@@ -467,7 +467,7 @@ function WebSidebarNav({
               href={categoryPath(cat.slug)}
               prefetch={false}
               onClick={onNavigate}
-              className="mb-1.5 flex items-center gap-2 rounded-full px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+              className="mb-1.5 flex items-center gap-2 rounded-full px-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
             >
               {cat.name}
               <span className={COUNT_CLASS}>{cat.components.length}</span>

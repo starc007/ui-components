@@ -208,7 +208,7 @@ export function AISidebarPreview() {
           <div className="min-h-0 flex-1 overflow-y-auto p-6 sm:p-8">
             <div className="mx-auto max-w-xl">
               <p className="text-xs text-muted-foreground">Selected resource</p>
-              <h3 className="mt-2 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+              <h3 className="mt-2 text-xl font-medium tracking-tight text-foreground sm:text-2xl">
                 {activeLabel}
               </h3>
               <p className="mt-3 max-w-lg text-sm leading-6 text-muted-foreground">

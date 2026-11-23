@@ -57,7 +57,7 @@ function CardArtwork({ detailsVisible }: { detailsVisible: boolean }) {
         <span className="absolute right-0 top-1/2 h-[34%] w-[28%] -translate-y-1/2 rounded-l-[35%] border border-r-0 border-black/30" />
       </span>
 
-      <span className="absolute bottom-[9%] left-[6%] flex items-center gap-2 text-lg font-semibold tracking-[-0.04em]">
+      <span className="absolute bottom-[9%] left-[6%] flex items-center gap-2 text-lg font-medium tracking-[-0.04em]">
         beUI <span className="block size-2.5 rotate-45 rounded-[2px] bg-white/85" />
       </span>
 

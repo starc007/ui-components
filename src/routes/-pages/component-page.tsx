@@ -315,7 +315,7 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
       {!data.hasVariantInstallCommands ? (
         <section id="install" className="mt-12 scroll-mt-24 border-t border-border pt-8">
           <div className="min-w-0">
-            <h2 className="text-sm font-semibold text-foreground">{t("install")}</h2>
+            <h2 className="text-sm font-medium text-foreground">{t("install")}</h2>
             <p className="mt-1 text-sm text-muted-foreground">{t("installDescription")}</p>
             <div className="mt-3">
               <InstallBlock slug={comp.slug} manual={data.manual} />
@@ -326,7 +326,7 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
 
       {data.propsDocs.length ? (
         <section id="api-reference" className="mt-12 scroll-mt-24 border-t border-border pt-8">
-          <h2 className="text-sm font-semibold text-foreground">{t("apiReference")}</h2>
+          <h2 className="text-sm font-medium text-foreground">{t("apiReference")}</h2>
           <div className="mt-4">
             <PropsTable docs={data.propsDocs} />
           </div>
@@ -548,7 +548,7 @@ function ExampleBlock({ data, showCredit }: { data: ExampleData; showCredit: boo
           id={`${example.slug}-install`}
           className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
         >
-          <h2 className="text-sm font-semibold text-foreground">{t("install")}</h2>
+          <h2 className="text-sm font-medium text-foreground">{t("install")}</h2>
           <div className="mt-3">
             <InstallBlock slug={example.installSlug} manual={manual} />
           </div>
@@ -559,7 +559,7 @@ function ExampleBlock({ data, showCredit }: { data: ExampleData; showCredit: boo
           id={`${example.slug}-api-reference`}
           className="mt-5 min-w-0 scroll-mt-24 border-t border-border pt-5"
         >
-          <h2 className="text-sm font-semibold text-foreground">{t("apiReference")}</h2>
+          <h2 className="text-sm font-medium text-foreground">{t("apiReference")}</h2>
           <div className="mt-3">
             <PropsTable docs={propsDocs} />
           </div>

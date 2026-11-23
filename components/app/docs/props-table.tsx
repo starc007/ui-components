@@ -13,7 +13,7 @@ export function PropsTable({ docs }: { docs: ComponentPropsDoc[] }) {
       {withProps.map((doc) => (
         <div key={doc.displayName}>
           {withProps.length > 1 ? (
-            <h3 className="mb-3 font-mono text-sm font-semibold text-foreground">
+            <h3 className="mb-3 font-mono text-sm font-medium text-foreground">
               {doc.displayName}
             </h3>
           ) : null}

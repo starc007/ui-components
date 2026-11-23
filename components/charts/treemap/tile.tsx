@@ -124,7 +124,7 @@ export function TreemapCell({
           renderTile(tile)
         ) : showLabel ? (
           <>
-            <span className="block truncate text-xs font-semibold sm:text-sm">{tile.label}</span>
+            <span className="block truncate text-xs font-medium sm:text-sm">{tile.label}</span>
             {showValue ? (
               <span className="mt-1 block truncate font-mono text-[11px] tabular-nums opacity-80 sm:text-xs">
                 {formatValue(tile.value)}

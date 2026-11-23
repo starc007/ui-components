@@ -553,13 +553,13 @@ const INITIAL: ReelState = (() => {
 })();
 
 // Card faces by value: slate under 2×, primary to 10×, amber to 100×, then
-// fuchsia; the history pills follow the same tiers. Cards are physical objects, so they keep their colours in both
+// rose; the history pills follow the same tiers. Cards are physical objects, so they keep their colours in both
 // themes.
 const FACE = {
   cool: "bg-zinc-700 text-white",
   warm: "bg-primary text-primary-foreground",
   hot: "bg-amber-400 text-amber-950",
-  jackpot: "bg-fuchsia-600 text-white",
+  jackpot: "bg-rose-600 text-white",
 } as const;
 const face = (multiplier: number) => (multiplier >= 100 ? "jackpot" : heat(multiplier));
 
@@ -744,7 +744,7 @@ const Card = memo(function Card({
         transition={LOCK}
       >
         {/* Four or more whole digits (1000×, 12.5K×) drop a size to stay inside the card. */}
-        <span className={cn("leading-none font-bold tracking-tight", whole.length >= 4 ? "text-base" : "text-xl")}>
+        <span className={cn("leading-none font-semibold tracking-tight", whole.length >= 4 ? "text-base" : "text-xl")}>
           {whole}
           {decimals ? <span className="text-[0.7em]">.{decimals}</span> : null}
           <span className="ml-0.5 text-[0.7em] opacity-70">×</span>

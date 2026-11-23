@@ -164,7 +164,7 @@ export function Playground() {
       rightSidebar={<RightSidebar />}
     >
       <header className="mb-8">
-        <h1 className="font-display text-3xl font-semibold text-foreground md:text-4xl">
+        <h1 className="font-display text-3xl font-medium text-foreground md:text-4xl">
           {t("header.title")}
         </h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
@@ -193,7 +193,7 @@ export function Playground() {
         <div className="min-w-0">
           {/* vocab: define the type for first-timers */}
           <div className="mb-5">
-            <h2 className="text-lg font-semibold text-foreground">
+            <h2 className="text-lg font-medium text-foreground">
               {active.label}
             </h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">

@@ -1077,7 +1077,7 @@ export function AttachmentUpload({
         >
           <Upload className="size-[18px]" />
         </motion.span>
-        <span className="text-sm font-semibold tracking-[-0.01em] text-foreground">
+        <span className="text-sm font-medium tracking-[-0.01em] text-foreground">
           {maxReached ? t("limitTitle") : (title ?? t("title"))}
         </span>
         <span className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -1092,7 +1092,7 @@ export function AttachmentUpload({
         <section className="mt-8" aria-labelledby={`${inputId}-attachments`}>
           <h3
             id={`${inputId}-attachments`}
-            className="text-sm font-semibold text-foreground"
+            className="text-sm font-medium text-foreground"
           >
             {attachmentsLabel ?? t("attachments")}
           </h3>

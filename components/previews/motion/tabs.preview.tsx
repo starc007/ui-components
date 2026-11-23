@@ -61,7 +61,7 @@ export function TabsPreview() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{title}</span>
+      <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{title}</span>
       {children}
     </div>
   );

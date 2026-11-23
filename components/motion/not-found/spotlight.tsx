@@ -56,7 +56,7 @@ export function NotFoundSpotlight({
         {/* Dim base layer. */}
         <span
           aria-hidden
-          className="select-none font-bold leading-none tracking-tighter text-white/10 [font-size:clamp(5rem,16vw,10rem)]"
+          className="select-none font-semibold leading-none tracking-tighter text-white/10 [font-size:clamp(5rem,16vw,10rem)]"
         >
           {code}
         </span>
@@ -65,7 +65,7 @@ export function NotFoundSpotlight({
           aria-label={code}
           style={enabled ? { WebkitMaskImage: mask, maskImage: mask } : undefined}
           className={cn(
-            "absolute select-none font-bold leading-none tracking-tighter text-white [font-size:clamp(5rem,16vw,10rem)]",
+            "absolute select-none font-semibold leading-none tracking-tighter text-white [font-size:clamp(5rem,16vw,10rem)]",
             !enabled && "text-white/90",
           )}
         >
@@ -74,7 +74,7 @@ export function NotFoundSpotlight({
       </motion.div>
 
       <div className="flex flex-col items-center gap-2">
-        <p className="text-lg font-semibold text-foreground">{title ?? t("title")}</p>
+        <p className="text-lg font-medium text-foreground">{title ?? t("title")}</p>
         <p className="max-w-sm text-sm text-muted-foreground">{description ?? t("description")}</p>
       </div>
 

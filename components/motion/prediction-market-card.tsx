@@ -318,7 +318,7 @@ function MarketOddsButton({
 			whileTap={reduce ? undefined : { scale: 0.96 }}
 			transition={SPRING_PRESS}
 			className={cn(
-				"relative flex min-h-10 min-w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-background px-3 text-sm font-semibold text-foreground shadow-[0_3px_0] transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+				"relative flex min-h-10 min-w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-background px-3 text-sm font-medium text-foreground shadow-[0_3px_0] transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
 				positive &&
 					"shadow-emerald-500/20 border-emerald-500/25 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-400",
 				!positive &&

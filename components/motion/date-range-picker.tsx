@@ -561,7 +561,7 @@ export function DateRangePickerGrid({
                                         "hover:bg-muted",
                                   date === today &&
                                     !endpoint &&
-                                    "font-semibold after:absolute after:bottom-1 after:size-0.75 after:rounded-full after:bg-current",
+                                    "font-medium after:absolute after:bottom-1 after:size-0.75 after:rounded-full after:bg-current",
                                 )}
                               >
                                 {new Date(parse(date)).getUTCDate()}

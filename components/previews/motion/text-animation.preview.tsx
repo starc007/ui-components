@@ -52,7 +52,7 @@ export function TextAnimationPreview() {
               className="font-semibold tracking-tight [font-size:clamp(1.125rem,7.8cqw,1.875rem)]"
             />
           ) : (
-            <TextShimmer duration={1.8} className="text-xl font-semibold">
+            <TextShimmer duration={1.8} className="text-xl font-medium">
               Loading with shimmer
             </TextShimmer>
           )}

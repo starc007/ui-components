@@ -53,10 +53,10 @@ export function Field({
               value={amount}
               onChange={(e) => onAmount?.(sanitizeAmount(e.target.value))}
               placeholder="0"
-              className="w-full bg-transparent text-2xl font-semibold tracking-tight text-foreground tabular-nums outline-none placeholder:text-muted-foreground/60"
+              className="w-full bg-transparent text-2xl font-medium tracking-tight text-foreground tabular-nums outline-none placeholder:text-muted-foreground/60"
             />
           ) : (
-            <div className="flex h-9 items-center gap-2 text-2xl font-semibold tracking-tight tabular-nums">
+            <div className="flex h-9 items-center gap-2 text-2xl font-medium tracking-tight tabular-nums">
               <motion.span
                 animate={{
                   opacity: quoting ? 0.55 : 1,
@@ -89,7 +89,7 @@ export function Field({
         <button
           type="button"
           onClick={onOpenPicker}
-          className="group inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card pl-1 pr-2.5 text-sm font-semibold text-foreground transition-transform hover:border-border active:scale-[0.97]"
+          className="group inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card pl-1 pr-2.5 text-sm font-medium text-foreground transition-transform hover:border-border active:scale-[0.97]"
         >
           <TokenDot token={token} chain={chain} />
           <span>{token.symbol}</span>
@@ -109,7 +109,7 @@ export function Field({
           <button
             type="button"
             onClick={() => onAmount?.(String(token.balance))}
-            className="rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+            className="rounded-full px-2 py-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground hover:bg-muted/60 hover:text-foreground"
           >
             {t("max")}
           </button>

@@ -99,7 +99,7 @@ export function AnimatedSidebarPreview() {
                 type="button"
                 className="flex min-w-0 flex-1 items-center gap-2 rounded-full text-left outline-none focus-visible:ring-2 focus-visible:ring-ring group-data-[state=collapsed]/sidebar:hidden"
               >
-                <span className="truncate text-sm font-semibold text-foreground">
+                <span className="truncate text-sm font-medium text-foreground">
                   Acme Inc
                 </span>
                 <ChevronsUpDown
@@ -204,7 +204,7 @@ export function AnimatedSidebarPreview() {
               type="button"
               className="flex min-h-11 w-full items-center gap-3 overflow-hidden rounded-full p-1 text-left outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#d5ff66] text-xs font-semibold text-[#172000]">
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#d5ff66] text-xs font-medium text-[#172000]">
                 AS
               </span>
               <span className="min-w-0 flex-1 group-data-[state=collapsed]/sidebar:hidden">
@@ -239,7 +239,7 @@ export function AnimatedSidebarPreview() {
               <p className="text-xs font-medium text-muted-foreground">
                 Wednesday, July 29
               </p>
-              <h3 className="mt-2 max-w-md text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+              <h3 className="mt-2 max-w-md text-xl font-medium tracking-tight text-foreground sm:text-2xl">
                 Good morning, Ava.
               </h3>
               <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">

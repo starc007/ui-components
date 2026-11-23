@@ -399,7 +399,7 @@ export function NativeComponentPage({ data }: { data: NativeComponentPageData })
           aria-labelledby="native-docs-heading"
           className="mt-12 scroll-mt-24 border-t border-border pt-8"
         >
-          <h2 id="native-docs-heading" className="text-sm font-semibold text-foreground">
+          <h2 id="native-docs-heading" className="text-sm font-medium text-foreground">
             {t("component.documentation")}
           </h2>
           <div className="mt-4">

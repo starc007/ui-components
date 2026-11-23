@@ -141,7 +141,7 @@ export function WalletCard({
         </ActionSwapText>
         {balanceHidden ? (
           <div className="mt-2 flex h-7 items-center justify-center">
-            <span className="translate-y-[3px] text-sm font-semibold text-muted-foreground leading-none tracking-[0.3em]">
+            <span className="translate-y-[3px] text-sm font-medium text-muted-foreground leading-none tracking-[0.3em]">
               *****
             </span>
           </div>

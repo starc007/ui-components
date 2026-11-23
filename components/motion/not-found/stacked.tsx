@@ -55,7 +55,7 @@ export function NotFoundStacked({
           transition={SPRING_PANEL}
           className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-3xl border border-border bg-card shadow-md"
         >
-          <h1 className="select-none font-bold leading-none tracking-tighter text-foreground [font-size:clamp(3.5rem,9vw,5rem)]">
+          <h1 className="select-none font-semibold leading-none tracking-tighter text-foreground [font-size:clamp(3.5rem,9vw,5rem)]">
             {code}
           </h1>
           <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -65,7 +65,7 @@ export function NotFoundStacked({
       </motion.div>
 
       <div className="flex flex-col items-center gap-2">
-        <p className="text-lg font-semibold text-foreground">{title ?? t("title")}</p>
+        <p className="text-lg font-medium text-foreground">{title ?? t("title")}</p>
         <p className="max-w-sm text-sm text-muted-foreground">{description ?? t("description")}</p>
       </div>
 

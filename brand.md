@@ -33,7 +33,8 @@ Only these sizes. No other arbitrary `text-[Npx]` values.
 | Micro (axis ticks, badges, counters) | `text-[11px]` | 11 / 16 | 500 |
 | Code | `font-mono text-[13px]` in code blocks, `text-xs` inline | 13 / 20 | 400 |
 
-- Weights: 400 body, 500 labels, buttons and headings, 600 display only. Nothing above 600.
+- Weights: 400 body, 500 labels, buttons, headings and page titles, 600 display only. Nothing above 600.
+- Display means `text-3xl` and up used as a readout or showcase (balances, prices, big counters, hero text), plus logo-letter marks and numbers on physical game cards. A page title at `text-3xl` is still 500.
 - Headings use `tracking-tight`. Body text keeps normal tracking.
 - Changing numbers use `tabular-nums`.
 - Retire `text-[9px]`, `text-[10px]`, `text-[12px]` (use `text-xs`), `text-[13px]` outside code, and `text-[15px]`.
@@ -97,7 +98,7 @@ Near-monochrome neutrals, one blue for emphasis, semantic status colors. Source 
 
 - Filled emphasis is `primary` blue, never a black `bg-foreground` fill: primary buttons, selected chips and dates, active pagination, filled slider tracks, progress, the solid message bubble, chart value labels.
 - Thin markers stay `foreground`: menu radio dots, text carets, slider handle lines. Neutral chips (avatar overflow, icon tiles, workspace marks) use `bg-muted text-foreground`. Things that depict a device (the dynamic island) keep their own color.
-- No purple, violet or indigo. `--violet` and the cyan-to-violet `--gradient-accent` are being retired.
+- No purple, violet, indigo or fuchsia, in tokens, chart palettes or previews. `--gradient-accent` runs from the cyan accent to primary blue.
 
 ## Surfaces and elevation
 
@@ -145,5 +146,3 @@ The radius and type pass (2026-11-23) moved every control, menu row and floating
 |---|---|---|
 | Returns calendar cell numbers | `text-[9px]` | Cells are about 17px wide on mobile, so 11px overflows. Needs a layout decision. |
 | Swap chain sub-badge letter | `text-[7px]` | Larger badge, or drop the letter |
-| `font-semibold` outside display (card title, others) | 600 | 500 |
-| `--violet`, `--gradient-accent` | in the theme | removed |

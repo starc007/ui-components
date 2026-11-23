@@ -78,7 +78,6 @@ const COLORS = [
   { token: "success", use: "Status" },
   { token: "warning", use: "Status" },
   { token: "danger", use: "Status" },
-  { token: "violet", use: "Retiring", retire: true },
 ];
 
 const MOTION = [
@@ -93,8 +92,6 @@ const MOTION = [
 const OFF_SYSTEM = [
   { area: "Returns calendar cells", now: "text-[9px]", target: "layout decision" },
   { area: "Swap chain sub-badge", now: "text-[7px]", target: "larger badge or no letter" },
-  { area: "Weight outside display", now: "font-semibold", target: "font-medium" },
-  { area: "Violet and accent gradient", now: "in the theme", target: "removed" },
 ];
 
 /** A floating panel drawn to the system: rounded-3xl, p-2, h-8 pill rows. */
@@ -276,7 +273,7 @@ export function BrandPage() {
                 style={{ background: `var(--${color.token})` }}
               />
               <span className="flex min-w-0 flex-col">
-                <span className={cn("truncate font-mono text-xs text-foreground", color.retire && "line-through")}>
+                <span className="truncate font-mono text-xs text-foreground">
                   {color.token}
                 </span>
                 <span className="truncate text-xs text-muted-foreground">{color.use}</span>

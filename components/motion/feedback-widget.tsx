@@ -352,7 +352,7 @@ export function FeedbackWidget({
                             </motion.svg>
                           </motion.div>
                         </div>
-                        <h3 className="text-sm font-semibold text-foreground">
+                        <h3 className="text-sm font-medium text-foreground">
                           {t("sentTitle")}
                         </h3>
                         <p className="text-xs leading-relaxed text-muted-foreground">
@@ -374,7 +374,7 @@ export function FeedbackWidget({
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
                           <AlertCircle className="h-5 w-5" />
                         </div>
-                        <h3 className="mt-3 text-sm font-semibold text-foreground">
+                        <h3 className="mt-3 text-sm font-medium text-foreground">
                           {t("errorTitle")}
                         </h3>
                         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
@@ -396,7 +396,7 @@ export function FeedbackWidget({
                         <div className="flex items-start justify-between gap-3">
                           <h3
                             id={titleId}
-                            className="text-sm font-semibold text-foreground"
+                            className="text-sm font-medium text-foreground"
                           >
                             {title}
                           </h3>

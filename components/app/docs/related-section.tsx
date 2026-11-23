@@ -21,7 +21,7 @@ export function RelatedSection({ related }: { related: RelatedItem[] }) {
       id="related-components"
       className="mt-12 scroll-mt-24 border-t border-border pt-8"
     >
-      <h2 className="text-sm font-semibold text-foreground">{t("relatedComponents")}</h2>
+      <h2 className="text-sm font-medium text-foreground">{t("relatedComponents")}</h2>
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {related.map((rel) => (
           <ComponentCard

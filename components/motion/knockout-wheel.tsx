@@ -408,7 +408,7 @@ function TeamMark({
           initial={false}
           animate={fade}
           transition={transition}
-          className="fill-muted-foreground font-semibold"
+          className="fill-muted-foreground font-medium"
         >
           {initials(node.team.name)}
         </motion.text>

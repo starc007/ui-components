@@ -71,7 +71,7 @@ export function NotFoundTerminal({
       </div>
 
       <div className="flex flex-col items-center gap-2">
-        <p className="text-lg font-semibold text-foreground">{title ?? t("title")}</p>
+        <p className="text-lg font-medium text-foreground">{title ?? t("title")}</p>
         <p className="max-w-sm text-sm text-muted-foreground">{description ?? t("description")}</p>
       </div>
 

@@ -94,7 +94,7 @@ function render(block: NativeReadmeBlock, key: number) {
       // The README's own title duplicates the page heading.
       if (block.level === 1) return null;
       return (
-        <h3 key={key} className="mt-4 text-base font-semibold text-foreground">
+        <h3 key={key} className="mt-4 text-base font-medium text-foreground">
           {inline(block.text)}
         </h3>
       );

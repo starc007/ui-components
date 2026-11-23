@@ -83,7 +83,7 @@ export function UpvoteButton({
           <motion.span
             key={votes}
             aria-hidden="true"
-            className="pointer-events-none absolute -top-1 left-1/2 text-xs font-semibold text-primary tabular-nums"
+            className="pointer-events-none absolute -top-1 left-1/2 text-xs font-medium text-primary tabular-nums"
             style={{ translate: "-50% 0" }}
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: [0, 1, 0], y: -18 }}
@@ -110,7 +110,7 @@ export function UpvoteButton({
           onVotedChange?.(next);
         }}
         className={cn(
-          "relative isolate inline-flex items-center justify-center overflow-hidden border text-sm font-semibold tabular-nums transition-colors duration-200",
+          "relative isolate inline-flex items-center justify-center overflow-hidden border text-sm font-medium tabular-nums transition-colors duration-200",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           "disabled:pointer-events-none disabled:opacity-50",
           vertical ? "min-w-12 flex-col gap-0.5 rounded-2xl px-2.5 py-2" : "h-9 gap-1.5 rounded-full pr-3.5 pl-2.5",

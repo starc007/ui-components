@@ -47,7 +47,7 @@ export function BalanceDelta({
             exit={{ opacity: 0, y: reduce ? 0 : -6, scale: reduce ? 1 : 0.9 }}
             transition={{ duration: 0.2, ease: EASE_OUT }}
             className={cn(
-              "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold tabular-nums",
+              "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium tabular-nums",
               up
                 ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
                 : "bg-red-500/15 text-red-600 dark:text-red-400",

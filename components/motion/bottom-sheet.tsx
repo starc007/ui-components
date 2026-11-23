@@ -231,7 +231,7 @@ export function BottomSheet({
                     {title ? (
                       <h2
                         id={titleId}
-                        className="text-base font-semibold text-foreground"
+                        className="text-base font-medium text-foreground"
                       >
                         {title}
                       </h2>

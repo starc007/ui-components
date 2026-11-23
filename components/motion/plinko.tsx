@@ -326,7 +326,7 @@ export function Plinko({
                 dominantBaseline="central"
                 // Long values shrink to fit their slot.
                 fontSize={Math.min(9, (GAP - 8) / (String(label).length * 0.6))}
-                className={cn("fill-foreground tabular-nums", slot === lastSlot ? "font-semibold" : "font-medium")}
+                className="fill-foreground font-medium tabular-nums"
               >
                 {label}
               </text>

@@ -27,7 +27,7 @@ export function ProBlocksSection({
         id={id}
         className={
           heading === "usedIn"
-            ? "text-sm font-semibold text-foreground"
+            ? "text-sm font-medium text-foreground"
             : "font-display text-xs font-medium uppercase text-muted-foreground"
         }
       >

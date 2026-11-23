@@ -29,7 +29,7 @@ export function ChainChip({
       {chain ? (
         <ChainDot chain={chain} size={20} />
       ) : (
-        <span className="text-xs font-semibold">{label}</span>
+        <span className="text-xs font-medium">{label}</span>
       )}
     </button>
   );
@@ -40,7 +40,7 @@ export function ChainDot({ chain, size = 16 }: { chain: Chain; size?: number }) 
     <span
       style={{ width: size, height: size }}
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-full text-[11px] font-bold",
+        "inline-flex shrink-0 items-center justify-center rounded-full text-[11px] font-semibold",
         chain.tone,
       )}
     >
@@ -63,7 +63,7 @@ export function TokenDot({
       className="relative inline-flex shrink-0"
       style={{ width: size, height: size }}
     >
-      <span className="absolute inset-0 inline-flex items-center justify-center rounded-full border border-border bg-background text-[11px] font-bold text-foreground">
+      <span className="absolute inset-0 inline-flex items-center justify-center rounded-full border border-border bg-background text-[11px] font-semibold text-foreground">
         {token.symbol.slice(0, 2)}
       </span>
       <span
@@ -72,7 +72,7 @@ export function TokenDot({
           height: size * 0.42,
         }}
         className={cn(
-          "absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full border-2 border-card text-[7px] font-bold",
+          "absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full border-2 border-card text-[7px] font-semibold",
           chain.tone,
         )}
       >

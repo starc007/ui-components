@@ -67,15 +67,15 @@ function ThemeContent({ data }: { data: ThemePageData }) {
 
   return (
     <div className="max-w-3xl">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
         {t("eyebrow")}
       </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
+      <h1 className="mt-2 text-3xl font-medium tracking-tight text-foreground">
         {t("title")}
       </h1>
       <p className="mt-3 text-muted-foreground">{t.rich("intro", { code })}</p>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2 className="mt-10 text-xl font-medium tracking-tight text-foreground">
         {t("option1.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">{t("option1.body")}</p>
@@ -83,7 +83,7 @@ function ThemeContent({ data }: { data: ThemePageData }) {
         <CodeBlock {...data.code.shadcnInit} />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold tracking-tight text-foreground">
+      <h2 className="mt-10 text-xl font-medium tracking-tight text-foreground">
         {t("option2.title")}
       </h2>
       <p className="mt-2 text-muted-foreground">

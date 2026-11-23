@@ -409,7 +409,7 @@ export function AdaptiveStepperValue({
         aria-atomic="true"
         style={style}
         className={cn(
-          "flex size-full min-w-0 items-center justify-center overflow-hidden rounded-full border border-transparent bg-transparent bg-clip-padding px-4 text-lg font-semibold tabular-nums text-foreground",
+          "flex size-full min-w-0 items-center justify-center overflow-hidden rounded-full border border-transparent bg-transparent bg-clip-padding px-4 text-lg font-medium tabular-nums text-foreground",
           className,
         )}
       >

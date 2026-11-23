@@ -40,7 +40,7 @@ export function MorphingModalPreview() {
 function Header({ title, onClose }: { title: string; onClose: () => void }) {
   return (
     <div className="mb-4 flex items-center justify-between">
-      <h2 className="text-base font-semibold text-foreground">{title}</h2>
+      <h2 className="text-base font-medium text-foreground">{title}</h2>
       <button
         type="button"
         onClick={onClose}
@@ -115,7 +115,7 @@ function PrivateKey({ onBack }: { onBack: () => void }) {
           ✕
         </button>
       </div>
-      <h2 className="text-xl font-semibold tracking-tight text-foreground">Private Key</h2>
+      <h2 className="text-xl font-medium tracking-tight text-foreground">Private Key</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         Your Private Key is the key used to back up your wallet. Keep it secret and secure at all times.
       </p>
@@ -160,7 +160,7 @@ function Recovery({ onBack }: { onBack: () => void }) {
           ✕
         </button>
       </div>
-      <h2 className="text-xl font-semibold tracking-tight text-foreground">Recovery Phrase</h2>
+      <h2 className="text-xl font-medium tracking-tight text-foreground">Recovery Phrase</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         12 words you can use to restore your wallet on any device. Write them down somewhere safe.
       </p>

@@ -75,7 +75,7 @@ export function SeoPage({
         ]}
       />
       <header id="overview" className="scroll-mt-24">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {kind === "guides" ? t("guide") : t("comparison")}
         </p>
         <h1 className="mt-2 text-3xl font-medium tracking-tight text-foreground">{page.heading}</h1>

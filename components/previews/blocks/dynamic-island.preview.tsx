@@ -73,7 +73,7 @@ export function DynamicIslandPreview() {
               <span className="text-[11px] uppercase tracking-wider opacity-60">
                 Incoming call
               </span>
-              <span className="text-sm font-semibold">Saurabh</span>
+              <span className="text-sm font-medium">Saurabh</span>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -105,7 +105,7 @@ export function DynamicIslandPreview() {
               format={formatClock}
               startOnView={false}
               duration={0.5}
-              className="text-sm font-semibold"
+              className="text-sm font-medium"
             />
           </DynamicIslandView>
 
@@ -114,7 +114,7 @@ export function DynamicIslandPreview() {
               <Music className="h-3.5 w-3.5" />
             </span>
             <div className="flex flex-col whitespace-nowrap text-left">
-              <span className="text-xs font-semibold leading-tight">
+              <span className="text-xs font-medium leading-tight">
                 Midnight City
               </span>
               <span className="text-[11px] opacity-60">M83</span>

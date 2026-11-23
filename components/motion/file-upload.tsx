@@ -594,7 +594,7 @@ export function FileUpload({
         <span className={cn("min-w-0", centered ? "max-w-xs" : "flex-1")}>
           <span
             className={cn(
-              "block font-semibold text-foreground",
+              "block font-medium text-foreground",
               centered ? "text-base" : "text-sm",
             )}
           >

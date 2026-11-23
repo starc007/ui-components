@@ -364,7 +364,7 @@ export function Mines({
         </AdaptiveStepper>
 
         <div className="text-right">
-          <div className="text-2xl font-semibold text-foreground">
+          <div className="text-2xl font-medium text-foreground">
             {phase === "busted" ? (
               // The multiplier is lost: struck through, as on the ticket. A plain
               // span, since a line-through skips the ticker's inline-block digits.

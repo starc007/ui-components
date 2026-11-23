@@ -112,7 +112,7 @@ export function SwipeableListPreview() {
       <div className="w-full max-w-sm rounded-3xl border border-border bg-background p-2 shadow-2xl">
         <div className="mb-3 flex items-center justify-between px-2">
           <div>
-            <p className="text-sm font-semibold text-foreground">Priority queue</p>
+            <p className="text-sm font-medium text-foreground">Priority queue</p>
             <p className="text-xs text-muted-foreground">{lastAction}</p>
           </div>
           <button

@@ -74,7 +74,7 @@ export function PullToRefreshPreview() {
         >
           <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background/90 px-5 py-4 backdrop-blur-md">
             <div>
-              <p className="font-semibold text-foreground">Activity</p>
+              <p className="font-medium text-foreground">Activity</p>
               <p className="text-xs text-muted-foreground">
                 Pull down to check for updates
               </p>

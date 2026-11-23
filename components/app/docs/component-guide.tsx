@@ -20,7 +20,7 @@ export function ComponentGuide({
         id="composition"
         className="mt-12 scroll-mt-24 border-t border-border pt-8"
       >
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+        <h2 className="text-xl font-medium tracking-tight text-foreground">
           {t("composition")}
         </h2>
         <p className="mt-3 text-base leading-7 text-muted-foreground">
@@ -52,7 +52,7 @@ export function ComponentGuide({
         id="behavior"
         className="mt-12 scroll-mt-24 border-t border-border pt-8"
       >
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+        <h2 className="text-xl font-medium tracking-tight text-foreground">
           {t("howItWorks")}
         </h2>
         <p className="mt-3 text-base leading-7 text-muted-foreground">

@@ -195,7 +195,7 @@ function NativeSetupContent({ data }: { data: NativeSetupPageData }) {
     <GuideShell>
       <JsonLd data={data.jsonLd} />
       <header id="overview" className="scroll-mt-24">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {t("header.eyebrow")}
         </p>
         <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

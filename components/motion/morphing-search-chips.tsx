@@ -164,7 +164,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
   return (
     <>
       {text.slice(0, at)}
-      <span className="font-semibold">{text.slice(at, at + query.length)}</span>
+      <span className="font-medium">{text.slice(at, at + query.length)}</span>
       {text.slice(at + query.length)}
     </>
   );

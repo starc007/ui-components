@@ -38,7 +38,7 @@ function Step({
 }) {
   return (
     <section className="min-w-0">
-      <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+      <h3 className="flex items-center gap-2 text-sm font-medium text-foreground">
         <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-foreground/5 font-mono text-[11px] text-muted-foreground">
           {number}
         </span>
@@ -87,7 +87,7 @@ export function NativePanel({
         className="scroll-mt-24 border-t border-border pt-8"
       >
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-sm font-semibold text-foreground">{t("install")}</h2>
+          <h2 className="text-sm font-medium text-foreground">{t("install")}</h2>
           <a
             href={component.repository}
             target="_blank"
