@@ -53,7 +53,7 @@ export const HEAT_PILL = {
   warm: `bg-primary/10 ${PRIMARY_TEXT}`,
   hot: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
   // Opt-in through GameHistory's `tier`, for games that mark 100× and up.
-  jackpot: "bg-fuchsia-500/15 text-fuchsia-700 dark:text-fuchsia-400",
+  jackpot: "bg-rose-500/15 text-rose-700 dark:text-rose-400",
 } as const;
 
 // Truncated, never rounded up: a 10,960× payout reads 10.9K×, not 11K×.

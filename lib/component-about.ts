@@ -3417,7 +3417,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   "slide-game": {
     overview:
-      "Slide is a React casino slide game built with Framer Motion. A bet and target panel sits beside the stage, or below it on narrow screens, with the win chance and profit on win kept up to date. Each round races a reel of multiplier cards past two tabs that hang from the stage's top and bottom edges: cards turn toward the center in 3D as they pass, colour-coded from slate under 2× through primary and amber to fuchsia at 100× and up. The reel slows through the last few cards and clicks the result into place between the tabs, which turn primary on a win or red on a miss. Results come from getResult, so a server can decide every round.",
+      "Slide is a React casino slide game built with Framer Motion. A bet and target panel sits beside the stage, or below it on narrow screens, with the win chance and profit on win kept up to date. Each round races a reel of multiplier cards past two tabs that hang from the stage's top and bottom edges: cards turn toward the center in 3D as they pass, colour-coded from slate under 2× through primary and amber to rose at 100× and up. The reel slows through the last few cards and clicks the result into place between the tabs, which turn primary on a win or red on a miss. Results come from getResult, so a server can decide every round.",
     useWhen: [
       "A casino or crypto gaming site needs a slide or multiplier game with a suspenseful reveal.",
       "A rewards or loyalty flow wants to reveal a multiplier or bonus with a short reel spin.",

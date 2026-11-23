@@ -8,10 +8,10 @@ import { BumpChart, BumpChartLegend, BumpChartPlot } from "@/components/charts/b
 const periods = ["Apr", "May", "Jun", "Jul", "Aug", "Sep"];
 // Illustrative product rankings; replace these with your own period-by-period ranks.
 const initialSeries = [
-  { id: "studio", name: "Studio", ranks: [4, 3, 2, 3, 2, 1], color: "#8b5cf6" },
+  { id: "studio", name: "Studio", ranks: [4, 3, 2, 3, 2, 1], color: "#0285f7" },
   { id: "canvas", name: "Canvas", ranks: [1, 1, 3, 2, 1, 2], color: "#0d9488" },
   { id: "layers", name: "Layers", ranks: [3, 2, 1, 1, 3, 3], color: "#f59e0b" },
-  { id: "orbit", name: "Orbit", ranks: [2, 4, 5, 4, 5, 4], color: "#3b82f6" },
+  { id: "orbit", name: "Orbit", ranks: [2, 4, 5, 4, 5, 4], color: "#16a34a" },
   { id: "frame", name: "Frame", ranks: [5, 5, 4, 5, 4, 5], color: "#f43f5e" },
 ];
 

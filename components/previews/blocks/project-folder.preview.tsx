@@ -6,7 +6,7 @@ const previews = [
   { id: "moss", color: "bg-emerald-200", mark: "A" },
   { id: "clay", color: "bg-orange-200", mark: "B" },
   { id: "sky", color: "bg-sky-200", mark: "C" },
-  { id: "lilac", color: "bg-violet-200", mark: "D" },
+  { id: "rose", color: "bg-rose-200", mark: "D" },
   { id: "sand", color: "bg-amber-100", mark: "E" },
 ].map((preview) => ({
   id: preview.id,

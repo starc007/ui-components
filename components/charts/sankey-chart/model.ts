@@ -49,7 +49,7 @@ export type PlacedLink = {
 
 export const SANKEY_COLORS = [
   "#1d4ed8",
-  "#7c3aed",
+  "#4d7c0f",
   "#0f766e",
   "#b45309",
   "#be123c",

@@ -23,7 +23,7 @@ type Format = (typeof FORMATS)[number];
 
 const PRESETS = [
   { value: "#3478f6", label: "Blue" },
-  { value: "#9270e8", label: "Purple" },
+  { value: "#3fb1d8", label: "Cyan" },
   { value: "#e66aa4", label: "Pink" },
   { value: "#e55656", label: "Red" },
   { value: "#ed9141", label: "Orange" },

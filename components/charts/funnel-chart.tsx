@@ -12,7 +12,7 @@ import { buildFunnel, type FunnelStage, funnelPath } from "./funnel-chart/model"
 const defaultFormat = (value: number) =>
   value.toLocaleString("en-US", { maximumFractionDigits: 2 });
 const percentage = (value: number | null) => (value === null ? "—" : `${value.toFixed(1)}%`);
-const colors = ["#8b5cf6", "#7774ef", "#548ee4", "#2ca6bc", "#14b8a6"];
+const colors = ["#1d4ed8", "#0285f7", "#0ea5e9", "#06b6d4", "#14b8a6"];
 
 export const funnelChartMessages = {
   label: "Conversion funnel",

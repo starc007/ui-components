@@ -45,7 +45,7 @@ export function useVolumeProfileModel({
   formatPrice = formatNumber,
   formatVolume = formatNumber,
   valueArea = 0.7,
-  color = "#6366f1",
+  color = "#0285f7",
   pocColor = "#f59e0b",
   activeId,
   defaultActiveId = null,

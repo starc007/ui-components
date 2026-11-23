@@ -15,7 +15,7 @@ const series = [
   { id: "direct", name: "Direct", color: "#38bdf8", base: 24, trend: 0.12 },
   { id: "referral", name: "Referrals", color: "#0d9488", base: 10, trend: 0.32 },
   { id: "social", name: "Social", color: "#fbbf24", base: 12, trend: 0.06 },
-  { id: "email", name: "Email", color: "#a78bfa", base: 5, trend: 0.09 },
+  { id: "email", name: "Email", color: "#f472b6", base: 5, trend: 0.09 },
   { id: "other", name: "Other", color: "#a1a1aa", base: 3, trend: 0.02 },
 ].map(({ base, trend, ...row }, i) => ({
   ...row,

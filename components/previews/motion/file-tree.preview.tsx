@@ -43,7 +43,7 @@ export function FileTreePreview() {
             <FileTreeFile
               value="styles"
               name="globals.css"
-              icon={<Palette className="size-4 text-violet-500" />}
+              icon={<Palette className="size-4 text-pink-500" />}
             />
           </FileTreeFolder>
           <FileTreeFolder value="public" name="public">

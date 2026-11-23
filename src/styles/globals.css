@@ -25,7 +25,6 @@
     --border-strong: oklch(15% 0 0 / 0.12);
     --accent-fg: oklch(15% 0 0);
     --neon: oklch(80% 0.22 145);
-    --violet: oklch(68% 0.22 295);
     --danger: oklch(62% 0.22 25);
     --success: oklch(70% 0.18 155);
     --warning: oklch(78% 0.18 75);
@@ -41,7 +40,7 @@
     --gradient-accent: linear-gradient(
         to right,
         oklch(72% 0.18 195) 0%,
-        oklch(68% 0.22 295) 100%
+        #0285f7 100%
     );
     /* shadcn semantic tokens, mapped onto the base. */
     --card-foreground: var(--foreground);
@@ -81,7 +80,7 @@
     --gradient-accent: linear-gradient(
         to right,
         oklch(80% 0.18 195) 0%,
-        oklch(72% 0.18 295) 100%
+        #0285f7 100%
     );
 }
 
@@ -95,7 +94,6 @@
     --color-border: var(--border);
     --color-border-strong: var(--border-strong);
     --color-neon: var(--neon);
-    --color-violet: var(--violet);
     --color-success: var(--success);
     --color-warning: var(--warning);
     --color-background: var(--background);

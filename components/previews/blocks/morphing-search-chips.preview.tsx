@@ -4,10 +4,10 @@ import { MorphingSearchChips } from "@/components/motion/morphing-search-chips";
 
 const tiles = [
   "from-rose-400/40 to-orange-300/30",
-  "from-sky-400/40 to-indigo-400/30",
+  "from-sky-400/40 to-blue-400/30",
   "from-emerald-400/40 to-teal-300/30",
   "from-amber-300/40 to-rose-300/30",
-  "from-violet-400/40 to-fuchsia-300/30",
+  "from-pink-400/40 to-rose-300/30",
   "from-teal-300/40 to-sky-300/30",
 ];
 
