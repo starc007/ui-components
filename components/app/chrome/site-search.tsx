@@ -78,7 +78,7 @@ export function SiteSearch({ className }: { className?: string }) {
       >
         <Search className="h-3.5 w-3.5 shrink-0" />
         <span className="hidden flex-1 text-left sm:block">{t("search.trigger")}</span>
-        <kbd className="hidden rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground md:inline-block">
+        <kbd className="hidden rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground md:inline-block">
           ⌘K
         </kbd>
       </button>

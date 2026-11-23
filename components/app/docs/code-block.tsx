@@ -40,7 +40,7 @@ export function CodeBlock({ code, html, lang, filename, className }: Props) {
       {filename ? (
         <div className="flex items-center justify-between gap-3 py-2 pr-3 pl-4">
           <div className="flex min-w-0 items-center gap-2 text-xs">
-            <span className="inline-flex h-5 shrink-0 items-center rounded-md bg-background px-1.5 font-mono text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+            <span className="inline-flex h-5 shrink-0 items-center rounded-full bg-background px-2 font-mono text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
               {langLabel}
             </span>
 

@@ -70,7 +70,7 @@ export function MobileNav() {
               href="/components/motion"
               onClick={() => setOpen(false)}
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-full px-3 py-1.5 text-sm transition-colors",
                 pathname.startsWith("/components/motion")
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -82,7 +82,7 @@ export function MobileNav() {
               href="/components/blocks"
               onClick={() => setOpen(false)}
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-full px-3 py-1.5 text-sm transition-colors",
                 pathname.startsWith("/components/blocks")
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -94,7 +94,7 @@ export function MobileNav() {
               href="/components/agents"
               onClick={() => setOpen(false)}
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-full px-3 py-1.5 text-sm transition-colors",
                 pathname.startsWith("/components/agents")
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -108,7 +108,7 @@ export function MobileNav() {
                 href={categoryPath(slug)}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "rounded-md px-3 py-1.5 text-sm transition-colors",
+                  "rounded-full px-3 py-1.5 text-sm transition-colors",
                   topLevelCategory(pathname) === slug
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground",
@@ -121,7 +121,7 @@ export function MobileNav() {
               href={NATIVE_PATH}
               onClick={() => setOpen(false)}
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-full px-3 py-1.5 text-sm transition-colors",
                 isNativePath(pathname)
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -133,7 +133,7 @@ export function MobileNav() {
               href="/playground"
               onClick={() => setOpen(false)}
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-full px-3 py-1.5 text-sm transition-colors",
                 pathname.startsWith("/playground")
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -145,7 +145,7 @@ export function MobileNav() {
               href="/sponsors"
               onClick={() => setOpen(false)}
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm transition-colors",
+                "rounded-full px-3 py-1.5 text-sm transition-colors",
                 pathname.startsWith("/sponsors")
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",

@@ -28,7 +28,7 @@ export function ProMobileCard() {
           <span className="font-display text-3xl font-semibold tracking-tight text-foreground">
             beUI
           </span>
-          <span className="rounded-md border border-accent/40 bg-background/60 px-2 py-0.5 text-base font-medium text-foreground">
+          <span className="rounded-full border border-accent/40 bg-background/60 px-2.5 py-0.5 text-base font-medium text-foreground">
             Pro Mobile
           </span>
         </div>

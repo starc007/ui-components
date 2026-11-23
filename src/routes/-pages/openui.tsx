@@ -91,7 +91,7 @@ const BeStat = defineComponent({
   description: "A single numeric metric that springs up from zero when shown.",
   props: z.object({ label: z.string(), value: z.number() }),
   component: ({ props }) => (
-    <div className="rounded-xl border border-border bg-card p-4">
+    <div className="rounded-2xl border border-border bg-card p-4">
       <p className="text-sm text-muted-foreground">{props.label}</p>
       <AnimatedNumber value={props.value} className="text-2xl font-semibold" />
     </div>

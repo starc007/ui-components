@@ -68,7 +68,7 @@ export function PreviewTile({
             {Preview ? <Preview /> : null}
           </PreviewFit>
         ) : (
-          <div aria-hidden="true" className="m-2 mb-0 min-h-0 flex-1 rounded-xl bg-background" />
+          <div aria-hidden="true" className="m-2 mb-0 min-h-0 flex-1 rounded-lg bg-background" />
         )}
         <div className="flex h-10 shrink-0 items-center justify-between gap-2 px-3.5">
           <div className="flex min-w-0 items-center gap-2">

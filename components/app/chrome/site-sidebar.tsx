@@ -240,7 +240,7 @@ const COUNT_CLASS =
   "inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground";
 
 const GROUP_LABEL =
-  "mb-1.5 flex items-center gap-2 rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground";
+  "mb-1.5 flex items-center gap-2 rounded-full px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground";
 
 // Clearance for the sticky category tabs at the top of the desktop sidebar.
 const STICKY_CLEARANCE = 64;
@@ -276,7 +276,7 @@ function useRevealActiveLink(href: string) {
 
 function linkClass(active: boolean) {
   return cn(
-    "relative block rounded-lg px-2.5 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:py-1",
+    "relative block rounded-full px-3 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:py-1",
     active
       ? "text-foreground font-medium bg-foreground/[0.06]"
       : "text-muted-foreground hover:text-foreground",
@@ -302,7 +302,7 @@ function NativeSidebarNav({
         <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           React Native
         </p>
-        <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
+        <SharedLayoutBg inset={0} pillClassName="rounded-full bg-foreground/[0.05]">
           {NATIVE_INTRO.map((item) => (
             <Link
               key={item.slug}
@@ -323,7 +323,7 @@ function NativeSidebarNav({
             {groupNames[group.name] ?? group.name}
             <span className={COUNT_CLASS}>{group.items.length}</span>
           </p>
-          <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
+          <SharedLayoutBg inset={0} pillClassName="rounded-full bg-foreground/[0.05]">
             {moveNewItemsToTop(
               group.items.map((item) => ({
                 ...item,
@@ -424,7 +424,7 @@ function WebSidebarNav({
           <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             {t("sidebar.intro")}
           </p>
-          <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
+          <SharedLayoutBg inset={0} pillClassName="rounded-full bg-foreground/[0.05]">
             {intro.map((item) => (
               <Link
                 key={item.slug}
@@ -443,7 +443,7 @@ function WebSidebarNav({
             <p className="mb-1.5 block px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               {t("sidebar.guides")}
             </p>
-            <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
+            <SharedLayoutBg inset={0} pillClassName="rounded-full bg-foreground/[0.05]">
               {PATTERNS.map((item) => (
                 <Link
                   key={item.slug}
@@ -467,12 +467,12 @@ function WebSidebarNav({
               href={categoryPath(cat.slug)}
               prefetch={false}
               onClick={onNavigate}
-              className="mb-1.5 flex items-center gap-2 rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+              className="mb-1.5 flex items-center gap-2 rounded-full px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
             >
               {cat.name}
               <span className={COUNT_CLASS}>{cat.components.length}</span>
             </Link>
-            <SharedLayoutBg inset={0} pillClassName="rounded-lg bg-foreground/[0.05]">
+            <SharedLayoutBg inset={0} pillClassName="rounded-full bg-foreground/[0.05]">
               {moveNewItemsToTop(cat.components, now).map((comp) => {
                 const href = componentPath(cat.slug, comp.slug);
                 return (

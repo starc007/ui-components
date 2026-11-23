@@ -136,7 +136,7 @@ export function Playground() {
                   type="button"
                   onClick={() => select(it.slug)}
                   className={cn(
-                    "w-full rounded-lg px-3 py-2 text-left text-sm transition-colors",
+                    "w-full rounded-full px-3 py-1.5 text-left text-sm transition-colors",
                     it.slug === active.slug
                       ? "bg-muted font-medium text-foreground"
                       : "text-muted-foreground hover:text-foreground",
@@ -153,7 +153,7 @@ export function Playground() {
             ) : null}
             {PLAYGROUND_SOON.map((it) => (
               <li key={it.slug}>
-                <span className="block cursor-not-allowed rounded-lg px-3 py-2 text-sm text-muted-foreground/40">
+                <span className="block cursor-not-allowed rounded-full px-3 py-1.5 text-sm text-muted-foreground/40">
                   {it.label}
                 </span>
               </li>

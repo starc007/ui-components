@@ -94,7 +94,7 @@ export function SiteHeader() {
             <Link
               href="/components/motion"
               className={cn(
-                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                "rounded-full px-1.5 py-1.5 text-sm transition-colors lg:px-3",
                 section ? "inline-flex" : "hidden xl:inline-flex",
                 isComponents
                   ? "text-foreground"
@@ -106,7 +106,7 @@ export function SiteHeader() {
             <Link
               href="/components/blocks"
               className={cn(
-                "hidden rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3 xl:inline-flex",
+                "hidden rounded-full px-1.5 py-1.5 text-sm transition-colors lg:px-3 xl:inline-flex",
                 isBlocks
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -117,7 +117,7 @@ export function SiteHeader() {
             <Link
               href="/components/agents"
               className={cn(
-                "hidden rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3 xl:inline-flex",
+                "hidden rounded-full px-1.5 py-1.5 text-sm transition-colors lg:px-3 xl:inline-flex",
                 isAgents
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -132,7 +132,7 @@ export function SiteHeader() {
                 key={slug}
                 href={categoryPath(slug)}
                 className={cn(
-                  "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                  "rounded-full px-1.5 py-1.5 text-sm transition-colors lg:px-3",
                   section === slug ? "hidden xl:inline-flex" : "inline-flex",
                   section === slug
                     ? "text-foreground"
@@ -145,7 +145,7 @@ export function SiteHeader() {
             <Link
               href={NATIVE_PATH}
               className={cn(
-                "inline-flex rounded-md px-1.5 py-1.5 text-sm whitespace-nowrap transition-colors lg:px-3",
+                "inline-flex rounded-full px-1.5 py-1.5 text-sm whitespace-nowrap transition-colors lg:px-3",
                 isNative
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -156,7 +156,7 @@ export function SiteHeader() {
             <Link
               href="/playground"
               className={cn(
-                "rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3",
+                "rounded-full px-1.5 py-1.5 text-sm transition-colors lg:px-3",
                 isPlayground
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -168,7 +168,7 @@ export function SiteHeader() {
               href="/sponsors"
               // From 2xl only, to leave room for Charts and Casino; the footer links it too.
               className={cn(
-                "hidden rounded-md px-1.5 py-1.5 text-sm transition-colors lg:px-3 2xl:inline-flex",
+                "hidden rounded-full px-1.5 py-1.5 text-sm transition-colors lg:px-3 2xl:inline-flex",
                 isSponsors
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",

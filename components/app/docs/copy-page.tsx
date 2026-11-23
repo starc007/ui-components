@@ -55,7 +55,7 @@ Help me understand how to use it. Be ready to explain the API, give examples, or
 }
 
 const actionClassName =
-  "flex min-h-10 w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm text-foreground outline-none transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:ring-2 focus-visible:ring-ring";
+  "flex min-h-8 w-full items-center gap-3 rounded-full px-3 py-1.5 text-left text-sm text-foreground outline-none transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:ring-2 focus-visible:ring-ring";
 
 export function CopyPage({
   pageUrl,
@@ -170,14 +170,14 @@ export function CopyPage({
       onOpenChange={setOpen}
       className="hidden sm:inline-flex"
     >
-      <div className="inline-flex rounded-lg bg-muted/70">
+      <div className="inline-flex rounded-full bg-muted/70">
         <button
           type="button"
           onClick={copyMarkdown}
           disabled={copyState === "copying"}
           aria-busy={copyState === "copying"}
           aria-label={copyAriaLabel}
-          className="inline-flex min-h-10 items-center gap-2 rounded-l-lg px-3 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait sm:min-h-8 sm:px-2.5 sm:text-xs"
+          className="inline-flex min-h-10 items-center gap-2 rounded-l-full pr-3 pl-4 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait sm:min-h-8 sm:px-2.5 sm:text-xs"
         >
           {copyState === "copying" ? (
             <LoaderCircle className="h-3.5 w-3.5 motion-safe:animate-spin" aria-hidden="true" />
@@ -205,7 +205,7 @@ export function CopyPage({
                 focusMenuItem("last");
               }
             }}
-            className="inline-flex min-h-10 w-10 items-center justify-center rounded-r-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring sm:min-h-8 sm:w-8"
+            className="inline-flex min-h-10 w-11 items-center justify-center rounded-r-full pr-1 text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring sm:min-h-8 sm:w-8"
           >
             <ChevronDown
               className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")}
@@ -215,7 +215,7 @@ export function CopyPage({
         </MorphPopoverTrigger>
       </div>
 
-      <MorphPopoverContent align="end" className="w-56 p-1.5">
+      <MorphPopoverContent align="end" className="w-56 p-2">
         <div
           ref={menuRef}
           role="menu"

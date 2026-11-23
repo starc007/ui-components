@@ -29,7 +29,7 @@ export function SponsorRow({
           href={`https://${sponsor.domain}/?utm_source=beui&utm_medium=referral&utm_campaign=sponsorship&utm_content=${placement}`}
           target="_blank"
           rel="noreferrer noopener"
-          className="inline-flex items-center gap-2 rounded-lg px-1 py-1 text-foreground opacity-80 transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="inline-flex items-center gap-2 rounded-full px-2 py-1 text-foreground opacity-80 transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           <img
             src={`/sponsors/${sponsor.icon}-light.svg`}

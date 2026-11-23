@@ -26,7 +26,7 @@ export function ComponentGuide({
         <p className="mt-3 text-base leading-7 text-muted-foreground">
           {guide.composition.description}
         </p>
-        <pre className="mt-4 w-full overflow-x-auto rounded-xl bg-muted p-5 font-mono text-[13px] leading-6 text-foreground">
+        <pre className="mt-4 w-full overflow-x-auto rounded-2xl bg-muted p-5 font-mono text-[13px] leading-6 text-foreground">
           <code>{guide.composition.tree}</code>
         </pre>
         {guide.connections.length ? (

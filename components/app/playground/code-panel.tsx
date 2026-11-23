@@ -49,7 +49,7 @@ export function CodePanel({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-xl border border-border font-mono text-[13px]",
+        "group relative overflow-hidden rounded-2xl border border-border font-mono text-[13px]",
         className,
       )}
     >

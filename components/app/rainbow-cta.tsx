@@ -15,7 +15,7 @@ export function RainbowCta({
   children,
   className,
   innerClassName,
-  shape = "rounded",
+  shape = "pill",
   ...props
 }: RainbowCtaProps) {
   const pill = shape === "pill";

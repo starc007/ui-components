@@ -218,7 +218,7 @@ function SponsorTier({
         <h2
           id={headingId}
           className={cn(
-            "inline-flex items-center gap-2 rounded-lg border px-3 py-2 font-mono text-sm font-medium text-foreground",
+            "inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-sm font-medium text-foreground",
             styles.chip,
           )}
         >
@@ -294,7 +294,7 @@ function truncateAddress(address: string) {
 
 function AddressRow({ label, address }: { label: string; address: string }) {
   return (
-    <div className="grid grid-cols-[5rem_minmax(0,1fr)_auto] items-center gap-4 rounded-xl border border-border px-4 py-3">
+    <div className="grid grid-cols-[5rem_minmax(0,1fr)_auto] items-center gap-4 rounded-2xl border border-border px-4 py-3">
       <p className="whitespace-nowrap text-sm font-medium text-muted-foreground">
         {label}
       </p>
