@@ -1,6 +1,7 @@
 @import "tailwindcss";
-@import "@fontsource-variable/geist";
-@import "@fontsource-variable/geist-mono";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource-variable/jetbrains-mono";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -8,8 +9,9 @@
    page flow and scrolls away; the header and sidebars stick below it. */
 :root {
     --announcement-h: 2.5rem;
-    --font-geist-sans: "Geist Variable";
-    --font-geist-mono: "Geist Mono Variable";
+    --font-ui: "Inter Variable";
+    --font-head: "Plus Jakarta Sans Variable";
+    --font-code: "JetBrains Mono Variable";
 }
 
 :root {
@@ -114,9 +116,9 @@
     --color-input: var(--input);
     --color-ring: var(--ring);
 
-    --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-    --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-    --font-display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    --font-sans: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
+    --font-mono: var(--font-code), ui-monospace, monospace;
+    --font-display: var(--font-head), var(--font-ui), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme {
@@ -249,6 +251,13 @@
         overflow-x: clip;
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
+    }
+    h1,
+    h2,
+    h3 {
+        font-family: var(--font-display);
+        /* Plus Jakarta Sans has a narrow word space; tracking-tight closes it further. */
+        word-spacing: 0.08em;
     }
     ::selection {
         background: color-mix(in oklch, var(--accent) 30%, transparent);
@@ -402,7 +411,7 @@
         border-radius: 0.375rem;
         background: var(--card);
         padding: 0.125rem 0.375rem;
-        font-family: var(--font-geist-mono), ui-monospace, monospace;
+        font-family: var(--font-code), ui-monospace, monospace;
         font-size: 0.875em;
         color: var(--foreground);
     }

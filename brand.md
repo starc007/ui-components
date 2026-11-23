@@ -40,12 +40,13 @@ The full light and dark token sets are applied to `:root` and `.dark`.
 
 Borders are structural and intentionally subtle. Never rely on a border alone to communicate state. Interactive focus states must use the visible foreground or accent ring.
 
-## Typography — Geist + Geist Mono
+## Typography: Plus Jakarta Sans + Inter + JetBrains Mono
 
-- **Display and body:** Geist
-- **Code, commands, numbers:** Geist Mono
+- **Headings (h1 to h3, `font-display`):** Plus Jakarta Sans
+- **Body and UI:** Inter
+- **Code, commands, numbers:** JetBrains Mono
 
-Both are loaded from `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` and exposed through `--font-sans`, `--font-display`, and `--font-mono` in `src/styles/globals.css`.
+All three are loaded from `@fontsource-variable/plus-jakarta-sans`, `@fontsource-variable/inter` and `@fontsource-variable/jetbrains-mono`, set as `--font-head`, `--font-ui` and `--font-code`, and exposed through `--font-display`, `--font-sans` and `--font-mono` in `src/styles/globals.css`.
 
 ### Type roles
 
@@ -104,7 +105,7 @@ Avoid hype and effort language: “revolutionary,” “powerful,” “seamless
 - Keep the documentation chrome neutral so component motion remains the focal point.
 - Use a 4 px spacing grid and consistent alignment across previews, code, and navigation.
 - Test light and dark mode at mobile, tablet, and desktop widths.
-- Use Geist Mono for install commands, code, and tabular numbers.
+- Use JetBrains Mono for install commands, code, and tabular numbers.
 - Keep focus states visible and respect reduced motion.
 
 **Don't:**
@@ -123,4 +124,4 @@ Avoid hype and effort language: “revolutionary,” “powerful,” “seamless
 
 ---
 
-_Last updated: 2026-07-10 via `brand-design`. Palette: beUI Current · Typography: Geist + Geist Mono · Gradients: enabled._
+_Last updated: 2026-07-10 via `brand-design`. Palette: beUI Current · Typography: Plus Jakarta Sans + Inter + JetBrains Mono · Gradients: enabled._
