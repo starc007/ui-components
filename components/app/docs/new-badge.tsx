@@ -30,7 +30,7 @@ export function NewBadge({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center rounded-full border border-(--color-border-strong) bg-accent/10 px-1.5 py-0.5 text-[10px] font-medium uppercase leading-none text-accent",
+        "inline-flex shrink-0 items-center rounded-full border border-(--color-border-strong) bg-accent/10 px-1.5 py-0.5 text-[11px] font-medium uppercase leading-none text-accent",
         className,
       )}
     >

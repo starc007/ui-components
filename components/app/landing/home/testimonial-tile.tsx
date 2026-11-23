@@ -44,7 +44,7 @@ export function TestimonialTile({ testimonial }: { testimonial: Testimonial }) {
       <span className="absolute top-4 right-4 text-muted-foreground/60 transition-colors group-hover:text-foreground">
         <XLogo />
       </span>
-      <p className="whitespace-pre-wrap pr-5 text-pretty text-[13px] leading-5 text-foreground">
+      <p className="whitespace-pre-wrap pr-5 text-pretty text-sm leading-5 text-foreground">
         {quoteText(testimonial.text)}
       </p>
       <div className="mt-4 flex items-center gap-2.5">

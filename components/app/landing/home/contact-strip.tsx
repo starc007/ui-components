@@ -72,7 +72,7 @@ export function ContactStrip({ className }: { className?: string }) {
           >
             {t("title")}
           </h2>
-          <p className="mt-3 max-w-sm text-pretty text-[13px] leading-5 text-muted-foreground">
+          <p className="mt-3 max-w-sm text-pretty text-sm leading-5 text-muted-foreground">
             {t("description")}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">

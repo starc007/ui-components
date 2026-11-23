@@ -72,7 +72,7 @@ export function PreviewTile({
         )}
         <div className="flex h-10 shrink-0 items-center justify-between gap-2 px-3.5">
           <div className="flex min-w-0 items-center gap-2">
-            <h3 className="truncate text-[13px] font-medium text-foreground">{component.name}</h3>
+            <h3 className="truncate text-sm font-medium text-foreground">{component.name}</h3>
             {component.badge === "new" ? <NewBadge launchedAt={component.launchedAt} /> : null}
           </div>
           <ArrowUpRight

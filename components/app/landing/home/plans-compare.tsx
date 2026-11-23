@@ -43,7 +43,7 @@ export function PlansCompare({
     <section aria-labelledby="landing-plans" className={cn("mx-auto max-w-6xl px-4", className)}>
       <SectionTitle id="landing-plans" label={t("label")} title={t("title")} />
       <div className="overflow-hidden rounded-2xl border border-border">
-        <table className="w-full text-left text-[13px]">
+        <table className="w-full text-left text-sm">
           <caption className="sr-only">{t("caption")}</caption>
           <thead>
             <tr className="border-b border-border">

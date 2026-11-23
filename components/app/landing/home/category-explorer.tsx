@@ -31,7 +31,7 @@ export function CategoryExplorer({ categories }: { categories: ExplorerCategory[
         <div className="max-w-full overflow-x-auto">
           <TabsList aria-label={t("sections")}>
             {categories.map((category) => (
-              <TabsTrigger key={category.slug} value={category.slug} className="text-[13px]">
+              <TabsTrigger key={category.slug} value={category.slug}>
                 {category.name}
                 {/* Inherits the label color, so it stays legible on the selected pill. */}
                 <span className="ml-1.5 font-mono text-[11px] tabular-nums opacity-60">

@@ -33,7 +33,7 @@ export function TestimonialAvatar({
       <span
         aria-hidden="true"
         className={cn(
-          "grid shrink-0 place-items-center rounded-full bg-card text-[10px] font-medium text-muted-foreground",
+          "grid shrink-0 place-items-center rounded-full bg-card text-[11px] font-medium text-muted-foreground",
           className,
         )}
       >

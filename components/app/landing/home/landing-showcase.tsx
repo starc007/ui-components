@@ -99,7 +99,7 @@ export function LandingShowcase({
       </section>
 
       <div className="mx-auto flex max-w-xl flex-col items-center gap-3 px-4">
-        <p className="text-[13px] text-muted-foreground">{t("home.installHint")}</p>
+        <p className="text-sm text-muted-foreground">{t("home.installHint")}</p>
         <InstallCommand className="w-full" />
       </div>
 

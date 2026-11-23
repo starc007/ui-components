@@ -24,7 +24,7 @@ export function SponsorCard() {
       <h2 className="text-base font-medium tracking-tight text-foreground">
         {t("title")}
       </h2>
-      <p className="mt-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+      <p className="mt-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
         {t("tier")}
       </p>
       <div className="mt-2 flex flex-col gap-3">

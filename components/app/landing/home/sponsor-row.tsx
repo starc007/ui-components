@@ -45,7 +45,7 @@ export function SponsorRow({
             height={20}
             className="hidden size-5 dark:block"
           />
-          <span className="text-[15px] font-medium tracking-tight">{sponsor.name}</span>
+          <span className="text-base font-medium tracking-tight">{sponsor.name}</span>
         </a>
       ))}
     </section>

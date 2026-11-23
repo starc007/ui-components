@@ -84,7 +84,7 @@ export function LandingComponentCard({
               <h3
                 className={cn(
                   "truncate font-display font-medium tracking-tight text-foreground",
-                  feature ? "text-lg" : "text-[0.95rem]",
+                  feature ? "text-lg" : "text-base",
                 )}
               >
                 {component.name}

@@ -91,7 +91,7 @@ export function NativeTile({ component }: { component: NativeTileComponent }) {
         </div>
         <div className="flex h-10 shrink-0 items-center justify-between gap-2 px-3.5">
           <div className="flex min-w-0 items-center gap-2">
-            <h3 className="truncate text-[13px] font-medium text-foreground">{component.title}</h3>
+            <h3 className="truncate text-sm font-medium text-foreground">{component.title}</h3>
             <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-[11px] leading-none text-muted-foreground">
               React Native
             </span>

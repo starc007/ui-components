@@ -237,7 +237,7 @@ export function SidebarCategoryTabs({
 }
 
 const COUNT_CLASS =
-  "inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[10px] font-medium tabular-nums text-muted-foreground";
+  "inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground/[0.06] px-1 text-[11px] leading-none font-medium tabular-nums text-muted-foreground";
 
 const GROUP_LABEL =
   "mb-1.5 flex items-center gap-2 rounded-full px-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground";

@@ -42,7 +42,7 @@ export function SectionTitle({
       {link ? (
         <Link
           href={link.href}
-          className="group inline-flex shrink-0 items-center gap-1 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+          className="group inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           {link.label}
           <ArrowRight

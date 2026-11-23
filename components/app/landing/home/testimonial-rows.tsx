@@ -50,7 +50,7 @@ export function TestimonialRows({ className }: { className?: string }) {
               />
             ))}
           </div>
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             {t.rich("builders", {
               count: BUILDER_COUNT,
               strong: (chunks) => <span className="font-medium text-foreground">{chunks}</span>,
@@ -63,7 +63,7 @@ export function TestimonialRows({ className }: { className?: string }) {
         >
           {t("title")}
         </h2>
-        <p className="mt-2 text-[13px] text-muted-foreground">
+        <p className="mt-2 text-sm text-muted-foreground">
           {t("subtitle")}
         </p>
       </div>
