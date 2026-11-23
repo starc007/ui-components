@@ -192,7 +192,7 @@ export function AISidebarPreview() {
                 <PanelLeft aria-hidden="true" className="size-4" />
               </AnimatedSidebarTrigger>
               <div className="min-w-0">
-                <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                   Workspace
                 </p>
                 <p className="truncate text-sm font-medium text-foreground">
@@ -200,7 +200,7 @@ export function AISidebarPreview() {
                 </p>
               </div>
             </div>
-            <span className="shrink-0 rounded-full bg-muted px-2.5 py-1 text-[10px] font-medium text-muted-foreground">
+            <span className="shrink-0 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
               Draft
             </span>
           </header>

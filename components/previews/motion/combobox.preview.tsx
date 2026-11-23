@@ -56,7 +56,7 @@ function WorkspaceMark({ value }: { value: string }) {
   const Icon = workspace.icon;
   return (
     <span
-      className={`grid size-7 shrink-0 place-items-center rounded-lg ${workspace.color}`}
+      className={`grid size-7 shrink-0 place-items-center rounded-full ${workspace.color}`}
     >
       <Icon className="size-3.5" />
     </span>
@@ -72,14 +72,14 @@ export function ComboboxPreview() {
         Workspace
       </p>
       <Combobox value={value} onValueChange={setValue}>
-        <ComboboxTrigger className="h-12 rounded-2xl px-2.5">
+        <ComboboxTrigger className="h-12 px-2.5">
           <ComboboxInput
             aria-label="Search workspaces"
             placeholder="Search workspaces…"
           />
         </ComboboxTrigger>
 
-        <ComboboxContent className="w-72 rounded-2xl">
+        <ComboboxContent className="w-72">
           <ComboboxList ariaLabel="Workspaces" className="p-2">
             <ComboboxEmpty>No workspaces found.</ComboboxEmpty>
             {(["Recent", "Workspaces"] as const).map((group, groupIndex) => (

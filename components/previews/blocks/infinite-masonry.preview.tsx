@@ -126,7 +126,7 @@ export function InfiniteMasonryPreview() {
               <p className="text-sm font-medium text-foreground">
                 {item.title}
               </p>
-              <p className="shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground">
+              <p className="shrink-0 text-[11px] uppercase tracking-wider text-muted-foreground">
                 {item.category}
               </p>
             </figcaption>

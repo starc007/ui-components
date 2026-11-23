@@ -61,7 +61,7 @@ export function PullToRefreshPreview() {
 
   return (
     <div className="flex min-h-[34rem] w-full items-center justify-center p-4">
-      <div className="w-full max-w-sm overflow-hidden rounded-[2rem] border border-border bg-background shadow-2xl">
+      <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-background shadow-2xl">
         <PullToRefresh
           ariaLabel="Activity feed"
           className="h-[30rem]"
@@ -79,7 +79,7 @@ export function PullToRefreshPreview() {
                 Pull down to check for updates
               </p>
             </div>
-            <span className="rounded-full bg-muted px-2.5 py-1 font-mono text-[10px] text-muted-foreground">
+            <span className="rounded-full bg-muted px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
               {refreshCount ? `${refreshCount} refreshed` : "live"}
             </span>
           </header>
@@ -90,7 +90,7 @@ export function PullToRefreshPreview() {
 
               return (
                 <article key={update.id} className="flex gap-3 px-3 py-4">
-                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-border bg-card text-muted-foreground shadow-sm">
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border bg-card text-muted-foreground shadow-sm">
                     <Icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -98,7 +98,7 @@ export function PullToRefreshPreview() {
                       <p className="text-sm font-medium text-foreground">
                         {update.title}
                       </p>
-                      <span className="shrink-0 font-mono text-[10px] text-muted-foreground">
+                      <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
                         {update.time}
                       </span>
                     </div>

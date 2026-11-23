@@ -68,7 +68,7 @@ function Row({
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-colors press ${
+      className={`flex w-full items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-colors press ${
         destructive
           ? "bg-destructive/10 text-destructive hover:bg-destructive/15"
           : "bg-foreground/[0.04] text-foreground hover:bg-foreground/[0.08]"
@@ -166,7 +166,7 @@ function Recovery({ onBack }: { onBack: () => void }) {
       </p>
       <div className="mt-4 grid grid-cols-3 gap-2">
         {["mountain", "river", "candle", "harbor", "amber", "violet", "spring", "ocean", "marble", "thunder", "willow", "crystal"].map((w, i) => (
-          <div key={w} className="rounded-lg border border-border bg-background/40 px-2 py-1.5 text-xs text-foreground">
+          <div key={w} className="rounded-full border border-border bg-background/40 px-2 py-1.5 text-xs text-foreground">
             <span className="mr-1 text-muted-foreground">{i + 1}.</span>
             {w}
           </div>

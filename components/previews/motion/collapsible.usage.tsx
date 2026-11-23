@@ -34,7 +34,7 @@ function Details() {
 export function CollapsibleUsage() {
   return (
     <Collapsible
-      className="max-w-sm rounded-xl border border-border bg-background p-4"
+      className="max-w-sm rounded-2xl border border-border bg-background p-4"
       contentClassName="grid"
     >
       <Details />

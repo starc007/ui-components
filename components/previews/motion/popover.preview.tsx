@@ -24,14 +24,14 @@ export function PopoverPreview() {
               <span className="text-muted-foreground">Width</span>
               <input
                 defaultValue="100%"
-                className="h-8 w-32 rounded-lg border border-border bg-background px-2.5 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground/20"
+                className="h-8 w-32 rounded-full border border-border bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground/20"
               />
             </label>
             <label className="flex items-center justify-between gap-3 text-sm">
               <span className="text-muted-foreground">Height</span>
               <input
                 defaultValue="auto"
-                className="h-8 w-32 rounded-lg border border-border bg-background px-2.5 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground/20"
+                className="h-8 w-32 rounded-full border border-border bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground/20"
               />
             </label>
           </div>

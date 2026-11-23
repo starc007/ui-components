@@ -26,7 +26,7 @@ export function ScrollRevealPreview() {
             root={containerRef}
             once={false}
             delay={i * 0.05}
-            className="rounded-xl border border-border bg-muted/50 px-4 py-16 text-center text-base font-medium text-foreground"
+            className="rounded-2xl border border-border bg-muted/50 px-4 py-16 text-center text-base font-medium text-foreground"
           >
             {label}
           </ScrollReveal>

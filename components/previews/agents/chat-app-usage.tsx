@@ -405,7 +405,7 @@ export function ChatAppExample({
               </p>
             </div>
           </div>
-          <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+          <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
             Connected
           </span>
         </header>

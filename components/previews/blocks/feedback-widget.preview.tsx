@@ -24,7 +24,7 @@ export function FeedbackWidgetPreview() {
       <div className="flex flex-col gap-3 p-5">
         <div className="h-2.5 w-3/4 rounded-full bg-muted-foreground/15" />
         <div className="h-2.5 w-1/2 rounded-full bg-muted-foreground/15" />
-        <div className="h-24 w-full rounded-xl bg-muted-foreground/[0.06]" />
+        <div className="h-24 w-full rounded-2xl bg-muted-foreground/[0.06]" />
         <div className="h-2.5 w-2/3 rounded-full bg-muted-foreground/15" />
       </div>
 

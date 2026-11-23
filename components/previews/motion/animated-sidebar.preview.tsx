@@ -92,12 +92,12 @@ export function AnimatedSidebarPreview() {
         >
           <AnimatedSidebarHeader className="p-3 pb-2">
             <div className="flex min-h-11 items-center gap-3 overflow-hidden px-2">
-              <div className="grid size-7 shrink-0 place-items-center rounded-lg bg-foreground text-background">
+              <div className="grid size-7 shrink-0 place-items-center rounded-full bg-foreground text-background">
                 <Command aria-hidden="true" className="size-4" />
               </div>
               <button
                 type="button"
-                className="flex min-w-0 flex-1 items-center gap-2 rounded-lg text-left outline-none focus-visible:ring-2 focus-visible:ring-ring group-data-[state=collapsed]/sidebar:hidden"
+                className="flex min-w-0 flex-1 items-center gap-2 rounded-full text-left outline-none focus-visible:ring-2 focus-visible:ring-ring group-data-[state=collapsed]/sidebar:hidden"
               >
                 <span className="truncate text-sm font-semibold text-foreground">
                   Acme Inc
@@ -202,7 +202,7 @@ export function AnimatedSidebarPreview() {
 
             <button
               type="button"
-              className="flex min-h-11 w-full items-center gap-3 overflow-hidden rounded-xl p-1 text-left outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+              className="flex min-h-11 w-full items-center gap-3 overflow-hidden rounded-full p-1 text-left outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
             >
               <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#d5ff66] text-xs font-semibold text-[#172000]">
                 AS
@@ -250,7 +250,7 @@ export function AnimatedSidebarPreview() {
 
             <div className="flex items-end justify-between border-border border-t pt-4">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                   Active view
                 </p>
                 <p className="mt-1 text-sm font-medium text-foreground">

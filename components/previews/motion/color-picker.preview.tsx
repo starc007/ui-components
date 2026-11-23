@@ -56,7 +56,7 @@ export function ColorPickerPreview() {
               type="button"
               onClick={() => setFormat(next)}
               aria-label={`Format ${format.toUpperCase()}, switch to ${next.toUpperCase()}`}
-              className="relative inline-flex h-9 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-background text-xs font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              className="relative inline-flex h-9 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-background text-xs font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
             >
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span

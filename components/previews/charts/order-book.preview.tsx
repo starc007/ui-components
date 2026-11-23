@@ -48,7 +48,7 @@ export function OrderBookPreview() {
       <div className="flex flex-wrap items-center justify-between gap-3 px-1">
         <div className="flex items-center gap-2 text-sm font-medium">
           SOL / USD
-          <span className="rounded border border-border px-1.5 py-0.5 text-[9px] font-normal uppercase tracking-wider text-muted-foreground">
+          <span className="rounded-full border border-border px-2 py-0.5 text-[11px] font-normal uppercase tracking-wider text-muted-foreground">
             Simulated
           </span>
         </div>

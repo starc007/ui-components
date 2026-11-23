@@ -84,7 +84,7 @@ function GridMedia() {
         <div
           // biome-ignore lint/suspicious/noArrayIndexKey: static decoration
           key={i}
-          className="rounded-xl border border-border bg-background"
+          className="rounded-2xl border border-border bg-background"
           style={{ opacity: 1 - i * 0.1 }}
         />
       ))}

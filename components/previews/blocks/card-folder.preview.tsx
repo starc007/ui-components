@@ -35,7 +35,7 @@ function CardArtwork({ detailsVisible }: { detailsVisible: boolean }) {
       <span className="absolute inset-0 bg-[radial-gradient(circle_at_78%_8%,rgb(255_255_255/0.11),transparent_32%)]" />
 
       <span className="absolute left-[6%] top-[8%] flex flex-col gap-2">
-        <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-white/55">
+        <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-white/55">
           Saurabh Chauhan
         </span>
         <DigitSwap
@@ -63,7 +63,7 @@ function CardArtwork({ detailsVisible }: { detailsVisible: boolean }) {
 
       <span className="absolute right-[7%] bottom-[10%] flex items-end gap-5">
         <span className="flex flex-col gap-1">
-          <span className="text-[8px] font-medium uppercase tracking-[0.16em] text-white/40">
+          <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/40">
             Expiry
           </span>
           <span className="text-xs font-medium text-white/90 tabular-nums">
@@ -71,7 +71,7 @@ function CardArtwork({ detailsVisible }: { detailsVisible: boolean }) {
           </span>
         </span>
         <span className="flex flex-col gap-1">
-          <span className="text-[8px] font-medium uppercase tracking-[0.16em] text-white/40">
+          <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/40">
             CVV
           </span>
           <DigitSwap

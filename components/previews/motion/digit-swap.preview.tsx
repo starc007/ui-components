@@ -33,7 +33,7 @@ export function DigitSwapPreview() {
         aria-label={revealed ? "Animate masked number" : "Animate card number"}
         aria-pressed={revealed}
         onClick={() => setRevealed((current) => !current)}
-        className="h-10 self-start rounded-lg border border-border px-3 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+        className="h-10 self-start rounded-full border border-border px-5 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
       >
         Animate
       </button>

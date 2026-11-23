@@ -63,13 +63,13 @@ export function ContextMenuPreview() {
                         : { opacity: 0, y: -2, filter: "blur(2px)" }
                     }
                     transition={reduce ? { duration: 0.1 } : SPRING_SWAP}
-                    className="flex items-center gap-1 text-[10px] text-muted-foreground"
+                    className="flex items-center gap-1 text-[11px] text-muted-foreground"
                   >
                     <Check aria-hidden="true" className="h-3 w-3 text-success" />
                     {message}
                   </motion.span>
                 ) : (
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     or long-press · Shift + F10
                   </span>
                 )}

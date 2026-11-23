@@ -11,7 +11,7 @@ export function MarqueePreview() {
         {logos.map((l) => (
           <div
             key={l}
-            className="mx-4 flex h-12 items-center justify-center rounded-lg border border-border bg-card px-6 text-sm font-medium text-foreground"
+            className="mx-4 flex h-12 items-center justify-center rounded-full border border-border bg-card px-6 text-sm font-medium text-foreground"
           >
             {l}
           </div>

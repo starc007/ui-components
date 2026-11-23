@@ -33,7 +33,7 @@ export function SmoothScrollPreview() {
         {SECTIONS.map((n) => (
           <div
             key={`section-${n}`}
-            className="rounded-lg bg-muted/60 px-3 py-4 text-sm text-muted-foreground"
+            className="rounded-2xl bg-muted/60 px-3 py-4 text-sm text-muted-foreground"
           >
             Section {n}
           </div>

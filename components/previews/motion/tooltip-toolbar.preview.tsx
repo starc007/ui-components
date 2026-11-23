@@ -27,7 +27,7 @@ export function TooltipToolbarPreview() {
   return (
     <TooltipProvider delay={300} skipDelay={400}>
       <div className="flex w-full flex-col items-center gap-8 py-6">
-        <div className="flex items-center gap-1 rounded-xl border border-border bg-card p-1">
+        <div className="flex items-center gap-1 rounded-full border border-border bg-card p-1">
           {actions.map(({ id, label, shortcut, keys, icon: Icon }) => (
             <Tooltip key={id} asLabel>
               <TooltipTrigger
@@ -35,7 +35,7 @@ export function TooltipToolbarPreview() {
                 aria-keyshortcuts={keys}
                 onClick={() => toggle(id)}
                 className={cn(
-                  "grid size-8 place-items-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring",
+                  "grid size-8 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring",
                   active.includes(id) && "bg-muted text-foreground",
                 )}
               >
@@ -45,7 +45,7 @@ export function TooltipToolbarPreview() {
                 <span className="flex items-center gap-2">
                   {label}
                   {/* The shortcut is announced through aria-keyshortcuts, not as part of the name. */}
-                  <span aria-hidden="true" className="text-[10px] text-muted-foreground">
+                  <span aria-hidden="true" className="text-[11px] text-muted-foreground">
                     {shortcut}
                   </span>
                 </span>
@@ -56,7 +56,7 @@ export function TooltipToolbarPreview() {
           <Tooltip asLabel disabled={active.length === 0}>
             <TooltipTrigger
               disabled={active.length === 0}
-              className="grid size-8 place-items-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40"
+              className="grid size-8 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40"
             >
               <Link2 aria-hidden="true" className="size-4" />
             </TooltipTrigger>
