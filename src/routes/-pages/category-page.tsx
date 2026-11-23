@@ -177,7 +177,6 @@ const GRID_CLASS =
 
 export function CategoryPage({ data }: { data: CategoryPageData }) {
   const t = useTranslations("Docs.category");
-  const tDocs = useTranslations("Docs");
   const { slug, contentKey: key, newComponents, components, agentGroups } = data;
 
   // The gallery has its own layout: a narrower centred column with a
@@ -201,10 +200,7 @@ export function CategoryPage({ data }: { data: CategoryPageData }) {
   return (
     <div>
       <JsonLd data={data.jsonLd} />
-      <nav aria-label={tDocs("breadcrumb")} className="flex items-center gap-1.5 text-sm">
-        <span className="font-medium text-foreground">{data.name}</span>
-      </nav>
-      <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
+      <h1 className="text-3xl font-medium tracking-tight text-foreground">
         {t(`${key}.heading`)}
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">{t(`${key}.description`)}</p>

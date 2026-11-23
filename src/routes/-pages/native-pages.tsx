@@ -1,7 +1,7 @@
 import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
-import { ArrowRight, ChevronRight, Globe } from "lucide-react";
+import { ArrowRight, Globe } from "lucide-react";
 import { useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { ComponentCard } from "@/components/app/docs/component-card";
@@ -126,10 +126,7 @@ export function NativeIndexPage({ data }: { data: NativeIndexPageData }) {
   return (
     <div>
       <JsonLd data={data.jsonLd} />
-      <nav aria-label={t("breadcrumb")} className="flex items-center gap-1.5 text-sm">
-        <span className="font-medium text-foreground">React Native</span>
-      </nav>
-      <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
+      <h1 className="text-3xl font-medium tracking-tight text-foreground">
         {t("heading")}
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">{t("intro")}</p>
@@ -364,17 +361,7 @@ export function NativeComponentPage({ data }: { data: NativeComponentPageData })
   return (
     <div>
       <JsonLd data={data.jsonLd} />
-      <nav aria-label={t("index.breadcrumb")} className="flex items-center gap-1.5 text-sm">
-        <Link
-          href={NATIVE_PATH}
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          React Native
-        </Link>
-        <ChevronRight aria-hidden="true" className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="font-medium text-foreground">{component.title}</span>
-      </nav>
-      <div className="mt-4 flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-3xl font-medium tracking-tight text-foreground">
           {component.title}
         </h1>
