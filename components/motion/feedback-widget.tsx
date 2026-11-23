@@ -437,7 +437,7 @@ export function FeedbackWidget({
                           size="md"
                           onClick={submit}
                           disabled={busy || message.trim().length === 0}
-                          className="flex-1 bg-foreground text-background hover:bg-foreground/90"
+                          className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                         >
                           {t("submit")}
                         </StatefulButton>

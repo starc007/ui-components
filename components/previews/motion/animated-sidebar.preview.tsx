@@ -92,7 +92,7 @@ export function AnimatedSidebarPreview() {
         >
           <AnimatedSidebarHeader className="p-3 pb-2">
             <div className="flex min-h-11 items-center gap-3 overflow-hidden px-2">
-              <div className="grid size-7 shrink-0 place-items-center rounded-full bg-foreground text-background">
+              <div className="grid size-7 shrink-0 place-items-center rounded-full bg-muted text-foreground">
                 <Command aria-hidden="true" className="size-4" />
               </div>
               <button

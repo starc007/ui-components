@@ -169,7 +169,8 @@ function bubbleContentClass(
   return cn(
     "relative z-0 min-w-9 max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-6 text-foreground",
     "[&_a]:font-medium [&_a]:underline [&_a]:underline-offset-4 [&_code]:rounded [&_code]:bg-background/60 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.9em] [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p+p]:mt-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:bg-background/60 [&_pre]:p-3 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5",
-    variant === "solid" && "text-background",
+    variant === "solid" &&
+      "text-primary-foreground [&_code]:bg-primary-foreground/15 [&_pre]:bg-primary-foreground/15",
     variant === "ghost" && "w-full max-w-none rounded-none px-0 py-0",
     variant === "danger" && "text-destructive",
     interactive &&
@@ -184,7 +185,7 @@ function bubbleSurfaceClass(
   return cn(
     "pointer-events-none absolute inset-0 -z-10 rounded-[inherit]",
     align === "end" ? "origin-bottom-right" : "origin-bottom-left",
-    variant === "solid" && "bg-foreground",
+    variant === "solid" && "bg-primary",
     variant === "soft" && "bg-muted",
     variant === "tint" && "bg-muted",
     variant === "outline" && "border border-border/70 bg-background",

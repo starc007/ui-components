@@ -101,8 +101,8 @@ export const ExpandingArrowButton = forwardRef<
       whileTap={reduce || disabled ? undefined : { scale: 0.97 }}
       transition={SPRING_PRESS}
       className={cn(
-        "relative inline-flex h-16 min-w-72 items-center overflow-hidden rounded-[22px] bg-neutral-950 p-1.5 text-white select-none",
-        "outline-none focus-visible:ring-2 focus-visible:ring-lime-300 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "relative inline-flex h-16 min-w-72 items-center overflow-hidden rounded-full bg-primary p-1.5 text-primary-foreground select-none",
+        "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         "disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
@@ -114,10 +114,10 @@ export const ExpandingArrowButton = forwardRef<
         transition={layoutTransition}
         style={{
           width: active ? "calc(100% - 12px)" : 52,
-          borderRadius: 16,
+          borderRadius: 26,
         }}
         className={cn(
-          "absolute inset-y-1.5 left-1.5 z-10 overflow-hidden bg-lime-300 text-neutral-950",
+          "absolute inset-y-1.5 left-1.5 z-10 overflow-hidden bg-primary-foreground text-primary",
           accentClassName,
         )}
       >

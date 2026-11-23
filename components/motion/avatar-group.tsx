@@ -209,7 +209,7 @@ export function AvatarGroup({
                     whileTap={reduce ? undefined : { scale: 0.92 }}
                     transition={SPRING_PRESS}
                     className={cn(
-                      "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-foreground font-medium text-background tabular-nums ring-2 ring-background outline-none focus-visible:ring-ring",
+                      "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted font-medium text-foreground tabular-nums ring-2 ring-background outline-none focus-visible:ring-ring",
                       SIZES[size].box,
                     )}
                   >

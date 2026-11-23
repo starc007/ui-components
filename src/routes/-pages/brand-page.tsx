@@ -93,7 +93,6 @@ const MOTION = [
 const OFF_SYSTEM = [
   { area: "Returns calendar cells", now: "text-[9px]", target: "layout decision" },
   { area: "Swap chain sub-badge", now: "text-[7px]", target: "larger badge or no letter" },
-  { area: "Black filled emphasis", now: "bg-foreground", target: "bg-primary" },
   { area: "Weight outside display", now: "font-semibold", target: "font-medium" },
   { area: "Violet and accent gradient", now: "in the theme", target: "removed" },
 ];

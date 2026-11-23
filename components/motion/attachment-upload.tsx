@@ -656,7 +656,7 @@ function AttachmentRow({
                   className={cn(
                     "w-[3px] shrink-0 rounded-full",
                     index / WAVEFORM_BARS.length <= progress
-                      ? "bg-foreground"
+                      ? "bg-primary"
                       : "bg-muted-foreground/35",
                   )}
                   style={{ height: bar.height }}
@@ -683,7 +683,7 @@ function AttachmentRow({
               onClick={() => onAudioToggle?.(item)}
               whileTap={reduce ? undefined : { scale: 0.94 }}
               transition={SPRING_PRESS}
-              className="grid size-9 shrink-0 place-items-center rounded-full bg-foreground text-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="grid size-9 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
@@ -1073,7 +1073,7 @@ export function AttachmentUpload({
                 }
           }
           transition={ITEM_TRANSITION}
-          className="mb-3 grid size-11 place-items-center rounded-full bg-muted text-foreground transition-colors duration-200 group-hover:bg-muted/80 group-data-[dragging=true]:bg-foreground group-data-[dragging=true]:text-background"
+          className="mb-3 grid size-11 place-items-center rounded-full bg-muted text-foreground transition-colors duration-200 group-hover:bg-muted/80 group-data-[dragging=true]:bg-primary group-data-[dragging=true]:text-primary-foreground"
         >
           <Upload className="size-[18px]" />
         </motion.span>

@@ -63,7 +63,7 @@ export function WaveSlider({ bars = BARS, className, ...options }: WaveSliderPro
             "h-14 flex-1 origin-center rounded-full",
             // /45 keeps the unfilled track above the 3:1 non-text contrast
             // floor in both themes (measured 4.16 dark / 3.13 light)
-            lane.filled ? "bg-foreground" : "bg-foreground/45",
+            lane.filled ? "bg-primary" : "bg-foreground/45",
           )}
           animate={{
             scaleY: reduce ? 0.4 : 0.22 + lane.crest * (dragging ? 0.78 : 0.6),

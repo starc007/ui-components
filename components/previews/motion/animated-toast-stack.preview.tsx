@@ -144,7 +144,7 @@ export function AnimatedToastStackPreview() {
             className={cn(
               "rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors press",
               position === positionOption
-                ? "bg-foreground text-background"
+                ? "bg-primary text-primary-foreground"
                 : "bg-foreground/[0.04] text-muted-foreground hover:bg-foreground/[0.08] hover:text-foreground",
             )}
           >

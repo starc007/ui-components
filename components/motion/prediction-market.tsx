@@ -532,7 +532,7 @@ export function PredictionMarket({
                   key={mode}
                   value={mode}
                   className="px-0 pb-3 pt-0 text-2xl font-semibold"
-                  indicatorClassName="h-0.5 bg-foreground"
+                  indicatorClassName="h-0.5 bg-primary"
                 >
                   {t(mode)}
                 </TabsTrigger>

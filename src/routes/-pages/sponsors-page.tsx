@@ -343,7 +343,7 @@ function SponsorPlanCard({
         )}
       >
         {featured ? (
-          <span className="absolute right-4 top-4 rounded-full border border-white/10 bg-foreground px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-wider text-background">
+          <span className="absolute right-4 top-4 rounded-full bg-primary px-2.5 py-1 text-[11px] font-medium uppercase tracking-wider text-primary-foreground">
             {t("planCard.highestImpact")}
           </span>
         ) : null}

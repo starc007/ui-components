@@ -396,8 +396,8 @@ function FileUploadRow({
                 className={cn(
                   "h-full rounded-full",
                   status === "success"
-                    ? "bg-emerald-500"
-                    : "bg-foreground",
+                    ? "bg-success"
+                    : "bg-primary",
                 )}
                 style={{
                   transformOrigin: "left",

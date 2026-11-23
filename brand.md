@@ -95,7 +95,8 @@ Near-monochrome neutrals, one blue for emphasis, semantic status colors. Source 
 | `accent` | `oklch(72% 0.18 195)` | `oklch(80% 0.18 195)` | Small highlights only |
 | `success`, `warning`, `danger` | | | Status only |
 
-- Filled emphasis is `primary` blue, never a black `bg-foreground` fill.
+- Filled emphasis is `primary` blue, never a black `bg-foreground` fill: primary buttons, selected chips and dates, active pagination, filled slider tracks, progress, the solid message bubble, chart value labels.
+- Thin markers stay `foreground`: menu radio dots, text carets, slider handle lines. Neutral chips (avatar overflow, icon tiles, workspace marks) use `bg-muted text-foreground`. Things that depict a device (the dynamic island) keep their own color.
 - No purple, violet or indigo. `--violet` and the cyan-to-violet `--gradient-accent` are being retired.
 
 ## Surfaces and elevation
@@ -144,6 +145,5 @@ The radius and type pass (2026-11-23) moved every control, menu row and floating
 |---|---|---|
 | Returns calendar cell numbers | `text-[9px]` | Cells are about 17px wide on mobile, so 11px overflows. Needs a layout decision. |
 | Swap chain sub-badge letter | `text-[7px]` | Larger badge, or drop the letter |
-| Black filled emphasis (`bg-foreground`): tool-approval approve, date-range month and year picks, others | black fill | `bg-primary` |
 | `font-semibold` outside display (card title, others) | 600 | 500 |
 | `--violet`, `--gradient-accent` | in the theme | removed |

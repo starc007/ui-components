@@ -84,8 +84,8 @@ export function FluidSlider({
           as the fill covers it and lines up glyph for glyph with the copy
           underneath. The clip's rounded right edge is the liquid cap. */}
       <motion.div className="absolute inset-0" style={{ clipPath }}>
-        <div className="absolute inset-0 bg-foreground" />
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-5 text-sm font-medium text-background">
+        <div className="absolute inset-0 bg-primary" />
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-5 text-sm font-medium text-primary-foreground">
           {row}
         </div>
       </motion.div>

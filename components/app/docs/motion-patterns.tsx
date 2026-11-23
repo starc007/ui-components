@@ -538,7 +538,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
         type="button"
         whileTap={reduce ? undefined : { scale: 0.97 }}
         transition={SPRING_PRESS}
-        className="h-11 rounded-full bg-foreground px-5 text-sm font-medium text-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="h-11 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         {t("pressMe")}
       </motion.button>
@@ -665,7 +665,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
               className={cn(
                 "min-h-10 rounded-full px-3 text-xs outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
                 selected
-                  ? "bg-foreground text-background"
+                  ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >

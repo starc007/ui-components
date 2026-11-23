@@ -514,7 +514,7 @@ export function DateRangePickerGrid({
                                 // Range scrubbing follows immediately: independent cell
                                 // fades leave stale highlights behind a moving pointer.
                                 className={cn(
-                                  "pointer-events-none absolute inset-y-0 rounded-[inherit] bg-foreground/[0.08]",
+                                  "pointer-events-none absolute inset-y-0 rounded-[inherit] bg-primary/10",
                                   inRange ? "opacity-100" : "opacity-0",
                                 )}
                                 style={{
@@ -554,7 +554,7 @@ export function DateRangePickerGrid({
                                 className={cn(
                                   "relative mx-auto flex h-8 w-full max-w-8 items-center justify-center rounded-full text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-30",
                                   endpoint
-                                    ? "bg-foreground font-medium text-background"
+                                    ? "bg-primary font-medium text-primary-foreground"
                                     : canHover &&
                                         !unavailable(date) &&
                                         !inRange &&
@@ -715,7 +715,7 @@ export function DateRangePickerPreset({
       className={cn(
         "rounded-full px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
         selected
-          ? "bg-foreground text-background"
+          ? "bg-primary text-primary-foreground"
           : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground",
         className,
       )}
@@ -993,7 +993,7 @@ function CalendarChoices({
           className={cn(
             "flex h-13 items-center justify-center rounded-full px-1 text-sm tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-25",
             choice.id === selected
-              ? "bg-foreground font-medium text-background"
+              ? "bg-primary font-medium text-primary-foreground"
               : "bg-muted/40 hover:bg-muted",
           )}
         >

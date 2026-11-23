@@ -247,7 +247,7 @@ export function CandlestickChartPlot({
           animate={{ y: y(lastPrice) }}
           transition={spring}
         >
-          <span className="block -translate-y-1/2 rounded-md bg-foreground px-1.5 py-0.5 font-mono text-xs text-background tabular-nums">
+          <span className="block -translate-y-1/2 rounded-full bg-primary px-2 py-0.5 font-mono text-xs text-primary-foreground tabular-nums">
             {formatPrice(lastPrice)}
           </span>
         </motion.div>

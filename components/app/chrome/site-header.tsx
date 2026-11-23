@@ -204,7 +204,7 @@ export function SiteHeader() {
             rel="noreferrer noopener"
             shape="pill"
             className="hidden min-h-9 text-xs sm:inline-flex"
-            innerClassName="whitespace-nowrap bg-foreground px-3 text-background sm:px-3.5"
+            innerClassName="whitespace-nowrap px-3 sm:px-3.5"
           >
             {t("getPro")}
             <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />

@@ -112,7 +112,7 @@ function KeysMedia() {
 
 function ReleaseMedia() {
   return (
-    <div className="flex size-full items-center justify-center bg-foreground text-background">
+    <div className="flex size-full items-center justify-center bg-primary text-primary-foreground">
       <span className="font-medium text-5xl tracking-tighter">2.0</span>
     </div>
   );

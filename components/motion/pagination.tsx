@@ -247,7 +247,7 @@ export function Pagination({
                     label: t("page", { page: item }),
                     current: isCurrent,
                     className: isCurrent
-                      ? "font-medium text-background"
+                      ? "font-medium text-primary-foreground"
                       : "text-muted-foreground hover:bg-foreground/[0.05] hover:text-foreground",
                     children: (
                       <>
@@ -256,7 +256,7 @@ export function Pagination({
                             aria-hidden="true"
                             layoutId={reduce ? undefined : "pagination-current"}
                             transition={SPRING_LAYOUT}
-                            className="absolute inset-0 rounded-full bg-foreground"
+                            className="absolute inset-0 rounded-full bg-primary"
                           />
                         ) : null}
                         <span className="relative">{item}</span>
