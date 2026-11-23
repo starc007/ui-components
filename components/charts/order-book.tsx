@@ -185,7 +185,7 @@ export function OrderBookHeader({ className }: { className?: string }) {
     <div
       aria-hidden="true"
       className={cn(
-        "grid grid-cols-3 py-3 text-[10px] uppercase tracking-wider text-muted-foreground",
+        "grid grid-cols-3 py-3 text-[11px] uppercase tracking-wider text-muted-foreground",
         className,
       )}
     >
@@ -287,7 +287,7 @@ export function OrderBookSpread({ className }: { className?: string }) {
         </span>
         {price == null ? "—" : formatPrice(price)}
       </span>
-      <span className="text-[10px] text-muted-foreground">
+      <span className="text-[11px] text-muted-foreground">
         {spread == null || midpoint == null
           ? t("spreadUnavailable")
           : spread < 0
@@ -308,7 +308,7 @@ export function OrderBookBalance({ className }: { className?: string }) {
   const ratio = total ? bidTotal / total : 0.5;
   return (
     <div className={cn("space-y-2 border-t border-border px-4 pb-3 pt-3", className)}>
-      <div className="flex justify-between text-[10px]">
+      <div className="flex justify-between text-[11px]">
         <span className="text-emerald-700 dark:text-emerald-400">
           {t("bids")} {total ? `${(ratio * 100).toFixed(1)}%` : "—"}
         </span>

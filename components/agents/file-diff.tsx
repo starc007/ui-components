@@ -185,7 +185,7 @@ export function FileDiff({
         aria-expanded={currentOpen}
         aria-controls={contentId}
         onClick={() => setOpen(!currentOpen)}
-        className="group flex min-h-9 w-full items-center gap-2 rounded-md py-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="group flex min-h-9 w-full items-center gap-2 rounded-full py-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <FileCode2
           aria-hidden="true"
@@ -225,7 +225,7 @@ export function FileDiff({
         open={currentOpen}
       >
         <div className="pl-6 pt-1.5">
-          <div className="overflow-hidden rounded-xl bg-muted/80">
+          <div className="overflow-hidden rounded-2xl bg-muted/80">
             <div
               ref={viewportRef}
               data-slot="file-diff-viewport"
@@ -287,7 +287,7 @@ export function FileDiff({
                   onClick={handleCopy}
                   whileTap={reduce ? undefined : { scale: 0.9 }}
                   transition={SPRING_PRESS}
-                  className="grid size-7 place-items-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-background/70 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                  className="grid size-7 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-background/70 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {copied ? (
                     <Check className="size-3.5" />

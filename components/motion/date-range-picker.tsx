@@ -65,7 +65,7 @@ const monthVariants = {
 };
 
 const iconClass =
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-30";
+  "inline-flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-30";
 
 /** State shared by built-in parts and custom date range controls. */
 export function useDateRangePicker() {
@@ -176,15 +176,15 @@ export function DateRangePickerSummary({
     <div
       {...props}
       className={cn(
-        "mb-2.5 grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2",
+        "mb-2.5 grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-2xl border border-border bg-muted/30 px-3.5 py-2",
         className,
       )}
     >
       <div className="min-w-0">
-        <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+        <p className="mb-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
           {t("startDate")}
         </p>
-        <p className="text-[13px] font-medium tabular-nums">
+        <p className="text-sm font-medium tabular-nums">
           {value ? shortFormat.format(parse(value.from)) : t("selectDate")}
         </p>
       </div>
@@ -194,12 +194,12 @@ export function DateRangePickerSummary({
         aria-hidden="true"
       />
       <div className="min-w-0">
-        <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+        <p className="mb-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
           {t("endDate")}
         </p>
         <p
           className={cn(
-            "text-[13px] font-medium tabular-nums",
+            "text-sm font-medium tabular-nums",
             !value?.to && "text-muted-foreground",
           )}
         >
@@ -250,7 +250,7 @@ export function DateRangePickerHeader({
           disabled={disabled}
           onClick={() => openChoices("months")}
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] font-semibold transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
+            "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
             view === "years" && "hidden",
           )}
         >
@@ -272,7 +272,7 @@ export function DateRangePickerHeader({
           aria-controls={view === "years" ? choicesId : undefined}
           disabled={disabled}
           onClick={() => openChoices("years")}
-          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] font-medium tabular-nums text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40"
+          className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium tabular-nums text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40"
         >
           {view === "years" ? `${yearPage}–${yearPageEnd}` : year}
           <ChevronDown
@@ -621,7 +621,7 @@ export function DateRangePickerClear({
       aria-label={props["aria-label"] ?? ctx.t("clearLabel")}
       disabled={disabled || ctx.disabled || !ctx.value}
       className={cn(
-        "rounded-md px-1.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-30",
+        "rounded-full px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-30",
         className,
       )}
       onClick={(event) => {
@@ -713,7 +713,7 @@ export function DateRangePickerPreset({
       aria-pressed={selected}
       disabled={disabled || !ctx.rangeAvailable(value)}
       className={cn(
-        "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
+        "rounded-full px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
         selected
           ? "bg-foreground text-background"
           : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -775,7 +775,7 @@ export function DateRangePickerTrigger({
           props["aria-label"] ?? ctx.t("triggerLabel", { label: ctx.label, summary })
         }
         className={cn(
-          "inline-flex h-9 w-fit max-w-full items-center gap-2 rounded-xl border border-border bg-background px-3 text-[13px] font-medium text-foreground transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
+          "inline-flex h-10 w-fit max-w-full items-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
           className,
         )}
       >
@@ -849,7 +849,7 @@ export function DateRangePickerContent({
   return (
     <MorphPopoverContent
       align="start"
-      radius={16}
+      radius={24}
       shadow={false}
       {...props}
       className={cn("w-80 max-w-[calc(100vw-1.5rem)]", className)}
@@ -991,7 +991,7 @@ function CalendarChoices({
           whileTap={reduce ? undefined : { scale: 0.96 }}
           transition={SPRING_PRESS}
           className={cn(
-            "flex h-13 items-center justify-center rounded-xl px-1 text-[13px] tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-25",
+            "flex h-13 items-center justify-center rounded-full px-1 text-sm tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-25",
             choice.id === selected
               ? "bg-foreground font-medium text-background"
               : "bg-muted/40 hover:bg-muted",

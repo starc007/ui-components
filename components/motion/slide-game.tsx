@@ -309,7 +309,7 @@ export function SlideGame({
               </label>
               <div
                 className={cn(
-                  "flex h-10 items-center gap-0.5 rounded-xl border bg-background pr-1 pl-3 transition-colors focus-within:ring-2 focus-within:ring-foreground/20",
+                  "flex h-10 items-center gap-0.5 rounded-full border bg-background pr-1 pl-3 transition-colors focus-within:ring-2 focus-within:ring-foreground/20",
                   noBet ? "border-rose-500/60" : "border-border hover:border-(--color-border-strong)",
                 )}
               >
@@ -332,7 +332,7 @@ export function SlideGame({
                   variant="ghost"
                   size="sm"
                   pressScale={0.96}
-                  className="h-8 rounded-lg px-2.5 tabular-nums"
+                  className="h-8 rounded-full px-2.5 tabular-nums"
                   onClick={() => scaleBet(0.5)}
                   disabled={busy}
                   aria-label={t("halveBet")}
@@ -343,7 +343,7 @@ export function SlideGame({
                   variant="ghost"
                   size="sm"
                   pressScale={0.96}
-                  className="h-8 rounded-lg px-2.5 tabular-nums"
+                  className="h-8 rounded-full px-2.5 tabular-nums"
                   onClick={() => scaleBet(2)}
                   disabled={busy}
                   aria-label={t("doubleBet")}
@@ -357,7 +357,7 @@ export function SlideGame({
                 {t("target")}
               </span>
               <Select value={String(target)} onValueChange={changeTarget} disabled={busy}>
-                <SelectTrigger className="h-10 rounded-xl tabular-nums">
+                <SelectTrigger className="h-10 rounded-full tabular-nums">
                   <span className="sr-only">{t("target")} </span>
                   {/* Options register after mount; the placeholder covers the server render. */}
                   <SelectValue placeholder={formatShort(target)} />
@@ -388,7 +388,7 @@ export function SlideGame({
 
           <Button
             className={cn(
-              "h-12 w-full rounded-xl text-base tabular-nums aria-disabled:opacity-60 aria-disabled:hover:bg-primary @min-[36rem]:mt-auto",
+              "h-12 w-full rounded-full text-base tabular-nums aria-disabled:opacity-60 aria-disabled:hover:bg-primary @min-[36rem]:mt-auto",
               busy ? "aria-disabled:cursor-wait" : "aria-disabled:cursor-not-allowed",
             )}
             // aria-disabled, not disabled: the button keeps keyboard focus through the round.

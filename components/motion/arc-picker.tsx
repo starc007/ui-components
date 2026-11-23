@@ -145,7 +145,7 @@ function ArcOption({
         if (!event.defaultPrevented) onSelect();
       }}
       className={cn(
-        "absolute rounded-md px-2 py-1 text-2xl font-light whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-35",
+        "absolute rounded-full px-3 py-1 text-2xl font-light whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-35",
         horizontal && "text-center",
         !horizontal && (side === "left" ? "text-right" : "text-left"),
         selected ? "text-primary" : "text-muted-foreground",

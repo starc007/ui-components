@@ -542,7 +542,7 @@ export function ContextMenuContent({
         onKeyDown={onKeyDown}
         onContextMenu={(event) => event.preventDefault()}
         className={cn(
-          "min-w-56 overflow-hidden rounded-xl border border-border bg-card p-1.5 text-foreground outline-none",
+          "min-w-56 overflow-hidden rounded-3xl border border-border bg-card p-2 text-foreground outline-none",
           className,
         )}
       >
@@ -608,10 +608,10 @@ function ContextMenuItemBase({
         if (closeOnSelect) context.setOpen(false);
       }}
       className={cn(
-        "relative isolate flex w-full select-none items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] outline-none",
+        "relative isolate flex w-full select-none items-center gap-2.5 rounded-full px-3 py-1.5 text-left text-sm outline-none",
         "focus-visible:ring-2 focus-visible:ring-foreground/15",
         "disabled:pointer-events-none disabled:opacity-40",
-        inset && "pl-8",
+        inset && "pl-9",
         tone === "destructive" ? "text-destructive" : "text-foreground",
         className,
       )}
@@ -620,7 +620,7 @@ function ContextMenuItemBase({
         <motion.span
           layoutId={`${context.menuId}-active`}
           className={cn(
-            "absolute inset-0 -z-10 rounded-lg",
+            "absolute inset-0 -z-10 rounded-full",
             tone === "destructive"
               ? "bg-destructive/10"
               : "bg-foreground/[0.065]",
@@ -760,8 +760,8 @@ export function ContextMenuLabel({
   return (
     <div
       className={cn(
-        "px-2.5 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground",
-        inset && "pl-8",
+        "px-3 pb-1 pt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground",
+        inset && "pl-9",
         className,
       )}
     >
@@ -778,7 +778,7 @@ export function ContextMenuSeparator({
   className,
 }: ContextMenuSeparatorProps) {
   return (
-    <hr className={cn("-mx-1 my-1 h-px border-0 bg-border", className)} />
+    <hr className={cn("-mx-2 my-1 h-px border-0 bg-border", className)} />
   );
 }
 
@@ -795,7 +795,7 @@ export function ContextMenuShortcut({
     <span
       aria-hidden="true"
       className={cn(
-        "ml-auto pl-4 text-[10px] font-medium tracking-wide text-muted-foreground",
+        "ml-auto pl-4 text-[11px] font-medium tracking-wide text-muted-foreground",
         className,
       )}
     >

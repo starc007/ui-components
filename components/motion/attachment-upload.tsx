@@ -253,7 +253,7 @@ function RowAction({
           initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.75 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={ITEM_TRANSITION}
-          className="grid size-9 shrink-0 place-items-center rounded-xl text-emerald-600 dark:text-emerald-400"
+          className="grid size-9 shrink-0 place-items-center rounded-full text-emerald-600 dark:text-emerald-400"
         >
           <Check className="size-4" />
         </motion.span>
@@ -267,7 +267,7 @@ function RowAction({
         <span
           role="status"
           aria-label={t("removing", { name: label })}
-          className="grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground"
+          className="grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground"
         >
           <motion.span
             animate={reduce ? undefined : { rotate: 360 }}
@@ -292,7 +292,7 @@ function RowAction({
           <span
             role="status"
             aria-label={t("uploadFailedFor", { name: label })}
-            className="grid size-9 shrink-0 place-items-center rounded-xl text-destructive"
+            className="grid size-9 shrink-0 place-items-center rounded-full text-destructive"
           >
             <AlertCircle className="size-4" />
           </span>
@@ -308,7 +308,7 @@ function RowAction({
           onClick={onClick}
           whileTap={reduce ? undefined : { scale: 0.92 }}
           transition={SPRING_PRESS}
-          className="grid size-9 shrink-0 place-items-center rounded-xl text-destructive outline-none transition-colors hover:bg-destructive/10 focus-visible:ring-2 focus-visible:ring-ring"
+          className="grid size-9 shrink-0 place-items-center rounded-full text-destructive outline-none transition-colors hover:bg-destructive/10 focus-visible:ring-2 focus-visible:ring-ring"
         >
           <RotateCcw className="size-4" />
         </motion.button>
@@ -324,7 +324,7 @@ function RowAction({
         onClick={onClick}
         whileTap={reduce ? undefined : { scale: 0.92 }}
         transition={SPRING_PRESS}
-        className="grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        className="grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
       >
         <X className="size-4" />
       </motion.button>
@@ -362,16 +362,16 @@ function ImageThumbnail({
     <Tooltip
       side="top"
       delay={160}
-      className="rounded-xl p-1 shadow-xl"
+      className="rounded-2xl p-1 shadow-xl"
       content={
         <span className="block w-32">
           {/* biome-ignore lint/performance/noImgElement: Blob and remote previews keep this registry component framework-agnostic. */}
           <img
             src={src}
             alt=""
-            className="h-20 w-full rounded-lg object-cover"
+            className="h-20 w-full rounded-xl object-cover"
           />
-          <span className="block px-1 pb-0.5 pt-1 text-center text-[10px] font-medium text-muted-foreground">
+          <span className="block px-1 pb-0.5 pt-1 text-center text-[11px] font-medium text-muted-foreground">
             {t("clickToPreview")}
           </span>
         </span>
@@ -723,7 +723,7 @@ function AttachmentRow({
                 target="_blank"
                 rel="noreferrer noopener"
                 aria-label={t("open", { name: item.name })}
-                className="grid size-8 shrink-0 place-items-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                className="grid size-8 shrink-0 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <ExternalLink className="size-4" />
               </a>
@@ -1050,7 +1050,7 @@ export function AttachmentUpload({
           addFiles(Array.from(event.dataTransfer.files));
         }}
         className={cn(
-          "group relative isolate flex min-h-52 w-full flex-col items-center justify-center overflow-hidden rounded-[2rem] bg-muted/65 p-2 text-center outline-none",
+          "group relative isolate flex min-h-52 w-full flex-col items-center justify-center overflow-hidden rounded-3xl bg-muted/65 p-2 text-center outline-none",
           "transition-colors duration-200 hover:bg-muted/85",
           "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           "data-[dragging=true]:bg-muted",
@@ -1060,7 +1060,7 @@ export function AttachmentUpload({
       >
         <span
           aria-hidden="true"
-          className="absolute inset-2 -z-10 rounded-[1.5rem] border border-dashed border-muted-foreground/25 bg-background transition-[border-color,background-color] duration-200 group-hover:border-muted-foreground/45 group-data-[dragging=true]:border-foreground/65 group-data-[dragging=true]:bg-muted/20"
+          className="absolute inset-2 -z-10 rounded-2xl border border-dashed border-muted-foreground/25 bg-background transition-[border-color,background-color] duration-200 group-hover:border-muted-foreground/45 group-data-[dragging=true]:border-foreground/65 group-data-[dragging=true]:bg-muted/20"
         />
         <motion.span
           aria-hidden="true"
@@ -1073,7 +1073,7 @@ export function AttachmentUpload({
                 }
           }
           transition={ITEM_TRANSITION}
-          className="mb-3 grid size-11 place-items-center rounded-2xl bg-muted text-foreground transition-colors duration-200 group-hover:bg-muted/80 group-data-[dragging=true]:bg-foreground group-data-[dragging=true]:text-background"
+          className="mb-3 grid size-11 place-items-center rounded-full bg-muted text-foreground transition-colors duration-200 group-hover:bg-muted/80 group-data-[dragging=true]:bg-foreground group-data-[dragging=true]:text-background"
         >
           <Upload className="size-[18px]" />
         </motion.span>

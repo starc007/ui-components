@@ -637,7 +637,7 @@ function LightboxFrame({
     <div className="relative flex min-h-0 flex-1 items-center justify-center">
       <div
         ref={bounds}
-        className="flex h-full w-full items-center justify-center overflow-hidden rounded-lg"
+        className="flex h-full w-full items-center justify-center overflow-hidden rounded-2xl"
       >
         <motion.div
           ref={imageBox}

@@ -193,7 +193,7 @@ export function TokenPicker({
                         type="button"
                         onClick={() => onPick(token.id)}
                         className={cn(
-                          "flex w-full items-center justify-between rounded-xl px-2 py-2 text-left transition-colors active:scale-[0.97]",
+                          "flex w-full items-center justify-between rounded-full px-3 py-2 text-left transition-colors active:scale-[0.97]",
                           active
                             ? "bg-muted/60"
                             : "hover:bg-muted/60",

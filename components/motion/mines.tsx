@@ -456,7 +456,7 @@ export function Mines({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.15, ease: EASE_OUT, delay: 0.1 }}
-                    className="absolute top-1.5 left-2 text-[10px] font-medium text-primary/70 tabular-nums"
+                    className="absolute top-1.5 left-2 text-[11px] font-medium text-primary/70 tabular-nums"
                   >
                     {order + 1}
                   </motion.span>

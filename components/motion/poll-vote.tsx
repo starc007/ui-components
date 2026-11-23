@@ -151,7 +151,7 @@ export function PollVote({
               onValueChange?.(option.id);
             }}
             className={cn(
-              "relative isolate flex h-10 items-center justify-between gap-3 overflow-hidden rounded-xl border px-3 text-left text-sm transition-colors duration-200",
+              "relative isolate flex h-10 items-center justify-between gap-3 overflow-hidden rounded-full border px-3 text-left text-sm transition-colors duration-200",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
               mine ? "border-primary/40 font-medium text-foreground" : "border-border text-foreground",
               !voted && "hover:bg-muted/60",

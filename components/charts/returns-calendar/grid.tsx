@@ -43,7 +43,7 @@ export function ReturnsCalendarGrid({ children, className }: { children?: ReactN
         <span
           key={c.name}
           className={cn(
-            "pb-1 text-center text-[10px] transition-colors duration-200",
+            "pb-1 text-center text-[11px] transition-colors duration-200",
             hot?.m === c.m ? "text-foreground" : "text-muted-foreground",
           )}
         >
@@ -52,7 +52,7 @@ export function ReturnsCalendarGrid({ children, className }: { children?: ReactN
       ))}
       <span
         className={cn(
-          "pb-1 text-center text-[10px] transition-colors duration-200",
+          "pb-1 text-center text-[11px] transition-colors duration-200",
           hot?.m === YEAR ? "text-foreground" : "text-muted-foreground",
         )}
       >
@@ -63,7 +63,7 @@ export function ReturnsCalendarGrid({ children, className }: { children?: ReactN
         <div key={year} className="contents">
           <span
             className={cn(
-              "flex items-center justify-end pr-1.5 font-mono text-[10px] tabular-nums transition-colors duration-200",
+              "flex items-center justify-end pr-1.5 font-mono text-[11px] tabular-nums transition-colors duration-200",
               hot?.y === y ? "text-foreground" : "text-muted-foreground",
             )}
           >

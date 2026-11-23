@@ -42,7 +42,7 @@ export function MultiSelectTrigger({
         context.setOpen(true);
       }}
       className={cn(
-        "relative z-20 flex min-h-11 w-full min-w-52 cursor-text items-center gap-2 rounded-xl border border-border bg-transparent px-2.5 py-1.5 text-sm text-foreground transition-[border-color] hover:border-(--color-border-strong)",
+        "relative z-20 flex min-h-11 w-full min-w-52 cursor-text items-center gap-2 rounded-[22px] border border-border bg-transparent px-2.5 py-1.5 text-sm text-foreground transition-[border-color] hover:border-(--color-border-strong)",
         "focus-within:ring-2 focus-within:ring-foreground/20",
         context.disabled && "pointer-events-none opacity-50",
         className,
@@ -128,7 +128,7 @@ export function MultiSelectValue({
                     }
               }
               className={cn(
-                "inline-flex h-7 max-w-full items-center gap-1 rounded-lg bg-muted px-2 text-xs font-medium text-foreground",
+                "inline-flex h-7 max-w-full items-center gap-1 rounded-full bg-muted px-2.5 text-xs font-medium text-foreground",
                 chipClassName,
               )}
             >
@@ -146,7 +146,7 @@ export function MultiSelectValue({
                   context.remove(value);
                   context.inputRef.current?.focus({ preventScroll: true });
                 }}
-                className="-mr-1 grid size-5 shrink-0 place-items-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-foreground/10 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                className="-mr-1 grid size-5 shrink-0 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-foreground/10 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <X aria-hidden="true" className="size-3" />
               </button>

@@ -204,7 +204,7 @@ function ToolRow({
         <ActionIcon action={item.action} />
       </span>
       <span className="shrink-0 font-medium text-foreground/90">{action}</span>
-      <span className="min-w-0 flex-1 truncate rounded-lg bg-muted/80 px-2.5 py-1 font-mono text-xs text-muted-foreground/70">
+      <span className="min-w-0 flex-1 truncate rounded-full bg-muted/80 px-2.5 py-1 font-mono text-xs text-muted-foreground/70">
         {item.target}
       </span>
       {typeof item.additions === "number" || typeof item.deletions === "number" ? (
@@ -241,7 +241,7 @@ function TraceRow({ item }: { item: AgentActivityTrace }) {
       </span>
       <span className="font-medium text-foreground/90">{item.label}</span>
       {item.detail ? (
-        <span className="min-w-0 truncate rounded-lg bg-muted/80 px-2.5 py-1 font-mono text-xs text-muted-foreground/70">
+        <span className="min-w-0 truncate rounded-full bg-muted/80 px-2.5 py-1 font-mono text-xs text-muted-foreground/70">
           {item.detail}
         </span>
       ) : (

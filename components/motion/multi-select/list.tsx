@@ -36,7 +36,7 @@ export function MultiSelectList({
       aria-label={ariaLabel ?? context.t("listLabel")}
       aria-multiselectable="true"
       className={cn(
-        "relative isolate max-h-64 overflow-y-auto overscroll-contain p-1.5 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden",
+        "relative isolate max-h-64 overflow-y-auto overscroll-contain p-2 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden",
         className,
       )}
     >
@@ -79,7 +79,7 @@ export function MultiSelectLabel({
 }: MultiSelectLabelProps) {
   const groupId = useContext(MultiSelectGroupContext);
   const labelClassName = cn(
-    "w-full px-2 py-1.5 text-[0.68rem] font-medium uppercase tracking-[0.12em] text-muted-foreground",
+    "w-full px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground",
     className,
   );
   return groupId ? (
@@ -169,7 +169,7 @@ export function MultiSelectItem({
         context.toggle(value);
       }}
       className={cn(
-        "relative flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm outline-none transition-colors duration-150",
+        "relative flex w-full items-center gap-2 rounded-full px-3 py-1.5 text-left text-sm outline-none transition-colors duration-150",
         active || selected ? "text-foreground" : "text-muted-foreground",
         "disabled:pointer-events-none disabled:opacity-45",
         className,
@@ -179,7 +179,7 @@ export function MultiSelectItem({
         <motion.span
           aria-hidden="true"
           layoutId={context.activeLayoutId}
-          className="absolute inset-0 -z-10 rounded-lg bg-muted"
+          className="absolute inset-0 -z-10 rounded-full bg-muted"
           transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
         />
       ) : null}

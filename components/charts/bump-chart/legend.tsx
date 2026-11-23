@@ -32,7 +32,7 @@ export function BumpChartLegend({ className }: { className?: string }) {
               }
             }}
             className={cn(
-              "flex min-w-0 items-center gap-2 rounded-md px-2 py-2.5 text-xs text-foreground transition-opacity duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+              "flex min-w-0 items-center gap-2 rounded-full px-3 py-2.5 text-xs text-foreground transition-opacity duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
               highlighted && highlighted !== row.id && "opacity-35",
               pinned === row.id && "bg-muted/60",
             )}
@@ -47,7 +47,7 @@ export function BumpChartLegend({ className }: { className?: string }) {
               {last == null ? "—" : `#${last}`}
             </span>
             <span
-              className="min-w-5 text-right font-mono text-[10px] tabular-nums text-muted-foreground"
+              className="min-w-5 text-right font-mono text-[11px] tabular-nums text-muted-foreground"
               title={
                 gain == null
                   ? t("changeUnavailable")

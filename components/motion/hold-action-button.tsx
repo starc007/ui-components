@@ -179,7 +179,7 @@ export const HoldActionButton = forwardRef<
       transition={SPRING_PRESS}
       className={cn(
         "relative inline-grid h-16 min-w-72 touch-none place-items-center overflow-hidden rounded-[var(--hold-radius)] bg-primary px-8 text-primary-foreground",
-        "[--hold-radius:22px]",
+        "[--hold-radius:9999px]",
         TOUCH_GESTURE_CLASS,
         "outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         "disabled:pointer-events-none disabled:opacity-50",

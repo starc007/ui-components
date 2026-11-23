@@ -175,7 +175,7 @@ export function NotificationBell({
           >
             <motion.span
               animate={badge}
-              className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-none font-semibold text-white tabular-nums ring-2 ring-background"
+              className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-destructive px-1 text-[11px] leading-none font-semibold text-white tabular-nums ring-2 ring-background"
             >
               <DigitSwap value={shown} direction="up" />
             </motion.span>

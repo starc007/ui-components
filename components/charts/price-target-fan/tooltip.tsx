@@ -28,7 +28,7 @@ export function PriceTargetFanTooltip({
           ? children(overlay)
           : (children ?? (
               <>
-                <span className="block text-[10px] text-muted-foreground">{overlay.title}</span>
+                <span className="block text-[11px] text-muted-foreground">{overlay.title}</span>
                 <span className="mt-1.5 flex flex-col gap-1">
                   {overlay.metrics.map((metric) => (
                     <span key={metric.label} className="flex items-center justify-between gap-3 text-xs">

@@ -190,7 +190,7 @@ export function BloomMenu({
                 if (next instanceof Node && !ref.current?.contains(next))
                   close(false);
               }}
-              style={{ borderRadius: 16 }}
+              style={{ borderRadius: 24 }}
               className="w-[min(86vw,420px)] overflow-hidden border border-border bg-card"
             >
               <motion.div
@@ -213,7 +213,7 @@ export function BloomMenu({
                     type="button"
                     onClick={() => close(true)}
                     aria-label={t("close")}
-                    className="rounded-sm text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                    className="rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -308,7 +308,7 @@ export function BloomMenu({
               type="button"
               layoutId={layoutId}
               transition={morph}
-              style={{ borderRadius: 16 }}
+              style={{ borderRadius: 22 }}
               onClick={() => setOpen(true)}
               aria-haspopup="menu"
               aria-expanded={open}

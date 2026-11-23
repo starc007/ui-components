@@ -199,7 +199,7 @@ export function CollapsibleTrigger({
       layout={context.reduce ? false : "position"}
       transition={{ layout: SPRING_LAYOUT }}
       className={cn(
-        "flex min-h-10 w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-medium outline-none transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+        "flex min-h-10 w-full items-center gap-3 rounded-2xl px-3 py-2 text-left text-sm font-medium outline-none transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
     >

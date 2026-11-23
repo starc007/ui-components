@@ -248,7 +248,7 @@ export function CardFolder({
             />
           </svg>
 
-          <span className="absolute inset-x-[5%] inset-y-0 z-10 flex min-w-0 flex-col justify-between py-4">
+          <span className="absolute inset-x-[5%] inset-y-0 z-10 flex min-w-0 flex-col justify-between py-3">
             <span className="flex items-start justify-between pr-2">
               <motion.button
                 key="card-details-visibility"
@@ -263,7 +263,7 @@ export function CardFolder({
                 whileTap={reduce || disabled ? undefined : { scale: 0.96 }}
                 transition={reduce ? { duration: 0.12 } : SPRING_PRESS}
                 className={cn(
-                  "z-30 flex size-10 shrink-0 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                  "z-30 flex size-9 shrink-0 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
                   isOpen ? "pointer-events-none" : "pointer-events-auto",
                 )}
               >
@@ -297,9 +297,9 @@ export function CardFolder({
                 </AnimatePresence>
               </motion.button>
 
-              <span className="flex shrink-0 items-end gap-3.5 pt-2">
+              <span className="flex shrink-0 items-end gap-3.5 pt-1">
                 <span className="flex flex-col gap-0.5">
-                  <span className="text-[9px] font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
+                  <span className="text-[11px] leading-none font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
                     {t("expiry")}
                   </span>
                   <span className="text-xs font-medium text-foreground tabular-nums">
@@ -307,7 +307,7 @@ export function CardFolder({
                   </span>
                 </span>
                 <span className="flex flex-col gap-0.5">
-                  <span className="text-[9px] font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
+                  <span className="text-[11px] leading-none font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
                     {t("cvv")}
                   </span>
                   <DigitSwap

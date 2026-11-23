@@ -116,7 +116,7 @@ export function BubbleSlider({ format, className, ...options }: BubbleSliderProp
                     ? undefined
                     : { rotate: tilt, scaleX: squash, scaleY: stretch, originY: 1 }
                 }
-                className="relative rounded-xl bg-foreground px-2.5 py-1 text-sm font-medium tabular-nums text-background shadow-md"
+                className="relative rounded-full bg-foreground px-3 py-1 text-sm font-medium tabular-nums text-background shadow-md"
               >
                 {readout}
                 <span className="absolute -bottom-1 left-1/2 size-2.5 -translate-x-1/2 rotate-45 rounded-[3px] bg-foreground" />

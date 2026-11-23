@@ -38,7 +38,10 @@ const UNFOLD_SPRING = {
 } as const;
 // Exits are faster than entrances: the panel folds back on a short ease.
 const UNFOLD_EXIT = { duration: 0.2, ease: EASE_OUT } as const;
-const RADIUS = 12;
+// The trigger is a pill (half its h-10 height). The panel is concentric with
+// its h-8 pill rows: 8px padding + 16px row radius.
+const TRIGGER_RADIUS = 20;
+const PANEL_RADIUS = 24;
 // How far the open panel sits from the trigger once it has pulled away.
 const GAP = 8;
 // The surface starts as a thin lip flush against the trigger's edge.
@@ -275,7 +278,7 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
   const nearRadius = useTransform(
     ctx.progress,
     [0, 0.2, 0.4, 1],
-    [RADIUS, 0, 0, RADIUS],
+    [TRIGGER_RADIUS, 0, 0, TRIGGER_RADIUS],
   );
   const rotate = useTransform(ctx.progress, (p) =>
     ctx.reduce ? (ctx.open ? 180 : 0) : Math.min(1, Math.max(0, p)) * 180,
@@ -299,13 +302,13 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
         }
       }}
       style={{
-        borderTopLeftRadius: ctx.reduce || !isTop ? RADIUS : nearRadius,
-        borderTopRightRadius: ctx.reduce || !isTop ? RADIUS : nearRadius,
-        borderBottomLeftRadius: ctx.reduce || isTop ? RADIUS : nearRadius,
-        borderBottomRightRadius: ctx.reduce || isTop ? RADIUS : nearRadius,
+        borderTopLeftRadius: ctx.reduce || !isTop ? TRIGGER_RADIUS : nearRadius,
+        borderTopRightRadius: ctx.reduce || !isTop ? TRIGGER_RADIUS : nearRadius,
+        borderBottomLeftRadius: ctx.reduce || isTop ? TRIGGER_RADIUS : nearRadius,
+        borderBottomRightRadius: ctx.reduce || isTop ? TRIGGER_RADIUS : nearRadius,
       }}
       className={cn(
-        "relative z-10 flex w-full items-center justify-between gap-2 border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors",
+        "relative z-10 flex h-10 w-full items-center justify-between gap-2 border border-border bg-background px-4 text-sm text-foreground outline-none transition-colors",
         "hover:border-(--color-border-strong) focus-visible:ring-2 focus-visible:ring-foreground/20",
         "disabled:pointer-events-none disabled:opacity-50",
         className,
@@ -405,11 +408,11 @@ export function SelectContent({ className, children }: SelectContentProps) {
   const fromY = ready ? (isTop ? GAP : -GAP) : 0;
   const detach = useTransform(progress, [0.4, 1], [0, 1]);
   const y = useTransform(detach, (d) => lerp(fromY, 0, d));
-  const nearRadius = useTransform(detach, (d) => (ready ? RADIUS * d : RADIUS));
+  const nearRadius = useTransform(detach, (d) => (ready ? PANEL_RADIUS * d : PANEL_RADIUS));
   const borderRadius = useTransform(nearRadius, (near) =>
     isTop
-      ? `${RADIUS}px ${RADIUS}px ${near}px ${near}px`
-      : `${near}px ${near}px ${RADIUS}px ${RADIUS}px`,
+      ? `${PANEL_RADIUS}px ${PANEL_RADIUS}px ${near}px ${near}px`
+      : `${near}px ${near}px ${PANEL_RADIUS}px ${PANEL_RADIUS}px`,
   );
   const clipPath = useTransform([progress, nearRadius], ([p, near]: number[]) => {
     if (!ready) return "none";
@@ -420,8 +423,8 @@ export function SelectContent({ className, children }: SelectContentProps) {
     const hidden = Math.max(0, (height - LIP) * (1 - reveal));
     const inset = isTop ? `${hidden}px 0 0 0` : `0 0 ${hidden}px 0`;
     const corners = isTop
-      ? `${RADIUS}px ${RADIUS}px ${near}px ${near}px`
-      : `${near}px ${near}px ${RADIUS}px ${RADIUS}px`;
+      ? `${PANEL_RADIUS}px ${PANEL_RADIUS}px ${near}px ${near}px`
+      : `${near}px ${near}px ${PANEL_RADIUS}px ${PANEL_RADIUS}px`;
     return `inset(${inset} round ${corners})`;
   });
   // The surface materialises over its first frames rather than popping in as
@@ -466,7 +469,7 @@ export function SelectContent({ className, children }: SelectContentProps) {
         <motion.div
           initial={false}
           animate={open ? "show" : "hidden"}
-          className="p-1"
+          className="p-2"
         >
           {children}
         </motion.div>
@@ -510,7 +513,7 @@ export function SelectItem({
         data-listbox-id={value}
         onClick={() => ctx.select(value)}
         className={cn(
-          "flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-1.5 text-left text-sm outline-none transition-colors",
+          "flex w-full items-center justify-between gap-2 rounded-full px-3 py-1.5 text-left text-sm outline-none transition-colors",
           selected
             ? "bg-muted text-foreground"
             : "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:bg-muted",

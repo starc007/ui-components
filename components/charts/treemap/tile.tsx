@@ -126,7 +126,7 @@ export function TreemapCell({
           <>
             <span className="block truncate text-xs font-semibold sm:text-sm">{tile.label}</span>
             {showValue ? (
-              <span className="mt-1 block truncate font-mono text-[10px] tabular-nums opacity-80 sm:text-xs">
+              <span className="mt-1 block truncate font-mono text-[11px] tabular-nums opacity-80 sm:text-xs">
                 {formatValue(tile.value)}
               </span>
             ) : null}

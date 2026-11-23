@@ -857,7 +857,7 @@ export function KnockoutWheel({
               top: pct(tapped.y + (tapAbove ? -tapped.r : tapped.r)),
             }}
             className={cn(
-              "pointer-events-none absolute z-10 w-max max-w-[min(18rem,80vw)] -translate-x-1/2 text-balance break-words rounded-lg border border-border bg-background px-2.5 py-1 text-center text-xs font-medium text-foreground shadow-lg",
+              "pointer-events-none absolute z-10 w-max max-w-[min(18rem,80vw)] -translate-x-1/2 text-balance break-words rounded-2xl border border-border bg-background px-3 py-1 text-center text-xs font-medium text-foreground shadow-lg",
               tapAbove ? "-translate-y-[calc(100%+8px)]" : "translate-y-2",
             )}
           >

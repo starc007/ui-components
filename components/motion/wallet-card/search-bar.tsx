@@ -97,8 +97,8 @@ export function SearchBar({
             aria-label={t("search")}
             onClick={() => setOpen(true)}
             transition={morph}
-            style={{ borderRadius: 12 }}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground"
+            style={{ borderRadius: 16 }}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground"
           >
             <Search className="h-4 w-4" />
           </motion.button>
@@ -114,10 +114,10 @@ export function SearchBar({
             key="panel"
             layoutId={layoutId}
             transition={morph}
-            style={{ borderRadius: 16 }}
+            style={{ borderRadius: 24 }}
             className="absolute top-0 -right-2 -left-2 z-40 overflow-hidden border border-border/30 bg-background backdrop-blur-md"
           >
-            <div className="flex h-9 items-center gap-2 px-3">
+            <div className="flex h-10 items-center gap-2.5 px-4">
               <motion.span
                 layout="position"
                 transition={glide}
@@ -156,7 +156,7 @@ export function SearchBar({
                 animate="show"
                 variants={reduce ? undefined : LIST}
                 className={cn(
-                  "max-h-56 overflow-y-auto p-1.5",
+                  "max-h-56 overflow-y-auto p-2",
                   armed ? "" : "pointer-events-none",
                 )}
               >
@@ -174,7 +174,7 @@ export function SearchBar({
                         submit(term);
                       }}
                       className={cn(
-                        "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left text-sm text-muted-foreground outline-none transition-colors",
+                        "flex h-8 w-full items-center gap-2.5 rounded-full px-2 text-left text-sm text-muted-foreground outline-none transition-colors",
                         armed && "hover:bg-muted hover:text-foreground",
                       )}
                     >

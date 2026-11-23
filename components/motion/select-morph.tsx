@@ -27,7 +27,11 @@ import { cn } from "@/lib/utils";
 // Shared-layout morph: trigger box grows into the panel and back, one surface.
 const MORPH: Transition = { type: "spring", duration: 0.5, bounce: 0.22 };
 // Trigger and panel header share this row so the morph stays seamless.
-const ROW = "flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-sm";
+const ROW = "flex h-10 w-full items-center justify-between gap-2 px-4 text-sm";
+// The closed trigger is a pill (half its h-10 height). The open panel is
+// concentric with its h-8 pill rows: 8px padding + 16px row radius.
+const TRIGGER_RADIUS = 20;
+const PANEL_RADIUS = 24;
 
 const LIST: Variants = {
   hidden: {},
@@ -264,7 +268,7 @@ export function MorphSelectTrigger({
       <div
         aria-hidden
         inert
-        className={cn(ROW, "invisible rounded-xl border border-border")}
+        className={cn(ROW, "invisible rounded-full border border-border")}
       >
         {children}
         <ChevronDown className="h-4 w-4" />
@@ -290,7 +294,7 @@ export function MorphSelectTrigger({
               }
             }}
             transition={ctx.reduce ? { duration: 0 } : MORPH}
-            style={{ borderRadius: 12 }}
+            style={{ borderRadius: TRIGGER_RADIUS }}
             className={cn(
               ROW,
               "absolute inset-x-0 top-0 z-10 border border-border bg-background text-foreground outline-none transition-colors",
@@ -344,7 +348,7 @@ export function MorphSelectContent({
             key="panel"
             layoutId={ctx.layoutId}
             transition={ctx.reduce ? { duration: 0 } : MORPH}
-            style={{ borderRadius: 12 }}
+            style={{ borderRadius: PANEL_RADIUS }}
             className={cn(
               "absolute inset-x-0 top-0 z-30 overflow-hidden border border-border bg-background shadow-lg",
               className,
@@ -397,7 +401,7 @@ export function MorphSelectContent({
                     ctx.close();
                   } else onKeyDown(event);
                 }}
-                className="p-1"
+                className="p-2"
               >
                 {children}
               </motion.ul>
@@ -448,7 +452,7 @@ export function MorphSelectItem({
         data-listbox-id={value}
         onClick={() => ctx.select(value)}
         className={cn(
-          "flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-1.5 text-left text-sm outline-none transition-colors",
+          "flex w-full items-center justify-between gap-2 rounded-full px-3 py-1.5 text-left text-sm outline-none transition-colors",
           selected
             ? "bg-muted text-foreground"
             : "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:bg-muted",

@@ -184,7 +184,7 @@ export function PromptInput({
     <form
       onSubmit={submit}
       className={cn(
-        "relative w-full rounded-2xl border border-border/80 bg-background p-2 transition-colors focus-within:border-foreground/25",
+        "relative w-full rounded-3xl border border-border/80 bg-background p-2 transition-colors focus-within:border-foreground/25",
         disabled && "opacity-60",
         className,
       )}
@@ -235,8 +235,8 @@ export function PromptInput({
               side="top"
               align="start"
               sideOffset={8}
-              radius={12}
-              className="w-56 p-1.5"
+              radius={24}
+              className="w-56 p-2"
             >
               {actions.map((action) => (
                 <button
@@ -247,7 +247,7 @@ export function PromptInput({
                     onAction?.(action.value);
                     setActionsOpen(false);
                   }}
-                  className="flex w-full items-start gap-2.5 rounded-lg px-2.5 py-2 text-left outline-none transition-colors hover:bg-muted focus-visible:bg-muted disabled:pointer-events-none disabled:opacity-50"
+                  className="flex w-full items-start gap-2.5 rounded-2xl px-3 py-2 text-left outline-none transition-colors hover:bg-muted focus-visible:bg-muted disabled:pointer-events-none disabled:opacity-50"
                 >
                   {action.icon ? (
                     <span className="mt-0.5 grid size-5 shrink-0 place-items-center text-muted-foreground [&_svg]:size-4">
@@ -277,7 +277,7 @@ export function PromptInput({
             disabled={disabled || loading}
             className="min-w-0"
           >
-            <SelectTrigger className="h-8 w-auto max-w-52 rounded-xl border-0 bg-transparent px-2 py-0 text-xs hover:bg-muted focus-visible:ring-2">
+            <SelectTrigger className="h-8 w-auto max-w-52 rounded-full border-0 bg-transparent px-3 py-0 text-xs hover:bg-muted focus-visible:ring-2">
               <span className="flex min-w-0 items-center gap-1.5">
                 {currentModel?.icon ? (
                   <span className="grid size-4 shrink-0 place-items-center text-muted-foreground [&_svg]:size-3.5">

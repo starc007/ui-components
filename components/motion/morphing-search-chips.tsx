@@ -504,7 +504,7 @@ export function MorphingSearchChips({
               announce(t("recentsCleared"));
               inputRef.current?.focus();
             }}
-            className="rounded-md px-1.5 py-0.5 text-xs text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded-full px-2 py-0.5 text-xs text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
           >
             {t("clear")}
           </button>
@@ -531,13 +531,13 @@ export function MorphingSearchChips({
                 onPointerDown={(event) => event.preventDefault()}
                 onPointerMove={() => moveTo(row.id)}
                 onClick={() => addChip(row.label)}
-                className="relative flex h-11 cursor-pointer items-center gap-3 rounded-2xl px-3 text-sm text-foreground"
+                className="relative flex h-10 cursor-pointer items-center gap-3 rounded-full px-3 text-sm text-foreground"
               >
                 {selected ? (
                   <motion.span
                     layoutId={`${id}-active`}
                     transition={layout}
-                    className="absolute inset-0 rounded-2xl bg-foreground/[0.06]"
+                    className="absolute inset-0 rounded-full bg-foreground/[0.06]"
                   />
                 ) : null}
                 {row.kind === "recent" ? (
@@ -570,7 +570,7 @@ export function MorphingSearchChips({
         <div className="px-3 pb-2 pt-1 text-sm text-muted-foreground">{emptyState}</div>
       ) : null}
       {loading ? (
-        <div className="flex h-11 items-center gap-3 px-3 text-sm text-muted-foreground">
+        <div className="flex h-10 items-center gap-3 px-3 text-sm text-muted-foreground">
           <LoaderCircle aria-hidden="true" className="size-4 motion-safe:animate-spin" />
           {t("searching")}
         </div>

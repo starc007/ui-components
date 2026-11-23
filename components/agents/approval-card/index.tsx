@@ -156,8 +156,8 @@ function QuestionOptions({
           className={cn("p-0.5", question.options?.length && "mt-1.5")}
           classNames={{
             field:
-              "h-10 rounded-xl border-0 bg-background/70 focus-within:bg-background",
-            input: "px-3 text-sm",
+              "h-10 rounded-full border-0 bg-background/70 focus-within:bg-background",
+            input: "px-4 text-sm",
           }}
         />
       ) : null}

@@ -351,7 +351,7 @@ function ResourceMenuAction({
     <button
       type="button"
       onClick={onSelect}
-      className="flex h-8 w-full items-center gap-2 rounded-lg px-2.5 text-left text-xs text-foreground outline-none transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+      className="flex h-8 w-full items-center gap-2 rounded-full px-3 text-left text-xs text-foreground outline-none transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
     >
       <Icon aria-hidden="true" className="size-3.5 shrink-0" />
       <span className="min-w-0 truncate">{children}</span>
@@ -569,7 +569,7 @@ function ResourceRow({
               onRenameCancel();
             }
           }}
-          className="mx-1 h-7 min-w-0 flex-1 rounded-md border border-border bg-background px-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="mx-1 h-7 min-w-0 flex-1 rounded-full border border-border bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       ) : (
         <MarqueeLabel active={hovered || menuOpen}>{row.item.label}</MarqueeLabel>
@@ -588,7 +588,7 @@ function ResourceRow({
               aria-label={t("actions", { item: row.item.label })}
               onClick={(event) => event.stopPropagation()}
               className={cn(
-                "grid size-7 shrink-0 place-items-center rounded-lg outline-none transition-opacity hover:bg-foreground/5 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring group-hover/resource:opacity-100 group-data-[menu-open=true]/resource:opacity-100",
+                "grid size-7 shrink-0 place-items-center rounded-full outline-none transition-opacity hover:bg-foreground/5 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring group-hover/resource:opacity-100 group-data-[menu-open=true]/resource:opacity-100",
                 // A finger never hovers, and this menu is the only path to
                 // rename and move without a drag — keep it on screen there.
                 canTouch ? "opacity-100" : "opacity-0",
@@ -601,8 +601,8 @@ function ResourceRow({
             side="bottom"
             align="end"
             sideOffset={8}
-            radius={12}
-            className="w-40 p-1.5"
+            radius={24}
+            className="w-40 p-2"
           >
             <div data-sidebar-resource-menu={row.item.id}>{menu}</div>
           </MorphPopoverContent>
@@ -1010,7 +1010,7 @@ export function AISidebar({
         <div
           aria-hidden="true"
           data-active={dropTarget?.id === null || undefined}
-          className="absolute inset-x-1 bottom-0 flex h-8 items-center justify-center rounded-lg border border-dashed border-border text-[10px] text-muted-foreground data-[active=true]:border-primary/50 data-[active=true]:bg-muted data-[active=true]:text-foreground"
+          className="absolute inset-x-1 bottom-0 flex h-8 items-center justify-center rounded-lg border border-dashed border-border text-[11px] text-muted-foreground data-[active=true]:border-primary/50 data-[active=true]:bg-muted data-[active=true]:text-foreground"
         >
           {t("moveToTop")}
         </div>

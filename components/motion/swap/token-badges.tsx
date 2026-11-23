@@ -18,7 +18,7 @@ export function ChainChip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "inline-flex h-9 shrink-0 items-center justify-center rounded-xl border transition-[color,background-color,border-color,transform] active:scale-[0.97]",
+        "inline-flex h-9 shrink-0 items-center justify-center rounded-full border transition-[color,background-color,border-color,transform] active:scale-[0.97]",
         chain ? "w-9" : "px-3",
         active
           ? "border-primary/20 bg-muted/60 text-foreground"
@@ -40,7 +40,7 @@ export function ChainDot({ chain, size = 16 }: { chain: Chain; size?: number }) 
     <span
       style={{ width: size, height: size }}
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-full text-[9px] font-bold",
+        "inline-flex shrink-0 items-center justify-center rounded-full text-[11px] font-bold",
         chain.tone,
       )}
     >

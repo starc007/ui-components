@@ -73,7 +73,7 @@ export function VolumeProfilePlot({
         {showAxes ? (
           <div
             aria-hidden="true"
-            className="relative shrink-0 text-right font-mono text-[10px] tabular-nums text-muted-foreground sm:text-xs"
+            className="relative shrink-0 text-right font-mono text-[11px] tabular-nums text-muted-foreground sm:text-xs"
           >
             {[1, 0.75, 0.5, 0.25, 0].map((position) => (
               <span key={position}>
@@ -138,7 +138,7 @@ export function VolumeProfilePlot({
                     className="absolute inset-x-0 top-1/2 border-t border-dashed"
                     style={{ borderColor: pocColor }}
                   >
-                    <span className="absolute right-0 -translate-y-1/2 rounded bg-background px-1.5 py-0.5 font-mono text-[10px] font-medium text-foreground">
+                    <span className="absolute right-0 -translate-y-1/2 rounded-full bg-background px-1.5 py-px font-mono text-[11px] leading-none font-medium text-foreground">
                       {t("pocBadge")}
                     </span>
                   </span>
@@ -221,7 +221,7 @@ export function VolumeProfilePlot({
           {showAxes ? (
             <div
               aria-hidden="true"
-              className="absolute inset-x-0 top-full mt-2 flex justify-between font-mono text-[10px] tabular-nums text-muted-foreground sm:text-xs"
+              className="absolute inset-x-0 top-full mt-2 flex justify-between font-mono text-[11px] tabular-nums text-muted-foreground sm:text-xs"
             >
               <span>0</span>
               <span>{formatVolume(maxVolume / 2)}</span>

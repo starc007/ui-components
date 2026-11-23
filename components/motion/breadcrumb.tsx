@@ -153,7 +153,7 @@ export function BreadcrumbLink({ className, render, ...props }: BreadcrumbLinkPr
   const linkProps = {
     ...props,
     className: cn(
-      "inline-flex min-h-8 min-w-0 items-center gap-1.5 rounded-md px-2 font-medium text-muted-foreground transition-colors duration-150 hover:bg-muted/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&>svg]:size-3.5 [&>svg]:shrink-0",
+      "inline-flex min-h-8 min-w-0 items-center gap-1.5 rounded-full px-3 font-medium text-muted-foreground transition-colors duration-150 hover:bg-muted/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&>svg]:size-3.5 [&>svg]:shrink-0",
       className,
     ),
   };
@@ -168,7 +168,7 @@ export function BreadcrumbPage({ className, children, ...props }: BreadcrumbPage
       {...props}
       aria-current="page"
       className={cn(
-        "relative isolate inline-flex min-h-8 min-w-0 items-center gap-1.5 rounded-md px-2 font-medium text-foreground [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&>svg]:size-3.5 [&>svg]:shrink-0",
+        "relative isolate inline-flex min-h-8 min-w-0 items-center gap-1.5 rounded-full px-3 font-medium text-foreground [overflow-wrap:anywhere] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&>svg]:size-3.5 [&>svg]:shrink-0",
         className,
       )}
     >
@@ -274,7 +274,7 @@ export function BreadcrumbEllipsis({ children, className, label }: BreadcrumbEll
             ref={trigger}
             type="button"
             aria-label={label ?? t("showHidden")}
-            className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             // Enter and Space open through MorphPopoverTrigger, which moves
             // focus to the first path itself. ArrowDown opens without a click.
             onKeyDown={(event) => {
@@ -289,10 +289,10 @@ export function BreadcrumbEllipsis({ children, className, label }: BreadcrumbEll
             <Ellipsis aria-hidden="true" className="size-4" />
           </button>
         </MorphPopoverTrigger>
-        <MorphPopoverContent align={placement.align} side={placement.side} radius={10} sideOffset={6} className="p-1.5">
+        <MorphPopoverContent align={placement.align} side={placement.side} radius={24} sideOffset={6} className="p-2">
           <BreadcrumbOverflowPaths
             ref={panel}
-            style={{ width: placement.width - 14 }}
+            style={{ width: placement.width - 18 }}
             focusOnOpen={focusOnOpen}
             onPointerEnter={() => { cancelClose(); setOpen(true); }}
             onPointerLeave={leave}

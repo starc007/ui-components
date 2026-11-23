@@ -375,8 +375,8 @@ export function MorphingSearch({
 	const collapsedContentClip = `inset(0px ${Math.max(
 		0,
 		panelWidth - anchorRect.width,
-	)}px ${resultsHeight}px 0px round 12px)`;
-	const expandedContentClip = "inset(0px 0px 0px 0px round 12px)";
+	)}px ${resultsHeight}px 0px round 24px)`;
+	const expandedContentClip = "inset(0px 0px 0px 0px round 24px)";
 
 	// Neither grouping layer carries a box: they only hold `inert`/`aria-hidden`,
 	// the z-index and the presence key, and every child below is `fixed` and
@@ -410,7 +410,7 @@ export function MorphingSearch({
 								<motion.div
 									layoutId={shellLayoutId}
 									aria-hidden="true"
-									className="fixed z-10 rounded-xl bg-background/90 backdrop-blur-xl"
+									className="fixed z-10 rounded-3xl bg-background/90 backdrop-blur-xl"
 									style={{
 										top: anchorRect.top,
 										left: anchorRect.left,
@@ -451,7 +451,7 @@ export function MorphingSearch({
 													opacity: SEARCH_MORPH,
 												}
 									}
-									className="pointer-events-auto fixed z-20 overflow-hidden rounded-xl"
+									className="pointer-events-auto fixed z-20 overflow-hidden rounded-3xl"
 									style={{
 										top: anchorRect.top,
 										left: anchorRect.left,
@@ -553,12 +553,12 @@ export function MorphingSearch({
 														}}
 														onFocus={() => moveTo(item.id)}
 														onClick={() => selectItem(item)}
-														className="relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+														className="relative flex w-full items-center gap-2.5 rounded-full px-4 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
 													>
 														{active ? (
 															<motion.span
 																layoutId={`${uid}-active-result`}
-																className="absolute inset-0 rounded-lg bg-foreground/5"
+																className="absolute inset-0 rounded-full bg-foreground/5"
 																transition={transition}
 															/>
 														) : null}
@@ -617,7 +617,7 @@ export function MorphingSearch({
 							boxShadow: "inset 0 0 0 1px var(--search-trigger-stroke)",
 						}}
 						className={cn(
-							"flex size-full items-center rounded-xl bg-background/60 text-left backdrop-blur-md outline-none [--search-trigger-stroke:var(--color-border)] hover:[--search-trigger-stroke:var(--color-border-strong)] focus-visible:ring-2 focus-visible:ring-ring",
+							"flex size-full items-center rounded-full bg-background/60 text-left backdrop-blur-md outline-none [--search-trigger-stroke:var(--color-border)] hover:[--search-trigger-stroke:var(--color-border-strong)] focus-visible:ring-2 focus-visible:ring-ring",
 							iconOnly ? "cursor-pointer justify-center" : "cursor-text px-3.5",
 						)}
 					></motion.button>

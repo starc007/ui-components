@@ -322,7 +322,7 @@ function FileUploadRow({
       <div className="flex items-center gap-3">
         <div
           className={cn(
-            "grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-muted text-muted-foreground",
+            "grid h-11 w-11 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground",
             classNames?.leading,
           )}
         >
@@ -558,7 +558,7 @@ export function FileUpload({
           addFiles(Array.from(event.dataTransfer.files));
         }}
         className={cn(
-          "group relative flex w-full overflow-hidden rounded-3xl border border-dashed border-border bg-background outline-none",
+          "group relative flex w-full overflow-hidden rounded-2xl border border-dashed border-border bg-background outline-none",
           "transition-[border-color,transform] duration-200 active:scale-[0.99]",
           "hover:border-foreground/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           "data-[dragging=true]:border-foreground",
@@ -574,8 +574,8 @@ export function FileUpload({
           className={cn(
             "grid shrink-0 place-items-center bg-muted text-foreground",
             centered
-              ? "h-16 w-16 rounded-[1.35rem] border border-border"
-              : "h-14 w-14 rounded-[1.25rem]",
+              ? "h-16 w-16 rounded-full border border-border"
+              : "h-14 w-14 rounded-full",
           )}
           animate={
             reduce

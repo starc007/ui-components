@@ -86,7 +86,7 @@ export function AccountSwitcher({
             aria-expanded={false}
             onClick={() => setOpen(true)}
             transition={morph}
-            style={{ borderRadius: 16 }}
+            style={{ borderRadius: 20 }}
             className={cn(
               HEAD,
               // shifted left by the padding so the avatar sits flush with the
@@ -119,7 +119,7 @@ export function AccountSwitcher({
             layoutId={layoutId}
             role="listbox"
             transition={morph}
-            style={{ borderRadius: 16 }}
+            style={{ borderRadius: 24 }}
             className="absolute top-0 -right-2 -left-2 z-30 overflow-hidden border border-border/30 bg-background backdrop-blur-md"
           >
             <button
@@ -149,7 +149,7 @@ export function AccountSwitcher({
               animate="show"
               variants={reduce ? undefined : LIST}
               className={cn(
-                "max-h-64 overflow-y-auto p-1.5",
+                "max-h-64 overflow-y-auto p-2",
                 armed ? "" : "pointer-events-none",
               )}
             >
@@ -160,7 +160,7 @@ export function AccountSwitcher({
                     key={account.id}
                     variants={reduce ? undefined : ITEM}
                     className={cn(
-                      "flex items-center rounded-xl pr-1 text-sm transition-colors",
+                      "flex items-center rounded-full pr-2 text-sm transition-colors",
                       selected
                         ? "bg-muted text-foreground"
                         : cn(
@@ -177,7 +177,7 @@ export function AccountSwitcher({
                         onSelect(account.id);
                         setOpen(false);
                       }}
-                      className="flex min-w-0 flex-1 items-center gap-2.5 rounded-xl px-2 py-2 text-left outline-none"
+                      className="flex min-w-0 flex-1 items-center gap-2.5 rounded-full px-2 py-2 text-left outline-none"
                     >
                       <AccountAvatar account={account} />
                       <span className="flex min-w-0 flex-1 flex-col">

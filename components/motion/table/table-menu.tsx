@@ -89,7 +89,7 @@ export function TableMenu({
               />
               <motion.div
                 role="menu"
-                className="fixed z-50 overflow-hidden rounded-xl border border-border bg-background p-1 shadow-xl"
+                className="fixed z-50 overflow-hidden rounded-3xl border border-border bg-background p-2 shadow-xl"
                 style={{ top: coords.top, left: coords.left, width: MENU_WIDTH }}
                 initial={
                   reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -4 }
@@ -109,7 +109,7 @@ export function TableMenu({
                       item.onSelect();
                     }}
                     className={cn(
-                      "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-sm transition-colors [&_svg]:h-4 [&_svg]:w-4",
+                      "flex w-full items-center gap-2.5 rounded-full px-3 py-1.5 text-left text-sm transition-colors [&_svg]:h-4 [&_svg]:w-4",
                       item.destructive
                         ? "text-rose-500 hover:bg-rose-500/10"
                         : "text-foreground hover:bg-muted",

@@ -575,7 +575,7 @@ export function PredictionMarket({
                       : "bg-emerald-500/20"
                   }
                   className={cn(
-                    "h-14 w-full rounded-[1.35rem] px-0 py-0 text-base font-semibold active:scale-[0.99]",
+                    "h-14 w-full rounded-full px-0 py-0 text-base font-semibold active:scale-[0.99]",
                     isNo
                       ? selected
                         ? "text-red-300 dark:text-red-300"
@@ -594,7 +594,7 @@ export function PredictionMarket({
 
         <div
           ref={amountRef}
-          className={cn("rounded-3xl bg-card p-4", classNames?.amount)}
+          className={cn("rounded-2xl bg-card p-4", classNames?.amount)}
         >
           <div className="flex min-h-24 flex-col items-center justify-center gap-5 text-center">
             <label
@@ -630,7 +630,7 @@ export function PredictionMarket({
                 type="button"
                 disabled={status === "placing"}
                 onClick={() => addAmount(amount)}
-                className="h-9 rounded-xl bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+                className="h-9 rounded-full bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
               >
                 +{order.mode === "buy" ? formatCompactCurrency(amount) : amount}
               </button>
@@ -639,7 +639,7 @@ export function PredictionMarket({
               type="button"
               disabled={status === "placing"}
               onClick={setMax}
-              className="h-9 rounded-xl bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+              className="h-9 rounded-full bg-background px-3.5 text-sm font-semibold text-foreground transition-[background-color,transform] duration-150 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
             >
               {t("max")}
             </button>
@@ -688,7 +688,7 @@ export function PredictionMarket({
             successText={t("tradeFilled")}
             errorText={quote.error ?? t("enterAmount")}
             className={cn(
-              "h-12 w-full rounded-2xl text-base font-semibold",
+              "h-12 w-full rounded-full text-base font-semibold",
               classNames?.action,
             )}
           >
@@ -704,7 +704,7 @@ export function PredictionMarket({
             pressScale={0.98}
             onClick={submit}
             className={cn(
-              "h-14 w-full rounded-2xl text-base font-semibold",
+              "h-14 w-full rounded-full text-base font-semibold",
               classNames?.action,
             )}
           >

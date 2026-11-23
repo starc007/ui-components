@@ -490,7 +490,7 @@ export interface ColorPickerAreaProps extends Omit<ComponentPropsWithRef<"div">,
 // One surface: the trigger chip grows into the area and shrinks back into it.
 const MORPH: Transition = { type: "spring", duration: 0.5, bounce: 0.2 };
 const AREA_RADIUS = 12;
-const CHIP_RADIUS = 6;
+const CHIP_RADIUS = 12;
 
 /** True inside ColorPickerContent, where the area morphs out of the trigger chip. */
 const MorphContext = createContext(false);
@@ -716,7 +716,7 @@ export function ColorPickerSwatch({ className, style, ...props }: ColorPickerSwa
     <span
       {...props}
       aria-hidden="true"
-      className={cn("relative block size-9 shrink-0 overflow-hidden rounded-lg", className)}
+      className={cn("relative block size-9 shrink-0 overflow-hidden rounded-full", className)}
       style={{ ...style, background: CHECKERBOARD }}
     >
       <span
@@ -732,7 +732,7 @@ export function ColorPickerSwatch({ className, style, ...props }: ColorPickerSwa
 // ---------------------------------------------------------------------------
 
 const FIELD_CLASS =
-  "h-9 w-full min-w-0 rounded-lg border border-border bg-background text-sm text-foreground tabular-nums outline-none transition-colors focus-visible:border-foreground/40 focus-visible:ring-2 focus-visible:ring-ring/30 disabled:cursor-not-allowed";
+  "h-9 w-full min-w-0 rounded-full border border-border bg-background text-sm text-foreground tabular-nums outline-none transition-colors focus-visible:border-foreground/40 focus-visible:ring-2 focus-visible:ring-ring/30 disabled:cursor-not-allowed";
 
 /** A horizontal shake for rejected input; dropped under reduced motion. */
 function useRejectShake() {
@@ -948,7 +948,7 @@ export function ColorPickerEyeDropper({
         }
       }}
       className={cn(
-        "inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed",
+        "inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-background text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed",
         className,
       )}
     >
@@ -1116,13 +1116,13 @@ export function ColorPickerTrigger({ className, children, onClick, ...props }: C
         if (!event.defaultPrevented) setOpen(!open);
       }}
       className={cn(
-        "inline-flex h-10 w-fit items-center gap-2.5 rounded-xl border border-border bg-background pr-3.5 pl-2.5 text-sm text-foreground outline-none transition-colors hover:border-foreground/20 focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed",
+        "inline-flex h-10 w-fit items-center gap-2.5 rounded-full border border-border bg-background pr-4 pl-2 text-sm text-foreground outline-none transition-colors hover:border-foreground/20 focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed",
         className,
       )}
     >
       <span aria-hidden="true" className="relative size-6 shrink-0">
         {/* The chip's empty socket while it is out being the area. */}
-        <span className="absolute inset-0 rounded-md border border-dashed border-foreground/20" />
+        <span className="absolute inset-0 rounded-full border border-dashed border-foreground/20" />
         {!open && (
           <motion.span
             layoutId={reduce ? undefined : `${id}-chip`}
@@ -1249,7 +1249,7 @@ export function ColorPickerContent({ align = "start", className, children, ...pr
               {/* The surface fades on its own layer so the morphing area is never faded with it. */}
               <motion.div
                 aria-hidden="true"
-                className="absolute inset-0 -z-10 rounded-2xl border border-border bg-background shadow-[0_12px_32px_-8px_rgb(0_0_0/0.25)]"
+                className="absolute inset-0 -z-10 rounded-3xl border border-border bg-background shadow-[0_12px_32px_-8px_rgb(0_0_0/0.25)]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

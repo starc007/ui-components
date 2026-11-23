@@ -185,7 +185,7 @@ export function RulerSlider({
                 )}
               />
               {tick.major ? (
-                <span className="absolute bottom-0 text-[10px] tabular-nums text-muted-foreground">
+                <span className="absolute bottom-0 text-[11px] tabular-nums text-muted-foreground">
                   {tick.value}
                 </span>
               ) : null}

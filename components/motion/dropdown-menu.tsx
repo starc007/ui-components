@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
 const VIEWPORT_PADDING = 8;
 // The panel's border and padding, so a submenu's first row lines up with the
 // row that opened it.
-const SUB_ALIGN_OFFSET = 5;
+const SUB_ALIGN_OFFSET = 9;
 // How far a submenu stacked under its row sits in, so it reads as nested.
 const SUB_STACK_INDENT = 16;
 // Long enough to skip the submenus a pointer crosses on its way somewhere else.
@@ -569,7 +569,7 @@ function MenuPanel({
         visibility: placement ? undefined : "hidden",
       }}
       className={cn(
-        "fixed z-[100] min-w-48 overflow-y-auto overscroll-contain rounded-xl border border-border bg-background p-1 text-foreground shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)] outline-none",
+        "fixed z-[100] min-w-48 overflow-y-auto overscroll-contain rounded-3xl border border-border bg-background p-2 text-foreground shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)] outline-none",
         parent && "z-[101]",
         className,
       )}
@@ -758,9 +758,9 @@ function ItemBase({
         if (closeOnSelect) root.setOpen(false);
       }}
       className={cn(
-        "relative isolate flex w-full cursor-default select-none items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm outline-none",
+        "relative isolate flex w-full cursor-default select-none items-center gap-2 rounded-full px-3 py-1.5 text-left text-sm outline-none",
         "[&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
-        inset && "pl-8",
+        inset && "pl-9",
         disabled && "opacity-50",
         tone === "destructive" ? "text-destructive [&_svg]:text-destructive" : "[&_svg]:text-muted-foreground",
         className,
@@ -771,7 +771,7 @@ function ItemBase({
           aria-hidden="true"
           layoutId={`${level.levelId}-highlight`}
           className={cn(
-            "absolute inset-0 -z-10 rounded-lg",
+            "absolute inset-0 -z-10 rounded-full",
             tone === "destructive" ? "bg-destructive/10" : "bg-foreground/[0.07]",
           )}
           transition={root.reduce ? { duration: 0 } : SPRING_LAYOUT}
@@ -809,7 +809,7 @@ export function DropdownMenuCheckboxItem({
       onSelect={() => onCheckedChange?.(!checked)}
       inset
     >
-      <span aria-hidden="true" className="absolute left-2 flex size-4 items-center justify-center">
+      <span aria-hidden="true" className="absolute left-3 flex size-4 items-center justify-center">
         <AnimatePresence initial={false}>
           {checked ? (
             <motion.span
@@ -872,7 +872,7 @@ export function DropdownMenuRadioItem({ value, closeOnSelect = false, children, 
       onSelect={() => group.onValueChange?.(value)}
       inset
     >
-      <span aria-hidden="true" className="absolute left-2 flex size-4 items-center justify-center">
+      <span aria-hidden="true" className="absolute left-3 flex size-4 items-center justify-center">
         <motion.span
           initial={false}
           animate={root.reduce ? { opacity: checked ? 1 : 0 } : { opacity: checked ? 1 : 0, scale: checked ? 1 : 0.4 }}
@@ -1076,7 +1076,7 @@ export interface DropdownMenuLabelProps {
 
 export function DropdownMenuLabel({ children, inset, className }: DropdownMenuLabelProps) {
   return (
-    <div className={cn("px-2 py-1.5 text-xs font-medium text-muted-foreground", inset && "pl-8", className)}>
+    <div className={cn("px-3 py-1.5 text-xs font-medium text-muted-foreground", inset && "pl-9", className)}>
       {children}
     </div>
   );
@@ -1087,7 +1087,7 @@ export interface DropdownMenuSeparatorProps {
 }
 
 export function DropdownMenuSeparator({ className }: DropdownMenuSeparatorProps) {
-  return <hr className={cn("-mx-1 my-1 h-px border-0 bg-border", className)} />;
+  return <hr className={cn("-mx-2 my-1 h-px border-0 bg-border", className)} />;
 }
 
 export interface DropdownMenuShortcutProps {

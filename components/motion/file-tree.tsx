@@ -326,7 +326,7 @@ export function FileTree({
       aria-label={ariaLabel ?? t("label")}
       aria-multiselectable="false"
       inset={0}
-      pillClassName="rounded-xl bg-muted"
+      pillClassName="rounded-full bg-muted"
       pillContainerClassName="inset-y-auto top-0 h-9"
       className={cn("min-w-0", className, classNames?.tree)}
     >
@@ -374,14 +374,14 @@ export function FileTree({
                   if (isFolder) toggleFolder(row.item.value);
                 }}
                 className={cn(
-                  "group/file-tree relative flex h-9 w-full items-center gap-2 overflow-hidden rounded-lg pr-2 text-left text-sm text-muted-foreground outline-none",
+                  "group/file-tree relative flex h-9 w-full items-center gap-2 overflow-hidden rounded-full pr-3 text-left text-sm text-muted-foreground outline-none",
                   "transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                   "aria-disabled:cursor-not-allowed",
                   isSelected && "bg-muted font-medium text-foreground",
                   classNames?.item,
                   row.item.className,
                 )}
-                style={{ paddingLeft: 8 + row.depth * indent }}
+                style={{ paddingLeft: 12 + row.depth * indent }}
               >
                 {row.depth > 0 ? (
                   <motion.span
@@ -390,7 +390,7 @@ export function FileTree({
                     animate={{ opacity: 1, scaleY: 1 }}
                     transition={reduce ? { duration: 0 } : BRANCH_DRAW}
                     className="absolute top-0 bottom-0 w-px origin-top bg-border/70"
-                    style={{ left: 16 + (row.depth - 1) * indent }}
+                    style={{ left: 20 + (row.depth - 1) * indent }}
                   />
                 ) : null}
 

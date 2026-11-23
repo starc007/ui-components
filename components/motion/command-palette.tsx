@@ -255,7 +255,7 @@ export function CommandPalette({
                 transition={reduce ? { duration: 0.1 } : PANEL_SPRING}
                 {...gate}
                 onKeyDown={onKeyDown}
-                className="pointer-events-auto w-full max-w-xl overflow-hidden rounded-2xl border border-border bg-background shadow-2xl will-change-transform"
+                className="pointer-events-auto w-full max-w-xl overflow-hidden rounded-3xl border border-border bg-background shadow-2xl will-change-transform"
               >
                 <div className="flex items-center gap-3 border-b border-border px-4">
                   <Search className="h-4 w-4 text-muted-foreground" />
@@ -282,7 +282,7 @@ export function CommandPalette({
                       canTouch && "text-base",
                     )}
                   />
-                  <kbd className="hidden rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground sm:inline-block">
+                  <kbd className="hidden rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground sm:inline-block">
                     ESC
                   </kbd>
                 </div>
@@ -302,7 +302,7 @@ export function CommandPalette({
                       <div key={group} className="mb-1 last:mb-0">
                         <div
                           aria-hidden
-                          className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+                          className="px-3 py-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
                         >
                           {group}
                         </div>
@@ -325,7 +325,7 @@ export function CommandPalette({
                                 setOpen(false);
                               }}
                               className={cn(
-                                "relative isolate flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sm transition-colors",
+                                "relative isolate flex w-full items-center gap-3 rounded-full px-3 py-1.5 text-left text-sm transition-colors",
                                 isActive
                                   ? "text-foreground"
                                   : "text-muted-foreground",
@@ -334,7 +334,7 @@ export function CommandPalette({
                               {isActive ? (
                                 <motion.span
                                   layoutId={`${uid}-active`}
-                                  className="absolute inset-0 z-0 rounded-md bg-muted"
+                                  className="absolute inset-0 z-0 rounded-full bg-muted"
                                   transition={
                                     reduce
                                       ? { duration: 0 }
@@ -362,7 +362,7 @@ export function CommandPalette({
                                 </span>
                               ) : null}
                               {it.hint ? (
-                                <kbd className="relative z-10 rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                                <kbd className="relative z-10 rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-muted-foreground">
                                   {it.hint}
                                 </kbd>
                               ) : null}

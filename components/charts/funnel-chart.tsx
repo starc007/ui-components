@@ -171,7 +171,7 @@ export function FunnelChartPlot({ className }: { className?: string }) {
                       percent: percentage(stage.conversion),
                     })}
                   >
-                    <span className="rounded bg-background/85 px-2 py-1 font-mono text-xs font-medium tabular-nums">
+                    <span className="rounded-full bg-background/85 px-2 py-1 font-mono text-xs font-medium tabular-nums">
                       {formatValue(stage.value)}
                     </span>
                   </button>
@@ -190,7 +190,7 @@ export function FunnelChartPlot({ className }: { className?: string }) {
               style={{ backgroundColor: stage.color ?? colors[index % colors.length] }}
             />
             <span>{stage.label}</span>
-            <span className="font-mono text-[10px] text-muted-foreground">
+            <span className="font-mono text-[11px] text-muted-foreground">
               {percentage(stage.conversion)}
             </span>
           </span>

@@ -123,7 +123,7 @@ export const SoundToggle = memo(function SoundToggle({
         aria-label={label}
         aria-pressed={on}
         pressScale={0.96}
-        className={cn("size-8 shrink-0 rounded-xl px-0", on && "text-foreground")}
+        className={cn("size-8 shrink-0 rounded-full px-0", on && "text-foreground")}
       >
         <ActionSwapCascadeIcon value={on ? "on" : "off"} className="size-4">
           {on ? <Volume2 aria-hidden="true" className="size-4" /> : <VolumeX aria-hidden="true" className="size-4" />}

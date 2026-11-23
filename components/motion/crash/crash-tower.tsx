@@ -227,7 +227,7 @@ function Tower({ game }: { game: CrashGame }) {
                 {k > 0 && k % 5 === 0 && !marked.some((g) => k === g || k === g + 1) ? (
                   <span
                     className={cn(
-                      "absolute top-1/2 left-full -translate-y-1/2 text-[10px] leading-none text-muted-foreground tabular-nums",
+                      "absolute top-1/2 left-full -translate-y-1/2 text-[11px] leading-none text-muted-foreground tabular-nums",
                       k === cashK ? "ml-6" : "ml-2",
                     )}
                   >
@@ -276,7 +276,7 @@ function Mark({
       exit={{ opacity: 0, transition: EXIT }}
       transition={{ duration: 0.15, ease: EASE_OUT }}
     >
-      <span className="absolute right-0 bottom-0.5 text-[10px] leading-none font-medium tabular-nums">
+      <span className="absolute right-0 bottom-0.5 text-[11px] leading-none font-medium tabular-nums">
         {pinned ? "↑ " : ""}
         {label}
       </span>

@@ -253,7 +253,7 @@ export function LiquidityHeatmapPlot({ className }: { className?: string }) {
           </table>
           <div
             aria-hidden="true"
-            className="absolute -right-[72px] top-0 bottom-0 flex w-16 flex-col justify-around text-right font-mono text-[10px] tabular-nums text-muted-foreground"
+            className="absolute -right-[72px] top-0 bottom-0 flex w-16 flex-col justify-around text-right font-mono text-[11px] tabular-nums text-muted-foreground"
           >
             {prices.map((price) => (
               <span key={price}>{formatPrice(price)}</span>
@@ -297,7 +297,7 @@ export function LiquidityHeatmapPlot({ className }: { className?: string }) {
         </div>
         <div
           aria-hidden="true"
-          className="mt-3 flex justify-between font-mono text-[10px] text-muted-foreground"
+          className="mt-3 flex justify-between font-mono text-[11px] text-muted-foreground"
         >
           {columns
             .filter(
@@ -354,7 +354,7 @@ export function LiquidityHeatmapLegend({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center justify-between gap-3 text-[10px] text-muted-foreground",
+        "flex flex-wrap items-center justify-between gap-3 text-[11px] text-muted-foreground",
         className,
       )}
     >

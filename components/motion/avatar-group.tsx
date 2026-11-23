@@ -16,7 +16,7 @@ export interface AvatarGroupMember {
 }
 
 const SIZES = {
-  sm: { box: "size-7 text-[10px]", px: 28 },
+  sm: { box: "size-7 text-[11px]", px: 28 },
   md: { box: "size-9 text-xs", px: 36 },
   lg: { box: "size-11 text-sm", px: 44 },
 } as const;

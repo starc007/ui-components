@@ -232,7 +232,7 @@ function TeamCrest({ team }: { team: Team | null }) {
       ) : team ? (
         // text-foreground, not muted: the /10 tint lifts the disc toward the
         // muted ramp, leaving 4.44:1 light and 3.55:1 dark — both under AA.
-        <span className="grid size-5 place-items-center rounded-full bg-foreground/10 text-[10px] font-semibold leading-none text-foreground">
+        <span className="grid size-5 place-items-center rounded-full bg-foreground/10 text-[11px] font-semibold leading-none text-foreground">
           {initials(team.name)}
         </span>
       ) : (

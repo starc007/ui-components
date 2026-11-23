@@ -247,7 +247,7 @@ export function Sparkline({
             )}
           </span>
           <motion.span
-            className="block text-[10px] text-muted-foreground"
+            className="block text-[11px] text-muted-foreground"
             initial={false}
             animate={{ opacity: inspecting ? 1 : 0 }}
             transition={{ duration: 0.12, ease: EASE_OUT }}
@@ -260,7 +260,7 @@ export function Sparkline({
         <span
           aria-hidden="true"
           className={cn(
-            "shrink-0 rounded-md px-1.5 py-0.5 font-mono text-[11px] tabular-nums",
+            "shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] tabular-nums",
             tone === "good" && "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
             tone === "bad" && "bg-rose-500/10 text-rose-600 dark:text-rose-400",
             tone === "flat" && "bg-muted text-muted-foreground",
