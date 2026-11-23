@@ -2,6 +2,7 @@ import { allComponents } from "../lib/registry";
 import { componentAbout } from "../lib/component-about";
 import { componentDates } from "../lib/component-dates";
 import { componentSeo, SEO_DESCRIPTION_MAX, SEO_TITLE_MAX } from "../lib/component-seo";
+import { componentSummaries, SUMMARY_MAX } from "../lib/component-summaries";
 import { seoPages } from "../lib/seo-pages";
 import { changelogEntries } from "../lib/changelog";
 import { allShadcnTargets, buildEntry, buildShadcnItem } from "../lib/registry-server";
@@ -79,6 +80,15 @@ for (const component of allComponents()) {
   } else if (/\u2014/.test(JSON.stringify(about))) {
     errors.push(`${label}: About copy contains an em dash`);
   }
+  const summary = componentSummaries[component.slug];
+  if (!summary) {
+    errors.push(`${label}: missing summary in lib/component-summaries.ts`);
+  } else {
+    if (summary.length > SUMMARY_MAX) {
+      errors.push(`${label}: summary is ${summary.length} chars (max ${SUMMARY_MAX})`);
+    }
+    if (/—/.test(summary)) errors.push(`${label}: summary contains an em dash`);
+  }
   const seo = componentSeo[component.slug];
   if (!seo) {
     errors.push(`${label}: missing entry in lib/component-seo.ts`);
@@ -98,8 +108,12 @@ for (const component of allComponents()) {
 }
 
 const componentSlugs = new Set(allComponents().map((component) => component.slug));
-for (const slug of [...Object.keys(componentSeo), ...Object.keys(componentAbout)]) {
-  if (!componentSlugs.has(slug)) errors.push(`SEO or About entry "${slug}" has no component`);
+for (const slug of [
+  ...Object.keys(componentSeo),
+  ...Object.keys(componentAbout),
+  ...Object.keys(componentSummaries),
+]) {
+  if (!componentSlugs.has(slug)) errors.push(`SEO, About or summary entry "${slug}" has no component`);
 }
 
 // Alternatives and guides pages: search copy limits, real component links,

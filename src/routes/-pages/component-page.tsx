@@ -1,7 +1,7 @@
 import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
-import { ArrowRight, ArrowUpRight, ChevronRight, Smartphone } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Smartphone } from "lucide-react";
 import { useFormatter, useLocale, useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { ComponentGuide } from "@/components/app/docs/component-guide";
@@ -19,6 +19,7 @@ import { getTranslations } from "@/i18n/server";
 import { componentDates } from "@/lib/component-dates";
 import { categoryPath, componentPath, nativeComponentPath } from "@/lib/component-paths";
 import { componentSeo } from "@/lib/component-seo";
+import { componentSummaries } from "@/lib/component-summaries";
 import { EASE_OUT_CSS } from "@/lib/ease";
 import type { Metadata } from "@/lib/head";
 import { type HighlightedCode, highlight } from "@/lib/highlight";
@@ -160,6 +161,7 @@ export const getComponentPage = createServerFn({ method: "GET" })
       catName,
       comp,
       englishName: comp.name,
+      summary: componentSummaries[comp.slug] ?? null,
       examples,
       sharedCredit: Boolean(sharedCredit),
       pageCredit: pageCredit ?? null,
@@ -243,25 +245,14 @@ function componentMetadata({
 
 export function ComponentPage({ data }: { data: ComponentPageData }) {
   const t = useTranslations("Docs.component");
-  const tDocs = useTranslations("Docs");
   const format = useFormatter();
-  const { comp, catSlug, catName, pageCredit, creditGroups } = data;
+  const { comp, catSlug, pageCredit, creditGroups } = data;
 
   return (
     <div className="min-w-0">
       <JsonLd data={data.jsonLd} />
       <div id="overview" className="scroll-mt-24">
-        <nav aria-label={tDocs("breadcrumb")} className="flex items-center gap-1.5 text-sm">
-          <Link
-            href={categoryPath(catSlug)}
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            {catName}
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="font-medium text-foreground">{comp.name}</span>
-        </nav>
-        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-medium tracking-tight text-foreground">
@@ -271,6 +262,9 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
                 <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
               ) : null}
             </div>
+            {data.summary ? (
+              <p className="mt-2 max-w-xl text-pretty text-muted-foreground">{data.summary}</p>
+            ) : null}
             {pageCredit ? (
               <CreditLink credit={pageCredit} className="mt-3" />
             ) : creditGroups.length ? (
