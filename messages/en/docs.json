@@ -28,6 +28,23 @@
       "description": "Explore animated crash, mines, plinko and slide games with fair built-in outcomes or server-decided results. Copy the React source and wire it to your own game logic.",
       "allLabel": "All casino games"
     },
+    "micro-interactions": {
+      "title": "React Micro Interactions",
+      "heading": "Micro Interactions",
+      "subheading": "Small animated controls for React. Copy the source and drop them in.",
+      "description": "Small animated controls for React: likes, votes, saves, follows, polls, reactions, sharing, downloads, deletes and more. Copy the source and drop them in.",
+      "allLabel": "All micro interactions",
+      "filterLabel": "Filter by interaction",
+      "filters": {
+        "all": "All",
+        "tap": "Tap",
+        "select": "Select",
+        "feedback": "Feedback"
+      },
+      "open": "Open {name}",
+      "play": "Play {name}",
+      "pause": "Pause {name}"
+    },
     "agents": {
       "title": "AI Agent Components — Animated React AI Interfaces",
       "heading": "Animated AI agent components",

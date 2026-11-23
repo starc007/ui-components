@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 import { useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
+import { InteractionGallery } from "@/components/app/docs/interaction-gallery";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { ProBlocksSection } from "@/components/app/docs/pro-blocks-section";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
@@ -15,7 +16,7 @@ import { type ComponentEntry, findCategory } from "@/lib/registry";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
 
 /** Copy per category in messages Docs.category; unknown categories read as motion. */
-const CONTENT_KEYS = ["motion", "blocks", "charts", "casino", "agents"] as const;
+const CONTENT_KEYS = ["motion", "blocks", "charts", "casino", "micro-interactions", "agents"] as const;
 type ContentKey = (typeof CONTENT_KEYS)[number];
 
 function contentKey(slug: string): ContentKey {
@@ -180,6 +181,24 @@ export function CategoryPage({ data }: { data: CategoryPageData }) {
   const tDocs = useTranslations("Docs");
   const { slug, contentKey: key, newComponents, components, agentGroups } = data;
 
+  // The gallery has its own layout: a narrower centred column with a
+  // centred heading and one line under it. No breadcrumb, and no platform
+  // switch (web only).
+  if (slug === "micro-interactions") {
+    return (
+      <div className="mx-auto w-full max-w-5xl pt-8 sm:pt-14">
+        <JsonLd data={data.jsonLd} />
+        <header className="mx-auto max-w-xl text-center">
+          <h1 className="text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+            {t("micro-interactions.heading")}
+          </h1>
+          <p className="mt-3 text-muted-foreground">{t("micro-interactions.subheading")}</p>
+        </header>
+        <InteractionGallery components={[...newComponents, ...components]} />
+      </div>
+    );
+  }
+
   return (
     <div>
       <JsonLd data={data.jsonLd} />
@@ -190,6 +209,7 @@ export function CategoryPage({ data }: { data: CategoryPageData }) {
         {t(`${key}.heading`)}
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">{t(`${key}.description`)}</p>
+      {/* The right sidebar carries the switch from xl. */}
       <div className="mt-6 xl:hidden">
         <PlatformSwitch />
       </div>

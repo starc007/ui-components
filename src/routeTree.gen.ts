@@ -35,6 +35,8 @@ import { Route as SiteDocsOpenuiRouteImport } from './routes/_site/docs/openui'
 import { Route as SiteDocsThemeRouteImport } from './routes/_site/docs/theme'
 import { Route as SiteGuidesIndexRouteImport } from './routes/_site/guides/index'
 import { Route as SiteGuidesSlugRouteImport } from './routes/_site/guides/$slug'
+import { Route as SiteMicroInteractionsIndexRouteImport } from './routes/_site/micro-interactions/index'
+import { Route as SiteMicroInteractionsSlugRouteImport } from './routes/_site/micro-interactions/$slug'
 import { Route as SiteReactNativeIndexRouteImport } from './routes/_site/react-native/index'
 import { Route as SiteReactNativeSlugRouteImport } from './routes/_site/react-native/$slug'
 import { Route as SiteComponentsCategoryIndexRouteImport } from './routes/_site/components/$category/index'
@@ -169,6 +171,18 @@ const SiteGuidesSlugRoute = SiteGuidesSlugRouteImport.update({
   path: '/guides/$slug',
   getParentRoute: () => SiteRouteRoute,
 } as any)
+const SiteMicroInteractionsIndexRoute =
+  SiteMicroInteractionsIndexRouteImport.update({
+    id: '/micro-interactions/',
+    path: '/micro-interactions/',
+    getParentRoute: () => SiteRouteRoute,
+  } as any)
+const SiteMicroInteractionsSlugRoute =
+  SiteMicroInteractionsSlugRouteImport.update({
+    id: '/micro-interactions/$slug',
+    path: '/micro-interactions/$slug',
+    getParentRoute: () => SiteRouteRoute,
+  } as any)
 const SiteReactNativeIndexRoute = SiteReactNativeIndexRouteImport.update({
   id: '/react-native/',
   path: '/react-native/',
@@ -212,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/docs/openui': typeof SiteDocsOpenuiRoute
   '/docs/theme': typeof SiteDocsThemeRoute
   '/guides/$slug': typeof SiteGuidesSlugRoute
+  '/micro-interactions/$slug': typeof SiteMicroInteractionsSlugRoute
   '/react-native/$slug': typeof SiteReactNativeSlugRoute
   '/alternatives/': typeof SiteAlternativesIndexRoute
   '/blog/': typeof SiteBlogIndexRoute
@@ -219,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/charts/': typeof SiteChartsIndexRoute
   '/components/': typeof SiteComponentsIndexRoute
   '/guides/': typeof SiteGuidesIndexRoute
+  '/micro-interactions/': typeof SiteMicroInteractionsIndexRoute
   '/react-native/': typeof SiteReactNativeIndexRoute
   '/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
   '/components/$category/': typeof SiteComponentsCategoryIndexRoute
@@ -243,6 +259,7 @@ export interface FileRoutesByTo {
   '/docs/openui': typeof SiteDocsOpenuiRoute
   '/docs/theme': typeof SiteDocsThemeRoute
   '/guides/$slug': typeof SiteGuidesSlugRoute
+  '/micro-interactions/$slug': typeof SiteMicroInteractionsSlugRoute
   '/react-native/$slug': typeof SiteReactNativeSlugRoute
   '/alternatives': typeof SiteAlternativesIndexRoute
   '/blog': typeof SiteBlogIndexRoute
@@ -250,6 +267,7 @@ export interface FileRoutesByTo {
   '/charts': typeof SiteChartsIndexRoute
   '/components': typeof SiteComponentsIndexRoute
   '/guides': typeof SiteGuidesIndexRoute
+  '/micro-interactions': typeof SiteMicroInteractionsIndexRoute
   '/react-native': typeof SiteReactNativeIndexRoute
   '/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
   '/components/$category': typeof SiteComponentsCategoryIndexRoute
@@ -276,6 +294,7 @@ export interface FileRoutesById {
   '/_site/docs/openui': typeof SiteDocsOpenuiRoute
   '/_site/docs/theme': typeof SiteDocsThemeRoute
   '/_site/guides/$slug': typeof SiteGuidesSlugRoute
+  '/_site/micro-interactions/$slug': typeof SiteMicroInteractionsSlugRoute
   '/_site/react-native/$slug': typeof SiteReactNativeSlugRoute
   '/_site/alternatives/': typeof SiteAlternativesIndexRoute
   '/_site/blog/': typeof SiteBlogIndexRoute
@@ -283,6 +302,7 @@ export interface FileRoutesById {
   '/_site/charts/': typeof SiteChartsIndexRoute
   '/_site/components/': typeof SiteComponentsIndexRoute
   '/_site/guides/': typeof SiteGuidesIndexRoute
+  '/_site/micro-interactions/': typeof SiteMicroInteractionsIndexRoute
   '/_site/react-native/': typeof SiteReactNativeIndexRoute
   '/_site/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
   '/_site/components/$category/': typeof SiteComponentsCategoryIndexRoute
@@ -309,6 +329,7 @@ export interface FileRouteTypes {
     | '/docs/openui'
     | '/docs/theme'
     | '/guides/$slug'
+    | '/micro-interactions/$slug'
     | '/react-native/$slug'
     | '/alternatives/'
     | '/blog/'
@@ -316,6 +337,7 @@ export interface FileRouteTypes {
     | '/charts/'
     | '/components/'
     | '/guides/'
+    | '/micro-interactions/'
     | '/react-native/'
     | '/components/$category/$slug'
     | '/components/$category/'
@@ -340,6 +362,7 @@ export interface FileRouteTypes {
     | '/docs/openui'
     | '/docs/theme'
     | '/guides/$slug'
+    | '/micro-interactions/$slug'
     | '/react-native/$slug'
     | '/alternatives'
     | '/blog'
@@ -347,6 +370,7 @@ export interface FileRouteTypes {
     | '/charts'
     | '/components'
     | '/guides'
+    | '/micro-interactions'
     | '/react-native'
     | '/components/$category/$slug'
     | '/components/$category'
@@ -372,6 +396,7 @@ export interface FileRouteTypes {
     | '/_site/docs/openui'
     | '/_site/docs/theme'
     | '/_site/guides/$slug'
+    | '/_site/micro-interactions/$slug'
     | '/_site/react-native/$slug'
     | '/_site/alternatives/'
     | '/_site/blog/'
@@ -379,6 +404,7 @@ export interface FileRouteTypes {
     | '/_site/charts/'
     | '/_site/components/'
     | '/_site/guides/'
+    | '/_site/micro-interactions/'
     | '/_site/react-native/'
     | '/_site/components/$category/$slug'
     | '/_site/components/$category/'
@@ -572,6 +598,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteGuidesSlugRouteImport
       parentRoute: typeof SiteRouteRoute
     }
+    '/_site/micro-interactions/': {
+      id: '/_site/micro-interactions/'
+      path: '/micro-interactions'
+      fullPath: '/micro-interactions/'
+      preLoaderRoute: typeof SiteMicroInteractionsIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/micro-interactions/$slug': {
+      id: '/_site/micro-interactions/$slug'
+      path: '/micro-interactions/$slug'
+      fullPath: '/micro-interactions/$slug'
+      preLoaderRoute: typeof SiteMicroInteractionsSlugRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
     '/_site/react-native/': {
       id: '/_site/react-native/'
       path: '/react-native'
@@ -623,6 +663,7 @@ interface SiteRouteRouteChildren {
   SiteDocsOpenuiRoute: typeof SiteDocsOpenuiRoute
   SiteDocsThemeRoute: typeof SiteDocsThemeRoute
   SiteGuidesSlugRoute: typeof SiteGuidesSlugRoute
+  SiteMicroInteractionsSlugRoute: typeof SiteMicroInteractionsSlugRoute
   SiteReactNativeSlugRoute: typeof SiteReactNativeSlugRoute
   SiteAlternativesIndexRoute: typeof SiteAlternativesIndexRoute
   SiteBlogIndexRoute: typeof SiteBlogIndexRoute
@@ -630,6 +671,7 @@ interface SiteRouteRouteChildren {
   SiteChartsIndexRoute: typeof SiteChartsIndexRoute
   SiteComponentsIndexRoute: typeof SiteComponentsIndexRoute
   SiteGuidesIndexRoute: typeof SiteGuidesIndexRoute
+  SiteMicroInteractionsIndexRoute: typeof SiteMicroInteractionsIndexRoute
   SiteReactNativeIndexRoute: typeof SiteReactNativeIndexRoute
   SiteComponentsCategorySlugRoute: typeof SiteComponentsCategorySlugRoute
   SiteComponentsCategoryIndexRoute: typeof SiteComponentsCategoryIndexRoute
@@ -655,6 +697,7 @@ const SiteRouteRouteChildren: SiteRouteRouteChildren = {
   SiteDocsOpenuiRoute: SiteDocsOpenuiRoute,
   SiteDocsThemeRoute: SiteDocsThemeRoute,
   SiteGuidesSlugRoute: SiteGuidesSlugRoute,
+  SiteMicroInteractionsSlugRoute: SiteMicroInteractionsSlugRoute,
   SiteReactNativeSlugRoute: SiteReactNativeSlugRoute,
   SiteAlternativesIndexRoute: SiteAlternativesIndexRoute,
   SiteBlogIndexRoute: SiteBlogIndexRoute,
@@ -662,6 +705,7 @@ const SiteRouteRouteChildren: SiteRouteRouteChildren = {
   SiteChartsIndexRoute: SiteChartsIndexRoute,
   SiteComponentsIndexRoute: SiteComponentsIndexRoute,
   SiteGuidesIndexRoute: SiteGuidesIndexRoute,
+  SiteMicroInteractionsIndexRoute: SiteMicroInteractionsIndexRoute,
   SiteReactNativeIndexRoute: SiteReactNativeIndexRoute,
   SiteComponentsCategorySlugRoute: SiteComponentsCategorySlugRoute,
   SiteComponentsCategoryIndexRoute: SiteComponentsCategoryIndexRoute,

@@ -18,7 +18,7 @@ export function toTile(component: ComponentEntry): TileComponent {
   };
 }
 
-const CATEGORY_ORDER = ["motion", "blocks", "agents", "charts", "casino"] as const;
+const CATEGORY_ORDER = ["motion", "blocks", "agents", "micro-interactions", "charts", "casino"] as const;
 
 /**
  * Each library section with its number of component pages, matching what its
