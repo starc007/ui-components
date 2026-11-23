@@ -27,12 +27,30 @@ export function LandingComponentCard({
   category = "motion",
   variant = "default",
   previewKey,
+  id,
+  href,
+  name,
+  description,
+  badge,
+  launchedAt,
 }: {
   component: ComponentEntry;
   category?: string;
   variant?: CardVariant;
   previewKey?: string;
+  /** Anchor id, so old `#variant` links land on the card. */
+  id?: string;
+  /** Overrides for a card that stands for one variant, not the whole page. */
+  href?: string;
+  name?: string;
+  description?: string;
+  badge?: "new" | null;
+  launchedAt?: string | null;
 }) {
+  const title = name ?? component.name;
+  const blurb = description ?? component.description;
+  const isNew = (badge === undefined ? component.badge : badge) === "new";
+  const newSince = (launchedAt === undefined ? component.launchedAt : launchedAt) ?? undefined;
   const t = useTranslations("Landing.card");
   const cardRef = useRef<HTMLElement>(null);
   const shouldRenderPreview = useInView(cardRef, {
@@ -51,16 +69,17 @@ export function LandingComponentCard({
   return (
     <article
       ref={cardRef}
-      className={cn("group/card relative h-full", VARIANT_SPAN[variant])}
+      id={id}
+      className={cn("group/card relative h-full scroll-mt-24", VARIANT_SPAN[variant])}
       onPointerEnter={() => setHover(true)}
       onPointerLeave={() => setHover(false)}
       onFocus={() => setHover(true)}
       onBlur={() => setHover(false)}
     >
       <Link
-        href={componentPath(category, component.slug)}
+        href={href ?? componentPath(category, component.slug)}
         prefetch={false}
-        aria-label={t("view", { name: component.name })}
+        aria-label={t("view", { name: title })}
         className="absolute inset-0 z-20 rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       />
       <div
@@ -87,14 +106,12 @@ export function LandingComponentCard({
                   feature ? "text-lg" : "text-base",
                 )}
               >
-                {component.name}
+                {title}
               </h3>
-              {component.badge === "new" ? (
-                <NewBadge launchedAt={component.launchedAt} />
-              ) : null}
+              {isNew ? <NewBadge launchedAt={newSince} /> : null}
             </div>
             <p className="mt-0.5 line-clamp-1 text-xs leading-relaxed text-muted-foreground">
-              {component.description}
+              {blurb}
             </p>
           </div>
           <ArrowUpRight

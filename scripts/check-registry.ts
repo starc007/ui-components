@@ -4,6 +4,8 @@ import { componentDates } from "../lib/component-dates";
 import { componentSeo, SEO_DESCRIPTION_MAX, SEO_TITLE_MAX } from "../lib/component-seo";
 import { componentSummaries, SUMMARY_MAX } from "../lib/component-summaries";
 import { seoPages } from "../lib/seo-pages";
+import { variantCopy, VARIANT_SUMMARY_MAX } from "../lib/variant-copy";
+import { allVariantPages } from "../lib/variant-pages";
 import { changelogEntries } from "../lib/changelog";
 import { allShadcnTargets, buildEntry, buildShadcnItem } from "../lib/registry-server";
 import { readSourceFile } from "../lib/source-files";
@@ -114,6 +116,34 @@ for (const slug of [
   ...Object.keys(componentSummaries),
 ]) {
   if (!componentSlugs.has(slug)) errors.push(`SEO, About or summary entry "${slug}" has no component`);
+}
+
+// Variant pages: every one needs its own name, search copy and summary.
+const variantInstallSlugs = new Set<string>();
+for (const { category, comp, example } of allVariantPages()) {
+  const label = `${category}/${comp.slug}/${example.slug}`;
+  variantInstallSlugs.add(example.installSlug);
+  const copy = variantCopy[example.installSlug];
+  if (!copy) {
+    errors.push(`${label}: missing entry "${example.installSlug}" in lib/variant-copy.ts`);
+    continue;
+  }
+  if (!copy.name.trim()) errors.push(`${label}: variant name is empty`);
+  if (copy.title.length > SEO_TITLE_MAX) {
+    errors.push(`${label}: variant title is ${copy.title.length} chars (max ${SEO_TITLE_MAX})`);
+  }
+  if (copy.description.length > SEO_DESCRIPTION_MAX) {
+    errors.push(
+      `${label}: variant description is ${copy.description.length} chars (max ${SEO_DESCRIPTION_MAX})`,
+    );
+  }
+  if (copy.summary.length > VARIANT_SUMMARY_MAX) {
+    errors.push(`${label}: variant summary is ${copy.summary.length} chars (max ${VARIANT_SUMMARY_MAX})`);
+  }
+  if (/—/.test(JSON.stringify(copy))) errors.push(`${label}: variant copy contains an em dash`);
+}
+for (const slug of Object.keys(variantCopy)) {
+  if (!variantInstallSlugs.has(slug)) errors.push(`Variant copy "${slug}" has no variant page`);
 }
 
 // Alternatives and guides pages: search copy limits, real component links,

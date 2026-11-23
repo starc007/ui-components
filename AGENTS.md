@@ -53,6 +53,7 @@ The site is fully static, so pages never run code per request.
 
 - An entry (`ComponentEntry`) has `slug`, `name`, `description`, `file`, `extraFiles`, an optional `usageFile`, and `examples` (`ComponentExample`), one per variant shown on the page. A variant with its own `installSlug` installs separately.
 - A page slug is not always an install slug. A page whose variants all carry an `installSlug` installs only by those (`button` → `button-base`, `button-stateful`, `button-magnetic`, `button-metallic`); `INSTALL_SLUGS` in `lib/registry.ts` lists every installable slug. Install slugs are public contract: when you split an existing page into variants, keep the old slug as one variant's `installSlug` so `/r/<slug>.json` still resolves.
+- Variant pages: a page whose examples each have their own `file` and `installSlug` (Button, Crash, Select, ...) splits. Each variant gets its own page at `<page>/<example slug>` with its own install, props, OG card, Markdown and sitemap entry. The parent becomes an overview of variant cards, and the sidebar nests the variants under it. `isSplitPage` and the path helpers are in `lib/variant-pages.ts`. Every variant page needs an entry in `lib/variant-copy.ts` (name, SEO title and description, one-line summary), and `check:registry` enforces it.
 - A component's API lives in its own file (exported props types, `<name>Messages`), and its preview in `components/previews/<category>/` shows real usage.
 - Reuse the shared building blocks instead of writing new ones:
   - Motion tokens: `lib/ease.ts`.

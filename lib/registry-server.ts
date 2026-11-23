@@ -2,6 +2,7 @@ import { allComponents, BLOCK_CATEGORIES, findCategory, registry } from "@/lib/r
 import { componentDates } from "@/lib/component-dates";
 import { pageUrlFor, withSignature } from "@/lib/signature";
 import { SITE_URL } from "@/lib/site";
+import { docsPathFor } from "@/lib/variant-pages";
 import { readOptionalSourceFile, readSourceFile, resolveSourceImport, type SourceFile } from "@/lib/source-files";
 
 export type RegistryFile = {
@@ -260,7 +261,7 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
   const previewSource = await readOptionalSourceFile(previewPath);
   const previewGraph = previewSource ? await collectSourceGraph([previewPath]) : null;
   const componentFileSet = new Set(requiredFiles);
-  const pageUrl = pageUrlFor(categorySlug, comp.pageSlug);
+  const pageUrl = `${SITE_URL}${docsPathFor(categorySlug, comp.pageSlug, slug)}`;
   const dates = componentDates(categorySlug, comp.pageSlug);
   const files = mergeRegistryFiles(componentGraph.files, previewGraph?.files ?? [], componentFileSet, previewPath, pageUrl);
 
@@ -272,8 +273,8 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
     source_url: `${SITE_URL}/r/${slug}/raw`,
     detail_url: `${SITE_URL}/r/${slug}`,
     raw_url: `${SITE_URL}/r/${slug}/raw`,
-    page_url: pageUrlFor(categorySlug, comp.pageSlug),
-    markdown_url: `${pageUrlFor(categorySlug, comp.pageSlug)}.md`,
+    page_url: pageUrl,
+    markdown_url: `${pageUrl}.md`,
     published_at: dates.publishedAt,
     updated_at: dates.updatedAt,
     dependencies: Array.from(new Set([...componentGraph.external, ...(previewGraph?.external ?? [])])).sort(),
@@ -317,7 +318,7 @@ export async function buildShadcnItem(
   const graph = await collectSourceGraph([comp.file, ...(comp.extraFiles ?? [])]);
   const dependencies = graph.external.filter((dep) => !SHADCN_DEP_SKIP.has(dep));
   const componentFileSet = new Set([comp.file, ...(comp.extraFiles ?? [])]);
-  const pageUrl = pageUrlFor(comp.categorySlug, comp.pageSlug);
+  const pageUrl = `${SITE_URL}${docsPathFor(comp.categorySlug, comp.pageSlug, comp.slug)}`;
 
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",

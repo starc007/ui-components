@@ -14,6 +14,7 @@ import { PagePager } from "@/components/app/docs/page-pager";
 import { PreviewCard } from "@/components/app/docs/preview-card";
 import { PropsTable } from "@/components/app/docs/props-table";
 import { type RelatedItem, RelatedSection } from "@/components/app/docs/related-section";
+import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
 import { getPreview, previews } from "@/components/previews";
 import { getTranslations } from "@/i18n/server";
 import { componentDates } from "@/lib/component-dates";
@@ -45,6 +46,8 @@ import {
 import { pageUrlFor, withSignature } from "@/lib/signature";
 import { readSourceFile } from "@/lib/source-files";
 import { cn } from "@/lib/utils";
+import { variantCopy } from "@/lib/variant-copy";
+import { isSplitPage, variantPath } from "@/lib/variant-pages";
 
 type ComponentPageInput = { category: string; slug: string };
 
@@ -57,6 +60,16 @@ type ExampleData = {
 };
 
 type CreditGroup = { credit: ComponentCredit; examples: ComponentExample[] };
+
+export type VariantCardData = {
+  slug: string;
+  name: string;
+  summary: string;
+  previewKey: string;
+  href: string;
+  badge: "new" | null;
+  launchedAt: string | null;
+};
 
 /**
  * Everything a component page shows that needs the repository or Shiki:
@@ -79,11 +92,29 @@ export const getComponentPage = createServerFn({ method: "GET" })
     const catName = cat.name;
     const pageUrl = pageUrlFor(cat.slug, comp.slug);
 
+    // A page of separate components links to one page per variant instead of
+    // rendering every variant's code here.
+    const split = isSplitPage(comp);
+    const variants: VariantCardData[] = split
+      ? (comp.examples ?? []).map((example) => {
+          const copy = example.installSlug ? variantCopy[example.installSlug] : undefined;
+          return {
+            slug: example.slug,
+            name: copy?.name ?? example.name,
+            summary: copy?.summary ?? example.description ?? "",
+            previewKey: example.previewKey,
+            href: variantPath(cat.slug, comp.slug, example.slug),
+            badge: example.badge ?? null,
+            launchedAt: example.launchedAt ?? null,
+          };
+        })
+      : [];
+
     const examples: ExampleData[] = [];
     const examplesShareSource =
       (comp.examples?.length ?? 0) > 1 &&
       new Set(comp.examples?.map((example) => example.file)).size === 1;
-    for (const [index, example] of (comp.examples ?? []).entries()) {
+    for (const [index, example] of (split ? [] : (comp.examples ?? [])).entries()) {
       const usageFile = example.usageFile ?? example.previewFile;
       const showApi = !examplesShareSource || index === (comp.examples?.length ?? 0) - 1;
       const [source, usage, manual] = await Promise.all([
@@ -113,7 +144,7 @@ export const getComponentPage = createServerFn({ method: "GET" })
       ]);
       main = { source, usage };
     }
-    const hasVariantInstallCommands = examples.some(({ example }) => example.installSlug);
+    const hasVariantInstallCommands = split || examples.some(({ example }) => example.installSlug);
 
     const related: RelatedItem[] = relatedComponents(cat.slug, comp.slug, 3);
 
@@ -163,6 +194,7 @@ export const getComponentPage = createServerFn({ method: "GET" })
       englishName: comp.name,
       summary: componentSummaries[comp.slug] ?? null,
       examples,
+      variants,
       sharedCredit: Boolean(sharedCredit),
       pageCredit: pageCredit ?? null,
       creditGroups,
@@ -185,13 +217,14 @@ export async function loadComponentPage(input: ComponentPageInput) {
   return data;
 }
 
-function componentMetadata({
+export function componentMetadata({
   catSlug,
   comp,
   keywords,
   title,
   description,
   imageAlt,
+  variant,
 }: {
   catSlug: string;
   comp: ComponentEntry;
@@ -199,15 +232,23 @@ function componentMetadata({
   title: string;
   description: string;
   imageAlt: string;
+  /** A variant page: its own path, social card and single registry item. */
+  variant?: { slug: string; installSlug: string };
 }): Metadata {
-  const installSlugs = comp.examples?.flatMap((example) =>
-    example.installSlug ? [example.installSlug] : [],
-  ) ?? [];
+  const installSlugs = variant
+    ? [variant.installSlug]
+    : (comp.examples?.flatMap((example) =>
+        example.installSlug ? [example.installSlug] : [],
+      ) ?? []);
   const registryItem = installSlugs[0] ? `/r/${installSlugs[0]}.json` : `/r/${comp.slug}.json`;
   const directoryItem = installSlugs[0] ? `/${installSlugs[0]}.json` : `/${comp.slug}.json`;
   const ogTitle = `${title} · beUI`;
-  const path = componentPath(catSlug, comp.slug);
-  const imageUrl = ogImagePath("component", comp.slug);
+  const path = variant
+    ? variantPath(catSlug, comp.slug, variant.slug)
+    : componentPath(catSlug, comp.slug);
+  const imageUrl = variant
+    ? ogImagePath("variant", variant.installSlug)
+    : ogImagePath("component", comp.slug);
 
   return {
     title,
@@ -226,8 +267,11 @@ function componentMetadata({
     alternates: {
       canonical: path,
       types: {
-        "application/json":
-          installSlugs.length > 0 ? `/r/${comp.slug}` : `/r/${comp.slug}.json`,
+        "application/json": variant
+          ? `/r/${variant.installSlug}.json`
+          : installSlugs.length > 0
+            ? `/r/${comp.slug}`
+            : `/r/${comp.slug}.json`,
         "text/plain": `/r/${comp.slug}/raw`,
       },
     },
@@ -284,7 +328,13 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
         <PlatformSwitch />
       </div>
 
-      {data.examples.length ? (
+      {data.variants.length ? (
+        <div className="mt-12 grid gap-4 sm:grid-cols-2">
+          {data.variants.map((variant) => (
+            <VariantCard key={variant.slug} variant={variant} component={comp} category={catSlug} />
+          ))}
+        </div>
+      ) : data.examples.length ? (
         <div className="mt-12 flex flex-col gap-20">
           {data.examples.map((example) => (
             <ExampleBlock
@@ -354,6 +404,33 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
   );
 }
 
+/** One variant on a split page's overview: a live preview linking to its page. */
+function VariantCard({
+  variant,
+  component,
+  category,
+}: {
+  variant: VariantCardData;
+  component: ComponentEntry;
+  category: string;
+}) {
+  return (
+    <div className="h-72">
+      <LandingComponentCard
+        component={component}
+        category={category}
+        previewKey={variant.previewKey}
+        id={variant.slug}
+        href={variant.href}
+        name={variant.name}
+        description={variant.summary}
+        badge={variant.badge}
+        launchedAt={variant.launchedAt}
+      />
+    </div>
+  );
+}
+
 const AVATAR_CLASS =
   "size-5 shrink-0 rounded-full object-cover outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10";
 const FOCUS_RING =
@@ -410,7 +487,7 @@ function CreditSummary({ groups, className }: { groups: CreditGroup[]; className
   );
 }
 
-function CreditLink({ credit, className }: { credit: ComponentCredit; className?: string }) {
+export function CreditLink({ credit, className }: { credit: ComponentCredit; className?: string }) {
   const t = useTranslations("Docs.component");
   const url = new URL(credit.url);
   url.searchParams.set("ref", "beui");

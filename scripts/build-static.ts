@@ -11,7 +11,9 @@ import { loadBannerAssets, renderBlogBanners } from "../lib/blog-banner";
 import { blogCoverPath, ogImagePath } from "../lib/og-paths";
 import { BLOG_FEED_PATH, BLOG_PATH, blogPostMarkdown, blogPostPath, blogPosts } from "../lib/blog";
 import { CHANGE_LABELS, CHANGELOG_PATH, changelogAnchor, changelogEntries, changelogItemLink } from "../lib/changelog";
-import { buildComponentMarkdown } from "../lib/component-markdown";
+import { buildComponentMarkdown, buildVariantMarkdown } from "../lib/component-markdown";
+import { variantCopy } from "../lib/variant-copy";
+import { allVariantPages, docsPathFor, variantPath } from "../lib/variant-pages";
 import { componentPath } from "../lib/component-paths";
 import { buildGuideMarkdown, GUIDE_SLUGS } from "../lib/guide-markdown";
 import { native } from "../lib/native";
@@ -66,6 +68,9 @@ function once<T>(build: () => Promise<T>) {
 }
 const registryIndex = once(buildIndex);
 const shadcnRegistry = once(buildShadcnRegistry);
+const variantPages = new Map(
+  allVariantPages().map((ref) => [variantPath(ref.category, ref.comp.slug, ref.example.slug), ref]),
+);
 const markdownCache = new Map<string, ReturnType<typeof buildComponentMarkdown>>();
 function componentMarkdown(categorySlug: string, slug: string) {
   const key = `${categorySlug}/${slug}`;
@@ -107,12 +112,14 @@ async function buildRegistry() {
   for (const target of allRegistryTargets()) {
     const { slug, categorySlug, pageSlug } = target;
     const entry = await buildEntry(categorySlug, slug);
+    // A variant of a split page has its own docs page.
+    const docsPath = docsPathFor(categorySlug, pageSlug, slug);
     if (entry) {
       await workerRoute(`/r/${slug}`, json(entry), {
         ...JSON_TYPE,
         ...CACHE,
         ...CORS,
-        link: `</r/${slug}/raw>; rel="alternate"; type="text/plain", <${componentPath(categorySlug, slug)}.md>; rel="alternate"; type="text/markdown", </llms.txt>; rel="describedby"; type="text/plain"`,
+        link: `</r/${slug}/raw>; rel="alternate"; type="text/plain", <${docsPath}.md>; rel="alternate"; type="text/markdown", </llms.txt>; rel="describedby"; type="text/plain"`,
       });
     }
     await workerRoute(`/r/${slug}/raw`, await readSourceFile(target.file), {
@@ -122,14 +129,17 @@ async function buildRegistry() {
       "x-robots-tag": "noindex",
       link: `</r/${slug}>; rel="alternate"; type="application/json"`,
     });
-    const markdown = await componentMarkdown(categorySlug, pageSlug);
+    const variant = variantPages.get(docsPath);
+    const markdown = variant
+      ? await buildVariantMarkdown(categorySlug, pageSlug, variant.example.slug)
+      : await componentMarkdown(categorySlug, pageSlug);
     if (markdown) {
       await workerRoute(`/r/${slug}.md`, markdown, {
         "content-type": "text/markdown; charset=utf-8",
         ...CACHE,
         ...CORS,
         "x-robots-tag": "noindex",
-        link: `<${componentPath(categorySlug, pageSlug)}>; rel="canonical"; type="text/html"`,
+        link: `<${docsPath}>; rel="canonical"; type="text/html"`,
       });
     }
   }
@@ -172,6 +182,10 @@ async function buildMarkdownPages() {
     const markdown = await componentMarkdown(component.category.slug, component.slug);
     if (!markdown) continue;
     await write(`${componentPath(component.category.slug, component.slug)}.md`, markdown);
+  }
+  for (const [pagePath, { category, comp, example }] of variantPages) {
+    const markdown = await buildVariantMarkdown(category, comp.slug, example.slug);
+    if (markdown) await write(`${pagePath}.md`, markdown);
   }
   for (const slug of GUIDE_SLUGS) {
     const markdown = buildGuideMarkdown(slug);
@@ -254,7 +268,16 @@ async function buildLlmsTxt() {
     "",
     "## Components",
     "",
-    ...idx.components.map((c) => `- [${c.name}](${c.markdown_url}): ${c.description}`),
+    ...idx.components.flatMap((c) => [
+      `- [${c.name}](${c.markdown_url}): ${c.description}`,
+      // A split page lists its variant pages under it.
+      ...[...variantPages]
+        .filter(([, v]) => v.category === c.category && v.comp.slug === c.slug)
+        .map(([pagePath, v]) => {
+          const copy = variantCopy[v.example.installSlug];
+          return `  - [${copy?.name ?? v.example.name}](${SITE_URL}${pagePath}.md): ${copy?.summary ?? v.example.description ?? ""}`;
+        }),
+    ]),
     "",
     "## React Native (beUI Native)",
     "",

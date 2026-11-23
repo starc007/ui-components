@@ -44,5 +44,6 @@ export function hasSiteSidebar(pathname: string) {
 
 /** Component, category and React Native pages, which offer the Web/React Native switch. */
 export function hasPlatformSwitch(pathname: string) {
-  return /^\/components\/[^/]+(\/[^/]+)?\/?$/.test(pathname) || isNativePath(pathname);
+  // Category list, component page or variant page.
+  return /^\/components\/[^/]+(\/[^/]+){0,2}\/?$/.test(pathname) || isNativePath(pathname);
 }

@@ -7,6 +7,9 @@ import { pageUrlFor } from "@/lib/signature";
 import { readOptionalSourceFile } from "@/lib/source-files";
 import { native } from "@/lib/native";
 import { buildNativeEntry } from "@/lib/native-registry";
+import { SITE_URL } from "@/lib/site";
+import { variantCopy } from "@/lib/variant-copy";
+import { findVariant, isSplitPage, variantPath } from "@/lib/variant-pages";
 
 function escapeTableCell(value: string) {
   return value.replace(/\|/g, "\\|").replace(/\s+/g, " ").trim();
@@ -103,6 +106,12 @@ export async function buildComponentMarkdown(
       lines.push("```bash");
       lines.push(`npx shadcn@latest add @beui/${example.installSlug}`);
       lines.push("```", "");
+      if (isSplitPage(component)) {
+        lines.push(
+          `Docs: ${SITE_URL}${variantPath(categorySlug, component.slug, example.slug)}.md`,
+          "",
+        );
+      }
     }
   } else {
     lines.push("```bash");
@@ -179,6 +188,87 @@ export async function buildComponentMarkdown(
     "",
     `- Registry detail: ${primaryEntry.detail_url}`,
     `- Raw source: ${primaryEntry.raw_url}`,
+    `- GitHub: https://github.com/starc007/ui-components`,
+    "",
+  );
+
+  return `${lines.join("\n").replace(/\n{3,}/g, "\n\n").trim()}\n`;
+}
+
+/** Markdown for one variant page (`/components/motion/button/metallic.md`). */
+export async function buildVariantMarkdown(
+  categorySlug: string,
+  componentSlug: string,
+  variantSlug: string,
+) {
+  const found = findVariant(categorySlug, componentSlug, variantSlug);
+  const installSlug = found?.example.installSlug;
+  if (!found || !installSlug) return null;
+  const { comp, example } = found;
+  const copy = variantCopy[installSlug];
+  const name = copy?.name ?? example.name;
+  const description = copy?.description ?? example.description ?? comp.description;
+
+  const pageUrl = `${SITE_URL}${variantPath(categorySlug, comp.slug, example.slug)}`;
+  const dates = componentDates(categorySlug, comp.slug);
+  const entry = await buildEntry(categorySlug, installSlug);
+  if (!entry) return null;
+
+  const lines = [
+    "---",
+    `title: ${JSON.stringify(name)}`,
+    `description: ${JSON.stringify(description)}`,
+    `category: ${JSON.stringify(findCategory(categorySlug)?.name ?? "Components")}`,
+    `parent: ${JSON.stringify(pageUrlFor(categorySlug, comp.slug))}`,
+    `publishedAt: ${JSON.stringify(dates.publishedAt)}`,
+    `updatedAt: ${JSON.stringify(dates.updatedAt)}`,
+    `documentation: ${JSON.stringify(pageUrl)}`,
+    `markdown: ${JSON.stringify(`${pageUrl}.md`)}`,
+    `license: ${JSON.stringify("MIT")}`,
+    "---",
+    "",
+    `# ${name}`,
+    "",
+    `> ${description}`,
+    "",
+    "## Install",
+    "",
+    "```bash",
+    `npx shadcn@latest add @beui/${installSlug}`,
+    "```",
+    "",
+    "## Dependencies",
+    "",
+    entry.dependencies.length
+      ? entry.dependencies.map((dependency) => `- \`${dependency}\``).join("\n")
+      : "This component has no external package dependencies.",
+    "",
+    "## Usage",
+    "",
+    ...(await usageSection(example)),
+  ];
+
+  const apiLines = apiReference(example.file);
+  if (apiLines.length) lines.push("## API Reference", "", ...apiLines);
+
+  const siblings = (comp.examples ?? []).filter((candidate) => candidate.slug !== example.slug);
+  if (siblings.length) {
+    lines.push(`## More in ${comp.name}`, "");
+    for (const sibling of siblings) {
+      const siblingName =
+        (sibling.installSlug && variantCopy[sibling.installSlug]?.name) || sibling.name;
+      lines.push(
+        `- [${siblingName}](${SITE_URL}${variantPath(categorySlug, comp.slug, sibling.slug)}.md)`,
+      );
+    }
+    lines.push("");
+  }
+
+  lines.push(
+    "## Source",
+    "",
+    `- Registry detail: ${entry.detail_url}`,
+    `- Raw source: ${entry.raw_url}`,
     `- GitHub: https://github.com/starc007/ui-components`,
     "",
   );

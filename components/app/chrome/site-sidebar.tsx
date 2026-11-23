@@ -24,6 +24,8 @@ import { Tooltip } from "@/components/motion/tooltip";
 import { moveNewItemsToTop } from "@/lib/component-status";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
+import { variantCopy } from "@/lib/variant-copy";
+import { isSplitPage, variantPath } from "@/lib/variant-pages";
 
 // `key` is a Chrome message key; a null key keeps `name` (a product name).
 type NavLink = {
@@ -283,6 +285,36 @@ function linkClass(active: boolean) {
   );
 }
 
+/**
+ * A variant row under a split page. A dashed guide runs down the left of the
+ * group in gray, a little inside the parent's label, and every row hooks off
+ * it. The line from the top down to the active row, and that row's hook, are
+ * drawn in the primary color. The guide stops at the last row's hook.
+ * Pseudo-elements on the link span the full row and sit outside the hover
+ * pill.
+ */
+function variantLinkClass(position: "above" | "active" | "below", last: boolean) {
+  return cn(
+    "relative ml-7 block rounded-full px-3 py-1.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:py-1",
+    // The guide: a 1px bar masked into fixed 3px dashes. A dashed border
+    // stretches its dashes to fit each element, so two of them never line up.
+    "before:pointer-events-none before:absolute before:top-0 before:-left-2 before:w-px before:[mask-image:repeating-linear-gradient(to_bottom,#000_0_3px,transparent_3px_6px)]",
+    // On the last row the guide stops where the arc starts to curve.
+    last ? "before:bottom-[calc(50%+0.5rem)]" : "before:bottom-0",
+    (position === "above" || (position === "active" && last)) && "before:bg-primary",
+    position === "below" && "before:bg-foreground/20",
+    // The active row's guide is dark down to its arc and gray below it.
+    position === "active" &&
+      !last &&
+      "before:bg-[linear-gradient(to_bottom,var(--color-primary)_50%,color-mix(in_oklab,var(--color-foreground)_20%,transparent)_50%)]",
+    // The arc: just the curve into the row, so it barely overlaps the guide.
+    "after:pointer-events-none after:absolute after:top-[calc(50%-0.5rem)] after:-left-2 after:h-2 after:w-4 after:rounded-bl-lg after:border-b after:border-l after:border-dashed",
+    position === "active"
+      ? "text-foreground font-medium after:border-primary"
+      : "text-muted-foreground hover:text-foreground after:border-foreground/20",
+  );
+}
+
 /** The React Native pages' list: overview, setup, then components by group. */
 function NativeSidebarNav({
   pathname,
@@ -473,9 +505,10 @@ function WebSidebarNav({
               <span className={COUNT_CLASS}>{cat.components.length}</span>
             </Link>
             <SharedLayoutBg inset={0} pillClassName="rounded-full bg-foreground/[0.05]">
-              {moveNewItemsToTop(cat.components, now).map((comp) => {
+              {moveNewItemsToTop(cat.components, now).flatMap((comp) => {
                 const href = componentPath(cat.slug, comp.slug);
-                return (
+                const split = isSplitPage(comp);
+                const parent = (
                   <Link
                     key={comp.slug}
                     href={href}
@@ -485,13 +518,60 @@ function WebSidebarNav({
                     className={linkClass(pathname === href)}
                   >
                     <span className="flex items-center justify-between gap-2">
-                      <span className="truncate">{comp.name}</span>
+                      <span className="flex min-w-0 items-center gap-1.5">
+                        <span className="truncate">{comp.name}</span>
+                        {split ? (
+                          <span className={COUNT_CLASS}>{comp.examples?.length}</span>
+                        ) : null}
+                      </span>
                       {comp.badge === "new" ? (
                         <NewBadge launchedAt={comp.launchedAt} />
                       ) : null}
                     </span>
                   </Link>
                 );
+                // A split page lists its variant pages under it while you are
+                // on the overview or one of the variants.
+                const open =
+                  split && (pathname === href || pathname.startsWith(`${href}/`));
+                if (!open) return [parent];
+                const examples = comp.examples ?? [];
+                const activeIndex = examples.findIndex(
+                  (example) => pathname === variantPath(cat.slug, comp.slug, example.slug),
+                );
+                return [
+                  parent,
+                  ...examples.map((example, index) => {
+                    const variantHref = variantPath(cat.slug, comp.slug, example.slug);
+                    const name =
+                      (example.installSlug && variantCopy[example.installSlug]?.name) ||
+                      example.name;
+                    return (
+                      <Link
+                        key={`${comp.slug}/${example.slug}`}
+                        href={variantHref}
+                        prefetch={false}
+                        aria-current={pathname === variantHref ? "page" : undefined}
+                        onClick={onNavigate}
+                        className={variantLinkClass(
+                          index < activeIndex
+                            ? "above"
+                            : index === activeIndex
+                              ? "active"
+                              : "below",
+                          index === examples.length - 1,
+                        )}
+                      >
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="truncate">{name}</span>
+                          {example.badge === "new" ? (
+                            <NewBadge launchedAt={example.launchedAt} />
+                          ) : null}
+                        </span>
+                      </Link>
+                    );
+                  }),
+                ];
               })}
             </SharedLayoutBg>
           </div>

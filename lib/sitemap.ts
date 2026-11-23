@@ -10,6 +10,7 @@ import { native } from "@/lib/native";
 import { seoPagePath, seoPages } from "@/lib/seo-pages";
 import { changelogEntries } from "@/lib/changelog";
 import { BLOG_PATH, blogPostPath, blogPosts } from "@/lib/blog";
+import { allVariantPages, variantPath } from "@/lib/variant-pages";
 import { SITE_URL as SITE } from "@/lib/site";
 
 type SitemapEntry = {
@@ -87,6 +88,12 @@ export function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "weekly",
     priority: 0.7,
   }));
+  const variantPages: MetadataRoute.Sitemap = allVariantPages().map(({ category, comp, example }) => ({
+    url: `${SITE}${variantPath(category, comp.slug, example.slug)}`,
+    lastModified: componentDates(category, comp.slug).updatedAt,
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
 
   // beUI Native's own pages, at /react-native.
   const nativeLaunch = "2026-10-16";
@@ -143,6 +150,7 @@ export function sitemap(): MetadataRoute.Sitemap {
     ...blogPages,
     ...categoryPages,
     ...componentPages,
+    ...variantPages,
     ...nativePages,
     ...feedPages,
     ...landingPages,
