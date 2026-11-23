@@ -206,7 +206,7 @@ export function TokenPicker({
                               {token.name}
                             </span>
                             <span className="truncate text-[11px] text-muted-foreground">
-                              {token.symbol}
+                              {token.symbol} · {chain.name}
                             </span>
                           </span>
                         </span>

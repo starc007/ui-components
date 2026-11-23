@@ -72,12 +72,10 @@ export function TokenDot({
           height: size * 0.42,
         }}
         className={cn(
-          "absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center rounded-full border-2 border-card text-[7px] font-semibold",
+          "absolute -bottom-0.5 -right-0.5 rounded-full border-2 border-card",
           chain.tone,
         )}
-      >
-        {chain.symbol}
-      </span>
+      />
     </span>
   );
 }
