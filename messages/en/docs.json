@@ -81,6 +81,8 @@
     "preview": "Preview",
     "usage": "Usage",
     "code": "Code",
+    "viewCode": "View code",
+    "hideCode": "Hide code",
     "install": "Install",
     "installDescription": "Add it with the shadcn CLI, or copy the source manually.",
     "apiReference": "API Reference",

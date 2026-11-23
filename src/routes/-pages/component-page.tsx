@@ -4,7 +4,6 @@ import { staticFunctionMiddleware } from "@tanstack/start-static-server-function
 import { ArrowRight, ArrowUpRight, ChevronRight, Smartphone } from "lucide-react";
 import { useFormatter, useLocale, useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
-import { CodeBlock } from "@/components/app/docs/code-block";
 import { ComponentGuide } from "@/components/app/docs/component-guide";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { InstallBlock } from "@/components/app/docs/install-block";
@@ -12,15 +11,9 @@ import { KeepInMind } from "@/components/app/docs/keep-in-mind";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { PagePager } from "@/components/app/docs/page-pager";
-import {
-  PreviewExpand,
-  PreviewExpandStage,
-  PreviewExpandToggle,
-  PreviewReplayToggle,
-} from "@/components/app/docs/preview-fullscreen";
+import { PreviewCard } from "@/components/app/docs/preview-card";
 import { PropsTable } from "@/components/app/docs/props-table";
 import { type RelatedItem, RelatedSection } from "@/components/app/docs/related-section";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { getPreview, previews } from "@/components/previews";
 import { getTranslations } from "@/i18n/server";
 import { componentDates } from "@/lib/component-dates";
@@ -457,59 +450,6 @@ function CreditLink({ credit, className }: { credit: ComponentCredit; className?
   );
 }
 
-const TRIGGER_CLASS =
-  "aria-[selected=true]:text-foreground [&_[data-tabs-label]]:text-foreground";
-
-function PreviewTabs({
-  stageId,
-  minHeight,
-  preview,
-  usage,
-  source,
-}: {
-  stageId: string;
-  minHeight: string;
-  preview: React.ReactNode;
-  usage: HighlightedCode;
-  source: HighlightedCode;
-}) {
-  const t = useTranslations("Docs.component");
-  return (
-    <PreviewExpand stageId={stageId}>
-      <Tabs defaultValue="preview" variant="pill">
-        <div className="flex items-center justify-between gap-3">
-          <TabsList>
-            <TabsTrigger value="preview" indicatorClassName="bg-background" className={TRIGGER_CLASS}>
-              {t("preview")}
-            </TabsTrigger>
-            <TabsTrigger value="usage" indicatorClassName="bg-background" className={TRIGGER_CLASS}>
-              {t("usage")}
-            </TabsTrigger>
-            <TabsTrigger value="source" indicatorClassName="bg-background" className={TRIGGER_CLASS}>
-              {t("code")}
-            </TabsTrigger>
-          </TabsList>
-          <div className="flex items-center gap-2">
-            <PreviewReplayToggle />
-            <PreviewExpandToggle />
-          </div>
-        </div>
-        <TabsContent value="preview" className="mt-4">
-          <PreviewExpandStage className={cn("flex items-center justify-center py-10", minHeight)}>
-            {preview}
-          </PreviewExpandStage>
-        </TabsContent>
-        <TabsContent value="usage" className="mt-4">
-          <CodeBlock {...usage} />
-        </TabsContent>
-        <TabsContent value="source" className="mt-4">
-          <CodeBlock {...source} />
-        </TabsContent>
-      </Tabs>
-    </PreviewExpand>
-  );
-}
-
 function ExampleBlock({ data, showCredit }: { data: ExampleData; showCredit: boolean }) {
   const t = useTranslations("Docs.component");
   const { example, source, usage, propsDocs, manual } = data;
@@ -530,7 +470,7 @@ function ExampleBlock({ data, showCredit }: { data: ExampleData; showCredit: boo
         <CreditLink credit={example.credit} className="-mt-2 mb-4" />
       ) : null}
       <div id={`${example.slug}-preview`} className="scroll-mt-24">
-        <PreviewTabs
+        <PreviewCard
           stageId={`${example.slug}-stage`}
           minHeight="min-h-[260px]"
           preview={Preview ? <Preview /> : null}
@@ -580,7 +520,7 @@ function DefaultTabs({
   return (
     <section id="preview" className="mt-8 scroll-mt-24">
       <h2 className="sr-only">{t("preview")}</h2>
-      <PreviewTabs
+      <PreviewCard
         stageId="preview-stage"
         minHeight="min-h-[320px]"
         preview={Preview ? <Preview /> : null}

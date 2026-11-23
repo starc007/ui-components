@@ -9,6 +9,21 @@ type Props = HighlightedCode & {
   className?: string;
 };
 
+/** Styles for Shiki output: line padding, highlights, diffs and focus. */
+export const CODE_BODY_CLASS = cn(
+  "relative",
+  "px-0 py-4 text-[13px] leading-relaxed",
+  "[&_pre]:!bg-transparent [&_pre]:!p-0",
+  "[&_code]:font-mono [&_code]:text-[13px]",
+  "[&_.shiki]:bg-transparent",
+  "[&_.line]:px-5",
+  "[&_.highlighted]:bg-foreground/[0.07] [&_.highlighted]:border-l-2 [&_.highlighted]:border-blue-500 [&_.highlighted]:!pl-[18px]",
+  "[&_.diff.add]:bg-green-500/10 [&_.diff.add]:border-l-2 [&_.diff.add]:border-green-500 [&_.diff.add]:!pl-[18px]",
+  "[&_.diff.remove]:bg-red-500/10 [&_.diff.remove]:border-l-2 [&_.diff.remove]:border-red-500 [&_.diff.remove]:!pl-[18px]",
+  "[&_.focused]:opacity-100 [&_pre:has(.focused)_.line:not(.focused)]:opacity-30",
+  "[&_pre:has(.focused)_.line:not(.focused)]:transition-opacity",
+);
+
 const LANG_LABELS: Record<string, string> = {
   tsx: "TSX",
   typescript: "TS",
@@ -61,22 +76,7 @@ export function CodeBlock({ code, html, lang, filename, className }: Props) {
 
       <div className={cn("overflow-hidden rounded-lg bg-background", filename && "mx-2 mb-2")}>
       <ExpandableCode>
-        <div
-          className={cn(
-            "relative",
-            "px-0 py-4 text-[13px] leading-relaxed",
-            "[&_pre]:!bg-transparent [&_pre]:!p-0",
-            "[&_code]:font-mono [&_code]:text-[13px]",
-            "[&_.shiki]:bg-transparent",
-            "[&_.line]:px-5",
-            "[&_.highlighted]:bg-foreground/[0.07] [&_.highlighted]:border-l-2 [&_.highlighted]:border-blue-500 [&_.highlighted]:!pl-[18px]",
-            "[&_.diff.add]:bg-green-500/10 [&_.diff.add]:border-l-2 [&_.diff.add]:border-green-500 [&_.diff.add]:!pl-[18px]",
-            "[&_.diff.remove]:bg-red-500/10 [&_.diff.remove]:border-l-2 [&_.diff.remove]:border-red-500 [&_.diff.remove]:!pl-[18px]",
-            "[&_.focused]:opacity-100 [&_pre:has(.focused)_.line:not(.focused)]:opacity-30",
-            "[&_pre:has(.focused)_.line:not(.focused)]:transition-opacity",
-          )}
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+        <div className={CODE_BODY_CLASS} dangerouslySetInnerHTML={{ __html: html }} />
       </ExpandableCode>
       </div>
     </div>
