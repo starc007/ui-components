@@ -60,16 +60,27 @@ function parseFrontmatter(source: string, file: string) {
 }
 
 function readPost(file: string): BlogPost {
-  const slug = file.replace(/\.md$/, "");
-  const { fields, body } = parseFrontmatter(readFileSync(path.join(BLOG_DIR, file), "utf8"), file);
+  return parseBlogPost(
+    readFileSync(path.join(BLOG_DIR, file), "utf8"),
+    file.replace(/\.md$/, ""),
+    `content/blog/${file}`,
+  );
+}
+
+/** Parses one post's Markdown (frontmatter + body). `label` names it in errors. */
+export function parseBlogPost(source: string, slug: string, label = slug): BlogPost {
+  const { fields, body } = parseFrontmatter(source, label);
   for (const key of ["title", "description", "publishedAt"]) {
-    if (!fields[key]) throw new Error(`content/blog/${file}: missing "${key}"`);
+    if (!fields[key]) throw new Error(`${label}: missing "${key}"`);
   }
   const tags = (fields.tags ?? "")
     .split(",")
     .map((tag) => tag.trim())
     .filter(Boolean);
-  if (tags.length > 4) throw new Error(`content/blog/${file}: at most 4 tags`);
+  if (tags.length > 4) throw new Error(`${label}: at most 4 tags`);
+  if (tags.some((tag) => !/^[a-z0-9]+$/.test(tag))) {
+    throw new Error(`${label}: tags are lowercase letters and digits only (dev.to)`);
+  }
   return {
     slug,
     title: fields.title,
