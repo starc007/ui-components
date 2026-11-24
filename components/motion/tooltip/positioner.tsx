@@ -55,8 +55,10 @@ export function TooltipArrow({ side, ref }: { side: TooltipSide; ref: Ref<SVGSVG
       className="pointer-events-none absolute overflow-visible"
       style={style}
     >
-      <path d={`${path}Z`} style={{ fill: "var(--tooltip-arrow-fill, transparent)" }} />
+      {/* Redrawn to fit the surface's edge once placed (see arrowShape). */}
+      <path data-arrow-fill="" d={`${path}Z`} style={{ fill: "var(--tooltip-arrow-fill, transparent)" }} />
       <path
+        data-arrow-stroke=""
         d={path}
         fill="none"
         strokeWidth="1"

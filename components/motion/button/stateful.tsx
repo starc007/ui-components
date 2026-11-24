@@ -220,7 +220,7 @@ export const StatefulButton = forwardRef<HTMLButtonElement, StatefulButtonProps>
     typeof stateText === "string" ? `${state}-${stateText}` : state;
 
   return (
-    <Button ref={ref} disabled={disabled || isBusy} aria-busy={isBusy} whileHover={undefined} {...rest}>
+    <Button ref={ref} disabled={disabled || isBusy} aria-busy={isBusy} {...rest}>
       <span
         aria-live="polite"
         className="relative inline-flex items-center justify-center overflow-hidden"

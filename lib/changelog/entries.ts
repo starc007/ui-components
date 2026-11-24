@@ -115,6 +115,25 @@ export const changelogEntries: ChangelogEntry[] = [
         "text": "Command Palette and Morphing Modal blur the page behind them a little less, which is lighter to render."
       },
       {
+        "type": "improved",
+        "text": "Button presses to a subtler 0.97 and no longer scales on hover. The ripple fades faster, and Metallic Button's shine sweeps once on hover instead of sweeping back.",
+        "component": "button"
+      },
+      {
+        "type": "improved",
+        "text": "Tooltip shows at once on keyboard focus and when moving along a row of controls, and goes at once on Escape, so only a first hover fades in. Arrows on the left and right join the rounded edge cleanly.",
+        "component": "tooltip"
+      },
+      {
+        "type": "improved",
+        "text": "Gooey Popover with trigger=\"hover\" waits a moment before opening, so a pointer passing over it no longer bursts it open. With reduced motion it fades in and out instead of appearing at once.",
+        "component": "popover"
+      },
+      {
+        "type": "improved",
+        "text": "Dropdown Menu and Context Menu open and close at once from the keyboard, and the highlight jumps between rows on arrow keys while still gliding after the mouse."
+      },
+      {
         "type": "fixed",
         "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
         "component": "select"

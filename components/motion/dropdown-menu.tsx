@@ -22,7 +22,7 @@ import {
 } from "react";
 import { enabledItems } from "@/components/motion/menu/use-menu-navigation";
 import { SPRING_PANEL } from "@/lib/ease";
-import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { PresenceGate } from "@/lib/presence-gate";
 import { useSound } from "@/lib/sound";
 import { closeSound } from "@/lib/sounds/close";
@@ -72,6 +72,7 @@ export function DropdownMenu({
 }: DropdownMenuProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [focusTarget, setFocusTarget] = useState<FocusTarget>("first");
+  const [instant, setInstant] = useState(false);
   const [mounted, setMounted] = useState(false);
   const controlled = controlledOpen !== undefined;
   const open = controlled ? controlledOpen : internalOpen;
@@ -86,10 +87,11 @@ export function DropdownMenu({
   useEffect(() => setMounted(true), []);
 
   const setOpen = useCallback(
-    (next: boolean, focus: FocusTarget = "first") => {
+    (next: boolean, focus: FocusTarget = "first", now = false) => {
       if (next !== open) {
         if (next) playOpen();
         else playClose();
+        setInstant(now);
       }
       if (next) setFocusTarget(focus);
       if (!controlled) setInternalOpen(next);
@@ -120,6 +122,7 @@ export function DropdownMenu({
       open,
       setOpen,
       focusTarget,
+      instant,
       menuId,
       triggerId,
       triggerRef,
@@ -127,7 +130,7 @@ export function DropdownMenu({
       mounted,
       playSelect,
     }),
-    [open, setOpen, focusTarget, menuId, triggerId, reduce, mounted, playSelect],
+    [open, setOpen, focusTarget, instant, menuId, triggerId, reduce, mounted, playSelect],
   );
 
   return <RootContext.Provider value={value}>{children}</RootContext.Provider>;
@@ -165,15 +168,17 @@ export function DropdownMenuTrigger({ children, disabled = false }: DropdownMenu
       childProps.onClick?.(event);
       if (event.defaultPrevented || disabled) return;
       // `detail` is 0 for a click the keyboard synthesized from Enter or Space:
-      // that opener wants the first row, a pointer wants no row picked yet.
-      root.setOpen(!root.open, event.detail === 0 ? "first" : "panel");
+      // that opener wants the first row and no animation, a pointer wants no
+      // row picked yet and the menu to grow out of the trigger.
+      const keyboard = event.detail === 0;
+      root.setOpen(!root.open, keyboard ? "first" : "panel", keyboard);
     },
     onKeyDown: (event: ReactKeyboardEvent<HTMLElement>) => {
       childProps.onKeyDown?.(event);
       if (event.defaultPrevented || disabled) return;
       if (event.key === "ArrowDown" || event.key === "ArrowUp") {
         event.preventDefault();
-        root.setOpen(true, event.key === "ArrowDown" ? "first" : "last");
+        root.setOpen(true, event.key === "ArrowDown" ? "first" : "last", true);
       }
     },
   });
@@ -205,19 +210,24 @@ export function DropdownMenuContent({
   const panelRef = useRef<HTMLDivElement | null>(null);
 
   const { setOpen, triggerRef, menuId } = root;
-  const close = useCallback(() => setOpen(false), [setOpen]);
+  // Escape and Tab are keys, so the menu goes at once; a press outside lets it fold away.
+  const dismiss = useCallback(
+    (reason: DismissReason) => setOpen(false, "first", reason === "escape"),
+    [setOpen],
+  );
+  const closeFromKey = useCallback(() => setOpen(false, "first", true), [setOpen]);
   const ignore = useCallback(
     (target: Element) =>
       Boolean(triggerRef.current?.contains(target)) ||
       Boolean(target.closest(`[data-menu-root="${CSS.escape(menuId)}"]`)),
     [triggerRef, menuId],
   );
-  useDismiss(root.open, close, null, { ignore });
+  useDismiss(root.open, dismiss, null, { ignore });
 
   if (!root.mounted) return null;
 
   return (
-    <AnimatePresence>
+    <AnimatePresence custom={root.instant}>
       {root.open && (
         <PresenceGate>
           {({ isPresent, gate }) => (
@@ -229,10 +239,11 @@ export function DropdownMenuContent({
               align={align}
               sideOffset={sideOffset}
               focus={root.focusTarget}
+              instant={root.instant}
               present={isPresent}
               gate={gate}
               labelledBy={root.triggerRef.current?.id ?? root.triggerId}
-              onClose={close}
+              onClose={closeFromKey}
               className={className}
             >
               {children}
@@ -371,7 +382,7 @@ interface SubContextValue {
   focus: FocusTarget;
   triggerRef: MutableRefObject<HTMLElement | null>;
   panelRef: MutableRefObject<HTMLDivElement | null>;
-  setOpen: (open: boolean, focus?: FocusTarget) => void;
+  setOpen: (open: boolean, focus?: FocusTarget, instant?: boolean) => void;
 }
 
 const SubContext = createContext<SubContextValue | null>(null);
@@ -396,7 +407,8 @@ export function DropdownMenuSub({ children }: DropdownMenuSubProps) {
   const open = level.openSub === id && level.present;
   const { setOpenSub } = level;
   const setOpen = useCallback(
-    (next: boolean, focus: FocusTarget = "none") => setOpenSub(next ? id : null, focus),
+    (next: boolean, focus: FocusTarget = "none", instant?: boolean) =>
+      setOpenSub(next ? id : null, focus, instant),
     [setOpenSub, id],
   );
   const value = useMemo(
@@ -478,8 +490,9 @@ export function DropdownMenuSubTrigger({ children, disabled, inset, textValue, c
             if (sub.open) enabledItems(sub.panelRef.current)[0]?.focus();
           }
         },
+        // Keys open the submenu in onKeyDown, so a click here is a pointer or a tap.
         onClick: () => {
-          if (!disabled) sub.setOpen(true, "first");
+          if (!disabled) sub.setOpen(true, "first", false);
         },
       }}
     >
@@ -502,7 +515,7 @@ export function DropdownMenuSubContent({ children, className, sideOffset = 6 }: 
   const sub = useSub("DropdownMenuSubContent");
 
   return (
-    <AnimatePresence>
+    <AnimatePresence custom={level.subInstant}>
       {sub.open && (
         <PresenceGate>
           {({ isPresent, gate }) => (
@@ -514,17 +527,18 @@ export function DropdownMenuSubContent({ children, className, sideOffset = 6 }: 
               align="start"
               sideOffset={sideOffset}
               focus={sub.focus}
+              instant={level.subInstant}
               present={isPresent}
               gate={gate}
               labelledBy={sub.id}
-              onClose={() => root.setOpen(false)}
+              onClose={() => root.setOpen(false, "first", true)}
               onPointerEnter={() => {
                 level.grace.current = null;
               }}
               onKeyDown={(event) => {
                 if (event.key !== "ArrowLeft") return false;
                 event.preventDefault();
-                sub.setOpen(false);
+                sub.setOpen(false, "none", true);
                 sub.triggerRef.current?.focus({ preventScroll: true });
                 return true;
               }}

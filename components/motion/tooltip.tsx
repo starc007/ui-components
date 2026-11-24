@@ -22,7 +22,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { TooltipSurface } from "@/components/motion/tooltip-surface";
-import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
 import { assignRef } from "@/lib/merge-refs";
@@ -83,6 +83,8 @@ function isEmpty(content: ReactNode) {
 
 interface TooltipContextValue {
   open: boolean;
+  /** Show and hide without animating (keyboard focus, a warm toolbar, a replaced label). */
+  instant: boolean;
   contentId: string;
   labelId: string;
   asLabel: boolean;
@@ -151,6 +153,9 @@ function TooltipRoot({
   const closeDelay = closeDelayProp ?? timing.closeDelay;
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const open = controlledOpen ?? uncontrolledOpen;
+  // Keyboard focus and a warm toolbar show the label at once; animating
+  // something seen this often only makes it feel slow.
+  const [instant, setInstant] = useState(false);
   const [empty, setEmpty] = useState(initialEmpty);
   const [trigger, setTrigger] = useState<TooltipAnchor | null>(null);
   const [external, setExternal] = useState<TooltipAnchor | null>(null);
@@ -209,32 +214,48 @@ function TooltipRoot({
     latest.current.onOpenChange?.(next);
   }, []);
 
-  const openNow = useCallback(() => {
-    clearTimers();
-    stopGrace();
-    if (latest.current.disabled || latest.current.empty) return;
-    if (current && current !== self.current) current.close();
-    current = self.current;
-    commit(true);
-  }, [clearTimers, stopGrace, commit]);
+  const openNow = useCallback(
+    (now = false) => {
+      clearTimers();
+      stopGrace();
+      if (latest.current.disabled || latest.current.empty) return;
+      // The label being replaced leaves at once, so two never show together.
+      if (current && current !== self.current) current.close();
+      current = self.current;
+      setInstant(now);
+      commit(true);
+    },
+    [clearTimers, stopGrace, commit],
+  );
 
-  const close = useCallback(() => {
-    clearTimers();
-    stopGrace();
-    if (latest.current.open) lastClosedAt = Date.now();
-    if (current === self.current) current = null;
-    commit(false);
-  }, [clearTimers, stopGrace, commit]);
+  const finish = useCallback(
+    (now: boolean) => {
+      clearTimers();
+      stopGrace();
+      if (latest.current.open) lastClosedAt = Date.now();
+      if (current === self.current) current = null;
+      if (latest.current.open) setInstant(now);
+      commit(false);
+    },
+    [clearTimers, stopGrace, commit],
+  );
+  // Also a listener (window blur, outside press), so it takes no arguments.
+  const close = useCallback(() => finish(false), [finish]);
   useLayoutEffect(() => {
-    self.current.close = close;
-  }, [close]);
+    self.current.close = () => finish(true);
+  }, [finish]);
 
   const requestOpen = useCallback(() => {
     clearTimers();
     if (latest.current.open || latest.current.disabled || latest.current.empty) return;
-    const warm = Date.now() - lastClosedAt < timing.skipDelay;
-    if (warm || latest.current.delay <= 0) openNow();
-    else openTimer.current = setTimeout(openNow, latest.current.delay);
+    // Warm: another label is still showing (the pointer is crossing to this
+    // one), or one closed a moment ago. Either way, skip the delay and the fade.
+    const warm =
+      (current !== null && current !== self.current) ||
+      Date.now() - lastClosedAt < timing.skipDelay;
+    if (warm) openNow(true);
+    else if (latest.current.delay <= 0) openNow();
+    else openTimer.current = setTimeout(() => openNow(), latest.current.delay);
   }, [clearTimers, openNow, timing.skipDelay]);
 
   const requestClose = useCallback(() => {
@@ -317,12 +338,13 @@ function TooltipRoot({
     const onFocusIn = () => {
       if (!focusFromKeyboard()) return;
       keyboardFocus = true;
-      openNow();
+      openNow(true);
     };
     const onFocusOut = (event: FocusEvent) => {
       if (trigger.contains(event.relatedTarget as Node | null)) return;
+      const fromKeyboard = keyboardFocus;
       keyboardFocus = false;
-      close();
+      finish(fromKeyboard);
     };
 
     // Both element kinds dispatch the same events; one type keeps the listeners typed.
@@ -355,6 +377,7 @@ function TooltipRoot({
     requestClose,
     openNow,
     close,
+    finish,
     clearTimers,
     stopGrace,
     startGrace,
@@ -396,7 +419,9 @@ function TooltipRoot({
   );
   // ...and closed by the next tap that lands somewhere else, or Escape. The
   // label covers nothing interactive, so that tap passes through to what it hit.
-  useDismiss(open, close, anchorObject, { ignore: insideTooltip });
+  // Escape is a key press, so the label goes at once.
+  const dismiss = useCallback((reason: DismissReason) => finish(reason === "escape"), [finish]);
+  useDismiss(open, dismiss, anchorObject, { ignore: insideTooltip });
 
   const onContentEnter = useCallback(() => {
     stopGrace();
@@ -421,6 +446,7 @@ function TooltipRoot({
   const value = useMemo<TooltipContextValue>(
     () => ({
       open,
+      instant,
       contentId,
       labelId,
       asLabel,
@@ -438,6 +464,7 @@ function TooltipRoot({
     }),
     [
       open,
+      instant,
       contentId,
       labelId,
       asLabel,
@@ -552,6 +579,7 @@ export function TooltipContent({
 }: TooltipContentProps) {
   const {
     open,
+    instant,
     contentId,
     labelId,
     asLabel,
@@ -581,7 +609,9 @@ export function TooltipContent({
           {children}
         </span>
       ) : null}
-      <AnimatePresence>
+      {/* `custom` reaches a surface that is already exiting, so a label closed
+          from the keyboard or replaced by a neighbour leaves without animating. */}
+      <AnimatePresence custom={instant}>
         {open && !empty ? (
           <TooltipPositioner
             key="tooltip"
@@ -601,6 +631,7 @@ export function TooltipContent({
                 id={asLabel ? undefined : contentId}
                 aria-hidden={asLabel || undefined}
                 ready={positioned}
+                instant={instant}
                 onPointerEnter={onContentEnter}
                 onPointerLeave={onContentLeave}
                 style={{ pointerEvents: isPresent && !followCursor ? "auto" : "none" }}

@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { forwardRef, useState } from "react";
-import { EASE_IN_OUT } from "@/lib/ease";
+import { EASE_IN_OUT, EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { Button, type ButtonProps } from "./base";
 
@@ -21,10 +21,13 @@ const SILVER_DRIFT = {
   repeat: Infinity,
 };
 
+// One quick sweep on hover. Leaving resets it instantly: both ends sit outside
+// the button, so the jump is invisible and no reverse sweep plays.
 const CHROME_SHIMMER = {
-  duration: 2.4,
-  ease: EASE_IN_OUT,
+  duration: 0.9,
+  ease: EASE_OUT,
 };
+const CHROME_RESET = { duration: 0 };
 
 export const MetallicButton = forwardRef<
   HTMLButtonElement,
@@ -79,7 +82,7 @@ export const MetallicButton = forwardRef<
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-[-58%] z-[1] w-[52%] -skew-x-12 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.5)_48%,transparent)] opacity-50 blur-[3px] mix-blend-screen"
         animate={still ? undefined : { x: hovered ? "310%" : "0%" }}
-        transition={still ? undefined : CHROME_SHIMMER}
+        transition={still ? undefined : hovered ? CHROME_SHIMMER : CHROME_RESET}
       />
 
       <span
