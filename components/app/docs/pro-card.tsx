@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "use-intl";
 import {
   blackFriday,
@@ -9,7 +8,7 @@ import {
   useBlackFridayLive,
 } from "@/components/app/black-friday";
 import { ProSalePrice } from "@/components/app/docs/pro-sale-price";
-import { RainbowCta } from "@/components/app/rainbow-cta";
+import { ProCta } from "@/components/app/pro-cta";
 
 /** Web + Mobile lifetime on pro.beui.dev. */
 const PRO_BUNDLE_PRICE_USD = 249;
@@ -55,17 +54,14 @@ export function ProCard() {
           </p>
         )}
       </div>
-      <RainbowCta
+      <ProCta
         href={onSale ? blackFridayProUrl("component_sidebar") : PRO_URL}
         target="_blank"
         rel="noreferrer noopener"
-        shape="pill"
         className="min-h-9 w-full text-xs"
-        innerClassName="py-1.5"
       >
         {t("explore")}
-        <ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0" />
-      </RainbowCta>
+      </ProCta>
     </section>
   );
 }

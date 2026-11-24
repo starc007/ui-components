@@ -116,7 +116,7 @@
     --background-image-brand-bg: var(--gradient-bg);
     --animate-marquee: marquee 30s linear infinite;
     --animate-marquee-vertical: marquee-vertical 30s linear infinite;
-    --animate-rainbow-border: rainbow-border 3s linear infinite;
+    --animate-shine-sweep: shine-sweep 5s var(--ease-in-out) infinite;
     --animate-shimmer: shimmer 2.5s linear infinite;
     --animate-action-send: action-send 520ms var(--ease-out) both;
     --animate-action-copy: action-copy 520ms var(--ease-out) both;
@@ -149,12 +149,14 @@
             background-position: -200% 0;
         }
     }
-    @keyframes rainbow-border {
-        from {
-            background-position: 0% 50%;
+    /* The Pro CTA's light band: one pass across, then a rest until the next. */
+    @keyframes shine-sweep {
+        0% {
+            transform: translateX(-100%) skewX(-12deg);
         }
-        to {
-            background-position: 100% 50%;
+        24%,
+        100% {
+            transform: translateX(200%) skewX(-12deg);
         }
     }
     @keyframes action-send {
