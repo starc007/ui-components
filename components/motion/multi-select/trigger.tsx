@@ -10,7 +10,8 @@ import type {
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import { mergeRefs, useMultiSelectContext } from "./context";
+import { mergeRefs } from "@/lib/merge-refs";
+import { useMultiSelectContext } from "./context";
 
 export interface MultiSelectTriggerProps {
   children: ReactNode;

@@ -29,6 +29,7 @@ import {
   SPRING_PRESS,
 } from "@/lib/ease";
 import { formatNumber, useLocale, useMessages } from "@/lib/i18n";
+import { mergeRefs } from "@/lib/merge-refs";
 import { cn } from "@/lib/utils";
 
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
@@ -100,16 +101,6 @@ function nextStep(
   return cleanNumber(Math.max(min, min + previousIndex * step));
 }
 
-function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref && typeof ref === "object") {
-        (ref as React.MutableRefObject<T | null>).current = node;
-      }
-    }
-  };
-}
 
 export interface AdaptiveStepperProps {
   children: ReactNode;

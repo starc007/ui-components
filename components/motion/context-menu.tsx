@@ -30,6 +30,7 @@ import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL } from "@/lib/ease";
 import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { useMessages } from "@/lib/i18n";
 import { holdSelection, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
+import { assignRef } from "@/lib/merge-refs";
 import { cn } from "@/lib/utils";
 
 type OpenModality = "pointer" | "keyboard" | "touch";
@@ -75,14 +76,6 @@ function useContextMenuContext(component: string) {
     throw new Error(`${component} must be used within <ContextMenu>`);
   }
   return context;
-}
-
-function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
-  if (typeof ref === "function") {
-    ref(value);
-  } else if (ref) {
-    ref.current = value;
-  }
 }
 
 function getEnabledItems(container: HTMLElement | null) {

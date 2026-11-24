@@ -30,6 +30,7 @@ import { useSound } from "@/lib/sound";
 import { closeSound } from "@/lib/sounds/close";
 import { openSound } from "@/lib/sounds/open";
 import { selectSound } from "@/lib/sounds/select";
+import { assignRef } from "@/lib/merge-refs";
 import { cn } from "@/lib/utils";
 
 const VIEWPORT_PADDING = 8;
@@ -102,11 +103,6 @@ function useLevel(component: string) {
     throw new Error(`${component} must be used within <DropdownMenuContent>`);
   }
   return context;
-}
-
-function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
-  if (typeof ref === "function") ref(value);
-  else if (ref) ref.current = value;
 }
 
 function clamp(value: number, min: number, max: number) {

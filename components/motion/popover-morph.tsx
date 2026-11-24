@@ -31,6 +31,7 @@ import { usePopoverPortalPosition } from "@/components/motion/popover-position";
 import { EASE_OUT } from "@/lib/ease";
 import { FOCUSABLE_SELECTOR } from "@/lib/focusable";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { mergeRefs } from "@/lib/merge-refs";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -192,16 +193,6 @@ export function MorphPopover({
 
 export interface MorphPopoverTriggerProps {
   children: ReactElement;
-}
-
-function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref && typeof ref === "object")
-        (ref as React.MutableRefObject<T | null>).current = node;
-    }
-  };
 }
 
 /** Wraps a single element, toggling the popover on click. */

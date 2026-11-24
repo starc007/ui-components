@@ -8,7 +8,8 @@ import type {
   Ref,
 } from "react";
 import { cn } from "@/lib/utils";
-import { mergeRefs, useComboboxContext } from "./context";
+import { mergeRefs } from "@/lib/merge-refs";
+import { useComboboxContext } from "./context";
 
 export interface ComboboxTriggerProps {
   children: ReactNode;

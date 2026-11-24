@@ -25,6 +25,7 @@ import { TooltipSurface } from "@/components/motion/tooltip-surface";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
+import { assignRef } from "@/lib/merge-refs";
 import { cn } from "@/lib/utils";
 import { focusFromKeyboard, graceArea, inBox, inPolygon, watchModality } from "./tooltip/grace";
 import { TooltipArrow, TooltipPositioner } from "./tooltip/positioner";
@@ -460,11 +461,6 @@ function TooltipRoot({
 
 function mergeIds(...ids: unknown[]) {
   return ids.filter((value) => typeof value === "string" && value).join(" ") || undefined;
-}
-
-function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
-  if (typeof ref === "function") ref(value);
-  else if (ref) (ref as { current: T | null }).current = value;
 }
 
 export interface TooltipTriggerProps extends ComponentProps<"button"> {

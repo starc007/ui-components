@@ -25,6 +25,7 @@ import {
   SPRING_SWAP,
 } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { mergeRefs } from "@/lib/merge-refs";
 import { cn } from "@/lib/utils";
 
 export type MessageBubbleVariant =
@@ -90,15 +91,6 @@ export interface MessageBubbleCollapsibleProps
   contentClassName?: string;
   triggerClassName?: string;
   children?: ReactNode;
-}
-
-function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
-    }
-  };
 }
 
 const BUBBLE_CONTENT_REVEAL = {
