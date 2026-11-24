@@ -119,7 +119,6 @@ export function CitationFavicon({
       {icon ? (
         icon
       ) : favicon.src ? (
-        // biome-ignore lint/performance/noImgElement: Dynamic cross-site favicons keep this framework-agnostic registry component portable.
         <img
           ref={favicon.ref}
           src={favicon.src}

@@ -25,7 +25,6 @@ export function ParallaxPreview() {
           speed={-0.6}
           className="absolute inset-x-0 -top-1/4 h-[150%]"
         >
-          {/* biome-ignore lint/performance/noImgElement: plain img keeps the copy-paste preview portable (no next/image host config). */}
           <img
             src="https://picsum.photos/seed/beui-parallax/800/600"
             alt=""
@@ -48,7 +47,6 @@ export function ParallaxPreview() {
           speed={0.9}
           className="absolute bottom-4 right-4"
         >
-          {/* biome-ignore lint/performance/noImgElement: plain img keeps the copy-paste preview portable (no next/image host config). */}
           <img
             src="https://picsum.photos/seed/beui-avatar/120/120"
             alt=""

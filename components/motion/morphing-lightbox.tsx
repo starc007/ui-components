@@ -294,7 +294,6 @@ export function ImageViewerThumbnail({
         className,
       )}
     >
-      {/* biome-ignore lint/performance/noImgElement: Copy-paste registry images must work outside Next.js. */}
       <motion.img
         layoutId={reduce ? undefined : `${groupId}-${image.id}`}
         src={image.src}
@@ -663,7 +662,6 @@ function LightboxFrame({
                     exit="exit"
                     className="absolute inset-0"
                   >
-                    {/* biome-ignore lint/performance/noImgElement: Copy-paste registry images must work outside Next.js. */}
                     <motion.img
                       src={image.src}
                       alt={image.alt}

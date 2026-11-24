@@ -214,8 +214,7 @@ function TeamCrest({ team }: { team: Team | null }) {
   return (
     <span className="flex h-5 w-7 shrink-0 items-center justify-center">
       {src ? (
-        // Plain <img> — flags come from flagcdn.com, logos from wherever you host them.
-        // biome-ignore lint/performance/noImgElement: remote asset, no next/image benefit
+        // Flags come from flagcdn.com, logos from wherever you host them.
         <img
           src={src}
           alt=""

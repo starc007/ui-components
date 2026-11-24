@@ -367,7 +367,6 @@ function ImageThumbnail({
       className="rounded-2xl p-1 shadow-xl"
       content={
         <span className="block w-32">
-          {/* biome-ignore lint/performance/noImgElement: Blob and remote previews keep this registry component framework-agnostic. */}
           <img
             src={src}
             alt=""
@@ -390,7 +389,6 @@ function ImageThumbnail({
         transition={SPRING_PRESS}
         className="group/image relative size-9 shrink-0 overflow-hidden rounded-[10px] bg-muted outline-none ring-1 ring-border/70 focus-visible:ring-2 focus-visible:ring-ring"
       >
-        {/* biome-ignore lint/performance/noImgElement: Motion layout requires the image element and portable blob URLs. */}
         <motion.img
           layoutId={layoutId}
           src={src}
@@ -465,7 +463,6 @@ function ImagePreviewDialog({
                 {...gate}
                 className="pointer-events-auto relative"
               >
-                {/* biome-ignore lint/performance/noImgElement: Motion layout requires the image element and portable blob URLs. */}
                 <motion.img
                   layoutId={reduce ? undefined : layoutId}
                   src={src}

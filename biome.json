@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
   "files": {
     "includes": [
       "**",
@@ -10,7 +10,8 @@
       "!.wrangler",
       "!coverage",
       "!!.claude/worktrees",
-      "!src/routeTree.gen.ts"
+      "!src/routeTree.gen.ts",
+      "!lib/native/catalog.json"
     ]
   },
   "formatter": {
@@ -24,7 +25,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "complexity": {
         "noImportantStyles": "off"
       },

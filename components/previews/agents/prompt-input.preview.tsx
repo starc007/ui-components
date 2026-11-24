@@ -18,7 +18,6 @@ function ModelLogo({ url }: { url: string }) {
   if (!favicon.src) return <Bot />;
 
   return (
-    // biome-ignore lint/performance/noImgElement: Remote provider favicons keep the registry preview framework-agnostic.
     <img
       ref={favicon.ref}
       src={favicon.src}

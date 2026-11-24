@@ -58,7 +58,6 @@ export function Avatar({ name, src, size = "md", className, ...props }: AvatarPr
       )}
     >
       {showImage ? (
-        // biome-ignore lint/performance/noImgElement: a portable component; avatars come from any host and fall back to initials on error
         <img
           src={src}
           alt={name}
