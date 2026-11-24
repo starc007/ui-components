@@ -16,20 +16,14 @@ export function getFormatter() {
 }
 
 /**
- * The messages client components read. Long docs prose in `Pages` stays in
- * the server functions that render those pages.
+ * The messages client components read on every page. `Pages` copy stays out:
+ * each page's server function returns its own subtree, which `PageMessages`
+ * (`src/routes/-pages/page-messages.tsx`) merges in, so one page's prose is
+ * not shipped in every other page's HTML.
  */
 export function clientMessages() {
-  const { Pages, ...shared } = messages;
-  return {
-    ...shared,
-    Pages: {
-      motionPatterns: Pages.motionPatterns,
-      playground: Pages.playground,
-      themes: Pages.themes,
-      sponsors: Pages.sponsors,
-    },
-  };
+  const { Pages: _pages, ...shared } = messages;
+  return { ...shared, Pages: {} };
 }
 
 export type ClientMessages = ReturnType<typeof clientMessages>;

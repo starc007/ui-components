@@ -13,7 +13,7 @@ import {
   type OpenSponsorSlotSize,
 } from "@/components/app/sponsors/open-sponsor-slot";
 import { SponsorPlanBeam } from "@/components/app/sponsors/sponsor-plan-beam";
-import { LOCALE } from "@/i18n/messages";
+import { LOCALE, messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
 import type { Metadata } from "@/lib/head";
 import { useSearchParams } from "@/lib/navigation";
@@ -52,7 +52,7 @@ export const getSponsorsPage = createServerFn({ method: "GET" })
         images: [DEFAULT_OG_IMAGE],
       },
     };
-    return { metadata };
+    return { metadata, messages: messages.Pages.sponsors };
   });
 
 const GITHUB_SPONSORS_URL = "https://github.com/sponsors/starc007";
