@@ -10,8 +10,12 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { retainAudioContext, setSoundsAllowed } from "@/lib/audio-context";
-import { type PlayOptions, type Sound, setMasterVolume } from "@/lib/sounds/engine";
+import {
+  registerSoundSettings,
+  retainAudioContext,
+  type SoundSettingsEntry,
+} from "@/lib/audio-context";
+import type { PlayOptions, Sound } from "@/lib/sounds/engine";
 
 export interface SoundSettings {
   /** False mutes every beUI sound under the provider. */
@@ -20,32 +24,46 @@ export interface SoundSettings {
   volume: number;
 }
 
-const SoundContext = createContext<SoundSettings>({ enabled: true, volume: 1 });
+const SoundContext = createContext<SoundSettings & { depth: number }>({
+  enabled: true,
+  volume: 1,
+  depth: 0,
+});
 
 /**
  * App-wide sound settings. `enabled={false}` mutes every beUI sound, from
- * component `sound` props and `useSound` to the games, and `volume` scales
- * them all. Without a provider, sounds play at full volume.
+ * component `sound` props and `useSound` to the games, Wheel Picker and
+ * Bookshelf, and `volume` scales them all. Without a provider, sounds play at
+ * full volume. A nested provider overrides the one around it.
  */
 export function SoundProvider({
   enabled = true,
   volume = 1,
   children,
 }: Partial<SoundSettings> & { children: ReactNode }) {
-  const value = useMemo(() => ({ enabled, volume }), [enabled, volume]);
-  // Module-level, so `sound.play()` called outside React obeys it too.
+  const depth = useContext(SoundContext).depth + 1;
+  const value = useMemo(() => ({ enabled, volume, depth }), [enabled, volume, depth]);
+
+  // Module-level as well (lib/audio-context.ts), so players outside React
+  // and `sound.play()` obey it too.
+  const entry = useRef<SoundSettingsEntry>({ depth, enabled, volume });
+  const registration = useRef<ReturnType<typeof registerSoundSettings> | null>(null);
   useEffect(() => {
-    setSoundsAllowed(enabled);
-    setMasterVolume(volume);
+    registration.current = registerSoundSettings(entry.current);
     return () => {
-      setSoundsAllowed(true);
-      setMasterVolume(1);
+      registration.current?.release();
+      registration.current = null;
     };
-  }, [enabled, volume]);
+  }, []);
+  useEffect(() => {
+    Object.assign(entry.current, { depth, enabled, volume });
+    registration.current?.update();
+  }, [depth, enabled, volume]);
+
   return <SoundContext.Provider value={value}>{children}</SoundContext.Provider>;
 }
 
-export function useSoundSettings() {
+export function useSoundSettings(): SoundSettings {
   return useContext(SoundContext);
 }
 

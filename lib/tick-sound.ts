@@ -3,7 +3,7 @@
 // make it read as a tiny physical impact instead of an oscillator beep, while
 // the high-passed transient gives it definition through phone speakers.
 
-import { getAudioContext, retainAudioContext } from "@/lib/audio-context";
+import { getAudioContext, playerGain, retainAudioContext } from "@/lib/audio-context";
 
 const DURATION = 0.016; // seconds, short enough to stay distinct during a fling
 const MASTER_GAIN = 0.055;
@@ -14,10 +14,9 @@ const MODES = [
   { frequency: 3160, decay: 0.00115, gain: 0.12, phase: 1.3 },
 ] as const;
 
-// The context is shared page-wide (lib/audio-context.ts). The gain and the
-// click buffer belong to it, so they are rebuilt if it was closed and
-// recreated.
-let output: { gain: GainNode; buffer: AudioBuffer } | null = null;
+// The context is shared page-wide (lib/audio-context.ts). The click buffer
+// belongs to it, so it is rebuilt if the context was closed and recreated.
+const buffers = new WeakMap<AudioContext, AudioBuffer>();
 
 function buildClickBuffer(context: AudioContext): AudioBuffer {
   const sampleRate = context.sampleRate;
@@ -60,13 +59,12 @@ function buildClickBuffer(context: AudioContext): AudioBuffer {
 function prepareOutput() {
   const ctx = getAudioContext();
   if (!ctx) return null;
-  if (output?.gain.context !== ctx) {
-    const gain = ctx.createGain();
-    gain.gain.value = MASTER_GAIN;
-    gain.connect(ctx.destination);
-    output = { gain, buffer: buildClickBuffer(ctx) };
+  let buffer = buffers.get(ctx);
+  if (!buffer) {
+    buffer = buildClickBuffer(ctx);
+    buffers.set(ctx, buffer);
   }
-  return { ctx, ...output };
+  return { ctx, gain: playerGain(ctx, "tick", MASTER_GAIN), buffer };
 }
 
 interface TickPlayer {

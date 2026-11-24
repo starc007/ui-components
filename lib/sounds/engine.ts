@@ -1,11 +1,11 @@
-import { getAudioContext } from "@/lib/audio-context";
+import { audioOutput, getAudioContext } from "@/lib/audio-context";
 
 // Every beUI sound is a short recipe of tones and filtered noise, played with
 // Web Audio the moment it is asked for. Nothing is downloaded.
 
 /** Options for one play of a sound. */
 export interface PlayOptions {
-  /** 0 to 1, multiplied with the master volume. */
+  /** 0 to 1, multiplied with the page-wide volume from `SoundProvider`. */
   volume?: number;
   /** Pitch multiplier; 1 is the designed pitch. */
   pitch?: number;
@@ -78,16 +78,10 @@ export interface SoundRecipe {
 const MASTER_GAIN = 0.16;
 const SILENT = 0.0001;
 
-let masterVolume = 1;
-
-/** Scales every beUI sound, 0 to 1. `SoundProvider` sets it from `volume`. */
-export function setMasterVolume(volume: number) {
-  masterVolume = Math.min(1, Math.max(0, volume));
-}
-
 const noiseBuffers = new WeakMap<BaseAudioContext, AudioBuffer>();
 
-function noiseBuffer(context: BaseAudioContext) {
+/** One second of white noise per context, shared by every noise voice. */
+export function noiseBuffer(context: BaseAudioContext) {
   let buffer = noiseBuffers.get(context);
   if (!buffer) {
     buffer = context.createBuffer(1, context.sampleRate, context.sampleRate);
@@ -157,14 +151,14 @@ export function defineSound({ name, duration, vary = 0, build }: SoundRecipe): S
     render,
     play({ volume = 1, pitch = 1 } = {}) {
       const context = getAudioContext();
-      const level = volume * masterVolume;
-      if (!context || level <= 0) return;
+      if (!context || volume <= 0) return;
       const spread = vary ? 1 + (Math.random() * 2 - 1) * vary : 1;
       render({
         context,
-        destination: context.destination,
+        // The page-wide volume is applied there.
+        destination: audioOutput(context),
         when: context.currentTime + 0.005,
-        volume: level,
+        volume,
         pitch: pitch * spread,
       });
     },

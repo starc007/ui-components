@@ -114,6 +114,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "fixed",
         "text": "Wheel Picker announces its current value to screen readers as a spin button, and its reduced-motion list marks the chosen row.",
         "component": "wheel-picker"
+      },
+      {
+        "type": "fixed",
+        "text": "A nested SoundProvider overrides the one around it, and unmounting one no longer unmutes the page.",
+        "component": "sound-kit"
       }
     ]
   },
