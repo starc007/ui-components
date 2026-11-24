@@ -7,6 +7,7 @@ import { categoryPath, NATIVE_PATH } from "@/lib/component-paths";
 import { Link } from "@/lib/navigation";
 
 const GITHUB_URL = "https://github.com/starc007/ui-components";
+const NATIVE_GITHUB_URL = "https://github.com/starc007/beui-native";
 const X_URL = "https://x.com/saurra3h";
 const EMAIL = "saurabh10102@gmail.com";
 const PRO_URL =
@@ -116,7 +117,6 @@ export function SiteFooter() {
         { href: "/docs/ai-agents", label: t("footer.agentGuide") },
         { href: "/docs/ai-agents#mcp-server", label: t("footer.mcpServer") },
         { href: "/llms.txt", label: "llms.txt" },
-        { href: GITHUB_URL, label: "GitHub" },
       ],
     },
     {
@@ -126,6 +126,8 @@ export function SiteFooter() {
         { href: PRO_URL, label: "beUI Pro" },
         { href: "/playground", label: t("header.playground") },
         { href: "/themes", label: t("header.themes") },
+        { href: GITHUB_URL, label: t("footer.githubWeb") },
+        { href: NATIVE_GITHUB_URL, label: t("footer.githubNative") },
         { href: "/sponsors", label: t("footer.sponsor") },
         { href: `mailto:${EMAIL}`, label: t("footer.contact") },
       ],
@@ -150,7 +152,16 @@ export function SiteFooter() {
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{t("footer.description")}</p>
           <p className="mt-3 text-sm text-muted-foreground">
             {t.rich("footer.createdBy", {
-              link: (chunks) => <span className="text-foreground">{chunks}</span>,
+              link: (chunks) => (
+                <a
+                  href={X_URL}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-foreground underline-offset-4 transition-colors hover:underline"
+                >
+                  {chunks}
+                </a>
+              ),
             })}
           </p>
           <ul className="mt-3 -ml-2 flex items-center gap-0.5">

@@ -92,6 +92,8 @@
     "contact": "Contact",
     "email": "Email",
     "sponsor": "Sponsor",
+    "githubWeb": "React on GitHub",
+    "githubNative": "React Native on GitHub",
     "compare": "Compare",
     "blog": "Blog",
     "alsoByUs": "Also by us",
