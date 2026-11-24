@@ -22,7 +22,7 @@ import { categoryPath, componentPath, nativeComponentPath } from "@/lib/componen
 import { componentSeo } from "@/lib/component-seo";
 import { componentSummaries } from "@/lib/component-summaries";
 import { EASE_OUT_CSS } from "@/lib/ease";
-import type { Metadata } from "@/lib/head";
+import { type Metadata, pageMetadata } from "@/lib/head";
 import { type HighlightedCode, highlight } from "@/lib/highlight";
 import { buildManualInstall, type ManualInstallData } from "@/lib/manual-install";
 import { findNativeComponent } from "@/lib/native";
@@ -245,38 +245,27 @@ export function componentMetadata({
       ) ?? []);
   const registryItem = installSlugs[0] ? `/r/${installSlugs[0]}.json` : `/r/${comp.slug}.json`;
   const directoryItem = installSlugs[0] ? `/${installSlugs[0]}.json` : `/${comp.slug}.json`;
-  const ogTitle = `${title} · beUI`;
   const path = variant
     ? variantPath(catSlug, comp.slug, variant.slug)
     : componentPath(catSlug, comp.slug);
-  const imageUrl = variant
-    ? ogImagePath("variant", variant.installSlug)
-    : ogImagePath("component", comp.slug);
 
-  return {
+  return pageMetadata({
+    path,
     title,
     description,
     keywords,
-    openGraph: {
-      title: ogTitle,
-      description,
-      url: path,
-      type: "article",
-      siteName: "beUI",
-      locale: "en_US",
-      images: [{ url: imageUrl, width: 1200, height: 630, alt: imageAlt }],
-    },
-    twitter: { card: "summary_large_image", title: ogTitle, description, images: [imageUrl] },
-    alternates: {
-      canonical: path,
-      types: {
-        "application/json": variant
-          ? `/r/${variant.installSlug}.json`
-          : installSlugs.length > 0
-            ? `/r/${comp.slug}`
-            : `/r/${comp.slug}.json`,
-        "text/plain": `/r/${comp.slug}/raw`,
-      },
+    type: "article",
+    image: variant
+      ? ogImagePath("variant", variant.installSlug)
+      : ogImagePath("component", comp.slug),
+    imageAlt,
+    types: {
+      "application/json": variant
+        ? `/r/${variant.installSlug}.json`
+        : installSlugs.length > 0
+          ? `/r/${comp.slug}`
+          : `/r/${comp.slug}.json`,
+      "text/plain": `/r/${comp.slug}/raw`,
     },
     other: {
       "beui:category": catSlug,
@@ -287,7 +276,7 @@ export function componentMetadata({
         ? { "beui:variant-registry-items": installSlugs.map((slug) => `/r/${slug}.json`) }
         : {}),
     },
-  };
+  });
 }
 
 export function ComponentPage({ data }: { data: ComponentPageData }) {

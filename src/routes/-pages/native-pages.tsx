@@ -23,7 +23,7 @@ import {
   TOP_LEVEL_CATEGORIES,
 } from "@/lib/component-paths";
 import { isComponentNew } from "@/lib/component-status";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
 import { findNativeComponent, type NativeComponent, native, nativeInstallCommands } from "@/lib/native";
 import nativeSlugs from "@/lib/native/slugs.json";
@@ -75,10 +75,12 @@ export const getNativeIndexPage = createServerFn({ method: "GET" })
 
     const title = t("metaTitle");
     const description = t("metaDescription");
-    const image = ogImagePath("page", "react-native");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: NATIVE_PATH,
       title,
       description,
+      image: ogImagePath("page", "react-native"),
+      imageAlt: title,
       keywords: [
         "react native components",
         "animated react native components",
@@ -87,25 +89,8 @@ export const getNativeIndexPage = createServerFn({ method: "GET" })
         "reanimated components",
         "react native animation",
       ],
-      openGraph: {
-        title: `${title} · beUI`,
-        description,
-        url: NATIVE_PATH,
-        locale: "en_US",
-        siteName: "beUI",
-        images: [{ url: image, width: 1200, height: 630, alt: title }],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${title} · beUI`,
-        description,
-        images: [image],
-      },
-      alternates: {
-        canonical: NATIVE_PATH,
-        types: { "application/json": "/native/r" },
-      },
-    };
+      types: { "application/json": "/native/r" },
+    });
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([
         { name: "beUI", path: "/" },
@@ -258,10 +243,13 @@ export const getNativeComponentPage = createServerFn({ method: "GET" })
       160,
     );
     const path = nativeComponentPath(slug);
-    const image = ogImagePath("native", slug);
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path,
       title,
       description,
+      type: "article",
+      image: ogImagePath("native", slug),
+      imageAlt: t("ogAlt", { name: component.title }),
       keywords: [
         `react native ${component.title.toLowerCase()}`,
         `${component.title.toLowerCase()} component react native`,
@@ -270,28 +258,8 @@ export const getNativeComponentPage = createServerFn({ method: "GET" })
         "reanimated",
         "animated react native",
       ],
-      openGraph: {
-        title: `${title} · beUI`,
-        description,
-        url: path,
-        locale: "en_US",
-        type: "article",
-        siteName: "beUI",
-        images: [
-          { url: image, width: 1200, height: 630, alt: t("ogAlt", { name: component.title }) },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${title} · beUI`,
-        description,
-        images: [image],
-      },
-      alternates: {
-        canonical: path,
-        types: { "application/json": `/native/r/${slug}` },
-      },
-    };
+      types: { "application/json": `/native/r/${slug}` },
+    });
 
     const category = webCategoryOf(slug);
     // Related native components, picked like the web page's related ones.

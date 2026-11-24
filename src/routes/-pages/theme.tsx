@@ -6,10 +6,9 @@ import { useTranslations } from "use-intl";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
 import { Link } from "@/lib/navigation";
-import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import { THEME_CSS } from "@/lib/theme-css";
 import { PageMessages } from "./page-messages";
 
@@ -21,25 +20,13 @@ export const getThemePage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .handler(async () => {
     const t = getTranslations("Pages.theme.meta");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: PAGE_PATH,
       title: t("title"),
       description: t("description"),
-      alternates: { canonical: PAGE_PATH },
-      openGraph: {
-        title: `${t("title")} · beUI`,
-        description: t("ogDescription"),
-        url: PAGE_PATH,
-        locale: "en_US",
-        type: "article",
-        siteName: "beUI",
-        images: [DEFAULT_OG_IMAGE],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${t("title")} · beUI`,
-        images: [DEFAULT_OG_IMAGE],
-      },
-    };
+      ogDescription: t("ogDescription"),
+      type: "article",
+    });
     const [shadcnInit, themeCss] = await Promise.all([
       highlight(SHADCN_INIT, { lang: "bash", filename: "terminal" }),
       highlight(THEME_CSS, { lang: "css", filename: "globals.css" }),

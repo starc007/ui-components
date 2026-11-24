@@ -2,8 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { messages } from "@/i18n/messages";
-import type { Metadata } from "@/lib/head";
-import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
+import { type Metadata, pageMetadata } from "@/lib/head";
 
 type LegalSection = {
   heading: string;
@@ -28,23 +27,8 @@ type LegalKey = "privacy" | "terms" | "refunds";
 function legalPage(key: LegalKey): LegalPageData {
   const page = messages.Pages[key];
   const path = `/${key}`;
-  const title = `${page.meta.title} · beUI`;
   return {
-    metadata: {
-      title: page.meta.title,
-      description: page.meta.description,
-      alternates: { canonical: path },
-      openGraph: {
-        title,
-        description: page.meta.description,
-        url: path,
-        locale: "en_US",
-        type: "website",
-        siteName: "beUI",
-        images: [DEFAULT_OG_IMAGE],
-      },
-      twitter: { card: "summary_large_image", title, images: [DEFAULT_OG_IMAGE] },
-    },
+    metadata: pageMetadata({ path, title: page.meta.title, description: page.meta.description }),
     heading: page.heading,
     updated: page.updated,
     intro: page.intro,
