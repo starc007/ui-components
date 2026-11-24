@@ -54,7 +54,7 @@ export function LineChartPreview() {
         <div className="flex items-center gap-2">
           <Tabs
             value={variant}
-            onValueChange={(value) => setVariant(value as "line" | "area")}
+            onValueChange={setVariant}
             variant="pill"
           >
             <TabsList aria-label="Chart style" wrapperClassName="w-auto">

@@ -15,9 +15,8 @@ import {
 import { SponsorPlanBeam } from "@/components/app/sponsors/sponsor-plan-beam";
 import { LOCALE, messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { useSearchParams } from "@/lib/navigation";
-import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import {
   SPONSOR_CHECKOUT_URLS,
   SPONSOR_EVM_ADDRESS,
@@ -33,25 +32,11 @@ export const getSponsorsPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .handler(async () => {
     const t = getTranslations("Pages.sponsors.meta");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: PAGE_PATH,
       title: t("title"),
       description: t("description"),
-      alternates: { canonical: PAGE_PATH },
-      openGraph: {
-        title: `${t("title")} · beUI`,
-        description: t("description"),
-        url: PAGE_PATH,
-        locale: "en_US",
-        type: "website",
-        siteName: "beUI",
-        images: [DEFAULT_OG_IMAGE],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${t("title")} · beUI`,
-        images: [DEFAULT_OG_IMAGE],
-      },
-    };
+    });
     return { metadata, messages: messages.Pages.sponsors };
   });
 

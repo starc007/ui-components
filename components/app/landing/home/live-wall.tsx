@@ -46,7 +46,7 @@ export function LiveWall({ tiles, className }: { tiles: WallTile[]; className?: 
         }
       />
 
-      <Tabs value={filter} onValueChange={(value) => setFilter(value as Filter)} variant="pill">
+      <Tabs value={filter} onValueChange={setFilter} variant="pill">
         <div className="max-w-full overflow-x-auto">
           <TabsList aria-label={t("filterLabel")}>
             {filters.map((tag) => (

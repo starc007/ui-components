@@ -156,7 +156,7 @@ export interface ThemeTokens {
   dark: Tokens;
 }
 
-export function buildTheme(choice: ThemeChoice): ThemeTokens {
+function buildTheme(choice: ThemeChoice): ThemeTokens {
   const build = (mode: "light" | "dark") => {
     const base = baseTokens(choice.base, mode);
     return { ...base, ...colorTokens(choice, mode, base) };

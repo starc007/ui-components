@@ -7,8 +7,7 @@ import { GuideShell } from "@/components/app/docs/guide-shell";
 import { MotionPatterns } from "@/components/app/docs/motion-patterns";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
-import { loaderHead, type Metadata } from "@/lib/head";
-import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
+import { loaderHead, pageMetadata } from "@/lib/head";
 import { SITE_URL } from "@/lib/site";
 import { PageMessages } from "../../-pages/page-messages";
 
@@ -18,28 +17,14 @@ const getMotionPatternsPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .handler(async () => {
     const t = getTranslations("Pages.motionPatterns.meta");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: PAGE_PATH,
       title: t("title"),
       description: t("description"),
-      alternates: {
-        canonical: PAGE_PATH,
-        types: { "text/markdown": `${PAGE_PATH}.md` },
-      },
-      openGraph: {
-        title: `${t("title")} · beUI`,
-        description: t("ogDescription"),
-        url: PAGE_PATH,
-        locale: "en_US",
-        type: "article",
-        siteName: "beUI",
-        images: [DEFAULT_OG_IMAGE],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${t("title")} · beUI`,
-        images: [DEFAULT_OG_IMAGE],
-      },
-    };
+      ogDescription: t("ogDescription"),
+      type: "article",
+      types: { "text/markdown": `${PAGE_PATH}.md` },
+    });
     return { metadata, messages: messages.Pages.motionPatterns };
   });
 

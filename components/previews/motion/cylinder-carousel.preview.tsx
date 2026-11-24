@@ -58,7 +58,7 @@ export function CylinderCarouselPreview() {
     <div className="flex w-full flex-col items-center gap-4 p-6">
       <Tabs
         value={variant}
-        onValueChange={(v) => setVariant(v as "concave" | "convex")}
+        onValueChange={setVariant}
         variant="segment"
       >
         <TabsList>

@@ -215,7 +215,7 @@ export function CommandPalette({
               transition={{ duration: 0.18, ease: EASE_OUT }}
               {...gate}
               onClick={() => setOpen(false)}
-              className="pointer-events-auto fixed inset-0 z-[100] bg-background/5 [backdrop-filter:blur(12px)_saturate(140%)] [-webkit-backdrop-filter:blur(12px)_saturate(140%)]"
+              className="pointer-events-auto fixed inset-0 z-[100] bg-background/5 [backdrop-filter:blur(10px)_saturate(140%)] [-webkit-backdrop-filter:blur(10px)_saturate(140%)]"
             />
           )}
         </PresenceGate>

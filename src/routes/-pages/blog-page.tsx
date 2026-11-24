@@ -4,7 +4,7 @@ import { staticFunctionMiddleware } from "@tanstack/start-static-server-function
 import { getTranslations } from "@/i18n/server";
 import { BLOG_FEED_PATH, BLOG_PATH, blogPostMeta, blogPostPath, blogPosts, findBlogPost } from "@/lib/blog";
 import { renderBlogMarkdown } from "@/lib/blog-markdown";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { ogImagePath } from "@/lib/og-paths";
 
 /** The /blog list: every visible post's frontmatter, newest first. */
@@ -14,24 +14,14 @@ export const getBlogIndex = createServerFn({ method: "GET" })
     const t = getTranslations("Native.blog");
     const title = t("title");
     const description = t("description");
-    const image = ogImagePath("page", "blog");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: BLOG_PATH,
       title,
       description,
-      alternates: {
-        canonical: BLOG_PATH,
-        types: { "application/rss+xml": BLOG_FEED_PATH },
-      },
-      openGraph: {
-        title: `${title} · beUI`,
-        description,
-        url: BLOG_PATH,
-        type: "website",
-        siteName: "beUI",
-        images: [{ url: image, width: 1200, height: 630, alt: title }],
-      },
-      twitter: { card: "summary_large_image", title: `${title} · beUI`, description, images: [image] },
-    };
+      image: ogImagePath("page", "blog"),
+      imageAlt: title,
+      types: { "application/rss+xml": BLOG_FEED_PATH },
+    });
     return { posts: blogPosts().map(blogPostMeta), metadata };
   });
 
@@ -43,27 +33,15 @@ export const getBlogPost = createServerFn({ method: "GET" })
     const post = findBlogPost(slug);
     if (!post) return null;
     const path = blogPostPath(post.slug);
-    const image = ogImagePath("blog", post.slug);
-    const ogTitle = `${post.title} · beUI`;
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path,
       title: post.title,
       description: post.description,
-      alternates: { canonical: path, types: { "text/markdown": `${path}.md` } },
-      openGraph: {
-        title: ogTitle,
-        description: post.description,
-        url: path,
-        type: "article",
-        siteName: "beUI",
-        images: [{ url: image, width: 1200, height: 630, alt: post.title }],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: ogTitle,
-        description: post.description,
-        images: [image],
-      },
-    };
+      type: "article",
+      image: ogImagePath("blog", post.slug),
+      imageAlt: post.title,
+      types: { "text/markdown": `${path}.md` },
+    });
     return {
       post: blogPostMeta(post),
       blocks: await renderBlogMarkdown(post.body),

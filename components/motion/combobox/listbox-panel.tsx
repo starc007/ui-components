@@ -30,8 +30,8 @@ export interface ListboxPanelPlacement {
 
 /**
  * The portaled panel Combobox and Multi Select open into: anchored to the
- * field, flipped to the side with room, and grown out of the field on one
- * spring. Each component passes its own open state and refs, and `name` keeps
+ * field, flipped to the side with room, and revealed from the field's edge on
+ * one spring. Each component passes its own open state and refs, and `name` keeps
  * its `data-<name>-content` attribute and `--<name>-trigger-width` variable.
  */
 export function ListboxPanel({
@@ -58,6 +58,9 @@ export function ListboxPanel({
   const [portalReady, setPortalReady] = useState(false);
   const [actualSide, setActualSide] = useState<ListboxPanelSide>(side);
   const [morphReady, setMorphReady] = useState(false);
+  // Fully closed: the close animation has finished, or nothing has opened yet.
+  const [settledClosed, setSettledClosed] = useState(!open);
+  if (open && settledClosed) setSettledClosed(false);
   const layout = usePopoverPortalPosition(triggerRef, measureRef, portalReady);
 
   useEffect(() => setPortalReady(true), []);
@@ -68,8 +71,10 @@ export function ListboxPanel({
   }, [portalReady]);
 
   useLayoutEffect(() => {
-    // Preserve the resolved side during exit, so top panels close upward.
-    if (!open || !layout) return;
+    // Preserve the resolved side during exit, so top panels close upward. Once
+    // closed it follows the field again, so the next reveal starts from the
+    // edge the panel will open on.
+    if (!layout || (!open && !settledClosed)) return;
     if (!avoidCollisions) {
       setActualSide(side);
       return;
@@ -81,7 +86,7 @@ export function ListboxPanel({
     else if (side === "top" && above < layout.content.height + sideOffset && below > above)
       setActualSide("bottom");
     else setActualSide(side);
-  }, [avoidCollisions, open, layout, side, sideOffset]);
+  }, [avoidCollisions, open, settledClosed, layout, side, sideOffset]);
 
   if (!portalReady) return null;
 
@@ -96,8 +101,13 @@ export function ListboxPanel({
         : triggerLeft;
   const maxLeft = Math.max(VIEWPORT_PADDING, window.innerWidth - contentWidth - VIEWPORT_PADDING);
   const left = Math.min(Math.max(desiredLeft, VIEWPORT_PADDING), maxLeft);
-  const surfaceHeight = layout?.content.height ?? 0;
   const transition = reduce || !morphReady ? { duration: 0 } : SPRING_MORPH;
+  // Revealed from the field's edge by a clip, so the panel keeps its size and
+  // nothing reflows while it opens. Percentages throughout, so motion can
+  // interpolate every edge.
+  const clipClosed =
+    actualSide === "bottom" ? "inset(0% 0% 100% 0% round 16px)" : "inset(100% 0% 0% 0% round 16px)";
+  const clipOpen = "inset(0% 0% 0% 0% round 16px)";
 
   return createPortal(
     <motion.div
@@ -108,11 +118,14 @@ export function ListboxPanel({
       inert={!open}
       initial={false}
       animate={{
-        height: open ? surfaceHeight : 0,
+        clipPath: open ? clipOpen : clipClosed,
         opacity: open ? 1 : 0,
         y: open ? (actualSide === "bottom" ? sideOffset : -sideOffset) : 0,
       }}
       transition={transition}
+      onAnimationComplete={() => {
+        if (!open) setSettledClosed(true);
+      }}
       style={
         {
           left,
@@ -128,7 +141,7 @@ export function ListboxPanel({
         } as CSSProperties
       }
       className={cn(
-        "fixed z-[9999] w-(--listbox-trigger-width) overflow-hidden rounded-2xl border border-border bg-background text-popover-foreground outline-none will-change-[height,transform]",
+        "fixed z-[9999] w-(--listbox-trigger-width) overflow-hidden rounded-2xl border border-border bg-background text-popover-foreground outline-none will-change-[clip-path,transform]",
         className,
       )}
     >

@@ -25,36 +25,16 @@ import {
   type ComboboxTranslate,
   comboboxMessages,
 } from "./messages";
-import { useActiveOption } from "./use-active-option";
+import {
+  defaultOptionFilter,
+  type OptionFilter,
+  type RegisteredItem,
+  useFilteredOptions,
+} from "./use-filtered-options";
 
-export type RegisteredItem = {
-  value: string;
-  label: string;
-  keywords: string[];
-  disabled: boolean;
-  groupId: string | null;
-  id: string;
-  ref: MutableRefObject<HTMLButtonElement | null>;
-};
+export type { RegisteredItem };
 
-export type ComboboxFilter = (
-  value: string,
-  query: string,
-  keywords: string[],
-) => boolean;
-
-const defaultFilter: ComboboxFilter = (value, query, keywords) => {
-  const needle = query.trim().toLocaleLowerCase();
-  if (!needle) return true;
-
-  const haystack = [value, ...keywords].join(" ").toLocaleLowerCase();
-  let queryIndex = 0;
-  for (const character of haystack) {
-    if (character === needle[queryIndex]) queryIndex += 1;
-    if (queryIndex === needle.length) return true;
-  }
-  return false;
-};
+export type ComboboxFilter = OptionFilter;
 
 export type ComboboxContextValue = {
   open: boolean;
@@ -132,7 +112,7 @@ export function Combobox({
   query: controlledQuery,
   defaultQuery = "",
   onQueryChange,
-  filter = defaultFilter,
+  filter = defaultOptionFilter,
   disabled = false,
   sound = false,
   className,
@@ -148,7 +128,6 @@ export function Combobox({
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [internalQuery, setInternalQuery] = useState(defaultQuery);
-  const [items, setItems] = useState<Map<string, RegisteredItem>>(new Map());
 
   const valueControlled = controlledValue !== undefined;
   const openControlled = controlledOpen !== undefined;
@@ -190,68 +169,19 @@ export function Combobox({
     [disabled, onOpenChange, open, openControlled, updateQuery, playOpen, playClose],
   );
 
-  const registerItem = useCallback((item: RegisteredItem) => {
-    setItems((current) => {
-      const existing = current.get(item.value);
-      if (
-        existing?.label === item.label &&
-        existing.disabled === item.disabled &&
-        existing.id === item.id &&
-        existing.ref === item.ref &&
-        existing.groupId === item.groupId &&
-        existing.keywords.join("\u0000") === item.keywords.join("\u0000")
-      ) {
-        return current;
-      }
-      const next = new Map(current);
-      next.set(item.value, item);
-      return next;
-    });
-  }, []);
-
-  const unregisterItem = useCallback((itemValue: string) => {
-    setItems((current) => {
-      if (!current.has(itemValue)) return current;
-      const next = new Map(current);
-      next.delete(itemValue);
-      return next;
-    });
-  }, []);
-
-  // The query the list filters by. Closing clears `query`, but the panel is
-  // still on screen for its exit, so it keeps filtering by the query it was
-  // open with rather than repopulating mid-collapse. The input already reads
-  // `query` only while open, so nothing the user can see reads the other one.
-  const [openQuery, setOpenQuery] = useState(query);
-  if (open && openQuery !== query) setOpenQuery(query);
-  const listQuery = open ? query : openQuery;
-
-  const visibleItems = useMemo(
-    () =>
-      Array.from(items.values()).filter((item) =>
-        filter(item.value, listQuery, [item.label, ...item.keywords]),
-      ),
-    [filter, items, listQuery],
-  );
-  const enabledVisibleItems = useMemo(
-    () => visibleItems.filter((item) => !item.disabled),
-    [visibleItems],
-  );
-  const visibleValues = useMemo(
-    () => new Set(visibleItems.map((item) => item.value)),
-    [visibleItems],
-  );
-  const visibleGroupIds = useMemo(
-    () => new Set(visibleItems.map((item) => item.groupId)),
-    [visibleItems],
-  );
-
-  const { activeValue, setActiveValue, moveActive } = useActiveOption({
-    open,
-    query: listQuery,
-    value,
-    enabledItems: enabledVisibleItems,
-  });
+  const {
+    items,
+    registerItem,
+    unregisterItem,
+    listQuery,
+    visibleValues,
+    visibleGroupIds,
+    visibleCount,
+    activeValue,
+    setActiveValue,
+    moveActive,
+    activeItemId,
+  } = useFilteredOptions({ open, query, value, filter });
 
   const select = useCallback(
     (next: string) => {
@@ -276,18 +206,6 @@ export function Combobox({
     return () => cancelAnimationFrame(frame);
   }, [open]);
 
-  useEffect(() => {
-    if (!activeValue || !open) return;
-    const item = items.get(activeValue)?.ref.current;
-    const list = item?.closest<HTMLElement>("[role='listbox']");
-    if (!item || !list) return;
-    const itemRect = item.getBoundingClientRect();
-    const listRect = list.getBoundingClientRect();
-    if (itemRect.top < listRect.top) list.scrollTop -= listRect.top - itemRect.top;
-    else if (itemRect.bottom > listRect.bottom)
-      list.scrollTop += itemRect.bottom - listRect.bottom;
-  }, [activeValue, items, open]);
-
   const insideContent = useCallback(
     (target: Element) => Boolean(contentRef.current?.contains(target)),
     [],
@@ -298,7 +216,6 @@ export function Combobox({
   );
   useDismiss(open, dismiss, rootRef, { focusOutside: true, ignore: insideContent });
 
-  const activeItem = activeValue ? items.get(activeValue) : undefined;
   const context = useMemo<ComboboxContextValue>(
     () => ({
       open,
@@ -317,8 +234,8 @@ export function Combobox({
         itemValue === undefined ? undefined : items.get(itemValue)?.label,
       isVisible: (itemValue) => !listQuery.trim() || visibleValues.has(itemValue),
       hasVisibleItems: (groupId) => visibleGroupIds.has(groupId),
-      visibleCount: visibleItems.length,
-      activeItemId: activeItem?.id,
+      visibleCount,
+      activeItemId,
       triggerId: `${baseId}-trigger`,
       listId: `${baseId}-list`,
       inputId: `${baseId}-input`,
@@ -331,7 +248,7 @@ export function Combobox({
       t,
     }),
     [
-      activeItem?.id,
+      activeItemId,
       activeValue,
       baseId,
       disabled,
@@ -350,7 +267,7 @@ export function Combobox({
       updateOpen,
       updateQuery,
       value,
-      visibleItems.length,
+      visibleCount,
       visibleGroupIds,
       visibleValues,
     ],

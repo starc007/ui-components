@@ -26,11 +26,14 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL } from "@/lib/ease";
+import { MENU_ITEM_CLASS, MenuItemHighlight } from "@/components/motion/menu/menu-item-highlight";
+import { enabledItems, useMenuNavigation } from "@/components/motion/menu/use-menu-navigation";
+import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
 import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { useMessages } from "@/lib/i18n";
-import { holdSelection, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { assignRef } from "@/lib/merge-refs";
+import { PresenceGate, type PresenceGateRenderProps } from "@/lib/presence-gate";
+import { holdSelection, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
 type OpenModality = "pointer" | "keyboard" | "touch";
@@ -40,6 +43,7 @@ const VIEWPORT_PADDING = 8;
 const LONG_PRESS_DELAY = 520;
 const LONG_PRESS_TOLERANCE = 10;
 const MORPH_DURATION = 0.3;
+const EXIT_DURATION = 0.2;
 
 type TriggerElementProps = React.HTMLAttributes<HTMLElement> & {
   ref?: Ref<HTMLElement>;
@@ -58,7 +62,6 @@ interface ContextMenuContextValue {
   openAt: (point: MenuPoint, modality: OpenModality) => void;
   point: MenuPoint;
   modality: OpenModality;
-  invocation: number;
   menuId: string;
   triggerRef: React.MutableRefObject<HTMLElement | null>;
   contentRef: React.MutableRefObject<HTMLDivElement | null>;
@@ -76,15 +79,6 @@ function useContextMenuContext(component: string) {
     throw new Error(`${component} must be used within <ContextMenu>`);
   }
   return context;
-}
-
-function getEnabledItems(container: HTMLElement | null) {
-  if (!container) return [];
-  return Array.from(
-    container.querySelectorAll<HTMLElement>(
-      '[data-context-menu-item="true"]:not([data-disabled="true"])',
-    ),
-  );
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -125,7 +119,6 @@ export function ContextMenu({
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [point, setPoint] = useState<MenuPoint>({ x: 0, y: 0 });
   const [modality, setModality] = useState<OpenModality>("pointer");
-  const [invocation, setInvocation] = useState(0);
   const [activeId, setActiveId] = useState<string | null>(null);
   const controlled = controlledOpen !== undefined;
   const open = controlled ? controlledOpen : internalOpen;
@@ -147,7 +140,6 @@ export function ContextMenu({
     (nextPoint: MenuPoint, nextModality: OpenModality) => {
       setPoint(nextPoint);
       setModality(nextModality);
-      setInvocation((current) => current + 1);
       setActiveId(null);
       setOpen(true);
     },
@@ -183,7 +175,6 @@ export function ContextMenu({
       openAt,
       point,
       modality,
-      invocation,
       menuId,
       triggerRef,
       contentRef,
@@ -198,7 +189,6 @@ export function ContextMenu({
       openAt,
       point,
       modality,
-      invocation,
       menuId,
       activeId,
       reduce,
@@ -355,36 +345,70 @@ export function ContextMenuContent({
 }: ContextMenuContentProps) {
   const context = useContextMenuContext("ContextMenuContent");
   const [mounted, setMounted] = useState(false);
-  const [position, setPosition] = useState<MenuPoint>(context.point);
-  const [origin, setOrigin] = useState<MenuPoint>({ x: 0, y: 0 });
-  const [size, setSize] = useState({ width: 0, height: 0 });
-  const [morphReady, setMorphReady] = useState(false);
-  const typeahead = useRef("");
-  const typeaheadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => setMounted(true), []);
 
+  if (!mounted) return null;
+
+  // Mounted only while open: a closed menu leaves nothing on the page.
+  return createPortal(
+    <AnimatePresence>
+      {context.open && (
+        <PresenceGate>
+          {({ isPresent, gate }) => (
+            <ContextMenuPanel
+              present={isPresent}
+              gate={gate}
+              ariaLabel={ariaLabel}
+              className={className}
+            >
+              {children}
+            </ContextMenuPanel>
+          )}
+        </PresenceGate>
+      )}
+    </AnimatePresence>,
+    document.body,
+  );
+}
+
+function ContextMenuPanel({
+  children,
+  className,
+  ariaLabel,
+  present,
+  gate,
+}: ContextMenuContentProps & {
+  present: boolean;
+  gate: PresenceGateRenderProps["gate"];
+}) {
+  const context = useContextMenuContext("ContextMenuContent");
+  const { point, modality, reduce, contentRef } = context;
+  const [position, setPosition] = useState<MenuPoint>(point);
+  const [origin, setOrigin] = useState<MenuPoint>({ x: 0, y: 0 });
+  const [size, setSize] = useState({ width: 0, height: 0 });
+  const [morphReady, setMorphReady] = useState(false);
+  const navigate = useMenuNavigation();
+  const instant = reduce || modality === "keyboard";
+
+  // Runs again for a new invocation, and when the menu reopens during its exit.
   useLayoutEffect(() => {
-    if (!context.open) {
-      setMorphReady(false);
-      return;
-    }
-    const content = context.contentRef.current;
+    if (!present) return;
+    const content = contentRef.current;
     if (!content) return;
-    content.dataset.invocation = String(context.invocation);
 
     const rect = content.getBoundingClientRect();
     const left = Math.max(
       VIEWPORT_PADDING,
       Math.min(
-        Math.max(context.point.x, VIEWPORT_PADDING),
+        Math.max(point.x, VIEWPORT_PADDING),
         window.innerWidth - rect.width - VIEWPORT_PADDING,
       ),
     );
     const top = Math.max(
       VIEWPORT_PADDING,
       Math.min(
-        Math.max(context.point.y, VIEWPORT_PADDING),
+        Math.max(point.y, VIEWPORT_PADDING),
         window.innerHeight - rect.height - VIEWPORT_PADDING,
       ),
     );
@@ -392,12 +416,12 @@ export function ContextMenuContent({
     setPosition({ x: left, y: top });
     setSize({ width: rect.width, height: rect.height });
     setOrigin({
-      x: clamp(context.point.x - left, 12, Math.max(12, rect.width - 12)),
-      y: clamp(context.point.y - top, 12, Math.max(12, rect.height - 12)),
+      x: clamp(point.x - left, 12, Math.max(12, rect.width - 12)),
+      y: clamp(point.y - top, 12, Math.max(12, rect.height - 12)),
     });
     setMorphReady(false);
 
-    if (context.reduce || context.modality === "keyboard") {
+    if (instant) {
       setMorphReady(true);
       return;
     }
@@ -413,38 +437,17 @@ export function ContextMenuContent({
       cancelAnimationFrame(prepareFrame);
       cancelAnimationFrame(openFrame);
     };
-  }, [
-    context.open,
-    context.point,
-    context.contentRef,
-    context.invocation,
-    context.modality,
-    context.reduce,
-  ]);
+    // Every invocation sets a new `point` object, even at the same spot.
+  }, [present, point, instant, contentRef]);
 
   useEffect(() => {
-    if (!context.open) return;
+    if (!present) return;
     const frame = requestAnimationFrame(() => {
-      const first = getEnabledItems(context.contentRef.current)[0];
+      const first = enabledItems(contentRef.current)[0];
       first?.focus({ preventScroll: true });
     });
     return () => cancelAnimationFrame(frame);
-  }, [context.open, context.contentRef]);
-
-  useEffect(
-    () => () => {
-      if (typeaheadTimer.current) clearTimeout(typeaheadTimer.current);
-    },
-    [],
-  );
-
-  const moveFocus = (direction: 1 | -1) => {
-    const items = getEnabledItems(context.contentRef.current);
-    if (items.length === 0) return;
-    const current = items.indexOf(document.activeElement as HTMLElement);
-    const next = current < 0 ? 0 : (current + direction + items.length) % items.length;
-    items[next]?.focus();
-  };
+  }, [present, contentRef]);
 
   const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
@@ -457,86 +460,45 @@ export function ContextMenuContent({
       context.setOpen(false);
       return;
     }
-    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      event.preventDefault();
-      moveFocus(event.key === "ArrowDown" ? 1 : -1);
-      return;
-    }
-    if (event.key === "Home" || event.key === "End") {
-      event.preventDefault();
-      const items = getEnabledItems(context.contentRef.current);
-      items[event.key === "Home" ? 0 : items.length - 1]?.focus();
-      return;
-    }
-    if (
-      event.key.length === 1 &&
-      !event.ctrlKey &&
-      !event.metaKey &&
-      !event.altKey
-    ) {
-      typeahead.current += event.key.toLocaleLowerCase();
-      if (typeaheadTimer.current) clearTimeout(typeaheadTimer.current);
-      typeaheadTimer.current = setTimeout(() => {
-        typeahead.current = "";
-      }, 500);
-      const match = getEnabledItems(context.contentRef.current).find((item) =>
-        (item.dataset.label ?? item.textContent ?? "")
-          .trim()
-          .toLocaleLowerCase()
-          .startsWith(typeahead.current),
-      );
-      match?.focus();
-    }
+    navigate(event, contentRef.current);
   };
 
-  if (!mounted) return null;
-
-  const visualOpen = context.open && morphReady;
   const clipHidden = collapsedClip(origin, size);
   const clipShown = "inset(0px 0px 0px 0px round 12px)";
+  const timing = (duration: number) =>
+    modality === "keyboard"
+      ? { duration: 0 }
+      : reduce
+        ? { duration: 0.1, ease: EASE_OUT }
+        : { duration, ease: EASE_OUT };
 
-  return createPortal(
+  return (
     <div
+      {...gate}
       data-context-menu-portal=""
-      aria-hidden={!context.open}
-      inert={!context.open}
-      style={{ left: position.x, top: position.y }}
-      className={cn(
-        "fixed z-[100] [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.2))]",
-        context.open ? "pointer-events-auto" : "pointer-events-none",
-      )}
+      style={{ ...gate.style, left: position.x, top: position.y }}
+      className="fixed z-[100] [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.2))]"
     >
       <motion.div
-        ref={context.contentRef}
+        ref={contentRef}
         id={context.menuId}
+        data-level={context.menuId}
         role="menu"
         aria-label={ariaLabel ?? context.t("label")}
         data-morph-ready={morphReady ? "true" : "false"}
         tabIndex={-1}
         initial={false}
         animate={{
-          opacity: visualOpen ? 1 : 0,
-          clipPath:
-            context.reduce || context.modality === "keyboard" || visualOpen
-              ? clipShown
-              : clipHidden,
+          opacity: morphReady ? 1 : 0,
+          clipPath: instant || morphReady ? clipShown : clipHidden,
         }}
-        transition={
-          context.modality === "keyboard"
-            ? { duration: 0 }
-            : context.reduce
-              ? { duration: 0.1, ease: EASE_OUT }
-              : {
-                  clipPath: {
-                    duration: MORPH_DURATION,
-                    ease: EASE_OUT,
-                  },
-                  opacity: {
-                    duration: MORPH_DURATION,
-                    ease: EASE_OUT,
-                  },
-                }
-        }
+        // Folds back into the point it opened from, faster than it grew.
+        exit={{
+          opacity: 0,
+          clipPath: instant ? clipShown : clipHidden,
+          transition: timing(EXIT_DURATION),
+        }}
+        transition={timing(MORPH_DURATION)}
         onKeyDown={onKeyDown}
         onContextMenu={(event) => event.preventDefault()}
         className={cn(
@@ -546,8 +508,7 @@ export function ContextMenuContent({
       >
         {children}
       </motion.div>
-    </div>,
-    document.body,
+    </div>
   );
 }
 
@@ -592,9 +553,10 @@ function ContextMenuItemBase({
       role={role}
       {...checkedProps}
       disabled={disabled}
-      data-context-menu-item="true"
-      data-disabled={disabled ? "true" : undefined}
-      data-label={textValue}
+      data-menu-item=""
+      data-level={context.menuId}
+      data-disabled={disabled ? "" : undefined}
+      data-text-value={textValue}
       tabIndex={-1}
       onFocus={() => context.setActiveId(id)}
       onPointerMove={(event) => {
@@ -606,7 +568,8 @@ function ContextMenuItemBase({
         if (closeOnSelect) context.setOpen(false);
       }}
       className={cn(
-        "relative isolate flex w-full select-none items-center gap-2.5 rounded-full px-3 py-1.5 text-left text-sm outline-none",
+        MENU_ITEM_CLASS,
+        "gap-2.5",
         "focus-visible:ring-2 focus-visible:ring-foreground/15",
         "disabled:pointer-events-none disabled:opacity-40",
         inset && "pl-9",
@@ -615,16 +578,7 @@ function ContextMenuItemBase({
       )}
     >
       {active ? (
-        <motion.span
-          layoutId={`${context.menuId}-active`}
-          className={cn(
-            "absolute inset-0 -z-10 rounded-full",
-            tone === "destructive"
-              ? "bg-destructive/10"
-              : "bg-foreground/[0.065]",
-          )}
-          transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
-        />
+        <MenuItemHighlight layoutId={`${context.menuId}-active`} tone={tone} reduce={context.reduce} />
       ) : null}
       {children}
     </button>

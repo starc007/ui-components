@@ -195,7 +195,7 @@ export function allShadcnTargets(): RegistryTarget[] {
   });
 }
 
-export function findRegistryTarget(slug: string) {
+function findRegistryTarget(slug: string) {
   return allRegistryTargets().find((target) => target.slug === slug);
 }
 

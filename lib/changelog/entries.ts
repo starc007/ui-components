@@ -102,6 +102,19 @@ export const changelogEntries: ChangelogEntry[] = [
         "component": "command-palette"
       },
       {
+        "type": "improved",
+        "text": "Context Menu leaves nothing on the page while closed, and folds back into the point it opened from a little faster than it grows.",
+        "component": "context-menu"
+      },
+      {
+        "type": "improved",
+        "text": "Combobox and Multi Select reveal their list with a clip instead of growing its height, so the panel never reflows while it opens."
+      },
+      {
+        "type": "improved",
+        "text": "Command Palette and Morphing Modal blur the page behind them a little less, which is lighter to render."
+      },
+      {
         "type": "fixed",
         "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
         "component": "select"

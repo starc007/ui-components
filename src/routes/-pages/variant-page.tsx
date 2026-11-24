@@ -28,7 +28,8 @@ import { withSignature } from "@/lib/signature";
 import { readSourceFile } from "@/lib/source-files";
 import { variantCopy } from "@/lib/variant-copy";
 import { findVariant, variantPath } from "@/lib/variant-pages";
-import { componentMetadata, CreditLink } from "./component-page";
+import { CreditLink } from "./component-page/credit-link";
+import { componentMetadata } from "./component-page/metadata";
 
 type VariantPageInput = { category: string; slug: string; variant: string };
 

@@ -4,13 +4,13 @@ import { staticFunctionMiddleware } from "@tanstack/start-static-server-function
 import { useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { InteractionGallery } from "@/components/app/docs/interaction-gallery";
-import { SoundGallery } from "@/components/app/docs/sound-gallery";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
+import { SoundGallery } from "@/components/app/docs/sound-gallery";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
 import { getTranslations } from "@/i18n/server";
 import { categoryPath } from "@/lib/component-paths";
 import { isComponentNew } from "@/lib/component-status";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { ogImagePath } from "@/lib/og-paths";
 import { type ComponentEntry, findCategory } from "@/lib/registry";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
@@ -88,13 +88,15 @@ export const getCategoryPage = createServerFn({ method: "GET" })
     const key = contentKey(cat.slug);
     const title = t(`${key}.title`);
     const description = t(`${key}.description`);
-    const ogTitle = `${title} · beUI`;
     const path = categoryPath(cat.slug);
-    const imageUrl = ogImagePath("category", cat.slug);
 
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path,
       title,
       description,
+      image: ogImagePath("category", cat.slug),
+      imageAlt: t("ogImageAlt", { name: cat.name }),
+      types: { "application/json": "/registry.json" },
       keywords: [
         `${rawCat.name} components`,
         "React motion components",
@@ -110,33 +112,7 @@ export const getCategoryPage = createServerFn({ method: "GET" })
         "beUI",
         ...rawCat.components.map((comp) => comp.name),
       ],
-      openGraph: {
-        title: ogTitle,
-        description,
-        url: path,
-        type: "website",
-        siteName: "beUI",
-        locale: "en_US",
-        images: [
-          {
-            url: imageUrl,
-            width: 1200,
-            height: 630,
-            alt: t("ogImageAlt", { name: cat.name }),
-          },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: ogTitle,
-        description,
-        images: [imageUrl],
-      },
-      alternates: {
-        canonical: path,
-        types: { "application/json": "/registry.json" },
-      },
-    };
+    });
 
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([

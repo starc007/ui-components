@@ -8,10 +8,9 @@ import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
 import { Link } from "@/lib/navigation";
-import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import { SITE_URL } from "@/lib/site";
 import { PageMessages } from "./page-messages";
 
@@ -89,28 +88,13 @@ export const getAIAgentsPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .handler(async () => {
     const t = getTranslations("Pages.aiAgents.meta");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: PAGE_PATH,
       title: t("title"),
       description: t("description"),
-      alternates: {
-        canonical: PAGE_PATH,
-        types: { "text/markdown": `${PAGE_PATH}.md` },
-      },
-      openGraph: {
-        title: `${t("title")} · beUI`,
-        description: t("description"),
-        url: PAGE_PATH,
-        locale: "en_US",
-        type: "article",
-        siteName: "beUI",
-        images: [DEFAULT_OG_IMAGE],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${t("title")} · beUI`,
-        images: [DEFAULT_OG_IMAGE],
-      },
-    };
+      type: "article",
+      types: { "text/markdown": `${PAGE_PATH}.md` },
+    });
     const [skill, mcpCli, mcpManual, fetchFlow, shadcn, entryShape] = await Promise.all([
       highlight(SKILL_SNIPPET, { lang: "bash", filename: "terminal" }),
       highlight(MCP_CLI_SNIPPET, { lang: "bash", filename: "terminal" }),

@@ -1,4 +1,4 @@
-import type { Metadata } from "@/lib/head";
+import { type Metadata, pageMetadata } from "@/lib/head";
 import { ogImagePath } from "@/lib/og-paths";
 import { alternativePages } from "@/lib/seo-pages/alternatives";
 import { guidePages } from "@/lib/seo-pages/guides";
@@ -21,25 +21,13 @@ export function findSeoPage(kind: SeoPageKind, slug: string) {
 
 export function seoPageMetadata(kind: SeoPageKind, page: SeoPage): Metadata {
   const path = seoPagePath(kind, page.slug);
-  const image = ogImagePath(kind === "guides" ? "guide" : "alternative", page.slug);
-  const ogTitle = `${page.title} · beUI`;
-  return {
+  return pageMetadata({
+    path,
     title: page.title,
     description: page.description,
-    alternates: { canonical: path, types: { "text/markdown": `${path}.md` } },
-    openGraph: {
-      title: ogTitle,
-      description: page.description,
-      url: path,
-      type: "article",
-      siteName: "beUI",
-      images: [{ url: image, width: 1200, height: 630, alt: page.heading }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: ogTitle,
-      description: page.description,
-      images: [image],
-    },
-  };
+    type: "article",
+    image: ogImagePath(kind === "guides" ? "guide" : "alternative", page.slug),
+    imageAlt: page.heading,
+    types: { "text/markdown": `${path}.md` },
+  });
 }

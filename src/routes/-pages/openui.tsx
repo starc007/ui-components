@@ -9,7 +9,7 @@ import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
 import { Link } from "@/lib/navigation";
 import { ogImagePath } from "@/lib/og-paths";
@@ -222,36 +222,15 @@ export const getOpenUIPage = createServerFn({ method: "GET" })
     const t = getTranslations("Pages.openui");
     const title = t("meta.title");
     const description = t("meta.description");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: PAGE_PATH,
       title,
       description,
-      alternates: {
-        canonical: PAGE_PATH,
-        types: { "text/markdown": `${PAGE_PATH}.md` },
-      },
-      openGraph: {
-        title: `${title} · beUI`,
-        description,
-        url: PAGE_PATH,
-        locale: "en_US",
-        type: "article",
-        siteName: "beUI",
-        images: [
-          {
-            url: PAGE_IMAGE,
-            width: 1200,
-            height: 630,
-            alt: t("meta.imageAlt"),
-          },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${title} · beUI`,
-        description,
-        images: [PAGE_IMAGE],
-      },
-    };
+      type: "article",
+      image: PAGE_IMAGE,
+      imageAlt: t("meta.imageAlt"),
+      types: { "text/markdown": `${PAGE_PATH}.md` },
+    });
 
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([
