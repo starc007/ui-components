@@ -74,11 +74,17 @@
   "footer": {
     "description": "Animated components for React, Next.js and React Native. Copy the source or install with a CLI.",
     "createdBy": "Created by <link>Saurabh</link>",
-    "links": "Links",
-    "viewAll": "View all ({count})",
-    "browseAll": "Browse all",
+    "columns": {
+      "library": "Library",
+      "learn": "Learn",
+      "agents": "For agents",
+      "beui": "beUI"
+    },
+    "agentGuide": "Agent guide",
+    "mcpServer": "MCP server",
+    "contact": "Contact",
+    "email": "Email",
     "sponsor": "Sponsor",
-    "guides": "Guides",
     "compare": "Compare",
     "blog": "Blog",
     "alsoByUs": "Also by us",
