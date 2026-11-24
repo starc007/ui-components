@@ -1,5 +1,8 @@
 const GITHUB_REPO_API_URL = "https://api.github.com/repos/starc007/ui-components";
 
+/** Static `{ count }` written by scripts/build-static.ts for the site header. */
+export const GITHUB_STARS_PATH = "/github-stars.json";
+
 export async function getGithubStarCount(): Promise<number | null> {
   try {
     const response = await fetch(GITHUB_REPO_API_URL, {

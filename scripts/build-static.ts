@@ -21,6 +21,7 @@ import { buildNativeEntry, buildNativeIndex, NATIVE_HEADERS } from "../lib/nativ
 import { OG_SIZE } from "../lib/og";
 import { loadCardFonts } from "../lib/og-fonts";
 import { ogCardElement, ogCards } from "../lib/og-cards";
+import { GITHUB_STARS_PATH, getGithubStarCount } from "../lib/github";
 import { redirectsFile } from "../lib/redirects";
 import { allComponents } from "../lib/registry";
 import {
@@ -457,6 +458,10 @@ await Promise.all([
   write("/robots.txt", robotsTxt()),
   write("/_redirects", redirectsFile()),
   write("/_headers", HEADERS),
+  // Read by the site header. Fetched once per build, so page views never run
+  // the Worker or spend GitHub's unauthenticated rate limit; null when GitHub
+  // is unreachable, and the header then shows the link without a count.
+  getGithubStarCount().then((count) => write(GITHUB_STARS_PATH, json({ count }))),
 ]);
 const cardCount = (await buildOgCards()) + (await buildBlogBanners());
 console.log(

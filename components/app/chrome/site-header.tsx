@@ -11,6 +11,7 @@ import { ThemeToggle } from "@/components/app/chrome/theme-toggle";
 import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { ProCta } from "@/components/app/pro-cta";
+import { GITHUB_STARS_PATH } from "@/lib/github";
 import { Link, usePathname } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +28,8 @@ export function SiteHeader() {
   const [githubStarCount, setGithubStarCount] = useState<number | null>(null);
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/github-stars", { signal: controller.signal })
+    // A static file from the build, so a page view never runs the Worker.
+    fetch(GITHUB_STARS_PATH, { signal: controller.signal })
       .then(async (response) => {
         if (!response.ok) return;
         const data = await response.json();
