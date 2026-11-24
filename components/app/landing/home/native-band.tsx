@@ -6,39 +6,29 @@ import nativeSlugs from "@/lib/native/slugs.json";
 import { cn } from "@/lib/utils";
 import { LandingButton } from "./landing-button";
 import { NATIVE_COUNT } from "./landing-data";
+import { SectionHeading } from "./section-heading";
 
-/** beUI Native in a bordered panel: pitch and install on the left, phones below. */
+/** beUI Native: a two-tone heading, then the install command over phones playing clips. */
 export function NativeBand({ phones, className }: { phones: NativePhone[]; className?: string }) {
   const t = useTranslations("Landing.native");
   return (
     <section aria-labelledby="landing-native" className={cn("mx-auto max-w-6xl px-4", className)}>
-      <div className="overflow-hidden rounded-2xl border border-border">
-        <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div className="max-w-md">
-            <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-              {t("eyebrow")}
-            </p>
-            <h2
-              id="landing-native"
-              className="mt-2 text-2xl font-medium tracking-tight text-foreground md:text-[1.75rem]"
-            >
-              {t("title")}
-            </h2>
-            <p className="mt-3 text-pretty text-sm leading-6 text-muted-foreground">
-              {t("description", { count: NATIVE_COUNT })}
-            </p>
-          </div>
-          <div className="flex flex-col gap-3 lg:w-[26rem]">
-            <InstallCommand tool="beui-native" slugs={nativeSlugs} className="w-full" />
-            <LandingButton href="/react-native" variant="outline" className="self-start">
-              {t("browse")}
-              <ArrowRight aria-hidden="true" />
-            </LandingButton>
-          </div>
+      <SectionHeading
+        id="landing-native"
+        title={t("title")}
+        muted={t("titleMuted", { count: NATIVE_COUNT })}
+        action={
+          <LandingButton href="/react-native" variant="outline">
+            {t("browse")}
+            <ArrowRight aria-hidden="true" />
+          </LandingButton>
+        }
+      />
+      <div className="overflow-hidden rounded-2xl bg-card">
+        <div className="mx-auto max-w-md px-4 pt-6">
+          <InstallCommand tool="beui-native" slugs={nativeSlugs} className="w-full" />
         </div>
-        <div className="-mt-6 border-t border-border bg-card">
-          <NativePhones phones={phones} />
-        </div>
+        <NativePhones phones={phones} />
       </div>
     </section>
   );

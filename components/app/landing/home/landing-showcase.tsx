@@ -8,6 +8,7 @@ import styles from "@/components/app/landing/landing.module.css";
 import type { NativePhone } from "@/components/app/landing/native-phones";
 import { registry } from "@/lib/registry";
 import { cn } from "@/lib/utils";
+import { AgentsBento } from "./agents-bento";
 import { ContactStrip } from "./contact-strip";
 import { FaqList } from "./faq-list";
 import { LandingButton } from "./landing-button";
@@ -89,9 +90,9 @@ export function LandingShowcase({ phones }: { phones: NativePhone[] }) {
       </div>
 
       <LiveWall tiles={tiles} className="pt-16 sm:pt-20" />
-
-      <TestimonialRows className="pt-16 sm:pt-24" />
+      <AgentsBento className="pt-16 sm:pt-24" />
       <NativeBand phones={phones} className="pt-16 sm:pt-24" />
+      <TestimonialRows className="pt-16 sm:pt-24" />
       <PlansCompare placement="landing_comparison" className="pt-16 sm:pt-24" />
       <FaqList className="pt-16 sm:pt-24" />
       <ContactStrip className="py-16 sm:py-24" />

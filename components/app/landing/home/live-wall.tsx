@@ -9,6 +9,7 @@ import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { LandingButton } from "./landing-button";
 import { LiveTile } from "./live-tile";
+import { SectionHeading } from "./section-heading";
 import { WALL_TAGS, type WallTag, type WallTile } from "./wall-picks";
 
 type Filter = "all" | WallTag;
@@ -33,19 +34,17 @@ export function LiveWall({ tiles, className }: { tiles: WallTile[]; className?: 
 
   return (
     <section aria-labelledby="landing-wall" className={cn("mx-auto max-w-6xl px-4", className)}>
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <h2
-          id="landing-wall"
-          className="max-w-lg text-balance text-2xl font-medium tracking-tight md:text-[1.75rem] md:leading-tight"
-        >
-          <span className="text-foreground">{t("title")}</span>{" "}
-          <span className="text-muted-foreground">{t("titleMuted")}</span>
-        </h2>
-        <LandingButton href="/components/motion" variant="outline" className="self-start sm:self-auto">
-          {t("browseAll")}
-          <ArrowRight aria-hidden="true" />
-        </LandingButton>
-      </div>
+      <SectionHeading
+        id="landing-wall"
+        title={t("title")}
+        muted={t("titleMuted")}
+        action={
+          <LandingButton href="/components/motion" variant="outline">
+            {t("browseAll")}
+            <ArrowRight aria-hidden="true" />
+          </LandingButton>
+        }
+      />
 
       <Tabs value={filter} onValueChange={(value) => setFilter(value as Filter)} variant="pill">
         <div className="max-w-full overflow-x-auto">

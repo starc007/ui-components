@@ -30,10 +30,34 @@
   "card": {
     "view": "View {name}"
   },
+  "agents": {
+    "title": "Built for agents.",
+    "titleMuted": "Your coding agent can find, read and install any beUI component.",
+    "guide": "Agent guide",
+    "mcp": {
+      "title": "MCP server",
+      "description": "Claude Code, Codex and Cursor search the library and pull the install command themselves.",
+      "prompt": "Add a toast stack that swipes away",
+      "reply": "Added Animated Toast Stack in components/motion. It stacks new toasts and dismisses them on swipe."
+    },
+    "cli": {
+      "title": "One command",
+      "description": "Every component installs through the shadcn registry, with its helpers."
+    },
+    "skill": {
+      "title": "Agent Skill",
+      "description": "Teach your agent beUI's motion rules: tokens, springs and reduced motion."
+    },
+    "docs": {
+      "title": "Docs your agent can read",
+      "description": "Every page is Markdown too. Copy it, or open it in Claude, ChatGPT or v0.",
+      "copyPage": "Copy Page",
+      "openIn": "Open in {app}"
+    }
+  },
   "native": {
-    "eyebrow": "beUI Native",
-    "title": "Same motion, on React Native",
-    "description": "{count} components rebuilt for touch with Reanimated, Gesture Handler and Uniwind.",
+    "title": "Same motion, on React Native.",
+    "titleMuted": "{count} components rebuilt for touch with Reanimated, Gesture Handler and Uniwind.",
     "browse": "Browse native components",
     "playClips": "Play clips",
     "pauseClips": "Pause clips"
