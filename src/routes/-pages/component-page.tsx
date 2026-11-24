@@ -1,8 +1,8 @@
 import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
-import { ArrowRight, ArrowUpRight, Smartphone } from "lucide-react";
-import { useFormatter, useLocale, useTranslations } from "use-intl";
+import { ArrowRight, Smartphone } from "lucide-react";
+import { useFormatter, useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { ComponentGuide } from "@/components/app/docs/component-guide";
 import { CopyPage } from "@/components/app/docs/copy-page";
@@ -11,32 +11,19 @@ import { KeepInMind } from "@/components/app/docs/keep-in-mind";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { PagePager } from "@/components/app/docs/page-pager";
-import { PreviewCard } from "@/components/app/docs/preview-card";
 import { PropsTable } from "@/components/app/docs/props-table";
 import { type RelatedItem, RelatedSection } from "@/components/app/docs/related-section";
-import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
-import { getPreview, previews } from "@/components/previews";
 import { getTranslations } from "@/i18n/server";
 import { componentDates } from "@/lib/component-dates";
 import { categoryPath, componentPath, nativeComponentPath } from "@/lib/component-paths";
 import { componentSeo } from "@/lib/component-seo";
 import { componentSummaries } from "@/lib/component-summaries";
-import { EASE_OUT_CSS } from "@/lib/ease";
-import { type Metadata, pageMetadata } from "@/lib/head";
 import { type HighlightedCode, highlight } from "@/lib/highlight";
-import { buildManualInstall, type ManualInstallData } from "@/lib/manual-install";
+import { buildManualInstall } from "@/lib/manual-install";
 import { findNativeComponent } from "@/lib/native";
 import { Link } from "@/lib/navigation";
-import { ogImagePath } from "@/lib/og-paths";
-import { type ComponentPropsDoc, getComponentProps } from "@/lib/props-extractor";
-import {
-  BLOCK_CATEGORIES,
-  type ComponentCredit,
-  type ComponentEntry,
-  type ComponentExample,
-  findCategory,
-  findComponent,
-} from "@/lib/registry";
+import { getComponentProps } from "@/lib/props-extractor";
+import { BLOCK_CATEGORIES, findCategory, findComponent } from "@/lib/registry";
 import {
   breadcrumbJsonLd,
   componentJsonLd,
@@ -46,30 +33,20 @@ import {
 import { pageUrlFor, withSignature } from "@/lib/signature";
 import { soundApiDocs } from "@/lib/sound-api-docs";
 import { readSourceFile } from "@/lib/source-files";
-import { cn } from "@/lib/utils";
 import { variantCopy } from "@/lib/variant-copy";
 import { isSplitPage, variantPath } from "@/lib/variant-pages";
-
-type ComponentPageInput = { category: string; slug: string };
-
-type ExampleData = {
-  example: ComponentExample;
-  source: HighlightedCode;
-  usage: HighlightedCode;
-  propsDocs: ComponentPropsDoc[];
-  manual: ManualInstallData | null;
-};
-
-type CreditGroup = { credit: ComponentCredit; examples: ComponentExample[] };
-
-export type VariantCardData = {
-  slug: string;
-  name: string;
-  previewKey: string;
-  href: string;
-  badge: "new" | null;
-  launchedAt: string | null;
-};
+import { CreditLink } from "./component-page/credit-link";
+import { CreditSummary } from "./component-page/credit-summary";
+import { DefaultTabs } from "./component-page/default-tabs";
+import { ExampleBlock } from "./component-page/example-block";
+import { componentMetadata } from "./component-page/metadata";
+import type {
+  ComponentPageInput,
+  CreditGroup,
+  ExampleData,
+  VariantCardData,
+} from "./component-page/types";
+import { VariantCard } from "./component-page/variant-card";
 
 /**
  * Everything a component page shows that needs the repository or Shiki:
@@ -220,65 +197,6 @@ export async function loadComponentPage(input: ComponentPageInput) {
   return data;
 }
 
-export function componentMetadata({
-  catSlug,
-  comp,
-  keywords,
-  title,
-  description,
-  imageAlt,
-  variant,
-}: {
-  catSlug: string;
-  comp: ComponentEntry;
-  keywords: string[];
-  title: string;
-  description: string;
-  imageAlt: string;
-  /** A variant page: its own path, social card and single registry item. */
-  variant?: { slug: string; installSlug: string };
-}): Metadata {
-  const installSlugs = variant
-    ? [variant.installSlug]
-    : (comp.examples?.flatMap((example) =>
-        example.installSlug ? [example.installSlug] : [],
-      ) ?? []);
-  const registryItem = installSlugs[0] ? `/r/${installSlugs[0]}.json` : `/r/${comp.slug}.json`;
-  const directoryItem = installSlugs[0] ? `/${installSlugs[0]}.json` : `/${comp.slug}.json`;
-  const path = variant
-    ? variantPath(catSlug, comp.slug, variant.slug)
-    : componentPath(catSlug, comp.slug);
-
-  return pageMetadata({
-    path,
-    title,
-    description,
-    keywords,
-    type: "article",
-    image: variant
-      ? ogImagePath("variant", variant.installSlug)
-      : ogImagePath("component", comp.slug),
-    imageAlt,
-    types: {
-      "application/json": variant
-        ? `/r/${variant.installSlug}.json`
-        : installSlugs.length > 0
-          ? `/r/${comp.slug}`
-          : `/r/${comp.slug}.json`,
-      "text/plain": `/r/${comp.slug}/raw`,
-    },
-    other: {
-      "beui:category": catSlug,
-      "beui:component": comp.slug,
-      "beui:registry-item": registryItem,
-      "beui:directory-item": directoryItem,
-      ...(installSlugs.length > 0
-        ? { "beui:variant-registry-items": installSlugs.map((slug) => `/r/${slug}.json`) }
-        : {}),
-    },
-  });
-}
-
 export function ComponentPage({ data }: { data: ComponentPageData }) {
   const t = useTranslations("Docs.component");
   const format = useFormatter();
@@ -393,202 +311,5 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
       </p>
       <PagePager category={catSlug} slug={comp.slug} />
     </div>
-  );
-}
-
-/** One variant on a split page's overview: a live preview linking to its page. */
-function VariantCard({
-  variant,
-  component,
-  category,
-}: {
-  variant: VariantCardData;
-  component: ComponentEntry;
-  category: string;
-}) {
-  return (
-    <div className="h-72">
-      <LandingComponentCard
-        component={component}
-        category={category}
-        previewKey={variant.previewKey}
-        id={variant.slug}
-        href={variant.href}
-        name={variant.name}
-        badge={variant.badge}
-        launchedAt={variant.launchedAt}
-      />
-    </div>
-  );
-}
-
-const AVATAR_CLASS =
-  "size-5 shrink-0 rounded-full object-cover outline outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10";
-const FOCUS_RING =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
-
-/** "Includes" so the title line doesn't claim designs others built. */
-function CreditSummary({ groups, className }: { groups: CreditGroup[]; className?: string }) {
-  const t = useTranslations("Docs.component");
-  const locale = useLocale();
-  const parts = new Intl.ListFormat(locale, { type: "conjunction" }).formatToParts(
-    groups.map(({ credit }) => credit.name),
-  );
-  let next = 0;
-  return (
-    <p className={cn("flex items-center gap-2 text-sm text-muted-foreground", className)}>
-      <span aria-hidden="true" className="flex shrink-0">
-        {groups.slice(0, 2).map(({ credit }, index) =>
-          credit.avatar ? (
-            <img
-              key={credit.url}
-              src={credit.avatar}
-              alt=""
-              width={20}
-              height={20}
-              className={cn(AVATAR_CLASS, "ring-2 ring-background", index > 0 && "-ml-1.5")}
-            />
-          ) : null,
-        )}
-      </span>
-      <span>
-        {t("includesDesignsBy")}{" "}
-        {parts.map((part, index) => {
-          if (part.type !== "element") {
-            // biome-ignore lint/suspicious/noArrayIndexKey: parts are positional
-            return <span key={index}>{part.value}</span>;
-          }
-          const group = groups[next++];
-          return (
-            <a
-              key={group.credit.url}
-              href={`#${group.examples[0].slug}`}
-              className={cn(
-                "rounded-sm font-medium text-foreground underline decoration-border underline-offset-4 transition-colors duration-150 hover:decoration-foreground",
-                FOCUS_RING,
-              )}
-              style={{ transitionTimingFunction: EASE_OUT_CSS }}
-            >
-              {part.value}
-            </a>
-          );
-        })}
-      </span>
-    </p>
-  );
-}
-
-export function CreditLink({ credit, className }: { credit: ComponentCredit; className?: string }) {
-  const t = useTranslations("Docs.component");
-  const url = new URL(credit.url);
-  url.searchParams.set("ref", "beui");
-  return (
-    <a
-      href={url.toString()}
-      target="_blank"
-      rel="noreferrer noopener"
-      className={cn(
-        "group -ml-1 inline-flex items-center gap-2 rounded-full py-1 pr-2.5 pl-1 text-sm text-muted-foreground transition-colors duration-150 hover:bg-foreground/[0.06] hover:text-foreground",
-        FOCUS_RING,
-        className,
-      )}
-      style={{ transitionTimingFunction: EASE_OUT_CSS }}
-    >
-      {credit.avatar ? (
-        <img src={credit.avatar} alt="" width={20} height={20} className={AVATAR_CLASS} />
-      ) : null}
-      <span>
-        {t("contributedBy")}{" "}
-        <span className="font-medium text-foreground">{credit.name}</span>
-      </span>
-      <ArrowUpRight
-        aria-hidden="true"
-        strokeWidth={1.5}
-        className="size-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-px group-hover:translate-x-px motion-reduce:transition-none"
-        style={{ transitionTimingFunction: EASE_OUT_CSS }}
-      />
-      <span className="sr-only">{t("opensInNewTab")}</span>
-    </a>
-  );
-}
-
-function ExampleBlock({ data, showCredit }: { data: ExampleData; showCredit: boolean }) {
-  const t = useTranslations("Docs.component");
-  const { example, source, usage, propsDocs, manual } = data;
-  const Preview = previews[example.previewKey];
-
-  return (
-    <section id={example.slug} className="scroll-mt-24">
-      <div className="mb-4 flex items-baseline justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-medium tracking-tight text-foreground">{example.name}</h2>
-          {example.badge === "new" ? <NewBadge launchedAt={example.launchedAt} /> : null}
-        </div>
-        <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
-          {example.file.split("/").pop()}
-        </code>
-      </div>
-      {example.credit && showCredit ? (
-        <CreditLink credit={example.credit} className="-mt-2 mb-4" />
-      ) : null}
-      <div id={`${example.slug}-preview`} className="scroll-mt-24">
-        <PreviewCard
-          stageId={`${example.slug}-stage`}
-          minHeight="min-h-[320px]"
-          preview={Preview ? <Preview /> : null}
-          usage={usage}
-          source={source}
-        />
-      </div>
-      {example.installSlug ? (
-        <div
-          id={`${example.slug}-install`}
-          className="mt-8 min-w-0 scroll-mt-24 border-t border-border pt-8"
-        >
-          <h2 className="text-sm font-medium text-foreground">{t("install")}</h2>
-          <div className="mt-3">
-            <InstallBlock slug={example.installSlug} manual={manual} />
-          </div>
-        </div>
-      ) : null}
-      {propsDocs.length ? (
-        <div
-          id={`${example.slug}-api-reference`}
-          className="mt-8 min-w-0 scroll-mt-24 border-t border-border pt-8"
-        >
-          <h2 className="text-sm font-medium text-foreground">{t("apiReference")}</h2>
-          <div className="mt-3">
-            <PropsTable docs={propsDocs} />
-          </div>
-        </div>
-      ) : null}
-    </section>
-  );
-}
-
-function DefaultTabs({
-  category,
-  slug,
-  source,
-  usage,
-}: {
-  category: string;
-  slug: string;
-  source: HighlightedCode;
-  usage: HighlightedCode;
-}) {
-  const t = useTranslations("Docs.component");
-  const Preview = getPreview(category, slug);
-  return (
-    <section id="preview" className="mt-12 scroll-mt-24">
-      <h2 className="sr-only">{t("preview")}</h2>
-      <PreviewCard
-        stageId="preview-stage"
-        minHeight="min-h-[360px]"
-        preview={Preview ? <Preview /> : null}
-        usage={usage}
-        source={source}
-      />
-    </section>
   );
 }
