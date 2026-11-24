@@ -9,20 +9,14 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useId } from "react";
 import {
   AgentCode,
   type AgentCodeLanguage,
 } from "@/components/agents/agent-code";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { useStatusOpen } from "@/lib/hooks/use-status-open";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -133,26 +127,18 @@ export function ToolApproval({
   const t = useMessages("toolApproval", toolApprovalMessages, labels);
   const baseId = useId();
   const detailsId = `${baseId}-details`;
-  const previousStatus = useRef(status);
-  const [internalOpen, setInternalOpen] = useState(defaultOpen);
-  const currentOpen = open ?? internalOpen;
-  const setOpen = useCallback(
-    (next: boolean) => {
-      if (open === undefined) setInternalOpen(next);
-      onOpenChange?.(next);
-    },
-    [onOpenChange, open],
-  );
+  // The details fold once a decision is made.
+  const [currentOpen, setOpen] = useStatusOpen({
+    status,
+    open,
+    defaultOpen,
+    onOpenChange,
+    decide: (previous, next) =>
+      previous === "pending" && next !== "pending" ? false : undefined,
+  });
   const busy = status === "approving" || status === "running";
   const pending = status === "pending";
   const error = status === "error";
-
-  useEffect(() => {
-    if (previousStatus.current === "pending" && status !== "pending") {
-      setOpen(false);
-    }
-    previousStatus.current = status;
-  }, [setOpen, status]);
 
   return (
     <div

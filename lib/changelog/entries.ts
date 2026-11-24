@@ -119,6 +119,18 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "fixed",
         "text": "A nested SoundProvider overrides the one around it, and unmounting one no longer unmutes the page.",
         "component": "sound-kit"
+      },
+      {
+        "type": "fixed",
+        "text": "Code Block, File Diff, Tool Result and Streaming Response say Copied only once the copy worked."
+      },
+      {
+        "type": "fixed",
+        "text": "Tool Result, Tool Approval, File Diff, Todo List and Agent Activity open and fold on a status change in the same frame, instead of one frame late."
+      },
+      {
+        "type": "fixed",
+        "text": "Streamed code in agent components no longer grows the highlight cache without limit."
       }
     ]
   },

@@ -2,15 +2,7 @@
 
 import { ChevronDown, ListTodo } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useId, useLayoutEffect, useRef } from "react";
 import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import {
@@ -18,6 +10,7 @@ import {
   SPRING_LAYOUT,
   SPRING_SWAP,
 } from "@/lib/ease";
+import { useStatusOpen } from "@/lib/hooks/use-status-open";
 import { formatNumber, useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -232,30 +225,23 @@ export function TodoList({
   const triggerId = `${baseId}-trigger`;
   const contentId = `${baseId}-content`;
   const viewportRef = useRef<HTMLDivElement>(null);
-  const previousComplete = useRef(false);
-  const [internalOpen, setInternalOpen] = useState(defaultOpen);
-  const currentOpen = open ?? internalOpen;
   const completed = items.filter((item) => item.status === "completed").length;
   const allComplete = items.length > 0 && completed === items.length;
   const itemCount = items.length;
-
-  const setOpen = useCallback(
-    (next: boolean) => {
-      if (open === undefined) setInternalOpen(next);
-      onOpenChange?.(next);
+  // Reopens when finished work gets a new item; folds once everything is
+  // done, if asked to, including a list that mounts already complete.
+  const [currentOpen, setOpen] = useStatusOpen({
+    status: allComplete,
+    initialStatus: false,
+    open,
+    defaultOpen,
+    onOpenChange,
+    decide: (wasComplete, isComplete) => {
+      if (wasComplete && !isComplete) return true;
+      if (!wasComplete && isComplete && collapseOnComplete) return false;
+      return undefined;
     },
-    [onOpenChange, open],
-  );
-
-  useEffect(() => {
-    if (previousComplete.current && !allComplete) {
-      setOpen(true);
-    }
-    if (!previousComplete.current && allComplete && collapseOnComplete) {
-      setOpen(false);
-    }
-    previousComplete.current = allComplete;
-  }, [allComplete, collapseOnComplete, setOpen]);
+  });
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;

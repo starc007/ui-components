@@ -14,15 +14,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useId, useLayoutEffect, useRef } from "react";
 import {
   AgentCode,
   type AgentCodeLanguage,
@@ -30,6 +22,8 @@ import {
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
 import { SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { useCopy } from "@/lib/hooks/use-copy";
+import { useStatusOpen } from "@/lib/hooks/use-status-open";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -186,46 +180,25 @@ export function ToolResult({
   const triggerId = `${baseId}-trigger`;
   const contentId = `${baseId}-content`;
   const viewportRef = useRef<HTMLDivElement>(null);
-  const previousStatus = useRef(status);
-  const copyTimer = useRef<number | undefined>(undefined);
-  const [copied, setCopied] = useState(false);
-  const [internalOpen, setInternalOpen] = useState(defaultOpen);
-  const currentOpen = open ?? internalOpen;
+  const { copied, copy: handleCopy } = useCopy({ text: copyText, onCopy });
+  // Opens when the tool starts running; folds when it stops, if asked to.
+  const [currentOpen, setOpen] = useStatusOpen({
+    status,
+    open,
+    defaultOpen,
+    onOpenChange,
+    decide: (previous, next) => {
+      if (previous !== "running" && next === "running") return true;
+      if (previous === "running" && next !== "running" && collapseOnComplete) return false;
+      return undefined;
+    },
+  });
   const running = status === "running";
   const canCopy = Boolean(copyText || onCopy);
   const titleKey = getSwapKey(title, status);
   const metaKey = getSwapKey(meta, `${status}-meta`);
   const toolKey = getSwapKey(tool, `${status}-tool`);
   const statusLabel = t(status);
-
-  const setOpen = useCallback(
-    (next: boolean) => {
-      if (open === undefined) setInternalOpen(next);
-      onOpenChange?.(next);
-    },
-    [onOpenChange, open],
-  );
-
-  useEffect(() => {
-    if (previousStatus.current !== "running" && status === "running") {
-      setOpen(true);
-    }
-    if (
-      previousStatus.current === "running" &&
-      status !== "running" &&
-      collapseOnComplete
-    ) {
-      setOpen(false);
-    }
-    previousStatus.current = status;
-  }, [collapseOnComplete, setOpen, status]);
-
-  useEffect(
-    () => () => {
-      if (copyTimer.current) window.clearTimeout(copyTimer.current);
-    },
-    [],
-  );
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
@@ -243,15 +216,6 @@ export function ToolResult({
     });
     return () => cancelAnimationFrame(frame);
   });
-
-  const handleCopy = useCallback(async () => {
-    if (onCopy) await onCopy();
-    else if (copyText) await navigator.clipboard?.writeText(copyText);
-
-    setCopied(true);
-    if (copyTimer.current) window.clearTimeout(copyTimer.current);
-    copyTimer.current = window.setTimeout(() => setCopied(false), 1600);
-  }, [copyText, onCopy]);
 
   return (
     <div

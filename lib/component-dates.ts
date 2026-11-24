@@ -168,11 +168,11 @@ const COMPONENT_DATES = {
   },
   "agents/code-block": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-24",
   },
   "agents/todo-list": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-24",
   },
   "agents/prompt-input": {
     publishedAt: "2026-08-02",
@@ -180,7 +180,7 @@ const COMPONENT_DATES = {
   },
   "agents/tool-result": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-24",
   },
   "agents/file-diff": {
     publishedAt: "2026-08-01",
@@ -188,7 +188,7 @@ const COMPONENT_DATES = {
   },
   "agents/streaming-response": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-24",
   },
   "agents/image-generation": {
     publishedAt: "2026-08-02",
@@ -196,7 +196,7 @@ const COMPONENT_DATES = {
   },
   "agents/tool-approval": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-24",
   },
   "agents/citations": {
     publishedAt: "2026-08-01",
@@ -204,7 +204,7 @@ const COMPONENT_DATES = {
   },
   "agents/agent-activity": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-24",
   },
   "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-11-10" },
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-11-24" },

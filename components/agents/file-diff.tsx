@@ -8,15 +8,7 @@ import {
   LoaderCircle,
 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useId, useLayoutEffect, useRef } from "react";
 import {
   type AgentCodeLanguage,
   AgentCodeLine,
@@ -25,6 +17,8 @@ import {
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { useCopy } from "@/lib/hooks/use-copy";
+import { useStatusOpen } from "@/lib/hooks/use-status-open";
 import { formatNumber, useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -106,46 +100,25 @@ export function FileDiff({
   const triggerId = `${baseId}-trigger`;
   const contentId = `${baseId}-content`;
   const viewportRef = useRef<HTMLDivElement>(null);
-  const previousStatus = useRef(status);
-  const copyTimer = useRef<number | undefined>(undefined);
-  const [copied, setCopied] = useState(false);
-  const [internalOpen, setInternalOpen] = useState(defaultOpen);
-  const currentOpen = open ?? internalOpen;
+  const { copied, copy: handleCopy } = useCopy({ text: copyText, onCopy });
+  // Opens when streaming starts; folds when it completes, if asked to.
+  const [currentOpen, setOpen] = useStatusOpen({
+    status,
+    open,
+    defaultOpen,
+    onOpenChange,
+    decide: (previous, next) => {
+      if (previous !== "streaming" && next === "streaming") return true;
+      if (previous === "streaming" && next === "complete" && collapseOnComplete) return false;
+      return undefined;
+    },
+  });
   const streaming = status === "streaming";
   const additions = lines.filter((line) => line.type === "added").length;
   const deletions = lines.filter((line) => line.type === "removed").length;
   const canCopy = Boolean(copyText || onCopy);
   const code = lines.map((line) => line.content).join("\n");
   const tokens = useAgentCodeTokens(code, language);
-
-  const setOpen = useCallback(
-    (next: boolean) => {
-      if (open === undefined) setInternalOpen(next);
-      onOpenChange?.(next);
-    },
-    [onOpenChange, open],
-  );
-
-  useEffect(() => {
-    if (previousStatus.current !== "streaming" && status === "streaming") {
-      setOpen(true);
-    }
-    if (
-      previousStatus.current === "streaming" &&
-      status === "complete" &&
-      collapseOnComplete
-    ) {
-      setOpen(false);
-    }
-    previousStatus.current = status;
-  }, [collapseOnComplete, setOpen, status]);
-
-  useEffect(
-    () => () => {
-      if (copyTimer.current) window.clearTimeout(copyTimer.current);
-    },
-    [],
-  );
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
@@ -164,15 +137,6 @@ export function FileDiff({
     });
     return () => cancelAnimationFrame(frame);
   });
-
-  const handleCopy = useCallback(async () => {
-    if (onCopy) await onCopy();
-    else if (copyText) await navigator.clipboard?.writeText(copyText);
-
-    setCopied(true);
-    if (copyTimer.current) window.clearTimeout(copyTimer.current);
-    copyTimer.current = window.setTimeout(() => setCopied(false), 1600);
-  }, [copyText, onCopy]);
 
   return (
     <div

@@ -1,22 +1,9 @@
 "use client";
 
-import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
+import { useControllable } from "@/lib/hooks/use-controllable";
 
-/** Controlled/uncontrolled value with a stable setter. */
-export function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (next: T) => void) {
-  const [internal, setInternal] = useState(defaultValue);
-  const latest = useRef({ value, internal, onChange });
-  useLayoutEffect(() => {
-    latest.current = { value, internal, onChange };
-  });
-  const set = useCallback((next: T) => {
-    const current = latest.current;
-    if (current.value === undefined) setInternal(next);
-    if ((current.value === undefined ? current.internal : current.value) !== next)
-      current.onChange?.(next);
-  }, []);
-  return [value === undefined ? internal : value, set, setInternal] as const;
-}
+export { useControllable };
 
 /**
  * The inspected category is held by id and resolved during render, so a
