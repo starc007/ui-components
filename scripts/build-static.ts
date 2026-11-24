@@ -35,7 +35,7 @@ import { robotsTxt } from "../lib/robots";
 import { seoPagePath, seoPages } from "../lib/seo-pages";
 import { seoPageMarkdown } from "../lib/seo-pages/markdown";
 import { SITE_URL } from "../lib/site";
-import { sitemapXml } from "../lib/sitemap";
+import { escapeXml, sitemapXml } from "../lib/sitemap";
 import { readSourceFile } from "../lib/source-files";
 import { THEME_CSS } from "../lib/theme-css";
 
@@ -305,14 +305,6 @@ async function buildLlmsTxt() {
   ];
   await write("/llms.txt", lines.join("\n"));
 }
-
-const escapeXml = (value: string) =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
 
 /** RSS 2.0 feed of the changelog, one item per release. */
 async function buildRss() {

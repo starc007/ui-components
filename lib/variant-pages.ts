@@ -2,8 +2,9 @@ import { componentPath } from "@/lib/component-paths";
 import {
   allComponents,
   type ComponentEntry,
-  type ComponentExample,
   findComponent,
+  type InstallableExample,
+  isInstallable,
 } from "@/lib/registry";
 
 /**
@@ -31,14 +32,16 @@ export function variantPath(category: string, componentSlug: string, variantSlug
 export function findVariant(category: string, componentSlug: string, variantSlug: string) {
   const comp = findComponent(category, componentSlug);
   if (!comp || !isSplitPage(comp)) return null;
-  const example = comp.examples?.find((candidate) => candidate.slug === variantSlug);
+  const example = comp.examples
+    ?.filter(isInstallable)
+    .find((candidate) => candidate.slug === variantSlug);
   return example ? { comp, example } : null;
 }
 
 export type VariantPageRef = {
   category: string;
   comp: ComponentEntry;
-  example: ComponentExample & { installSlug: string };
+  example: InstallableExample;
 };
 
 /** Every variant page, in registry order. */
@@ -46,10 +49,10 @@ export function allVariantPages(): VariantPageRef[] {
   return allComponents()
     .filter(isSplitPage)
     .flatMap((comp) =>
-      (comp.examples ?? []).map((example) => ({
+      (comp.examples ?? []).filter(isInstallable).map((example) => ({
         category: comp.category.slug,
         comp,
-        example: example as ComponentExample & { installSlug: string },
+        example,
       })),
     );
 }

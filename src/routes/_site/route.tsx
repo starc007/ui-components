@@ -11,7 +11,7 @@ import { SiteFrame } from "@/components/app/chrome/site-frame";
 import { SiteHeader } from "@/components/app/chrome/site-header";
 import { SiteSoundProvider } from "@/components/app/chrome/site-sound";
 import { ThemeProvider } from "@/components/app/chrome/theme-provider";
-import { LOCALE } from "@/i18n/messages";
+import { LOCALE, type SiteMessages } from "@/i18n/messages";
 import { clientMessages, getTranslations } from "@/i18n/server";
 import { type Metadata, metadataToHead } from "@/lib/head";
 import { LocaleProvider } from "@/lib/i18n";
@@ -104,7 +104,9 @@ const googleAnalyticsId = import.meta.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as str
 function SiteLayout({ children }: { children: ReactNode }) {
   const { messages } = Route.useLoaderData();
   return (
-    <IntlProvider locale={LOCALE} messages={messages as never} timeZone="UTC">
+    // The layout ships every namespace but `Pages`; each page merges its own
+    // `Pages.<page>` in through `PageMessages`, so the full type holds there.
+    <IntlProvider locale={LOCALE} messages={messages as SiteMessages} timeZone="UTC">
       {/* Library components format numbers for this locale; their labels are English defaults. */}
       <LocaleProvider locale={LOCALE}>
         <ThemeProvider>

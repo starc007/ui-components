@@ -213,7 +213,7 @@ export const getComponentPage = createServerFn({ method: "GET" })
 
 export type ComponentPageData = NonNullable<Awaited<ReturnType<typeof getComponentPage>>>;
 
-/** Loader for the three routes that render component pages. */
+/** Loader for every route that renders a component page. */
 export async function loadComponentPage(input: ComponentPageInput) {
   const data = await getComponentPage({ data: input });
   if (!data) throw notFound();

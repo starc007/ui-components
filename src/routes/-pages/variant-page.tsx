@@ -21,7 +21,7 @@ import { buildManualInstall } from "@/lib/manual-install";
 import { findNativeComponent } from "@/lib/native";
 import { Link } from "@/lib/navigation";
 import { getComponentProps } from "@/lib/props-extractor";
-import { BLOCK_CATEGORIES, findCategory } from "@/lib/registry";
+import { BLOCK_CATEGORIES, findCategory, isInstallable } from "@/lib/registry";
 import { breadcrumbJsonLd, componentJsonLd, componentKeywords, relatedComponents } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { withSignature } from "@/lib/signature";
@@ -44,7 +44,7 @@ export const getVariantPage = createServerFn({ method: "GET" })
     const found = findVariant(category, slug, variant);
     if (!cat || !found) return null;
     const { comp, example } = found;
-    const installSlug = example.installSlug as string;
+    const { installSlug } = example;
 
     const t = getTranslations("Docs.component");
     const copy = variantCopy[installSlug];
@@ -65,9 +65,10 @@ export const getVariantPage = createServerFn({ method: "GET" })
 
     // The other variants of the same page, as cards that link to their pages.
     const siblings: RelatedItem[] = (comp.examples ?? [])
-      .filter((other) => other.slug !== example.slug && other.installSlug)
+      .filter(isInstallable)
+      .filter((other) => other.slug !== example.slug)
       .map((other) => {
-        const otherCopy = variantCopy[other.installSlug as string];
+        const otherCopy = variantCopy[other.installSlug];
         return {
           category: cat.slug,
           slug: other.slug,

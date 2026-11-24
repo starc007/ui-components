@@ -42,6 +42,13 @@ export type ComponentExample = {
   usageFile?: string;
 };
 
+/** A variant with its own install slug. */
+export type InstallableExample = ComponentExample & { installSlug: string };
+
+export function isInstallable(example: ComponentExample): example is InstallableExample {
+  return Boolean(example.installSlug);
+}
+
 export type ComponentEntry = {
   slug: string;
   name: string;

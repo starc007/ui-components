@@ -1,4 +1,4 @@
-import { allComponents, BLOCK_CATEGORIES, findCategory, registry } from "@/lib/registry";
+import { allComponents, BLOCK_CATEGORIES, findCategory, isInstallable, registry } from "@/lib/registry";
 import { componentDates } from "@/lib/component-dates";
 import { pageUrlFor, withSignature } from "@/lib/signature";
 import { SITE_URL } from "@/lib/site";
@@ -152,9 +152,9 @@ export function allRegistryTargets(): RegistryTarget[] {
     };
 
     const variantTargets: RegistryTarget[] = (component.examples ?? [])
-      .filter((example) => example.installSlug)
+      .filter(isInstallable)
       .map((example) => ({
-        slug: example.installSlug as string,
+        slug: example.installSlug,
         name: `${component.name} ${example.name}`,
         description: example.description ?? component.description,
         file: example.file,
@@ -170,9 +170,9 @@ export function allRegistryTargets(): RegistryTarget[] {
 export function allShadcnTargets(): RegistryTarget[] {
   return allComponents().flatMap((component) => {
     const variantTargets: RegistryTarget[] = (component.examples ?? [])
-      .filter((example) => example.installSlug)
+      .filter(isInstallable)
       .map((example) => ({
-        slug: example.installSlug as string,
+        slug: example.installSlug,
         name: `${component.name} ${example.name}`,
         description: example.description ?? component.description,
         file: example.file,
