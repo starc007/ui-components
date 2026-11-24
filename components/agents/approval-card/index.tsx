@@ -10,7 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
 import { Button } from "@/components/motion/button";
@@ -267,9 +267,17 @@ export function ApprovalCard({
     onStepChange?.(next);
   };
 
+  // Two answers set in one batch would otherwise both spread the answers
+  // from this render, and the second would drop the first.
+  const answersRef = useRef(currentAnswers);
+  useLayoutEffect(() => {
+    answersRef.current = currentAnswers;
+  });
   const updateCurrentAnswer = (next: ApprovalCardAnswer) => {
     if (!question) return;
-    setAnswers({ ...currentAnswers, [question.id]: next });
+    const merged = { ...answersRef.current, [question.id]: next };
+    answersRef.current = merged;
+    setAnswers(merged);
   };
 
   const continueQuestion = () => {
@@ -292,10 +300,33 @@ export function ApprovalCard({
     }
 
     clearAutoAdvance();
+    const queuedFor = question.id;
     autoAdvanceTimer.current = window.setTimeout(() => {
-      setStep(currentStep + 1);
+      autoAdvanceTimer.current = undefined;
+      // Read the card as it is now: the question may have changed, or the
+      // card may no longer be waiting for an answer.
+      const now = latest.current;
+      if (!now.pending || now.questionId !== queuedFor) return;
+      if (now.currentStep >= now.questionCount - 1) return;
+      now.setStep(now.currentStep + 1);
     }, 240);
   };
+  const latest = useRef({
+    pending,
+    questionId: question?.id,
+    currentStep,
+    questionCount: questions.length,
+    setStep,
+  });
+  useLayoutEffect(() => {
+    latest.current = {
+      pending,
+      questionId: question?.id,
+      currentStep,
+      questionCount: questions.length,
+      setStep,
+    };
+  });
 
   return (
     <div
