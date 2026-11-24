@@ -56,7 +56,7 @@ export function SankeyChartPreview() {
     <div className="w-full max-w-3xl space-y-4">
       <Tabs
         value={quarter}
-        onValueChange={(value) => setQuarter(value as keyof typeof QUARTERS)}
+        onValueChange={setQuarter}
         variant="segment"
       >
         <TabsList>

@@ -55,7 +55,7 @@ export function ChangelogContent() {
         <h1 className="text-3xl font-medium tracking-tight text-foreground sm:text-4xl">{t("heading")}</h1>
         <p className="mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">{t("description")}</p>
         <div className="mt-8 flex items-center gap-2">
-          <Tabs value={filter} onValueChange={(value) => setFilter(value as Filter)} variant="pill">
+          <Tabs value={filter} onValueChange={setFilter} variant="pill">
             <TabsList aria-label={t("filterLabel")}>
               {FILTERS.map((key) => (
                 <TabsTrigger key={key} value={key}>

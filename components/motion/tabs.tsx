@@ -82,7 +82,12 @@ const transition: Transition = {
   mass: 1.2,
 };
 
-export function Tabs({
+/**
+ * Pass a union of tab values as `T` (or let `value` infer it) and
+ * `onValueChange` receives that union. Every trigger's `value` must be one of
+ * them.
+ */
+export function Tabs<T extends string = string>({
   defaultValue,
   value,
   onValueChange,
@@ -93,9 +98,9 @@ export function Tabs({
   children,
   className,
 }: {
-  defaultValue?: string;
-  value?: string;
-  onValueChange?: (v: string) => void;
+  defaultValue?: T;
+  value?: T;
+  onValueChange?: (v: T) => void;
   variant?: Variant;
   /**
    * With "selected", a trigger's icon springs open only on the selected tab
@@ -110,7 +115,7 @@ export function Tabs({
   className?: string;
 }) {
   const t = useMessages("tabs", tabsMessages, labels);
-  const [internal, setInternal] = useState(defaultValue ?? "");
+  const [internal, setInternal] = useState<string>(defaultValue ?? "");
   const layoutId = useId();
   const reduce = useReducedMotion();
   const controlled = value !== undefined;
@@ -120,7 +125,8 @@ export function Tabs({
     (v: string) => {
       if (v !== current) play();
       if (!controlled) setInternal(v);
-      onValueChange?.(v);
+      // Triggers only carry values from `T`, so the string is one of them.
+      onValueChange?.(v as T);
     },
     [controlled, onValueChange, current, play],
   );

@@ -53,7 +53,7 @@ export function InteractionGallery({ components }: { components: ComponentEntry[
   return (
     <section className="mt-8">
       <div className="flex justify-center">
-        <Tabs value={filter} onValueChange={(value) => setFilter(value as Filter)} variant="pill">
+        <Tabs value={filter} onValueChange={setFilter} variant="pill">
           <TabsList aria-label={t("filterLabel")}>
             {FILTERS.map((key) => (
               <TabsTrigger key={key} value={key}>
