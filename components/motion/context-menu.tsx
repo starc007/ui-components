@@ -26,7 +26,9 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL } from "@/lib/ease";
+import { MENU_ITEM_CLASS, MenuItemHighlight } from "@/components/motion/menu/menu-item-highlight";
+import { enabledItems, useMenuNavigation } from "@/components/motion/menu/use-menu-navigation";
+import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
 import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { useMessages } from "@/lib/i18n";
 import { assignRef } from "@/lib/merge-refs";
@@ -77,15 +79,6 @@ function useContextMenuContext(component: string) {
     throw new Error(`${component} must be used within <ContextMenu>`);
   }
   return context;
-}
-
-function getEnabledItems(container: HTMLElement | null) {
-  if (!container) return [];
-  return Array.from(
-    container.querySelectorAll<HTMLElement>(
-      '[data-context-menu-item="true"]:not([data-disabled="true"])',
-    ),
-  );
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -395,8 +388,7 @@ function ContextMenuPanel({
   const [origin, setOrigin] = useState<MenuPoint>({ x: 0, y: 0 });
   const [size, setSize] = useState({ width: 0, height: 0 });
   const [morphReady, setMorphReady] = useState(false);
-  const typeahead = useRef("");
-  const typeaheadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navigate = useMenuNavigation();
   const instant = reduce || modality === "keyboard";
 
   // Runs again for a new invocation, and when the menu reopens during its exit.
@@ -451,26 +443,11 @@ function ContextMenuPanel({
   useEffect(() => {
     if (!present) return;
     const frame = requestAnimationFrame(() => {
-      const first = getEnabledItems(contentRef.current)[0];
+      const first = enabledItems(contentRef.current)[0];
       first?.focus({ preventScroll: true });
     });
     return () => cancelAnimationFrame(frame);
   }, [present, contentRef]);
-
-  useEffect(
-    () => () => {
-      if (typeaheadTimer.current) clearTimeout(typeaheadTimer.current);
-    },
-    [],
-  );
-
-  const moveFocus = (direction: 1 | -1) => {
-    const items = getEnabledItems(context.contentRef.current);
-    if (items.length === 0) return;
-    const current = items.indexOf(document.activeElement as HTMLElement);
-    const next = current < 0 ? 0 : (current + direction + items.length) % items.length;
-    items[next]?.focus();
-  };
 
   const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
@@ -483,36 +460,7 @@ function ContextMenuPanel({
       context.setOpen(false);
       return;
     }
-    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      event.preventDefault();
-      moveFocus(event.key === "ArrowDown" ? 1 : -1);
-      return;
-    }
-    if (event.key === "Home" || event.key === "End") {
-      event.preventDefault();
-      const items = getEnabledItems(context.contentRef.current);
-      items[event.key === "Home" ? 0 : items.length - 1]?.focus();
-      return;
-    }
-    if (
-      event.key.length === 1 &&
-      !event.ctrlKey &&
-      !event.metaKey &&
-      !event.altKey
-    ) {
-      typeahead.current += event.key.toLocaleLowerCase();
-      if (typeaheadTimer.current) clearTimeout(typeaheadTimer.current);
-      typeaheadTimer.current = setTimeout(() => {
-        typeahead.current = "";
-      }, 500);
-      const match = getEnabledItems(context.contentRef.current).find((item) =>
-        (item.dataset.label ?? item.textContent ?? "")
-          .trim()
-          .toLocaleLowerCase()
-          .startsWith(typeahead.current),
-      );
-      match?.focus();
-    }
+    navigate(event, contentRef.current);
   };
 
   const clipHidden = collapsedClip(origin, size);
@@ -534,6 +482,7 @@ function ContextMenuPanel({
       <motion.div
         ref={contentRef}
         id={context.menuId}
+        data-level={context.menuId}
         role="menu"
         aria-label={ariaLabel ?? context.t("label")}
         data-morph-ready={morphReady ? "true" : "false"}
@@ -604,9 +553,10 @@ function ContextMenuItemBase({
       role={role}
       {...checkedProps}
       disabled={disabled}
-      data-context-menu-item="true"
-      data-disabled={disabled ? "true" : undefined}
-      data-label={textValue}
+      data-menu-item=""
+      data-level={context.menuId}
+      data-disabled={disabled ? "" : undefined}
+      data-text-value={textValue}
       tabIndex={-1}
       onFocus={() => context.setActiveId(id)}
       onPointerMove={(event) => {
@@ -618,7 +568,8 @@ function ContextMenuItemBase({
         if (closeOnSelect) context.setOpen(false);
       }}
       className={cn(
-        "relative isolate flex w-full select-none items-center gap-2.5 rounded-full px-3 py-1.5 text-left text-sm outline-none",
+        MENU_ITEM_CLASS,
+        "gap-2.5",
         "focus-visible:ring-2 focus-visible:ring-foreground/15",
         "disabled:pointer-events-none disabled:opacity-40",
         inset && "pl-9",
@@ -627,16 +578,7 @@ function ContextMenuItemBase({
       )}
     >
       {active ? (
-        <motion.span
-          layoutId={`${context.menuId}-active`}
-          className={cn(
-            "absolute inset-0 -z-10 rounded-full",
-            tone === "destructive"
-              ? "bg-destructive/10"
-              : "bg-foreground/[0.065]",
-          )}
-          transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
-        />
+        <MenuItemHighlight layoutId={`${context.menuId}-active`} tone={tone} reduce={context.reduce} />
       ) : null}
       {children}
     </button>

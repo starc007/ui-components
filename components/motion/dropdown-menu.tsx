@@ -22,8 +22,10 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { MENU_ITEM_CLASS, MenuItemHighlight } from "@/components/motion/menu/menu-item-highlight";
+import { enabledItems, useMenuNavigation } from "@/components/motion/menu/use-menu-navigation";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
-import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL } from "@/lib/ease";
+import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { PresenceGate } from "@/lib/presence-gate";
 import { useSound } from "@/lib/sound";
@@ -43,7 +45,6 @@ const SUB_STACK_INDENT = 16;
 const SUB_OPEN_DELAY = 100;
 // How long a pointer heading for an open submenu may cross sibling rows.
 const SUB_GRACE = 300;
-const TYPEAHEAD_RESET = 500;
 const EXIT = { duration: 0.12, ease: EASE_OUT };
 // The panel grows out of its trigger from this scale and distance.
 const OPEN_SCALE = 0.94;
@@ -107,15 +108,6 @@ function useLevel(component: string) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), Math.max(min, max));
-}
-
-function enabledItems(panel: HTMLElement | null) {
-  if (!panel) return [];
-  return Array.from(
-    panel.querySelectorAll<HTMLElement>(
-      `[data-menu-item][data-level="${panel.dataset.level}"]:not([data-disabled])`,
-    ),
-  );
 }
 
 function insidePolygon(point: Point, polygon: Point[]) {
@@ -414,8 +406,7 @@ function MenuPanel({
   const [openSub, setOpenSubState] = useState<string | null>(null);
   const [subFocus, setSubFocus] = useState<FocusTarget>("none");
   const grace = useRef<{ polygon: Point[]; until: number } | null>(null);
-  const typeahead = useRef("");
-  const typeaheadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navigate = useMenuNavigation();
 
   const layout = usePopoverPortalPosition(anchorRef, panelRef, true);
   // Held once placed: an exiting panel stays where it was, even if the
@@ -450,13 +441,6 @@ function MenuPanel({
     (focus === "last" ? items[items.length - 1] : items[0])?.focus({ preventScroll: true });
   }, [placed, present, focus, panelRef]);
 
-  useEffect(
-    () => () => {
-      if (typeaheadTimer.current) clearTimeout(typeaheadTimer.current);
-    },
-    [],
-  );
-
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     // Submenus render inside this panel's React tree, so their keys bubble
     // here too. Each panel answers only for its own rows.
@@ -464,46 +448,12 @@ function MenuPanel({
     const target = event.target as HTMLElement;
     if (!panel || target.closest("[data-menu-panel]") !== panel) return;
     if (onKeyDown?.(event)) return;
-
-    const items = enabledItems(panel);
-    const index = items.indexOf(target);
-    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      event.preventDefault();
-      if (items.length === 0) return;
-      const step = event.key === "ArrowDown" ? 1 : -1;
-      const next = index < 0 ? (step === 1 ? 0 : items.length - 1) : (index + step + items.length) % items.length;
-      items[next]?.focus();
-      return;
-    }
-    if (event.key === "Home" || event.key === "End") {
-      event.preventDefault();
-      items[event.key === "Home" ? 0 : items.length - 1]?.focus();
-      return;
-    }
     if (event.key === "Tab") {
       event.preventDefault();
       onClose();
       return;
     }
-    const typed = event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey;
-    if (!typed || (event.key === " " && typeahead.current === "")) return;
-    typeahead.current += event.key.toLocaleLowerCase();
-    if (typeaheadTimer.current) clearTimeout(typeaheadTimer.current);
-    typeaheadTimer.current = setTimeout(() => {
-      typeahead.current = "";
-    }, TYPEAHEAD_RESET);
-    // Start after the current row, so repeating a letter cycles its matches.
-    const ordered = [...items.slice(index + 1), ...items.slice(0, index + 1)];
-    const query = typeahead.current;
-    const repeated = query.length > 1 && [...query].every((char) => char === query[0]);
-    const needle = repeated ? query[0] : query;
-    const match = ordered.find((item) =>
-      (item.dataset.textValue ?? item.textContent ?? "").trim().toLocaleLowerCase().startsWith(needle),
-    );
-    if (match) {
-      event.preventDefault();
-      match.focus();
-    }
+    navigate(event, panel);
   };
 
   const level = useMemo<LevelContextValue>(
@@ -774,7 +724,8 @@ function ItemBase({
         if (closeOnSelect) root.setOpen(false);
       }}
       className={cn(
-        "relative isolate flex w-full cursor-default select-none items-center gap-2 rounded-full px-3 py-1.5 text-left text-sm outline-none",
+        MENU_ITEM_CLASS,
+        "cursor-default gap-2",
         "[&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         inset && "pl-9",
         disabled && "opacity-50",
@@ -783,15 +734,7 @@ function ItemBase({
       )}
     >
       {active && !disabled ? (
-        <motion.span
-          aria-hidden="true"
-          layoutId={`${level.levelId}-highlight`}
-          className={cn(
-            "absolute inset-0 -z-10 rounded-full",
-            tone === "destructive" ? "bg-destructive/10" : "bg-foreground/[0.07]",
-          )}
-          transition={root.reduce ? { duration: 0 } : SPRING_LAYOUT}
-        />
+        <MenuItemHighlight layoutId={`${level.levelId}-highlight`} tone={tone} reduce={root.reduce} />
       ) : null}
       {children}
     </button>
