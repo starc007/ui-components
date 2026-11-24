@@ -120,6 +120,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "component": "button"
       },
       {
+        "type": "improved",
+        "text": "Tooltip shows at once on keyboard focus and when moving along a row of controls, and goes at once on Escape, so only a first hover fades in. Arrows on the left and right join the rounded edge cleanly.",
+        "component": "tooltip"
+      },
+      {
         "type": "fixed",
         "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
         "component": "select"
