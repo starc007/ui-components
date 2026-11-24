@@ -58,6 +58,9 @@ export function ListboxPanel({
   const [portalReady, setPortalReady] = useState(false);
   const [actualSide, setActualSide] = useState<ListboxPanelSide>(side);
   const [morphReady, setMorphReady] = useState(false);
+  // Fully closed: the close animation has finished, or nothing has opened yet.
+  const [settledClosed, setSettledClosed] = useState(!open);
+  if (open && settledClosed) setSettledClosed(false);
   const layout = usePopoverPortalPosition(triggerRef, measureRef, portalReady);
 
   useEffect(() => setPortalReady(true), []);
@@ -68,8 +71,10 @@ export function ListboxPanel({
   }, [portalReady]);
 
   useLayoutEffect(() => {
-    // Preserve the resolved side during exit, so top panels close upward.
-    if (!open || !layout) return;
+    // Preserve the resolved side during exit, so top panels close upward. Once
+    // closed it follows the field again, so the next reveal starts from the
+    // edge the panel will open on.
+    if (!layout || (!open && !settledClosed)) return;
     if (!avoidCollisions) {
       setActualSide(side);
       return;
@@ -81,7 +86,7 @@ export function ListboxPanel({
     else if (side === "top" && above < layout.content.height + sideOffset && below > above)
       setActualSide("bottom");
     else setActualSide(side);
-  }, [avoidCollisions, open, layout, side, sideOffset]);
+  }, [avoidCollisions, open, settledClosed, layout, side, sideOffset]);
 
   if (!portalReady) return null;
 
@@ -118,6 +123,9 @@ export function ListboxPanel({
         y: open ? (actualSide === "bottom" ? sideOffset : -sideOffset) : 0,
       }}
       transition={transition}
+      onAnimationComplete={() => {
+        if (!open) setSettledClosed(true);
+      }}
       style={
         {
           left,
