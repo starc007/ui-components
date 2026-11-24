@@ -47,13 +47,16 @@ Only these sizes. No other arbitrary `text-[Npx]` values.
 |---|---|
 | Buttons, icon buttons, inputs, select and combobox triggers, search, tabs, segmented controls, chips, badges, switches, pagination, toasts, single-line tooltips, OTP cells | `rounded-full` |
 | Rows inside menus, listboxes, selects and command palettes | `rounded-full` |
-| Floating panels (menu, select list, popover, combobox list) | `rounded-3xl` with `p-2` |
+| Dropdown panels (dropdown and context menus, select, combobox and multi-select lists, table menus) | `rounded-2xl` with `p-2` |
+| Popovers | `rounded-3xl` with `p-2` |
 | Cards, previews, code blocks, rich tooltips | `rounded-2xl` |
 | Dialogs, sheets, drawers, large containers | `rounded-3xl` |
 
 ### Concentric rule
 
-Inner radius = outer radius − gap. A floating panel is `rounded-3xl` (24px) with `p-2` (8px) around `h-8` rows, whose pill radius is 16px: 24 − 8 = 16, so the corners line up. When you change a panel's padding, change its radius with it.
+Inner radius = outer radius − gap. A popover is `rounded-3xl` (24px) with `p-2` (8px) around `h-8` rows, whose pill radius is 16px: 24 − 8 = 16, so the corners line up. When you change a panel's padding, change its radius with it.
+
+Dropdown panels are the one chosen exception: they use `rounded-2xl` (16px) for a tighter look, and their `h-8` rows stay full pills.
 
 ### Exceptions
 
@@ -105,7 +108,7 @@ Monochrome: neutrals, a near-black primary (white in dark mode) for emphasis, se
 ## Surfaces and elevation
 
 - Cards: `rounded-2xl border border-border`, no shadow, no gray fill, no extra outer border.
-- Floating panels: `rounded-3xl border border-border bg-background p-2` plus one soft shadow, `shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]`. This is the only shadow in the system.
+- Floating panels: `rounded-2xl` (dropdowns) or `rounded-3xl` (popovers) with `border border-border bg-background p-2` plus one soft shadow, `shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]`. This is the only shadow in the system.
 - Focus: a visible `ring-2` in `ring-foreground/20` or the primary color. Never remove focus without a replacement.
 
 ## Icons

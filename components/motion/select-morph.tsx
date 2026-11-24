@@ -29,9 +29,9 @@ const MORPH: Transition = { type: "spring", duration: 0.5, bounce: 0.22 };
 // Trigger and panel header share this row so the morph stays seamless.
 const ROW = "flex h-10 w-full items-center justify-between gap-2 px-4 text-sm";
 // The closed trigger is a pill (half its h-10 height). The open panel is
-// concentric with its h-8 pill rows: 8px padding + 16px row radius.
+// rounded-2xl, the radius every floating list in the library uses.
 const TRIGGER_RADIUS = 20;
-const PANEL_RADIUS = 24;
+const PANEL_RADIUS = 16;
 
 const LIST: Variants = {
   hidden: {},

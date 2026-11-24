@@ -542,7 +542,7 @@ export function ContextMenuContent({
         onKeyDown={onKeyDown}
         onContextMenu={(event) => event.preventDefault()}
         className={cn(
-          "min-w-56 overflow-hidden rounded-3xl border border-border bg-card p-2 text-foreground outline-none",
+          "min-w-56 overflow-hidden rounded-2xl border border-border bg-card p-2 text-foreground outline-none",
           className,
         )}
       >

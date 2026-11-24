@@ -569,7 +569,7 @@ function MenuPanel({
         visibility: placement ? undefined : "hidden",
       }}
       className={cn(
-        "fixed z-[100] min-w-48 overflow-y-auto overscroll-contain rounded-3xl border border-border bg-background p-2 text-foreground shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)] outline-none",
+        "fixed z-[100] min-w-48 overflow-y-auto overscroll-contain rounded-2xl border border-border bg-background p-2 text-foreground shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)] outline-none",
         parent && "z-[101]",
         className,
       )}

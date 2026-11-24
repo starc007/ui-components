@@ -38,10 +38,10 @@ const UNFOLD_SPRING = {
 } as const;
 // Exits are faster than entrances: the panel folds back on a short ease.
 const UNFOLD_EXIT = { duration: 0.2, ease: EASE_OUT } as const;
-// The trigger is a pill (half its h-10 height). The panel is concentric with
-// its h-8 pill rows: 8px padding + 16px row radius.
+// The trigger is a pill (half its h-10 height). The panel is rounded-2xl, the
+// radius every floating list in the library uses.
 const TRIGGER_RADIUS = 20;
-const PANEL_RADIUS = 24;
+const PANEL_RADIUS = 16;
 // How far the open panel sits from the trigger once it has pulled away.
 const GAP = 8;
 // The surface starts as a thin lip flush against the trigger's edge.

@@ -8,6 +8,16 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
  */
 export const changelogEntries: ChangelogEntry[] = [
   {
+    "date": "2026-11-24",
+    "title": "Fixes and improvements",
+    "items": [
+      {
+        "type": "improved",
+        "text": "Dropdown Menu, Context Menu, Select, Combobox, Multi Select and the Table menu open in panels with tighter 16px corners."
+      }
+    ]
+  },
+  {
     "date": "2026-11-19",
     "title": "Bookshelf",
     "items": [
