@@ -1,19 +1,10 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import {
-  type ComponentProps,
-  createContext,
-  useCallback,
-  useContext,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type ComponentProps, createContext, useContext, useMemo } from "react";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
+import { useInspection } from "../xy/use-inspection";
 import { type VolumeProfileMessages, volumeProfileMessages } from "./messages";
 import { buildVolumeProfile, type VolumeProfileBin } from "./model";
 
@@ -56,23 +47,20 @@ export function useVolumeProfileModel({
   const label = labelProp ?? t("label");
   const unit = unitProp ?? t("unit");
   const model = useMemo(() => buildVolumeProfile(data, valueArea), [data, valueArea]);
-  const [internalId, setInternalId] = useState(defaultActiveId);
-  if (internalId !== null && !model.rows.some((row) => row.id === internalId)) setInternalId(null);
-  const requestedId = activeId === undefined ? internalId : activeId;
-  const activeIndex = model.rows.findIndex((row) => row.id === requestedId);
-  const active = model.rows[activeIndex] ?? null;
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const plotRef = useRef<HTMLDivElement>(null);
-  const tooltipId = useId();
-  const latest = useRef({ activeId, requestedId, onActiveChange });
-  useLayoutEffect(() => {
-    latest.current = { activeId, requestedId, onActiveChange };
+  const {
+    activeIndex,
+    setActive,
+    open: tooltipOpen,
+    setOpen: setTooltipOpen,
+    plotRef,
+    tooltipId,
+  } = useInspection({
+    ids: model.rows.map((row) => row.id),
+    activeId,
+    defaultActiveId,
+    onActiveChange,
   });
-  const setActive = useCallback((id: string | null) => {
-    const current = latest.current;
-    if (current.activeId === undefined) setInternalId(id);
-    if (current.requestedId !== id) current.onActiveChange?.(id);
-  }, []);
+  const active = model.rows[activeIndex] ?? null;
   const describe = (row: (typeof model.rows)[number]) =>
     [
       t("range", { low: formatPrice(row.priceLow), high: formatPrice(row.priceHigh) }),

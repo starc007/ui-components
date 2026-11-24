@@ -1,19 +1,10 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import {
-  type ComponentProps,
-  createContext,
-  useCallback,
-  useContext,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type ComponentProps, createContext, useContext, useMemo } from "react";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
+import { useInspection } from "../xy/use-inspection";
 import { type StatusBarMessages, statusBarMessages } from "./messages";
 
 export interface StatusBarDatum {
@@ -91,25 +82,20 @@ export function useStatusBarModel({
       return { datum, status };
     });
   }, [data, statuses]);
-  const [internalId, setInternalId] = useState(defaultActiveId);
-  // Resolve stale identities during render so returning periods never revive a cursor.
-  if (internalId !== null && !rows.some(({ datum }) => datum.id === internalId))
-    setInternalId(null);
-  const requestedId = activeId === undefined ? internalId : activeId;
-  const activeIndex = rows.findIndex(({ datum }) => datum.id === requestedId);
-  const active = rows[activeIndex] ?? null;
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const plotRef = useRef<HTMLDivElement>(null);
-  const tooltipId = useId();
-  const latest = useRef({ activeId, requestedId, onActiveChange });
-  useLayoutEffect(() => {
-    latest.current = { activeId, requestedId, onActiveChange };
+  const {
+    activeIndex,
+    setActive,
+    open: tooltipOpen,
+    setOpen: setTooltipOpen,
+    plotRef,
+    tooltipId,
+  } = useInspection({
+    ids: rows.map(({ datum }) => datum.id),
+    activeId,
+    defaultActiveId,
+    onActiveChange,
   });
-  const setActive = useCallback((id: string | null) => {
-    const current = latest.current;
-    if (current.activeId === undefined) setInternalId(id);
-    if (current.requestedId !== id) current.onActiveChange?.(id);
-  }, []);
+  const active = rows[activeIndex] ?? null;
   return {
     rows,
     statuses,
