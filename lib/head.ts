@@ -108,11 +108,11 @@ export function pageMetadata({
   };
 }
 
-export function absoluteUrl(path: string) {
+function absoluteUrl(path: string) {
   return new URL(path, SITE_URL).toString();
 }
 
-export function pageTitle(title: NonNullable<Metadata["title"]>) {
+function pageTitle(title: NonNullable<Metadata["title"]>) {
   return typeof title === "string" ? `${title}${TITLE_SUFFIX}` : title.absolute;
 }
 
