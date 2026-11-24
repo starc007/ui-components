@@ -2,7 +2,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useTranslations } from "use-intl";
 import { Link } from "@/lib/navigation";
 import { componentPath } from "@/lib/component-paths";
-import { moveNewItemsToTop } from "@/lib/component-status";
+import { sidebarOrder } from "@/lib/component-status";
 import { findCategory } from "@/lib/registry";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +14,7 @@ export function PagePager({ category, slug }: { category: string; slug: string }
   const t = useTranslations("Docs.pager");
   const cat = findCategory(category);
   if (!cat) return null;
-  const items = moveNewItemsToTop(cat.components);
+  const items = sidebarOrder(cat.components, (item) => item.name);
   const index = items.findIndex((item) => item.slug === slug);
   if (index === -1) return null;
   const prev = items[index - 1];

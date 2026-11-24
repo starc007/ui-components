@@ -31,13 +31,9 @@ export function isComponentNew(component: ComponentLaunch, now = Date.now()) {
   );
 }
 
-/** Sidebar order: items still marked new first, the rest in catalog order. */
-export function moveNewItemsToTop<T extends ComponentLaunch>(
-  items: readonly T[],
-  now = Date.now(),
-) {
-  return [
-    ...items.filter((item) => isComponentNew(item, now)),
-    ...items.filter((item) => !isComponentNew(item, now)),
-  ];
+/** Sidebar order: alphabetical by the shown name. New items keep their badge in place. */
+export function sidebarOrder<T>(items: readonly T[], nameOf: (item: T) => string) {
+  return [...items].sort((a, b) =>
+    nameOf(a).localeCompare(nameOf(b), "en", { sensitivity: "base" }),
+  );
 }

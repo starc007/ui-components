@@ -21,7 +21,7 @@ import { NewBadge } from "@/components/app/docs/new-badge";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
 import { Button } from "@/components/motion/button";
 import { Tooltip } from "@/components/motion/tooltip";
-import { moveNewItemsToTop } from "@/lib/component-status";
+import { sidebarOrder } from "@/lib/component-status";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { variantCopy } from "@/lib/variant-copy";
@@ -326,7 +326,6 @@ function NativeSidebarNav({
   const t = useTranslations("Chrome");
   const groupNames: Record<string, string> = useMessages().Chrome.sidebar.nativeGroups;
   const navRef = useRevealActiveLink(pathname);
-  const now = Date.now();
 
   return (
     <nav ref={navRef} aria-label={t("sidebar.browseNative")} className="flex flex-col gap-6">
@@ -356,12 +355,12 @@ function NativeSidebarNav({
             <span className={COUNT_CLASS}>{group.items.length}</span>
           </p>
           <SharedLayoutBg inset={0} pillClassName="rounded-full bg-foreground/[0.05]">
-            {moveNewItemsToTop(
+            {sidebarOrder(
               group.items.map((item) => ({
                 ...item,
                 badge: "launchedAt" in item ? ("new" as const) : undefined,
               })),
-              now,
+              (item) => item.title,
             ).map((item) => {
               const href = nativeComponentPath(item.slug);
               return (
@@ -423,7 +422,6 @@ function WebSidebarNav({
   const section = topLevelCategory(pathname);
   const isSection = section !== undefined;
   const categoryFilter = filter.value;
-  const now = Date.now();
   const categories = isSection
     ? registry.filter((category) => category.slug === section)
     : SIDEBAR_CATEGORIES;
@@ -505,7 +503,7 @@ function WebSidebarNav({
               <span className={COUNT_CLASS}>{cat.components.length}</span>
             </Link>
             <SharedLayoutBg inset={0} pillClassName="rounded-full bg-foreground/[0.05]">
-              {moveNewItemsToTop(cat.components, now).flatMap((comp) => {
+              {sidebarOrder(cat.components, (comp) => comp.name).flatMap((comp) => {
                 const href = componentPath(cat.slug, comp.slug);
                 const split = isSplitPage(comp);
                 const parent = (
