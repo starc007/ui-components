@@ -125,6 +125,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "component": "tooltip"
       },
       {
+        "type": "improved",
+        "text": "Gooey Popover with trigger=\"hover\" waits a moment before opening, so a pointer passing over it no longer bursts it open. With reduced motion it fades in and out instead of appearing at once.",
+        "component": "popover"
+      },
+      {
         "type": "fixed",
         "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
         "component": "select"

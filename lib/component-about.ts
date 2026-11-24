@@ -1401,7 +1401,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A popover must open from inside a scroll container or card with overflow hidden without being cut off.",
     ],
     accessibility:
-      "The trigger receives aria-haspopup, aria-expanded and aria-controls, and the panel has the dialog role. Escape and a pointer press outside close it, and if focus was inside the panel when it closes, focus returns to the trigger. The closed Gooey panel is inert, and with the hover trigger it also opens on keyboard focus and toggles on tap. With reduced motion enabled, the Gooey variant drops its goo filter and opens instantly, and the Morph variant replaces its clip reveal with a short fade.",
+      "The trigger receives aria-haspopup, aria-expanded and aria-controls, and the panel has the dialog role. Escape and a pointer press outside close it, and if focus was inside the panel when it closes, focus returns to the trigger. The closed Gooey panel is inert, and with the hover trigger it also opens on keyboard focus and toggles on tap. With reduced motion enabled, the Gooey variant drops its goo morph for a short fade, and the Morph variant replaces its clip reveal with a short fade.",
     faq: [
       {
         question: "How do I make an animated popover in React?",
@@ -1411,7 +1411,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       {
         question: "Can the popover open on hover?",
         answer:
-          "The Gooey Popover takes trigger=\"hover\", which opens on pointer hover and keyboard focus and closes after a short delay. The default is trigger=\"click\". The Morph Popover opens on click.",
+          "The Gooey Popover takes trigger=\"hover\", which opens once the pointer rests on the trigger for a moment or on keyboard focus, and closes after a short delay. The default is trigger=\"click\". The Morph Popover opens on click.",
       },
       {
         question: "How do I control the popover position and open state?",
