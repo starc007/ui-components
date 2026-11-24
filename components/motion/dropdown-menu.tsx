@@ -26,6 +26,10 @@ import { usePopoverPortalPosition } from "@/components/motion/popover-position";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { PresenceGate } from "@/lib/presence-gate";
+import { useSound } from "@/lib/sound";
+import { closeSound } from "@/lib/sounds/close";
+import { openSound } from "@/lib/sounds/open";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 
 const VIEWPORT_PADDING = 8;
@@ -64,6 +68,8 @@ interface RootContextValue {
   triggerRef: MutableRefObject<HTMLElement | null>;
   reduce: boolean;
   mounted: boolean;
+  /** Plays the select sound when the menu's `sound` prop is on. */
+  playSelect: () => void;
 }
 
 const RootContext = createContext<RootContextValue | null>(null);
@@ -243,6 +249,11 @@ export interface DropdownMenuProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /**
+   * Play a soft sweep as the menu opens and closes, and a tick for checkbox
+   * and radio rows. Off by default; a `SoundProvider` can mute it app-wide.
+   */
+  sound?: boolean;
 }
 
 export function DropdownMenu({
@@ -250,6 +261,7 @@ export function DropdownMenu({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
+  sound = false,
 }: DropdownMenuProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [focusTarget, setFocusTarget] = useState<FocusTarget>("first");
@@ -260,16 +272,23 @@ export function DropdownMenu({
   const menuId = useId();
   const triggerId = useId();
   const reduce = useReducedMotion() ?? false;
+  const playOpen = useSound(openSound, { enabled: sound });
+  const playClose = useSound(closeSound, { enabled: sound });
+  const playSelect = useSound(selectSound, { enabled: sound });
 
   useEffect(() => setMounted(true), []);
 
   const setOpen = useCallback(
     (next: boolean, focus: FocusTarget = "first") => {
+      if (next !== open) {
+        if (next) playOpen();
+        else playClose();
+      }
       if (next) setFocusTarget(focus);
       if (!controlled) setInternalOpen(next);
       onOpenChange?.(next);
     },
-    [controlled, onOpenChange],
+    [controlled, onOpenChange, open, playOpen, playClose],
   );
 
   // Focus goes back to the trigger when the menu closes from inside it, or
@@ -299,8 +318,9 @@ export function DropdownMenu({
       triggerRef,
       reduce,
       mounted,
+      playSelect,
     }),
-    [open, setOpen, focusTarget, menuId, triggerId, reduce, mounted],
+    [open, setOpen, focusTarget, menuId, triggerId, reduce, mounted, playSelect],
   );
 
   return <RootContext.Provider value={value}>{children}</RootContext.Provider>;
@@ -806,7 +826,10 @@ export function DropdownMenuCheckboxItem({
       role="menuitemcheckbox"
       checked={checked}
       closeOnSelect={closeOnSelect}
-      onSelect={() => onCheckedChange?.(!checked)}
+      onSelect={() => {
+        if (!closeOnSelect) root.playSelect();
+        onCheckedChange?.(!checked);
+      }}
     >
       {children}
       {/* The mark sits at the end of the row, never before the label. */}
@@ -869,7 +892,11 @@ export function DropdownMenuRadioItem({ value, closeOnSelect = false, children, 
       role="menuitemradio"
       checked={checked}
       closeOnSelect={closeOnSelect}
-      onSelect={() => group.onValueChange?.(value)}
+      onSelect={() => {
+        // A pick that closes the menu sounds through the close sweep instead.
+        if (!closeOnSelect && !checked) root.playSelect();
+        group.onValueChange?.(value);
+      }}
     >
       {children}
       {/* The mark sits at the end of the row, never before the label. */}

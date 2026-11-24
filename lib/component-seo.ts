@@ -727,4 +727,90 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Five animated 404 pages for React and Next.js: glitch, magnetic digits, cursor spotlight, card stack and terminal. Free source, install with shadcn.",
   },
+  // Sounds
+  "sound-kit": {
+    title: "UI Sound Effects for React, Web Audio Kit",
+    description:
+      "16 interface sounds for React, synthesized live with Web Audio: tap, press, type, toggle, open, success, error and more. No audio files. Install with shadcn.",
+  },
+  "tap-sound": {
+    title: "Tap Sound Effect for React UI",
+    description:
+      "A light glass tap sound for React clicks, synthesized with Web Audio. No audio file, a useSound hook and app-wide mute. Install with shadcn.",
+  },
+  "press-sound": {
+    title: "Button Press Sound Effect for React",
+    description:
+      "A soft button press sound for React: a low thump with a bright click, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "type-sound": {
+    title: "Keyboard Typing Sound Effect for React",
+    description:
+      "A keystroke sound for React inputs with random pitch per key, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "select-sound": {
+    title: "Select and Tab Switch Sound for React",
+    description:
+      "A crisp select sound for React tabs, menus and segmented controls, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "toggle-sound": {
+    title: "Toggle Switch Sound Effect for React",
+    description:
+      "On and off toggle sounds for React switches and checkboxes, a rising and falling snap made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "open-sound": {
+    title: "Menu and Modal Open Sound for React",
+    description:
+      "A short rising swish for React menus, popovers and dialogs opening, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "close-sound": {
+    title: "Menu and Modal Close Sound for React",
+    description:
+      "A quick falling swish for React menus, dialogs and toasts closing, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "navigate-sound": {
+    title: "Page Transition Swish Sound for React",
+    description:
+      "An airy swish for moving between pages, steps and slides in React, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "success-sound": {
+    title: "Success Chime Sound Effect for React",
+    description:
+      "A two-note success chime for saves and completed tasks in React, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "error-sound": {
+    title: "Error Sound Effect for React UI",
+    description:
+      "A soft two-note error sound for failed actions in React, synthesized with Web Audio. Clear, not harsh, no audio file. Install with shadcn.",
+  },
+  "warning-sound": {
+    title: "Warning Alert Sound Effect for React",
+    description:
+      "A calm two-note warning sound for React alerts and confirmations, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "notify-sound": {
+    title: "Notification Bell Sound for React",
+    description:
+      "A small bell notification sound for React toasts and messages, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "copy-sound": {
+    title: "Copy to Clipboard Sound Effect for React",
+    description:
+      "Two quick rising ticks for copy buttons in React, synthesized with Web Audio. No audio file, app-wide mute. Install with shadcn.",
+  },
+  "delete-sound": {
+    title: "Delete and Trash Sound Effect for React",
+    description:
+      "A short crumple sound for deleting items in React, synthesized with Web Audio. No audio file, app-wide mute. Install with shadcn.",
+  },
+  "drop-sound": {
+    title: "Drag and Drop Sound Effect for React",
+    description:
+      "A soft thud with a small bounce for drag and drop in React, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "tick-sound": {
+    title: "Slider and Picker Tick Sound for React",
+    description:
+      "A tiny tick for React sliders, pickers, counters and loading steps, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
 };

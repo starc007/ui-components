@@ -86,6 +86,7 @@ export function AnimatedToastStackPreview() {
   return (
     <div className="flex min-h-72 w-full flex-col items-center justify-center gap-6">
       <AnimatedToastStack
+        sound
         toasts={toasts}
         onDismiss={dismissToast}
         position={position}

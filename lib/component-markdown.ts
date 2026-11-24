@@ -1,6 +1,7 @@
 import { componentAbout } from "@/lib/component-about";
 import { componentDates } from "@/lib/component-dates";
 import { getComponentProps } from "@/lib/props-extractor";
+import { soundApiDocs } from "@/lib/sound-api-docs";
 import { findCategory, findComponent, type ComponentExample } from "@/lib/registry";
 import { buildEntry } from "@/lib/registry-server";
 import { pageUrlFor } from "@/lib/signature";
@@ -23,7 +24,9 @@ function codeLanguage(file: string) {
 }
 
 function apiReference(file: string) {
-  const docs = getComponentProps(file);
+  const docs = file.startsWith("lib/sounds/")
+    ? soundApiDocs(file === "lib/sounds/index.ts" ? "sound-kit" : file)
+    : getComponentProps(file);
   if (!docs.length) return [];
 
   const lines: string[] = [];

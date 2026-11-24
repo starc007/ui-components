@@ -27,6 +27,8 @@ import {
 import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { notifySound } from "@/lib/sounds/notify";
 import { cn } from "@/lib/utils";
 
 export type ToastStatus = "neutral" | "info" | "loading" | "success" | "error";
@@ -94,6 +96,11 @@ export interface AnimatedToastStackProps {
   renderToast?: (toast: AnimatedToast) => ReactNode;
   /** Override any built-in string. */
   labels?: Partial<AnimatedToastStackMessages>;
+  /**
+   * Play a two-note chime when a new toast arrives. Off by default; a
+   * `SoundProvider` can mute it app-wide.
+   */
+  sound?: boolean;
 }
 
 export interface UseAnimatedToastStackOptions {
@@ -278,9 +285,19 @@ export function AnimatedToastStack({
   icons,
   renderToast,
   labels,
+  sound = false,
 }: AnimatedToastStackProps) {
   const t = useMessages("animatedToastStack", animatedToastStackMessages, labels);
   const [portalTarget, setPortalTarget] = useState<Element | null>(null);
+  const play = useSound(notifySound, { enabled: sound });
+  // Toasts present on the first render are already on screen, so only ids
+  // that arrive later chime, once per batch.
+  const seen = useRef<Set<string> | null>(null);
+  useEffect(() => {
+    const ids = toasts.map((toast) => toast.id);
+    if (seen.current && ids.some((id) => !seen.current?.has(id))) play();
+    seen.current = new Set(ids);
+  }, [toasts, play]);
   const visibleToasts = toasts.slice(-maxVisible);
   const isBottom = position.startsWith("bottom");
   const resolvedPlacement = placement ?? (fixed ? "fixed" : "static");

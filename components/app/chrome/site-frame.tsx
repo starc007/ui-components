@@ -10,7 +10,7 @@ import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { categoryPath, hasSiteSidebar } from "@/lib/component-paths";
 
 /** Galleries that drop both sidebars so their content runs the full width. */
-const FULL_WIDTH_PAGES = new Set([categoryPath("micro-interactions")]);
+const FULL_WIDTH_PAGES = new Set([categoryPath("micro-interactions"), categoryPath("sounds")]);
 
 export function SiteFrame({ children }: { children: ReactNode }) {
   const pathname = usePathname();

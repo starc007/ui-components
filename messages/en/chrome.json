@@ -6,6 +6,7 @@
     "charts": "Charts",
     "casino": "Casino",
     "micro-interactions": "Interactions",
+    "sounds": "Sounds",
     "playground": "Playground",
     "sponsors": "Sponsors",
     "starOnGithub": "Star on GitHub",
@@ -17,6 +18,11 @@
     "howToGuides": "How-to guides",
     "changelog": "Changelog",
     "blog": "Blog"
+  },
+  "sound": {
+    "label": "Mute sounds",
+    "mute": "Mute sounds",
+    "unmute": "Turn sounds on"
   },
   "mobileNav": {
     "open": "Open navigation",

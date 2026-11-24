@@ -12,6 +12,20 @@ export const changelogEntries: ChangelogEntry[] = [
     "title": "Fixes and improvements",
     "items": [
       {
+        "type": "new",
+        "text": "Sounds: sixteen interface sounds synthesized live with Web Audio, from tap and type to success and error. Install one, or Sound Kit for all of them with the useSound hook. No audio files.",
+        "href": "/sounds"
+      },
+      {
+        "type": "new",
+        "text": "Button, Switch, Tabs, Dropdown Menu and Animated Toast Stack take a sound prop that plays the matching beUI sound. It is off by default."
+      },
+      {
+        "type": "new",
+        "text": "SoundProvider sets a volume for every beUI sound and can mute them all at once, including the casino games, Wheel Picker and Bookshelf.",
+        "component": "sound-kit"
+      },
+      {
         "type": "improved",
         "text": "Dropdown Menu, Context Menu, Select, Combobox, Multi Select and the Table menu open in panels with tighter 16px corners."
       },

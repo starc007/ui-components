@@ -114,7 +114,7 @@ export function MobileNav() {
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                {t(`header.${slug as "charts" | "casino" | "micro-interactions"}`)}
+                {t(`header.${slug as "charts" | "casino" | "micro-interactions" | "sounds"}`)}
               </Link>
             ))}
             <Link

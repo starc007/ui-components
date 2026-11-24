@@ -20,6 +20,38 @@ export type ComponentAbout = {
   faq: ComponentFaq[];
 };
 
+// Shared by every sound page: the sounds work the same way and only differ in
+// what they sound like and where they fit.
+const SOUND_ACCESSIBILITY =
+  "A sound plays only in answer to the user's own input, never on its own, and it never carries meaning alone: pair it with the visible change it marks. Wrap the app in SoundProvider to give people one mute switch and a volume, and remember their choice.";
+
+function soundFaq(exportName: string): ComponentFaq[] {
+  return [
+    {
+      question: "Does it load an audio file?",
+      answer: `No. ${exportName} is a short recipe of tones and filtered noise that Web Audio plays the moment it is called, so nothing is downloaded and it works offline.`,
+    },
+    {
+      question: "How do I play it outside React?",
+      answer: `Call ${exportName}.play() from any event handler. In React, useSound(${exportName}) gives a stable play function that respects SoundProvider and a component's sound prop.`,
+    },
+    {
+      question: "Why is there no sound on page load?",
+      answer:
+        "Browsers only start audio after a user gesture. The first press or key unlocks it, which also keeps sounds tied to what the user did.",
+    },
+  ];
+}
+
+function soundAbout(name: string, exportName: string, what: string, useWhen: string[]): ComponentAbout {
+  return {
+    overview: `${name} is an interface sound for React and the web, synthesized live with Web Audio. ${what} Import ${exportName} and call play(), or use the useSound hook, which follows SoundProvider for app-wide volume and mute.`,
+    useWhen,
+    accessibility: SOUND_ACCESSIBILITY,
+    faq: soundFaq(exportName),
+  };
+}
+
 export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   "expanding-arrow-button": {
     overview:
@@ -4001,4 +4033,108 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       },
     ],
   },
+  // Sounds
+  "sound-kit": {
+    overview:
+      "Sound Kit is every beUI interface sound in one install: tap, press, type, select, toggle, open, close, navigate, success, error, warning, notify, copy, delete, drop and tick. Each is synthesized live with Web Audio, so there are no audio files. It ships the useSound hook and SoundProvider, which sets one volume and one mute switch for every beUI sound, including the sound props on Button, Switch, Tabs, Dropdown Menu and Animated Toast Stack.",
+    useWhen: [
+      "An app wants consistent feedback sounds across many controls.",
+      "A product needs a settings toggle that mutes every sound at once.",
+      "You want to try sounds before picking the few you ship.",
+    ],
+    accessibility: SOUND_ACCESSIBILITY,
+    faq: [
+      {
+        question: "Should I install the kit or single sounds?",
+        answer:
+          "Single sounds ship only what you use, about a dozen lines each plus the shared engine. Install the kit when you want them all or are still choosing.",
+      },
+      ...soundFaq("tapSound").slice(0, 1),
+      {
+        question: "How do I mute everything?",
+        answer:
+          "Render SoundProvider with enabled={false}. It silences useSound, the sound props on beUI components, and the games, Wheel Picker and Bookshelf.",
+      },
+    ],
+  },
+  "tap-sound": soundAbout("Tap Sound", "tapSound", "It is a light glass tick over a soft knock, with a little random pitch so repeated taps don't sound stamped.", [
+    "Plain clicks on cards, list rows and icon buttons.",
+    "Chips, tags and filters that react to a tap.",
+    "Any control that needs a quiet confirmation it was touched.",
+  ]),
+  "press-sound": soundAbout("Press Sound", "pressSound", "It is a soft low thump with a bright click on top, the sound of a physical button. The beUI Button plays it with the sound prop.", [
+    "Primary and secondary buttons.",
+    "Call to action buttons in forms and dialogs.",
+    "Hardware-like controls such as keypads and pads.",
+  ]),
+  "type-sound": soundAbout("Type Sound", "typeSound", "It is a short keystroke made of filtered noise and a small low tone, with random pitch on every press so fast typing sounds natural.", [
+    "Chat inputs and message composers.",
+    "Search fields and command palettes.",
+    "Terminal or typewriter style text effects.",
+  ]),
+  "select-sound": soundAbout("Select Sound", "selectSound", "It is a crisp detent, one short bright tone with a touch of noise. The beUI Tabs and Dropdown Menu play it with the sound prop.", [
+    "Tabs and segmented controls.",
+    "Menu items, radio groups and checkboxes in menus.",
+    "Picking a date, colour or option from a list.",
+  ]),
+  "toggle-sound": soundAbout("Toggle Sound", "toggleOnSound", "It comes as a pair: toggleOnSound is a rising snap and toggleOffSound plays the same snap falling, so on and off are easy to tell apart. The beUI Switch plays them with the sound prop.", [
+    "Switches in settings pages.",
+    "Checkboxes and favourite or follow toggles.",
+    "Mute, lock and visibility toggles.",
+  ]),
+  "open-sound": soundAbout("Open Sound", "openSound", "It is a short rising swish of filtered noise with a soft tone under it. The beUI Dropdown Menu plays it with the sound prop.", [
+    "Dropdown menus and popovers opening.",
+    "Dialogs, sheets and drawers sliding in.",
+    "Expanding a panel or accordion.",
+  ]),
+  "close-sound": soundAbout("Close Sound", "closeSound", "It is the open swish falling and a little quicker, so closing feels lighter than opening. The beUI Dropdown Menu plays it with the sound prop.", [
+    "Menus and popovers closing.",
+    "Dismissing a dialog, sheet or toast.",
+    "Collapsing a panel or accordion.",
+  ]),
+  "navigate-sound": soundAbout("Navigate Sound", "navigateSound", "It is a quick airy swish of noise sweeping up, with no pitched tone, so it stays out of the way on frequent moves.", [
+    "Moving between pages, steps or slides.",
+    "Carousels and onboarding flows.",
+    "Back and next buttons in a wizard.",
+  ]),
+  "success-sound": soundAbout("Success Sound", "successSound", "It is two soft mallet notes rising a fifth, each with a faint overtone.", [
+    "A form saved or a payment completed.",
+    "A task checked off or an upload finished.",
+    "A level or step completed in a game or course.",
+  ]),
+  "error-sound": soundAbout("Error Sound", "errorSound", "It is two low notes falling with a slight buzz, clear without being harsh.", [
+    "A form that failed to submit.",
+    "A rejected payment or a failed upload.",
+    "An action that isn't allowed right now.",
+  ]),
+  "warning-sound": soundAbout("Warning Sound", "warningSound", "It is two even mid notes, calmer than the error sound, for something that needs a look rather than a fix.", [
+    "Unsaved changes before leaving a page.",
+    "A quota or limit about to be reached.",
+    "A confirmation step before a risky action.",
+  ]),
+  "notify-sound": soundAbout("Notify Sound", "notifySound", "It is a single small bell with a slow shimmer from two slightly detuned tones. The beUI Animated Toast Stack plays it for new toasts with the sound prop.", [
+    "A new message or comment arriving.",
+    "A toast or in-app notification appearing.",
+    "A reminder or timer going off.",
+  ]),
+  "copy-sound": soundAbout("Copy Sound", "copySound", "It is two quick rising ticks, like a small duplicate.", [
+    "Copy buttons on code blocks and links.",
+    "Copying an invite code or wallet address.",
+    "Duplicating an item in a list.",
+  ]),
+  "delete-sound": soundAbout("Delete Sound", "deleteSound", "It is a short crumple of noise falling away over a dropping low tone.", [
+    "Deleting a message, file or row.",
+    "Moving an item to the trash.",
+    "Clearing a list or a search.",
+  ]),
+  "drop-sound": soundAbout("Drop Sound", "dropSound", "It is a soft low thud with a small second bounce, like an item settling.", [
+    "Dropping a card into a kanban column.",
+    "Reordering a list by drag and drop.",
+    "Dropping a file onto an upload area.",
+  ]),
+  "tick-sound": soundAbout("Tick Sound", "tickSound", "It is a tiny high tick, short enough to repeat quickly without blurring.", [
+    "Sliders and steppers passing each step.",
+    "Wheel pickers and counters.",
+    "Loading steps or a countdown.",
+  ]),
 };

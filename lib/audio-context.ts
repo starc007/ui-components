@@ -7,6 +7,14 @@ type AudioContextCtor = typeof AudioContext;
 
 let context: AudioContext | null = null;
 let users = 0;
+// Cleared by a muted SoundProvider (lib/sound.tsx): every player that reads
+// the context goes silent, without each component tracking the setting.
+let allowed = true;
+
+/** Lets every beUI sound on the page play, or silences them all. */
+export function setSoundsAllowed(next: boolean) {
+  allowed = next;
+}
 
 /**
  * Registers a sound player. Call the returned function when the player is
@@ -28,9 +36,10 @@ export function retainAudioContext() {
 
 /**
  * The shared context, created on first call and resumed if suspended. Null
- * during SSR and in browsers without Web Audio.
+ * during SSR, in browsers without Web Audio, and while sounds are muted.
  */
 export function getAudioContext(): AudioContext | null {
+  if (!allowed) return null;
   if (!context) {
     if (typeof window === "undefined") return null;
     const Ctor =

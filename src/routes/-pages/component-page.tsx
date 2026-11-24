@@ -44,6 +44,7 @@ import {
   relatedComponents,
 } from "@/lib/seo";
 import { pageUrlFor, withSignature } from "@/lib/signature";
+import { soundApiDocs } from "@/lib/sound-api-docs";
 import { readSourceFile } from "@/lib/source-files";
 import { cn } from "@/lib/utils";
 import { variantCopy } from "@/lib/variant-copy";
@@ -199,7 +200,11 @@ export const getComponentPage = createServerFn({ method: "GET" })
       main,
       manual: hasVariantInstallCommands ? null : await buildManualInstall(cat.slug, comp.slug),
       hasVariantInstallCommands,
-      propsDocs: comp.examples?.length ? [] : getComponentProps(comp.file),
+      propsDocs: comp.examples?.length
+        ? []
+        : cat.slug === "sounds"
+          ? soundApiDocs(comp.slug)
+          : getComponentProps(comp.file),
       related,
       nativeDescription: native?.description ?? null,
       updatedAt: componentDates(cat.slug, comp.slug).updatedAt,

@@ -7,7 +7,7 @@ export function TabsPreview() {
   return (
     <div className="flex w-full max-w-md flex-col gap-8">
       <Section title="Pill">
-        <Tabs defaultValue="overview" variant="pill">
+        <Tabs sound defaultValue="overview" variant="pill">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
@@ -19,7 +19,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
       <Section title="Overflow">
-        <Tabs defaultValue="Overview" className="w-full max-w-xs">
+        <Tabs sound defaultValue="Overview" className="w-full max-w-xs">
           <TabsList>
             {["Overview", "Activity", "Analytics", "Members", "Billing", "Settings"].map((label) => (
               <TabsTrigger key={label} value={label}>{label}</TabsTrigger>
@@ -28,7 +28,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
       <Section title="Segment">
-        <Tabs defaultValue="day" variant="segment">
+        <Tabs sound defaultValue="day" variant="segment">
           <TabsList>
             <TabsTrigger value="day">Day</TabsTrigger>
             <TabsTrigger value="week">Week</TabsTrigger>
@@ -37,7 +37,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
       <Section title="Icon on selected">
-        <Tabs defaultValue="home" variant="pill" icons="selected">
+        <Tabs sound defaultValue="home" variant="pill" icons="selected">
           <TabsList>
             <TabsTrigger value="home" icon={<Home className="size-3.5" />}>Home</TabsTrigger>
             <TabsTrigger value="stats" icon={<BarChart3 className="size-3.5" />}>Stats</TabsTrigger>
@@ -46,7 +46,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
       <Section title="Underline">
-        <Tabs defaultValue="all" variant="underline">
+        <Tabs sound defaultValue="all" variant="underline">
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="open">Open</TabsTrigger>

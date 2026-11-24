@@ -92,6 +92,7 @@ export function SiteFooter() {
         { href: categoryPath("agents"), label: t("header.agents") },
         { href: categoryPath("charts"), label: t("header.charts") },
         { href: categoryPath("micro-interactions"), label: t("header.micro-interactions") },
+        { href: categoryPath("sounds"), label: t("header.sounds") },
         { href: categoryPath("casino"), label: t("header.casino") },
         { href: NATIVE_PATH, label: t("header.reactNative") },
       ],

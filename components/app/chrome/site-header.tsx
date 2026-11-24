@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { HeaderNav } from "@/components/app/chrome/header-nav";
 import { MobileNav } from "@/components/app/chrome/mobile-nav";
 import { SiteSearch } from "@/components/app/chrome/site-search";
+import { SoundToggle } from "@/components/app/chrome/sound-toggle";
 import { ThemeToggle } from "@/components/app/chrome/theme-toggle";
 import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
@@ -82,6 +83,7 @@ export function SiteHeader() {
 
         <nav className="flex items-center gap-2">
           <SiteSearch className="w-9 shrink-0 justify-center px-0 lg:w-48 lg:justify-start lg:px-3 xl:w-60 [&>span]:hidden lg:[&>span]:block [&>kbd]:hidden lg:[&>kbd]:inline-block" />
+          <SoundToggle />
           <ThemeToggle />
           <PressLink
             href="https://github.com/starc007/ui-components"

@@ -4,6 +4,7 @@ import { staticFunctionMiddleware } from "@tanstack/start-static-server-function
 import { useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { InteractionGallery } from "@/components/app/docs/interaction-gallery";
+import { SoundGallery } from "@/components/app/docs/sound-gallery";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
 import { getTranslations } from "@/i18n/server";
@@ -15,7 +16,15 @@ import { type ComponentEntry, findCategory } from "@/lib/registry";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
 
 /** Copy per category in messages Docs.category; unknown categories read as motion. */
-const CONTENT_KEYS = ["motion", "blocks", "charts", "casino", "micro-interactions", "agents"] as const;
+const CONTENT_KEYS = [
+  "motion",
+  "blocks",
+  "charts",
+  "casino",
+  "micro-interactions",
+  "sounds",
+  "agents",
+] as const;
 type ContentKey = (typeof CONTENT_KEYS)[number];
 
 function contentKey(slug: string): ContentKey {
@@ -182,6 +191,21 @@ export function CategoryPage({ data }: { data: CategoryPageData }) {
   // The gallery has its own layout: a narrower centred column with a
   // centred heading and one line under it. No breadcrumb, and no platform
   // switch (web only).
+  if (slug === "sounds") {
+    return (
+      <div className="mx-auto w-full max-w-5xl pt-8 sm:pt-14">
+        <JsonLd data={data.jsonLd} />
+        <header className="mx-auto max-w-xl text-center">
+          <h1 className="text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+            {t("sounds.heading")}
+          </h1>
+          <p className="mt-3 text-muted-foreground">{t("sounds.subheading")}</p>
+        </header>
+        <SoundGallery />
+      </div>
+    );
+  }
+
   if (slug === "micro-interactions") {
     return (
       <div className="mx-auto w-full max-w-5xl pt-8 sm:pt-14">

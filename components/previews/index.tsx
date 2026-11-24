@@ -317,6 +317,57 @@ export const previews: Record<string, ComponentType> = {
   "micro-interactions/poll-vote": dynamic(() =>
     import("./micro-interactions/poll-vote.preview").then((m) => m.PollVotePreview),
   ),
+  "sounds/sound-kit": dynamic(() =>
+    import("./sounds/sound-kit.preview").then((m) => m.SoundKitPreview),
+  ),
+  "sounds/tap-sound": dynamic(() =>
+    import("./sounds/tap-sound.preview").then((m) => m.TapSoundPreview),
+  ),
+  "sounds/press-sound": dynamic(() =>
+    import("./sounds/press-sound.preview").then((m) => m.PressSoundPreview),
+  ),
+  "sounds/type-sound": dynamic(() =>
+    import("./sounds/type-sound.preview").then((m) => m.TypeSoundPreview),
+  ),
+  "sounds/select-sound": dynamic(() =>
+    import("./sounds/select-sound.preview").then((m) => m.SelectSoundPreview),
+  ),
+  "sounds/toggle-sound": dynamic(() =>
+    import("./sounds/toggle-sound.preview").then((m) => m.ToggleSoundPreview),
+  ),
+  "sounds/open-sound": dynamic(() =>
+    import("./sounds/open-sound.preview").then((m) => m.OpenSoundPreview),
+  ),
+  "sounds/close-sound": dynamic(() =>
+    import("./sounds/close-sound.preview").then((m) => m.CloseSoundPreview),
+  ),
+  "sounds/navigate-sound": dynamic(() =>
+    import("./sounds/navigate-sound.preview").then((m) => m.NavigateSoundPreview),
+  ),
+  "sounds/success-sound": dynamic(() =>
+    import("./sounds/success-sound.preview").then((m) => m.SuccessSoundPreview),
+  ),
+  "sounds/error-sound": dynamic(() =>
+    import("./sounds/error-sound.preview").then((m) => m.ErrorSoundPreview),
+  ),
+  "sounds/warning-sound": dynamic(() =>
+    import("./sounds/warning-sound.preview").then((m) => m.WarningSoundPreview),
+  ),
+  "sounds/notify-sound": dynamic(() =>
+    import("./sounds/notify-sound.preview").then((m) => m.NotifySoundPreview),
+  ),
+  "sounds/copy-sound": dynamic(() =>
+    import("./sounds/copy-sound.preview").then((m) => m.CopySoundPreview),
+  ),
+  "sounds/delete-sound": dynamic(() =>
+    import("./sounds/delete-sound.preview").then((m) => m.DeleteSoundPreview),
+  ),
+  "sounds/drop-sound": dynamic(() =>
+    import("./sounds/drop-sound.preview").then((m) => m.DropSoundPreview),
+  ),
+  "sounds/tick-sound": dynamic(() =>
+    import("./sounds/tick-sound.preview").then((m) => m.TickSoundPreview),
+  ),
   "blocks/card-dealer": dynamic(() =>
     import("./blocks/card-dealer.preview").then((m) => m.CardDealerPreview),
   ),

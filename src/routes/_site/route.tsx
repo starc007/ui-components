@@ -9,6 +9,7 @@ import { KeyboardShortcuts } from "@/components/app/chrome/keyboard-shortcuts";
 import { NativeStrip } from "@/components/app/chrome/native-strip";
 import { SiteFrame } from "@/components/app/chrome/site-frame";
 import { SiteHeader } from "@/components/app/chrome/site-header";
+import { SiteSoundProvider } from "@/components/app/chrome/site-sound";
 import { ThemeProvider } from "@/components/app/chrome/theme-provider";
 import { LOCALE } from "@/i18n/messages";
 import { clientMessages, getTranslations } from "@/i18n/server";
@@ -107,14 +108,16 @@ function SiteLayout({ children }: { children: ReactNode }) {
       {/* Library components format numbers for this locale; their labels are English defaults. */}
       <LocaleProvider locale={LOCALE}>
         <ThemeProvider>
-          <JsonLd data={siteJsonLd()} />
-          <KeyboardShortcuts />
-          <NativeStrip />
-          <SiteHeader />
-          <main>
-            <SiteFrame>{children}</SiteFrame>
-          </main>
-          <GoogleAnalytics measurementId={googleAnalyticsId} />
+          <SiteSoundProvider>
+            <JsonLd data={siteJsonLd()} />
+            <KeyboardShortcuts />
+            <NativeStrip />
+            <SiteHeader />
+            <main>
+              <SiteFrame>{children}</SiteFrame>
+            </main>
+            <GoogleAnalytics measurementId={googleAnalyticsId} />
+          </SiteSoundProvider>
         </ThemeProvider>
       </LocaleProvider>
     </IntlProvider>

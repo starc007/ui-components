@@ -38,6 +38,7 @@ export function HeaderNav({ pathname }: { pathname: string }) {
   const resources: MorphNavItem[] = RESOURCES.map(({ key, href }) => ({ href, title: t(key) }));
   const charts = categoryPath("charts");
   const interactions = categoryPath("micro-interactions");
+  const sounds = categoryPath("sounds");
 
   return (
     <MorphNav
@@ -65,6 +66,13 @@ export function HeaderNav({ pathname }: { pathname: string }) {
           label: t("micro-interactions"),
           href: interactions,
           active: within(pathname, interactions),
+        },
+        {
+          kind: "link",
+          id: "sounds",
+          label: t("sounds"),
+          href: sounds,
+          active: within(pathname, sounds),
         },
         {
           kind: "link",

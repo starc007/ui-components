@@ -44,6 +44,15 @@
       "play": "Play {name}",
       "pause": "Pause {name}"
     },
+    "sounds": {
+      "title": "UI Sound Effects for React",
+      "heading": "Sounds",
+      "subheading": "Interface sounds for the web, synthesized live. Press one to hear it.",
+      "description": "Sixteen interface sounds for React: tap, press, type, select, toggle, open, close, success, error, notify and more. Synthesized live with Web Audio, no audio files. Install one or all.",
+      "allLabel": "All sounds",
+      "muted": "Sounds are muted. Turn them on",
+      "keysHint": "Play them from the keys: 1 to 0, then Q to Y."
+    },
     "agents": {
       "title": "AI Agent Components — Animated React AI Interfaces",
       "heading": "Animated AI agent components",

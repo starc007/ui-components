@@ -8,6 +8,7 @@ import {
 } from "motion/react";
 import {
   forwardRef,
+  type MouseEvent,
   type PointerEvent,
   type ReactNode,
   useCallback,
@@ -16,6 +17,8 @@ import {
 } from "react";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useSound } from "@/lib/sound";
+import { pressSound } from "@/lib/sounds/press";
 import { cn } from "@/lib/utils";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline";
@@ -30,6 +33,8 @@ export interface ButtonProps extends Omit<
   pressScale?: number;
   /** Spawn a Material-style ripple from the press point. Off by default. */
   ripple?: boolean;
+  /** Play a soft press sound. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   children?: ReactNode;
 }
 
@@ -67,9 +72,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       size = "md",
       pressScale = 0.93,
       ripple = false,
+      sound = false,
       className,
       children,
       onPointerDown,
+      onClick,
       ...rest
     },
     ref,
@@ -78,9 +85,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const canHover = useHoverCapable();
     const [ripples, setRipples] = useState<Ripple[]>([]);
     const nextId = useRef(0);
+    const play = useSound(pressSound, { enabled: sound });
+
+    const handleClick = useCallback(
+      (event: MouseEvent<HTMLButtonElement>) => {
+        // `detail` is 0 for a click the keyboard made; a pointer press already sounded.
+        if (event.detail === 0) play();
+        onClick?.(event);
+      },
+      [play, onClick],
+    );
 
     const handlePointerDown = useCallback(
       (event: PointerEvent<HTMLButtonElement>) => {
+        play();
         if (ripple && !reduce) {
           const rect = event.currentTarget.getBoundingClientRect();
           const size = Math.max(rect.width, rect.height) * 2;
@@ -97,7 +115,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         }
         onPointerDown?.(event);
       },
-      [ripple, reduce, onPointerDown],
+      [ripple, reduce, onPointerDown, play],
     );
 
     return (
@@ -108,6 +126,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         whileHover={reduce || !canHover ? undefined : { scale: 1.02 }}
         transition={SPRING_PRESS}
         onPointerDown={handlePointerDown}
+        onClick={handleClick}
         className={cn(
           "inline-flex items-center justify-center font-medium select-none",
           "transition-colors",

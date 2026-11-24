@@ -18,6 +18,8 @@ import {
 } from "react";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
@@ -87,6 +89,7 @@ export function Tabs({
   variant = "pill",
   icons = "always",
   labels,
+  sound = false,
   children,
   className,
 }: {
@@ -101,6 +104,8 @@ export function Tabs({
   icons?: IconDisplay;
   /** Override any built-in string. */
   labels?: Partial<TabsMessages>;
+  /** Play a soft tick when the user picks another tab. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   children: ReactNode;
   className?: string;
 }) {
@@ -110,12 +115,14 @@ export function Tabs({
   const reduce = useReducedMotion();
   const controlled = value !== undefined;
   const current = controlled ? value : internal;
+  const play = useSound(selectSound, { enabled: sound });
   const setValue = useCallback(
     (v: string) => {
+      if (v !== current) play();
       if (!controlled) setInternal(v);
       onValueChange?.(v);
     },
-    [controlled, onValueChange],
+    [controlled, onValueChange, current, play],
   );
   const x = useSpring(0, transition);
   const y = useSpring(0, transition);

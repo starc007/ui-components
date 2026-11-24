@@ -35,7 +35,7 @@ export function DropdownMenuPreview() {
 
   return (
     <div className="flex min-h-[360px] w-full items-start justify-center pt-16">
-      <DropdownMenu>
+      <DropdownMenu sound>
         <DropdownMenuTrigger>
           {/* No press or hover scale: the menu measures the trigger as it opens. */}
           <button
