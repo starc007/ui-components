@@ -18,6 +18,10 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         "type": "improved",
         "text": "Morph Popover, and the popovers in Date Range Picker, Color Picker, Breadcrumb, Prompt Input and AI Sidebar, now use 16px corners to match the menus. Pass radius to Morph Popover for another size."
+      },
+      {
+        "type": "improved",
+        "text": "Morphing Modal, Center Morph Modal, Command Palette and Morphing Search open as dialogs with 16px corners, matching menus and popovers."
       }
     ]
   },

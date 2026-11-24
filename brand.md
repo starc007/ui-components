@@ -49,13 +49,14 @@ Only these sizes. No other arbitrary `text-[Npx]` values.
 | Rows inside menus, listboxes, selects and command palettes | `rounded-full` |
 | Floating panels (dropdown and context menus, select, combobox and multi-select lists, table menus, popovers) | `rounded-2xl` with `p-2` |
 | Cards, previews, code blocks, rich tooltips | `rounded-2xl` |
-| Dialogs, sheets, drawers, large containers | `rounded-3xl` |
+| Dialogs (modals, command palette, search overlay) | `rounded-2xl` |
+| Sheets, drawers, large containers | `rounded-3xl` |
 
 ### Concentric rule
 
 Inner radius = outer radius − gap. The docs preview frame is `rounded-3xl` (24px) with `p-2` (8px) around `rounded-2xl` panels: 24 − 8 = 16, so the corners line up. When you change a container's padding, change its radius with it.
 
-Floating panels are the one chosen exception: they use `rounded-2xl` (16px) for a tighter look, and their `h-8` rows stay full pills.
+Floating panels and dialogs are the one chosen exception: they use `rounded-2xl` (16px) for a tighter look, and their `h-8` rows stay full pills.
 
 ### Exceptions
 

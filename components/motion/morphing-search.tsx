@@ -376,7 +376,7 @@ export function MorphingSearch({
 		0,
 		panelWidth - anchorRect.width,
 	)}px ${resultsHeight}px 0px round 24px)`;
-	const expandedContentClip = "inset(0px 0px 0px 0px round 24px)";
+	const expandedContentClip = "inset(0px 0px 0px 0px round 16px)";
 
 	// Neither grouping layer carries a box: they only hold `inert`/`aria-hidden`,
 	// the z-index and the presence key, and every child below is `fixed` and
@@ -410,7 +410,7 @@ export function MorphingSearch({
 								<motion.div
 									layoutId={shellLayoutId}
 									aria-hidden="true"
-									className="fixed z-10 rounded-3xl bg-background/90 backdrop-blur-xl"
+									className="fixed z-10 rounded-2xl bg-background/90 backdrop-blur-xl"
 									style={{
 										top: anchorRect.top,
 										left: anchorRect.left,
@@ -451,7 +451,7 @@ export function MorphingSearch({
 													opacity: SEARCH_MORPH,
 												}
 									}
-									className="pointer-events-auto fixed z-20 overflow-hidden rounded-3xl"
+									className="pointer-events-auto fixed z-20 overflow-hidden rounded-2xl"
 									style={{
 										top: anchorRect.top,
 										left: anchorRect.left,
