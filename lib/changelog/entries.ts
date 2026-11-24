@@ -104,6 +104,11 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         "type": "fixed",
         "text": "Open overlays share one scroll lock, so closing one never unlocks the page under another that is still open."
+      },
+      {
+        "type": "fixed",
+        "text": "Wheel Picker announces its current value to screen readers as a spin button, and its reduced-motion list marks the chosen row.",
+        "component": "wheel-picker"
       }
     ]
   },

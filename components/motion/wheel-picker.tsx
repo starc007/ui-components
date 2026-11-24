@@ -484,6 +484,10 @@ export function WheelPicker({
   const maskFade =
     "[mask-image:linear-gradient(to_bottom,transparent,#000_22%,#000_78%,transparent)]";
 
+  const selectedIndex = indexOf(currentValue);
+  const selectedOption = options[selectedIndex];
+  const selectedLabel = selectedOption ? optionLabel(selectedOption) : undefined;
+
   if (reduce) {
     const pad = (height - itemHeight) / 2;
     return (
@@ -499,9 +503,11 @@ export function WheelPicker({
           className="pointer-events-none absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 border-border border-y bg-foreground/[0.04]"
           style={{ height: itemHeight }}
         />
+        {/* Reduced motion: a plain list of buttons, the chosen one pressed. */}
         <ul
+          aria-label={ariaLabel}
           className={cn(
-            "h-full snap-y snap-mandatory overflow-y-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            "h-full snap-y snap-mandatory overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
             maskFade,
           )}
           style={{ paddingTop: pad, paddingBottom: pad }}
@@ -513,6 +519,7 @@ export function WheelPicker({
                 <button
                   type="button"
                   disabled={disabled}
+                  aria-pressed={v === currentValue}
                   onClick={() => emit(options.indexOf(option))}
                   className={cn(
                     "flex w-full items-center justify-center font-medium",
@@ -533,10 +540,18 @@ export function WheelPicker({
   }
 
   return (
+    // A spinbutton, not a listbox: the drawn rows are decoration, and one value
+    // is chosen by stepping, so assistive tech hears the current row as the
+    // value and arrows step it.
     <div
       ref={container}
-      role="listbox"
+      role="spinbutton"
       aria-label={ariaLabel}
+      aria-valuemin={1}
+      aria-valuemax={options.length}
+      aria-valuenow={selectedIndex + 1}
+      aria-valuetext={selectedLabel}
+      aria-disabled={disabled || undefined}
       tabIndex={disabled ? -1 : 0}
       onKeyDown={onKeyDown}
       onPointerDown={onPointerDown}
