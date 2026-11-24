@@ -31,9 +31,28 @@ export function isComponentNew(component: ComponentLaunch, now = Date.now()) {
   );
 }
 
-/** Sidebar order: alphabetical by the shown name. New items keep their badge in place. */
+// Overview pages that lead their list instead of sorting in with the items
+// they cover.
+const PINNED_FIRST = new Set(["sound-kit"]);
+
+function isPinned(item: unknown) {
+  return (
+    typeof item === "object" &&
+    item !== null &&
+    "slug" in item &&
+    typeof item.slug === "string" &&
+    PINNED_FIRST.has(item.slug)
+  );
+}
+
+/**
+ * Sidebar order: pinned overviews first, then alphabetical by the shown name.
+ * New items keep their badge in place.
+ */
 export function sidebarOrder<T>(items: readonly T[], nameOf: (item: T) => string) {
-  return [...items].sort((a, b) =>
-    nameOf(a).localeCompare(nameOf(b), "en", { sensitivity: "base" }),
+  return [...items].sort(
+    (a, b) =>
+      Number(isPinned(b)) - Number(isPinned(a)) ||
+      nameOf(a).localeCompare(nameOf(b), "en", { sensitivity: "base" }),
   );
 }
