@@ -51,7 +51,7 @@ export function LandingShowcase({ phones }: { phones: NativePhone[] }) {
     <div className="relative">
       <section className="mx-auto max-w-2xl px-4 pt-14 pb-10 text-center sm:pt-20">
         <HeroEyebrow count={WEB_COUNT} nativeCount={NATIVE_COUNT} />
-        <h1 className="mt-5 text-balance text-[2.25rem] font-medium leading-[1.08] tracking-tight sm:text-5xl">
+        <h1 className="mt-3 text-balance text-[2.25rem] font-medium leading-[1.08] tracking-tight sm:text-5xl">
           {t.rich("hero.headline", mark)}
         </h1>
         <p className="mx-auto mt-5 max-w-md text-pretty text-sm leading-6 text-muted-foreground">
