@@ -10,16 +10,23 @@
     "sponsors": "Sponsors",
     "starOnGithub": "Star on GitHub",
     "starOnGithubCount": "Star on GitHub, {count} stars",
-    "getPro": "Get Pro"
+    "getPro": "Get Pro",
+    "reactNative": "React Native",
+    "resources": "Resources",
+    "motionGuides": "Motion guides",
+    "howToGuides": "How-to guides",
+    "changelog": "Changelog",
+    "blog": "Blog"
   },
   "mobileNav": {
     "open": "Open navigation",
     "title": "Menu"
   },
   "theme": {
-    "lightTheme": "Light theme",
-    "darkTheme": "Dark theme",
-    "systemTheme": "System theme"
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   },
   "dock": {
     "email": "Email"
