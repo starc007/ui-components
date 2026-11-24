@@ -32,10 +32,27 @@ const LANG_MAP: Record<string, string> = {
  * tab) otherwise ship megabytes of repeated style attributes. Class names hash
  * the colors, so blocks agree.
  */
-export async function highlight(
+export function highlight(
   code: string,
   { lang = "tsx", filename }: { lang?: string; filename?: string } = {},
 ): Promise<HighlightedCode> {
+  // Every component page's Manual install tab re-highlights the same shared
+  // `lib/` files; the prerender would otherwise redo about two thirds of its
+  // Shiki work. Keyed on everything that shapes the result.
+  const key = `${lang}\u0000${filename ?? ""}\u0000${code}`;
+  let result = cache.get(key);
+  if (!result) {
+    result = render(code, lang, filename);
+    // A failure is not worth remembering; the next caller tries again.
+    result.catch(() => cache.delete(key));
+    cache.set(key, result);
+  }
+  return result;
+}
+
+const cache = new Map<string, Promise<HighlightedCode>>();
+
+async function render(code: string, lang: string, filename: string | undefined): Promise<HighlightedCode> {
   const shikiLang = LANG_MAP[lang.toLowerCase()] ?? lang;
   const styleToClass = transformerStyleToClass({ classPrefix: "k" });
   const highlighted = await codeToHtml(code, {

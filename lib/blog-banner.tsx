@@ -17,6 +17,12 @@ import satori from "satori";
  * (dev.to's 1000x420 at 2x, also used on the post page and on Medium).
  */
 
+/**
+ * Satori already turns text into paths, so resvg needs no fonts. Loading the
+ * system's fonts anyway costs ~0.7s per image and changes no pixel.
+ */
+export const RESVG_OPTIONS = { font: { loadSystemFonts: false } } as const;
+
 type Rgb = [number, number, number];
 
 // Off-white into beUI blue.
@@ -276,7 +282,7 @@ export async function renderBlogBanners(
       }),
       { ...size, fonts: assets.fonts },
     );
-    return new Resvg(svg).render().asPng();
+    return new Resvg(svg, RESVG_OPTIONS).render().asPng();
   };
   const [og, cover] = await Promise.all([render(BANNER_SIZES.og), render(BANNER_SIZES.cover)]);
   return { og, cover };

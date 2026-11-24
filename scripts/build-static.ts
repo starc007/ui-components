@@ -7,7 +7,7 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 import satori from "satori";
-import { loadBannerAssets, renderBlogBanners } from "../lib/blog-banner";
+import { loadBannerAssets, RESVG_OPTIONS, renderBlogBanners } from "../lib/blog-banner";
 import { blogCoverPath, ogImagePath } from "../lib/og-paths";
 import { BLOG_FEED_PATH, BLOG_PATH, blogPostMarkdown, blogPostPath, blogPosts } from "../lib/blog";
 import { CHANGE_LABELS, CHANGELOG_PATH, changelogAnchor, changelogEntries, changelogItemLink } from "../lib/changelog";
@@ -392,7 +392,7 @@ async function buildOgCards() {
     await Promise.all(
       cards.slice(index, index + 8).map(async (card) => {
         const svg = await satori(ogCardElement(card, { backgroundSrc, logoSrc }), { ...OG_SIZE, fonts });
-        await write(card.path, new Resvg(svg).render().asPng());
+        await write(card.path, new Resvg(svg, RESVG_OPTIONS).render().asPng());
       }),
     );
   }
