@@ -131,6 +131,25 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         "type": "fixed",
         "text": "Streamed code in agent components no longer grows the highlight cache without limit."
+      },
+      {
+        "type": "fixed",
+        "text": "Collapsible agent panels keep their height while they close, so the closing reveal is seen instead of snapping shut."
+      },
+      {
+        "type": "fixed",
+        "text": "AI Sidebar shows controlled items in the first render after they change, and treats activeId null as controlled.",
+        "component": "ai-sidebar"
+      },
+      {
+        "type": "fixed",
+        "text": "Approval Card no longer auto-advances after its question changes or it stops waiting, and keeps both of two quick answers.",
+        "component": "approval-card"
+      },
+      {
+        "type": "fixed",
+        "text": "Message Scroller keeps following the output through a long smooth scroll.",
+        "component": "message-scroller"
       }
     ]
   },

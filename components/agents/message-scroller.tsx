@@ -303,21 +303,43 @@ export function MessageScroller({
     scheduleRailSync();
   }, [t, scheduleRailSync]);
 
-  const scrollToEnd = useCallback((behavior: ScrollBehavior) => {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
+  // A scroll this component started must not read as the reader scrolling
+  // away. A smooth scroll can outlast any fixed guess, so the flag clears on
+  // `scrollend`; the timer is the fallback where that event doesn't exist.
+  const releaseAfterScroll = useCallback(
+    (viewport: HTMLElement, behavior: ScrollBehavior) => {
+      if (scrollTimerRef.current) window.clearTimeout(scrollTimerRef.current);
+      const release = () => {
+        programmaticScrollRef.current = false;
+        viewport.removeEventListener("scrollend", release);
+        if (scrollTimerRef.current) window.clearTimeout(scrollTimerRef.current);
+      };
+      if (behavior !== "smooth") {
+        scrollTimerRef.current = window.setTimeout(release, 0);
+        return;
+      }
+      const hasScrollEnd = "onscrollend" in window;
+      if (hasScrollEnd) viewport.addEventListener("scrollend", release);
+      scrollTimerRef.current = window.setTimeout(release, hasScrollEnd ? 1200 : 320);
+    },
+    [],
+  );
 
-    programmaticScrollRef.current = true;
-    if (typeof viewport.scrollTo === "function") {
-      viewport.scrollTo({ top: viewport.scrollHeight, behavior });
-    } else {
-      viewport.scrollTop = viewport.scrollHeight;
-    }
-    if (scrollTimerRef.current) window.clearTimeout(scrollTimerRef.current);
-    scrollTimerRef.current = window.setTimeout(() => {
-      programmaticScrollRef.current = false;
-    }, behavior === "smooth" ? 320 : 0);
-  }, []);
+  const scrollToEnd = useCallback(
+    (behavior: ScrollBehavior) => {
+      const viewport = viewportRef.current;
+      if (!viewport) return;
+
+      programmaticScrollRef.current = true;
+      if (typeof viewport.scrollTo === "function") {
+        viewport.scrollTo({ top: viewport.scrollHeight, behavior });
+      } else {
+        viewport.scrollTop = viewport.scrollHeight;
+      }
+      releaseAfterScroll(viewport, behavior);
+    },
+    [releaseAfterScroll],
+  );
 
   const handleScroll = useCallback(() => {
     const viewport = viewportRef.current;
@@ -432,12 +454,9 @@ export function MessageScroller({
       } else {
         viewport.scrollTop = top;
       }
-      if (scrollTimerRef.current) window.clearTimeout(scrollTimerRef.current);
-      scrollTimerRef.current = window.setTimeout(() => {
-        programmaticScrollRef.current = false;
-      }, behavior === "smooth" ? 320 : 0);
+      releaseAfterScroll(viewport, behavior);
     },
-    [railItems, reduce, scrollToEnd, setFollowing, smooth],
+    [railItems, reduce, releaseAfterScroll, scrollToEnd, setFollowing, smooth],
   );
 
   const viewport = (
