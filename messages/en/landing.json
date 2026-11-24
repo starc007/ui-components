@@ -9,21 +9,23 @@
     "libraryCount": "<num>{count}</num> <muted>{library}</muted><sr> components</sr>"
   },
   "home": {
-    "installHint": "One command. The source is yours.",
-    "stats": {
-      "web": "React components",
-      "native": "React Native components",
-      "sections": "Library sections",
-      "license": "Free for commercial use"
-    },
+    "worksWith": "Works with",
     "sponsoredBy": "Sponsored by",
-    "newLabel": "New",
-    "newTitle": "Recently launched",
-    "changelog": "Changelog",
-    "exploreLabel": "Explore",
-    "exploreTitle": "Everything in the library",
-    "sections": "Library sections",
-    "allInSection": "All {count} in {name}"
+    "wall": {
+      "title": "Play with it.",
+      "titleMuted": "Every tile is the real component, running live.",
+      "browseAll": "Browse all components",
+      "filterLabel": "Filter by interaction",
+      "filters": {
+        "all": "All",
+        "hover": "Hover",
+        "press": "Press",
+        "drag": "Drag",
+        "type": "Type",
+        "loading": "Loading",
+        "sound": "Sound"
+      }
+    }
   },
   "card": {
     "view": "View {name}"

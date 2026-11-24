@@ -1,69 +1,44 @@
 import { ArrowRight } from "lucide-react";
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode, SVGProps } from "react";
 import { useTranslations } from "use-intl";
+import { ClaudeIcon, OpenAIIcon, ShadcnIcon, V0Icon } from "@/components/app/brand-icons";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
-import { InstallCommand } from "@/components/app/docs/install-command";
 import { HeroEyebrow } from "@/components/app/landing/hero-eyebrow";
 import styles from "@/components/app/landing/landing.module.css";
 import type { NativePhone } from "@/components/app/landing/native-phones";
 import { registry } from "@/lib/registry";
 import { cn } from "@/lib/utils";
-import { CategoryExplorer } from "./category-explorer";
 import { ContactStrip } from "./contact-strip";
 import { FaqList } from "./faq-list";
 import { LandingButton } from "./landing-button";
-import {
-  landingCategories,
-  NATIVE_COUNT,
-  newEntries,
-  PRO_URL,
-  WEB_COUNT,
-} from "./landing-data";
+import { NATIVE_COUNT, PRO_URL, WEB_COUNT } from "./landing-data";
+import { LiveWall } from "./live-wall";
 import { NativeBand } from "./native-band";
-import { NativeTile, type NativeTileComponent } from "./native-tile";
 import { PlansCompare } from "./plans-compare";
-import { PreviewTile } from "./preview-tile";
-import { SectionTitle } from "./section-title";
 import { SponsorRow } from "./sponsor-row";
 import { TestimonialRows } from "./testimonial-rows";
+import { wallTiles } from "./wall-picks";
 
 const react =
   "[--mark-bg:#d4eaf4] [--mark-fg:#0d3a50] dark:[--mark-bg:rgb(126_192_222/0.2)] dark:[--mark-fg:#cdebf7]";
 const reactNative =
   "[--mark-bg:#f8dcc4] [--mark-fg:#4a2310] dark:[--mark-bg:rgb(244_178_124/0.2)] dark:[--mark-fg:#fbdcc3]";
 
+/** Tools beUI installs into: the shadcn CLI and the agents that read its registry. */
+const WORKS_WITH: { name: string; icon: ComponentType<SVGProps<SVGSVGElement>>; className?: string }[] = [
+  { name: "shadcn", icon: ShadcnIcon },
+  { name: "Claude Code", icon: ClaudeIcon },
+  { name: "Codex", icon: OpenAIIcon },
+  { name: "v0", icon: V0Icon, className: "w-5" },
+];
+
 /**
- * The home page. A compact centered hero with the install command, the
- * numbers, new components, and a tabbed explorer across every section.
+ * The home page. A compact centered hero with the install command, then a
+ * wall of live components to play with, filtered by interaction.
  */
-export function LandingShowcase({
-  phones,
-  freshNative,
-}: {
-  phones: NativePhone[];
-  freshNative: NativeTileComponent[];
-}) {
+export function LandingShowcase({ phones }: { phones: NativePhone[] }) {
   const t = useTranslations("Landing");
-  const categories = landingCategories(registry);
-  // Web and React Native launches in one row, newest first.
-  const fresh = [
-    ...newEntries(registry).map((entry) => ({
-      key: `${entry.category}-${entry.component.slug}`,
-      launchedAt: entry.component.launchedAt,
-      web: entry,
-    })),
-    ...freshNative.map((component) => ({
-      key: `native-${component.slug}`,
-      launchedAt: component.launchedAt,
-      native: component,
-    })),
-  ].sort((a, b) => (b.launchedAt ?? "").localeCompare(a.launchedAt ?? ""));
-  const stats = [
-    { value: String(WEB_COUNT), label: t("home.stats.web") },
-    { value: String(NATIVE_COUNT), label: t("home.stats.native") },
-    { value: String(categories.length), label: t("home.stats.sections") },
-    { value: "MIT", label: t("home.stats.license") },
-  ];
+  const tiles = wallTiles(registry);
   const mark = {
     react: (chunks: ReactNode) => <mark className={cn(styles.mark, react)}>{chunks}</mark>,
     native: (chunks: ReactNode) => (
@@ -99,66 +74,21 @@ export function LandingShowcase({
       </section>
 
       <div className="mx-auto flex max-w-xl flex-col items-center gap-3 px-4">
-        <p className="text-sm text-muted-foreground">{t("home.installHint")}</p>
-        <InstallCommand className="w-full" />
-      </div>
-
-      <div className="mx-auto mt-14 max-w-6xl px-4">
-        <dl className="grid grid-cols-2 overflow-hidden rounded-2xl border border-border lg:grid-cols-4">
-          {stats.map((stat, index) => (
-            <div
-              key={stat.label}
-              className={cn(
-                "flex flex-col gap-1 border-border p-5",
-                index % 2 === 1 && "border-l",
-                index >= 2 && "border-t lg:border-t-0",
-                index === 2 && "lg:border-l",
-              )}
-            >
-              <dt className="order-2 text-xs text-muted-foreground">{stat.label}</dt>
-              <dd className="order-1 text-2xl font-medium tracking-tight tabular-nums text-foreground">
-                {stat.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
+          <span>{t("home.worksWith")}</span>
+          <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            {WORKS_WITH.map(({ name, icon: Icon, className }) => (
+              <li key={name} className="inline-flex items-center gap-1.5 text-foreground">
+                <Icon className={cn("size-3.5", className)} />
+                {name}
+              </li>
+            ))}
+          </ul>
+        </div>
         <SponsorRow placement="landing_hero" className="mt-6 justify-center" />
       </div>
 
-      {fresh.length ? (
-        <section aria-labelledby="landing-new" className="mx-auto max-w-6xl px-4 pt-16 sm:pt-24">
-          <SectionTitle
-            id="landing-new"
-            label={t("home.newLabel")}
-            title={t("home.newTitle")}
-            link={{ href: "/changelog", label: t("home.changelog") }}
-          />
-          <div className="grid grid-cols-1 gap-3 [grid-auto-rows:15rem] sm:grid-cols-2 lg:grid-cols-4">
-            {fresh.slice(0, 8).map((item) =>
-              "web" in item && item.web ? (
-                <PreviewTile
-                  key={item.key}
-                  category={item.web.category}
-                  component={item.web.component}
-                  previewKey={item.web.previewKey}
-                />
-              ) : "native" in item && item.native ? (
-                <NativeTile key={item.key} component={item.native} />
-              ) : null,
-            )}
-          </div>
-        </section>
-      ) : null}
-
-      <section aria-labelledby="landing-explore" className="mx-auto max-w-6xl px-4 pt-16 sm:pt-24">
-        <SectionTitle
-          id="landing-explore"
-          label={t("home.exploreLabel")}
-          title={t("home.exploreTitle")}
-          align="center"
-        />
-        <CategoryExplorer categories={categories} />
-      </section>
+      <LiveWall tiles={tiles} className="pt-16 sm:pt-20" />
 
       <TestimonialRows className="pt-16 sm:pt-24" />
       <NativeBand phones={phones} className="pt-16 sm:pt-24" />

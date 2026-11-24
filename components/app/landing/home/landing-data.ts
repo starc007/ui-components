@@ -1,46 +1,22 @@
-import { categoryPath } from "@/lib/component-paths";
 import { isComponentNew } from "@/lib/component-status";
 import summary from "@/lib/native/summary.json";
 import { type CategoryEntry, type ComponentEntry, INSTALLABLE_COUNT } from "@/lib/registry";
-import type { TileComponent } from "./preview-tile";
 
-export type LandingEntry = { category: string; component: TileComponent };
+/** The registry fields the landing reads for a component, small enough for the client. */
+export type LandingComponent = Pick<ComponentEntry, "slug" | "name" | "badge" | "launchedAt"> & {
+  examples?: { previewKey: string }[];
+};
 
-/** Strips a registry entry down to what a client tile needs. */
-export function toTile(component: ComponentEntry): TileComponent {
+export type LandingEntry = { category: string; component: LandingComponent };
+
+function toLanding(component: ComponentEntry): LandingComponent {
   return {
     slug: component.slug,
     name: component.name,
     badge: component.badge,
     launchedAt: component.launchedAt,
     examples: component.examples?.slice(0, 1).map(({ previewKey }) => ({ previewKey })),
-    installSlug: component.examples?.find((example) => example.installSlug)?.installSlug ?? component.slug,
   };
-}
-
-const CATEGORY_ORDER = ["motion", "blocks", "agents", "micro-interactions", "charts", "casino"] as const;
-
-/**
- * Each library section with its number of component pages, matching what its
- * page and the footer list (Casino is three games, not five designs).
- */
-export function landingCategories(source: CategoryEntry[]) {
-  return CATEGORY_ORDER.flatMap((slug) => {
-    const category = source.find((entry) => entry.slug === slug);
-    if (!category) return [];
-    return [
-      {
-        slug,
-        name: category.name,
-        href: categoryPath(slug),
-        count: category.components.length,
-        entries: category.components.map((component) => ({
-          category: slug,
-          component: toTile(component),
-        })),
-      },
-    ];
-  });
 }
 
 /** Components still marked new, newest first, named after their newest variant. */
@@ -56,7 +32,7 @@ export function newEntries(source: CategoryEntry[]): (LandingEntry & { previewKe
           return {
             category: category.slug,
             previewKey: variant?.previewKey,
-            component: toTile(
+            component: toLanding(
               variant ? { ...component, name: variant.name, launchedAt: variant.launchedAt } : component,
             ),
           };
