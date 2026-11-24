@@ -19,6 +19,7 @@ import {
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { useElementSize } from "../xy/use-width";
 import { cn } from "@/lib/utils";
 import { emphasis, useSankeyChart } from "./context";
 import type { PlacedNode } from "./model";
@@ -87,19 +88,7 @@ export function SankeyChartPlot({ className, showValues = true }: SankeyChartPlo
   // useId output can hold characters that break a url(#…) reference.
   const gradient = gradientId.replace(/[^\w-]/g, "");
 
-  useLayoutEffect(() => {
-    const plot = plotRef.current;
-    if (!plot) return;
-    const measure = () => {
-      const { width, height } = plot.getBoundingClientRect();
-      if (width > 0 && height > 0)
-        setSize((s) => (s.width === width && s.height === height ? s : { width, height }));
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(plot);
-    return () => observer.disconnect();
-  }, [plotRef, setSize]);
+  useElementSize(plotRef, setSize);
 
   // A focused node that leaves the data hands focus to the tab stop, so
   // keyboard users are not dropped to the top of the page.

@@ -3,6 +3,7 @@
 import { AnimatePresence, LayoutGroup } from "motion/react";
 import { type KeyboardEvent, type ReactNode, useId, useLayoutEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { useElementSize } from "../xy/use-width";
 import { useTreemap } from "./context";
 import type { TreemapTile } from "./model";
 import { TreemapCell } from "./tile";
@@ -20,21 +21,7 @@ export function TreemapPlot({ className, tileClassName, renderTile }: TreemapPlo
     useTreemap();
   const layoutId = useId();
   const focusedId = useRef<string | null>(null);
-  useLayoutEffect(() => {
-    const plot = plotRef.current;
-    if (!plot) return;
-    const measure = () => {
-      const { width, height } = plot.getBoundingClientRect();
-      if (width > 0 && height > 0)
-        setSize((size) =>
-          size.width === width && size.height === height ? size : { width, height },
-        );
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(plot);
-    return () => observer.disconnect();
-  }, [plotRef, setSize]);
+  useElementSize(plotRef, setSize);
   useLayoutEffect(() => {
     const id = focusedId.current;
     if (!id || tiles.some((tile) => tile.id === id)) return;
