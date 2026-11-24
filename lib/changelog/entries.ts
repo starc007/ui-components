@@ -102,6 +102,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "component": "command-palette"
       },
       {
+        "type": "improved",
+        "text": "Context Menu leaves nothing on the page while closed, and folds back into the point it opened from a little faster than it grows.",
+        "component": "context-menu"
+      },
+      {
         "type": "fixed",
         "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
         "component": "select"
