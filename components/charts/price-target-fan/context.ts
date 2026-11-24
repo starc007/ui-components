@@ -1,7 +1,8 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import { createContext, useCallback, useContext, useId, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useId, useMemo, useRef } from "react";
+import { useControllable } from "@/lib/hooks/use-controllable";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useLocale, useMessages } from "@/lib/i18n";
 import { priceTargetFanMessages } from "./messages";
@@ -39,12 +40,11 @@ export function usePriceTargetFanModel({
   const svgRef = useRef<SVGSVGElement>(null);
   const canHover = useHoverCapable();
   const tooltipId = useId();
-  const [internalActive, setInternalActive] = useState(defaultActive);
-  const requestedActive = controlledActive === undefined ? internalActive : controlledActive;
-  const setActive = (next: PriceTargetFanActive | null) => {
-    if (controlledActive === undefined) setInternalActive(next);
-    onActiveChange?.(next);
-  };
+  const [requestedActive, setActive, setInternalActive] = useControllable<PriceTargetFanActive | null>(
+    controlledActive,
+    defaultActive,
+    onActiveChange,
+  );
   const targetIndex =
     requestedActive?.type === "target"
       ? targets.findIndex((target) => target.key === requestedActive.key)

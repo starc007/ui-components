@@ -10,6 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useControllable } from "@/lib/hooks/use-controllable";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useLocale, useMessages } from "@/lib/i18n";
 import { returnsCalendarMessages } from "./messages";
@@ -42,8 +43,12 @@ export function useReturnsCalendarModel({
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
   const [storedHover, setHover] = useState<ReturnsCalendarCell | null>(null);
-  const [internalSelection, setInternalSelection] = useState(defaultSelection);
-  const requestedSelection = controlledSelection === undefined ? internalSelection : controlledSelection;
+  const [requestedSelection, setSelection, setInternalSelection] =
+    useControllable<ReturnsCalendarSelection | null>(
+      controlledSelection,
+      defaultSelection,
+      onSelectionChange,
+    );
   const validCell = (cell: ReturnsCalendarCell) =>
     Number.isInteger(cell.y) &&
     Number.isInteger(cell.m) &&
@@ -64,10 +69,6 @@ export function useReturnsCalendarModel({
   if (storedHover && !hover) setHover(null);
   const pinned = selection?.start ?? null;
   const spanEnd = selection?.end ?? null;
-  const setSelection = (next: ReturnsCalendarSelection | null) => {
-    if (controlledSelection === undefined) setInternalSelection(next);
-    onSelectionChange?.(next);
-  };
   const gridRef = useRef<HTMLDivElement>(null);
   const tooltipId = useId();
   // the entrance wave owns the cells until it has landed; hover lifts take over after

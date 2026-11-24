@@ -20,6 +20,7 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
+import { useControllable } from "@/lib/hooks/use-controllable";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
@@ -140,19 +141,6 @@ export interface MorphingSearchChipsProps {
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<MorphingSearchChipsMessages>;
-}
-
-function useControllable<T>(value: T | undefined, initial: T, onChange?: (next: T) => void) {
-  const [internal, setInternal] = useState(initial);
-  const current = value ?? internal;
-  const set = useCallback(
-    (next: T) => {
-      if (value === undefined) setInternal(next);
-      onChange?.(next);
-    },
-    [value, onChange],
-  );
-  return [current, set, setInternal] as const;
 }
 
 const sameTerm = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
