@@ -104,8 +104,15 @@
   "contact": {
     "eyebrow": "Work with me",
     "title": "Need components built for your product?",
-    "description": "Custom motion components and frontend systems, built to spec. Book a call or drop a line, whichever is easier.",
+    "description": "Custom motion and frontend systems, built to spec.",
     "bookCall": "Book a call",
-    "email": "Email me"
+    "email": "Email me",
+    "servicesLabel": "What I build",
+    "services": {
+      "components": "Custom motion components",
+      "systems": "Design systems in code",
+      "landing": "Landing pages that move",
+      "native": "React Native interfaces"
+    }
   }
 }
