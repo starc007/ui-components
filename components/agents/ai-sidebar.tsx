@@ -629,7 +629,13 @@ export function AISidebar({
   labels,
 }: AISidebarProps) {
   const t = useMessages("aiSidebar", aiSidebarMessages, labels);
-  const [internalItems, setInternalItems] = useState(items ?? defaultItems);
+  const [internalItems, setInternalItems] = useState(defaultItems);
+  // A move shows at once. When `items` is controlled, it shows on top of the
+  // items it was made from until the parent passes new ones.
+  const [optimistic, setOptimistic] = useState<{
+    base: SidebarResource[];
+    items: SidebarResource[];
+  } | null>(null);
   const [internalActiveId, setInternalActiveId] = useState(defaultActiveId);
   const [expandedIds, setExpandedIds] = useState(
     () => new Set(defaultExpandedIds),
@@ -644,12 +650,14 @@ export function AISidebar({
   const [announcement, setAnnouncement] = useState("");
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
   const movePendingRef = useRef(false);
-  const renderedItems = internalItems;
-  const selectedId = activeId ?? internalActiveId;
-
-  useEffect(() => {
-    if (items) setInternalItems(items);
-  }, [items]);
+  if (optimistic && optimistic.base !== items) setOptimistic(null);
+  const renderedItems =
+    items === undefined
+      ? internalItems
+      : optimistic?.base === items
+        ? optimistic.items
+        : items;
+  const selectedId = activeId !== undefined ? activeId : internalActiveId;
 
   const flat = useMemo(
     () => flattenResources(renderedItems, expandedIds),
@@ -683,10 +691,11 @@ export function AISidebar({
 
   const updateItems = useCallback(
     (next: SidebarResource[]) => {
-      setInternalItems(next);
+      if (items === undefined) setInternalItems(next);
+      else setOptimistic(next === items ? null : { base: items, items: next });
       onItemsChange?.(next);
     },
-    [onItemsChange],
+    [items, onItemsChange],
   );
 
   const performMove = useCallback(
