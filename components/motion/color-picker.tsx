@@ -1249,7 +1249,7 @@ export function ColorPickerContent({ align = "start", className, children, ...pr
               {/* The surface fades on its own layer so the morphing area is never faded with it. */}
               <motion.div
                 aria-hidden="true"
-                className="absolute inset-0 -z-10 rounded-3xl border border-border bg-background shadow-[0_12px_32px_-8px_rgb(0_0_0/0.25)]"
+                className="absolute inset-0 -z-10 rounded-2xl border border-border bg-background shadow-[0_12px_32px_-8px_rgb(0_0_0/0.25)]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

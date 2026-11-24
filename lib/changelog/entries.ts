@@ -14,6 +14,10 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         "type": "improved",
         "text": "Dropdown Menu, Context Menu, Select, Combobox, Multi Select and the Table menu open in panels with tighter 16px corners."
+      },
+      {
+        "type": "improved",
+        "text": "Morph Popover, and the popovers in Date Range Picker, Color Picker, Breadcrumb, Prompt Input and AI Sidebar, now use 16px corners to match the menus. Pass radius to Morph Popover for another size."
       }
     ]
   },

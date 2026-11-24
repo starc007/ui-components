@@ -290,7 +290,7 @@ export interface MorphPopoverContentProps {
   align?: Align;
   /** Gap between trigger and panel, in px. Default 8. */
   sideOffset?: number;
-  /** Panel corner radius, in px. Default 24, concentric with p-2 around pill rows. */
+  /** Panel corner radius, in px. Default 16 (rounded-2xl), like every floating panel. */
   radius?: number;
   /** Draw the surface shadow. Default true. */
   shadow?: boolean;
@@ -328,7 +328,7 @@ function MorphPopoverSurface({
   side = "bottom",
   align = "end",
   sideOffset = 8,
-  radius = 24,
+  radius = 16,
   shadow = true,
   onOpenAutoFocus,
   initialFocus,

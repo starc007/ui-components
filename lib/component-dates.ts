@@ -37,7 +37,7 @@ const COMPONENT_DATES = {
   "charts/donut-chart": { publishedAt: "2026-10-12", updatedAt: "2026-11-10" },
   "charts/candlestick-chart": { publishedAt: "2026-10-12", updatedAt: "2026-11-10" },
   "motion/card": { publishedAt: "2026-10-10", updatedAt: "2026-11-10" },
-  "motion/color-picker": { publishedAt: "2026-10-10", updatedAt: "2026-11-10" },
+  "motion/color-picker": { publishedAt: "2026-10-10", updatedAt: "2026-11-24" },
   "charts/treemap": { publishedAt: "2026-10-07", updatedAt: "2026-11-10" },
   "charts/volume-profile": { publishedAt: "2026-10-07", updatedAt: "2026-11-10" },
   "charts/status-bar": { publishedAt: "2026-10-07", updatedAt: "2026-11-10" },
@@ -51,11 +51,11 @@ const COMPONENT_DATES = {
   "agents/voice-orb": { publishedAt: "2026-10-04", updatedAt: "2026-11-10" },
   "motion/sortable-stack": { publishedAt: "2026-10-02", updatedAt: "2026-11-10" },
   "motion/image-viewer": { publishedAt: "2026-10-02", updatedAt: "2026-11-10" },
-  "motion/date-range-picker": { publishedAt: "2026-10-02", updatedAt: "2026-11-10" },
+  "motion/date-range-picker": { publishedAt: "2026-10-02", updatedAt: "2026-11-24" },
   "motion/color-selector": { publishedAt: "2026-09-27", updatedAt: "2026-10-18" },
   "motion/pagination": { publishedAt: "2026-10-31", updatedAt: "2026-11-10" },
   "motion/avatar-group": { publishedAt: "2026-10-31", updatedAt: "2026-11-10" },
-  "motion/breadcrumb": { publishedAt: "2026-09-27", updatedAt: "2026-11-10" },
+  "motion/breadcrumb": { publishedAt: "2026-09-27", updatedAt: "2026-11-24" },
   "motion/tilt-card": { publishedAt: "2026-05-17", updatedAt: "2026-10-18" },
   "motion/button": { publishedAt: "2026-05-17", updatedAt: "2026-11-10" },
   "motion/expandable-control": {
@@ -92,7 +92,7 @@ const COMPONENT_DATES = {
   "motion/dock": { publishedAt: "2026-05-17", updatedAt: "2026-10-18" },
   "motion/tooltip": { publishedAt: "2026-05-17", updatedAt: "2026-10-18" },
   "motion/context-menu": { publishedAt: "2026-07-27", updatedAt: "2026-11-24" },
-  "motion/popover": { publishedAt: "2026-07-07", updatedAt: "2026-11-10" },
+  "motion/popover": { publishedAt: "2026-07-07", updatedAt: "2026-11-24" },
   "motion/morphing-modal": { publishedAt: "2026-05-17", updatedAt: "2026-11-10" },
   "motion/center-morph-modal": {
     publishedAt: "2026-07-21",
@@ -143,7 +143,7 @@ const COMPONENT_DATES = {
   },
   "agents/ai-sidebar": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-24",
   },
   "agents/approval-card": {
     publishedAt: "2026-08-01",

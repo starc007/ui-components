@@ -289,7 +289,7 @@ export function BreadcrumbEllipsis({ children, className, label }: BreadcrumbEll
             <Ellipsis aria-hidden="true" className="size-4" />
           </button>
         </MorphPopoverTrigger>
-        <MorphPopoverContent align={placement.align} side={placement.side} radius={24} sideOffset={6} className="p-2">
+        <MorphPopoverContent align={placement.align} side={placement.side} sideOffset={6} className="p-2">
           <BreadcrumbOverflowPaths
             ref={panel}
             style={{ width: placement.width - 18 }}

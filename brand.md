@@ -47,23 +47,22 @@ Only these sizes. No other arbitrary `text-[Npx]` values.
 |---|---|
 | Buttons, icon buttons, inputs, select and combobox triggers, search, tabs, segmented controls, chips, badges, switches, pagination, toasts, single-line tooltips, OTP cells | `rounded-full` |
 | Rows inside menus, listboxes, selects and command palettes | `rounded-full` |
-| Dropdown panels (dropdown and context menus, select, combobox and multi-select lists, table menus) | `rounded-2xl` with `p-2` |
-| Popovers | `rounded-3xl` with `p-2` |
+| Floating panels (dropdown and context menus, select, combobox and multi-select lists, table menus, popovers) | `rounded-2xl` with `p-2` |
 | Cards, previews, code blocks, rich tooltips | `rounded-2xl` |
 | Dialogs, sheets, drawers, large containers | `rounded-3xl` |
 
 ### Concentric rule
 
-Inner radius = outer radius − gap. A popover is `rounded-3xl` (24px) with `p-2` (8px) around `h-8` rows, whose pill radius is 16px: 24 − 8 = 16, so the corners line up. When you change a panel's padding, change its radius with it.
+Inner radius = outer radius − gap. The docs preview frame is `rounded-3xl` (24px) with `p-2` (8px) around `rounded-2xl` panels: 24 − 8 = 16, so the corners line up. When you change a container's padding, change its radius with it.
 
-Dropdown panels are the one chosen exception: they use `rounded-2xl` (16px) for a tighter look, and their `h-8` rows stay full pills.
+Floating panels are the one chosen exception: they use `rounded-2xl` (16px) for a tighter look, and their `h-8` rows stay full pills.
 
 ### Exceptions
 
 - **Checkbox** stays a rounded square (`rounded-md`). A round checkbox reads as a radio.
 - **Multi-line inputs** (textarea, prompt input) use `rounded-3xl`, since a pill can't hold several lines.
 - **Data marks** in charts (bars, cells, swatches in a legend) keep their small radii (2 to 4px).
-- **Rows whose text can wrap** (citations, approval options, prompt actions) use `rounded-2xl`, which stays concentric inside a `rounded-3xl p-2` panel. Rows with a fixed title and one truncated subtitle line (search results, combobox options with an avatar) stay `rounded-full`.
+- **Rows whose text can wrap** (citations, approval options) use `rounded-2xl`, which stays concentric inside a `rounded-3xl p-2` container. Inside a floating panel (`rounded-2xl p-2`), such rows (prompt actions) use `rounded-lg`. Rows with a fixed title and one truncated subtitle line (search results, combobox options with an avatar) stay `rounded-full`.
 - **Range slider tracks** keep `rounded-lg`: the fill offset and handle stretch are tuned to 8px ends.
 - **Physical objects** (playing cards, books, folders, device and terminal frames, game boards and tiles) keep their own shapes.
 - **Inline `code` and `kbd` keycaps** keep a small radius.
@@ -108,7 +107,7 @@ Monochrome: neutrals, a near-black primary (white in dark mode) for emphasis, se
 ## Surfaces and elevation
 
 - Cards: `rounded-2xl border border-border`, no shadow, no gray fill, no extra outer border.
-- Floating panels: `rounded-2xl` (dropdowns) or `rounded-3xl` (popovers) with `border border-border bg-background p-2` plus one soft shadow, `shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]`. This is the only shadow in the system.
+- Floating panels: `rounded-2xl border border-border bg-background p-2` plus one soft shadow, `shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]`. This is the only shadow in the system.
 - Focus: a visible `ring-2` in `ring-foreground/20` or the primary color. Never remove focus without a replacement.
 
 ## Icons

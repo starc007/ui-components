@@ -849,7 +849,6 @@ export function DateRangePickerContent({
   return (
     <MorphPopoverContent
       align="start"
-      radius={24}
       shadow={false}
       {...props}
       className={cn("w-80 max-w-[calc(100vw-1.5rem)]", className)}
