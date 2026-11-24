@@ -3,6 +3,7 @@ import type { ComponentProps, ReactNode } from "react";
 import { useTranslations } from "use-intl";
 import { GithubIcon } from "@/components/app/icons";
 import { Tooltip } from "@/components/motion/tooltip";
+import { FooterWordmark } from "./footer-wordmark";
 import { categoryPath, NATIVE_PATH } from "@/lib/component-paths";
 import { Link } from "@/lib/navigation";
 
@@ -142,7 +143,7 @@ export function SiteFooter() {
 
   return (
     <footer className="relative isolate overflow-hidden border-t border-border/60">
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-2 gap-x-8 gap-y-10 px-4 pt-14 pb-48 sm:pb-64 md:grid-cols-4 lg:grid-cols-[1.6fr_repeat(4,minmax(0,1fr))]">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-2 gap-x-8 gap-y-10 px-4 pt-14 pb-8 md:grid-cols-4 lg:grid-cols-[1.6fr_repeat(4,minmax(0,1fr))]">
         {/* Brand: its own row until the columns fit beside it. */}
         <div className="col-span-2 max-w-xs md:col-span-4 lg:col-span-1">
           <Link prefetch={false} href="/" className="inline-flex items-center gap-2.5">
@@ -229,19 +230,7 @@ export function SiteFooter() {
         </div>
       </div>
 
-      {/* Match the artwork height to the grid's bottom padding so it never sits behind links. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-48 [mask-image:linear-gradient(to_bottom,transparent,black_80%)] sm:h-64"
-      >
-        <img
-          src="/landing/coastal-sketch.webp"
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 size-full object-cover object-bottom dark:brightness-50"
-        />
-      </div>
+      <FooterWordmark />
     </footer>
   );
 }
