@@ -56,6 +56,8 @@ export interface CommandPaletteProps {
   onOpenChange?: (open: boolean) => void;
   /** Override any built-in string. `results` names items without a `group`. */
   labels?: Partial<CommandPaletteMessages>;
+  /** Classes for the dialog panel. */
+  className?: string;
 }
 
 // Opened via a keyboard shortcut many times a day — entrance must read as
@@ -75,6 +77,7 @@ export function CommandPalette({
   open: controlledOpen,
   onOpenChange,
   labels,
+  className,
 }: CommandPaletteProps) {
   const t = useMessages("commandPalette", commandPaletteMessages, labels);
   const placeholder = placeholderProp ?? t("placeholder");
@@ -248,7 +251,10 @@ export function CommandPalette({
                 transition={reduce ? { duration: 0.1 } : PANEL_SPRING}
                 {...gate}
                 onKeyDown={onKeyDown}
-                className="pointer-events-auto w-full max-w-xl overflow-hidden rounded-2xl border border-border bg-background shadow-2xl will-change-transform"
+                className={cn(
+                  "pointer-events-auto w-full max-w-xl overflow-hidden rounded-2xl border border-border bg-background shadow-2xl outline-none will-change-transform",
+                  className,
+                )}
               >
                 <div className="flex items-center gap-3 border-b border-border px-4">
                   <Search className="h-4 w-4 text-muted-foreground" />

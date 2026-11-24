@@ -37,6 +37,7 @@ import {
   useDateRangePickerContext,
 } from "./date-range-picker/context";
 import { parse } from "./date-range-picker/date-utils";
+import { dateFormats } from "./date-range-picker/formats";
 import type {
   DateRange,
   DateRangePickerProps,
@@ -431,25 +432,16 @@ export function DateRangePickerGrid({
               >
                 <thead>
                   <tr>
-                    {Array.from({ length: 7 }, (_, index) => {
-                      const day = new Intl.DateTimeFormat(locale, {
-                        weekday: "long",
-                        timeZone: "UTC",
-                      }).format(Date.UTC(2026, 0, 4 + index));
-                      return (
-                        <th
-                          key={day}
-                          scope="col"
-                          abbr={day}
-                          className="h-6 pb-1.5 text-center text-[11px] font-medium text-muted-foreground"
-                        >
-                          {new Intl.DateTimeFormat(locale, {
-                            weekday: "short",
-                            timeZone: "UTC",
-                          }).format(Date.UTC(2026, 0, 4 + index))}
-                        </th>
-                      );
-                    })}
+                    {dateFormats(locale).weekdays.map((day) => (
+                      <th
+                        key={day.long}
+                        scope="col"
+                        abbr={day.long}
+                        className="h-6 pb-1.5 text-center text-[11px] font-medium text-muted-foreground"
+                      >
+                        {day.short}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
@@ -748,11 +740,7 @@ export function DateRangePickerTrigger({
     },
     [ctx.trigger, ref],
   );
-  const format = new Intl.DateTimeFormat(ctx.locale, {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
+  const format = dateFormats(ctx.locale).shortNoYear;
   const sameYear =
     ctx.value?.to && ctx.value.from.slice(0, 4) === ctx.value.to.slice(0, 4);
   const summary = ctx.value

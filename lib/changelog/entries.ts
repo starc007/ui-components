@@ -97,6 +97,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "component": "command-palette"
       },
       {
+        "type": "improved",
+        "text": "Command Palette takes a className for its dialog panel.",
+        "component": "command-palette"
+      },
+      {
         "type": "fixed",
         "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
         "component": "select"
