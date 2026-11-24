@@ -106,14 +106,15 @@ export function ItemBase({
       }}
       onPointerLeave={subTrigger?.onPointerLeave}
       onKeyDown={subTrigger?.onKeyDown}
-      onClick={() => {
+      onClick={(event) => {
         if (disabled) return;
         if (subTrigger) {
           subTrigger.onClick();
           return;
         }
         onSelect?.();
-        if (closeOnSelect) root.setOpen(false);
+        // `detail` is 0 when Enter or Space picked the row: close without animating.
+        if (closeOnSelect) root.setOpen(false, "first", event.detail === 0);
       }}
       className={cn(
         MENU_ITEM_CLASS,
@@ -126,7 +127,12 @@ export function ItemBase({
       )}
     >
       {active && !disabled ? (
-        <MenuItemHighlight layoutId={`${level.levelId}-highlight`} tone={tone} reduce={root.reduce} />
+        <MenuItemHighlight
+          layoutId={`${level.levelId}-highlight`}
+          tone={tone}
+          reduce={root.reduce}
+          instant={!level.glide}
+        />
       ) : null}
       {children}
     </button>

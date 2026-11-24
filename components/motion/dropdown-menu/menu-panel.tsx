@@ -27,6 +27,7 @@ const EXIT = { duration: 0.12, ease: EASE_OUT };
 const OPEN_SCALE = 0.94;
 const OPEN_TRAVEL = 6;
 const OPEN = { duration: 0.2, ease: EASE_OUT };
+const INSTANT = { duration: 0 };
 
 interface PanelProps {
   children: ReactNode;
@@ -37,6 +38,8 @@ interface PanelProps {
   align: Align;
   sideOffset: number;
   focus: FocusTarget;
+  /** Show without animating; the AnimatePresence around it carries the same flag to the exit. */
+  instant: boolean;
   present: boolean;
   gate: { inert: boolean; style: { pointerEvents: "auto" | "none" } };
   labelledBy: string;
@@ -56,6 +59,7 @@ export function MenuPanel({
   align,
   sideOffset,
   focus,
+  instant,
   present,
   gate,
   labelledBy,
@@ -68,8 +72,10 @@ export function MenuPanel({
   const parent = useContext(LevelContext);
   const levelId = useId();
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [glide, setGlide] = useState(true);
   const [openSub, setOpenSubState] = useState<string | null>(null);
   const [subFocus, setSubFocus] = useState<FocusTarget>("none");
+  const [subInstant, setSubInstant] = useState(false);
   const grace = useRef<{ polygon: Point[]; until: number } | null>(null);
   const navigate = useMenuNavigation();
 
@@ -86,10 +92,14 @@ export function MenuPanel({
     setPlacement(place(anchor, layout.content, side, align, sideOffset));
   }, [layout, present, side, align, sideOffset, parent]);
 
-  const setOpenSub = useCallback((next: string | null, nextFocus: FocusTarget = "none") => {
-    setSubFocus(nextFocus);
-    setOpenSubState(next);
-  }, []);
+  const setOpenSub = useCallback(
+    (next: string | null, nextFocus: FocusTarget = "none", now = nextFocus !== "none") => {
+      setSubFocus(nextFocus);
+      setSubInstant(now);
+      setOpenSubState(next);
+    },
+    [],
+  );
 
   // Waits for the first placement: the panel is `visibility: hidden` until
   // then, and the browser will not focus anything inside it.
@@ -112,6 +122,8 @@ export function MenuPanel({
     const panel = panelRef.current;
     const target = event.target as HTMLElement;
     if (!panel || target.closest("[data-menu-panel]") !== panel) return;
+    // Set before the key moves focus, so the highlight it lands on jumps.
+    setGlide(false);
     if (onKeyDown?.(event)) return;
     if (event.key === "Tab") {
       event.preventDefault();
@@ -128,12 +140,14 @@ export function MenuPanel({
       panelRef,
       activeId,
       setActiveId,
+      glide,
       openSub,
       setOpenSub,
       subFocus,
+      subInstant,
       grace,
     }),
-    [levelId, present, panelRef, activeId, openSub, setOpenSub, subFocus],
+    [levelId, present, panelRef, activeId, glide, openSub, setOpenSub, subFocus, subInstant],
   );
 
   // The panel starts tucked toward its trigger and springs out of it.
@@ -141,25 +155,38 @@ export function MenuPanel({
   const toward = used === "top" || used === "left" ? 1 : -1;
   const vertical = used === "top" || used === "bottom";
   const offset = (distance: number) => (vertical ? { y: distance * toward } : { x: distance * toward });
+  // `custom` is the instant flag. An exiting panel reads it from its
+  // AnimatePresence, so Escape removes the menu at once even after it has
+  // already left the React tree.
   const variants: Variants = root.reduce
     ? {
         hidden: { opacity: 0 },
-        shown: { opacity: 1, transition: { duration: 0.15, ease: EASE_OUT } },
-        gone: { opacity: 0, transition: EXIT },
+        shown: (now = false) => ({
+          opacity: 1,
+          transition: now ? INSTANT : { duration: 0.15, ease: EASE_OUT },
+        }),
+        gone: (now = false) => ({ opacity: 0, transition: now ? INSTANT : EXIT }),
       }
     : {
         hidden: { opacity: 0, scale: OPEN_SCALE, ...offset(OPEN_TRAVEL) },
-        shown: {
+        shown: (now = false) => ({
           opacity: 1,
           scale: 1,
           x: 0,
           y: 0,
-          transition: {
-            ...OPEN,
-            opacity: { duration: 0.12, ease: EASE_OUT },
-          },
-        },
-        gone: { opacity: 0, scale: 0.97, ...offset(OPEN_TRAVEL / 2), transition: EXIT },
+          transition: now
+            ? INSTANT
+            : {
+                ...OPEN,
+                opacity: { duration: 0.12, ease: EASE_OUT },
+              },
+        }),
+        gone: (now = false) => ({
+          opacity: 0,
+          scale: 0.97,
+          ...offset(OPEN_TRAVEL / 2),
+          transition: now ? INSTANT : EXIT,
+        }),
       };
 
   return createPortal(
@@ -175,11 +202,15 @@ export function MenuPanel({
       data-menu-root={root.menuId}
       data-level={levelId}
       data-side={placement?.side ?? side}
+      custom={instant}
       variants={variants}
       initial="hidden"
       animate="shown"
       exit="gone"
       onKeyDown={handleKeyDown}
+      onPointerMove={(event) => {
+        if (event.pointerType !== "touch") setGlide(true);
+      }}
       onFocus={(event) => {
         if (event.target === event.currentTarget) setActiveId(null);
       }}

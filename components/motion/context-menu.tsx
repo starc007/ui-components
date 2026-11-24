@@ -67,6 +67,11 @@ interface ContextMenuContextValue {
   contentRef: React.MutableRefObject<HTMLDivElement | null>;
   activeId: string | null;
   setActiveId: (id: string | null) => void;
+  /** The highlight glides after the pointer, and jumps after a key. */
+  glide: boolean;
+  setGlide: (glide: boolean) => void;
+  /** Close from a key press (Escape, Tab): no exit animation. */
+  closeFromKey: () => void;
   reduce: boolean;
   t: (key: keyof ContextMenuMessages) => string;
 }
@@ -120,6 +125,7 @@ export function ContextMenu({
   const [point, setPoint] = useState<MenuPoint>({ x: 0, y: 0 });
   const [modality, setModality] = useState<OpenModality>("pointer");
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [glide, setGlide] = useState(true);
   const controlled = controlledOpen !== undefined;
   const open = controlled ? controlledOpen : internalOpen;
   const triggerRef = useRef<HTMLElement | null>(null);
@@ -140,20 +146,29 @@ export function ContextMenu({
     (nextPoint: MenuPoint, nextModality: OpenModality) => {
       setPoint(nextPoint);
       setModality(nextModality);
+      setGlide(nextModality !== "keyboard");
       setActiveId(null);
       setOpen(true);
     },
     [setOpen],
   );
 
+  // The exit times itself by modality, so a key press closes without one.
+  const closeFromKey = useCallback(() => {
+    setModality("keyboard");
+    setOpen(false);
+  }, [setOpen]);
+
   // A focused panel answers Escape itself; this covers a menu opened by
   // pointer that never took focus. Either way focus goes back to the trigger.
   const dismiss = useCallback(
     (reason: DismissReason) => {
-      setOpen(false);
-      if (reason === "escape") triggerRef.current?.focus();
+      if (reason === "escape") {
+        closeFromKey();
+        triggerRef.current?.focus();
+      } else setOpen(false);
     },
-    [setOpen],
+    [setOpen, closeFromKey],
   );
   useDismiss(open, dismiss, contentRef);
 
@@ -180,6 +195,9 @@ export function ContextMenu({
       contentRef,
       activeId,
       setActiveId,
+      glide,
+      setGlide,
+      closeFromKey,
       reduce,
       t,
     }),
@@ -191,6 +209,8 @@ export function ContextMenu({
       modality,
       menuId,
       activeId,
+      glide,
+      closeFromKey,
       reduce,
       t,
     ],
@@ -450,14 +470,16 @@ function ContextMenuPanel({
   }, [present, contentRef]);
 
   const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    // Set before the key moves focus, so the highlight it lands on jumps.
+    context.setGlide(false);
     if (event.key === "Escape") {
       event.preventDefault();
-      context.setOpen(false);
+      context.closeFromKey();
       context.triggerRef.current?.focus();
       return;
     }
     if (event.key === "Tab") {
-      context.setOpen(false);
+      context.closeFromKey();
       return;
     }
     navigate(event, contentRef.current);
@@ -500,6 +522,9 @@ function ContextMenuPanel({
         }}
         transition={timing(MORPH_DURATION)}
         onKeyDown={onKeyDown}
+        onPointerMove={(event) => {
+          if (event.pointerType !== "touch") context.setGlide(true);
+        }}
         onContextMenu={(event) => event.preventDefault()}
         className={cn(
           "min-w-56 overflow-hidden rounded-2xl border border-border bg-card p-2 text-foreground outline-none",
@@ -578,7 +603,12 @@ function ContextMenuItemBase({
       )}
     >
       {active ? (
-        <MenuItemHighlight layoutId={`${context.menuId}-active`} tone={tone} reduce={context.reduce} />
+        <MenuItemHighlight
+          layoutId={`${context.menuId}-active`}
+          tone={tone}
+          reduce={context.reduce}
+          instant={!context.glide}
+        />
       ) : null}
       {children}
     </button>

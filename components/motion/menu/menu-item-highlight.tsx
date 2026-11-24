@@ -13,10 +13,20 @@ export interface MenuItemHighlightProps {
   layoutId: string;
   tone?: "default" | "destructive";
   reduce: boolean;
+  /**
+   * Jump instead of gliding: the highlight was moved by the keyboard, where a
+   * spring only trails behind fast arrowing.
+   */
+  instant?: boolean;
 }
 
 /** The pill behind the active row. Render it only inside the active row. */
-export function MenuItemHighlight({ layoutId, tone = "default", reduce }: MenuItemHighlightProps) {
+export function MenuItemHighlight({
+  layoutId,
+  tone = "default",
+  reduce,
+  instant = false,
+}: MenuItemHighlightProps) {
   return (
     <motion.span
       aria-hidden="true"
@@ -25,7 +35,7 @@ export function MenuItemHighlight({ layoutId, tone = "default", reduce }: MenuIt
         "absolute inset-0 -z-10 rounded-full",
         tone === "destructive" ? "bg-destructive/10" : "bg-foreground/[0.07]",
       )}
-      transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
+      transition={reduce || instant ? { duration: 0 } : SPRING_LAYOUT}
     />
   );
 }

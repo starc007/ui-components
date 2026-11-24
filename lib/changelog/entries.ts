@@ -130,6 +130,10 @@ export const changelogEntries: ChangelogEntry[] = [
         "component": "popover"
       },
       {
+        "type": "improved",
+        "text": "Dropdown Menu and Context Menu open and close at once from the keyboard, and the highlight jumps between rows on arrow keys while still gliding after the mouse."
+      },
+      {
         "type": "fixed",
         "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
         "component": "select"

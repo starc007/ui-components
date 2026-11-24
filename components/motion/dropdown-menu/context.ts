@@ -7,8 +7,14 @@ export type FocusTarget = "first" | "last" | "panel" | "none";
 
 export interface RootContextValue {
   open: boolean;
-  setOpen: (open: boolean, focus?: FocusTarget) => void;
+  /**
+   * `instant` skips the open or close animation: the keyboard asked for it,
+   * and keyboard users open and close menus far too often to wait on motion.
+   */
+  setOpen: (open: boolean, focus?: FocusTarget, instant?: boolean) => void;
   focusTarget: FocusTarget;
+  /** Whether the latest open or close skips its animation. */
+  instant: boolean;
   menuId: string;
   triggerId: string;
   triggerRef: MutableRefObject<HTMLElement | null>;
@@ -33,9 +39,14 @@ export interface LevelContextValue {
   panelRef: MutableRefObject<HTMLDivElement | null>;
   activeId: string | null;
   setActiveId: (id: string | null) => void;
+  /** The highlight glides after the pointer, and jumps after a key. */
+  glide: boolean;
   openSub: string | null;
-  setOpenSub: (id: string | null, focus?: FocusTarget) => void;
+  /** `instant` defaults to true when a focus target says the keyboard opened it. */
+  setOpenSub: (id: string | null, focus?: FocusTarget, instant?: boolean) => void;
   subFocus: FocusTarget;
+  /** Whether the submenu's latest open or close skips its animation. */
+  subInstant: boolean;
   /** A pointer on its way from a submenu trigger to the submenu it opened. */
   grace: MutableRefObject<{ polygon: Point[]; until: number } | null>;
 }
