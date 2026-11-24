@@ -657,7 +657,9 @@ export function ContextMenuCheckboxItem({
       ariaChecked={checked}
       onSelect={() => onCheckedChange?.(!checked)}
     >
-      <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+      {children}
+      {/* The mark sits at the end of the row, never before the label. */}
+      <span aria-hidden="true" className="ml-auto flex h-4 w-4 shrink-0 items-center justify-center">
         <AnimatePresence initial={false}>
           {checked ? (
             <motion.span
@@ -672,7 +674,6 @@ export function ContextMenuCheckboxItem({
           ) : null}
         </AnimatePresence>
       </span>
-      {children}
     </ContextMenuItemBase>
   );
 }
@@ -733,15 +734,18 @@ export function ContextMenuRadioItem({
       ariaChecked={checked}
       onSelect={() => group.onValueChange?.(value)}
     >
-      <span className="flex h-4 w-4 shrink-0 items-center justify-center">
-        <span
+      {children}
+      {/* The mark sits at the end of the row, never before the label. */}
+      <span aria-hidden="true" className="ml-auto flex h-4 w-4 shrink-0 items-center justify-center">
+        <Check
+          aria-hidden="true"
           className={cn(
-            "h-1.5 w-1.5 rounded-full bg-current transition-opacity",
+            "h-3.5 w-3.5 transition-opacity",
             checked ? "opacity-100" : "opacity-0",
           )}
+          strokeWidth={2.4}
         />
       </span>
-      {children}
     </ContextMenuItemBase>
   );
 }

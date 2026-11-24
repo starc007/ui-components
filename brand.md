@@ -118,6 +118,7 @@ Monochrome: neutrals, a near-black primary (white in dark mode) for emphasis, se
 - `size-4` in md controls, `size-3.5` in sm controls.
 - Icon-only buttons are `rounded-full` and get a tooltip.
 - Icon chips use a neutral background, not a colored one.
+- Selection marks (the check on a selected menu, select or radio row) sit at the end of the row, never before the label. Labels stay flush with the other rows.
 
 ## Motion
 

@@ -26,6 +26,10 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         "type": "improved",
         "text": "Bottom Sheet, the Swap token picker and the floating and inset Animated Sidebar use 16px corners. Drawer now rounds the two corners facing the page."
+      },
+      {
+        "type": "improved",
+        "text": "Dropdown Menu and Context Menu show the check for checkbox and radio items at the end of the row, so labels line up with the rest of the menu."
       }
     ]
   },

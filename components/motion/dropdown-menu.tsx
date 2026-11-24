@@ -658,7 +658,7 @@ export interface DropdownMenuItemProps {
   /** Close the whole menu after selecting. Default true. */
   closeOnSelect?: boolean;
   tone?: ItemTone;
-  /** Indent to line up with checkbox and radio rows. */
+  /** Indent to line up with rows that start with an icon. */
   inset?: boolean;
   /** Text matched by typeahead when the label is not plain text. */
   textValue?: string;
@@ -807,9 +807,10 @@ export function DropdownMenuCheckboxItem({
       checked={checked}
       closeOnSelect={closeOnSelect}
       onSelect={() => onCheckedChange?.(!checked)}
-      inset
     >
-      <span aria-hidden="true" className="absolute left-3 flex size-4 items-center justify-center">
+      {children}
+      {/* The mark sits at the end of the row, never before the label. */}
+      <span aria-hidden="true" className="ml-auto flex size-4 shrink-0 items-center justify-center">
         <AnimatePresence initial={false}>
           {checked ? (
             <motion.span
@@ -825,7 +826,6 @@ export function DropdownMenuCheckboxItem({
           ) : null}
         </AnimatePresence>
       </span>
-      {children}
     </ItemBase>
   );
 }
@@ -857,7 +857,7 @@ export interface DropdownMenuRadioItemProps extends Omit<DropdownMenuItemProps, 
   value: string;
 }
 
-/** Stays open after a pick by default, so the dot can be seen moving. */
+/** Stays open after a pick by default, so the check can be seen moving. */
 export function DropdownMenuRadioItem({ value, closeOnSelect = false, children, ...props }: DropdownMenuRadioItemProps) {
   const root = useRoot("DropdownMenuRadioItem");
   const group = useContext(RadioGroupContext);
@@ -870,17 +870,19 @@ export function DropdownMenuRadioItem({ value, closeOnSelect = false, children, 
       checked={checked}
       closeOnSelect={closeOnSelect}
       onSelect={() => group.onValueChange?.(value)}
-      inset
     >
-      <span aria-hidden="true" className="absolute left-3 flex size-4 items-center justify-center">
+      {children}
+      {/* The mark sits at the end of the row, never before the label. */}
+      <span aria-hidden="true" className="ml-auto flex size-4 shrink-0 items-center justify-center">
         <motion.span
           initial={false}
-          animate={root.reduce ? { opacity: checked ? 1 : 0 } : { opacity: checked ? 1 : 0, scale: checked ? 1 : 0.4 }}
+          animate={root.reduce ? { opacity: checked ? 1 : 0 } : { opacity: checked ? 1 : 0, scale: checked ? 1 : 0.6 }}
           transition={root.reduce ? { duration: 0.1 } : SPRING_PANEL}
-          className="size-1.5 rounded-full bg-foreground"
-        />
+          className="flex"
+        >
+          <Check className="size-3.5 text-foreground" strokeWidth={2.4} />
+        </motion.span>
       </span>
-      {children}
     </ItemBase>
   );
 }

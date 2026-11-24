@@ -2,6 +2,7 @@
 
 import {
   Check,
+  CloudOff,
   Copy,
   Download,
   Eye,
@@ -123,6 +124,7 @@ export function ContextMenuPreview() {
               setMessage(checked ? "Available offline" : "Online only");
             }}
           >
+            <CloudOff aria-hidden="true" className="h-4 w-4" />
             Keep offline
           </ContextMenuCheckboxItem>
 

@@ -87,7 +87,7 @@ export function DropdownMenuPreview() {
             </DropdownMenuSubContent>
           </DropdownMenuSub>
           <DropdownMenuSeparator />
-          <DropdownMenuLabel inset>View</DropdownMenuLabel>
+          <DropdownMenuLabel>View</DropdownMenuLabel>
           <DropdownMenuCheckboxItem checked={statusBar} onCheckedChange={setStatusBar}>
             Status bar
           </DropdownMenuCheckboxItem>
@@ -95,7 +95,7 @@ export function DropdownMenuPreview() {
             Compact rows
           </DropdownMenuCheckboxItem>
           <DropdownMenuSeparator />
-          <DropdownMenuLabel inset>Panel</DropdownMenuLabel>
+          <DropdownMenuLabel>Panel</DropdownMenuLabel>
           <DropdownMenuRadioGroup value={panel} onValueChange={setPanel}>
             <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>
