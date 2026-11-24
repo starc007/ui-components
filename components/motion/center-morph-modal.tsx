@@ -18,8 +18,10 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 import { useMessages } from "@/lib/i18n";
 import { PresenceGate } from "@/lib/presence-gate";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
@@ -175,15 +177,6 @@ export interface CenterMorphModalContentProps {
   backdropClassName?: string;
 }
 
-const FOCUSABLE_SELECTOR = [
-  "a[href]",
-  "button:not([disabled])",
-  "input:not([disabled])",
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  '[tabindex]:not([tabindex="-1"])',
-].join(",");
-
 const CENTER_FOLDED_CLIP =
   "inset(48% 48% 48% 48% round 16px)";
 const CENTER_OPEN_CLIP = "inset(0% 0% 0% 0% round 16px)";
@@ -196,13 +189,6 @@ const CENTER_UNFOLD_TRANSITION = {
   duration: 0.43,
   ease: CENTER_UNFOLD_EASE,
 } as const;
-
-function getFocusableElements(root: HTMLElement | null) {
-  if (!root) return [];
-  return Array.from(
-    root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-  ).filter((element) => element.tabIndex >= 0);
-}
 
 export function CenterMorphModalContent({
   children,
@@ -226,51 +212,14 @@ export function CenterMorphModalContent({
 
   useEffect(() => setMounted(true), []);
 
-  useEffect(() => {
-    if (!context.open) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const focusFrame = requestAnimationFrame(() => {
-      const [firstFocusable] = getFocusableElements(panelRef.current);
-      (firstFocusable ?? panelRef.current)?.focus();
-    });
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && dismissible) {
-        event.preventDefault();
-        context.setOpen(false);
-        return;
-      }
-
-      if (event.key !== "Tab") return;
-      const focusable = getFocusableElements(panelRef.current);
-      if (focusable.length === 0) {
-        event.preventDefault();
-        panelRef.current?.focus();
-        return;
-      }
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      cancelAnimationFrame(focusFrame);
-      window.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = previousOverflow;
-      document.getElementById(context.triggerId)?.focus();
-    };
-  }, [context, dismissible]);
+  // Tab stays in the panel, Escape closes when dismissible, and focus returns
+  // to the trigger that opened it.
+  const { open, setOpen } = context;
+  const close = useCallback(() => setOpen(false), [setOpen]);
+  useFocusTrap(open && mounted, panelRef, {
+    onEscape: dismissible ? close : undefined,
+  });
+  useScrollLock(open);
 
   if (!mounted) return null;
 

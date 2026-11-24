@@ -24,6 +24,7 @@ import {
   useState,
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { type ListboxRow, useListbox } from "@/lib/hooks/use-listbox";
 import { useSound } from "@/lib/sound";
 import { closeSound } from "@/lib/sounds/close";
@@ -212,21 +213,13 @@ export function Select({
     return () => animation.stop();
   }, [open, progress, reduce]);
 
-  // close on outside pointer / escape
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-    const onPointer = (e: PointerEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node))
-        setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open, setOpen, close]);
+  // Escape hands focus back to the trigger; an outside press leaves it where
+  // the press put it.
+  const dismiss = useCallback(
+    (reason: DismissReason) => (reason === "escape" ? close() : setOpen(false)),
+    [close, setOpen],
+  );
+  useDismiss(open, dismiss, rootRef);
 
   const rows = useMemo(
     () =>

@@ -58,7 +58,7 @@ The site is fully static, so pages never run code per request.
 - Reuse the shared building blocks instead of writing new ones:
   - Motion tokens: `lib/ease.ts`.
   - Hooks in `lib/hooks/`: dismissal (`use-dismiss`), focus trap and modal scope (`use-focus-trap`, `use-modal-scope`), list cursors (`use-row-cursor`, `use-listbox`), open sessions (`use-on-open`), sliders (`use-slider`), hover and touch capability and gestures.
-  - Overlays: `PresenceGate` (`lib/presence-gate.tsx`), `lib/focusable.ts`, pointer capture in `lib/touch.ts`.
+  - Overlays: `PresenceGate` (`lib/presence-gate.tsx`), `lib/focusable.ts`, pointer capture in `lib/touch.ts`, scroll locking (`lib/scroll-lock.ts`, reference-counted). `useDismiss`, `useFocusTrap` and `useModalScope` register in one layer stack (`lib/layers.ts`), so only the innermost overlay answers Escape and a trap leaves focus in a menu opened on top of it. Never hand-roll outside-press, Escape, focus-trap or `body.style.overflow` code.
   - Strings: `useMessages` and `LocaleProvider` (`lib/i18n.tsx`).
   - Charts: `components/charts/xy/` (scales, paths, axis, legend, inspector, tooltip content, data table, `useElementWidth`, `useInspection`).
   - Sound: the sounds category (`/sounds`) is the sound library, one file per sound in `lib/sounds/` built on `lib/sounds/engine.ts`. A component's `sound` prop (off by default) imports the sounds it needs and plays them through `useSound(sound, { enabled: sound })` from `lib/sound.tsx`. `SoundProvider` sets volume and mutes every beUI sound through the gate in `lib/audio-context.ts`.

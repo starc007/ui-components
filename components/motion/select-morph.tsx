@@ -21,11 +21,13 @@ import {
   useRef,
   useState,
 } from "react";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { type ListboxRow, useListbox } from "@/lib/hooks/use-listbox";
 import { useSound } from "@/lib/sound";
 import { closeSound } from "@/lib/sounds/close";
 import { openSound } from "@/lib/sounds/open";
 import { selectSound } from "@/lib/sounds/select";
+import { PresenceGate } from "@/lib/presence-gate";
 import { cn } from "@/lib/utils";
 
 // Shared-layout morph: trigger box grows into the panel and back, one surface.
@@ -182,20 +184,11 @@ export function MorphSelect({
     });
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-    const onPointer = (e: PointerEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node))
-        setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open, close, setOpen]);
+  const dismiss = useCallback(
+    (reason: DismissReason) => (reason === "escape" ? close() : setOpen(false)),
+    [close, setOpen],
+  );
+  useDismiss(open, dismiss, rootRef);
 
   const rows = useMemo(
     () =>
@@ -377,62 +370,72 @@ export function MorphSelectContent({
             transition={ctx.reduce ? { duration: 0 } : MORPH}
             style={{ borderRadius: PANEL_RADIUS }}
             className={cn(
-              "absolute inset-x-0 top-0 z-30 overflow-hidden border border-border bg-background shadow-lg",
+              "pointer-events-none absolute inset-x-0 top-0 z-30 overflow-hidden border border-border bg-background shadow-lg",
               className,
             )}
           >
-            {/* header mirrors the trigger (continuous morph) and collapses the
-                panel back into the trigger when clicked */}
-            <motion.button
-              type="button"
-              id={ctx.headerId}
-              layout="position"
-              aria-haspopup="listbox"
-              aria-expanded
-              aria-controls={ctx.listId}
-              onClick={() => ctx.close()}
-              className={cn(ROW, "outline-none")}
-            >
-              <span
-                className={cn(
-                  "min-w-0 truncate",
-                  label ? "text-foreground" : "text-muted-foreground",
-                )}
-              >
-                {label ?? ctx.placeholder}
-              </span>
-              <motion.span
-                aria-hidden
-                animate={{ rotate: 180 }}
-                transition={ctx.reduce ? { duration: 0 } : MORPH}
-                className="text-muted-foreground"
-              >
-                <ChevronDown className="h-4 w-4" />
-              </motion.span>
-            </motion.button>
+            {/* The panel sits over the returning trigger for the whole morph
+                back, so its contents stop taking clicks and focus as soon as
+                it starts leaving. The surface itself never takes pointer
+                events, so the gate goes on this wrapper. */}
+            <PresenceGate>
+              {({ gate }) => (
+                <div {...gate}>
+                  {/* header mirrors the trigger (continuous morph) and
+                      collapses the panel back into the trigger when clicked */}
+                  <motion.button
+                    type="button"
+                    id={ctx.headerId}
+                    layout="position"
+                    aria-haspopup="listbox"
+                    aria-expanded
+                    aria-controls={ctx.listId}
+                    onClick={() => ctx.close()}
+                    className={cn(ROW, "outline-none")}
+                  >
+                    <span
+                      className={cn(
+                        "min-w-0 truncate",
+                        label ? "text-foreground" : "text-muted-foreground",
+                      )}
+                    >
+                      {label ?? ctx.placeholder}
+                    </span>
+                    <motion.span
+                      aria-hidden
+                      animate={{ rotate: 180 }}
+                      transition={ctx.reduce ? { duration: 0 } : MORPH}
+                      className="text-muted-foreground"
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </motion.span>
+                  </motion.button>
 
-            <div className="h-px bg-border" />
+                  <div className="h-px bg-border" />
 
-            <ActiveOptionContext.Provider value={activeId}>
-              <motion.ul
-                ref={listRef}
-                id={ctx.listId}
-                role="listbox"
-                aria-labelledby={ctx.headerId}
-                initial="hidden"
-                animate="show"
-                variants={ctx.reduce ? undefined : LIST}
-                onKeyDown={(event) => {
-                  if (event.key === "Tab") {
-                    event.preventDefault();
-                    ctx.close();
-                  } else onKeyDown(event);
-                }}
-                className="p-2"
-              >
-                {children}
-              </motion.ul>
-            </ActiveOptionContext.Provider>
+                  <ActiveOptionContext.Provider value={activeId}>
+                    <motion.ul
+                      ref={listRef}
+                      id={ctx.listId}
+                      role="listbox"
+                      aria-labelledby={ctx.headerId}
+                      initial="hidden"
+                      animate="show"
+                      variants={ctx.reduce ? undefined : LIST}
+                      onKeyDown={(event) => {
+                        if (event.key === "Tab") {
+                          event.preventDefault();
+                          ctx.close();
+                        } else onKeyDown(event);
+                      }}
+                      className="p-2"
+                    >
+                      {children}
+                    </motion.ul>
+                  </ActiveOptionContext.Provider>
+                </div>
+              )}
+            </PresenceGate>
           </motion.div>
         ) : null}
       </AnimatePresence>

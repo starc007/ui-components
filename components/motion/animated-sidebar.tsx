@@ -31,7 +31,9 @@ import {
   SPRING_LAYOUT,
   SPRING_PRESS,
 } from "@/lib/ease";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 import { useMessages } from "@/lib/i18n";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 type SidebarState = "expanded" | "collapsed";
@@ -114,15 +116,6 @@ const REDUCED_TRANSITION = {
   duration: 0.16,
   ease: EASE_OUT,
 } as const;
-
-const FOCUSABLE_SELECTOR = [
-  "a[href]",
-  "button:not([disabled])",
-  "input:not([disabled])",
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  "[tabindex]:not([tabindex='-1'])",
-].join(",");
 
 function subscribeToMobileQuery(callback: () => void) {
   const query = window.matchMedia(MOBILE_QUERY);
@@ -349,42 +342,12 @@ function MobileSidebar({
     if (context.openMobile) setHidden(false);
   }, [context.openMobile]);
 
-  useEffect(() => {
-    if (!context.openMobile) return;
-
-    const body = document.body;
-    const scrollY = window.scrollY;
-    const previousBodyStyles = {
-      left: body.style.left,
-      overflow: body.style.overflow,
-      position: body.style.position,
-      right: body.style.right,
-      top: body.style.top,
-    };
-
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.left = "0";
-    body.style.right = "0";
-    body.style.overflow = "hidden";
-
-    const focusFrame = requestAnimationFrame(() => {
-      const firstFocusable =
-        panelRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
-      (firstFocusable ?? panelRef.current)?.focus({ preventScroll: true });
-    });
-
-    return () => {
-      cancelAnimationFrame(focusFrame);
-      body.style.position = previousBodyStyles.position;
-      body.style.top = previousBodyStyles.top;
-      body.style.left = previousBodyStyles.left;
-      body.style.right = previousBodyStyles.right;
-      body.style.overflow = previousBodyStyles.overflow;
-      window.scrollTo(0, scrollY);
-      context.triggerRef.current?.focus({ preventScroll: true });
-    };
-  }, [context.openMobile, context.triggerRef]);
+  // A modal sheet: focus moves in, Tab stays inside, Escape closes, and focus
+  // returns to the opener. The fixed body lock holds on iOS Safari too.
+  const { openMobile, setOpenMobile } = context;
+  const closeMobile = useCallback(() => setOpenMobile(false), [setOpenMobile]);
+  useFocusTrap(openMobile && mounted, panelRef, { onEscape: closeMobile });
+  useScrollLock(openMobile, { fixed: true });
 
   if (!mounted) return null;
 
@@ -449,38 +412,6 @@ function MobileSidebar({
         }
         onAnimationComplete={() => {
           if (!openMobileRef.current) setHidden(true);
-        }}
-        onKeyDown={(event) => {
-          if (event.key === "Escape") {
-            event.preventDefault();
-            context.setOpenMobile(false);
-            return;
-          }
-
-          if (event.key !== "Tab") return;
-          const focusable = panelRef.current
-            ? Array.from(
-                panelRef.current.querySelectorAll<HTMLElement>(
-                  FOCUSABLE_SELECTOR,
-                ),
-              )
-            : [];
-
-          if (focusable.length === 0) {
-            event.preventDefault();
-            panelRef.current?.focus();
-            return;
-          }
-
-          const first = focusable[0];
-          const last = focusable[focusable.length - 1];
-          if (event.shiftKey && document.activeElement === first) {
-            event.preventDefault();
-            last.focus();
-          } else if (!event.shiftKey && document.activeElement === last) {
-            event.preventDefault();
-            first.focus();
-          }
         }}
         className={cn(
           "pointer-events-auto fixed inset-y-0 flex h-dvh w-(--sidebar-width-mobile) max-w-[88vw] flex-col overflow-hidden",

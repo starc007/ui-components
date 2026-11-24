@@ -15,6 +15,7 @@ import {
   type ReactNode,
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -233,21 +234,8 @@ export function ExpandableTabs({
   );
 
   // Outside click / Escape closes — it behaves like an open menu.
-  useEffect(() => {
-    if (!visualActiveId) return;
-    const onPointer = (e: PointerEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) setActive(null);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setActive(null);
-    };
-    document.addEventListener("pointerdown", onPointer);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onPointer);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [setActive, visualActiveId]);
+  const collapse = useCallback(() => setActive(null), [setActive]);
+  useDismiss(visualActiveId !== null, collapse, rootRef);
 
   const closedSize = {
     width:

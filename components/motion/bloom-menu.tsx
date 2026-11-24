@@ -22,6 +22,7 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useMessages } from "@/lib/i18n";
@@ -144,22 +145,11 @@ export function BloomMenu({
     moveTo(rows[next].id);
   };
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape") close(true);
-    };
-    const onPointer = (e: PointerEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node))
-        setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open, close]);
+  const dismiss = useCallback(
+    (reason: DismissReason) => (reason === "escape" ? close(true) : setOpen(false)),
+    [close],
+  );
+  useDismiss(open, dismiss, ref);
 
   const morph = reduce ? { duration: 0.15 } : SPRING_FOLDER;
 

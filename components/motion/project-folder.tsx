@@ -18,8 +18,10 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 export type ProjectFolderPreview = {
@@ -64,14 +66,6 @@ export interface ProjectFolderProps {
 }
 
 const MAX_PREVIEWS = 5;
-const FOCUSABLE_SELECTOR = [
-  "a[href]",
-  "button:not([disabled])",
-  "input:not([disabled])",
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  '[tabindex]:not([tabindex="-1"])',
-].join(",");
 
 function getPreviewTransform(index: number, count: number) {
   const offset = index - (count - 1) / 2;
@@ -170,45 +164,13 @@ export function ProjectFolder({
     if (reduce && isClosing) finishClose();
   }, [finishClose, isClosing, reduce]);
 
+  useFocusTrap(isExpanded && mounted, dialogRef, { onEscape: closeOverlay });
+  useScrollLock(isExpanded);
   useEffect(() => {
     if (!isExpanded) return;
-
-    const previousOverflow = document.body.style.overflow;
     const focusFrame = requestAnimationFrame(() => closeButtonRef.current?.focus());
-
-    document.body.style.overflow = "hidden";
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        closeOverlay();
-        return;
-      }
-      if (event.key !== "Tab" || !dialogRef.current) return;
-
-      const focusable = Array.from(
-        dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      ).filter((element) => element.tabIndex >= 0);
-      const first = focusable[0];
-      const last = focusable.at(-1);
-      if (!first || !last) return;
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      cancelAnimationFrame(focusFrame);
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [closeOverlay, isExpanded]);
+    return () => cancelAnimationFrame(focusFrame);
+  }, [isExpanded]);
 
   const handleFolderClick = () => {
     setIsClosing(false);

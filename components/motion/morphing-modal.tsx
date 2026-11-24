@@ -14,9 +14,11 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
-import { focusablesIn, useFocusTrap } from "@/lib/hooks/use-focus-trap";
+import { focusablesIn } from "@/lib/focusable";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 import { useMessages } from "@/lib/i18n";
 import { PresenceGate } from "@/lib/presence-gate";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
@@ -96,14 +98,7 @@ export function MorphingModal({
   const enterY = reduce ? 0 : placement === "bottom" ? 40 : 20;
   const enterScale = reduce ? 1 : 0.97;
 
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
+  useScrollLock(open);
 
   // Mounted only while open, and while open the chrome is two fixed siblings
   // rather than one wrapper: the backdrop spans the viewport edges but carries

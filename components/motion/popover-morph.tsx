@@ -30,6 +30,7 @@ import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
 import { EASE_OUT } from "@/lib/ease";
 import { FOCUSABLE_SELECTOR } from "@/lib/focusable";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -155,25 +156,14 @@ export function MorphPopover({
     restore?.focus();
   }, [root, setOpen, trigger]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-    const onPointer = (e: PointerEvent) => {
-      const target = e.target as Node;
-      if (
-        root &&
-        !root.contains(target) &&
-        !contentRef.current?.contains(target)
-      )
-        close();
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open, root, close]);
+  // Inside is the root anchor and the portaled panel. Until the root mounts
+  // there is nothing to measure "outside" against, so nothing dismisses.
+  const insidePopover = useCallback(
+    (target: Element) =>
+      !root || root.contains(target) || Boolean(contentRef.current?.contains(target)),
+    [root],
+  );
+  useDismiss(open, close, null, { ignore: insidePopover });
 
   const ctx = useMemo<MorphContextValue>(
     () => ({

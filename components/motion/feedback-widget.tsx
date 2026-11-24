@@ -12,6 +12,7 @@ import {
 } from "react";
 import { Button, StatefulButton } from "@/components/motion/button";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -132,27 +133,10 @@ export function FeedbackWidget({
   }, [status, reduce]);
 
   // Dismiss on escape or outside click while open (but not mid-send).
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !busy) close();
-    };
-    const onPointer = (e: PointerEvent) => {
-      if (
-        !busy &&
-        rootRef.current &&
-        !rootRef.current.contains(e.target as Node)
-      ) {
-        close();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open, busy, close]);
+  const dismiss = useCallback(() => {
+    if (!busy) close();
+  }, [busy, close]);
+  useDismiss(open, dismiss, rootRef);
 
   const scheduleSuccessClose = () => {
     clearCloseTimer();

@@ -13,12 +13,12 @@ import {
   type KeyboardEvent,
   type PointerEvent,
   useCallback,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 import { emphasis, useSankeyChart } from "./context";
 import type { PlacedNode } from "./model";
@@ -117,16 +117,11 @@ export function SankeyChartPlot({ className, showValues = true }: SankeyChartPlo
 
   // A tap or click elsewhere dismisses what a tap opened; touch has no hover
   // to leave, so the tooltip would otherwise stay up.
-  useEffect(() => {
-    if (!tooltipOpen) return;
-    const dismiss = (event: globalThis.PointerEvent) => {
-      if (plotRef.current?.contains(event.target as Node)) return;
-      setTooltipOpen(false);
-      setActive(null);
-    };
-    document.addEventListener("pointerdown", dismiss);
-    return () => document.removeEventListener("pointerdown", dismiss);
-  }, [tooltipOpen, plotRef, setTooltipOpen, setActive]);
+  const dismissTooltip = useCallback(() => {
+    setTooltipOpen(false);
+    setActive(null);
+  }, [setTooltipOpen, setActive]);
+  useDismiss(tooltipOpen, dismissTooltip, plotRef, { escape: false });
 
   // A node with any flow to or from the highlighted node lights up with it.
   const lit = emphasis(active);

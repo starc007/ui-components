@@ -27,6 +27,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL } from "@/lib/ease";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { useMessages } from "@/lib/i18n";
 import { holdSelection, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
@@ -160,19 +161,23 @@ export function ContextMenu({
     [setOpen],
   );
 
+  // A focused panel answers Escape itself; this covers a menu opened by
+  // pointer that never took focus. Either way focus goes back to the trigger.
+  const dismiss = useCallback(
+    (reason: DismissReason) => {
+      setOpen(false);
+      if (reason === "escape") triggerRef.current?.focus();
+    },
+    [setOpen],
+  );
+  useDismiss(open, dismiss, contentRef);
+
   useEffect(() => {
     if (!open) return;
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (!contentRef.current?.contains(event.target as Node)) setOpen(false);
-    };
     const onWindowChange = () => setOpen(false);
-
-    window.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("resize", onWindowChange);
     window.addEventListener("scroll", onWindowChange);
     return () => {
-      window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("resize", onWindowChange);
       window.removeEventListener("scroll", onWindowChange);
     };

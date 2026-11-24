@@ -14,6 +14,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { useMessages } from "@/lib/i18n";
 import { useSound } from "@/lib/sound";
 import { closeSound } from "@/lib/sounds/close";
@@ -298,30 +299,15 @@ export function Combobox({
       list.scrollTop += itemRect.bottom - listRect.bottom;
   }, [activeValue, items, open]);
 
-  useEffect(() => {
-    if (!open) return;
-    const isInside = (target: Node) =>
-      rootRef.current?.contains(target) || contentRef.current?.contains(target);
-    const onPointerDown = (event: PointerEvent) => {
-      if (!isInside(event.target as Node)) updateOpen(false);
-    };
-    const onFocusIn = (event: FocusEvent) => {
-      if (!isInside(event.target as Node)) updateOpen(false);
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      event.preventDefault();
-      updateOpen(false, true);
-    };
-    window.addEventListener("pointerdown", onPointerDown);
-    window.addEventListener("focusin", onFocusIn);
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      window.removeEventListener("pointerdown", onPointerDown);
-      window.removeEventListener("focusin", onFocusIn);
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open, updateOpen]);
+  const insideContent = useCallback(
+    (target: Element) => Boolean(contentRef.current?.contains(target)),
+    [],
+  );
+  const dismiss = useCallback(
+    (reason: DismissReason) => updateOpen(false, reason === "escape"),
+    [updateOpen],
+  );
+  useDismiss(open, dismiss, rootRef, { focusOutside: true, ignore: insideContent });
 
   const activeItem = activeValue ? items.get(activeValue) : undefined;
   const context = useMemo<ComboboxContextValue>(

@@ -13,11 +13,13 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useMessages } from "@/lib/i18n";
 import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { PresenceGate } from "@/lib/presence-gate";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 import { searchCommands } from "@/lib/command-search";
 
@@ -97,6 +99,7 @@ export function CommandPalette({
   const canTouch = useTouchCapable();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -106,29 +109,17 @@ export function CommandPalette({
       ) {
         e.preventDefault();
         setOpen(!open);
-        return;
-      }
-      if (e.key === "Escape" && open) {
-        e.preventDefault();
-        setOpen(false);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, shortcut, setOpen]);
 
-  useEffect(() => {
-    if (!open) return;
-    const root = document.documentElement;
-    const previousRootOverflow = root.style.overflow;
-    const previousBodyOverflow = document.body.style.overflow;
-    root.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    return () => {
-      root.style.overflow = previousRootOverflow;
-      document.body.style.overflow = previousBodyOverflow;
-    };
-  }, [open]);
+  // A modal dialog: Tab stays inside, Escape closes, and focus goes back to
+  // whatever opened it.
+  const close = useCallback(() => setOpen(false), [setOpen]);
+  useFocusTrap(open && mounted, panelRef, { onEscape: close });
+  useScrollLock(open);
 
   const filtered = useMemo(() => searchCommands(items, query), [items, query]);
 
@@ -237,6 +228,8 @@ export function CommandPalette({
               className="pointer-events-none fixed inset-x-4 bottom-4 top-[18vh] z-[100] flex items-start justify-center"
             >
               <motion.div
+                ref={panelRef}
+                tabIndex={-1}
                 role="dialog"
                 aria-modal="true"
                 aria-label={t("dialog")}

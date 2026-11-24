@@ -20,6 +20,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useMessages } from "@/lib/i18n";
@@ -238,14 +239,12 @@ export function MorphingSearch({
 		};
 	}, [backgroundScrollLocked]);
 
+	// The backdrop handles presses; this is Escape, answered only while the
+	// search is the innermost open layer.
+	useDismiss(open, closeSearch, dialogRef, { outsidePress: false });
+
 	useEffect(() => {
 		const handleShortcut = (event: KeyboardEvent) => {
-			if (event.key === "Escape" && open) {
-				event.preventDefault();
-				closeSearch();
-				return;
-			}
-
 			if (
 				!open &&
 				shortcut &&
@@ -264,7 +263,7 @@ export function MorphingSearch({
 
 		window.addEventListener("keydown", handleShortcut);
 		return () => window.removeEventListener("keydown", handleShortcut);
-	}, [closeSearch, open, openSearch, shortcut]);
+	}, [open, openSearch, shortcut]);
 
 	// Only this component's own state. Telling the consumer the query changed is
 	// a side effect, so it waits for the effect below.

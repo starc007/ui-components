@@ -86,6 +86,24 @@ export const changelogEntries: ChangelogEntry[] = [
         "type": "fixed",
         "text": "Before After Slider shows the before image correctly inside a scaled or zoomed container, where it used to clip to a small patch in the corner.",
         "component": "before-after-slider"
+      },
+      {
+        "type": "fixed",
+        "text": "Overlays stack: a menu opened inside a Drawer, Bottom Sheet or modal keeps keyboard focus, and Escape closes only the innermost one."
+      },
+      {
+        "type": "fixed",
+        "text": "Command Palette keeps Tab inside the dialog and returns focus to where it was when it closes.",
+        "component": "command-palette"
+      },
+      {
+        "type": "fixed",
+        "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
+        "component": "select"
+      },
+      {
+        "type": "fixed",
+        "text": "Open overlays share one scroll lock, so closing one never unlocks the page under another that is still open."
       }
     ]
   },

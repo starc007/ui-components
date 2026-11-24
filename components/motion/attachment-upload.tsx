@@ -35,8 +35,10 @@ import {
   SPRING_LAYOUT,
   SPRING_PRESS,
 } from "@/lib/ease";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 import { useLocale, useMessages } from "@/lib/i18n";
 import { PresenceGate } from "@/lib/presence-gate";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 export type AttachmentUploadKind = "file" | "link" | "image" | "audio";
@@ -414,34 +416,11 @@ function ImagePreviewDialog({
   reduce: boolean;
   t: Translate;
 }) {
-  const closeRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!item) return;
-
-    const previousFocus =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    closeRef.current?.focus();
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-      if (event.key === "Tab") {
-        event.preventDefault();
-        closeRef.current?.focus();
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-      previousFocus?.focus();
-    };
-  }, [item, onClose]);
+  const panelRef = useRef<HTMLDivElement>(null);
+  // The close button is the only stop, so Tab stays on it; Escape closes and
+  // focus returns to the thumbnail that opened the preview.
+  useFocusTrap(Boolean(item), panelRef, { onEscape: onClose });
+  useScrollLock(Boolean(item));
 
   if (typeof document === "undefined") return null;
 
@@ -474,6 +453,8 @@ function ImagePreviewDialog({
 
             <div className="fixed inset-4 flex items-center justify-center sm:inset-8">
               <motion.div
+                ref={panelRef}
+                tabIndex={-1}
                 role="dialog"
                 aria-modal="true"
                 aria-label={t("previewOf", { name: item.name })}
@@ -493,7 +474,6 @@ function ImagePreviewDialog({
                   transition={{ layout: SPRING_LAYOUT }}
                 />
                 <motion.button
-                  ref={closeRef}
                   type="button"
                   aria-label={t("closePreview")}
                   onClick={onClose}

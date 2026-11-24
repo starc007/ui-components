@@ -11,8 +11,10 @@ import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { EASE_DRAWER } from "@/lib/ease";
 import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
+import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useMessages } from "@/lib/i18n";
 import { PresenceGate } from "@/lib/presence-gate";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
@@ -71,9 +73,7 @@ export function BottomSheet({
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (open) setSnap(defaultSnap);
-  }, [open, defaultSnap]);
+  useOnOpen(open, () => setSnap(defaultSnap));
 
   // Focus moves into the sheet on open, Tab stays inside it, and focus returns
   // to the opener on close. `mounted` gates it because the sheet only exists
@@ -85,33 +85,8 @@ export function BottomSheet({
   // Lock background scroll while open. overflow:hidden alone is ignored by
   // iOS Safari — boundary scrolls inside the sheet chain to the page, which
   // scrolls underneath and ends up somewhere else on close. position:fixed
-  // is the lock that actually holds; restore the scroll position after.
-  useEffect(() => {
-    if (!open) return;
-    const body = document.body;
-    const scrollY = window.scrollY;
-    const prev = {
-      position: body.style.position,
-      top: body.style.top,
-      left: body.style.left,
-      right: body.style.right,
-      overflow: body.style.overflow,
-    };
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.left = "0";
-    body.style.right = "0";
-    body.style.overflow = "hidden";
-
-    return () => {
-      body.style.position = prev.position;
-      body.style.top = prev.top;
-      body.style.left = prev.left;
-      body.style.right = prev.right;
-      body.style.overflow = prev.overflow;
-      window.scrollTo(0, scrollY);
-    };
-  }, [open]);
+  // is the lock that actually holds; it restores the scroll position after.
+  useScrollLock(open, { fixed: true });
 
   const onDragEnd = (_: unknown, info: PanInfo) => {
     const velocity = info.velocity.y;

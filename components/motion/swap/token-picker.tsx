@@ -4,6 +4,8 @@ import { Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SPRING_PANEL } from "@/lib/ease";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
+import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { EASE } from "./constants";
@@ -37,23 +39,20 @@ export function TokenPicker({
   const [chainFilter, setChainFilter] = useState("all");
   const [q, setQ] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
+  useOnOpen(open, () => setQ(""));
   useEffect(() => {
     if (!open) return;
-    setQ("");
-    requestAnimationFrame(() =>
+    const frame = requestAnimationFrame(() =>
       inputRef.current?.focus({ preventScroll: true }),
     );
+    return () => cancelAnimationFrame(frame);
   }, [open]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  // A modal sheet: Tab stays inside, Escape closes, focus returns to the
+  // token button that opened it.
+  useFocusTrap(open, sheetRef, { onEscape: onClose });
 
   const popular = useMemo(
     () => tokens.filter((token) => token.popular).slice(0, 6),
@@ -100,7 +99,9 @@ export function TokenPicker({
             transition={
               reduce ? { duration: 0.18, ease: EASE } : SPRING_PANEL
             }
-            className="absolute inset-x-0 bottom-0 z-20 flex max-h-[92%] flex-col rounded-t-2xl border-t border-border bg-card shadow-2xl"
+            ref={sheetRef}
+            tabIndex={-1}
+            className="absolute inset-x-0 bottom-0 z-20 flex max-h-[92%] flex-col rounded-t-2xl border-t border-border bg-card shadow-2xl outline-none"
             role="dialog"
             aria-modal="true"
             aria-label={t(side === "from" ? "selectFromToken" : "selectToToken")}
