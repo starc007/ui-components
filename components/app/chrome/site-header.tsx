@@ -12,7 +12,6 @@ import { GithubIcon } from "@/components/app/icons";
 import { PressLink } from "@/components/app/press-link";
 import { ProCta } from "@/components/app/pro-cta";
 import { Link, usePathname } from "@/lib/navigation";
-import { hasSiteSidebar } from "@/lib/component-paths";
 import { cn } from "@/lib/utils";
 
 function formatStarCount(count: number) {
@@ -42,8 +41,6 @@ export function SiteHeader() {
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  // Docs pages navigate from their sidebar, so the header carries no links there.
-  const sidebarPage = hasSiteSidebar(pathname);
   const formattedStarCount =
     typeof githubStarCount === "number"
       ? formatStarCount(githubStarCount)
@@ -78,7 +75,7 @@ export function SiteHeader() {
             />
             <span>beUI</span>
           </Link>
-          {sidebarPage ? null : <HeaderNav pathname={pathname} />}
+          <HeaderNav pathname={pathname} />
         </div>
 
         <nav className="flex items-center gap-2">

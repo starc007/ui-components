@@ -25,8 +25,8 @@ function within(pathname: string, href: string) {
 }
 
 /**
- * The header links on pages without the docs sidebar: a Components menu,
- * Charts, Interactions and React Native as links, and a Resources menu.
+ * The header links on every page: a Components menu, Charts, Interactions,
+ * Sounds and React Native as links, and a Resources menu.
  */
 export function HeaderNav({ pathname }: { pathname: string }) {
   const t = useTranslations("Chrome.header");
