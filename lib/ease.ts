@@ -57,3 +57,11 @@ export const SPRING_GLIDE = {
   damping: 50,
   mass: 0.5,
 } as const;
+
+/** Shared-surface morphs: a trigger growing into its panel and back on one
+ * weighted spring, so opening and closing travel the same path. */
+export const SPRING_MORPH = {
+  type: "spring",
+  duration: 0.5,
+  bounce: 0.22,
+} as const;

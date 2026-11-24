@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Transition } from "motion/react";
+import { motion } from "motion/react";
 import {
   type CSSProperties,
   type ReactNode,
@@ -11,19 +11,13 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
+import { SPRING_MORPH } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { useComboboxContext } from "./context";
 
 type Side = "top" | "bottom";
 type Align = "start" | "center" | "end";
 
-// The panel uses one weighted spring for both directions, so opening and
-// closing travel through the same detached geometry.
-const COMBOBOX_MORPH: Transition = {
-  type: "spring",
-  duration: 0.5,
-  bounce: 0.22,
-};
 const VIEWPORT_PADDING = 8;
 
 export interface ComboboxContentProps {
@@ -122,7 +116,7 @@ export function ComboboxContent({
           : 0,
       }}
       transition={
-        context.reduce || !morphReady ? { duration: 0 } : COMBOBOX_MORPH
+        context.reduce || !morphReady ? { duration: 0 } : SPRING_MORPH
       }
       style={
         {
@@ -152,7 +146,7 @@ export function ComboboxContent({
         initial={false}
         animate={{ opacity: context.open ? 1 : 0 }}
         transition={
-          context.reduce || !morphReady ? { duration: 0 } : COMBOBOX_MORPH
+          context.reduce || !morphReady ? { duration: 0 } : SPRING_MORPH
         }
       >
         {children}

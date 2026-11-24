@@ -4,7 +4,6 @@ import { Check, ChevronDown } from "lucide-react";
 import {
   AnimatePresence,
   motion,
-  type Transition,
   useReducedMotion,
   type Variants,
 } from "motion/react";
@@ -21,6 +20,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { SPRING_MORPH } from "@/lib/ease";
 import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { type ListboxRow, useListbox } from "@/lib/hooks/use-listbox";
 import { useSound } from "@/lib/sound";
@@ -31,7 +31,7 @@ import { PresenceGate } from "@/lib/presence-gate";
 import { cn } from "@/lib/utils";
 
 // Shared-layout morph: trigger box grows into the panel and back, one surface.
-const MORPH: Transition = { type: "spring", duration: 0.5, bounce: 0.22 };
+const MORPH = SPRING_MORPH;
 // Trigger and panel header share this row so the morph stays seamless.
 const ROW = "flex h-10 w-full items-center justify-between gap-2 px-4 text-sm";
 // The closed trigger is a pill (half its h-10 height). The open panel is

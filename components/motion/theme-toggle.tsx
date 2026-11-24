@@ -44,6 +44,7 @@ const VT_STYLE_ID = "beui-theme-toggle-vt";
 // either EASE_OUT_CSS or a keyword. The circle variants keep the Material
 // standard curve because their reveal expands symmetrically rather than
 // decelerating. Durations differ per variant to match native OS mode switches.
+const CIRCLE_EASE_CSS = "cubic-bezier(0.4, 0, 0.2, 1)";
 const VT_CSS = `
 html[data-beui-vt="rect"]::view-transition-old(root) {
   animation: none;
@@ -60,11 +61,11 @@ html[data-beui-vt="circle-blur"]::view-transition-old(root) {
 }
 html[data-beui-vt="circle"]::view-transition-new(root) {
   mix-blend-mode: normal;
-  animation: beui-circle-reveal 700ms cubic-bezier(0.4, 0, 0.2, 1);
+  animation: beui-circle-reveal 700ms ${CIRCLE_EASE_CSS};
 }
 html[data-beui-vt="circle-blur"]::view-transition-new(root) {
   mix-blend-mode: normal;
-  animation: beui-circle-blur-reveal 700ms cubic-bezier(0.4, 0, 0.2, 1);
+  animation: beui-circle-blur-reveal 700ms ${CIRCLE_EASE_CSS};
 }
 html[data-beui-vt="blinds"]::view-transition-old(root) {
   animation: none;

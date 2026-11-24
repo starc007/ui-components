@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Transition } from "motion/react";
+import { motion } from "motion/react";
 import {
   type CSSProperties,
   type ReactNode,
@@ -11,19 +11,13 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
+import { SPRING_MORPH } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { useMultiSelectContext } from "./context";
 
 type Side = "top" | "bottom";
 type Align = "start" | "center" | "end";
 
-// Matches the Combobox surface: the field grows into a panel and then
-// separates, preserving a continuous spatial relationship with its trigger.
-const MULTI_SELECT_MORPH: Transition = {
-  type: "spring",
-  duration: 0.5,
-  bounce: 0.22,
-};
 const VIEWPORT_PADDING = 8;
 
 export interface MultiSelectContentProps {
@@ -123,7 +117,7 @@ export function MultiSelectContent({
           : 0,
       }}
       transition={
-        context.reduce || !morphReady ? { duration: 0 } : MULTI_SELECT_MORPH
+        context.reduce || !morphReady ? { duration: 0 } : SPRING_MORPH
       }
       style={
         {
@@ -153,7 +147,7 @@ export function MultiSelectContent({
         initial={false}
         animate={{ opacity: context.open ? 1 : 0 }}
         transition={
-          context.reduce || !morphReady ? { duration: 0 } : MULTI_SELECT_MORPH
+          context.reduce || !morphReady ? { duration: 0 } : SPRING_MORPH
         }
       >
         {children}
