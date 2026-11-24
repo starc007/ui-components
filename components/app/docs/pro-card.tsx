@@ -11,7 +11,7 @@ import { ProSalePrice } from "@/components/app/docs/pro-sale-price";
 import { ProCta } from "@/components/app/pro-cta";
 
 /** Web + Mobile lifetime on pro.beui.dev. */
-const PRO_BUNDLE_PRICE_USD = 249;
+export const PRO_BUNDLE_PRICE_USD = 249;
 
 const PRO_URL =
   "https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=component_sidebar";

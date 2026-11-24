@@ -15,7 +15,7 @@ import { LandingButton } from "./landing-button";
 import { NATIVE_COUNT, PRO_URL, WEB_COUNT } from "./landing-data";
 import { LiveWall } from "./live-wall";
 import { NativeBand } from "./native-band";
-import { PlansCompare } from "./plans-compare";
+import { ProBand } from "./pro-band";
 import { SponsorRow } from "./sponsor-row";
 import { TestimonialRows } from "./testimonial-rows";
 import { wallTiles } from "./wall-picks";
@@ -93,7 +93,7 @@ export function LandingShowcase({ phones }: { phones: NativePhone[] }) {
       <AgentsBento className="pt-16 sm:pt-24" />
       <NativeBand phones={phones} className="pt-16 sm:pt-24" />
       <TestimonialRows className="pt-16 sm:pt-24" />
-      <PlansCompare placement="landing_comparison" className="pt-16 sm:pt-24" />
+      <ProBand placement="landing_pro_band" className="pt-16 sm:pt-24" />
       <FaqList className="pt-16 sm:pt-24" />
       <ContactStrip className="py-16 sm:py-24" />
       <SiteFooter />

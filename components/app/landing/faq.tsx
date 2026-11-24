@@ -2,14 +2,8 @@ import { useTranslations } from "use-intl";
 import type { ReactNode } from "react";
 import { Link } from "@/lib/navigation";
 
-const FAQ_IDS = [
-  "free",
-  "install",
-  "stack",
-  "reactNative",
-  "customize",
-  "pro",
-] as const;
+// Four questions: what most visitors ask before trying a component.
+const FAQ_IDS = ["free", "install", "reactNative", "pro"] as const;
 
 const linkClass = "underline underline-offset-4";
 
@@ -37,13 +31,6 @@ export function useFaqItems() {
       command: "bunx --bun shadcn add @beui/button-base",
       code,
     }),
-    stack: t.rich("stack.answer", {
-      link: (chunks) => (
-        <Link className={linkClass} href="/docs/theme">
-          {chunks}
-        </Link>
-      ),
-    }),
     reactNative: t.rich("reactNative.answer", {
       command: "npx beui-native add button",
       code,
@@ -58,7 +45,6 @@ export function useFaqItems() {
         </Link>
       ),
     }),
-    customize: t("customize.answer"),
     pro: t("pro.answer"),
   };
   return FAQ_IDS.map((id) => ({
