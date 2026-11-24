@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { NotFoundPage } from "../-not-found";
+import { NotFoundPage, notFoundMeta } from "../-not-found";
 
 /**
  * Prerendered as /404.html. Cloudflare serves it, with a 404 status, for any
@@ -11,15 +11,7 @@ export const Route = createFileRoute("/_site/404")({
     const layout = matches.find((match) => (match.routeId as string) === "/_site")?.loaderData as
       | { messages: { Chrome: { notFound: { title: string; description: string } } } }
       | undefined;
-    const text = layout?.messages.Chrome.notFound;
-    return {
-      meta: [
-        ...(text
-          ? [{ title: `${text.title} · beUI` }, { name: "description", content: text.description }]
-          : []),
-        { name: "robots", content: "noindex" },
-      ],
-    };
+    return { meta: notFoundMeta(layout?.messages.Chrome.notFound) };
   },
   component: NotFoundPage,
 });

@@ -17,7 +17,7 @@ import { type Metadata, metadataToHead } from "@/lib/head";
 import { LocaleProvider } from "@/lib/i18n";
 import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import { AUTHOR, SITE_NAME, siteJsonLd } from "@/lib/seo";
-import { NotFoundPage } from "../-not-found";
+import { NotFoundPage, notFoundMeta } from "../-not-found";
 
 const KEYWORDS = [
   "React motion components",
@@ -74,15 +74,7 @@ export const Route = createFileRoute("/_site")({
     const head = metadataToHead(loaderData.metadata);
     // A child that threw notFound() gets the not-found title and noindex.
     if (matches.some((match) => match.status === "notFound")) {
-      const notFound = loaderData.messages.Chrome.notFound;
-      return {
-        ...head,
-        meta: [
-          { title: `${notFound.title} · beUI` },
-          { name: "description", content: notFound.description },
-          { name: "robots", content: "noindex" },
-        ],
-      };
+      return { ...head, meta: notFoundMeta(loaderData.messages.Chrome.notFound) };
     }
     return head;
   },
