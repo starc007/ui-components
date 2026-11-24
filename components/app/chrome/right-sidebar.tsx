@@ -15,7 +15,7 @@ export function RightSidebar() {
 
   return (
     <>
-      {isComponentPage ? <PlatformSwitch layout="block" className="mb-4" /> : null}
+      {isComponentPage ? <PlatformSwitch layout="block" className="mb-3" /> : null}
       {isNativePath(pathname) ? <ProMobileCard /> : <ProCard />}
       <SponsorCard />
     </>

@@ -5,7 +5,7 @@ import { blackFriday, blackFridayPrice, formatUsd } from "@/components/app/black
 export function ProSalePrice({ dollars }: { dollars: number }) {
   const t = useTranslations("Docs.proSale");
   return (
-    <p className="mt-3 flex flex-wrap items-center gap-x-2 text-xs leading-5 text-muted-foreground">
+    <p className="mt-2 flex flex-wrap items-center gap-x-2 text-xs leading-5 text-muted-foreground">
       <span className="font-medium text-foreground">
         {t.rich("price", {
           was: formatUsd(dollars),
