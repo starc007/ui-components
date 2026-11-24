@@ -30,6 +30,11 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         "type": "improved",
         "text": "Dropdown Menu and Context Menu show the check for checkbox and radio items at the end of the row, so labels line up with the rest of the menu."
+      },
+      {
+        "type": "fixed",
+        "text": "Before After Slider shows the before image correctly inside a scaled or zoomed container, where it used to clip to a small patch in the corner.",
+        "component": "before-after-slider"
       }
     ]
   },

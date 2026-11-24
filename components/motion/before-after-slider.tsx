@@ -166,14 +166,15 @@ export function BeforeAfterSlider({
   }, [current, position, reduce]);
   useEffect(() => () => position.stop(), [position]);
 
-  // The curved cut is drawn in pixels, so it needs the frame's size.
+  // The curved cut is drawn in pixels, so it needs the frame's size. The
+  // clip path is in the frame's own pixels, so read the layout size, which a
+  // scaled or zoomed ancestor does not change, not the on-screen box.
   useLayoutEffect(() => {
     const frame = frameRef.current;
     if (!frame) return;
     const measure = () => {
-      const rect = frame.getBoundingClientRect();
-      width.set(rect.width);
-      height.set(rect.height);
+      width.set(frame.offsetWidth);
+      height.set(frame.offsetHeight);
     };
     measure();
     const observer = new ResizeObserver(measure);

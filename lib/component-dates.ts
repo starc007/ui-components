@@ -45,7 +45,7 @@ const COMPONENT_DATES = {
   "motion/collapsible": { publishedAt: "2026-10-05", updatedAt: "2026-10-18" },
   "motion/bookshelf": { publishedAt: "2026-11-19", updatedAt: "2026-11-19" },
   "motion/dropdown-menu": { publishedAt: "2026-11-16", updatedAt: "2026-11-24" },
-  "motion/before-after-slider": { publishedAt: "2026-11-14", updatedAt: "2026-11-14" },
+  "motion/before-after-slider": { publishedAt: "2026-11-14", updatedAt: "2026-11-24" },
   "motion/aspect-ratio": { publishedAt: "2026-10-05", updatedAt: "2026-11-10" },
   "motion/arc-picker": { publishedAt: "2026-10-04", updatedAt: "2026-11-10" },
   "agents/voice-orb": { publishedAt: "2026-10-04", updatedAt: "2026-11-10" },
