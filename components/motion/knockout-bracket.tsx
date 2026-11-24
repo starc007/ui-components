@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight, Shield } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { useMemo, useState } from "react";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT } from "@/lib/ease";
 import { useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -523,32 +524,36 @@ export function KnockoutBracket({
             ))}
           </div>
           {page > 0 && (
-            <button
-              type="button"
-              onClick={() => setPage((p) => clamp(clamp(p, 0, maxPage) - 1, 0, maxPage))}
-              aria-label={t("previousRound")}
-              // Inset by PAD_X so the hover fill clears the scroll clip; 44px
-              // button is the tap target, the inner circle the visible affordance.
-              style={{ left: PAD_X }}
-              className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"
-            >
-              <span className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors group-hover:bg-foreground/10 group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring">
-                <ChevronLeft className="size-5" />
-              </span>
-            </button>
+            <Tooltip content={t("previousRound")} side="right">
+              <button
+                type="button"
+                onClick={() => setPage((p) => clamp(clamp(p, 0, maxPage) - 1, 0, maxPage))}
+                aria-label={t("previousRound")}
+                // Inset by PAD_X so the hover fill clears the scroll clip; 44px
+                // button is the tap target, the inner circle the visible affordance.
+                style={{ left: PAD_X }}
+                className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"
+              >
+                <span className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors group-hover:bg-foreground/10 group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring">
+                  <ChevronLeft className="size-5" />
+                </span>
+              </button>
+            </Tooltip>
           )}
           {page < maxPage && (
-            <button
-              type="button"
-              onClick={() => setPage((p) => clamp(clamp(p, 0, maxPage) + 1, 0, maxPage))}
-              aria-label={t("nextRound")}
-              style={{ right: PAD_X }}
-              className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"
-            >
-              <span className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors group-hover:bg-foreground/10 group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring">
-                <ChevronRight className="size-5" />
-              </span>
-            </button>
+            <Tooltip content={t("nextRound")} side="left">
+              <button
+                type="button"
+                onClick={() => setPage((p) => clamp(clamp(p, 0, maxPage) + 1, 0, maxPage))}
+                aria-label={t("nextRound")}
+                style={{ right: PAD_X }}
+                className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"
+              >
+                <span className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors group-hover:bg-foreground/10 group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring">
+                  <ChevronRight className="size-5" />
+                </span>
+              </button>
+            </Tooltip>
           )}
         </div>
 

@@ -29,6 +29,7 @@ import {
   type MorphPopoverContentProps,
   MorphPopoverTrigger,
 } from "@/components/motion/popover-morph";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import {
@@ -235,6 +236,10 @@ export function DateRangePickerHeader({
     page,
     t,
   } = useDateRangePickerContext("DateRangePickerHeader");
+  const previousLabel = t(
+    view === "years" ? "previousYears" : view === "months" ? "previousYear" : "previousMonth",
+  );
+  const nextLabel = t(view === "years" ? "nextYears" : view === "months" ? "nextYear" : "nextMonth");
   return (
     <div
       {...props}
@@ -283,40 +288,32 @@ export function DateRangePickerHeader({
         </button>
       </div>
       <div className="flex shrink-0 gap-0.5">
-        <button
-          type="button"
-          aria-label={t(
-            view === "years"
-              ? "previousYears"
-              : view === "months"
-                ? "previousYear"
-                : "previousMonth",
-          )}
-          disabled={previousDisabled}
-          className={iconClass}
-          onClick={() => page(-1)}
-        >
-          <ChevronLeft size={16} aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          aria-label={t(
-            view === "years"
-              ? "nextYears"
-              : view === "months"
-                ? "nextYear"
-                : "nextMonth",
-          )}
-          disabled={nextDisabled}
-          hidden={view === "years" && nextDisabled}
-          className={cn(
-            iconClass,
-            view === "years" && nextDisabled && "hidden",
-          )}
-          onClick={() => page(1)}
-        >
-          <ChevronRight size={16} aria-hidden="true" />
-        </button>
+        <Tooltip content={previousLabel} side="top">
+          <button
+            type="button"
+            aria-label={previousLabel}
+            disabled={previousDisabled}
+            className={iconClass}
+            onClick={() => page(-1)}
+          >
+            <ChevronLeft size={16} aria-hidden="true" />
+          </button>
+        </Tooltip>
+        <Tooltip content={nextLabel} side="top">
+          <button
+            type="button"
+            aria-label={nextLabel}
+            disabled={nextDisabled}
+            hidden={view === "years" && nextDisabled}
+            className={cn(
+              iconClass,
+              view === "years" && nextDisabled && "hidden",
+            )}
+            onClick={() => page(1)}
+          >
+            <ChevronRight size={16} aria-hidden="true" />
+          </button>
+        </Tooltip>
       </div>
     </div>
   );
@@ -911,7 +908,8 @@ function CalendarChoices({
 }: {
   id: string;
   label: string;
-  choices: { id: string; label: string; disabled: boolean }[];
+  /** `label` is the full name; `short` is what the grid shows. */
+  choices: { id: string; label: string; short: string; disabled: boolean }[];
   selected: string;
   focusOnMount: boolean;
   reduce: boolean;
@@ -982,6 +980,7 @@ function CalendarChoices({
           key={choice.id}
           type="button"
           disabled={choice.disabled}
+          aria-label={choice.label === choice.short ? undefined : choice.label}
           aria-pressed={choice.id === selected}
           tabIndex={choice.id === active ? 0 : -1}
           onFocus={() => setCursor(choice.id)}
@@ -989,14 +988,20 @@ function CalendarChoices({
           onClick={() => onSelect(choice.id)}
           whileTap={reduce ? undefined : { scale: 0.96 }}
           transition={SPRING_PRESS}
-          className={cn(
-            "flex h-13 items-center justify-center rounded-full px-1 text-sm tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-25",
-            choice.id === selected
-              ? "bg-primary font-medium text-primary-foreground"
-              : "bg-muted/40 hover:bg-muted",
-          )}
+          // The cell stays a full-size tap target that fills the grid; only the
+          // pill inside it carries the selection, hover and focus.
+          className="group flex h-13 items-center justify-center text-sm tabular-nums outline-none disabled:opacity-25"
         >
-          {choice.label}
+          <span
+            className={cn(
+              "inline-flex h-9 min-w-14 items-center justify-center rounded-full px-3 transition-colors group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-card",
+              choice.id === selected
+                ? "bg-primary font-medium text-primary-foreground"
+                : "text-foreground group-hover:bg-muted group-disabled:group-hover:bg-transparent",
+            )}
+          >
+            {choice.short}
+          </span>
         </motion.button>
       ))}
     </fieldset>

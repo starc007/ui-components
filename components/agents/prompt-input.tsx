@@ -25,6 +25,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/motion/select";
+import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -312,31 +313,33 @@ export function PromptInput({
           </Select>
         ) : null}
 
-        <Button
-          type={loading ? "button" : "submit"}
-          size="icon"
-          disabled={loading ? !onStop : !canSubmit}
-          aria-label={loading ? t("stop") : t("send")}
-          onClick={loading ? onStop : undefined}
-          className="ml-auto size-8 rounded-full"
-        >
-          <AnimatePresence initial={false} mode="popLayout">
-            <motion.span
-              key={loading ? "stop" : "send"}
-              initial={reduce ? { opacity: 1 } : { opacity: 0, y: 3, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -3, scale: 0.8 }}
-              transition={reduce ? { duration: 0 } : SPRING_SWAP}
-              className="grid place-items-center"
-            >
-              {loading ? (
-                <Square className="size-3 fill-current" />
-              ) : (
-                <ArrowUp className="size-4" />
-              )}
-            </motion.span>
-          </AnimatePresence>
-        </Button>
+        <Tooltip content={loading ? t("stop") : t("send")} side="top">
+          <Button
+            type={loading ? "button" : "submit"}
+            size="icon"
+            disabled={loading ? !onStop : !canSubmit}
+            aria-label={loading ? t("stop") : t("send")}
+            onClick={loading ? onStop : undefined}
+            className="ml-auto size-8 rounded-full"
+          >
+            <AnimatePresence initial={false} mode="popLayout">
+              <motion.span
+                key={loading ? "stop" : "send"}
+                initial={reduce ? { opacity: 1 } : { opacity: 0, y: 3, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -3, scale: 0.8 }}
+                transition={reduce ? { duration: 0 } : SPRING_SWAP}
+                className="grid place-items-center"
+              >
+                {loading ? (
+                  <Square className="size-3 fill-current" />
+                ) : (
+                  <ArrowUp className="size-4" />
+                )}
+              </motion.span>
+            </AnimatePresence>
+          </Button>
+        </Tooltip>
       </div>
     </form>
   );

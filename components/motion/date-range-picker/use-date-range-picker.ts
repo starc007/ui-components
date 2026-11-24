@@ -114,6 +114,10 @@ export function useDateRangePickerController({
     month: "long",
     timeZone: "UTC",
   });
+  const shortMonthNameFormat = new Intl.DateTimeFormat(locale, {
+    month: "short",
+    timeZone: "UTC",
+  });
   const dateFormat = new Intl.DateTimeFormat(locale, {
     weekday: "long",
     month: "long",
@@ -403,6 +407,9 @@ export function useDateRangePickerController({
           return {
             id: date,
             label: monthNameFormat.format(parse(date)),
+            // Three columns leave a long name like "November" no room in its
+            // pill, so the grid shows the short name; `label` stays the name.
+            short: shortMonthNameFormat.format(parse(date)),
             disabled:
               disabled ||
               Boolean(min && date < monthOf(min)) ||
@@ -416,6 +423,7 @@ export function useDateRangePickerController({
             return {
               id: String(choiceYear),
               label: String(choiceYear),
+              short: String(choiceYear),
               disabled:
                 disabled || choiceYear < minYear || choiceYear > maxYear,
             };

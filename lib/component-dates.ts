@@ -184,7 +184,7 @@ const COMPONENT_DATES = {
   },
   "agents/file-diff": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-24",
   },
   "agents/streaming-response": {
     publishedAt: "2026-08-01",
@@ -210,7 +210,7 @@ const COMPONENT_DATES = {
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-11-10" },
   "blocks/project-folder": { publishedAt: "2026-08-15", updatedAt: "2026-11-10" },
   "blocks/card-folder": { publishedAt: "2026-09-04", updatedAt: "2026-11-10" },
-  "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-11-10" },
+  "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-11-24" },
   "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-11-24" },
   "blocks/swap": { publishedAt: "2026-05-19", updatedAt: "2026-11-24" },
   "blocks/dynamic-island": { publishedAt: "2026-06-10", updatedAt: "2026-11-24" },
@@ -221,7 +221,7 @@ const COMPONENT_DATES = {
   "blocks/expandable-tabs": { publishedAt: "2026-06-14", updatedAt: "2026-11-10" },
   "blocks/morphing-tabs": { publishedAt: "2026-08-06", updatedAt: "2026-11-10" },
   "blocks/swipeable-list": { publishedAt: "2026-06-15", updatedAt: "2026-11-10" },
-  "blocks/file-upload": { publishedAt: "2026-06-18", updatedAt: "2026-11-10" },
+  "blocks/file-upload": { publishedAt: "2026-06-18", updatedAt: "2026-11-24" },
   "blocks/prediction-market": { publishedAt: "2026-06-18", updatedAt: "2026-11-24" },
   "blocks/wallet-card": { publishedAt: "2026-07-03", updatedAt: "2026-11-24" },
   "blocks/otp-input": { publishedAt: "2026-06-13", updatedAt: "2026-11-24" },

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useId, useRef, useState } from "react";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT } from "@/lib/ease";
 import { useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -354,29 +355,33 @@ function FileUploadRow({
             <div className="flex shrink-0 items-center gap-1">
               <StatusIcon status={status} reduce={reduce} t={t} />
               {status === "error" ? (
+                <Tooltip content={t("retry", { name: item.name })} side="top">
+                  <button
+                    type="button"
+                    onClick={() => onRetry(item)}
+                    aria-label={t("retry", { name: item.name })}
+                    className={cn(
+                      "grid h-7 w-7 place-items-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground active:scale-95",
+                      classNames?.action,
+                    )}
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" />
+                  </button>
+                </Tooltip>
+              ) : null}
+              <Tooltip content={t("remove", { name: item.name })} side="top">
                 <button
                   type="button"
-                  onClick={() => onRetry(item)}
-                  aria-label={t("retry", { name: item.name })}
+                  onClick={() => onRemove(item)}
+                  aria-label={t("remove", { name: item.name })}
                   className={cn(
                     "grid h-7 w-7 place-items-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground active:scale-95",
                     classNames?.action,
                   )}
                 >
-                  <RotateCcw className="h-3.5 w-3.5" />
+                  <X className="h-3.5 w-3.5" />
                 </button>
-              ) : null}
-              <button
-                type="button"
-                onClick={() => onRemove(item)}
-                aria-label={t("remove", { name: item.name })}
-                className={cn(
-                  "grid h-7 w-7 place-items-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground active:scale-95",
-                  classNames?.action,
-                )}
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
+              </Tooltip>
             </div>
           </div>
 

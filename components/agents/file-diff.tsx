@@ -23,6 +23,7 @@ import {
   useAgentCodeTokens,
 } from "@/components/agents/agent-code";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { formatNumber, useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -280,21 +281,22 @@ export function FileDiff({
 
             {canCopy ? (
               <div className="flex justify-end px-2 pb-1.5 pt-1">
-                <motion.button
-                  type="button"
-                  aria-label={copied ? t("copied") : t("copy")}
-                  title={copied ? t("copied") : t("copy")}
-                  onClick={handleCopy}
-                  whileTap={reduce ? undefined : { scale: 0.9 }}
-                  transition={SPRING_PRESS}
-                  className="grid size-7 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-background/70 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  {copied ? (
-                    <Check className="size-3.5" />
-                  ) : (
-                    <Copy className="size-3.5" />
-                  )}
-                </motion.button>
+                <Tooltip content={copied ? t("copied") : t("copy")} side="top">
+                  <motion.button
+                    type="button"
+                    aria-label={copied ? t("copied") : t("copy")}
+                    onClick={handleCopy}
+                    whileTap={reduce ? undefined : { scale: 0.9 }}
+                    transition={SPRING_PRESS}
+                    className="grid size-7 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-background/70 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {copied ? (
+                      <Check className="size-3.5" />
+                    ) : (
+                      <Copy className="size-3.5" />
+                    )}
+                  </motion.button>
+                </Tooltip>
               </div>
             ) : null}
           </div>

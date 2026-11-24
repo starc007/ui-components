@@ -65,6 +65,15 @@ export const changelogEntries: ChangelogEntry[] = [
         "text": "Bloom Menu, Feedback Widget, OTP Input, Swap and Expandable Action Bar now use the shared beUI springs and curves, so they move like the rest of the library."
       },
       {
+        "type": "improved",
+        "text": "Icon-only action buttons show their name in a tooltip on hover and focus: Swap's reverse button, Prompt Input's send and stop, File Upload's retry and remove, the Date Range Picker's month arrows, Knockout Bracket's round arrows and File Diff's copy button."
+      },
+      {
+        "type": "fixed",
+        "text": "Date Range Picker's month and year grids mark the choice with a compact pill instead of filling the whole cell, and months show short names. Screen readers still hear the full name.",
+        "component": "date-range-picker"
+      },
+      {
         "type": "fixed",
         "text": "Swap's quote spinner no longer scales in when reduced motion is on.",
         "component": "swap"

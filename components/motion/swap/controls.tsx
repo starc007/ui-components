@@ -3,6 +3,7 @@
 import { ArrowDownUp, Check, ChevronDown, Send, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
+import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -25,17 +26,19 @@ export function FlipButton({
   const t = useMessages("swap", swapMessages, labels);
   return (
     <div className="relative -my-4 flex justify-center" style={{ zIndex: 1 }}>
-      <motion.button
-        type="button"
-        onClick={onClick}
-        aria-label={t("reverse")}
-        whileTap={reduce ? undefined : { scale: 0.9 }}
-        animate={reduce ? undefined : { rotate: rotation }}
-        transition={SPRING_LAYOUT}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[3px] border-card bg-muted text-foreground backdrop-blur"
-      >
-        <ArrowDownUp className="h-3.5 w-3.5" />
-      </motion.button>
+      <Tooltip content={t("reverse")} side="right">
+        <motion.button
+          type="button"
+          onClick={onClick}
+          aria-label={t("reverse")}
+          whileTap={reduce ? undefined : { scale: 0.9 }}
+          animate={reduce ? undefined : { rotate: rotation }}
+          transition={SPRING_LAYOUT}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[3px] border-card bg-muted text-foreground backdrop-blur"
+        >
+          <ArrowDownUp className="h-3.5 w-3.5" />
+        </motion.button>
+      </Tooltip>
     </div>
   );
 }
