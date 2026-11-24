@@ -64,7 +64,6 @@ type CreditGroup = { credit: ComponentCredit; examples: ComponentExample[] };
 export type VariantCardData = {
   slug: string;
   name: string;
-  summary: string;
   previewKey: string;
   href: string;
   badge: "new" | null;
@@ -101,7 +100,6 @@ export const getComponentPage = createServerFn({ method: "GET" })
           return {
             slug: example.slug,
             name: copy?.name ?? example.name,
-            summary: copy?.summary ?? example.description ?? "",
             previewKey: example.previewKey,
             href: variantPath(cat.slug, comp.slug, example.slug),
             badge: example.badge ?? null,
@@ -423,7 +421,6 @@ function VariantCard({
         id={variant.slug}
         href={variant.href}
         name={variant.name}
-        description={variant.summary}
         badge={variant.badge}
         launchedAt={variant.launchedAt}
       />

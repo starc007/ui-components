@@ -2,7 +2,6 @@
 
 import { componentPath } from "@/lib/component-paths";
 
-import { ArrowUpRight } from "lucide-react";
 import { useInView } from "motion/react";
 import { useTranslations } from "use-intl";
 import { useRef, useState } from "react";
@@ -11,7 +10,6 @@ import { NewBadge } from "@/components/app/docs/new-badge";
 import { PreviewFit } from "@/components/app/landing/preview-fit";
 import { getPreview, previews } from "@/components/previews";
 import { Link } from "@/lib/navigation";
-import { EASE_OUT_CSS } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type CardVariant = "default" | "wide" | "feature";
@@ -30,7 +28,6 @@ export function LandingComponentCard({
   id,
   href,
   name,
-  description,
   badge,
   launchedAt,
 }: {
@@ -43,12 +40,10 @@ export function LandingComponentCard({
   /** Overrides for a card that stands for one variant, not the whole page. */
   href?: string;
   name?: string;
-  description?: string;
   badge?: "new" | null;
   launchedAt?: string | null;
 }) {
   const title = name ?? component.name;
-  const blurb = description ?? component.description;
   const isNew = (badge === undefined ? component.badge : badge) === "new";
   const newSince = (launchedAt === undefined ? component.launchedAt : launchedAt) ?? undefined;
   const t = useTranslations("Landing.card");
@@ -82,10 +77,7 @@ export function LandingComponentCard({
         aria-label={t("view", { name: title })}
         className="absolute inset-0 z-20 rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       />
-      <div
-        className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card transition-colors duration-300 contain-[paint] group-hover/card:border-border-strong"
-        style={{ transitionTimingFunction: EASE_OUT_CSS }}
-      >
+      <div className="relative flex h-full flex-col overflow-hidden rounded-3xl bg-card contain-[paint]">
         {shouldRenderPreview ? (
           <PreviewFit hover={hover} maxScale={feature ? 1 : 0.82}>
             {Preview ? <Preview /> : null}
@@ -97,27 +89,16 @@ export function LandingComponentCard({
           />
         )}
 
-        <div className="flex shrink-0 items-center justify-between gap-3 px-4 py-3.5">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h3
-                className={cn(
-                  "truncate font-display font-medium tracking-tight text-foreground",
-                  feature ? "text-lg" : "text-base",
-                )}
-              >
-                {title}
-              </h3>
-              {isNew ? <NewBadge launchedAt={newSince} /> : null}
-            </div>
-            <p className="mt-0.5 line-clamp-1 text-xs leading-relaxed text-muted-foreground">
-              {blurb}
-            </p>
-          </div>
-          <ArrowUpRight
-            className="h-4 w-4 shrink-0 -translate-x-1 text-muted-foreground opacity-0 transition-[opacity,transform] duration-300 group-hover/card:translate-x-0 group-hover/card:opacity-100"
-            style={{ transitionTimingFunction: EASE_OUT_CSS }}
-          />
+        <div className="flex min-w-0 shrink-0 items-center gap-2 px-4 py-3.5">
+          <h3
+            className={cn(
+              "truncate font-display font-medium tracking-tight text-foreground",
+              feature ? "text-lg" : "text-base",
+            )}
+          >
+            {title}
+          </h3>
+          {isNew ? <NewBadge launchedAt={newSince} /> : null}
         </div>
       </div>
     </article>
