@@ -1,13 +1,23 @@
 "use client";
 
-import { Check, ChevronDown, Copy, FileDown, LoaderCircle, TriangleAlert } from "lucide-react";
-import { useTranslations } from "use-intl";
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import {
-  MorphPopover,
-  MorphPopoverContent,
-  MorphPopoverTrigger,
-} from "@/components/motion/popover-morph";
+  ArrowUpRight,
+  Check,
+  ChevronDown,
+  Copy,
+  FileDown,
+  LoaderCircle,
+  TriangleAlert,
+} from "lucide-react";
+import { useTranslations } from "use-intl";
+import { useEffect, useRef, useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/motion/dropdown-menu";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
@@ -54,8 +64,9 @@ Help me understand how to use it. Be ready to explain the API, give examples, or
   return `${baseUrl}?q=${encodeURIComponent(prompt)}`;
 }
 
-const actionClassName =
-  "flex min-h-8 w-full items-center gap-3 rounded-full px-3 py-1.5 text-left text-sm text-foreground outline-none transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:ring-2 focus-visible:ring-ring";
+function openInNewTab(href: string) {
+  window.open(href, "_blank", "noopener,noreferrer");
+}
 
 export function CopyPage({
   pageUrl,
@@ -70,16 +81,6 @@ export function CopyPage({
   const [open, setOpen] = useState(false);
   const [copyState, setCopyState] = useState<CopyState>("idle");
   const resetTimer = useRef<number | null>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const wasOpen = useRef(false);
-
-  useEffect(() => {
-    if (wasOpen.current && !open && menuRef.current?.contains(document.activeElement)) {
-      triggerRef.current?.focus();
-    }
-    wasOpen.current = open;
-  }, [open]);
 
   useEffect(
     () => () => {
@@ -111,49 +112,10 @@ export function CopyPage({
     resetLater();
   };
 
-  const focusMenuItem = (edge: "first" | "last") => {
-    setOpen(true);
-    window.setTimeout(() => {
-      const items = menuRef.current?.querySelectorAll<HTMLAnchorElement>("a");
-      items?.[edge === "first" ? 0 : items.length - 1]?.focus();
-    });
-  };
-
-  const handleMenuKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (!menuRef.current || !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
-      return;
-    }
-    const items = Array.from(menuRef.current.querySelectorAll<HTMLAnchorElement>("a"));
-    if (!items.length) return;
-    event.preventDefault();
-    const current = items.indexOf(document.activeElement as HTMLAnchorElement);
-    if (event.key === "Home") items[0]?.focus();
-    else if (event.key === "End") items.at(-1)?.focus();
-    else if (event.key === "ArrowDown") items[(current + 1) % items.length]?.focus();
-    else items[(current - 1 + items.length) % items.length]?.focus();
-  };
-
-  const actions = [
-    {
-      label: t("viewMarkdown"),
-      href: markdownPath,
-      icon: <FileDown className="h-4 w-4" aria-hidden="true" />,
-    },
-    {
-      label: t("openIn", { app: "v0" }),
-      href: promptUrl("https://v0.dev", pageUrl),
-      icon: <V0Icon className="h-4 w-4" />,
-    },
-    {
-      label: t("openIn", { app: "ChatGPT" }),
-      href: promptUrl("https://chatgpt.com", pageUrl),
-      icon: <ChatGPTIcon className="h-4 w-4" />,
-    },
-    {
-      label: t("openIn", { app: "Claude" }),
-      href: promptUrl("https://claude.ai/new", pageUrl),
-      icon: <ClaudeIcon className="h-4 w-4" />,
-    },
+  const assistants = [
+    { app: "v0", href: promptUrl("https://v0.dev", pageUrl), icon: <V0Icon /> },
+    { app: "ChatGPT", href: promptUrl("https://chatgpt.com", pageUrl), icon: <ChatGPTIcon /> },
+    { app: "Claude", href: promptUrl("https://claude.ai/new", pageUrl), icon: <ClaudeIcon /> },
   ];
 
   const copyLabel = copyState === "error" ? t("tryAgain") : t("copy");
@@ -165,11 +127,7 @@ export function CopyPage({
         : t("copyAria");
 
   return (
-    <MorphPopover
-      open={open}
-      onOpenChange={setOpen}
-      className="hidden shrink-0 whitespace-nowrap sm:inline-flex"
-    >
+    <div className="hidden shrink-0 whitespace-nowrap sm:block">
       <div className="inline-flex rounded-full bg-muted/70">
         <button
           type="button"
@@ -191,20 +149,11 @@ export function CopyPage({
           <span>{copyLabel}</span>
         </button>
         <span className="my-2 w-px bg-border" aria-hidden="true" />
-        <MorphPopoverTrigger>
+        <DropdownMenu open={open} onOpenChange={setOpen}>
+          <DropdownMenuTrigger>
           <button
-            ref={triggerRef}
             type="button"
             aria-label={t("moreActions")}
-            onKeyDown={(event) => {
-              if (event.key === "ArrowDown") {
-                event.preventDefault();
-                focusMenuItem("first");
-              } else if (event.key === "ArrowUp") {
-                event.preventDefault();
-                focusMenuItem("last");
-              }
-            }}
             className="inline-flex min-h-10 w-11 items-center justify-center rounded-r-full pr-1 text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring sm:min-h-8 sm:w-8"
           >
             <ChevronDown
@@ -212,32 +161,26 @@ export function CopyPage({
               aria-hidden="true"
             />
           </button>
-        </MorphPopoverTrigger>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem onSelect={() => openInNewTab(markdownPath)}>
+              <FileDown aria-hidden="true" />
+              {t("viewMarkdown")}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            {assistants.map((assistant) => (
+              <DropdownMenuItem
+                key={assistant.app}
+                onSelect={() => openInNewTab(assistant.href)}
+              >
+                {assistant.icon}
+                {t("openIn", { app: assistant.app })}
+                <ArrowUpRight aria-hidden="true" className="ml-auto size-3.5" />
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-
-      <MorphPopoverContent align="end" className="w-56 p-2">
-        <div
-          ref={menuRef}
-          role="menu"
-          aria-label={t("menu")}
-          onKeyDown={handleMenuKeyDown}
-        >
-          {actions.map((action) => (
-            <a
-              key={action.label}
-              href={action.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              role="menuitem"
-              onClick={() => setOpen(false)}
-              className={actionClassName}
-            >
-              <span className="text-muted-foreground">{action.icon}</span>
-              {action.label}
-            </a>
-          ))}
-        </div>
-      </MorphPopoverContent>
-    </MorphPopover>
+    </div>
   );
 }
