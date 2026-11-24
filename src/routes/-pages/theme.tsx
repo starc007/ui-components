@@ -8,6 +8,7 @@ import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
 import type { Metadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
+import { Link } from "@/lib/navigation";
 import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import { THEME_CSS } from "@/lib/theme-css";
 import { PageMessages } from "./page-messages";
@@ -108,6 +109,19 @@ function ThemeContent({ data }: { data: ThemePageData }) {
       <div className="mt-4">
         <CodeBlock {...data.code.themeCss} />
       </div>
+
+      <h2 className="mt-10 text-xl font-medium tracking-tight text-foreground">
+        {t("customize.title")}
+      </h2>
+      <p className="mt-2 text-muted-foreground">
+        {t.rich("customize.body", {
+          link: (chunks) => (
+            <Link href="/themes" className="text-foreground underline underline-offset-4">
+              {chunks}
+            </Link>
+          ),
+        })}
+      </p>
     </div>
   );
 }

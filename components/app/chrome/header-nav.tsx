@@ -13,6 +13,7 @@ const SECTIONS = [
 
 const RESOURCES = [
   { key: "playground", href: "/playground" },
+  { key: "themes", href: "/themes" },
   { key: "motionGuides", href: "/docs/motion-patterns" },
   { key: "howToGuides", href: "/guides" },
   { key: "changelog", href: "/changelog" },

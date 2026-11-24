@@ -125,6 +125,7 @@ export function SiteFooter() {
       links: [
         { href: PRO_URL, label: "beUI Pro" },
         { href: "/playground", label: t("header.playground") },
+        { href: "/themes", label: t("header.themes") },
         { href: "/sponsors", label: t("footer.sponsor") },
         { href: `mailto:${EMAIL}`, label: t("footer.contact") },
       ],

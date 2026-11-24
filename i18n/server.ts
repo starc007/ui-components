@@ -26,6 +26,7 @@ export function clientMessages() {
     Pages: {
       motionPatterns: Pages.motionPatterns,
       playground: Pages.playground,
+      themes: Pages.themes,
       sponsors: Pages.sponsors,
     },
   };

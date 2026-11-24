@@ -241,6 +241,10 @@
       "title": "Option 2: paste the theme CSS",
       "body": "Not using shadcn? Paste this into your <code>globals.css</code> directly below <code>@import \"tailwindcss\";</code>. It defines the tokens, motion animations and surface utilities the components use. Requires Tailwind CSS v4.",
       "alsoAvailable": "Also available at <link>/theme.css</link>."
+    },
+    "customize": {
+      "title": "Make it yours",
+      "body": "Pick a primary color and a base gray on <link>Themes</link>, see every component wear it in light and dark, and copy the tokens to paste below this theme."
     }
   },
   "aiAgents": {
@@ -609,6 +613,81 @@
       "title": "Your logo here",
       "price": "{tier} · {price}/mo",
       "viewPlan": "View plan"
+    }
+  },
+  "themes": {
+    "meta": {
+      "title": "Themes for beUI Components",
+      "description": "Pick a primary color and a base gray, see every beUI component wear it live in light and dark, and copy the CSS tokens for your globals.css."
+    },
+    "title": "Themes",
+    "intro": "Pick a color and a base gray. The whole page wears it, then copy the CSS.",
+    "color": "Color",
+    "base": "Base gray",
+    "mode": "Mode",
+    "colors": {
+      "graphite": "Graphite",
+      "blue": "Blue",
+      "sky": "Sky",
+      "teal": "Teal",
+      "green": "Green",
+      "amber": "Amber",
+      "orange": "Orange",
+      "red": "Red",
+      "rose": "Rose"
+    },
+    "bases": {
+      "neutral": "Neutral",
+      "warm": "Warm",
+      "cool": "Cool"
+    },
+    "modes": {
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied",
+    "reset": "Reset",
+    "css": "CSS",
+    "copyCss": "Copy CSS",
+    "cssCopied": "Copied",
+    "cssHint": "Paste into globals.css below the beUI theme. It sets the light and dark tokens.",
+    "exportTitle": "beUI theme: {color} on {base}",
+    "board": {
+      "buttons": "Buttons",
+      "continue": "Continue",
+      "download": "Download",
+      "outline": "Outline",
+      "ghost": "Ghost",
+      "settings": "Settings",
+      "notifications": "Notifications",
+      "sync": "Sync across devices",
+      "volume": "Volume",
+      "tabs": "Tabs",
+      "overview": "Overview",
+      "activity": "Activity",
+      "billing": "Billing",
+      "overviewBody": "Everything at a glance.",
+      "activityBody": "What changed this week.",
+      "billingBody": "Plan, invoices and seats.",
+      "reactions": "Reactions",
+      "menus": "Menus",
+      "planFree": "Free",
+      "planPro": "Pro",
+      "planTeam": "Team",
+      "sort": "Sort",
+      "sortRecent": "Most recent",
+      "sortPopular": "Most popular",
+      "export": "Export",
+      "checkout": "Checkout",
+      "poll": "Poll",
+      "pollSprings": "Springs",
+      "pollCurves": "Easing curves",
+      "pollBoth": "Both, it depends",
+      "toast": "Toast",
+      "showToast": "Show a toast",
+      "toastTitle": "Theme saved",
+      "toastBody": "Your colors are ready to copy."
     }
   },
   "playground": {

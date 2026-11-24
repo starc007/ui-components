@@ -142,6 +142,18 @@ export function MobileNav() {
               {t("header.playground")}
             </Link>
             <Link
+              href="/themes"
+              onClick={() => setOpen(false)}
+              className={cn(
+                "rounded-full px-3 py-1.5 text-sm transition-colors",
+                pathname.startsWith("/themes")
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {t("header.themes")}
+            </Link>
+            <Link
               href="/sponsors"
               onClick={() => setOpen(false)}
               className={cn(

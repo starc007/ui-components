@@ -13,6 +13,11 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
+        "text": "Themes: pick a primary color and a base gray, see every component wear it in light and dark, and copy the CSS tokens or share the link.",
+        "href": "/themes"
+      },
+      {
+        "type": "new",
         "text": "Sounds: sixteen interface sounds synthesized live with Web Audio, from tap and type to success and error. Install one, or Sound Kit for all of them with the useSound hook. No audio files.",
         "href": "/sounds"
       },

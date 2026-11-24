@@ -20,6 +20,7 @@ import { Route as SitePrivacyRouteImport } from './routes/_site/privacy'
 import { Route as SiteRefundsRouteImport } from './routes/_site/refunds'
 import { Route as SiteSponsorsRouteImport } from './routes/_site/sponsors'
 import { Route as SiteTermsRouteImport } from './routes/_site/terms'
+import { Route as SiteThemesRouteImport } from './routes/_site/themes'
 import { Route as SiteAlternativesIndexRouteImport } from './routes/_site/alternatives/index'
 import { Route as SiteAlternativesSlugRouteImport } from './routes/_site/alternatives/$slug'
 import { Route as SiteBlogIndexRouteImport } from './routes/_site/blog/index'
@@ -99,6 +100,11 @@ const SiteSponsorsRoute = SiteSponsorsRouteImport.update({
 const SiteTermsRoute = SiteTermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteThemesRoute = SiteThemesRouteImport.update({
+  id: '/themes',
+  path: '/themes',
   getParentRoute: () => SiteRouteRoute,
 } as any)
 const SiteAlternativesIndexRoute = SiteAlternativesIndexRouteImport.update({
@@ -248,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/refunds': typeof SiteRefundsRoute
   '/sponsors': typeof SiteSponsorsRoute
   '/terms': typeof SiteTermsRoute
+  '/themes': typeof SiteThemesRoute
   '/alternatives/$slug': typeof SiteAlternativesSlugRoute
   '/blog/$slug': typeof SiteBlogSlugRoute
   '/charts/$slug': typeof SiteChartsSlugRoute
@@ -285,6 +292,7 @@ export interface FileRoutesByTo {
   '/refunds': typeof SiteRefundsRoute
   '/sponsors': typeof SiteSponsorsRoute
   '/terms': typeof SiteTermsRoute
+  '/themes': typeof SiteThemesRoute
   '/': typeof SiteIndexRoute
   '/alternatives/$slug': typeof SiteAlternativesSlugRoute
   '/blog/$slug': typeof SiteBlogSlugRoute
@@ -325,6 +333,7 @@ export interface FileRoutesById {
   '/_site/refunds': typeof SiteRefundsRoute
   '/_site/sponsors': typeof SiteSponsorsRoute
   '/_site/terms': typeof SiteTermsRoute
+  '/_site/themes': typeof SiteThemesRoute
   '/_site/': typeof SiteIndexRoute
   '/_site/alternatives/$slug': typeof SiteAlternativesSlugRoute
   '/_site/blog/$slug': typeof SiteBlogSlugRoute
@@ -366,6 +375,7 @@ export interface FileRouteTypes {
     | '/refunds'
     | '/sponsors'
     | '/terms'
+    | '/themes'
     | '/alternatives/$slug'
     | '/blog/$slug'
     | '/charts/$slug'
@@ -403,6 +413,7 @@ export interface FileRouteTypes {
     | '/refunds'
     | '/sponsors'
     | '/terms'
+    | '/themes'
     | '/'
     | '/alternatives/$slug'
     | '/blog/$slug'
@@ -442,6 +453,7 @@ export interface FileRouteTypes {
     | '/_site/refunds'
     | '/_site/sponsors'
     | '/_site/terms'
+    | '/_site/themes'
     | '/_site/'
     | '/_site/alternatives/$slug'
     | '/_site/blog/$slug'
@@ -552,6 +564,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof SiteTermsRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/themes': {
+      id: '/_site/themes'
+      path: '/themes'
+      fullPath: '/themes'
+      preLoaderRoute: typeof SiteThemesRouteImport
       parentRoute: typeof SiteRouteRoute
     }
     '/_site/alternatives/': {
@@ -749,6 +768,7 @@ interface SiteRouteRouteChildren {
   SiteRefundsRoute: typeof SiteRefundsRoute
   SiteSponsorsRoute: typeof SiteSponsorsRoute
   SiteTermsRoute: typeof SiteTermsRoute
+  SiteThemesRoute: typeof SiteThemesRoute
   SiteIndexRoute: typeof SiteIndexRoute
   SiteAlternativesSlugRoute: typeof SiteAlternativesSlugRoute
   SiteBlogSlugRoute: typeof SiteBlogSlugRoute
@@ -788,6 +808,7 @@ const SiteRouteRouteChildren: SiteRouteRouteChildren = {
   SiteRefundsRoute: SiteRefundsRoute,
   SiteSponsorsRoute: SiteSponsorsRoute,
   SiteTermsRoute: SiteTermsRoute,
+  SiteThemesRoute: SiteThemesRoute,
   SiteIndexRoute: SiteIndexRoute,
   SiteAlternativesSlugRoute: SiteAlternativesSlugRoute,
   SiteBlogSlugRoute: SiteBlogSlugRoute,
