@@ -202,7 +202,7 @@ export function BottomSheet({
               {...gate}
               style={{ ...heightStyle, ...gate.style }}
               className={cn(
-                "pointer-events-auto fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-3xl outline-none will-change-transform",
+                "pointer-events-auto fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-2xl flex-col overflow-hidden rounded-t-2xl outline-none will-change-transform",
                 "border border-border bg-background shadow-xl",
                 className,
               )}

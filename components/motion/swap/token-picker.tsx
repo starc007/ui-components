@@ -100,7 +100,7 @@ export function TokenPicker({
             transition={
               reduce ? { duration: 0.18, ease: EASE } : SPRING_PANEL
             }
-            className="absolute inset-x-0 bottom-0 z-20 flex max-h-[92%] flex-col rounded-t-3xl border-t border-border bg-card shadow-2xl"
+            className="absolute inset-x-0 bottom-0 z-20 flex max-h-[92%] flex-col rounded-t-2xl border-t border-border bg-card shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-label={t(side === "from" ? "selectFromToken" : "selectToToken")}

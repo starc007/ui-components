@@ -22,6 +22,10 @@ export const changelogEntries: ChangelogEntry[] = [
       {
         "type": "improved",
         "text": "Morphing Modal, Center Morph Modal, Command Palette and Morphing Search open as dialogs with 16px corners, matching menus and popovers."
+      },
+      {
+        "type": "improved",
+        "text": "Bottom Sheet, the Swap token picker and the floating and inset Animated Sidebar use 16px corners. Drawer now rounds the two corners facing the page."
       }
     ]
   },

@@ -111,9 +111,11 @@ export function Drawer({
               {...gate}
               className={cn(
                 "fixed inset-y-0 z-50 flex w-80 max-w-[85vw] flex-col bg-background shadow-2xl outline-none",
+                // Only the corners facing the page are rounded; the edge
+                // against the viewport stays square.
                 side === "right"
-                  ? "right-0 border-l border-border"
-                  : "left-0 border-r border-border",
+                  ? "right-0 rounded-l-2xl border-l border-border"
+                  : "left-0 rounded-r-2xl border-r border-border",
                 className,
               )}
             >
