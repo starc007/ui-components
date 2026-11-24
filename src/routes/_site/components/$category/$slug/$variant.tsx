@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { TOP_LEVEL_CATEGORIES } from "@/lib/component-paths";
-import { metadataToHead } from "@/lib/head";
+import { loaderHead } from "@/lib/head";
 import { loadVariantPage, VariantPage } from "../../../../-pages/variant-page";
 
 export const Route = createFileRoute("/_site/components/$category/$slug/$variant")({
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_site/components/$category/$slug/$variant
       variant: params.variant,
     });
   },
-  head: ({ loaderData }) => (loaderData ? metadataToHead(loaderData.metadata) : {}),
+  head: loaderHead,
   component: function Page() {
     return <VariantPage data={Route.useLoaderData()} />;
   },

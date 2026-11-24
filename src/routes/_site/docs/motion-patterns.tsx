@@ -7,7 +7,7 @@ import { GuideShell } from "@/components/app/docs/guide-shell";
 import { MotionPatterns } from "@/components/app/docs/motion-patterns";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
-import { type Metadata, metadataToHead } from "@/lib/head";
+import { loaderHead, type Metadata } from "@/lib/head";
 import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import { SITE_URL } from "@/lib/site";
 import { PageMessages } from "../../-pages/page-messages";
@@ -45,7 +45,7 @@ const getMotionPatternsPage = createServerFn({ method: "GET" })
 
 export const Route = createFileRoute("/_site/docs/motion-patterns")({
   loader: () => getMotionPatternsPage(),
-  head: ({ loaderData }) => (loaderData ? metadataToHead(loaderData.metadata) : {}),
+  head: loaderHead,
   component: function Page() {
     const data = Route.useLoaderData();
     return (

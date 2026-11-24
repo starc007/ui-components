@@ -5,7 +5,7 @@ import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { ThemeStudio } from "@/components/app/themes/theme-studio";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
-import { type Metadata, metadataToHead } from "@/lib/head";
+import { loaderHead, type Metadata } from "@/lib/head";
 import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import { PageMessages } from "../-pages/page-messages";
 
@@ -39,7 +39,7 @@ const getThemesPage = createServerFn({ method: "GET" })
 
 export const Route = createFileRoute("/_site/themes")({
   loader: () => getThemesPage(),
-  head: ({ loaderData }) => (loaderData ? metadataToHead(loaderData.metadata) : {}),
+  head: loaderHead,
   component: function Page() {
     const data = Route.useLoaderData();
     return (

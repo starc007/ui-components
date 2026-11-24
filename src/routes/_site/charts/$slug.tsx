@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { metadataToHead } from "@/lib/head";
+import { loaderHead } from "@/lib/head";
 import { ComponentPage, loadComponentPage } from "../../-pages/component-page";
 
 export const Route = createFileRoute("/_site/charts/$slug")({
   loader: ({ params }) => loadComponentPage({ category: "charts", slug: params.slug }),
-  head: ({ loaderData }) => (loaderData ? metadataToHead(loaderData.metadata) : {}),
+  head: loaderHead,
   component: function Page() {
     return <ComponentPage data={Route.useLoaderData()} />;
   },

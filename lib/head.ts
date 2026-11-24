@@ -124,3 +124,11 @@ export function metadataToHead(metadata: Metadata) {
 
   return { meta, links };
 }
+
+/**
+ * A route's `head` for a loader that returns `{ metadata }`: the page's tags
+ * once its data has loaded, none before.
+ */
+export function loaderHead({ loaderData }: { loaderData?: { metadata: Metadata } }) {
+  return loaderData ? metadataToHead(loaderData.metadata) : {};
+}

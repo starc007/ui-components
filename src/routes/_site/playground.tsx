@@ -4,7 +4,7 @@ import { staticFunctionMiddleware } from "@tanstack/start-static-server-function
 import { Playground } from "@/components/app/playground/playground";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
-import { type Metadata, metadataToHead } from "@/lib/head";
+import { loaderHead, type Metadata } from "@/lib/head";
 import { PageMessages } from "../-pages/page-messages";
 
 const getPlaygroundPage = createServerFn({ method: "GET" })
@@ -21,7 +21,7 @@ const getPlaygroundPage = createServerFn({ method: "GET" })
 
 export const Route = createFileRoute("/_site/playground")({
   loader: () => getPlaygroundPage(),
-  head: ({ loaderData }) => (loaderData ? metadataToHead(loaderData.metadata) : {}),
+  head: loaderHead,
   component: function PlaygroundPage() {
     const data = Route.useLoaderData();
     return (
