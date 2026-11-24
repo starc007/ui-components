@@ -85,7 +85,7 @@ export function SoundWave({
       <Bars
         peaks={peaks}
         className={cn(
-          "bg-muted-foreground/25 transition-opacity duration-300",
+          "bg-muted-foreground/25 transition-[opacity,background-color] duration-300 group-hover/pad:bg-muted-foreground/45",
           peaks ? "opacity-100" : "opacity-50",
         )}
       />
@@ -130,12 +130,16 @@ export interface SoundPadProps {
   className?: string;
 }
 
-/** A card that plays a sound when pressed and draws its waveform. */
+/**
+ * A card that plays a sound when pressed and draws its waveform. Same frame
+ * as the site's component cards: a borderless card with an inset stage
+ * (rounded-3xl outside, rounded-2xl inside, 8px apart) and a name row.
+ */
 export function SoundPad({ name, sound, pulse, onPress, keyHint, nameSlot, className }: SoundPadProps) {
   return (
     <div
       className={cn(
-        "relative flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 transition-[transform,border-color] duration-150 has-[button:active]:scale-[0.98] has-[button:hover]:border-(--color-border-strong) motion-reduce:has-[button:active]:scale-100",
+        "group/pad relative flex flex-col rounded-3xl bg-card transition-transform duration-150 ease-out has-[button:active]:scale-[0.98] motion-reduce:has-[button:active]:scale-100",
         className,
       )}
     >
@@ -143,18 +147,22 @@ export function SoundPad({ name, sound, pulse, onPress, keyHint, nameSlot, class
         type="button"
         onClick={onPress}
         aria-label={`Play ${name}`}
-        className="absolute inset-0 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="absolute inset-0 z-10 rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       />
-      <SoundWave sound={sound} pulse={pulse} className="pointer-events-none" />
-      <div className="flex items-center justify-between gap-2 text-sm">
-        <span className="relative font-medium text-foreground">{nameSlot ?? name}</span>
-        <span className="pointer-events-none flex shrink-0 items-center gap-2 whitespace-nowrap text-xs text-muted-foreground tabular-nums">
+      <div className="pointer-events-none relative m-2 mb-0 rounded-2xl bg-background px-5 py-6">
+        <SoundWave sound={sound} pulse={pulse} className="h-10" />
+        {keyHint ? (
+          <kbd className="absolute top-2 right-2 hidden size-5 items-center justify-center rounded-full bg-muted font-sans text-[10px] font-medium uppercase text-muted-foreground sm:inline-flex">
+            {keyHint}
+          </kbd>
+        ) : null}
+      </div>
+      <div className="flex min-w-0 items-center justify-between gap-2 px-4 py-3.5">
+        <span className="relative z-20 truncate font-display text-base font-medium tracking-tight text-foreground">
+          {nameSlot ?? name}
+        </span>
+        <span className="pointer-events-none shrink-0 whitespace-nowrap text-xs text-muted-foreground tabular-nums">
           {Math.round(sound.duration * 1000)} ms
-          {keyHint ? (
-            <kbd className="hidden size-5 items-center sm:inline-flex justify-center rounded-md border border-border font-sans text-[11px] uppercase">
-              {keyHint}
-            </kbd>
-          ) : null}
         </span>
       </div>
     </div>
