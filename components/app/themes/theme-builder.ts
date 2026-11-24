@@ -43,9 +43,10 @@ const COLOR_SPECS: Record<
   rose: { hue: 8, light: [0.62, 0.2], dark: [0.71, 0.17] },
 };
 
-/** Swatch color for each choice, shown in the picker. */
+/** Swatch color for each choice, shown in the picker. Graphite is the page's
+ * ink, so it reads in both modes: near-black in light, near-white in dark. */
 export const COLOR_SWATCH: Record<ThemeColor, string> = {
-  graphite: "#262626",
+  graphite: "var(--foreground)",
   ...(Object.fromEntries(
     Object.entries(COLOR_SPECS).map(([key, spec]) => [
       key,

@@ -85,7 +85,7 @@ export function SoundWave({
       <Bars
         peaks={peaks}
         className={cn(
-          "bg-muted-foreground/25 transition-[opacity,background-color] duration-300 group-hover/pad:bg-muted-foreground/45",
+          "bg-muted-foreground/25 transition-[opacity,background-color] duration-300 group-hover/pad:bg-muted-foreground/45 dark:bg-muted-foreground/35 dark:group-hover/pad:bg-muted-foreground/55",
           peaks ? "opacity-100" : "opacity-50",
         )}
       />
