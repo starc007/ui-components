@@ -9,6 +9,8 @@ import { allVariantPages } from "../lib/variant-pages";
 import { changelogEntries } from "../lib/changelog";
 import { allShadcnTargets, buildEntry, buildShadcnItem } from "../lib/registry-server";
 import { readSourceFile } from "../lib/source-files";
+import { redirectMatches, redirectSources } from "../lib/redirects";
+import { sitemap } from "../lib/sitemap";
 
 const errors: string[] = [];
 const slugLabels = new Map<string, string[]>();
@@ -201,6 +203,16 @@ changelogEntries.forEach((entry, index) => {
     }
   }
 });
+
+// Cloudflare applies `_redirects` before it looks for a file, so a rule that
+// matches a real page sends every visitor of that page somewhere else.
+for (const { url } of sitemap()) {
+  const path = new URL(url).pathname;
+  for (const candidate of [path, `${path}.md`]) {
+    const source = redirectSources().find((rule) => redirectMatches(rule, candidate));
+    if (source) errors.push(`Redirect "${source}" shadows the page ${candidate}`);
+  }
+}
 
 for (const [slug, labels] of slugLabels) {
   if (labels.length > 1) {
