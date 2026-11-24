@@ -17,7 +17,7 @@ import {
   type Variants,
 } from "motion/react";
 import type { ReactNode } from "react";
-import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
+import { EASE_IN_OUT, EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type AnimatedBadgeStatus =
@@ -163,7 +163,7 @@ export function AnimatedBadge({
           className="absolute inset-0 rounded-full bg-current"
           initial={{ opacity: 0.06 }}
           animate={{ opacity: [0.06, 0.18, 0.06] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: EASE_IN_OUT }}
         />
       ) : null}
       {/* The badge animates its width with a scale transform. Slots opt into

@@ -22,6 +22,8 @@ export interface TextRevealProps {
   children?: ReactNode;
 }
 
+// Slower and heavier than the UI springs on purpose: a headline reveal should
+// drift in over a beat, not snap like a control. `spring` overrides it.
 const DEFAULT_SPRING = { stiffness: 140, damping: 26, mass: 1.2 };
 
 type WordGroup = { text: string; trailing: string };

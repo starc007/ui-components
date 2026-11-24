@@ -109,6 +109,8 @@ export interface UseAnimatedToastStackOptions {
   limit?: number;
 }
 
+// A little softer and heavier than SPRING_PANEL, so toasts reshuffling in the
+// stack move as one pile instead of snapping card by card.
 const STACK_SPRING: Transition = {
   type: "spring",
   stiffness: 420,

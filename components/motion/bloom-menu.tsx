@@ -21,7 +21,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useMessages } from "@/lib/i18n";
@@ -283,10 +283,8 @@ export function BloomMenu({
                         }
                         animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                         transition={{
+                          ...SPRING_SWAP,
                           delay: reduce ? 0 : 0.1 + dist * 0.07,
-                          type: "spring",
-                          stiffness: 440,
-                          damping: 34,
                         }}
                         className="flex flex-col items-center gap-2"
                       >

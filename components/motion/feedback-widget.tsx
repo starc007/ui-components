@@ -11,7 +11,7 @@ import {
   useState,
 } from "react";
 import { Button, StatefulButton } from "@/components/motion/button";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -311,7 +311,7 @@ export function FeedbackWidget({
                                   transition={{
                                     duration: 0.6,
                                     delay: 0.18 + i * 0.02,
-                                    ease: "easeOut",
+                                    ease: EASE_OUT,
                                   }}
                                   style={{ backgroundColor: s.color }}
                                   className="absolute h-1.5 w-1.5 rounded-full"
@@ -321,9 +321,7 @@ export function FeedbackWidget({
                             initial={reduce ? { scale: 1 } : { scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{
-                              type: "spring",
-                              stiffness: 500,
-                              damping: 22,
+                              ...SPRING_PRESS,
                               delay: 0.04,
                             }}
                             className="flex h-12 w-12 items-center justify-center rounded-full bg-(--color-success)"
@@ -345,7 +343,7 @@ export function FeedbackWidget({
                                 animate={{ pathLength: 1 }}
                                 transition={{
                                   duration: 0.35,
-                                  ease: "easeOut",
+                                  ease: EASE_OUT,
                                   delay: 0.15,
                                 }}
                               />

@@ -9,6 +9,8 @@ import {
   useNotFoundMessages,
 } from "./shared";
 
+// Each character lands quicker than Text Reveal's slow default, so a terminal
+// line reads as typed rather than faded in.
 const TYPE_SPRING = { stiffness: 320, damping: 30, mass: 0.6 };
 
 export function NotFoundTerminal({

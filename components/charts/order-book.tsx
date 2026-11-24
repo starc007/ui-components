@@ -285,7 +285,7 @@ export function OrderBookSpread({ className }: { className?: string }) {
         <span className="sr-only">
           {t("referencePrice")}{" "}
         </span>
-        {price == null ? "—" : formatPrice(price)}
+        {price == null ? "–" : formatPrice(price)}
       </span>
       <span className="text-[11px] text-muted-foreground">
         {spread == null || midpoint == null
@@ -310,11 +310,11 @@ export function OrderBookBalance({ className }: { className?: string }) {
     <div className={cn("space-y-2 border-t border-border px-4 pb-3 pt-3", className)}>
       <div className="flex justify-between text-[11px]">
         <span className="text-emerald-700 dark:text-emerald-400">
-          {t("bids")} {total ? `${(ratio * 100).toFixed(1)}%` : "—"}
+          {t("bids")} {total ? `${(ratio * 100).toFixed(1)}%` : "–"}
         </span>
         <span className="text-muted-foreground">{t("visibleDepth")}</span>
         <span className="text-rose-600 dark:text-rose-400">
-          {t("asks")} {total ? `${((1 - ratio) * 100).toFixed(1)}%` : "—"}
+          {t("asks")} {total ? `${((1 - ratio) * 100).toFixed(1)}%` : "–"}
         </span>
       </div>
       <div aria-hidden="true" className="relative h-1 overflow-hidden rounded-full bg-rose-500/25">

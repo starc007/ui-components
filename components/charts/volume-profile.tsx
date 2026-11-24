@@ -88,7 +88,7 @@ export function VolumeProfile({
                         ? model.t("inside")
                         : model.valueArea
                           ? model.t("outside")
-                          : "—"}
+                          : "–"}
                   </td>
                 </tr>
               ))}

@@ -179,7 +179,7 @@ export function PredictionMarketCard({
 									>
 										{probability(outcome.probability) > 0
 											? `${(1 / probability(outcome.probability)).toFixed(1)}×`
-											: "—"}
+											: "–"}
 									</button>
 								</Tooltip>
 								<MarketOddsButton

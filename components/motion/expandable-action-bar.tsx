@@ -13,6 +13,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useHoverGesture } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
@@ -64,19 +65,9 @@ export interface ExpandableActionBarProps {
   renderItem?: (item: ExpandableActionBarItem, state: { expanded: boolean; active: boolean }) => ReactNode;
 }
 
-const ITEM_TRANSITION: Transition = {
-  type: "spring",
-  stiffness: 460,
-  damping: 34,
-  mass: 0.62,
-};
+const ITEM_TRANSITION: Transition = SPRING_SWAP;
 
-const LABEL_TRANSITION: Transition = {
-  type: "spring",
-  stiffness: 380,
-  damping: 32,
-  mass: 0.7,
-};
+const LABEL_TRANSITION: Transition = SPRING_LAYOUT;
 
 const SIZE_CLASS: Record<ExpandableActionBarSize, string> = {
   sm: "min-h-9 gap-1 p-1 text-xs",

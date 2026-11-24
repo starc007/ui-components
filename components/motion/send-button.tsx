@@ -3,7 +3,7 @@
 import { AnimatePresence, type HTMLMotionProps, motion, type Transition, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { TextMorph } from "@/components/motion/text-morph";
-import { EASE_IN, EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { EASE_IN, EASE_IN_OUT, EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { useSound } from "@/lib/sound";
 import { navigateSound } from "@/lib/sounds/navigate";
@@ -42,7 +42,7 @@ const LAUNCH: Transition = { duration: 0.55, times: [0, 0.22, 1], ease: [EASE_OU
 // it, then erases from its tail.
 const TRAIL: Transition = { duration: 0.8, times: [0, 0.5, 1], ease: [EASE_IN, EASE_OUT], delay: 0.14 };
 // The dots bounce in a wave while it sends.
-const BOUNCE: Transition = { duration: 0.6, ease: "easeInOut", repeat: Number.POSITIVE_INFINITY, repeatDelay: 0.1 };
+const BOUNCE: Transition = { duration: 0.6, ease: EASE_IN_OUT, repeat: Number.POSITIVE_INFINITY, repeatDelay: 0.1 };
 const DOTS = [0, 1, 2];
 
 /**

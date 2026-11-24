@@ -44,7 +44,7 @@ export function BumpChartLegend({ className }: { className?: string }) {
             />
             <span className="truncate">{row.name}</span>
             <span className="ml-auto font-mono tabular-nums">
-              {last == null ? "—" : `#${last}`}
+              {last == null ? "–" : `#${last}`}
             </span>
             <span
               className="min-w-5 text-right font-mono text-[11px] tabular-nums text-muted-foreground"
@@ -58,7 +58,7 @@ export function BumpChartLegend({ className }: { className?: string }) {
                       : t(gain > 0 ? "up" : "down", { count: Math.abs(gain) })
               }
             >
-              {gain == null || gain === 0 ? "—" : `${gain > 0 ? "↑" : "↓"}${Math.abs(gain)}`}
+              {gain == null || gain === 0 ? "–" : `${gain > 0 ? "↑" : "↓"}${Math.abs(gain)}`}
             </span>
           </button>
         );

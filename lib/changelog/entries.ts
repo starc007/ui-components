@@ -56,6 +56,24 @@ export const changelogEntries: ChangelogEntry[] = [
         "text": "Dropdown Menu and Context Menu show the check for checkbox and radio items at the end of the row, so labels line up with the rest of the menu."
       },
       {
+        "type": "improved",
+        "text": "Range Slider and Ruler Slider draw their handle, fill and focus ring in the primary color, so they follow your theme. The default look is unchanged.",
+        "component": "range-slider"
+      },
+      {
+        "type": "improved",
+        "text": "Bloom Menu, Feedback Widget, OTP Input, Swap and Expandable Action Bar now use the shared beUI springs and curves, so they move like the rest of the library."
+      },
+      {
+        "type": "fixed",
+        "text": "Swap's quote spinner no longer scales in when reduced motion is on.",
+        "component": "swap"
+      },
+      {
+        "type": "improved",
+        "text": "Charts and the Prediction Market card show an en dash for a missing value."
+      },
+      {
         "type": "fixed",
         "text": "Before After Slider shows the before image correctly inside a scaled or zoomed container, where it used to clip to a small patch in the corner.",
         "component": "before-after-slider"

@@ -15,6 +15,7 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
 } from "react";
+import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type InputClassNames = {
@@ -194,7 +195,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
               strokeLinejoin="round"
               initial={reduce ? { pathLength: 1 } : { pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
+              transition={{ duration: 0.35, ease: EASE_OUT }}
             />
           </motion.svg>
         ) : rightSlot ? (

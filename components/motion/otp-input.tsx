@@ -7,7 +7,7 @@ import {
   useReducedMotion,
 } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -388,7 +388,7 @@ export function OTPInput({
               transition={
                 reduce
                   ? { duration: 0 }
-                  : { type: "spring", stiffness: 500, damping: 28 }
+                  : SPRING_PRESS
               }
               className="pointer-events-none absolute -right-7 top-1/2 -translate-y-1/2 text-emerald-500"
               aria-hidden

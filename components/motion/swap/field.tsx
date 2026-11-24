@@ -2,7 +2,7 @@
 
 import { useId } from "react";
 import { useMessages } from "@/lib/i18n";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ChevronDown, Loader2, Wallet } from "lucide-react";
 import type { Chain, Token, TokenSide } from "./types";
 import { TokenDot } from "./token-badges";
@@ -32,6 +32,7 @@ export function Field({
   labels?: Partial<SwapMessages>;
 }) {
   const t = useMessages("swap", swapMessages, labels);
+  const reduce = useReducedMotion();
   const id = useId();
   const usdValue = (Number(amount) || 0) * (token.usd ?? 0);
 
@@ -70,9 +71,9 @@ export function Field({
               <AnimatePresence>
                 {quoting ? (
                   <motion.span
-                    initial={{ opacity: 0, scale: 0.85 }}
+                    initial={{ opacity: 0, scale: reduce ? 1 : 0.85 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.85 }}
+                    exit={{ opacity: 0, scale: reduce ? 1 : 0.85 }}
                     transition={{ duration: 0.14, ease: EASE }}
                   >
                     <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />

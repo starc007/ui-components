@@ -195,7 +195,7 @@ export function RulerSlider({
 
         {/* needle — the read head the scale moves under */}
         <div className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2">
-          <span className="block h-9 w-[3px] rounded-full bg-foreground" />
+          <span className="block h-9 w-[3px] rounded-full bg-primary" />
         </div>
       </div>
     </div>

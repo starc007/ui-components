@@ -29,7 +29,7 @@ export function VolumeProfileSummary({ className }: { className?: string }) {
           />
           {t("poc")}
         </dt>
-        <dd className="font-mono font-medium tabular-nums">{poc ? formatPrice(poc.price) : "—"}</dd>
+        <dd className="font-mono font-medium tabular-nums">{poc ? formatPrice(poc.price) : "–"}</dd>
       </div>
       {valueArea ? (
         <div className="col-span-2 space-y-1.5 sm:col-span-1">
