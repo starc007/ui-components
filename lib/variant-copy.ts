@@ -28,8 +28,8 @@ export const variantCopy: Record<string, VariantCopy> = {
     name: "Base Button",
     title: "Animated React Button with Press and Ripple",
     description:
-      "Free animated React button with spring press scale, hover lift, ripple, variants and sizes. A drop-in base for any app. Framer Motion, Tailwind, shadcn install.",
-    summary: "A button with spring press, hover lift, variants and sizes.",
+      "Free animated React button with a subtle spring press, optional ripple, variants and sizes. A drop-in base for any app. Framer Motion, Tailwind, shadcn install.",
+    summary: "A button with a subtle spring press, ripple, variants and sizes.",
   },
   "button-stateful": {
     name: "Stateful Button",

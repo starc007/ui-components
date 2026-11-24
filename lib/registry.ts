@@ -322,7 +322,7 @@ export const registry: CategoryEntry[] = [
           {
             slug: "base",
             name: "Button",
-            description: "Press scale, hover lift, variants and sizes.",
+            description: "Subtle press scale, ripple, variants and sizes.",
             installSlug: "button-base",
             file: "components/motion/button/base.tsx",
             previewKey: "motion/button-base",

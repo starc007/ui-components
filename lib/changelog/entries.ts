@@ -115,6 +115,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "text": "Command Palette and Morphing Modal blur the page behind them a little less, which is lighter to render."
       },
       {
+        "type": "improved",
+        "text": "Button presses to a subtler 0.97 and no longer scales on hover. The ripple fades faster, and Metallic Button's shine sweeps once on hover instead of sweeping back.",
+        "component": "button"
+      },
+      {
         "type": "fixed",
         "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
         "component": "select"

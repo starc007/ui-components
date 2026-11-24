@@ -821,7 +821,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "An app needs one consistent button set with sizes, variants and an icon size for toolbars.",
     ],
     accessibility:
-      "Every variant renders a native button element (ButtonLink renders an anchor), so Enter, Space and focus work as usual. StatefulButton disables itself and sets aria-busy while loading, and its label sits in a polite live region so the new state text is announced. With reduced motion enabled, the press and hover scale, ripple and letter cascade are removed, MetallicButton's reflection stops, and the magnetic pull is turned off; the magnetic pull is also skipped on devices that cannot hover.",
+      "Every variant renders a native button element (ButtonLink renders an anchor), so Enter, Space and focus work as usual. StatefulButton disables itself and sets aria-busy while loading, and its label sits in a polite live region so the new state text is announced. With reduced motion enabled, the press scale, ripple and letter cascade are removed, MetallicButton's reflection stops, and the magnetic pull is turned off; the magnetic pull is also skipped on devices that cannot hover.",
     faq: [
       {
         question: "How do I make an animated button in React with Framer Motion?",
