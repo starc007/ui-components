@@ -5,7 +5,6 @@ import {
   createContext,
   type MutableRefObject,
   type ReactNode,
-  type Ref,
   useCallback,
   useContext,
   useEffect,
@@ -96,16 +95,6 @@ export function useMultiSelectContext(component: string) {
   return context;
 }
 
-export function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref && typeof ref === "object") {
-        (ref as MutableRefObject<T | null>).current = node;
-      }
-    }
-  };
-}
 
 export interface MultiSelectProps {
   children: ReactNode;

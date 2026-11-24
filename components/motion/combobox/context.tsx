@@ -5,7 +5,6 @@ import {
   createContext,
   type MutableRefObject,
   type ReactNode,
-  type Ref,
   useCallback,
   useContext,
   useEffect,
@@ -100,16 +99,6 @@ export function useComboboxContext(component: string) {
   const context = useContext(ComboboxContext);
   if (!context) throw new Error(`${component} must be used within <Combobox>`);
   return context;
-}
-
-export function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref && typeof ref === "object")
-        (ref as MutableRefObject<T | null>).current = node;
-    }
-  };
 }
 
 export interface ComboboxProps {
