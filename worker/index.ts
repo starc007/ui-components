@@ -16,17 +16,32 @@ type Env = {
 type WorkerRoute = { asset: string; headers: Record<string, string> };
 
 // Path → stored body and exact headers, written by scripts/build-static.ts.
-// Read once per isolate.
+// Read once per isolate; a failed read is dropped so the next request retries.
 let registry: Promise<Record<string, WorkerRoute>> | undefined;
 function loadRegistry(env: Env, url: URL) {
-  registry ??= env.ASSETS.fetch(new URL("/__worker/routes.json", url)).then((response) => {
-    if (!response.ok) throw new Error(`Registry routes missing: ${response.status}`);
-    return response.json();
-  });
-  registry.catch(() => {
-    registry = undefined;
-  });
+  if (!registry) {
+    const loading = env.ASSETS.fetch(new URL("/__worker/routes.json", url)).then((response) => {
+      if (!response.ok) throw new Error(`Registry routes missing: ${response.status}`);
+      return response.json<Record<string, WorkerRoute>>();
+    });
+    loading.catch(() => {
+      if (registry === loading) registry = undefined;
+    });
+    registry = loading;
+  }
   return registry;
+}
+
+const RETRY_SECONDS = 30;
+
+function registryUnavailable() {
+  return Response.json(
+    { error: "unavailable" },
+    {
+      status: 503,
+      headers: { "Retry-After": String(RETRY_SECONDS), "Cache-Control": "no-store" },
+    },
+  );
 }
 
 export default {
@@ -47,19 +62,37 @@ export default {
     if (pathname === "/api/og") return legacyOgCard(url, env);
 
     const isRegistryPath = /^\/(?:r|native\/r)(?:\/|$)/.test(pathname);
-    const route = isRegistryPath ? (await loadRegistry(env, url))[pathname] : undefined;
-    if (route && (request.method === "GET" || request.method === "HEAD")) {
+    if (isRegistryPath) {
+      let routes: Record<string, WorkerRoute>;
+      try {
+        routes = await loadRegistry(env, url);
+      } catch (error) {
+        console.error("Registry routes unavailable", error);
+        return registryUnavailable();
+      }
+      const route = routes[pathname];
+      if (!route) return Response.json({ error: "not_found" }, { status: 404 });
+      if (request.method === "OPTIONS") {
+        return new Response(null, { status: 204, headers: route.headers });
+      }
+      if (request.method !== "GET" && request.method !== "HEAD") {
+        return Response.json(
+          { error: "method_not_allowed" },
+          { status: 405, headers: { Allow: "GET, HEAD, OPTIONS" } },
+        );
+      }
       const asset = await env.ASSETS.fetch(new URL(route.asset, url));
+      // The route's headers describe its body; without one, say so plainly
+      // rather than serve an error page under a JSON type and a long cache.
+      if (!asset.ok) {
+        await asset.body?.cancel();
+        console.error(`Registry body missing for ${pathname}: ${asset.status}`);
+        return registryUnavailable();
+      }
       return new Response(request.method === "HEAD" ? null : asset.body, {
         status: asset.status,
         headers: route.headers,
       });
-    }
-    if (route && request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: route.headers });
-    }
-    if (isRegistryPath) {
-      return Response.json({ error: "not_found" }, { status: 404 });
     }
     // Any other path that reached the Worker: hand it to the asset server
     // (static files, then the 404 page).
