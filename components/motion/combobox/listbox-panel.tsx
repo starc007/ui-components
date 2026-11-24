@@ -30,8 +30,8 @@ export interface ListboxPanelPlacement {
 
 /**
  * The portaled panel Combobox and Multi Select open into: anchored to the
- * field, flipped to the side with room, and grown out of the field on one
- * spring. Each component passes its own open state and refs, and `name` keeps
+ * field, flipped to the side with room, and revealed from the field's edge on
+ * one spring. Each component passes its own open state and refs, and `name` keeps
  * its `data-<name>-content` attribute and `--<name>-trigger-width` variable.
  */
 export function ListboxPanel({
@@ -96,8 +96,13 @@ export function ListboxPanel({
         : triggerLeft;
   const maxLeft = Math.max(VIEWPORT_PADDING, window.innerWidth - contentWidth - VIEWPORT_PADDING);
   const left = Math.min(Math.max(desiredLeft, VIEWPORT_PADDING), maxLeft);
-  const surfaceHeight = layout?.content.height ?? 0;
   const transition = reduce || !morphReady ? { duration: 0 } : SPRING_MORPH;
+  // Revealed from the field's edge by a clip, so the panel keeps its size and
+  // nothing reflows while it opens. Percentages throughout, so motion can
+  // interpolate every edge.
+  const clipClosed =
+    actualSide === "bottom" ? "inset(0% 0% 100% 0% round 16px)" : "inset(100% 0% 0% 0% round 16px)";
+  const clipOpen = "inset(0% 0% 0% 0% round 16px)";
 
   return createPortal(
     <motion.div
@@ -108,7 +113,7 @@ export function ListboxPanel({
       inert={!open}
       initial={false}
       animate={{
-        height: open ? surfaceHeight : 0,
+        clipPath: open ? clipOpen : clipClosed,
         opacity: open ? 1 : 0,
         y: open ? (actualSide === "bottom" ? sideOffset : -sideOffset) : 0,
       }}
@@ -128,7 +133,7 @@ export function ListboxPanel({
         } as CSSProperties
       }
       className={cn(
-        "fixed z-[9999] w-(--listbox-trigger-width) overflow-hidden rounded-2xl border border-border bg-background text-popover-foreground outline-none will-change-[height,transform]",
+        "fixed z-[9999] w-(--listbox-trigger-width) overflow-hidden rounded-2xl border border-border bg-background text-popover-foreground outline-none will-change-[clip-path,transform]",
         className,
       )}
     >

@@ -107,6 +107,10 @@ export const changelogEntries: ChangelogEntry[] = [
         "component": "context-menu"
       },
       {
+        "type": "improved",
+        "text": "Combobox and Multi Select reveal their list with a clip instead of growing its height, so the panel never reflows while it opens."
+      },
+      {
         "type": "fixed",
         "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
         "component": "select"
