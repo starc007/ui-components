@@ -2,21 +2,14 @@
 
 import { Check, Copy, FileCode2, LoaderCircle } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useLayoutEffect, useMemo, useRef } from "react";
 import {
   type AgentCodeLanguage,
   AgentCodeLine,
   useAgentCodeTokens,
 } from "@/components/agents/agent-code";
 import { SPRING_PRESS } from "@/lib/ease";
+import { useCopy } from "@/lib/hooks/use-copy";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -67,8 +60,7 @@ export function CodeBlock({
   const t = useMessages("codeBlock", codeBlockMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const viewportRef = useRef<HTMLDivElement>(null);
-  const copyTimer = useRef<number | undefined>(undefined);
-  const [copied, setCopied] = useState(false);
+  const { copied, copy: handleCopy } = useCopy({ text: code, onCopy });
   const streaming = status === "streaming";
   const tokens = useAgentCodeTokens(code, language);
   const highlighted = useMemo(
@@ -81,13 +73,6 @@ export function CodeBlock({
     offset += content.length + 1;
     return line;
   });
-
-  useEffect(
-    () => () => {
-      if (copyTimer.current) window.clearTimeout(copyTimer.current);
-    },
-    [],
-  );
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
@@ -106,15 +91,6 @@ export function CodeBlock({
     });
     return () => cancelAnimationFrame(frame);
   });
-
-  const handleCopy = useCallback(async () => {
-    if (onCopy) await onCopy();
-    else await navigator.clipboard?.writeText(code);
-
-    setCopied(true);
-    if (copyTimer.current) window.clearTimeout(copyTimer.current);
-    copyTimer.current = window.setTimeout(() => setCopied(false), 1600);
-  }, [code, onCopy]);
 
   return (
     <div
