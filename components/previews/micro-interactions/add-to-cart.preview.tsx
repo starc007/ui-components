@@ -15,6 +15,7 @@ export function AddToCartPreview() {
   return (
     <div {...stage}>
       <AddToCart
+        sound
         quantity={quantity}
         onQuantityChange={(next) => {
           // A click hands control back to the closest step in the loop.

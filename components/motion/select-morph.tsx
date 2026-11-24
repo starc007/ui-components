@@ -22,6 +22,10 @@ import {
   useState,
 } from "react";
 import { type ListboxRow, useListbox } from "@/lib/hooks/use-listbox";
+import { useSound } from "@/lib/sound";
+import { closeSound } from "@/lib/sounds/close";
+import { openSound } from "@/lib/sounds/open";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 
 // Shared-layout morph: trigger box grows into the panel and back, one surface.
@@ -45,14 +49,14 @@ const ITEM: Variants = {
 interface MorphContextValue {
   value: string | undefined;
   open: boolean;
-  setOpen: (open: boolean) => void;
+  setOpen: (open: boolean, quiet?: boolean) => void;
   select: (value: string) => void;
   register: (value: string, label: string, disabled: boolean) => void;
   unregister: (value: string) => void;
   labelFor: (value: string | undefined) => string | undefined;
   rows: ListboxRow[];
   /** Closes the panel; focus inside it returns to the trigger. */
-  close: () => void;
+  close: (quiet?: boolean) => void;
   triggerRef: RefObject<HTMLButtonElement | null>;
   placeholder: string;
   setPlaceholder: (p: string) => void;
@@ -81,6 +85,8 @@ export interface MorphSelectProps {
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   disabled?: boolean;
+  /** Play open and close swishes and a select on a pick. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   className?: string;
   children: ReactNode;
 }
@@ -95,6 +101,7 @@ export function MorphSelect({
   defaultValue,
   onValueChange,
   disabled = false,
+  sound = false,
   className,
   children,
 }: MorphSelectProps) {
@@ -105,8 +112,23 @@ export function MorphSelect({
   // Set when the panel closes holding focus: the trigger is unmounted while
   // open, so focus can only go back once it has mounted again.
   const restoreFocus = useRef(false);
-  const [open, setOpen] = useState(false);
+  const [open, setOpenState] = useState(false);
   const [internal, setInternal] = useState(defaultValue);
+  const playOpen = useSound(openSound, { enabled: sound });
+  const playClose = useSound(closeSound, { enabled: sound });
+  const playSelect = useSound(selectSound, { enabled: sound });
+
+  // `quiet` skips the close sweep when a pick already made its own sound.
+  const setOpen = useCallback(
+    (next: boolean, quiet = false) => {
+      if (next !== open && !quiet) {
+        if (next) playOpen();
+        else playClose();
+      }
+      setOpenState(next);
+    },
+    [open, playOpen, playClose],
+  );
   // ref-counted: items render twice (hidden registrar + open panel), so a
   // label is only dropped once every copy with that value has unmounted.
   const [labels, setLabels] = useState<
@@ -117,11 +139,14 @@ export function MorphSelect({
   const controlled = value !== undefined;
   const current = controlled ? value : internal;
 
-  const close = useCallback(() => {
-    if (rootRef.current?.contains(document.activeElement))
-      restoreFocus.current = true;
-    setOpen(false);
-  }, []);
+  const close = useCallback(
+    (quiet = false) => {
+      if (rootRef.current?.contains(document.activeElement))
+        restoreFocus.current = true;
+      setOpen(false, quiet);
+    },
+    [setOpen],
+  );
 
   useEffect(() => {
     if (open || !restoreFocus.current) return;
@@ -131,11 +156,12 @@ export function MorphSelect({
 
   const select = useCallback(
     (next: string) => {
+      playSelect();
       if (!controlled) setInternal(next);
       onValueChange?.(next);
-      close();
+      close(true);
     },
-    [controlled, onValueChange, close],
+    [controlled, onValueChange, close, playSelect],
   );
 
   const register = useCallback((v: string, label: string, disabled: boolean) => {
@@ -169,7 +195,7 @@ export function MorphSelect({
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointerdown", onPointer);
     };
-  }, [open, close]);
+  }, [open, close, setOpen]);
 
   const rows = useMemo(
     () =>
@@ -205,6 +231,7 @@ export function MorphSelect({
     [
       current,
       open,
+      setOpen,
       select,
       register,
       unregister,
@@ -363,7 +390,7 @@ export function MorphSelectContent({
               aria-haspopup="listbox"
               aria-expanded
               aria-controls={ctx.listId}
-              onClick={ctx.close}
+              onClick={() => ctx.close()}
               className={cn(ROW, "outline-none")}
             >
               <span

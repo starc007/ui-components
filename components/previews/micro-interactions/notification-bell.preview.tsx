@@ -11,7 +11,7 @@ export function NotificationBellPreview() {
 
   return (
     <div {...stage}>
-      <NotificationBell count={count} onCountChange={setCount} />
+      <NotificationBell sound count={count} onCountChange={setCount} />
     </div>
   );
 }

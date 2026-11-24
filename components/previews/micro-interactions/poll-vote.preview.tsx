@@ -19,6 +19,7 @@ export function PollVotePreview() {
   return (
     <div {...stage} className="w-72">
       <PollVote
+        sound
         options={OPTIONS}
         value={STEPS[step]}
         onValueChange={(next) => setStep(Math.max(0, STEPS.indexOf(next)))}

@@ -19,6 +19,10 @@ import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
 import { PresenceGate } from "@/lib/presence-gate";
+import { useSound } from "@/lib/sound";
+import { closeSound } from "@/lib/sounds/close";
+import { openSound } from "@/lib/sounds/open";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 
 export const reactionPickerMessages = {
@@ -54,6 +58,8 @@ export interface ReactionPickerProps {
   /** Reactions from everyone else. The viewer's own is added on top. */
   count?: number;
   labels?: Partial<ReactionPickerMessages>;
+  /** Play open and close swishes for the tray and a select on a pick. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   className?: string;
 }
 
@@ -115,9 +121,13 @@ export function ReactionPicker({
   onValueChange,
   count = 0,
   labels,
+  sound = false,
   className,
 }: ReactionPickerProps) {
   const t = useMessages("ReactionPicker", reactionPickerMessages, labels);
+  const playOpen = useSound(openSound, { enabled: sound });
+  const playClose = useSound(closeSound, { enabled: sound });
+  const playPick = useSound(selectSound, { enabled: sound });
   const reduce = Boolean(useReducedMotion());
   const canHover = useHoverCapable();
   const [internal, setInternal] = useState<string | null>(defaultValue);
@@ -211,7 +221,12 @@ export function ReactionPicker({
     setOpen(false);
     setActive(null);
   };
-  useDismiss(open, close, rootRef);
+  // Closing without a pick; a pick closes quietly behind its own sound.
+  const dismiss = () => {
+    playClose();
+    close();
+  };
+  useDismiss(open, dismiss, rootRef);
 
   // Opening by keyboard moves focus to the current reaction, or the first.
   const focusOnOpen = useRef(false);
@@ -224,6 +239,7 @@ export function ReactionPicker({
 
   const pick = (reaction: Reaction, index: number) => {
     const next = reaction.id === value ? null : reaction.id;
+    playPick({ pitch: next ? 1.1 : 0.85 });
     // Measure both ends now, from the event, while the tray is still open:
     // the icon itself, so a lifted one leaves from where it is drawn.
     const root = rootRef.current?.getBoundingClientRect();
@@ -262,11 +278,16 @@ export function ReactionPicker({
         aria-label={chosen ? t("reacted", { reaction: chosen.label }) : t("react")}
         whileTap={reduce ? undefined : { scale: 0.94 }}
         transition={SPRING_PRESS}
-        onClick={() => (open ? close() : setOpen(true))}
+        onClick={() => {
+          if (open) return dismiss();
+          playOpen();
+          setOpen(true);
+        }}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " " || event.key === "ArrowUp") focusOnOpen.current = true;
           if (event.key === "ArrowUp" && !open) {
             event.preventDefault();
+            playOpen();
             setOpen(true);
           }
         }}

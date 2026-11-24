@@ -10,6 +10,7 @@ export function RangeSliderRulerPreview() {
   return (
     <div className="w-full max-w-sm">
       <RulerSlider
+        sound
         value={value}
         onValueChange={setValue}
         min={40}

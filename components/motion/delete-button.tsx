@@ -5,6 +5,10 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { closeSound } from "@/lib/sounds/close";
+import { deleteSound } from "@/lib/sounds/delete";
+import { tapSound } from "@/lib/sounds/tap";
 import { cn } from "@/lib/utils";
 
 export const deleteButtonMessages = {
@@ -27,6 +31,8 @@ export interface DeleteButtonProps {
   onDelete?: () => unknown;
   disabled?: boolean;
   labels?: Partial<DeleteButtonMessages>;
+  /** Play a tap to arm, a close on cancel and a crumple once deleted. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   className?: string;
 }
 
@@ -49,8 +55,17 @@ const SPREAD = 10;
  * with Deleted, before the bin comes back. The cross, Escape or moving
  * focus away cancels. One pill springs to fit each step.
  */
-export function DeleteButton({ onDelete, disabled = false, labels, className }: DeleteButtonProps) {
+export function DeleteButton({
+  onDelete,
+  disabled = false,
+  labels,
+  sound = false,
+  className,
+}: DeleteButtonProps) {
   const t = useMessages("DeleteButton", deleteButtonMessages, labels);
+  const playArm = useSound(tapSound, { enabled: sound });
+  const playCancel = useSound(closeSound, { enabled: sound });
+  const playDeleted = useSound(deleteSound, { enabled: sound });
   const reduce = Boolean(useReducedMotion());
   const [phase, setPhase] = useState<Phase>("idle");
 
@@ -101,7 +116,10 @@ export function DeleteButton({ onDelete, disabled = false, labels, className }: 
       return;
     }
     const wait = Math.max(0, DELETING_MS - (Date.now() - started));
-    setTimeout(() => setPhase("deleted"), wait);
+    setTimeout(() => {
+      playDeleted();
+      setPhase("deleted");
+    }, wait);
   };
 
   const blur = reduce ? "blur(0px)" : "blur(3px)";
@@ -134,7 +152,10 @@ export function DeleteButton({ onDelete, disabled = false, labels, className }: 
       animate={width ? { width } : undefined}
       transition={reduce ? { duration: 0 } : SPRING_SWAP}
       onKeyDown={(event) => {
-        if (event.key === "Escape" && phase === "confirm") go("idle");
+        if (event.key === "Escape" && phase === "confirm") {
+          playCancel();
+          go("idle");
+        }
       }}
       onBlur={(event) => {
         // Cancel when focus leaves the pill while it is asking.
@@ -159,7 +180,10 @@ export function DeleteButton({ onDelete, disabled = false, labels, className }: 
             type="button"
             disabled={disabled}
             aria-label={t("delete")}
-            onClick={() => go("confirm")}
+            onClick={() => {
+              playArm();
+              go("confirm");
+            }}
             whileTap={reduce ? undefined : { scale: 0.9 }}
             className={cn(
               "inline-flex size-9 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors",
@@ -182,7 +206,10 @@ export function DeleteButton({ onDelete, disabled = false, labels, className }: 
               ref={cancelRef}
               type="button"
               aria-label={t("cancel")}
-              onClick={() => go("idle")}
+              onClick={() => {
+                playCancel();
+                go("idle");
+              }}
               className={cn(round, "text-muted-foreground hover:bg-muted hover:text-foreground")}
               {...side(SPREAD)}
             >

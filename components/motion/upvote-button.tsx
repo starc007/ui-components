@@ -6,6 +6,8 @@ import { useState } from "react";
 import { DigitSwap } from "@/components/motion/digit-swap";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { toggleOffSound, toggleOnSound } from "@/lib/sounds/toggle";
 import { cn } from "@/lib/utils";
 
 export const upvoteButtonMessages = {
@@ -25,6 +27,8 @@ export interface UpvoteButtonProps
   count: number;
   orientation?: UpvoteButtonOrientation;
   labels?: Partial<UpvoteButtonMessages>;
+  /** Play a rising snap on vote and a falling one on unvote. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
 
 const EXIT = { duration: 0.16, ease: EASE_OUT } as const;
@@ -61,6 +65,7 @@ export function UpvoteButton({
   count,
   orientation = "vertical",
   labels,
+  sound = false,
   className,
   onClick,
   ...rest
@@ -69,6 +74,8 @@ export function UpvoteButton({
   const reduce = Boolean(useReducedMotion());
   const [internal, setInternal] = useState(defaultVoted);
   const voted = votedProp ?? internal;
+  const playVote = useSound(toggleOnSound, { enabled: sound });
+  const playUnvote = useSound(toggleOffSound, { enabled: sound });
   // Counts every toggle, so each one swaps the arrow; votes alone replay the +1.
   const [toggles, setToggles] = useState(0);
   const [votes, setVotes] = useState(0);
@@ -104,6 +111,8 @@ export function UpvoteButton({
           onClick?.(event);
           if (event.defaultPrevented) return;
           const next = !voted;
+          if (next) playVote();
+          else playUnvote();
           if (votedProp === undefined) setInternal(next);
           setToggles((value) => value + 1);
           if (next) setVotes((value) => value + 1);

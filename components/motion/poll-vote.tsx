@@ -4,6 +4,8 @@ import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 
 import { useEffect, useState } from "react";
 import { EASE_IN, EASE_OUT, SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 
 export const pollVoteMessages = {
@@ -24,6 +26,8 @@ export interface PollVoteProps {
   defaultValue?: string | null;
   onValueChange?: (value: string | null) => void;
   labels?: Partial<PollVoteMessages>;
+  /** Play a crisp select on a vote. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   className?: string;
 }
 
@@ -104,6 +108,7 @@ export function PollVote({
   defaultValue = null,
   onValueChange,
   labels,
+  sound = false,
   className,
 }: PollVoteProps) {
   const t = useMessages("PollVote", pollVoteMessages, labels);
@@ -111,6 +116,7 @@ export function PollVote({
   const [internal, setInternal] = useState<string | null>(defaultValue);
   const value = valueProp === undefined ? internal : valueProp;
   const voted = value !== null;
+  const play = useSound(selectSound, { enabled: sound });
 
   // Remember the vote before this one: a first vote fills in a wave, a
   // moved vote shifts every bar together.
@@ -147,6 +153,7 @@ export function PollVote({
             transition={SPRING_PRESS}
             onClick={() => {
               if (mine) return;
+              play();
               if (valueProp === undefined) setInternal(option.id);
               onValueChange?.(option.id);
             }}

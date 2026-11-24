@@ -8,7 +8,7 @@ export function RefreshButtonPreview() {
 
   return (
     <div {...stage}>
-      <RefreshButton />
+      <RefreshButton sound />
     </div>
   );
 }

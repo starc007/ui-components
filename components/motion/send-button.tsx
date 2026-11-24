@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { TextMorph } from "@/components/motion/text-morph";
 import { EASE_IN, EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { navigateSound } from "@/lib/sounds/navigate";
+import { successSound } from "@/lib/sounds/success";
 import { cn } from "@/lib/utils";
 
 export const sendButtonMessages = {
@@ -22,6 +25,8 @@ export interface SendButtonProps
   /** Runs the send. Return a promise to keep Sending up until it settles. */
   onSend?: () => unknown;
   labels?: Partial<SendButtonMessages>;
+  /** Play a swish as the plane leaves and a success chime once sent. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
 
 // Sending shows at least this long, so the flight always reads.
@@ -46,8 +51,17 @@ const DOTS = [0, 1, 2];
  * tail; three dots bounce while it sends; a check pops in for Sent; then the
  * plane flies back in from the bottom left, as if it had looped around.
  */
-export function SendButton({ onSend, labels, className, onClick, ...rest }: SendButtonProps) {
+export function SendButton({
+  onSend,
+  labels,
+  sound = false,
+  className,
+  onClick,
+  ...rest
+}: SendButtonProps) {
   const t = useMessages("SendButton", sendButtonMessages, labels);
+  const playSend = useSound(navigateSound, { enabled: sound });
+  const playSent = useSound(successSound, { enabled: sound });
   const reduce = Boolean(useReducedMotion());
   const [phase, setPhase] = useState<Phase>("idle");
   // Counts sends, so each one replays the contrail.
@@ -70,7 +84,10 @@ export function SendButton({ onSend, labels, className, onClick, ...rest }: Send
       return;
     }
     const wait = Math.max(0, SENDING_MS - (Date.now() - started));
-    setTimeout(() => setPhase("sent"), wait);
+    setTimeout(() => {
+      playSent();
+      setPhase("sent");
+    }, wait);
   };
 
   const instant = { duration: 0 };
@@ -85,6 +102,7 @@ export function SendButton({ onSend, labels, className, onClick, ...rest }: Send
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented || phase !== "idle") return;
+        playSend();
         void send();
       }}
       className={cn(

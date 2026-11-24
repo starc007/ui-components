@@ -22,6 +22,11 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "new",
+        "text": "Seventeen Micro Interactions, Select, Morph Select, Combobox and all six Range Slider variants take the sound prop too: taps, drops and chimes that match each action, and a tick per slider step that rises toward the max.",
+        "href": "/micro-interactions"
+      },
+      {
+        "type": "new",
         "text": "SoundProvider sets a volume for every beUI sound and can mute them all at once, including the casino games, Wheel Picker and Bookshelf.",
         "component": "sound-kit"
       },

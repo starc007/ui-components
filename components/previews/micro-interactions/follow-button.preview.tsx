@@ -11,7 +11,7 @@ export function FollowButtonPreview() {
 
   return (
     <div {...stage}>
-      <FollowButton following={following} onFollowingChange={setFollowing} />
+      <FollowButton sound following={following} onFollowingChange={setFollowing} />
     </div>
   );
 }

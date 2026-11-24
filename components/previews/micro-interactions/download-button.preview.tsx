@@ -9,7 +9,7 @@ export function DownloadButtonPreview() {
 
   return (
     <div {...stage}>
-      <DownloadButton />
+      <DownloadButton sound />
     </div>
   );
 }

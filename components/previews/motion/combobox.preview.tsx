@@ -71,7 +71,7 @@ export function ComboboxPreview() {
       <p className="mb-2 text-xs font-medium text-muted-foreground">
         Workspace
       </p>
-      <Combobox value={value} onValueChange={setValue}>
+      <Combobox sound value={value} onValueChange={setValue}>
         <ComboboxTrigger className="h-12 px-2.5">
           <ComboboxInput
             aria-label="Search workspaces"

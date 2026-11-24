@@ -5,6 +5,9 @@ import { useId, useState } from "react";
 import { TextMorph } from "@/components/motion/text-morph";
 import { EASE_IN_OUT, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { pressSound } from "@/lib/sounds/press";
+import { tapSound } from "@/lib/sounds/tap";
 import { cn } from "@/lib/utils";
 
 export const lockToggleMessages = {
@@ -23,6 +26,8 @@ export interface LockToggleProps
   /** Show Locked / Unlocked next to the padlock. */
   showLabel?: boolean;
   labels?: Partial<LockToggleMessages>;
+  /** Play a low press on lock and a light tap on unlock. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
 
 // How far the shackle lifts clear of the body, how far it swings open on
@@ -61,6 +66,7 @@ export function LockToggle({
   onLockedChange,
   showLabel = true,
   labels,
+  sound = false,
   className,
   onClick,
   ...rest
@@ -69,6 +75,8 @@ export function LockToggle({
   const reduce = Boolean(useReducedMotion());
   const [internal, setInternal] = useState(defaultLocked);
   const locked = lockedProp ?? internal;
+  const playLock = useSound(pressSound, { enabled: sound });
+  const playUnlock = useSound(tapSound, { enabled: sound });
   const mask = `lock-keyhole-${useId().replace(/:/g, "")}`;
 
   const instant = { duration: 0 };
@@ -99,6 +107,8 @@ export function LockToggle({
         onClick?.(event);
         if (event.defaultPrevented) return;
         const next = !locked;
+        if (next) playLock();
+        else playUnlock();
         if (lockedProp === undefined) setInternal(next);
         onLockedChange?.(next);
       }}

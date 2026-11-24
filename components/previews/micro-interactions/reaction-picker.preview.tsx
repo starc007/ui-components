@@ -25,7 +25,7 @@ export function ReactionPickerPreview() {
   return (
     // Room above for the tray to open into.
     <div {...stage} className="pt-12">
-      <ReactionPicker count={24} />
+      <ReactionPicker sound count={24} />
     </div>
   );
 }

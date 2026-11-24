@@ -10,7 +10,7 @@ export function MuteTogglePreview() {
 
   return (
     <div {...stage}>
-      <MuteToggle muted={muted} onMutedChange={setMuted} />
+      <MuteToggle sound muted={muted} onMutedChange={setMuted} />
     </div>
   );
 }

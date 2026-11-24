@@ -15,6 +15,10 @@ import {
   useState,
 } from "react";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { closeSound } from "@/lib/sounds/close";
+import { openSound } from "@/lib/sounds/open";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 import {
   type ComboboxMessages,
@@ -120,6 +124,8 @@ export interface ComboboxProps {
   onQueryChange?: (query: string) => void;
   filter?: ComboboxFilter;
   disabled?: boolean;
+  /** Play open and close swishes and a select on a pick. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<ComboboxMessages>;
@@ -138,6 +144,7 @@ export function Combobox({
   onQueryChange,
   filter = defaultFilter,
   disabled = false,
+  sound = false,
   className,
   labels,
 }: ComboboxProps) {
@@ -168,10 +175,19 @@ export function Combobox({
     [onQueryChange, queryControlled],
   );
 
+  const playOpen = useSound(openSound, { enabled: sound });
+  const playClose = useSound(closeSound, { enabled: sound });
+  const playSelect = useSound(selectSound, { enabled: sound });
+
+  // `quiet` skips the close sweep when a pick already made its own sound.
   const updateOpen = useCallback(
-    (next: boolean, restoreFocus = false) => {
+    (next: boolean, restoreFocus = false, quiet = false) => {
       if (disabled && next) return;
       if (next !== open) {
+        if (!quiet) {
+          if (next) playOpen();
+          else playClose();
+        }
         if (!openControlled) setInternalOpen(next);
         onOpenChange?.(next);
       }
@@ -181,7 +197,7 @@ export function Combobox({
           inputRef.current?.focus({ preventScroll: true }),
         );
     },
-    [disabled, onOpenChange, open, openControlled, updateQuery],
+    [disabled, onOpenChange, open, openControlled, updateQuery, playOpen, playClose],
   );
 
   const registerItem = useCallback((item: RegisteredItem) => {
@@ -250,11 +266,12 @@ export function Combobox({
   const select = useCallback(
     (next: string) => {
       if (items.get(next)?.disabled) return;
+      playSelect();
       if (!valueControlled) setInternalValue(next);
       onValueChange?.(next);
-      updateOpen(false, true);
+      updateOpen(false, true, true);
     },
-    [items, onValueChange, updateOpen, valueControlled],
+    [items, onValueChange, updateOpen, valueControlled, playSelect],
   );
 
   const selectActive = useCallback(() => {

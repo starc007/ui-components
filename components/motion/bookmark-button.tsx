@@ -5,6 +5,9 @@ import { useState } from "react";
 import { TextMorph } from "@/components/motion/text-morph";
 import { EASE_IN, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { dropSound } from "@/lib/sounds/drop";
+import { tapSound } from "@/lib/sounds/tap";
 import { cn } from "@/lib/utils";
 
 export const bookmarkButtonMessages = {
@@ -25,6 +28,8 @@ export interface BookmarkButtonProps
   /** What is being saved, for the accessible name ("Save {name}"). */
   name?: string;
   labels?: Partial<BookmarkButtonMessages>;
+  /** Play a soft drop on save and a tap on unsave. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
 
 const RIBBON = "M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v15.5L12 16.5l-6.5 4V5A1.5 1.5 0 0 1 7 3.5z";
@@ -50,6 +55,7 @@ export function BookmarkButton({
   showLabel = true,
   name,
   labels,
+  sound = false,
   className,
   onClick,
   ...rest
@@ -59,6 +65,8 @@ export function BookmarkButton({
   const [internal, setInternal] = useState(defaultSaved);
   const saved = savedProp ?? internal;
   const instant = { duration: 0 };
+  const playSave = useSound(dropSound, { enabled: sound });
+  const playUnsave = useSound(tapSound, { enabled: sound });
 
   return (
     <motion.button
@@ -73,6 +81,8 @@ export function BookmarkButton({
         onClick?.(event);
         if (event.defaultPrevented) return;
         const next = !saved;
+        if (next) playSave();
+        else playUnsave({ pitch: 0.85 });
         if (savedProp === undefined) setInternal(next);
         onSavedChange?.(next);
       }}

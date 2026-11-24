@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { DigitSwap } from "@/components/motion/digit-swap";
 import { EASE_IN, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { notifySound } from "@/lib/sounds/notify";
+import { tapSound } from "@/lib/sounds/tap";
 import { cn } from "@/lib/utils";
 
 export const notificationBellMessages = {
@@ -24,6 +27,8 @@ export interface NotificationBellProps
   /** Counts above this show as "9+". */
   max?: number;
   labels?: Partial<NotificationBellMessages>;
+  /** Play a small bell when the count goes up and a tap when it is cleared. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
 
 // A bell's swing: wide at first, each pass a little smaller, settling at rest.
@@ -53,6 +58,7 @@ export function NotificationBell({
   onCountChange,
   max = 9,
   labels,
+  sound = false,
   className,
   onClick,
   ...rest
@@ -83,6 +89,13 @@ export function NotificationBell({
   const bell = useAnimationControls();
   const clapper = useAnimationControls();
   const badge = useAnimationControls();
+  const playNotify = useSound(notifySound, { enabled: sound });
+  const playClear = useSound(tapSound, { enabled: sound });
+
+  // A new notification rings once, with or without reduced motion.
+  useEffect(() => {
+    if (rings > 0) playNotify();
+  }, [rings, playNotify]);
 
   useEffect(() => {
     if (rings === 0 || reduce) return;
@@ -117,6 +130,7 @@ export function NotificationBell({
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented || count === 0) return;
+        playClear();
         if (countProp === undefined) setInternal(0);
         onCountChange?.(0);
       }}

@@ -13,7 +13,7 @@ export function RangeSliderPreview() {
         <span>Drag the handle</span>
         <span className="tabular-nums text-foreground">{value}</span>
       </div>
-      <RangeSlider value={value} onValueChange={setValue} step={5} aria-label="Value" />
+      <RangeSlider sound value={value} onValueChange={setValue} step={5} aria-label="Value" />
     </div>
   );
 }

@@ -11,6 +11,8 @@ import { useEffect, useRef, useState } from "react";
 import { TextMorph } from "@/components/motion/text-morph";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { copySound } from "@/lib/sounds/copy";
 import { cn } from "@/lib/utils";
 
 export const copyButtonMessages = {
@@ -30,6 +32,8 @@ export interface CopyButtonProps
   /** Show "Copy" / "Copied" next to the icon. */
   showLabel?: boolean;
   labels?: Partial<CopyButtonMessages>;
+  /** Play two quick ticks once the text is copied. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
 
 const EXIT = { duration: 0.12, ease: EASE_OUT } as const;
@@ -66,6 +70,7 @@ export function CopyButton({
   timeout = 1600,
   showLabel = false,
   labels,
+  sound = false,
   className,
   onClick,
   ...rest
@@ -74,6 +79,7 @@ export function CopyButton({
   const reduce = Boolean(useReducedMotion());
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const play = useSound(copySound, { enabled: sound });
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
@@ -93,6 +99,7 @@ export function CopyButton({
           } catch {
             return;
           }
+          play();
           setCopied(true);
           onCopy?.(text);
           clearTimeout(timer.current);

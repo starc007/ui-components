@@ -10,7 +10,7 @@ export function BookmarkButtonPreview() {
 
   return (
     <div {...stage}>
-      <BookmarkButton saved={saved} onSavedChange={setSaved} />
+      <BookmarkButton sound saved={saved} onSavedChange={setSaved} />
     </div>
   );
 }

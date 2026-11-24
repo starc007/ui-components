@@ -16,6 +16,9 @@ import { useEffect, useRef, useState } from "react";
 import { TextMorph } from "@/components/motion/text-morph";
 import { EASE_IN, EASE_IN_OUT, EASE_OUT, SPRING_GLIDE, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { successSound } from "@/lib/sounds/success";
+import { tapSound } from "@/lib/sounds/tap";
 import { cn } from "@/lib/utils";
 
 export const downloadButtonMessages = {
@@ -38,6 +41,8 @@ export interface DownloadButtonProps
    */
   onDownload?: (report: (progress: number) => void) => unknown;
   labels?: Partial<DownloadButtonMessages>;
+  /** Play a tap on start and a success chime when done. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
 
 // The pill, and the round badge it folds into when the download is done.
@@ -67,8 +72,17 @@ const DRIFT = { duration: 0.7, ease: "linear", repeat: Number.POSITIVE_INFINITY 
  * the pill folds into a round badge where a check pops in, then opens back
  * into the button as the colour drains away.
  */
-export function DownloadButton({ onDownload, labels, className, onClick, ...rest }: DownloadButtonProps) {
+export function DownloadButton({
+  onDownload,
+  labels,
+  sound = false,
+  className,
+  onClick,
+  ...rest
+}: DownloadButtonProps) {
   const t = useMessages("DownloadButton", downloadButtonMessages, labels);
+  const playStart = useSound(tapSound, { enabled: sound });
+  const playDone = useSound(successSound, { enabled: sound });
   const reduce = Boolean(useReducedMotion());
   const [phase, setPhase] = useState<Phase>("idle");
   const [percent, setPercent] = useState(0);
@@ -134,6 +148,7 @@ export function DownloadButton({ onDownload, labels, className, onClick, ...rest
       return;
     }
     report(1);
+    playDone();
     setPhase("done");
   };
 
@@ -207,6 +222,7 @@ export function DownloadButton({ onDownload, labels, className, onClick, ...rest
         onClick={(event) => {
           onClick?.(event);
           if (event.defaultPrevented || phase !== "idle") return;
+          playStart();
           void start();
         }}
         className={cn(

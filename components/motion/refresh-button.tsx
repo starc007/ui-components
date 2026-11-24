@@ -13,6 +13,9 @@ import { useEffect, useRef, useState } from "react";
 import { TextMorph } from "@/components/motion/text-morph";
 import { EASE_IN, EASE_IN_OUT, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { selectSound } from "@/lib/sounds/select";
+import { tapSound } from "@/lib/sounds/tap";
 import { cn } from "@/lib/utils";
 
 export const refreshButtonMessages = {
@@ -30,6 +33,8 @@ export interface RefreshButtonProps
   /** Runs the refresh. Return a promise to keep spinning until it settles. */
   onRefresh?: () => unknown;
   labels?: Partial<RefreshButtonMessages>;
+  /** Play a tap on refresh and a crisp select once updated. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
 
 // Spins at least this long, so a quick refresh still reads as one.
@@ -56,8 +61,17 @@ const BREATHE = { duration: 1.1, ease: EASE_IN_OUT, repeat: Number.POSITIVE_INFI
  * the arc closes and the arrowhead clicks back in, then a check takes over
  * as Refresh morphs to Refreshing and Updated.
  */
-export function RefreshButton({ onRefresh, labels, className, onClick, ...rest }: RefreshButtonProps) {
+export function RefreshButton({
+  onRefresh,
+  labels,
+  sound = false,
+  className,
+  onClick,
+  ...rest
+}: RefreshButtonProps) {
   const t = useMessages("RefreshButton", refreshButtonMessages, labels);
+  const playStart = useSound(tapSound, { enabled: sound });
+  const playUpdated = useSound(selectSound, { enabled: sound });
   const reduce = Boolean(useReducedMotion());
   const [phase, setPhase] = useState<Phase>("idle");
   const rotate = useMotionValue(0);
@@ -98,13 +112,14 @@ export function RefreshButton({ onRefresh, labels, className, onClick, ...rest }
       return () => controls.stop();
     }
     if (phase === "updated") {
+      playUpdated();
       const id = setTimeout(() => {
         rotate.set(0);
         setPhase("idle");
       }, UPDATED_MS);
       return () => clearTimeout(id);
     }
-  }, [phase, reduce, rotate]);
+  }, [phase, reduce, rotate, playUpdated]);
 
   const refresh = async () => {
     setPhase("refreshing");
@@ -132,6 +147,7 @@ export function RefreshButton({ onRefresh, labels, className, onClick, ...rest }
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented || phase !== "idle") return;
+        playStart();
         void refresh();
       }}
       className={cn(

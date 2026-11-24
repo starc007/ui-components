@@ -11,6 +11,8 @@ import { TextMorph } from "@/components/motion/text-morph";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 
 export const followButtonMessages = {
@@ -30,6 +32,8 @@ export interface FollowButtonProps
   /** Who is being followed, for the accessible name ("Follow {name}"). */
   name?: string;
   labels?: Partial<FollowButtonMessages>;
+  /** Play a crisp select on follow, lower on unfollow. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
 
 type Phase = "loading" | "confirm";
@@ -73,6 +77,7 @@ export function FollowButton({
   onFollowingChange,
   name,
   labels,
+  sound = false,
   className,
   onClick,
   onPointerEnter,
@@ -84,6 +89,7 @@ export function FollowButton({
   const canHover = useHoverCapable();
   const [internal, setInternal] = useState(defaultFollowing);
   const following = followingProp ?? internal;
+  const play = useSound(selectSound, { enabled: sound });
   const [hovered, setHovered] = useState(false);
   // A fresh follow reads Following until the pointer leaves, so the click
   // that followed never shows Unfollow under the cursor.
@@ -142,6 +148,7 @@ export function FollowButton({
         onClick?.(event);
         if (event.defaultPrevented) return;
         const next = !following;
+        play({ pitch: next ? 1 : 0.8 });
         if (followingProp === undefined) setInternal(next);
         if (next) setArmed(false);
         onFollowingChange?.(next);

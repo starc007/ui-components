@@ -10,7 +10,7 @@ export function LockTogglePreview() {
 
   return (
     <div {...stage}>
-      <LockToggle locked={locked} onLockedChange={setLocked} />
+      <LockToggle sound locked={locked} onLockedChange={setLocked} />
     </div>
   );
 }

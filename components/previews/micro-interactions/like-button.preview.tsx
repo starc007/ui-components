@@ -10,7 +10,7 @@ export function LikeButtonPreview() {
 
   return (
     <div {...stage}>
-      <LikeButton count={128} liked={liked} onLikedChange={setLiked} />
+      <LikeButton sound count={128} liked={liked} onLikedChange={setLiked} />
     </div>
   );
 }

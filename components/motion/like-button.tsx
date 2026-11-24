@@ -6,6 +6,8 @@ import { type ComponentPropsWithRef, useState } from "react";
 import { DigitSwap } from "@/components/motion/digit-swap";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { tapSound } from "@/lib/sounds/tap";
 import { cn } from "@/lib/utils";
 
 export const likeButtonMessages = {
@@ -22,6 +24,8 @@ export interface LikeButtonProps
   /** Likes from everyone else. The viewer's own like is added on top. */
   count?: number;
   labels?: Partial<LikeButtonMessages>;
+  /** Play a soft tap on like and unlike. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
 
 // Eight sparks at even angles, alternating near and far so the burst reads as
@@ -54,6 +58,7 @@ export function LikeButton({
   onLikedChange,
   count,
   labels,
+  sound = false,
   className,
   onClick,
   ...rest
@@ -64,6 +69,7 @@ export function LikeButton({
   const liked = likedProp ?? internal;
   // Each like gets its own burst; 0 means none has played yet.
   const [burst, setBurst] = useState(0);
+  const play = useSound(tapSound, { enabled: sound });
 
   return (
     <button
@@ -74,6 +80,7 @@ export function LikeButton({
         onClick?.(event);
         if (event.defaultPrevented) return;
         const next = !liked;
+        play({ pitch: next ? 1.2 : 0.85 });
         if (likedProp === undefined) setInternal(next);
         if (next) setBurst((value) => value + 1);
         onLikedChange?.(next);

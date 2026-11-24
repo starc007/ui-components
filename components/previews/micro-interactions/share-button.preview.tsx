@@ -18,7 +18,7 @@ export function ShareButtonPreview() {
   return (
     // Room above for the fan to open into.
     <div {...stage} className="pt-20">
-      <ShareButton />
+      <ShareButton sound />
     </div>
   );
 }

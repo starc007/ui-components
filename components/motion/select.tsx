@@ -25,6 +25,10 @@ import {
 } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { type ListboxRow, useListbox } from "@/lib/hooks/use-listbox";
+import { useSound } from "@/lib/sound";
+import { closeSound } from "@/lib/sounds/close";
+import { openSound } from "@/lib/sounds/open";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 
 // One progress value drives the surface, gap, corners and chevron. This short
@@ -60,14 +64,14 @@ type Placement = "bottom" | "top";
 interface SelectContextValue {
   value: string | undefined;
   open: boolean;
-  setOpen: (open: boolean) => void;
+  setOpen: (open: boolean, quiet?: boolean) => void;
   select: (value: string) => void;
   register: (value: string, label: string, disabled: boolean) => void;
   unregister: (value: string) => void;
   labelFor: (value: string | undefined) => string | undefined;
   rows: ListboxRow[];
   /** Closes the panel; focus inside it returns to the trigger. */
-  close: () => void;
+  close: (quiet?: boolean) => void;
   reduce: boolean;
   progress: MotionValue<number>;
   triggerId: string;
@@ -106,6 +110,8 @@ export interface SelectProps {
    */
   onOpenChange?: (open: boolean) => void;
   disabled?: boolean;
+  /** Play open and close swishes and a select on a pick. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   className?: string;
   children: ReactNode;
 }
@@ -118,6 +124,7 @@ export function Select({
   defaultOpen = false,
   onOpenChange,
   disabled = false,
+  sound = false,
   className,
   children,
 }: SelectProps) {
@@ -137,33 +144,46 @@ export function Select({
   const open = openControlled ? openProp : internalOpen;
   const progress = useMotionValue(open ? 1 : 0);
 
+  const playOpen = useSound(openSound, { enabled: sound });
+  const playClose = useSound(closeSound, { enabled: sound });
+  const playSelect = useSound(selectSound, { enabled: sound });
+
+  // `quiet` skips the close sweep when a pick already made its own sound.
   const setOpen = useCallback(
-    (next: boolean) => {
+    (next: boolean, quiet = false) => {
+      if (next !== open && !quiet) {
+        if (next) playOpen();
+        else playClose();
+      }
       if (!openControlled) setInternalOpen(next);
       onOpenChange?.(next);
     },
-    [onOpenChange, openControlled],
+    [onOpenChange, openControlled, open, playOpen, playClose],
   );
 
   // The panel turns inert as it closes, which would drop focus held inside it
   // on the page body. Hand it back to the trigger before that happens.
-  const close = useCallback(() => {
-    const trigger = document.getElementById(`${baseId}-trigger`);
-    if (
-      rootRef.current?.contains(document.activeElement) &&
-      document.activeElement !== trigger
-    )
-      trigger?.focus();
-    setOpen(false);
-  }, [baseId, setOpen]);
+  const close = useCallback(
+    (quiet = false) => {
+      const trigger = document.getElementById(`${baseId}-trigger`);
+      if (
+        rootRef.current?.contains(document.activeElement) &&
+        document.activeElement !== trigger
+      )
+        trigger?.focus();
+      setOpen(false, quiet);
+    },
+    [baseId, setOpen],
+  );
 
   const select = useCallback(
     (next: string) => {
+      playSelect();
       if (!controlled) setInternal(next);
       onValueChange?.(next);
-      close();
+      close(true);
     },
-    [controlled, onValueChange, close],
+    [controlled, onValueChange, close, playSelect],
   );
 
   const register = useCallback((v: string, label: string, disabled: boolean) => {

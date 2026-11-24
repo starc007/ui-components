@@ -7,6 +7,10 @@ import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { closeSound } from "@/lib/sounds/close";
+import { openSound } from "@/lib/sounds/open";
+import { successSound } from "@/lib/sounds/success";
 import { cn } from "@/lib/utils";
 
 export const shareButtonMessages = {
@@ -38,6 +42,8 @@ export interface ShareButtonProps {
    */
   onAction?: (id: string) => unknown;
   labels?: Partial<ShareButtonMessages>;
+  /** Play open and close swishes for the fan and a success chime when an action is done. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   className?: string;
 }
 
@@ -99,8 +105,17 @@ function Bubble({ ref, style, ...props }: HTMLMotionProps<"button"> & { ref?: Re
  * into a check, then the fan folds back into the button. What an action
  * does is up to `onAction`; the button itself shares nothing.
  */
-export function ShareButton({ actions: actionsProp, onAction, labels, className }: ShareButtonProps) {
+export function ShareButton({
+  actions: actionsProp,
+  onAction,
+  labels,
+  sound = false,
+  className,
+}: ShareButtonProps) {
   const t = useMessages("ShareButton", shareButtonMessages, labels);
+  const playOpen = useSound(openSound, { enabled: sound });
+  const playClose = useSound(closeSound, { enabled: sound });
+  const playDone = useSound(successSound, { enabled: sound });
   const reduce = Boolean(useReducedMotion());
   const canHover = useHoverCapable();
   const [open, setOpen] = useState(false);
@@ -134,7 +149,12 @@ export function ShareButton({ actions: actionsProp, onAction, labels, className 
     setActive(null);
     setDone(null);
   };
-  useDismiss(open, close, rootRef);
+  // Closing by hand; the close after a finished action is quiet behind its chime.
+  const dismiss = () => {
+    playClose();
+    close();
+  };
+  useDismiss(open, dismiss, rootRef);
 
   const run = async (action: ShareAction) => {
     try {
@@ -142,6 +162,7 @@ export function ShareButton({ actions: actionsProp, onAction, labels, className 
     } catch {
       return;
     }
+    playDone();
     setDone(action.id);
     setActive(action.id);
     timer.current = setTimeout(close, DONE_MS);
@@ -250,7 +271,11 @@ export function ShareButton({ actions: actionsProp, onAction, labels, className 
         aria-label={open ? t("close") : t("share")}
         whileTap={reduce ? undefined : { scale: 0.92 }}
         transition={SPRING_PRESS}
-        onClick={() => (open ? close() : setOpen(true))}
+        onClick={() => {
+          if (open) return dismiss();
+          playOpen();
+          setOpen(true);
+        }}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") focusOnOpen.current = !open;
         }}

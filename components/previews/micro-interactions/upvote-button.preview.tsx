@@ -10,7 +10,7 @@ export function UpvoteButtonPreview() {
 
   return (
     <div {...stage}>
-      <UpvoteButton count={482} voted={voted} onVotedChange={setVoted} />
+      <UpvoteButton sound count={482} voted={voted} onVotedChange={setVoted} />
     </div>
   );
 }

@@ -6,6 +6,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { DigitSwap } from "@/components/motion/digit-swap";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { deleteSound } from "@/lib/sounds/delete";
+import { dropSound } from "@/lib/sounds/drop";
+import { tickSound } from "@/lib/sounds/tick";
 import { cn } from "@/lib/utils";
 
 export const addToCartMessages = {
@@ -26,6 +30,8 @@ export interface AddToCartProps {
   max?: number;
   disabled?: boolean;
   labels?: Partial<AddToCartMessages>;
+  /** Play a drop on add, a tick per step and a crumple on remove. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   /**
    * Resize the pill to fit each face (default). Turn it off and give it a
    * width, for example `w-full`, to keep one size in both states.
@@ -53,6 +59,7 @@ export function AddToCart({
   max = 99,
   disabled = false,
   labels,
+  sound = false,
   morphWidth = true,
   className,
 }: AddToCartProps) {
@@ -60,6 +67,9 @@ export function AddToCart({
   const reduce = Boolean(useReducedMotion());
   const [internal, setInternal] = useState(defaultQuantity);
   const quantity = quantityProp ?? internal;
+  const playAdd = useSound(dropSound, { enabled: sound });
+  const playStep = useSound(tickSound, { enabled: sound });
+  const playRemove = useSound(deleteSound, { enabled: sound });
   const [direction, setDirection] = useState<"up" | "down">("up");
   const inCart = quantity > 0;
 
@@ -76,6 +86,9 @@ export function AddToCart({
   const change = (next: number) => {
     const clamped = Math.max(0, Math.min(max, next));
     if (clamped === quantity) return;
+    if (quantity === 0) playAdd();
+    else if (clamped === 0) playRemove();
+    else playStep({ pitch: clamped > quantity ? 1.1 : 0.9 });
     if (clamped > 0 !== inCart) moveFocus.current = true;
     setDirection(clamped > quantity ? "up" : "down");
     if (quantityProp === undefined) setInternal(clamped);

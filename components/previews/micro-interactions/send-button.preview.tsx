@@ -8,7 +8,7 @@ export function SendButtonPreview() {
 
   return (
     <div {...stage}>
-      <SendButton />
+      <SendButton sound />
     </div>
   );
 }

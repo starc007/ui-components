@@ -16,7 +16,7 @@ export function DeleteButtonPreview() {
 
   return (
     <div {...stage}>
-      <DeleteButton />
+      <DeleteButton sound />
     </div>
   );
 }

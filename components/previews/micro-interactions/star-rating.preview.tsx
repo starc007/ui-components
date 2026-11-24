@@ -16,7 +16,7 @@ export function StarRatingPreview() {
 
   return (
     <div {...stage}>
-      <StarRating value={rating} onValueChange={setRating} size={28} />
+      <StarRating sound value={rating} onValueChange={setRating} size={28} />
     </div>
   );
 }

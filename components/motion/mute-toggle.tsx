@@ -4,6 +4,8 @@ import { type HTMLMotionProps, motion, useReducedMotion } from "motion/react";
 import { useId, useState } from "react";
 import { EASE_IN, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { toggleOffSound, toggleOnSound } from "@/lib/sounds/toggle";
 import { cn } from "@/lib/utils";
 
 export const muteToggleMessages = {
@@ -18,6 +20,8 @@ export interface MuteToggleProps
   defaultMuted?: boolean;
   onMutedChange?: (muted: boolean) => void;
   labels?: Partial<MuteToggleMessages>;
+  /** Play a falling snap on mute and a rising one on unmute. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
 
 const SPEAKER = "M11 5L6 9H3v6h3l5 4V5z";
@@ -47,6 +51,7 @@ export function MuteToggle({
   defaultMuted = false,
   onMutedChange,
   labels,
+  sound = false,
   className,
   onClick,
   ...rest
@@ -55,6 +60,8 @@ export function MuteToggle({
   const reduce = Boolean(useReducedMotion());
   const [internal, setInternal] = useState(defaultMuted);
   const muted = mutedProp ?? internal;
+  const playMute = useSound(toggleOffSound, { enabled: sound });
+  const playUnmute = useSound(toggleOnSound, { enabled: sound });
   const mask = `mute-gap-${useId().replace(/:/g, "")}`;
 
   // Each unmute, from a click or a controlled change, sends one pulse.
@@ -95,6 +102,8 @@ export function MuteToggle({
         onClick?.(event);
         if (event.defaultPrevented) return;
         const next = !muted;
+        if (next) playMute();
+        else playUnmute();
         if (mutedProp === undefined) setInternal(next);
         onMutedChange?.(next);
       }}

@@ -13,7 +13,7 @@ export function SelectMorphPreview() {
   const [value, setValue] = useState("next");
   return (
     <div className="w-56">
-      <MorphSelect value={value} onValueChange={setValue}>
+      <MorphSelect sound value={value} onValueChange={setValue}>
         <MorphSelectTrigger>
           <MorphSelectValue placeholder="Pick a framework" />
         </MorphSelectTrigger>

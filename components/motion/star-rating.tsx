@@ -6,6 +6,8 @@ import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 
 export const starRatingMessages = {
@@ -27,6 +29,8 @@ export interface StarRatingProps {
   /** Star size in pixels. */
   size?: number;
   labels?: Partial<StarRatingMessages>;
+  /** Play a select whose pitch rises with the rating. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   className?: string;
 }
 
@@ -61,6 +65,7 @@ export function StarRating({
   disabled = false,
   size = 20,
   labels,
+  sound = false,
   className,
 }: StarRatingProps) {
   const t = useMessages("StarRating", starRatingMessages, labels);
@@ -69,6 +74,7 @@ export function StarRating({
   const [internal, setInternal] = useState(defaultValue);
   const value = valueProp ?? internal;
   const [hover, setHover] = useState<number | null>(null);
+  const playSelect = useSound(selectSound, { enabled: sound });
   // The last change, so fills wave left to right and drains right to left.
   // A hover clears it: previews change at once.
   const [sweep, setSweep] = useState<Sweep | null>(null);
@@ -124,6 +130,8 @@ export function StarRating({
   const select = (next: number) => {
     if (!interactive) return;
     const clamped = Math.max(1, Math.min(max, next));
+    // Rises about a semitone per star, so the rating can be heard.
+    playSelect({ pitch: 2 ** ((clamped - 1) / 12) });
     // Choosing the star that is already set replays its pop; any other
     // choice plays through the value change above.
     if (clamped === value) {
