@@ -111,6 +111,10 @@ export const changelogEntries: ChangelogEntry[] = [
         "text": "Combobox and Multi Select reveal their list with a clip instead of growing its height, so the panel never reflows while it opens."
       },
       {
+        "type": "improved",
+        "text": "Command Palette and Morphing Modal blur the page behind them a little less, which is lighter to render."
+      },
+      {
         "type": "fixed",
         "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
         "component": "select"
