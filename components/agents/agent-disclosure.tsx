@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, type HTMLMotionProps, useReducedMotion } from "motion/react";
-import type { CSSProperties } from "react";
+import { type CSSProperties, useState } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
@@ -11,16 +11,24 @@ export interface AgentDisclosureProps
   openHeight?: CSSProperties["height"];
 }
 
-/** Shared transform-only reveal for collapsible agent content. */
+/**
+ * Shared reveal for collapsible agent content: a clip, fade and short drop,
+ * never an animated height. The box takes its height as soon as it opens and
+ * gives it up only once the closing reveal has played, so the exit is seen
+ * and mirrors the entrance.
+ */
 export function AgentDisclosure({
   open,
   openHeight = "auto",
   className,
   style,
   transition,
+  onAnimationComplete,
   ...props
 }: AgentDisclosureProps) {
   const reduce = useReducedMotion() ?? false;
+  const [collapsed, setCollapsed] = useState(!open);
+  if (open && collapsed) setCollapsed(false);
 
   return (
     <motion.div
@@ -43,10 +51,14 @@ export function AgentDisclosure({
           ease: EASE_OUT,
         }
       }
+      onAnimationComplete={(definition) => {
+        if (!open) setCollapsed(true);
+        onAnimationComplete?.(definition);
+      }}
       className={cn("overflow-hidden", className)}
       style={{
         ...style,
-        height: open ? openHeight : 0,
+        height: collapsed ? 0 : openHeight,
         pointerEvents: open ? undefined : "none",
         transformOrigin: "top",
       }}
