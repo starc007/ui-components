@@ -27,6 +27,7 @@ const ENDPOINTS = [
 ] as const;
 
 const MCP_URL = "https://mcp.beui.dev/mcp";
+const WEBMCP_SPEC_URL = "https://webmachinelearning.github.io/webmcp/";
 
 // One-click installs. Cursor takes the mcp.json entry as base64 JSON; VS Code
 // takes a named server as URL-encoded JSON.
@@ -231,6 +232,31 @@ function AIAgentsContent({ data }: { data: AIAgentsPageData }) {
       <p className="mt-4 text-sm text-muted-foreground">
         {t.rich("mcpServer.toolsWithNative", { code })}
       </p>
+
+      <AnchorHeading
+        id="webmcp"
+        className="mt-10"
+        headingClassName="text-xl font-medium tracking-tight text-foreground"
+      >
+        {t("webmcp.title")}
+      </AnchorHeading>
+      <p className="mt-2 text-muted-foreground">
+        {t.rich("webmcp.body", {
+          code,
+          link: (chunks) => (
+            <a
+              href={WEBMCP_SPEC_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground"
+            >
+              {chunks}
+            </a>
+          ),
+        })}
+      </p>
+      <p className="mt-4 text-muted-foreground">{t.rich("webmcp.tools", { code })}</p>
+      <p className="mt-4 text-sm text-muted-foreground">{t.rich("webmcp.discovery", { code })}</p>
 
       <AnchorHeading
         id="endpoints"
