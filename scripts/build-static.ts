@@ -23,7 +23,7 @@ import { loadCardFonts } from "../lib/og-fonts";
 import { ogCardElement, ogCards } from "../lib/og-cards";
 import { GITHUB_STARS_PATH, getGithubStarCount } from "../lib/github";
 import { redirectsFile } from "../lib/redirects";
-import { allComponents } from "../lib/registry";
+import { allComponents, registry } from "../lib/registry";
 import {
   allRegistryTargets,
   allShadcnTargets,
@@ -214,12 +214,9 @@ async function buildMarkdownPages() {
   }
 }
 
-/** Every guide and component page's Markdown in one file, so an agent can load the docs in one fetch. */
-async function buildLlmsFullTxt() {
-  const idx = await registryIndex();
-  // The site tagline, not the web registry's description: these files cover
-  // beUI Native too.
-  const sections: string[] = [`# ${idx.name}`, "", `> ${SITE_TAGLINE}.`, "", `Index: ${SITE_URL}/llms.txt`, ""];
+/** Docs guides, how-to guides, comparisons and posts, as Markdown sections. */
+function guideSections() {
+  const sections: string[] = [];
   for (const slug of GUIDE_SLUGS) {
     const markdown = buildGuideMarkdown(slug);
     if (markdown) sections.push(markdown.trim(), "", "---", "");
@@ -232,29 +229,118 @@ async function buildLlmsFullTxt() {
   for (const post of blogPosts()) {
     sections.push(blogPostMarkdown(post, SITE_URL).trim(), "", "---", "");
   }
+  return sections;
+}
+
+/** One category's component docs, every page's Markdown in sidebar order. */
+async function categorySections(categorySlug: string) {
+  const sections: string[] = [];
   for (const component of allComponents()) {
+    if (component.category.slug !== categorySlug) continue;
     const markdown = await componentMarkdown(component.category.slug, component.slug);
     if (markdown) sections.push(markdown.trim(), "", "---", "");
   }
-  await write("/llms-full.txt", sections.join("\n"));
+  return sections;
+}
+
+/** The per-category doc files under /llms/, next to llms-full.txt. */
+const LLMS_PARTS = [
+  ...registry.map((category) => ({
+    path: `/llms/${category.slug}.txt`,
+    title: category.name,
+    category: category.slug,
+  })),
+  { path: "/llms/guides.txt", title: "Guides, comparisons and blog", category: null },
+];
+
+/**
+ * Every guide and component page's Markdown in one file, so an agent can load
+ * the docs in one fetch, plus the same docs split by category under /llms/,
+ * small enough for one context: an agent building chat UI loads
+ * /llms/agents.txt rather than all of it.
+ */
+async function buildLlmsFullTxt() {
+  const idx = await registryIndex();
+  // The site tagline, not the web registry's description: these files cover
+  // beUI Native too.
+  const header = (title: string) => [
+    `# ${idx.name}${title ? `: ${title}` : ""}`,
+    "",
+    `> ${SITE_TAGLINE}.`,
+    "",
+    `Index: ${SITE_URL}/llms.txt`,
+    "",
+  ];
+  const guides = guideSections();
+  const byCategory = new Map<string, string[]>();
+  for (const category of registry) byCategory.set(category.slug, await categorySections(category.slug));
+
+  await write(
+    "/llms-full.txt",
+    [...header(""), ...guides, ...registry.flatMap((c) => byCategory.get(c.slug) ?? [])].join("\n"),
+  );
+  for (const part of LLMS_PARTS) {
+    const body = part.category ? (byCategory.get(part.category) ?? []) : guides;
+    await write(part.path, [...header(part.title), ...body].join("\n"));
+  }
 }
 
 async function buildLlmsTxt() {
   const idx = await registryIndex();
   const nativeIndex = buildNativeIndex();
+  const installList = (slugs: string[]) => slugs.map((slug) => `\`${slug}\``).join(", ");
   const lines = [
     `# ${idx.name}`,
     "",
     `> ${SITE_TAGLINE}.`,
     "",
+    "beUI is copy-paste source, not a package: each component installs into the project with the shadcn CLI as `@beui/<install-slug>`, with its npm dependencies and, when it uses them, beUI's extra theme tokens. Components are React with Tailwind CSS v4 and Framer Motion (`motion`), respect reduced motion, and take a `className` and `labels` for translation.",
+    "",
+    "## Start here",
+    "",
+    `1. Set up once: a shadcn project needs nothing more (run \`npx shadcn@latest init\` if it has no components.json). Without shadcn, paste ${idx.endpoints.theme_css} into globals.css.`,
+    `2. Find a component: the Components list below, the index at ${idx.endpoints.index} (every page with its \`install_slugs\` and \`variants\`), or the MCP server's \`search_components\`.`,
+    `3. Read its docs before writing code: ${idx.endpoints.markdown_by_slug} has usage, every prop with its type and default, the data types its props take, composition and accessibility.`,
+    "4. Install: `npx shadcn@latest add @beui/<install-slug>`. A page that splits into variants (Button) installs only by its variants' slugs.",
+    "5. Compose with the named exports in the added files. There is no runtime `beui` package.",
+    "",
     "## Endpoints",
     "",
-    `- Registry index (JSON): ${idx.endpoints.index}`,
-    `- Component detail (JSON): ${idx.endpoints.detail}`,
+    `- Registry index (JSON, install slugs and variants per page): ${idx.endpoints.index}`,
+    `- Component docs (Markdown) by slug: ${idx.endpoints.markdown_by_slug}`,
+    `- Component detail (JSON: files, dependencies, props, types): ${idx.endpoints.detail}`,
     `- Raw source (text/plain): ${idx.endpoints.raw}`,
-    `- Component Markdown: ${idx.endpoints.markdown}`,
-    `- Full docs in one file (docs guides, how-to guides and comparisons, then every component's install, usage and props): ${SITE_URL}/llms-full.txt`,
+    `- shadcn registry: ${idx.endpoints.shadcn_registry}`,
+    `- Theme tokens as a shadcn item: ${idx.endpoints.theme_item}`,
+    `- Theme CSS to paste: ${idx.endpoints.theme_css}`,
+    "- MCP server (HTTP, no key): https://mcp.beui.dev/mcp",
+    "- Agent skill: `npx skills add starc007/ui-components --skill beui`",
+    `- Docs for one category, one file each: ${LLMS_PARTS.map((part) => `${SITE_URL}${part.path}`).join(", ")}`,
+    `- Every doc in one file (large): ${SITE_URL}/llms-full.txt`,
     "",
+    "## Components",
+    "",
+    ...registry.flatMap((category) => {
+      const pages = idx.components.filter((c) => c.category === category.slug);
+      if (!pages.length) return [];
+      return [
+        `### ${category.name}`,
+        "",
+        `All ${category.name} docs in one file: ${SITE_URL}/llms/${category.slug}.txt`,
+        "",
+        ...pages.flatMap((c) => [
+          `- [${c.name}](${c.markdown_url}): ${c.description} Install: ${installList(c.install_slugs)}`,
+          // A split page lists its variant pages under it.
+          ...[...variantPages]
+            .filter(([, v]) => v.category === c.category && v.comp.slug === c.slug)
+            .map(([pagePath, v]) => {
+              const copy = variantCopy[v.example.installSlug];
+              return `  - [${copy?.name ?? v.example.name}](${SITE_URL}${pagePath}.md): ${copy?.summary ?? v.example.description ?? ""} Install: \`${v.example.installSlug}\``;
+            }),
+        ]),
+        "",
+      ];
+    }),
     "## Guides",
     "",
     `- [Motion Guides](${SITE_URL}/docs/motion-patterns.md): Purposeful motion, timing, easing, recipes, and reduced motion.`,
@@ -281,19 +367,6 @@ async function buildLlmsTxt() {
       (post) => `- [${post.title}](${SITE_URL}${blogPostPath(post.slug)}.md): ${post.description}`,
     ),
     "",
-    "## Components",
-    "",
-    ...idx.components.flatMap((c) => [
-      `- [${c.name}](${c.markdown_url}): ${c.description}`,
-      // A split page lists its variant pages under it.
-      ...[...variantPages]
-        .filter(([, v]) => v.category === c.category && v.comp.slug === c.slug)
-        .map(([pagePath, v]) => {
-          const copy = variantCopy[v.example.installSlug];
-          return `  - [${copy?.name ?? v.example.name}](${SITE_URL}${pagePath}.md): ${copy?.summary ?? v.example.description ?? ""}`;
-        }),
-    ]),
-    "",
     "## React Native (beUI Native)",
     "",
     `> ${nativeIndex.description}`,
@@ -309,13 +382,9 @@ async function buildLlmsTxt() {
     "",
     "To add a native component, run `npx beui-native add <slug>` from the app's root. To do it by hand: fetch its detail JSON, run its `install` commands, then copy every file in `files` to its `path`, keeping the folder layout. Add the `theme` file once per app.",
     "",
-    "## Usage for agents",
+    "## Copying by hand",
     "",
-    "1. Fetch the index to discover components.",
-    "2. Fetch a component detail JSON for files, deps and source.",
-    "3. Drop files into the user's project at the listed paths.",
-    "4. Install external `dependencies` listed on the entry.",
-    "5. Internal helpers (e.g. `@/lib/utils`) ship in the `files` array as `type: util`.",
+    "Without the shadcn CLI: fetch a component's detail JSON, copy every file in `files` to its `path` (component files and their internal helpers such as `@/lib/utils`, typed `util`), install its `dependencies`, and add the theme tokens once.",
     "",
   ];
   await write("/llms.txt", lines.join("\n"));
@@ -435,6 +504,12 @@ const HEADERS = `/assets/*
   Cache-Control: public, max-age=300, s-maxage=3600
 
 /llms-full.txt
+  Content-Type: text/plain; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, OPTIONS
+  Cache-Control: public, max-age=300, s-maxage=3600
+
+/llms/*
   Content-Type: text/plain; charset=utf-8
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET, OPTIONS

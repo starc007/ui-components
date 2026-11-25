@@ -5,6 +5,12 @@ import { SITE_URL } from "@/lib/site";
 import { docsPathFor } from "@/lib/variant-pages";
 import { readOptionalSourceFile, readSourceFile, resolveSourceImport, type SourceFile } from "@/lib/source-files";
 import { buildThemeItem, THEME_ITEM_URL, usesTheme } from "@/lib/theme-registry";
+import {
+  type ComponentPropsDoc,
+  getComponentProps,
+  getReferencedTypes,
+  type ReferencedTypeDoc,
+} from "@/lib/props-extractor";
 
 export type RegistryFile = {
   path: string;
@@ -26,6 +32,14 @@ export type RegistryEntry = {
   updated_at: string;
   dependencies: string[];
   internal: string[];
+  /** What `shadcn add @beui/<slug>` accepts for this entry. */
+  install_slugs: string[];
+  /** Uses beUI's extra theme tokens, which the theme item provides. */
+  requires_theme: boolean;
+  /** Every prop of every exported component, as the API table shows it. */
+  props: ComponentPropsDoc[];
+  /** The object types those props take (e.g. `CommandItem`), field by field. */
+  types: ReferencedTypeDoc[];
   files: RegistryFile[];
 };
 
@@ -47,6 +61,8 @@ export type ShadcnRegistryItem = {
   author: string;
   dependencies: string[];
   registryDependencies: string[];
+  /** Shown by the shadcn CLI after install. */
+  docs: string;
   files: ShadcnRegistryFile[];
 };
 
@@ -129,6 +145,16 @@ function shadcnFile(rel: string, content?: string): ShadcnRegistryFile {
     target: targetForPath(rel),
     ...(content !== undefined ? { content } : {}),
   };
+}
+
+function uniqueBy<T>(items: T[], key: (item: T) => string) {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const k = key(item);
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
 }
 
 function uniqueByPath(files: ShadcnRegistryFile[]) {
@@ -265,6 +291,12 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
   const pageUrl = `${SITE_URL}${docsPathFor(categorySlug, comp.pageSlug, slug)}`;
   const dates = componentDates(categorySlug, comp.pageSlug);
   const files = mergeRegistryFiles(componentGraph.files, previewGraph?.files ?? [], componentFileSet, previewPath, pageUrl);
+  // A page split into variants installs only by its variants' slugs.
+  const variantSlugs = allShadcnTargets()
+    .filter((target) => target.categorySlug === categorySlug && target.pageSlug === comp.pageSlug)
+    .map((target) => target.slug);
+  const installSlugsFor = comp.slug === comp.pageSlug && !variantSlugs.includes(comp.slug) ? variantSlugs : [comp.slug];
+  const apiFiles = requiredFiles.filter((file) => /\.tsx?$/.test(file) && !file.startsWith("lib/sounds/"));
 
   return {
     slug: comp.slug,
@@ -280,6 +312,14 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
     updated_at: dates.updatedAt,
     dependencies: Array.from(new Set([...componentGraph.external, ...(previewGraph?.external ?? [])])).sort(),
     internal: Array.from(new Set([...componentGraph.internal, ...(previewGraph?.internal ?? [])])).sort(),
+    install_slugs: installSlugsFor.length ? installSlugsFor : [comp.slug],
+    requires_theme: usesTheme(componentGraph.files.map((file) => file.content)),
+    // An index that re-exports its parts would list them twice; keep the first.
+    props: uniqueBy(
+      apiFiles.flatMap((file) => getComponentProps(file)).filter((doc) => doc.props.length),
+      (doc) => doc.displayName,
+    ),
+    types: uniqueBy(apiFiles.flatMap((file) => getReferencedTypes(file)), (type) => type.name),
     files,
   };
 }
@@ -332,6 +372,12 @@ export async function buildShadcnItem(
     dependencies,
     // beUI's extra tokens come along with any component that uses them.
     registryDependencies: needsTheme ? [THEME_ITEM_URL] : [],
+    docs: [
+      `${comp.name}: usage, props and types at ${pageUrl}.md`,
+      needsTheme ? "It uses beUI's theme tokens, added with this install." : "",
+    ]
+      .filter(Boolean)
+      .join(" "),
     files: uniqueByPath(
       graph.files.map((file) => {
         if (!includeContent) return shadcnFile(file.path);
