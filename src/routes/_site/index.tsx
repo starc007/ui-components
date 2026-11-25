@@ -5,7 +5,7 @@ import { getHomePage } from "../-pages/home";
 
 export const Route = createFileRoute("/_site/")({
   loader: () => getHomePage(),
-  head: () => metadataToHead({ alternates: { canonical: "/" } }),
+  head: () => metadataToHead({ alternates: { canonical: "/", types: { "text/markdown": "/index.md" } } }),
   component: HomePage,
 });
 

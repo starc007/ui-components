@@ -96,7 +96,7 @@ export const getCategoryPage = createServerFn({ method: "GET" })
       description,
       image: ogImagePath("category", cat.slug),
       imageAlt: t("ogImageAlt", { name: cat.name }),
-      types: { "application/json": "/registry.json" },
+      types: { "text/markdown": `${path}.md`, "application/json": "/registry.json" },
       keywords: [
         `${rawCat.name} components`,
         "React motion components",

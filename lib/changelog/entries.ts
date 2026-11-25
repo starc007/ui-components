@@ -41,7 +41,7 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "new",
-        "text": "Agent-ready docs: every prop and data type described, beUI's theme tokens as a registry item that installs with the components that use them, MCP tools for docs and setup, and llms.txt grouped by category with install slugs.",
+        "text": "Agent-ready docs: every prop and data type described, beUI's theme tokens as a registry item that installs with the components that use them, MCP tools for docs and setup, WebMCP tools on every page for agents in the browser, a Markdown version of every page, and llms.txt grouped by category with install slugs.",
         "href": "/docs/ai-agents"
       },
       {
