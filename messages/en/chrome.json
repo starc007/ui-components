@@ -102,7 +102,7 @@
     "privacy": "Privacy",
     "terms": "Terms of service",
     "refunds": "Refunds",
-    "docsTagline": "The motion toolkit for React & Next.js",
+    "docsTagline": "Motion components and agent UI for React",
     "label": "Footer"
   },
   "nativeStrip": {
