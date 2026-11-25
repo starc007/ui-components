@@ -78,6 +78,7 @@ export const componentSummaries: Record<string, string> = {
   "animated-toast-stack": "Toasts in one island that springs from pill to card to list.",
   "theme-toggle":
     "Switch themes with a full-page wipe, circle or shutter reveal.",
+  "wave-reveal": "A colourful wave that carries one screen into the next.",
   "bouncy-accordion":
     "A single-open accordion with weighted, bouncy spring layout.",
   drawer: "A side panel that slides in with a blurred backdrop and scroll lock.",

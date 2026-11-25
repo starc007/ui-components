@@ -1595,6 +1595,34 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  "wave-reveal": {
+    overview:
+      "Wave Reveal is a React screen transition built with Framer Motion. Wrap two screens, such as a confirm step and its success state, and flip revealed: the card pulls toward the button you pressed while light gathers there, then a colourful wave leaves from that point. Under its front the screen swells like a lens with a slight colour split and blurs, the next screen comes in behind it, and the edges keep an uneven glow and a bright hairline that fade after it. Choose a wide arc that travels up, a tall arc that travels sideways, or a ring from the centre. It needs no WebGL: masks swap the screens, an SVG filter does the swell and a backdrop blur softens the front.",
+    useWhen: [
+      "A payment, deploy or invite confirm step should turn into its success screen with a moment of weight.",
+      "A card flips between two states and a plain crossfade feels too quiet.",
+      "A checkout or onboarding step wants a transition that starts from the button that was pressed.",
+    ],
+    accessibility:
+      "Only the screen being shown is exposed to assistive technology and takes focus; the other one is inert. When focus was in the outgoing screen, such as on the button that started the wave, it moves to the first control of the incoming screen. The wave layers are hidden from assistive technology and never take pointer events. With reduced motion the screens crossfade with no pull, wave or bend.",
+    faq: [
+      {
+        question: "Where does the wave start?",
+        answer:
+          "From the point you pressed inside the card. Pass sourceRef to start from an element's centre instead, which also covers keyboard presses. Without either it starts from the bottom edge, the left edge or the centre, depending on type.",
+      },
+      {
+        question: "Can I turn off the bend or change the colours?",
+        answer:
+          "Set distortion to 0 for a clean wave with no bend, or raise it for a stronger lens. Pass colors as CSS colours for the wave front and the edge glow, and duration in seconds.",
+      },
+      {
+        question: "Where should padding go?",
+        answer:
+          "On the screens, not on WaveReveal. The wave and the edge glow fill the card's padding box, so padding on the wrapper would keep the glow off the edges.",
+      },
+    ],
+  },
   "theme-toggle": {
     overview:
       "Theme Toggle is a React dark mode toggle button that repaints the whole page through the View Transition API. The rectangle, circle and circle-blur variants reveal the new theme with a clip-path that grows from a chosen corner, edge or center, and the blinds variant opens the new theme across the screen in slats like a shutter. The sun and moon icon swaps with a blur, and a useThemeToggle hook lets you trigger the same transition from your own control.",

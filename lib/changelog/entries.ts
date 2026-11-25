@@ -31,7 +31,7 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "new",
-        "text": "Voice Note, Status Icon, Confetti and Click Burst, plus slash commands in Prompt Input.",
+        "text": "Voice Note, Status Icon, Confetti, Click Burst and Wave Reveal, plus slash commands in Prompt Input.",
         "href": "/micro-interactions"
       },
       {

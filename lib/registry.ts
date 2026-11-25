@@ -975,6 +975,17 @@ export const registry: CategoryEntry[] = [
         ],
       },
       {
+        slug: "wave-reveal",
+        name: "Wave Reveal",
+        description:
+          "Carries one screen into the next with a colourful wave: the card pulls toward the pressed button, a wave leaves from it and bends the screen as it passes, and its colour lingers on the edges. Vertical, horizontal or center.",
+        file: "components/motion/wave-reveal.tsx",
+        usageFile: "components/previews/motion/wave-reveal.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-11-25",
+        keywords: ["screen transition react", "wave transition", "distortion transition", "success screen animation", "card reveal animation"],
+      },
+      {
         slug: "bouncy-accordion",
         name: "Bouncy Accordion",
         description: "Single-open accordion with weighted spring layout, icon rows and reduced-motion-safe content reveals.",

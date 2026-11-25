@@ -713,6 +713,9 @@ export const previews: Record<string, ComponentType> = {
   "motion/theme-toggle": dynamic(() =>
     import("./motion/theme-toggle.preview").then((m) => m.ThemeTogglePreview),
   ),
+  "motion/wave-reveal": dynamic(() =>
+    import("./motion/wave-reveal.preview").then((m) => m.WaveRevealPreview),
+  ),
   "motion/smooth-scroll": dynamic(() =>
     import("./motion/smooth-scroll.preview").then((m) => m.SmoothScrollPreview),
   ),
