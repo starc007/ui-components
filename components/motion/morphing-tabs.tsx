@@ -56,16 +56,23 @@ export type MorphingTabsClassNames = {
 };
 
 export interface MorphingTabsProps {
+  /** Tabs to show, each with an id, label and panel content. */
   items: MorphingTabsItem[];
+  /** The active tab id, for controlled use. */
   value?: string | null;
+  /** The initial tab id when uncontrolled. Defaults to the first enabled tab. */
   defaultValue?: string | null;
+  /** Called with the tab id, or `null` when none is left, when the active tab changes. */
   onValueChange?: (id: string | null) => void;
   /** Called once after a pointer drag or keyboard reorder completes. */
   onOrderChange?: (ids: string[]) => void;
   /** Enables the close affordance on every tab when provided. */
   onClose?: (id: string) => void;
+  /** Accessible name for the tab list. Default: "Tabs" */
   ariaLabel?: string;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for each part: root, rail, tab, active tab, icon, label, close and content. */
   classNames?: MorphingTabsClassNames;
   /** Override any built-in string. */
   labels?: Partial<MorphingTabsMessages>;

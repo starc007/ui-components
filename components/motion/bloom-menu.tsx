@@ -73,10 +73,13 @@ const SPRING_FOLDER = {
 } as const;
 
 export interface BloomMenuProps {
+  /** Grid items, each with a label and icon. Defaults to 6 create actions. */
   items?: MenuItem[];
+  /** Called with the item's label when an item is picked. The menu then closes. */
   onSelect?: (label: string) => void;
   /** Override any built-in string. */
   labels?: Partial<BloomMenuMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

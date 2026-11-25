@@ -7,14 +7,21 @@ import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export interface NotFoundProps {
+  /** Classes merged onto the root element. */
   className?: string;
   /** The big status code. */
   code?: string;
+  /** Heading under the status code. Default: "Page not found" */
   title?: string;
+  /** Supporting line under the heading. */
   description?: string;
+  /** Link for the primary button. Default: "/" */
   homeHref?: string;
+  /** Text of the primary button. Default: "Back home" */
   homeLabel?: string;
+  /** Link for the secondary button. Default: "/components/motion" */
   browseHref?: string;
+  /** Text of the secondary button. Default: "Browse components" */
   browseLabel?: string;
   /** Override any built-in string. Explicit `title`, `description`, `homeLabel` and `browseLabel` props still win. */
   labels?: Partial<NotFoundMessages>;

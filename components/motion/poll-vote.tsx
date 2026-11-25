@@ -20,14 +20,19 @@ export type PollVoteMessages = typeof pollVoteMessages;
 export type PollOption = { id: string; label: string; votes: number };
 
 export interface PollVoteProps {
+  /** The choices, each with an id, label and vote count before the viewer's vote. */
   options: PollOption[];
   /** The viewer's choice, or null before they vote. */
   value?: string | null;
+  /** The initial choice when uncontrolled. Default: null */
   defaultValue?: string | null;
+  /** Called with the option id when the viewer votes or changes their vote. */
   onValueChange?: (value: string | null) => void;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<PollVoteMessages>;
   /** Play a crisp select on a vote. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;
+  /** Classes merged onto the root fieldset. */
   className?: string;
 }
 

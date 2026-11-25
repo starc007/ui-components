@@ -8,8 +8,11 @@ import { cn } from "@/lib/utils";
 
 export interface TiltCardProps {
   children: ReactNode;
+  /** Tilt range edge to edge, in degrees, so each edge leans half of it. Default: 12 */
   max?: number;
+  /** Shows a soft highlight that follows the pointer. Default: true */
   glare?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

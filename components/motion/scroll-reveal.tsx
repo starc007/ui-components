@@ -14,6 +14,7 @@ export interface ScrollRevealProps {
   blur?: number;
   /** Reveal duration in seconds. */
   duration?: number;
+  /** Wait before the reveal starts, in seconds. Default: 0 */
   delay?: number;
   /** Reveal only once (default) or every time it enters view. */
   once?: boolean;
@@ -21,6 +22,7 @@ export interface ScrollRevealProps {
   amount?: "some" | "all" | number;
   /** Scroll root for contained scroll areas. Defaults to the viewport. */
   root?: RefObject<Element | null>;
+  /** Classes merged onto the wrapper element. */
   className?: string;
 }
 

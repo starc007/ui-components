@@ -14,16 +14,27 @@ import {
 
 export interface AnimatedSidebarMenuButtonProps {
   children: ReactNode;
+  /** Icon shown before the label; stays visible in the collapsed rail. */
   icon?: ReactNode;
+  /** Trailing content such as a count, hidden while collapsed. */
   badge?: ReactNode;
+  /** Renders a link to this URL instead of a button. */
   href?: string;
+  /** Marks the current page and moves the shared highlight here. Default: false */
   isActive?: boolean;
+  /** Expanded state of a submenu this button toggles; also shows a chevron. */
   ariaExpanded?: boolean;
+  /** Disables the item. Default: false */
   disabled?: boolean;
+  /** Close the mobile drawer on select. Defaults to true unless `ariaExpanded` is set. */
   closeOnSelect?: boolean;
+  /** Link target, used with `href`. */
   target?: "_blank" | "_self" | "_parent" | "_top";
+  /** Link rel, used with `href`. Defaults to "noreferrer noopener" for `_blank`. */
   rel?: string;
+  /** Called when the item is clicked. */
   onSelect?: () => void;
+  /** Classes merged onto the button or link element. */
   className?: string;
 }
 

@@ -52,26 +52,45 @@ export type {
 } from "./attachment-upload/types";
 
 export interface AttachmentUploadProps {
+  /** The attachment list, for controlled use. */
   value?: AttachmentUploadItem[];
+  /** The initial attachment list when uncontrolled. */
   defaultValue?: AttachmentUploadItem[];
+  /** Called with the full list when attachments are added or removed. */
   onValueChange?: (items: AttachmentUploadItem[]) => void;
+  /** Called with the new items and their files after files are accepted. */
   onFilesAdded?: (items: AttachmentUploadItem[], files: File[]) => void;
+  /** Called with files turned away for being too large or over `maxFiles`. */
   onFilesRejected?: (files: File[], reason: AttachmentRejectReason) => void;
+  /** Called with the item after its remove animation finishes. */
   onRemove?: (item: AttachmentUploadItem) => void;
+  /** Called with a failed item when its retry button is pressed. Shows the button. */
   onRetry?: (item: AttachmentUploadItem) => void;
+  /** Id of the audio attachment that shows as playing. */
   playingId?: string;
+  /** Called with an audio item when its play or pause button is pressed. */
   onAudioToggle?: (item: AttachmentUploadItem) => void;
+  /** File types the picker allows, as in the input `accept` attribute. */
   accept?: string;
+  /** Allows picking or dropping more than 1 file at a time. Default: true */
   multiple?: boolean;
+  /** Most attachments allowed. The dropzone locks once reached. Default: 12 */
   maxFiles?: number;
+  /** Largest file size allowed, in bytes. Default: 500 MB */
   maxFileSize?: number;
+  /** Turns off the dropzone and file picker. Default: false */
   disabled?: boolean;
+  /** Heading inside the dropzone. Default: "Drag and drop or browse files" */
   title?: string;
+  /** Line under the dropzone heading. Defaults to the max file size. */
   description?: string;
+  /** Heading above the attachment list. Default: "Attachments" */
   attachmentsLabel?: string;
   /** Override any built-in string. `{name}` fills the per-attachment labels; `{count}` and `{max}` fill `limitDescription`; `{size}` fills `description`. */
   labels?: Partial<AttachmentUploadMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for the dropzone, list and each row. */
   classNames?: AttachmentUploadClassNames;
 }
 

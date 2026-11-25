@@ -20,6 +20,7 @@ export interface FluidSliderProps extends SliderOptions {
   label?: string;
   /** Formats the value shown on the right. */
   format?: (value: number) => string;
+  /** Classes merged onto the slider track, the root element. */
   className?: string;
 }
 

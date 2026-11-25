@@ -31,16 +31,27 @@ export type CodeBlockStatus = "streaming" | "complete";
 const NO_LINES: number[] = [];
 
 export interface CodeBlockProps {
+  /** The source code to show. May grow while `status` is "streaming". */
   code: string;
+  /** Language for syntax highlighting, also shown in the header. Default: "typescript" */
   language?: AgentCodeLanguage;
+  /** File name shown in the header. */
   filename?: ReactNode;
+  /** "streaming" shows Writing and follows new lines, "complete" shows Ready. Default: "complete" */
   status?: CodeBlockStatus;
+  /** Shows a line number gutter. Default: true */
   showLineNumbers?: boolean;
+  /** 1-based line numbers to tint. */
   highlightLines?: number[];
+  /** Height in px before the code scrolls. Default: 280 */
   maxHeight?: number;
+  /** Wraps long lines instead of scrolling sideways. Default: false */
   wrap?: boolean;
+  /** Shows the copy button. Default: true */
   copyable?: boolean;
+  /** Runs in place of the clipboard write when copy is pressed. Shows the copy button. */
   onCopy?: () => void | Promise<void>;
+  /** Classes merged onto the root element. */
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<CodeBlockMessages>;

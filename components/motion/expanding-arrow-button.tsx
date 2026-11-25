@@ -21,7 +21,9 @@ export interface ExpandingArrowButtonProps extends Omit<
   "children"
 > {
   children: ReactNode;
+  /** Classes merged onto the chevron pill that widens on hover or focus. */
   accentClassName?: string;
+  /** Classes merged onto the label text. */
   labelClassName?: string;
 }
 

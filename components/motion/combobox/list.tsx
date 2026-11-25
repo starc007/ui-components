@@ -16,7 +16,9 @@ import { ComboboxGroupContext, useComboboxContext } from "./context";
 
 export interface ComboboxListProps {
   children: ReactNode;
+  /** Accessible name for the list. Default: "Options" */
   ariaLabel?: string;
+  /** Classes merged onto the scrolling list element. */
   className?: string;
 }
 
@@ -42,6 +44,7 @@ export function ComboboxList({
 
 export interface ComboboxGroupProps {
   children: ReactNode;
+  /** Classes merged onto the group element. */
   className?: string;
 }
 
@@ -61,6 +64,7 @@ export function ComboboxGroup({ children, className }: ComboboxGroupProps) {
 
 export interface ComboboxLabelProps {
   children: ReactNode;
+  /** Classes merged onto the label element. */
   className?: string;
 }
 
@@ -78,12 +82,18 @@ export function ComboboxLabel({ children, className }: ComboboxLabelProps) {
 }
 
 export interface ComboboxItemProps {
+  /** Unique value set on the combobox when this item is picked. */
   value: string;
   children: ReactNode;
+  /** Text used for search and the selected label. Default: string children, else `value` */
   textValue?: string;
+  /** Extra search terms that match this item. */
   keywords?: string[];
+  /** Dims the item and stops it from being picked. Default: false */
   disabled?: boolean;
+  /** Called with the item's value when it is picked. */
   onSelect?: (value: string) => void;
+  /** Classes merged onto the item button. */
   className?: string;
 }
 
@@ -190,6 +200,7 @@ export function ComboboxItem({
 
 export interface ComboboxEmptyProps {
   children?: ReactNode;
+  /** Classes merged onto the empty message. */
   className?: string;
 }
 
@@ -212,6 +223,7 @@ export function ComboboxEmpty({
 }
 
 export interface ComboboxSeparatorProps {
+  /** Classes merged onto the separator line. */
   className?: string;
 }
 

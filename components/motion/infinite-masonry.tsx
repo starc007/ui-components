@@ -29,27 +29,49 @@ export type InfiniteMasonryMessages = typeof infiniteMasonryMessages;
 export type InfiniteMasonryKey = string | number | bigint;
 
 export interface InfiniteMasonryProps<T> {
+  /** The items loaded so far, in feed order. */
   items: readonly T[];
+  /** Returns a stable unique key for an item. */
   getItemKey: (item: T, index: number) => InfiniteMasonryKey;
+  /** Renders one item's card. */
   renderItem: (item: T, index: number) => ReactNode;
+  /** Called when the scroll nears the end and more items should load. */
   onLoadMore: () => void | Promise<void>;
+  /** Whether more items can load. False shows `endState` after the last item. */
   hasMore: boolean;
+  /** Shows loading placeholders at the end while more items load. Default: false */
   loading?: boolean;
+  /** Error shown in a card at the end. Pauses loading while set. */
   error?: ReactNode;
+  /** Called from the error card's retry button. The button shows only when set. */
   onRetry?: () => void;
+  /** Estimated item height in px before it is measured. Default: 240 */
   estimateSize?: (item: T, index: number) => number;
+  /** Renders a loading placeholder card while more items load. */
   renderLoadingItem?: (index: number) => ReactNode;
+  /** Shown when there are no items and nothing more to load. */
   emptyState?: ReactNode;
+  /** Shown below the last item once `hasMore` is false. */
   endState?: ReactNode;
+  /** Smallest column width in px before a column is dropped. Default: 208 */
   minColumnWidth?: number;
+  /** Most columns to show. Default: 4 */
   maxColumns?: number;
+  /** Space between items in px. Default: 12 */
   gap?: number;
+  /** Rows to render past the viewport, per column. Default: 4 */
   overscan?: number;
+  /** Starts loading when this many items from the end are visible. Default: 3 */
   prefetch?: number;
+  /** Fades and slides in items added after the first render. Default: true */
   animateItems?: boolean;
+  /** Accessible name for the feed. Default: "Infinite masonry feed" */
   ariaLabel?: string;
+  /** Classes merged onto the scroll container. */
   className?: string;
+  /** Classes merged onto the inner content element that holds the items. */
   contentClassName?: string;
+  /** Classes merged onto each item wrapper, not loading or error cards. */
   itemClassName?: string;
   /** Override any built-in string. */
   labels?: Partial<InfiniteMasonryMessages>;

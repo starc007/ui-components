@@ -34,12 +34,18 @@ export interface AnimatedBadgeProps extends Omit<
   HTMLMotionProps<"span">,
   "children"
 > {
+  /** Sets the color and default icon; changing it rolls the icon. Default: "neutral" */
   status?: AnimatedBadgeStatus;
+  /** Badge height, padding and text size. Default: "md" */
   size?: AnimatedBadgeSize;
   children?: ReactNode;
+  /** Custom icon in place of the status icon. */
   icon?: ReactNode;
+  /** Show the icon before the label. Default: true */
   showIcon?: boolean;
+  /** Breathe the background to show ongoing work. Default: true while status is "loading" */
   pulse?: boolean;
+  /** Key that triggers the label roll when it changes. Default: the text label, else the status. */
   contentKey?: string | number;
 }
 

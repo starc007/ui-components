@@ -37,9 +37,13 @@ export interface StatusBarProps extends ComponentProps<"section"> {
   data: readonly StatusBarDatum[];
   /** Override the default status labels and colors, or define your own states. */
   statuses?: readonly StatusBarStatus[];
+  /** Accessible name for the chart. Default: "Status history" */
   label?: string;
+  /** Id of the inspected period, for controlled use. Null clears it. */
   activeId?: string | null;
+  /** The initial inspected period id when uncontrolled. Default: null */
   defaultActiveId?: string | null;
+  /** Called with the period id, or null, when the inspected period changes. */
   onActiveChange?: (id: string | null) => void;
   /** Override any built-in string, including the default status labels. */
   labels?: Partial<StatusBarMessages>;

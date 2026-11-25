@@ -26,11 +26,13 @@ export interface CopyButtonProps
   extends Omit<HTMLMotionProps<"button">, "children" | "value" | "onCopy"> {
   /** Text to copy, or a function that returns it at click time. */
   value: string | (() => string);
+  /** Called with the copied text after it reaches the clipboard. */
   onCopy?: (value: string) => void;
   /** How long the copied state holds, in milliseconds. */
   timeout?: number;
   /** Show "Copy" / "Copied" next to the icon. */
   showLabel?: boolean;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<CopyButtonMessages>;
   /** Play two quick ticks once the text is copied. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;

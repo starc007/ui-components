@@ -6,10 +6,15 @@ import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export interface AnimatedNumberProps {
+  /** Number to count to. Changes count from the last shown value. */
   value: number;
+  /** Length of each count, in seconds. Default: 1.2 */
   duration?: number;
+  /** Formats each frame's number. Defaults to a rounded, locale-grouped integer. */
   format?: (n: number) => string;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Wait until the number scrolls into view before counting. Default: true */
   startOnView?: boolean;
 }
 

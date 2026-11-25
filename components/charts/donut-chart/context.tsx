@@ -23,6 +23,7 @@ export const donutChartMessages = {
 export type DonutChartMessages = typeof donutChartMessages;
 
 export interface DonutChartProps {
+  /** Slices of the ring, each with an id, name, color and value. */
   segments: readonly DonutSegment[];
   /** Ring thickness in viewBox units; the chart is 200 wide. */
   thickness?: number;
@@ -30,17 +31,21 @@ export interface DonutChartProps {
   gap?: number;
   /** Focused segment, shared by the ring, center, and legend. Controlled. */
   activeId?: string | null;
+  /** The initially focused segment id when uncontrolled. Default: null */
   defaultActiveId?: string | null;
+  /** Called with the segment id, or null, when the focused segment changes. */
   onActiveChange?: (id: string | null) => void;
   /** Called when a legend item is clicked. */
   onSelect?: (id: string) => void;
   /** Marks a legend item as pressed. */
   selectedId?: string | null;
+  /** Formats values in the center and legend. Default: en-US number format. */
   formatValue?: (value: number) => string;
   /** Accessible name for the chart. */
   label?: string;
   /** Override any built-in string. */
   labels?: Partial<DonutChartMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
   children?: ReactNode;
 }

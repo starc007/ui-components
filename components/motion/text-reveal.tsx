@@ -8,16 +8,27 @@ import { cn } from "@/lib/utils";
 type SplitMode = "word" | "char";
 
 export interface TextRevealProps {
+  /** Text to reveal. Pass an array to put each string on its own line. */
   text: string | string[];
+  /** Element to render as the root. Default: "span" */
   as?: ElementType;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Animate word by word or character by character. Default: "word" */
   split?: SplitMode;
+  /** Delay between each word or character, in seconds. Default: 0.09 */
   stagger?: number;
+  /** Delay before the first word or character, in seconds. Default: 0 */
   delay?: number;
+  /** Starting blur of each unit, in pixels. Default: 12 */
   blur?: number;
+  /** How far below each unit starts, as a length or pixels. Default: "40%" */
   yOffset?: string | number;
+  /** Overrides the rise spring. Default: { stiffness: 140, damping: 26, mass: 1.2 } */
   spring?: { stiffness?: number; damping?: number; mass?: number };
+  /** With `whileInView`, plays only the first time the text scrolls in. Default: true */
   once?: boolean;
+  /** Waits until the text scrolls into view before playing. Default: false */
   whileInView?: boolean;
   children?: ReactNode;
 }

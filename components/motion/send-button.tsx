@@ -24,6 +24,7 @@ export interface SendButtonProps
   extends Omit<HTMLMotionProps<"button">, "children" | "onChange"> {
   /** Runs the send. Return a promise to keep Sending up until it settles. */
   onSend?: () => unknown;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<SendButtonMessages>;
   /** Play a swish as the plane leaves and a success chime once sent. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;

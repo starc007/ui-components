@@ -20,6 +20,7 @@ const SPRING_BOUNCY = { type: "spring", stiffness: 500, damping: 14, mass: 0.7 }
 export interface RangeSliderProps extends SliderOptions {
   /** Render a tick dot at each step. */
   showTicks?: boolean;
+  /** Classes merged onto the slider track. */
   className?: string;
 }
 

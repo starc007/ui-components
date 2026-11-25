@@ -11,7 +11,9 @@ import { type SankeyActive, useSankeyChart } from "./context";
 const MAX_FLOWS = 4;
 
 export interface SankeyChartTooltipProps {
+  /** Classes merged onto the tooltip panel. */
   className?: string;
+  /** Preferred side for the tooltip. Default: "top" */
   side?: "top" | "right" | "bottom" | "left";
   /** Custom content for the highlighted node or flow. */
   children?: ReactNode | ((active: SankeyActive) => ReactNode);

@@ -88,6 +88,7 @@ export interface KnockoutWheelProps {
    * Round of 16. Defaults to 0 (the whole tree); clamped to the valid range.
    */
   initialRound?: number;
+  /** Classes merged onto the root scroll container. */
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<KnockoutWheelMessages>;

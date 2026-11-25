@@ -53,8 +53,11 @@ type TriggerElementProps = React.HTMLAttributes<HTMLElement> & {
 
 export interface DropdownMenuProps {
   children: ReactNode;
+  /** Whether the menu is open, for controlled use. */
   open?: boolean;
+  /** Whether the menu starts open when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new open state when the menu opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /**
    * Play a soft sweep as the menu opens and closes, and a tick for checkbox
@@ -143,6 +146,7 @@ export function DropdownMenu({
 export interface DropdownMenuTriggerProps {
   /** A single focusable element, usually a button. */
   children: ReactElement<TriggerElementProps>;
+  /** Stops clicks and arrow keys from opening the menu. Default: false */
   disabled?: boolean;
 }
 
@@ -190,6 +194,7 @@ export function DropdownMenuTrigger({ children, disabled = false }: DropdownMenu
 
 export interface DropdownMenuContentProps {
   children: ReactNode;
+  /** Classes merged onto the menu panel. */
   className?: string;
   /** Preferred side. Flips when the viewport has no room. Default "bottom". */
   side?: "top" | "bottom";
@@ -264,7 +269,9 @@ export function DropdownMenuItem(props: DropdownMenuItemProps) {
 }
 
 export interface DropdownMenuCheckboxItemProps extends Omit<DropdownMenuItemProps, "onSelect" | "tone" | "inset"> {
+  /** Whether the row is checked. */
   checked: boolean;
+  /** Called with the new checked state when the row is toggled. */
   onCheckedChange?: (checked: boolean) => void;
 }
 
@@ -318,9 +325,12 @@ interface RadioGroupContextValue {
 const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
 
 export interface DropdownMenuRadioGroupProps {
+  /** The `value` of the checked radio row. */
   value: string;
+  /** Called with the picked row's value when a radio row is selected. */
   onValueChange?: (value: string) => void;
   children: ReactNode;
+  /** Classes merged onto the group wrapper. */
   className?: string;
 }
 
@@ -334,6 +344,7 @@ export function DropdownMenuRadioGroup({ value, onValueChange, children, classNa
 }
 
 export interface DropdownMenuRadioItemProps extends Omit<DropdownMenuItemProps, "onSelect" | "tone" | "inset"> {
+  /** The row's value. Checked when it matches the group's `value`. */
   value: string;
 }
 
@@ -420,9 +431,13 @@ export function DropdownMenuSub({ children }: DropdownMenuSubProps) {
 
 export interface DropdownMenuSubTriggerProps {
   children: ReactNode;
+  /** Stops hover, click and keys from opening the submenu. */
   disabled?: boolean;
+  /** Indent to line up with rows that start with an icon. */
   inset?: boolean;
+  /** Text matched by typeahead when the label is not plain text. */
   textValue?: string;
+  /** Classes merged onto the trigger row. */
   className?: string;
 }
 
@@ -504,6 +519,7 @@ export function DropdownMenuSubTrigger({ children, disabled, inset, textValue, c
 
 export interface DropdownMenuSubContentProps {
   children: ReactNode;
+  /** Classes merged onto the submenu panel. */
   className?: string;
   /** Gap between the menu's edge and the submenu in px. Default 6. */
   sideOffset?: number;
@@ -559,7 +575,9 @@ export function DropdownMenuSubContent({ children, className, sideOffset = 6 }: 
 
 export interface DropdownMenuLabelProps {
   children: ReactNode;
+  /** Indent to line up with rows that start with an icon. */
   inset?: boolean;
+  /** Classes merged onto the label element. */
   className?: string;
 }
 
@@ -572,6 +590,7 @@ export function DropdownMenuLabel({ children, inset, className }: DropdownMenuLa
 }
 
 export interface DropdownMenuSeparatorProps {
+  /** Classes merged onto the separator line. */
   className?: string;
 }
 
@@ -581,6 +600,7 @@ export function DropdownMenuSeparator({ className }: DropdownMenuSeparatorProps)
 
 export interface DropdownMenuShortcutProps {
   children: ReactNode;
+  /** Classes merged onto the shortcut text. */
   className?: string;
 }
 

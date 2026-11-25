@@ -75,6 +75,7 @@ export interface CrashProps {
   "aria-label"?: string;
   /** Override built-in text for this instance. */
   labels?: Partial<CrashMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

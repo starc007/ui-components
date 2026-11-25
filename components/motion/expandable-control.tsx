@@ -41,19 +41,30 @@ type ExpandableStateProps = {
 export interface ExpandableButtonProps
   extends Omit<HTMLMotionProps<"button">, "children">,
     ExpandableStateProps {
+  /** Icon always shown in the collapsed button. */
   icon: ReactNode;
+  /** Text revealed beside the icon when expanded. A string also names the button. */
   label: ReactNode;
 }
 
 export interface ExpandableChipProps extends ExpandableStateProps {
+  /** Chip text; pressing it toggles the action. */
   label: ReactNode;
+  /** Icon for the action button revealed when expanded. */
   actionIcon: ReactNode;
+  /** Accessible name for the action button. */
   actionLabel: string;
+  /** Called when the revealed action button is pressed. */
   onAction?: () => void;
+  /** Collapse and return focus to the chip after the action runs. Default: true */
   collapseOnAction?: boolean;
+  /** Disable both the chip and its action. */
   disabled?: boolean;
+  /** Classes merged onto the chip's outer surface. */
   className?: string;
+  /** Classes merged onto the label button. */
   labelClassName?: string;
+  /** Classes merged onto the action button. */
   actionClassName?: string;
 }
 

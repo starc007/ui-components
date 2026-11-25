@@ -249,6 +249,7 @@ export interface PopoverProps {
   open?: boolean;
   /** Uncontrolled initial open state. */
   defaultOpen?: boolean;
+  /** Called with the new open state when the panel opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /** How the popover is summoned. Default "click". */
   trigger?: TriggerMode;
@@ -262,6 +263,7 @@ export interface PopoverProps {
   panelRadius?: number;
   /** Blur radius feeding the goo filter — higher melts more. Default 8. */
   gooStrength?: number;
+  /** Classes merged onto the wrapper around the trigger. */
   className?: string;
 }
 
@@ -542,6 +544,7 @@ const ALIGN_ORIGIN: Record<Align, string> = {
 
 export interface PopoverContentProps {
   children: ReactNode;
+  /** Classes merged onto the panel's content box. */
   className?: string;
 }
 

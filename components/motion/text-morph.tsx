@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 export interface TextMorphProps {
   /** The text to show. Changing it morphs from the previous string. */
   children: string;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

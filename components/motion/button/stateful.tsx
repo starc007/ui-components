@@ -30,11 +30,16 @@ export const statefulButtonMessages = {
 export type StatefulButtonMessages = typeof statefulButtonMessages;
 
 export interface StatefulButtonProps extends Omit<ButtonProps, "children"> {
+  /** Which state to show. Loading also disables the button. Default: "idle" */
   state?: ButtonState;
   children: ReactNode;
+  /** Text shown while loading. Default: "Loading" */
   loadingText?: ReactNode;
+  /** Text shown on success. Default: "Done" */
   successText?: ReactNode;
+  /** Text shown on error. Default: "Try again" */
   errorText?: ReactNode;
+  /** Trailing icon shown only while idle. */
   icon?: ReactNode;
   /** Override any built-in string. */
   labels?: Partial<StatefulButtonMessages>;

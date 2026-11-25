@@ -28,10 +28,14 @@ export interface PriceTargetFanProps {
   /** Actual prices, oldest first, using ISO dates. Empty history renders only the current price and targets. */
   history?: PriceHistoryPoint[];
   children?: ReactNode;
+  /** Inspected history date or target, for controlled use. */
   active?: PriceTargetFanActive | null;
+  /** The initially inspected point when uncontrolled. Default: null */
   defaultActive?: PriceTargetFanActive | null;
+  /** Called with the inspected date or target, or `null`, when inspection changes. */
   onActiveChange?: (active: PriceTargetFanActive | null) => void;
   /** Override any built-in string. */
   labels?: Partial<PriceTargetFanMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }

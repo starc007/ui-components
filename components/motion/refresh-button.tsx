@@ -32,6 +32,7 @@ export interface RefreshButtonProps
   extends Omit<HTMLMotionProps<"button">, "children" | "onChange"> {
   /** Runs the refresh. Return a promise to keep spinning until it settles. */
   onRefresh?: () => unknown;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<RefreshButtonMessages>;
   /** Play a tap on refresh and a crisp select once updated. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;

@@ -37,12 +37,15 @@ export interface SparklineProps extends Omit<ComponentProps<"div">, "children"> 
   labels?: readonly string[];
   /** Accessible name, such as "Revenue, last 30 days". */
   label: string;
+  /** A bare line, or a line over a fading gradient fill. Default: "line" */
   variant?: "line" | "area";
+  /** How points are joined: smooth, straight or stepped. Default: "monotone" */
   curve?: XYCurve;
   /** Any CSS color. Defaults to the current text color. */
   color?: string;
   /** Height in px. Width follows the container. */
   height?: number;
+  /** Line thickness in px. Default: 1.5 */
   strokeWidth?: number;
   /** Show the change from the first to the last sample as a badge. */
   showDelta?: boolean;
@@ -50,6 +53,7 @@ export interface SparklineProps extends Omit<ComponentProps<"div">, "children"> 
   invertDelta?: boolean;
   /** Hover, drag or arrow keys to read individual samples. Adds one tab stop. */
   interactive?: boolean;
+  /** Formats values in the readout and accessible summary. Defaults to up to 2 decimals. */
   formatValue?: (value: number) => string;
   /**
    * Override any built-in string, including the shared `xyChart` ones.

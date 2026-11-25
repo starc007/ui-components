@@ -18,11 +18,15 @@ export type LikeButtonMessages = typeof likeButtonMessages;
 
 export interface LikeButtonProps
   extends Omit<ComponentPropsWithRef<"button">, "children" | "onChange"> {
+  /** Whether the viewer has liked it, for controlled use. */
   liked?: boolean;
+  /** Whether it starts liked when uncontrolled. Default: false */
   defaultLiked?: boolean;
+  /** Called with the new state when the button is pressed. */
   onLikedChange?: (liked: boolean) => void;
   /** Likes from everyone else. The viewer's own like is added on top. */
   count?: number;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<LikeButtonMessages>;
   /** Play a soft tap on like and unlike. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;

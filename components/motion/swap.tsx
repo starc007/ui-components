@@ -19,12 +19,17 @@ export { type SwapMessages, swapMessages } from "./swap/messages";
 export type { Chain, Token } from "./swap/types";
 
 export interface MultiChainSwapProps {
+  /** Networks the token picker groups tokens by. Default: a built-in demo list. */
   chains?: Chain[];
+  /** Tokens offered in the picker, each tied to a chain. Default: a built-in demo list. */
   tokens?: Token[];
+  /** Id of the token to sell at first. Default: "eth-eth" */
   defaultFromId?: string;
+  /** Id of the token to buy at first. Default: "sol-sol" */
   defaultToId?: string;
   /** Override any built-in string. */
   labels?: Partial<SwapMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

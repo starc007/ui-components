@@ -21,18 +21,25 @@ import { cn } from "@/lib/utils";
 export type WheelPickerOption = string | { label: string; value: string };
 
 export interface WheelPickerProps {
+  /** Rows on the wheel, as strings or label and value pairs. */
   options: WheelPickerOption[];
+  /** The selected value, for controlled use. */
   value?: string;
+  /** The initial value when uncontrolled. */
   defaultValue?: string;
+  /** Called with the new value whenever another row reaches the center, including mid-drag. */
   onValueChange?: (value: string) => void;
   /** Rows visible through the window, odd. More = flatter curve. Default 5. */
   visibleCount?: number;
   /** Row height in px. Default 36. */
   itemHeight?: number;
+  /** Blocks dragging, scrolling and keys, and dims the wheel. Default: false */
   disabled?: boolean;
   /** Play a short tick each time the selected value changes. Default false. */
   sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Accessible name for the wheel. */
   "aria-label"?: string;
 }
 

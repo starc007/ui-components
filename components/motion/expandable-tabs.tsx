@@ -47,12 +47,17 @@ export type ExpandableTabsClassNames = {
 };
 
 export interface ExpandableTabsProps {
+  /** Tabs in the bar, each with an icon, label and panel content. */
   items: ExpandableTabsItem[];
   /** Active tab id, or null/undefined for the closed (bar-only) state. */
   value?: string | null;
+  /** The tab open at first when uncontrolled. Default: null */
   defaultValue?: string | null;
+  /** Called with the tab id when one opens, or null when the panel closes. */
   onValueChange?: (id: string | null) => void;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for inner parts: root, panel, bar, tab, activeTab, icon, label, pill. */
   classNames?: ExpandableTabsClassNames;
   /** Override any built-in string. */
   labels?: Partial<ExpandableTabsMessages>;

@@ -104,11 +104,15 @@ function collapsedClip(
 
 export interface ContextMenuProps {
   children: ReactNode;
+  /** Whether the menu is open, for controlled use. */
   open?: boolean;
+  /** Whether the menu starts open when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new open state when the menu opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /** Override any built-in string. */
   labels?: Partial<ContextMenuMessages>;
+  /** Classes merged onto the wrapper around the trigger and menu. */
   className?: string;
 }
 
@@ -225,7 +229,9 @@ export function ContextMenu({
 
 export interface ContextMenuTriggerProps {
   children: ReactElement<TriggerElementProps>;
+  /** Stops right-click, long press and the keyboard from opening the menu. Default: false */
   disabled?: boolean;
+  /** Classes merged onto the child element. */
   className?: string;
 }
 
@@ -354,7 +360,9 @@ export function ContextMenuTrigger({
 
 export interface ContextMenuContentProps {
   children: ReactNode;
+  /** Classes merged onto the menu panel. */
   className?: string;
+  /** Accessible name for the menu. Default: "Context menu" */
   ariaLabel?: string;
 }
 
@@ -541,12 +549,19 @@ type ContextMenuItemTone = "default" | "destructive";
 
 export interface ContextMenuItemProps {
   children: ReactNode;
+  /** Called when the item is clicked or chosen with the keyboard. */
   onSelect?: () => void;
+  /** Dims the item and skips it in keyboard navigation. Default: false */
   disabled?: boolean;
+  /** Closes the menu after the item is chosen. Default: true */
   closeOnSelect?: boolean;
+  /** Colors the item red for destructive actions. Default: "default" */
   tone?: ContextMenuItemTone;
+  /** Adds left padding so the text lines up with items that have an icon. Default: false */
   inset?: boolean;
+  /** Classes merged onto the item button. */
   className?: string;
+  /** Text matched by typeahead, when the item's own text is not plain. */
   textValue?: string;
 }
 
@@ -621,7 +636,9 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
 
 export interface ContextMenuCheckboxItemProps
   extends Omit<ContextMenuItemProps, "onSelect"> {
+  /** Whether the item shows its check mark. */
   checked: boolean;
+  /** Called with the new checked state when the item is chosen. */
   onCheckedChange?: (checked: boolean) => void;
 }
 
@@ -669,9 +686,12 @@ const ContextMenuRadioGroupContext =
   createContext<ContextMenuRadioGroupContextValue | null>(null);
 
 export interface ContextMenuRadioGroupProps {
+  /** The value of the checked radio item. */
   value: string;
+  /** Called with the item's value when a radio item is chosen. */
   onValueChange?: (value: string) => void;
   children: ReactNode;
+  /** Classes merged onto the group element. */
   className?: string;
 }
 
@@ -694,6 +714,7 @@ export function ContextMenuRadioGroup({
 
 export interface ContextMenuRadioItemProps
   extends Omit<ContextMenuItemProps, "onSelect"> {
+  /** The value this item sets on its radio group. */
   value: string;
 }
 
@@ -734,7 +755,9 @@ export function ContextMenuRadioItem({
 
 export interface ContextMenuLabelProps {
   children: ReactNode;
+  /** Adds left padding to line up with inset items. Default: false */
   inset?: boolean;
+  /** Classes merged onto the label element. */
   className?: string;
 }
 
@@ -757,6 +780,7 @@ export function ContextMenuLabel({
 }
 
 export interface ContextMenuSeparatorProps {
+  /** Classes merged onto the separator line. */
   className?: string;
 }
 
@@ -770,6 +794,7 @@ export function ContextMenuSeparator({
 
 export interface ContextMenuShortcutProps {
   children: ReactNode;
+  /** Classes merged onto the shortcut text. */
   className?: string;
 }
 

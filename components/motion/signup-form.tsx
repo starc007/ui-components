@@ -86,7 +86,9 @@ export type SignUpFormClassNames = {
 export interface SignUpFormProps {
   /** Controlled values. Omit for uncontrolled. */
   values?: SignUpValues;
+  /** Initial field values when uncontrolled. Missing fields start empty. */
   defaultValues?: Partial<SignUpValues>;
+  /** Called with all field values whenever a field changes. */
   onValuesChange?: (values: SignUpValues) => void;
   /** Called with valid values only. Return a promise to drive the button state. */
   onSubmit?: (values: SignUpValues) => void | Promise<void>;
@@ -96,15 +98,21 @@ export interface SignUpFormProps {
   status?: SignUpStatus;
   /** Form-level failure message, shown above the submit button. */
   errorMessage?: string;
+  /** Heading above the fields. Pass null to hide it. Default: "Create your account" */
   title?: ReactNode;
+  /** Line under the heading. Pass null to hide it. Default: "Start building in under a minute." */
   description?: ReactNode;
+  /** Submit button text. Default: "Create account" */
   submitLabel?: string;
+  /** Content below the submit button, e.g. a sign-in link. */
   footer?: ReactNode;
   /** Show the password strength meter. */
   strengthMeter?: boolean;
   /** Override any built-in string. */
   labels?: Partial<SignUpFormMessages>;
+  /** Classes merged onto the form element. */
   className?: string;
+  /** Classes for inner parts: root, header, title, description, fields, strength, terms, submit, footer. */
   classNames?: SignUpFormClassNames;
 }
 

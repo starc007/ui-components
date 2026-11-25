@@ -23,13 +23,19 @@ const defaultFormat = (value: number) =>
 export interface TreemapProps extends ComponentProps<"section"> {
   /** Flat leaves or nested groups. Tile area uses leaf values; groups sum their descendants. */
   data: readonly TreemapNode[];
+  /** Chart name, used as its accessible label and table caption. Default: "Treemap" */
   label?: string;
+  /** Formats values in tiles, the tooltip and the legend. Defaults to up to 2 decimals. */
   formatValue?: (value: number) => string;
   /** Top-level palette; nodes can override their inherited color and textColor. */
   colors?: readonly string[];
+  /** Tile text color, unless a node sets its own. Default: "#ffffff" */
   textColor?: string;
+  /** Id of the inspected tile, or null for none, for controlled use. */
   activeId?: string | null;
+  /** Id of the tile inspected at first when uncontrolled. Default: null */
   defaultActiveId?: string | null;
+  /** Called with the tile id when inspection moves, or null when it clears. */
   onActiveChange?: (id: string | null) => void;
   /** Override any built-in string. */
   labels?: Partial<TreemapMessages>;

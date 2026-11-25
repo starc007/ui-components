@@ -32,13 +32,21 @@ export function snapSliderValue(next: number, min: number, max: number, step: nu
 }
 
 export interface SliderOptions {
+  /** The current value, for controlled use. */
   value?: number;
+  /** The initial value when uncontrolled. Default: 0 */
   defaultValue?: number;
+  /** Called with the snapped value whenever a drag or key press changes it. */
   onValueChange?: (value: number) => void;
+  /** Lowest value on the track. Default: 0 */
   min?: number;
+  /** Highest value on the track. Default: 100 */
   max?: number;
+  /** Increment values snap to when dragging or using arrow keys. Default: 1 */
   step?: number;
+  /** Ignores pointer and keyboard input. Default: false */
   disabled?: boolean;
+  /** Accessible name for the slider handle. */
   "aria-label"?: string;
   /** Announced instead of the raw number — pass one when the value carries a
    * unit or a suffix ("72.5 kg", "35%"); a bare number needs no valueText. */

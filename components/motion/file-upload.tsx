@@ -51,23 +51,39 @@ export type FileUploadClassNames = {
 };
 
 export interface FileUploadProps {
+  /** The file queue, for controlled use. */
   value?: FileUploadItem[];
+  /** The initial file queue when uncontrolled. */
   defaultValue?: FileUploadItem[];
+  /** Called with the full queue when files are added, removed or retried. */
   onValueChange?: (items: FileUploadItem[]) => void;
+  /** Called with the new items and their files after files are added. */
   onFilesAdded?: (items: FileUploadItem[], files: File[]) => void;
+  /** Called with the item when its remove button is pressed. */
   onRemove?: (item: FileUploadItem) => void;
+  /** Called with the item, reset to uploading, when its retry button is pressed. */
   onRetry?: (item: FileUploadItem) => void;
+  /** File types the picker allows, as in the input `accept` attribute. */
   accept?: string;
+  /** Allows picking or dropping more than 1 file at a time. Default: true */
   multiple?: boolean;
+  /** Most files allowed in the queue. No limit when unset. */
   maxFiles?: number;
+  /** Turns off the dropzone and file picker. Default: false */
   disabled?: boolean;
+  /** Dropzone layout: a row, or a stacked and centered block. Default: "default" */
   variant?: FileUploadVariant;
+  /** Heading inside the dropzone. Default: "Drop files here" */
   title?: string;
+  /** Line under the dropzone heading. Default: "Add files to the upload queue" */
   description?: string;
+  /** Text on the browse pill. Default: "Browse" */
   browseLabel?: string;
   /** Override any built-in string. `{name}` fills the per-file labels; `{count}` and `{max}` fill `limitDescription`. */
   labels?: Partial<FileUploadMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for each part: root, dropzone, queue, item and its inner parts. */
   classNames?: FileUploadClassNames;
 }
 

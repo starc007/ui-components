@@ -10,13 +10,19 @@ import { cn } from "@/lib/utils";
 const THUMB_SPRING = { type: "spring", stiffness: 800, damping: 80, mass: 4 } as const;
 
 export interface SwitchProps {
+  /** Whether the switch is on. */
   checked: boolean;
+  /** Called with the new state when the switch is toggled. */
   onCheckedChange: (checked: boolean) => void;
+  /** Dims the switch and stops it from toggling. */
   disabled?: boolean;
+  /** Visible text beside the switch, also its accessible name. */
   label?: string;
+  /** Accessible name when there is no visible `label`. */
   ariaLabel?: string;
   /** Play a rising blip on, a falling one off. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

@@ -23,12 +23,17 @@ export const addToCartMessages = {
 export type AddToCartMessages = typeof addToCartMessages;
 
 export interface AddToCartProps {
+  /** Items in the cart, for controlled use. 0 shows the add button. */
   quantity?: number;
+  /** The initial quantity when uncontrolled. Default: 0 */
   defaultQuantity?: number;
+  /** Called with the new quantity when an item is added or removed. */
   onQuantityChange?: (quantity: number) => void;
   /** Most items one cart line can hold. */
   max?: number;
+  /** Blocks adding and stepping, and dims the button. Default: false */
   disabled?: boolean;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<AddToCartMessages>;
   /** Play a drop on add, a tick per step and a crumple on remove. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;
@@ -37,6 +42,7 @@ export interface AddToCartProps {
    * width, for example `w-full`, to keep one size in both states.
    */
   morphWidth?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

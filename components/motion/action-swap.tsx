@@ -24,28 +24,43 @@ export interface ActionSwapButtonProps extends Omit<
   HTMLMotionProps<"button">,
   "children" | "onChange"
 > {
+  /** States the button steps through, each with a label and optional icon. */
   items: ActionSwapItem[];
+  /** The id of the shown item, for controlled use. */
   value?: string;
+  /** The initial item id when uncontrolled. Default: the first item. */
   defaultValue?: string;
+  /** Called with the next item's id and the item when a press advances it. */
   onValueChange?: (value: string, item: ActionSwapItem) => void;
+  /** Visual style of the button. Default: "secondary" */
   variant?: ActionSwapButtonVariant;
+  /** Button height and padding. Default: "md" */
   size?: ActionSwapButtonSize;
+  /** How the label and icon swap between items. Default: "blur" */
   animation?: ActionSwapAnimation;
+  /** Show only the icon and use the label as the accessible name. Default: true for size "icon" */
   iconOnly?: boolean;
+  /** Advance to the next item on each press, wrapping at the end. Default: true */
   cycle?: boolean;
 }
 
 export interface ActionSwapTextProps {
+  /** Key for the current text; a new value plays the swap. */
   value: string;
   children: ReactNode;
+  /** How the old text leaves and the new text enters. Default: "blur" */
   animation?: ActionSwapAnimation;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
 export interface ActionSwapIconProps {
+  /** Key for the current icon; a new value plays the swap. */
   value: string;
   children: ReactNode;
+  /** How the old icon leaves and the new one enters. "cascade" plays as "roll". Default: "blur" */
   animation?: ActionSwapAnimation;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

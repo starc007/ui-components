@@ -33,18 +33,27 @@ export interface InputProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "value" | "defaultValue" | "onChange"
 > {
+  /** Text shown above the field and tied to it as its label. */
   label?: string;
+  /** The field text, for controlled use. */
   value?: string;
+  /** The initial field text when uncontrolled. */
   defaultValue?: string;
+  /** Called with the new text on every edit. */
   onChange?: (value: string) => void;
   /** Truthy error triggers a shake, red border and (if a string) a message. */
   error?: string | boolean;
   /** Reserve one message line so validation does not shift nearby content. */
   reserveErrorLine?: boolean;
+  /** Shows a green check in place of `rightIcon`. */
   success?: boolean;
+  /** Icon inside the field, before the text. */
   leftIcon?: ReactNode;
+  /** Icon inside the field, after the text. Hidden while `success` is set. */
   rightIcon?: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for the root, label, field, input, icons and error message. */
   classNames?: InputClassNames;
 }
 

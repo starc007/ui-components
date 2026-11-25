@@ -11,6 +11,7 @@ import { TreemapCell } from "./tile";
 export interface TreemapPlotProps {
   /** Sets the plot height; default 20rem. The layout follows its measured dimensions. */
   className?: string;
+  /** Classes merged onto every tile button. */
   tileClassName?: string;
   /** Return presentation content only; each tile already owns its button and accessible name. */
   renderTile?: (tile: TreemapTile) => ReactNode;

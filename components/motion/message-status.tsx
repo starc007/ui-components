@@ -18,10 +18,13 @@ export type MessageStatusMessages = typeof messageStatusMessages;
 export type MessageStatusValue = "sending" | "sent" | "delivered" | "read";
 
 export interface MessageStatusProps {
+  /** Delivery stage. Moving forward animates the badges to the next state. */
   status: MessageStatusValue;
   /** Show the status as a word next to the badges. */
   showLabel?: boolean;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<MessageStatusMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

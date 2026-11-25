@@ -12,6 +12,7 @@ import { dateFormats } from "./formats";
 
 export interface DateRangePickerTriggerProps
   extends HTMLMotionProps<"button"> {
+  /** Shown while no range is picked. Default: "Select dates" */
   placeholder?: string;
 }
 export function DateRangePickerTrigger({

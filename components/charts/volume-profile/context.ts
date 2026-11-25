@@ -13,17 +13,26 @@ const formatNumber = (value: number) => value.toLocaleString("en-US", { maximumF
 export interface VolumeProfileProps extends ComponentProps<"section"> {
   /** Already-aggregated executed volume. Sorted by price; unequal bins and gaps are supported. */
   data: readonly VolumeProfileBin[];
+  /** Chart name, used in its accessible labels. Default: "Volume profile" */
   label?: string;
+  /** Volume unit shown after amounts. Default: "units" */
   unit?: string;
+  /** Formats prices in the plot, tooltip and summary. Defaults to up to 2 decimals. */
   formatPrice?: (price: number) => string;
+  /** Formats volume amounts in the tooltip and summary. Defaults to up to 2 decimals. */
   formatVolume?: (volume: number) => string;
   /** Target fraction, default 0.7. Whole bins may cover less; the POC is always included.
    * Set false to hide the value area. Equal-volume POCs favor the lower price. */
   valueArea?: number | false;
+  /** Bar color for regular price levels. Default: "#0285f7" */
   color?: string;
+  /** Color for the point of control bar and its marker. Default: "#f59e0b" */
   pocColor?: string;
+  /** Id of the inspected bin, or null for none, for controlled use. */
   activeId?: string | null;
+  /** Id of the bin inspected at first when uncontrolled. Default: null */
   defaultActiveId?: string | null;
+  /** Called with the bin id when inspection moves, or null when it clears. */
   onActiveChange?: (id: string | null) => void;
   /** Override any built-in string. */
   labels?: Partial<VolumeProfileMessages>;

@@ -104,6 +104,8 @@ export interface AgentActivityProps {
   maxHeight?: number;
   /** Override any built-in string. Pick `One`/`Other` keys by count; `{count}`, `{duration}`, `{seconds}` and `{minutes}` fill the matching messages. */
   labels?: Partial<AgentActivityMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto the list of activity items. */
   contentClassName?: string;
 }

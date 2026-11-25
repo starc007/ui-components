@@ -76,9 +76,13 @@ export function paginationRange(
 
 export interface PaginationProps
   extends Omit<ComponentPropsWithRef<"nav">, "onChange" | "children"> {
+  /** Number of pages, starting from 1. */
   totalPages: number;
+  /** The current page, 1-based, for controlled use. */
   page?: number;
+  /** The initial page when uncontrolled. Default: 1 */
   defaultPage?: number;
+  /** Called with the new page number when a control is pressed. */
   onPageChange?: (page: number) => void;
   /** Pages shown either side of the current one. */
   siblings?: number;

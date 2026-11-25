@@ -21,11 +21,13 @@ export interface NotificationBellProps
   extends Omit<HTMLMotionProps<"button">, "children" | "onChange"> {
   /** Unread count. */
   count?: number;
+  /** The initial unread count when uncontrolled. Default: 0 */
   defaultCount?: number;
   /** Called with 0 when the bell is pressed, and with any count you set. */
   onCountChange?: (count: number) => void;
   /** Counts above this show as "9+". */
   max?: number;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<NotificationBellMessages>;
   /** Play a small bell when the count goes up and a tap when it is cleared. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;

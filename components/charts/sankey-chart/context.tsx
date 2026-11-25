@@ -29,10 +29,13 @@ import {
 } from "./model";
 
 export interface SankeyChartProps extends ComponentProps<"section"> {
+  /** The nodes, each with an id and label. Columns come from the links. */
   nodes: readonly SankeyNode[];
   /** Weighted flows between node ids. Links that would close a loop are left out. */
   links: readonly SankeyLink[];
+  /** Accessible name for the chart and its data table. Default: "Sankey chart" */
   label?: string;
+  /** Formats values in node labels, the tooltip and the data table. */
   formatValue?: (value: number) => string;
   /** Palette for nodes without their own color, in node order. */
   colors?: readonly string[];
@@ -42,7 +45,9 @@ export interface SankeyChartProps extends ComponentProps<"section"> {
   nodePadding?: number;
   /** Highlighted node or link id. Controlled. Link ids default to `source:target`. */
   activeId?: string | null;
+  /** Initially highlighted node or link id when uncontrolled. Default: null */
   defaultActiveId?: string | null;
+  /** Called with the node or link id, or null, when the highlight changes. */
   onActiveChange?: (id: string | null) => void;
   /** Override any built-in string. */
   labels?: Partial<SankeyChartMessages>;

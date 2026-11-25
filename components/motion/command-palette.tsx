@@ -53,12 +53,17 @@ export const commandPaletteMessages = {
 export type CommandPaletteMessages = typeof commandPaletteMessages;
 
 export interface CommandPaletteProps {
+  /** Commands to search, each with a label, optional group and an `onSelect` action. */
   items: CommandItem[];
   /** Opens with Cmd/Ctrl + this key. Default: "k" */
   shortcut?: string;
+  /** Hint text in the search field. Default: "Type a command or search…" */
   placeholder?: string;
+  /** Text shown when no command matches. Default: "No results found." */
   emptyMessage?: string;
+  /** Whether the palette is open, for controlled use. */
   open?: boolean;
+  /** Called with the new open state when the palette opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /** Override any built-in string. `results` names items without a `group`. */
   labels?: Partial<CommandPaletteMessages>;

@@ -40,11 +40,15 @@ export type {
 export { defaultWeek } from "./types";
 
 export interface AvailabilitySchedulerProps {
+  /** The weekly hours, for controlled use. */
   value?: WeekAvailability;
+  /** The initial weekly hours when uncontrolled. Defaults to weekdays 09:00 to 17:00. */
   defaultValue?: WeekAvailability;
+  /** Called with the whole week when any day or time range changes. */
   onChange?: (value: WeekAvailability) => void;
   /** Minutes between selectable times. Default 30. */
   step?: number;
+  /** Classes merged onto the root element. */
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<AvailabilitySchedulerMessages>;

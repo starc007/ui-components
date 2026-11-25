@@ -53,13 +53,17 @@ export interface ReactionPickerProps {
   reactions?: Reaction[];
   /** The viewer's reaction id, or null for none. */
   value?: string | null;
+  /** The initial reaction id when uncontrolled. Default: null */
   defaultValue?: string | null;
+  /** Called with the picked reaction id, or null when the same one is picked again. */
   onValueChange?: (value: string | null) => void;
   /** Reactions from everyone else. The viewer's own is added on top. */
   count?: number;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<ReactionPickerMessages>;
   /** Play open and close swishes for the tray and a select on a pick. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

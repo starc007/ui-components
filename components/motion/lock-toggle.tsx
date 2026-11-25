@@ -20,11 +20,15 @@ export type LockToggleMessages = typeof lockToggleMessages;
 
 export interface LockToggleProps
   extends Omit<HTMLMotionProps<"button">, "children" | "onChange"> {
+  /** Whether the padlock is locked, for controlled use. */
   locked?: boolean;
+  /** Whether it starts locked when uncontrolled. Default: true */
   defaultLocked?: boolean;
+  /** Called with the next state when the padlock is toggled. */
   onLockedChange?: (locked: boolean) => void;
   /** Show Locked / Unlocked next to the padlock. */
   showLabel?: boolean;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<LockToggleMessages>;
   /** Play a low press on lock and a light tap on unlock. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;

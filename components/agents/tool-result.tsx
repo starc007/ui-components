@@ -46,30 +46,48 @@ export const toolResultMessages = {
 export type ToolResultMessages = typeof toolResultMessages;
 
 export interface ToolResultProps {
+  /** Tool name, shown in small monospace after the title. */
   tool: ReactNode;
+  /** Heading in the header row, rolls to the new text when it changes. */
   title: ReactNode;
   children: ReactNode;
+  /** Run state, sets the status badge and auto open or fold. Default: "running" */
   status?: ToolResultStatus;
+  /** Picks the header icon when no `icon` is given. Default: "custom" */
   kind?: ToolResultKind;
+  /** Short muted detail after the title, e.g. a duration or count. */
   meta?: ReactNode;
+  /** Replaces the icon chosen by `kind`. */
   icon?: ReactNode;
+  /** Whether the output panel is open, for controlled use. */
   open?: boolean;
+  /** Whether the output panel starts open when uncontrolled. Default: true */
   defaultOpen?: boolean;
+  /** Called with the new open state when the panel opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Folds the panel when the status leaves "running". Default: true */
   collapseOnComplete?: boolean;
+  /** Maximum height of the scrolling output area, in px. Default: 220 */
   maxHeight?: number;
+  /** Text the copy button writes to the clipboard. Shows the copy button. */
   copyText?: string;
+  /** Runs instead of the clipboard write when copy is pressed. Shows the copy button. */
   onCopy?: () => void | Promise<void>;
+  /** Called when the retry button is pressed. Shows the retry button. */
   onRetry?: () => void;
   /** Override any built-in string. */
   labels?: Partial<ToolResultMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto the padded box around the output. */
   contentClassName?: string;
 }
 
 export interface ToolResultOutputProps {
   children: string;
+  /** Syntax highlighting language for the output. Default: "bash" */
   language?: AgentCodeLanguage;
+  /** Classes merged onto the code element. */
   className?: string;
 }
 

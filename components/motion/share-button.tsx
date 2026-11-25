@@ -41,9 +41,11 @@ export interface ShareButtonProps {
    * to show the check once it settles; if it rejects, the fan stays open.
    */
   onAction?: (id: string) => unknown;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<ShareButtonMessages>;
   /** Play open and close swishes for the fan and a success chime when an action is done. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

@@ -29,10 +29,13 @@ export interface DeleteButtonProps {
    * up until it settles; if it rejects, the button goes back to the bin.
    */
   onDelete?: () => unknown;
+  /** Disable the bin button and dim the control. Default: false */
   disabled?: boolean;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<DeleteButtonMessages>;
   /** Play a tap to arm, a close on cancel and a crumple once deleted. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

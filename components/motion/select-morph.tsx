@@ -105,12 +105,17 @@ function useMorphContext(component: string) {
 }
 
 export interface MorphSelectProps {
+  /** The selected value, for controlled use. */
   value?: string;
+  /** The initial value when uncontrolled. */
   defaultValue?: string;
+  /** Called with the option's value when the user picks one. */
   onValueChange?: (value: string) => void;
+  /** Disable the trigger so the panel cannot open. Default: false */
   disabled?: boolean;
   /** Play open and close swishes and a select on a pick. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
   children: ReactNode;
 }
@@ -277,7 +282,9 @@ export function MorphSelect({
 }
 
 export interface MorphSelectValueProps {
+  /** Text shown in the trigger and panel header before anything is picked. Default: "Select" */
   placeholder?: string;
+  /** Classes merged onto the value text. */
   className?: string;
 }
 
@@ -301,6 +308,7 @@ export function MorphSelectValue({
 }
 
 export interface MorphSelectTriggerProps {
+  /** Classes merged onto the trigger button. */
   className?: string;
   children: ReactNode;
 }
@@ -369,6 +377,7 @@ export function MorphSelectTrigger({
 }
 
 export interface MorphSelectContentProps {
+  /** Classes merged onto the open panel. */
   className?: string;
   children: ReactNode;
 }
@@ -489,8 +498,11 @@ export function MorphSelectContent({
 }
 
 export interface MorphSelectItemProps {
+  /** Value reported when this option is picked. */
   value: string;
+  /** Make the option unselectable and skip it in keyboard navigation. Default: false */
   disabled?: boolean;
+  /** Classes merged onto the option button. */
   className?: string;
   children: ReactNode;
 }

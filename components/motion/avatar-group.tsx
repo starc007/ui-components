@@ -39,8 +39,11 @@ function initials(name: string) {
 }
 
 export interface AvatarProps extends Omit<ComponentPropsWithRef<"span">, "children"> {
+  /** Person's name, used for alt text and the initials fallback. */
   name: string;
+  /** Image URL. Initials show when missing or when it fails to load. */
   src?: string;
+  /** Avatar size: 28, 36 or 44 px. Default: "md" */
   size?: AvatarSize;
 }
 
@@ -76,13 +79,17 @@ export function Avatar({ name, src, size = "md", className, ...props }: AvatarPr
 }
 
 export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<"div">, "children"> {
+  /** People to show, each with a name and optional image. */
   members: AvatarGroupMember[];
   /** Avatars shown before the rest collapse into a +N count. */
   max?: number;
+  /** Avatar size: 28, 36 or 44 px. Default: "md" */
   size?: AvatarSize;
   /** Whether every member is shown. Pair with `onExpandedChange`. */
   expanded?: boolean;
+  /** Whether every member starts shown when uncontrolled. Default: false */
   defaultExpanded?: boolean;
+  /** Called with the next state when the +N count expands or collapses. */
   onExpandedChange?: (expanded: boolean) => void;
   /** Accessible name for the list, such as "Project members". */
   label?: string;

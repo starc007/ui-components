@@ -20,13 +20,17 @@ export type BookmarkButtonMessages = typeof bookmarkButtonMessages;
 
 export interface BookmarkButtonProps
   extends Omit<HTMLMotionProps<"button">, "children" | "onChange"> {
+  /** Whether the item is saved, for controlled use. */
   saved?: boolean;
+  /** The initial saved state when uncontrolled. Default: false */
   defaultSaved?: boolean;
+  /** Called with the new state when the button is pressed. */
   onSavedChange?: (saved: boolean) => void;
   /** Show "Save" / "Saved" next to the icon. Icon only when false. */
   showLabel?: boolean;
   /** What is being saved, for the accessible name ("Save {name}"). */
   name?: string;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<BookmarkButtonMessages>;
   /** Play a soft drop on save and a tap on unsave. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;

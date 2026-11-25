@@ -15,7 +15,9 @@ export interface BarChartTooltipData {
 
 export interface BarChartTooltipProps {
   children?: ReactNode | ((data: BarChartTooltipData) => ReactNode);
+  /** Classes merged onto the tooltip panel. */
   className?: string;
+  /** Which side of the pointer or anchor the tooltip opens on. Default: "top" */
   side?: "top" | "right" | "bottom" | "left";
 }
 

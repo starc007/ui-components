@@ -90,6 +90,7 @@ export interface KnockoutBracketProps {
   thirdPlaceLabel?: string;
   /** Override any built-in string. */
   labels?: Partial<KnockoutBracketMessages>;
+  /** Classes merged onto the root scroll container. */
   className?: string;
 }
 

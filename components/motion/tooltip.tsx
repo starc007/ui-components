@@ -112,8 +112,11 @@ function useTooltipContext(part: string) {
 
 export interface TooltipRootProps {
   children?: ReactNode;
+  /** Whether the tooltip is shown, for controlled use. */
   open?: boolean;
+  /** Whether the tooltip starts shown when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new state when the tooltip shows or hides. */
   onOpenChange?: (open: boolean) => void;
   /** Delay before showing on hover (ms). Keyboard focus shows immediately. */
   delay?: number;
@@ -557,7 +560,9 @@ export function TooltipTrigger({ asChild = false, children, ref, ...props }: Too
 
 export interface TooltipContentProps {
   children?: ReactNode;
+  /** Preferred side of the anchor. Flips when there is no room. Default: "top" */
   side?: TooltipSide;
+  /** Alignment along the chosen side. Default: "center" */
   align?: TooltipAlign;
   /** Gap between anchor and tooltip (px). */
   sideOffset?: number;
@@ -565,6 +570,7 @@ export interface TooltipContentProps {
   arrow?: boolean;
   /** Point within the anchor, as fractions of its rendered width and height. */
   anchorPoint?: TooltipPoint;
+  /** Classes merged onto the tooltip surface. */
   className?: string;
 }
 

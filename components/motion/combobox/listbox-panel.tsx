@@ -21,10 +21,15 @@ export type ListboxPanelAlign = "start" | "center" | "end";
 const VIEWPORT_PADDING = 8;
 
 export interface ListboxPanelPlacement {
+  /** Preferred side of the field to open on. Default: "bottom" */
   side?: ListboxPanelSide;
+  /** Horizontal alignment against the field. Default: "start" */
   align?: ListboxPanelAlign;
+  /** Gap between the field and the panel, in px. Default: 6 */
   sideOffset?: number;
+  /** Flip to the other side when there is more room there. Default: true */
   avoidCollisions?: boolean;
+  /** Classes merged onto the panel element. */
   className?: string;
 }
 

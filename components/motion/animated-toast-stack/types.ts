@@ -47,7 +47,10 @@ export type ToastClassNames = {
 };
 
 export interface UseAnimatedToastStackOptions {
+  /** Toasts in the stack on first render. */
   initialToasts?: ToastInput[];
+  /** Time before a toast without its own `duration` closes, in ms. Default: 4200 */
   defaultDuration?: number;
+  /** Most toasts kept. Older ones drop off when a new one arrives. */
   limit?: number;
 }

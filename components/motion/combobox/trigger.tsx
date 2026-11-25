@@ -13,6 +13,7 @@ import { useComboboxContext } from "./context";
 
 export interface ComboboxTriggerProps {
   children: ReactNode;
+  /** Classes merged onto the trigger field. */
   className?: string;
 }
 
@@ -46,10 +47,12 @@ export function ComboboxTrigger({ children, className }: ComboboxTriggerProps) {
 }
 
 export interface ComboboxValueProps {
+  /** Shown while nothing is selected. Default: "Select an option" */
   placeholder?: ReactNode;
   children?:
     | ReactNode
     | ((value: string | undefined, label: string | undefined) => ReactNode);
+  /** Classes merged onto the value text. */
   className?: string;
 }
 
@@ -85,7 +88,9 @@ export interface ComboboxInputProps
     InputHTMLAttributes<HTMLInputElement>,
     "defaultValue" | "value"
   > {
+  /** Ref to the underlying input element. */
   ref?: Ref<HTMLInputElement>;
+  /** Classes merged onto the wrapper around the search icon and input. */
   wrapperClassName?: string;
 }
 

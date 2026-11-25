@@ -62,13 +62,21 @@ export interface LightboxImage {
 }
 
 export interface MorphingLightboxProps {
+  /** Images in the gallery. Each needs a unique `id` and positive dimensions. */
   images: LightboxImage[];
+  /** Id of the open image, or null when closed, for controlled use. */
   value?: string | null;
+  /** Id of the image open at first when uncontrolled. Default: null */
   defaultValue?: string | null;
+  /** Called with the image id when one opens or changes, and null on close. */
   onValueChange?: (id: string | null) => void;
+  /** Accessible name for the gallery and the viewer dialog. Default: "Image gallery" */
   label?: string;
+  /** Classes merged onto the default thumbnail grid. */
   className?: string;
+  /** Classes merged onto each default thumbnail button. */
   thumbnailClassName?: string;
+  /** Renders the caption for the open image. Defaults to its `caption` or `alt`. */
   renderCaption?: (image: LightboxImage) => ReactNode;
   /** Compose gallery and viewer parts instead of the default layout. */
   children?: ReactNode;
@@ -254,7 +262,9 @@ export function ImageViewerGallery({
 
 export interface ImageViewerThumbnailProps
   extends Omit<HTMLMotionProps<"button">, "children"> {
+  /** Id of the image from `images` this thumbnail shows and opens. */
   imageId: string;
+  /** Classes merged onto the thumbnail image. */
   imageClassName?: string;
   children?: ReactNode;
 }
@@ -404,6 +414,7 @@ export function ImageViewerNext(props: ViewerButtonProps) {
 }
 
 export interface ImageViewerContentProps {
+  /** Classes merged onto the viewer dialog panel. */
   className?: string;
   /** Custom header; defaults to the counter and close control. */
   header?: ReactNode;

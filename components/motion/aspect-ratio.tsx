@@ -53,6 +53,7 @@ export function AspectRatio({
 
 export interface AspectRatioImageProps
   extends Omit<HTMLMotionProps<"img">, "layout" | "layoutDependency" | "width" | "height"> {
+  /** Describes the image for screen readers. Pass "" when it is decorative. */
   alt: string;
   /** Intrinsic width in pixels, used to reserve the image's cover crop. */
   width: number;

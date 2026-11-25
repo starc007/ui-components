@@ -18,15 +18,23 @@ const CHECK_PATH = "M5 13l4 4L19 7";
 const INDETERMINATE_PATH = "M6 12h12";
 
 export interface CheckboxProps {
+  /** Whether the box is checked. */
   checked: boolean;
+  /** Called with the new state when the box is toggled. */
   onCheckedChange: (checked: boolean) => void;
+  /** Blocks toggling and dims the control. */
   disabled?: boolean;
+  /** Shows a dash for a partly selected group. Announced as mixed. */
   indeterminate?: boolean;
+  /** Visible text beside the box, also its accessible name. */
   label?: string;
   /** Supporting text under the label, announced as the description rather than the name. */
   description?: string;
+  /** Classes merged onto the root label element. */
   className?: string;
+  /** Id for the checkbox button. Generated when omitted. */
   id?: string;
+  /** Accessible name when there is no visible label. */
   "aria-label"?: string;
   /** Associates an external message (e.g. a form error) with the control. */
   "aria-describedby"?: string;

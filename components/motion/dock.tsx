@@ -14,6 +14,7 @@ const DockContext = createContext<DockContextValue | null>(null);
 
 export interface DockProps {
   children: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
   /** Size of each item in px. */
   size?: number;
@@ -42,10 +43,13 @@ export function Dock({ children, size = 44, className }: DockProps) {
 
 export interface DockItemProps {
   children: ReactNode;
+  /** Classes merged onto the item element. */
   className?: string;
   /** When set, the item renders as a <button>. Omit when children carry their own link or button. */
   onClick?: () => void;
+  /** Moves the shared highlight pill to this item; sets `aria-pressed` on a button. */
   active?: boolean;
+  /** Accessible name for the button rendered when `onClick` is set. */
   "aria-label"?: string;
 }
 

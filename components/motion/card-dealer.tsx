@@ -45,6 +45,7 @@ export interface CardDealerProps<T extends CardDealerCard> {
   onCardSelect?: (id: string) => void;
   /** Card size in px. Default 84 by 120. */
   cardWidth?: number;
+  /** Card height in px, paired with `cardWidth`. Default: 120 */
   cardHeight?: number;
   /** Most horizontal space between neighbouring hand cards, in px. Default 46. */
   spread?: number;
@@ -54,6 +55,7 @@ export interface CardDealerProps<T extends CardDealerCard> {
   "aria-label"?: string;
   /** Override any built-in string. */
   labels?: Partial<CardDealerMessages>;
+  /** Classes merged onto the table element. */
   className?: string;
 }
 

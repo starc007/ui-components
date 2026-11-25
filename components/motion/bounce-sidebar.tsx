@@ -29,16 +29,25 @@ export const bounceSidebarMessages = {
 export type BounceSidebarMessages = typeof bounceSidebarMessages;
 
 export interface BounceSidebarProps {
+  /** Links or buttons listed in the sidebar, in order. */
   items: BounceSidebarItem[];
+  /** Id of the active item, for controlled use. */
   value?: string;
+  /** The initial active item id when uncontrolled. Defaults to the first item. */
   defaultValue?: string;
+  /** Called with the item id when an item is picked. */
   onValueChange?: (value: string) => void;
+  /** Accessible name for the nav. Default: "Sidebar navigation" */
   ariaLabel?: string;
   /** Override any built-in string. */
   labels?: Partial<BounceSidebarMessages>;
+  /** Classes merged onto the root nav element. */
   className?: string;
+  /** Classes merged onto the list element. */
   listClassName?: string;
+  /** Classes merged onto each item's link or button. */
   itemClassName?: string;
+  /** Classes merged onto the bouncing dot. */
   indicatorClassName?: string;
 }
 

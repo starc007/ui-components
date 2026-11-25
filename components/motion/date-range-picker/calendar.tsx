@@ -11,6 +11,7 @@ import { DateRangePickerSummary } from "./summary";
 
 export interface DateRangePickerCalendarProps
   extends ComponentPropsWithoutRef<"section"> {
+  /** Show the selected range summary above the default layout. Default: the root's showSummary. */
   showSummary?: boolean;
 }
 

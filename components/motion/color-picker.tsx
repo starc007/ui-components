@@ -131,6 +131,7 @@ export interface ColorPickerProps
   extends Omit<ComponentPropsWithRef<"fieldset">, "onChange" | "defaultValue"> {
   /** Controlled hex color (#rgb, #rrggbb or #rrggbbaa). */
   value?: string;
+  /** The initial hex color when uncontrolled. Default: "#3478f6" */
   defaultValue?: string;
   /** Fires on every change while dragging or typing, with a lowercase hex. */
   onValueChange?: (value: string) => void;
@@ -142,7 +143,9 @@ export interface ColorPickerProps
   name?: string;
   /** Controlled open state for ColorPickerTrigger + ColorPickerContent. */
   open?: boolean;
+  /** Whether the popover starts open when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new state when the popover opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /** Override any built-in string. */
   labels?: Partial<ColorPickerMessages>;
@@ -601,6 +604,7 @@ function ChannelSlider({
 }
 
 export interface ColorPickerHueProps extends Omit<ComponentPropsWithRef<"div">, "children"> {
+  /** Accessible name for the hue slider. Default: "Hue" */
   label?: string;
 }
 
@@ -622,6 +626,7 @@ export function ColorPickerHue({ label, ...props }: ColorPickerHueProps) {
 }
 
 export interface ColorPickerAlphaProps extends Omit<ComponentPropsWithRef<"div">, "children"> {
+  /** Accessible name for the opacity slider. Default: "Opacity" */
   label?: string;
 }
 

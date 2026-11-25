@@ -38,18 +38,29 @@ export const animatedToastStackMessages = {
 export type AnimatedToastStackMessages = typeof animatedToastStackMessages;
 
 export interface AnimatedToastStackProps {
+  /** Toasts to show, oldest first. Usually the `toasts` from `useAnimatedToastStack`. */
   toasts: AnimatedToast[];
+  /** Called with the toast id on close or swipe. Swipe and close work only when set. */
   onDismiss?: (id: string) => void;
+  /** Screen corner or edge the stack anchors to. Default: "bottom-right" */
   position?: ToastPosition;
+  /** How the stack is positioned. Overrides `fixed` when set. */
   placement?: "static" | "fixed" | "absolute";
+  /** Shorthand for `placement="fixed"`. Default: false */
   fixed?: boolean;
+  /** Render into a portal. Defaults to true when the placement is fixed. */
   portal?: boolean;
+  /** Element to portal into. Defaults to `document.body`. */
   portalRoot?: Element | null;
   /** How many toasts the open island lists. Default 4. */
   maxVisible?: number;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for each inner part, keyed by slot. */
   classNames?: ToastClassNames;
+  /** Icons per status, used in place of the built-in ones. */
   icons?: Partial<Record<ToastStatus, ReactNode>>;
+  /** Renders a toast's whole body in place of the built-in layout. */
   renderToast?: (toast: AnimatedToast) => ReactNode;
   /** Override any built-in string. */
   labels?: Partial<AnimatedToastStackMessages>;

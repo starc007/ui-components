@@ -33,6 +33,7 @@ export interface ThemeToggleProps
   variant?: ThemeVariant;
   /** Origin direction for the reveal. Default: "bottom-up". */
   start?: RectStart;
+  /** Classes merged onto the sun and moon icons. */
   iconClassName?: string;
   /** Override any built-in string. */
   labels?: Partial<ThemeToggleMessages>;

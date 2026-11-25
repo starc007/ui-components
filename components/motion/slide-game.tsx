@@ -99,6 +99,7 @@ export interface SlideGameProps {
   "aria-label"?: string;
   /** Overrides for the built-in text, e.g. for another language. */
   labels?: Partial<SlideGameMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

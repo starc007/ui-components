@@ -21,11 +21,14 @@ export interface HeatCalendarProps {
   endDate?: Date;
   /** The single hue. Any CSS color; magnitude maps to its strength, never to a second color. */
   color?: string;
+  /** Classes merged onto the root element. */
   className?: string;
   children?: ReactNode;
   /** Controlled selection; null clears it. Cell coordinates are zero-based week/day (Monday first). */
   selection?: HeatCalendarSelection | null;
+  /** The initial selected cell or range when uncontrolled. Default: null */
   defaultSelection?: HeatCalendarSelection | null;
+  /** Called with the new cell or range, or null when cleared. */
   onSelectionChange?: (selection: HeatCalendarSelection | null) => void;
   /** Override any built-in string. */
   labels?: Partial<HeatCalendarMessages>;

@@ -78,20 +78,31 @@ export type SwipeableListClassNames = {
 };
 
 export interface SwipeableListProps {
+  /** Rows to render, each with optional left and right swipe actions. */
   items: SwipeableListItem[];
+  /** The open row and side, or null when all are closed, for controlled use. */
   value?: SwipeableListValue | null;
+  /** The initially open row and side when uncontrolled. Default: null */
   defaultValue?: SwipeableListValue | null;
+  /** Called with the open row and side, or null, when a row opens or closes. */
   onValueChange?: (value: SwipeableListValue | null) => void;
+  /** Called with the row, action and side when an action button is pressed. */
   onAction?: (payload: {
     item: SwipeableListItem;
     action: SwipeAction;
     side: SwipeSide;
   }) => void;
+  /** Width of each revealed action button (px). Default: 56 */
   actionWidth?: number;
+  /** Minimum drag distance that opens a row on release (px). Default: 34 */
   revealThreshold?: number;
+  /** Close the row after one of its actions runs. Default: true */
   closeOnAction?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for each inner part, such as rows, rails, actions and text. */
   classNames?: SwipeableListClassNames;
+  /** Custom content for a row's surface, in place of its title and description. */
   renderItem?: (item: SwipeableListItem) => ReactNode;
   /** Override any built-in string. */
   labels?: Partial<SwipeableListMessages>;

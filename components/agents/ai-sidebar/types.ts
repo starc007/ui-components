@@ -43,23 +43,36 @@ export interface SidebarResourceMenuControls {
 }
 
 export interface AISidebarProps {
+  /** The resource tree, for controlled use. */
   items?: SidebarResource[];
+  /** The initial resource tree when uncontrolled. */
   defaultItems?: SidebarResource[];
+  /** Called with the new tree after a move, rename or rollback. */
   onItemsChange?: (items: SidebarResource[]) => void;
   /** Reject the promise to roll the optimistic move back. */
   onMove?: (move: SidebarResourceMove) => void | Promise<void>;
+  /** Called with the error and the move when `onMove` rejects. */
   onMoveError?: (error: unknown, move: SidebarResourceMove) => void;
+  /** Called with the item and trimmed new label. Reject to roll it back. */
   onRename?: (item: SidebarResource, label: string) => void | Promise<void>;
+  /** Id of the selected row, for controlled use. */
   activeId?: string | null;
+  /** Id of the initially selected row when uncontrolled. Default: null */
   defaultActiveId?: string | null;
+  /** Called with the row's id when a row is selected. */
   onActiveChange?: (id: string) => void;
+  /** Ids of folders and projects that start expanded. */
   defaultExpandedIds?: string[];
+  /** Renders a row's icon in place of the built-in kind icon. */
   renderIcon?: (item: SidebarResource) => ReactNode;
+  /** Renders a row's actions menu, with controls to close, rename and move. */
   renderMenu?: (
     item: SidebarResource,
     controls: SidebarResourceMenuControls,
   ) => ReactNode;
+  /** Accessible name for the tree. Default: "Resources" */
   ariaLabel?: string;
+  /** Classes merged onto the tree element. */
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<AISidebarMessages>;

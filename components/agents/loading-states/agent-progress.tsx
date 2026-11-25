@@ -30,6 +30,7 @@ export interface AgentProgressProps {
   running?: boolean;
   /** Override any built-in string. `{label}` fills `inProgress`. */
   labels?: Partial<LoadingStatesMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

@@ -8,17 +8,25 @@ import { type CompositionChartMessages, compositionChartMessages } from "./messa
 import { buildComposition, type CompositionSeries } from "./model";
 
 export interface CompositionChartProps {
+  /** Parts that stack to 100% in each period, each with a value per period. */
   series: readonly CompositionSeries[];
   /** Unique labels in chronological order. */
   periods: readonly string[];
+  /** Draw stacked bars or a stacked area. Default: "bar" */
   view?: "bar" | "area";
+  /** The inspected period, for controlled use. */
   period?: string;
+  /** The initially inspected period when uncontrolled. Default: the last period */
   defaultPeriod?: string;
+  /** Called with the period's label when a different period is inspected. */
   onPeriodChange?: (period: string) => void;
+  /** Formats raw values in the legend and tooltip. */
   formatValue?: (value: number) => string;
+  /** Accessible name for the chart. Default: "Composition over time" */
   label?: string;
   /** Override any built-in string. */
   labels?: Partial<CompositionChartMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
   children?: ReactNode;
 }

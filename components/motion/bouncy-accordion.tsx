@@ -37,12 +37,19 @@ export type BouncyAccordionClassNames = {
 };
 
 export interface BouncyAccordionProps {
+  /** Rows to render, each with an id, title and optional description. */
   items: BouncyAccordionItem[];
+  /** Id of the open item, or null for none, for controlled use. */
   value?: string | null;
+  /** Id of the item open at first when uncontrolled. Default: null */
   defaultValue?: string | null;
+  /** Called with the open item's id, or null when all close. */
   onValueChange?: (value: string | null) => void;
+  /** Lets the open item close when its trigger is pressed again. Default: true */
   collapsible?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for the root, items, triggers, icons, titles, chevrons and content. */
   classNames?: BouncyAccordionClassNames;
 }
 

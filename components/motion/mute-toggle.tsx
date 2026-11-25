@@ -16,9 +16,13 @@ export type MuteToggleMessages = typeof muteToggleMessages;
 
 export interface MuteToggleProps
   extends Omit<HTMLMotionProps<"button">, "children" | "onChange"> {
+  /** Whether sound is muted, for controlled use. */
   muted?: boolean;
+  /** Whether it starts muted when uncontrolled. Default: false */
   defaultMuted?: boolean;
+  /** Called with the new muted state when the button is pressed. */
   onMutedChange?: (muted: boolean) => void;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<MuteToggleMessages>;
   /** Play a falling snap on mute and a rising one on unmute. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;

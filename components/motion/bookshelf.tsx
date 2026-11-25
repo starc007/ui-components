@@ -52,10 +52,13 @@ export type BookshelfBook = {
 };
 
 export interface BookshelfProps {
+  /** Books on the shelf, in order. */
   books: BookshelfBook[];
   /** Id of the open book, or null. Pass to control the shelf. */
   value?: string | null;
+  /** Id of the book open at first when uncontrolled. Default: null */
   defaultValue?: string | null;
+  /** Called with the book id, or `null` when it closes, when the open book changes. */
   onValueChange?: (id: string | null) => void;
   /** Book height in px. */
   height?: number;
@@ -72,6 +75,7 @@ export interface BookshelfProps {
   sound?: boolean;
   /** Override any built-in string. */
   labels?: Partial<BookshelfMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

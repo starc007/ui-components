@@ -26,11 +26,15 @@ export type FollowButtonMessages = typeof followButtonMessages;
 
 export interface FollowButtonProps
   extends Omit<HTMLMotionProps<"button">, "children" | "onChange"> {
+  /** Whether the user is following, for controlled use. */
   following?: boolean;
+  /** Whether it starts in the following state when uncontrolled. Default: false */
   defaultFollowing?: boolean;
+  /** Called with the new state when the button is clicked. */
   onFollowingChange?: (following: boolean) => void;
   /** Who is being followed, for the accessible name ("Follow {name}"). */
   name?: string;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<FollowButtonMessages>;
   /** Play a crisp select on follow, lower on unfollow. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;

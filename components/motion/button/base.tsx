@@ -27,7 +27,9 @@ export interface ButtonProps extends Omit<
   HTMLMotionProps<"button">,
   "children"
 > {
+  /** Visual style: filled, card, ghost or outline. Default: "primary" */
   variant?: ButtonVariant;
+  /** Height and padding; "icon" is a square icon-only button. Default: "md" */
   size?: ButtonSize;
   /** Scale while pressed. Default 0.97: subtle, so the press reads as feedback, not a squash. */
   pressScale?: number;
@@ -42,7 +44,9 @@ export interface ButtonLinkProps extends Omit<
   HTMLMotionProps<"a">,
   "children"
 > {
+  /** Visual style: filled, card, ghost or outline. Default: "primary" */
   variant?: ButtonVariant;
+  /** Height and padding; "icon" is a square icon-only link. Default: "md" */
   size?: ButtonSize;
   /** Scale while pressed. Default 0.97. */
   pressScale?: number;

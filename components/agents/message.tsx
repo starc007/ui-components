@@ -41,6 +41,7 @@ const MessageContext = createContext<MessageContextValue>({
 
 export interface MessageProps
   extends Omit<ComponentPropsWithRef<typeof motion.article>, "children"> {
+  /** Who sent it; "user" rows align to the end, "assistant" rows to the start. */
   from: MessageFrom;
   /** Plays a trailing-edge pop-up once when this message row mounts. */
   animateIn?: boolean;
@@ -50,6 +51,7 @@ export interface MessageProps
 }
 
 export interface MessageGroupProps extends ComponentPropsWithRef<"div"> {
+  /** Gap between messages: 6 px for "compact", 16 px for "default". Default: "compact" */
   spacing?: "compact" | "default";
 }
 
@@ -65,6 +67,7 @@ export type MessageFooterProps = ComponentPropsWithRef<"div">;
 export type MessageMarkerProps = ComponentPropsWithRef<"div">;
 
 export interface MessageTypingProps extends ComponentPropsWithRef<"span"> {
+  /** Screen reader text for the typing dots. Default: "Responding" */
   label?: string;
 }
 

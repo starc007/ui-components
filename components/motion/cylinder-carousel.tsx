@@ -70,12 +70,15 @@ export interface CylinderCarouselProps {
   autoRotate?: boolean;
   /** Auto-roll speed in items per second. */
   autoRotateSpeed?: number;
+  /** Zero-based index of the item centered at first. Default: 0 */
   defaultIndex?: number;
+  /** Called with the zero-based index when a new item reaches the center. */
   onIndexChange?: (index: number) => void;
   /** Stage height in px. Defaults to `itemSize`. */
   height?: number;
   /** Override any built-in string. */
   labels?: Partial<CylinderCarouselMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

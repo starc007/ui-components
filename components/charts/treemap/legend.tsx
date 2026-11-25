@@ -4,7 +4,9 @@ import { cn } from "@/lib/utils";
 import { useTreemap } from "./context";
 
 export interface TreemapLegendProps {
+  /** Classes merged onto the legend list. */
   className?: string;
+  /** Shows each item's formatted value after its label. Default: false */
   showValues?: boolean;
 }
 

@@ -58,6 +58,7 @@ export interface PlinkoProps {
   "aria-label"?: string;
   /** Override built-in text for this instance. */
   labels?: Partial<PlinkoMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

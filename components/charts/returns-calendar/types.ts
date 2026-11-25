@@ -14,10 +14,14 @@ export interface ReturnsCalendarProps {
   years?: number[];
   /** `returns[year][month]` in percent, twelve months per row. */
   returns?: number[][];
+  /** Classes merged onto the root element. */
   className?: string;
   children?: ReactNode;
+  /** The pinned cell or range of cells, or null, for controlled use. */
   selection?: ReturnsCalendarSelection | null;
+  /** The initial selection when uncontrolled. Default: null */
   defaultSelection?: ReturnsCalendarSelection | null;
+  /** Called with the new cell or range, or null when cleared. */
   onSelectionChange?: (selection: ReturnsCalendarSelection | null) => void;
   /** Override any built-in string. */
   labels?: Partial<ReturnsCalendarMessages>;
