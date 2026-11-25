@@ -1,7 +1,9 @@
 /**
  * The beUI theme layer: everything a project needs for the components to look
  * right without shadcn. Paste it into your globals.css (below `@import
- * "tailwindcss";`), or run `npx shadcn init` which sets up the same tokens.
+ * "tailwindcss";`). A shadcn project has the base tokens already and gets
+ * beUI's extras from the `theme` registry item, which lib/theme-registry.ts
+ * builds from this string.
  *
  * Keep in sync with src/styles/globals.css (this is the consumer-facing subset:
  * tokens, @theme mappings, animations and the utilities components rely on,

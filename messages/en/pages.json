@@ -234,8 +234,8 @@
     "title": "Theme setup",
     "intro": "beUI components style themselves with shadcn semantic tokens (<code>bg-primary</code>, <code>text-muted-foreground</code>, border, ring). Set those tokens up once and every component works. Two ways:",
     "option1": {
-      "title": "Option 1: shadcn init (recommended)",
-      "body": "If your project uses shadcn, you already have these tokens. Otherwise run init once; it writes the token layer into your CSS."
+      "title": "Option 1: shadcn (recommended)",
+      "body": "A shadcn project already has the base colors. beUI adds a few of its own (border-strong, success, warning, neon, glass surfaces, ease curves), and every component that uses them installs them for you. To add them up front, run this once. It adds to your theme and changes no existing color."
     },
     "option2": {
       "title": "Option 2: paste the theme CSS",

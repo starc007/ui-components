@@ -109,7 +109,7 @@
   "install": {
     "cli": "CLI",
     "manual": "Manual",
-    "themeNotice": "Needs the theme tokens once. Already ran <code>shadcn init</code>? You are set. <link>Theme setup</link>",
+    "themeNotice": "Needs beUI's theme tokens once: paste the theme CSS, or with shadcn run <code>npx shadcn add https://beui.dev/r/theme.json</code>. <link>Theme setup</link>",
     "dependencies": "Install dependencies",
     "utilFiles": "{count, plural, one {Add util file} other {Add util files}}",
     "sourceCode": "Copy the source code"

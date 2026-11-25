@@ -40,6 +40,7 @@ import { SITE_URL } from "../lib/site";
 import { escapeXml, sitemapXml } from "../lib/sitemap";
 import { readSourceFile } from "../lib/source-files";
 import { THEME_CSS } from "../lib/theme-css";
+import { buildThemeItem, THEME_SLUG } from "../lib/theme-registry";
 
 const OUT = "dist/client";
 /** Bodies the Worker serves live here, out of the way of public URLs. */
@@ -145,6 +146,16 @@ async function buildRegistry() {
       });
     }
   }
+
+  // beUI's extra theme tokens, a registry dependency of components using them.
+  const themeItem = json(buildThemeItem());
+  await workerRoute(`/r/${THEME_SLUG}.json`, themeItem, {
+    ...JSON_TYPE,
+    ...CACHE,
+    ...CORS,
+    link: '</r/registry.json>; rel="collection"; type="application/json"',
+  });
+  await write(`/${THEME_SLUG}.json`, themeItem);
 
   for (const target of allShadcnTargets()) {
     const item = await buildShadcnItem(target.categorySlug, target.slug);

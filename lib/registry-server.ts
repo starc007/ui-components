@@ -4,6 +4,7 @@ import { pageUrlFor, withSignature } from "@/lib/signature";
 import { SITE_URL } from "@/lib/site";
 import { docsPathFor } from "@/lib/variant-pages";
 import { readOptionalSourceFile, readSourceFile, resolveSourceImport, type SourceFile } from "@/lib/source-files";
+import { buildThemeItem, THEME_ITEM_URL, usesTheme } from "@/lib/theme-registry";
 
 export type RegistryFile = {
   path: string;
@@ -53,7 +54,7 @@ export type ShadcnRegistry = {
   $schema: "https://ui.shadcn.com/schema/registry.json";
   name: string;
   homepage: string;
-  items: Array<Omit<ShadcnRegistryItem, "$schema">>;
+  items: Array<Omit<ShadcnRegistryItem, "$schema"> | Omit<ReturnType<typeof buildThemeItem>, "$schema">>;
 };
 
 export type RegistryTarget = {
@@ -319,6 +320,7 @@ export async function buildShadcnItem(
   const dependencies = graph.external.filter((dep) => !SHADCN_DEP_SKIP.has(dep));
   const componentFileSet = new Set([comp.file, ...(comp.extraFiles ?? [])]);
   const pageUrl = `${SITE_URL}${docsPathFor(comp.categorySlug, comp.pageSlug, comp.slug)}`;
+  const needsTheme = usesTheme(graph.files.map((file) => file.content));
 
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
@@ -328,7 +330,8 @@ export async function buildShadcnItem(
     description: comp.description,
     author: "Saurabh <saurabh10102@gmail.com>",
     dependencies,
-    registryDependencies: [],
+    // beUI's extra tokens come along with any component that uses them.
+    registryDependencies: needsTheme ? [THEME_ITEM_URL] : [],
     files: uniqueByPath(
       graph.files.map((file) => {
         if (!includeContent) return shadcnFile(file.path);
@@ -351,11 +354,15 @@ export async function buildShadcnRegistry(): Promise<ShadcnRegistry> {
     }),
   );
 
+  const { $schema: _themeSchema, ...theme } = buildThemeItem();
   return {
     $schema: "https://ui.shadcn.com/schema/registry.json",
     name: "beui",
     homepage: SITE_URL,
-    items: items.filter((item): item is Omit<ShadcnRegistryItem, "$schema"> => item !== null),
+    items: [
+      theme,
+      ...items.filter((item): item is Omit<ShadcnRegistryItem, "$schema"> => item !== null),
+    ],
   };
 }
 
