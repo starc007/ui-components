@@ -1568,14 +1568,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   "animated-toast-stack": {
     overview:
-      "Animated Toast Stack is a React toast notification component built with Framer Motion. Toasts enter with a spring and light blur, stack with layout-aware motion as others arrive or leave, and morph their icon and text when a toast changes status, for example from loading to success. Each toast can carry a description, an action button and a close button, and can be swiped sideways to dismiss. A useAnimatedToastStack hook handles adding, updating, auto-dismissing and clearing toasts.",
+      "Animated Toast Stack is a React toast notification component built with Framer Motion. Every toast lives in one island anchored to a screen corner. It blooms out of a dot into a compact pill for a title, springs open into a card when a toast has a description or action, shows a +N count for the others, and opens into the full list on hover, focus or a tap. A status change, for example from loading to success, morphs the icon and text in place. Toasts swipe away sideways, and the last one folds back into the dot. A useAnimatedToastStack hook handles adding, updating, auto-dismissing and clearing toasts.",
     useWhen: [
       "A form or settings page confirms a save, then shows an error with a retry action if the request fails.",
       "An upload or export starts with a loading toast that updates in place to success when it finishes.",
       "A dashboard shows short notifications in a screen corner without blocking the page.",
     ],
     accessibility:
-      "The stack is an ordered list with aria-live set to polite, so screen readers announce new toasts without interrupting. The close control is a real button labeled Dismiss toast, and actions render as buttons. With reduced motion enabled, toasts and their status changes use opacity fades only, and swipe to dismiss is turned off, so the close button remains the way to dismiss.",
+      "A hidden live region set to polite announces every new toast and every change to one, so screen readers hear each toast even though the island shows one at a time. The island is a labeled Notifications region that Tab reaches; focusing it opens the list, where each close control is a real button labeled Dismiss toast and actions render as buttons, and Escape closes it. Countdowns pause while the island is open and while the tab is hidden, so a toast never runs out while someone is reading it. With reduced motion enabled, the island resizes at once and toasts change with opacity fades only; swipe to dismiss still works.",
     faq: [
       {
         question: "How do I add toast notifications in React?",
@@ -1590,7 +1590,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       {
         question: "How do I change where toasts appear and how long they stay?",
         answer:
-          "Set position, such as bottom-right or top-center, and placement to fixed for a page overlay. Each toast takes a duration in milliseconds, defaultDuration sets the hook default, and a duration of 0 keeps the toast until it is dismissed.",
+          "Set position, such as bottom-right or top-center, and placement to fixed for a page overlay. Each toast takes a duration in milliseconds, defaultDuration sets the hook default, and a duration of 0 keeps the toast until it is dismissed. Pass the hook's pause and resume to the stack's onPause and onResume so opening the island holds the countdowns.",
       },
     ],
   },

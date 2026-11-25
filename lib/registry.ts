@@ -956,7 +956,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "animated-toast-stack",
         name: "Animated Toast Stack",
-        description: "Stacked toasts with status morphs, swipe dismissal, actions and layout-aware motion.",
+        description: "Toasts in one morphing island: a pill that springs into a card, opens into a list on hover, and swipes away.",
         file: "components/motion/animated-toast-stack.tsx",
       },
       {

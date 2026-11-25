@@ -31,7 +31,7 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "improved",
-        "text": "Polished UI and motion across the library: instant from the keyboard, subtler presses, cleaner menus, selects and tooltips, and 16px corners on every floating panel."
+        "text": "Polished UI and motion across the library: instant from the keyboard, subtler presses, cleaner menus, selects, tooltips and dialogs, swipeable drawers, toasts redesigned as one morphing island, and 16px corners on every floating panel."
       },
       {
         "type": "fixed",

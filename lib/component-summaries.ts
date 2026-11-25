@@ -75,7 +75,7 @@ export const componentSummaries: Record<string, string> = {
   "animated-badge": "Status badges with animated icons and a pulse on change.",
   "action-swap":
     "Swap a button's label and icon with blur, roll or cascade motion.",
-  "animated-toast-stack": "Stacked toasts that morph by status and swipe away.",
+  "animated-toast-stack": "Toasts in one island that springs from pill to card to list.",
   "theme-toggle":
     "Switch themes with a full-page wipe, circle or shutter reveal.",
   "bouncy-accordion":

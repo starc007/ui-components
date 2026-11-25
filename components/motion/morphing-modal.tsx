@@ -120,7 +120,8 @@ export function MorphingModal({
               tabIndex={-1}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              // The scrim clears faster than it settles, like the panel.
+              exit={{ opacity: 0, transition: { duration: 0.15, ease: EASE_OUT } }}
               transition={{ duration: 0.2, ease: EASE_OUT }}
               {...gate}
               onClick={onClose}
