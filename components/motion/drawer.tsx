@@ -34,14 +34,18 @@ export const drawerMessages = {
 export type DrawerMessages = typeof drawerMessages;
 
 export interface DrawerProps {
+  /** Whether the drawer is shown. */
   open: boolean;
+  /** Called with false when the backdrop, Escape or a swipe closes the drawer. */
   onOpenChange: (open: boolean) => void;
+  /** Edge of the viewport the panel slides in from. Default: "right" */
   side?: "left" | "right";
   children: ReactNode;
   /** Class for the panel surface. */
   className?: string;
   /** Class for the backdrop. */
   backdropClassName?: string;
+  /** Accessible name for the dialog panel. */
   ariaLabel?: string;
   /**
    * Close when the backdrop is clicked, Escape is pressed, or the panel is

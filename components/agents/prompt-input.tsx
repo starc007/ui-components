@@ -41,17 +41,26 @@ export const promptInputMessages = {
 export type PromptInputMessages = typeof promptInputMessages;
 
 export interface PromptModel {
+  /** Unique key, passed to `onModelChange` and `onSubmit`. */
   value: string;
+  /** Name shown in the model menu and on its trigger when selected. */
   label: ReactNode;
+  /** Icon before the label in the menu and on the trigger. */
   icon?: ReactNode;
+  /** Stops the model from being picked. */
   disabled?: boolean;
 }
 
 export interface PromptAction {
+  /** Unique key, passed to `onAction` when the item is chosen. */
   value: string;
+  /** Item text in the add menu. */
   label: ReactNode;
+  /** Muted line under the label. */
   description?: ReactNode;
+  /** Icon before the label. */
   icon?: ReactNode;
+  /** Stops the item from being chosen. */
   disabled?: boolean;
 }
 
@@ -59,23 +68,39 @@ export interface PromptInputProps extends Omit<
   TextareaHTMLAttributes<HTMLTextAreaElement>,
   "value" | "defaultValue" | "onChange" | "onSubmit" | "children"
 > {
+  /** The prompt text, for controlled use. */
   value?: string;
+  /** The initial prompt text when uncontrolled. Default: "" */
   defaultValue?: string;
+  /** Called with the new text on every edit. */
   onValueChange?: (value: string) => void;
+  /** Models listed in the model menu. Hidden when empty. */
   models?: PromptModel[];
+  /** The selected model's value, for controlled use. */
   model?: string;
+  /** The initial model when uncontrolled. Default: the first model */
   defaultModel?: string;
+  /** Called with the model's value when a model is picked. */
   onModelChange?: (model: string) => void;
+  /** Items in the add menu next to the input. Hidden when empty. */
   actions?: PromptAction[];
+  /** Called with the action's value when an add menu item is chosen. */
   onAction?: (action: string) => void;
+  /** Called with the trimmed prompt and selected model on Enter or the send button. */
   onSubmit?: (value: string, model?: string) => void | Promise<void>;
+  /** Swaps send for a stop button and blocks new prompts. Default: false */
   loading?: boolean;
+  /** Called when the stop button is pressed while loading. */
   onStop?: () => void;
+  /** Height of the empty input, in text rows. Default: 2 */
   minRows?: number;
+  /** Rows the input grows to before it scrolls. Default: 8 */
   maxRows?: number;
+  /** Extra controls placed between the add menu and the model menu. */
   leadingAction?: ReactNode;
   /** Override any built-in string. */
   labels?: Partial<PromptInputMessages>;
+  /** Classes merged onto the form element. */
   className?: string;
 }
 

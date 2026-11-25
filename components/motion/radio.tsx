@@ -40,11 +40,16 @@ function useRadioGroup() {
 }
 
 export interface RadioGroupProps {
+  /** The selected value, for controlled use. */
   value?: string;
+  /** The initial value when uncontrolled. Default: "" */
   defaultValue?: string;
+  /** Called with the item's value when the selection changes. */
   onValueChange?: (value: string) => void;
   children: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Stacks items in a column or wraps them in a row. Default: "vertical" */
   orientation?: "vertical" | "horizontal";
   /** Accessible name for the group when no visible label names it. */
   "aria-label"?: string;
@@ -123,12 +128,17 @@ export function RadioGroup({
 }
 
 export interface RadioGroupItemProps {
+  /** The value the group takes when this item is picked. */
   value: string;
+  /** Text shown beside the radio, used as its name. */
   label?: string;
   /** Supporting text under the label, announced as the description rather than the name. */
   description?: string;
+  /** Dims the item and stops it from being picked. */
   disabled?: boolean;
+  /** Classes merged onto the item's label element. */
   className?: string;
+  /** Id for the radio button. Default: a generated id */
   id?: string;
 }
 

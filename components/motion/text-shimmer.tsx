@@ -8,8 +8,11 @@ import {
 
 export interface TextShimmerProps {
   children: ReactNode;
+  /** Element to render the text as. Default: "span" */
   as?: ElementType;
+  /** Length of one shimmer sweep (s). Default: 2.5 */
   duration?: number;
+  /** Classes merged onto the text element. */
   className?: string;
 }
 

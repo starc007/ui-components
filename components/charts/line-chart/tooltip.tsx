@@ -16,6 +16,7 @@ export interface LineChartTooltipData {
 
 export interface LineChartTooltipProps {
   children?: ReactNode | ((data: LineChartTooltipData) => ReactNode);
+  /** Classes merged onto the tooltip panel. */
   className?: string;
   /**
    * `auto` sits right of the point, flips left near the right edge, and on

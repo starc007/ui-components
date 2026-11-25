@@ -15,6 +15,7 @@ import { useMultiSelectContext } from "./context";
 
 export interface MultiSelectTriggerProps {
   children: ReactNode;
+  /** Classes merged onto the trigger element. */
   className?: string;
 }
 
@@ -61,9 +62,12 @@ export function MultiSelectTrigger({
 }
 
 export interface MultiSelectValueProps {
+  /** Shown while nothing is selected and the list is closed. Default: "Select options" */
   placeholder?: ReactNode;
   children?: (value: string, label: string) => ReactNode;
+  /** Classes merged onto the wrapper around the chips. */
   className?: string;
+  /** Classes merged onto each selected value chip. */
   chipClassName?: string;
 }
 
@@ -164,7 +168,9 @@ export interface MultiSelectInputProps
     InputHTMLAttributes<HTMLInputElement>,
     "defaultValue" | "value"
   > {
+  /** Ref to the search input element. */
   ref?: Ref<HTMLInputElement>;
+  /** Shows a search icon before the input. Default: false */
   showIcon?: boolean;
 }
 

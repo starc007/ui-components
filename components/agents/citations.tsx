@@ -25,9 +25,13 @@ export const citationsMessages = {
 export type CitationsMessages = typeof citationsMessages;
 
 export interface CitationItem {
+  /** Unique key for the source, matched by a `Citation` marker's `citationId`. */
   id: string;
+  /** Source name shown as the row's main text. */
   title: ReactNode;
+  /** Muted text after the title, such as the site's host. */
   domain?: ReactNode;
+  /** Link opened in a new tab and the favicon source. Omit for a plain row. */
   url?: string;
   /**
    * Replaces the URL favicon, e.g. a document icon for non-web sources. An svg
@@ -37,19 +41,28 @@ export interface CitationItem {
 }
 
 export interface CitationsProps {
+  /** Sources listed in order, numbered from 1. */
   citations: CitationItem[];
+  /** Text of the toggle button. Default: "Sources" */
   title?: ReactNode;
+  /** Whether the list is expanded, for controlled use. */
   open?: boolean;
+  /** Whether the list starts expanded when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new state when the list expands or collapses. */
   onOpenChange?: (open: boolean) => void;
+  /** Prefix for row ids that `Citation` markers link to. Generated when omitted. */
   idPrefix?: string;
+  /** Classes merged onto the root element. */
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<CitationsMessages>;
 }
 
 export interface CitationProps {
+  /** Id of the `CitationItem` this marker links to. */
   citationId: string;
+  /** Number shown on the marker. */
   index: number;
   /** Must match the related Citations idPrefix. */
   idPrefix: string;
@@ -58,20 +71,27 @@ export interface CitationProps {
    * the index so voice control users can say the number they see.
    */
   label?: string;
+  /** Classes merged onto the marker link. */
   className?: string;
 }
 
 export interface CitationListProps {
+  /** Sources listed in order, numbered from 1. */
   citations: CitationItem[];
+  /** Prefix for row ids that `Citation` markers link to. Generated when omitted. */
   idPrefix?: string;
   /** The citation a marker just led to; its row is lit. */
   highlightedId?: string;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
 export interface CitationStackProps {
+  /** Sources whose favicons are stacked. */
   citations: CitationItem[];
+  /** Most favicons to show. Default: 3 */
   limit?: number;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -108,6 +128,7 @@ export function CitationFavicon({
   icon,
   className,
 }: {
+  /** Page whose site favicon is shown. A globe icon shows when absent or broken. */
   url?: string;
   /** Drawn instead of the favicon when truthy. */
   icon?: ReactNode;

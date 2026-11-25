@@ -20,23 +20,33 @@ export type ImageGenerationStatus =
 export interface ImageGenerationProps {
   /** The completed media. Pass an img, Next Image, canvas, video, or custom preview. */
   children?: ReactNode;
+  /** Generation stage. Sets the dither overlay, media blur and status line. Default: "generating" */
   status?: ImageGenerationStatus;
   /** Accessible description. Defaults to a description derived from prompt. */
   label?: string;
+  /** The prompt, shown in quotes under the status line. */
   prompt?: string;
+  /** Badge in the top right corner. Default: "1024 × 1024" */
   resolution?: string;
   /** CSS aspect ratio reserved before generated media is available. */
   aspectRatio?: CSSProperties["aspectRatio"];
+  /** "compact" caps the width at 208px, "fluid" fills the container. Default: "compact" */
   size?: "compact" | "fluid";
   /** Lets the active dither cluster follow fine-pointer movement. */
   interactive?: boolean;
+  /** Replaces the built-in status line text for the current status. */
   statusText?: string;
+  /** Shows the status line under the media. Default: true */
   showStatus?: boolean;
+  /** Called from the retry button, which shows only when status is "error". */
   onRetry?: () => void;
   /** Override any built-in string. `{status}` and `{prompt}` fill `labelWithPrompt`; `{prompt}` fills `quotedPrompt`. */
   labels?: Partial<ImageGenerationMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto the layer that holds the media. */
   mediaClassName?: string;
+  /** Classes merged onto the status line. */
   statusClassName?: string;
 }
 

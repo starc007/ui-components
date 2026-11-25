@@ -9,8 +9,11 @@ import type { DateRangePickerProps } from "./types";
 
 export interface DateRangePickerDropdownProps
   extends Omit<DateRangePickerProps, "children"> {
+  /** Trigger text while no range is picked. Default: "Select dates" */
   placeholder?: string;
+  /** Classes merged onto the trigger button. */
   triggerClassName?: string;
+  /** Classes merged onto the calendar. */
   calendarClassName?: string;
 }
 /** Convenience composition of the root, trigger, content and calendar. */

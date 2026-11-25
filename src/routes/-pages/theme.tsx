@@ -15,7 +15,7 @@ import { PageMessages } from "./page-messages";
 
 const PAGE_PATH = "/docs/theme";
 
-const SHADCN_INIT = `npx shadcn@latest init`;
+const SHADCN_INIT = `npx shadcn@latest add https://beui.dev/r/theme.json`;
 
 const H2_CLASS = "text-xl font-medium tracking-tight text-foreground";
 
@@ -29,6 +29,7 @@ export const getThemePage = createServerFn({ method: "GET" })
       description: t("description"),
       ogDescription: t("ogDescription"),
       type: "article",
+      types: { "text/markdown": `${PAGE_PATH}.md` },
     });
     const [shadcnInit, themeCss] = await Promise.all([
       highlight(SHADCN_INIT, { lang: "bash", filename: "terminal" }),

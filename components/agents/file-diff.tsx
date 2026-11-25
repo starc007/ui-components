@@ -33,10 +33,15 @@ export type FileDiffStatus = "streaming" | "complete";
 export type FileDiffLineType = "added" | "removed" | "context";
 
 export interface FileDiffLine {
+  /** Stable key, so streamed lines keep their place. */
   id: string;
+  /** Marks the line added (green, +), removed (red, −) or unchanged. Default: "context" */
   type?: FileDiffLineType;
+  /** Line number in the old file, shown in the first gutter. Blank when not set. */
   oldLine?: number;
+  /** Line number in the new file, shown in the second gutter. Blank when not set. */
   newLine?: number;
+  /** The line's code, without the + or − marker. Syntax highlighted. */
   content: string;
 }
 
@@ -52,19 +57,31 @@ export const fileDiffMessages = {
 export type FileDiffMessages = typeof fileDiffMessages;
 
 export interface FileDiffProps {
+  /** File name or path shown in the header. */
   file: ReactNode;
+  /** Diff lines, each added, removed or context, with optional line numbers. */
   lines: FileDiffLine[];
+  /** "streaming" while lines arrive, "complete" once the edit lands. Default: "streaming" */
   status?: FileDiffStatus;
+  /** Whether the diff is expanded, for controlled use. */
   open?: boolean;
+  /** Whether the diff starts expanded when uncontrolled. Default: true */
   defaultOpen?: boolean;
+  /** Called with the new state when the diff expands or collapses. */
   onOpenChange?: (open: boolean) => void;
+  /** Fold the diff when status moves from streaming to complete. Default: true */
   collapseOnComplete?: boolean;
+  /** Tallest the line viewport grows before it scrolls (px). Default: 220 */
   maxHeight?: number;
+  /** Language used for syntax highlighting. Default: "typescript" */
   language?: AgentCodeLanguage;
+  /** Text the copy button writes to the clipboard. Shows the button when set. */
   copyText?: string;
+  /** Runs instead of the clipboard write when the copy button is pressed. */
   onCopy?: () => void | Promise<void>;
   /** Override any built-in string. */
   labels?: Partial<FileDiffMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

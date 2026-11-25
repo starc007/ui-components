@@ -32,12 +32,17 @@ export type FunnelChartMessages = typeof funnelChartMessages;
 export interface FunnelChartProps {
   /** Ordered stages with finite, nonnegative counts; duplicate IDs are omitted. */
   stages: readonly FunnelStage[];
+  /** Narrow from top to bottom, or from left to right. Default: "vertical" */
   direction?: "vertical" | "horizontal";
+  /** Noun after each count, e.g. "users". Default: "people" */
   unit?: string;
+  /** Accessible name for the chart. Default: "Conversion funnel" */
   label?: string;
+  /** Formats each stage's count. */
   formatValue?: (value: number) => string;
   /** Override any built-in string. */
   labels?: Partial<FunnelChartMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
   children?: ReactNode;
 }

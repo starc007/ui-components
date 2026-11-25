@@ -21,10 +21,15 @@ export type TodoItemStatus =
   | "cancelled";
 
 export interface TodoItem {
+  /** Unique key for the row. */
   id: string;
+  /** Task text; struck through when completed. */
   title: ReactNode;
+  /** Task state; sets the icon and text tone. Default: "pending" */
   status?: TodoItemStatus;
+  /** Ring fill from 0 to 100 while in progress; unset spins a partial ring. */
   progress?: number;
+  /** Muted text at the end of the row, such as a time or count. */
   detail?: ReactNode;
 }
 
@@ -50,15 +55,23 @@ const STATUS_MESSAGE = {
 } as const satisfies Record<TodoItemStatus, keyof TodoListMessages>;
 
 export interface TodoListProps {
+  /** The tasks, each with a status. */
   items: TodoItem[];
+  /** Header text. Default: "To-dos" */
   title?: ReactNode;
+  /** Whether the list is expanded, for controlled use. */
   open?: boolean;
+  /** Whether the list starts expanded when uncontrolled. Default: true */
   defaultOpen?: boolean;
+  /** Called with the new state when the list expands or collapses. */
   onOpenChange?: (open: boolean) => void;
+  /** Collapses the list once every task is completed. Default: true */
   collapseOnComplete?: boolean;
+  /** Height in px before the task list scrolls. Default: 248 */
   maxHeight?: number;
   /** Override any built-in string. `{completed}` and `{total}` fill `progress`. */
   labels?: Partial<TodoListMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

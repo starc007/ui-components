@@ -45,23 +45,41 @@ export const cardFolderMessages = {
 export type CardFolderMessages = typeof cardFolderMessages;
 
 export interface CardFolderProps {
+  /** Card name shown on the folder front and used in labels. */
   title: string;
+  /** Full card number. Non-digits are stripped; only the last 4 show until revealed. */
   cardNumber: string;
+  /** Expiry date text shown on the folder, e.g. "08/29". */
   expiry: string;
+  /** Security code, masked until details are revealed. */
   cvv: string;
+  /** The card face that lifts out of the folder. */
   card: ReactNode;
+  /** Whether the card is lifted out, for controlled use. */
   open?: boolean;
+  /** Whether the card starts lifted out when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the next state when the folder opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Whether the number and CVV are revealed, for controlled use. */
   detailsVisible?: boolean;
+  /** Whether the number and CVV start revealed when uncontrolled. Default: false */
   defaultDetailsVisible?: boolean;
+  /** Called with the next state when the details are shown or hidden. */
   onDetailsVisibleChange?: (visible: boolean) => void;
+  /** Called after the folder is pressed, alongside the open toggle. */
   onClick?: () => void;
+  /** Called when the actions button is pressed. The button shows only when set. */
   onAction?: () => void;
+  /** Accessible name for the folder button. Defaults to the `open` or `close` label. */
   ariaLabel?: string;
+  /** Accessible name for the actions button. Defaults to the `actions` label. */
   actionLabel?: string;
+  /** Disables opening, revealing details and the actions button. Default: false */
   disabled?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto the wrapper around the card face. */
   cardClassName?: string;
   /** Override any built-in string. `{title}`, `{lastFour}` and `{expiry}` fill `open`, `close` and `actions`. */
   labels?: Partial<CardFolderMessages>;

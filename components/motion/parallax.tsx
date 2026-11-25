@@ -24,11 +24,13 @@ export interface ParallaxProps {
    * (background). ~0.1–0.5 reads best.
    */
   speed?: number;
+  /** Drift sideways or up and down as the page scrolls. Default: "y" */
   axis?: "x" | "y";
   /** Scroll container for contained scroll areas. Defaults to the viewport. */
   container?: RefObject<HTMLElement | null>;
   /** Spring-smooth the drift. Disabled automatically under reduced motion. */
   spring?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

@@ -17,6 +17,7 @@ export interface RulerSliderProps extends SliderOptions {
   majorEvery?: number;
   /** Unit shown next to the value. */
   unit?: string;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

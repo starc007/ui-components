@@ -60,6 +60,7 @@ export interface InlineSliderProps extends SliderOptions {
   format?: (value: number) => string;
   /** Show markers for the ten evenly spaced snap stops, except where they overlap inline text. */
   showTicks?: boolean;
+  /** Classes merged onto the track element. */
   className?: string;
 }
 

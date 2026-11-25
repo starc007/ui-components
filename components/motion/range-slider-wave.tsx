@@ -17,6 +17,7 @@ const SPREAD = 2.6;
 export interface WaveSliderProps extends SliderOptions {
   /** Number of bars drawn across the track. */
   bars?: number;
+  /** Classes merged onto the slider track. */
   className?: string;
 }
 

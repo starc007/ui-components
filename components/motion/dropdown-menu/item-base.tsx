@@ -10,15 +10,19 @@ type ItemTone = "default" | "destructive";
 
 export interface DropdownMenuItemProps {
   children: ReactNode;
+  /** Called when the item is chosen by click, Enter or Space. */
   onSelect?: () => void;
+  /** Dims the item and blocks selecting it. Default: false */
   disabled?: boolean;
   /** Close the whole menu after selecting. Default true. */
   closeOnSelect?: boolean;
+  /** "destructive" tints the row for dangerous actions. Default: "default" */
   tone?: ItemTone;
   /** Indent to line up with rows that start with an icon. */
   inset?: boolean;
   /** Text matched by typeahead when the label is not plain text. */
   textValue?: string;
+  /** Classes merged onto the item row. */
   className?: string;
 }
 

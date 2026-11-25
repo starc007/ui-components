@@ -3030,7 +3030,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A power-user tool has more actions than fit in its toolbar and needs one searchable place for them.",
     ],
     accessibility:
-      "The palette renders as a modal dialog with the search field as a combobox that points at the highlighted row through aria-activedescendant, and results use the listbox and option roles. Cmd K or Ctrl K toggles it, Arrow Up and Arrow Down move the highlight, Enter runs the command and Escape closes. The field takes focus on open and the page behind stops scrolling. With reduced motion enabled, the panel fades in without its slide and scale, and the highlight moves without a spring.",
+      "The palette renders as a modal dialog with the search field as a combobox that points at the highlighted row through aria-activedescendant, and results use the listbox and option roles. Cmd K or Ctrl K toggles it, Arrow Up and Arrow Down move the highlight, Enter runs the command and Escape closes. The list is virtualized, so each option states its position and the total with aria-posinset and aria-setsize. The field takes focus on open and the page behind stops scrolling. With reduced motion enabled, the panel fades in without its drop and the highlight jumps between rows instead of gliding.",
     faq: [
       {
         question: "How do I add a Cmd K command palette to a React app?",

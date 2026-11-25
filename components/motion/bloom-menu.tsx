@@ -28,7 +28,12 @@ import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-type MenuItem = { label: string; icon: ComponentType<{ className?: string }> };
+type MenuItem = {
+  /** Text under the icon. Also the item's key and the value sent to `onSelect`. */
+  label: string;
+  /** Icon component drawn above the label. */
+  icon: ComponentType<{ className?: string }>;
+};
 
 const ITEMS: MenuItem[] = [
   { label: "Doc", icon: FileText },
@@ -73,10 +78,13 @@ const SPRING_FOLDER = {
 } as const;
 
 export interface BloomMenuProps {
+  /** Grid items, each with a label and icon. Defaults to 6 create actions. */
   items?: MenuItem[];
+  /** Called with the item's label when an item is picked. The menu then closes. */
   onSelect?: (label: string) => void;
   /** Override any built-in string. */
   labels?: Partial<BloomMenuMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

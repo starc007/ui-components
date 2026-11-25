@@ -22,7 +22,9 @@ export interface BarChartProps extends Omit<ComponentProps<"section">, "children
   series: readonly XYSeries[];
   /** Unique category labels in display order. */
   categories: readonly string[];
+  /** Place series bars side by side or stack them per category. Default: "grouped" */
   layout?: "grouped" | "stacked";
+  /** Draw bars upward from the bottom or rightward from the left. Default: "vertical" */
   orientation?: "vertical" | "horizontal";
   /** Order categories by their visible total. Bars glide to their new place when it changes. */
   sort?: "none" | "ascending" | "descending";
@@ -30,15 +32,21 @@ export interface BarChartProps extends Omit<ComponentProps<"section">, "children
   max?: number;
   /** Inspected category, by label. */
   activeId?: string | null;
+  /** The initially inspected category label when uncontrolled. Default: null */
   defaultActiveId?: string | null;
+  /** Called with the category label, or null, when the inspected category changes. */
   onActiveChange?: (id: string | null) => void;
   /** Series ids hidden through the legend. */
   hiddenSeries?: readonly string[];
+  /** Series ids hidden at first when uncontrolled. Default: [] */
   defaultHiddenSeries?: readonly string[];
+  /** Called with the hidden series ids when a legend entry is toggled. */
   onHiddenSeriesChange?: (ids: readonly string[]) => void;
+  /** Formats values in the tooltip and data table. Default: up to 2 decimals. */
   formatValue?: (value: number) => string;
   /** Axis tick labels. Defaults to compact notation (1.2K). */
   formatTick?: (value: number) => string;
+  /** Accessible name for the chart. Default: "Bar chart" */
   label?: string;
   /** Override any built-in string, including the shared `xyChart` ones. */
   labels?: Partial<BarChartMessages & XYChartMessages>;

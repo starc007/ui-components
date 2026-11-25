@@ -35,7 +35,9 @@ export interface BarChartPlotProps {
   height?: number;
   /** Width of the category label gutter for horizontal bars, in px. */
   labelWidth?: number;
+  /** Draws grid lines at the value axis ticks. Default: true */
   showGrid?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

@@ -9,7 +9,9 @@ import { useTreemap } from "./context";
 import type { TreemapItem } from "./model";
 
 export interface TreemapTooltipProps {
+  /** Classes merged onto the tooltip surface. */
   className?: string;
+  /** Side of the hovered tile the tooltip opens on. Default: "top" */
   side?: "top" | "right" | "bottom" | "left";
   children?: ReactNode | ((item: TreemapItem) => ReactNode);
 }

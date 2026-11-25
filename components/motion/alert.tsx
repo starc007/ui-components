@@ -66,9 +66,13 @@ const VARIANT_ICON = {
 };
 
 export interface AlertProps extends Omit<HTMLMotionProps<"div">, "initial" | "animate" | "exit" | "layout" | "transition" | "role"> {
+  /** Color and icon tone. Default: "default" */
   variant?: AlertVariant;
+  /** Whether the alert shows, for controlled use. */
   open?: boolean;
+  /** Whether the alert starts shown when uncontrolled. Default: true */
   defaultOpen?: boolean;
+  /** Called with the new state when the alert shows or is dismissed. */
   onOpenChange?: (open: boolean) => void;
   /** Focus this element when closing hides the currently focused alert control. */
   returnFocusRef?: RefObject<HTMLElement | null>;

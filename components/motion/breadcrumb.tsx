@@ -197,7 +197,9 @@ export function BreadcrumbSeparator({ className, children, ...props }: Breadcrum
 export interface BreadcrumbEllipsisProps {
   /** Hidden BreadcrumbItems, in path order. */
   children: ReactNode;
+  /** Classes merged onto the wrapper around the ellipsis button. */
   className?: string;
+  /** Accessible name for the ellipsis button. Default: "Show hidden paths" */
   label?: string;
 }
 

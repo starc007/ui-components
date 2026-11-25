@@ -25,13 +25,21 @@ import { cn } from "@/lib/utils";
 import { searchCommands } from "@/lib/command-search";
 
 export type CommandItem = {
+  /** Unique key for the command, also stored in the recent list. */
   id: string;
+  /** Name shown in the row and matched by search. */
   label: string;
+  /** Heading the command is listed under; also searched. Default: "Results" */
   group?: string;
+  /** Shortcut text shown as a key at the row end, such as "⌘K". */
   hint?: string;
+  /** Extra search terms, such as aliases, that match this command. */
   keywords?: string[];
+  /** Lucide icon shown before the label. */
   icon?: LucideIcon;
+  /** Content shown after the label, such as a status tag. */
   badge?: ReactNode;
+  /** Called when the command is chosen, before the palette closes. */
   onSelect: () => void;
 };
 
@@ -53,12 +61,17 @@ export const commandPaletteMessages = {
 export type CommandPaletteMessages = typeof commandPaletteMessages;
 
 export interface CommandPaletteProps {
+  /** Commands to search, each with a label, optional group and an `onSelect` action. */
   items: CommandItem[];
   /** Opens with Cmd/Ctrl + this key. Default: "k" */
   shortcut?: string;
+  /** Hint text in the search field. Default: "Type a command or search…" */
   placeholder?: string;
+  /** Text shown when no command matches. Default: "No results found." */
   emptyMessage?: string;
+  /** Whether the palette is open, for controlled use. */
   open?: boolean;
+  /** Called with the new open state when the palette opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /** Override any built-in string. `results` names items without a `group`. */
   labels?: Partial<CommandPaletteMessages>;

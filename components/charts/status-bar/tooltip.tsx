@@ -13,7 +13,9 @@ export interface StatusBarTooltipData {
 
 export interface StatusBarTooltipProps {
   children?: ReactNode | ((data: StatusBarTooltipData) => ReactNode);
+  /** Classes merged onto the tooltip panel. */
   className?: string;
+  /** Preferred side for the tooltip. Default: "top" */
   side?: "top" | "right" | "bottom" | "left";
 }
 

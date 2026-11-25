@@ -40,12 +40,19 @@ export interface HoldActionButtonProps extends Omit<
   | "onKeyUp"
 > {
   children: ReactNode;
+  /** Fill rises from the bottom or sweeps in from the left. Default: "vertical" */
   type?: "vertical" | "horizontal";
+  /** Label shown while the button is held. Default: "Keep holding" */
   holdingLabel?: ReactNode;
+  /** Label shown once the hold completes. Default: "Done" */
   completeLabel?: ReactNode;
+  /** How long the button must be held to complete (ms). Default: 1600 */
   holdDuration?: number;
+  /** Called once when the fill finishes while still held. */
   onHoldComplete?: () => void;
+  /** Classes merged onto the fill layer, e.g. to change its color. */
   fillClassName?: string;
+  /** Classes merged onto the label wrapper. */
   labelClassName?: string;
   /** Override any built-in string. */
   labels?: Partial<HoldActionButtonMessages>;

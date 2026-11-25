@@ -18,10 +18,15 @@ export type Candle = {
   id: string;
   /** Axis and readout label, such as "14:05". */
   label: string;
+  /** Price at the start of the period. Green when `close` is at or above it. */
   open: number;
+  /** Highest price in the period, the top of the wick. */
   high: number;
+  /** Lowest price in the period, the bottom of the wick. */
   low: number;
+  /** Price at the end of the period. */
   close: number;
+  /** Amount traded in the period, drawn as a bar along the bottom. */
   volume: number;
 };
 
@@ -40,6 +45,7 @@ export const candlestickChartMessages = {
 export type CandlestickChartMessages = typeof candlestickChartMessages;
 
 export interface CandlestickChartProps {
+  /** Price candles in time order, each with open, high, low, close and volume. */
   candles: readonly Candle[];
   /** Draws a dashed line and tag at this price, usually the last trade. */
   lastPrice?: number;
@@ -48,14 +54,19 @@ export interface CandlestickChartProps {
    * new ones arrive. Pair with `onActiveIdChange`.
    */
   activeId?: string | null;
+  /** The initial crosshair candle id when uncontrolled. Default: null */
   defaultActiveId?: string | null;
+  /** Called with the candle id, or `null`, when the crosshair moves or leaves. */
   onActiveIdChange?: (id: string | null) => void;
+  /** Formats prices on the axis, readout and last-price tag. Defaults to up to 2 decimals. */
   formatPrice?: (value: number) => string;
+  /** Formats volume in the readout. Defaults to compact notation (1.2K). */
   formatVolume?: (value: number) => string;
   /** Accessible name for the chart. */
   label?: string;
   /** Override any built-in string. */
   labels?: Partial<CandlestickChartMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
   children?: ReactNode;
 }

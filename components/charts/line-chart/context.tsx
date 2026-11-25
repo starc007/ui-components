@@ -21,25 +21,33 @@ export const lineChartMessages = {
 export type LineChartMessages = typeof lineChartMessages;
 
 export interface LineChartProps extends Omit<ComponentProps<"section">, "children"> {
+  /** Lines to draw, each with an id, name, color and values. */
   series: readonly XYSeries[];
   /** Unique x-axis labels in display order. Values align with them by index. */
   categories: readonly string[];
   /** `area` fills each line down to zero with a fading gradient. */
   variant?: "line" | "area";
+  /** How points are joined. Default: "monotone" */
   curve?: XYCurve;
   /** Fixed value-axis bounds. Defaults to rounded bounds around the visible series. */
   domain?: readonly [number, number];
   /** Inspected category, by label. */
   activeId?: string | null;
+  /** The initially inspected category when uncontrolled. */
   defaultActiveId?: string | null;
+  /** Called with the category label, or `null`, when the inspected category changes. */
   onActiveChange?: (id: string | null) => void;
   /** Series ids hidden through the legend. */
   hiddenSeries?: readonly string[];
+  /** Series ids hidden at first when uncontrolled. Default: [] */
   defaultHiddenSeries?: readonly string[];
+  /** Called with the hidden series ids when the legend toggles a series. */
   onHiddenSeriesChange?: (ids: readonly string[]) => void;
+  /** Formats values in the tooltip and inspector. Defaults to up to 2 decimals. */
   formatValue?: (value: number) => string;
   /** Axis tick labels. Defaults to compact notation (1.2K). */
   formatTick?: (value: number) => string;
+  /** Accessible name for the chart. Default: "Line chart" */
   label?: string;
   /**
    * `loading` hides the lines behind a pulsing placeholder until your data

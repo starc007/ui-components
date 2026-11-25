@@ -20,17 +20,23 @@ export type StarRatingMessages = typeof starRatingMessages;
 export interface StarRatingProps {
   /** Selected stars, 0 for none. */
   value?: number;
+  /** The initial rating when uncontrolled. Default: 0 */
   defaultValue?: number;
+  /** Called with the new rating when a star is picked. */
   onValueChange?: (value: number) => void;
+  /** Number of stars. Default: 5 */
   max?: number;
   /** Shows the value without taking input. */
   readOnly?: boolean;
+  /** Dims the stars and stops input. Default: false */
   disabled?: boolean;
   /** Star size in pixels. */
   size?: number;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<StarRatingMessages>;
   /** Play a select whose pitch rises with the rating. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

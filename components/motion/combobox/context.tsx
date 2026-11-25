@@ -83,19 +83,31 @@ export function useComboboxContext(component: string) {
 
 export interface ComboboxProps {
   children: ReactNode;
+  /** The selected value, for controlled use. */
   value?: string;
+  /** The initial value when uncontrolled. */
   defaultValue?: string;
+  /** Called with the option value when the user picks an option. */
   onValueChange?: (value: string) => void;
+  /** Whether the list is open, for controlled use. */
   open?: boolean;
+  /** Whether the list starts open when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the next open state when the list opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** The search text, for controlled use. */
   query?: string;
+  /** The initial search text when uncontrolled. Default: "" */
   defaultQuery?: string;
+  /** Called with the new text when the query changes. It clears on close. */
   onQueryChange?: (query: string) => void;
+  /** Return true to show an option for the query. Default: fuzzy match on value and keywords */
   filter?: ComboboxFilter;
+  /** Disables the input and blocks opening the list. Default: false */
   disabled?: boolean;
   /** Play open and close swishes and a select on a pick. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<ComboboxMessages>;

@@ -19,13 +19,21 @@ import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type InputClassNames = {
+  /** Classes for the outer wrapper. */
   root?: string;
+  /** Classes for the label above the field. */
   label?: string;
+  /** Classes for the bordered box around the input and icons. */
   field?: string;
+  /** Classes for the input element. */
   input?: string;
+  /** Classes for the wrapper of the icon before the text. */
   leftIcon?: string;
+  /** Classes for the wrapper of the icon after the text. */
   rightIcon?: string;
+  /** Classes for the check mark shown while `success` is set. */
   successIcon?: string;
+  /** Classes for the error message under the field. */
   errorMessage?: string;
 };
 
@@ -33,18 +41,27 @@ export interface InputProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "value" | "defaultValue" | "onChange"
 > {
+  /** Text shown above the field and tied to it as its label. */
   label?: string;
+  /** The field text, for controlled use. */
   value?: string;
+  /** The initial field text when uncontrolled. */
   defaultValue?: string;
+  /** Called with the new text on every edit. */
   onChange?: (value: string) => void;
   /** Truthy error triggers a shake, red border and (if a string) a message. */
   error?: string | boolean;
   /** Reserve one message line so validation does not shift nearby content. */
   reserveErrorLine?: boolean;
+  /** Shows a green check in place of `rightIcon`. */
   success?: boolean;
+  /** Icon inside the field, before the text. */
   leftIcon?: ReactNode;
+  /** Icon inside the field, after the text. Hidden while `success` is set. */
   rightIcon?: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for the root, label, field, input, icons and error message. */
   classNames?: InputClassNames;
 }
 

@@ -32,6 +32,7 @@ export interface ReasoningTextProps {
   indicator?: ReactNode;
   /** Override any built-in string, including the default phrases. */
   labels?: Partial<LoadingStatesMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

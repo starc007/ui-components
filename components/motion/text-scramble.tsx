@@ -18,7 +18,9 @@ export interface TextScrambleProps {
   duration?: number;
   /** Characters sampled while unresolved positions are scrambling. */
   glyphs?: string;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Inline styles for the root element. */
   style?: CSSProperties;
 }
 

@@ -104,16 +104,27 @@ function nextStep(
 
 export interface AdaptiveStepperProps {
   children: ReactNode;
+  /** The current value, for controlled use. */
   value?: number;
+  /** The initial value when uncontrolled. Default: 0 */
   defaultValue?: number;
+  /** Called with the new value when a button steps it. */
   onValueChange?: (value: number) => void;
+  /** Lowest allowed value. Default: 0 */
   min?: number;
+  /** Highest allowed value. Default: 10 */
   max?: number;
+  /** Amount each press adds or removes. Default: 1 */
   step?: number;
+  /** Disables both buttons. Default: false */
   disabled?: boolean;
+  /** Form field name. Renders a hidden input carrying the value. */
   name?: string;
+  /** Formats the value read to screen readers. Defaults to a locale number. */
   formatValueText?: (value: number) => string;
+  /** Classes merged onto the root fieldset. */
   className?: string;
+  /** Accessible name for the stepper. Default: "Quantity" */
   "aria-label"?: string;
   /** Override any built-in string. `{label}` and `{value}` fill `summary`. */
   labels?: Partial<AdaptiveStepperMessages>;
@@ -262,7 +273,9 @@ export function AdaptiveStepper({
 export interface AdaptiveStepperActionProps
   extends Omit<HTMLMotionProps<"button">, "children" | "onClick"> {
   children?: ReactNode;
+  /** Called on click before the step. Call `preventDefault()` to skip the step. */
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  /** Ref to the underlying button element. */
   ref?: Ref<HTMLButtonElement>;
 }
 

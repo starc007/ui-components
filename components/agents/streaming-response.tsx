@@ -42,20 +42,29 @@ export type StreamingResponseMessages = typeof streamingResponseMessages;
 export interface StreamingResponseProps {
   /** Rendered response content. Pass plain text or the output of a Markdown renderer. */
   children: ReactNode;
+  /** Stream state; actions appear once it leaves "streaming". Default: "streaming" */
   status?: StreamingResponseStatus;
   /** Plain-text value copied by the built-in copy action. */
   copyText?: string;
   /** Overrides the built-in clipboard action. */
   onCopy?: () => void | Promise<void>;
+  /** Called when the retry action is pressed. The action shows only when set. */
   onRetry?: () => void;
   /** Optional sources shown as a compact footer disclosure after streaming. */
   sources?: CitationItem[];
+  /** Whether the sources list is expanded, for controlled use. */
   sourcesOpen?: boolean;
+  /** Whether the sources list starts expanded when uncontrolled. Default: false */
   defaultSourcesOpen?: boolean;
+  /** Called with the next state when the sources list expands or collapses. */
   onSourcesOpenChange?: (open: boolean) => void;
+  /** Prefix for source row ids that `Citation` markers link to. Generated when omitted. */
   sourceIdPrefix?: string;
+  /** The thumbs up or down rating, for controlled use. */
   feedback?: StreamingResponseFeedback;
+  /** The initial rating when uncontrolled. Default: null */
   defaultFeedback?: StreamingResponseFeedback;
+  /** Called with the new rating, or `null` when it is toggled off. */
   onFeedbackChange?: (feedback: StreamingResponseFeedback) => void;
   /** Set false when a surrounding conversation log announces streamed text. */
   announce?: boolean;
@@ -63,8 +72,11 @@ export interface StreamingResponseProps {
   showActions?: boolean;
   /** Override any built-in string. `{count}` fills `source` (one) and `sources` (many). */
   labels?: Partial<StreamingResponseMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto the wrapper around the response content. */
   contentClassName?: string;
+  /** Classes merged onto the row of completion actions. */
   actionsClassName?: string;
 }
 

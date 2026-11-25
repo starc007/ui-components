@@ -49,31 +49,49 @@ export const toolApprovalMessages = {
 export type ToolApprovalMessages = typeof toolApprovalMessages;
 
 export interface ToolApprovalParameter {
+  /** Unique key for the row. */
   id: string;
+  /** Parameter name, shown muted in the left column of the details. */
   label: ReactNode;
+  /** Parameter value, shown in monospace in the right column. */
   value: ReactNode;
 }
 
 export interface ToolApprovalCodeProps {
+  /** Source text to show, wrapped rather than scrolled. */
   code: string;
+  /** Language used for syntax highlighting. Default: "bash" */
   language?: AgentCodeLanguage;
+  /** Classes merged onto the code block. */
   className?: string;
 }
 
 export interface ToolApprovalProps {
+  /** Tool name shown in monospace under the title. */
   tool: ReactNode;
+  /** Heading for the request. Default: "Allow this tool to run?" */
   title?: ReactNode;
+  /** Short explanation of what the tool will do. */
   description?: ReactNode;
+  /** Arguments listed in the expandable details panel. */
   parameters?: ToolApprovalParameter[];
+  /** Request state, which sets the icon, badge and action buttons. Default: "pending" */
   status?: ToolApprovalStatus;
+  /** Whether the details panel is expanded, for controlled use. */
   open?: boolean;
+  /** Whether the details panel starts expanded when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new state when the details panel opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Called when the "Allow once" button is pressed. */
   onApprove?: () => void;
+  /** Called when "Always allow" is pressed. The button shows only when set. */
   onAlwaysAllow?: () => void;
+  /** Called when the "Deny" button is pressed. */
   onDeny?: () => void;
   /** Override any built-in string. */
   labels?: Partial<ToolApprovalMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

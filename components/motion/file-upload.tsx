@@ -27,47 +27,81 @@ export type FileUploadStatus = "queued" | "uploading" | "success" | "error";
 export type FileUploadVariant = "default" | "centered";
 
 export type FileUploadItem = {
+  /** Unique key for the row in the queue. */
   id: string;
+  /** File name shown on the row; its extension picks the icon and kind label. */
   name: string;
+  /** File size in bytes, shown next to the kind label. */
   size: number;
+  /** MIME type, used for the icon and kind label when the name has no extension. */
   type?: string;
+  /** Upload progress from 0 to 100. Success always shows 100. Default: 0 */
   progress?: number;
+  /** Upload state; sets the status icon, progress bar and retry button. Default: "queued" */
   status?: FileUploadStatus;
+  /** Message shown after the size when the status is `error`. */
   error?: string;
+  /** The picked File, kept for your upload code; the component does not read it. */
   file?: File;
 };
 
 export type FileUploadClassNames = {
+  /** The outer wrapper around the dropzone and queue. */
   root?: string;
+  /** The drop area with the browse pill. */
   dropzone?: string;
+  /** The list of file rows. */
   queue?: string;
+  /** One file row. */
   item?: string;
+  /** The round file icon at the start of a row. */
   leading?: string;
+  /** The column with the name, meta line and progress bar. */
   content?: string;
+  /** The file name text. */
   name?: string;
+  /** The kind, size and error line under the name. */
   meta?: string;
+  /** The progress bar track. */
   progress?: string;
+  /** The retry and remove buttons. */
   action?: string;
 };
 
 export interface FileUploadProps {
+  /** The file queue, for controlled use. */
   value?: FileUploadItem[];
+  /** The initial file queue when uncontrolled. */
   defaultValue?: FileUploadItem[];
+  /** Called with the full queue when files are added, removed or retried. */
   onValueChange?: (items: FileUploadItem[]) => void;
+  /** Called with the new items and their files after files are added. */
   onFilesAdded?: (items: FileUploadItem[], files: File[]) => void;
+  /** Called with the item when its remove button is pressed. */
   onRemove?: (item: FileUploadItem) => void;
+  /** Called with the item, reset to uploading, when its retry button is pressed. */
   onRetry?: (item: FileUploadItem) => void;
+  /** File types the picker allows, as in the input `accept` attribute. */
   accept?: string;
+  /** Allows picking or dropping more than 1 file at a time. Default: true */
   multiple?: boolean;
+  /** Most files allowed in the queue. No limit when unset. */
   maxFiles?: number;
+  /** Turns off the dropzone and file picker. Default: false */
   disabled?: boolean;
+  /** Dropzone layout: a row, or a stacked and centered block. Default: "default" */
   variant?: FileUploadVariant;
+  /** Heading inside the dropzone. Default: "Drop files here" */
   title?: string;
+  /** Line under the dropzone heading. Default: "Add files to the upload queue" */
   description?: string;
+  /** Text on the browse pill. Default: "Browse" */
   browseLabel?: string;
   /** Override any built-in string. `{name}` fills the per-file labels; `{count}` and `{max}` fill `limitDescription`. */
   labels?: Partial<FileUploadMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for each part: root, dropzone, queue, item and its inner parts. */
   classNames?: FileUploadClassNames;
 }
 

@@ -25,7 +25,9 @@ import { useScrollLock } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 export type ProjectFolderPreview = {
+  /** Unique key for the card, which links it between the folder and the overlay. */
   id: string;
+  /** What the card shows, such as an image or file thumbnail. */
   content: ReactNode;
 };
 
@@ -41,9 +43,13 @@ export const projectFolderMessages = {
 export type ProjectFolderMessages = typeof projectFolderMessages;
 
 export interface ProjectFolderProps {
+  /** Folder name shown on the front and in the overlay header. */
   title: string;
+  /** Secondary text beside the count. Default: "Updated recently" */
   description?: string;
+  /** Cards that fan out of the folder and fill the overlay. Only the first 5 show. */
   previews?: ProjectFolderPreview[];
+  /** Number shown in the count text. Default: the number of previews */
   count?: number;
   /**
    * Singular noun for the count, e.g. `"file"`. Pluralized the English way by
@@ -51,17 +57,27 @@ export interface ProjectFolderProps {
    * unset to use the localizable `countOne`/`countOther` messages.
    */
   itemLabel?: string;
+  /** Whether the lid tilts and previews fan out, for controlled use. */
   open?: boolean;
+  /** Whether the folder starts open when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new open state on hover, focus, click or close. */
   onOpenChange?: (open: boolean) => void;
+  /** Whether the full-screen previews overlay is shown, for controlled use. */
   expanded?: boolean;
+  /** Whether the overlay starts shown when uncontrolled. Default: false */
   defaultExpanded?: boolean;
+  /** Called with the new state when the overlay opens or closes. */
   onExpandedChange?: (expanded: boolean) => void;
+  /** Called when the folder is clicked, after it starts opening. */
   onClick?: () => void;
+  /** Blocks hover, click and the overlay, and dims the folder. Default: false */
   disabled?: boolean;
+  /** Accessible name for the folder button. */
   ariaLabel?: string;
   /** Override any built-in string. `{count}` fills `countOne`/`countOther`; `{title}` fills `close`. */
   labels?: Partial<ProjectFolderMessages>;
+  /** Classes merged onto the folder button. */
   className?: string;
 }
 

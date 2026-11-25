@@ -16,7 +16,12 @@ import { cn } from "@/lib/utils";
 import { OrderBookDepthRow } from "./order-book/depth-row";
 import { buildOrderBook, type DepthLevel, summarizeDepth } from "./order-book/model";
 
-export type OrderBookLevel = { price: number; size: number };
+export type OrderBookLevel = {
+  /** Price of the level, in the quote asset. */
+  price: number;
+  /** Amount resting at this price, in the base asset. */
+  size: number;
+};
 export type { DepthLevel as OrderBookDepthLevel, DepthSummary as OrderBookDepthSummaryData } from "./order-book/model";
 
 /** A level identified by its side and price, so it survives snapshot updates. */
@@ -55,23 +60,31 @@ export interface OrderBookProps {
   levels?: number;
   /** Last traded price. Omit to show the midpoint of the best bid and ask. */
   lastPrice?: number;
+  /** Accessible name for the book. Default: "Order book" */
   label?: string;
+  /** Symbol of the traded asset, shown beside sizes. Default: "" */
   baseSymbol?: string;
+  /** Symbol prices are quoted in, shown beside prices. Default: "USD" */
   quoteSymbol?: string;
+  /** Formats prices, the spread and averages. Defaults to 2 decimal places. */
   formatPrice?: (value: number) => string;
+  /** Formats sizes and totals. Defaults to compact notation, e.g. 1.2K. */
   formatSize?: (value: number) => string;
   /**
    * The level whose depth is inspected: it and every better level on its side
    * are highlighted, and `OrderBookDepthSummary` totals them. Controlled.
    */
   activeLevel?: OrderBookActiveLevel;
+  /** The initial inspected level when uncontrolled. Default: null */
   defaultActiveLevel?: OrderBookActiveLevel;
+  /** Called with the level, or null, when the inspected level changes. */
   onActiveLevelChange?: (level: OrderBookActiveLevel) => void;
   /** Makes each price a button, for example to fill an order ticket. */
   onLevelSelect?: (level: DepthLevel, side: "bid" | "ask") => void;
   /** Override any built-in string. */
   labels?: Partial<OrderBookMessages>;
   children?: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -202,7 +215,14 @@ export function OrderBookHeader({ className }: { className?: string }) {
   );
 }
 
-export function OrderBookSide({ side, className }: { side: "bid" | "ask"; className?: string }) {
+export function OrderBookSide({
+  side,
+  className,
+}: {
+  /** Which levels the table lists: bids, or asks with the best ask last. */
+  side: "bid" | "ask";
+  className?: string;
+}) {
   const {
     bids,
     asks,
@@ -338,6 +358,7 @@ export function OrderBookDepthSummary({
   children,
   className,
 }: {
+  /** Shown while no level is inspected. Default: "Hover a level to see the cost of filling up to it" */
   placeholder?: ReactNode;
   /** Custom readout for the inspected levels. */
   children?: (summary: NonNullable<ReturnType<typeof useOrderBook>["summary"]>) => ReactNode;

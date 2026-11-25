@@ -1,5 +1,7 @@
 export interface DonutSegment {
+  /** Unique key for the segment, used for the active and selected segment. */
   id: string;
+  /** Name shown in the legend and the ring's center while active. */
   name: string;
   /** Any CSS color, such as "#2563eb" or "var(--chart-1)". */
   color: string;

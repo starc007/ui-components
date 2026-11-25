@@ -19,7 +19,9 @@ import {
 
 export interface MultiSelectListProps {
   children: ReactNode;
+  /** Accessible name for the listbox. Default: "Options" */
   ariaLabel?: string;
+  /** Classes merged onto the scrolling listbox. */
   className?: string;
 }
 
@@ -47,6 +49,7 @@ export function MultiSelectList({
 
 export interface MultiSelectGroupProps {
   children: ReactNode;
+  /** Classes merged onto the group fieldset. */
   className?: string;
 }
 
@@ -70,6 +73,7 @@ export function MultiSelectGroup({
 
 export interface MultiSelectLabelProps {
   children: ReactNode;
+  /** Classes merged onto the label element. */
   className?: string;
 }
 
@@ -90,12 +94,18 @@ export function MultiSelectLabel({
 }
 
 export interface MultiSelectItemProps {
+  /** The option's value, added to or removed from the selection. */
   value: string;
   children: ReactNode;
+  /** Text for search and the trigger chip when the label is not plain text. */
   textValue?: string;
+  /** Extra words that match this option in search. */
   keywords?: string[];
+  /** Keeps the option visible but not selectable. Default: false */
   disabled?: boolean;
+  /** Called with the option's value when it is clicked, before it toggles. */
   onSelect?: (value: string) => void;
+  /** Classes merged onto the option row. */
   className?: string;
 }
 
@@ -204,6 +214,7 @@ export function MultiSelectItem({
 
 export interface MultiSelectEmptyProps {
   children?: ReactNode;
+  /** Classes merged onto the empty message. */
   className?: string;
 }
 
@@ -227,6 +238,7 @@ export function MultiSelectEmpty({
 }
 
 export interface MultiSelectSeparatorProps {
+  /** Classes merged onto the separator line. */
   className?: string;
 }
 

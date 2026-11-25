@@ -29,26 +29,40 @@ type FileTreeItem = {
 };
 
 export interface FileTreeFolderProps {
+  /** Unique id, used for selection and in `expandedIds`. */
   value: string;
+  /** Text shown on the row. */
   name: string;
+  /** Replaces the default folder icon. */
   icon?: ReactNode;
+  /** Blocks selecting and expanding the folder. */
   disabled?: boolean;
   children?: ReactNode;
+  /** Classes merged onto the folder's row. */
   className?: string;
 }
 
 export interface FileTreeFileProps {
+  /** Unique id, passed to `onValueChange` when the file is selected. */
   value: string;
+  /** Text shown on the row. */
   name: string;
+  /** Replaces the default file icon. */
   icon?: ReactNode;
+  /** Blocks selecting the file. */
   disabled?: boolean;
+  /** Classes merged onto the file's row. */
   className?: string;
 }
 
 export type FileTreeClassNames = {
+  /** The tree root element. */
   tree?: string;
+  /** Each file or folder row. */
   item?: string;
+  /** The file or folder icon in a row. */
   icon?: string;
+  /** The name text in a row. */
   label?: string;
 };
 
@@ -61,17 +75,27 @@ export type FileTreeMessages = typeof fileTreeMessages;
 
 export interface FileTreeProps {
   children: ReactNode;
+  /** The selected row's value, for controlled use. */
   value?: string | null;
+  /** The initially selected row's value when uncontrolled. Default: null */
   defaultValue?: string | null;
+  /** Called with the row's value when a file or folder is selected. */
   onValueChange?: (value: string) => void;
+  /** Values of the open folders, for controlled use. */
   expandedIds?: string[];
+  /** Values of the folders open at first when uncontrolled. Default: [] */
   defaultExpandedIds?: string[];
+  /** Called with every open folder's value when a folder opens or closes. */
   onExpandedChange?: (expandedIds: string[]) => void;
+  /** Accessible name for the tree. Default: "Files" */
   ariaLabel?: string;
   /** Override any built-in string. */
   labels?: Partial<FileTreeMessages>;
+  /** Extra left padding per nesting level, in pixels. Default: 18 */
   indent?: number;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for the tree, each row, its icon and its label. */
   classNames?: FileTreeClassNames;
 }
 

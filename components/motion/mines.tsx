@@ -89,6 +89,7 @@ export interface MinesProps {
   "aria-label"?: string;
   /** Override built-in text for this instance. */
   labels?: Partial<MinesMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

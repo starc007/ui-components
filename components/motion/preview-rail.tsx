@@ -25,32 +25,55 @@ export const previewRailMessages = {
 export type PreviewRailMessages = typeof previewRailMessages;
 
 export interface PreviewRailItem {
+  /** Unique key, used for the active item and passed to `onActiveChange`. */
   id: string;
+  /** Title of the preview card and the tick's accessible name. */
   label: string;
+  /** Accessible name for the tick when it should differ from `label`. */
   ariaLabel?: string;
+  /** Muted text under the title in the preview card. */
   description?: ReactNode;
+  /** Makes the tick a link; on touch, the first tap shows the preview. */
   href?: string;
+  /** Link target for `href`. */
   target?: "_blank" | "_self" | "_parent" | "_top";
+  /** Link `rel`. Default: "noreferrer noopener" when `target` is "_blank" */
   rel?: string;
 }
 
 export interface PreviewRailProps {
+  /** Rail entries, each a tick with a preview card and an optional link. */
   items: PreviewRailItem[];
+  /** Accessible name for the rail's nav element. Default: "Section navigation" */
   label?: string;
+  /** Lay the ticks out in a column or a row. Default: "vertical" */
   orientation?: "vertical" | "horizontal";
+  /** The selected item id, for controlled use. */
   activeId?: string;
+  /** The initial selected item id when uncontrolled. Default: the first item. */
   defaultActiveId?: string;
+  /** Called with the item id when an item is selected. */
   onActiveChange?: (id: string) => void;
+  /** Called with the item when it is clicked or tapped. */
   onItemSelect?: (item: PreviewRailItem) => void;
+  /** Custom content for the hover card. Default: the item's label and description. */
   renderPreview?: (item: PreviewRailItem) => ReactNode;
+  /** Show a preview card beside the hovered or focused tick. Default: true */
   showPreview?: boolean;
+  /** Which side of the rail the vertical preview card sits on. Default: "after" */
   previewSide?: "before" | "after";
+  /** Keep the selected tick lit when nothing is hovered or focused. Default: false */
   highlightActive?: boolean;
+  /** Length of each tick's slot along the rail (px). Default: 24 */
   itemSize?: number;
   children?: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto the nav element that holds the ticks. */
   railClassName?: string;
+  /** Classes merged onto the layer that positions the preview cards. */
   previewContainerClassName?: string;
+  /** Classes merged onto the wrapper around the shown preview card. */
   previewClassName?: string;
   /** Override any built-in string. */
   labels?: Partial<PreviewRailMessages>;

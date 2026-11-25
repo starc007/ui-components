@@ -78,17 +78,29 @@ export function useMultiSelectContext(component: string) {
 
 export interface MultiSelectProps {
   children: ReactNode;
+  /** The selected values, for controlled use. */
   value?: string[];
+  /** The initial selected values when uncontrolled. Default: [] */
   defaultValue?: string[];
+  /** Called with the new list of values when an option is added or removed. */
   onValueChange?: (value: string[]) => void;
+  /** Whether the list is open, for controlled use. */
   open?: boolean;
+  /** Whether the list starts open when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new state when the list opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** The search text, for controlled use. */
   query?: string;
+  /** The initial search text when uncontrolled. Default: "" */
   defaultQuery?: string;
+  /** Called with the new text when the search input changes. */
   onQueryChange?: (query: string) => void;
+  /** Decides which options match the search text. */
   filter?: MultiSelectFilter;
+  /** Blocks opening and changing the selection. Default: false */
   disabled?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
   /** Override any built-in string. `{label}` fills the option label. */
   labels?: Partial<MultiSelectMessages>;

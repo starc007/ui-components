@@ -67,10 +67,13 @@ export interface Sound {
 }
 
 export interface SoundRecipe {
+  /** Display name, like "Tap". */
   name: string;
+  /** Length in seconds, tail included. */
   duration: number;
   /** Random pitch spread per play (0.04 = ±4%), so repeats don't sound stamped. */
   vary?: number;
+  /** Adds the sound's tones and noise bursts to the voice on each play. */
   build: (voice: Voice) => void;
 }
 

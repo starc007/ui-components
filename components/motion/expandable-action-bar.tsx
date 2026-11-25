@@ -22,34 +22,57 @@ import { cn } from "@/lib/utils";
 export type ExpandableActionBarSize = "sm" | "md";
 
 export type ExpandableActionBarItem = {
+  /** Unique key, matched against `activeId`. */
   id: string;
+  /** Text shown beside the icon while expanded. A string also becomes the tooltip. */
   label: ReactNode;
+  /** Icon shown in the button at all times. */
   icon: ReactNode;
+  /** Called when the action runs, before the bar's `onAction`. */
   onClick?: () => void;
+  /** Dims the button and blocks presses. */
   disabled?: boolean;
+  /** Marks the item active and applies `classNames.activeItem`. */
   active?: boolean;
+  /** Small count or marker on the button. Pinned to the corner while collapsed. */
   badge?: ReactNode;
+  /** Keyboard hint shown after the label while expanded, on wider screens. */
   shortcut?: ReactNode;
 };
 
 export type ExpandableActionBarClassNames = {
+  /** Classes for the outer wrapper. */
   root?: string;
+  /** Classes for the pill that holds the buttons. */
   track?: string;
+  /** Classes for every action button. */
   item?: string;
+  /** Classes added to the active action button. */
   activeItem?: string;
+  /** Classes for the icon wrapper. */
   icon?: string;
+  /** Classes for the expanding label. */
   label?: string;
+  /** Classes for the badge. */
   badge?: string;
+  /** Classes for the shortcut hint. */
   shortcut?: string;
 };
 
 export interface ExpandableActionBarProps {
+  /** Actions shown as icon buttons, in order. */
   items: ExpandableActionBarItem[];
+  /** Whether labels are shown, for controlled use. */
   expanded?: boolean;
+  /** Whether the bar starts expanded when uncontrolled. Default: false */
   defaultExpanded?: boolean;
+  /** Called with the new state when the bar expands or collapses. */
   onExpandedChange?: (expanded: boolean) => void;
+  /** Id of the item to mark active. Falls back to an item's own `active` flag. */
   activeId?: string;
+  /** Called with the item after its own `onClick` when an action runs. */
   onAction?: (item: ExpandableActionBarItem) => void;
+  /** Height and spacing of the bar. Default: "md" */
   size?: ExpandableActionBarSize;
   /**
    * Expand when a pointer that hovers rests on the bar. Default true. It also
@@ -58,10 +81,15 @@ export interface ExpandableActionBarProps {
    * Set false to make every tap and click act immediately.
    */
   expandOnHover?: boolean;
+  /** Expand when keyboard focus moves into the bar. Default: true */
   expandOnFocus?: boolean;
+  /** Wait before collapsing after the pointer or focus leaves, in ms. Default: 90 */
   collapseDelay?: number;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for each inner part, keyed by slot. */
   classNames?: ExpandableActionBarClassNames;
+  /** Replaces an item's icon, label, badge and shortcut with custom content. */
   renderItem?: (item: ExpandableActionBarItem, state: { expanded: boolean; active: boolean }) => ReactNode;
 }
 

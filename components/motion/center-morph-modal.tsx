@@ -63,6 +63,7 @@ export interface CenterMorphModalProps {
   open?: boolean;
   /** Initial state when used uncontrolled. */
   defaultOpen?: boolean;
+  /** Called with the new open state when the modal opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /** Override any built-in string. */
   labels?: Partial<CenterMorphModalMessages>;
@@ -173,8 +174,11 @@ export interface CenterMorphModalContentProps {
   dismissible?: boolean;
   /** Render the close control inside the panel's top-right corner. Default true. */
   showCloseButton?: boolean;
+  /** Accessible name and tooltip for the close button. Default: "Close modal" */
   closeButtonLabel?: string;
+  /** Classes merged onto the modal panel. */
   className?: string;
+  /** Classes merged onto the backdrop. */
   backdropClassName?: string;
 }
 

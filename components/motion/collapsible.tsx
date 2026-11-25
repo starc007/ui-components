@@ -66,9 +66,13 @@ function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
 }
 
 export interface CollapsibleProps extends Omit<HTMLMotionProps<"div">, "layout"> {
+  /** Whether the content is shown, for controlled use. */
   open?: boolean;
+  /** Whether the content starts shown when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new state when the content opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Ignore toggles so the content stays as it is. Default: false */
   disabled?: boolean;
   /** Layout classes for the inner wrapper, separate from the animated surface. */
   contentClassName?: string;

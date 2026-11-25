@@ -32,14 +32,20 @@ export const bottomSheetMessages = {
 export type BottomSheetMessages = typeof bottomSheetMessages;
 
 export interface BottomSheetProps {
+  /** Whether the sheet is open. */
   open: boolean;
+  /** Called with false when the sheet is dismissed by drag, backdrop or Escape. */
   onOpenChange: (open: boolean) => void;
   /** Heights (0-1 = fraction of viewport, or "auto"). First entry is default. */
   snapPoints?: (number | "auto")[];
+  /** Index into `snapPoints` the sheet opens at. Default: 0 */
   defaultSnap?: number;
+  /** Heading at the top of the sheet, also its accessible name. */
   title?: string;
+  /** Text under the title, also its accessible description. */
   description?: string;
   children?: ReactNode;
+  /** Classes merged onto the sheet panel. */
   className?: string;
   /** Min drag distance (px) past current snap to dismiss. */
   dismissThreshold?: number;

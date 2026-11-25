@@ -18,6 +18,7 @@ export interface ScrollToProps
   /** Override the ease duration in seconds. */
   duration?: number;
   children: ReactNode;
+  /** Classes merged onto the button. */
   className?: string;
 }
 

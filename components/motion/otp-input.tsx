@@ -31,8 +31,11 @@ export type OTPStatus = "idle" | "error" | "success";
 export interface OTPInputProps {
   /** Number of slots. Default 6. */
   length?: number;
+  /** The entered digits, for controlled use. */
   value?: string;
+  /** The initial digits when uncontrolled. Default: "" */
   defaultValue?: string;
+  /** Called with the entered digits whenever a slot changes. */
   onChange?: (value: string) => void;
   /** Fires once every slot is filled. */
   onComplete?: (value: string) => void;
@@ -48,12 +51,15 @@ export interface OTPInputProps {
   status?: OTPStatus;
   /** Render dots instead of the typed digits. */
   mask?: boolean;
+  /** Block typing and dim the slots. Default: false */
   disabled?: boolean;
+  /** Focus the input on mount. Default: false */
   autoFocus?: boolean;
   /** Accessible label for the underlying input. */
   "aria-label"?: string;
   /** Override any built-in string. */
   labels?: Partial<OTPInputMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

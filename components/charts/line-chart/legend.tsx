@@ -4,6 +4,7 @@ import { XYLegend } from "../xy/legend";
 import { useLineChart } from "./context";
 
 export interface LineChartLegendProps {
+  /** Classes merged onto the legend element. */
   className?: string;
 }
 

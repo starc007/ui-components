@@ -19,8 +19,11 @@ export interface DigitSwapProps {
   stagger?: number;
   /** Number of final characters that receive `suffixClassName`. */
   suffixLength?: number;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto every animated character. */
   glyphClassName?: string;
+  /** Classes added to the last `suffixLength` characters. */
   suffixClassName?: string;
 }
 

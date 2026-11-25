@@ -125,8 +125,11 @@ function useSelectContext(component: string) {
 }
 
 export interface SelectProps {
+  /** The selected value, for controlled use. */
   value?: string;
+  /** The initial value when uncontrolled. */
   defaultValue?: string;
+  /** Called with the new value when an option is picked. */
   onValueChange?: (value: string) => void;
   /**
    * Controlled open state of the panel. A layout that stacks selects can hold
@@ -142,9 +145,11 @@ export interface SelectProps {
    * which one is open to paint it above its neighbours.
    */
   onOpenChange?: (open: boolean) => void;
+  /** Disables the trigger so the panel cannot open. Default: false */
   disabled?: boolean;
   /** Play open and close swishes and a select on a pick. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
   children: ReactNode;
 }
@@ -316,6 +321,7 @@ export function Select({
 }
 
 export interface SelectTriggerProps {
+  /** Classes merged onto the trigger button. */
   className?: string;
   children: ReactNode;
 }
@@ -379,7 +385,9 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
 }
 
 export interface SelectValueProps {
+  /** Text shown while nothing is selected. Default: "Select" */
   placeholder?: string;
+  /** Classes merged onto the label wrapper. */
   className?: string;
 }
 
@@ -419,6 +427,7 @@ export function SelectValue({ placeholder, className }: SelectValueProps) {
 }
 
 export interface SelectContentProps {
+  /** Classes merged onto the options panel. */
   className?: string;
   children: ReactNode;
 }
@@ -565,8 +574,11 @@ export function SelectContent({ className, children }: SelectContentProps) {
 }
 
 export interface SelectItemProps {
+  /** Value reported when this option is picked. */
   value: string;
+  /** Prevents picking this option. Default: false */
   disabled?: boolean;
+  /** Classes merged onto the option button. */
   className?: string;
   children: ReactNode;
 }

@@ -41,13 +41,18 @@ interface LiquidityHeatmapProps {
   snapshots: readonly LiquiditySnapshot[];
   /** Fixed intensity ceiling keeps colors comparable across live updates. */
   maxSize?: number;
+  /** Size unit shown in cell labels and the legend. Default: "units" */
   unit?: string;
+  /** Accessible name for the chart section. Default: "Liquidity heatmap" */
   label?: string;
+  /** Formats price levels on the axis and in cell labels. Defaults to up to 2 decimals. */
   formatPrice?: (price: number) => string;
+  /** Formats resting size in cell labels. Defaults to compact notation, e.g. 1.2K. */
   formatSize?: (size: number) => string;
   /** Override any built-in string. */
   labels?: Partial<LiquidityHeatmapMessages>;
   children?: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 const Context = createContext<

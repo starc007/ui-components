@@ -4,7 +4,9 @@ import type { TableMessages } from "./messages";
 export type SortDirection = "asc" | "desc";
 
 export type SortState = {
+  /** `key` of the column the rows are sorted by. */
   key: string;
+  /** Sort order: `asc` for smallest first, `desc` for largest first. */
   direction: SortDirection;
 };
 
@@ -30,25 +32,35 @@ export type TableColumn<T> = {
 export type InsertPosition = "before" | "after";
 
 export interface TableProps<T> {
+  /** Rows to display, one object per row. */
   data: T[];
+  /** Column definitions, in display order. */
   columns: TableColumn<T>[];
   /** Stable id per row, required for correct selection across sorts. Defaults to row index. */
   getRowId?: (row: T, index: number) => string;
   /** Render a leading checkbox column with select-all in the header. */
   selectable?: boolean;
+  /** Ids of the selected rows, for controlled use. */
   selectedRowIds?: string[];
+  /** Ids of the rows selected at first when uncontrolled. */
   defaultSelectedRowIds?: string[];
+  /** Called with the selected row ids when the selection changes. */
   onSelectionChange?: (ids: string[]) => void;
+  /** The active sort, or null for none, for controlled use. */
   sort?: SortState | null;
+  /** The initial sort when uncontrolled. Default: null */
   defaultSort?: SortState | null;
+  /** Called with the new sort when a header click cycles asc, desc, then none. */
   onSortChange?: (sort: SortState | null) => void;
   /** Allow dragging the right edge of a header to resize that column. */
   resizable?: boolean;
   /** Minimum column width in px when resizing. */
   minColumnWidth?: number;
+  /** Called with the column key and its new width in px when a resize drag ends. */
   onColumnResize?: (key: string, width: number) => void;
   /** Allow dragging a header grip to reorder columns. */
   reorderable?: boolean;
+  /** Called with the column keys in their new order after a reorder drop. */
   onColumnOrderChange?: (keys: string[]) => void;
   /** Called when an `editable` cell changes. */
   onCellEdit?: (rowId: string, columnKey: string, value: string) => void;
@@ -74,9 +86,11 @@ export interface TableProps<T> {
   loading?: boolean;
   /** How many skeleton rows to show while loading more (default 3). */
   skeletonRows?: number;
+  /** Shown in place of rows when `data` is empty. Default: "No data" */
   emptyState?: ReactNode;
   /** Override any built-in string. `{row}` and `{column}` fill the per-row and per-column labels. */
   labels?: Partial<TableMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

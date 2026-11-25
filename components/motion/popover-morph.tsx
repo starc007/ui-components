@@ -67,7 +67,9 @@ export interface MorphPopoverProps {
   open?: boolean;
   /** Uncontrolled initial open state. */
   defaultOpen?: boolean;
+  /** Called with the new open state when the panel opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Classes merged onto the wrapper around the trigger. */
   className?: string;
 }
 
@@ -267,7 +269,9 @@ function clipAt(side: Side, align: Align, radius: number, inset: number) {
 
 export interface MorphPopoverContentProps {
   children: ReactNode;
+  /** Preferred side of the trigger. Flips when there is no room. Default: "bottom" */
   side?: Side;
+  /** Lines the panel up with the trigger's start or end edge. Default: "end" */
   align?: Align;
   /** Gap between trigger and panel, in px. Default 8. */
   sideOffset?: number;
@@ -286,6 +290,7 @@ export interface MorphPopoverContentProps {
    * pointer open does not move focus. Ignored with `onOpenAutoFocus`.
    */
   initialFocus?: RefObject<HTMLElement | null>;
+  /** Classes merged onto the panel surface. */
   className?: string;
 }
 

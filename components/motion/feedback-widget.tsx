@@ -42,6 +42,7 @@ const SPRINKLES = Array.from({ length: 8 }, (_, i) => {
 });
 
 export interface FeedbackData {
+  /** Text from the message field, as typed. Never blank. */
   message: string;
 }
 
@@ -65,12 +66,17 @@ export type FeedbackWidgetMessages = typeof feedbackWidgetMessages;
 export interface FeedbackWidgetProps {
   /** Called on submit. May be async; the button shows a sending state until it resolves. */
   onSubmit?: (data: FeedbackData) => void | Promise<void>;
+  /** Corner the widget sits in and grows from. Default: "bottom-right" */
   position?: "bottom-right" | "bottom-left";
+  /** Heading of the open form. Default: "Help us improve" */
   title?: string;
+  /** Placeholder of the message field. Default: "Share an idea or report a bug" */
   placeholder?: string;
+  /** Icon on the closed trigger button. Defaults to a message icon. */
   icon?: ReactNode;
   /** Override any built-in string. */
   labels?: Partial<FeedbackWidgetMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

@@ -7,7 +7,9 @@ import { cn } from "@/lib/utils";
 import { useVolumeProfile } from "./context";
 
 export interface VolumeProfilePlotProps {
+  /** Classes merged onto the plot row; set its height here. */
   className?: string;
+  /** Classes merged onto each volume bar. */
   barClassName?: string;
   /** Plot height is set by className; default 20rem. */
   showAxes?: boolean;

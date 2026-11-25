@@ -40,6 +40,7 @@ export interface DownloadButtonProps
    * runs on its own, as a demo.
    */
   onDownload?: (report: (progress: number) => void) => unknown;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<DownloadButtonMessages>;
   /** Play a tap on start and a success chime when done. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;

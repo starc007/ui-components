@@ -1,4 +1,11 @@
-export type DepthLevel = { price: number; size: number; total: number };
+export type DepthLevel = {
+  /** Price of the level, in quote currency. */
+  price: number;
+  /** Base size resting at this price, summed across duplicate entries. */
+  size: number;
+  /** Running size from the best price out to this level, which sets the depth bar. */
+  total: number;
+};
 type Level = { price: number; size: number };
 
 function prepare(levels: readonly Level[], side: "bid" | "ask", limit: number): DepthLevel[] {
@@ -18,6 +25,7 @@ function prepare(levels: readonly Level[], side: "bid" | "ask", limit: number): 
 }
 
 export type DepthSummary = {
+  /** Which side of the book the inspected levels are on. */
   side: "bid" | "ask";
   /** Number of levels from the best price out to the inspected one. */
   levels: number;

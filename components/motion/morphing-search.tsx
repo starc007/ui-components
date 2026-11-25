@@ -41,11 +41,17 @@ const SEARCH_CLIP_TRANSITION: Transition = {
 };
 
 export type MorphingSearchItem = {
+	/** Unique key for the result row. */
 	id: string;
+	/** Main text of the result row, matched by the search. */
 	title: string;
+	/** Smaller text under the title, also matched by the search. */
 	description?: string;
+	/** Extra words the search matches that are not shown. */
 	keywords?: string[];
+	/** Lucide icon component shown before the title. Omitted when not set. */
 	icon?: LucideIcon;
+	/** Called when this result is chosen, before the search's `onSelect`. */
 	onSelect?: () => void;
 };
 
@@ -61,19 +67,29 @@ export const morphingSearchMessages = {
 export type MorphingSearchMessages = typeof morphingSearchMessages;
 
 export interface MorphingSearchProps {
+	/** Searchable items, matched on title, description and keywords. */
 	items: MorphingSearchItem[];
+	/** Input placeholder and accessible name. Default: "Search" */
 	placeholder?: string;
+	/** Opens the search when this key is pressed outside a text field. Default: "f" */
 	shortcut?: string;
 	/** Render the closed trigger as a compact search icon. */
 	iconOnly?: boolean;
+	/** Text shown when no item matches the query. Default: "No results found." */
 	emptyMessage?: string;
+	/** Whether the search panel is open, for controlled use. */
 	open?: boolean;
+	/** Whether the panel starts open when uncontrolled. Default: false */
 	defaultOpen?: boolean;
+	/** Called with the new open state when the panel opens or closes. */
 	onOpenChange?: (open: boolean) => void;
+	/** Called with the query text as the user types. */
 	onQueryChange?: (query: string) => void;
+	/** Called with the chosen item after its own `onSelect`, then the panel closes. */
 	onSelect?: (item: MorphingSearchItem) => void;
 	/** Override any built-in string. */
 	labels?: Partial<MorphingSearchMessages>;
+	/** Classes merged onto the closed trigger wrapper. */
 	className?: string;
 }
 

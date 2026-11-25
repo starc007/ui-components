@@ -24,7 +24,9 @@ type CommonProps = {
 };
 
 export interface ScrollProgressBarProps extends CommonProps {
+  /** A thin horizontal bar, or "circle" for a ring. Default: "bar" */
   variant?: "bar";
+  /** Edge the bar sits on. Default: "top" */
   position?: "top" | "bottom";
   /** Bar thickness in px. */
   height?: number;

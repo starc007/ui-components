@@ -31,6 +31,7 @@ export type MorphingModalMessages = typeof morphingModalMessages;
 export interface MorphingModalProps {
   /** Which view is currently shown. `null` closes the modal. */
   viewId: string | null;
+  /** Called on Escape or a backdrop press. Set `viewId` to null to close. */
   onClose: () => void;
   children: ReactNode;
   /** "bottom" anchors to the viewport bottom (mobile-like). "center" centers vertically. */
@@ -40,6 +41,7 @@ export interface MorphingModalProps {
    * first heading in the current view.
    */
   ariaLabel?: string;
+  /** Classes merged onto the dialog panel. */
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<MorphingModalMessages>;

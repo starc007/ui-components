@@ -3,11 +3,17 @@ import { cn } from "@/lib/utils";
 
 export interface MarqueeProps {
   children: ReactNode;
+  /** Direction the content scrolls. Default: "left" */
   direction?: "left" | "right" | "up" | "down";
+  /** Seconds for one full loop, so higher is slower. Default: 30 */
   speed?: number;
+  /** Pauses scrolling while the pointer is over it. Default: true */
   pauseOnHover?: boolean;
+  /** CSS length between items and between the repeated tracks. Default: "1rem" */
   gap?: string;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Fades the leading and trailing edges with a mask. Default: true */
   fade?: boolean;
 }
 

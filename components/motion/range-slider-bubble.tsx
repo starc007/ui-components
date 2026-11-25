@@ -25,6 +25,7 @@ const FULL_TILT = 320;
 export interface BubbleSliderProps extends SliderOptions {
   /** Formats the value shown in the bubble. */
   format?: (value: number) => string;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

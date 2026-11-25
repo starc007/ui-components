@@ -8,14 +8,23 @@ import { useAnimatedSidebar } from "./context";
 
 export interface AnimatedSidebarMenuSubButtonProps {
   children: ReactNode;
+  /** Leading icon. Defaults to a small dot. */
   icon?: ReactNode;
+  /** Renders a link to this URL instead of a button. */
   href?: string;
+  /** Marks the row as the current page. Default: false */
   isActive?: boolean;
+  /** Dims the row and blocks selection. Default: false */
   disabled?: boolean;
+  /** Closes the mobile sidebar after selecting. Default: true */
   closeOnSelect?: boolean;
+  /** Link target, used with `href`. */
   target?: "_blank" | "_self" | "_parent" | "_top";
+  /** Link rel, used with `href`. Defaults to "noreferrer noopener" for "_blank". */
   rel?: string;
+  /** Called when the row is clicked and not disabled. */
   onSelect?: () => void;
+  /** Classes merged onto the button or link. */
   className?: string;
 }
 

@@ -67,12 +67,19 @@ type SidebarProviderStyle = CSSProperties & {
 
 export interface AnimatedSidebarProviderProps
   extends HTMLAttributes<HTMLDivElement> {
+  /** Whether the desktop sidebar is expanded, for controlled use. */
   open?: boolean;
+  /** Whether the desktop sidebar starts expanded when uncontrolled. Default: true */
   defaultOpen?: boolean;
+  /** Called with the next state when the desktop sidebar expands or collapses. */
   onOpenChange?: (open: boolean) => void;
+  /** Whether the mobile drawer is open, for controlled use. */
   openMobile?: boolean;
+  /** Whether the mobile drawer starts open when uncontrolled. Default: false */
   defaultOpenMobile?: boolean;
+  /** Called with the next state when the mobile drawer opens or closes. */
   onOpenMobileChange?: (open: boolean) => void;
+  /** Inline styles; set `--sidebar-width`, `--sidebar-width-icon` or `--sidebar-width-mobile` here. */
   style?: SidebarProviderStyle;
   /** Override any built-in string. */
   labels?: Partial<AnimatedSidebarMessages>;
@@ -178,10 +185,15 @@ export function AnimatedSidebarProvider({
 export interface AnimatedSidebarProps
   extends Omit<HTMLMotionProps<"aside">, "children"> {
   children?: ReactNode;
+  /** Which edge of the layout the sidebar sits on. Default: "left" */
   side?: SidebarSide;
+  /** Panel style: bordered edge, floating card, or inset card. Default: "sidebar" */
   variant?: SidebarVariant;
+  /** How it collapses: to an icon rail, fully off canvas, or never. Default: "icon" */
   collapsible?: SidebarCollapsible;
+  /** Accessible name for the sidebar landmark. Default: "Sidebar" */
   ariaLabel?: string;
+  /** Classes merged onto the inner panel that holds the content. */
   panelClassName?: string;
 }
 
@@ -551,6 +563,7 @@ export const AnimatedSidebarMenuItem = forwardRef<
 
 export interface AnimatedSidebarMenuSubProps
   extends Omit<HTMLMotionProps<"ul">, "children"> {
+  /** Shows the submenu. It stays hidden while the sidebar is collapsed. */
   open: boolean;
   children?: ReactNode;
 }

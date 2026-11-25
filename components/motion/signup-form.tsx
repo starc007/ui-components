@@ -20,10 +20,15 @@ import { cn } from "@/lib/utils";
 export type SignUpStatus = "idle" | "loading" | "success" | "error";
 
 export type SignUpValues = {
+  /** Text in the name field. */
   name: string;
+  /** Text in the email field. */
   email: string;
+  /** Text in the password field. */
   password: string;
+  /** Text in the confirm password field, which must match `password`. */
   confirmPassword: string;
+  /** Whether the terms checkbox is checked. */
   terms: boolean;
 };
 
@@ -72,21 +77,32 @@ type Translate = (
 ) => string;
 
 export type SignUpFormClassNames = {
+  /** Classes for the form element. */
   root?: string;
+  /** Classes for the wrapper around the title and description. */
   header?: string;
+  /** Classes for the heading. */
   title?: string;
+  /** Classes for the line under the heading. */
   description?: string;
+  /** Classes for the column that holds the input fields. */
   fields?: string;
+  /** Classes for the password strength meter. */
   strength?: string;
+  /** Classes for the terms checkbox and its error. */
   terms?: string;
+  /** Classes for the submit button. */
   submit?: string;
+  /** Classes for the content below the submit button. */
   footer?: string;
 };
 
 export interface SignUpFormProps {
   /** Controlled values. Omit for uncontrolled. */
   values?: SignUpValues;
+  /** Initial field values when uncontrolled. Missing fields start empty. */
   defaultValues?: Partial<SignUpValues>;
+  /** Called with all field values whenever a field changes. */
   onValuesChange?: (values: SignUpValues) => void;
   /** Called with valid values only. Return a promise to drive the button state. */
   onSubmit?: (values: SignUpValues) => void | Promise<void>;
@@ -96,15 +112,21 @@ export interface SignUpFormProps {
   status?: SignUpStatus;
   /** Form-level failure message, shown above the submit button. */
   errorMessage?: string;
+  /** Heading above the fields. Pass null to hide it. Default: "Create your account" */
   title?: ReactNode;
+  /** Line under the heading. Pass null to hide it. Default: "Start building in under a minute." */
   description?: ReactNode;
+  /** Submit button text. Default: "Create account" */
   submitLabel?: string;
+  /** Content below the submit button, e.g. a sign-in link. */
   footer?: ReactNode;
   /** Show the password strength meter. */
   strengthMeter?: boolean;
   /** Override any built-in string. */
   labels?: Partial<SignUpFormMessages>;
+  /** Classes merged onto the form element. */
   className?: string;
+  /** Classes for inner parts: root, header, title, description, fields, strength, terms, submit, footer. */
   classNames?: SignUpFormClassNames;
 }
 

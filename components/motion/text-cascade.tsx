@@ -5,6 +5,7 @@ import { ActionSwapText } from "./action-swap";
 export interface TextCascadeProps {
   /** Current text. Changing it cascades the letters to the new value. */
   text: string;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

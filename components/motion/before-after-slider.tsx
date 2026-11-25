@@ -46,12 +46,15 @@ export interface BeforeAfterSliderProps {
   value?: number;
   /** Starting position when uncontrolled. */
   defaultValue?: number;
+  /** Called with the new position (percent) as the divider moves. */
   onValueChange?: (value: number) => void;
   /** Show the Before and After labels in the top corners. */
   showLabels?: boolean;
   /** Sweep the divider once when the slider first scrolls into view, to show it moves. */
   hint?: boolean;
+  /** Lock the divider in place and skip the hint sweep. Default: false */
   disabled?: boolean;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<BeforeAfterSliderMessages>;
   /** Size the frame here; it defaults to a 3:2 box at full width. */
   className?: string;

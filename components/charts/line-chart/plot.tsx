@@ -53,9 +53,11 @@ export interface LineChartPlotProps {
   height?: number;
   /** Stroke width of each line, in px. */
   strokeWidth?: number;
+  /** Draw horizontal grid lines at the value ticks. Default: true */
   showGrid?: boolean;
   /** Fade lines and fills out toward the left and right edges of the plot. */
   fadeEdges?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

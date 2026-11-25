@@ -7,6 +7,7 @@ import type { DateRange } from "./types";
 
 export interface DateRangePickerPresetProps
   extends Omit<ComponentPropsWithRef<"button">, "value"> {
+  /** Range selected when this preset is pressed. */
   value: DateRange;
   /** Accessible preset name and selection announcement. */
   label: string;

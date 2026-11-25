@@ -20,12 +20,17 @@ export type UpvoteButtonOrientation = "vertical" | "horizontal";
 
 export interface UpvoteButtonProps
   extends Omit<HTMLMotionProps<"button">, "children" | "onChange"> {
+  /** Whether the viewer has voted, for controlled use. */
   voted?: boolean;
+  /** Whether the viewer starts voted when uncontrolled. Default: false */
   defaultVoted?: boolean;
+  /** Called with the next state when the viewer votes or takes it back. */
   onVotedChange?: (voted: boolean) => void;
   /** Votes from everyone else. The viewer's own vote is added on top. */
   count: number;
+  /** Stack the arrow above the count, or place them side by side. Default: "vertical" */
   orientation?: UpvoteButtonOrientation;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<UpvoteButtonMessages>;
   /** Play a rising snap on vote and a falling one on unvote. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;

@@ -39,8 +39,11 @@ export const reactionPickerMessages = {
 export type ReactionPickerMessages = typeof reactionPickerMessages;
 
 export type Reaction = {
+  /** Unique key, used as the picker's value. */
   id: string;
+  /** Name shown above the reaction on hover and used as its accessible name. */
   label: string;
+  /** Icon or emoji in the tray, which flies to the trigger once picked. */
   icon: ReactNode;
   /** Text colour class for the icon, e.g. "text-rose-500". */
   color?: string;
@@ -53,13 +56,17 @@ export interface ReactionPickerProps {
   reactions?: Reaction[];
   /** The viewer's reaction id, or null for none. */
   value?: string | null;
+  /** The initial reaction id when uncontrolled. Default: null */
   defaultValue?: string | null;
+  /** Called with the picked reaction id, or null when the same one is picked again. */
   onValueChange?: (value: string | null) => void;
   /** Reactions from everyone else. The viewer's own is added on top. */
   count?: number;
+  /** Override any built-in string, e.g. for translation. */
   labels?: Partial<ReactionPickerMessages>;
   /** Play open and close swishes for the tray and a select on a pick. Off by default; a `SoundProvider` can mute it app-wide. */
   sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

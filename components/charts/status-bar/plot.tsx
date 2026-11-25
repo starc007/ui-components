@@ -11,9 +11,11 @@ const ENTRANCE_SPAN = 0.18;
 const ENTRANCE_TRANSFORM = ["translateY(4px) scaleY(0.9)", "translateY(0px) scaleY(1)"];
 
 export interface StatusBarPlotProps {
+  /** Classes merged onto the root element. */
   className?: string;
   /** Customize segment height and roundness independently of the 44px hit area. */
   barClassName?: string;
+  /** Show the first and last segment labels under the bar. Default: true */
   showLabels?: boolean;
   children?: ReactNode;
 }

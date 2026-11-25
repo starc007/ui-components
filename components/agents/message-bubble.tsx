@@ -60,6 +60,7 @@ const MessageBubbleContext = createContext<MessageBubbleContextValue>({
 
 export interface MessageBubbleProps
   extends Omit<HTMLMotionProps<"div">, "children"> {
+  /** Fill and border style of the bubble. Default: "soft" */
   variant?: MessageBubbleVariant;
   /** Defaults to the surrounding Message alignment when omitted. */
   align?: MessageBubbleAlign;
@@ -77,18 +78,27 @@ export interface MessageBubbleContentProps
 }
 
 export interface MessageBubbleGroupProps extends ComponentPropsWithRef<"div"> {
+  /** Gap between bubbles. Default: "compact" */
   spacing?: "compact" | "default";
 }
 
 export interface MessageBubbleCollapsibleProps
   extends ComponentPropsWithRef<"div"> {
+  /** Whether the full text shows, for controlled use. */
   open?: boolean;
+  /** Whether the full text shows at first when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new state when the text expands or collapses. */
   onOpenChange?: (open: boolean) => void;
+  /** Lines shown while collapsed. Default: 4 */
   collapsedLines?: 2 | 3 | 4 | 5 | 6;
+  /** Text of the expand button. Default: "Show more" */
   moreLabel?: ReactNode;
+  /** Text of the collapse button. Default: "Show less" */
   lessLabel?: ReactNode;
+  /** Classes merged onto the clamped text wrapper. */
   contentClassName?: string;
+  /** Classes merged onto the show more button. */
   triggerClassName?: string;
   children?: ReactNode;
 }

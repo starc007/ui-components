@@ -53,56 +53,90 @@ type Translate = (
 ) => string;
 
 export type PredictionMarketOutcome = {
+  /** Unique key, used as the order's `outcomeId` and the `positions` key. */
   id: string;
+  /** Text on the outcome button. "No" and "Down" are styled red. */
   label: string;
+  /** Price per share from 0 to 1, shown in cents. */
   price: number;
 };
 
 export type PredictionMarketOrderValue = {
+  /** Whether the order buys or sells shares. */
   mode: PredictionMarketMode;
+  /** The `id` of the selected outcome. */
   outcomeId: string;
+  /** Raw input text: dollars when buying, shares when selling. */
   amount: string;
 };
 
 export type PredictionMarketQuote = {
+  /** Whether the order can be placed. */
   valid: boolean;
+  /** The parsed amount: dollars when buying, shares when selling. */
   amount: number;
+  /** Price per share, clamped between 0.01 and 0.99. */
   price: number;
+  /** Shares bought, or shares sold. */
   shares: number;
+  /** Dollars won if the outcome resolves, or dollars received from a sale. */
   payout: number;
+  /** Why the order is invalid, shown on the trade button. Absent when valid. */
   error?: string;
 };
 
 export type PredictionMarketClassNames = {
+  /** Classes for the outer card. */
   root?: string;
+  /** Classes for the top bar with the buy and sell tabs. */
   header?: string;
+  /** Classes for the buy and sell tabs. */
   tabs?: string;
+  /** Classes for the outcome buttons. */
   outcomes?: string;
+  /** Classes for the amount panel with the input and chips. */
   amount?: string;
+  /** Classes for the row of quick amount chips. */
   chips?: string;
+  /** Classes for the footer with the payout and trade button. */
   footer?: string;
+  /** Classes for the trade or connect button. */
   action?: string;
 };
 
 export interface PredictionMarketProps {
+  /** Outcomes to trade, each with a price from 0 to 1. Default: Up and Down */
   outcomes?: PredictionMarketOutcome[];
+  /** The order's mode, outcome and amount, for controlled use. */
   value?: PredictionMarketOrderValue;
+  /** The initial order when uncontrolled. Missing fields start as buy, the first outcome and empty. */
   defaultValue?: Partial<PredictionMarketOrderValue>;
+  /** Called with the full order when the mode, outcome or amount changes. */
   onValueChange?: (value: PredictionMarketOrderValue) => void;
+  /** Called with the order and its quote once a valid trade fills. */
   onTrade?: (
     order: PredictionMarketOrderValue,
     quote: PredictionMarketQuote,
   ) => void;
+  /** Called when the connect button is pressed while signed out. */
   onSignIn?: () => void;
+  /** Whether the user is signed in. When false, a connect button replaces the trade footer. Default: true */
   authenticated?: boolean;
+  /** Text beside the buy and sell tabs. Default: "Market" */
   orderTypeLabel?: string;
+  /** Cash available to buy with, in dollars. Default: 500 */
   balance?: number;
+  /** Shares held per outcome id, which caps how much can be sold. */
   positions?: Record<string, number>;
+  /** Amounts the quick chips add to the input. Default: [10, 50, 100, 500] */
   quickAmounts?: number[];
+  /** Smallest buy amount, in dollars. Default: 1 */
   minTrade?: number;
   /** Override any built-in string. `{price}` fills `avgPrice`, `{amount}` fills `minimum`. */
   labels?: Partial<PredictionMarketMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for each inner part, keyed by slot. */
   classNames?: PredictionMarketClassNames;
 }
 

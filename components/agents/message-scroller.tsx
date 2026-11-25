@@ -113,14 +113,20 @@ export interface MessageScrollerProps extends ComponentPropsWithRef<"div"> {
   jumpButton?: boolean;
   /** Accessible label for the optional message navigation rail. */
   navigationLabel?: string;
+  /** Classes merged onto the scrolling viewport. */
   viewportClassName?: string;
+  /** Classes merged onto the log element that wraps the messages. */
   contentClassName?: string;
+  /** Classes merged onto the navigation rail, used with `navigation="rail"`. */
   railClassName?: string;
+  /** Ref to the scrolling viewport element. */
   viewportRef?: Ref<HTMLElement>;
+  /** Extra props for the scrolling viewport. Its event handlers still run. */
   viewportProps?: Omit<
     ComponentPropsWithRef<"section">,
     "children" | "className" | "ref"
   >;
+  /** Extra props for the log element that wraps the messages. */
   contentProps?: Omit<
     ComponentPropsWithRef<"div">,
     "children" | "className" | "ref"

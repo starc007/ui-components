@@ -7,7 +7,7 @@ export type NavLink = {
   slug: string;
   href: string;
   key: "sidebar.home" | "sidebar.overview" | "sidebar.setup" | `docsPages.${
-    "changelog" | "motionGuides" | "agentGuide" | "nativeSetup"
+    "motionGuides" | "agentGuide" | "nativeSetup"
   }` | null;
   name?: string;
 };
@@ -15,7 +15,6 @@ export type NavLink = {
 export const INTRO: NavLink[] = [
   { slug: "home", key: "sidebar.home", href: "/components/motion" },
   { slug: "react-native", key: null, name: "React Native", href: NATIVE_PATH },
-  { slug: "changelog", key: "docsPages.changelog", href: "/changelog" },
 ];
 
 export const PATTERNS: NavLink[] = [

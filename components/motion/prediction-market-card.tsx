@@ -26,38 +26,53 @@ export const predictionMarketCardMessages = {
 export type PredictionMarketCardMessages = typeof predictionMarketCardMessages;
 
 export interface PredictionMarketCardOutcome {
+	/** Unique key, sent back as `outcomeId` when the outcome is picked. */
 	id: string;
+	/** Outcome name shown in the row and the trade button's accessible name. */
 	label: string;
 	/** Probability between 0 and 1. */
 	probability: number;
+	/** Image or icon shown in a round frame before the label. */
 	icon?: ReactNode;
 	/** Optional team color for the compact probability line. */
 	color?: string;
 }
 
 export interface PredictionMarketCardSelection {
+	/** The `id` of the outcome that was picked. */
 	outcomeId: string;
+	/** The side picked. The card's outcome buttons always send "yes". */
 	side: "yes" | "no";
 }
 
 export interface PredictionMarketCardProps {
+	/** Market question shown as the card heading. */
 	title: string;
+	/** Image or icon shown in a round frame beside the title. */
 	icon?: ReactNode;
+	/** Category label shown under the title, after the status. */
 	category?: string;
+	/** Preformatted trading volume shown in the footer, e.g. "$2.4M". */
 	volume: string;
 	/** Chronological volume samples for the optional footer sparkline. */
 	volumeHistory?: number[];
 	/** A scheduled time or live match status. */
 	status?: string;
+	/** Show the status in red with a dot, for a match in progress. Default: false */
 	live?: boolean;
+	/** Outcomes listed with their probability, payout and trade button. */
 	outcomes: PredictionMarketCardOutcome[];
 	/** Called on each outcome CTA click; the card keeps no selected state. */
 	onOutcomeClick?: (value: PredictionMarketCardSelection) => void;
+	/** Whether the market is bookmarked, for controlled use. */
 	bookmarked?: boolean;
+	/** The initial bookmark state when uncontrolled. Default: false */
 	defaultBookmarked?: boolean;
+	/** Called with the new state when the bookmark button is pressed. */
 	onBookmarkChange?: (bookmarked: boolean) => void;
 	/** Override any built-in string. */
 	labels?: Partial<PredictionMarketCardMessages>;
+	/** Classes merged onto the root element. */
 	className?: string;
 }
 

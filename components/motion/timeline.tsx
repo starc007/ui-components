@@ -69,6 +69,7 @@ export type TimelineEvent = {
   id: string;
   /** ISO date string or Date. Read in UTC. */
   date: string | Date;
+  /** Card heading under the date, cut to 1 line. */
   title: string;
   /** Visual shown inside the card. Keep it non-interactive: the card itself
    * is the button. */
@@ -86,11 +87,13 @@ export const timelineMessages = {
 export type TimelineMessages = typeof timelineMessages;
 
 export interface TimelineProps {
+  /** The events, each shown as a card along the timeline. */
   events: TimelineEvent[];
   /** Focused event id (controlled). */
   value?: string;
   /** Initially focused event id (uncontrolled). Defaults to the first event. */
   defaultValue?: string;
+  /** Called with the event id when a different event comes into focus. */
   onValueChange?: (id: string) => void;
   /** Card width in px at full size. Shrinks to fit narrow containers. */
   itemWidth?: number;
@@ -102,11 +105,15 @@ export interface TimelineProps {
   ruler?: boolean;
   /** Lines fanning from the top and bottom center to the cards near the center. */
   cables?: boolean;
+  /** Formats the date on each card. Defaults to a short date like "Mar 4 ’24". */
   formatDate?: (date: Date) => string;
+  /** Formats the large year numerals. Defaults to a 2-digit year like "’24". */
   formatYear?: (date: Date) => string;
+  /** Accessible name for the timeline. Default: "Timeline" */
   "aria-label"?: string;
   /** Override any built-in string. */
   labels?: Partial<TimelineMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

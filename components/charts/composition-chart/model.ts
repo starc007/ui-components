@@ -1,6 +1,9 @@
 export interface CompositionSeries {
+  /** Unique key, used to highlight the series. Later duplicates are dropped. */
   id: string;
+  /** Series name shown in the legend and tooltip. */
   name: string;
+  /** CSS color for the series' area, legend swatch and tooltip dot. */
   color: string;
   /** Nonnegative values aligned with periods. Missing/invalid values leave a gap. */
   values: readonly (number | null)[];

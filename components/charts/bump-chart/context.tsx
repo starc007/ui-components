@@ -9,17 +9,22 @@ import { type BumpChartMessages, bumpChartMessages } from "./messages";
 import { type BumpSeries, buildBumpChart } from "./model";
 
 export interface BumpChartProps {
+  /** Lines to draw, each with one rank per period. Duplicate ids are dropped. */
   series: readonly BumpSeries[];
   /** Unique period labels, in chronological order. */
   periods: readonly string[];
   /** Pinned series ID. Null clears the selection. */
   active?: string | null;
+  /** The initial pinned series id when uncontrolled. Default: null */
   defaultActive?: string | null;
+  /** Called with the series id, or null, when the pinned series changes. */
   onActiveChange?: (id: string | null) => void;
+  /** Accessible name for the chart. Default: "Rankings over time" */
   label?: string;
   /** Override any built-in string. */
   labels?: Partial<BumpChartMessages>;
   children?: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

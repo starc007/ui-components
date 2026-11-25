@@ -1,4 +1,7 @@
-import { allComponents } from "../lib/registry";
+import { existsSync, readFileSync } from "node:fs";
+import { agentPicker, pickerSlugs } from "../lib/agent-picker";
+import { allComponents, INSTALL_SLUGS } from "../lib/registry";
+import { SKILL_PATH, syncedSkill } from "./sync-skill";
 import { componentAbout } from "../lib/component-about";
 import { componentDates } from "../lib/component-dates";
 import { componentSeo, SEO_DESCRIPTION_MAX, SEO_TITLE_MAX } from "../lib/component-seo";
@@ -9,6 +12,7 @@ import { allVariantPages } from "../lib/variant-pages";
 import { changelogEntries } from "../lib/changelog";
 import { allShadcnTargets, buildEntry, buildShadcnItem } from "../lib/registry-server";
 import { readSourceFile } from "../lib/source-files";
+import { getComponentProps, getReferencedTypes } from "../lib/props-extractor";
 import { redirectMatches, redirectSources } from "../lib/redirects";
 import { sitemap } from "../lib/sitemap";
 
@@ -211,6 +215,81 @@ for (const { url } of sitemap()) {
   for (const candidate of [path, `${path}.md`]) {
     const source = redirectSources().find((rule) => redirectMatches(rule, candidate));
     if (source) errors.push(`Redirect "${source}" shadows the page ${candidate}`);
+  }
+}
+
+// The code shown as a component's usage (the docs Usage tab, its Markdown and
+// what agents copy) must run in someone else's project: nothing from the site
+// chrome or the demo helpers. A preview that needs those sets `usageFile` to a
+// separate, plain composition instead.
+const SITE_ONLY_IMPORT = /from\s+["']@\/components\/(?:app|previews)\//;
+for (const component of allComponents()) {
+  const categorySlug = component.category.slug;
+  const targets = component.examples?.length
+    ? component.examples.map((example) => ({
+        label: `${categorySlug}/${component.slug}/${example.slug}`,
+        file: example.usageFile ?? example.previewFile,
+      }))
+    : [
+        {
+          label: `${categorySlug}/${component.slug}`,
+          file: component.usageFile ?? `components/previews/${categorySlug}/${component.slug}.preview.tsx`,
+        },
+      ];
+  for (const { label, file } of targets) {
+    if (!existsSync(file)) continue;
+    if (SITE_ONLY_IMPORT.test(readFileSync(file, "utf8"))) {
+      errors.push(
+        `${label}: usage code ${file} imports from the site or demo helpers; give it a plain usageFile`,
+      );
+    }
+  }
+}
+
+// Every prop, and every field of the data types props take (`CommandItem`),
+// carries a description: the API table, the Markdown, the registry JSON and
+// the MCP docs all show it, and an agent writing code against a component has
+// nothing else to go on. Add a one-line JSDoc comment on the member.
+const documentedFiles = new Set<string>();
+for (const component of allComponents()) {
+  const files = component.examples?.length
+    ? component.examples.map((example) => example.file)
+    : [component.file];
+  for (const file of files) {
+    if (documentedFiles.has(file) || file.startsWith("lib/sounds/")) continue;
+    documentedFiles.add(file);
+    for (const doc of getComponentProps(file)) {
+      for (const prop of doc.props) {
+        if (!prop.description) errors.push(`${file}: prop ${doc.displayName}.${prop.name} has no description`);
+      }
+    }
+    for (const type of getReferencedTypes(file)) {
+      for (const field of type.fields) {
+        if (!field.description) errors.push(`${type.file}: field ${type.name}.${field.name} has no description`);
+      }
+    }
+  }
+}
+
+// The beUI skill's picker and evals name install slugs an agent will run, so
+// every one must exist, and SKILL.md must carry the table lib/agent-picker.ts
+// generates (`bun scripts/sync-skill.ts` rewrites it).
+const installable = new Set(INSTALL_SLUGS);
+for (const row of agentPicker) {
+  for (const slug of pickerSlugs(row)) {
+    if (!installable.has(slug)) errors.push(`Skill picker "${row.ask}": "${slug}" is not an install slug`);
+  }
+}
+const skill = readFileSync(SKILL_PATH, "utf8");
+if (syncedSkill(skill) !== skill) {
+  errors.push(`${SKILL_PATH}: picker table is out of date; run bun scripts/sync-skill.ts`);
+}
+const skillEvals = JSON.parse(readFileSync("skills/beui/evals.json", "utf8")) as {
+  evals: { id: string; expected_slugs?: string[]; not_slugs?: string[] }[];
+};
+for (const item of skillEvals.evals) {
+  for (const slug of [...(item.expected_slugs ?? []), ...(item.not_slugs ?? [])]) {
+    if (!installable.has(slug)) errors.push(`Skill eval "${item.id}": "${slug}" is not an install slug`);
   }
 }
 
