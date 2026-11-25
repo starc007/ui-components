@@ -6,6 +6,7 @@ import { useFormatter, useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { ComponentGuide } from "@/components/app/docs/component-guide";
 import { CopyPage } from "@/components/app/docs/copy-page";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { InstallBlock } from "@/components/app/docs/install-block";
 import { KeepInMind } from "@/components/app/docs/keep-in-mind";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
@@ -208,14 +209,17 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
       <div id="overview" className="scroll-mt-24">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-medium tracking-tight text-foreground">
-                {comp.name}
-              </h1>
-              {comp.badge === "new" ? (
-                <NewBadge launchedAt={comp.launchedAt} className="mt-1" />
-              ) : null}
-            </div>
+            <AnchorHeading
+              as="h1"
+              headingClassName="text-3xl font-medium tracking-tight text-foreground"
+              trailing={
+                comp.badge === "new" ? (
+                  <NewBadge launchedAt={comp.launchedAt} className="mt-1 ml-1.5" />
+                ) : null
+              }
+            >
+              {comp.name}
+            </AnchorHeading>
             {data.summary ? (
               <p className="mt-2 max-w-xl text-pretty text-muted-foreground">{data.summary}</p>
             ) : null}
@@ -261,7 +265,9 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
       {!data.hasVariantInstallCommands ? (
         <section id="install" className="mt-12 scroll-mt-24 border-t border-border pt-8">
           <div className="min-w-0">
-            <h2 className="text-sm font-medium text-foreground">{t("install")}</h2>
+            <AnchorHeading section="install" headingClassName="text-sm font-medium text-foreground">
+              {t("install")}
+            </AnchorHeading>
             <p className="mt-1 text-sm text-muted-foreground">{t("installDescription")}</p>
             <div className="mt-3">
               <InstallBlock slug={comp.slug} manual={data.manual} />
@@ -272,9 +278,14 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
 
       {data.propsDocs.length ? (
         <section id="api-reference" className="mt-12 scroll-mt-24 border-t border-border pt-8">
-          <h2 className="text-sm font-medium text-foreground">{t("apiReference")}</h2>
+          <AnchorHeading
+            section="api-reference"
+            headingClassName="text-sm font-medium text-foreground"
+          >
+            {t("apiReference")}
+          </AnchorHeading>
           <div className="mt-4">
-            <PropsTable docs={data.propsDocs} />
+            <PropsTable docs={data.propsDocs} idPrefix="api-reference" />
           </div>
         </section>
       ) : null}

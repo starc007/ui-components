@@ -5,6 +5,7 @@ import { ArrowRight, Smartphone } from "lucide-react";
 import { useFormatter, useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { CopyPage } from "@/components/app/docs/copy-page";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { InstallBlock } from "@/components/app/docs/install-block";
 import { KeepInMind } from "@/components/app/docs/keep-in-mind";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
@@ -147,12 +148,17 @@ export function VariantPage({ data }: { data: VariantPageData }) {
       <div id="overview" className="scroll-mt-24">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-medium tracking-tight text-foreground">{data.name}</h1>
-              {example.badge === "new" ? (
-                <NewBadge launchedAt={example.launchedAt} className="mt-1" />
-              ) : null}
-            </div>
+            <AnchorHeading
+              as="h1"
+              headingClassName="text-3xl font-medium tracking-tight text-foreground"
+              trailing={
+                example.badge === "new" ? (
+                  <NewBadge launchedAt={example.launchedAt} className="mt-1 ml-1.5" />
+                ) : null
+              }
+            >
+              {data.name}
+            </AnchorHeading>
             {data.summary ? (
               <p className="mt-2 max-w-xl text-pretty text-muted-foreground">{data.summary}</p>
             ) : null}
@@ -183,7 +189,9 @@ export function VariantPage({ data }: { data: VariantPageData }) {
       </section>
 
       <section id="install" className="mt-12 scroll-mt-24 border-t border-border pt-8">
-        <h2 className="text-sm font-medium text-foreground">{t("install")}</h2>
+        <AnchorHeading section="install" headingClassName="text-sm font-medium text-foreground">
+          {t("install")}
+        </AnchorHeading>
         <p className="mt-1 text-sm text-muted-foreground">{t("installDescription")}</p>
         <div className="mt-3">
           <InstallBlock slug={data.installSlug} manual={data.manual} />
@@ -192,9 +200,14 @@ export function VariantPage({ data }: { data: VariantPageData }) {
 
       {data.propsDocs.length ? (
         <section id="api-reference" className="mt-12 scroll-mt-24 border-t border-border pt-8">
-          <h2 className="text-sm font-medium text-foreground">{t("apiReference")}</h2>
+          <AnchorHeading
+            section="api-reference"
+            headingClassName="text-sm font-medium text-foreground"
+          >
+            {t("apiReference")}
+          </AnchorHeading>
           <div className="mt-4">
-            <PropsTable docs={data.propsDocs} />
+            <PropsTable docs={data.propsDocs} idPrefix="api-reference" />
           </div>
         </section>
       ) : null}

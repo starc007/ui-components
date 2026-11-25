@@ -1,4 +1,5 @@
 import { useTranslations } from "use-intl";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { InstallBlock } from "@/components/app/docs/install-block";
 import { NewBadge } from "@/components/app/docs/new-badge";
 import { PreviewCard } from "@/components/app/docs/preview-card";
@@ -15,10 +16,17 @@ export function ExampleBlock({ data, showCredit }: { data: ExampleData; showCred
   return (
     <section id={example.slug} className="scroll-mt-24">
       <div className="mb-4 flex items-baseline justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-medium tracking-tight text-foreground">{example.name}</h2>
-          {example.badge === "new" ? <NewBadge launchedAt={example.launchedAt} /> : null}
-        </div>
+        <AnchorHeading
+          section={example.slug}
+          headingClassName="text-xl font-medium tracking-tight text-foreground"
+          trailing={
+            example.badge === "new" ? (
+              <NewBadge launchedAt={example.launchedAt} className="ml-0.5" />
+            ) : null
+          }
+        >
+          {example.name}
+        </AnchorHeading>
         <code className="rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
           {example.file.split("/").pop()}
         </code>
@@ -40,7 +48,12 @@ export function ExampleBlock({ data, showCredit }: { data: ExampleData; showCred
           id={`${example.slug}-install`}
           className="mt-8 min-w-0 scroll-mt-24 border-t border-border pt-8"
         >
-          <h2 className="text-sm font-medium text-foreground">{t("install")}</h2>
+          <AnchorHeading
+            section={`${example.slug}-install`}
+            headingClassName="text-sm font-medium text-foreground"
+          >
+            {t("install")}
+          </AnchorHeading>
           <div className="mt-3">
             <InstallBlock slug={example.installSlug} manual={manual} />
           </div>
@@ -51,9 +64,14 @@ export function ExampleBlock({ data, showCredit }: { data: ExampleData; showCred
           id={`${example.slug}-api-reference`}
           className="mt-8 min-w-0 scroll-mt-24 border-t border-border pt-8"
         >
-          <h2 className="text-sm font-medium text-foreground">{t("apiReference")}</h2>
+          <AnchorHeading
+            section={`${example.slug}-api-reference`}
+            headingClassName="text-sm font-medium text-foreground"
+          >
+            {t("apiReference")}
+          </AnchorHeading>
           <div className="mt-3">
-            <PropsTable docs={propsDocs} />
+            <PropsTable docs={propsDocs} idPrefix={`${example.slug}-api-reference`} />
           </div>
         </div>
       ) : null}

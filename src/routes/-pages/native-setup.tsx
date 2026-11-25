@@ -6,6 +6,7 @@ import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
 import { pageMetadata } from "@/lib/head";
@@ -133,7 +134,12 @@ function Code({ children }: { children: ReactNode }) {
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
     <section id={id} className="mt-10 scroll-mt-24">
-      <h2 className="text-xl font-medium tracking-tight text-foreground">{title}</h2>
+      <AnchorHeading
+        section={id}
+        headingClassName="text-xl font-medium tracking-tight text-foreground"
+      >
+        {title}
+      </AnchorHeading>
       {children}
     </section>
   );
@@ -185,9 +191,12 @@ function NativeSetupContent({ data }: { data: NativeSetupPageData }) {
           {t("header.eyebrow")}
         </p>
         <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <h1 className="text-3xl font-medium tracking-tight text-foreground">
+          <AnchorHeading
+            as="h1"
+            headingClassName="text-3xl font-medium tracking-tight text-foreground"
+          >
             {t("header.title")}
-          </h1>
+          </AnchorHeading>
           <CopyPage
             pageUrl={`${SITE_URL}${PAGE_PATH}`}
             markdownPath={`${PAGE_PATH}.md`}

@@ -6,6 +6,7 @@ import { useTranslations } from "use-intl";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
 import { pageMetadata } from "@/lib/head";
@@ -137,9 +138,12 @@ function AIAgentsContent({ data }: { data: AIAgentsPageData }) {
           {t("header.eyebrow")}
         </p>
         <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <h1 className="text-3xl font-medium tracking-tight text-foreground">
+          <AnchorHeading
+            as="h1"
+            headingClassName="text-3xl font-medium tracking-tight text-foreground"
+          >
             {t("header.title")}
-          </h1>
+          </AnchorHeading>
           <CopyPage
             pageUrl={`${SITE_URL}${PAGE_PATH}`}
             markdownPath={`${PAGE_PATH}.md`}
@@ -151,12 +155,13 @@ function AIAgentsContent({ data }: { data: AIAgentsPageData }) {
         </p>
       </header>
 
-      <h2
+      <AnchorHeading
         id="agent-skill"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+        className="mt-10"
+        headingClassName="text-xl font-medium tracking-tight text-foreground"
       >
         {t("agentSkill.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("agentSkill.body", { code })}
       </p>
@@ -164,12 +169,13 @@ function AIAgentsContent({ data }: { data: AIAgentsPageData }) {
         <CodeBlock {...blocks.skill} />
       </div>
 
-      <h2
+      <AnchorHeading
         id="mcp-server"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+        className="mt-10"
+        headingClassName="text-xl font-medium tracking-tight text-foreground"
       >
         {t("mcpServer.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("mcpServer.body", { code, url: MCP_URL })}
       </p>
@@ -184,12 +190,13 @@ function AIAgentsContent({ data }: { data: AIAgentsPageData }) {
         {t.rich("mcpServer.toolsWithNative", { code })}
       </p>
 
-      <h2
+      <AnchorHeading
         id="endpoints"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+        className="mt-10"
+        headingClassName="text-xl font-medium tracking-tight text-foreground"
       >
         {t("endpoints.title")}
-      </h2>
+      </AnchorHeading>
       <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
         {ENDPOINTS.map((e) => (
           <li
@@ -225,34 +232,37 @@ function AIAgentsContent({ data }: { data: AIAgentsPageData }) {
         ))}
       </ul>
 
-      <h2
+      <AnchorHeading
         id="agent-flow"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+        className="mt-10"
+        headingClassName="text-xl font-medium tracking-tight text-foreground"
       >
         {t("agentFlow.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">{t("agentFlow.body")}</p>
       <div className="mt-4">
         <CodeBlock {...blocks.fetchFlow} />
       </div>
 
-      <h2
+      <AnchorHeading
         id="shadcn-flow"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+        className="mt-10"
+        headingClassName="text-xl font-medium tracking-tight text-foreground"
       >
         {t("shadcnFlow.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">{t("shadcnFlow.body")}</p>
       <div className="mt-4">
         <CodeBlock {...blocks.shadcn} />
       </div>
 
-      <h2
+      <AnchorHeading
         id="entry-shape"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+        className="mt-10"
+        headingClassName="text-xl font-medium tracking-tight text-foreground"
       >
         {t("entryShape.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("entryShape.body", { code })}
       </p>
@@ -260,12 +270,13 @@ function AIAgentsContent({ data }: { data: AIAgentsPageData }) {
         <CodeBlock {...blocks.entryShape} />
       </div>
 
-      <h2
+      <AnchorHeading
         id="generative-ui"
-        className="mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground"
+        className="mt-10"
+        headingClassName="text-xl font-medium tracking-tight text-foreground"
       >
         {t("generativeUi.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("generativeUi.body", {
           link: (chunks) => (

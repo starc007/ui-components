@@ -118,6 +118,11 @@
     "copy": "Copy code",
     "copied": "Copied"
   },
+  "headingAnchor": {
+    "copy": "Copy link",
+    "copyAria": "Copy link to {section}",
+    "copied": "Link copied"
+  },
   "expandCode": "Expand Code",
   "copyPage": {
     "copy": "Copy Page",
