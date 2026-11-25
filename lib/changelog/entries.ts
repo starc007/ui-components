@@ -7,172 +7,35 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
  * internal work.
  */
 export const changelogEntries: ChangelogEntry[] = [
+  // Everything from 2026-11-24 until the v2 launch lives in this one entry.
+  // Move its date to the newest ship day, and fold new work into these lines
+  // rather than adding one per component.
   {
     "date": "2026-11-25",
-    "title": "Fixes and improvements",
-    "items": [
-      {
-        "type": "improved",
-        "text": "Smoother, snappier motion across components: instant from the keyboard, subtler presses and cleaner menus, selects and tooltips."
-      }
-    ]
-  },
-  {
-    "date": "2026-11-24",
-    "title": "Fixes and improvements",
+    "title": "beUI v2",
     "items": [
       {
         "type": "new",
-        "text": "Themes: pick a primary color and a base gray, see every component wear it in light and dark, and copy the CSS tokens or share the link.",
+        "text": "Themes: pick a primary color and a base gray, see every component in it, and copy the CSS tokens.",
         "href": "/themes"
       },
       {
         "type": "new",
-        "text": "Sounds: sixteen interface sounds synthesized live with Web Audio, from tap and type to success and error. Install one, or Sound Kit for all of them with the useSound hook. No audio files.",
+        "text": "Sounds: 16 interface sounds made live with Web Audio. Install one, or Sound Kit for all of them.",
         "href": "/sounds"
       },
       {
         "type": "new",
-        "text": "Button, Switch, Tabs, Dropdown Menu and Animated Toast Stack take a sound prop that plays the matching beUI sound. It is off by default."
-      },
-      {
-        "type": "new",
-        "text": "Seventeen Micro Interactions, Select, Morph Select, Combobox and all six Range Slider variants take the sound prop too: taps, drops and chimes that match each action, and a tick per slider step that rises toward the max.",
-        "href": "/micro-interactions"
-      },
-      {
-        "type": "new",
-        "text": "SoundProvider sets a volume for every beUI sound and can mute them all at once, including the casino games, Wheel Picker and Bookshelf.",
+        "text": "A sound prop on buttons, menus, selects, sliders and micro interactions, off by default, with SoundProvider for volume and mute.",
         "component": "sound-kit"
       },
       {
         "type": "improved",
-        "text": "Dropdown Menu, Context Menu, Select, Combobox, Multi Select and the Table menu open in panels with tighter 16px corners."
-      },
-      {
-        "type": "improved",
-        "text": "Morph Popover, and the popovers in Date Range Picker, Color Picker, Breadcrumb, Prompt Input and AI Sidebar, now use 16px corners to match the menus. Pass radius to Morph Popover for another size."
-      },
-      {
-        "type": "improved",
-        "text": "Morphing Modal, Center Morph Modal, Command Palette and Morphing Search open as dialogs with 16px corners, matching menus and popovers."
-      },
-      {
-        "type": "improved",
-        "text": "Bottom Sheet, the Swap token picker and the floating and inset Animated Sidebar use 16px corners. Drawer now rounds the two corners facing the page."
-      },
-      {
-        "type": "improved",
-        "text": "Dropdown Menu and Context Menu show the check for checkbox and radio items at the end of the row, so labels line up with the rest of the menu."
-      },
-      {
-        "type": "improved",
-        "text": "Range Slider and Ruler Slider draw their handle, fill and focus ring in the primary color, so they follow your theme. The default look is unchanged.",
-        "component": "range-slider"
-      },
-      {
-        "type": "improved",
-        "text": "Bloom Menu, Feedback Widget, OTP Input, Swap and Expandable Action Bar now use the shared beUI springs and curves, so they move like the rest of the library."
-      },
-      {
-        "type": "improved",
-        "text": "Icon-only action buttons show their name in a tooltip on hover and focus: Swap's reverse button, Prompt Input's send and stop, File Upload's retry and remove, the Date Range Picker's month arrows, Knockout Bracket's round arrows and File Diff's copy button."
+        "text": "Polished UI and motion across the library: instant from the keyboard, subtler presses, cleaner menus, selects and tooltips, and 16px corners on every floating panel."
       },
       {
         "type": "fixed",
-        "text": "Date Range Picker's month and year grids mark the choice with a compact pill instead of filling the whole cell, and months show short names. Screen readers still hear the full name.",
-        "component": "date-range-picker"
-      },
-      {
-        "type": "fixed",
-        "text": "Swap's quote spinner no longer scales in when reduced motion is on.",
-        "component": "swap"
-      },
-      {
-        "type": "improved",
-        "text": "Charts and the Prediction Market card show an en dash for a missing value."
-      },
-      {
-        "type": "fixed",
-        "text": "Before After Slider shows the before image correctly inside a scaled or zoomed container, where it used to clip to a small patch in the corner.",
-        "component": "before-after-slider"
-      },
-      {
-        "type": "fixed",
-        "text": "Overlays stack: a menu opened inside a Drawer, Bottom Sheet or modal keeps keyboard focus, and Escape closes only the innermost one."
-      },
-      {
-        "type": "fixed",
-        "text": "Command Palette keeps Tab inside the dialog and returns focus to where it was when it closes.",
-        "component": "command-palette"
-      },
-      {
-        "type": "improved",
-        "text": "Command Palette takes a className for its dialog panel.",
-        "component": "command-palette"
-      },
-      {
-        "type": "improved",
-        "text": "Context Menu leaves nothing on the page while closed, and folds back into the point it opened from a little faster than it grows.",
-        "component": "context-menu"
-      },
-      {
-        "type": "improved",
-        "text": "Combobox and Multi Select reveal their list with a clip instead of growing its height, so the panel never reflows while it opens."
-      },
-      {
-        "type": "improved",
-        "text": "Command Palette and Morphing Modal blur the page behind them a little less, which is lighter to render."
-      },
-      {
-        "type": "fixed",
-        "text": "Morph Select's rows stop taking clicks as soon as it starts closing.",
-        "component": "select"
-      },
-      {
-        "type": "fixed",
-        "text": "Open overlays share one scroll lock, so closing one never unlocks the page under another that is still open."
-      },
-      {
-        "type": "fixed",
-        "text": "Wheel Picker announces its current value to screen readers as a spin button, and its reduced-motion list marks the chosen row.",
-        "component": "wheel-picker"
-      },
-      {
-        "type": "fixed",
-        "text": "A nested SoundProvider overrides the one around it, and unmounting one no longer unmutes the page.",
-        "component": "sound-kit"
-      },
-      {
-        "type": "fixed",
-        "text": "Code Block, File Diff, Tool Result and Streaming Response say Copied only once the copy worked."
-      },
-      {
-        "type": "fixed",
-        "text": "Tool Result, Tool Approval, File Diff, Todo List and Agent Activity open and fold on a status change in the same frame, instead of one frame late."
-      },
-      {
-        "type": "fixed",
-        "text": "Streamed code in agent components no longer grows the highlight cache without limit."
-      },
-      {
-        "type": "fixed",
-        "text": "Collapsible agent panels keep their height while they close, so the closing reveal is seen instead of snapping shut."
-      },
-      {
-        "type": "fixed",
-        "text": "AI Sidebar shows controlled items in the first render after they change, and treats activeId null as controlled.",
-        "component": "ai-sidebar"
-      },
-      {
-        "type": "fixed",
-        "text": "Approval Card no longer auto-advances after its question changes or it stops waiting, and keeps both of two quick answers.",
-        "component": "approval-card"
-      },
-      {
-        "type": "fixed",
-        "text": "Message Scroller keeps following the output through a long smooth scroll.",
-        "component": "message-scroller"
+        "text": "Focus, overlay stacking, scroll lock and screen reader fixes across menus, dialogs, pickers and agent components."
       }
     ]
   },
@@ -215,7 +78,7 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
-        "text": "Before After Slider compares two images with a draggable divider that bends as it moves. Click to glide it, use the arrow keys, and swipe up or down on touch to scroll past it.",
+        "text": "Before After Slider compares 2 images with a draggable divider that bends as it moves. Click to glide it, use the arrow keys, and swipe up or down on touch to scroll past it.",
         "component": "before-after-slider"
       }
     ]
@@ -523,7 +386,7 @@ export const changelogEntries: ChangelogEntry[] = [
   {
     "date": "2026-10-16",
     "title": "React Native components arrive",
-    "summary": "beUI Native brings React Native versions of beUI components to the site, alongside two new charts and a broad keyboard and focus pass.",
+    "summary": "beUI Native brings React Native versions of beUI components to the site, alongside 2 new charts and a broad keyboard and focus pass.",
     "items": [
       {
         "type": "new",
