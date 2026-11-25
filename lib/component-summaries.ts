@@ -208,7 +208,7 @@ export const componentSummaries: Record<string, string> = {
   swap: "A cross-chain swap with chain and token pickers and a live quote.",
   "dynamic-island": "An iOS-style pill that morphs between live activity views.",
   "command-palette":
-    "A Cmd+K launcher with fuzzy search and a springy active row.",
+    "A Cmd+K launcher with fuzzy search, a gliding active row and key hints.",
   "morphing-search":
     "A search field or icon that morphs into a glass results panel.",
   "expandable-action-bar":

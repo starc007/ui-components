@@ -11,7 +11,7 @@ import { InstallBlock } from "@/components/app/docs/install-block";
 import { KeepInMind } from "@/components/app/docs/keep-in-mind";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
 import { NewBadge } from "@/components/app/docs/new-badge";
-import { PagePager } from "@/components/app/docs/page-pager";
+import { PagePager, PagePagerButtons } from "@/components/app/docs/page-pager";
 import { PropsTable } from "@/components/app/docs/props-table";
 import { type RelatedItem, RelatedSection } from "@/components/app/docs/related-section";
 import { getTranslations } from "@/i18n/server";
@@ -229,11 +229,16 @@ export function ComponentPage({ data }: { data: ComponentPageData }) {
               <CreditSummary groups={creditGroups} className="mt-3" />
             ) : null}
           </div>
-          <CopyPage
-            pageUrl={pageUrlFor(catSlug, comp.slug)}
-            markdownPath={`${componentPath(catSlug, comp.slug)}.md`}
-            componentName={data.englishName}
-          />
+          <div className="flex shrink-0 items-center gap-2">
+            <CopyPage
+              pageUrl={pageUrlFor(catSlug, comp.slug)}
+              markdownPath={`${componentPath(catSlug, comp.slug)}.md`}
+              componentName={data.englishName}
+            />
+            {/* Hidden on phones, as Copy Page is; the pager at the foot of
+                the page covers them. */}
+            <PagePagerButtons category={catSlug} slug={comp.slug} className="hidden sm:flex" />
+          </div>
         </div>
       </div>
 

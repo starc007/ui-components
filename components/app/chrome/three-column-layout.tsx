@@ -37,7 +37,8 @@ export function ThreeColumnLayout({
           </div>
         </div>
       ) : null}
-      <div className="min-w-0 pt-8 pb-8 md:pt-12">
+      {/* 16px under the header from md, level with both sidebars. */}
+      <div className="min-w-0 pt-6 pb-8 md:pt-4">
         {children}
         <DocsFooter />
       </div>

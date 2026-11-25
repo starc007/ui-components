@@ -725,6 +725,23 @@ const cases: Array<[name: string, render: () => ReactElement]> = [
     ),
   ],
   [
+    // Recents add a group to the list and a Clear recent button outside it.
+    "CommandPalette open with recent",
+    () => {
+      localStorage.setItem("a11y-command-recent", JSON.stringify(["docs"]));
+      return (
+        <CommandPalette
+          open
+          recent="a11y-command-recent"
+          items={[
+            { id: "docs", label: "Open documentation", group: "Pages", onSelect: () => {} },
+            { id: "settings", label: "Settings", group: "Pages", onSelect: () => {} },
+          ]}
+        />
+      );
+    },
+  ],
+  [
     "Select open",
     () => (
       <Select defaultValue="react" defaultOpen>
