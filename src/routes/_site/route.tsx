@@ -11,6 +11,7 @@ import { SiteFrame } from "@/components/app/chrome/site-frame";
 import { SiteHeader } from "@/components/app/chrome/site-header";
 import { SiteSoundProvider } from "@/components/app/chrome/site-sound";
 import { ThemeProvider } from "@/components/app/chrome/theme-provider";
+import { WebMcpTools } from "@/components/app/chrome/webmcp-tools";
 import { LOCALE, type SiteMessages } from "@/i18n/messages";
 import { clientMessages, getTranslations } from "@/i18n/server";
 import { type Metadata, metadataToHead } from "@/lib/head";
@@ -105,6 +106,7 @@ function SiteLayout({ children }: { children: ReactNode }) {
           <SiteSoundProvider>
             <JsonLd data={siteJsonLd()} />
             <KeyboardShortcuts />
+            <WebMcpTools />
             <NativeStrip />
             <SiteHeader />
             <main>

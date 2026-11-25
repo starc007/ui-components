@@ -3,6 +3,7 @@
 // robots.txt, social cards, `_redirects` and `_headers`. Cloudflare serves the
 // folder as static assets; worker/index.ts serves the /r and /native/r
 // endpoints from dist/client/__worker/routes.json so their headers stay exact.
+import { createHash } from "node:crypto";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Resvg } from "@resvg/resvg-js";
@@ -14,7 +15,7 @@ import { CHANGE_LABELS, CHANGELOG_PATH, changelogAnchor, changelogEntries, chang
 import { buildComponentMarkdown, buildVariantMarkdown } from "../lib/component-markdown";
 import { variantCopy } from "../lib/variant-copy";
 import { allVariantPages, docsPathFor, variantPath } from "../lib/variant-pages";
-import { componentPath } from "../lib/component-paths";
+import { categoryPath, componentPath } from "../lib/component-paths";
 import { buildGuideMarkdown, GUIDE_SLUGS } from "../lib/guide-markdown";
 import { native } from "../lib/native";
 import { buildNativeEntry, buildNativeIndex, NATIVE_HEADERS } from "../lib/native-registry";
@@ -285,10 +286,50 @@ async function buildLlmsFullTxt() {
   }
 }
 
+type RegistryIndex = Awaited<ReturnType<typeof buildIndex>>;
+
+/** One category's pages as a Markdown list, each split page with its variants under it. */
+function componentList(idx: RegistryIndex, categorySlug: string) {
+  const installList = (slugs: string[]) => slugs.map((slug) => `\`${slug}\``).join(", ");
+  return idx.components
+    .filter((c) => c.category === categorySlug)
+    .flatMap((c) => [
+      `- [${c.name}](${c.markdown_url}): ${c.description} Install: ${installList(c.install_slugs)}`,
+      ...[...variantPages]
+        .filter(([, v]) => v.category === c.category && v.comp.slug === c.slug)
+        .map(([pagePath, v]) => {
+          const copy = variantCopy[v.example.installSlug];
+          return `  - [${copy?.name ?? v.example.name}](${SITE_URL}${pagePath}.md): ${copy?.summary ?? v.example.description ?? ""} Install: \`${v.example.installSlug}\``;
+        }),
+    ]);
+}
+
+/** Each category page's Markdown twin: what the category holds and every page in it. */
+async function buildCategoryMarkdown() {
+  const idx = await registryIndex();
+  for (const category of registry) {
+    const list = componentList(idx, category.slug);
+    if (!list.length) continue;
+    await write(
+      `${categoryPath(category.slug)}.md`,
+      [
+        `# ${category.name}`,
+        "",
+        `> ${category.description}`,
+        "",
+        `Install any page with \`npx shadcn@latest add @beui/<install-slug>\`. Every page's full docs in one file: ${SITE_URL}/llms/${category.slug}.txt`,
+        "",
+        ...list,
+        "",
+      ].join("\n"),
+    );
+  }
+}
+
+/** llms.txt, which doubles as the home page's Markdown twin at /index.md. */
 async function buildLlmsTxt() {
   const idx = await registryIndex();
   const nativeIndex = buildNativeIndex();
-  const installList = (slugs: string[]) => slugs.map((slug) => `\`${slug}\``).join(", ");
   const lines = [
     `# ${idx.name}`,
     "",
@@ -321,23 +362,14 @@ async function buildLlmsTxt() {
     "## Components",
     "",
     ...registry.flatMap((category) => {
-      const pages = idx.components.filter((c) => c.category === category.slug);
-      if (!pages.length) return [];
+      const list = componentList(idx, category.slug);
+      if (!list.length) return [];
       return [
         `### ${category.name}`,
         "",
         `All ${category.name} docs in one file: ${SITE_URL}/llms/${category.slug}.txt`,
         "",
-        ...pages.flatMap((c) => [
-          `- [${c.name}](${c.markdown_url}): ${c.description} Install: ${installList(c.install_slugs)}`,
-          // A split page lists its variant pages under it.
-          ...[...variantPages]
-            .filter(([, v]) => v.category === c.category && v.comp.slug === c.slug)
-            .map(([pagePath, v]) => {
-              const copy = variantCopy[v.example.installSlug];
-              return `  - [${copy?.name ?? v.example.name}](${SITE_URL}${pagePath}.md): ${copy?.summary ?? v.example.description ?? ""} Install: \`${v.example.installSlug}\``;
-            }),
-        ]),
+        ...list,
         "",
       ];
     }),
@@ -389,6 +421,52 @@ async function buildLlmsTxt() {
     "",
   ];
   await write("/llms.txt", lines.join("\n"));
+  await write("/index.md", lines.join("\n"));
+}
+
+// ---------------------------------------------------------------------------
+// /.well-known: where agents look for the site's APIs and skills.
+
+/** RFC 9727 API catalog: the registry, the native registry and the MCP server. */
+function apiCatalog() {
+  const docs = [
+    { href: `${SITE_URL}/docs/ai-agents`, type: "text/html" },
+    { href: `${SITE_URL}/llms.txt`, type: "text/plain" },
+  ];
+  return {
+    linkset: [
+      { anchor: `${SITE_URL}/r`, "service-doc": docs },
+      { anchor: `${SITE_URL}/native/r`, "service-doc": docs },
+      { anchor: "https://mcp.beui.dev/mcp", "service-doc": docs },
+    ],
+  };
+}
+
+/** The beUI agent skill, published for Agent Skills discovery with its digest. */
+async function buildAgentSkills() {
+  const skill = await readFile("skills/beui/SKILL.md", "utf8");
+  const description = /^description:\s*(.+)$/m.exec(skill)?.[1]?.trim() ?? "";
+  const url = "/.well-known/agent-skills/beui/SKILL.md";
+  await write(url, skill);
+  await write(
+    "/.well-known/agent-skills/index.json",
+    JSON.stringify(
+      {
+        $schema: "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+        skills: [
+          {
+            name: "beui",
+            type: "skill-md",
+            description,
+            url,
+            digest: `sha256:${createHash("sha256").update(skill).digest("hex")}`,
+          },
+        ],
+      },
+      null,
+      2,
+    ),
+  );
 }
 
 /** RSS 2.0 feed of the changelog, one item per release. */
@@ -477,7 +555,17 @@ async function buildOgCards() {
 }
 
 /** Response headers for the static files (Cloudflare `_headers`). */
-const HEADERS = `/assets/*
+const HEADERS = `/
+  Link: </llms.txt>; rel="describedby"; type="text/plain", </index.md>; rel="alternate"; type="text/markdown", </.well-known/api-catalog>; rel="api-catalog", </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json", </docs/ai-agents>; rel="service-doc"
+
+/.well-known/api-catalog
+  Content-Type: application/linkset+json
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, HEAD, OPTIONS
+  Link: </.well-known/api-catalog>; rel="api-catalog"
+  Cache-Control: public, max-age=300, s-maxage=3600
+
+/assets/*
   Cache-Control: public, max-age=31536000, immutable
 
 /manifest.webmanifest
@@ -539,6 +627,9 @@ await buildRegistry();
 await buildMarkdownPages();
 await Promise.all([
   buildLlmsTxt(),
+  buildCategoryMarkdown(),
+  buildAgentSkills(),
+  write("/.well-known/api-catalog", JSON.stringify(apiCatalog(), null, 2)),
   buildLlmsFullTxt(),
   buildRss(),
   buildBlogRss(),
