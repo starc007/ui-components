@@ -188,7 +188,7 @@ const COMPONENT_DATES = {
   },
   "agents/streaming-response": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/image-generation": {
     publishedAt: "2026-08-02",

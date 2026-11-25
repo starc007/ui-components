@@ -16,6 +16,7 @@ import {
   CitationList,
   CitationStack,
 } from "@/components/agents/citations";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useCopy } from "@/lib/hooks/use-copy";
 import { useMessages } from "@/lib/i18n";
@@ -81,21 +82,43 @@ function ResponseAction({
   const reduce = useReducedMotion() ?? false;
 
   return (
-    <motion.button
-      type="button"
-      aria-label={label}
-      title={label}
-      aria-pressed={active}
-      onClick={onClick}
-      whileTap={reduce ? undefined : { scale: 0.9 }}
-      transition={SPRING_PRESS}
-      className={cn(
-        "grid size-7 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring",
-        active && "bg-muted text-foreground",
-      )}
-    >
-      {children}
-    </motion.button>
+    <Tooltip content={label} side="top">
+      <motion.button
+        type="button"
+        aria-label={label}
+        aria-pressed={active}
+        onClick={onClick}
+        whileTap={reduce ? undefined : { scale: 0.95 }}
+        transition={SPRING_PRESS}
+        className={cn(
+          // A foreground tint, not bg-muted: muted is the bubble colour, so a
+          // muted hover would vanish inside a soft bubble.
+          "grid size-7 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring",
+          active && "bg-foreground/[0.06] text-foreground",
+        )}
+      >
+        {children}
+      </motion.button>
+    </Tooltip>
+  );
+}
+
+/** Crossfades one action icon into another (copy into check). */
+function ActionIcon({ id, children }: { id: string; children: ReactNode }) {
+  const reduce = useReducedMotion() ?? false;
+  return (
+    <AnimatePresence mode="popLayout" initial={false}>
+      <motion.span
+        key={id}
+        initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
+        animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+        exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
+        transition={reduce ? { duration: 0.12 } : SPRING_SWAP}
+        className="grid place-items-center"
+      >
+        {children}
+      </motion.span>
+    </AnimatePresence>
   );
 }
 
@@ -185,11 +208,13 @@ export function StreamingResponse({
                   label={copied ? t("copied") : t("copy")}
                   onClick={handleCopy}
                 >
-                  {copied ? (
-                    <Check className="size-3.5" />
-                  ) : (
-                    <Copy className="size-3.5" />
-                  )}
+                  <ActionIcon id={copied ? "copied" : "copy"}>
+                    {copied ? (
+                      <Check className="size-3.5" />
+                    ) : (
+                      <Copy className="size-3.5" />
+                    )}
+                  </ActionIcon>
                 </ResponseAction>
               ) : null}
               {onRetry ? (
@@ -204,14 +229,23 @@ export function StreamingResponse({
                     active={currentFeedback === "up"}
                     onClick={() => setFeedback("up")}
                   >
-                    <ThumbsUp className="size-3.5" />
+                    {/* A chosen rating fills in, so the choice reads at a glance. */}
+                    <ActionIcon id={currentFeedback === "up" ? "up-on" : "up"}>
+                      <ThumbsUp
+                        className={cn("size-3.5", currentFeedback === "up" && "fill-current")}
+                      />
+                    </ActionIcon>
                   </ResponseAction>
                   <ResponseAction
                     label={t("notHelpful")}
                     active={currentFeedback === "down"}
                     onClick={() => setFeedback("down")}
                   >
-                    <ThumbsDown className="size-3.5" />
+                    <ActionIcon id={currentFeedback === "down" ? "down-on" : "down"}>
+                      <ThumbsDown
+                        className={cn("size-3.5", currentFeedback === "down" && "fill-current")}
+                      />
+                    </ActionIcon>
                   </ResponseAction>
                 </>
               ) : null}
@@ -249,7 +283,7 @@ export function StreamingResponse({
                 <CitationList
                   citations={sources}
                   idPrefix={resolvedSourcePrefix}
-                  className="mt-2 rounded-2xl bg-muted p-2"
+                  className="mt-2 rounded-2xl border border-border p-2"
                 />
               </AgentDisclosure>
             ) : null}
