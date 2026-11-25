@@ -94,7 +94,12 @@ export function getComponentProps(relFile: string): ComponentPropsDoc[] {
   const cached = cache.get(absPath);
   if (cached) return cached;
 
-  const docs = parser.parseWithProgramProvider([absPath], getProgram);
+  // docgen reads any exported function that takes an object as a component;
+  // components are PascalCase and hooks start with `use`, so a lowercase
+  // helper like `formatHex` is not part of the API.
+  const docs = parser
+    .parseWithProgramProvider([absPath], getProgram)
+    .filter((doc) => /^[A-Z]/.test(doc.displayName) || /^use[A-Z]/.test(doc.displayName));
   const result: ComponentPropsDoc[] = docs.map((doc) => ({
     displayName: doc.displayName,
     props: ownProps(Object.values(doc.props ?? {})).map((prop) => ({

@@ -10,6 +10,7 @@ import { allVariantPages } from "../lib/variant-pages";
 import { changelogEntries } from "../lib/changelog";
 import { allShadcnTargets, buildEntry, buildShadcnItem } from "../lib/registry-server";
 import { readSourceFile } from "../lib/source-files";
+import { getComponentProps, getReferencedTypes } from "../lib/props-extractor";
 import { redirectMatches, redirectSources } from "../lib/redirects";
 import { sitemap } from "../lib/sitemap";
 
@@ -239,6 +240,31 @@ for (const component of allComponents()) {
       errors.push(
         `${label}: usage code ${file} imports from the site or demo helpers; give it a plain usageFile`,
       );
+    }
+  }
+}
+
+// Every prop, and every field of the data types props take (`CommandItem`),
+// carries a description: the API table, the Markdown, the registry JSON and
+// the MCP docs all show it, and an agent writing code against a component has
+// nothing else to go on. Add a one-line JSDoc comment on the member.
+const documentedFiles = new Set<string>();
+for (const component of allComponents()) {
+  const files = component.examples?.length
+    ? component.examples.map((example) => example.file)
+    : [component.file];
+  for (const file of files) {
+    if (documentedFiles.has(file) || file.startsWith("lib/sounds/")) continue;
+    documentedFiles.add(file);
+    for (const doc of getComponentProps(file)) {
+      for (const prop of doc.props) {
+        if (!prop.description) errors.push(`${file}: prop ${doc.displayName}.${prop.name} has no description`);
+      }
+    }
+    for (const type of getReferencedTypes(file)) {
+      for (const field of type.fields) {
+        if (!field.description) errors.push(`${type.file}: field ${type.name}.${field.name} has no description`);
+      }
     }
   }
 }
