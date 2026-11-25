@@ -20,6 +20,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { MENU_ITEM_CLASS, MenuItemHighlight } from "@/components/motion/menu/menu-item-highlight";
 import { SPRING_MORPH } from "@/lib/ease";
 import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { type ListboxRow, useListbox } from "@/lib/hooks/use-listbox";
@@ -32,6 +33,12 @@ import { cn } from "@/lib/utils";
 
 // Shared-layout morph: trigger box grows into the panel and back, one surface.
 const MORPH = SPRING_MORPH;
+// The fold back into the trigger: shorter than the open and without bounce,
+// so the panel settles as it leaves instead of wobbling out. Local because it
+// only exists as this morph's close.
+const MORPH_CLOSE = { type: "spring", duration: 0.35, bounce: 0 } as const;
+// Opened or closed from the keyboard: no motion at all.
+const INSTANT = { duration: 0 } as const;
 // Trigger and panel header share this row so the morph stays seamless.
 const ROW = "flex h-10 w-full items-center justify-between gap-2 px-4 text-sm";
 // The closed trigger is a pill (half its h-10 height). The open panel is
@@ -51,14 +58,17 @@ const ITEM: Variants = {
 interface MorphContextValue {
   value: string | undefined;
   open: boolean;
-  setOpen: (open: boolean, quiet?: boolean) => void;
-  select: (value: string) => void;
+  /** `instant` skips the morph: the keyboard asked for it. */
+  setOpen: (open: boolean, quiet?: boolean, instant?: boolean) => void;
+  select: (value: string, instant?: boolean) => void;
+  /** Whether the latest open or close skips its animation. */
+  instant: boolean;
   register: (value: string, label: string, disabled: boolean) => void;
   unregister: (value: string) => void;
   labelFor: (value: string | undefined) => string | undefined;
   rows: ListboxRow[];
   /** Closes the panel; focus inside it returns to the trigger. */
-  close: (quiet?: boolean) => void;
+  close: (quiet?: boolean, instant?: boolean) => void;
   triggerRef: RefObject<HTMLButtonElement | null>;
   placeholder: string;
   setPlaceholder: (p: string) => void;
@@ -72,7 +82,19 @@ interface MorphContextValue {
 
 const MorphContext = createContext<MorphContextValue | null>(null);
 // The option keyboard focus is on, resolved during render by the content.
-const ActiveOptionContext = createContext<string | undefined>(undefined);
+// The active option (resolved during render by the content), whether its
+// highlight glides (after the pointer) or jumps (after a key), and how a
+// pointer resting on an option makes it the active one.
+interface ActiveOption {
+  activeId: string | undefined;
+  glide: boolean;
+  setActive: (id: string) => void;
+}
+const ActiveOptionContext = createContext<ActiveOption>({
+  activeId: undefined,
+  glide: true,
+  setActive: () => {},
+});
 // True inside the hidden copy that only keeps labels registered while closed.
 const RegistrarContext = createContext(false);
 
@@ -115,6 +137,7 @@ export function MorphSelect({
   // open, so focus can only go back once it has mounted again.
   const restoreFocus = useRef(false);
   const [open, setOpenState] = useState(false);
+  const [instant, setInstant] = useState(false);
   const [internal, setInternal] = useState(defaultValue);
   const playOpen = useSound(openSound, { enabled: sound });
   const playClose = useSound(closeSound, { enabled: sound });
@@ -122,10 +145,13 @@ export function MorphSelect({
 
   // `quiet` skips the close sweep when a pick already made its own sound.
   const setOpen = useCallback(
-    (next: boolean, quiet = false) => {
-      if (next !== open && !quiet) {
-        if (next) playOpen();
-        else playClose();
+    (next: boolean, quiet = false, now = false) => {
+      if (next !== open) {
+        if (!quiet) {
+          if (next) playOpen();
+          else playClose();
+        }
+        setInstant(now);
       }
       setOpenState(next);
     },
@@ -142,10 +168,10 @@ export function MorphSelect({
   const current = controlled ? value : internal;
 
   const close = useCallback(
-    (quiet = false) => {
+    (quiet = false, now = false) => {
       if (rootRef.current?.contains(document.activeElement))
         restoreFocus.current = true;
-      setOpen(false, quiet);
+      setOpen(false, quiet, now);
     },
     [setOpen],
   );
@@ -157,11 +183,11 @@ export function MorphSelect({
   }, [open]);
 
   const select = useCallback(
-    (next: string) => {
+    (next: string, now = false) => {
       playSelect();
       if (!controlled) setInternal(next);
       onValueChange?.(next);
-      close(true);
+      close(true, now);
     },
     [controlled, onValueChange, close, playSelect],
   );
@@ -184,8 +210,9 @@ export function MorphSelect({
     });
   }, []);
 
+  // Escape closes at once; an outside press folds the panel back.
   const dismiss = useCallback(
-    (reason: DismissReason) => (reason === "escape" ? close() : setOpen(false)),
+    (reason: DismissReason) => (reason === "escape" ? close(false, true) : setOpen(false)),
     [close, setOpen],
   );
   useDismiss(open, dismiss, rootRef);
@@ -206,6 +233,7 @@ export function MorphSelect({
       open,
       setOpen,
       select,
+      instant,
       register,
       unregister,
       labelFor: (v) => (v === undefined ? undefined : labels.get(v)?.label),
@@ -226,6 +254,7 @@ export function MorphSelect({
       open,
       setOpen,
       select,
+      instant,
       register,
       unregister,
       labels,
@@ -306,14 +335,17 @@ export function MorphSelectTrigger({
             aria-haspopup="listbox"
             aria-expanded={ctx.open}
             aria-controls={ctx.listId}
-            onClick={() => ctx.setOpen(true)}
+            // `detail` is 0 for a click the keyboard made (Enter, Space): no morph.
+            onClick={(event) => ctx.setOpen(true, false, event.detail === 0)}
             onKeyDown={(event) => {
               if (event.key === "ArrowDown" || event.key === "ArrowUp") {
                 event.preventDefault();
-                ctx.setOpen(true);
+                ctx.setOpen(true, false, true);
               }
             }}
-            transition={ctx.reduce ? { duration: 0 } : MORPH}
+            // The trigger is what the panel morphs back into, so its
+            // transition is the close.
+            transition={ctx.reduce || ctx.instant ? INSTANT : MORPH_CLOSE}
             style={{ borderRadius: TRIGGER_RADIUS }}
             className={cn(
               ROW,
@@ -348,12 +380,17 @@ export function MorphSelectContent({
   const ctx = useMorphContext("MorphSelectContent");
   const label = ctx.labelFor(ctx.value);
   const listRef = useRef<HTMLUListElement>(null);
-  const { activeId, onKeyDown } = useListbox({
+  const { activeId, onKeyDown, moveTo } = useListbox({
     open: ctx.open,
     rows: ctx.rows,
     selected: ctx.value,
     list: listRef,
   });
+  const [glide, setGlide] = useState(true);
+  const active = useMemo<ActiveOption>(
+    () => ({ activeId, glide, setActive: moveTo }),
+    [activeId, glide, moveTo],
+  );
   return (
     <>
       {/* always-mounted, hidden — keeps item label registrations alive while
@@ -367,10 +404,11 @@ export function MorphSelectContent({
           <motion.div
             key="panel"
             layoutId={ctx.layoutId}
-            transition={ctx.reduce ? { duration: 0 } : MORPH}
+            transition={ctx.reduce || ctx.instant ? INSTANT : MORPH}
             style={{ borderRadius: PANEL_RADIUS }}
             className={cn(
-              "pointer-events-none absolute inset-x-0 top-0 z-30 overflow-hidden border border-border bg-background shadow-lg",
+              // The same soft shadow as the menus, so floating lists read as one family.
+              "pointer-events-none absolute inset-x-0 top-0 z-30 overflow-hidden border border-border bg-background shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]",
               className,
             )}
           >
@@ -390,7 +428,7 @@ export function MorphSelectContent({
                     aria-haspopup="listbox"
                     aria-expanded
                     aria-controls={ctx.listId}
-                    onClick={() => ctx.close()}
+                    onClick={(event) => ctx.close(false, event.detail === 0)}
                     className={cn(ROW, "outline-none")}
                   >
                     <span
@@ -404,7 +442,7 @@ export function MorphSelectContent({
                     <motion.span
                       aria-hidden
                       animate={{ rotate: 180 }}
-                      transition={ctx.reduce ? { duration: 0 } : MORPH}
+                      transition={ctx.reduce || ctx.instant ? INSTANT : MORPH}
                       className="text-muted-foreground"
                     >
                       <ChevronDown className="h-4 w-4" />
@@ -413,7 +451,7 @@ export function MorphSelectContent({
 
                   <div className="h-px bg-border" />
 
-                  <ActiveOptionContext.Provider value={activeId}>
+                  <ActiveOptionContext.Provider value={active}>
                     <motion.ul
                       ref={listRef}
                       id={ctx.listId}
@@ -421,12 +459,19 @@ export function MorphSelectContent({
                       aria-labelledby={ctx.headerId}
                       initial="hidden"
                       animate="show"
-                      variants={ctx.reduce ? undefined : LIST}
+                      // The panel mounts fresh each open, so a keyboard open
+                      // can simply leave the stagger out.
+                      variants={ctx.reduce || ctx.instant ? undefined : LIST}
                       onKeyDown={(event) => {
+                        // Set before the key moves the active option, so its highlight jumps.
+                        setGlide(false);
                         if (event.key === "Tab") {
                           event.preventDefault();
-                          ctx.close();
+                          ctx.close(false, true);
                         } else onKeyDown(event);
+                      }}
+                      onPointerMove={(event) => {
+                        if (event.pointerType !== "touch") setGlide(true);
                       }}
                       className="p-2"
                     >
@@ -457,9 +502,10 @@ export function MorphSelectItem({
   children,
 }: MorphSelectItemProps) {
   const ctx = useMorphContext("MorphSelectItem");
-  const activeId = useContext(ActiveOptionContext);
+  const { activeId, glide, setActive } = useContext(ActiveOptionContext);
   const registrarOnly = useContext(RegistrarContext);
   const selected = ctx.value === value;
+  const active = activeId === value;
   const label = typeof children === "string" ? children : value;
 
   useLayoutEffect(() => {
@@ -471,27 +517,40 @@ export function MorphSelectItem({
   if (registrarOnly) return null;
 
   return (
-    <motion.li role="none" variants={ctx.reduce ? undefined : ITEM}>
+    <motion.li role="none" variants={ctx.reduce || ctx.instant ? undefined : ITEM}>
       <button
         type="button"
         role="option"
         aria-selected={selected}
         disabled={disabled}
         // One tab stop: the active option, which focus follows while open.
-        tabIndex={activeId === value ? 0 : -1}
+        tabIndex={active ? 0 : -1}
         data-listbox-id={value}
-        onClick={() => ctx.select(value)}
+        // A resting pointer makes this the active option, so the highlight
+        // follows the mouse the same way it follows the arrow keys.
+        onPointerMove={(event) => {
+          if (event.pointerType !== "touch" && !disabled && !active) setActive(value);
+        }}
+        // Enter or Space on the option (`detail` 0) closes without the morph.
+        onClick={(event) => ctx.select(value, event.detail === 0)}
         className={cn(
-          "flex w-full items-center justify-between gap-2 rounded-full px-3 py-1.5 text-left text-sm outline-none transition-colors",
-          selected
-            ? "bg-muted text-foreground"
-            : "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:bg-muted",
+          MENU_ITEM_CLASS,
+          "justify-between gap-2 text-foreground",
           "disabled:pointer-events-none disabled:opacity-50",
           className,
         )}
       >
-        {children}
-        {selected ? <Check className="h-3.5 w-3.5 shrink-0" /> : null}
+        {/* One highlight for the whole list: it glides after the pointer and
+            jumps after a key. The selected option is marked by its check. */}
+        {active && !disabled ? (
+          <MenuItemHighlight
+            layoutId={`${ctx.listId}-highlight`}
+            reduce={ctx.reduce}
+            instant={!glide}
+          />
+        ) : null}
+        <span className="flex min-w-0 flex-1 items-center gap-2">{children}</span>
+        {selected ? <Check aria-hidden="true" className="h-3.5 w-3.5 shrink-0" /> : null}
       </button>
     </motion.li>
   );

@@ -44,9 +44,9 @@ const COMPONENT_DATES = {
   "charts/line-chart": { publishedAt: "2026-10-27", updatedAt: "2026-11-24" },
   "charts/bar-chart": { publishedAt: "2026-10-27", updatedAt: "2026-11-24" },
   "charts/sparkline": { publishedAt: "2026-10-27", updatedAt: "2026-11-24" },
-  "casino/crash": { publishedAt: "2026-11-05", updatedAt: "2026-11-24" },
+  "casino/crash": { publishedAt: "2026-11-05", updatedAt: "2026-11-25" },
   "casino/mines": { publishedAt: "2026-11-05", updatedAt: "2026-11-24" },
-  "casino/slide-game": { publishedAt: "2026-11-06", updatedAt: "2026-11-24" },
+  "casino/slide-game": { publishedAt: "2026-11-06", updatedAt: "2026-11-25" },
   "casino/plinko": { publishedAt: "2026-11-03", updatedAt: "2026-11-24" },
   "blocks/card-dealer": { publishedAt: "2026-10-24", updatedAt: "2026-11-24" },
   "charts/sankey-chart": { publishedAt: "2026-10-22", updatedAt: "2026-11-24" },
@@ -91,7 +91,7 @@ const COMPONENT_DATES = {
   "motion/tabs": { publishedAt: "2026-05-17", updatedAt: "2026-11-24" },
   "motion/switch": { publishedAt: "2026-05-17", updatedAt: "2026-11-24" },
   "motion/input": { publishedAt: "2026-06-29", updatedAt: "2026-11-24" },
-  "motion/select": { publishedAt: "2026-06-28", updatedAt: "2026-11-24" },
+  "motion/select": { publishedAt: "2026-06-28", updatedAt: "2026-11-25" },
   "motion/combobox": { publishedAt: "2026-08-11", updatedAt: "2026-11-24" },
   "motion/multi-select": { publishedAt: "2026-08-29", updatedAt: "2026-11-24" },
   "motion/checkbox": { publishedAt: "2026-06-23", updatedAt: "2026-11-10" },
@@ -144,19 +144,19 @@ const COMPONENT_DATES = {
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/message-bubble": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/message": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/message-scroller": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/ai-sidebar": {
     publishedAt: "2026-08-02",
@@ -176,7 +176,7 @@ const COMPONENT_DATES = {
   },
   "agents/prompt-input": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/tool-result": {
     publishedAt: "2026-08-01",
@@ -211,7 +211,7 @@ const COMPONENT_DATES = {
   "blocks/project-folder": { publishedAt: "2026-08-15", updatedAt: "2026-11-24" },
   "blocks/card-folder": { publishedAt: "2026-09-04", updatedAt: "2026-11-10" },
   "blocks/knockout-bracket": { publishedAt: "2026-07-12", updatedAt: "2026-11-24" },
-  "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-11-24" },
+  "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-11-25" },
   "blocks/swap": { publishedAt: "2026-05-19", updatedAt: "2026-11-24" },
   "blocks/dynamic-island": { publishedAt: "2026-06-10", updatedAt: "2026-11-24" },
   "blocks/command-palette": { publishedAt: "2026-05-17", updatedAt: "2026-11-24" },
