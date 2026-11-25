@@ -81,7 +81,7 @@ export function SiteHeader() {
         </div>
 
         <nav className="flex items-center gap-2">
-          <SiteSearch className="w-9 shrink-0 justify-center px-0 lg:w-48 lg:justify-start lg:px-3 xl:w-60 [&>span]:hidden lg:[&>span]:block [&>kbd]:hidden lg:[&>kbd]:inline-block" />
+          <SiteSearch className="w-9 shrink-0 justify-center px-0 lg:w-48 lg:justify-start lg:pr-[5px] lg:pl-3 xl:w-60 [&>span]:hidden lg:[&>span]:block [&>kbd]:hidden lg:[&>kbd]:inline-flex" />
           <SoundToggle />
           <ThemeToggle />
           <PressLink
