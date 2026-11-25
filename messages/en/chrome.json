@@ -122,6 +122,17 @@
     "keysHint": "Press a key, or type b e u i",
     "keysHintTouch": "Tap a key"
   },
+  "proPopup": {
+    "title": "Enjoying beUI so far?",
+    "body": "Go further with Pro: 366+ premium blocks, full landing templates and 70+ mobile screens.",
+    "badge": "beUI Pro",
+    "saleBadge": "{percent}% off",
+    "cta": "Get Pro",
+    "lifetime": "lifetime",
+    "saleEnds": "until {end}",
+    "close": "Close",
+    "opensInNewTab": "(opens in a new tab)"
+  },
   "nativeStrip": {
     "label": "beUI Pro for mobile",
     "announcement": "beUI Pro for mobile is live<more>, with <strong>70+ React Native blocks and screens</strong></more>",
