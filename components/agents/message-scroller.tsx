@@ -1,6 +1,7 @@
 "use client";
 
-import { useReducedMotion } from "motion/react";
+import { ArrowDown } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   type ComponentPropsWithRef,
   type Ref,
@@ -14,11 +15,18 @@ import {
   PreviewRail,
   type PreviewRailItem,
 } from "@/components/motion/preview-rail";
+import { Tooltip } from "@/components/motion/tooltip";
+import { EASE_OUT } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
+// The jump button rises in from the bottom edge and drops back out, faster.
+const JUMP_IN = { duration: 0.2, ease: EASE_OUT } as const;
+const JUMP_OUT = { duration: 0.14, ease: EASE_OUT } as const;
+
 export const messageScrollerMessages = {
   label: "Conversation",
+  jumpToLatest: "Jump to latest",
   navigationLabel: "Message navigation",
   preview: "Message",
   goToUser: "Go to user message {index} of {total}",
@@ -101,6 +109,8 @@ export interface MessageScrollerProps extends ComponentPropsWithRef<"div"> {
   busy?: boolean;
   /** Adds a compact rail for navigating between rendered Message rows. */
   navigation?: "rail";
+  /** Shows a button back to the latest message once the reader scrolls up. Default true. */
+  jumpButton?: boolean;
   /** Accessible label for the optional message navigation rail. */
   navigationLabel?: string;
   viewportClassName?: string;
@@ -127,6 +137,7 @@ export function MessageScroller({
   label,
   busy,
   navigation,
+  jumpButton = true,
   navigationLabel,
   viewportClassName,
   contentClassName,
@@ -156,6 +167,8 @@ export function MessageScroller({
   const [railItems, setRailItems] = useState<PreviewRailItem[]>([]);
   const [activeRailId, setActiveRailId] = useState("");
   const [railOverflowing, setRailOverflowing] = useState(false);
+  // Mirrors followingRef for rendering: the jump button shows while false.
+  const [atLiveEdge, setAtLiveEdge] = useState(true);
   const {
     onScroll: onViewportScroll,
     onWheel: onViewportWheel,
@@ -180,6 +193,7 @@ export function MessageScroller({
     (next: boolean) => {
       if (followingRef.current === next) return;
       followingRef.current = next;
+      setAtLiveEdge(next);
       onFollowChange?.(next);
     },
     [onFollowChange],
@@ -505,10 +519,16 @@ export function MessageScroller({
     </section>
   );
 
+  const jumpToLatest = () => {
+    setFollowing(true);
+    scrollToEnd(reduce || !smooth ? "auto" : "smooth");
+  };
+  const showJump = jumpButton && followOutput && !atLiveEdge;
+
   return (
     <div
       data-slot="message-scroller"
-      className={cn("min-h-0", className)}
+      className={cn("relative min-h-0", className)}
       {...props}
     >
       {navigation === "rail" ? (
@@ -536,6 +556,31 @@ export function MessageScroller({
       ) : (
         viewport
       )}
+      {/* Back to the live edge, once the reader has scrolled away from it. */}
+      <AnimatePresence>
+        {showJump ? (
+          <motion.div
+            key="jump"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1, transition: JUMP_IN }}
+            exit={reduce ? { opacity: 0, transition: JUMP_OUT } : { opacity: 0, y: 8, scale: 0.95, transition: JUMP_OUT }}
+            className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center"
+          >
+            <Tooltip content={t("jumpToLatest")} side="top">
+              <button
+                type="button"
+                onClick={jumpToLatest}
+                aria-label={t("jumpToLatest")}
+                // Card fill and the strong border: it floats over messages
+                // that share the background, and must read as a control.
+                className="pointer-events-auto inline-flex size-8 items-center justify-center rounded-full border border-(--color-border-strong) bg-card text-muted-foreground shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)] outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.97]"
+              >
+                <ArrowDown aria-hidden="true" className="size-4" />
+              </button>
+            </Tooltip>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
