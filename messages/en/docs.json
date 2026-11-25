@@ -166,7 +166,9 @@
   "pager": {
     "label": "Previous and next components",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "previousNamed": "Previous: {name}",
+    "nextNamed": "Next: {name}"
   },
   "previewExpand": {
     "expand": "Expand preview",

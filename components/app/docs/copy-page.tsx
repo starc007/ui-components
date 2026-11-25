@@ -94,14 +94,14 @@ export function CopyPage({
 
   return (
     <div className="hidden shrink-0 whitespace-nowrap sm:block">
-      <div className="inline-flex rounded-full bg-muted/70">
+      <div className="inline-flex rounded-full bg-foreground/[0.06]">
         <button
           type="button"
           onClick={copyMarkdown}
           disabled={copyState === "copying"}
           aria-busy={copyState === "copying"}
           aria-label={copyAriaLabel}
-          className="inline-flex min-h-10 items-center gap-2 rounded-l-full pr-3 pl-4 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait sm:min-h-8 sm:px-2.5 sm:text-xs"
+          className="inline-flex min-h-10 items-center gap-2 rounded-l-full pr-3 pl-4 text-sm font-medium text-foreground outline-none transition-colors hover:bg-foreground/[0.05] focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-wait sm:min-h-8 sm:px-2.5 sm:text-xs"
         >
           {copyState === "copying" ? (
             <LoaderCircle className="h-3.5 w-3.5 motion-safe:animate-spin" aria-hidden="true" />
@@ -120,7 +120,7 @@ export function CopyPage({
           <button
             type="button"
             aria-label={t("moreActions")}
-            className="inline-flex min-h-10 w-11 items-center justify-center rounded-r-full pr-1 text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring sm:min-h-8 sm:w-8"
+            className="inline-flex min-h-10 w-11 items-center justify-center rounded-r-full pr-1 text-muted-foreground outline-none transition-colors hover:bg-foreground/[0.05] hover:text-foreground focus-visible:relative focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring sm:min-h-8 sm:w-8"
           >
             <ChevronDown
               className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")}
