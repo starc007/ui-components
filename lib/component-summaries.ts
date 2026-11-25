@@ -163,6 +163,7 @@ export const componentSummaries: Record<string, string> = {
     "A one-tap poll where bars race to their shares as totals count up.",
   "status-icon": "One icon that spins while syncing, then closes into its result.",
   confetti: "A confetti burst you call like a toast, from any button.",
+  "click-burst": "A burst of stars and dots from wherever you click.",
   "voice-orb": "A breathing liquid orb that reacts to voice level.",
   "voice-note": "A mic button that opens into a recording bar with a live waveform.",
   "message-bubble":

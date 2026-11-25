@@ -4075,6 +4075,27 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       },
     ],
   },
+  "click-burst": {
+    overview:
+      "Click Burst is a React click effect built with Framer Motion. Wrap any clickable element, such as a checkbox, a like button or a save button, and each click throws a small burst of four-point stars and dots from the exact point you clicked. The pieces pop out in a ring, spin and shrink as they slow, and fade, in about half a second. The child keeps all its own behaviour; Click Burst only listens for its clicks. Set enabled to burst on some clicks only, such as checking a task but not unchecking it.",
+    useWhen: [
+      "Ticking a task, finishing a step or completing a habit should feel rewarding.",
+      "A like, star or save button wants a small moment of delight.",
+      "A game, quiz or streak marks a correct answer.",
+    ],
+    accessibility:
+      "The burst is drawn on a layer that is hidden from assistive technology and never takes pointer events, so the wrapped control works and is announced exactly as before. A click from the keyboard bursts from the element's centre. With reduced motion nothing is drawn.",
+    faq: [
+      {
+        question: "How do I burst only when a checkbox is checked?",
+        answer: "Pass enabled={!checked}. The value is read at the moment of the click, before the checkbox changes, so checking bursts and unchecking does not.",
+      },
+      {
+        question: "Can I change the colours and size?",
+        answer: "Pass colors as CSS colours, count for the number of pieces and spread for how far they fly in px. Set origin to center to burst from the middle instead of the click point.",
+      },
+    ],
+  },
   confetti: {
     overview:
       "Confetti is a confetti burst for React success moments that you call like a toast: confetti() from any event handler, with no provider, hook or element to mount. A burst blooms out of a button or a point: the pieces pop up and slow in the air, then tumble and sway as they drift down at a gentle, capped speed, and fade out. It draws on one canvas over the page that exists only while pieces are in the air, and overlapping bursts share it.",

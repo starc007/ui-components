@@ -1791,6 +1791,17 @@ export const registry: CategoryEntry[] = [
         launchedAt: "2026-11-25",
         keywords: ["react confetti", "confetti animation", "confetti burst", "celebration effect", "success confetti"],
       },
+      {
+        slug: "click-burst",
+        name: "Click Burst",
+        description:
+          "Wrap any clickable element and each click throws a small burst of stars and dots from the point you click: a moment of delight on a check, a like or a save.",
+        file: "components/motion/click-burst.tsx",
+        usageFile: "components/previews/micro-interactions/click-burst.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-11-25",
+        keywords: ["click burst react", "click particles", "sparkle click effect", "checkbox celebration", "click animation"],
+      },
     ],
   },
   {
