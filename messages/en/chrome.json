@@ -41,6 +41,7 @@
   },
   "mobileNav": {
     "open": "Open navigation",
+    "close": "Close navigation",
     "title": "Menu"
   },
   "theme": {

@@ -1,13 +1,14 @@
 "use client";
 
-import { Menu } from "lucide-react";
-import { useTranslations } from "use-intl";
+import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { SidebarNav } from "@/components/app/chrome/site-sidebar";
-import { BottomSheet } from "@/components/motion/bottom-sheet";
-import { Button } from "@/components/motion/button";
+import { createPortal } from "react-dom";
+import { useTranslations } from "use-intl";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
-import { Link, usePathname } from "@/lib/navigation";
+import { SidebarNav } from "@/components/app/chrome/site-sidebar";
+import { Button } from "@/components/motion/button";
+import { Drawer } from "@/components/motion/drawer";
+import { Tooltip } from "@/components/motion/tooltip";
 import {
   categoryPath,
   hasPlatformSwitch,
@@ -17,17 +18,24 @@ import {
   TOP_LEVEL_CATEGORIES,
   topLevelCategory,
 } from "@/lib/component-paths";
+import { Link, usePathname } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
-/** Mobile nav: a header hamburger that opens the sidebar list in beUI's own bottom sheet. */
+type Section = { href: string; label: string; active: boolean };
+
+/** Mobile nav: a header hamburger that opens the site navigation in a drawer from the left. */
 export function MobileNav() {
   const t = useTranslations("Chrome");
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const sidebarPage = hasSiteSidebar(pathname);
+  const platformSwitch = hasPlatformSwitch(pathname);
 
-  // Covers navigation that doesn't go through a sheet link (back/forward).
-  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger — close the sheet on any route change.
+  useEffect(() => setMounted(true), []);
+
+  // Covers navigation that doesn't go through a drawer link (back/forward).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger — close the drawer on any route change.
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -43,6 +51,38 @@ export function MobileNav() {
     return () => desktop.removeEventListener("change", closeOnDesktop);
   }, [open, sidebarPage]);
 
+  const sections: Section[] = [
+    {
+      href: "/components/motion",
+      label: t("header.components"),
+      active: pathname.startsWith("/components/motion"),
+    },
+    {
+      href: "/components/blocks",
+      label: t("header.blocks"),
+      active: pathname.startsWith("/components/blocks"),
+    },
+    {
+      href: "/components/agents",
+      label: t("header.agents"),
+      active: pathname.startsWith("/components/agents"),
+    },
+    ...TOP_LEVEL_CATEGORIES.map((slug) => ({
+      href: categoryPath(slug),
+      label: t(`header.${slug as "charts" | "casino" | "micro-interactions" | "sounds"}`),
+      active: topLevelCategory(pathname) === slug,
+    })),
+    // The platform switch above the list already leads there.
+    ...(platformSwitch
+      ? []
+      : [{ href: NATIVE_PATH, label: "React Native", active: isNativePath(pathname) }]),
+    { href: "/playground", label: t("header.playground"), active: pathname.startsWith("/playground") },
+    { href: "/themes", label: t("header.themes"), active: pathname.startsWith("/themes") },
+    { href: "/sponsors", label: t("header.sponsors"), active: pathname.startsWith("/sponsors") },
+  ];
+
+  const close = () => setOpen(false);
+
   return (
     <div className={sidebarPage ? "md:hidden" : "xl:hidden"}>
       <Button
@@ -56,119 +96,75 @@ export function MobileNav() {
       >
         <Menu className="h-5 w-5" />
       </Button>
-      <BottomSheet
-        open={open}
-        onOpenChange={setOpen}
-        title={t("mobileNav.title")}
-        snapPoints={[0.85]}
-      >
-        <div className="flex flex-col gap-5 pt-2">
-          {/* The list below follows the platform, so pick it here too. */}
-          {hasPlatformSwitch(pathname) ? <PlatformSwitch layout="block" /> : null}
-          <nav className="flex flex-wrap gap-1">
-            <Link
-              href="/components/motion"
-              onClick={() => setOpen(false)}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-sm transition-colors",
-                pathname.startsWith("/components/motion")
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
+      {/* Portalled: the scrolled header's backdrop blur would otherwise
+          become the containing block of the drawer's fixed layers. */}
+      {mounted
+        ? createPortal(
+            <Drawer
+              side="left"
+              open={open}
+              onOpenChange={setOpen}
+              ariaLabel={t("mobileNav.title")}
+              className="w-72 shadow-none"
             >
-              {t("header.components")}
-            </Link>
-            <Link
-              href="/components/blocks"
-              onClick={() => setOpen(false)}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-sm transition-colors",
-                pathname.startsWith("/components/blocks")
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t("header.blocks")}
-            </Link>
-            <Link
-              href="/components/agents"
-              onClick={() => setOpen(false)}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-sm transition-colors",
-                pathname.startsWith("/components/agents")
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t("header.agents")}
-            </Link>
-            {TOP_LEVEL_CATEGORIES.map((slug) => (
-              <Link
-                key={slug}
-                href={categoryPath(slug)}
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "rounded-full px-3 py-1.5 text-sm transition-colors",
-                  topLevelCategory(pathname) === slug
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {t(`header.${slug as "charts" | "casino" | "micro-interactions" | "sounds"}`)}
-              </Link>
-            ))}
-            <Link
-              href={NATIVE_PATH}
-              onClick={() => setOpen(false)}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-sm transition-colors",
-                isNativePath(pathname)
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              React Native
-            </Link>
-            <Link
-              href="/playground"
-              onClick={() => setOpen(false)}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-sm transition-colors",
-                pathname.startsWith("/playground")
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t("header.playground")}
-            </Link>
-            <Link
-              href="/themes"
-              onClick={() => setOpen(false)}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-sm transition-colors",
-                pathname.startsWith("/themes")
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t("header.themes")}
-            </Link>
-            <Link
-              href="/sponsors"
-              onClick={() => setOpen(false)}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-sm transition-colors",
-                pathname.startsWith("/sponsors")
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t("header.sponsors")}
-            </Link>
-          </nav>
-          <SidebarNav onNavigate={() => setOpen(false)} />
-        </div>
-      </BottomSheet>
+              <div className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border px-4">
+                <Link
+                  href="/"
+                  onClick={close}
+                  className="flex items-center gap-2.5 text-sm font-medium tracking-tight text-foreground"
+                >
+                  <img
+                    src="/beui-mark.png"
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="h-6 w-6 rounded-lg"
+                  />
+                  <span>beUI</span>
+                </Link>
+                <Tooltip content={t("mobileNav.close")} side="bottom">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full"
+                    onClick={close}
+                    aria-label={t("mobileNav.close")}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </Tooltip>
+              </div>
+
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pt-3 pb-8">
+                {/* The list below follows the platform, so pick it here too. */}
+                {platformSwitch ? (
+                  <PlatformSwitch layout="block" className="mb-3" />
+                ) : null}
+                <nav aria-label={t("mobileNav.title")} className="grid grid-cols-2 gap-0.5">
+                  {sections.map((section) => (
+                    <Link
+                      key={section.href}
+                      href={section.href}
+                      onClick={close}
+                      aria-current={section.active ? "page" : undefined}
+                      className={cn(
+                        "flex h-9 items-center truncate rounded-lg px-3 text-sm transition-colors",
+                        section.active
+                          ? "bg-foreground/[0.06] font-medium text-foreground"
+                          : "text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
+                      )}
+                    >
+                      {section.label}
+                    </Link>
+                  ))}
+                </nav>
+                <div className="my-3 h-px bg-border" />
+                <SidebarNav onNavigate={close} />
+              </div>
+            </Drawer>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }
