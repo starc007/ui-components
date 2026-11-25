@@ -79,6 +79,16 @@ function ownProps(props: docgen.PropItem[]): docgen.PropItem[] {
 
 const cache = new Map<string, ComponentPropsDoc[]>();
 
+// Props that come from React's own types carry no JSDoc in this repo; these
+// say what they do in beUI terms so no row of the API table is blank.
+const COMMON_PROP_DESCRIPTIONS: Record<string, string> = {
+  children: "Content rendered inside the component.",
+  className: "Classes merged onto the root element.",
+  style: "Inline styles for the root element.",
+  ref: "Ref to the root element.",
+  id: "Id for the root element.",
+};
+
 export function getComponentProps(relFile: string): ComponentPropsDoc[] {
   const absPath = path.join(PROJECT_ROOT, relFile);
   const cached = cache.get(absPath);
@@ -92,9 +102,126 @@ export function getComponentProps(relFile: string): ComponentPropsDoc[] {
       type: formatType(prop),
       required: prop.required,
       defaultValue: (prop.defaultValue?.value as string | undefined) ?? null,
-      description: prop.description || "",
+      description: prop.description || COMMON_PROP_DESCRIPTIONS[prop.name] || "",
     })),
   }));
   cache.set(absPath, result);
+  return result;
+}
+
+export type TypeFieldDoc = {
+  name: string;
+  type: string;
+  required: boolean;
+  description: string;
+};
+
+/** An object type a component's props refer to, such as `CommandItem`. */
+export type ReferencedTypeDoc = {
+  name: string;
+  fields: TypeFieldDoc[];
+};
+
+const typeCache = new Map<string, ReferencedTypeDoc[]>();
+
+/** Object-shaped interfaces and type aliases declared in one source file. */
+function objectTypeDeclarations(source: ts.SourceFile) {
+  const found = new Map<string, ts.InterfaceDeclaration | ts.TypeLiteralNode>();
+  for (const statement of source.statements) {
+    if (ts.isInterfaceDeclaration(statement)) found.set(statement.name.text, statement);
+    else if (ts.isTypeAliasDeclaration(statement) && ts.isTypeLiteralNode(statement.type)) {
+      found.set(statement.name.text, statement.type);
+    }
+  }
+  return found;
+}
+
+/** The repo's own files a source file imports from (not node_modules). */
+function importedRepoFiles(source: ts.SourceFile, checker: ts.TypeChecker) {
+  const files: ts.SourceFile[] = [];
+  for (const statement of source.statements) {
+    if (!ts.isImportDeclaration(statement) && !ts.isExportDeclaration(statement)) continue;
+    const specifier = statement.moduleSpecifier;
+    if (!specifier) continue;
+    const declaration = checker.getSymbolAtLocation(specifier)?.valueDeclaration;
+    const file = declaration?.getSourceFile();
+    if (file && !file.isDeclarationFile && !file.fileName.includes("node_modules")) files.push(file);
+  }
+  return files;
+}
+
+function fieldsOf(
+  node: ts.InterfaceDeclaration | ts.TypeLiteralNode,
+  checker: ts.TypeChecker,
+): TypeFieldDoc[] {
+  const fields: TypeFieldDoc[] = [];
+  for (const member of node.members) {
+    if (!ts.isPropertySignature(member) && !ts.isMethodSignature(member)) continue;
+    const symbol = member.name ? checker.getSymbolAtLocation(member.name) : undefined;
+    const description = symbol
+      ? ts.displayPartsToString(symbol.getDocumentationComment(checker)).trim()
+      : "";
+    const type = ts.isPropertySignature(member)
+      ? (member.type?.getText() ?? "unknown")
+      : `(${member.parameters.map((p) => p.getText()).join(", ")}) => ${member.type?.getText() ?? "void"}`;
+    fields.push({
+      name: member.name.getText(),
+      type: type.replace(/\s+/g, " "),
+      required: !member.questionToken,
+      description,
+    });
+  }
+  return fields;
+}
+
+/**
+ * The object types a component's props name, with their fields, so docs can
+ * say what goes in `items: CommandItem[]`. Looks in the component file and the
+ * repo files it imports, and follows types those fields name in turn, two
+ * levels deep. Props types themselves and string unions are left out: the
+ * props table covers the first, and the type column already spells out the
+ * second.
+ */
+export function getReferencedTypes(relFile: string): ReferencedTypeDoc[] {
+  const absPath = path.join(PROJECT_ROOT, relFile);
+  const cached = typeCache.get(absPath);
+  if (cached) return cached;
+
+  const program = getProgram();
+  const checker = program.getTypeChecker();
+  const source = program.getSourceFile(absPath);
+  if (!source) return [];
+
+  const declarations = new Map(objectTypeDeclarations(source));
+  for (const file of importedRepoFiles(source, checker)) {
+    for (const [name, node] of objectTypeDeclarations(file)) {
+      if (!declarations.has(name)) declarations.set(name, node);
+    }
+  }
+
+  const named = (text: string) =>
+    [...declarations.keys()].filter(
+      (name) => !name.endsWith("Props") && !name.endsWith("Messages") && new RegExp(`\\b${name}\\b`).test(text),
+    );
+
+  const propTypes = getComponentProps(relFile).flatMap((doc) => doc.props.map((prop) => prop.type));
+  const result: ReferencedTypeDoc[] = [];
+  const seen = new Set<string>();
+  let frontier = named(propTypes.join(" "));
+  for (let depth = 0; depth < 2 && frontier.length; depth++) {
+    const next: string[] = [];
+    for (const name of frontier) {
+      if (seen.has(name)) continue;
+      seen.add(name);
+      const node = declarations.get(name);
+      if (!node) continue;
+      const fields = fieldsOf(node, checker);
+      if (!fields.length) continue;
+      result.push({ name, fields });
+      next.push(...named(fields.map((field) => field.type).join(" ")));
+    }
+    frontier = next;
+  }
+  typeCache.set(absPath, result);
   return result;
 }

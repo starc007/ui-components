@@ -1,6 +1,7 @@
 import { componentAbout } from "@/lib/component-about";
 import { componentDates } from "@/lib/component-dates";
-import { getComponentProps } from "@/lib/props-extractor";
+import type { AgentGuide } from "@/lib/agent-guides";
+import { getComponentProps, getReferencedTypes } from "@/lib/props-extractor";
 import { soundApiDocs } from "@/lib/sound-api-docs";
 import { findCategory, findComponent, type ComponentExample } from "@/lib/registry";
 import { buildEntry } from "@/lib/registry-server";
@@ -49,14 +50,84 @@ function apiReference(file: string) {
   return lines.length > 2 ? lines : [];
 }
 
+/** The object types the props name (e.g. `CommandItem`), field by field. */
+function typesReference(files: string[]) {
+  const seen = new Set<string>();
+  const lines: string[] = [];
+  for (const file of files) {
+    if (file.startsWith("lib/sounds/")) continue;
+    for (const type of getReferencedTypes(file)) {
+      if (seen.has(type.name)) continue;
+      seen.add(type.name);
+      lines.push(`### ${type.name}`, "");
+      lines.push("| Field | Type | Required | Description |");
+      lines.push("| --- | --- | --- | --- |");
+      for (const field of type.fields) {
+        lines.push(
+          `| \`${field.name}\` | \`${escapeTableCell(field.type)}\` | ${field.required ? "Yes" : "No"} | ${
+            escapeTableCell(field.description) || "—"
+          } |`,
+        );
+      }
+      lines.push("");
+    }
+  }
+  return lines;
+}
+
+/** How the parts fit together, for components that ship a composition guide. */
+function compositionSection(guide: AgentGuide | undefined) {
+  if (!guide) return [];
+  return [
+    "## Composition",
+    "",
+    guide.composition.description,
+    "",
+    "```text",
+    guide.composition.tree.trim(),
+    "```",
+    "",
+    ...guide.connections.map((connection) => `- \`${connection.slug}\`: ${connection.description}`),
+    ...(guide.connections.length ? [""] : []),
+    "### How it works",
+    "",
+    guide.introduction,
+    "",
+    ...guide.lifecycle.map((stage) => `- **${stage.title}.** ${stage.description}`),
+    "",
+    "### What it owns and what it leaves to you",
+    "",
+    `- **Owns:** ${guide.contract.owns}`,
+    `- **Leaves to the app:** ${guide.contract.leaves}`,
+    "",
+    "### Principles",
+    "",
+    ...guide.principles.map((principle) => `- **${principle.title}.** ${principle.description}`),
+    "",
+    "### Use it when",
+    "",
+    guide.guidance.useWhen,
+    "",
+    "### Avoid it when",
+    "",
+    guide.guidance.avoidWhen,
+    "",
+  ];
+}
+
+/**
+ * An example's usage code: its public composition (`usageFile`) when it has
+ * one, the same file the docs page's Usage tab shows, else its preview.
+ */
 async function usageSection(example: ComponentExample) {
-  const usage = await readOptionalSourceFile(example.previewFile);
+  const file = example.usageFile ?? example.previewFile;
+  const usage = await readOptionalSourceFile(file);
   if (!usage) return [];
   return [
     `### ${example.name} usage`,
     "",
     ...(example.description ? [example.description, ""] : []),
-    `\`\`\`${codeLanguage(example.previewFile)}`,
+    `\`\`\`${codeLanguage(file)}`,
     usage.trim(),
     "```",
     "",
@@ -133,10 +204,11 @@ export async function buildComponentMarkdown(
   if (examples.length) {
     for (const example of examples) lines.push(...(await usageSection(example)));
   } else {
-    const previewFile = `components/previews/${categorySlug}/${component.slug}.preview.tsx`;
-    const usage = await readOptionalSourceFile(previewFile);
+    const usageFile =
+      component.usageFile ?? `components/previews/${categorySlug}/${component.slug}.preview.tsx`;
+    const usage = await readOptionalSourceFile(usageFile);
     if (usage) {
-      lines.push(`\`\`\`${codeLanguage(previewFile)}`, usage.trim(), "```", "");
+      lines.push(`\`\`\`${codeLanguage(usageFile)}`, usage.trim(), "```", "");
     } else {
       lines.push(`See the live example at ${pageUrl}.`, "");
     }
@@ -147,6 +219,9 @@ export async function buildComponentMarkdown(
     : [component.file];
   const apiLines = apiFiles.flatMap((file) => apiReference(file));
   if (apiLines.length) lines.push("## API Reference", "", ...apiLines);
+  const typeLines = typesReference(apiFiles);
+  if (typeLines.length) lines.push("## Types", "", ...typeLines);
+  lines.push(...compositionSection(component.guide));
 
   const about = componentAbout[component.slug];
   if (about) {
@@ -253,6 +328,8 @@ export async function buildVariantMarkdown(
 
   const apiLines = apiReference(example.file);
   if (apiLines.length) lines.push("## API Reference", "", ...apiLines);
+  const typeLines = typesReference([example.file]);
+  if (typeLines.length) lines.push("## Types", "", ...typeLines);
 
   const siblings = (comp.examples ?? []).filter((candidate) => candidate.slug !== example.slug);
   if (siblings.length) {
