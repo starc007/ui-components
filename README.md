@@ -88,6 +88,8 @@ See the [AI agents guide](https://beui.dev/docs/ai-agents) for client setup. You
 npx skills add starc007/ui-components --skill beui
 ```
 
+Agents working in a browser tab can use [WebMCP](https://beui.dev/docs/ai-agents#webmcp) instead of reading the page. Where the browser supports it, every page on beui.dev registers read-only tools on `document.modelContext`: `search_components`, `get_component_docs`, `get_install_command` and `read_page`.
+
 For direct access without MCP:
 
 | Endpoint | Contents |
@@ -96,6 +98,9 @@ For direct access without MCP:
 | [`/r/registry.json`](https://beui.dev/r/registry.json) | Installable component catalog |
 | `/r/{slug}.json` | shadcn-compatible registry item with source and dependencies |
 | `/r/{slug}/raw` | Raw component source |
+| `{page}.md` | Any docs page as Markdown, linked from the page |
+| [`/.well-known/api-catalog`](https://beui.dev/.well-known/api-catalog) | API catalog (RFC 9727) |
+| [`/.well-known/agent-skills/index.json`](https://beui.dev/.well-known/agent-skills/index.json) | Agent skill index |
 
 ## Run locally
 
