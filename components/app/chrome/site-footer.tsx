@@ -1,7 +1,7 @@
 import { Mail } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { useTranslations } from "use-intl";
-import { GithubIcon } from "@/components/app/icons";
+import { GithubIcon, XIcon } from "@/components/app/icons";
 import { Tooltip } from "@/components/motion/tooltip";
 import { FooterWordmark } from "./footer-wordmark";
 import { categoryPath, NATIVE_PATH } from "@/lib/component-paths";
@@ -33,14 +33,6 @@ const LEGAL_PAGES = ["privacy", "terms", "refunds"] as const;
 const COPYRIGHT_YEAR = 2026;
 
 type FooterLink = { href: string; label: string };
-
-function XIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" className="size-4">
-      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-    </svg>
-  );
-}
 
 /**
  * Site pages go through the router; anything else is a plain anchor, new tab
@@ -136,7 +128,7 @@ export function SiteFooter() {
   ];
 
   const socials = [
-    { href: X_URL, label: "X", icon: <XIcon /> },
+    { href: X_URL, label: "X", icon: <XIcon className="size-4" /> },
     { href: GITHUB_URL, label: "GitHub", icon: <GithubIcon className="size-4" /> },
     { href: `mailto:${EMAIL}`, label: t("footer.email"), icon: <Mail aria-hidden="true" className="size-4" /> },
   ];
