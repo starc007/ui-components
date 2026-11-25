@@ -507,7 +507,9 @@ function ContextMenuPanel({
       {...gate}
       data-context-menu-portal=""
       style={{ ...gate.style, left: position.x, top: position.y }}
-      className="fixed z-[100] [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.2))]"
+      // The panel's clip-path would cut a box-shadow, so the wrapper draws the
+      // system's one panel shadow as a drop-shadow instead.
+      className="fixed z-[100] [filter:drop-shadow(0_8px_12px_rgb(0_0_0/0.12))]"
     >
       <motion.div
         ref={contentRef}
@@ -535,7 +537,7 @@ function ContextMenuPanel({
         }}
         onContextMenu={(event) => event.preventDefault()}
         className={cn(
-          "min-w-56 overflow-hidden rounded-2xl border border-border bg-card p-2 text-foreground outline-none",
+          "min-w-56 overflow-hidden rounded-2xl border border-border bg-background p-2 text-foreground outline-none",
           className,
         )}
       >
