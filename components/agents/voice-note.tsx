@@ -48,9 +48,21 @@ export interface VoiceNoteProps extends Omit<ComponentProps<"div">, "children" |
 
 // Half the control's height: the mic's radius, and the bar's end caps.
 const RADIUS = 20;
-// Enough to fill a wide bar; the oldest are clipped off on the left.
+// Enough to fill a wide bar; the oldest fade out at the left.
 const BARS = 56;
 const SAMPLE_MS = 90;
+// One bar's width plus the gap after it, in px: how far the strip moves per sample.
+const BAR_STEP = 5;
+// How far each sample moves toward the new level (0–1); lower is smoother.
+const SMOOTHING = 0.6;
+// The newest bar grows to its height as it arrives.
+const BAR_IN = { duration: 0.14, ease: EASE_OUT } as const;
+
+type Sample = { id: number; value: number };
+
+function emptyWave(): Sample[] {
+  return Array.from({ length: BARS }, (_, id) => ({ id, value: 0 }));
+}
 const SENT_MS = 1200;
 // The bar's controls fade in as it opens and out as soon as it starts to close.
 const CONTENT_IN = { duration: 0.2, ease: EASE_OUT, delay: 0.08 } as const;
@@ -99,7 +111,14 @@ export function VoiceNote({
   const [barShown, setBarShown] = useState(false);
   const [sent, setSent] = useState(false);
   const [elapsed, setElapsed] = useState(0);
-  const [samples, setSamples] = useState<number[]>(() => Array(BARS).fill(0));
+  // Each sample keeps its id for life, so its bar keeps its height and moves
+  // with the strip instead of taking on its neighbour's height every tick.
+  const [samples, setSamples] = useState<Sample[]>(emptyWave);
+  const sampleId = useRef(BARS);
+  const smoothed = useRef(0);
+  // The strip slides left by one bar per sample, linearly, so the waveform
+  // scrolls continuously rather than stepping.
+  const scroll = useMotionValue(0);
   const startedAt = useRef(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const micRef = useRef<HTMLButtonElement>(null);
@@ -128,7 +147,8 @@ export function VoiceNote({
     if (disabled || recording) return;
     startedAt.current = performance.now();
     setElapsed(0);
-    setSamples(Array(BARS).fill(0));
+    setSamples(emptyWave());
+    smoothed.current = 0;
     setSent(false);
     setRecording(true);
     setBarShown(true);
@@ -181,20 +201,30 @@ export function VoiceNote({
     if (!recording) return;
     const timer = window.setInterval(() => {
       const { level: input, maxDuration: limit } = latest.current;
-      const value =
+      const raw =
         input === undefined
           ? 0.12 + Math.random() * 0.14
           : isMotionValue(input)
             ? input.get()
             : input;
-      setSamples((current) => [...current.slice(1), Math.max(0, Math.min(1, value))]);
+      // A little smoothing, so neighbouring bars rise and fall together
+      // instead of spiking.
+      smoothed.current += (Math.max(0, Math.min(1, raw)) - smoothed.current) * SMOOTHING;
+      const id = sampleId.current++;
+      setSamples((current) => [...current.slice(1), { id, value: smoothed.current }]);
+      // The new bar pushes the strip left by one slot: start it one slot to
+      // the right and slide it home over the next sample's time.
+      if (!reduce) {
+        scroll.set(BAR_STEP);
+        animate(scroll, 0, { duration: SAMPLE_MS / 1000, ease: "linear" });
+      }
       const now = performance.now() - startedAt.current;
       setElapsed(now);
       // Reaching the limit sends, exactly as the send button would.
       if (limit !== undefined && now >= limit * 1000) stopRef.current(true);
     }, SAMPLE_MS);
     return () => window.clearInterval(timer);
-  }, [recording]);
+  }, [recording, reduce, scroll]);
 
   // Focus follows the control that took the mic's place, and comes back.
   useEffect(() => {
@@ -315,19 +345,25 @@ export function VoiceNote({
                 {clock(elapsed)}
               </span>
 
-              {/* Newest sample on the right; bars scale, they never resize. */}
+              {/* Newest sample on the right. The strip scrolls left as a whole
+                  and each bar keeps its height; only the newest bar grows in.
+                  Bars scale, they never resize, and the oldest fade out at
+                  the left edge instead of being cut off. */}
               <span
                 aria-hidden="true"
-                className="flex h-6 min-w-0 flex-1 items-center justify-end gap-[2px] overflow-hidden"
+                className="flex h-6 min-w-0 flex-1 items-center justify-end overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_28px)]"
               >
-                {samples.map((value, index) => (
-                  <span
-                    // biome-ignore lint/suspicious/noArrayIndexKey: bars are fixed slots
-                    key={index}
-                    className="h-full w-[3px] shrink-0 origin-center rounded-full bg-foreground/70 transition-transform duration-100 ease-out"
-                    style={{ transform: `scaleY(${Math.max(0.12, value)})` }}
-                  />
-                ))}
+                <motion.span style={{ x: scroll }} className="flex h-full shrink-0 items-center gap-[2px]">
+                  {samples.map((sample) => (
+                    <motion.span
+                      key={sample.id}
+                      initial={sample.id >= BARS && !reduce ? { scaleY: 0.12 } : false}
+                      animate={{ scaleY: Math.max(0.12, sample.value) }}
+                      transition={BAR_IN}
+                      className="h-full w-[3px] shrink-0 origin-center rounded-full bg-foreground/70"
+                    />
+                  ))}
+                </motion.span>
               </span>
 
               <Tooltip content={t("send")} side="top">
