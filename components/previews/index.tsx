@@ -42,6 +42,9 @@ export const previews: Record<string, ComponentType> = {
   "agents/voice-orb": dynamic(() =>
     import("./agents/voice-orb.preview").then((m) => m.VoiceOrbPreview),
   ),
+  "agents/voice-note": dynamic(() =>
+    import("./agents/voice-note.preview").then((m) => m.VoiceNotePreview),
+  ),
   "motion/sortable-stack": dynamic(() =>
     import("./motion/sortable-stack.preview").then((m) => m.SortableListPreview),
   ),
@@ -316,6 +319,12 @@ export const previews: Record<string, ComponentType> = {
   ),
   "micro-interactions/poll-vote": dynamic(() =>
     import("./micro-interactions/poll-vote.preview").then((m) => m.PollVotePreview),
+  ),
+  "micro-interactions/status-icon": dynamic(() =>
+    import("./micro-interactions/status-icon.preview").then((m) => m.StatusIconPreview),
+  ),
+  "micro-interactions/confetti": dynamic(() =>
+    import("./micro-interactions/confetti.preview").then((m) => m.ConfettiPreview),
   ),
   "sounds/sound-kit": dynamic(() =>
     import("./sounds/sound-kit.preview").then((m) => m.SoundKitPreview),

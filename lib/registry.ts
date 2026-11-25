@@ -1769,6 +1769,28 @@ export const registry: CategoryEntry[] = [
         launchedAt: "2026-11-16",
         keywords: ["poll component react", "voting poll animation", "animated poll results", "survey vote ui"],
       },
+      {
+        slug: "status-icon",
+        name: "Status Icon",
+        description:
+          "One status icon that morphs instead of swapping: a short arc spins while syncing, then closes into a full ring in green, amber or red as a check, exclamation or cross draws in.",
+        file: "components/motion/status-icon.tsx",
+        usageFile: "components/previews/micro-interactions/status-icon.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-11-25",
+        keywords: ["status icon react", "animated sync icon", "success check animation", "loading to success icon", "animated status indicator"],
+      },
+      {
+        slug: "confetti",
+        name: "Confetti",
+        description:
+          "Confetti for success moments, called like a toast: confetti() from any handler throws a burst from a button or a point, on one canvas that exists only while pieces fall.",
+        file: "components/motion/confetti.tsx",
+        usageFile: "components/previews/micro-interactions/confetti.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-11-25",
+        keywords: ["react confetti", "confetti animation", "confetti burst", "celebration effect", "success confetti"],
+      },
     ],
   },
   {
@@ -1980,6 +2002,17 @@ export const registry: CategoryEntry[] = [
         badge: "new",
         launchedAt: "2026-10-04",
         keywords: ["voice orb", "audio visualization", "liquid orb", "voice activity", "webgl sphere"],
+      },
+      {
+        slug: "voice-note",
+        name: "Voice Note",
+        description:
+          "A mic button that opens into a recording bar with a timer, a live waveform, discard and send. The bar springs out of the mic's circle to both sides, folds back into it on send, and the app owns the recording.",
+        file: "components/agents/voice-note.tsx",
+        usageFile: "components/previews/agents/voice-note.usage.tsx",
+        badge: "new",
+        launchedAt: "2026-11-25",
+        keywords: ["voice note react", "voice message recorder", "audio recording button", "voice input chat", "record voice ui"],
       },
       {
         slug: "message-bubble",
