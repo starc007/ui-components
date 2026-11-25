@@ -125,6 +125,7 @@ const COMPONENT_DATES = {
   "motion/action-swap": { publishedAt: "2026-06-10", updatedAt: "2026-10-18" },
   "motion/animated-toast-stack": { publishedAt: "2026-06-05", updatedAt: "2026-11-25" },
   "motion/theme-toggle": { publishedAt: "2026-06-15", updatedAt: "2026-11-10" },
+  "motion/wave-reveal": { publishedAt: "2026-11-25", updatedAt: "2026-11-25" },
   "motion/bouncy-accordion": { publishedAt: "2026-06-16", updatedAt: "2026-11-15" },
   "motion/drawer": { publishedAt: "2026-06-22", updatedAt: "2026-11-25" },
   "motion/scroll-animation": { publishedAt: "2026-06-24", updatedAt: "2026-11-10" },

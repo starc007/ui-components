@@ -265,6 +265,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Dark mode toggle for React and Next.js that repaints the page with a circle, rectangle or blinds reveal through the View Transition API. Free source.",
   },
+  "wave-reveal": {
+    title: "React Wave Transition: Reveal the Next Screen",
+    description:
+      "Free React screen transition: a colourful wave leaves the pressed button, bends the card and reveals the next screen. Reduced motion, shadcn install.",
+  },
   "bouncy-accordion": {
     title: "Animated Accordion Component for React",
     description:
