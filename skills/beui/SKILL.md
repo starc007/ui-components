@@ -13,18 +13,20 @@ For licensed components, use the separate `beui-pro` skill and Pro connection.
 
 ## Workflow
 
-1. Discover current components with the public MCP's `list_components` or `search_components` when connected. Otherwise, fetch the live registry:
+1. Discover current components with the public MCP's `search_components` or `list_components` when connected. Each result lists its `install_slugs`. Otherwise, fetch the live index, which lists `install_slugs` and `variants` for every page:
 
 ```bash
-curl -fsS https://beui.dev/r/registry.json
+curl -fsS https://beui.dev/r
 ```
 
-2. For CLI installation, pick the closest install slug from `items[].name` in the live registry. Public MCP catalog slugs can name documentation pages with multiple installable variants. Do not assume every page slug is an install slug.
-3. Inspect the selected component with MCP `get_component`, or inspect an installable item through the CLI:
+2. For CLI installation, use one of the component's `install_slugs`. A page that splits into variants (Button: `button-base`, `button-stateful`, ...) installs only by its variants' slugs. MCP `get_install_command` checks a slug for you.
+3. Read the docs before writing code: MCP `get_component_docs`, or the Markdown at `https://beui.dev/r/<slug>.md`. It has usage, every prop with its type and default, the data types props take, composition and accessibility. Inspect the source with MCP `get_component` or the CLI:
 
 ```bash
 npx shadcn@latest view @beui/<slug>
 ```
+
+On a project's first install, MCP `get_setup` (or https://beui.dev/docs/theme) covers setup. Components that use beUI's extra theme tokens install them through the shadcn CLI; a hand copy needs `npx shadcn@latest add https://beui.dev/r/theme.json` or the pasted theme CSS.
 
 4. Install the complete files returned by MCP using the project's paths and aliases, then install the listed package dependencies. Preserve existing helpers and local modifications. Alternatively, install a verified registry slug with the user's package runner:
 

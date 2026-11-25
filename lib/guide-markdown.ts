@@ -139,7 +139,7 @@ Manual configuration:
 }
 \`\`\`
 
-Available tools: \`list_components\`, \`search_components\`, \`get_component\`, and \`get_install_command\`. For React Native apps, \`list_native_components\` and \`get_native_component\` return beUI Native components with every file to copy.
+Available tools: \`get_setup\` (one-time project setup and theme tokens), \`list_components\`, \`search_components\`, \`get_component_docs\` (props, types and usage as Markdown), \`get_component\` (source files), and \`get_install_command\` (checks the slug). For React Native apps, \`list_native_components\` and \`get_native_component\` return beUI Native components with every file to copy.
 
 ## Endpoints
 

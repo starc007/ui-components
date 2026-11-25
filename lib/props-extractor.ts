@@ -119,6 +119,8 @@ export type TypeFieldDoc = {
 /** An object type a component's props refer to, such as `CommandItem`. */
 export type ReferencedTypeDoc = {
   name: string;
+  /** Repo-relative file that declares it. */
+  file: string;
   fields: TypeFieldDoc[];
 };
 
@@ -217,7 +219,8 @@ export function getReferencedTypes(relFile: string): ReferencedTypeDoc[] {
       if (!node) continue;
       const fields = fieldsOf(node, checker);
       if (!fields.length) continue;
-      result.push({ name, fields });
+      const file = path.relative(PROJECT_ROOT, node.getSourceFile().fileName);
+      result.push({ name, file, fields });
       next.push(...named(fields.map((field) => field.type).join(" ")));
     }
     frontier = next;

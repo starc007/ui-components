@@ -3,13 +3,17 @@ import { z } from "zod";
 import {
   getEntry,
   getIndex,
+  getMarkdown,
   getNativeEntry,
   getNativeIndex,
   installCommand,
+  installSlugs,
   PACKAGE_MANAGERS,
   type IndexComponent,
   type PackageManager,
+  type RegistryIndex,
 } from "./registry.js";
+import { searchComponents } from "./search.js";
 
 export type FreeEnv = {
   REGISTRY_URL?: string;
@@ -24,20 +28,29 @@ const error = (message: string) => ({
   content: [{ type: "text" as const, text: message }],
 });
 
-/** Lightweight relevance score over a component's name/description/category. */
-function score(comp: IndexComponent, query: string) {
-  const q = query.toLowerCase();
-  const name = comp.name.toLowerCase();
-  const slug = comp.slug.toLowerCase();
-  if (slug === q || name === q) return 100;
-  if (slug.includes(q) || name.includes(q)) return 60;
-  if (comp.description.toLowerCase().includes(q)) return 30;
-  if (comp.category.toLowerCase().includes(q)) return 10;
-  return 0;
+/** What list and search return per component. */
+function summary(c: IndexComponent) {
+  return {
+    slug: c.slug,
+    name: c.name,
+    category: c.category,
+    description: c.description,
+    // The slugs `shadcn add @beui/<slug>` accepts; a page that splits into
+    // variants installs only by its variants' slugs.
+    install_slugs: c.install_slugs ?? [c.slug],
+    ...(c.variants?.length ? { variants: c.variants } : {}),
+  };
 }
 
+/** The page a slug belongs to: its own page, or the page of a variant. */
+function findPage(index: RegistryIndex, slug: string) {
+  return index.components.find((c) => c.slug === slug) ?? installSlugs(index).get(slug);
+}
+
+const THEME_ITEM = "https://beui.dev/r/theme.json";
+
 export function createFreeServer(env: FreeEnv) {
-  const server = new McpServer({ name: "beUI", version: "0.1.0" });
+  const server = new McpServer({ name: "beUI", version: "0.2.0" });
 
   server.registerTool(
     "list_components",
@@ -57,14 +70,7 @@ export function createFreeServer(env: FreeEnv) {
         const components = category
           ? index.components.filter((c) => c.category === category)
           : index.components;
-        return json(
-          components.map((c) => ({
-            slug: c.slug,
-            name: c.name,
-            category: c.category,
-            description: c.description,
-          })),
-        );
+        return json(components.map(summary));
       } catch (e) {
         return error(`Failed to list components: ${(e as Error).message}`);
       }
@@ -75,27 +81,39 @@ export function createFreeServer(env: FreeEnv) {
     "search_components",
     {
       description:
-        "Search beUI components by keyword. Matches name, slug, description and category. Returns the best matches first.",
+        "Search beUI components by what you need, e.g. 'bottom sheet', 'toast', 'prompt input'. Every word must match. Names, slugs and keywords rank first; descriptions count only when nothing matches by name. Each result lists its install_slugs.",
       inputSchema: {
-        query: z.string().describe("Search term, e.g. 'bottom sheet', 'toast', 'command palette'."),
+        query: z.string().describe("What to find, e.g. 'bottom sheet', 'toast', 'command palette'."),
       },
     },
     async ({ query }) => {
       try {
         const index = await getIndex(env);
-        const ranked = index.components
-          .map((c) => ({ c, s: score(c, query) }))
-          .filter((r) => r.s > 0)
-          .sort((a, b) => b.s - a.s)
-          .map((r) => ({
-            slug: r.c.slug,
-            name: r.c.name,
-            category: r.c.category,
-            description: r.c.description,
-          }));
-        return json(ranked);
+        return json(searchComponents(index.components, query).map(summary));
       } catch (e) {
         return error(`Search failed: ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    "get_component_docs",
+    {
+      description:
+        "Get a beUI component's documentation as Markdown: install command, dependencies, usage code, every prop with its type, default and description, the data types its props take (e.g. CommandItem), composition and when to use it, accessibility and FAQ. Read this before writing code that uses the component.",
+      inputSchema: {
+        slug: z
+          .string()
+          .describe("A page or install slug, e.g. 'command-palette' or 'button-stateful'."),
+      },
+    },
+    async ({ slug }) => {
+      try {
+        return { content: [{ type: "text" as const, text: await getMarkdown(env, slug) }] };
+      } catch (e) {
+        return error(
+          `No docs for "${slug}": ${(e as Error).message}. Use search_components to find a valid slug.`,
+        );
       }
     },
   );
@@ -104,22 +122,31 @@ export function createFreeServer(env: FreeEnv) {
     "get_component",
     {
       description:
-        "Get full details for a beUI component by slug: description, npm dependencies, every source file (path + contents) and the install command. Use this to copy the component into a project.",
+        "Get a beUI component's source by slug: description, npm dependencies, every source file (path + contents) and the install command. Use this to copy the component into a project by hand; get_component_docs explains how to use it.",
       inputSchema: {
         slug: z.string().describe("Component slug, e.g. 'bottom-sheet' (from list_components/search_components)."),
       },
     },
     async ({ slug }) => {
       try {
-        const entry = await getEntry(env, slug);
+        const [entry, index] = await Promise.all([getEntry(env, slug), getIndex(env)]);
+        const page = findPage(index, slug);
+        const slugs = page?.install_slugs ?? [entry.slug];
+        const installable = slugs.includes(entry.slug);
         return json({
           slug: entry.slug,
           name: entry.name,
           description: entry.description,
           category: entry.category,
           page_url: entry.page_url,
+          docs: `Call get_component_docs with "${entry.slug}" for props, types and usage.`,
           dependencies: entry.dependencies,
-          install: installCommand(entry.slug, "bun"),
+          // A page that splits into variants has no install of its own.
+          install: installable
+            ? installCommand(entry.slug, "bun")
+            : slugs.map((s) => installCommand(s, "bun")),
+          ...(page?.variants?.length ? { variants: page.variants } : {}),
+          theme: `Uses beUI theme tokens? The shadcn install adds them; for a hand copy, run \`npx shadcn@latest add ${THEME_ITEM}\` or paste https://beui.dev/theme.css once.`,
           files: entry.files.map((f) => ({
             path: f.path,
             type: f.type,
@@ -136,9 +163,9 @@ export function createFreeServer(env: FreeEnv) {
     "get_install_command",
     {
       description:
-        "Get the shadcn CLI install command for a beUI component, for a given package manager.",
+        "Get the shadcn CLI install command for a beUI component, for a given package manager. Checks the slug: a page that splits into variants returns its variants' commands instead, and an unknown slug returns the closest matches.",
       inputSchema: {
-        slug: z.string().describe("Component slug, e.g. 'command-palette'."),
+        slug: z.string().describe("Install slug, e.g. 'command-palette' or 'button-stateful'."),
         packageManager: z
           .enum(["bun", "npm", "pnpm", "yarn"])
           .default("bun")
@@ -147,12 +174,71 @@ export function createFreeServer(env: FreeEnv) {
     },
     async ({ slug, packageManager }) => {
       const pm = packageManager as PackageManager;
-      return json({
-        slug,
-        packageManager: pm,
-        command: installCommand(slug, pm),
-        all: PACKAGE_MANAGERS.map((p) => ({ packageManager: p, command: installCommand(slug, p) })),
-      });
+      try {
+        const index = await getIndex(env);
+        const valid = installSlugs(index);
+        if (valid.has(slug)) {
+          return json({
+            slug,
+            packageManager: pm,
+            command: installCommand(slug, pm),
+            all: PACKAGE_MANAGERS.map((p) => ({ packageManager: p, command: installCommand(slug, p) })),
+          });
+        }
+        const page = index.components.find((c) => c.slug === slug);
+        if (page?.variants?.length) {
+          return json({
+            slug,
+            note: `"${slug}" is a page with separate variants; install one of them.`,
+            variants: page.variants.map((v) => ({ ...v, command: installCommand(v.install_slug, pm) })),
+          });
+        }
+        const suggestions = searchComponents(index.components, slug.replace(/-/g, " ")).slice(0, 5);
+        return error(
+          `"${slug}" is not a beUI install slug.${
+            suggestions.length
+              ? ` Closest: ${suggestions.flatMap((c) => c.install_slugs ?? [c.slug]).join(", ")}.`
+              : ""
+          } Use search_components to find one.`,
+        );
+      } catch (e) {
+        return error(`Could not check "${slug}": ${(e as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    "get_setup",
+    {
+      description:
+        "One-time project setup for beUI: what a project needs (Tailwind CSS v4, motion, the shadcn CLI) and how to add beUI's theme tokens. Call this once before installing components into a new project.",
+      inputSchema: {},
+    },
+    async () => {
+      try {
+        const index = await getIndex(env);
+        return json({
+          requirements: ["React 18 or 19", "Tailwind CSS v4", "the motion package (installed with each component)"],
+          summary: index.setup,
+          with_shadcn: {
+            steps: [
+              "If the project has no components.json yet, run `npx shadcn@latest init` once.",
+              "Install components with `npx shadcn@latest add @beui/<install_slug>`. Each brings its files, npm dependencies and, if it needs them, beUI's theme tokens.",
+              `To add the theme tokens up front: \`npx shadcn@latest add ${THEME_ITEM}\`. It adds to the theme and changes no existing color.`,
+            ],
+          },
+          without_shadcn: {
+            steps: [
+              "Paste https://beui.dev/theme.css into globals.css below `@import \"tailwindcss\";` once. It has the base and beUI tokens, animations and utilities.",
+              "Copy a component's files from get_component, keeping their paths, and install its npm dependencies.",
+            ],
+          },
+          docs: "https://beui.dev/docs/theme",
+          agent_guide: "https://beui.dev/docs/ai-agents.md",
+        });
+      } catch (e) {
+        return error(`Could not load setup: ${(e as Error).message}`);
+      }
     },
   );
 

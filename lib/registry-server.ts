@@ -381,7 +381,12 @@ export async function buildIndex() {
       detail: `${SITE_URL}/r/{slug}`,
       raw: `${SITE_URL}/r/{slug}/raw`,
       markdown: `${SITE_URL}/components/{category}/{slug}.md`,
+      markdown_by_slug: `${SITE_URL}/r/{slug}.md`,
+      theme_item: THEME_ITEM_URL,
+      theme_css: `${SITE_URL}/theme.css`,
     },
+    setup:
+      "Components install as source with the shadcn CLI and need Tailwind CSS v4, the motion package and a cn() helper (shipped with each item). beUI's extra tokens (border-strong, success, warning, neon, glass, ease curves) come with any component that uses them through the theme item; a project without shadcn pastes theme_css instead.",
     categories: registry.map((c) => ({
       slug: c.slug,
       name: c.name,
@@ -389,11 +394,18 @@ export async function buildIndex() {
     })),
     components: allComponents().map((c) => {
       const dates = componentDates(c.category.slug, c.slug);
+      // A page whose variants install separately has no install slug of its own.
+      const variants = (c.examples ?? [])
+        .filter(isInstallable)
+        .map((example) => ({ slug: example.slug, name: example.name, install_slug: example.installSlug }));
       return {
         slug: c.slug,
         name: c.name,
         description: c.description,
         category: c.category.slug,
+        keywords: c.keywords ?? [],
+        install_slugs: variants.length ? variants.map((variant) => variant.install_slug) : [c.slug],
+        variants,
         published_at: dates.publishedAt,
         updated_at: dates.updatedAt,
         detail_url: `${SITE_URL}/r/${c.slug}`,
