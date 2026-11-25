@@ -145,10 +145,16 @@ export function AgentCodeLine({
   tokens,
   className,
 }: AgentCodeLineProps) {
+  // While code streams, the tokens can lag a few characters behind the line.
+  // Keep the coloured part and show the new characters plain after it: the
+  // text is always current, and nothing already coloured flashes back to plain.
+  const tokenText = tokens?.map((token) => token.content).join("") ?? "";
+  const usable = tokens && code.startsWith(tokenText) ? tokens : undefined;
+  const rest = usable ? code.slice(tokenText.length) : "";
   return (
     <span className={className}>
-      {tokens
-        ? tokens.map((token) => (
+      {usable
+        ? usable.map((token) => (
             <span
               key={`${token.offset}-${token.content}`}
               style={
@@ -163,6 +169,7 @@ export function AgentCodeLine({
             </span>
           ))
         : code}
+      {rest}
     </span>
   );
 }
