@@ -7,9 +7,9 @@ import {
   MessageSquarePlus,
   PanelLeft,
   Paperclip,
+  Puzzle,
   Search,
   User,
-  WandSparkles,
 } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import {
@@ -30,8 +30,8 @@ import {
   type ApprovalCardQuestion,
   type ApprovalCardStatus,
 } from "@/components/agents/approval-card";
-import { CodeBlock } from "@/components/agents/code-block";
 import { ChatApp } from "@/components/agents/chat-app";
+import { CodeBlock } from "@/components/agents/code-block";
 import { FileDiff } from "@/components/agents/file-diff";
 import { ImageGeneration } from "@/components/agents/image-generation";
 import { ThinkingShimmer } from "@/components/agents/loading-states";
@@ -50,7 +50,7 @@ import {
 import { MessageScroller } from "@/components/agents/message-scroller";
 import { PromptInput } from "@/components/agents/prompt-input";
 import { StreamingResponse } from "@/components/agents/streaming-response";
-import { TodoList, type TodoItem } from "@/components/agents/todo-list";
+import { type TodoItem, TodoList } from "@/components/agents/todo-list";
 import {
   ToolApproval,
   ToolApprovalCode,
@@ -678,7 +678,7 @@ export function ChatAppExample({
               actions={[
                 { value: "attach", label: "Attach file", icon: <Paperclip /> },
                 { value: "project", label: "Add project context", icon: <FolderKanban /> },
-                { value: "skill", label: "Use a skill", icon: <WandSparkles /> },
+                { value: "skill", label: "Use a skill", icon: <Puzzle /> },
               ]}
             />
           </div>
