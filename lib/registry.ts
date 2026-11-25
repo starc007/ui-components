@@ -1773,7 +1773,7 @@ export const registry: CategoryEntry[] = [
         slug: "status-icon",
         name: "Status Icon",
         description:
-          "One status icon that morphs instead of swapping: a short arc spins while syncing, then closes into a full ring in green, amber or red as a check, exclamation or cross draws in.",
+          "One status icon that morphs instead of swapping: a breathing arc spins while syncing, then sweeps on to close the ring, which fills green, amber or red as a white check, exclamation or cross draws in.",
         file: "components/motion/status-icon.tsx",
         usageFile: "components/previews/micro-interactions/status-icon.usage.tsx",
         badge: "new",
