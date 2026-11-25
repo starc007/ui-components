@@ -158,6 +158,10 @@ export function MessageGroup({
       className={cn(
         "flex w-full flex-col",
         spacing === "compact" ? "gap-1.5" : "gap-4",
+        // A message that follows one from the same speaker tightens its
+        // bubble's top corner on that side, so the run reads as one turn.
+        "[&>[data-from=user]+[data-from=user]_[data-slot=message-bubble-content]]:rounded-se-md",
+        "[&>[data-from=assistant]+[data-from=assistant]_[data-slot=message-bubble-content]]:rounded-ss-md",
         className,
       )}
       {...props}
