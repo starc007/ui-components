@@ -96,7 +96,8 @@ export function HeadingAnchor({
 /**
  * A docs heading with a copy-link `#` beside it. Pass `id` when the heading
  * itself is the link target, or `section` when a wrapping section carries the
- * id. With neither, the `#` copies the page URL (for page titles).
+ * id. With neither (page titles), no `#` shows: it would only link the page
+ * the reader is already on.
  */
 export function AnchorHeading({
   as: Tag = "h2",
@@ -118,12 +119,13 @@ export function AnchorHeading({
   /** Shown after the `#`, such as a New badge. */
   trailing?: ReactNode;
 }) {
+  const hash = id ?? section;
   return (
     <div className={cn("group/heading flex min-w-0 items-center gap-1.5", className)}>
       <Tag id={id} className={cn(id && "scroll-mt-24", headingClassName)}>
         {children}
       </Tag>
-      <HeadingAnchor hash={id ?? section} label={children} size={Tag === "h1" ? "lg" : "sm"} />
+      {hash ? <HeadingAnchor hash={hash} label={children} size={Tag === "h1" ? "lg" : "sm"} /> : null}
       {trailing}
     </div>
   );
