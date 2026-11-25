@@ -32,6 +32,9 @@ type Piece = {
   spin: number;
   flip: number;
   flipSpeed: number;
+  sway: number;
+  swaySpeed: number;
+  swayWidth: number;
   width: number;
   height: number;
   round: boolean;
@@ -41,11 +44,20 @@ type Piece = {
 };
 
 const ACCENTS = ["#f97316", "#facc15", "#22c55e", "#38bdf8", "#f43f5e"];
-// Tuned per frame at 60 fps; scaled by real frame time so slow screens fall
-// at the same speed.
-const GRAVITY = 0.32;
-const DRAG = 0.986;
-const FADE_MS = 450;
+// Paper physics, tuned per frame at 60 fps and scaled by real frame time so
+// every screen plays the same. Strong air drag turns the launch into a quick
+// pop that slows at once; with gravity it also caps the fall at a gentle
+// terminal speed (GRAVITY × DRAG / (1 − DRAG), about 3.4 px a frame), so
+// pieces drift down instead of dropping like stones.
+const GRAVITY = 0.22;
+const DRAG = 0.94;
+// Launch speed in px a frame, before `power`.
+const SPEED_MIN = 11;
+const SPEED_RANGE = 9;
+// Pieces leave over this many ms, not in one frame, so the burst blooms
+// instead of starting as one dense dot.
+const STAGGER_MS = 70;
+const FADE_MS = 600;
 
 let canvas: HTMLCanvasElement | null = null;
 let context: CanvasRenderingContext2D | null = null;
@@ -105,16 +117,23 @@ function unmountCanvas() {
 function tick(now: number) {
   const ctx = context;
   if (!ctx) return;
-  const step = Math.min((now - last) / (1000 / 60), 3);
-  last = now;
+  // A frame's timestamp can be a little older than the moment the burst was
+  // fired; never step backwards, and never leap after a stall.
+  const step = Math.min(Math.max(0, (now - last) / (1000 / 60)), 3);
+  last = Math.max(last, now);
   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
   pieces = pieces.filter((piece) => {
     const age = now - piece.born;
+    // Not launched yet: keep it, draw nothing.
+    if (age < 0) return true;
     if (age > piece.life || piece.y > window.innerHeight + 40) return false;
-    piece.vx *= DRAG ** step;
-    piece.vy = piece.vy * DRAG ** step + GRAVITY * step;
-    piece.x += piece.vx * step;
+    const drag = DRAG ** step;
+    piece.vx *= drag;
+    piece.vy = piece.vy * drag + GRAVITY * step;
+    // Paper sways side to side as it falls.
+    piece.sway += piece.swaySpeed * step;
+    piece.x += (piece.vx + Math.sin(piece.sway) * piece.swayWidth) * step;
     piece.y += piece.vy * step;
     piece.rotation += piece.spin * step;
     piece.flip += piece.flipSpeed * step;
@@ -169,23 +188,27 @@ export function confetti(options: ConfettiOptions = {}): Promise<void> {
   mountCanvas();
   for (let index = 0; index < count; index++) {
     const direction = ((angle + (Math.random() - 0.5) * spread) * Math.PI) / 180;
-    const speed = (7 + Math.random() * 7) * power;
+    const speed = (SPEED_MIN + Math.random() * SPEED_RANGE) * power;
     const width = 5 + Math.random() * 5;
     pieces.push({
-      x: start.x,
-      y: start.y,
+      // A few px of scatter, so pieces do not all leave from one pixel.
+      x: start.x + (Math.random() - 0.5) * 8,
+      y: start.y + (Math.random() - 0.5) * 8,
       vx: Math.cos(direction) * speed,
       vy: -Math.sin(direction) * speed,
       rotation: Math.random() * Math.PI * 2,
-      spin: (Math.random() - 0.5) * 0.3,
+      spin: (Math.random() - 0.5) * 0.24,
       flip: Math.random() * Math.PI,
-      flipSpeed: 0.08 + Math.random() * 0.14,
+      flipSpeed: 0.06 + Math.random() * 0.1,
+      sway: Math.random() * Math.PI * 2,
+      swaySpeed: 0.05 + Math.random() * 0.06,
+      swayWidth: 0.4 + Math.random() * 0.7,
       width,
       height: width * (1.4 + Math.random() * 0.6),
       round: Math.random() < 0.25,
       color: colors[index % colors.length],
-      born: now,
-      life: 1900 + Math.random() * 900,
+      born: now + Math.random() * STAGGER_MS,
+      life: 2400 + Math.random() * 1000,
     });
   }
 

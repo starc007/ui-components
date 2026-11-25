@@ -4077,7 +4077,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   confetti: {
     overview:
-      "Confetti is a confetti burst for React success moments that you call like a toast: confetti() from any event handler, with no provider, hook or element to mount. A burst throws paper pieces from a button or a point, they tumble and fall with gravity and drag, and fade out. It draws on one canvas over the page that exists only while pieces are in the air, and overlapping bursts share it.",
+      "Confetti is a confetti burst for React success moments that you call like a toast: confetti() from any event handler, with no provider, hook or element to mount. A burst blooms out of a button or a point: the pieces pop up and slow in the air, then tumble and sway as they drift down at a gentle, capped speed, and fade out. It draws on one canvas over the page that exists only while pieces are in the air, and overlapping bursts share it.",
     useWhen: [
       "A checkout, signup or upgrade just succeeded.",
       "A user finishes onboarding, a streak or a big task.",
