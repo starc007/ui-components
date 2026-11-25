@@ -180,11 +180,11 @@ const COMPONENT_DATES = {
   },
   "agents/tool-result": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/file-diff": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/streaming-response": {
     publishedAt: "2026-08-01",

@@ -15,6 +15,7 @@ import {
   type AgentCodeLanguage,
 } from "@/components/agents/agent-code";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { IconSwap } from "@/components/agents/icon-swap";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useStatusOpen } from "@/lib/hooks/use-status-open";
 import { useMessages } from "@/lib/i18n";
@@ -159,15 +160,7 @@ export function ToolApproval({
         >
           {/* The icon tells the story of the request, so each change morphs:
               shield, then spinner, then check or cross. */}
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span
-              key={busy ? "busy" : status}
-              initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-              exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
-              transition={reduce ? { duration: 0.12 } : SPRING_SWAP}
-              className="grid place-items-center"
-            >
+          <IconSwap id={busy ? "busy" : status}>
               {busy ? (
                 <LoaderCircle className={cn("size-4", !reduce && "animate-spin")} />
               ) : error ? (
@@ -179,8 +172,7 @@ export function ToolApproval({
               ) : (
                 <ShieldCheck className="size-4" />
               )}
-            </motion.span>
-          </AnimatePresence>
+          </IconSwap>
         </span>
 
         <div className="min-w-0 flex-1">

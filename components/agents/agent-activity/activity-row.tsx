@@ -12,7 +12,8 @@ import {
   Wrench,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
+import { IconSwap } from "@/components/agents/icon-swap";
+import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import type { AgentActivityTranslate } from "./messages";
 import type {
@@ -26,7 +27,6 @@ import type {
 } from "./types";
 
 function StepRow({ item }: { item: AgentActivityStep }) {
-  const reduce = useReducedMotion() ?? false;
   const state = item.status ?? "complete";
 
   return (
@@ -37,15 +37,7 @@ function StepRow({ item }: { item: AgentActivityStep }) {
         aria-hidden="true"
         className="relative mt-0.5 grid size-4 shrink-0 place-items-center text-muted-foreground/70"
       >
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span
-            key={state}
-            initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
-            transition={reduce ? { duration: 0.12 } : SPRING_SWAP}
-            className="grid place-items-center"
-          >
+        <IconSwap id={state}>
             {state === "complete" ? (
               <Check className="size-4" strokeWidth={1.8} />
             ) : state === "active" ? (
@@ -60,8 +52,7 @@ function StepRow({ item }: { item: AgentActivityStep }) {
             ) : (
               <Circle className="size-3" strokeWidth={1.5} />
             )}
-          </motion.span>
-        </AnimatePresence>
+        </IconSwap>
       </span>
       <span
         className={cn(

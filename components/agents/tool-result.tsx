@@ -20,7 +20,9 @@ import {
   type AgentCodeLanguage,
 } from "@/components/agents/agent-code";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { IconSwap } from "@/components/agents/icon-swap";
 import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
+import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useCopy } from "@/lib/hooks/use-copy";
 import { useStatusOpen } from "@/lib/hooks/use-status-open";
@@ -123,17 +125,20 @@ function ToolResultAction({
   const reduce = useReducedMotion() ?? false;
 
   return (
-    <motion.button
-      type="button"
-      aria-label={label}
-      title={label}
-      onClick={onClick}
-      whileTap={reduce ? undefined : { scale: 0.9 }}
-      transition={SPRING_PRESS}
-      className="grid size-7 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      {children}
-    </motion.button>
+    <Tooltip content={label} side="top">
+      <motion.button
+        type="button"
+        aria-label={label}
+        onClick={onClick}
+        whileTap={reduce ? undefined : { scale: 0.95 }}
+        transition={SPRING_PRESS}
+        // A foreground tint: the output panel is already muted, so a muted
+        // hover would not show.
+        className="grid size-7 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        {children}
+      </motion.button>
+    </Tooltip>
   );
 }
 
@@ -262,7 +267,9 @@ export function ToolResult({
             getStatusClass(status),
           )}
         >
-          <StatusIcon status={status} reduce={reduce} />
+          <IconSwap id={status}>
+            <StatusIcon status={status} reduce={reduce} />
+          </IconSwap>
           <ActionSwapRollText value={status}>{statusLabel}</ActionSwapRollText>
         </span>
         <motion.span
@@ -300,11 +307,13 @@ export function ToolResult({
                   label={copied ? t("copied") : t("copy")}
                   onClick={handleCopy}
                 >
-                  {copied ? (
-                    <Check className="size-3.5" />
-                  ) : (
-                    <Copy className="size-3.5" />
-                  )}
+                  <IconSwap id={copied ? "copied" : "copy"}>
+                    {copied ? (
+                      <Check className="size-3.5" />
+                    ) : (
+                      <Copy className="size-3.5" />
+                    )}
+                  </IconSwap>
                 </ToolResultAction>
               ) : null}
               {onRetry ? (
@@ -312,11 +321,6 @@ export function ToolResult({
                   <RotateCcw className="size-3.5" />
                 </ToolResultAction>
               ) : null}
-              <span className="ml-auto text-[11px] text-muted-foreground/55">
-                <ActionSwapRollText value={status}>
-                  {statusLabel}
-                </ActionSwapRollText>
-              </span>
               </div>
             ) : null}
           </div>

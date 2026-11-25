@@ -16,6 +16,7 @@ import {
   CitationList,
   CitationStack,
 } from "@/components/agents/citations";
+import { IconSwap as ActionIcon } from "@/components/agents/icon-swap";
 import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { useCopy } from "@/lib/hooks/use-copy";
@@ -100,25 +101,6 @@ function ResponseAction({
         {children}
       </motion.button>
     </Tooltip>
-  );
-}
-
-/** Crossfades one action icon into another (copy into check). */
-function ActionIcon({ id, children }: { id: string; children: ReactNode }) {
-  const reduce = useReducedMotion() ?? false;
-  return (
-    <AnimatePresence mode="popLayout" initial={false}>
-      <motion.span
-        key={id}
-        initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
-        animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-        exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
-        transition={reduce ? { duration: 0.12 } : SPRING_SWAP}
-        className="grid place-items-center"
-      >
-        {children}
-      </motion.span>
-    </AnimatePresence>
   );
 }
 
