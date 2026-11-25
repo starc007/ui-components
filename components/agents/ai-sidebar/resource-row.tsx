@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import {
+  type ComponentProps,
   type DragEvent,
   type KeyboardEvent,
   type ReactNode,
@@ -26,6 +27,7 @@ import {
   MorphPopoverContent,
   MorphPopoverTrigger,
 } from "@/components/motion/popover-morph";
+import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_LAYOUT } from "@/lib/ease";
 import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { cn } from "@/lib/utils";
@@ -274,23 +276,16 @@ export function ResourceRow({
           open={menuOpen}
           onOpenChange={onMenuOpenChange}
         >
-          <MorphPopoverTrigger>
-            <button
-              type="button"
-              draggable={false}
-              tabIndex={-1}
+          <Tooltip content={menuOpen ? null : t("actions", { item: row.item.label })} side="top">
+            <ActionsTrigger
               aria-label={t("actions", { item: row.item.label })}
-              onClick={(event) => event.stopPropagation()}
               className={cn(
-                "grid size-7 shrink-0 place-items-center rounded-full outline-none transition-opacity hover:bg-foreground/5 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring group-hover/resource:opacity-100 group-data-[menu-open=true]/resource:opacity-100",
                 // A finger never hovers, and this menu is the only path to
                 // rename and move without a drag — keep it on screen there.
                 canTouch ? "opacity-100" : "opacity-0",
               )}
-            >
-              <MoreHorizontal aria-hidden="true" className="size-4" />
-            </button>
-          </MorphPopoverTrigger>
+            />
+          </Tooltip>
           <MorphPopoverContent
             side="bottom"
             align="end"
@@ -302,5 +297,32 @@ export function ResourceRow({
         </MorphPopover>
       ) : null}
     </motion.div>
+  );
+}
+
+/**
+ * The row's "…" button. Its own component so the tooltip around it and the
+ * popover trigger inside both reach the button.
+ */
+function ActionsTrigger({ className, ...props }: ComponentProps<"button">) {
+  return (
+    <MorphPopoverTrigger>
+      <button
+        type="button"
+        draggable={false}
+        tabIndex={-1}
+        {...props}
+        onClick={(event) => {
+          props.onClick?.(event);
+          event.stopPropagation();
+        }}
+        className={cn(
+          "grid size-7 shrink-0 place-items-center rounded-full outline-none transition-opacity hover:bg-foreground/5 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring group-hover/resource:opacity-100 group-data-[menu-open=true]/resource:opacity-100",
+          className,
+        )}
+      >
+        <MoreHorizontal aria-hidden="true" className="size-4" />
+      </button>
+    </MorphPopoverTrigger>
   );
 }

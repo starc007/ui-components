@@ -160,7 +160,7 @@ const COMPONENT_DATES = {
   },
   "agents/ai-sidebar": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
