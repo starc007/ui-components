@@ -26,6 +26,7 @@ const COMPONENT_DATES = {
   "micro-interactions/poll-vote": { publishedAt: "2026-11-16", updatedAt: "2026-11-24" },
   "micro-interactions/status-icon": { publishedAt: "2026-11-25", updatedAt: "2026-11-25" },
   "micro-interactions/confetti": { publishedAt: "2026-11-25", updatedAt: "2026-11-25" },
+  "micro-interactions/click-burst": { publishedAt: "2026-11-25", updatedAt: "2026-11-25" },
   "sounds/sound-kit": { publishedAt: "2026-11-24", updatedAt: "2026-11-24" },
   "sounds/tap-sound": { publishedAt: "2026-11-24", updatedAt: "2026-11-24" },
   "sounds/press-sound": { publishedAt: "2026-11-24", updatedAt: "2026-11-24" },

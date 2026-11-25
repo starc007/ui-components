@@ -707,6 +707,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Free React status icon: a spinning sync arc closes into a ring as a check, exclamation or cross draws in. Accessible, reduced motion, shadcn install.",
   },
+  "click-burst": {
+    title: "React Click Burst: Sparkle Particles on Click",
+    description:
+      "Free React click burst: wrap a checkbox, like or save button and each click throws stars and dots from the click point. Reduced motion, shadcn install.",
+  },
   confetti: {
     title: "React Confetti Burst for Success Moments",
     description:

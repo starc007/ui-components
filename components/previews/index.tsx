@@ -326,6 +326,9 @@ export const previews: Record<string, ComponentType> = {
   "micro-interactions/confetti": dynamic(() =>
     import("./micro-interactions/confetti.preview").then((m) => m.ConfettiPreview),
   ),
+  "micro-interactions/click-burst": dynamic(() =>
+    import("./micro-interactions/click-burst.preview").then((m) => m.ClickBurstPreview),
+  ),
   "sounds/sound-kit": dynamic(() =>
     import("./sounds/sound-kit.preview").then((m) => m.SoundKitPreview),
   ),
