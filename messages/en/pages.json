@@ -255,7 +255,7 @@
     "header": {
       "eyebrow": "Agent guide",
       "title": "For AI agents",
-      "intro": "beUI exposes a static, agent-friendly surface. Install the beUI skill, connect the MCP server below, or hit the raw endpoints directly. Coding agents (Claude, Codex, Cursor, Amp) can list components, fetch source with all deps, and drop files into the user's project."
+      "intro": "beUI exposes a static, agent-friendly surface. Install the beUI skill, connect the MCP server below, call the WebMCP tools from a browser tab, or hit the raw endpoints directly. Coding agents (Claude, Codex, Cursor, Amp) can list components, fetch source with all deps, and drop files into the user's project."
     },
     "agentSkill": {
       "title": "Agent skill",
@@ -269,6 +269,12 @@
       "addToVsCode": "Add to VS Code",
       "windsurf": "Windsurf names the field <code>serverUrl</code> instead of <code>url</code>:",
       "toolsWithNative": "Tools: <code>get_setup</code>, <code>list_components</code>, <code>search_components</code>, <code>get_component_docs</code>, <code>get_component</code>, <code>get_install_command</code>. For React Native apps, <code>list_native_components</code> and <code>get_native_component</code> return beUI Native components with every file to copy."
+    },
+    "webmcp": {
+      "title": "WebMCP",
+      "body": "Agents working in a browser tab can call beUI's tools instead of reading the page. Where the browser supports <link>WebMCP</link>, a W3C Community Group draft that Chrome and Edge are testing, every page on beui.dev registers 4 read-only tools on <code>document.modelContext</code>. Other browsers load nothing extra.",
+      "tools": "Tools: <code>search_components</code>, <code>get_component_docs</code>, <code>get_install_command</code> and <code>read_page</code>, which returns the open page as Markdown. Each returns JSON with <code>ok</code> and either <code>data</code> or an <code>error</code> with a code and a hint.",
+      "discovery": "For agents that only fetch: every page links its Markdown version, and the home page's Link header points to <code>/llms.txt</code>, the API catalog at <code>/.well-known/api-catalog</code> and the agent skill index at <code>/.well-known/agent-skills/index.json</code>."
     },
     "endpoints": {
       "title": "Endpoints",

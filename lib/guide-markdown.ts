@@ -159,6 +159,21 @@ Windsurf names the field \`serverUrl\` instead of \`url\`, in \`~/.codeium/winds
 
 Available tools: \`get_setup\` (one-time project setup and theme tokens), \`list_components\`, \`search_components\`, \`get_component_docs\` (props, types and usage as Markdown), \`get_component\` (source files), and \`get_install_command\` (checks the slug). For React Native apps, \`list_native_components\` and \`get_native_component\` return beUI Native components with every file to copy.
 
+## WebMCP
+
+Agents working in a browser tab can call beUI's tools instead of reading the page. Where the browser supports [WebMCP](https://webmachinelearning.github.io/webmcp/), a W3C Community Group draft that Chrome and Edge are testing, every page on beui.dev registers 4 read-only tools on \`document.modelContext\`. Other browsers load nothing extra.
+
+| Tool | Returns |
+| --- | --- |
+| \`search_components\` | Components matching a query, with install slugs and doc links |
+| \`get_component_docs\` | One component's docs as Markdown, by page or install slug |
+| \`get_install_command\` | The shadcn command for npm, pnpm, yarn or bun |
+| \`read_page\` | The open page as Markdown |
+
+Each returns JSON with \`ok\` and either \`data\` or an \`error\` with a code and a hint.
+
+For agents that only fetch: every page links its Markdown version, and the home page's Link header points to \`/llms.txt\`, the API catalog at \`/.well-known/api-catalog\` and the agent skill index at \`/.well-known/agent-skills/index.json\`.
+
 ## Endpoints
 
 | Endpoint | Purpose |
