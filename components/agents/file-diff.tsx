@@ -7,7 +7,7 @@ import {
   FileCode2,
   LoaderCircle,
 } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { type ReactNode, useId, useLayoutEffect, useRef } from "react";
 import {
   type AgentCodeLanguage,
@@ -15,8 +15,15 @@ import {
   useAgentCodeTokens,
 } from "@/components/agents/agent-code";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { IconSwap } from "@/components/agents/icon-swap";
 import { Tooltip } from "@/components/motion/tooltip";
-import { SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+
+const DIFFSTAT_BLOCKS = 5;
+
+// A streamed line settles quickly: lines can arrive many times a second.
+const LINE_IN = { duration: 0.18, ease: EASE_OUT } as const;
+
 import { useCopy } from "@/lib/hooks/use-copy";
 import { useStatusOpen } from "@/lib/hooks/use-status-open";
 import { formatNumber, useLocale, useMessages } from "@/lib/i18n";
@@ -75,6 +82,30 @@ function ChangeCount({ value, type }: { value: number; type: "added" | "removed"
     >
       {type === "added" ? "+" : "−"}
       {formatNumber(value, locale)}
+    </span>
+  );
+}
+
+/**
+ * Five blocks split between additions and deletions, so the size and shape
+ * of the change reads at a glance. The counts beside it carry the numbers.
+ */
+function DiffStat({ additions, deletions }: { additions: number; deletions: number }) {
+  const total = additions + deletions;
+  if (!total) return null;
+  const added = Math.round((additions / total) * DIFFSTAT_BLOCKS);
+  return (
+    <span aria-hidden="true" className="flex shrink-0 gap-0.5">
+      {Array.from({ length: DIFFSTAT_BLOCKS }, (_, index) => (
+        <span
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed blocks
+          key={index}
+          className={cn(
+            "size-1.5 rounded-[2px] transition-colors duration-200",
+            index < added ? "bg-emerald-500" : "bg-rose-500",
+          )}
+        />
+      ))}
     </span>
   );
 }
@@ -162,16 +193,19 @@ export function FileDiff({
         <span className="flex shrink-0 items-center gap-2">
           <ChangeCount value={additions} type="added" />
           <ChangeCount value={deletions} type="removed" />
+          <DiffStat additions={additions} deletions={deletions} />
         </span>
         <span className="grid size-4 shrink-0 place-items-center text-muted-foreground/60">
-          {streaming ? (
-            <LoaderCircle
-              aria-label={t("applying")}
-              className={cn("size-3.5", !reduce && "animate-spin")}
-            />
-          ) : (
-            <Check aria-label={t("applied")} className="size-3.5" />
-          )}
+          <IconSwap id={streaming ? "applying" : "applied"}>
+            {streaming ? (
+              <LoaderCircle
+                aria-label={t("applying")}
+                className={cn("size-3.5", !reduce && "animate-spin")}
+              />
+            ) : (
+              <Check aria-label={t("applied")} className="size-3.5" />
+            )}
+          </IconSwap>
         </span>
         <motion.span
           aria-hidden="true"
@@ -190,7 +224,7 @@ export function FileDiff({
         open={currentOpen}
       >
         <div className="pl-6 pt-1.5">
-          <div className="overflow-hidden rounded-2xl bg-muted/80">
+          <div className="group/diff relative overflow-hidden rounded-xl bg-muted/80">
             <div
               ref={viewportRef}
               data-slot="file-diff-viewport"
@@ -200,15 +234,31 @@ export function FileDiff({
             >
               <div className="font-mono text-xs leading-5">
                 <span className="sr-only">{t("changes")}</span>
+                {/* Lines that stream in fade in, opacity only: a moving line
+                    fights the auto-scroll that follows the stream. Lines
+                    already there when the diff mounts are simply shown. */}
+                <AnimatePresence initial={false}>
                 {lines.map((line, index) => {
                   const type = line.type ?? "context";
+                  // A streamed line waits for its syntax colours before it
+                  // shows: shown at once, it would flash as plain text and
+                  // then recolour mid-fade. Before the highlighter has run at
+                  // all (`tokens` null), lines show plain.
+                  const ready = tokens === null || Boolean(tokens[index]);
                   return (
-                    <div
+                    <motion.div
                       key={line.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: ready ? 1 : 0 }}
+                      transition={LINE_IN}
                       className={cn(
                         "grid grid-cols-[2.25rem_2.25rem_1rem_minmax(0,1fr)]",
-                        type === "added" && "bg-emerald-500/[0.07]",
-                        type === "removed" && "bg-rose-500/[0.07]",
+                        // A tint plus a 2px edge: the edge still marks the
+                        // line where a faint tint melts into the panel.
+                        type === "added" &&
+                          "bg-emerald-500/10 shadow-[inset_2px_0_0_var(--color-emerald-500)]",
+                        type === "removed" &&
+                          "bg-rose-500/10 shadow-[inset_2px_0_0_var(--color-rose-500)]",
                       )}
                     >
                       <span className="select-none pr-2 text-right tabular-nums text-muted-foreground/40">
@@ -237,28 +287,39 @@ export function FileDiff({
                         tokens={tokens?.[index]}
                         className="min-w-0 whitespace-pre px-1.5"
                       />
-                    </div>
+                    </motion.div>
                   );
                 })}
+                </AnimatePresence>
               </div>
             </div>
 
             {canCopy ? (
-              <div className="flex justify-end px-2 pb-1.5 pt-1">
+              // Floats in the corner instead of taking a row of its own. It
+              // shows on hover or focus where there is a pointer, always on
+              // touch, and stays while "Copied" is showing.
+              <div
+                className={cn(
+                  "absolute top-1.5 right-1.5 transition-opacity duration-150 group-focus-within/diff:opacity-100 group-hover/diff:opacity-100 [@media(hover:none)]:opacity-100",
+                  copied ? "opacity-100" : "opacity-0",
+                )}
+              >
                 <Tooltip content={copied ? t("copied") : t("copy")} side="top">
                   <motion.button
                     type="button"
                     aria-label={copied ? t("copied") : t("copy")}
                     onClick={handleCopy}
-                    whileTap={reduce ? undefined : { scale: 0.9 }}
+                    whileTap={reduce ? undefined : { scale: 0.95 }}
                     transition={SPRING_PRESS}
-                    className="grid size-7 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-background/70 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                    className="grid size-7 place-items-center rounded-full border border-border bg-background text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    {copied ? (
-                      <Check className="size-3.5" />
-                    ) : (
-                      <Copy className="size-3.5" />
-                    )}
+                    <IconSwap id={copied ? "copied" : "copy"}>
+                      {copied ? (
+                        <Check className="size-3.5" />
+                      ) : (
+                        <Copy className="size-3.5" />
+                      )}
+                    </IconSwap>
                   </motion.button>
                 </Tooltip>
               </div>
