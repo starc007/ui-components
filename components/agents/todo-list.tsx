@@ -3,8 +3,8 @@
 import { ChevronDown, ListTodo } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { type ReactNode, useId, useLayoutEffect, useRef } from "react";
+import { ClipResizeFrame } from "@/components/agents/clip-resize-frame";
 import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
-import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import {
   EASE_OUT,
   SPRING_LAYOUT,
@@ -262,12 +262,12 @@ export function TodoList({
   }, [itemCount, reduce]);
 
   return (
-    <section
+    // The card's bottom edge glides as the list folds or opens, instead of
+    // the old fold that snapped the edge up once it finished.
+    <ClipResizeFrame
+      role="region"
       aria-label={t("label")}
-      className={cn(
-        "w-full overflow-hidden rounded-2xl border border-border/70",
-        className,
-      )}
+      className={cn("w-full", className)}
     >
       <button
         id={triggerId}
@@ -308,11 +308,19 @@ export function TodoList({
         </motion.span>
       </button>
 
-      <AgentDisclosure
+      {/* The list leaves the layout at once when folding (popLayout) and
+          fades under the rising edge; opening, it fades in as the edge drops. */}
+      <AnimatePresence initial={false} mode="popLayout">
+      {currentOpen ? (
+      <motion.div
+        key="list"
         id={contentId}
         role="region"
         aria-labelledby={triggerId}
-        open={currentOpen}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { duration: 0.2, ease: EASE_OUT } }}
+        exit={{ opacity: 0, transition: { duration: 0.14, ease: EASE_OUT } }}
+        className="w-full"
       >
         <div
           ref={viewportRef}
@@ -387,7 +395,9 @@ export function TodoList({
             </p>
           )}
         </div>
-      </AgentDisclosure>
-    </section>
+      </motion.div>
+      ) : null}
+      </AnimatePresence>
+    </ClipResizeFrame>
   );
 }

@@ -172,7 +172,7 @@ const COMPONENT_DATES = {
   },
   "agents/todo-list": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/prompt-input": {
     publishedAt: "2026-08-02",
