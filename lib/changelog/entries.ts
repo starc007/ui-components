@@ -21,7 +21,7 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "new",
-        "text": "Sounds: 16 interface sounds made live with Web Audio. Install one, or Sound Kit for all of them.",
+        "text": "Sounds: 16 interface sounds made live with Web Audio, built like real taps from a contact click, a body tuned to a material and a little room. Install one, or Sound Kit for all of them.",
         "href": "/sounds"
       },
       {

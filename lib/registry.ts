@@ -1835,7 +1835,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "tap-sound",
         name: "Tap Sound",
-        description: "A light glass tick over a soft knock, for taps and plain clicks.",
+        description: "A fingertip on glass: a crisp contact, a small glass ring and a soft knock, for taps and plain clicks.",
         file: "lib/sounds/tap.ts",
         usageFile: "components/previews/sounds/tap-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1846,7 +1846,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "press-sound",
         name: "Press Sound",
-        description: "A soft low thump with a bright click on top, for buttons.",
+        description: "A physical button: a switch click over a soft thump and a little casing ring, for buttons.",
         file: "lib/sounds/press.ts",
         usageFile: "components/previews/sounds/press-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1857,7 +1857,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "type-sound",
         name: "Type Sound",
-        description: "A short keystroke with a little random pitch, for text fields, search and chat inputs.",
+        description: "A keystroke with a click, a spring and a soft thock, at a little random pitch, for text fields, search and chat inputs.",
         file: "lib/sounds/type.ts",
         usageFile: "components/previews/sounds/type-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1868,7 +1868,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "select-sound",
         name: "Select Sound",
-        description: "A crisp detent, for tabs, segmented controls and menu choices.",
+        description: "A crisp detent, like a dial clicking into a notch, for tabs, segmented controls and menu choices.",
         file: "lib/sounds/select.ts",
         usageFile: "components/previews/sounds/select-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1879,7 +1879,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "toggle-sound",
         name: "Toggle Sound",
-        description: "A rising snap for on and the same snap falling for off, for switches and checkboxes.",
+        description: "A two-stage snap like a real switch, rising for on and falling for off, for switches and checkboxes.",
         file: "lib/sounds/toggle.ts",
         usageFile: "components/previews/sounds/toggle-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1890,7 +1890,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "open-sound",
         name: "Open Sound",
-        description: "A short rising swish, for menus, popovers and dialogs opening.",
+        description: "A soft rising whoosh that lands with a light glass touch, for menus, popovers and dialogs opening.",
         file: "lib/sounds/open.ts",
         usageFile: "components/previews/sounds/open-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1901,7 +1901,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "close-sound",
         name: "Close Sound",
-        description: "A falling swish a little quicker than open, for things closing.",
+        description: "A falling whoosh a little quicker than open, settling with a soft tap, for things closing.",
         file: "lib/sounds/close.ts",
         usageFile: "components/previews/sounds/close-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1912,7 +1912,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "navigate-sound",
         name: "Navigate Sound",
-        description: "A quick airy swish, for moving between pages, steps or slides.",
+        description: "A quick airy slide, like a page passing under a hand, for moving between pages, steps or slides.",
         file: "lib/sounds/navigate.ts",
         usageFile: "components/previews/sounds/navigate-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1923,7 +1923,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "success-sound",
         name: "Success Sound",
-        description: "Two soft mallet notes rising a fifth, for a saved or completed action.",
+        description: "Two soft mallet notes on a wooden bar, rising a fifth, for a saved or completed action.",
         file: "lib/sounds/success.ts",
         usageFile: "components/previews/sounds/success-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1934,7 +1934,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "error-sound",
         name: "Error Sound",
-        description: "Two low notes falling with a slight buzz, for a failed action.",
+        description: "Two dull wooden knocks falling, each with a soft beat, for a failed action.",
         file: "lib/sounds/error.ts",
         usageFile: "components/previews/sounds/error-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1945,7 +1945,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "warning-sound",
         name: "Warning Sound",
-        description: "Two even mid notes, for a heads-up that needs a look.",
+        description: "Two even taps on a small glass block, for a heads-up that needs a look.",
         file: "lib/sounds/warning.ts",
         usageFile: "components/previews/sounds/warning-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1956,7 +1956,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "notify-sound",
         name: "Notify Sound",
-        description: "A single small bell with a shimmer, for a new message or toast.",
+        description: "A single small struck bell with a slow shimmer, for a new message or toast.",
         file: "lib/sounds/notify.ts",
         usageFile: "components/previews/sounds/notify-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1967,7 +1967,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "copy-sound",
         name: "Copy Sound",
-        description: "Two quick rising ticks, for copying to the clipboard.",
+        description: "Two quick rising glass ticks, for copying to the clipboard.",
         file: "lib/sounds/copy.ts",
         usageFile: "components/previews/sounds/copy-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -1978,7 +1978,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "delete-sound",
         name: "Delete Sound",
-        description: "A short crumple that drops away, for removing or trashing an item.",
+        description: "A short paper crumple that drops away, for removing or trashing an item.",
         file: "lib/sounds/delete.ts",
         usageFile: "components/previews/sounds/delete-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
@@ -2000,7 +2000,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "tick-sound",
         name: "Tick Sound",
-        description: "A tiny tick, for counters, sliders, pickers and loading steps.",
+        description: "A tiny dry metal tick, for counters, sliders, pickers and loading steps.",
         file: "lib/sounds/tick.ts",
         usageFile: "components/previews/sounds/tick-sound.usage.tsx",
         extraFiles: ["lib/sound.tsx"],
