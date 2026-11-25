@@ -18,7 +18,21 @@
     "motionGuides": "Motion guides",
     "howToGuides": "How-to guides",
     "changelog": "Changelog",
-    "blog": "Blog"
+    "blog": "Blog",
+    "menuCount": "{count} components",
+    "menu": {
+      "components": "Buttons, menus, inputs and overlays",
+      "blocks": "Composed widgets and full flows",
+      "agents": "Chat, reasoning and prompt input",
+      "casino": "Crash, plinko and other games",
+      "playground": "Tune motion and copy the code",
+      "themes": "Pick colors and copy the tokens",
+      "motionGuides": "Timing, easing and reduced motion",
+      "howToGuides": "Recipes for common animated UI",
+      "changelog": "New components and fixes",
+      "blog": "Notes on motion and interfaces",
+      "sponsors": "Back beUI and get featured"
+    }
   },
   "sound": {
     "label": "Mute sounds",

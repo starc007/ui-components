@@ -1,25 +1,49 @@
 "use client";
 
+import {
+  Bot,
+  Dices,
+  GraduationCap,
+  Heart,
+  Layers,
+  LayoutGrid,
+  type LucideIcon,
+  Newspaper,
+  Palette,
+  ScrollText,
+  SlidersHorizontal,
+  Spline,
+} from "lucide-react";
 import { useTranslations } from "use-intl";
 import { MorphNav, type MorphNavItem } from "@/components/app/chrome/morph-nav";
 import { categoryPath, isNativePath, NATIVE_PATH } from "@/lib/component-paths";
+import { registry } from "@/lib/registry";
 
 const SECTIONS = [
-  { slug: "motion", title: "components" },
-  { slug: "blocks", title: "blocks" },
-  { slug: "agents", title: "agents" },
-  { slug: "casino", title: "casino" },
-] as const;
+  { slug: "motion", title: "components", icon: Layers },
+  { slug: "blocks", title: "blocks", icon: LayoutGrid },
+  { slug: "agents", title: "agents", icon: Bot },
+  { slug: "casino", title: "casino", icon: Dices },
+] as const satisfies readonly { slug: string; title: string; icon: LucideIcon }[];
 
 const RESOURCES = [
-  { key: "playground", href: "/playground" },
-  { key: "themes", href: "/themes" },
-  { key: "motionGuides", href: "/docs/motion-patterns" },
-  { key: "howToGuides", href: "/guides" },
-  { key: "changelog", href: "/changelog" },
-  { key: "blog", href: "/blog" },
-  { key: "sponsors", href: "/sponsors" },
-] as const;
+  { key: "playground", href: "/playground", icon: SlidersHorizontal },
+  { key: "themes", href: "/themes", icon: Palette },
+  { key: "motionGuides", href: "/docs/motion-patterns", icon: Spline },
+  { key: "howToGuides", href: "/guides", icon: GraduationCap },
+  { key: "changelog", href: "/changelog", icon: ScrollText },
+  { key: "blog", href: "/blog", icon: Newspaper },
+  { key: "sponsors", href: "/sponsors", icon: Heart },
+] as const satisfies readonly { key: string; href: string; icon: LucideIcon }[];
+
+/** Installable components in a category, variants included. */
+function categoryCount(slug: string) {
+  const category = registry.find((candidate) => candidate.slug === slug);
+  return (category?.components ?? []).reduce((total, component) => {
+    const variants = (component.examples ?? []).filter((example) => example.installSlug).length;
+    return total + (variants || 1);
+  }, 0);
+}
 
 function within(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -32,11 +56,26 @@ function within(pathname: string, href: string) {
 export function HeaderNav({ pathname }: { pathname: string }) {
   const t = useTranslations("Chrome.header");
 
-  const sections: MorphNavItem[] = SECTIONS.map(({ slug, title }) => ({
-    href: categoryPath(slug),
-    title: t(title),
+  const sections: MorphNavItem[] = SECTIONS.map(({ slug, title, icon: Icon }) => {
+    const href = categoryPath(slug);
+    const count = categoryCount(slug);
+    return {
+      href,
+      title: t(title),
+      description: t(`menu.${title}`),
+      icon: <Icon />,
+      meta: String(count),
+      metaLabel: t("menuCount", { count }),
+      current: within(pathname, href),
+    };
+  });
+  const resources: MorphNavItem[] = RESOURCES.map(({ key, href, icon: Icon }) => ({
+    href,
+    title: t(key),
+    description: t(`menu.${key}`),
+    icon: <Icon />,
+    current: within(pathname, href),
   }));
-  const resources: MorphNavItem[] = RESOURCES.map(({ key, href }) => ({ href, title: t(key) }));
   const charts = categoryPath("charts");
   const interactions = categoryPath("micro-interactions");
   const sounds = categoryPath("sounds");
