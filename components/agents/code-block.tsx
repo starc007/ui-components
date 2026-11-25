@@ -8,6 +8,9 @@ import {
   AgentCodeLine,
   useAgentCodeTokens,
 } from "@/components/agents/agent-code";
+import { IconSwap } from "@/components/agents/icon-swap";
+import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
+import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PRESS } from "@/lib/ease";
 import { useCopy } from "@/lib/hooks/use-copy";
 import { useMessages } from "@/lib/i18n";
@@ -122,29 +125,36 @@ export function CodeBlock({
               : "text-emerald-600 dark:text-emerald-400",
           )}
         >
-          {streaming ? (
-            <LoaderCircle className={cn("size-3", !reduce && "animate-spin")} />
-          ) : (
-            <Check className="size-3" />
-          )}
-          {streaming ? t("writing") : t("ready")}
+          <IconSwap id={streaming ? "writing" : "ready"}>
+            {streaming ? (
+              <LoaderCircle className={cn("size-3", !reduce && "animate-spin")} />
+            ) : (
+              <Check className="size-3" />
+            )}
+          </IconSwap>
+          <ActionSwapRollText value={status}>
+            {streaming ? t("writing") : t("ready")}
+          </ActionSwapRollText>
         </span>
         {copyable || onCopy ? (
-          <motion.button
-            type="button"
-            aria-label={copied ? t("copied") : t("copy")}
-            title={copied ? t("copied") : t("copy")}
-            onClick={handleCopy}
-            whileTap={reduce ? undefined : { scale: 0.9 }}
-            transition={SPRING_PRESS}
-            className="grid size-7 shrink-0 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-background/70 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            {copied ? (
-              <Check className="size-3.5" />
-            ) : (
-              <Copy className="size-3.5" />
-            )}
-          </motion.button>
+          <Tooltip content={copied ? t("copied") : t("copy")} side="top">
+            <motion.button
+              type="button"
+              aria-label={copied ? t("copied") : t("copy")}
+              onClick={handleCopy}
+              whileTap={reduce ? undefined : { scale: 0.95 }}
+              transition={SPRING_PRESS}
+              className="grid size-7 shrink-0 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-background/70 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <IconSwap id={copied ? "copied" : "copy"}>
+                {copied ? (
+                  <Check className="size-3.5" />
+                ) : (
+                  <Copy className="size-3.5" />
+                )}
+              </IconSwap>
+            </motion.button>
+          </Tooltip>
         ) : null}
       </div>
 
@@ -167,7 +177,10 @@ export function CodeBlock({
                     showLineNumbers
                       ? "grid-cols-[2.75rem_minmax(0,1fr)]"
                       : "grid-cols-1",
-                    highlighted.has(lineNumber) && "bg-blue-500/[0.07]",
+                    // Tint plus a 2px edge, like changed lines in File Diff:
+                    // a tint alone melts into the panel.
+                    highlighted.has(lineNumber) &&
+                      "bg-blue-500/10 shadow-[inset_2px_0_0_var(--color-blue-500)]",
                   )}
                 >
                   {showLineNumbers ? (

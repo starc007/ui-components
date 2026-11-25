@@ -61,7 +61,7 @@ const COMPONENT_DATES = {
   "motion/alert": { publishedAt: "2026-10-05", updatedAt: "2026-11-24" },
   "motion/collapsible": { publishedAt: "2026-10-05", updatedAt: "2026-10-18" },
   "motion/bookshelf": { publishedAt: "2026-11-19", updatedAt: "2026-11-24" },
-  "motion/dropdown-menu": { publishedAt: "2026-11-16", updatedAt: "2026-11-24" },
+  "motion/dropdown-menu": { publishedAt: "2026-11-16", updatedAt: "2026-11-25" },
   "motion/before-after-slider": { publishedAt: "2026-11-14", updatedAt: "2026-11-24" },
   "motion/aspect-ratio": { publishedAt: "2026-10-05", updatedAt: "2026-11-24" },
   "motion/arc-picker": { publishedAt: "2026-10-04", updatedAt: "2026-11-24" },
@@ -92,7 +92,7 @@ const COMPONENT_DATES = {
   "motion/switch": { publishedAt: "2026-05-17", updatedAt: "2026-11-24" },
   "motion/input": { publishedAt: "2026-06-29", updatedAt: "2026-11-24" },
   "motion/select": { publishedAt: "2026-06-28", updatedAt: "2026-11-25" },
-  "motion/combobox": { publishedAt: "2026-08-11", updatedAt: "2026-11-24" },
+  "motion/combobox": { publishedAt: "2026-08-11", updatedAt: "2026-11-25" },
   "motion/multi-select": { publishedAt: "2026-08-29", updatedAt: "2026-11-24" },
   "motion/checkbox": { publishedAt: "2026-06-23", updatedAt: "2026-11-10" },
   "motion/radio": { publishedAt: "2026-06-23", updatedAt: "2026-10-18" },
@@ -108,7 +108,7 @@ const COMPONENT_DATES = {
   "motion/preview-rail": { publishedAt: "2026-07-11", updatedAt: "2026-11-24" },
   "motion/dock": { publishedAt: "2026-05-17", updatedAt: "2026-10-18" },
   "motion/tooltip": { publishedAt: "2026-05-17", updatedAt: "2026-11-24" },
-  "motion/context-menu": { publishedAt: "2026-07-27", updatedAt: "2026-11-24" },
+  "motion/context-menu": { publishedAt: "2026-07-27", updatedAt: "2026-11-25" },
   "motion/popover": { publishedAt: "2026-07-07", updatedAt: "2026-11-24" },
   "motion/morphing-modal": { publishedAt: "2026-05-17", updatedAt: "2026-11-25" },
   "motion/center-morph-modal": {
@@ -140,7 +140,7 @@ const COMPONENT_DATES = {
   "charts/price-target-fan": { publishedAt: "2026-09-11", updatedAt: "2026-11-24" },
   "agents/loading-states": {
     publishedAt: "2026-07-30",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-25",
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
@@ -160,19 +160,19 @@ const COMPONENT_DATES = {
   },
   "agents/ai-sidebar": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/approval-card": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/code-block": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/todo-list": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/prompt-input": {
     publishedAt: "2026-08-02",
@@ -180,31 +180,31 @@ const COMPONENT_DATES = {
   },
   "agents/tool-result": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/file-diff": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/streaming-response": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/image-generation": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-25",
   },
   "agents/tool-approval": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/citations": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/agent-activity": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-11-10" },
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-11-24" },
@@ -214,7 +214,7 @@ const COMPONENT_DATES = {
   "blocks/availability-scheduler": { publishedAt: "2026-07-10", updatedAt: "2026-11-25" },
   "blocks/swap": { publishedAt: "2026-05-19", updatedAt: "2026-11-24" },
   "blocks/dynamic-island": { publishedAt: "2026-06-10", updatedAt: "2026-11-24" },
-  "blocks/command-palette": { publishedAt: "2026-05-17", updatedAt: "2026-11-24" },
+  "blocks/command-palette": { publishedAt: "2026-05-17", updatedAt: "2026-11-25" },
   "blocks/morphing-search": { publishedAt: "2026-08-18", updatedAt: "2026-11-24" },
   "blocks/expandable-action-bar": { publishedAt: "2026-06-05", updatedAt: "2026-11-24" },
   "blocks/overflow-actions": { publishedAt: "2026-06-19", updatedAt: "2026-11-10" },

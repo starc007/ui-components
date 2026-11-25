@@ -156,23 +156,22 @@ export function ChatPreview({
       const assistantId = `sent-assistant-${run}`;
       const response = typeof reply === "function" ? reply(prompt) : reply;
 
+      // The reply's bubble opens with the typing dots in it and streams into
+      // the same bubble, so nothing swaps when the first words arrive.
       setMessages((current) => [
         ...current,
         { id: userId, from: "user", content: prompt, animateIn: true },
+        {
+          id: assistantId,
+          from: "assistant",
+          content: "",
+          animateIn: true,
+          streaming: true,
+        },
       ]);
       setPending(true);
 
       replyTimer.current = window.setTimeout(() => {
-        setMessages((current) => [
-          ...current,
-          {
-            id: assistantId,
-            from: "assistant",
-            content: "",
-            animateIn: true,
-            streaming: true,
-          },
-        ]);
         setPending(false);
         setActiveReply({ id: assistantId, content: response });
       }, reduce ? 0 : 420);
@@ -184,10 +183,13 @@ export function ChatPreview({
     if (replyTimer.current) window.clearTimeout(replyTimer.current);
     replyTimer.current = undefined;
     setPending(false);
+    // A reply stopped before its first word leaves no empty bubble behind.
     setMessages((current) =>
-      current.map((message) =>
-        message.streaming ? { ...message, streaming: false } : message,
-      ),
+      current
+        .filter((message) => !(message.streaming && !message.content))
+        .map((message) =>
+          message.streaming ? { ...message, streaming: false } : message,
+        ),
     );
     setActiveReply(null);
   }, []);
@@ -232,7 +234,9 @@ export function ChatPreview({
                   variant={
                     message.from === "user" ? userVariant : assistantVariant
                   }
-                  animateIn={false}
+                  // The reply's bubble pops from its corner; a sent row
+                  // already rises as a whole.
+                  animateIn={message.from === "assistant" && message.animateIn}
                 >
                   <MessageBubbleContent>
                     {message.from === "assistant" ? (
@@ -254,18 +258,6 @@ export function ChatPreview({
               </MessageContent>
             </Message>
           ))}
-          {pending ? (
-            <Message id="pending-assistant" from="assistant">
-              {showAvatars ? (
-                <MessageAvatar>
-                  <Bot />
-                </MessageAvatar>
-              ) : null}
-              <MessageContent>
-                <MessageTyping label="Preparing response" />
-              </MessageContent>
-            </Message>
-          ) : null}
         </MessageGroup>
       </MessageScroller>
 

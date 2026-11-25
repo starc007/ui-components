@@ -2,8 +2,9 @@
 
 import { Maximize2, Minimize2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChatAppExample } from "@/components/previews/agents/chat-app-usage";
 import { ActionSwapIcon } from "@/components/motion/action-swap";
+import { Tooltip } from "@/components/motion/tooltip";
+import { ChatAppExample } from "@/components/previews/agents/chat-app-usage";
 import { cn } from "@/lib/utils";
 
 export function ChatAppPreview() {
@@ -105,13 +106,13 @@ export function ChatAppPreview() {
           "fixed inset-0 z-[100] h-dvh overscroll-contain p-3 sm:p-4",
       )}
     >
+      <Tooltip content={expanded ? "Exit expanded preview" : "Expand preview"} side="bottom">
       <button
         ref={toggleRef}
         type="button"
         onClick={toggleExpanded}
         aria-label={expanded ? "Exit expanded preview" : "Expand preview"}
-        title={expanded ? "Exit expanded preview" : "Expand preview"}
-        className="absolute top-5 right-24 z-50 grid size-10 place-items-center rounded-full border border-border/80 bg-background/90 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="absolute top-5 right-24 z-50 grid size-10 place-items-center rounded-full border border-border/80 bg-background/90 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <ActionSwapIcon
           value={expanded ? "minimize" : "maximize"}
@@ -124,6 +125,7 @@ export function ChatAppPreview() {
           )}
         </ActionSwapIcon>
       </button>
+      </Tooltip>
       <ChatAppExample className={expanded ? "h-full" : undefined} />
     </div>
   );

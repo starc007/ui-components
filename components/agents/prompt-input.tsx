@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowUp, Plus, Square } from "lucide-react";
+import { ArrowUp, ChevronDown, Plus, Square } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
+  type ComponentProps,
   type FormEvent,
   type KeyboardEvent,
   type ReactNode,
@@ -15,18 +16,15 @@ import {
 } from "react";
 import { Button } from "@/components/motion/button";
 import {
-  MorphPopover,
-  MorphPopoverContent,
-  MorphPopoverTrigger,
-} from "@/components/motion/popover-morph";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/motion/select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/motion/dropdown-menu";
 import { Tooltip } from "@/components/motion/tooltip";
-import { SPRING_SWAP } from "@/lib/ease";
+import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -114,6 +112,7 @@ export function PromptInput({
     defaultModel ?? models[0]?.value,
   );
   const [actionsOpen, setActionsOpen] = useState(false);
+  const [modelsOpen, setModelsOpen] = useState(false);
   const currentValue = value ?? internalValue;
   const currentModelValue = model ?? internalModel;
   const currentModel = models.find(
@@ -212,122 +211,118 @@ export function PromptInput({
 
       <div className="mt-1 flex min-h-8 items-center gap-1">
         {actions.length ? (
-          <MorphPopover open={actionsOpen} onOpenChange={setActionsOpen}>
-            <MorphPopoverTrigger>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
+          // The library menu: arrow keys and typeahead, a highlight that
+          // glides between rows, and no animation when the keyboard opens it.
+          <DropdownMenu open={actionsOpen} onOpenChange={setActionsOpen}>
+            <Tooltip content={t("addToPrompt")} side="top">
+              <AddButton
+                open={actionsOpen}
+                reduce={reduce}
                 disabled={disabled || loading}
                 aria-label={t("addToPrompt")}
-                className="size-8 rounded-full"
-              >
-                <motion.span
-                  aria-hidden="true"
-                  animate={{ rotate: actionsOpen ? 45 : 0 }}
-                  transition={reduce ? { duration: 0 } : SPRING_SWAP}
-                >
-                  <Plus className="size-4" />
-                </motion.span>
-              </Button>
-            </MorphPopoverTrigger>
-
-            <MorphPopoverContent
-              side="top"
-              align="start"
-              sideOffset={8}
-              className="w-56 p-2"
-            >
+              />
+            </Tooltip>
+            <DropdownMenuContent side="top" align="start" sideOffset={8} className="w-72">
               {actions.map((action) => (
-                <button
+                <DropdownMenuItem
                   key={action.value}
-                  type="button"
                   disabled={action.disabled}
-                  onClick={() => {
-                    onAction?.(action.value);
-                    setActionsOpen(false);
-                  }}
-                  className="flex w-full items-start gap-2.5 rounded-lg px-3 py-2 text-left outline-none transition-colors hover:bg-muted focus-visible:bg-muted disabled:pointer-events-none disabled:opacity-50"
+                  onSelect={() => onAction?.(action.value)}
+                  textValue={typeof action.label === "string" ? action.label : undefined}
+                  className="items-start"
                 >
                   {action.icon ? (
-                    <span className="mt-0.5 grid size-5 shrink-0 place-items-center text-muted-foreground [&_svg]:size-4">
+                    <span aria-hidden="true" className="mt-0.5 flex shrink-0">
                       {action.icon}
                     </span>
                   ) : null}
-                  <span className="min-w-0">
-                    <span className="block text-sm text-foreground">
-                      {action.label}
-                    </span>
+                  {/* One line each: a menu row is read at a glance. */}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate">{action.label}</span>
                     {action.description ? (
-                      <span className="mt-0.5 block text-xs leading-4 text-muted-foreground">
+                      <span className="block truncate text-xs leading-4 text-muted-foreground">
                         {action.description}
                       </span>
                     ) : null}
                   </span>
-                </button>
+                </DropdownMenuItem>
               ))}
-            </MorphPopoverContent>
-          </MorphPopover>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : null}
         {leadingAction}
         {models.length ? (
-          <Select
-            value={currentModelValue}
-            onValueChange={setModel}
-            disabled={disabled || loading}
-            className="min-w-0"
-          >
-            <SelectTrigger className="h-8 w-auto max-w-52 rounded-full border-0 bg-transparent px-3 py-0 text-xs hover:bg-muted focus-visible:ring-2">
-              <span className="flex min-w-0 items-center gap-1.5">
+          // The same menu as the plus: a model is a pick from a short list,
+          // with the check at the end of the chosen row.
+          <DropdownMenu open={modelsOpen} onOpenChange={setModelsOpen}>
+            <DropdownMenuTrigger disabled={disabled || loading}>
+              <button
+                type="button"
+                disabled={disabled || loading}
+                className="inline-flex h-8 min-w-0 max-w-52 items-center gap-1.5 rounded-full px-3 text-xs text-muted-foreground outline-none transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none data-[state=open]:bg-foreground/[0.06] data-[state=open]:text-foreground"
+              >
                 {currentModel?.icon ? (
-                  <span className="grid size-4 shrink-0 place-items-center text-muted-foreground [&_svg]:size-3.5">
+                  <span aria-hidden="true" className="flex size-4 shrink-0 items-center justify-center [&_svg]:size-3.5">
                     {currentModel.icon}
                   </span>
                 ) : null}
-                <span className="truncate text-muted-foreground">
-                  {currentModel?.label ?? t("chooseModel")}
-                </span>
-              </span>
-            </SelectTrigger>
-            <SelectContent className="right-auto w-52 shadow-none">
-              {models.map((option) => (
-                <SelectItem
-                  key={option.value}
-                  value={option.value}
-                  disabled={option.disabled}
-                  className="py-2"
+                <span className="truncate">{currentModel?.label ?? t("chooseModel")}</span>
+                <motion.span
+                  aria-hidden="true"
+                  animate={{ rotate: modelsOpen ? 180 : 0 }}
+                  transition={reduce ? { duration: 0 } : SPRING_SWAP}
+                  className="flex shrink-0"
                 >
-                  <span className="flex min-w-0 items-center gap-2">
+                  <ChevronDown className="size-3.5" />
+                </motion.span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="top" align="start" sideOffset={8} className="w-56">
+              <DropdownMenuRadioGroup value={currentModelValue ?? ""} onValueChange={setModel}>
+                {models.map((option) => (
+                  <DropdownMenuRadioItem
+                    key={option.value}
+                    value={option.value}
+                    disabled={option.disabled}
+                    closeOnSelect
+                    textValue={typeof option.label === "string" ? option.label : undefined}
+                  >
                     {option.icon ? (
-                      <span className="grid size-5 shrink-0 place-items-center text-muted-foreground [&_svg]:size-4">
+                      <span aria-hidden="true" className="flex shrink-0">
                         {option.icon}
                       </span>
                     ) : null}
-                    <span className="min-w-0 truncate text-sm text-foreground">
-                      {option.label}
-                    </span>
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                    <span className="min-w-0 truncate">{option.label}</span>
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : null}
 
-        <Tooltip content={loading ? t("stop") : t("send")} side="top">
+        <span className="relative ml-auto flex">
+          <Tooltip content={loading ? t("stop") : t("send")} side="top">
           <Button
             type={loading ? "button" : "submit"}
             size="icon"
             disabled={loading ? !onStop : !canSubmit}
             aria-label={loading ? t("stop") : t("send")}
             onClick={loading ? onStop : undefined}
-            className="ml-auto size-8 rounded-full"
+            className={cn(
+              "size-8 rounded-full",
+              // Nothing to send: a quiet gray chip, not a dimmed primary. It
+              // lights up the moment there is a prompt.
+              !loading && !canSubmit && "bg-foreground/[0.06] text-muted-foreground disabled:opacity-100",
+            )}
           >
             <AnimatePresence initial={false} mode="popLayout">
               <motion.span
                 key={loading ? "stop" : "send"}
-                initial={reduce ? { opacity: 1 } : { opacity: 0, y: 3, scale: 0.8 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -3, scale: 0.8 }}
+                // A little blur melts the arrow into the square, so the swap
+                // reads as one icon changing rather than two crossing.
+                initial={reduce ? { opacity: 1 } : { opacity: 0, y: 3, scale: 0.8, filter: "blur(2px)" }}
+                animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -3, scale: 0.8, filter: "blur(2px)" }}
                 transition={reduce ? { duration: 0 } : SPRING_SWAP}
                 className="grid place-items-center"
               >
@@ -339,8 +334,72 @@ export function PromptInput({
               </motion.span>
             </AnimatePresence>
           </Button>
-        </Tooltip>
+          </Tooltip>
+          {/* While the agent works, a thin arc circles the stop button. */}
+          <AnimatePresence>
+            {loading ? (
+              <motion.svg
+                key="working"
+                aria-hidden="true"
+                viewBox="0 0 40 40"
+                initial={{ opacity: 0, scale: reduce ? 1 : 0.9 }}
+                animate={{ opacity: 1, scale: 1, rotate: reduce ? 0 : 360 }}
+                exit={{ opacity: 0, transition: { duration: 0.15, ease: EASE_OUT } }}
+                transition={{
+                  opacity: { duration: 0.2, ease: EASE_OUT },
+                  scale: { duration: 0.2, ease: EASE_OUT },
+                  rotate: { duration: 1, ease: "linear", repeat: Number.POSITIVE_INFINITY },
+                }}
+                className="pointer-events-none absolute -inset-1 size-10 text-primary"
+              >
+                <circle cx="20" cy="20" r="19" fill="none" stroke="currentColor" strokeOpacity={0.15} strokeWidth="1.5" />
+                <circle
+                  cx="20"
+                  cy="20"
+                  r="19"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeDasharray="30 90"
+                />
+              </motion.svg>
+            ) : null}
+          </AnimatePresence>
+        </span>
       </div>
     </form>
+  );
+}
+
+/**
+ * The plus that opens the add menu. Its own component so the tooltip around it
+ * and the menu trigger inside both reach the button: the plus turns into a
+ * cross while the menu is open.
+ */
+function AddButton({
+  open,
+  reduce,
+  ...props
+}: ComponentProps<typeof Button> & { open: boolean; reduce: boolean }) {
+  return (
+    <DropdownMenuTrigger disabled={props.disabled}>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        {...props}
+        className="size-8 rounded-full data-[state=open]:bg-foreground/[0.06] data-[state=open]:text-foreground"
+      >
+        <motion.span
+          aria-hidden="true"
+          animate={{ rotate: open ? 45 : 0 }}
+          transition={reduce ? { duration: 0 } : SPRING_SWAP}
+          className="flex"
+        >
+          <Plus className="size-4" />
+        </motion.span>
+      </Button>
+    </DropdownMenuTrigger>
   );
 }
