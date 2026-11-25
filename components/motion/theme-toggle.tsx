@@ -137,7 +137,12 @@ const CIRCLE_ORIGIN: Record<RectStart, string> = {
 export function useThemeToggle({
   variant = "rectangle",
   start = "bottom-up",
-}: { variant?: ThemeVariant; start?: RectStart } = {}) {
+}: {
+  /** Shape of the view transition reveal. Default: "rectangle" */
+  variant?: ThemeVariant;
+  /** Where the reveal starts. Ignored by "blinds". Default: "bottom-up" */
+  start?: RectStart;
+} = {}) {
   const { setTheme, resolvedTheme } = useTheme();
   const reduce = useReducedMotion() ?? false;
   const [mounted, setMounted] = useState(false);

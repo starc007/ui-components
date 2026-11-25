@@ -83,7 +83,9 @@ export type CrashPhase = "idle" | "starting" | "running" | "crashed";
 
 /** A live round's crash point, tagged with the round `onStart` was given. */
 export interface CrashReveal {
+  /** Round number from `onStart`; a reveal for any other round is ignored. */
   round: number;
+  /** Multiplier the round crashes at, such as 2.5 for 2.5×. */
   value: number;
 }
 

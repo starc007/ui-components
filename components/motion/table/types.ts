@@ -4,7 +4,9 @@ import type { TableMessages } from "./messages";
 export type SortDirection = "asc" | "desc";
 
 export type SortState = {
+  /** `key` of the column the rows are sorted by. */
   key: string;
+  /** Sort order: `asc` for smallest first, `desc` for largest first. */
   direction: SortDirection;
 };
 

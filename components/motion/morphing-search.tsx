@@ -41,11 +41,17 @@ const SEARCH_CLIP_TRANSITION: Transition = {
 };
 
 export type MorphingSearchItem = {
+	/** Unique key for the result row. */
 	id: string;
+	/** Main text of the result row, matched by the search. */
 	title: string;
+	/** Smaller text under the title, also matched by the search. */
 	description?: string;
+	/** Extra words the search matches that are not shown. */
 	keywords?: string[];
+	/** Lucide icon component shown before the title. Omitted when not set. */
 	icon?: LucideIcon;
+	/** Called when this result is chosen, before the search's `onSelect`. */
 	onSelect?: () => void;
 };
 

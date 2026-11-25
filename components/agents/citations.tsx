@@ -25,9 +25,13 @@ export const citationsMessages = {
 export type CitationsMessages = typeof citationsMessages;
 
 export interface CitationItem {
+  /** Unique key for the source, matched by a `Citation` marker's `citationId`. */
   id: string;
+  /** Source name shown as the row's main text. */
   title: ReactNode;
+  /** Muted text after the title, such as the site's host. */
   domain?: ReactNode;
+  /** Link opened in a new tab and the favicon source. Omit for a plain row. */
   url?: string;
   /**
    * Replaces the URL favicon, e.g. a document icon for non-web sources. An svg
@@ -124,6 +128,7 @@ export function CitationFavicon({
   icon,
   className,
 }: {
+  /** Page whose site favicon is shown. A globe icon shows when absent or broken. */
   url?: string;
   /** Drawn instead of the favicon when truthy. */
   icon?: ReactNode;

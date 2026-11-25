@@ -39,8 +39,11 @@ export const reactionPickerMessages = {
 export type ReactionPickerMessages = typeof reactionPickerMessages;
 
 export type Reaction = {
+  /** Unique key, used as the picker's value. */
   id: string;
+  /** Name shown above the reaction on hover and used as its accessible name. */
   label: string;
+  /** Icon or emoji in the tray, which flies to the trigger once picked. */
   icon: ReactNode;
   /** Text colour class for the icon, e.g. "text-rose-500". */
   color?: string;

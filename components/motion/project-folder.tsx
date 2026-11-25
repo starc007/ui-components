@@ -25,7 +25,9 @@ import { useScrollLock } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 export type ProjectFolderPreview = {
+  /** Unique key for the card, which links it between the folder and the overlay. */
   id: string;
+  /** What the card shows, such as an image or file thumbnail. */
   content: ReactNode;
 };
 

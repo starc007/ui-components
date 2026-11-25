@@ -9,7 +9,9 @@ import { formatNumber, useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export interface AvatarGroupMember {
+  /** Unique key for the avatar in the list. */
   id: string;
+  /** Shown in the tooltip, used as alt text and for the initials. */
   name: string;
   /** Image URL. Without one, or if it fails to load, initials show. */
   src?: string;

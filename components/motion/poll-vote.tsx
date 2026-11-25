@@ -17,7 +17,14 @@ export const pollVoteMessages = {
 
 export type PollVoteMessages = typeof pollVoteMessages;
 
-export type PollOption = { id: string; label: string; votes: number };
+export type PollOption = {
+  /** Unique key for the choice, passed to `onValueChange` on a vote. */
+  id: string;
+  /** Text shown on the choice's row. */
+  label: string;
+  /** Votes before the viewer's; their vote adds 1 to the share. */
+  votes: number;
+};
 
 export interface PollVoteProps {
   /** The choices, each with an id, label and vote count before the viewer's vote. */

@@ -49,8 +49,11 @@ export const toolApprovalMessages = {
 export type ToolApprovalMessages = typeof toolApprovalMessages;
 
 export interface ToolApprovalParameter {
+  /** Unique key for the row. */
   id: string;
+  /** Parameter name, shown muted in the left column of the details. */
   label: ReactNode;
+  /** Parameter value, shown in monospace in the right column. */
   value: ReactNode;
 }
 

@@ -15,7 +15,12 @@ import { type RefObject, useCallback, useLayoutEffect, useMemo, useRef } from "r
 
 export type TooltipSide = "top" | "right" | "bottom" | "left";
 export type TooltipAlign = "start" | "center" | "end";
-export type TooltipPoint = { x: number; y: number };
+export type TooltipPoint = {
+  /** Horizontal position; for `anchorPoint`, a 0 to 1 fraction of the anchor's width. */
+  x: number;
+  /** Vertical position; for `anchorPoint`, a 0 to 1 fraction of the anchor's height. */
+  y: number;
+};
 export type TooltipAnchor = HTMLElement | SVGElement;
 
 const ORIGIN: Record<TooltipSide, string> = {

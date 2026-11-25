@@ -18,21 +18,34 @@ import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type BouncyAccordionItem = {
+  /** Unique key, used as the accordion's open value. */
   id: string;
+  /** Text on the trigger row, cut off with an ellipsis when long. */
   title: ReactNode;
+  /** Body revealed when the row opens. Without it the row has no panel. */
   description?: ReactNode;
+  /** Icon shown before the title. Omitted when not set. */
   icon?: ReactNode;
+  /** Dims the row and blocks its trigger. */
   disabled?: boolean;
 };
 
 export type BouncyAccordionClassNames = {
+  /** Classes for the outer wrapper. */
   root?: string;
+  /** Classes for each row's card. */
   item?: string;
+  /** Classes for each row's trigger button. */
   trigger?: string;
+  /** Classes for the icon wrapper in the trigger. */
   icon?: string;
+  /** Classes for the title in the trigger. */
   title?: string;
+  /** Classes for the chevron that turns when the row opens. */
   chevron?: string;
+  /** Classes for the collapsible panel. */
   content?: string;
+  /** Classes for the description text inside the panel. */
   description?: string;
 };
 

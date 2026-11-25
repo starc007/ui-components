@@ -25,8 +25,11 @@ export const shareButtonMessages = {
 export type ShareButtonMessages = typeof shareButtonMessages;
 
 export type ShareAction = {
+  /** Unique key, passed to `onAction` when the bubble is pressed. */
   id: string;
+  /** Bubble name, shown beside it on hover or focus and read as its label. */
   label: string;
+  /** Icon in the bubble, swapped for a check once the action is done. */
   icon: ReactNode;
   /** Shown on the label once the action is done, e.g. "Copied". */
   doneLabel?: string;

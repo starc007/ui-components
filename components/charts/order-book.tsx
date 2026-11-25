@@ -16,7 +16,12 @@ import { cn } from "@/lib/utils";
 import { OrderBookDepthRow } from "./order-book/depth-row";
 import { buildOrderBook, type DepthLevel, summarizeDepth } from "./order-book/model";
 
-export type OrderBookLevel = { price: number; size: number };
+export type OrderBookLevel = {
+  /** Price of the level, in the quote asset. */
+  price: number;
+  /** Amount resting at this price, in the base asset. */
+  size: number;
+};
 export type { DepthLevel as OrderBookDepthLevel, DepthSummary as OrderBookDepthSummaryData } from "./order-book/model";
 
 /** A level identified by its side and price, so it survives snapshot updates. */
@@ -210,7 +215,14 @@ export function OrderBookHeader({ className }: { className?: string }) {
   );
 }
 
-export function OrderBookSide({ side, className }: { side: "bid" | "ask"; className?: string }) {
+export function OrderBookSide({
+  side,
+  className,
+}: {
+  /** Which levels the table lists: bids, or asks with the best ask last. */
+  side: "bid" | "ask";
+  className?: string;
+}) {
   const {
     bids,
     asks,
@@ -346,6 +358,7 @@ export function OrderBookDepthSummary({
   children,
   className,
 }: {
+  /** Shown while no level is inspected. Default: "Hover a level to see the cost of filling up to it" */
   placeholder?: ReactNode;
   /** Custom readout for the inspected levels. */
   children?: (summary: NonNullable<ReturnType<typeof useOrderBook>["summary"]>) => ReactNode;

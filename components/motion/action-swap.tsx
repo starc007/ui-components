@@ -7,9 +7,13 @@ import { EASE_OUT, SPRING_LAYOUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type ActionSwapItem = {
+  /** Unique key, used as the button's value. */
   id: string;
+  /** Text shown on the button while this item is active. Hidden when `iconOnly`. */
   label: ReactNode;
+  /** Icon shown before the label while this item is active. */
   icon?: ReactNode;
+  /** Accessible name while active. Falls back to a string label when `iconOnly`. */
   ariaLabel?: string;
 };
 

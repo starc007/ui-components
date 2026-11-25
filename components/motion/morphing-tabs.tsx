@@ -37,21 +37,34 @@ export const morphingTabsMessages = {
 export type MorphingTabsMessages = typeof morphingTabsMessages;
 
 export type MorphingTabsItem = {
+  /** Unique key for the tab, used in `value` and the order. */
   id: string;
+  /** Text shown in the tab and used in its close button's name. */
   label: string;
+  /** Icon shown before the label. */
   icon?: ReactNode;
+  /** Panel content shown while this tab is active. */
   content: ReactNode;
+  /** Blocks selecting and reordering this tab. */
   disabled?: boolean;
 };
 
 export type MorphingTabsClassNames = {
+  /** Classes for the outer wrapper. */
   root?: string;
+  /** Classes for the bar that holds the tabs. */
   rail?: string;
+  /** Classes for each tab button. */
   tab?: string;
+  /** Classes for the shaped surface behind the active tab. */
   activeTab?: string;
+  /** Classes for the wrapper around each tab icon. */
   icon?: string;
+  /** Classes for each tab label. */
   label?: string;
+  /** Classes for each close button, shown when `onClose` is set. */
   close?: string;
+  /** Classes for the panel under the tabs. */
   content?: string;
 };
 

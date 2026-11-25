@@ -21,10 +21,15 @@ export type TodoItemStatus =
   | "cancelled";
 
 export interface TodoItem {
+  /** Unique key for the row. */
   id: string;
+  /** Task text; struck through when completed. */
   title: ReactNode;
+  /** Task state; sets the icon and text tone. Default: "pending" */
   status?: TodoItemStatus;
+  /** Ring fill from 0 to 100 while in progress; unset spins a partial ring. */
   progress?: number;
+  /** Muted text at the end of the row, such as a time or count. */
   detail?: ReactNode;
 }
 

@@ -26,17 +26,22 @@ export const predictionMarketCardMessages = {
 export type PredictionMarketCardMessages = typeof predictionMarketCardMessages;
 
 export interface PredictionMarketCardOutcome {
+	/** Unique key, sent back as `outcomeId` when the outcome is picked. */
 	id: string;
+	/** Outcome name shown in the row and the trade button's accessible name. */
 	label: string;
 	/** Probability between 0 and 1. */
 	probability: number;
+	/** Image or icon shown in a round frame before the label. */
 	icon?: ReactNode;
 	/** Optional team color for the compact probability line. */
 	color?: string;
 }
 
 export interface PredictionMarketCardSelection {
+	/** The `id` of the outcome that was picked. */
 	outcomeId: string;
+	/** The side picked. The card's outcome buttons always send "yes". */
 	side: "yes" | "no";
 }
 

@@ -2,10 +2,17 @@ import type { ReactNode } from "react";
 import type { ReturnsCalendarMessages } from "./messages";
 
 /** Zero-based row and month; month 12 selects the year total. */
-export type ReturnsCalendarCell = { y: number; m: number };
+export type ReturnsCalendarCell = {
+  /** Row index into `years` and `returns`. */
+  y: number;
+  /** Month index from 0 to 11, or 12 for the year total. */
+  m: number;
+};
 
 export interface ReturnsCalendarSelection {
+  /** The pinned cell, or the anchor of a span. */
   start: ReturnsCalendarCell;
+  /** Other end of a span, compounded with `start`; both months or both year totals. */
   end?: ReturnsCalendarCell;
 }
 

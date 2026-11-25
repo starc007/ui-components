@@ -1,9 +1,13 @@
 import type { ReactNode } from "react";
 
 export type WalletAccount = {
+  /** Unique key, used as the active account id and the generated avatar's seed. */
   id: string;
+  /** Account name shown in the switcher. */
   name: string;
+  /** Wallet address, shown shortened in the menu and copied in full. */
   address: string;
+  /** Custom avatar. Falls back to a generated image seeded from the id. */
   avatar?: ReactNode;
 };
 

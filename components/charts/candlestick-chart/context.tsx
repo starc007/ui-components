@@ -18,10 +18,15 @@ export type Candle = {
   id: string;
   /** Axis and readout label, such as "14:05". */
   label: string;
+  /** Price at the start of the period. Green when `close` is at or above it. */
   open: number;
+  /** Highest price in the period, the top of the wick. */
   high: number;
+  /** Lowest price in the period, the bottom of the wick. */
   low: number;
+  /** Price at the end of the period. */
   close: number;
+  /** Amount traded in the period, drawn as a bar along the bottom. */
   volume: number;
 };
 

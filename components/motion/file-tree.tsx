@@ -56,9 +56,13 @@ export interface FileTreeFileProps {
 }
 
 export type FileTreeClassNames = {
+  /** The tree root element. */
   tree?: string;
+  /** Each file or folder row. */
   item?: string;
+  /** The file or folder icon in a row. */
   icon?: string;
+  /** The name text in a row. */
   label?: string;
 };
 

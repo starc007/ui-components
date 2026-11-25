@@ -3,11 +3,15 @@ import type { DateRangePickerMessages } from "./messages";
 
 /** Calendar dates, independent of a browser's timezone: YYYY-MM-DD. */
 export interface DateRange {
+  /** First day of the range, as YYYY-MM-DD. */
   from: string;
+  /** Last day of the range, on or after `from`. Omit while only the start is picked. */
   to?: string;
 }
 export interface DateRangePreset {
+  /** Text shown on the preset button. */
   label: string;
+  /** Range selected when the preset button is pressed. */
   value: DateRange;
 }
 export interface DateRangePickerProps {

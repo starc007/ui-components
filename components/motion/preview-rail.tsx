@@ -25,12 +25,19 @@ export const previewRailMessages = {
 export type PreviewRailMessages = typeof previewRailMessages;
 
 export interface PreviewRailItem {
+  /** Unique key, used for the active item and passed to `onActiveChange`. */
   id: string;
+  /** Title of the preview card and the tick's accessible name. */
   label: string;
+  /** Accessible name for the tick when it should differ from `label`. */
   ariaLabel?: string;
+  /** Muted text under the title in the preview card. */
   description?: ReactNode;
+  /** Makes the tick a link; on touch, the first tap shows the preview. */
   href?: string;
+  /** Link target for `href`. */
   target?: "_blank" | "_self" | "_parent" | "_top";
+  /** Link `rel`. Default: "noreferrer noopener" when `target` is "_blank" */
   rel?: string;
 }
 

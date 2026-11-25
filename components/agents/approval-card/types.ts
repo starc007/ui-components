@@ -10,21 +10,32 @@ export type ApprovalCardStatus =
   | "answered";
 
 export interface ApprovalCardOption {
+  /** Value stored in the answer's `selected` list when picked. */
   value: string;
+  /** Text shown next to the radio or checkbox. */
   label: string;
   /** Plain supporting text rendered under the label. */
   description?: string;
+  /** Stops the option from being picked. */
   disabled?: boolean;
 }
 
 export interface ApprovalCardQuestion {
+  /** Unique key; the question's answer is stored under it. */
   id: string;
+  /** Question text, shown as the card heading on its step. */
   title: ReactNode;
+  /** Supporting text under the question. */
   description?: ReactNode;
+  /** Choices shown as radios, or checkboxes when `multiple` is set. */
   options?: ApprovalCardOption[];
+  /** Allows picking more than 1 option, shown as checkboxes. */
   multiple?: boolean;
+  /** Set to false to stay on the step after a single choice is picked. */
   autoAdvance?: boolean;
+  /** Adds a text field for a free-form answer. */
   allowCustom?: boolean;
+  /** Placeholder of the free-form field. Default: "Add another response…" */
   customPlaceholder?: string;
 }
 

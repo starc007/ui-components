@@ -2,15 +2,20 @@ import type { ReactNode } from "react";
 import type { PriceTargetFanMessages } from "./messages";
 
 export interface PriceTarget {
+  /** Unique name of the target, such as "High", shown as "{key} target". */
   key: string;
+  /** Target price at the horizon, in the chart's currency. */
   price: number;
+  /** Number of analysts behind this target, shown in its tooltip. */
   analysts: number;
   /** Any CSS color; the projection, its dot and its label take it. */
   color?: string;
 }
 
 export interface PriceHistoryPoint {
+  /** ISO date of the price, such as "2026-01-31". */
   date: string;
+  /** Traded price on that date. */
   price: number;
 }
 

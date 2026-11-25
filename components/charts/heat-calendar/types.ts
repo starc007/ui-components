@@ -1,10 +1,17 @@
 import type { ReactNode } from "react";
 import type { HeatCalendarMessages } from "./messages";
 
-export type HeatCalendarCell = { w: number; d: number };
+export type HeatCalendarCell = {
+  /** Zero-based week column, oldest week first. */
+  w: number;
+  /** Zero-based day row, Monday first. */
+  d: number;
+};
 
 export interface HeatCalendarSelection {
+  /** The first clicked cell, which anchors the range. */
   start: HeatCalendarCell;
+  /** The second clicked cell, before or after `start`. Omit for a single cell. */
   end?: HeatCalendarCell;
 }
 

@@ -19,13 +19,21 @@ import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type InputClassNames = {
+  /** Classes for the outer wrapper. */
   root?: string;
+  /** Classes for the label above the field. */
   label?: string;
+  /** Classes for the bordered box around the input and icons. */
   field?: string;
+  /** Classes for the input element. */
   input?: string;
+  /** Classes for the wrapper of the icon before the text. */
   leftIcon?: string;
+  /** Classes for the wrapper of the icon after the text. */
   rightIcon?: string;
+  /** Classes for the check mark shown while `success` is set. */
   successIcon?: string;
+  /** Classes for the error message under the field. */
   errorMessage?: string;
 };
 

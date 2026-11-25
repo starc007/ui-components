@@ -48,19 +48,24 @@ export type Team = {
 export type MatchSide = {
   /** null renders a TBD slot with a shield icon. */
   team: Team | null;
+  /** Goals or points shown beside the team. null leaves it blank for an unplayed match. */
   score: number | null;
   /** Present on both sides to render Google-style shootout scores — 1 (3). */
   penalties?: number | null;
 };
 
 export type Match = {
+  /** Unique key for the match card. */
   id: string;
   /** Kick-off day, already formatted. Omit it and the card drops the date row. */
   date?: string;
+  /** Kick-off time, already formatted, shown after the date. */
   time?: string;
   /** Omit it and a match with a `winner` counts as finished. */
   status?: "finished" | "upcoming";
+  /** The team and score on the card's top row. */
   home: MatchSide;
+  /** The team and score on the card's bottom row. */
   away: MatchSide;
   /** Decides the marker and which side dims. */
   winner?: "home" | "away";
@@ -71,6 +76,7 @@ export type Match = {
 export type Round = {
   /** Shown as the column header — "Round of 32", "Upper bracket final", "Last 8". */
   name: string;
+  /** Matches in this column, top to bottom, half as many as the round before. */
   matches: Match[];
 };
 

@@ -69,6 +69,7 @@ export type TimelineEvent = {
   id: string;
   /** ISO date string or Date. Read in UTC. */
   date: string | Date;
+  /** Card heading under the date, cut to 1 line. */
   title: string;
   /** Visual shown inside the card. Keep it non-interactive: the card itself
    * is the button. */

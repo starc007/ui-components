@@ -20,10 +20,15 @@ import { cn } from "@/lib/utils";
 export type SignUpStatus = "idle" | "loading" | "success" | "error";
 
 export type SignUpValues = {
+  /** Text in the name field. */
   name: string;
+  /** Text in the email field. */
   email: string;
+  /** Text in the password field. */
   password: string;
+  /** Text in the confirm password field, which must match `password`. */
   confirmPassword: string;
+  /** Whether the terms checkbox is checked. */
   terms: boolean;
 };
 
@@ -72,14 +77,23 @@ type Translate = (
 ) => string;
 
 export type SignUpFormClassNames = {
+  /** Classes for the form element. */
   root?: string;
+  /** Classes for the wrapper around the title and description. */
   header?: string;
+  /** Classes for the heading. */
   title?: string;
+  /** Classes for the line under the heading. */
   description?: string;
+  /** Classes for the column that holds the input fields. */
   fields?: string;
+  /** Classes for the password strength meter. */
   strength?: string;
+  /** Classes for the terms checkbox and its error. */
   terms?: string;
+  /** Classes for the submit button. */
   submit?: string;
+  /** Classes for the content below the submit button. */
   footer?: string;
 };
 

@@ -1,8 +1,11 @@
 export interface FunnelStage {
   /** Keep IDs stable when updating counts. */
   id: string;
+  /** Stage name shown on its bar, in the tooltip and in the legend. */
   label: string;
+  /** Count at this stage; negative and non-finite values are left out. */
   value: number;
+  /** Any CSS color for the bar. Defaults to the palette, in stage order. */
   color?: string;
 }
 

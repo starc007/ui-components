@@ -33,8 +33,11 @@ const CONTINUITY_LABEL: Variants = {
 };
 
 type ExpandableStateProps = {
+  /** Whether the hidden part is revealed, for controlled use. */
   expanded?: boolean;
+  /** The initial expanded state when uncontrolled. Default: false */
   defaultExpanded?: boolean;
+  /** Called with the new state when the control expands or collapses. */
   onExpandedChange?: (expanded: boolean) => void;
 };
 

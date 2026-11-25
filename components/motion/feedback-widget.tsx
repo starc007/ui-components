@@ -42,6 +42,7 @@ const SPRINKLES = Array.from({ length: 8 }, (_, i) => {
 });
 
 export interface FeedbackData {
+  /** Text from the message field, as typed. Never blank. */
   message: string;
 }
 

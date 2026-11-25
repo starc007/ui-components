@@ -22,24 +22,40 @@ import { cn } from "@/lib/utils";
 export type ExpandableActionBarSize = "sm" | "md";
 
 export type ExpandableActionBarItem = {
+  /** Unique key, matched against `activeId`. */
   id: string;
+  /** Text shown beside the icon while expanded. A string also becomes the tooltip. */
   label: ReactNode;
+  /** Icon shown in the button at all times. */
   icon: ReactNode;
+  /** Called when the action runs, before the bar's `onAction`. */
   onClick?: () => void;
+  /** Dims the button and blocks presses. */
   disabled?: boolean;
+  /** Marks the item active and applies `classNames.activeItem`. */
   active?: boolean;
+  /** Small count or marker on the button. Pinned to the corner while collapsed. */
   badge?: ReactNode;
+  /** Keyboard hint shown after the label while expanded, on wider screens. */
   shortcut?: ReactNode;
 };
 
 export type ExpandableActionBarClassNames = {
+  /** Classes for the outer wrapper. */
   root?: string;
+  /** Classes for the pill that holds the buttons. */
   track?: string;
+  /** Classes for every action button. */
   item?: string;
+  /** Classes added to the active action button. */
   activeItem?: string;
+  /** Classes for the icon wrapper. */
   icon?: string;
+  /** Classes for the expanding label. */
   label?: string;
+  /** Classes for the badge. */
   badge?: string;
+  /** Classes for the shortcut hint. */
   shortcut?: string;
 };
 

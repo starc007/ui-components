@@ -8,18 +8,26 @@ export type SidebarResourceKind =
   | "bookmark";
 
 export interface SidebarResource {
+  /** Unique key for the row, used for selection, expansion and moves. */
   id: string;
+  /** Name shown in the row and edited on rename. */
   label: string;
+  /** Picks the row icon; folders and projects can hold children. */
   kind: SidebarResourceKind;
+  /** Nested rows shown when a folder or project is expanded. */
   children?: SidebarResource[];
+  /** Dims the row and blocks selecting, renaming, dragging and dropping into it. */
   disabled?: boolean;
 }
 
 export type SidebarResourceDropPosition = "before" | "inside" | "after";
 
 export interface SidebarResourceMove {
+  /** Id of the row being moved. */
   itemId: string;
+  /** Id of the row it lands next to or inside, or null for the end of the root. */
   targetId: string | null;
+  /** Where the row lands relative to the target. */
   position: SidebarResourceDropPosition;
 }
 
@@ -30,15 +38,22 @@ export interface SidebarResourceMove {
  * row cannot make from where it sits.
  */
 export interface SidebarResourceMoveCommands {
+  /** Moves the row above the row before it. */
   up?: () => void;
+  /** Moves the row below the row after it. */
   down?: () => void;
+  /** Moves the row into the folder or project above it, named by `label`. */
   into?: { label: string; run: () => void };
+  /** Moves the row out of its parent, just after it. */
   out?: () => void;
 }
 
 export interface SidebarResourceMenuControls {
+  /** Closes the row menu. */
   close: () => void;
+  /** Closes the menu and starts renaming the row in place. */
   rename: () => void;
+  /** The moves this row can make right now. */
   moves: SidebarResourceMoveCommands;
 }
 

@@ -41,17 +41,26 @@ export const promptInputMessages = {
 export type PromptInputMessages = typeof promptInputMessages;
 
 export interface PromptModel {
+  /** Unique key, passed to `onModelChange` and `onSubmit`. */
   value: string;
+  /** Name shown in the model menu and on its trigger when selected. */
   label: ReactNode;
+  /** Icon before the label in the menu and on the trigger. */
   icon?: ReactNode;
+  /** Stops the model from being picked. */
   disabled?: boolean;
 }
 
 export interface PromptAction {
+  /** Unique key, passed to `onAction` when the item is chosen. */
   value: string;
+  /** Item text in the add menu. */
   label: ReactNode;
+  /** Muted line under the label. */
   description?: ReactNode;
+  /** Icon before the label. */
   icon?: ReactNode;
+  /** Stops the item from being chosen. */
   disabled?: boolean;
 }
 

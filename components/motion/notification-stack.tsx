@@ -31,20 +31,32 @@ export const notificationStackMessages = {
 export type NotificationStackMessages = typeof notificationStackMessages;
 
 export type NotificationStackItem = {
+  /** Unique key for the notification. */
   id: string;
+  /** Heading text on the card. */
   title: ReactNode;
+  /** Smaller text under the title. Omitted when not set. */
   description?: ReactNode;
+  /** Content at the card's top right, such as a timestamp. */
   trailing?: ReactNode;
 };
 
 export type NotificationStackClassNames = {
+  /** Classes for the grid that holds the cards. */
   stack?: string;
+  /** Classes for each notification card. */
   card?: string;
+  /** Classes for the text column inside each card. */
   content?: string;
+  /** Classes for each card's title. */
   title?: string;
+  /** Classes for each card's description. */
   description?: string;
+  /** Classes for each card's trailing content. */
   trailing?: string;
+  /** Classes for the row under the cards with the count and label. */
   footer?: string;
+  /** Classes for the round badge showing the notification count. */
   count?: string;
 };
 

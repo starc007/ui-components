@@ -14,11 +14,14 @@ export interface StatusBarDatum {
   label: string;
   /** Must match an ID in statuses. */
   status: string;
+  /** Extra detail shown in the tooltip under the status, such as an incident note. */
   description?: string;
 }
 
 export interface StatusBarStatus {
+  /** Unique key that a datum's `status` points to. */
   id: string;
+  /** Name shown in the legend and tooltip. */
   label: string;
   /** Any CSS color, including theme variables. */
   color: string;

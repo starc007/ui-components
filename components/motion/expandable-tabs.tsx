@@ -27,22 +27,32 @@ export const expandableTabsMessages = {
 export type ExpandableTabsMessages = typeof expandableTabsMessages;
 
 export type ExpandableTabsItem = {
+  /** Unique key for the tab, used in `value`. */
   id: string;
   /** String label — shown inside the active tab and used as the button's accessible name. */
   label: string;
+  /** Icon shown in the tab button, open or closed. */
   icon: ReactNode;
   /** Panel shown above the bar when this tab is active. */
   content: ReactNode;
 };
 
 export type ExpandableTabsClassNames = {
+  /** Classes for the outer shell that grows to fit the panel. */
   root?: string;
+  /** Classes for the panel area above the bar. */
   panel?: string;
+  /** Classes for the tab bar along the bottom. */
   bar?: string;
+  /** Classes for each tab button. */
   tab?: string;
+  /** Classes added to the active tab button. */
   activeTab?: string;
+  /** Classes for the wrapper around each tab icon. */
   icon?: string;
+  /** Classes for the active tab's label. */
   label?: string;
+  /** Classes for the highlight behind the active tab. */
   pill?: string;
 };
 

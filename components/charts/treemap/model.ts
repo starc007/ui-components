@@ -36,9 +36,13 @@ interface ResolvedNode {
 }
 
 export interface TreemapTile extends TreemapItem {
+  /** Left edge of the tile from the plot's left (px). */
   x: number;
+  /** Top edge of the tile from the plot's top (px). */
   y: number;
+  /** Tile width (px). */
   width: number;
+  /** Tile height (px). */
   height: number;
 }
 

@@ -53,34 +53,54 @@ type Translate = (
 ) => string;
 
 export type PredictionMarketOutcome = {
+  /** Unique key, used as the order's `outcomeId` and the `positions` key. */
   id: string;
+  /** Text on the outcome button. "No" and "Down" are styled red. */
   label: string;
+  /** Price per share from 0 to 1, shown in cents. */
   price: number;
 };
 
 export type PredictionMarketOrderValue = {
+  /** Whether the order buys or sells shares. */
   mode: PredictionMarketMode;
+  /** The `id` of the selected outcome. */
   outcomeId: string;
+  /** Raw input text: dollars when buying, shares when selling. */
   amount: string;
 };
 
 export type PredictionMarketQuote = {
+  /** Whether the order can be placed. */
   valid: boolean;
+  /** The parsed amount: dollars when buying, shares when selling. */
   amount: number;
+  /** Price per share, clamped between 0.01 and 0.99. */
   price: number;
+  /** Shares bought, or shares sold. */
   shares: number;
+  /** Dollars won if the outcome resolves, or dollars received from a sale. */
   payout: number;
+  /** Why the order is invalid, shown on the trade button. Absent when valid. */
   error?: string;
 };
 
 export type PredictionMarketClassNames = {
+  /** Classes for the outer card. */
   root?: string;
+  /** Classes for the top bar with the buy and sell tabs. */
   header?: string;
+  /** Classes for the buy and sell tabs. */
   tabs?: string;
+  /** Classes for the outcome buttons. */
   outcomes?: string;
+  /** Classes for the amount panel with the input and chips. */
   amount?: string;
+  /** Classes for the row of quick amount chips. */
   chips?: string;
+  /** Classes for the footer with the payout and trade button. */
   footer?: string;
+  /** Classes for the trade or connect button. */
   action?: string;
 };
 

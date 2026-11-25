@@ -33,10 +33,15 @@ export type FileDiffStatus = "streaming" | "complete";
 export type FileDiffLineType = "added" | "removed" | "context";
 
 export interface FileDiffLine {
+  /** Stable key, so streamed lines keep their place. */
   id: string;
+  /** Marks the line added (green, +), removed (red, −) or unchanged. Default: "context" */
   type?: FileDiffLineType;
+  /** Line number in the old file, shown in the first gutter. Blank when not set. */
   oldLine?: number;
+  /** Line number in the new file, shown in the second gutter. Blank when not set. */
   newLine?: number;
+  /** The line's code, without the + or − marker. Syntax highlighted. */
   content: string;
 }
 

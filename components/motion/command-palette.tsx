@@ -25,13 +25,21 @@ import { cn } from "@/lib/utils";
 import { searchCommands } from "@/lib/command-search";
 
 export type CommandItem = {
+  /** Unique key for the command, also stored in the recent list. */
   id: string;
+  /** Name shown in the row and matched by search. */
   label: string;
+  /** Heading the command is listed under; also searched. Default: "Results" */
   group?: string;
+  /** Shortcut text shown as a key at the row end, such as "⌘K". */
   hint?: string;
+  /** Extra search terms, such as aliases, that match this command. */
   keywords?: string[];
+  /** Lucide icon shown before the label. */
   icon?: LucideIcon;
+  /** Content shown after the label, such as a status tag. */
   badge?: ReactNode;
+  /** Called when the command is chosen, before the palette closes. */
   onSelect: () => void;
 };
 

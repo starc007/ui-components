@@ -98,9 +98,13 @@ export function Tabs<T extends string = string>({
   children,
   className,
 }: {
+  /** The tab selected at first when uncontrolled. */
   defaultValue?: T;
+  /** The selected tab's value, for controlled use. */
   value?: T;
+  /** Called with the tab's value when a tab is picked. */
   onValueChange?: (v: T) => void;
+  /** Selection style: "pill", "underline" or "segment". Default: "pill" */
   variant?: Variant;
   /**
    * With "selected", a trigger's icon springs open only on the selected tab
@@ -652,7 +656,16 @@ export function TabsTrigger({
   );
 }
 
-export function TabsContent({ value, children, className }: { value: string; children: ReactNode; className?: string }) {
+export function TabsContent({
+  value,
+  children,
+  className,
+}: {
+  /** The trigger value that shows this panel. */
+  value: string;
+  children: ReactNode;
+  className?: string;
+}) {
   const { value: current, registerPanel, unregisterPanel, tabId, panelId } = useTabs();
   const reduce = useReducedMotion();
   const active = current === value;

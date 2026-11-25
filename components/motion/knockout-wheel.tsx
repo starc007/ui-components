@@ -61,15 +61,20 @@ export type MatchSide = {
 /** Structurally compatible with the knockout bracket's Match, minus the fields
  * the wheel never draws (date, time, status). */
 export type Match = {
+  /** Unique key for the match's node on the wheel. */
   id: string;
+  /** First side: its team and score. Feeds from match `2k` of the round before. */
   home: MatchSide;
+  /** Second side: its team and score. Feeds from match `2k + 1` of the round before. */
   away: MatchSide;
+  /** Side that went through; its team fills the next ring. Unset while undecided. */
   winner?: "home" | "away";
 };
 
 export type Round = {
   /** Read out with the match in tooltips and the screen-reader list. */
   name: string;
+  /** The round's matches, in draw order; half as many as the round before. */
   matches: Match[];
 };
 

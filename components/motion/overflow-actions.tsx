@@ -24,22 +24,36 @@ import { cn } from "@/lib/utils";
 export type OverflowActionsSize = "sm" | "md";
 
 export type OverflowActionItem = {
+  /** Unique key for the action. */
   id: string;
+  /** Text on the button. A string also becomes the tooltip. */
   label: ReactNode;
+  /** Icon shown before the label. Omitted when not set. */
   icon?: ReactNode;
+  /** Called when the button is pressed, before the bar's `onAction`. */
   onClick?: () => void;
+  /** Dims the button and blocks presses. */
   disabled?: boolean;
+  /** Accessible name for the button, for a label that is not plain text. */
   ariaLabel?: string;
 };
 
 export type OverflowActionsClassNames = {
+  /** Classes for the outer wrapper. */
   root?: string;
+  /** Classes for the row that holds the buttons and toggle. */
   track?: string;
+  /** Classes for every action button. */
   action?: string;
+  /** Classes added to the always-visible action buttons. */
   primaryAction?: string;
+  /** Classes added to the extra action buttons. */
   overflowAction?: string;
+  /** Classes for the button that shows and hides the extra actions. */
   toggle?: string;
+  /** Classes for each action's icon wrapper. */
   icon?: string;
+  /** Classes for each action's label. */
   label?: string;
 };
 

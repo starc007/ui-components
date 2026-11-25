@@ -37,8 +37,11 @@ export const bookshelfMessages = {
 export type BookshelfMessages = typeof bookshelfMessages;
 
 export type BookshelfBook = {
+  /** Unique key for the book, used in `value` and `onValueChange`. */
   id: string;
+  /** Title printed on the spine and typeset cover, and the book's accessible name. */
   title: string;
+  /** Author printed on the spine and cover and added to the accessible name. */
   author?: string;
   /** Cloth color of the spine and cover. Any CSS color. */
   color: string;

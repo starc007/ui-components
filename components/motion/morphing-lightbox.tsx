@@ -52,12 +52,17 @@ export const imageViewerMessages = {
 export type ImageViewerMessages = typeof imageViewerMessages;
 
 export interface LightboxImage {
+  /** Unique key, used as the open value. Ids must not repeat. */
   id: string;
+  /** Image URL for the thumbnail and the open view. */
   src: string;
+  /** Alt text, also the caption and open label fallback. */
   alt: string;
   /** Intrinsic dimensions preserve aspect ratio through the thumbnail morph. */
   width: number;
+  /** Intrinsic height in px; must be positive, like `width`. */
   height: number;
+  /** Text under the open image. Default: the `alt` text */
   caption?: string;
 }
 
