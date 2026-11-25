@@ -65,6 +65,16 @@ export function useRouter() {
     () => ({
       push: (href: string) => router.navigate({ href }),
       replace: (href: string) => router.navigate({ href, replace: true }),
+      /** Swap the URL hash in place: no new history entry, no scroll. */
+      replaceHash: (hash: string) => {
+        const { pathname, search } = window.location;
+        return router.navigate({
+          href: `${pathname}${search}${hash ? `#${hash}` : ""}`,
+          replace: true,
+          resetScroll: false,
+          hashScrollIntoView: false,
+        });
+      },
       prefetch: (href: string) =>
         router.preloadRoute({ to: href } as Parameters<typeof router.preloadRoute>[0]),
       back: () => router.history.back(),

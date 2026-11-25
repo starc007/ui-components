@@ -5,6 +5,7 @@ import { ArrowRight, Globe } from "lucide-react";
 import { useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { ComponentCard } from "@/components/app/docs/component-card";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { NativePanel, type NativePanelCode } from "@/components/app/docs/native/native-panel";
 import {
@@ -330,9 +331,12 @@ export function NativeComponentPage({ data }: { data: NativeComponentPageData })
     <div>
       <JsonLd data={data.jsonLd} />
       <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-3xl font-medium tracking-tight text-foreground">
+        <AnchorHeading
+          as="h1"
+          headingClassName="text-3xl font-medium tracking-tight text-foreground"
+        >
           {component.title}
-        </h1>
+        </AnchorHeading>
         <span className="mt-1 inline-flex items-center rounded-full border border-border px-2 py-0.5 text-xs font-medium text-muted-foreground">
           React Native
         </span>

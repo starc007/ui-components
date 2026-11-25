@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "use-intl";
 import { CodeBlock } from "@/components/app/docs/code-block";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { InstallTabs } from "@/components/app/docs/install-tabs";
 import { NativePreview } from "@/components/app/docs/native/native-preview";
@@ -87,7 +88,12 @@ export function NativePanel({
         className="scroll-mt-24 border-t border-border pt-8"
       >
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-sm font-medium text-foreground">{t("install")}</h2>
+          <AnchorHeading
+            section="native-install"
+            headingClassName="text-sm font-medium text-foreground"
+          >
+            {t("install")}
+          </AnchorHeading>
           <a
             href={component.repository}
             target="_blank"

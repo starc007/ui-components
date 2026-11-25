@@ -7,6 +7,7 @@ import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
 import { pageMetadata } from "@/lib/head";
@@ -274,8 +275,7 @@ const code = (chunks: ReactNode) => (
 
 const em = (chunks: ReactNode) => <em>{chunks}</em>;
 
-const H2_CLASS =
-  "mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground";
+const H2_CLASS = "text-xl font-medium tracking-tight text-foreground";
 
 export function OpenUIPage({ data }: { data: OpenUIPageData }) {
   return (
@@ -297,9 +297,12 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
           {t("header.eyebrow")}
         </p>
         <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <h1 className="text-3xl font-medium tracking-tight text-foreground">
+          <AnchorHeading
+            as="h1"
+            headingClassName="text-3xl font-medium tracking-tight text-foreground"
+          >
             {t("header.title")}
-          </h1>
+          </AnchorHeading>
           <CopyPage
             pageUrl={`${SITE_URL}${PAGE_PATH}`}
             markdownPath={`${PAGE_PATH}.md`}
@@ -323,9 +326,9 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         </p>
       </header>
 
-      <h2 id="install" className={H2_CLASS}>
+      <AnchorHeading id="install" className="mt-10" headingClassName={H2_CLASS}>
         {t("install.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("install.body", {
           link: (chunks) => (
@@ -345,9 +348,9 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         {t.rich("install.scaffold", { code, command: SCAFFOLD_COMMAND })}
       </p>
 
-      <h2 id="register-components" className={H2_CLASS}>
+      <AnchorHeading id="register-components" className="mt-10" headingClassName={H2_CLASS}>
         {t("registerComponents.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("registerComponents.body", { code })}
       </p>
@@ -355,9 +358,9 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         <CodeBlock {...blocks.define} />
       </div>
 
-      <h2 id="assemble-library" className={H2_CLASS}>
+      <AnchorHeading id="assemble-library" className="mt-10" headingClassName={H2_CLASS}>
         {t("assembleLibrary.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("assembleLibrary.body", { code })}
       </p>
@@ -365,9 +368,9 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         <CodeBlock {...blocks.library} />
       </div>
 
-      <h2 id="generate-prompt" className={H2_CLASS}>
+      <AnchorHeading id="generate-prompt" className="mt-10" headingClassName={H2_CLASS}>
         {t("generatePrompt.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("generatePrompt.body", { code, command: GENERATE_COMMAND })}
       </p>
@@ -378,9 +381,9 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         {t.rich("generatePrompt.note", { code })}
       </p>
 
-      <h2 id="render-stream" className={H2_CLASS}>
+      <AnchorHeading id="render-stream" className="mt-10" headingClassName={H2_CLASS}>
         {t("renderStream.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("renderStream.body", { code, renderer: "<Renderer>" })}
       </p>
@@ -388,16 +391,16 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         <CodeBlock {...blocks.render} />
       </div>
 
-      <h2 id="why-beui" className={H2_CLASS}>
+      <AnchorHeading id="why-beui" className="mt-10" headingClassName={H2_CLASS}>
         {t("whyBeui.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("whyBeui.body", { em })}
       </p>
 
-      <h2 id="resources" className={H2_CLASS}>
+      <AnchorHeading id="resources" className="mt-10" headingClassName={H2_CLASS}>
         {t("resources.title")}
-      </h2>
+      </AnchorHeading>
       <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
         {RESOURCES.map((r) => (
           <li key={r.url} className="flex items-start justify-between gap-4 p-4">
