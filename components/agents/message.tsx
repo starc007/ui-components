@@ -214,7 +214,9 @@ export function MessageHeader({ className, ...props }: MessageHeaderProps) {
     <div
       data-slot="message-header"
       className={cn(
-        "flex items-center gap-1.5 px-1 text-[11px] leading-none text-muted-foreground",
+        // No inset: the label lines up with the edge of the bubble or text
+        // below it, whichever variant is used.
+        "flex items-center gap-1.5 text-[11px] leading-none text-muted-foreground",
         from === "user" ? "justify-end" : "justify-start",
         className,
       )}
@@ -230,7 +232,7 @@ export function MessageFooter({ className, ...props }: MessageFooterProps) {
     <div
       data-slot="message-footer"
       className={cn(
-        "flex min-h-5 items-center gap-1 px-1 text-[11px] text-muted-foreground",
+        "flex min-h-5 items-center gap-1 text-[11px] text-muted-foreground",
         from === "user" ? "justify-end" : "justify-start",
         className,
       )}
