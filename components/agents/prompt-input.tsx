@@ -10,6 +10,7 @@ import {
   type TextareaHTMLAttributes,
   useCallback,
   useEffect,
+  useId,
   useLayoutEffect,
   useRef,
   useState,
@@ -23,10 +24,15 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/motion/dropdown-menu";
+import { MENU_ITEM_CLASS, MenuItemHighlight } from "@/components/motion/menu/menu-item-highlight";
 import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
+import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+/** One identity for the default, so the filtered list stays stable. */
+const NO_COMMANDS: PromptCommand[] = [];
 
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
 export const promptInputMessages = {
@@ -36,6 +42,7 @@ export const promptInputMessages = {
   chooseModel: "Choose model",
   send: "Send prompt",
   stop: "Stop generating",
+  commands: "Commands",
 };
 
 export type PromptInputMessages = typeof promptInputMessages;
@@ -64,6 +71,17 @@ export interface PromptAction {
   disabled?: boolean;
 }
 
+export interface PromptCommand {
+  /** What follows the slash: typing `/value` finds it, and picking it writes `/value ` into the prompt. */
+  value: string;
+  /** Name shown in the command list. Also matched while typing. */
+  label: string;
+  /** Muted line beside the label. */
+  description?: ReactNode;
+  /** Icon before the label. */
+  icon?: ReactNode;
+}
+
 export interface PromptInputProps extends Omit<
   TextareaHTMLAttributes<HTMLTextAreaElement>,
   "value" | "defaultValue" | "onChange" | "onSubmit" | "children"
@@ -86,6 +104,10 @@ export interface PromptInputProps extends Omit<
   actions?: PromptAction[];
   /** Called with the action's value when an add menu item is chosen. */
   onAction?: (action: string) => void;
+  /** Slash commands. Typing `/` at the start of a word lists them above the input. Hidden when empty. */
+  commands?: PromptCommand[];
+  /** Called with the command's value when a slash command is picked. */
+  onCommand?: (command: string) => void;
   /** Called with the trimmed prompt and selected model on Enter or the send button. */
   onSubmit?: (value: string, model?: string) => void | Promise<void>;
   /** Swaps send for a stop button and blocks new prompts. Default: false */
@@ -114,6 +136,8 @@ export function PromptInput({
   onModelChange,
   actions = [],
   onAction,
+  commands = NO_COMMANDS,
+  onCommand,
   onSubmit,
   loading = false,
   onStop,
@@ -144,6 +168,47 @@ export function PromptInput({
     (option) => option.value === currentModelValue,
   );
   const canSubmit = Boolean(currentValue.trim()) && !disabled && !loading;
+
+  // Slash commands: the word before the caret, when it starts with `/`.
+  const [caret, setCaret] = useState(currentValue.length);
+  // Escape closes the list for the slash it was opened by, until another one.
+  const [dismissedAt, setDismissedAt] = useState(-1);
+  const baseId = useId();
+  const slash = commands.length
+    ? /(?:^|\s)\/([\w-]*)$/.exec(currentValue.slice(0, caret))
+    : null;
+  const query = slash ? slash[1].toLowerCase() : "";
+  const slashAt = slash ? caret - slash[1].length - 1 : -1;
+  const matches = slash
+    ? commands.filter(
+        (command) =>
+          command.value.toLowerCase().includes(query) ||
+          command.label.toLowerCase().includes(query),
+      )
+    : NO_COMMANDS;
+  const slashOpen = matches.length > 0 && slashAt !== dismissedAt && !disabled;
+  const commandRows = matches.map((command) => ({ id: command.value }));
+  const { activeIndex, moveTo, moveActive } = useRowCursor(commandRows, query);
+  const activeCommand = slashOpen ? matches[activeIndex] : undefined;
+  const listId = `${baseId}-commands`;
+  const optionId = (value: string) => `${baseId}-command-${value}`;
+  // Pointer moves glide the highlight; arrow keys jump it, a spring would
+  // only trail behind fast arrowing.
+  const [glide, setGlide] = useState(false);
+
+  const pickCommand = (command: PromptCommand) => {
+    const inserted = `/${command.value} `;
+    const next =
+      currentValue.slice(0, slashAt) + inserted + currentValue.slice(caret);
+    const nextCaret = slashAt + inserted.length;
+    setValue(next);
+    setCaret(nextCaret);
+    onCommand?.(command.value);
+    requestAnimationFrame(() => {
+      textareaRef.current?.focus({ preventScroll: true });
+      textareaRef.current?.setSelectionRange(nextCaret, nextCaret);
+    });
+  };
 
   const resizeTextarea = useCallback(() => {
     const textarea = textareaRef.current;
@@ -193,6 +258,24 @@ export function PromptInput({
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     onKeyDown?.(event);
+    if (slashOpen && !event.defaultPrevented && !event.nativeEvent.isComposing) {
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        setGlide(false);
+        moveActive(event.key === "ArrowDown" ? 1 : -1);
+        return;
+      }
+      if ((event.key === "Enter" && !event.shiftKey) || event.key === "Tab") {
+        event.preventDefault();
+        if (activeCommand) pickCommand(activeCommand);
+        return;
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setDismissedAt(slashAt);
+        return;
+      }
+    }
     if (
       event.defaultPrevented ||
       event.key !== "Enter" ||
@@ -221,6 +304,70 @@ export function PromptInput({
       >
         {`${currentValue}\u200b`}
       </div>
+
+      {/* Opened by typing, so it is simply there; it fades out quickly. Focus
+          stays in the input, which drives the list with the arrow keys. */}
+      <AnimatePresence>
+        {slashOpen ? (
+          <motion.div
+            key="commands"
+            id={listId}
+            role="listbox"
+            aria-label={t("commands")}
+            initial={false}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, pointerEvents: "none", transition: { duration: 0.1, ease: EASE_OUT } }}
+            className="absolute inset-x-0 bottom-full z-20 mb-2 max-h-64 overflow-y-auto overscroll-contain rounded-2xl border border-border bg-background p-2 shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]"
+          >
+            {matches.map((command, index) => {
+              const active = index === activeIndex;
+              return (
+                <button
+                  key={command.value}
+                  id={optionId(command.value)}
+                  type="button"
+                  role="option"
+                  aria-selected={active}
+                  tabIndex={-1}
+                  onPointerMove={() => {
+                    if (active) return;
+                    setGlide(true);
+                    moveTo(command.value);
+                  }}
+                  onPointerDown={(event) => event.preventDefault()}
+                  onClick={() => pickCommand(command)}
+                  className={cn(MENU_ITEM_CLASS, "cursor-default gap-2.5 text-foreground")}
+                >
+                  {active ? (
+                    <MenuItemHighlight
+                      layoutId={`${baseId}-command-highlight`}
+                      reduce={reduce}
+                      instant={!glide}
+                    />
+                  ) : null}
+                  {command.icon ? (
+                    <span
+                      aria-hidden="true"
+                      className="flex shrink-0 text-muted-foreground [&_svg]:size-4"
+                    >
+                      {command.icon}
+                    </span>
+                  ) : null}
+                  <span className="shrink-0">{command.label}</span>
+                  {command.description ? (
+                    <span className="min-w-0 truncate text-xs text-muted-foreground">
+                      {command.description}
+                    </span>
+                  ) : null}
+                  <span className="ml-auto shrink-0 font-mono text-xs text-muted-foreground/70">
+                    /{command.value}
+                  </span>
+                </button>
+              );
+            })}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
       <textarea
         ref={textareaRef}
         value={currentValue}
@@ -229,7 +376,14 @@ export function PromptInput({
         aria-label={ariaLabel ?? t("label")}
         rows={minRows}
         {...textareaProps}
-        onChange={(event) => setValue(event.target.value)}
+        aria-autocomplete={commands.length ? "list" : undefined}
+        aria-controls={slashOpen ? listId : undefined}
+        aria-activedescendant={activeCommand ? optionId(activeCommand.value) : undefined}
+        onChange={(event) => {
+          setValue(event.target.value);
+          setCaret(event.target.selectionStart);
+        }}
+        onSelect={(event) => setCaret(event.currentTarget.selectionStart)}
         onKeyDown={handleKeyDown}
         className="scrollbar-hide block w-full resize-none overflow-y-auto bg-transparent px-2 pt-1.5 text-sm leading-6 text-foreground outline-none placeholder:text-muted-foreground/55"
       />
