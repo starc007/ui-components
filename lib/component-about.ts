@@ -4056,7 +4056,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   },
   "status-icon": {
     overview:
-      "Status Icon is a React status indicator built with Framer Motion that morphs between states instead of swapping glyphs. Idle is a quiet dashed ring. Syncing spins a short arc round a faint track at a steady speed. On success, warning or error the arc closes into the full ring in green, amber or red, and a check, an exclamation or a cross draws in after it. Moving on erases the mark faster than it drew.",
+      "Status Icon is a React status indicator built with Framer Motion that morphs between states instead of swapping glyphs. Idle is a faint ring. Syncing spins a lone arc up to a steady speed while its length breathes, like a system spinner. On success, warning or error the arc coasts on with the speed it had and eases to a stop at the top as the ring closes, the ring fills green, amber or red with a small spring, and a white check, exclamation or cross draws in, all as one motion. Going back to syncing empties it and the arc opens again.",
     useWhen: [
       "A save, sync or upload shows its progress and result in one spot.",
       "A list or table marks each row's job as running, done or failed.",
