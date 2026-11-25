@@ -28,7 +28,7 @@ const PICKS: WallPick[] = [
   { category: "motion", slug: "before-after-slider", tags: ["drag"], rows: 3 },
   { category: "motion", slug: "button", variant: "magnetic", tags: ["hover"], rows: 2, small: true },
   { category: "casino", slug: "crash", variant: "plane", tags: ["press", "sound"], rows: 3 },
-  { category: "motion", slug: "tilt-card", tags: ["hover"], rows: 3 },
+  { category: "blocks", slug: "bloom-menu", tags: ["press"], rows: 3 },
   { category: "blocks", slug: "otp-input", tags: ["type"], rows: 2 },
   { category: "blocks", slug: "card-folder", tags: ["hover", "press"], rows: 2 },
   { category: "motion", slug: "wheel-picker", tags: ["drag", "sound"], rows: 3 },
