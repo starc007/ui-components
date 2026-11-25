@@ -17,6 +17,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT } from "@/lib/ease";
 import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 import { useMessages } from "@/lib/i18n";
@@ -189,6 +190,11 @@ const CENTER_UNFOLD_TRANSITION = {
   duration: 0.43,
   ease: CENTER_UNFOLD_EASE,
 } as const;
+// Folding back is faster than unfolding: the user is done with it.
+const CENTER_FOLD_TRANSITION = {
+  duration: 0.3,
+  ease: CENTER_UNFOLD_EASE,
+} as const;
 
 export function CenterMorphModalContent({
   children,
@@ -236,7 +242,11 @@ export function CenterMorphModalContent({
                 disabled={!dismissible}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                // The scrim clears faster than it settles, like the panel.
+                exit={{
+                  opacity: 0,
+                  transition: { duration: reduce ? 0.1 : 0.2, ease: EASE_OUT },
+                }}
                 {...gate}
                 transition={{
                   duration: reduce ? 0.1 : 0.28,
@@ -285,6 +295,7 @@ export function CenterMorphModalContent({
                         : {
                             opacity: 1,
                             clipPath: CENTER_FOLDED_CLIP,
+                            transition: CENTER_FOLD_TRANSITION,
                           }
                     }
                     {...gate}
@@ -301,6 +312,7 @@ export function CenterMorphModalContent({
                     {children}
 
                     {showCloseButton ? (
+                      <Tooltip content={closeButtonLabel ?? t("close")} side="left">
                       <motion.button
                         type="button"
                         aria-label={closeButtonLabel ?? t("close")}
@@ -311,6 +323,7 @@ export function CenterMorphModalContent({
                             : { opacity: 0, scale: 0.8 }
                         }
                         animate={{ opacity: 1, scale: 1 }}
+                        whileTap={reduce ? undefined : { scale: 0.95 }}
                         exit={{
                           opacity: 0,
                           scale: reduce ? 1 : 0.88,
@@ -325,6 +338,7 @@ export function CenterMorphModalContent({
                       >
                         <X className="h-4 w-4" aria-hidden="true" />
                       </motion.button>
+                      </Tooltip>
                     ) : null}
                   </motion.div>
                 </div>
