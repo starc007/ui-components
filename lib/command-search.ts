@@ -14,13 +14,18 @@ function normalize(value: string) {
     .trim();
 }
 
-function tokenScore(token: string, field: string) {
-  const words = field.split(" ");
+// A keyword longer than this many words is prose (a description), not an
+// alias, and only ever matches as a fallback.
+const PROSE_WORDS = 3;
+
+/** The label: whole words, word starts, then abbreviations. Never the middle
+ * of a word: "tab" finds Tabs and Table, not Sortable List. */
+function labelScore(token: string, label: string) {
+  const words = label.split(" ");
   if (words.includes(token)) return 100;
   if (words.some((word) => word.startsWith(token))) return 80;
-  if (field.includes(token)) return 60;
   // Keep short queries precise; fuzzy abbreviations may skip at most two
-  // letters within a word, rather than matching across a whole description.
+  // letters within a word, rather than matching across a whole name.
   if (token.length < 3) return 0;
   for (const word of words) {
     if (word.length - token.length > 2) continue;
@@ -33,27 +38,60 @@ function tokenScore(token: string, field: string) {
   return 0;
 }
 
-/** Match every query word across fields and put direct name matches first. */
+/** Groups, aliases and prose: whole words and word starts only, so "tab"
+ * never matches inside "stable". */
+function wordScore(token: string, field: string, exact: number, prefix: number) {
+  const words = field.split(" ");
+  if (words.includes(token)) return exact;
+  if (token.length >= 2 && words.some((word) => word.startsWith(token))) return prefix;
+  return 0;
+}
+
+/**
+ * Match every query word and rank direct name matches first. A command
+ * whose every word matched its name, group or a short keyword is a strong
+ * match; one that needed a long keyword (a description) is weak, and weak
+ * matches show only when nothing matched strongly. Typing "swap" lists the
+ * swap components, not everything whose description mentions swapping.
+ */
 export function searchCommands<T extends SearchableCommand>(items: T[], query: string): T[] {
   const normalized = normalize(query);
   if (!normalized) return items;
   const tokens = normalized.split(/\s+/);
-  return items
-    .map((item) => {
-      const label = normalize(item.label);
-      const fields = [label, normalize(item.group ?? ""), ...(item.keywords ?? []).map(normalize)];
-      let score = label === normalized ? 10000 : label.startsWith(normalized) ? 2000 : 0;
-      for (const token of tokens) {
-        const best = Math.max(...fields.map((field, index) => {
-          const match = tokenScore(token, field);
-          return match ? match + (index === 0 ? 40 : 0) : 0;
-        }));
-        if (!best) return { item, score: 0 };
+
+  const scored = items.map((item) => {
+    const label = normalize(item.label);
+    const group = normalize(item.group ?? "");
+    const keywords = (item.keywords ?? []).map(normalize).filter(Boolean);
+    const aliases = keywords.filter((k) => k.split(" ").length <= PROSE_WORDS);
+    const prose = keywords.filter((k) => k.split(" ").length > PROSE_WORDS);
+
+    let score = label === normalized ? 10000 : label.startsWith(normalized) ? 2000 : 0;
+    let strong = true;
+    for (const token of tokens) {
+      const best = Math.max(
+        labelScore(token, label) + 40,
+        wordScore(token, group, 90, 70),
+        ...aliases.map((alias) => wordScore(token, alias, 90, 70)),
+      );
+      if (best > 40) {
         score += best;
+        continue;
       }
-      return { item, score };
-    })
-    .filter(({ score }) => score > 0)
+      // Prose needs at least three letters; shorter words are everywhere.
+      const fallback =
+        token.length >= 3 ? Math.max(0, ...prose.map((text) => wordScore(token, text, 30, 20))) : 0;
+      if (!fallback) return { item, score: 0, strong: false };
+      score += fallback;
+      strong = false;
+    }
+    return { item, score, strong };
+  });
+
+  const matches = scored.filter(({ score }) => score > 0);
+  const anyStrong = matches.some(({ strong }) => strong);
+  return matches
+    .filter(({ strong }) => strong || !anyStrong)
     .sort((a, b) => b.score - a.score)
     .map(({ item }) => item);
 }

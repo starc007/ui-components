@@ -2639,7 +2639,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "command-palette",
         name: "Command Palette",
-        description: "⌘K palette with fuzzy filter, spring-animated active row and glass surface.",
+        description: "⌘K palette with fuzzy filter, a gliding active row, key hints and a height that holds while you type.",
         file: "components/motion/command-palette.tsx",
       },
       {

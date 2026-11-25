@@ -534,7 +534,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "command-palette": {
     title: "React Command Palette (Cmd K Menu)",
     description:
-      "Cmd K command palette for React with fuzzy search, a spring-animated active row, keyboard navigation and a glass surface. Free source, shadcn install.",
+      "Cmd K command palette for React with fuzzy search, a gliding active row, keyboard hints and a steady height as results filter. Free source, shadcn install.",
   },
   "morphing-search": {
     title: "Animated Search Bar for React with Results",

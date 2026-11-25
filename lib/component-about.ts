@@ -3023,7 +3023,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   "command-palette": {
     overview:
-      "Command Palette is a Cmd K style command menu for React, built with Framer Motion and Tailwind CSS. It opens over the page from a keyboard shortcut, filters commands as you type with ranked fuzzy matching across labels, groups and keywords, and slides a spring highlight between rows. Commands can carry an icon, a group heading, a badge and a keyboard hint.",
+      "Command Palette is a Cmd K style command menu for React, built with Framer Motion and Tailwind CSS. It opens over the page from a keyboard shortcut, filters commands as you type with ranked fuzzy matching across labels, groups and keywords, and glides a highlight between rows. The list is virtualized, so hundreds of commands open and filter without a delay, it keeps its height while results filter, a footer shows the navigation keys, and with `recent` on it remembers the commands people pick and lists them first. Commands can carry an icon, a group heading, a badge and a keyboard hint.",
     useWhen: [
       "A dashboard or SaaS app wants a keyboard-first way to jump between pages and run actions.",
       "A documentation site needs a quick search over its sections that opens with Cmd K or Ctrl K.",
