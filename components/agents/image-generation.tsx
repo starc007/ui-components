@@ -4,6 +4,7 @@ import { Check, CircleAlert, RotateCcw } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef } from "react";
+import { IconSwap } from "@/components/agents/icon-swap";
 import { EASE_IN_OUT, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
@@ -361,7 +362,9 @@ export function ImageGeneration({
                   statusClassName,
                 )}
               >
-                <DitherMark status={status} reduce={reduce} />
+                <IconSwap id={active ? "active" : status}>
+                  <DitherMark status={status} reduce={reduce} />
+                </IconSwap>
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.span
                     key={resolvedStatusText}
@@ -392,7 +395,7 @@ export function ImageGeneration({
             onClick={onRetry}
             whileTap={reduce ? undefined : { scale: 0.96 }}
             transition={SPRING_PRESS}
-            className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-sm font-medium text-foreground outline-none transition-colors hover:bg-foreground/[0.06] focus-visible:ring-2 focus-visible:ring-ring"
           >
             <RotateCcw aria-hidden="true" className="size-4" />
             {t("retry")}

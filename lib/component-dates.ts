@@ -192,7 +192,7 @@ const COMPONENT_DATES = {
   },
   "agents/image-generation": {
     publishedAt: "2026-08-02",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-25",
   },
   "agents/tool-approval": {
     publishedAt: "2026-08-01",
