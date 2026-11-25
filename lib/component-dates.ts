@@ -200,7 +200,7 @@ const COMPONENT_DATES = {
   },
   "agents/citations": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "agents/agent-activity": {
     publishedAt: "2026-08-01",
