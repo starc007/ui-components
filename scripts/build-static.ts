@@ -33,6 +33,7 @@ import {
   buildShadcnRegistry,
 } from "../lib/registry-server";
 import { robotsTxt } from "../lib/robots";
+import { SITE_TAGLINE } from "../lib/seo";
 import { seoPagePath, seoPages } from "../lib/seo-pages";
 import { seoPageMarkdown } from "../lib/seo-pages/markdown";
 import { SITE_URL } from "../lib/site";
@@ -205,7 +206,9 @@ async function buildMarkdownPages() {
 /** Every guide and component page's Markdown in one file, so an agent can load the docs in one fetch. */
 async function buildLlmsFullTxt() {
   const idx = await registryIndex();
-  const sections: string[] = [`# ${idx.name}`, "", `> ${idx.description}`, "", `Index: ${SITE_URL}/llms.txt`, ""];
+  // The site tagline, not the web registry's description: these files cover
+  // beUI Native too.
+  const sections: string[] = [`# ${idx.name}`, "", `> ${SITE_TAGLINE}.`, "", `Index: ${SITE_URL}/llms.txt`, ""];
   for (const slug of GUIDE_SLUGS) {
     const markdown = buildGuideMarkdown(slug);
     if (markdown) sections.push(markdown.trim(), "", "---", "");
@@ -231,7 +234,7 @@ async function buildLlmsTxt() {
   const lines = [
     `# ${idx.name}`,
     "",
-    `> ${idx.description}`,
+    `> ${SITE_TAGLINE}.`,
     "",
     "## Endpoints",
     "",

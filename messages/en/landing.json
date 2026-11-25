@@ -1,12 +1,13 @@
 {
   "hero": {
-    "headline": "Animated components for <react>React</react> and <native>React Native</native>",
+    "headline": "Animated components for React and React Native",
     "subtitle": "Copy-paste components built with Framer Motion and Tailwind CSS. Install one with the shadcn CLI and the source is yours.",
     "browseComponents": "Browse components",
     "explorePro": "Explore Pro",
     "opensInNewTab": "(opens in a new tab)",
     "repoOnGitHub": "{name} on GitHub",
-    "libraryCount": "<num>{count}</num> <muted>{library}</muted><sr> components</sr>"
+    "libraryCount": "<num>{count}</num> <muted>{library}</muted><sr> components</sr>",
+    "categoriesLabel": "Browse by category"
   },
   "home": {
     "worksWith": "Works with",
