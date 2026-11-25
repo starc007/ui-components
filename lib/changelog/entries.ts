@@ -31,8 +31,13 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "new",
-        "text": "Voice Note, Status Icon, Confetti, Click Burst and Wave Reveal, plus slash commands in Prompt Input.",
+        "text": "Micro interactions: 22 small animated controls, from like, bookmark, follow and upvote buttons to copy, send, star rating, reactions, status icons, confetti and click bursts.",
         "href": "/micro-interactions"
+      },
+      {
+        "type": "new",
+        "text": "Voice Note and Wave Reveal, plus slash commands in Prompt Input.",
+        "component": "voice-note"
       },
       {
         "type": "new",
