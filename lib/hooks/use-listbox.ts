@@ -101,5 +101,7 @@ export function useListbox({
     }
   };
 
-  return { activeId, onKeyDown };
+  // `moveTo` lets a pointer resting on an option make it the active one, so a
+  // highlight drawn from `activeId` follows the mouse as well as the keys.
+  return { activeId, onKeyDown, moveTo };
 }
