@@ -30,6 +30,11 @@ export const changelogEntries: ChangelogEntry[] = [
         "component": "sound-kit"
       },
       {
+        "type": "new",
+        "text": "Agent-ready docs: every prop and data type described, beUI's theme tokens as a registry item that installs with the components that use them, MCP tools for docs and setup, and llms.txt grouped by category with install slugs.",
+        "href": "/docs/ai-agents"
+      },
+      {
         "type": "improved",
         "text": "Polished UI and motion across the library: instant from the keyboard, subtler presses, cleaner menus, selects, tooltips and dialogs, a steadier command palette with key hints, recent searches and more precise results, swipeable drawers, toasts redesigned as one morphing island, a clearer prompt input and chat bubbles, a jump to latest button in chats, and 16px corners on every floating panel with rows to match."
       },
