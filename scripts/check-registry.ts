@@ -1,3 +1,4 @@
+import { existsSync, readFileSync } from "node:fs";
 import { allComponents } from "../lib/registry";
 import { componentAbout } from "../lib/component-about";
 import { componentDates } from "../lib/component-dates";
@@ -211,6 +212,34 @@ for (const { url } of sitemap()) {
   for (const candidate of [path, `${path}.md`]) {
     const source = redirectSources().find((rule) => redirectMatches(rule, candidate));
     if (source) errors.push(`Redirect "${source}" shadows the page ${candidate}`);
+  }
+}
+
+// The code shown as a component's usage (the docs Usage tab, its Markdown and
+// what agents copy) must run in someone else's project: nothing from the site
+// chrome or the demo helpers. A preview that needs those sets `usageFile` to a
+// separate, plain composition instead.
+const SITE_ONLY_IMPORT = /from\s+["']@\/components\/(?:app|previews)\//;
+for (const component of allComponents()) {
+  const categorySlug = component.category.slug;
+  const targets = component.examples?.length
+    ? component.examples.map((example) => ({
+        label: `${categorySlug}/${component.slug}/${example.slug}`,
+        file: example.usageFile ?? example.previewFile,
+      }))
+    : [
+        {
+          label: `${categorySlug}/${component.slug}`,
+          file: component.usageFile ?? `components/previews/${categorySlug}/${component.slug}.preview.tsx`,
+        },
+      ];
+  for (const { label, file } of targets) {
+    if (!existsSync(file)) continue;
+    if (SITE_ONLY_IMPORT.test(readFileSync(file, "utf8"))) {
+      errors.push(
+        `${label}: usage code ${file} imports from the site or demo helpers; give it a plain usageFile`,
+      );
+    }
   }
 }
 

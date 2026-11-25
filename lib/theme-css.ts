@@ -138,5 +138,12 @@ export const THEME_CSS = `@custom-variant dark (&:where(.dark, .dark *));
         backdrop-filter: blur(12px);
         border: 1px solid var(--glass-border);
     }
+
+    .press {
+        transition: transform 120ms var(--ease-out);
+    }
+    .press:active {
+        transform: scale(0.97);
+    }
 }
 `;
