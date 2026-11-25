@@ -343,6 +343,7 @@ async function buildLlmsTxt() {
     }),
     "## Guides",
     "",
+    `- [Theme Setup](${SITE_URL}/docs/theme.md): The tokens components use, with shadcn or as pasted CSS.`,
     `- [Motion Guides](${SITE_URL}/docs/motion-patterns.md): Purposeful motion, timing, easing, recipes, and reduced motion.`,
     `- [Agent Guide](${SITE_URL}/docs/ai-agents.md): Agent skill, MCP server, registry endpoints, and install flows.`,
     `- [OpenUI Guide](${SITE_URL}/docs/openui.md): Register beUI components and render streamed generative interfaces.`,

@@ -14,6 +14,7 @@ import {
   USAGE_SNIPPET,
 } from "@/lib/native-setup";
 import { SITE_URL } from "@/lib/site";
+import { THEME_CSS } from "@/lib/theme-css";
 
 const guides = {
   "motion-patterns": {
@@ -124,7 +125,12 @@ codex mcp add beui --url https://mcp.beui.dev/mcp
 
 # Amp
 amp mcp add beui https://mcp.beui.dev/mcp
+
+# Gemini CLI
+gemini mcp add --transport http beui https://mcp.beui.dev/mcp
 \`\`\`
+
+One click: [Add to Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=beui&config=${encodeURIComponent(btoa(JSON.stringify({ url: "https://mcp.beui.dev/mcp" })))}) or [Add to VS Code](vscode:mcp/install?${encodeURIComponent(JSON.stringify({ name: "beui", type: "http", url: "https://mcp.beui.dev/mcp" }))}).
 
 Manual configuration:
 
@@ -134,6 +140,18 @@ Manual configuration:
     "beui": {
       "type": "http",
       "url": "https://mcp.beui.dev/mcp"
+    }
+  }
+}
+\`\`\`
+
+Windsurf names the field \`serverUrl\` instead of \`url\`, in \`~/.codeium/windsurf/mcp_config.json\`:
+
+\`\`\`json
+{
+  "mcpServers": {
+    "beui": {
+      "serverUrl": "https://mcp.beui.dev/mcp"
     }
   }
 }
@@ -267,6 +285,32 @@ beUI components own their files and ship through a shadcn-compatible registry. G
 - [OpenUI](https://www.openui.com)
 - [Defining components](https://www.openui.com/docs/openui-lang/defining-components)
 - [shadcn chat example](https://www.openui.com/docs/openui-lang/examples/shadcn-chat)`,
+  },
+  theme: {
+    title: "Theme setup",
+    description:
+      "Set up the theme tokens beUI components use, once per project: with shadcn, or by pasting the theme CSS.",
+    body: `beUI components are styled with Tailwind CSS v4 and semantic tokens (\`bg-background\`, \`text-muted-foreground\`, \`border-border\`), the same ones shadcn uses, plus a few of beUI's own. Set them up once per project.
+
+## Option 1: shadcn (recommended)
+
+A shadcn project already has the base tokens. beUI adds \`border-strong\`, \`success\`, \`warning\` and \`neon\` colors, the \`glass\`, \`glass-strong\`, \`glass-thin\`, \`press\`, \`scrollbar-hide\` and mask utilities, the ease curves and the marquee and shimmer animations. Every component that uses them lists the theme item as a registry dependency, so \`npx shadcn@latest add @beui/<slug>\` installs them with it. To add them up front, run this once. It adds to your theme and changes no existing color:
+
+\`\`\`bash
+npx shadcn@latest add ${SITE_URL}/r/theme.json
+\`\`\`
+
+## Option 2: paste the theme CSS
+
+Not using shadcn? Paste this into \`globals.css\` directly below \`@import "tailwindcss";\`. It defines the base tokens, beUI's tokens, the animations and the utilities. Also available at ${SITE_URL}/theme.css.
+
+\`\`\`css
+${THEME_CSS.trim()}
+\`\`\`
+
+## Make it yours
+
+Change the token values to match your brand, or build a palette on the [themes page](${SITE_URL}/themes) and copy its CSS. Components read the tokens, so every component follows.`,
   },
   "native-setup": {
     title: "Set up beUI Native",

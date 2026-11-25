@@ -28,6 +28,24 @@ const ENDPOINTS = [
 
 const MCP_URL = "https://mcp.beui.dev/mcp";
 
+// One-click installs. Cursor takes the mcp.json entry as base64 JSON; VS Code
+// takes a named server as URL-encoded JSON.
+const CURSOR_INSTALL = `cursor://anysphere.cursor-deeplink/mcp/install?name=beui&config=${encodeURIComponent(
+  btoa(JSON.stringify({ url: MCP_URL })),
+)}`;
+const VSCODE_INSTALL = `vscode:mcp/install?${encodeURIComponent(
+  JSON.stringify({ name: "beui", type: "http", url: MCP_URL }),
+)}`;
+
+// Windsurf reads `serverUrl`, not `url`, so it gets its own snippet.
+const WINDSURF_SNIPPET = `{
+  "mcpServers": {
+    "beui": {
+      "serverUrl": "https://mcp.beui.dev/mcp"
+    }
+  }
+}`;
+
 const SKILL_SNIPPET = `npx skills add starc007/ui-components --skill beui`;
 
 const MCP_CLI_SNIPPET = `# Claude Code
@@ -37,7 +55,10 @@ claude mcp add --transport http beui https://mcp.beui.dev/mcp
 codex mcp add beui --url https://mcp.beui.dev/mcp
 
 # Amp
-amp mcp add beui https://mcp.beui.dev/mcp`;
+amp mcp add beui https://mcp.beui.dev/mcp
+
+# Gemini CLI
+gemini mcp add --transport http beui https://mcp.beui.dev/mcp`;
 
 const MCP_MANUAL_SNIPPET = `{
   "mcpServers": {
@@ -96,10 +117,11 @@ export const getAIAgentsPage = createServerFn({ method: "GET" })
       type: "article",
       types: { "text/markdown": `${PAGE_PATH}.md` },
     });
-    const [skill, mcpCli, mcpManual, fetchFlow, shadcn, entryShape] = await Promise.all([
+    const [skill, mcpCli, mcpManual, mcpWindsurf, fetchFlow, shadcn, entryShape] = await Promise.all([
       highlight(SKILL_SNIPPET, { lang: "bash", filename: "terminal" }),
       highlight(MCP_CLI_SNIPPET, { lang: "bash", filename: "terminal" }),
       highlight(MCP_MANUAL_SNIPPET, { lang: "json", filename: "mcp.json" }),
+      highlight(WINDSURF_SNIPPET, { lang: "json", filename: "~/.codeium/windsurf/mcp_config.json" }),
       highlight(FETCH_SNIPPET, { lang: "ts", filename: "agent.ts" }),
       highlight(SHADCN_SNIPPET, { lang: "bash", filename: "terminal" }),
       highlight(ENTRY_SHAPE, { lang: "json", filename: "r/swap.json" }),
@@ -107,7 +129,7 @@ export const getAIAgentsPage = createServerFn({ method: "GET" })
     return {
       metadata,
       messages: messages.Pages.aiAgents,
-      code: { skill, mcpCli, mcpManual, fetchFlow, shadcn, entryShape },
+      code: { skill, mcpCli, mcpManual, mcpWindsurf, fetchFlow, shadcn, entryShape },
     };
   });
 
@@ -179,12 +201,32 @@ function AIAgentsContent({ data }: { data: AIAgentsPageData }) {
       <p className="mt-2 text-muted-foreground">
         {t.rich("mcpServer.body", { code, url: MCP_URL })}
       </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {/* Editor deep links: plain anchors, the editor takes it from there. */}
+        {[
+          { href: CURSOR_INSTALL, label: t("mcpServer.addToCursor") },
+          { href: VSCODE_INSTALL, label: t("mcpServer.addToVsCode") },
+        ].map(({ href, label }) => (
+          <a
+            key={href}
+            href={href}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-sm text-foreground outline-none transition-colors hover:border-(--color-border-strong) focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {label}
+            <ArrowUpRight aria-hidden="true" className="size-3.5 text-muted-foreground" />
+          </a>
+        ))}
+      </div>
       <div className="mt-4">
         <CodeBlock {...blocks.mcpCli} />
       </div>
       <p className="mt-4 text-muted-foreground">{t("mcpServer.manual")}</p>
       <div className="mt-4">
         <CodeBlock {...blocks.mcpManual} />
+      </div>
+      <p className="mt-4 text-muted-foreground">{t.rich("mcpServer.windsurf", { code })}</p>
+      <div className="mt-4">
+        <CodeBlock {...blocks.mcpWindsurf} />
       </div>
       <p className="mt-4 text-sm text-muted-foreground">
         {t.rich("mcpServer.toolsWithNative", { code })}

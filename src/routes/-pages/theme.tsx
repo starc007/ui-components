@@ -29,6 +29,7 @@ export const getThemePage = createServerFn({ method: "GET" })
       description: t("description"),
       ogDescription: t("ogDescription"),
       type: "article",
+      types: { "text/markdown": `${PAGE_PATH}.md` },
     });
     const [shadcnInit, themeCss] = await Promise.all([
       highlight(SHADCN_INIT, { lang: "bash", filename: "terminal" }),

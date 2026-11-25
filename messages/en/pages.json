@@ -265,6 +265,9 @@
       "title": "MCP server",
       "body": "The fastest path: connect the beUI MCP server and your agent can list, search and install components directly. Hosted at <code>{url}</code>.",
       "manual": "Any other client: add it manually to your MCP config.",
+      "addToCursor": "Add to Cursor",
+      "addToVsCode": "Add to VS Code",
+      "windsurf": "Windsurf names the field <code>serverUrl</code> instead of <code>url</code>:",
       "toolsWithNative": "Tools: <code>get_setup</code>, <code>list_components</code>, <code>search_components</code>, <code>get_component_docs</code>, <code>get_component</code>, <code>get_install_command</code>. For React Native apps, <code>list_native_components</code> and <code>get_native_component</code> return beUI Native components with every file to copy."
     },
     "endpoints": {

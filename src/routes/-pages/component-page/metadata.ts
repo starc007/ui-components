@@ -50,6 +50,8 @@ export function componentMetadata({
           ? `/r/${comp.slug}`
           : `/r/${comp.slug}.json`,
       "text/plain": `/r/${comp.slug}/raw`,
+      // The same docs as Markdown, for an agent that fetched the HTML.
+      "text/markdown": `${path}.md`,
     },
     other: {
       "beui:category": catSlug,
