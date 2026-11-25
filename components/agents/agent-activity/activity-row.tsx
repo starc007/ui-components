@@ -1,4 +1,5 @@
 import {
+  Brain,
   Check,
   Circle,
   FileText,
@@ -7,12 +8,11 @@ import {
   MessageSquare,
   PencilLine,
   Search,
-  Sparkles,
   SquareTerminal,
   Wrench,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
+import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import type { AgentActivityTranslate } from "./messages";
 import type {
@@ -26,28 +26,42 @@ import type {
 } from "./types";
 
 function StepRow({ item }: { item: AgentActivityStep }) {
+  const reduce = useReducedMotion() ?? false;
   const state = item.status ?? "complete";
 
   return (
     <div className="flex min-h-7 items-start gap-2.5 rounded-md px-1.5 py-1">
+      {/* The marker morphs as the step moves on: a finished step's dot
+          blurs into its check rather than snapping. */}
       <span
         aria-hidden="true"
-        className="mt-0.5 grid size-4 shrink-0 place-items-center text-muted-foreground/70"
+        className="relative mt-0.5 grid size-4 shrink-0 place-items-center text-muted-foreground/70"
       >
-        {state === "complete" ? (
-          <Check className="size-4" strokeWidth={1.8} />
-        ) : state === "active" ? (
-          <span className="relative grid size-3 place-items-center">
-            <motion.span
-              className="absolute inset-0 rounded-full bg-foreground/10"
-              animate={{ opacity: [0.35, 0.8, 0.35] }}
-              transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
-            />
-            <span className="size-1.5 rounded-full bg-foreground/60" />
-          </span>
-        ) : (
-          <Circle className="size-3" strokeWidth={1.5} />
-        )}
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.span
+            key={state}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
+            transition={reduce ? { duration: 0.12 } : SPRING_SWAP}
+            className="grid place-items-center"
+          >
+            {state === "complete" ? (
+              <Check className="size-4" strokeWidth={1.8} />
+            ) : state === "active" ? (
+              <span className="relative grid size-3 place-items-center">
+                <motion.span
+                  className="absolute inset-0 rounded-full bg-foreground/10"
+                  animate={{ opacity: [0.35, 0.8, 0.35] }}
+                  transition={{ duration: 1.5, ease: "easeInOut", repeat: Number.POSITIVE_INFINITY }}
+                />
+                <span className="size-1.5 rounded-full bg-foreground/60" />
+              </span>
+            ) : (
+              <Circle className="size-3" strokeWidth={1.5} />
+            )}
+          </motion.span>
+        </AnimatePresence>
       </span>
       <span
         className={cn(
@@ -99,7 +113,7 @@ function SearchResultRow({
   );
   const className = cn(
     "flex min-h-7 items-center gap-2 rounded-md px-1.5 py-1 text-left outline-none transition-colors",
-    result.url && "focus-visible:ring-2 focus-visible:ring-ring",
+    result.url && "hover:bg-foreground/[0.04] focus-visible:ring-2 focus-visible:ring-ring",
   );
 
   return result.url ? (
@@ -222,7 +236,7 @@ function ToolRow({
 }
 
 function TraceIcon({ kind }: { kind: AgentActivityTrace["kind"] }) {
-  if (kind === "thinking") return <Sparkles className="size-4" />;
+  if (kind === "thinking") return <Brain className="size-4" />;
   if (kind === "message") return <MessageSquare className="size-4" />;
   if (kind === "write") return <PencilLine className="size-4" />;
   if (kind === "run") return <SquareTerminal className="size-4" />;

@@ -204,7 +204,7 @@ const COMPONENT_DATES = {
   },
   "agents/agent-activity": {
     publishedAt: "2026-08-01",
-    updatedAt: "2026-11-24",
+    updatedAt: "2026-11-25",
   },
   "blocks/infinite-masonry": { publishedAt: "2026-07-15", updatedAt: "2026-11-10" },
   "blocks/notification-stack": { publishedAt: "2026-07-14", updatedAt: "2026-11-24" },
