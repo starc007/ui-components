@@ -77,9 +77,9 @@ const ICON_BUTTON =
 
 /**
  * The site footer: the brand with social links, four short link columns, and
- * a bottom bar with legal links and our other products, over the coastal
- * sketch. Individual components are linked from the sidebar, category pages
- * and sitemap, not from here.
+ * a bottom bar with legal links and our other products, then the "beUI"
+ * keycaps to sign off. Individual components are linked from the sidebar,
+ * category pages and sitemap, not from here.
  */
 export function SiteFooter() {
   const t = useTranslations("Chrome");
