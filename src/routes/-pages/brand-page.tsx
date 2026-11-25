@@ -3,7 +3,7 @@
 // Internal design reference for brand.md. Dev only: not in the sitemap, so the
 // static build never renders it.
 
-import { Copy, Download, Search, Trash2 } from "lucide-react";
+import { Check, Copy, Crown, Download, Search, Trash2 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { Button } from "@/components/motion/button";
 import { Checkbox } from "@/components/motion/checkbox";
@@ -11,6 +11,7 @@ import { Input } from "@/components/motion/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/motion/select";
 import { Switch } from "@/components/motion/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
+import { Tooltip } from "@/components/motion/tooltip";
 import { cn } from "@/lib/utils";
 
 function Section({ title, rule, children }: { title: string; rule: string; children: ReactNode }) {
@@ -82,23 +83,28 @@ const COLORS = [
 
 const MOTION = [
   { token: "EASE_OUT", use: "Most entrances and transitions", value: "cubic-bezier(0.16, 1, 0.3, 1)" },
-  { token: "EASE_IN", use: "Falls and exits only", value: "cubic-bezier(0.55, 0, 1, 0.45)" },
+  { token: "EASE_IN", use: "Things that fall, never UI entrances", value: "cubic-bezier(0.55, 0, 1, 0.45)" },
+  { token: "EASE_IN_OUT", use: "Moves between two resting places", value: "cubic-bezier(0.77, 0, 0.175, 1)" },
+  { token: "EASE_DRAWER", use: "Drawers and sheets sliding in", value: "cubic-bezier(0.32, 0.72, 0, 1)" },
   { token: "SPRING_PRESS", use: "Press feedback", value: "500 / 30 / 0.6" },
   { token: "SPRING_SWAP", use: "Label and icon swaps", value: "460 / 30 / 0.55" },
   { token: "SPRING_PANEL", use: "Modals and sheets", value: "420 / 40 / 0.5" },
   { token: "SPRING_LAYOUT", use: "Sliding pills and indicators", value: "360 / 32 / 0.6" },
+  { token: "SPRING_MORPH", use: "A trigger growing into its panel", value: "0.5s · bounce 0.22" },
+  { token: "SPRING_MOUSE", use: "Cursor-follow effects", value: "200 / 15 / 0.3" },
+  { token: "SPRING_GLIDE", use: "Dragged slider handles and fills", value: "700 / 50 / 0.5" },
 ];
 
-/** A floating panel drawn to the system: rounded-3xl, p-2, h-8 pill rows. */
+/** A floating panel drawn to the system: rounded-2xl, p-2, rounded-lg rows. */
 function PanelMock({ rows, active }: { rows: string[]; active: number }) {
   return (
-    <div className="w-56 rounded-3xl border border-border bg-background p-2 shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]">
+    <div className="w-56 rounded-2xl border border-border bg-background p-2 shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]">
       {rows.map((row, index) => (
         <div
           key={row}
           className={cn(
-            "flex h-8 items-center rounded-full px-3 text-sm text-foreground",
-            index === active && "bg-card",
+            "flex h-8 items-center rounded-lg px-3 text-sm text-foreground",
+            index === active && "bg-foreground/[0.07]",
           )}
         >
           {row}
@@ -127,7 +133,7 @@ export function BrandPage() {
         <div className="grid gap-4 md:grid-cols-3">
           {FAMILIES.map((family) => (
             <Card key={family.name} label={family.role}>
-              <span className={cn("text-2xl font-medium tracking-tight text-foreground", family.className)}>
+              <span className={cn("text-xl font-medium tracking-tight text-foreground", family.className)}>
                 {family.name}
               </span>
               <span className={cn("text-sm text-muted-foreground", family.className)}>{family.sample}</span>
@@ -147,7 +153,10 @@ export function BrandPage() {
         </Card>
       </Section>
 
-      <Section title="Radius" rule="Controls are rounded-full. Panels rounded-3xl, cards rounded-2xl, dialogs rounded-3xl.">
+      <Section
+        title="Radius"
+        rule="Controls are rounded-full. Panels, cards, dialogs, sheets and drawers rounded-2xl; rows inside panels rounded-lg; large containers rounded-3xl."
+      >
         <Card label="Controls · rounded-full">
           <div className="flex flex-wrap items-center gap-3">
             <Button variant="primary">Continue</Button>
@@ -156,9 +165,11 @@ export function BrandPage() {
               Download
             </Button>
             <Button variant="outline">Outline</Button>
-            <Button variant="secondary" size="icon" aria-label="Delete">
-              <Trash2 className="size-4" />
-            </Button>
+            <Tooltip content="Delete">
+              <Button variant="secondary" size="icon" aria-label="Delete">
+                <Trash2 className="size-4" />
+              </Button>
+            </Tooltip>
             <Tabs defaultValue="day" variant="pill">
               <TabsList>
                 <TabsTrigger value="day">Day</TabsTrigger>
@@ -175,7 +186,7 @@ export function BrandPage() {
         </Card>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Card label="Select · pill trigger, rounded-3xl panel, pill rows">
+          <Card label="Select · pill trigger, rounded-2xl panel, rounded-lg rows">
             <div className="w-48">
               <Select value={framework} onValueChange={setFramework}>
                 <SelectTrigger>
@@ -190,13 +201,13 @@ export function BrandPage() {
             </div>
           </Card>
 
-          <Card label="Floating panel · rounded-3xl, p-2, rows rounded-full h-8">
+          <Card label="Floating panel · rounded-2xl, p-2, rows rounded-lg h-8">
             <div className="flex flex-wrap items-start gap-6">
               <PanelMock rows={["Next.js", "Remix", "Astro", "Vite"]} active={1} />
               <div className="flex flex-col gap-1 font-mono text-[11px] text-muted-foreground">
-                <span>panel 24px</span>
+                <span>panel 16px</span>
                 <span>− padding 8px</span>
-                <span className="text-foreground">= row 16px (pill at h-8)</span>
+                <span className="text-foreground">= row 8px (rounded-lg)</span>
               </div>
             </div>
           </Card>
@@ -206,12 +217,12 @@ export function BrandPage() {
           <Card label="Card · rounded-2xl">
             <div className="h-20 rounded-2xl border border-border" />
           </Card>
-          <Card label="Dialog, sheet · rounded-3xl">
-            <div className="h-20 rounded-3xl border border-border" />
+          <Card label="Dialog, sheet, drawer · rounded-2xl">
+            <div className="h-20 rounded-2xl border border-border" />
           </Card>
           <Card label="Nested · inner = outer − gap">
             <div className="rounded-3xl border border-border p-2">
-              <div className="h-14 rounded-2xl bg-card" />
+              <div className="h-14 rounded-2xl border border-border" />
             </div>
           </Card>
         </div>
@@ -246,9 +257,11 @@ export function BrandPage() {
             <Button size="sm">Small</Button>
             <Button size="md">Medium</Button>
             <Button size="lg">Large</Button>
-            <Button variant="secondary" size="icon" aria-label="Copy">
-              <Copy className="size-4" />
-            </Button>
+            <Tooltip content="Copy">
+              <Button variant="secondary" size="icon" aria-label="Copy">
+                <Copy className="size-4" />
+              </Button>
+            </Tooltip>
           </div>
           <div className="flex flex-wrap gap-6 font-mono text-[11px] text-muted-foreground">
             <span>sm · 32 · px-3 · text-xs · icon 14</span>
@@ -282,12 +295,83 @@ export function BrandPage() {
         <div className="grid gap-4 md:grid-cols-2">
           <Card label="Card · border, no shadow, no fill">
             <span className="text-sm text-foreground">Monthly revenue</span>
-            <span className="font-mono text-2xl tabular-nums text-foreground">$12,480</span>
+            <span className="font-mono text-3xl font-semibold tabular-nums text-foreground">$12,480</span>
           </Card>
           <div className="flex items-center justify-center rounded-2xl border border-dashed border-border p-6">
             <PanelMock rows={["Edit", "Duplicate", "Delete"]} active={0} />
           </div>
         </div>
+      </Section>
+
+      <Section
+        title="Icons"
+        rule="Lucide or Hugeicons, never Sparkles. size-4 in md controls. Icon-only buttons are round and get a tooltip; icon chips stay neutral."
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card label="Selection mark at the end of the row">
+            <div className="w-56 rounded-2xl border border-border bg-background p-2 shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]">
+              {["Next.js", "Remix", "Astro"].map((row, index) => (
+                <div
+                  key={row}
+                  className={cn(
+                    "flex h-8 items-center justify-between rounded-lg px-3 text-sm text-foreground",
+                    index === 0 && "bg-foreground/[0.07]",
+                  )}
+                >
+                  {row}
+                  {index === 0 ? <Check className="size-4" /> : null}
+                </div>
+              ))}
+            </div>
+          </Card>
+          <Card label="Icon button and icon chip">
+            <div className="flex items-center gap-4">
+              <Tooltip content="Copy">
+                <Button variant="secondary" size="icon" aria-label="Copy">
+                  <Copy className="size-4" />
+                </Button>
+              </Tooltip>
+              <span className="grid size-10 place-items-center rounded-full bg-muted text-foreground">
+                <Crown className="size-4" />
+              </span>
+            </div>
+          </Card>
+        </div>
+      </Section>
+
+      <Section
+        title="Contrast"
+        rule="Primary passes AAA in both themes. Always pair bg-primary with text-primary-foreground, never text-white."
+      >
+        <Card>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground">
+              Primary on primary-foreground
+            </span>
+            <span className="font-mono text-[11px] text-muted-foreground">
+              light #171717 / #fafafa · dark #f5f5f5 / #151515 · above 15:1
+            </span>
+          </div>
+        </Card>
+      </Section>
+
+      <Section
+        title="Voice"
+        rule="Sparse, precise, active. Name the component, say what it does, show the install command."
+      >
+        <Card>
+          <p className="text-sm text-foreground">
+            A spring-pressed button with loading, success, and error states. Copy the source or install it from the
+            registry.
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {["revolutionary", "powerful", "seamless", "simply", "just", "unlock", "supercharge", "!"].map((word) => (
+              <Tag key={word} tone="bad">
+                {word}
+              </Tag>
+            ))}
+          </div>
+        </Card>
       </Section>
 
       <Section title="Motion" rule="Tokens from lib/ease.ts. Under 300ms, exits faster, transform and opacity only.">

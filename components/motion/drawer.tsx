@@ -162,7 +162,7 @@ export function Drawer({
               {...gate}
               className={cn(
                 // Vertical scrolling stays native; only a sideways swipe drags.
-                "fixed inset-y-0 z-50 flex w-80 max-w-[85vw] touch-pan-y flex-col bg-background shadow-2xl outline-none",
+                "fixed inset-y-0 z-50 flex w-80 max-w-[85vw] touch-pan-y flex-col bg-background shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)] outline-none",
                 // Only the corners facing the page are rounded; the edge
                 // against the viewport stays square.
                 side === "right"

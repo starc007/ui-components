@@ -59,7 +59,7 @@ export function TooltipSurface({
       exit="closed"
       style={{ transformOrigin: "var(--tooltip-origin, center)", ...style }}
       className={cn(
-        "block whitespace-nowrap rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground shadow-lg",
+        "block whitespace-nowrap rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]",
         className,
       )}
       {...props}

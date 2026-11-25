@@ -105,7 +105,7 @@ export function MobileNav() {
               open={open}
               onOpenChange={setOpen}
               ariaLabel={t("mobileNav.title")}
-              className="w-72 shadow-none"
+              className="w-72"
             >
               <div className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border px-4">
                 <Link
