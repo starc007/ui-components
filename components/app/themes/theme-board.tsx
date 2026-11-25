@@ -54,7 +54,10 @@ export function ThemeBoard() {
   const [sync, setSync] = useState(false);
   const [plan, setPlan] = useState("pro");
   const [sort, setSort] = useState("recent");
-  const { toasts, showToast, dismissToast } = useAnimatedToastStack({ defaultDuration: 3200, limit: 3 });
+  const { toasts, showToast, dismissToast, pause, resume } = useAnimatedToastStack({
+    defaultDuration: 3200,
+    limit: 3,
+  });
 
   return (
     <div className="columns-1 gap-4 md:columns-2 2xl:columns-3">
@@ -169,6 +172,8 @@ export function ThemeBoard() {
           sound
           toasts={toasts}
           onDismiss={dismissToast}
+          onPause={pause}
+          onResume={resume}
           position="bottom-right"
           placement="fixed"
           maxVisible={3}

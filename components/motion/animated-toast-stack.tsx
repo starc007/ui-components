@@ -1,82 +1,38 @@
 "use client";
 
-import {
-  AlertCircle,
-  Bell,
-  Check,
-  Info,
-  LoaderCircle,
-  type LucideIcon,
-  X,
-} from "lucide-react";
-import {
-  AnimatePresence,
-  motion,
-  type Transition,
-  useReducedMotion,
-} from "motion/react";
-import {
-  memo,
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { AnimatePresence, motion, type PanInfo, useReducedMotion } from "motion/react";
+import { type ReactNode, type Ref, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { useSound } from "@/lib/sound";
 import { notifySound } from "@/lib/sounds/notify";
 import { cn } from "@/lib/utils";
+import { ToastBody } from "./animated-toast-stack/toast-body";
+import type {
+  AnimatedToast,
+  ToastClassNames,
+  ToastPosition,
+  ToastStatus,
+} from "./animated-toast-stack/types";
+import { useContentSize } from "./animated-toast-stack/use-content-size";
 
-export type ToastStatus = "neutral" | "info" | "loading" | "success" | "error";
-export type ToastPosition =
-  | "top-left"
-  | "top-center"
-  | "top-right"
-  | "bottom-left"
-  | "bottom-center"
-  | "bottom-right";
-
-export type AnimatedToastAction = {
-  label: ReactNode;
-  onClick: (toast: AnimatedToast) => void;
-};
-
-export type AnimatedToast = {
-  id: string;
-  title: ReactNode;
-  description?: ReactNode;
-  status?: ToastStatus;
-  icon?: ReactNode;
-  action?: AnimatedToastAction;
-  duration?: number;
-  dismissible?: boolean;
-  createdAt?: number;
-};
-
-export type ToastInput = Omit<AnimatedToast, "id" | "createdAt"> & {
-  id?: string;
-};
-
-export type ToastClassNames = {
-  root?: string;
-  item?: string;
-  surface?: string;
-  iconWrap?: string;
-  content?: string;
-  title?: string;
-  description?: string;
-  action?: string;
-  close?: string;
-  progress?: string;
-};
+export type {
+  AnimatedToast,
+  AnimatedToastAction,
+  ToastClassNames,
+  ToastInput,
+  ToastPosition,
+  ToastStatus,
+  UseAnimatedToastStackOptions,
+} from "./animated-toast-stack/types";
+export { useAnimatedToastStack } from "./animated-toast-stack/use-animated-toast-stack";
 
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
 export const animatedToastStackMessages = {
   dismiss: "Dismiss toast",
+  region: "Notifications",
+  more: "{count} more",
 };
 
 export type AnimatedToastStackMessages = typeof animatedToastStackMessages;
@@ -89,6 +45,7 @@ export interface AnimatedToastStackProps {
   fixed?: boolean;
   portal?: boolean;
   portalRoot?: Element | null;
+  /** How many toasts the open island lists. Default 4. */
   maxVisible?: number;
   className?: string;
   classNames?: ToastClassNames;
@@ -101,177 +58,67 @@ export interface AnimatedToastStackProps {
    * `SoundProvider` can mute it app-wide.
    */
   sound?: boolean;
+  /**
+   * Called when the island opens (hover, focus or a tap). Pass the hook's
+   * `pause` so toasts don't run out while someone is reading them.
+   */
+  onPause?: () => void;
+  /** Called when it closes again. Pass the hook's `resume`. */
+  onResume?: () => void;
 }
 
-export interface UseAnimatedToastStackOptions {
-  initialToasts?: ToastInput[];
-  defaultDuration?: number;
-  limit?: number;
-}
-
-// A little softer and heavier than SPRING_PANEL, so toasts reshuffling in the
-// stack move as one pile instead of snapping card by card.
-const STACK_SPRING: Transition = {
-  type: "spring",
-  stiffness: 420,
-  damping: 34,
-  mass: 0.75,
-};
-
-const CONTENT_TRANSITION = {
-  duration: 0.28,
-  ease: EASE_OUT,
+// The island blooms out of a dot this size and folds back into one.
+const DOT = 40;
+// One radius, never animated: the browser clamps it to half the height, so
+// the dot, the pill and the card all fall out of the size spring.
+const RADIUS = 20;
+// The card and the open list share one width, so swapping between them only
+// moves the height.
+const CARD = "w-[22rem] max-w-[calc(100vw-2rem)]";
+// Closing waits a beat, so a shell resizing under the pointer never flaps.
+const COLLAPSE_DELAY = 120;
+// The island's size spring. Less bounce than SPRING_MORPH: a toast resizes
+// often, and an overshooting height reads as a wobble. Local because only this
+// shell morphs between so many sizes.
+const ISLAND_SPRING = { type: "spring", duration: 0.45, bounce: 0.08 } as const;
+const FOLD = { duration: 0.25, ease: EASE_OUT } as const;
+const FADE = { duration: 0.12, ease: EASE_OUT } as const;
+// New content blooms in once the shell is most of the way open, instead of
+// riding the whole spring, so it is never seen half clipped.
+const CONTENT_IN = {
+  default: ISLAND_SPRING,
+  opacity: { duration: 0.18, delay: 0.05, ease: EASE_OUT },
+  filter: { duration: 0.22, delay: 0.05, ease: EASE_OUT },
 } as const;
-
-const STATUS_ICON: Record<ToastStatus, LucideIcon> = {
-  neutral: Bell,
-  info: Info,
-  loading: LoaderCircle,
-  success: Check,
-  error: AlertCircle,
-};
-
-const STATUS_CLASS: Record<ToastStatus, string> = {
-  neutral: "text-muted-foreground bg-muted/60",
-  info: "text-primary bg-muted",
-  loading: "text-primary bg-muted",
-  success: "text-emerald-600 bg-emerald-500/10 dark:text-emerald-400",
-  error: "text-destructive bg-destructive/10",
-};
+// Overlaps the incoming fade, so a swap is a crossfade and never a blank blink.
+const CONTENT_OUT = { duration: 0.1, ease: EASE_OUT } as const;
+// A swipe this far (px) or this fast (px/s) dismisses.
+const SWIPE_DISTANCE = 72;
+const SWIPE_SPEED = 520;
 
 const POSITION_CLASS: Record<ToastPosition, string> = {
-  "top-left": "left-4 top-4",
-  "top-center": "left-1/2 top-4 -translate-x-1/2",
-  "top-right": "right-4 top-4",
-  "bottom-left": "bottom-6 left-4",
-  "bottom-center": "bottom-6 left-1/2 -translate-x-1/2",
-  "bottom-right": "bottom-6 right-4",
+  "top-left": "left-4 top-4 justify-start",
+  "top-center": "left-1/2 top-4 -translate-x-1/2 justify-center",
+  "top-right": "right-4 top-4 justify-end",
+  "bottom-left": "bottom-6 left-4 justify-start",
+  "bottom-center": "bottom-6 left-1/2 -translate-x-1/2 justify-center",
+  "bottom-right": "bottom-6 right-4 justify-end",
 };
 
-let idSeed = 0;
+// Content pins to the corner the island grows from: it holds still while the
+// shell opens around it, and the outgoing and incoming content share that
+// corner, so neither jumps when the other changes the size.
+const PIN_CLASS: Record<ToastPosition, string> = {
+  "top-left": "items-start justify-start",
+  "top-center": "items-start justify-center",
+  "top-right": "items-start justify-end",
+  "bottom-left": "items-end justify-start",
+  "bottom-center": "items-end justify-center",
+  "bottom-right": "items-end justify-end",
+};
 
-function createToast(input: ToastInput, defaultDuration: number): AnimatedToast {
-  return {
-    duration: defaultDuration,
-    dismissible: true,
-    ...input,
-    id: input.id ?? `toast-${Date.now()}-${idSeed++}`,
-    createdAt: Date.now(),
-  };
-}
-
-export function useAnimatedToastStack({
-  initialToasts = [],
-  defaultDuration = 4200,
-  limit,
-}: UseAnimatedToastStackOptions = {}) {
-  const toastTimers = useRef<Map<string, { timer: number; signature: string }>>(new Map());
-  const [toasts, setToasts] = useState<AnimatedToast[]>(() =>
-    initialToasts.map((toast) => createToast(toast, defaultDuration)),
-  );
-
-  const dismissToast = useCallback((id: string) => {
-    setToasts((current) => current.filter((toast) => toast.id !== id));
-  }, []);
-
-  const clearToasts = useCallback(() => {
-    setToasts([]);
-  }, []);
-
-  const showToast = useCallback(
-    (input: ToastInput) => {
-      const toast = createToast(input, defaultDuration);
-      setToasts((current) => {
-        const next = [...current, toast];
-        return typeof limit === "number" ? next.slice(-limit) : next;
-      });
-      return toast.id;
-    },
-    [defaultDuration, limit],
-  );
-
-  const updateToast = useCallback((id: string, patch: Partial<ToastInput>) => {
-    setToasts((current) =>
-      current.map((toast) =>
-        toast.id === id
-          ? {
-              ...toast,
-              ...patch,
-              id,
-              createdAt: patch.duration === undefined ? toast.createdAt : Date.now(),
-            }
-          : toast,
-      ),
-    );
-  }, []);
-
-  useEffect(() => {
-    const activeIds = new Set(toasts.map((toast) => toast.id));
-
-    toastTimers.current.forEach((entry, id) => {
-      if (!activeIds.has(id)) {
-        window.clearTimeout(entry.timer);
-        toastTimers.current.delete(id);
-      }
-    });
-
-    toasts.forEach((toast) => {
-      const duration = toast.duration ?? defaultDuration;
-      const existing = toastTimers.current.get(toast.id);
-
-      if (duration <= 0) {
-        if (existing) {
-          window.clearTimeout(existing.timer);
-          toastTimers.current.delete(toast.id);
-        }
-        return;
-      }
-
-      const createdAt = toast.createdAt ?? Date.now();
-      const signature = `${createdAt}:${duration}`;
-
-      if (existing?.signature === signature) {
-        return;
-      }
-
-      if (existing) {
-        window.clearTimeout(existing.timer);
-      }
-
-      const elapsed = Date.now() - createdAt;
-      const remaining = Math.max(duration - elapsed, 0);
-      const timer = window.setTimeout(() => {
-        toastTimers.current.delete(toast.id);
-        dismissToast(toast.id);
-      }, remaining);
-
-      toastTimers.current.set(toast.id, { timer, signature });
-    });
-  }, [defaultDuration, dismissToast, toasts]);
-
-  useEffect(() => {
-    const timers = toastTimers.current;
-
-    return () => {
-      timers.forEach((entry) => {
-        window.clearTimeout(entry.timer);
-      });
-      timers.clear();
-    };
-  }, []);
-
-  return useMemo(
-    () => ({
-      toasts,
-      showToast,
-      updateToast,
-      dismissToast,
-      clearToasts,
-      setToasts,
-    }),
-    [clearToasts, dismissToast, showToast, toasts, updateToast],
-  );
-}
+const swiped = (info: PanInfo) =>
+  Math.abs(info.offset.x) > SWIPE_DISTANCE || Math.abs(info.velocity.x) > SWIPE_SPEED;
 
 export function AnimatedToastStack({
   toasts,
@@ -288,6 +135,8 @@ export function AnimatedToastStack({
   renderToast,
   labels,
   sound = false,
+  onPause,
+  onResume,
 }: AnimatedToastStackProps) {
   const t = useMessages("animatedToastStack", animatedToastStackMessages, labels);
   const [portalTarget, setPortalTarget] = useState<Element | null>(null);
@@ -300,8 +149,7 @@ export function AnimatedToastStack({
     if (seen.current && ids.some((id) => !seen.current?.has(id))) play();
     seen.current = new Set(ids);
   }, [toasts, play]);
-  const visibleToasts = toasts.slice(-maxVisible);
-  const isBottom = position.startsWith("bottom");
+  const visible = toasts.slice(-maxVisible);
   const resolvedPlacement = placement ?? (fixed ? "fixed" : "static");
   const shouldPortal = portal ?? resolvedPlacement === "fixed";
 
@@ -309,231 +157,350 @@ export function AnimatedToastStack({
     setPortalTarget(shouldPortal ? (portalRoot ?? document.body) : null);
   }, [portalRoot, shouldPortal]);
 
-  const stack = (
-    <ol
-      aria-live="polite"
-      aria-atomic="false"
+  const layer = (
+    <div
       className={cn(
-        "pointer-events-none flex w-[calc(100vw-2rem)] max-w-sm gap-2",
-        isBottom ? "flex-col-reverse" : "flex-col",
+        "pointer-events-none flex",
         resolvedPlacement === "fixed" && "fixed z-[90]",
         resolvedPlacement === "absolute" && "absolute z-20",
-        resolvedPlacement !== "static" && POSITION_CLASS[position],
+        resolvedPlacement !== "static" && cn(CARD, POSITION_CLASS[position]),
         classNames?.root,
         className,
       )}
     >
-      <AnimatePresence initial={false} mode="popLayout">
-        {visibleToasts.map((toast, index) => (
-          <ToastItem
-            key={toast.id}
-            toast={toast}
-            index={index}
+      {/* One island cannot announce each toast, so a hidden live region does:
+          every new toast, and every change to one, is read out politely. */}
+      <div className="sr-only" aria-live="polite" aria-atomic="false">
+        {toasts.map((toast) => (
+          <p key={toast.id}>
+            {toast.title}
+            {toast.description ? ". " : null}
+            {toast.description}
+          </p>
+        ))}
+      </div>
+      <AnimatePresence>
+        {visible.length > 0 ? (
+          <Island
+            key="island"
+            toasts={visible}
+            position={position}
             onDismiss={onDismiss}
             classNames={classNames}
             icons={icons}
             renderToast={renderToast}
-            dismissLabel={t("dismiss")}
+            labels={{ dismiss: t("dismiss"), region: t("region"), more: (count) => t("more", { count }) }}
+            onPause={onPause}
+            onResume={onResume}
           />
-        ))}
+        ) : null}
       </AnimatePresence>
-    </ol>
+    </div>
   );
 
-  if (shouldPortal && !portalTarget) {
-    return null;
-  }
-
-  if (shouldPortal && portalTarget) {
-    return createPortal(stack, portalTarget);
-  }
-
-  return stack;
+  if (shouldPortal && !portalTarget) return null;
+  if (shouldPortal && portalTarget) return createPortal(layer, portalTarget);
+  return layer;
 }
 
-const ToastItem = memo(function ToastItem({
-  toast,
-  index,
+function Island({
+  toasts,
+  position,
   onDismiss,
   classNames,
   icons,
   renderToast,
-  dismissLabel,
+  labels,
+  onPause,
+  onResume,
 }: {
-  toast: AnimatedToast;
-  index: number;
+  toasts: AnimatedToast[];
+  position: ToastPosition;
   onDismiss?: (id: string) => void;
   classNames?: ToastClassNames;
   icons?: Partial<Record<ToastStatus, ReactNode>>;
   renderToast?: (toast: AnimatedToast) => ReactNode;
-  dismissLabel: string;
+  labels: { dismiss: string; region: string; more: (count: number) => string };
+  onPause?: () => void;
+  onResume?: () => void;
 }) {
-  const reduce = useReducedMotion();
-  const status = toast.status ?? "neutral";
-  const Icon = STATUS_ICON[status];
-  const iconNode = icons?.[status] ?? toast.icon ?? <Icon className="h-3.5 w-3.5" />;
-  const canDismiss = toast.dismissible !== false && Boolean(onDismiss);
-  const hasDetails = Boolean(toast.description || toast.action);
+  const reduce = useReducedMotion() ?? false;
+  const [sizer, size] = useContentSize<HTMLDivElement>();
+  const shellRef = useRef<HTMLElement>(null);
+  const newest = toasts[toasts.length - 1];
+  const others = toasts.length - 1;
+  const fromBottom = position.startsWith("bottom");
+  const edge = fromBottom ? 1 : -1;
+  const compact = !newest.description && !newest.action && !renderToast;
+  const canSwipe = newest.dismissible !== false && Boolean(onDismiss);
+
+  // The island opens into the full list while it is hovered or focused, or
+  // after a tap on a touch screen, and holds every countdown while open.
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [tapped, setTapped] = useState(false);
+  const open = hovered || focused || tapped;
+  const collapseTimer = useRef<number | null>(null);
+  // Set when a swipe throws away the last toast: the island leaves that way.
+  const [flung, setFlung] = useState<-1 | 0 | 1>(0);
+
+  const latest = useRef({ onPause, onResume });
+  useLayoutEffect(() => {
+    latest.current = { onPause, onResume };
+  });
+  useEffect(() => {
+    if (open) latest.current.onPause?.();
+    else latest.current.onResume?.();
+  }, [open]);
+  useEffect(
+    () => () => {
+      if (collapseTimer.current) window.clearTimeout(collapseTimer.current);
+      latest.current.onResume?.();
+    },
+    [],
+  );
+
+  // A tap anywhere else closes what a tap opened.
+  useEffect(() => {
+    if (!tapped) return;
+    const onDown = (event: PointerEvent) => {
+      if (!shellRef.current?.contains(event.target as Node)) setTapped(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [tapped]);
+
+  const ordered = fromBottom ? toasts : [...toasts].reverse();
+  const rowTransition = reduce ? FADE : CONTENT_IN;
+  const shellTransition = reduce
+    ? { width: { duration: 0 }, height: { duration: 0 }, default: { duration: 0.15, ease: EASE_OUT } }
+    : {
+        default: ISLAND_SPRING,
+        opacity: { duration: 0.18, ease: EASE_OUT },
+        filter: { duration: 0.24, ease: EASE_OUT },
+      };
+  // Outgoing content holds the corner it was pinned to while it fades.
+  const anchorX = position.endsWith("right") ? "right" : "left";
+  const anchorY = fromBottom ? "bottom" : "top";
+  const origin = `${anchorY} ${position.endsWith("center") ? "center" : anchorX}`;
 
   return (
-    <motion.li
-      layout
-      initial={
-        reduce
-          ? { opacity: 0 }
-          : { opacity: 0, y: 22, scale: 0.96, filter: "blur(10px)" }
-      }
-      animate={
-        reduce
-          ? { opacity: 1 }
-          : { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
-      }
+    <motion.section
+      ref={shellRef}
+      aria-label={labels.region}
+      // Reachable from the keyboard even as a pill with nothing to press.
+      tabIndex={0}
+      initial={reduce ? { opacity: 0 } : { opacity: 0, width: DOT, height: DOT, y: 16 * edge, filter: "blur(6px)" }}
+      animate={{
+        opacity: 1,
+        x: 0,
+        y: 0,
+        filter: "blur(0px)",
+        ...(size ? { width: size.width, height: size.height } : {}),
+      }}
+      // Folds back into the dot, or flies off the way it was swiped.
       exit={
         reduce
-          ? { opacity: 0 }
-          : {
-              opacity: 0,
-              x: 32,
-              scale: 0.96,
-              filter: "blur(8px)",
-              transition: { duration: 0.18, ease: EASE_OUT },
-            }
+          ? { opacity: 0, transition: FADE }
+          : flung
+            ? { opacity: 0, x: flung * 160, filter: "blur(4px)", transition: FOLD }
+            : { opacity: 0, width: DOT, height: DOT, y: 10 * edge, filter: "blur(6px)", transition: FOLD }
       }
-      transition={STACK_SPRING}
-      drag={canDismiss && !reduce ? "x" : false}
+      transition={shellTransition}
+      drag={!open && canSwipe ? "x" : false}
       dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.18}
+      dragElastic={0.2}
       onDragEnd={(_, info) => {
-        if (!canDismiss || !onDismiss) return;
-        if (Math.abs(info.offset.x) > 72 || Math.abs(info.velocity.x) > 520) {
-          onDismiss(toast.id);
-        }
+        if (!canSwipe || !swiped(info)) return;
+        if (toasts.length === 1) setFlung(info.offset.x < 0 ? -1 : 1);
+        onDismiss?.(newest.id);
       }}
-      className={cn("pointer-events-auto relative will-change-transform", classNames?.item)}
-      style={{ zIndex: 20 - index }}
+      onTap={(event) => {
+        const pointer = (event as PointerEvent).pointerType;
+        if (pointer !== "touch" && pointer !== "pen") return;
+        // A tap on a toast's own button (close, action) is that button's.
+        const target = event.target instanceof Element ? event.target : null;
+        if (target?.closest("button")) return;
+        setTapped((current) => !current);
+      }}
+      onPointerEnter={(event) => {
+        if (event.pointerType === "touch") return;
+        if (collapseTimer.current) window.clearTimeout(collapseTimer.current);
+        setHovered(true);
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType === "touch") return;
+        if (collapseTimer.current) window.clearTimeout(collapseTimer.current);
+        collapseTimer.current = window.setTimeout(() => setHovered(false), COLLAPSE_DELAY);
+      }}
+      onFocus={() => setFocused(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(false);
+      }}
+      onKeyDown={(event) => {
+        if (event.key !== "Escape") return;
+        setHovered(false);
+        setTapped(false);
+        (document.activeElement as HTMLElement | null)?.blur();
+      }}
+      style={{ borderRadius: RADIUS }}
+      className={cn(
+        // A ring, not a border: the shell's box stays exactly the content's
+        // size, so leaving content is pinned where it was drawn.
+        "pointer-events-auto relative flex touch-pan-y overflow-hidden bg-card text-foreground shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)] ring-1 ring-border outline-none",
+        "focus-visible:ring-2 focus-visible:ring-ring",
+        PIN_CLASS[position],
+        classNames?.surface,
+      )}
     >
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-2xl border border-border bg-card/95 p-3 shadow-2xl backdrop-blur-xl",
-          classNames?.surface,
-        )}
-      >
-        {renderToast ? (
-          renderToast(toast)
-        ) : (
-          <div className={cn("flex gap-3", hasDetails ? "items-start" : "items-center")}>
-            <motion.span
-              layout
-              className={cn(
-                "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
-                hasDetails && "mt-0.5",
-                STATUS_CLASS[status],
-                classNames?.iconWrap,
-              )}
-            >
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.span
-                  key={status}
-                  initial={
-                    reduce
-                      ? { opacity: 0 }
-                      : { opacity: 0, y: 8, scale: 0.8, filter: "blur(6px)" }
-                  }
-                  animate={
-                    reduce
-                      ? { opacity: 1 }
-                      : { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
-                  }
-                  exit={
-                    reduce
-                      ? { opacity: 0 }
-                      : { opacity: 0, y: -8, scale: 0.9, filter: "blur(6px)" }
-                  }
-                  transition={CONTENT_TRANSITION}
-                  className="inline-flex"
-                >
-                  {status === "loading" ? (
-                    <span className="inline-flex animate-spin">{iconNode}</span>
-                  ) : (
-                    iconNode
-                  )}
-                </motion.span>
-              </AnimatePresence>
-            </motion.span>
-
-            <div className={cn("min-w-0 flex-1", classNames?.content)}>
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.div
-                  key={`${toast.id}-${status}-${String(toast.title)}`}
-                  initial={
-                    reduce
-                      ? { opacity: 0 }
-                      : { opacity: 0, y: 8, filter: "blur(6px)" }
-                  }
-                  animate={
-                    reduce
-                      ? { opacity: 1 }
-                      : { opacity: 1, y: 0, filter: "blur(0px)" }
-                  }
-                  exit={
-                    reduce
-                      ? { opacity: 0 }
-                      : { opacity: 0, y: -8, filter: "blur(6px)" }
-                  }
-                  transition={CONTENT_TRANSITION}
-                >
-                  <p
-                    className={cn(
-                      "truncate text-sm font-medium leading-5 text-foreground",
-                      classNames?.title,
-                    )}
-                  >
-                    {toast.title}
-                  </p>
-                  {toast.description ? (
-                    <p
-                      className={cn(
-                        "mt-0.5 line-clamp-2 text-xs leading-4 text-muted-foreground",
-                        classNames?.description,
-                      )}
-                    >
-                      {toast.description}
-                    </p>
-                  ) : null}
-                </motion.div>
-              </AnimatePresence>
-
-              {toast.action ? (
-                <button
-                  type="button"
-                  onClick={() => toast.action?.onClick(toast)}
-                  className={cn(
-                    "mt-2 inline-flex h-7 items-center rounded-full bg-muted/80 px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted",
-                    classNames?.action,
-                  )}
-                >
-                  {toast.action.label}
-                </button>
-              ) : null}
-            </div>
-
-            {canDismiss ? (
-              <button
-                type="button"
-                onClick={() => onDismiss?.(toast.id)}
-                aria-label={dismissLabel}
-                className={cn(
-                  "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground",
-                  classNames?.close,
-                )}
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            ) : null}
-          </div>
-        )}
-
+      {/* w-max keeps this at the natural size of what is shown; the shell
+          springs its real width and height toward it. */}
+      <div ref={sizer} className="w-max shrink-0">
+        <AnimatePresence mode="popLayout" initial={false} anchorX={anchorX} anchorY={anchorY}>
+          {open || !compact ? (
+            // The card and the open list are one stack: the newest toast's row
+            // stays mounted while the others fade in around it, so opening
+            // never redraws the text that is already on screen.
+            <Slot key="stack" fromBottom={fromBottom} origin={origin} reduce={reduce} className={CARD}>
+              <ol className="relative divide-y divide-border">
+                <AnimatePresence initial={false} mode="popLayout" anchorY={anchorY}>
+                  {(open ? ordered : [newest]).map((toast) => (
+                    <Row
+                      key={toast.id}
+                      toast={toast}
+                      others={open ? 0 : others}
+                      swipe={open}
+                      onDismiss={onDismiss}
+                      classNames={classNames}
+                      icons={icons}
+                      renderToast={renderToast}
+                      labels={labels}
+                      reduce={reduce}
+                      transition={rowTransition}
+                    />
+                  ))}
+                </AnimatePresence>
+              </ol>
+            </Slot>
+          ) : (
+            <Slot key={`${newest.id}-pill`} fromBottom={fromBottom} origin={origin} reduce={reduce}>
+              <ToastBody
+                toast={newest}
+                compact
+                others={others}
+                onDismiss={onDismiss}
+                dismissLabel={labels.dismiss}
+                moreLabel={labels.more(others)}
+                classNames={classNames}
+                icons={icons}
+                renderToast={renderToast}
+                reduce={reduce}
+              />
+            </Slot>
+          )}
+        </AnimatePresence>
       </div>
+    </motion.section>
+  );
+}
+
+/** What the island shows: it unfurls out of the edge and is sucked back into it. */
+function Slot({
+  ref,
+  fromBottom,
+  origin,
+  reduce,
+  className,
+  children,
+}: {
+  // popLayout measures and pins the outgoing slot through this ref.
+  ref?: Ref<HTMLDivElement>;
+  fromBottom: boolean;
+  origin: string;
+  reduce: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <motion.div
+      ref={ref}
+      initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.97, y: fromBottom ? 4 : -4, filter: "blur(4px)" }}
+      animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+      // Out fast and blur-free, before the resizing shell can clip it.
+      exit={reduce ? { opacity: 0, transition: FADE } : { opacity: 0, scale: 0.97, transition: CONTENT_OUT }}
+      transition={reduce ? FADE : CONTENT_IN}
+      style={{ transformOrigin: origin }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/** One toast in the open island: its own close, and a swipe of its own. */
+function Row({
+  ref,
+  toast,
+  others,
+  swipe,
+  onDismiss,
+  classNames,
+  icons,
+  renderToast,
+  labels,
+  reduce,
+  transition,
+}: {
+  // popLayout pins a leaving row through this ref while the others close up.
+  ref?: Ref<HTMLLIElement>;
+  toast: AnimatedToast;
+  // The collapsed card counts the toasts waiting behind it.
+  others: number;
+  // Rows swipe on their own only in the open list; the collapsed island swipes whole.
+  swipe: boolean;
+  onDismiss?: (id: string) => void;
+  classNames?: ToastClassNames;
+  icons?: Partial<Record<ToastStatus, ReactNode>>;
+  renderToast?: (toast: AnimatedToast) => ReactNode;
+  labels: { dismiss: string; more: (count: number) => string };
+  reduce: boolean;
+  transition: object;
+}) {
+  const [flung, setFlung] = useState<-1 | 0 | 1>(0);
+  const canSwipe = swipe && toast.dismissible !== false && Boolean(onDismiss);
+  return (
+    <motion.li
+      ref={ref}
+      layout="position"
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6 }}
+      animate={{ opacity: 1, x: 0, y: 0 }}
+      exit={
+        reduce || !flung
+          ? { opacity: 0, transition: FADE }
+          : { opacity: 0, x: flung * 160, transition: FOLD }
+      }
+      transition={transition}
+      drag={canSwipe ? "x" : false}
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.2}
+      onDragEnd={(_, info) => {
+        if (!canSwipe || !swiped(info)) return;
+        setFlung(info.offset.x < 0 ? -1 : 1);
+        onDismiss?.(toast.id);
+      }}
+      className={cn("relative bg-card", classNames?.item)}
+    >
+      <ToastBody
+        toast={toast}
+        others={others}
+        onDismiss={onDismiss}
+        dismissLabel={labels.dismiss}
+        moreLabel={labels.more(others)}
+        classNames={classNames}
+        icons={icons}
+        renderToast={renderToast}
+        reduce={reduce}
+      />
     </motion.li>
   );
-});
+}

@@ -258,7 +258,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "animated-toast-stack": {
     title: "Animated Toast Notifications for React",
     description:
-      "Stacked React toast notifications with status morphs, swipe to dismiss, actions and layout-aware motion. Tailwind styled, free source, shadcn install.",
+      "React toast notifications in one morphing island: a pill that springs into a card and a list, with status morphs, swipe to dismiss and actions. shadcn install.",
   },
   "theme-toggle": {
     title: "Animated Theme Toggle for React (View Transitions)",
