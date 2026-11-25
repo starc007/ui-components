@@ -140,7 +140,7 @@ const COMPONENT_DATES = {
   "charts/price-target-fan": { publishedAt: "2026-09-11", updatedAt: "2026-11-24" },
   "agents/loading-states": {
     publishedAt: "2026-07-30",
-    updatedAt: "2026-11-10",
+    updatedAt: "2026-11-25",
   },
   "agents/chat-app": {
     publishedAt: "2026-08-02",
