@@ -145,7 +145,7 @@ export function ToolApproval({
       data-state={status}
       aria-busy={busy}
       className={cn(
-        "w-full overflow-hidden rounded-2xl border border-border/60 bg-muted/20 text-sm",
+        "w-full overflow-hidden rounded-2xl border border-border/60 bg-background text-sm",
         className,
       )}
     >
@@ -157,17 +157,30 @@ export function ToolApproval({
             error && "text-destructive",
           )}
         >
-          {busy ? (
-            <LoaderCircle className={cn("size-4", !reduce && "animate-spin")} />
-          ) : error ? (
-            <CircleAlert className="size-4" />
-          ) : status === "denied" ? (
-            <X className="size-4" />
-          ) : status === "approved" || status === "complete" ? (
-            <Check className="size-4" />
-          ) : (
-            <ShieldCheck className="size-4" />
-          )}
+          {/* The icon tells the story of the request, so each change morphs:
+              shield, then spinner, then check or cross. */}
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={busy ? "busy" : status}
+              initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: "blur(2px)" }}
+              transition={reduce ? { duration: 0.12 } : SPRING_SWAP}
+              className="grid place-items-center"
+            >
+              {busy ? (
+                <LoaderCircle className={cn("size-4", !reduce && "animate-spin")} />
+              ) : error ? (
+                <CircleAlert className="size-4" />
+              ) : status === "denied" ? (
+                <X className="size-4" />
+              ) : status === "approved" || status === "complete" ? (
+                <Check className="size-4" />
+              ) : (
+                <ShieldCheck className="size-4" />
+              )}
+            </motion.span>
+          </AnimatePresence>
         </span>
 
         <div className="min-w-0 flex-1">
@@ -180,11 +193,23 @@ export function ToolApproval({
             </div>
             <span
               className={cn(
-                "shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors",
+                "relative shrink-0 overflow-hidden rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors",
                 getStatusBadgeClass(status),
               )}
             >
-              {t(status)}
+              {/* The label rolls up as the status moves on. */}
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  key={status}
+                  initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                  transition={{ duration: reduce ? 0.12 : 0.18, ease: EASE_OUT }}
+                  className="block"
+                >
+                  {t(status)}
+                </motion.span>
+              </AnimatePresence>
             </span>
           </div>
           {description ? (
@@ -255,18 +280,20 @@ export function ToolApproval({
                 onClick={onAlwaysAllow}
                 whileTap={reduce ? undefined : { scale: 0.97 }}
                 transition={SPRING_PRESS}
-                className="rounded-full border border-border/60 bg-background px-3 py-1.5 text-xs font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                className="rounded-full border border-border/60 bg-background px-3 py-1.5 text-xs font-medium text-foreground outline-none transition-colors hover:bg-foreground/[0.06] focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {t("alwaysAllow")}
               </motion.button>
             ) : null}
-            <button
+            <motion.button
               type="button"
               onClick={onDeny}
-              className="rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              whileTap={reduce ? undefined : { scale: 0.97 }}
+              transition={SPRING_PRESS}
+              className="rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
             >
               {t("deny")}
-            </button>
+            </motion.button>
           </motion.div>
         ) : null}
       </AnimatePresence>
