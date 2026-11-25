@@ -30,6 +30,7 @@
     "lint": "biome lint .",
     "typecheck": "tsc --noEmit && tsc --noEmit -p worker",
     "check:registry": "bun scripts/check-registry.ts",
+    "sync:skill": "bun scripts/sync-skill.ts",
     "test": "bun test",
     "check:messages": "bun scripts/check-messages.ts",
     "blog:banners": "bun scripts/blog-banners.ts",

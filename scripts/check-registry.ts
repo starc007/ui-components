@@ -1,5 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
-import { allComponents } from "../lib/registry";
+import { agentPicker, pickerSlugs } from "../lib/agent-picker";
+import { allComponents, INSTALL_SLUGS } from "../lib/registry";
+import { SKILL_PATH, syncedSkill } from "./sync-skill";
 import { componentAbout } from "../lib/component-about";
 import { componentDates } from "../lib/component-dates";
 import { componentSeo, SEO_DESCRIPTION_MAX, SEO_TITLE_MAX } from "../lib/component-seo";
@@ -266,6 +268,28 @@ for (const component of allComponents()) {
         if (!field.description) errors.push(`${type.file}: field ${type.name}.${field.name} has no description`);
       }
     }
+  }
+}
+
+// The beUI skill's picker and evals name install slugs an agent will run, so
+// every one must exist, and SKILL.md must carry the table lib/agent-picker.ts
+// generates (`bun scripts/sync-skill.ts` rewrites it).
+const installable = new Set(INSTALL_SLUGS);
+for (const row of agentPicker) {
+  for (const slug of pickerSlugs(row)) {
+    if (!installable.has(slug)) errors.push(`Skill picker "${row.ask}": "${slug}" is not an install slug`);
+  }
+}
+const skill = readFileSync(SKILL_PATH, "utf8");
+if (syncedSkill(skill) !== skill) {
+  errors.push(`${SKILL_PATH}: picker table is out of date; run bun scripts/sync-skill.ts`);
+}
+const skillEvals = JSON.parse(readFileSync("skills/beui/evals.json", "utf8")) as {
+  evals: { id: string; expected_slugs?: string[]; not_slugs?: string[] }[];
+};
+for (const item of skillEvals.evals) {
+  for (const slug of [...(item.expected_slugs ?? []), ...(item.not_slugs ?? [])]) {
+    if (!installable.has(slug)) errors.push(`Skill eval "${item.id}": "${slug}" is not an install slug`);
   }
 }
 

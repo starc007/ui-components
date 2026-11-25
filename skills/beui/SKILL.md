@@ -44,6 +44,8 @@ The live registry is the source of truth. Use the table below only to resolve co
 
 ## Picker
 
+<!-- picker:start (generated from lib/agent-picker.ts; run bun scripts/sync-skill.ts) -->
+
 | User asks for | Install `@beui/...` | Avoid |
 | --- | --- | --- |
 | Toast or snackbar | `animated-toast-stack` | `notification-stack` |
@@ -136,6 +138,8 @@ The live registry is the source of truth. Use the table below only to resolve co
 | 3D tilt card | `tilt-card` | custom glare math |
 | Tooltip | `tooltip` | `popover` |
 | Switch, checkbox, radio, input | `switch`, `checkbox`, `radio`, `input` | restyled native controls |
+
+<!-- picker:end -->
 
 ## Composition rules
 
