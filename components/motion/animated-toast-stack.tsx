@@ -161,7 +161,9 @@ export function AnimatedToastStack({
     <div
       className={cn(
         "pointer-events-none flex",
-        resolvedPlacement === "fixed" && "fixed z-[90]",
+        // Above dialogs and menus (z-[100]), so a toast fired from one shows;
+        // below tooltips and popovers (z-[9999]).
+        resolvedPlacement === "fixed" && "fixed z-[200]",
         resolvedPlacement === "absolute" && "absolute z-20",
         resolvedPlacement !== "static" && cn(CARD, POSITION_CLASS[position]),
         classNames?.root,
