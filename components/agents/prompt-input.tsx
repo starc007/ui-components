@@ -15,6 +15,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { ClipResizeFrame } from "@/components/agents/clip-resize-frame";
 import { Button } from "@/components/motion/button";
 import {
   DropdownMenu,
@@ -26,13 +27,20 @@ import {
 } from "@/components/motion/dropdown-menu";
 import { MENU_ITEM_CLASS, MenuItemHighlight } from "@/components/motion/menu/menu-item-highlight";
 import { Tooltip } from "@/components/motion/tooltip";
-import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
+import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 /** One identity for the default, so the filtered list stays stable. */
 const NO_COMMANDS: PromptCommand[] = [];
+
+// The slash list rises in and drops away faster; rows fade in and out as the
+// filter changes, and the rest slide into place.
+const LIST_IN = { duration: 0.18, ease: EASE_OUT } as const;
+const LIST_OUT = { duration: 0.12, ease: EASE_OUT } as const;
+const ROW_OUT = { duration: 0.1, ease: EASE_OUT } as const;
+const ROW_MOVE = { layout: SPRING_LAYOUT, opacity: { duration: 0.16, ease: EASE_OUT } } as const;
 
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
 export const promptInputMessages = {
@@ -305,24 +313,43 @@ export function PromptInput({
         {`${currentValue}\u200b`}
       </div>
 
-      {/* Opened by typing, so it is simply there; it fades out quickly. Focus
-          stays in the input, which drives the list with the arrow keys. */}
+      {/* The list rises a few px out of the input as it fades in, and drops
+          back faster. Focus stays in the input, which drives it with the arrow
+          keys. As you filter, its top edge glides (the list is anchored at its
+          bottom, above the input), leaving rows fade and the rest slide into
+          place, instead of the edge and rows jumping. */}
       <AnimatePresence>
         {slashOpen ? (
           <motion.div
             key="commands"
-            id={listId}
-            role="listbox"
-            aria-label={t("commands")}
-            initial={false}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, pointerEvents: "none", transition: { duration: 0.1, ease: EASE_OUT } }}
-            className="absolute inset-x-0 bottom-full z-20 mb-2 max-h-64 overflow-y-auto overscroll-contain rounded-2xl border border-border bg-background p-2 shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={
+              reduce
+                ? { opacity: 0, pointerEvents: "none", transition: LIST_OUT }
+                : { opacity: 0, y: 4, pointerEvents: "none", transition: LIST_OUT }
+            }
+            transition={LIST_IN}
+            style={{ transformOrigin: "bottom left" }}
+            className="absolute inset-x-0 bottom-full z-20 mb-2"
           >
+            <ClipResizeFrame edge="top" contentClassName="p-2">
+              <div
+                id={listId}
+                role="listbox"
+                aria-label={t("commands")}
+                className="relative max-h-60 overflow-y-auto overscroll-contain"
+              >
+                <AnimatePresence initial={false} mode="popLayout">
             {matches.map((command, index) => {
               const active = index === activeIndex;
               return (
-                <button
+                <motion.button
+                  layout={reduce ? false : "position"}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0, transition: ROW_OUT }}
+                  transition={ROW_MOVE}
                   key={command.value}
                   id={optionId(command.value)}
                   type="button"
@@ -362,9 +389,12 @@ export function PromptInput({
                   <span className="ml-auto shrink-0 font-mono text-xs text-muted-foreground/70">
                     /{command.value}
                   </span>
-                </button>
+                </motion.button>
               );
             })}
+                </AnimatePresence>
+              </div>
+            </ClipResizeFrame>
           </motion.div>
         ) : null}
       </AnimatePresence>
