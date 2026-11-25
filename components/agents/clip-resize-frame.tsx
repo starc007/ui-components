@@ -26,6 +26,12 @@ export interface ClipResizeFrameProps extends Omit<HTMLMotionProps<"div">, "chil
    * changes, on a morph spring, for pills and chips. Default: "y"
    */
   axis?: "x" | "y";
+  /**
+   * With axis "y", which edge moves. "top" is for a panel anchored at its
+   * bottom, such as a list opening above an input: its top edge glides and its
+   * content stays against the bottom. Default: "bottom"
+   */
+  edge?: "top" | "bottom";
   /** Outer corner radius in px. The surface inside uses one less. */
   radius?: number;
   /** Classes for the content box (padding goes here). */
@@ -42,6 +48,7 @@ export interface ClipResizeFrameProps extends Omit<HTMLMotionProps<"div">, "chil
  */
 export function ClipResizeFrame({
   axis = "y",
+  edge = "bottom",
   radius = 16,
   className,
   contentClassName,
@@ -51,15 +58,18 @@ export function ClipResizeFrame({
 }: ClipResizeFrameProps) {
   const reduce = useReducedMotion() ?? false;
   const horizontal = axis === "x";
+  const fromTop = !horizontal && edge === "top";
   const surfaceRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  // How much of the surface (px) is hidden right now: at the bottom, or split
-  // evenly between the two ends.
+  // How much of the surface (px) is hidden right now: at the moving edge, or
+  // split evenly between the two ends.
   const gap = useMotionValue(0);
   const clip = (value: number, round: number) =>
     horizontal
       ? `inset(0 ${value / 2}px 0 ${value / 2}px round ${round}px)`
-      : `inset(0 0 ${value}px 0 round ${round}px)`;
+      : fromTop
+        ? `inset(${value}px 0 0 0 round ${round}px)`
+        : `inset(0 0 ${value}px 0 round ${round}px)`;
   const frameClip = useTransform(gap, (value) =>
     Math.abs(value) > 0.5 ? clip(value, radius) : "none",
   );
@@ -130,7 +140,13 @@ export function ClipResizeFrame({
         style={{ borderRadius: radius - 1, clipPath: surfaceClip }}
         // Held wider than its content while shrinking, the surface keeps the
         // content centred, so the two ends close in on it evenly.
-        className={cn("overflow-hidden bg-background", horizontal && "flex justify-center")}
+        // Held taller than its content, a top-edge surface keeps the content
+        // against its anchored bottom.
+        className={cn(
+          "overflow-hidden bg-background",
+          horizontal && "flex justify-center",
+          fromTop && "flex flex-col justify-end",
+        )}
       >
         <div ref={contentRef} className={cn(horizontal && "w-max shrink-0", contentClassName)}>
           {children}
