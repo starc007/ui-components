@@ -404,6 +404,11 @@ export const componentSeo: Record<string, ComponentSeo> = {
     description:
       "Free animated AI voice orb for React: a liquid shader sphere that reacts to microphone or audio levels, for voice agent UIs. Custom colors, reduced motion support.",
   },
+  "voice-note": {
+    title: "React Voice Note Recorder for Chat and AI Apps",
+    description:
+      "Free React voice note: a mic button opens into a recording bar with timer, live waveform, discard and send. You own the recording. shadcn install.",
+  },
   "message-bubble": {
     title: "React Chat Bubble Component for AI Chat UI",
     description:
@@ -696,6 +701,16 @@ export const componentSeo: Record<string, ComponentSeo> = {
     title: "React Poll Component with Animated Results",
     description:
       "Free React poll: your pick fills with a check, the bars fill in a wave and the percentages count up. Accessible, shadcn install.",
+  },
+  "status-icon": {
+    title: "React Animated Status Icon: Sync to Success",
+    description:
+      "Free React status icon: a spinning sync arc closes into a ring as a check, exclamation or cross draws in. Accessible, reduced motion, shadcn install.",
+  },
+  confetti: {
+    title: "React Confetti Burst for Success Moments",
+    description:
+      "Free React confetti: call confetti() from any handler for a burst from a button. One canvas only while it plays, respects reduced motion, shadcn install.",
   },
   "delete-button": {
     title: "React Delete Button with Confirm Animation",

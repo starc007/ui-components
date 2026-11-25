@@ -161,7 +161,10 @@ export const componentSummaries: Record<string, string> = {
   "lock-toggle": "A padlock whose shackle drops shut and swings open again.",
   "poll-vote":
     "A one-tap poll where bars race to their shares as totals count up.",
+  "status-icon": "One icon that spins while syncing, then closes into its result.",
+  confetti: "A confetti burst you call like a toast, from any button.",
   "voice-orb": "A breathing liquid orb that reacts to voice level.",
+  "voice-note": "A mic button that opens into a recording bar with a live waveform.",
   "message-bubble":
     "Chat bubbles with tones, grouping, avatars and show-more content.",
   message: "Conversation rows with grouped bubbles that pop in when sent.",

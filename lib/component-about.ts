@@ -2296,6 +2296,27 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  "voice-note": {
+    overview:
+      "Voice Note is a React voice message recorder for chat and AI apps, built with Framer Motion. A mic button opens into a recording bar with discard, a recording dot and timer, a live waveform and send. The bar springs out of the mic's own circle to both sides at once, and sending folds it back into the centre, where the mic briefly shows a check. It morphs with a clip, so its width never animates and nothing around it shifts. The recording itself is yours: start your recorder in onRecordStart and pass the input level in, and the waveform moves with the voice.",
+    useWhen: [
+      "A chat or AI assistant accepts spoken messages next to typed ones.",
+      "A support or feedback form lets people leave a quick voice note.",
+      "A messaging app needs record, discard and send in one compact control.",
+    ],
+    accessibility:
+      "Record, discard and send are real buttons with names and tooltips. When recording starts focus moves to send, Escape discards, and focus returns to the mic when the bar closes. Recording and sending are announced in a polite live region; the timer and waveform are hidden from assistive technology. With reduced motion the bar fades instead of growing and the dot does not pulse.",
+    faq: [
+      {
+        question: "Does it record audio?",
+        answer: "No. It never opens the microphone. Start a MediaRecorder in onRecordStart, stop it in onSend or onDiscard, and pass the input level as level to drive the waveform.",
+      },
+      {
+        question: "How do I limit the length?",
+        answer: "Set maxDuration in seconds, and the note is sent when it reaches that length.",
+      },
+    ],
+  },
   "voice-orb": {
     overview:
       "Voice Orb is a React voice visualizer for AI voice assistants: a breathing liquid sphere drawn with a WebGL shader, with flowing highlights and three custom pigments. Its silhouette swells with a spring as activity rises, driven by a number, a Framer Motion MotionValue or an audio analyser you provide. The orb pauses when it is offscreen or the tab is hidden, and shows a fallback with an onError callback if WebGL is unavailable.",
@@ -2414,14 +2435,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   "prompt-input": {
     overview:
-      "Prompt Input is an AI chat composer for React. The textarea grows with the prompt between minRows and maxRows, Enter sends and Shift plus Enter adds a line, and the send button swaps into a stop button while a response is loading. It can show a model picker built on the beUI Select and an animated actions menu for things like attachments or tools, with the icon swaps animated by Framer Motion.",
+      "Prompt Input is an AI chat composer for React. The textarea grows with the prompt between minRows and maxRows, Enter sends and Shift plus Enter adds a line, and the send button swaps into a stop button while a response is loading, with a thin arc circling it while the agent works. It can show a model menu and an add menu built on the beUI Dropdown Menu, and slash commands: typing / at the start of a word lists your commands above the input, filtered as you type, and picking one writes it into the prompt. Icon swaps are animated by Framer Motion.",
     useWhen: [
       "An AI chat app needs a message box with a model selector and a send or stop button.",
       "An agent workspace needs an actions menu to attach files, add context or pick a tool before sending.",
       "A coding assistant needs a multiline prompt field that grows with the instruction instead of scrolling a single line.",
     ],
     accessibility:
-      "The composer is a form with a labeled textarea (\"Prompt\" by default), and the send, stop and actions buttons have labels such as \"Send prompt\", \"Stop generating\" and \"Add to prompt\". Enter submits only when the prompt is not empty and ignores Enter during IME composition, so typing in languages like Japanese or Chinese does not send early. After sending, focus returns to the textarea. With reduced motion enabled, the send and stop swap and the plus icon rotation happen without movement.",
+      "The composer is a form with a labeled textarea (\"Prompt\" by default), and the send, stop and actions buttons have labels such as \"Send prompt\", \"Stop generating\" and \"Add to prompt\". Enter submits only when the prompt is not empty and ignores Enter during IME composition, so typing in languages like Japanese or Chinese does not send early. After sending, focus returns to the textarea. While the slash command list is open, focus stays in the textarea: the arrow keys move through the commands, Enter or Tab picks one and Escape closes the list, and the textarea points at the highlighted command with aria-activedescendant. With reduced motion enabled, the send and stop swap and the plus icon rotation happen without movement.",
     faq: [
       {
         question: "How do I build a ChatGPT style prompt input in React?",
@@ -4030,6 +4051,52 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       {
         question: "Can I reset it?",
         answer: "Control it with value and set it back to null; the bars drain and the list is ready for a vote again.",
+      },
+    ],
+  },
+  "status-icon": {
+    overview:
+      "Status Icon is a React status indicator built with Framer Motion that morphs between states instead of swapping glyphs. Idle is a quiet dashed ring. Syncing spins a short arc round a faint track at a steady speed. On success, warning or error the arc closes into the full ring in green, amber or red, and a check, an exclamation or a cross draws in after it. Moving on erases the mark faster than it drew.",
+    useWhen: [
+      "A save, sync or upload shows its progress and result in one spot.",
+      "A list or table marks each row's job as running, done or failed.",
+      "A status line next to text needs an icon that changes with it.",
+    ],
+    accessibility:
+      "It renders with the img role and a name for its state, such as Syncing or Done, which you can translate with labels. Pass decorative when nearby text already says the status, and it is hidden from assistive technology. With reduced motion the arc does not spin and marks fade in instead of drawing.",
+    faq: [
+      {
+        question: "Which states does it have?",
+        answer: "idle, syncing, success, warning and error. Change the status prop and it morphs from the current state to the new one.",
+      },
+      {
+        question: "Can I change its size?",
+        answer: "Yes. Pass size in px; the default is 20. Colours come from the text colour classes, so className can change them.",
+      },
+    ],
+  },
+  confetti: {
+    overview:
+      "Confetti is a confetti burst for React success moments that you call like a toast: confetti() from any event handler, with no provider, hook or element to mount. A burst throws paper pieces from a button or a point, they tumble and fall with gravity and drag, and fade out. It draws on one canvas over the page that exists only while pieces are in the air, and overlapping bursts share it.",
+    useWhen: [
+      "A checkout, signup or upgrade just succeeded.",
+      "A user finishes onboarding, a streak or a big task.",
+      "A launch or announcement page wants a moment of delight on a button.",
+    ],
+    accessibility:
+      "The canvas is hidden from assistive technology and never takes pointer events, so nothing under it is blocked. Announce the success itself in text or a toast; confetti is decoration. With reduced motion confetti() draws nothing and resolves at once.",
+    faq: [
+      {
+        question: "How do I fire it from a button?",
+        answer: "Call confetti({ origin: event.currentTarget }) in the click handler, and the burst starts from the button's centre.",
+      },
+      {
+        question: "Can I change the colours and size of the burst?",
+        answer: "Pass colors as CSS colours, count for the number of pieces, power for the launch speed, and angle and spread for the direction.",
+      },
+      {
+        question: "How do I know when it has finished?",
+        answer: "confetti() returns a promise that resolves when the last piece has gone.",
       },
     ],
   },
