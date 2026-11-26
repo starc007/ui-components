@@ -5,6 +5,8 @@ publishedAt: 2026-11-26
 tags: reactnative, animation, expo, typescript
 product: native
 draft: false
+devto: https://dev.to/saurra3h/best-react-native-animation-libraries-in-2027-kdo
+medium: https://saurra3h.medium.com/best-react-native-animation-libraries-in-2027-a712fb52ad58
 ---
 
 Your app works. It also feels stiff. Buttons don't react to a press, sheets snap open, lists jump when a row goes away. So you go looking for React Native animation libraries.
