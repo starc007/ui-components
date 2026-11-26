@@ -2,7 +2,7 @@
 
 import { useId } from "react";
 import { useMessages } from "@/lib/i18n";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ChevronDown, Loader2, Wallet } from "lucide-react";
 import type { Chain, Token, TokenSide } from "./types";
 import { TokenDot } from "./token-badges";
@@ -32,6 +32,7 @@ export function Field({
   labels?: Partial<SwapMessages>;
 }) {
   const t = useMessages("swap", swapMessages, labels);
+  const reduce = useReducedMotion();
   const id = useId();
   const usdValue = (Number(amount) || 0) * (token.usd ?? 0);
 
@@ -53,10 +54,10 @@ export function Field({
               value={amount}
               onChange={(e) => onAmount?.(sanitizeAmount(e.target.value))}
               placeholder="0"
-              className="w-full bg-transparent text-2xl font-semibold tracking-tight text-foreground tabular-nums outline-none placeholder:text-muted-foreground/60"
+              className="w-full bg-transparent text-2xl font-medium tracking-tight text-foreground tabular-nums outline-none placeholder:text-muted-foreground/60"
             />
           ) : (
-            <div className="flex h-9 items-center gap-2 text-2xl font-semibold tracking-tight tabular-nums">
+            <div className="flex h-9 items-center gap-2 text-2xl font-medium tracking-tight tabular-nums">
               <motion.span
                 animate={{
                   opacity: quoting ? 0.55 : 1,
@@ -70,9 +71,9 @@ export function Field({
               <AnimatePresence>
                 {quoting ? (
                   <motion.span
-                    initial={{ opacity: 0, scale: 0.85 }}
+                    initial={{ opacity: 0, scale: reduce ? 1 : 0.85 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.85 }}
+                    exit={{ opacity: 0, scale: reduce ? 1 : 0.85 }}
                     transition={{ duration: 0.14, ease: EASE }}
                   >
                     <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -89,7 +90,7 @@ export function Field({
         <button
           type="button"
           onClick={onOpenPicker}
-          className="group inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card pl-1 pr-2.5 text-sm font-semibold text-foreground transition-transform hover:border-border active:scale-[0.97]"
+          className="group inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card pl-1 pr-2.5 text-sm font-medium text-foreground transition-transform hover:border-border active:scale-[0.97]"
         >
           <TokenDot token={token} chain={chain} />
           <span>{token.symbol}</span>
@@ -109,7 +110,7 @@ export function Field({
           <button
             type="button"
             onClick={() => onAmount?.(String(token.balance))}
-            className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+            className="rounded-full px-2 py-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground hover:bg-muted/60 hover:text-foreground"
           >
             {t("max")}
           </button>

@@ -13,7 +13,7 @@ export function RangeSliderWavePreview() {
         <span>Gain</span>
         <span className="tabular-nums text-foreground">{value}</span>
       </div>
-      <WaveSlider value={value} onValueChange={setValue} aria-label="Gain" />
+      <WaveSlider sound value={value} onValueChange={setValue} aria-label="Gain" />
     </div>
   );
 }

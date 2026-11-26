@@ -3,7 +3,8 @@
 import { ArrowDownUp, Check, ChevronDown, Send, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
-import { SPRING_PRESS } from "@/lib/ease";
+import { Tooltip } from "@/components/motion/tooltip";
+import { SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { EASE } from "./constants";
@@ -25,17 +26,19 @@ export function FlipButton({
   const t = useMessages("swap", swapMessages, labels);
   return (
     <div className="relative -my-4 flex justify-center" style={{ zIndex: 1 }}>
-      <motion.button
-        type="button"
-        onClick={onClick}
-        aria-label={t("reverse")}
-        whileTap={reduce ? undefined : { scale: 0.9 }}
-        animate={reduce ? undefined : { rotate: rotation }}
-        transition={{ type: "spring", stiffness: 380, damping: 26, mass: 0.6 }}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[3px] border-card bg-muted text-foreground backdrop-blur"
-      >
-        <ArrowDownUp className="h-3.5 w-3.5" />
-      </motion.button>
+      <Tooltip content={t("reverse")} side="right">
+        <motion.button
+          type="button"
+          onClick={onClick}
+          aria-label={t("reverse")}
+          whileTap={reduce ? undefined : { scale: 0.9 }}
+          animate={reduce ? undefined : { rotate: rotation }}
+          transition={SPRING_LAYOUT}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border-[3px] border-card bg-muted text-foreground backdrop-blur"
+        >
+          <ArrowDownUp className="h-3.5 w-3.5" />
+        </motion.button>
+      </Tooltip>
     </div>
   );
 }
@@ -74,7 +77,7 @@ export function ActionButton({
       transition={SPRING_PRESS}
       disabled={disabled}
       className={cn(
-        "mt-3 inline-flex h-12 w-full items-center justify-center rounded-2xl text-sm font-semibold transition-colors",
+        "mt-3 inline-flex h-12 w-full items-center justify-center rounded-full text-sm font-medium transition-colors",
         disabled
           ? "cursor-not-allowed bg-muted text-muted-foreground"
           : "bg-primary text-primary-foreground hover:bg-primary/90",
@@ -123,12 +126,12 @@ export function DestinationRow({
   }, [show]);
 
   return (
-    <div className="mt-1 overflow-hidden rounded-xl border border-border/50 bg-background/40">
+    <div className="mt-1 overflow-hidden rounded-2xl border border-border/50 bg-background/40">
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={show}
-        className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-[12px] text-muted-foreground hover:text-foreground"
+        className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-xs text-muted-foreground hover:text-foreground"
       >
         <span className="flex items-center gap-2">
           <Send className="h-3.5 w-3.5 shrink-0" />
@@ -160,7 +163,7 @@ export function DestinationRow({
             <div className="border-t border-border/50 px-3.5 pb-3 pt-2.5">
               <div
                 className={cn(
-                  "flex items-center gap-2 rounded-lg border px-2.5 py-2 transition-colors",
+                  "flex items-center gap-2 rounded-full border px-3 py-2 transition-colors",
                   hasAddress && !valid
                     ? "border-destructive/40"
                     : "border-border",
@@ -172,7 +175,7 @@ export function DestinationRow({
                   onChange={(e) => onAddress(e.target.value.trim())}
                   placeholder={t("addressPlaceholder")}
                   spellCheck={false}
-                  className="min-w-0 flex-1 bg-transparent font-mono text-[12px] text-foreground outline-none placeholder:text-muted-foreground/60"
+                  className="min-w-0 flex-1 bg-transparent font-mono text-xs text-foreground outline-none placeholder:text-muted-foreground/60"
                 />
                 <AnimatePresence mode="wait">
                   {hasAddress ? (

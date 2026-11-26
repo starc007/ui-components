@@ -85,7 +85,7 @@ export function BumpChartSeriesPath({
             x="18"
             dominantBaseline="central"
             fill={row.color}
-            className="text-[10px] font-medium"
+            className="text-[11px] font-medium"
           >
             {row.name.length > 12 ? `${row.name.slice(0, 11)}…` : row.name}
             <title>{row.name}</title>

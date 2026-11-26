@@ -21,13 +21,19 @@ import {
   useRef,
   useState,
 } from "react";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-type MenuItem = { label: string; icon: ComponentType<{ className?: string }> };
+type MenuItem = {
+  /** Text under the icon. Also the item's key and the value sent to `onSelect`. */
+  label: string;
+  /** Icon component drawn above the label. */
+  icon: ComponentType<{ className?: string }>;
+};
 
 const ITEMS: MenuItem[] = [
   { label: "Doc", icon: FileText },
@@ -72,10 +78,13 @@ const SPRING_FOLDER = {
 } as const;
 
 export interface BloomMenuProps {
+  /** Grid items, each with a label and icon. Defaults to 6 create actions. */
   items?: MenuItem[];
+  /** Called with the item's label when an item is picked. The menu then closes. */
   onSelect?: (label: string) => void;
   /** Override any built-in string. */
   labels?: Partial<BloomMenuMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -144,22 +153,11 @@ export function BloomMenu({
     moveTo(rows[next].id);
   };
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape") close(true);
-    };
-    const onPointer = (e: PointerEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node))
-        setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open, close]);
+  const dismiss = useCallback(
+    (reason: DismissReason) => (reason === "escape" ? close(true) : setOpen(false)),
+    [close],
+  );
+  useDismiss(open, dismiss, ref);
 
   const morph = reduce ? { duration: 0.15 } : SPRING_FOLDER;
 
@@ -190,7 +188,7 @@ export function BloomMenu({
                 if (next instanceof Node && !ref.current?.contains(next))
                   close(false);
               }}
-              style={{ borderRadius: 16 }}
+              style={{ borderRadius: 24 }}
               className="w-[min(86vw,420px)] overflow-hidden border border-border bg-card"
             >
               <motion.div
@@ -213,7 +211,7 @@ export function BloomMenu({
                     type="button"
                     onClick={() => close(true)}
                     aria-label={t("close")}
-                    className="rounded-sm text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                    className="rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -283,10 +281,8 @@ export function BloomMenu({
                         }
                         animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                         transition={{
+                          ...SPRING_SWAP,
                           delay: reduce ? 0 : 0.1 + dist * 0.07,
-                          type: "spring",
-                          stiffness: 440,
-                          damping: 34,
                         }}
                         className="flex flex-col items-center gap-2"
                       >
@@ -308,7 +304,7 @@ export function BloomMenu({
               type="button"
               layoutId={layoutId}
               transition={morph}
-              style={{ borderRadius: 16 }}
+              style={{ borderRadius: 22 }}
               onClick={() => setOpen(true)}
               aria-haspopup="menu"
               aria-expanded={open}

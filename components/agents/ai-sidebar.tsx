@@ -1,616 +1,52 @@
 "use client";
 
+import { AnimatePresence } from "motion/react";
 import {
-  ArrowDown,
-  ArrowUp,
-  Bookmark,
-  FileText,
-  Folder,
-  FolderInput,
-  FolderOpen,
-  type LucideIcon,
-  MoreHorizontal,
-  Pencil,
-  Undo2,
-} from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import {
-  type DragEvent,
   type KeyboardEvent,
-  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import {
-  MorphPopover,
-  MorphPopoverContent,
-  MorphPopoverTrigger,
-} from "@/components/motion/popover-morph";
-import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
-import { useTouchCapable } from "@/lib/hooks/use-touch-capable";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { type AISidebarMessages, aiSidebarMessages } from "./ai-sidebar/messages";
+import { ResourceRow } from "./ai-sidebar/resource-row";
+import {
+  canContain,
+  containsResource,
+  findResource,
+  flattenResources,
+  moveResource,
+  renameResource,
+} from "./ai-sidebar/tree";
+import type {
+  AISidebarProps,
+  DropTarget,
+  FlatResource,
+  SidebarResource,
+  SidebarResourceDropPosition,
+  SidebarResourceMove,
+  SidebarResourceMoveCommands,
+} from "./ai-sidebar/types";
 
-export const aiSidebarMessages = {
-  label: "Resources",
-  rename: "Rename",
-  renameItem: "Rename {item}",
-  actions: "Actions for {item}",
-  moveUp: "Move up",
-  moveDown: "Move down",
-  moveInto: "Move into {target}",
-  moveOut: "Move out",
-  moveToTop: "Move to top level",
-  movePending: "Wait for the current move to finish.",
-  movedBefore: "Moved {item} before {target}.",
-  movedInside: "Moved {item} inside {target}.",
-  movedAfter: "Moved {item} after {target}.",
-  movedToTop: "Moved {item} to the top level.",
-  moveFailed: "Move failed. {item} was restored.",
-  renameFailed: "Rename failed. {item} was restored.",
-  unnamedItem: "item",
-};
-
-export type AISidebarMessages = typeof aiSidebarMessages;
-
-type Translate = (
-  key: keyof AISidebarMessages,
-  values?: Record<string, string | number>,
-) => string;
+export { type AISidebarMessages, aiSidebarMessages } from "./ai-sidebar/messages";
+export type {
+  AISidebarProps,
+  SidebarResource,
+  SidebarResourceDropPosition,
+  SidebarResourceKind,
+  SidebarResourceMenuControls,
+  SidebarResourceMove,
+  SidebarResourceMoveCommands,
+} from "./ai-sidebar/types";
 
 const MOVED_MESSAGE = {
   before: "movedBefore",
   inside: "movedInside",
   after: "movedAfter",
 } as const satisfies Record<SidebarResourceDropPosition, keyof AISidebarMessages>;
-
-export type SidebarResourceKind =
-  | "folder"
-  | "project"
-  | "file"
-  | "bookmark";
-
-export interface SidebarResource {
-  id: string;
-  label: string;
-  kind: SidebarResourceKind;
-  children?: SidebarResource[];
-  disabled?: boolean;
-}
-
-export type SidebarResourceDropPosition = "before" | "inside" | "after";
-
-export interface SidebarResourceMove {
-  itemId: string;
-  targetId: string | null;
-  position: SidebarResourceDropPosition;
-}
-
-/**
- * The moves this row can make right now, the same four the keyboard offers on
- * `Alt+Shift+Arrow`. A pointer drag is the fast path for them; a finger has no
- * drag to give, so the row menu carries them too. Absent keys are moves this
- * row cannot make from where it sits.
- */
-export interface SidebarResourceMoveCommands {
-  up?: () => void;
-  down?: () => void;
-  into?: { label: string; run: () => void };
-  out?: () => void;
-}
-
-export interface SidebarResourceMenuControls {
-  close: () => void;
-  rename: () => void;
-  moves: SidebarResourceMoveCommands;
-}
-
-export interface AISidebarProps {
-  items?: SidebarResource[];
-  defaultItems?: SidebarResource[];
-  onItemsChange?: (items: SidebarResource[]) => void;
-  /** Reject the promise to roll the optimistic move back. */
-  onMove?: (move: SidebarResourceMove) => void | Promise<void>;
-  onMoveError?: (error: unknown, move: SidebarResourceMove) => void;
-  onRename?: (item: SidebarResource, label: string) => void | Promise<void>;
-  activeId?: string | null;
-  defaultActiveId?: string | null;
-  onActiveChange?: (id: string) => void;
-  defaultExpandedIds?: string[];
-  renderIcon?: (item: SidebarResource) => ReactNode;
-  renderMenu?: (
-    item: SidebarResource,
-    controls: SidebarResourceMenuControls,
-  ) => ReactNode;
-  ariaLabel?: string;
-  className?: string;
-  /** Override any built-in string. */
-  labels?: Partial<AISidebarMessages>;
-}
-
-interface FlatResource {
-  item: SidebarResource;
-  depth: number;
-  parentId: string | null;
-}
-
-interface DropTarget {
-  id: string | null;
-  position: SidebarResourceDropPosition;
-}
-
-const ROW_REVEAL = {
-  duration: 0.16,
-  ease: EASE_OUT,
-} as const;
-
-function canContain(item: SidebarResource) {
-  return item.kind === "folder" || item.kind === "project";
-}
-
-function flattenResources(
-  items: SidebarResource[],
-  expanded: Set<string>,
-  depth = 0,
-  parentId: string | null = null,
-): FlatResource[] {
-  return items.flatMap((item) => {
-    const row = { item, depth, parentId };
-    if (!item.children?.length || !expanded.has(item.id)) return [row];
-    return [
-      row,
-      ...flattenResources(item.children, expanded, depth + 1, item.id),
-    ];
-  });
-}
-
-function findResource(
-  items: SidebarResource[],
-  id: string,
-): SidebarResource | undefined {
-  for (const item of items) {
-    if (item.id === id) return item;
-    const child = item.children ? findResource(item.children, id) : undefined;
-    if (child) return child;
-  }
-}
-
-function containsResource(item: SidebarResource, id: string): boolean {
-  return (
-    item.id === id ||
-    item.children?.some((child) => containsResource(child, id)) === true
-  );
-}
-
-function removeResource(
-  items: SidebarResource[],
-  id: string,
-): { items: SidebarResource[]; removed?: SidebarResource } {
-  let removed: SidebarResource | undefined;
-  const next: SidebarResource[] = [];
-
-  for (const item of items) {
-    if (item.id === id) {
-      removed = item;
-      continue;
-    }
-
-    if (item.children?.length) {
-      const childResult = removeResource(item.children, id);
-      if (childResult.removed) {
-        removed = childResult.removed;
-        next.push({ ...item, children: childResult.items });
-        continue;
-      }
-    }
-
-    next.push(item);
-  }
-
-  return { items: next, removed };
-}
-
-function insertResource(
-  items: SidebarResource[],
-  resource: SidebarResource,
-  targetId: string | null,
-  position: SidebarResourceDropPosition,
-): SidebarResource[] {
-  if (targetId === null) return [...items, resource];
-
-  const next: SidebarResource[] = [];
-  for (const item of items) {
-    if (item.id === targetId) {
-      if (position === "before") next.push(resource, item);
-      else if (position === "after") next.push(item, resource);
-      else next.push({ ...item, children: [...(item.children ?? []), resource] });
-      continue;
-    }
-
-    if (item.children?.length) {
-      next.push({
-        ...item,
-        children: insertResource(item.children, resource, targetId, position),
-      });
-    } else {
-      next.push(item);
-    }
-  }
-  return next;
-}
-
-function moveResource(
-  items: SidebarResource[],
-  move: SidebarResourceMove,
-): SidebarResource[] | null {
-  const source = findResource(items, move.itemId);
-  if (!source || source.disabled) return null;
-  if (move.targetId && containsResource(source, move.targetId)) return null;
-
-  const target = move.targetId ? findResource(items, move.targetId) : undefined;
-  if (
-    move.position === "inside" &&
-    (!target || target.disabled || !canContain(target))
-  )
-    return null;
-
-  const removed = removeResource(items, move.itemId);
-  if (!removed.removed) return null;
-  return insertResource(
-    removed.items,
-    removed.removed,
-    move.targetId,
-    move.position,
-  );
-}
-
-function renameResource(
-  items: SidebarResource[],
-  id: string,
-  label: string,
-): SidebarResource[] {
-  return items.map((item) => ({
-    ...item,
-    label: item.id === id ? label : item.label,
-    children: item.children
-      ? renameResource(item.children, id, label)
-      : undefined,
-  }));
-}
-
-function defaultIcon(item: SidebarResource, expanded: boolean) {
-  const Icon =
-    item.kind === "folder" || item.kind === "project"
-      ? expanded
-        ? FolderOpen
-        : Folder
-      : item.kind === "bookmark"
-          ? Bookmark
-          : FileText;
-  return <Icon className="size-4" />;
-}
-
-function MarqueeLabel({ active, children }: { active: boolean; children: string }) {
-  const reduce = useReducedMotion() ?? false;
-  const viewportRef = useRef<HTMLSpanElement>(null);
-  const labelRef = useRef<HTMLSpanElement>(null);
-  const [distance, setDistance] = useState(0);
-
-  useEffect(() => {
-    const measure = () => {
-      const viewport = viewportRef.current;
-      const label = labelRef.current;
-      if (!viewport || !label) return;
-      setDistance(label.scrollWidth > viewport.clientWidth ? label.scrollWidth + 24 : 0);
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    if (viewportRef.current) observer.observe(viewportRef.current);
-    if (labelRef.current) observer.observe(labelRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  const running = active && distance > 0 && !reduce;
-
-  return (
-    <span ref={viewportRef} className="block min-w-0 flex-1 overflow-hidden">
-      <motion.span
-        className="flex w-max items-center gap-6 whitespace-nowrap"
-        animate={{ x: running ? [0, -distance] : 0 }}
-        transition={
-          running
-            ? {
-                duration: Math.max(2.4, distance / 34),
-                ease: "linear",
-                repeat: Number.POSITIVE_INFINITY,
-                repeatDelay: 2,
-              }
-            : ROW_REVEAL
-        }
-      >
-        <span ref={labelRef}>{children}</span>
-        {running ? <span aria-hidden="true">{children}</span> : null}
-      </motion.span>
-    </span>
-  );
-}
-
-function ResourceMenuAction({
-  icon: Icon,
-  onSelect,
-  children,
-}: {
-  icon: LucideIcon;
-  onSelect: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onSelect}
-      className="flex h-8 w-full items-center gap-2 rounded-lg px-2.5 text-left text-xs text-foreground outline-none transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      <Icon aria-hidden="true" className="size-3.5 shrink-0" />
-      <span className="min-w-0 truncate">{children}</span>
-    </button>
-  );
-}
-
-interface ResourceRowProps {
-  row: FlatResource;
-  active: boolean;
-  expanded: boolean;
-  focused: boolean;
-  draggingId: string | null;
-  dropTarget: DropTarget | null;
-  menuOpen: boolean;
-  moves: SidebarResourceMoveCommands;
-  renaming: boolean;
-  onDragEnd: () => void;
-  onDragOver: (event: DragEvent<HTMLDivElement>, row: FlatResource) => void;
-  onDragStart: (event: DragEvent<HTMLDivElement>, id: string) => void;
-  onDrop: (event: DragEvent<HTMLDivElement>) => void;
-  onFocus: () => void;
-  onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void;
-  onMenuOpenChange: (open: boolean) => void;
-  onRenameCancel: () => void;
-  onRenameCommit: (label: string) => void;
-  onRenameStart: () => void;
-  onSelect: () => void;
-  onToggle: () => void;
-  renderIcon?: (item: SidebarResource) => ReactNode;
-  renderMenu?: AISidebarProps["renderMenu"];
-  setRef: (node: HTMLDivElement | null) => void;
-  t: Translate;
-}
-
-function ResourceRow({
-  row,
-  active,
-  expanded,
-  focused,
-  draggingId,
-  dropTarget,
-  menuOpen,
-  moves,
-  renaming,
-  onDragEnd,
-  onDragOver,
-  onDragStart,
-  onDrop,
-  onFocus,
-  onKeyDown,
-  onMenuOpenChange,
-  onRenameCancel,
-  onRenameCommit,
-  onRenameStart,
-  onSelect,
-  onToggle,
-  renderIcon,
-  renderMenu,
-  setRef,
-  t,
-}: ResourceRowProps) {
-  const reduce = useReducedMotion() ?? false;
-  const canTouch = useTouchCapable();
-  const [hovered, setHovered] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const skipRenameBlurRef = useRef(false);
-  const draggedRef = useRef(false);
-  const [draft, setDraft] = useState(row.item.label);
-  const acceptsChildren = canContain(row.item);
-  const isDragging = draggingId === row.item.id;
-  const dropPosition = dropTarget?.id === row.item.id ? dropTarget.position : null;
-
-  useEffect(() => {
-    if (!renaming) return;
-    skipRenameBlurRef.current = false;
-    setDraft(row.item.label);
-    requestAnimationFrame(() => {
-      inputRef.current?.focus();
-      inputRef.current?.select();
-    });
-  }, [renaming, row.item.label]);
-
-  const runFromMenu = (action: () => void) => () => {
-    onMenuOpenChange(false);
-    action();
-  };
-
-  const menu = renderMenu?.(row.item, {
-    close: () => onMenuOpenChange(false),
-    rename: () => {
-      onMenuOpenChange(false);
-      onRenameStart();
-    },
-    moves,
-  }) ?? (
-    <>
-      <ResourceMenuAction icon={Pencil} onSelect={runFromMenu(onRenameStart)}>
-        {t("rename")}
-      </ResourceMenuAction>
-      {moves.up || moves.down || moves.into || moves.out ? (
-        <div aria-hidden="true" className="my-1 h-px bg-border" />
-      ) : null}
-      {moves.up ? (
-        <ResourceMenuAction icon={ArrowUp} onSelect={runFromMenu(moves.up)}>
-          {t("moveUp")}
-        </ResourceMenuAction>
-      ) : null}
-      {moves.down ? (
-        <ResourceMenuAction icon={ArrowDown} onSelect={runFromMenu(moves.down)}>
-          {t("moveDown")}
-        </ResourceMenuAction>
-      ) : null}
-      {moves.into ? (
-        <ResourceMenuAction
-          icon={FolderInput}
-          onSelect={runFromMenu(moves.into.run)}
-        >
-          {t("moveInto", { target: moves.into.label })}
-        </ResourceMenuAction>
-      ) : null}
-      {moves.out ? (
-        <ResourceMenuAction icon={Undo2} onSelect={runFromMenu(moves.out)}>
-          {t("moveOut")}
-        </ResourceMenuAction>
-      ) : null}
-    </>
-  );
-
-  return (
-    <motion.div
-      ref={setRef}
-      layout="position"
-      transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
-      role="treeitem"
-      aria-level={row.depth + 1}
-      aria-selected={acceptsChildren ? undefined : active}
-      aria-expanded={acceptsChildren ? expanded : undefined}
-      aria-disabled={row.item.disabled || undefined}
-      tabIndex={focused ? 0 : -1}
-      draggable={!row.item.disabled && !renaming}
-      data-menu-open={menuOpen || undefined}
-      data-drop={dropPosition ?? undefined}
-      data-dragging={isDragging || undefined}
-      onFocus={onFocus}
-      onKeyDown={onKeyDown}
-      onClick={(event) => {
-        if (
-          event.defaultPrevented ||
-          draggedRef.current ||
-          renaming ||
-          row.item.disabled
-        )
-          return;
-        if (acceptsChildren) onToggle();
-        else onSelect();
-      }}
-      onDoubleClick={(event) => {
-        if (acceptsChildren || row.item.disabled) return;
-        event.preventDefault();
-        onRenameStart();
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onDragStartCapture={(event) => {
-        draggedRef.current = true;
-        onDragStart(event, row.item.id);
-      }}
-      onDragEndCapture={() => {
-        onDragEnd();
-        requestAnimationFrame(() => {
-          draggedRef.current = false;
-        });
-      }}
-      onDragOver={(event) => onDragOver(event, row)}
-      onDrop={onDrop}
-      className={cn(
-        "group/resource relative flex min-h-9 min-w-0 cursor-pointer items-center gap-2.5 rounded-xl pr-3 text-sm outline-none",
-        "text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
-        "focus-visible:bg-muted/70 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
-        "data-[menu-open=true]:bg-muted data-[menu-open=true]:text-foreground",
-        "data-[dragging=true]:opacity-40",
-        "data-[drop=inside]:bg-muted data-[drop=inside]:ring-1 data-[drop=inside]:ring-primary/45",
-        "data-[drop=before]:before:absolute data-[drop=before]:before:-top-0.5 data-[drop=before]:before:right-2 data-[drop=before]:before:left-2 data-[drop=before]:before:h-0.5 data-[drop=before]:before:rounded-full data-[drop=before]:before:bg-primary",
-        "data-[drop=after]:after:absolute data-[drop=after]:after:-bottom-0.5 data-[drop=after]:after:right-2 data-[drop=after]:after:left-2 data-[drop=after]:after:h-0.5 data-[drop=after]:after:rounded-full data-[drop=after]:after:bg-primary",
-        !acceptsChildren && active && "bg-muted text-foreground",
-        row.item.disabled && "cursor-not-allowed opacity-45",
-      )}
-      style={{ paddingLeft: `${12 + row.depth * 16}px` }}
-    >
-      <span aria-hidden="true" className="grid size-5 shrink-0 place-items-center">
-        {renderIcon?.(row.item) ?? defaultIcon(row.item, expanded)}
-      </span>
-
-      {renaming ? (
-        <input
-          ref={inputRef}
-          value={draft}
-          aria-label={t("renameItem", { item: row.item.label })}
-          onChange={(event) => setDraft(event.target.value)}
-          draggable={false}
-          onClick={(event) => event.stopPropagation()}
-          onDoubleClick={(event) => event.stopPropagation()}
-          onBlur={() => {
-            if (!skipRenameBlurRef.current) onRenameCommit(draft);
-          }}
-          onKeyDown={(event) => {
-            event.stopPropagation();
-            if (event.key === "Enter") {
-              skipRenameBlurRef.current = true;
-              onRenameCommit(draft);
-            }
-            if (event.key === "Escape") {
-              skipRenameBlurRef.current = true;
-              onRenameCancel();
-            }
-          }}
-          className="mx-1 h-7 min-w-0 flex-1 rounded-md border border-border bg-background px-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        />
-      ) : (
-        <MarqueeLabel active={hovered || menuOpen}>{row.item.label}</MarqueeLabel>
-      )}
-
-      {!renaming && !row.item.disabled ? (
-        <MorphPopover
-          open={menuOpen}
-          onOpenChange={onMenuOpenChange}
-        >
-          <MorphPopoverTrigger>
-            <button
-              type="button"
-              draggable={false}
-              tabIndex={-1}
-              aria-label={t("actions", { item: row.item.label })}
-              onClick={(event) => event.stopPropagation()}
-              className={cn(
-                "grid size-7 shrink-0 place-items-center rounded-lg outline-none transition-opacity hover:bg-foreground/5 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring group-hover/resource:opacity-100 group-data-[menu-open=true]/resource:opacity-100",
-                // A finger never hovers, and this menu is the only path to
-                // rename and move without a drag — keep it on screen there.
-                canTouch ? "opacity-100" : "opacity-0",
-              )}
-            >
-              <MoreHorizontal aria-hidden="true" className="size-4" />
-            </button>
-          </MorphPopoverTrigger>
-          <MorphPopoverContent
-            side="bottom"
-            align="end"
-            sideOffset={8}
-            radius={12}
-            className="w-40 p-1.5"
-          >
-            <div data-sidebar-resource-menu={row.item.id}>{menu}</div>
-          </MorphPopoverContent>
-        </MorphPopover>
-      ) : null}
-    </motion.div>
-  );
-}
 
 export function AISidebar({
   items,
@@ -630,7 +66,13 @@ export function AISidebar({
   labels,
 }: AISidebarProps) {
   const t = useMessages("aiSidebar", aiSidebarMessages, labels);
-  const [internalItems, setInternalItems] = useState(items ?? defaultItems);
+  const [internalItems, setInternalItems] = useState(defaultItems);
+  // A move shows at once. When `items` is controlled, it shows on top of the
+  // items it was made from until the parent passes new ones.
+  const [optimistic, setOptimistic] = useState<{
+    base: SidebarResource[];
+    items: SidebarResource[];
+  } | null>(null);
   const [internalActiveId, setInternalActiveId] = useState(defaultActiveId);
   const [expandedIds, setExpandedIds] = useState(
     () => new Set(defaultExpandedIds),
@@ -645,12 +87,14 @@ export function AISidebar({
   const [announcement, setAnnouncement] = useState("");
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
   const movePendingRef = useRef(false);
-  const renderedItems = internalItems;
-  const selectedId = activeId ?? internalActiveId;
-
-  useEffect(() => {
-    if (items) setInternalItems(items);
-  }, [items]);
+  if (optimistic && optimistic.base !== items) setOptimistic(null);
+  const renderedItems =
+    items === undefined
+      ? internalItems
+      : optimistic?.base === items
+        ? optimistic.items
+        : items;
+  const selectedId = activeId !== undefined ? activeId : internalActiveId;
 
   const flat = useMemo(
     () => flattenResources(renderedItems, expandedIds),
@@ -684,10 +128,11 @@ export function AISidebar({
 
   const updateItems = useCallback(
     (next: SidebarResource[]) => {
-      setInternalItems(next);
+      if (items === undefined) setInternalItems(next);
+      else setOptimistic(next === items ? null : { base: items, items: next });
       onItemsChange?.(next);
     },
-    [onItemsChange],
+    [items, onItemsChange],
   );
 
   const performMove = useCallback(
@@ -1010,7 +455,7 @@ export function AISidebar({
         <div
           aria-hidden="true"
           data-active={dropTarget?.id === null || undefined}
-          className="absolute inset-x-1 bottom-0 flex h-8 items-center justify-center rounded-lg border border-dashed border-border text-[10px] text-muted-foreground data-[active=true]:border-primary/50 data-[active=true]:bg-muted data-[active=true]:text-foreground"
+          className="absolute inset-x-1 bottom-0 flex h-8 items-center justify-center rounded-lg border border-dashed border-border text-[11px] text-muted-foreground data-[active=true]:border-primary/50 data-[active=true]:bg-muted data-[active=true]:text-foreground"
         >
           {t("moveToTop")}
         </div>

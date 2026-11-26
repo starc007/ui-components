@@ -9,7 +9,7 @@
 // add a short, low body under a thump, never a melody, so nothing reads as
 // a synth.
 
-import { getAudioContext, retainAudioContext } from "@/lib/audio-context";
+import { getAudioContext, playerGain, retainAudioContext } from "@/lib/audio-context";
 
 const MASTER_GAIN = 0.2;
 // Running the pointer quickly along the spines riffles them, but not faster
@@ -24,10 +24,9 @@ const SEAT_AT = 0.22;
 
 type Output = { master: GainNode; white: AudioBuffer; friction: AudioBuffer };
 
-// The context is shared page-wide (lib/audio-context.ts). The master gain and
-// the noise buffers belong to it, so they are rebuilt if it was closed and
-// recreated.
-let output: Output | null = null;
+// The context is shared page-wide (lib/audio-context.ts). The noise buffers
+// belong to it, so they are rebuilt if it was closed and recreated.
+const buffers = new WeakMap<AudioContext, Omit<Output, "master">>();
 
 function whiteNoise(ctx: AudioContext, seconds: number) {
   const length = Math.ceil(ctx.sampleRate * seconds);
@@ -62,17 +61,12 @@ function frictionNoise(ctx: AudioContext, seconds: number) {
 function ensureOutput() {
   const ctx = getAudioContext();
   if (!ctx) return null;
-  if (output?.master.context !== ctx) {
-    const master = ctx.createGain();
-    master.gain.value = MASTER_GAIN;
-    master.connect(ctx.destination);
-    output = {
-      master,
-      white: whiteNoise(ctx, 0.5),
-      friction: frictionNoise(ctx, 0.6),
-    };
+  let noise = buffers.get(ctx);
+  if (!noise) {
+    noise = { white: whiteNoise(ctx, 0.5), friction: frictionNoise(ctx, 0.6) };
+    buffers.set(ctx, noise);
   }
-  return { ctx, ...output };
+  return { ctx, master: playerGain(ctx, "book", MASTER_GAIN), ...noise };
 }
 
 /**

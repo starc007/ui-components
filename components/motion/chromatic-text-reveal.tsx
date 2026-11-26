@@ -13,8 +13,8 @@ import { cn } from "@/lib/utils";
 
 const CHROMATIC_PALETTE = [
   "#60a5fa",
-  "#818cf8",
-  "#c084fc",
+  "#22d3ee",
+  "#f472b6",
   "#fb7185",
   "#fbbf24",
 ];

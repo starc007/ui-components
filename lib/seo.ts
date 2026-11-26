@@ -15,7 +15,7 @@ export const SITE = SITE_URL;
 export const SITE_NAME = "beUI";
 export const SITE_TAGLINE = "Animated components for React, Next.js and React Native";
 export const SITE_DESCRIPTION =
-  "Free, open-source animated components for React, Next.js and React Native, built with Motion, Tailwind CSS and Reanimated. Copy the source or install via CLI.";
+  "Free, open-source animated components for React, Next.js and React Native. Built with Framer Motion, Tailwind CSS and Reanimated. Install with the shadcn CLI.";
 export const AUTHOR = "Saurabh";
 
 const abs = (path: string) => (path.startsWith("http") ? path : `${SITE}${path}`);
@@ -181,19 +181,34 @@ export function docsArticleJsonLd({
 export function componentJsonLd(
   cat: CategoryEntry,
   comp: ComponentEntry,
-  { headline, description }: { headline: string; description: string },
+  {
+    headline,
+    description,
+    variant,
+  }: {
+    headline: string;
+    description: string;
+    /** A variant page of a split component page. */
+    variant?: { slug: string; installSlug: string; name: string; description: string };
+  },
 ): JsonLdSchema {
-  const url = abs(componentPath(cat.slug, comp.slug));
+  const url = abs(
+    variant
+      ? `${componentPath(cat.slug, comp.slug)}/${variant.slug}`
+      : componentPath(cat.slug, comp.slug),
+  );
   const dates = componentDates(cat.slug, comp.slug);
   return {
     "@context": "https://schema.org",
     "@type": "TechArticle",
     "@id": `${url}#article`,
     headline,
-    name: comp.name,
+    name: variant?.name ?? comp.name,
     description,
     url,
-    image: abs(ogImagePath("component", comp.slug)),
+    image: abs(
+      variant ? ogImagePath("variant", variant.installSlug) : ogImagePath("component", comp.slug),
+    ),
     inLanguage: "en",
     isPartOf: { "@id": `${SITE}/#website` },
     datePublished: dates.publishedAt,
@@ -207,8 +222,8 @@ export function componentJsonLd(
     publisher: { "@id": `${SITE}/#org` },
     about: {
       "@type": "SoftwareSourceCode",
-      name: comp.name,
-      description: comp.guide?.seo.description ?? comp.description,
+      name: variant?.name ?? comp.name,
+      description: variant?.description ?? comp.guide?.seo.description ?? comp.description,
       codeRepository: "https://github.com/starc007/ui-components",
       license: "https://github.com/starc007/ui-components/blob/main/LICENSE",
       programmingLanguage: "TypeScript",

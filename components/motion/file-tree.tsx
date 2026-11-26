@@ -29,26 +29,40 @@ type FileTreeItem = {
 };
 
 export interface FileTreeFolderProps {
+  /** Unique id, used for selection and in `expandedIds`. */
   value: string;
+  /** Text shown on the row. */
   name: string;
+  /** Replaces the default folder icon. */
   icon?: ReactNode;
+  /** Blocks selecting and expanding the folder. */
   disabled?: boolean;
   children?: ReactNode;
+  /** Classes merged onto the folder's row. */
   className?: string;
 }
 
 export interface FileTreeFileProps {
+  /** Unique id, passed to `onValueChange` when the file is selected. */
   value: string;
+  /** Text shown on the row. */
   name: string;
+  /** Replaces the default file icon. */
   icon?: ReactNode;
+  /** Blocks selecting the file. */
   disabled?: boolean;
+  /** Classes merged onto the file's row. */
   className?: string;
 }
 
 export type FileTreeClassNames = {
+  /** The tree root element. */
   tree?: string;
+  /** Each file or folder row. */
   item?: string;
+  /** The file or folder icon in a row. */
   icon?: string;
+  /** The name text in a row. */
   label?: string;
 };
 
@@ -61,17 +75,27 @@ export type FileTreeMessages = typeof fileTreeMessages;
 
 export interface FileTreeProps {
   children: ReactNode;
+  /** The selected row's value, for controlled use. */
   value?: string | null;
+  /** The initially selected row's value when uncontrolled. Default: null */
   defaultValue?: string | null;
+  /** Called with the row's value when a file or folder is selected. */
   onValueChange?: (value: string) => void;
+  /** Values of the open folders, for controlled use. */
   expandedIds?: string[];
+  /** Values of the folders open at first when uncontrolled. Default: [] */
   defaultExpandedIds?: string[];
+  /** Called with every open folder's value when a folder opens or closes. */
   onExpandedChange?: (expandedIds: string[]) => void;
+  /** Accessible name for the tree. Default: "Files" */
   ariaLabel?: string;
   /** Override any built-in string. */
   labels?: Partial<FileTreeMessages>;
+  /** Extra left padding per nesting level, in pixels. Default: 18 */
   indent?: number;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for the tree, each row, its icon and its label. */
   classNames?: FileTreeClassNames;
 }
 
@@ -326,7 +350,7 @@ export function FileTree({
       aria-label={ariaLabel ?? t("label")}
       aria-multiselectable="false"
       inset={0}
-      pillClassName="rounded-xl bg-muted"
+      pillClassName="rounded-full bg-muted"
       pillContainerClassName="inset-y-auto top-0 h-9"
       className={cn("min-w-0", className, classNames?.tree)}
     >
@@ -374,14 +398,14 @@ export function FileTree({
                   if (isFolder) toggleFolder(row.item.value);
                 }}
                 className={cn(
-                  "group/file-tree relative flex h-9 w-full items-center gap-2 overflow-hidden rounded-lg pr-2 text-left text-sm text-muted-foreground outline-none",
+                  "group/file-tree relative flex h-9 w-full items-center gap-2 overflow-hidden rounded-full pr-3 text-left text-sm text-muted-foreground outline-none",
                   "transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                   "aria-disabled:cursor-not-allowed",
                   isSelected && "bg-muted font-medium text-foreground",
                   classNames?.item,
                   row.item.className,
                 )}
-                style={{ paddingLeft: 8 + row.depth * indent }}
+                style={{ paddingLeft: 12 + row.depth * indent }}
               >
                 {row.depth > 0 ? (
                   <motion.span
@@ -390,7 +414,7 @@ export function FileTree({
                     animate={{ opacity: 1, scaleY: 1 }}
                     transition={reduce ? { duration: 0 } : BRANCH_DRAW}
                     className="absolute top-0 bottom-0 w-px origin-top bg-border/70"
-                    style={{ left: 16 + (row.depth - 1) * indent }}
+                    style={{ left: 20 + (row.depth - 1) * indent }}
                   />
                 ) : null}
 

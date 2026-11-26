@@ -14,6 +14,14 @@ export const TEXT_SHIMMER_KEYFRAMES =
 export const TEXT_SHIMMER_CLASS_NAME =
   "beui-text-shimmer bg-[length:200%_100%] bg-clip-text text-transparent bg-[linear-gradient(110deg,var(--muted-foreground)_30%,var(--foreground)_50%,var(--muted-foreground)_70%)]";
 
+/**
+ * Only the moving highlight band, transparent elsewhere. Laid over text drawn
+ * in pieces (a letter cascade), so one band sweeps the whole phrase instead
+ * of every piece carrying, and flashing, its own gradient.
+ */
+export const TEXT_SHIMMER_HIGHLIGHT_CLASS_NAME =
+  "beui-text-shimmer bg-[length:200%_100%] bg-clip-text text-transparent bg-[linear-gradient(110deg,transparent_30%,var(--foreground)_50%,transparent_70%)]";
+
 export function textShimmerStyle(duration: number): CSSProperties {
   return {
     animation: `beui-text-shimmer ${duration}s linear infinite`,

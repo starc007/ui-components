@@ -2,7 +2,7 @@
 // blast, a cash-out arpeggio) built from oscillators and noise at runtime, so
 // there are no audio files to ship.
 
-import { getAudioContext, retainAudioContext } from "@/lib/audio-context";
+import { getAudioContext, playerGain, retainAudioContext } from "@/lib/audio-context";
 
 const MASTER_GAIN = 0.12;
 // Pentatonic steps from G5, so any run of gems stays in key. Two octaves of
@@ -10,19 +10,8 @@ const MASTER_GAIN = 0.12;
 const BASE = 783.99;
 const SCALE = [0, 2, 4, 7, 9];
 
-// The context is shared page-wide (lib/audio-context.ts). The master gain
-// belongs to it, so it is rebuilt if the context was closed and recreated.
-let master: GainNode | null = null;
-
-function ensureContext() {
-  const ctx = getAudioContext();
-  if (ctx && master?.context !== ctx) {
-    master = ctx.createGain();
-    master.gain.value = MASTER_GAIN;
-    master.connect(ctx.destination);
-  }
-  return ctx;
-}
+/** This module's level on the shared context (lib/audio-context.ts). */
+const masterFor = (context: AudioContext) => playerGain(context, "game", MASTER_GAIN);
 
 /** A pitched tone with a fast attack and exponential decay. */
 function tone(
@@ -31,7 +20,7 @@ function tone(
   at: number,
   { duration = 0.18, type = "sine", gain = 1 }: { duration?: number; type?: OscillatorType; gain?: number } = {},
 ) {
-  if (!master) return;
+  const master = masterFor(context);
   const osc = context.createOscillator();
   const env = context.createGain();
   osc.type = type;
@@ -71,7 +60,7 @@ export interface GameSounds {
 export function createGameSounds(): GameSounds {
   const release = retainAudioContext();
   let disposed = false;
-  const live = () => (disposed ? null : ensureContext());
+  const live = () => (disposed ? null : getAudioContext());
 
   return {
     prepare() {
@@ -100,7 +89,8 @@ export function createGameSounds(): GameSounds {
     },
     mine() {
       const context = live();
-      if (!context || !master) return;
+      if (!context) return;
+      const master = masterFor(context);
       const now = context.currentTime;
       // A burst of noise swept down through a low-pass filter…
       const length = Math.ceil(context.sampleRate * 0.45);

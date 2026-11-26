@@ -95,7 +95,7 @@ export function InfiniteMasonryPreview() {
     <div className="w-full max-w-5xl">
       <div className="mb-3 flex items-end justify-between gap-4 px-1">
         <div>
-          <p className="text-sm font-semibold text-foreground">Visual index</p>
+          <p className="text-sm font-medium text-foreground">Visual index</p>
           <p className="mt-0.5 text-xs text-muted-foreground">
             Scroll to load the next page
           </p>
@@ -126,7 +126,7 @@ export function InfiniteMasonryPreview() {
               <p className="text-sm font-medium text-foreground">
                 {item.title}
               </p>
-              <p className="shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground">
+              <p className="shrink-0 text-[11px] uppercase tracking-wider text-muted-foreground">
                 {item.category}
               </p>
             </figcaption>

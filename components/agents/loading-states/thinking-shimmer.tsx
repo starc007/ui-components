@@ -13,6 +13,7 @@ export interface ThinkingShimmerProps {
   duration?: number;
   /** Override any built-in string. */
   labels?: Partial<LoadingStatesMessages>;
+  /** Classes merged onto the shimmering text. */
   className?: string;
 }
 

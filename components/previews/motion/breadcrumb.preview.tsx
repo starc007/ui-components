@@ -63,7 +63,7 @@ export function BreadcrumbPreview() {
               restoreFocus.current = depth + 1;
               setDepth((value) => Math.min(value + 1, PATH.length - 1));
             }}
-            className="flex w-full items-center gap-3 rounded-lg border border-border/60 px-4 py-3 text-start text-sm transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex w-full items-center gap-3 rounded-full border border-border/60 px-4 py-3 text-start text-sm transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Folder aria-hidden="true" className="size-4 text-muted-foreground" />
             <span className="flex-1">{PATH[depth + 1]}</span>

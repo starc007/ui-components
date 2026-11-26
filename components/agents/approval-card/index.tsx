@@ -9,14 +9,16 @@ import {
   MessageSquareText,
   X,
 } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ClipResizeFrame } from "@/components/agents/clip-resize-frame";
+import { IconSwap } from "@/components/agents/icon-swap";
 import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
 import { Button } from "@/components/motion/button";
 import { Checkbox } from "@/components/motion/checkbox";
 import { Input } from "@/components/motion/input";
 import { RadioGroup, RadioGroupItem } from "@/components/motion/radio";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -40,6 +42,18 @@ export type {
 } from "./types";
 
 const EMPTY_ANSWER: ApprovalCardAnswer = { selected: [], custom: "" };
+
+// `custom` is the step direction (1 forward, -1 back). The leaving question
+// goes faster than the new one arrives.
+const QUESTION_VARIANTS: Variants = {
+  enter: (direction: number) => ({ opacity: 0, x: 10 * direction }),
+  center: { opacity: 1, x: 0, transition: { duration: 0.2, ease: EASE_OUT } },
+  exit: (direction: number) => ({
+    opacity: 0,
+    x: -8 * direction,
+    transition: { duration: 0.12, ease: EASE_OUT },
+  }),
+};
 
 const STATUS_MESSAGE = {
   pending: "inputRequired",
@@ -155,9 +169,8 @@ function QuestionOptions({
           }
           className={cn("p-0.5", question.options?.length && "mt-1.5")}
           classNames={{
-            field:
-              "h-10 rounded-xl border-0 bg-background/70 focus-within:bg-background",
-            input: "px-3 text-sm",
+            field: "h-10 rounded-full border border-border bg-transparent",
+            input: "px-4 text-sm",
           }}
         />
       ) : null}
@@ -261,15 +274,28 @@ export function ApprovalCard({
     [answers, onAnswersChange],
   );
 
+  // Which way the last step went: 1 forward, -1 back. Set before the step
+  // changes, so the question that leaves and the one that enters agree.
+  const [direction, setDirection] = useState<1 | -1>(1);
+
   const setStep = (next: number) => {
     clearAutoAdvance();
+    setDirection(next < currentStep ? -1 : 1);
     if (step === undefined) setInternalStep(next);
     onStepChange?.(next);
   };
 
+  // Two answers set in one batch would otherwise both spread the answers
+  // from this render, and the second would drop the first.
+  const answersRef = useRef(currentAnswers);
+  useLayoutEffect(() => {
+    answersRef.current = currentAnswers;
+  });
   const updateCurrentAnswer = (next: ApprovalCardAnswer) => {
     if (!question) return;
-    setAnswers({ ...currentAnswers, [question.id]: next });
+    const merged = { ...answersRef.current, [question.id]: next };
+    answersRef.current = merged;
+    setAnswers(merged);
   };
 
   const continueQuestion = () => {
@@ -292,19 +318,42 @@ export function ApprovalCard({
     }
 
     clearAutoAdvance();
+    const queuedFor = question.id;
     autoAdvanceTimer.current = window.setTimeout(() => {
-      setStep(currentStep + 1);
+      autoAdvanceTimer.current = undefined;
+      // Read the card as it is now: the question may have changed, or the
+      // card may no longer be waiting for an answer.
+      const now = latest.current;
+      if (!now.pending || now.questionId !== queuedFor) return;
+      if (now.currentStep >= now.questionCount - 1) return;
+      now.setStep(now.currentStep + 1);
     }, 240);
   };
+  const latest = useRef({
+    pending,
+    questionId: question?.id,
+    currentStep,
+    questionCount: questions.length,
+    setStep,
+  });
+  useLayoutEffect(() => {
+    latest.current = {
+      pending,
+      questionId: question?.id,
+      currentStep,
+      questionCount: questions.length,
+      setStep,
+    };
+  });
 
   return (
-    <div
+    // The card's bottom edge glides when it grows or shrinks (a step with
+    // more options, or the form folding away on submit) instead of jumping.
+    <ClipResizeFrame
       data-state={status}
       aria-busy={busy}
-      className={cn(
-        "w-full overflow-hidden rounded-2xl bg-muted p-4 text-sm",
-        className,
-      )}
+      className={cn("w-full text-sm", className)}
+      contentClassName="p-4"
     >
       <div className="flex items-start gap-3">
         <span
@@ -314,22 +363,24 @@ export function ApprovalCard({
             getStatusClass(status),
           )}
         >
-          {busy ? (
-            <LoaderCircle className={cn("size-4", !reduce && "animate-spin")} />
-          ) : interactive ? (
-            questionMode ? (
-              <CircleHelp className="size-4" />
+          <IconSwap id={busy ? "busy" : interactive ? "ask" : status}>
+            {busy ? (
+              <LoaderCircle className={cn("size-4", !reduce && "animate-spin")} />
+            ) : interactive ? (
+              questionMode ? (
+                <CircleHelp className="size-4" />
+              ) : (
+                <MessageSquareText className="size-4" />
+              )
+            ) : status === "rejected" ? (
+              <X className="size-4" />
             ) : (
-              <MessageSquareText className="size-4" />
-            )
-          ) : status === "rejected" ? (
-            <X className="size-4" />
-          ) : (
-            <Check className="size-4" />
-          )}
+              <Check className="size-4" />
+            )}
+          </IconSwap>
         </span>
 
-        <div className="min-w-0 flex-1">
+        <div className="relative min-w-0 flex-1">
           <div className="flex min-w-0 items-start gap-3">
             <h3 className="min-w-0 flex-1 text-base font-medium leading-5 text-foreground">
               <ActionSwapRollText value={titleKey}>
@@ -352,30 +403,43 @@ export function ApprovalCard({
                   getStatusBadgeClass(status),
                 )}
               >
-                {statusLabel}
+                <ActionSwapRollText value={status}>{statusLabel}</ActionSwapRollText>
               </span>
             )}
             {onDismiss ? (
-              <button
-                type="button"
-                aria-label={t("dismiss")}
-                onClick={onDismiss}
-                className="grid size-5 shrink-0 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                <X className="size-4" />
-              </button>
+              <Tooltip content={t("dismiss")} side="top">
+                <button
+                  type="button"
+                  aria-label={t("dismiss")}
+                  onClick={onDismiss}
+                  className="grid size-5 shrink-0 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <X className="size-4" />
+                </button>
+              </Tooltip>
             ) : null}
           </div>
 
-          <AgentDisclosure open={interactive}>
+          {/* On submit the form leaves the layout at once (popLayout) and
+              fades out while the card's edge glides up over it. */}
+          <AnimatePresence initial={false} mode="popLayout">
+          {interactive ? (
+          <motion.div
+            key="form"
+            exit={{ opacity: 0, transition: { duration: 0.14, ease: EASE_OUT } }}
+          >
             {questionMode && question ? (
-              <AnimatePresence initial={false} mode="wait">
+              // Forward slides in from the right, back from the left, so the
+              // steps read as a row the card moves along. The old question
+              // leaves fast, so the next one is never kept waiting.
+              <AnimatePresence initial={false} mode="wait" custom={direction}>
                 <motion.div
                   key={question.id}
-                  initial={reduce ? { opacity: 1 } : { opacity: 0, x: 8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={reduce ? { opacity: 0 } : { opacity: 0, x: -6 }}
-                  transition={{ duration: reduce ? 0 : 0.2, ease: EASE_OUT }}
+                  custom={direction}
+                  variants={QUESTION_VARIANTS}
+                  initial={reduce ? false : "enter"}
+                  animate="center"
+                  exit={reduce ? { opacity: 0, transition: { duration: 0 } } : "exit"}
                 >
                   {question.description ? (
                     <p className="mt-1 leading-5 text-muted-foreground">
@@ -407,16 +471,18 @@ export function ApprovalCard({
               <div className="mt-4 flex items-center gap-3">
                 {multipleQuestions ? (
                   <>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={t("previousQuestion")}
-                      disabled={busy || currentStep === 0}
-                      onClick={() => setStep(currentStep - 1)}
-                      className="rounded-full"
-                    >
-                      <ArrowLeft className="size-4" />
-                    </Button>
+                    <Tooltip content={t("previousQuestion")} side="top">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={t("previousQuestion")}
+                        disabled={busy || currentStep === 0}
+                        onClick={() => setStep(currentStep - 1)}
+                        className="rounded-full"
+                      >
+                        <ArrowLeft className="size-4" />
+                      </Button>
+                    </Tooltip>
                     <ProgressDots
                       current={currentStep}
                       ids={questions.map((item) => item.id)}
@@ -427,28 +493,34 @@ export function ApprovalCard({
                     />
                   </>
                 ) : null}
-                <Button
-                  size={currentStep === questions.length - 1 ? "sm" : "icon"}
-                  aria-label={
-                    currentStep === questions.length - 1
-                      ? t("submit")
-                      : t("nextQuestion")
-                  }
-                  disabled={busy || !isAnswered(currentAnswer)}
-                  onClick={continueQuestion}
-                  className="ml-auto rounded-full"
+                <Tooltip
+                  // The last step's button carries its own text label.
+                  content={currentStep === questions.length - 1 ? null : t("nextQuestion")}
+                  side="top"
                 >
-                  {busy ? (
-                    <LoaderCircle className={cn("size-4", !reduce && "animate-spin")} />
-                  ) : currentStep === questions.length - 1 ? (
-                    <>
-                      {submitLabel ?? t("submit")}
-                      <ArrowRight className="size-3.5" />
-                    </>
-                  ) : (
-                    <ArrowRight className="size-4" />
-                  )}
-                </Button>
+                  <Button
+                    size={currentStep === questions.length - 1 ? "sm" : "icon"}
+                    aria-label={
+                      currentStep === questions.length - 1
+                        ? t("submit")
+                        : t("nextQuestion")
+                    }
+                    disabled={busy || !isAnswered(currentAnswer)}
+                    onClick={continueQuestion}
+                    className="ml-auto rounded-full"
+                  >
+                    {busy ? (
+                      <LoaderCircle className={cn("size-4", !reduce && "animate-spin")} />
+                    ) : currentStep === questions.length - 1 ? (
+                      <>
+                        {submitLabel ?? t("submit")}
+                        <ArrowRight className="size-3.5" />
+                      </>
+                    ) : (
+                      <ArrowRight className="size-4" />
+                    )}
+                  </Button>
+                </Tooltip>
               </div>
             ) : (
               <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -484,15 +556,20 @@ export function ApprovalCard({
                 ) : null}
               </div>
             )}
-          </AgentDisclosure>
-
-          {!interactive ? (
-            <p className="mt-1 text-sm text-muted-foreground">
+          </motion.div>
+          ) : (
+            <motion.p
+              key="result"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { duration: 0.2, delay: 0.06, ease: EASE_OUT } }}
+              className="mt-1 text-sm text-muted-foreground"
+            >
               {result ?? statusLabel}
-            </p>
-          ) : null}
+            </motion.p>
+          )}
+          </AnimatePresence>
         </div>
       </div>
-    </div>
+    </ClipResizeFrame>
   );
 }

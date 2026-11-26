@@ -18,31 +18,51 @@ import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type BouncyAccordionItem = {
+  /** Unique key, used as the accordion's open value. */
   id: string;
+  /** Text on the trigger row, cut off with an ellipsis when long. */
   title: ReactNode;
+  /** Body revealed when the row opens. Without it the row has no panel. */
   description?: ReactNode;
+  /** Icon shown before the title. Omitted when not set. */
   icon?: ReactNode;
+  /** Dims the row and blocks its trigger. */
   disabled?: boolean;
 };
 
 export type BouncyAccordionClassNames = {
+  /** Classes for the outer wrapper. */
   root?: string;
+  /** Classes for each row's card. */
   item?: string;
+  /** Classes for each row's trigger button. */
   trigger?: string;
+  /** Classes for the icon wrapper in the trigger. */
   icon?: string;
+  /** Classes for the title in the trigger. */
   title?: string;
+  /** Classes for the chevron that turns when the row opens. */
   chevron?: string;
+  /** Classes for the collapsible panel. */
   content?: string;
+  /** Classes for the description text inside the panel. */
   description?: string;
 };
 
 export interface BouncyAccordionProps {
+  /** Rows to render, each with an id, title and optional description. */
   items: BouncyAccordionItem[];
+  /** Id of the open item, or null for none, for controlled use. */
   value?: string | null;
+  /** Id of the item open at first when uncontrolled. Default: null */
   defaultValue?: string | null;
+  /** Called with the open item's id, or null when all close. */
   onValueChange?: (value: string | null) => void;
+  /** Lets the open item close when its trigger is pressed again. Default: true */
   collapsible?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for the root, items, triggers, icons, titles, chevrons and content. */
   classNames?: BouncyAccordionClassNames;
 }
 
@@ -218,7 +238,7 @@ function BouncyAccordionRow({
           ) : null}
           <span
             className={cn(
-              "min-w-0 flex-1 truncate text-[15px] font-medium text-foreground",
+              "min-w-0 flex-1 truncate text-base font-medium text-foreground",
               classNames?.title,
             )}
           >
@@ -268,7 +288,7 @@ function BouncyAccordionRow({
           >
             <div
               className={cn(
-                "text-[15px] leading-6 text-muted-foreground",
+                "text-sm leading-6 text-muted-foreground",
                 classNames?.description,
               )}
             >

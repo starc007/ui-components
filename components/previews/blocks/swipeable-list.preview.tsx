@@ -55,7 +55,7 @@ const initialItems: SwipeableListItem[] = [
     description: "Finalize the announcement copy",
     meta: "9:41",
     leading: (
-      <div className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-background text-muted-foreground">
+      <div className="grid h-10 w-10 place-items-center rounded-full border border-border bg-background text-muted-foreground">
         <FileText className="h-4 w-4" />
       </div>
     ),
@@ -68,7 +68,7 @@ const initialItems: SwipeableListItem[] = [
     description: "Three comments need a response",
     meta: "11:08",
     leading: (
-      <div className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-background text-muted-foreground">
+      <div className="grid h-10 w-10 place-items-center rounded-full border border-border bg-background text-muted-foreground">
         <Mail className="h-4 w-4" />
       </div>
     ),
@@ -81,7 +81,7 @@ const initialItems: SwipeableListItem[] = [
     description: "Check spacing before handoff",
     meta: "13:20",
     leading: (
-      <div className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-background text-muted-foreground">
+      <div className="grid h-10 w-10 place-items-center rounded-full border border-border bg-background text-muted-foreground">
         <UserRound className="h-4 w-4" />
       </div>
     ),
@@ -94,7 +94,7 @@ const initialItems: SwipeableListItem[] = [
     description: "Retry queue has one failed job",
     meta: "Now",
     leading: (
-      <div className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-background text-muted-foreground">
+      <div className="grid h-10 w-10 place-items-center rounded-full border border-border bg-background text-muted-foreground">
         <Flag className="h-4 w-4" />
       </div>
     ),
@@ -109,10 +109,10 @@ export function SwipeableListPreview() {
 
   return (
     <div className="flex min-h-96 w-full items-center justify-center">
-      <div className="w-full max-w-sm rounded-[2rem] border border-border bg-background p-3 shadow-2xl">
-        <div className="mb-3 flex items-center justify-between px-1">
+      <div className="w-full max-w-sm rounded-3xl border border-border bg-background p-2 shadow-2xl">
+        <div className="mb-3 flex items-center justify-between px-2">
           <div>
-            <p className="text-sm font-semibold text-foreground">Priority queue</p>
+            <p className="text-sm font-medium text-foreground">Priority queue</p>
             <p className="text-xs text-muted-foreground">{lastAction}</p>
           </div>
           <button
@@ -139,7 +139,7 @@ export function SwipeableListPreview() {
           }}
         />
 
-        <div className="mt-3 flex items-center justify-between px-1 text-[11px] font-medium text-muted-foreground">
+        <div className="mt-3 mb-1 flex items-center justify-between px-2 text-[11px] font-medium text-muted-foreground">
           <span>{items.length} open</span>
           <span>Today</span>
         </div>

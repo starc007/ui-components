@@ -109,7 +109,7 @@ export function FileUploadPreview() {
       <div className="w-full max-w-md rounded-[2rem] border border-border bg-background p-3">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2 px-1">
           <div>
-            <p className="text-sm font-semibold text-foreground">
+            <p className="text-sm font-medium text-foreground">
               Upload package
             </p>
             <p className="text-xs text-muted-foreground">

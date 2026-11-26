@@ -3,40 +3,53 @@ import type { ReactNode } from "react";
 import { DocsFooter } from "@/components/app/chrome/docs-footer";
 import { cn } from "@/lib/utils";
 
+/**
+ * The docs grid: left navigation, content, right resources. Leave out a
+ * sidebar for a page whose content should take its room; with neither, the
+ * content runs the full width.
+ */
 export function ThreeColumnLayout({
   leftSidebar,
   children,
   rightSidebar,
   className,
 }: {
-  leftSidebar: ReactNode;
+  leftSidebar?: ReactNode;
   children: ReactNode;
-  rightSidebar: ReactNode;
+  rightSidebar?: ReactNode;
   className?: string;
 }) {
   const t = useTranslations("Chrome.sidebar");
   return (
     <div
       className={cn(
-        "grid min-w-0 grid-cols-[minmax(0,1fr)] px-4 [--left-sidebar-width:15rem] [--right-sidebar-width:20rem] md:grid-cols-[var(--left-sidebar-width)_minmax(0,1fr)] md:gap-4 md:px-6 xl:grid-cols-[var(--left-sidebar-width)_minmax(0,1fr)_var(--right-sidebar-width)] xl:gap-8 xl:px-8",
+        "grid min-w-0 grid-cols-[minmax(0,1fr)] px-4 [--left-sidebar-width:15rem] [--right-sidebar-width:16rem] md:gap-4 md:px-6 xl:gap-8 xl:px-8",
+        leftSidebar && "md:grid-cols-[var(--left-sidebar-width)_minmax(0,1fr)]",
+        leftSidebar && rightSidebar && "xl:grid-cols-[var(--left-sidebar-width)_minmax(0,1fr)_var(--right-sidebar-width)]",
+        !leftSidebar && rightSidebar && "xl:grid-cols-[minmax(0,1fr)_var(--right-sidebar-width)]",
         className,
       )}
     >
-      <div className="hidden min-w-0 md:block">
-        <div className="sticky top-14 h-[calc(100dvh-3.5rem)] overflow-y-auto pt-4 pb-6 pr-4 scrollbar-hide">
-          {leftSidebar}
+      {leftSidebar ? (
+        <div className="hidden min-w-0 md:block">
+          <div className="sticky top-14 h-[calc(100dvh-3.5rem)] overflow-y-auto pt-4 pb-6 pr-4 scrollbar-hide">
+            {leftSidebar}
+          </div>
         </div>
-      </div>
-      <div className="min-w-0 pt-4 pb-8">
+      ) : null}
+      {/* 16px under the header from md, level with both sidebars. */}
+      <div className="min-w-0 pt-6 pb-8 md:pt-4">
         {children}
         <DocsFooter />
       </div>
-      <aside aria-label={t("resources")} className="hidden min-w-0 pt-4 xl:block">
-        {/* 16px under the 56px header, matching the other two columns. */}
-        <div className="sticky top-[4.5rem] z-10 max-h-[calc(100dvh-5.5rem)] overflow-y-auto pb-1 scrollbar-hide">
-          {rightSidebar}
-        </div>
-      </aside>
+      {rightSidebar ? (
+        <aside aria-label={t("resources")} className="hidden min-w-0 pt-4 xl:block">
+          {/* 16px under the 56px header, matching the other two columns. */}
+          <div className="sticky top-[4.5rem] z-10 max-h-[calc(100dvh-5.5rem)] overflow-y-auto pb-1 scrollbar-hide">
+            {rightSidebar}
+          </div>
+        </aside>
+      ) : null}
     </div>
   );
 }

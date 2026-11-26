@@ -17,9 +17,12 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT } from "@/lib/ease";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 import { useMessages } from "@/lib/i18n";
 import { PresenceGate } from "@/lib/presence-gate";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
@@ -60,6 +63,7 @@ export interface CenterMorphModalProps {
   open?: boolean;
   /** Initial state when used uncontrolled. */
   defaultOpen?: boolean;
+  /** Called with the new open state when the modal opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /** Override any built-in string. */
   labels?: Partial<CenterMorphModalMessages>;
@@ -170,23 +174,17 @@ export interface CenterMorphModalContentProps {
   dismissible?: boolean;
   /** Render the close control inside the panel's top-right corner. Default true. */
   showCloseButton?: boolean;
+  /** Accessible name and tooltip for the close button. Default: "Close modal" */
   closeButtonLabel?: string;
+  /** Classes merged onto the modal panel. */
   className?: string;
+  /** Classes merged onto the backdrop. */
   backdropClassName?: string;
 }
 
-const FOCUSABLE_SELECTOR = [
-  "a[href]",
-  "button:not([disabled])",
-  "input:not([disabled])",
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  '[tabindex]:not([tabindex="-1"])',
-].join(",");
-
 const CENTER_FOLDED_CLIP =
-  "inset(48% 48% 48% 48% round 30px)";
-const CENTER_OPEN_CLIP = "inset(0% 0% 0% 0% round 30px)";
+  "inset(48% 48% 48% 48% round 16px)";
+const CENTER_OPEN_CLIP = "inset(0% 0% 0% 0% round 16px)";
 
 // Complex clip-path strings can snap when a spring resolves its final distance.
 // Keep the radius constant so the whole duration reads as surface unfolding,
@@ -196,13 +194,11 @@ const CENTER_UNFOLD_TRANSITION = {
   duration: 0.43,
   ease: CENTER_UNFOLD_EASE,
 } as const;
-
-function getFocusableElements(root: HTMLElement | null) {
-  if (!root) return [];
-  return Array.from(
-    root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-  ).filter((element) => element.tabIndex >= 0);
-}
+// Folding back is faster than unfolding: the user is done with it.
+const CENTER_FOLD_TRANSITION = {
+  duration: 0.3,
+  ease: CENTER_UNFOLD_EASE,
+} as const;
 
 export function CenterMorphModalContent({
   children,
@@ -226,51 +222,14 @@ export function CenterMorphModalContent({
 
   useEffect(() => setMounted(true), []);
 
-  useEffect(() => {
-    if (!context.open) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const focusFrame = requestAnimationFrame(() => {
-      const [firstFocusable] = getFocusableElements(panelRef.current);
-      (firstFocusable ?? panelRef.current)?.focus();
-    });
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && dismissible) {
-        event.preventDefault();
-        context.setOpen(false);
-        return;
-      }
-
-      if (event.key !== "Tab") return;
-      const focusable = getFocusableElements(panelRef.current);
-      if (focusable.length === 0) {
-        event.preventDefault();
-        panelRef.current?.focus();
-        return;
-      }
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      cancelAnimationFrame(focusFrame);
-      window.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = previousOverflow;
-      document.getElementById(context.triggerId)?.focus();
-    };
-  }, [context, dismissible]);
+  // Tab stays in the panel, Escape closes when dismissible, and focus returns
+  // to the trigger that opened it.
+  const { open, setOpen } = context;
+  const close = useCallback(() => setOpen(false), [setOpen]);
+  useFocusTrap(open && mounted, panelRef, {
+    onEscape: dismissible ? close : undefined,
+  });
+  useScrollLock(open);
 
   if (!mounted) return null;
 
@@ -287,7 +246,11 @@ export function CenterMorphModalContent({
                 disabled={!dismissible}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                // The scrim clears faster than it settles, like the panel.
+                exit={{
+                  opacity: 0,
+                  transition: { duration: reduce ? 0.1 : 0.2, ease: EASE_OUT },
+                }}
                 {...gate}
                 transition={{
                   duration: reduce ? 0.1 : 0.28,
@@ -336,6 +299,7 @@ export function CenterMorphModalContent({
                         : {
                             opacity: 1,
                             clipPath: CENTER_FOLDED_CLIP,
+                            transition: CENTER_FOLD_TRANSITION,
                           }
                     }
                     {...gate}
@@ -345,13 +309,14 @@ export function CenterMorphModalContent({
                         : CENTER_UNFOLD_TRANSITION
                     }
                     className={cn(
-                      "pointer-events-auto relative w-full max-w-[26rem] origin-center overflow-hidden rounded-[30px] border border-border bg-background will-change-[clip-path]",
+                      "pointer-events-auto relative w-full max-w-[26rem] origin-center overflow-hidden rounded-2xl border border-border bg-background will-change-[clip-path]",
                       className,
                     )}
                   >
                     {children}
 
                     {showCloseButton ? (
+                      <Tooltip content={closeButtonLabel ?? t("close")} side="left">
                       <motion.button
                         type="button"
                         aria-label={closeButtonLabel ?? t("close")}
@@ -362,6 +327,7 @@ export function CenterMorphModalContent({
                             : { opacity: 0, scale: 0.8 }
                         }
                         animate={{ opacity: 1, scale: 1 }}
+                        whileTap={reduce ? undefined : { scale: 0.95 }}
                         exit={{
                           opacity: 0,
                           scale: reduce ? 1 : 0.88,
@@ -376,6 +342,7 @@ export function CenterMorphModalContent({
                       >
                         <X className="h-4 w-4" aria-hidden="true" />
                       </motion.button>
+                      </Tooltip>
                     ) : null}
                   </motion.div>
                 </div>

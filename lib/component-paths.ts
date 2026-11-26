@@ -1,5 +1,5 @@
 /** Categories with their own top-level section instead of /components/<category>. */
-export const TOP_LEVEL_CATEGORIES = ["charts", "casino"];
+export const TOP_LEVEL_CATEGORIES = ["charts", "casino", "micro-interactions", "sounds"];
 
 /** The top-level section a path is in, if any. */
 export function topLevelCategory(pathname: string) {
@@ -44,5 +44,6 @@ export function hasSiteSidebar(pathname: string) {
 
 /** Component, category and React Native pages, which offer the Web/React Native switch. */
 export function hasPlatformSwitch(pathname: string) {
-  return /^\/components\/[^/]+(\/[^/]+)?\/?$/.test(pathname) || isNativePath(pathname);
+  // Category list, component page or variant page.
+  return /^\/components\/[^/]+(\/[^/]+){0,2}\/?$/.test(pathname) || isNativePath(pathname);
 }

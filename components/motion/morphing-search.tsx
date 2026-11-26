@@ -20,6 +20,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { EASE_OUT, SPRING_LAYOUT } from "@/lib/ease";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useMessages } from "@/lib/i18n";
@@ -40,11 +41,17 @@ const SEARCH_CLIP_TRANSITION: Transition = {
 };
 
 export type MorphingSearchItem = {
+	/** Unique key for the result row. */
 	id: string;
+	/** Main text of the result row, matched by the search. */
 	title: string;
+	/** Smaller text under the title, also matched by the search. */
 	description?: string;
+	/** Extra words the search matches that are not shown. */
 	keywords?: string[];
+	/** Lucide icon component shown before the title. Omitted when not set. */
 	icon?: LucideIcon;
+	/** Called when this result is chosen, before the search's `onSelect`. */
 	onSelect?: () => void;
 };
 
@@ -60,19 +67,29 @@ export const morphingSearchMessages = {
 export type MorphingSearchMessages = typeof morphingSearchMessages;
 
 export interface MorphingSearchProps {
+	/** Searchable items, matched on title, description and keywords. */
 	items: MorphingSearchItem[];
+	/** Input placeholder and accessible name. Default: "Search" */
 	placeholder?: string;
+	/** Opens the search when this key is pressed outside a text field. Default: "f" */
 	shortcut?: string;
 	/** Render the closed trigger as a compact search icon. */
 	iconOnly?: boolean;
+	/** Text shown when no item matches the query. Default: "No results found." */
 	emptyMessage?: string;
+	/** Whether the search panel is open, for controlled use. */
 	open?: boolean;
+	/** Whether the panel starts open when uncontrolled. Default: false */
 	defaultOpen?: boolean;
+	/** Called with the new open state when the panel opens or closes. */
 	onOpenChange?: (open: boolean) => void;
+	/** Called with the query text as the user types. */
 	onQueryChange?: (query: string) => void;
+	/** Called with the chosen item after its own `onSelect`, then the panel closes. */
 	onSelect?: (item: MorphingSearchItem) => void;
 	/** Override any built-in string. */
 	labels?: Partial<MorphingSearchMessages>;
+	/** Classes merged onto the closed trigger wrapper. */
 	className?: string;
 }
 
@@ -238,14 +255,12 @@ export function MorphingSearch({
 		};
 	}, [backgroundScrollLocked]);
 
+	// The backdrop handles presses; this is Escape, answered only while the
+	// search is the innermost open layer.
+	useDismiss(open, closeSearch, dialogRef, { outsidePress: false });
+
 	useEffect(() => {
 		const handleShortcut = (event: KeyboardEvent) => {
-			if (event.key === "Escape" && open) {
-				event.preventDefault();
-				closeSearch();
-				return;
-			}
-
 			if (
 				!open &&
 				shortcut &&
@@ -264,7 +279,7 @@ export function MorphingSearch({
 
 		window.addEventListener("keydown", handleShortcut);
 		return () => window.removeEventListener("keydown", handleShortcut);
-	}, [closeSearch, open, openSearch, shortcut]);
+	}, [open, openSearch, shortcut]);
 
 	// Only this component's own state. Telling the consumer the query changed is
 	// a side effect, so it waits for the effect below.
@@ -375,8 +390,8 @@ export function MorphingSearch({
 	const collapsedContentClip = `inset(0px ${Math.max(
 		0,
 		panelWidth - anchorRect.width,
-	)}px ${resultsHeight}px 0px round 12px)`;
-	const expandedContentClip = "inset(0px 0px 0px 0px round 12px)";
+	)}px ${resultsHeight}px 0px round 24px)`;
+	const expandedContentClip = "inset(0px 0px 0px 0px round 16px)";
 
 	// Neither grouping layer carries a box: they only hold `inert`/`aria-hidden`,
 	// the z-index and the presence key, and every child below is `fixed` and
@@ -410,7 +425,7 @@ export function MorphingSearch({
 								<motion.div
 									layoutId={shellLayoutId}
 									aria-hidden="true"
-									className="fixed z-10 rounded-xl bg-background/90 backdrop-blur-xl"
+									className="fixed z-10 rounded-2xl bg-background/90 backdrop-blur-xl"
 									style={{
 										top: anchorRect.top,
 										left: anchorRect.left,
@@ -451,7 +466,7 @@ export function MorphingSearch({
 													opacity: SEARCH_MORPH,
 												}
 									}
-									className="pointer-events-auto fixed z-20 overflow-hidden rounded-xl"
+									className="pointer-events-auto fixed z-20 overflow-hidden rounded-2xl"
 									style={{
 										top: anchorRect.top,
 										left: anchorRect.left,
@@ -553,12 +568,12 @@ export function MorphingSearch({
 														}}
 														onFocus={() => moveTo(item.id)}
 														onClick={() => selectItem(item)}
-														className="relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+														className="relative flex w-full items-center gap-2.5 rounded-full px-4 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
 													>
 														{active ? (
 															<motion.span
 																layoutId={`${uid}-active-result`}
-																className="absolute inset-0 rounded-lg bg-foreground/5"
+																className="absolute inset-0 rounded-full bg-foreground/5"
 																transition={transition}
 															/>
 														) : null}
@@ -617,7 +632,7 @@ export function MorphingSearch({
 							boxShadow: "inset 0 0 0 1px var(--search-trigger-stroke)",
 						}}
 						className={cn(
-							"flex size-full items-center rounded-xl bg-background/60 text-left backdrop-blur-md outline-none [--search-trigger-stroke:var(--color-border)] hover:[--search-trigger-stroke:var(--color-border-strong)] focus-visible:ring-2 focus-visible:ring-ring",
+							"flex size-full items-center rounded-full bg-background/60 text-left backdrop-blur-md outline-none [--search-trigger-stroke:var(--color-border)] hover:[--search-trigger-stroke:var(--color-border-strong)] focus-visible:ring-2 focus-visible:ring-ring",
 							iconOnly ? "cursor-pointer justify-center" : "cursor-text px-3.5",
 						)}
 					></motion.button>

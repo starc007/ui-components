@@ -1,8 +1,16 @@
-import { allComponents, BLOCK_CATEGORIES, findCategory, registry } from "@/lib/registry";
+import { allComponents, BLOCK_CATEGORIES, findCategory, isInstallable, registry } from "@/lib/registry";
 import { componentDates } from "@/lib/component-dates";
 import { pageUrlFor, withSignature } from "@/lib/signature";
 import { SITE_URL } from "@/lib/site";
+import { docsPathFor } from "@/lib/variant-pages";
 import { readOptionalSourceFile, readSourceFile, resolveSourceImport, type SourceFile } from "@/lib/source-files";
+import { buildThemeItem, THEME_ITEM_URL, usesTheme } from "@/lib/theme-registry";
+import {
+  type ComponentPropsDoc,
+  getComponentProps,
+  getReferencedTypes,
+  type ReferencedTypeDoc,
+} from "@/lib/props-extractor";
 
 export type RegistryFile = {
   path: string;
@@ -24,6 +32,14 @@ export type RegistryEntry = {
   updated_at: string;
   dependencies: string[];
   internal: string[];
+  /** What `shadcn add @beui/<slug>` accepts for this entry. */
+  install_slugs: string[];
+  /** Uses beUI's extra theme tokens, which the theme item provides. */
+  requires_theme: boolean;
+  /** Every prop of every exported component, as the API table shows it. */
+  props: ComponentPropsDoc[];
+  /** The object types those props take (e.g. `CommandItem`), field by field. */
+  types: ReferencedTypeDoc[];
   files: RegistryFile[];
 };
 
@@ -45,6 +61,8 @@ export type ShadcnRegistryItem = {
   author: string;
   dependencies: string[];
   registryDependencies: string[];
+  /** Shown by the shadcn CLI after install. */
+  docs: string;
   files: ShadcnRegistryFile[];
 };
 
@@ -52,7 +70,7 @@ export type ShadcnRegistry = {
   $schema: "https://ui.shadcn.com/schema/registry.json";
   name: string;
   homepage: string;
-  items: Array<Omit<ShadcnRegistryItem, "$schema">>;
+  items: Array<Omit<ShadcnRegistryItem, "$schema"> | Omit<ReturnType<typeof buildThemeItem>, "$schema">>;
 };
 
 export type RegistryTarget = {
@@ -129,6 +147,16 @@ function shadcnFile(rel: string, content?: string): ShadcnRegistryFile {
   };
 }
 
+function uniqueBy<T>(items: T[], key: (item: T) => string) {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const k = key(item);
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}
+
 function uniqueByPath(files: ShadcnRegistryFile[]) {
   const seen = new Set<string>();
   return files.filter((file) => {
@@ -151,9 +179,9 @@ export function allRegistryTargets(): RegistryTarget[] {
     };
 
     const variantTargets: RegistryTarget[] = (component.examples ?? [])
-      .filter((example) => example.installSlug)
+      .filter(isInstallable)
       .map((example) => ({
-        slug: example.installSlug as string,
+        slug: example.installSlug,
         name: `${component.name} ${example.name}`,
         description: example.description ?? component.description,
         file: example.file,
@@ -169,9 +197,9 @@ export function allRegistryTargets(): RegistryTarget[] {
 export function allShadcnTargets(): RegistryTarget[] {
   return allComponents().flatMap((component) => {
     const variantTargets: RegistryTarget[] = (component.examples ?? [])
-      .filter((example) => example.installSlug)
+      .filter(isInstallable)
       .map((example) => ({
-        slug: example.installSlug as string,
+        slug: example.installSlug,
         name: `${component.name} ${example.name}`,
         description: example.description ?? component.description,
         file: example.file,
@@ -194,7 +222,7 @@ export function allShadcnTargets(): RegistryTarget[] {
   });
 }
 
-export function findRegistryTarget(slug: string) {
+function findRegistryTarget(slug: string) {
   return allRegistryTargets().find((target) => target.slug === slug);
 }
 
@@ -260,9 +288,15 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
   const previewSource = await readOptionalSourceFile(previewPath);
   const previewGraph = previewSource ? await collectSourceGraph([previewPath]) : null;
   const componentFileSet = new Set(requiredFiles);
-  const pageUrl = pageUrlFor(categorySlug, comp.pageSlug);
+  const pageUrl = `${SITE_URL}${docsPathFor(categorySlug, comp.pageSlug, slug)}`;
   const dates = componentDates(categorySlug, comp.pageSlug);
   const files = mergeRegistryFiles(componentGraph.files, previewGraph?.files ?? [], componentFileSet, previewPath, pageUrl);
+  // A page split into variants installs only by its variants' slugs.
+  const variantSlugs = allShadcnTargets()
+    .filter((target) => target.categorySlug === categorySlug && target.pageSlug === comp.pageSlug)
+    .map((target) => target.slug);
+  const installSlugsFor = comp.slug === comp.pageSlug && !variantSlugs.includes(comp.slug) ? variantSlugs : [comp.slug];
+  const apiFiles = requiredFiles.filter((file) => /\.tsx?$/.test(file) && !file.startsWith("lib/sounds/"));
 
   return {
     slug: comp.slug,
@@ -272,12 +306,20 @@ export async function buildEntry(categorySlug: string, slug: string): Promise<Re
     source_url: `${SITE_URL}/r/${slug}/raw`,
     detail_url: `${SITE_URL}/r/${slug}`,
     raw_url: `${SITE_URL}/r/${slug}/raw`,
-    page_url: pageUrlFor(categorySlug, comp.pageSlug),
-    markdown_url: `${pageUrlFor(categorySlug, comp.pageSlug)}.md`,
+    page_url: pageUrl,
+    markdown_url: `${pageUrl}.md`,
     published_at: dates.publishedAt,
     updated_at: dates.updatedAt,
     dependencies: Array.from(new Set([...componentGraph.external, ...(previewGraph?.external ?? [])])).sort(),
     internal: Array.from(new Set([...componentGraph.internal, ...(previewGraph?.internal ?? [])])).sort(),
+    install_slugs: installSlugsFor.length ? installSlugsFor : [comp.slug],
+    requires_theme: usesTheme(componentGraph.files.map((file) => file.content)),
+    // An index that re-exports its parts would list them twice; keep the first.
+    props: uniqueBy(
+      apiFiles.flatMap((file) => getComponentProps(file)).filter((doc) => doc.props.length),
+      (doc) => doc.displayName,
+    ),
+    types: uniqueBy(apiFiles.flatMap((file) => getReferencedTypes(file)), (type) => type.name),
     files,
   };
 }
@@ -317,7 +359,8 @@ export async function buildShadcnItem(
   const graph = await collectSourceGraph([comp.file, ...(comp.extraFiles ?? [])]);
   const dependencies = graph.external.filter((dep) => !SHADCN_DEP_SKIP.has(dep));
   const componentFileSet = new Set([comp.file, ...(comp.extraFiles ?? [])]);
-  const pageUrl = pageUrlFor(comp.categorySlug, comp.pageSlug);
+  const pageUrl = `${SITE_URL}${docsPathFor(comp.categorySlug, comp.pageSlug, comp.slug)}`;
+  const needsTheme = usesTheme(graph.files.map((file) => file.content));
 
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
@@ -327,7 +370,14 @@ export async function buildShadcnItem(
     description: comp.description,
     author: "Saurabh <saurabh10102@gmail.com>",
     dependencies,
-    registryDependencies: [],
+    // beUI's extra tokens come along with any component that uses them.
+    registryDependencies: needsTheme ? [THEME_ITEM_URL] : [],
+    docs: [
+      `${comp.name}: usage, props and types at ${pageUrl}.md`,
+      needsTheme ? "It uses beUI's theme tokens, added with this install." : "",
+    ]
+      .filter(Boolean)
+      .join(" "),
     files: uniqueByPath(
       graph.files.map((file) => {
         if (!includeContent) return shadcnFile(file.path);
@@ -350,11 +400,15 @@ export async function buildShadcnRegistry(): Promise<ShadcnRegistry> {
     }),
   );
 
+  const { $schema: _themeSchema, ...theme } = buildThemeItem();
   return {
     $schema: "https://ui.shadcn.com/schema/registry.json",
     name: "beui",
     homepage: SITE_URL,
-    items: items.filter((item): item is Omit<ShadcnRegistryItem, "$schema"> => item !== null),
+    items: [
+      theme,
+      ...items.filter((item): item is Omit<ShadcnRegistryItem, "$schema"> => item !== null),
+    ],
   };
 }
 
@@ -373,7 +427,12 @@ export async function buildIndex() {
       detail: `${SITE_URL}/r/{slug}`,
       raw: `${SITE_URL}/r/{slug}/raw`,
       markdown: `${SITE_URL}/components/{category}/{slug}.md`,
+      markdown_by_slug: `${SITE_URL}/r/{slug}.md`,
+      theme_item: THEME_ITEM_URL,
+      theme_css: `${SITE_URL}/theme.css`,
     },
+    setup:
+      "Components install as source with the shadcn CLI and need Tailwind CSS v4, the motion package and a cn() helper (shipped with each item). beUI's extra tokens (border-strong, success, warning, neon, glass, ease curves) come with any component that uses them through the theme item; a project without shadcn pastes theme_css instead.",
     categories: registry.map((c) => ({
       slug: c.slug,
       name: c.name,
@@ -381,11 +440,18 @@ export async function buildIndex() {
     })),
     components: allComponents().map((c) => {
       const dates = componentDates(c.category.slug, c.slug);
+      // A page whose variants install separately has no install slug of its own.
+      const variants = (c.examples ?? [])
+        .filter(isInstallable)
+        .map((example) => ({ slug: example.slug, name: example.name, install_slug: example.installSlug }));
       return {
         slug: c.slug,
         name: c.name,
         description: c.description,
         category: c.category.slug,
+        keywords: c.keywords ?? [],
+        install_slugs: variants.length ? variants.map((variant) => variant.install_slug) : [c.slug],
+        variants,
         published_at: dates.publishedAt,
         updated_at: dates.updatedAt,
         detail_url: `${SITE_URL}/r/${c.slug}`,

@@ -11,6 +11,7 @@ import {
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useLocale, useMessages } from "@/lib/i18n";
 import { DAY, iso, monthOf, ordered, parse, shiftMonth } from "./date-utils";
+import { dateFormats } from "./formats";
 import { dateRangePickerMessages } from "./messages";
 import type { DateRange, DateRangePickerProps } from "./types";
 
@@ -105,28 +106,14 @@ export function useDateRangePickerController({
   const choicesId = useId();
   const reduce = useReducedMotion() ?? false;
   const canHover = useHoverCapable();
-  const monthFormat = new Intl.DateTimeFormat(locale, {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-  const monthNameFormat = new Intl.DateTimeFormat(locale, {
-    month: "long",
-    timeZone: "UTC",
-  });
-  const dateFormat = new Intl.DateTimeFormat(locale, {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-  const shortFormat = new Intl.DateTimeFormat(locale, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+  const formats = dateFormats(locale);
+  const {
+    month: monthFormat,
+    monthName: monthNameFormat,
+    shortMonthName: shortMonthNameFormat,
+    date: dateFormat,
+    short: shortFormat,
+  } = formats;
   const unavailable = (date: string) =>
     disabled ||
     Boolean(min && date < min) ||
@@ -403,6 +390,9 @@ export function useDateRangePickerController({
           return {
             id: date,
             label: monthNameFormat.format(parse(date)),
+            // Three columns leave a long name like "November" no room in its
+            // pill, so the grid shows the short name; `label` stays the name.
+            short: shortMonthNameFormat.format(parse(date)),
             disabled:
               disabled ||
               Boolean(min && date < monthOf(min)) ||
@@ -416,6 +406,7 @@ export function useDateRangePickerController({
             return {
               id: String(choiceYear),
               label: String(choiceYear),
+              short: String(choiceYear),
               disabled:
                 disabled || choiceYear < minYear || choiceYear > maxYear,
             };

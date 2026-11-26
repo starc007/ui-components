@@ -4,7 +4,14 @@ import { axe } from "jest-axe";
 import { useState } from "react";
 import { BloomMenu } from "@/components/motion/bloom-menu";
 import { BottomSheet } from "@/components/motion/bottom-sheet";
+import { CommandPalette } from "@/components/motion/command-palette";
 import { Drawer } from "@/components/motion/drawer";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/motion/dropdown-menu";
 import { FeedbackWidget } from "@/components/motion/feedback-widget";
 import { MorphingModal } from "@/components/motion/morphing-modal";
 import { OTPInput } from "@/components/motion/otp-input";
@@ -166,6 +173,67 @@ describe("overlay focus", () => {
       fireEvent.keyDown(document, { key: "Escape" });
     });
     await waitFor(() => expect(document.activeElement).toBe(opener));
+  });
+
+  test("a menu inside a drawer keeps focus, and Escape closes only the menu", async () => {
+    const onOpenChange = mock(() => {});
+    const { getByRole } = render(
+      <Drawer open onOpenChange={onOpenChange} ariaLabel="Settings">
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <button type="button">Actions</button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>Rename</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </Drawer>,
+    );
+    const trigger = getByRole("button", { name: "Actions" });
+    act(() => {
+      trigger.focus();
+      fireEvent.keyDown(trigger, { key: "ArrowDown" });
+    });
+    const menu = getByRole("menu", { name: "Actions" });
+    // The menu portals out of the drawer; the drawer's trap must not pull
+    // focus back out of it.
+    const item = getByRole("menuitem", { name: "Rename" });
+    act(() => item.focus());
+    expect(menu.contains(document.activeElement)).toBe(true);
+
+    act(() => {
+      fireEvent.keyDown(document.activeElement ?? document, { key: "Escape" });
+    });
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+    expect(onOpenChange).not.toHaveBeenCalled();
+  });
+
+  test("command palette keeps Tab inside and returns focus on Escape", async () => {
+    const onOpenChange = mock((_open: boolean) => {});
+    const { findByRole } = render(
+      <CommandPalette
+        items={[{ id: "docs", label: "Docs", onSelect: () => {} }]}
+        onOpenChange={onOpenChange}
+      />,
+    );
+    const outside = document.createElement("button");
+    outside.textContent = "Outside";
+    document.body.append(outside);
+    outside.focus();
+    act(() => {
+      fireEvent.keyDown(window, { key: "k", metaKey: true });
+    });
+    const dialog = await findByRole("dialog");
+    await waitFor(() => expect(dialog.contains(document.activeElement)).toBe(true));
+    // Focus that strays out of the dialog is pulled back in.
+    act(() => outside.focus());
+    expect(dialog.contains(document.activeElement)).toBe(true);
+    act(() => {
+      fireEvent.keyDown(document.activeElement ?? document, { key: "Escape" });
+    });
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    await waitFor(() => expect(document.activeElement === outside).toBe(true));
+    outside.remove();
   });
 
   test("bottom sheet moves focus into the dialog", async () => {

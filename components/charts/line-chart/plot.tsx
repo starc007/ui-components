@@ -53,9 +53,11 @@ export interface LineChartPlotProps {
   height?: number;
   /** Stroke width of each line, in px. */
   strokeWidth?: number;
+  /** Draw horizontal grid lines at the value ticks. Default: true */
   showGrid?: boolean;
   /** Fade lines and fills out toward the left and right edges of the plot. */
   fadeEdges?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -435,7 +437,7 @@ export function LineChartPlot({
               exit={{ opacity: 0, transition: { duration: 0.1, ease: EASE_OUT } }}
               transition={{ x: spring, opacity: { duration: 0.12 } }}
             >
-              <span className="block -translate-x-1/2 overflow-hidden rounded-full bg-foreground px-2 py-0.5 text-[11px] leading-4 font-medium whitespace-nowrap text-background">
+              <span className="block -translate-x-1/2 overflow-hidden rounded-full bg-primary px-2 py-0.5 text-[11px] leading-4 font-medium whitespace-nowrap text-primary-foreground">
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.span
                     key={categories[active]}

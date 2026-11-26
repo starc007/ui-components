@@ -4,6 +4,8 @@ import { Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SPRING_PANEL } from "@/lib/ease";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
+import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { EASE } from "./constants";
@@ -37,23 +39,20 @@ export function TokenPicker({
   const [chainFilter, setChainFilter] = useState("all");
   const [q, setQ] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
+  useOnOpen(open, () => setQ(""));
   useEffect(() => {
     if (!open) return;
-    setQ("");
-    requestAnimationFrame(() =>
+    const frame = requestAnimationFrame(() =>
       inputRef.current?.focus({ preventScroll: true }),
     );
+    return () => cancelAnimationFrame(frame);
   }, [open]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  // A modal sheet: Tab stays inside, Escape closes, focus returns to the
+  // token button that opened it.
+  useFocusTrap(open, sheetRef, { onEscape: onClose });
 
   const popular = useMemo(
     () => tokens.filter((token) => token.popular).slice(0, 6),
@@ -100,7 +99,9 @@ export function TokenPicker({
             transition={
               reduce ? { duration: 0.18, ease: EASE } : SPRING_PANEL
             }
-            className="absolute inset-x-0 bottom-0 z-20 flex max-h-[92%] flex-col rounded-t-3xl border-t border-border bg-card shadow-2xl"
+            ref={sheetRef}
+            tabIndex={-1}
+            className="absolute inset-x-0 bottom-0 z-20 flex max-h-[92%] flex-col rounded-t-2xl border-t border-border bg-card shadow-2xl outline-none"
             role="dialog"
             aria-modal="true"
             aria-label={t(side === "from" ? "selectFromToken" : "selectToToken")}
@@ -147,7 +148,7 @@ export function TokenPicker({
             <div className="flex-1 overflow-y-auto px-3 pb-4 pt-3">
               {!q && chainFilter === "all" ? (
                 <>
-                  <p className="px-1 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <p className="px-1 pb-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                     {t("popular")}
                   </p>
                   <div className="[scrollbar-width:none] [&::-webkit-scrollbar]:hidden flex items-center gap-1.5 overflow-x-auto pb-3">
@@ -159,7 +160,7 @@ export function TokenPicker({
                           key={token.id}
                           type="button"
                           onClick={() => onPick(token.id)}
-                          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-background/50 py-1 pl-1 pr-3 text-sm font-semibold text-foreground transition-transform hover:border-border active:scale-[0.97]"
+                          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-background/50 py-1 pl-1 pr-3 text-sm font-medium text-foreground transition-transform hover:border-border active:scale-[0.97]"
                         >
                           <TokenDot token={token} chain={chain} size={22} />
                           {token.symbol}
@@ -170,7 +171,7 @@ export function TokenPicker({
                 </>
               ) : null}
 
-              <p className="px-1 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <p className="px-1 pb-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                 {q
                   ? t("results")
                   : chainFilter === "all"
@@ -193,7 +194,7 @@ export function TokenPicker({
                         type="button"
                         onClick={() => onPick(token.id)}
                         className={cn(
-                          "flex w-full items-center justify-between rounded-xl px-2 py-2 text-left transition-colors active:scale-[0.97]",
+                          "flex w-full items-center justify-between rounded-full px-3 py-2 text-left transition-colors active:scale-[0.97]",
                           active
                             ? "bg-muted/60"
                             : "hover:bg-muted/60",
@@ -202,11 +203,11 @@ export function TokenPicker({
                         <span className="flex min-w-0 items-center gap-2.5">
                           <TokenDot token={token} chain={chain} size={32} />
                           <span className="flex min-w-0 flex-col">
-                            <span className="truncate text-sm font-semibold text-foreground">
+                            <span className="truncate text-sm font-medium text-foreground">
                               {token.name}
                             </span>
                             <span className="truncate text-[11px] text-muted-foreground">
-                              {token.symbol}
+                              {token.symbol} · {chain.name}
                             </span>
                           </span>
                         </span>

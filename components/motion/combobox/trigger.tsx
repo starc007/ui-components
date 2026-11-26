@@ -8,10 +8,12 @@ import type {
   Ref,
 } from "react";
 import { cn } from "@/lib/utils";
-import { mergeRefs, useComboboxContext } from "./context";
+import { mergeRefs } from "@/lib/merge-refs";
+import { useComboboxContext } from "./context";
 
 export interface ComboboxTriggerProps {
   children: ReactNode;
+  /** Classes merged onto the trigger field. */
   className?: string;
 }
 
@@ -30,7 +32,7 @@ export function ComboboxTrigger({ children, className }: ComboboxTriggerProps) {
         context.setOpen(true);
       }}
       className={cn(
-        "relative z-20 flex h-10 w-full min-w-52 cursor-text items-center justify-between gap-3 rounded-xl border border-border bg-transparent px-3 text-sm text-foreground transition-[border-color] hover:border-(--color-border-strong)",
+        "relative z-20 flex h-10 w-full min-w-52 cursor-text items-center justify-between gap-3 rounded-full border border-border bg-transparent px-4 text-sm text-foreground transition-[border-color] hover:border-(--color-border-strong)",
         "focus-within:ring-2 focus-within:ring-foreground/20",
         context.disabled && "pointer-events-none opacity-50",
         className,
@@ -45,10 +47,12 @@ export function ComboboxTrigger({ children, className }: ComboboxTriggerProps) {
 }
 
 export interface ComboboxValueProps {
+  /** Shown while nothing is selected. Default: "Select an option" */
   placeholder?: ReactNode;
   children?:
     | ReactNode
     | ((value: string | undefined, label: string | undefined) => ReactNode);
+  /** Classes merged onto the value text. */
   className?: string;
 }
 
@@ -84,7 +88,9 @@ export interface ComboboxInputProps
     InputHTMLAttributes<HTMLInputElement>,
     "defaultValue" | "value"
   > {
+  /** Ref to the underlying input element. */
   ref?: Ref<HTMLInputElement>;
+  /** Classes merged onto the wrapper around the search icon and input. */
   wrapperClassName?: string;
 }
 

@@ -60,6 +60,7 @@ export interface InlineSliderProps extends SliderOptions {
   format?: (value: number) => string;
   /** Show markers for the ten evenly spaced snap stops, except where they overlap inline text. */
   showTicks?: boolean;
+  /** Classes merged onto the track element. */
   className?: string;
 }
 
@@ -297,7 +298,7 @@ export function InlineSlider({
         </span>
         <span
           ref={readoutRef}
-          className="absolute right-5 top-1/2 max-w-[40%] -translate-y-1/2 truncate text-[13px] font-semibold leading-[18px] tracking-tight tabular-nums"
+          className="absolute right-5 top-1/2 max-w-[40%] -translate-y-1/2 truncate text-sm font-medium leading-5 tracking-tight tabular-nums"
         >
           {format(current)}
         </span>

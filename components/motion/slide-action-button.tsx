@@ -34,11 +34,17 @@ export interface SlideActionButtonProps extends Omit<
   "children"
 > {
   children: ReactNode;
+  /** Label shown once the slide completes. Default: "Complete" */
   completeLabel?: ReactNode;
+  /** Fraction of the track (0 to 1) the thumb must pass to complete. Default: 0.82 */
   threshold?: number;
+  /** Time before the thumb slides back after completing (ms). Default: 1200 */
   resetDelay?: number;
+  /** Called when the thumb is released past the threshold, or on Enter or Space. */
   onComplete?: () => void;
+  /** Classes merged onto the draggable thumb. */
   thumbClassName?: string;
+  /** Classes merged onto the fill that trails the thumb. */
   fillClassName?: string;
   /** Override any built-in string. */
   labels?: Partial<SlideActionButtonMessages>;

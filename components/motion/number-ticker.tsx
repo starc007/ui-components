@@ -7,6 +7,7 @@ import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export interface NumberTickerProps {
+  /** Number to show. Digits roll to it when it changes. */
   value: number;
   /** Digits to pad to (left). */
   pad?: number;
@@ -21,11 +22,15 @@ export interface NumberTickerProps {
   stagger?: number;
   /** Render only after the element enters the viewport. */
   startOnView?: boolean;
+  /** Static text before the number, such as "$". */
   prefix?: string;
+  /** Static text after the number, such as "%". */
   suffix?: string;
   /** Add a small blur during digit rolls. */
   blur?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto each rolling digit. */
   digitClassName?: string;
   /**
    * Insert locale group separators. `true` uses the `LocaleProvider` locale

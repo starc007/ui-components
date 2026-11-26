@@ -13,18 +13,19 @@ import { Route as SiteRouteRouteImport } from './routes/_site/route'
 import { Route as SiteIndexRouteImport } from './routes/_site/index'
 import { Route as SiteSplatRouteImport } from './routes/_site/$'
 import { Route as Site404RouteImport } from './routes/_site/404'
+import { Route as SiteBrandRouteImport } from './routes/_site/brand'
 import { Route as SiteChangelogRouteImport } from './routes/_site/changelog'
 import { Route as SitePlaygroundRouteImport } from './routes/_site/playground'
 import { Route as SitePrivacyRouteImport } from './routes/_site/privacy'
 import { Route as SiteRefundsRouteImport } from './routes/_site/refunds'
 import { Route as SiteSponsorsRouteImport } from './routes/_site/sponsors'
 import { Route as SiteTermsRouteImport } from './routes/_site/terms'
+import { Route as SiteThemesRouteImport } from './routes/_site/themes'
 import { Route as SiteAlternativesIndexRouteImport } from './routes/_site/alternatives/index'
 import { Route as SiteAlternativesSlugRouteImport } from './routes/_site/alternatives/$slug'
 import { Route as SiteBlogIndexRouteImport } from './routes/_site/blog/index'
 import { Route as SiteBlogSlugRouteImport } from './routes/_site/blog/$slug'
 import { Route as SiteCasinoIndexRouteImport } from './routes/_site/casino/index'
-import { Route as SiteCasinoSlugRouteImport } from './routes/_site/casino/$slug'
 import { Route as SiteChartsIndexRouteImport } from './routes/_site/charts/index'
 import { Route as SiteChartsSlugRouteImport } from './routes/_site/charts/$slug'
 import { Route as SiteComponentsIndexRouteImport } from './routes/_site/components/index'
@@ -35,10 +36,17 @@ import { Route as SiteDocsOpenuiRouteImport } from './routes/_site/docs/openui'
 import { Route as SiteDocsThemeRouteImport } from './routes/_site/docs/theme'
 import { Route as SiteGuidesIndexRouteImport } from './routes/_site/guides/index'
 import { Route as SiteGuidesSlugRouteImport } from './routes/_site/guides/$slug'
+import { Route as SiteMicroInteractionsIndexRouteImport } from './routes/_site/micro-interactions/index'
+import { Route as SiteMicroInteractionsSlugRouteImport } from './routes/_site/micro-interactions/$slug'
 import { Route as SiteReactNativeIndexRouteImport } from './routes/_site/react-native/index'
 import { Route as SiteReactNativeSlugRouteImport } from './routes/_site/react-native/$slug'
+import { Route as SiteSoundsIndexRouteImport } from './routes/_site/sounds/index'
+import { Route as SiteSoundsSlugRouteImport } from './routes/_site/sounds/$slug'
+import { Route as SiteCasinoSlugIndexRouteImport } from './routes/_site/casino/$slug/index'
+import { Route as SiteCasinoSlugVariantRouteImport } from './routes/_site/casino/$slug/$variant'
 import { Route as SiteComponentsCategoryIndexRouteImport } from './routes/_site/components/$category/index'
-import { Route as SiteComponentsCategorySlugRouteImport } from './routes/_site/components/$category/$slug'
+import { Route as SiteComponentsCategorySlugIndexRouteImport } from './routes/_site/components/$category/$slug/index'
+import { Route as SiteComponentsCategorySlugVariantRouteImport } from './routes/_site/components/$category/$slug/$variant'
 
 const SiteRouteRoute = SiteRouteRouteImport.update({
   id: '/_site',
@@ -57,6 +65,11 @@ const SiteSplatRoute = SiteSplatRouteImport.update({
 const Site404Route = Site404RouteImport.update({
   id: '/404',
   path: '/404',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteBrandRoute = SiteBrandRouteImport.update({
+  id: '/brand',
+  path: '/brand',
   getParentRoute: () => SiteRouteRoute,
 } as any)
 const SiteChangelogRoute = SiteChangelogRouteImport.update({
@@ -89,6 +102,11 @@ const SiteTermsRoute = SiteTermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => SiteRouteRoute,
 } as any)
+const SiteThemesRoute = SiteThemesRouteImport.update({
+  id: '/themes',
+  path: '/themes',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
 const SiteAlternativesIndexRoute = SiteAlternativesIndexRouteImport.update({
   id: '/alternatives/',
   path: '/alternatives/',
@@ -112,11 +130,6 @@ const SiteBlogSlugRoute = SiteBlogSlugRouteImport.update({
 const SiteCasinoIndexRoute = SiteCasinoIndexRouteImport.update({
   id: '/casino/',
   path: '/casino/',
-  getParentRoute: () => SiteRouteRoute,
-} as any)
-const SiteCasinoSlugRoute = SiteCasinoSlugRouteImport.update({
-  id: '/casino/$slug',
-  path: '/casino/$slug',
   getParentRoute: () => SiteRouteRoute,
 } as any)
 const SiteChartsIndexRoute = SiteChartsIndexRouteImport.update({
@@ -169,6 +182,18 @@ const SiteGuidesSlugRoute = SiteGuidesSlugRouteImport.update({
   path: '/guides/$slug',
   getParentRoute: () => SiteRouteRoute,
 } as any)
+const SiteMicroInteractionsIndexRoute =
+  SiteMicroInteractionsIndexRouteImport.update({
+    id: '/micro-interactions/',
+    path: '/micro-interactions/',
+    getParentRoute: () => SiteRouteRoute,
+  } as any)
+const SiteMicroInteractionsSlugRoute =
+  SiteMicroInteractionsSlugRouteImport.update({
+    id: '/micro-interactions/$slug',
+    path: '/micro-interactions/$slug',
+    getParentRoute: () => SiteRouteRoute,
+  } as any)
 const SiteReactNativeIndexRoute = SiteReactNativeIndexRouteImport.update({
   id: '/react-native/',
   path: '/react-native/',
@@ -179,16 +204,42 @@ const SiteReactNativeSlugRoute = SiteReactNativeSlugRouteImport.update({
   path: '/react-native/$slug',
   getParentRoute: () => SiteRouteRoute,
 } as any)
+const SiteSoundsIndexRoute = SiteSoundsIndexRouteImport.update({
+  id: '/sounds/',
+  path: '/sounds/',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteSoundsSlugRoute = SiteSoundsSlugRouteImport.update({
+  id: '/sounds/$slug',
+  path: '/sounds/$slug',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteCasinoSlugIndexRoute = SiteCasinoSlugIndexRouteImport.update({
+  id: '/casino/$slug/',
+  path: '/casino/$slug/',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
+const SiteCasinoSlugVariantRoute = SiteCasinoSlugVariantRouteImport.update({
+  id: '/casino/$slug/$variant',
+  path: '/casino/$slug/$variant',
+  getParentRoute: () => SiteRouteRoute,
+} as any)
 const SiteComponentsCategoryIndexRoute =
   SiteComponentsCategoryIndexRouteImport.update({
     id: '/components/$category/',
     path: '/components/$category/',
     getParentRoute: () => SiteRouteRoute,
   } as any)
-const SiteComponentsCategorySlugRoute =
-  SiteComponentsCategorySlugRouteImport.update({
-    id: '/components/$category/$slug',
-    path: '/components/$category/$slug',
+const SiteComponentsCategorySlugIndexRoute =
+  SiteComponentsCategorySlugIndexRouteImport.update({
+    id: '/components/$category/$slug/',
+    path: '/components/$category/$slug/',
+    getParentRoute: () => SiteRouteRoute,
+  } as any)
+const SiteComponentsCategorySlugVariantRoute =
+  SiteComponentsCategorySlugVariantRouteImport.update({
+    id: '/components/$category/$slug/$variant',
+    path: '/components/$category/$slug/$variant',
     getParentRoute: () => SiteRouteRoute,
   } as any)
 
@@ -196,15 +247,16 @@ export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
   '/$': typeof SiteSplatRoute
   '/404': typeof Site404Route
+  '/brand': typeof SiteBrandRoute
   '/changelog': typeof SiteChangelogRoute
   '/playground': typeof SitePlaygroundRoute
   '/privacy': typeof SitePrivacyRoute
   '/refunds': typeof SiteRefundsRoute
   '/sponsors': typeof SiteSponsorsRoute
   '/terms': typeof SiteTermsRoute
+  '/themes': typeof SiteThemesRoute
   '/alternatives/$slug': typeof SiteAlternativesSlugRoute
   '/blog/$slug': typeof SiteBlogSlugRoute
-  '/casino/$slug': typeof SiteCasinoSlugRoute
   '/charts/$slug': typeof SiteChartsSlugRoute
   '/docs/ai-agents': typeof SiteDocsAiAgentsRoute
   '/docs/motion-patterns': typeof SiteDocsMotionPatternsRoute
@@ -212,30 +264,38 @@ export interface FileRoutesByFullPath {
   '/docs/openui': typeof SiteDocsOpenuiRoute
   '/docs/theme': typeof SiteDocsThemeRoute
   '/guides/$slug': typeof SiteGuidesSlugRoute
+  '/micro-interactions/$slug': typeof SiteMicroInteractionsSlugRoute
   '/react-native/$slug': typeof SiteReactNativeSlugRoute
+  '/sounds/$slug': typeof SiteSoundsSlugRoute
   '/alternatives/': typeof SiteAlternativesIndexRoute
   '/blog/': typeof SiteBlogIndexRoute
   '/casino/': typeof SiteCasinoIndexRoute
   '/charts/': typeof SiteChartsIndexRoute
   '/components/': typeof SiteComponentsIndexRoute
   '/guides/': typeof SiteGuidesIndexRoute
+  '/micro-interactions/': typeof SiteMicroInteractionsIndexRoute
   '/react-native/': typeof SiteReactNativeIndexRoute
-  '/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
+  '/sounds/': typeof SiteSoundsIndexRoute
+  '/casino/$slug/$variant': typeof SiteCasinoSlugVariantRoute
+  '/casino/$slug/': typeof SiteCasinoSlugIndexRoute
   '/components/$category/': typeof SiteComponentsCategoryIndexRoute
+  '/components/$category/$slug/$variant': typeof SiteComponentsCategorySlugVariantRoute
+  '/components/$category/$slug/': typeof SiteComponentsCategorySlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/$': typeof SiteSplatRoute
   '/404': typeof Site404Route
+  '/brand': typeof SiteBrandRoute
   '/changelog': typeof SiteChangelogRoute
   '/playground': typeof SitePlaygroundRoute
   '/privacy': typeof SitePrivacyRoute
   '/refunds': typeof SiteRefundsRoute
   '/sponsors': typeof SiteSponsorsRoute
   '/terms': typeof SiteTermsRoute
+  '/themes': typeof SiteThemesRoute
   '/': typeof SiteIndexRoute
   '/alternatives/$slug': typeof SiteAlternativesSlugRoute
   '/blog/$slug': typeof SiteBlogSlugRoute
-  '/casino/$slug': typeof SiteCasinoSlugRoute
   '/charts/$slug': typeof SiteChartsSlugRoute
   '/docs/ai-agents': typeof SiteDocsAiAgentsRoute
   '/docs/motion-patterns': typeof SiteDocsMotionPatternsRoute
@@ -243,32 +303,40 @@ export interface FileRoutesByTo {
   '/docs/openui': typeof SiteDocsOpenuiRoute
   '/docs/theme': typeof SiteDocsThemeRoute
   '/guides/$slug': typeof SiteGuidesSlugRoute
+  '/micro-interactions/$slug': typeof SiteMicroInteractionsSlugRoute
   '/react-native/$slug': typeof SiteReactNativeSlugRoute
+  '/sounds/$slug': typeof SiteSoundsSlugRoute
   '/alternatives': typeof SiteAlternativesIndexRoute
   '/blog': typeof SiteBlogIndexRoute
   '/casino': typeof SiteCasinoIndexRoute
   '/charts': typeof SiteChartsIndexRoute
   '/components': typeof SiteComponentsIndexRoute
   '/guides': typeof SiteGuidesIndexRoute
+  '/micro-interactions': typeof SiteMicroInteractionsIndexRoute
   '/react-native': typeof SiteReactNativeIndexRoute
-  '/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
+  '/sounds': typeof SiteSoundsIndexRoute
+  '/casino/$slug/$variant': typeof SiteCasinoSlugVariantRoute
+  '/casino/$slug': typeof SiteCasinoSlugIndexRoute
   '/components/$category': typeof SiteComponentsCategoryIndexRoute
+  '/components/$category/$slug/$variant': typeof SiteComponentsCategorySlugVariantRoute
+  '/components/$category/$slug': typeof SiteComponentsCategorySlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_site': typeof SiteRouteRouteWithChildren
   '/_site/$': typeof SiteSplatRoute
   '/_site/404': typeof Site404Route
+  '/_site/brand': typeof SiteBrandRoute
   '/_site/changelog': typeof SiteChangelogRoute
   '/_site/playground': typeof SitePlaygroundRoute
   '/_site/privacy': typeof SitePrivacyRoute
   '/_site/refunds': typeof SiteRefundsRoute
   '/_site/sponsors': typeof SiteSponsorsRoute
   '/_site/terms': typeof SiteTermsRoute
+  '/_site/themes': typeof SiteThemesRoute
   '/_site/': typeof SiteIndexRoute
   '/_site/alternatives/$slug': typeof SiteAlternativesSlugRoute
   '/_site/blog/$slug': typeof SiteBlogSlugRoute
-  '/_site/casino/$slug': typeof SiteCasinoSlugRoute
   '/_site/charts/$slug': typeof SiteChartsSlugRoute
   '/_site/docs/ai-agents': typeof SiteDocsAiAgentsRoute
   '/_site/docs/motion-patterns': typeof SiteDocsMotionPatternsRoute
@@ -276,16 +344,23 @@ export interface FileRoutesById {
   '/_site/docs/openui': typeof SiteDocsOpenuiRoute
   '/_site/docs/theme': typeof SiteDocsThemeRoute
   '/_site/guides/$slug': typeof SiteGuidesSlugRoute
+  '/_site/micro-interactions/$slug': typeof SiteMicroInteractionsSlugRoute
   '/_site/react-native/$slug': typeof SiteReactNativeSlugRoute
+  '/_site/sounds/$slug': typeof SiteSoundsSlugRoute
   '/_site/alternatives/': typeof SiteAlternativesIndexRoute
   '/_site/blog/': typeof SiteBlogIndexRoute
   '/_site/casino/': typeof SiteCasinoIndexRoute
   '/_site/charts/': typeof SiteChartsIndexRoute
   '/_site/components/': typeof SiteComponentsIndexRoute
   '/_site/guides/': typeof SiteGuidesIndexRoute
+  '/_site/micro-interactions/': typeof SiteMicroInteractionsIndexRoute
   '/_site/react-native/': typeof SiteReactNativeIndexRoute
-  '/_site/components/$category/$slug': typeof SiteComponentsCategorySlugRoute
+  '/_site/sounds/': typeof SiteSoundsIndexRoute
+  '/_site/casino/$slug/$variant': typeof SiteCasinoSlugVariantRoute
+  '/_site/casino/$slug/': typeof SiteCasinoSlugIndexRoute
   '/_site/components/$category/': typeof SiteComponentsCategoryIndexRoute
+  '/_site/components/$category/$slug/$variant': typeof SiteComponentsCategorySlugVariantRoute
+  '/_site/components/$category/$slug/': typeof SiteComponentsCategorySlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -293,15 +368,16 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/404'
+    | '/brand'
     | '/changelog'
     | '/playground'
     | '/privacy'
     | '/refunds'
     | '/sponsors'
     | '/terms'
+    | '/themes'
     | '/alternatives/$slug'
     | '/blog/$slug'
-    | '/casino/$slug'
     | '/charts/$slug'
     | '/docs/ai-agents'
     | '/docs/motion-patterns'
@@ -309,30 +385,38 @@ export interface FileRouteTypes {
     | '/docs/openui'
     | '/docs/theme'
     | '/guides/$slug'
+    | '/micro-interactions/$slug'
     | '/react-native/$slug'
+    | '/sounds/$slug'
     | '/alternatives/'
     | '/blog/'
     | '/casino/'
     | '/charts/'
     | '/components/'
     | '/guides/'
+    | '/micro-interactions/'
     | '/react-native/'
-    | '/components/$category/$slug'
+    | '/sounds/'
+    | '/casino/$slug/$variant'
+    | '/casino/$slug/'
     | '/components/$category/'
+    | '/components/$category/$slug/$variant'
+    | '/components/$category/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/$'
     | '/404'
+    | '/brand'
     | '/changelog'
     | '/playground'
     | '/privacy'
     | '/refunds'
     | '/sponsors'
     | '/terms'
+    | '/themes'
     | '/'
     | '/alternatives/$slug'
     | '/blog/$slug'
-    | '/casino/$slug'
     | '/charts/$slug'
     | '/docs/ai-agents'
     | '/docs/motion-patterns'
@@ -340,31 +424,39 @@ export interface FileRouteTypes {
     | '/docs/openui'
     | '/docs/theme'
     | '/guides/$slug'
+    | '/micro-interactions/$slug'
     | '/react-native/$slug'
+    | '/sounds/$slug'
     | '/alternatives'
     | '/blog'
     | '/casino'
     | '/charts'
     | '/components'
     | '/guides'
+    | '/micro-interactions'
     | '/react-native'
-    | '/components/$category/$slug'
+    | '/sounds'
+    | '/casino/$slug/$variant'
+    | '/casino/$slug'
     | '/components/$category'
+    | '/components/$category/$slug/$variant'
+    | '/components/$category/$slug'
   id:
     | '__root__'
     | '/_site'
     | '/_site/$'
     | '/_site/404'
+    | '/_site/brand'
     | '/_site/changelog'
     | '/_site/playground'
     | '/_site/privacy'
     | '/_site/refunds'
     | '/_site/sponsors'
     | '/_site/terms'
+    | '/_site/themes'
     | '/_site/'
     | '/_site/alternatives/$slug'
     | '/_site/blog/$slug'
-    | '/_site/casino/$slug'
     | '/_site/charts/$slug'
     | '/_site/docs/ai-agents'
     | '/_site/docs/motion-patterns'
@@ -372,16 +464,23 @@ export interface FileRouteTypes {
     | '/_site/docs/openui'
     | '/_site/docs/theme'
     | '/_site/guides/$slug'
+    | '/_site/micro-interactions/$slug'
     | '/_site/react-native/$slug'
+    | '/_site/sounds/$slug'
     | '/_site/alternatives/'
     | '/_site/blog/'
     | '/_site/casino/'
     | '/_site/charts/'
     | '/_site/components/'
     | '/_site/guides/'
+    | '/_site/micro-interactions/'
     | '/_site/react-native/'
-    | '/_site/components/$category/$slug'
+    | '/_site/sounds/'
+    | '/_site/casino/$slug/$variant'
+    | '/_site/casino/$slug/'
     | '/_site/components/$category/'
+    | '/_site/components/$category/$slug/$variant'
+    | '/_site/components/$category/$slug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -416,6 +515,13 @@ declare module '@tanstack/react-router' {
       path: '/404'
       fullPath: '/404'
       preLoaderRoute: typeof Site404RouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/brand': {
+      id: '/_site/brand'
+      path: '/brand'
+      fullPath: '/brand'
+      preLoaderRoute: typeof SiteBrandRouteImport
       parentRoute: typeof SiteRouteRoute
     }
     '/_site/changelog': {
@@ -460,6 +566,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteTermsRouteImport
       parentRoute: typeof SiteRouteRoute
     }
+    '/_site/themes': {
+      id: '/_site/themes'
+      path: '/themes'
+      fullPath: '/themes'
+      preLoaderRoute: typeof SiteThemesRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
     '/_site/alternatives/': {
       id: '/_site/alternatives/'
       path: '/alternatives'
@@ -493,13 +606,6 @@ declare module '@tanstack/react-router' {
       path: '/casino'
       fullPath: '/casino/'
       preLoaderRoute: typeof SiteCasinoIndexRouteImport
-      parentRoute: typeof SiteRouteRoute
-    }
-    '/_site/casino/$slug': {
-      id: '/_site/casino/$slug'
-      path: '/casino/$slug'
-      fullPath: '/casino/$slug'
-      preLoaderRoute: typeof SiteCasinoSlugRouteImport
       parentRoute: typeof SiteRouteRoute
     }
     '/_site/charts/': {
@@ -572,6 +678,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteGuidesSlugRouteImport
       parentRoute: typeof SiteRouteRoute
     }
+    '/_site/micro-interactions/': {
+      id: '/_site/micro-interactions/'
+      path: '/micro-interactions'
+      fullPath: '/micro-interactions/'
+      preLoaderRoute: typeof SiteMicroInteractionsIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/micro-interactions/$slug': {
+      id: '/_site/micro-interactions/$slug'
+      path: '/micro-interactions/$slug'
+      fullPath: '/micro-interactions/$slug'
+      preLoaderRoute: typeof SiteMicroInteractionsSlugRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
     '/_site/react-native/': {
       id: '/_site/react-native/'
       path: '/react-native'
@@ -586,6 +706,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteReactNativeSlugRouteImport
       parentRoute: typeof SiteRouteRoute
     }
+    '/_site/sounds/': {
+      id: '/_site/sounds/'
+      path: '/sounds'
+      fullPath: '/sounds/'
+      preLoaderRoute: typeof SiteSoundsIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/sounds/$slug': {
+      id: '/_site/sounds/$slug'
+      path: '/sounds/$slug'
+      fullPath: '/sounds/$slug'
+      preLoaderRoute: typeof SiteSoundsSlugRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/casino/$slug/': {
+      id: '/_site/casino/$slug/'
+      path: '/casino/$slug'
+      fullPath: '/casino/$slug/'
+      preLoaderRoute: typeof SiteCasinoSlugIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/casino/$slug/$variant': {
+      id: '/_site/casino/$slug/$variant'
+      path: '/casino/$slug/$variant'
+      fullPath: '/casino/$slug/$variant'
+      preLoaderRoute: typeof SiteCasinoSlugVariantRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
     '/_site/components/$category/': {
       id: '/_site/components/$category/'
       path: '/components/$category'
@@ -593,11 +741,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteComponentsCategoryIndexRouteImport
       parentRoute: typeof SiteRouteRoute
     }
-    '/_site/components/$category/$slug': {
-      id: '/_site/components/$category/$slug'
+    '/_site/components/$category/$slug/': {
+      id: '/_site/components/$category/$slug/'
       path: '/components/$category/$slug'
-      fullPath: '/components/$category/$slug'
-      preLoaderRoute: typeof SiteComponentsCategorySlugRouteImport
+      fullPath: '/components/$category/$slug/'
+      preLoaderRoute: typeof SiteComponentsCategorySlugIndexRouteImport
+      parentRoute: typeof SiteRouteRoute
+    }
+    '/_site/components/$category/$slug/$variant': {
+      id: '/_site/components/$category/$slug/$variant'
+      path: '/components/$category/$slug/$variant'
+      fullPath: '/components/$category/$slug/$variant'
+      preLoaderRoute: typeof SiteComponentsCategorySlugVariantRouteImport
       parentRoute: typeof SiteRouteRoute
     }
   }
@@ -606,16 +761,17 @@ declare module '@tanstack/react-router' {
 interface SiteRouteRouteChildren {
   SiteSplatRoute: typeof SiteSplatRoute
   Site404Route: typeof Site404Route
+  SiteBrandRoute: typeof SiteBrandRoute
   SiteChangelogRoute: typeof SiteChangelogRoute
   SitePlaygroundRoute: typeof SitePlaygroundRoute
   SitePrivacyRoute: typeof SitePrivacyRoute
   SiteRefundsRoute: typeof SiteRefundsRoute
   SiteSponsorsRoute: typeof SiteSponsorsRoute
   SiteTermsRoute: typeof SiteTermsRoute
+  SiteThemesRoute: typeof SiteThemesRoute
   SiteIndexRoute: typeof SiteIndexRoute
   SiteAlternativesSlugRoute: typeof SiteAlternativesSlugRoute
   SiteBlogSlugRoute: typeof SiteBlogSlugRoute
-  SiteCasinoSlugRoute: typeof SiteCasinoSlugRoute
   SiteChartsSlugRoute: typeof SiteChartsSlugRoute
   SiteDocsAiAgentsRoute: typeof SiteDocsAiAgentsRoute
   SiteDocsMotionPatternsRoute: typeof SiteDocsMotionPatternsRoute
@@ -623,31 +779,39 @@ interface SiteRouteRouteChildren {
   SiteDocsOpenuiRoute: typeof SiteDocsOpenuiRoute
   SiteDocsThemeRoute: typeof SiteDocsThemeRoute
   SiteGuidesSlugRoute: typeof SiteGuidesSlugRoute
+  SiteMicroInteractionsSlugRoute: typeof SiteMicroInteractionsSlugRoute
   SiteReactNativeSlugRoute: typeof SiteReactNativeSlugRoute
+  SiteSoundsSlugRoute: typeof SiteSoundsSlugRoute
   SiteAlternativesIndexRoute: typeof SiteAlternativesIndexRoute
   SiteBlogIndexRoute: typeof SiteBlogIndexRoute
   SiteCasinoIndexRoute: typeof SiteCasinoIndexRoute
   SiteChartsIndexRoute: typeof SiteChartsIndexRoute
   SiteComponentsIndexRoute: typeof SiteComponentsIndexRoute
   SiteGuidesIndexRoute: typeof SiteGuidesIndexRoute
+  SiteMicroInteractionsIndexRoute: typeof SiteMicroInteractionsIndexRoute
   SiteReactNativeIndexRoute: typeof SiteReactNativeIndexRoute
-  SiteComponentsCategorySlugRoute: typeof SiteComponentsCategorySlugRoute
+  SiteSoundsIndexRoute: typeof SiteSoundsIndexRoute
+  SiteCasinoSlugVariantRoute: typeof SiteCasinoSlugVariantRoute
+  SiteCasinoSlugIndexRoute: typeof SiteCasinoSlugIndexRoute
   SiteComponentsCategoryIndexRoute: typeof SiteComponentsCategoryIndexRoute
+  SiteComponentsCategorySlugVariantRoute: typeof SiteComponentsCategorySlugVariantRoute
+  SiteComponentsCategorySlugIndexRoute: typeof SiteComponentsCategorySlugIndexRoute
 }
 
 const SiteRouteRouteChildren: SiteRouteRouteChildren = {
   SiteSplatRoute: SiteSplatRoute,
   Site404Route: Site404Route,
+  SiteBrandRoute: SiteBrandRoute,
   SiteChangelogRoute: SiteChangelogRoute,
   SitePlaygroundRoute: SitePlaygroundRoute,
   SitePrivacyRoute: SitePrivacyRoute,
   SiteRefundsRoute: SiteRefundsRoute,
   SiteSponsorsRoute: SiteSponsorsRoute,
   SiteTermsRoute: SiteTermsRoute,
+  SiteThemesRoute: SiteThemesRoute,
   SiteIndexRoute: SiteIndexRoute,
   SiteAlternativesSlugRoute: SiteAlternativesSlugRoute,
   SiteBlogSlugRoute: SiteBlogSlugRoute,
-  SiteCasinoSlugRoute: SiteCasinoSlugRoute,
   SiteChartsSlugRoute: SiteChartsSlugRoute,
   SiteDocsAiAgentsRoute: SiteDocsAiAgentsRoute,
   SiteDocsMotionPatternsRoute: SiteDocsMotionPatternsRoute,
@@ -655,16 +819,24 @@ const SiteRouteRouteChildren: SiteRouteRouteChildren = {
   SiteDocsOpenuiRoute: SiteDocsOpenuiRoute,
   SiteDocsThemeRoute: SiteDocsThemeRoute,
   SiteGuidesSlugRoute: SiteGuidesSlugRoute,
+  SiteMicroInteractionsSlugRoute: SiteMicroInteractionsSlugRoute,
   SiteReactNativeSlugRoute: SiteReactNativeSlugRoute,
+  SiteSoundsSlugRoute: SiteSoundsSlugRoute,
   SiteAlternativesIndexRoute: SiteAlternativesIndexRoute,
   SiteBlogIndexRoute: SiteBlogIndexRoute,
   SiteCasinoIndexRoute: SiteCasinoIndexRoute,
   SiteChartsIndexRoute: SiteChartsIndexRoute,
   SiteComponentsIndexRoute: SiteComponentsIndexRoute,
   SiteGuidesIndexRoute: SiteGuidesIndexRoute,
+  SiteMicroInteractionsIndexRoute: SiteMicroInteractionsIndexRoute,
   SiteReactNativeIndexRoute: SiteReactNativeIndexRoute,
-  SiteComponentsCategorySlugRoute: SiteComponentsCategorySlugRoute,
+  SiteSoundsIndexRoute: SiteSoundsIndexRoute,
+  SiteCasinoSlugVariantRoute: SiteCasinoSlugVariantRoute,
+  SiteCasinoSlugIndexRoute: SiteCasinoSlugIndexRoute,
   SiteComponentsCategoryIndexRoute: SiteComponentsCategoryIndexRoute,
+  SiteComponentsCategorySlugVariantRoute:
+    SiteComponentsCategorySlugVariantRoute,
+  SiteComponentsCategorySlugIndexRoute: SiteComponentsCategorySlugIndexRoute,
 }
 
 const SiteRouteRouteWithChildren = SiteRouteRoute._addFileChildren(

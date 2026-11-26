@@ -8,6 +8,7 @@ import {
 } from "motion/react";
 import {
   forwardRef,
+  type MouseEvent,
   type PointerEvent,
   type ReactNode,
   useCallback,
@@ -15,7 +16,8 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
-import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
+import { useSound } from "@/lib/sound";
+import { pressSound } from "@/lib/sounds/press";
 import { cn } from "@/lib/utils";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline";
@@ -25,11 +27,16 @@ export interface ButtonProps extends Omit<
   HTMLMotionProps<"button">,
   "children"
 > {
+  /** Visual style: filled, card, ghost or outline. Default: "primary" */
   variant?: ButtonVariant;
+  /** Height and padding; "icon" is a square icon-only button. Default: "md" */
   size?: ButtonSize;
+  /** Scale while pressed. Default 0.97: subtle, so the press reads as feedback, not a squash. */
   pressScale?: number;
   /** Spawn a Material-style ripple from the press point. Off by default. */
   ripple?: boolean;
+  /** Play a soft press sound. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   children?: ReactNode;
 }
 
@@ -37,8 +44,11 @@ export interface ButtonLinkProps extends Omit<
   HTMLMotionProps<"a">,
   "children"
 > {
+  /** Visual style: filled, card, ghost or outline. Default: "primary" */
   variant?: ButtonVariant;
+  /** Height and padding; "icon" is a square icon-only link. Default: "md" */
   size?: ButtonSize;
+  /** Scale while pressed. Default 0.97. */
   pressScale?: number;
   children?: ReactNode;
 }
@@ -57,7 +67,7 @@ const SIZE_CLASS: Record<ButtonSize, string> = {
   sm: "h-8 px-3 text-xs gap-1.5 rounded-full",
   md: "h-10 px-5 text-sm gap-2 rounded-full",
   lg: "h-12 px-6 text-base gap-2 rounded-full",
-  icon: "h-8 w-8 rounded-lg",
+  icon: "h-8 w-8 rounded-full",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -65,22 +75,34 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     {
       variant = "primary",
       size = "md",
-      pressScale = 0.93,
+      pressScale = 0.97,
       ripple = false,
+      sound = false,
       className,
       children,
       onPointerDown,
+      onClick,
       ...rest
     },
     ref,
   ) {
     const reduce = useReducedMotion();
-    const canHover = useHoverCapable();
     const [ripples, setRipples] = useState<Ripple[]>([]);
     const nextId = useRef(0);
+    const play = useSound(pressSound, { enabled: sound });
+
+    const handleClick = useCallback(
+      (event: MouseEvent<HTMLButtonElement>) => {
+        // `detail` is 0 for a click the keyboard made; a pointer press already sounded.
+        if (event.detail === 0) play();
+        onClick?.(event);
+      },
+      [play, onClick],
+    );
 
     const handlePointerDown = useCallback(
       (event: PointerEvent<HTMLButtonElement>) => {
+        play();
         if (ripple && !reduce) {
           const rect = event.currentTarget.getBoundingClientRect();
           const size = Math.max(rect.width, rect.height) * 2;
@@ -97,17 +119,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         }
         onPointerDown?.(event);
       },
-      [ripple, reduce, onPointerDown],
+      [ripple, reduce, onPointerDown, play],
     );
 
     return (
+      // Hover changes colour only: a hover scale blurs the label, and buttons
+      // are hovered far too often for movement to earn its place.
       <motion.button
         ref={ref}
         type="button"
         whileTap={reduce ? undefined : { scale: pressScale }}
-        whileHover={reduce || !canHover ? undefined : { scale: 1.02 }}
         transition={SPRING_PRESS}
         onPointerDown={handlePointerDown}
+        onClick={handleClick}
         className={cn(
           "inline-flex items-center justify-center font-medium select-none",
           "transition-colors",
@@ -137,7 +161,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                   initial={{ scale: 0.05, opacity: 0.3 }}
                   animate={{ scale: 1, opacity: 0 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 1.6, ease: EASE_OUT }}
+                  transition={{ duration: 0.8, ease: EASE_OUT }}
                   onAnimationComplete={() =>
                     setRipples((prev) => prev.filter((x) => x.id !== r.id))
                   }
@@ -157,7 +181,7 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
     {
       variant = "primary",
       size = "md",
-      pressScale = 0.93,
+      pressScale = 0.97,
       className,
       children,
       ...rest
@@ -165,13 +189,11 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
     ref,
   ) {
     const reduce = useReducedMotion();
-    const canHover = useHoverCapable();
 
     return (
       <motion.a
         ref={ref}
         whileTap={reduce ? undefined : { scale: pressScale }}
-        whileHover={reduce || !canHover ? undefined : { scale: 1.02 }}
         transition={SPRING_PRESS}
         className={cn(
           "inline-flex items-center justify-center font-medium select-none",

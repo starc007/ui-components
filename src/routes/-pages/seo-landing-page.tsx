@@ -2,7 +2,7 @@ import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 import { getTranslations } from "@/i18n/server";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
 import { ogImagePath } from "@/lib/og-paths";
 import { findSeoPage, seoPageMetadata } from "@/lib/seo-pages";
@@ -40,21 +40,13 @@ export const getSeoIndexPage = createServerFn({ method: "GET" })
     const path = `/${kind}`;
     const title = t("title");
     const description = t("description");
-    const image = ogImagePath("page", kind);
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path,
       title,
       description,
-      alternates: { canonical: path },
-      openGraph: {
-        title: `${title} · beUI`,
-        description,
-        url: path,
-        type: "website",
-        siteName: "beUI",
-        images: [{ url: image, width: 1200, height: 630, alt: title }],
-      },
-      twitter: { card: "summary_large_image", title: `${title} · beUI`, description, images: [image] },
-    };
+      image: ogImagePath("page", kind),
+      imageAlt: title,
+    });
     return { metadata };
   });
 

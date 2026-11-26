@@ -45,23 +45,41 @@ export const cardFolderMessages = {
 export type CardFolderMessages = typeof cardFolderMessages;
 
 export interface CardFolderProps {
+  /** Card name shown on the folder front and used in labels. */
   title: string;
+  /** Full card number. Non-digits are stripped; only the last 4 show until revealed. */
   cardNumber: string;
+  /** Expiry date text shown on the folder, e.g. "08/29". */
   expiry: string;
+  /** Security code, masked until details are revealed. */
   cvv: string;
+  /** The card face that lifts out of the folder. */
   card: ReactNode;
+  /** Whether the card is lifted out, for controlled use. */
   open?: boolean;
+  /** Whether the card starts lifted out when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the next state when the folder opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Whether the number and CVV are revealed, for controlled use. */
   detailsVisible?: boolean;
+  /** Whether the number and CVV start revealed when uncontrolled. Default: false */
   defaultDetailsVisible?: boolean;
+  /** Called with the next state when the details are shown or hidden. */
   onDetailsVisibleChange?: (visible: boolean) => void;
+  /** Called after the folder is pressed, alongside the open toggle. */
   onClick?: () => void;
+  /** Called when the actions button is pressed. The button shows only when set. */
   onAction?: () => void;
+  /** Accessible name for the folder button. Defaults to the `open` or `close` label. */
   ariaLabel?: string;
+  /** Accessible name for the actions button. Defaults to the `actions` label. */
   actionLabel?: string;
+  /** Disables opening, revealing details and the actions button. Default: false */
   disabled?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto the wrapper around the card face. */
   cardClassName?: string;
   /** Override any built-in string. `{title}`, `{lastFour}` and `{expiry}` fill `open`, `close` and `actions`. */
   labels?: Partial<CardFolderMessages>;
@@ -248,7 +266,7 @@ export function CardFolder({
             />
           </svg>
 
-          <span className="absolute inset-x-[5%] inset-y-0 z-10 flex min-w-0 flex-col justify-between py-4">
+          <span className="absolute inset-x-[5%] inset-y-0 z-10 flex min-w-0 flex-col justify-between py-3">
             <span className="flex items-start justify-between pr-2">
               <motion.button
                 key="card-details-visibility"
@@ -263,7 +281,7 @@ export function CardFolder({
                 whileTap={reduce || disabled ? undefined : { scale: 0.96 }}
                 transition={reduce ? { duration: 0.12 } : SPRING_PRESS}
                 className={cn(
-                  "z-30 flex size-10 shrink-0 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                  "z-30 flex size-9 shrink-0 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
                   isOpen ? "pointer-events-none" : "pointer-events-auto",
                 )}
               >
@@ -297,9 +315,9 @@ export function CardFolder({
                 </AnimatePresence>
               </motion.button>
 
-              <span className="flex shrink-0 items-end gap-3.5 pt-2">
+              <span className="flex shrink-0 items-end gap-3.5 pt-1">
                 <span className="flex flex-col gap-0.5">
-                  <span className="text-[9px] font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
+                  <span className="text-[11px] leading-none font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
                     {t("expiry")}
                   </span>
                   <span className="text-xs font-medium text-foreground tabular-nums">
@@ -307,7 +325,7 @@ export function CardFolder({
                   </span>
                 </span>
                 <span className="flex flex-col gap-0.5">
-                  <span className="text-[9px] font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
+                  <span className="text-[11px] leading-none font-medium uppercase tracking-[0.12em] text-muted-foreground/65">
                     {t("cvv")}
                   </span>
                   <DigitSwap

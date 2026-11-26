@@ -19,7 +19,9 @@ import {
 
 export interface MultiSelectListProps {
   children: ReactNode;
+  /** Accessible name for the listbox. Default: "Options" */
   ariaLabel?: string;
+  /** Classes merged onto the scrolling listbox. */
   className?: string;
 }
 
@@ -36,7 +38,7 @@ export function MultiSelectList({
       aria-label={ariaLabel ?? context.t("listLabel")}
       aria-multiselectable="true"
       className={cn(
-        "relative isolate max-h-64 overflow-y-auto overscroll-contain p-1.5 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden",
+        "relative isolate max-h-64 overflow-y-auto overscroll-contain p-2 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden",
         className,
       )}
     >
@@ -47,6 +49,7 @@ export function MultiSelectList({
 
 export interface MultiSelectGroupProps {
   children: ReactNode;
+  /** Classes merged onto the group fieldset. */
   className?: string;
 }
 
@@ -70,6 +73,7 @@ export function MultiSelectGroup({
 
 export interface MultiSelectLabelProps {
   children: ReactNode;
+  /** Classes merged onto the label element. */
   className?: string;
 }
 
@@ -79,7 +83,7 @@ export function MultiSelectLabel({
 }: MultiSelectLabelProps) {
   const groupId = useContext(MultiSelectGroupContext);
   const labelClassName = cn(
-    "w-full px-2 py-1.5 text-[0.68rem] font-medium uppercase tracking-[0.12em] text-muted-foreground",
+    "w-full px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground",
     className,
   );
   return groupId ? (
@@ -90,12 +94,18 @@ export function MultiSelectLabel({
 }
 
 export interface MultiSelectItemProps {
+  /** The option's value, added to or removed from the selection. */
   value: string;
   children: ReactNode;
+  /** Text for search and the trigger chip when the label is not plain text. */
   textValue?: string;
+  /** Extra words that match this option in search. */
   keywords?: string[];
+  /** Keeps the option visible but not selectable. Default: false */
   disabled?: boolean;
+  /** Called with the option's value when it is clicked, before it toggles. */
   onSelect?: (value: string) => void;
+  /** Classes merged onto the option row. */
   className?: string;
 }
 
@@ -169,7 +179,7 @@ export function MultiSelectItem({
         context.toggle(value);
       }}
       className={cn(
-        "relative flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm outline-none transition-colors duration-150",
+        "relative flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm outline-none transition-colors duration-150",
         active || selected ? "text-foreground" : "text-muted-foreground",
         "disabled:pointer-events-none disabled:opacity-45",
         className,
@@ -179,7 +189,7 @@ export function MultiSelectItem({
         <motion.span
           aria-hidden="true"
           layoutId={context.activeLayoutId}
-          className="absolute inset-0 -z-10 rounded-lg bg-muted"
+          className="absolute inset-0 -z-10 rounded-lg bg-foreground/[0.07]"
           transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
         />
       ) : null}
@@ -204,6 +214,7 @@ export function MultiSelectItem({
 
 export interface MultiSelectEmptyProps {
   children?: ReactNode;
+  /** Classes merged onto the empty message. */
   className?: string;
 }
 
@@ -227,6 +238,7 @@ export function MultiSelectEmpty({
 }
 
 export interface MultiSelectSeparatorProps {
+  /** Classes merged onto the separator line. */
   className?: string;
 }
 

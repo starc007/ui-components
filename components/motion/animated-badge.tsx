@@ -17,7 +17,7 @@ import {
   type Variants,
 } from "motion/react";
 import type { ReactNode } from "react";
-import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
+import { EASE_IN_OUT, EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 
 export type AnimatedBadgeStatus =
@@ -34,12 +34,18 @@ export interface AnimatedBadgeProps extends Omit<
   HTMLMotionProps<"span">,
   "children"
 > {
+  /** Sets the color and default icon; changing it rolls the icon. Default: "neutral" */
   status?: AnimatedBadgeStatus;
+  /** Badge height, padding and text size. Default: "md" */
   size?: AnimatedBadgeSize;
   children?: ReactNode;
+  /** Custom icon in place of the status icon. */
   icon?: ReactNode;
+  /** Show the icon before the label. Default: true */
   showIcon?: boolean;
+  /** Breathe the background to show ongoing work. Default: true while status is "loading" */
   pulse?: boolean;
+  /** Key that triggers the label roll when it changes. Default: the text label, else the status. */
   contentKey?: string | number;
 }
 
@@ -163,7 +169,7 @@ export function AnimatedBadge({
           className="absolute inset-0 rounded-full bg-current"
           initial={{ opacity: 0.06 }}
           animate={{ opacity: [0.06, 0.18, 0.06] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: EASE_IN_OUT }}
         />
       ) : null}
       {/* The badge animates its width with a scale transform. Slots opt into

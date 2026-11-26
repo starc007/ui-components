@@ -25,6 +25,7 @@ const FULL_TILT = 320;
 export interface BubbleSliderProps extends SliderOptions {
   /** Formats the value shown in the bubble. */
   format?: (value: number) => string;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -82,14 +83,14 @@ export function BubbleSlider({ format, className, ...options }: BubbleSliderProp
         )}
       >
         <motion.div
-          className="absolute inset-y-0 left-0 rounded-full bg-foreground"
+          className="absolute inset-y-0 left-0 rounded-full bg-primary"
           style={{ width: left }}
         />
 
         {/* thumb — overhangs the track by half its width at both ends, which the
             wrapper's padding leaves room for */}
         <motion.div
-          className="absolute top-1/2 size-5 rounded-full border-2 border-foreground bg-background shadow-sm"
+          className="absolute top-1/2 size-5 rounded-full border-2 border-primary bg-background shadow-sm"
           style={{ left, x: "-50%", y: "-50%" }}
           animate={reduce ? undefined : { scale: dragging ? 1.25 : 1 }}
           transition={SPRING_PRESS}
@@ -116,10 +117,10 @@ export function BubbleSlider({ format, className, ...options }: BubbleSliderProp
                     ? undefined
                     : { rotate: tilt, scaleX: squash, scaleY: stretch, originY: 1 }
                 }
-                className="relative rounded-xl bg-foreground px-2.5 py-1 text-sm font-medium tabular-nums text-background shadow-md"
+                className="relative rounded-full bg-primary px-3 py-1 text-sm font-medium tabular-nums text-primary-foreground shadow-md"
               >
                 {readout}
-                <span className="absolute -bottom-1 left-1/2 size-2.5 -translate-x-1/2 rotate-45 rounded-[3px] bg-foreground" />
+                <span className="absolute -bottom-1 left-1/2 size-2.5 -translate-x-1/2 rotate-45 rounded-[3px] bg-primary" />
               </motion.div>
             ) : null}
           </AnimatePresence>

@@ -7,9 +7,10 @@ import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
 import { Link } from "@/lib/navigation";
 import { ogImagePath } from "@/lib/og-paths";
@@ -91,9 +92,9 @@ const BeStat = defineComponent({
   description: "A single numeric metric that springs up from zero when shown.",
   props: z.object({ label: z.string(), value: z.number() }),
   component: ({ props }) => (
-    <div className="rounded-xl border border-border bg-card p-4">
+    <div className="rounded-2xl border border-border bg-card p-4">
       <p className="text-sm text-muted-foreground">{props.label}</p>
-      <AnimatedNumber value={props.value} className="text-2xl font-semibold" />
+      <AnimatedNumber value={props.value} className="text-2xl font-medium" />
     </div>
   ),
 });
@@ -222,36 +223,15 @@ export const getOpenUIPage = createServerFn({ method: "GET" })
     const t = getTranslations("Pages.openui");
     const title = t("meta.title");
     const description = t("meta.description");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: PAGE_PATH,
       title,
       description,
-      alternates: {
-        canonical: PAGE_PATH,
-        types: { "text/markdown": `${PAGE_PATH}.md` },
-      },
-      openGraph: {
-        title: `${title} · beUI`,
-        description,
-        url: PAGE_PATH,
-        locale: "en_US",
-        type: "article",
-        siteName: "beUI",
-        images: [
-          {
-            url: PAGE_IMAGE,
-            width: 1200,
-            height: 630,
-            alt: t("meta.imageAlt"),
-          },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${title} · beUI`,
-        description,
-        images: [PAGE_IMAGE],
-      },
-    };
+      type: "article",
+      image: PAGE_IMAGE,
+      imageAlt: t("meta.imageAlt"),
+      types: { "text/markdown": `${PAGE_PATH}.md` },
+    });
 
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([
@@ -295,8 +275,7 @@ const code = (chunks: ReactNode) => (
 
 const em = (chunks: ReactNode) => <em>{chunks}</em>;
 
-const H2_CLASS =
-  "mt-10 scroll-mt-24 text-xl font-medium tracking-tight text-foreground";
+const H2_CLASS = "text-xl font-medium tracking-tight text-foreground";
 
 export function OpenUIPage({ data }: { data: OpenUIPageData }) {
   return (
@@ -314,13 +293,16 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
     <GuideShell>
       <JsonLd data={data.jsonLd} />
       <header id="overview" className="scroll-mt-24">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {t("header.eyebrow")}
         </p>
         <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <h1 className="text-3xl font-medium tracking-tight text-foreground">
+          <AnchorHeading
+            as="h1"
+            headingClassName="text-3xl font-medium tracking-tight text-foreground"
+          >
             {t("header.title")}
-          </h1>
+          </AnchorHeading>
           <CopyPage
             pageUrl={`${SITE_URL}${PAGE_PATH}`}
             markdownPath={`${PAGE_PATH}.md`}
@@ -344,9 +326,9 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         </p>
       </header>
 
-      <h2 id="install" className={H2_CLASS}>
+      <AnchorHeading id="install" className="mt-10" headingClassName={H2_CLASS}>
         {t("install.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("install.body", {
           link: (chunks) => (
@@ -366,9 +348,9 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         {t.rich("install.scaffold", { code, command: SCAFFOLD_COMMAND })}
       </p>
 
-      <h2 id="register-components" className={H2_CLASS}>
+      <AnchorHeading id="register-components" className="mt-10" headingClassName={H2_CLASS}>
         {t("registerComponents.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("registerComponents.body", { code })}
       </p>
@@ -376,9 +358,9 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         <CodeBlock {...blocks.define} />
       </div>
 
-      <h2 id="assemble-library" className={H2_CLASS}>
+      <AnchorHeading id="assemble-library" className="mt-10" headingClassName={H2_CLASS}>
         {t("assembleLibrary.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("assembleLibrary.body", { code })}
       </p>
@@ -386,9 +368,9 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         <CodeBlock {...blocks.library} />
       </div>
 
-      <h2 id="generate-prompt" className={H2_CLASS}>
+      <AnchorHeading id="generate-prompt" className="mt-10" headingClassName={H2_CLASS}>
         {t("generatePrompt.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("generatePrompt.body", { code, command: GENERATE_COMMAND })}
       </p>
@@ -399,9 +381,9 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         {t.rich("generatePrompt.note", { code })}
       </p>
 
-      <h2 id="render-stream" className={H2_CLASS}>
+      <AnchorHeading id="render-stream" className="mt-10" headingClassName={H2_CLASS}>
         {t("renderStream.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("renderStream.body", { code, renderer: "<Renderer>" })}
       </p>
@@ -409,16 +391,16 @@ function OpenUIContent({ data }: { data: OpenUIPageData }) {
         <CodeBlock {...blocks.render} />
       </div>
 
-      <h2 id="why-beui" className={H2_CLASS}>
+      <AnchorHeading id="why-beui" className="mt-10" headingClassName={H2_CLASS}>
         {t("whyBeui.title")}
-      </h2>
+      </AnchorHeading>
       <p className="mt-2 text-muted-foreground">
         {t.rich("whyBeui.body", { em })}
       </p>
 
-      <h2 id="resources" className={H2_CLASS}>
+      <AnchorHeading id="resources" className="mt-10" headingClassName={H2_CLASS}>
         {t("resources.title")}
-      </h2>
+      </AnchorHeading>
       <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
         {RESOURCES.map((r) => (
           <li key={r.url} className="flex items-start justify-between gap-4 p-4">

@@ -1,15 +1,20 @@
 export interface SankeyNode {
+  /** Unique key that links point to. Repeated ids keep the first node. */
   id: string;
+  /** Name shown beside the node, in the tooltip and in the data table. */
   label: string;
   /** Any CSS color. Defaults to the palette, in node order. */
   color?: string;
+  /** Extra line in the node's tooltip and accessible name. */
   description?: string;
 }
 
 export interface SankeyLink {
   /** Defaults to `${source}:${target}`. */
   id?: string;
+  /** `id` of the node the flow leaves. */
   source: string;
+  /** `id` of the node the flow enters. */
   target: string;
   /** Positive value. Zero, negative and invalid values are left out. */
   value: number;
@@ -49,7 +54,7 @@ export type PlacedLink = {
 
 export const SANKEY_COLORS = [
   "#1d4ed8",
-  "#7c3aed",
+  "#4d7c0f",
   "#0f766e",
   "#b45309",
   "#be123c",

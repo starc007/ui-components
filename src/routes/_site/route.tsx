@@ -9,14 +9,17 @@ import { KeyboardShortcuts } from "@/components/app/chrome/keyboard-shortcuts";
 import { NativeStrip } from "@/components/app/chrome/native-strip";
 import { SiteFrame } from "@/components/app/chrome/site-frame";
 import { SiteHeader } from "@/components/app/chrome/site-header";
+import { SiteSoundProvider } from "@/components/app/chrome/site-sound";
+import { ProPopup } from "@/components/app/chrome/pro-popup";
 import { ThemeProvider } from "@/components/app/chrome/theme-provider";
-import { LOCALE } from "@/i18n/messages";
+import { WebMcpTools } from "@/components/app/chrome/webmcp-tools";
+import { LOCALE, type SiteMessages } from "@/i18n/messages";
 import { clientMessages, getTranslations } from "@/i18n/server";
 import { type Metadata, metadataToHead } from "@/lib/head";
 import { LocaleProvider } from "@/lib/i18n";
 import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import { AUTHOR, SITE_NAME, siteJsonLd } from "@/lib/seo";
-import { NotFoundPage } from "../-not-found";
+import { NotFoundPage, notFoundMeta } from "../-not-found";
 
 const KEYWORDS = [
   "React motion components",
@@ -73,15 +76,7 @@ export const Route = createFileRoute("/_site")({
     const head = metadataToHead(loaderData.metadata);
     // A child that threw notFound() gets the not-found title and noindex.
     if (matches.some((match) => match.status === "notFound")) {
-      const notFound = loaderData.messages.Chrome.notFound;
-      return {
-        ...head,
-        meta: [
-          { title: `${notFound.title} · beUI` },
-          { name: "description", content: notFound.description },
-          { name: "robots", content: "noindex" },
-        ],
-      };
+      return { ...head, meta: notFoundMeta(loaderData.messages.Chrome.notFound) };
     }
     return head;
   },
@@ -103,18 +98,24 @@ const googleAnalyticsId = import.meta.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID as str
 function SiteLayout({ children }: { children: ReactNode }) {
   const { messages } = Route.useLoaderData();
   return (
-    <IntlProvider locale={LOCALE} messages={messages as never} timeZone="UTC">
+    // The layout ships every namespace but `Pages`; each page merges its own
+    // `Pages.<page>` in through `PageMessages`, so the full type holds there.
+    <IntlProvider locale={LOCALE} messages={messages as SiteMessages} timeZone="UTC">
       {/* Library components format numbers for this locale; their labels are English defaults. */}
       <LocaleProvider locale={LOCALE}>
         <ThemeProvider>
-          <JsonLd data={siteJsonLd()} />
-          <KeyboardShortcuts />
-          <NativeStrip />
-          <SiteHeader />
-          <main>
-            <SiteFrame>{children}</SiteFrame>
-          </main>
-          <GoogleAnalytics measurementId={googleAnalyticsId} />
+          <SiteSoundProvider>
+            <JsonLd data={siteJsonLd()} />
+            <KeyboardShortcuts />
+            <WebMcpTools />
+            <NativeStrip />
+            <SiteHeader />
+            <main>
+              <SiteFrame>{children}</SiteFrame>
+            </main>
+            <ProPopup />
+            <GoogleAnalytics measurementId={googleAnalyticsId} />
+          </SiteSoundProvider>
         </ThemeProvider>
       </LocaleProvider>
     </IntlProvider>

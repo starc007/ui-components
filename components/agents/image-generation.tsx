@@ -4,6 +4,7 @@ import { Check, CircleAlert, RotateCcw } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef } from "react";
+import { IconSwap } from "@/components/agents/icon-swap";
 import { EASE_IN_OUT, EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
@@ -19,23 +20,33 @@ export type ImageGenerationStatus =
 export interface ImageGenerationProps {
   /** The completed media. Pass an img, Next Image, canvas, video, or custom preview. */
   children?: ReactNode;
+  /** Generation stage. Sets the dither overlay, media blur and status line. Default: "generating" */
   status?: ImageGenerationStatus;
   /** Accessible description. Defaults to a description derived from prompt. */
   label?: string;
+  /** The prompt, shown in quotes under the status line. */
   prompt?: string;
+  /** Badge in the top right corner. Default: "1024 × 1024" */
   resolution?: string;
   /** CSS aspect ratio reserved before generated media is available. */
   aspectRatio?: CSSProperties["aspectRatio"];
+  /** "compact" caps the width at 208px, "fluid" fills the container. Default: "compact" */
   size?: "compact" | "fluid";
   /** Lets the active dither cluster follow fine-pointer movement. */
   interactive?: boolean;
+  /** Replaces the built-in status line text for the current status. */
   statusText?: string;
+  /** Shows the status line under the media. Default: true */
   showStatus?: boolean;
+  /** Called from the retry button, which shows only when status is "error". */
   onRetry?: () => void;
   /** Override any built-in string. `{status}` and `{prompt}` fill `labelWithPrompt`; `{prompt}` fills `quotedPrompt`. */
   labels?: Partial<ImageGenerationMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto the layer that holds the media. */
   mediaClassName?: string;
+  /** Classes merged onto the status line. */
   statusClassName?: string;
 }
 
@@ -299,7 +310,7 @@ export function ImageGeneration({
           role="img"
           aria-label={resolvedLabel}
           style={{ aspectRatio }}
-          className="relative isolate w-full overflow-hidden rounded-xl bg-muted"
+          className="relative isolate w-full overflow-hidden rounded-2xl bg-muted"
         >
           <motion.div
             aria-hidden={children ? undefined : true}
@@ -344,7 +355,7 @@ export function ImageGeneration({
           </AnimatePresence>
 
           {resolution ? (
-            <span className="absolute top-2 right-2 z-10 rounded-full bg-background/75 px-2 py-0.5 font-mono text-[10px] tabular-nums text-muted-foreground">
+            <span className="absolute top-2 right-2 z-10 rounded-full bg-background/75 px-2 py-0.5 font-mono text-[11px] tabular-nums text-muted-foreground">
               {resolution}
             </span>
           ) : null}
@@ -361,7 +372,9 @@ export function ImageGeneration({
                   statusClassName,
                 )}
               >
-                <DitherMark status={status} reduce={reduce} />
+                <IconSwap id={active ? "active" : status}>
+                  <DitherMark status={status} reduce={reduce} />
+                </IconSwap>
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.span
                     key={resolvedStatusText}
@@ -392,7 +405,7 @@ export function ImageGeneration({
             onClick={onRetry}
             whileTap={reduce ? undefined : { scale: 0.96 }}
             transition={SPRING_PRESS}
-            className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-sm font-medium text-foreground outline-none transition-colors hover:bg-foreground/[0.06] focus-visible:ring-2 focus-visible:ring-ring"
           >
             <RotateCcw aria-hidden="true" className="size-4" />
             {t("retry")}

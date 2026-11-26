@@ -4,6 +4,7 @@ import { crc32, deflateSync } from "node:zlib";
 import { Resvg } from "@resvg/resvg-js";
 import type { ReactElement } from "react";
 import type { BlogProduct } from "@/lib/blog";
+import { CARD_TEXT_FONT, CARD_TITLE_FONT, loadCardFonts } from "@/lib/og-fonts";
 import satori from "satori";
 
 /**
@@ -15,6 +16,12 @@ import satori from "satori";
  * Each post gets two images: the 1200x630 social card and a 2000x840 cover
  * (dev.to's 1000x420 at 2x, also used on the post page and on Medium).
  */
+
+/**
+ * Satori already turns text into paths, so resvg needs no fonts. Loading the
+ * system's fonts anyway costs ~0.7s per image and changes no pixel.
+ */
+export const RESVG_OPTIONS = { font: { loadSystemFonts: false } } as const;
 
 type Rgb = [number, number, number];
 
@@ -206,7 +213,7 @@ function bannerElement({
   const unit = height / 630;
   const pad = Math.round(72 * unit);
   return (
-    <div style={{ width, height, display: "flex", position: "relative", fontFamily: "Geist", color: TEXT }}>
+    <div style={{ width, height, display: "flex", position: "relative", fontFamily: CARD_TEXT_FONT, color: TEXT }}>
       <img src={backgroundSrc} alt="" width={width} height={height} style={{ position: "absolute", inset: 0 }} />
       <img
         src={logoSrc}
@@ -231,8 +238,10 @@ function bannerElement({
           style={{
             display: "flex",
             fontSize: Math.round((title.length > 40 ? 50 : 60) * unit),
+            fontFamily: CARD_TITLE_FONT,
             fontWeight: 500,
-            letterSpacing: "-0.04em",
+            letterSpacing: "-0.02em",
+            wordSpacing: "0.08em",
             lineHeight: 1.08,
           }}
         >
@@ -247,16 +256,9 @@ export type BannerAssets = Awaited<ReturnType<typeof loadBannerAssets>>;
 
 export async function loadBannerAssets() {
   const read = (file: string) => readFile(path.join("public", file));
-  const [regular, medium, logo] = await Promise.all([
-    read("og/fonts/Geist-Regular.ttf"),
-    read("og/fonts/Geist-Medium.ttf"),
-    read("beui-mark.png"),
-  ]);
+  const [fonts, logo] = await Promise.all([loadCardFonts(), read("beui-mark.png")]);
   return {
-    fonts: [
-      { name: "Geist", data: regular, weight: 400 as const, style: "normal" as const },
-      { name: "Geist", data: medium, weight: 500 as const, style: "normal" as const },
-    ],
+    fonts,
     logoSrc: `data:image/png;base64,${logo.toString("base64")}`,
   };
 }
@@ -280,7 +282,7 @@ export async function renderBlogBanners(
       }),
       { ...size, fonts: assets.fonts },
     );
-    return new Resvg(svg).render().asPng();
+    return new Resvg(svg, RESVG_OPTIONS).render().asPng();
   };
   const [og, cover] = await Promise.all([render(BANNER_SIZES.og), render(BANNER_SIZES.cover)]);
   return { og, cover };

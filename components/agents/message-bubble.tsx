@@ -2,8 +2,11 @@
 
 import { ChevronDown } from "lucide-react";
 import {
+  animate,
   type HTMLMotionProps,
   motion,
+  useMotionTemplate,
+  useMotionValue,
   useReducedMotion,
 } from "motion/react";
 import {
@@ -16,15 +19,14 @@ import {
   useCallback,
   useContext,
   useId,
+  useLayoutEffect,
+  useRef,
   useState,
 } from "react";
 import { MessageSideContext } from "@/components/agents/message-context";
-import {
-  EASE_OUT,
-  SPRING_LAYOUT,
-  SPRING_SWAP,
-} from "@/lib/ease";
+import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { mergeRefs } from "@/lib/merge-refs";
 import { cn } from "@/lib/utils";
 
 export type MessageBubbleVariant =
@@ -55,10 +57,10 @@ const MessageBubbleContext = createContext<MessageBubbleContextValue>({
   animateIn: true,
   variant: "soft",
 });
-const MessageBubbleLayoutContext = createContext<() => void>(() => {});
 
 export interface MessageBubbleProps
   extends Omit<HTMLMotionProps<"div">, "children"> {
+  /** Fill and border style of the bubble. Default: "soft" */
   variant?: MessageBubbleVariant;
   /** Defaults to the surrounding Message alignment when omitted. */
   align?: MessageBubbleAlign;
@@ -76,29 +78,29 @@ export interface MessageBubbleContentProps
 }
 
 export interface MessageBubbleGroupProps extends ComponentPropsWithRef<"div"> {
+  /** Gap between bubbles. Default: "compact" */
   spacing?: "compact" | "default";
 }
 
 export interface MessageBubbleCollapsibleProps
   extends ComponentPropsWithRef<"div"> {
+  /** Whether the full text shows, for controlled use. */
   open?: boolean;
+  /** Whether the full text shows at first when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new state when the text expands or collapses. */
   onOpenChange?: (open: boolean) => void;
+  /** Lines shown while collapsed. Default: 4 */
   collapsedLines?: 2 | 3 | 4 | 5 | 6;
+  /** Text of the expand button. Default: "Show more" */
   moreLabel?: ReactNode;
+  /** Text of the collapse button. Default: "Show less" */
   lessLabel?: ReactNode;
+  /** Classes merged onto the clamped text wrapper. */
   contentClassName?: string;
+  /** Classes merged onto the show more button. */
   triggerClassName?: string;
   children?: ReactNode;
-}
-
-function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
-    }
-  };
 }
 
 const BUBBLE_CONTENT_REVEAL = {
@@ -106,6 +108,13 @@ const BUBBLE_CONTENT_REVEAL = {
   ease: EASE_OUT,
   delay: 0.04,
 } as const;
+
+// Expanded text wipes in top to bottom, quick enough to read straight on.
+const REVEAL = { duration: 0.32, ease: EASE_OUT } as const;
+// Clamped text stays solid to here (%), then fades out by the bottom.
+const CLAMP_SOLID = 68;
+// How soft the moving edge of the wipe is, in % of the text's height.
+const WIPE_EDGE = 12;
 
 // Sent bubbles should pop into place quickly with one restrained overshoot.
 const BUBBLE_POP = {
@@ -164,12 +173,16 @@ export function MessageBubble({
 
 function bubbleContentClass(
   variant: MessageBubbleVariant,
+  align: MessageBubbleAlign,
   interactive: boolean,
 ) {
   return cn(
     "relative z-0 min-w-9 max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-6 text-foreground",
+    // The corner by the speaker is tighter, so a bubble points at who said it.
+    align === "end" ? "rounded-ee-md" : "rounded-es-md",
     "[&_a]:font-medium [&_a]:underline [&_a]:underline-offset-4 [&_code]:rounded [&_code]:bg-background/60 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.9em] [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p+p]:mt-2 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:bg-background/60 [&_pre]:p-3 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5",
-    variant === "solid" && "text-background",
+    variant === "solid" &&
+      "text-primary-foreground [&_code]:bg-primary-foreground/15 [&_pre]:bg-primary-foreground/15",
     variant === "ghost" && "w-full max-w-none rounded-none px-0 py-0",
     variant === "danger" && "text-destructive",
     interactive &&
@@ -184,7 +197,7 @@ function bubbleSurfaceClass(
   return cn(
     "pointer-events-none absolute inset-0 -z-10 rounded-[inherit]",
     align === "end" ? "origin-bottom-right" : "origin-bottom-left",
-    variant === "solid" && "bg-foreground",
+    variant === "solid" && "bg-primary",
     variant === "soft" && "bg-muted",
     variant === "tint" && "bg-muted",
     variant === "outline" && "border border-border/70 bg-background",
@@ -202,21 +215,20 @@ export function MessageBubbleContent({
   const reduce = useReducedMotion() ?? false;
   const { align = "start", animateIn, variant } =
     useContext(MessageBubbleContext);
-  const [layoutVersion, setLayoutVersion] = useState(0);
-  const notifyLayout = useCallback(
-    () => setLayoutVersion((version) => version + 1),
-    [],
-  );
   const interactive =
     render?.type === "button" || render?.type === "a";
-  const classes = cn(bubbleContentClass(variant, interactive), className);
+  const classes = cn(
+    bubbleContentClass(variant, align, interactive),
+    className,
+  );
   const composedChildren = (
     <>
+      {/* The surface pops in once, then always matches its text: a surface
+          that springs after its content leaves streamed lines and expanded
+          text hanging outside the bubble. */}
       {variant !== "ghost" ? (
         <motion.span
           aria-hidden="true"
-          layout={reduce ? false : "size"}
-          layoutDependency={layoutVersion}
           initial={
             animateIn && !reduce
               ? {
@@ -232,24 +244,21 @@ export function MessageBubbleContent({
               : {
                   opacity: { duration: 0.12, ease: EASE_OUT },
                   scale: BUBBLE_POP,
-                  layout: SPRING_LAYOUT,
                 }
           }
           className={bubbleSurfaceClass(variant, align)}
         />
       ) : null}
-      <MessageBubbleLayoutContext.Provider value={notifyLayout}>
-        <motion.div
-          initial={animateIn ? { opacity: 0 } : false}
-          animate={{ opacity: 1 }}
-          transition={
-            reduce ? { duration: 0.12, ease: EASE_OUT } : BUBBLE_CONTENT_REVEAL
-          }
-          className="relative"
-        >
-          {children}
-        </motion.div>
-      </MessageBubbleLayoutContext.Provider>
+      <motion.div
+        initial={animateIn ? { opacity: 0 } : false}
+        animate={{ opacity: 1 }}
+        transition={
+          reduce ? { duration: 0.12, ease: EASE_OUT } : BUBBLE_CONTENT_REVEAL
+        }
+        className="relative"
+      >
+        {children}
+      </motion.div>
     </>
   );
 
@@ -290,6 +299,10 @@ export function MessageBubbleGroup({
       className={cn(
         "flex w-full flex-col",
         spacing === "compact" ? "gap-1.5" : "gap-3",
+        // A bubble that follows one from the same speaker tightens its top
+        // corner on that side too, so the run reads as one turn.
+        "[&>[data-align=end]+[data-align=end]_[data-slot=message-bubble-content]]:rounded-se-md",
+        "[&>[data-align=start]+[data-align=start]_[data-slot=message-bubble-content]]:rounded-ss-md",
         className,
       )}
       {...props}
@@ -320,7 +333,6 @@ export function MessageBubbleCollapsible({
 }: MessageBubbleCollapsibleProps) {
   const reduce = useReducedMotion() ?? false;
   const contentId = useId();
-  const notifyLayout = useContext(MessageBubbleLayoutContext);
   const t = useMessages(
     "messageBubble",
     messageBubbleMessages,
@@ -328,15 +340,48 @@ export function MessageBubbleCollapsible({
   );
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const currentOpen = open ?? internalOpen;
+  const contentRef = useRef<HTMLDivElement>(null);
+  // Where the clamped text ended, as a share of the full text: the reveal
+  // starts there, so the lines already on screen never blink.
+  const clampedHeight = useRef(0);
+  // The fade mask, from solid (`solid`%) to clear (`clear`%). Clamped, it
+  // softens the last lines; open, it wipes down until the text is all solid.
+  const solid = useMotionValue(currentOpen ? 100 : CLAMP_SOLID);
+  const clear = useMotionValue(currentOpen ? 100 + WIPE_EDGE : 100);
+  const mask = useMotionTemplate`linear-gradient(to bottom, #000 ${solid}%, transparent ${clear}%)`;
 
   const setOpen = useCallback(
     (next: boolean) => {
-      notifyLayout();
+      if (next) clampedHeight.current = contentRef.current?.offsetHeight ?? 0;
       if (open === undefined) setInternalOpen(next);
       onOpenChange?.(next);
     },
-    [notifyLayout, onOpenChange, open],
+    [onOpenChange, open],
   );
+
+  // Opening shows the whole text at once (no height animation) and wipes the
+  // new lines in from the top; closing clamps straight back.
+  useLayoutEffect(() => {
+    if (!currentOpen) {
+      solid.set(CLAMP_SOLID);
+      clear.set(100);
+      return;
+    }
+    const full = contentRef.current?.offsetHeight ?? 0;
+    const start =
+      reduce || !full || !clampedHeight.current
+        ? 100
+        : Math.min(100, (clampedHeight.current / full) * 100 - WIPE_EDGE);
+    solid.set(start);
+    clear.set(start + WIPE_EDGE);
+    if (start >= 100) return;
+    const toSolid = animate(solid, 100, REVEAL);
+    const toClear = animate(clear, 100 + WIPE_EDGE, REVEAL);
+    return () => {
+      toSolid.stop();
+      toClear.stop();
+    };
+  }, [currentOpen, reduce, solid, clear]);
 
   return (
     <div
@@ -345,18 +390,17 @@ export function MessageBubbleCollapsible({
       className={cn("w-full", className)}
       {...props}
     >
-      <div
+      <motion.div
+        ref={contentRef}
         id={contentId}
+        style={{ maskImage: mask, WebkitMaskImage: mask }}
         className={cn(
-          "transition-[mask-image] duration-200",
           !currentOpen && LINE_CLAMP_CLASS[collapsedLines],
-          !currentOpen &&
-            "[mask-image:linear-gradient(to_bottom,#000_68%,transparent_100%)]",
           contentClassName,
         )}
       >
         {children}
-      </div>
+      </motion.div>
       <button
         type="button"
         aria-expanded={currentOpen}

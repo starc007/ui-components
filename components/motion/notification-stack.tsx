@@ -31,36 +31,59 @@ export const notificationStackMessages = {
 export type NotificationStackMessages = typeof notificationStackMessages;
 
 export type NotificationStackItem = {
+  /** Unique key for the notification. */
   id: string;
+  /** Heading text on the card. */
   title: ReactNode;
+  /** Smaller text under the title. Omitted when not set. */
   description?: ReactNode;
+  /** Content at the card's top right, such as a timestamp. */
   trailing?: ReactNode;
 };
 
 export type NotificationStackClassNames = {
+  /** Classes for the grid that holds the cards. */
   stack?: string;
+  /** Classes for each notification card. */
   card?: string;
+  /** Classes for the text column inside each card. */
   content?: string;
+  /** Classes for each card's title. */
   title?: string;
+  /** Classes for each card's description. */
   description?: string;
+  /** Classes for each card's trailing content. */
   trailing?: string;
+  /** Classes for the row under the cards with the count and label. */
   footer?: string;
+  /** Classes for the round badge showing the notification count. */
   count?: string;
 };
 
 export interface NotificationStackProps {
+  /** Notifications to show, newest first. The first one sits on top. */
   items: NotificationStackItem[];
+  /** Whether the stack is fanned out, for controlled use. */
   expanded?: boolean;
+  /** Whether the stack starts fanned out when uncontrolled. Default: false */
   defaultExpanded?: boolean;
+  /** Called with the new state when the stack expands or collapses. */
   onExpandedChange?: (expanded: boolean) => void;
+  /** Called when the expanded stack is clicked, instead of collapsing it. */
   onViewAll?: () => void;
+  /** Most cards shown in the stack, at least 1. Default: 3 */
   maxVisible?: number;
+  /** Footer text while collapsed. Default: "Notifications" */
   collapsedLabel?: string;
+  /** Footer text while expanded. Default: "View all" */
   expandedLabel?: string;
+  /** Text shown when `items` is empty. Default: "All caught up" */
   emptyLabel?: string;
   /** Override any built-in string. `{count}` and `{label}` fill the stack's accessible names. */
   labels?: Partial<NotificationStackMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for inner parts: stack, card, content, title, description, trailing, footer, count. */
   classNames?: NotificationStackClassNames;
 }
 

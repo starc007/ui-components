@@ -11,7 +11,8 @@ import {
   useState,
 } from "react";
 import { Button, StatefulButton } from "@/components/motion/button";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +42,7 @@ const SPRINKLES = Array.from({ length: 8 }, (_, i) => {
 });
 
 export interface FeedbackData {
+  /** Text from the message field, as typed. Never blank. */
   message: string;
 }
 
@@ -64,12 +66,17 @@ export type FeedbackWidgetMessages = typeof feedbackWidgetMessages;
 export interface FeedbackWidgetProps {
   /** Called on submit. May be async; the button shows a sending state until it resolves. */
   onSubmit?: (data: FeedbackData) => void | Promise<void>;
+  /** Corner the widget sits in and grows from. Default: "bottom-right" */
   position?: "bottom-right" | "bottom-left";
+  /** Heading of the open form. Default: "Help us improve" */
   title?: string;
+  /** Placeholder of the message field. Default: "Share an idea or report a bug" */
   placeholder?: string;
+  /** Icon on the closed trigger button. Defaults to a message icon. */
   icon?: ReactNode;
   /** Override any built-in string. */
   labels?: Partial<FeedbackWidgetMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -132,27 +139,10 @@ export function FeedbackWidget({
   }, [status, reduce]);
 
   // Dismiss on escape or outside click while open (but not mid-send).
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !busy) close();
-    };
-    const onPointer = (e: PointerEvent) => {
-      if (
-        !busy &&
-        rootRef.current &&
-        !rootRef.current.contains(e.target as Node)
-      ) {
-        close();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open, busy, close]);
+  const dismiss = useCallback(() => {
+    if (!busy) close();
+  }, [busy, close]);
+  useDismiss(open, dismiss, rootRef);
 
   const scheduleSuccessClose = () => {
     clearCloseTimer();
@@ -311,7 +301,7 @@ export function FeedbackWidget({
                                   transition={{
                                     duration: 0.6,
                                     delay: 0.18 + i * 0.02,
-                                    ease: "easeOut",
+                                    ease: EASE_OUT,
                                   }}
                                   style={{ backgroundColor: s.color }}
                                   className="absolute h-1.5 w-1.5 rounded-full"
@@ -321,9 +311,7 @@ export function FeedbackWidget({
                             initial={reduce ? { scale: 1 } : { scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{
-                              type: "spring",
-                              stiffness: 500,
-                              damping: 22,
+                              ...SPRING_PRESS,
                               delay: 0.04,
                             }}
                             className="flex h-12 w-12 items-center justify-center rounded-full bg-(--color-success)"
@@ -345,14 +333,14 @@ export function FeedbackWidget({
                                 animate={{ pathLength: 1 }}
                                 transition={{
                                   duration: 0.35,
-                                  ease: "easeOut",
+                                  ease: EASE_OUT,
                                   delay: 0.15,
                                 }}
                               />
                             </motion.svg>
                           </motion.div>
                         </div>
-                        <h3 className="text-sm font-semibold text-foreground">
+                        <h3 className="text-sm font-medium text-foreground">
                           {t("sentTitle")}
                         </h3>
                         <p className="text-xs leading-relaxed text-muted-foreground">
@@ -374,7 +362,7 @@ export function FeedbackWidget({
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
                           <AlertCircle className="h-5 w-5" />
                         </div>
-                        <h3 className="mt-3 text-sm font-semibold text-foreground">
+                        <h3 className="mt-3 text-sm font-medium text-foreground">
                           {t("errorTitle")}
                         </h3>
                         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
@@ -396,7 +384,7 @@ export function FeedbackWidget({
                         <div className="flex items-start justify-between gap-3">
                           <h3
                             id={titleId}
-                            className="text-sm font-semibold text-foreground"
+                            className="text-sm font-medium text-foreground"
                           >
                             {title}
                           </h3>
@@ -437,7 +425,7 @@ export function FeedbackWidget({
                           size="md"
                           onClick={submit}
                           disabled={busy || message.trim().length === 0}
-                          className="flex-1 bg-foreground text-background hover:bg-foreground/90"
+                          className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                         >
                           {t("submit")}
                         </StatefulButton>

@@ -57,20 +57,20 @@ export function HeroEyebrow({
         {LIBRARIES.map((library, index) => (
           <div key={library.platform} className="inline-flex items-center">
             {index > 0 ? (
-              <span aria-hidden="true" className="mx-1 h-4 w-px shrink-0 bg-border" />
+              <span aria-hidden="true" className="mx-0.5 h-3.5 w-px shrink-0 bg-border" />
             ) : null}
             <a
               href={library.repo}
               target="_blank"
               rel="noreferrer noopener"
               aria-label={t("repoOnGitHub", { name: library.repoName })}
-              className={`inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground ${focus}`}
+              className={`inline-flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground ${focus}`}
             >
-              <GithubIcon className="size-4" />
+              <GithubIcon className="size-3.5" />
             </a>
             <Link
               href={library.href}
-              className={`-ml-1 inline-flex min-h-9 items-center rounded-full py-2 pr-3.5 pl-1.5 text-foreground transition-colors ${focus}`}
+              className={`-ml-1 inline-flex min-h-7 items-center rounded-full py-1 pr-3 pl-1 text-foreground transition-colors ${focus}`}
             >
               {/* One text run: flex would drop the space between items. */}
               <span>

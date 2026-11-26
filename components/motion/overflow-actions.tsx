@@ -24,22 +24,36 @@ import { cn } from "@/lib/utils";
 export type OverflowActionsSize = "sm" | "md";
 
 export type OverflowActionItem = {
+  /** Unique key for the action. */
   id: string;
+  /** Text on the button. A string also becomes the tooltip. */
   label: ReactNode;
+  /** Icon shown before the label. Omitted when not set. */
   icon?: ReactNode;
+  /** Called when the button is pressed, before the bar's `onAction`. */
   onClick?: () => void;
+  /** Dims the button and blocks presses. */
   disabled?: boolean;
+  /** Accessible name for the button, for a label that is not plain text. */
   ariaLabel?: string;
 };
 
 export type OverflowActionsClassNames = {
+  /** Classes for the outer wrapper. */
   root?: string;
+  /** Classes for the row that holds the buttons and toggle. */
   track?: string;
+  /** Classes for every action button. */
   action?: string;
+  /** Classes added to the always-visible action buttons. */
   primaryAction?: string;
+  /** Classes added to the extra action buttons. */
   overflowAction?: string;
+  /** Classes for the button that shows and hides the extra actions. */
   toggle?: string;
+  /** Classes for each action's icon wrapper. */
   icon?: string;
+  /** Classes for each action's label. */
   label?: string;
 };
 
@@ -52,19 +66,31 @@ export const overflowActionsMessages = {
 export type OverflowActionsMessages = typeof overflowActionsMessages;
 
 export interface OverflowActionsProps {
+  /** Actions that always show. */
   primaryActions: OverflowActionItem[];
+  /** Extra actions revealed when the toggle expands the bar. */
   overflowActions: OverflowActionItem[];
+  /** Whether the extra actions show, for controlled use. */
   expanded?: boolean;
+  /** Whether the extra actions start shown when uncontrolled. Default: false */
   defaultExpanded?: boolean;
+  /** Called with the new state when the extra actions show or hide. */
   onExpandedChange?: (expanded: boolean) => void;
+  /** Called with the item after any action is pressed and its `onClick` runs. */
   onAction?: (item: OverflowActionItem) => void;
+  /** Hides the extra actions after any action is pressed. Default: false */
   collapseOnAction?: boolean;
+  /** Button and spacing size. Default: "md" */
   size?: OverflowActionsSize;
+  /** Accessible name for the toggle while collapsed. Default: "Show extra actions" */
   openLabel?: string;
+  /** Accessible name for the toggle while expanded. Default: "Hide extra actions" */
   closeLabel?: string;
   /** Override any built-in string. */
   labels?: Partial<OverflowActionsMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for each part: root, track, actions, toggle, icon and label. */
   classNames?: OverflowActionsClassNames;
 }
 

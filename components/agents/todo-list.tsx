@@ -2,22 +2,15 @@
 
 import { ChevronDown, ListTodo } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useId, useLayoutEffect, useRef } from "react";
+import { ClipResizeFrame } from "@/components/agents/clip-resize-frame";
 import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
-import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import {
   EASE_OUT,
   SPRING_LAYOUT,
   SPRING_SWAP,
 } from "@/lib/ease";
+import { useStatusOpen } from "@/lib/hooks/use-status-open";
 import { formatNumber, useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -28,10 +21,15 @@ export type TodoItemStatus =
   | "cancelled";
 
 export interface TodoItem {
+  /** Unique key for the row. */
   id: string;
+  /** Task text; struck through when completed. */
   title: ReactNode;
+  /** Task state; sets the icon and text tone. Default: "pending" */
   status?: TodoItemStatus;
+  /** Ring fill from 0 to 100 while in progress; unset spins a partial ring. */
   progress?: number;
+  /** Muted text at the end of the row, such as a time or count. */
   detail?: ReactNode;
 }
 
@@ -57,15 +55,23 @@ const STATUS_MESSAGE = {
 } as const satisfies Record<TodoItemStatus, keyof TodoListMessages>;
 
 export interface TodoListProps {
+  /** The tasks, each with a status. */
   items: TodoItem[];
+  /** Header text. Default: "To-dos" */
   title?: ReactNode;
+  /** Whether the list is expanded, for controlled use. */
   open?: boolean;
+  /** Whether the list starts expanded when uncontrolled. Default: true */
   defaultOpen?: boolean;
+  /** Called with the new state when the list expands or collapses. */
   onOpenChange?: (open: boolean) => void;
+  /** Collapses the list once every task is completed. Default: true */
   collapseOnComplete?: boolean;
+  /** Height in px before the task list scrolls. Default: 248 */
   maxHeight?: number;
   /** Override any built-in string. `{completed}` and `{total}` fill `progress`. */
   labels?: Partial<TodoListMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -232,30 +238,23 @@ export function TodoList({
   const triggerId = `${baseId}-trigger`;
   const contentId = `${baseId}-content`;
   const viewportRef = useRef<HTMLDivElement>(null);
-  const previousComplete = useRef(false);
-  const [internalOpen, setInternalOpen] = useState(defaultOpen);
-  const currentOpen = open ?? internalOpen;
   const completed = items.filter((item) => item.status === "completed").length;
   const allComplete = items.length > 0 && completed === items.length;
   const itemCount = items.length;
-
-  const setOpen = useCallback(
-    (next: boolean) => {
-      if (open === undefined) setInternalOpen(next);
-      onOpenChange?.(next);
+  // Reopens when finished work gets a new item; folds once everything is
+  // done, if asked to, including a list that mounts already complete.
+  const [currentOpen, setOpen] = useStatusOpen({
+    status: allComplete,
+    initialStatus: false,
+    open,
+    defaultOpen,
+    onOpenChange,
+    decide: (wasComplete, isComplete) => {
+      if (wasComplete && !isComplete) return true;
+      if (!wasComplete && isComplete && collapseOnComplete) return false;
+      return undefined;
     },
-    [onOpenChange, open],
-  );
-
-  useEffect(() => {
-    if (previousComplete.current && !allComplete) {
-      setOpen(true);
-    }
-    if (!previousComplete.current && allComplete && collapseOnComplete) {
-      setOpen(false);
-    }
-    previousComplete.current = allComplete;
-  }, [allComplete, collapseOnComplete, setOpen]);
+  });
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
@@ -276,12 +275,12 @@ export function TodoList({
   }, [itemCount, reduce]);
 
   return (
-    <section
+    // The card's bottom edge glides as the list folds or opens, instead of
+    // the old fold that snapped the edge up once it finished.
+    <ClipResizeFrame
+      role="region"
       aria-label={t("label")}
-      className={cn(
-        "w-full overflow-hidden rounded-2xl border border-border/70",
-        className,
-      )}
+      className={cn("w-full", className)}
     >
       <button
         id={triggerId}
@@ -322,11 +321,19 @@ export function TodoList({
         </motion.span>
       </button>
 
-      <AgentDisclosure
+      {/* The list leaves the layout at once when folding (popLayout) and
+          fades under the rising edge; opening, it fades in as the edge drops. */}
+      <AnimatePresence initial={false} mode="popLayout">
+      {currentOpen ? (
+      <motion.div
+        key="list"
         id={contentId}
         role="region"
         aria-labelledby={triggerId}
-        open={currentOpen}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { duration: 0.2, ease: EASE_OUT } }}
+        exit={{ opacity: 0, transition: { duration: 0.14, ease: EASE_OUT } }}
+        className="w-full"
       >
         <div
           ref={viewportRef}
@@ -401,7 +408,9 @@ export function TodoList({
             </p>
           )}
         </div>
-      </AgentDisclosure>
-    </section>
+      </motion.div>
+      ) : null}
+      </AnimatePresence>
+    </ClipResizeFrame>
   );
 }

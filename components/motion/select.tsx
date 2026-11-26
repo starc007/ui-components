@@ -2,6 +2,7 @@
 
 import { Check, ChevronDown } from "lucide-react";
 import {
+  AnimatePresence,
   animate,
   type MotionValue,
   motion,
@@ -23,8 +24,14 @@ import {
   useRef,
   useState,
 } from "react";
+import { MENU_ITEM_CLASS, MenuItemHighlight } from "@/components/motion/menu/menu-item-highlight";
 import { EASE_OUT } from "@/lib/ease";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { type ListboxRow, useListbox } from "@/lib/hooks/use-listbox";
+import { useSound } from "@/lib/sound";
+import { closeSound } from "@/lib/sounds/close";
+import { openSound } from "@/lib/sounds/open";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 
 // One progress value drives the surface, gap, corners and chevron. This short
@@ -37,19 +44,38 @@ const UNFOLD_SPRING = {
   bounce: 0.12,
 } as const;
 // Exits are faster than entrances: the panel folds back on a short ease.
-const UNFOLD_EXIT = { duration: 0.2, ease: EASE_OUT } as const;
-const RADIUS = 12;
+const UNFOLD_EXIT = { duration: 0.15, ease: EASE_OUT } as const;
+// Opened or closed from the keyboard: no motion at all.
+const INSTANT = { duration: 0 } as const;
+// The trigger's label rolls when the value changes: the old one rises out,
+// faster than the new one rises in, with a 2px blur that hides the overlap.
+const LABEL_IN = { duration: 0.18, ease: EASE_OUT } as const;
+const LABEL_OUT = { duration: 0.12, ease: EASE_OUT } as const;
+// The trigger is a pill (half its h-10 height). The panel is rounded-2xl, the
+// radius every floating list in the library uses.
+const TRIGGER_RADIUS = 20;
+const PANEL_RADIUS = 16;
 // How far the open panel sits from the trigger once it has pulled away.
 const GAP = 8;
 // The surface starts as a thin lip flush against the trigger's edge.
 const LIP = 8;
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
+// `custom` is the instant flag: rows of a list opened from the keyboard are
+// simply there, like the panel around them.
 const ITEM_VARIANTS: Variants = {
   // A shared short reveal keeps late rows in long, scrolled lists ready with
   // the surface. Per-index staggering can delay visible rows by over a second.
-  hidden: { opacity: 0, y: -4, transition: { duration: 0.08, ease: EASE_OUT } },
-  show: { opacity: 1, y: 0, transition: { duration: 0.12, ease: EASE_OUT } },
+  hidden: (instant = false) => ({
+    opacity: 0,
+    y: -4,
+    transition: instant ? INSTANT : { duration: 0.08, ease: EASE_OUT },
+  }),
+  show: (instant = false) => ({
+    opacity: 1,
+    y: 0,
+    transition: instant ? INSTANT : { duration: 0.12, ease: EASE_OUT },
+  }),
 };
 
 type Placement = "bottom" | "top";
@@ -57,14 +83,17 @@ type Placement = "bottom" | "top";
 interface SelectContextValue {
   value: string | undefined;
   open: boolean;
-  setOpen: (open: boolean) => void;
-  select: (value: string) => void;
+  /** `instant` skips the unfold: the keyboard asked for it. */
+  setOpen: (open: boolean, quiet?: boolean, instant?: boolean) => void;
+  select: (value: string, instant?: boolean) => void;
   register: (value: string, label: string, disabled: boolean) => void;
   unregister: (value: string) => void;
   labelFor: (value: string | undefined) => string | undefined;
   rows: ListboxRow[];
   /** Closes the panel; focus inside it returns to the trigger. */
-  close: () => void;
+  close: (quiet?: boolean, instant?: boolean) => void;
+  /** Whether the latest open or close skips its animation. */
+  instant: boolean;
   reduce: boolean;
   progress: MotionValue<number>;
   triggerId: string;
@@ -75,8 +104,19 @@ interface SelectContextValue {
 }
 
 const SelectContext = createContext<SelectContextValue | null>(null);
-// The option keyboard focus is on, resolved during render by the content.
-const ActiveOptionContext = createContext<string | undefined>(undefined);
+// The active option (resolved during render by the content), whether its
+// highlight glides (after the pointer) or jumps (after a key), and how a
+// pointer resting on an option makes it the active one.
+interface ActiveOption {
+  activeId: string | undefined;
+  glide: boolean;
+  setActive: (id: string) => void;
+}
+const ActiveOptionContext = createContext<ActiveOption>({
+  activeId: undefined,
+  glide: true,
+  setActive: () => {},
+});
 
 function useSelectContext(component: string) {
   const ctx = useContext(SelectContext);
@@ -85,8 +125,11 @@ function useSelectContext(component: string) {
 }
 
 export interface SelectProps {
+  /** The selected value, for controlled use. */
   value?: string;
+  /** The initial value when uncontrolled. */
   defaultValue?: string;
+  /** Called with the new value when an option is picked. */
   onValueChange?: (value: string) => void;
   /**
    * Controlled open state of the panel. A layout that stacks selects can hold
@@ -102,7 +145,11 @@ export interface SelectProps {
    * which one is open to paint it above its neighbours.
    */
   onOpenChange?: (open: boolean) => void;
+  /** Disables the trigger so the panel cannot open. Default: false */
   disabled?: boolean;
+  /** Play open and close swishes and a select on a pick. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
   children: ReactNode;
 }
@@ -115,6 +162,7 @@ export function Select({
   defaultOpen = false,
   onOpenChange,
   disabled = false,
+  sound = false,
   className,
   children,
 }: SelectProps) {
@@ -127,6 +175,7 @@ export function Select({
     Map<string, { label: string; disabled: boolean }>
   >(new Map());
   const [placement, setPlacement] = useState<Placement>("bottom");
+  const [instant, setInstant] = useState(false);
 
   const controlled = value !== undefined;
   const current = controlled ? value : internal;
@@ -134,33 +183,49 @@ export function Select({
   const open = openControlled ? openProp : internalOpen;
   const progress = useMotionValue(open ? 1 : 0);
 
+  const playOpen = useSound(openSound, { enabled: sound });
+  const playClose = useSound(closeSound, { enabled: sound });
+  const playSelect = useSound(selectSound, { enabled: sound });
+
+  // `quiet` skips the close sweep when a pick already made its own sound.
   const setOpen = useCallback(
-    (next: boolean) => {
+    (next: boolean, quiet = false, now = false) => {
+      if (next !== open) {
+        if (!quiet) {
+          if (next) playOpen();
+          else playClose();
+        }
+        setInstant(now);
+      }
       if (!openControlled) setInternalOpen(next);
       onOpenChange?.(next);
     },
-    [onOpenChange, openControlled],
+    [onOpenChange, openControlled, open, playOpen, playClose],
   );
 
   // The panel turns inert as it closes, which would drop focus held inside it
   // on the page body. Hand it back to the trigger before that happens.
-  const close = useCallback(() => {
-    const trigger = document.getElementById(`${baseId}-trigger`);
-    if (
-      rootRef.current?.contains(document.activeElement) &&
-      document.activeElement !== trigger
-    )
-      trigger?.focus();
-    setOpen(false);
-  }, [baseId, setOpen]);
+  const close = useCallback(
+    (quiet = false, now = false) => {
+      const trigger = document.getElementById(`${baseId}-trigger`);
+      if (
+        rootRef.current?.contains(document.activeElement) &&
+        document.activeElement !== trigger
+      )
+        trigger?.focus();
+      setOpen(false, quiet, now);
+    },
+    [baseId, setOpen],
+  );
 
   const select = useCallback(
-    (next: string) => {
+    (next: string, now = false) => {
+      playSelect();
       if (!controlled) setInternal(next);
       onValueChange?.(next);
-      close();
+      close(true, now);
     },
-    [controlled, onValueChange, close],
+    [controlled, onValueChange, close, playSelect],
   );
 
   const register = useCallback((v: string, label: string, disabled: boolean) => {
@@ -184,26 +249,18 @@ export function Select({
     const animation = animate(
       progress,
       open ? 1 : 0,
-      reduce ? { duration: 0.12 } : open ? UNFOLD_SPRING : UNFOLD_EXIT,
+      instant ? INSTANT : reduce ? { duration: 0.12 } : open ? UNFOLD_SPRING : UNFOLD_EXIT,
     );
     return () => animation.stop();
-  }, [open, progress, reduce]);
+  }, [open, progress, reduce, instant]);
 
-  // close on outside pointer / escape
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-    const onPointer = (e: PointerEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node))
-        setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open, setOpen, close]);
+  // Escape hands focus back to the trigger and closes at once; an outside
+  // press leaves focus where the press put it and folds the panel away.
+  const dismiss = useCallback(
+    (reason: DismissReason) => (reason === "escape" ? close(false, true) : setOpen(false)),
+    [close, setOpen],
+  );
+  useDismiss(open, dismiss, rootRef);
 
   const rows = useMemo(
     () =>
@@ -226,6 +283,7 @@ export function Select({
       labelFor: (v) => (v === undefined ? undefined : labels.get(v)?.label),
       rows,
       close,
+      instant,
       reduce,
       progress,
       triggerId: `${baseId}-trigger`,
@@ -244,6 +302,7 @@ export function Select({
       labels,
       rows,
       close,
+      instant,
       reduce,
       progress,
       baseId,
@@ -262,6 +321,7 @@ export function Select({
 }
 
 export interface SelectTriggerProps {
+  /** Classes merged onto the trigger button. */
   className?: string;
   children: ReactNode;
 }
@@ -275,7 +335,7 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
   const nearRadius = useTransform(
     ctx.progress,
     [0, 0.2, 0.4, 1],
-    [RADIUS, 0, 0, RADIUS],
+    [TRIGGER_RADIUS, 0, 0, TRIGGER_RADIUS],
   );
   const rotate = useTransform(ctx.progress, (p) =>
     ctx.reduce ? (ctx.open ? 180 : 0) : Math.min(1, Math.max(0, p)) * 180,
@@ -288,24 +348,25 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
       aria-haspopup="listbox"
       aria-expanded={ctx.open}
       aria-controls={ctx.listId}
-      onClick={() => ctx.setOpen(!ctx.open)}
+      // `detail` is 0 for a click the keyboard made (Enter, Space): no unfold.
+      onClick={(event) => ctx.setOpen(!ctx.open, false, event.detail === 0)}
       onKeyDown={(event) => {
         if (
           !ctx.open &&
           (event.key === "ArrowDown" || event.key === "ArrowUp")
         ) {
           event.preventDefault();
-          ctx.setOpen(true);
+          ctx.setOpen(true, false, true);
         }
       }}
       style={{
-        borderTopLeftRadius: ctx.reduce || !isTop ? RADIUS : nearRadius,
-        borderTopRightRadius: ctx.reduce || !isTop ? RADIUS : nearRadius,
-        borderBottomLeftRadius: ctx.reduce || isTop ? RADIUS : nearRadius,
-        borderBottomRightRadius: ctx.reduce || isTop ? RADIUS : nearRadius,
+        borderTopLeftRadius: ctx.reduce || !isTop ? TRIGGER_RADIUS : nearRadius,
+        borderTopRightRadius: ctx.reduce || !isTop ? TRIGGER_RADIUS : nearRadius,
+        borderBottomLeftRadius: ctx.reduce || isTop ? TRIGGER_RADIUS : nearRadius,
+        borderBottomRightRadius: ctx.reduce || isTop ? TRIGGER_RADIUS : nearRadius,
       }}
       className={cn(
-        "relative z-10 flex w-full items-center justify-between gap-2 border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors",
+        "relative z-10 flex h-10 w-full items-center justify-between gap-2 border border-border bg-background px-4 text-sm text-foreground outline-none transition-colors",
         "hover:border-(--color-border-strong) focus-visible:ring-2 focus-visible:ring-foreground/20",
         "disabled:pointer-events-none disabled:opacity-50",
         className,
@@ -324,23 +385,49 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
 }
 
 export interface SelectValueProps {
+  /** Text shown while nothing is selected. Default: "Select" */
   placeholder?: string;
+  /** Classes merged onto the label wrapper. */
   className?: string;
 }
 
 export function SelectValue({ placeholder, className }: SelectValueProps) {
   const ctx = useSelectContext("SelectValue");
   const label = ctx.labelFor(ctx.value);
+  const text = label ?? placeholder ?? "Select";
+  // A pick from the keyboard swaps the label at once; reduced motion keeps a
+  // short crossfade without the travel.
+  const still = ctx.instant || ctx.reduce;
+  const swap = ctx.instant ? INSTANT : ctx.reduce ? { duration: 0.12 } : LABEL_IN;
   return (
-    <span
-      className={cn(label ? "text-foreground" : "text-muted-foreground", className)}
-    >
-      {label ?? placeholder ?? "Select"}
+    // Both labels share one grid cell, so the outgoing one never takes space
+    // or moves the chevron, and both truncate the same way.
+    <span className={cn("grid min-w-0 flex-1 overflow-hidden text-left", className)}>
+      <AnimatePresence initial={false}>
+        <motion.span
+          key={text}
+          initial={still ? { opacity: 0 } : { opacity: 0, y: "70%", filter: "blur(2px)" }}
+          animate={{ opacity: 1, y: "0%", filter: "blur(0px)" }}
+          exit={
+            still
+              ? { opacity: 0, transition: swap }
+              : { opacity: 0, y: "-70%", filter: "blur(2px)", transition: LABEL_OUT }
+          }
+          transition={swap}
+          className={cn(
+            "col-start-1 row-start-1 block truncate",
+            label ? "text-foreground" : "text-muted-foreground",
+          )}
+        >
+          {text}
+        </motion.span>
+      </AnimatePresence>
     </span>
   );
 }
 
 export interface SelectContentProps {
+  /** Classes merged onto the options panel. */
   className?: string;
   children: ReactNode;
 }
@@ -350,12 +437,17 @@ export function SelectContent({ className, children }: SelectContentProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
   const { open, progress, reduce, setPlacement } = ctx;
-  const { activeId, onKeyDown } = useListbox({
+  const { activeId, onKeyDown, moveTo } = useListbox({
     open,
     rows: ctx.rows,
     selected: ctx.value,
     list: panelRef,
   });
+  const [glide, setGlide] = useState(true);
+  const active = useMemo<ActiveOption>(
+    () => ({ activeId, glide, setActive: moveTo }),
+    [activeId, glide, moveTo],
+  );
 
   // Keep descendants laid out while hidden: display:none resets nested
   // scrollers in Chromium. Collapse only the hidden outer footprint after
@@ -405,11 +497,11 @@ export function SelectContent({ className, children }: SelectContentProps) {
   const fromY = ready ? (isTop ? GAP : -GAP) : 0;
   const detach = useTransform(progress, [0.4, 1], [0, 1]);
   const y = useTransform(detach, (d) => lerp(fromY, 0, d));
-  const nearRadius = useTransform(detach, (d) => (ready ? RADIUS * d : RADIUS));
+  const nearRadius = useTransform(detach, (d) => (ready ? PANEL_RADIUS * d : PANEL_RADIUS));
   const borderRadius = useTransform(nearRadius, (near) =>
     isTop
-      ? `${RADIUS}px ${RADIUS}px ${near}px ${near}px`
-      : `${near}px ${near}px ${RADIUS}px ${RADIUS}px`,
+      ? `${PANEL_RADIUS}px ${PANEL_RADIUS}px ${near}px ${near}px`
+      : `${near}px ${near}px ${PANEL_RADIUS}px ${PANEL_RADIUS}px`,
   );
   const clipPath = useTransform([progress, nearRadius], ([p, near]: number[]) => {
     if (!ready) return "none";
@@ -420,8 +512,8 @@ export function SelectContent({ className, children }: SelectContentProps) {
     const hidden = Math.max(0, (height - LIP) * (1 - reveal));
     const inset = isTop ? `${hidden}px 0 0 0` : `0 0 ${hidden}px 0`;
     const corners = isTop
-      ? `${RADIUS}px ${RADIUS}px ${near}px ${near}px`
-      : `${near}px ${near}px ${RADIUS}px ${RADIUS}px`;
+      ? `${PANEL_RADIUS}px ${PANEL_RADIUS}px ${near}px ${near}px`
+      : `${near}px ${near}px ${PANEL_RADIUS}px ${PANEL_RADIUS}px`;
     return `inset(${inset} round ${corners})`;
   });
   // The surface materialises over its first frames rather than popping in as
@@ -437,10 +529,15 @@ export function SelectContent({ className, children }: SelectContentProps) {
       aria-hidden={!open}
       inert={!open}
       onKeyDown={(event) => {
+        // Set before the key moves the active option, so its highlight jumps.
+        setGlide(false);
         // Tab leaves the list from the trigger, so focus moves on to the
         // control after the select rather than into the closing panel.
-        if (event.key === "Tab") ctx.close();
+        if (event.key === "Tab") ctx.close(false, true);
         else onKeyDown(event);
+      }}
+      onPointerMove={(event) => {
+        if (event.pointerType !== "touch") setGlide(true);
       }}
       style={{
         visibility: present ? undefined : "hidden",
@@ -457,16 +554,17 @@ export function SelectContent({ className, children }: SelectContentProps) {
       // flush against the trigger, then separates into its own rounded pill;
       // sits above or below depending on available space
       className={cn(
-        "absolute left-0 right-0 z-20 overflow-hidden border border-border bg-background shadow-lg",
+        // The same soft shadow as the menus, so floating lists read as one family.
+        "absolute left-0 right-0 z-20 overflow-hidden border border-border bg-background shadow-[0_8px_24px_-8px_rgb(0_0_0/0.16)]",
         isTop ? "bottom-full" : "top-full",
         className,
       )}
     >
-      <ActiveOptionContext.Provider value={activeId}>
+      <ActiveOptionContext.Provider value={active}>
         <motion.div
           initial={false}
           animate={open ? "show" : "hidden"}
-          className="p-1"
+          className="p-2"
         >
           {children}
         </motion.div>
@@ -476,8 +574,11 @@ export function SelectContent({ className, children }: SelectContentProps) {
 }
 
 export interface SelectItemProps {
+  /** Value reported when this option is picked. */
   value: string;
+  /** Prevents picking this option. Default: false */
   disabled?: boolean;
+  /** Classes merged onto the option button. */
   className?: string;
   children: ReactNode;
 }
@@ -489,8 +590,9 @@ export function SelectItem({
   children,
 }: SelectItemProps) {
   const ctx = useSelectContext("SelectItem");
-  const activeId = useContext(ActiveOptionContext);
+  const { activeId, glide, setActive } = useContext(ActiveOptionContext);
   const selected = ctx.value === value;
+  const active = activeId === value;
   const label = typeof children === "string" ? children : value;
 
   useLayoutEffect(() => {
@@ -499,27 +601,40 @@ export function SelectItem({
   useLayoutEffect(() => () => ctx.unregister(value), [ctx.unregister, value]);
 
   return (
-    <motion.div variants={ctx.reduce ? undefined : ITEM_VARIANTS}>
+    <motion.div custom={ctx.instant} variants={ctx.reduce ? undefined : ITEM_VARIANTS}>
       <button
         type="button"
         role="option"
         aria-selected={selected}
         disabled={disabled}
         // One tab stop: the active option, which focus follows while open.
-        tabIndex={activeId === value ? 0 : -1}
+        tabIndex={active ? 0 : -1}
         data-listbox-id={value}
-        onClick={() => ctx.select(value)}
+        // A resting pointer makes this the active option, so the highlight
+        // follows the mouse the same way it follows the arrow keys.
+        onPointerMove={(event) => {
+          if (event.pointerType !== "touch" && !disabled && !active) setActive(value);
+        }}
+        // Enter or Space on the option (`detail` 0) closes without folding.
+        onClick={(event) => ctx.select(value, event.detail === 0)}
         className={cn(
-          "flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-1.5 text-left text-sm outline-none transition-colors",
-          selected
-            ? "bg-muted text-foreground"
-            : "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:bg-muted",
+          MENU_ITEM_CLASS,
+          "justify-between gap-2 text-foreground",
           "disabled:pointer-events-none disabled:opacity-50",
           className,
         )}
       >
-        {children}
-        {selected ? <Check className="h-3.5 w-3.5 shrink-0" /> : null}
+        {/* One highlight for the whole list: it glides after the pointer and
+            jumps after a key. The selected option is marked by its check. */}
+        {active && !disabled ? (
+          <MenuItemHighlight
+            layoutId={`${ctx.listId}-highlight`}
+            reduce={ctx.reduce}
+            instant={!glide}
+          />
+        ) : null}
+        <span className="flex min-w-0 flex-1 items-center gap-2">{children}</span>
+        {selected ? <Check aria-hidden="true" className="h-3.5 w-3.5 shrink-0" /> : null}
       </button>
     </motion.div>
   );

@@ -9,20 +9,15 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useId } from "react";
 import {
   AgentCode,
   type AgentCodeLanguage,
 } from "@/components/agents/agent-code";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { IconSwap } from "@/components/agents/icon-swap";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { useStatusOpen } from "@/lib/hooks/use-status-open";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -54,31 +49,49 @@ export const toolApprovalMessages = {
 export type ToolApprovalMessages = typeof toolApprovalMessages;
 
 export interface ToolApprovalParameter {
+  /** Unique key for the row. */
   id: string;
+  /** Parameter name, shown muted in the left column of the details. */
   label: ReactNode;
+  /** Parameter value, shown in monospace in the right column. */
   value: ReactNode;
 }
 
 export interface ToolApprovalCodeProps {
+  /** Source text to show, wrapped rather than scrolled. */
   code: string;
+  /** Language used for syntax highlighting. Default: "bash" */
   language?: AgentCodeLanguage;
+  /** Classes merged onto the code block. */
   className?: string;
 }
 
 export interface ToolApprovalProps {
+  /** Tool name shown in monospace under the title. */
   tool: ReactNode;
+  /** Heading for the request. Default: "Allow this tool to run?" */
   title?: ReactNode;
+  /** Short explanation of what the tool will do. */
   description?: ReactNode;
+  /** Arguments listed in the expandable details panel. */
   parameters?: ToolApprovalParameter[];
+  /** Request state, which sets the icon, badge and action buttons. Default: "pending" */
   status?: ToolApprovalStatus;
+  /** Whether the details panel is expanded, for controlled use. */
   open?: boolean;
+  /** Whether the details panel starts expanded when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new state when the details panel opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Called when the "Allow once" button is pressed. */
   onApprove?: () => void;
+  /** Called when "Always allow" is pressed. The button shows only when set. */
   onAlwaysAllow?: () => void;
+  /** Called when the "Deny" button is pressed. */
   onDeny?: () => void;
   /** Override any built-in string. */
   labels?: Partial<ToolApprovalMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -133,33 +146,25 @@ export function ToolApproval({
   const t = useMessages("toolApproval", toolApprovalMessages, labels);
   const baseId = useId();
   const detailsId = `${baseId}-details`;
-  const previousStatus = useRef(status);
-  const [internalOpen, setInternalOpen] = useState(defaultOpen);
-  const currentOpen = open ?? internalOpen;
-  const setOpen = useCallback(
-    (next: boolean) => {
-      if (open === undefined) setInternalOpen(next);
-      onOpenChange?.(next);
-    },
-    [onOpenChange, open],
-  );
+  // The details fold once a decision is made.
+  const [currentOpen, setOpen] = useStatusOpen({
+    status,
+    open,
+    defaultOpen,
+    onOpenChange,
+    decide: (previous, next) =>
+      previous === "pending" && next !== "pending" ? false : undefined,
+  });
   const busy = status === "approving" || status === "running";
   const pending = status === "pending";
   const error = status === "error";
-
-  useEffect(() => {
-    if (previousStatus.current === "pending" && status !== "pending") {
-      setOpen(false);
-    }
-    previousStatus.current = status;
-  }, [setOpen, status]);
 
   return (
     <div
       data-state={status}
       aria-busy={busy}
       className={cn(
-        "w-full overflow-hidden rounded-2xl border border-border/60 bg-muted/20 text-sm",
+        "w-full overflow-hidden rounded-2xl border border-border/60 bg-background text-sm",
         className,
       )}
     >
@@ -167,21 +172,25 @@ export function ToolApproval({
         <span
           aria-hidden="true"
           className={cn(
-            "mt-0.5 grid size-8 shrink-0 place-items-center rounded-xl border border-border/60 bg-background text-muted-foreground",
+            "mt-0.5 grid size-8 shrink-0 place-items-center rounded-full border border-border/60 bg-background text-muted-foreground",
             error && "text-destructive",
           )}
         >
-          {busy ? (
-            <LoaderCircle className={cn("size-4", !reduce && "animate-spin")} />
-          ) : error ? (
-            <CircleAlert className="size-4" />
-          ) : status === "denied" ? (
-            <X className="size-4" />
-          ) : status === "approved" || status === "complete" ? (
-            <Check className="size-4" />
-          ) : (
-            <ShieldCheck className="size-4" />
-          )}
+          {/* The icon tells the story of the request, so each change morphs:
+              shield, then spinner, then check or cross. */}
+          <IconSwap id={busy ? "busy" : status}>
+              {busy ? (
+                <LoaderCircle className={cn("size-4", !reduce && "animate-spin")} />
+              ) : error ? (
+                <CircleAlert className="size-4" />
+              ) : status === "denied" ? (
+                <X className="size-4" />
+              ) : status === "approved" || status === "complete" ? (
+                <Check className="size-4" />
+              ) : (
+                <ShieldCheck className="size-4" />
+              )}
+          </IconSwap>
         </span>
 
         <div className="min-w-0 flex-1">
@@ -194,11 +203,23 @@ export function ToolApproval({
             </div>
             <span
               className={cn(
-                "shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors",
+                "relative shrink-0 overflow-hidden rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors",
                 getStatusBadgeClass(status),
               )}
             >
-              {t(status)}
+              {/* The label rolls up as the status moves on. */}
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  key={status}
+                  initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                  transition={{ duration: reduce ? 0.12 : 0.18, ease: EASE_OUT }}
+                  className="block"
+                >
+                  {t(status)}
+                </motion.span>
+              </AnimatePresence>
             </span>
           </div>
           {description ? (
@@ -211,7 +232,7 @@ export function ToolApproval({
               aria-expanded={currentOpen}
               aria-controls={detailsId}
               onClick={() => setOpen(!currentOpen)}
-              className="mt-2 inline-flex items-center gap-1 rounded-md text-xs font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-2 inline-flex items-center gap-1 rounded-full text-xs font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
             >
               {t("viewDetails")}
               <motion.span
@@ -259,7 +280,7 @@ export function ToolApproval({
               onClick={onApprove}
               whileTap={reduce ? undefined : { scale: 0.97 }}
               transition={SPRING_PRESS}
-              className="rounded-xl bg-foreground px-3 py-1.5 text-xs font-medium text-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               {t("allowOnce")}
             </motion.button>
@@ -269,18 +290,20 @@ export function ToolApproval({
                 onClick={onAlwaysAllow}
                 whileTap={reduce ? undefined : { scale: 0.97 }}
                 transition={SPRING_PRESS}
-                className="rounded-xl border border-border/60 bg-background px-3 py-1.5 text-xs font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                className="rounded-full border border-border/60 bg-background px-3 py-1.5 text-xs font-medium text-foreground outline-none transition-colors hover:bg-foreground/[0.06] focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {t("alwaysAllow")}
               </motion.button>
             ) : null}
-            <button
+            <motion.button
               type="button"
               onClick={onDeny}
-              className="rounded-xl px-3 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              whileTap={reduce ? undefined : { scale: 0.97 }}
+              transition={SPRING_PRESS}
+              className="rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
             >
               {t("deny")}
-            </button>
+            </motion.button>
           </motion.div>
         ) : null}
       </AnimatePresence>

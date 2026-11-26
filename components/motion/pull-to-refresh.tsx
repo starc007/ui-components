@@ -50,6 +50,7 @@ export interface PullToRefreshProps {
   children: ReactNode;
   /** Keeps the indicator active while an externally managed refresh runs. */
   refreshing?: boolean;
+  /** Turns off the pull gesture. Default: false */
   disabled?: boolean;
   /** Resisted pull distance in pixels required to refresh. */
   threshold?: number;
@@ -57,14 +58,21 @@ export interface PullToRefreshProps {
   maxPull?: number;
   /** Content offset in pixels while refreshing. */
   holdDistance?: number;
+  /** Indicator text while pulling, short of the threshold. Default: "Pull to refresh" */
   pullingLabel?: ReactNode;
+  /** Indicator text once past the threshold. Default: "Release to refresh" */
   releaseLabel?: ReactNode;
+  /** Indicator text while refreshing. Default: "Refreshing" */
   refreshingLabel?: ReactNode;
+  /** Accessible name for the scroll region. Default: "Refreshable content" */
   ariaLabel?: string;
   /** Override any built-in string. */
   labels?: Partial<PullToRefreshMessages>;
+  /** Classes merged onto the scroll container. */
   className?: string;
+  /** Classes merged onto the element that wraps the children and moves with the pull. */
   contentClassName?: string;
+  /** Classes merged onto the indicator at the top. */
   indicatorClassName?: string;
 }
 

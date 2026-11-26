@@ -16,7 +16,12 @@ import { cn } from "@/lib/utils";
 import { OrderBookDepthRow } from "./order-book/depth-row";
 import { buildOrderBook, type DepthLevel, summarizeDepth } from "./order-book/model";
 
-export type OrderBookLevel = { price: number; size: number };
+export type OrderBookLevel = {
+  /** Price of the level, in the quote asset. */
+  price: number;
+  /** Amount resting at this price, in the base asset. */
+  size: number;
+};
 export type { DepthLevel as OrderBookDepthLevel, DepthSummary as OrderBookDepthSummaryData } from "./order-book/model";
 
 /** A level identified by its side and price, so it survives snapshot updates. */
@@ -55,23 +60,31 @@ export interface OrderBookProps {
   levels?: number;
   /** Last traded price. Omit to show the midpoint of the best bid and ask. */
   lastPrice?: number;
+  /** Accessible name for the book. Default: "Order book" */
   label?: string;
+  /** Symbol of the traded asset, shown beside sizes. Default: "" */
   baseSymbol?: string;
+  /** Symbol prices are quoted in, shown beside prices. Default: "USD" */
   quoteSymbol?: string;
+  /** Formats prices, the spread and averages. Defaults to 2 decimal places. */
   formatPrice?: (value: number) => string;
+  /** Formats sizes and totals. Defaults to compact notation, e.g. 1.2K. */
   formatSize?: (value: number) => string;
   /**
    * The level whose depth is inspected: it and every better level on its side
    * are highlighted, and `OrderBookDepthSummary` totals them. Controlled.
    */
   activeLevel?: OrderBookActiveLevel;
+  /** The initial inspected level when uncontrolled. Default: null */
   defaultActiveLevel?: OrderBookActiveLevel;
+  /** Called with the level, or null, when the inspected level changes. */
   onActiveLevelChange?: (level: OrderBookActiveLevel) => void;
   /** Makes each price a button, for example to fill an order ticket. */
   onLevelSelect?: (level: DepthLevel, side: "bid" | "ask") => void;
   /** Override any built-in string. */
   labels?: Partial<OrderBookMessages>;
   children?: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -185,7 +198,7 @@ export function OrderBookHeader({ className }: { className?: string }) {
     <div
       aria-hidden="true"
       className={cn(
-        "grid grid-cols-3 py-3 text-[10px] uppercase tracking-wider text-muted-foreground",
+        "grid grid-cols-3 py-3 text-[11px] uppercase tracking-wider text-muted-foreground",
         className,
       )}
     >
@@ -202,7 +215,14 @@ export function OrderBookHeader({ className }: { className?: string }) {
   );
 }
 
-export function OrderBookSide({ side, className }: { side: "bid" | "ask"; className?: string }) {
+export function OrderBookSide({
+  side,
+  className,
+}: {
+  /** Which levels the table lists: bids, or asks with the best ask last. */
+  side: "bid" | "ask";
+  className?: string;
+}) {
   const {
     bids,
     asks,
@@ -285,9 +305,9 @@ export function OrderBookSpread({ className }: { className?: string }) {
         <span className="sr-only">
           {t("referencePrice")}{" "}
         </span>
-        {price == null ? "—" : formatPrice(price)}
+        {price == null ? "–" : formatPrice(price)}
       </span>
-      <span className="text-[10px] text-muted-foreground">
+      <span className="text-[11px] text-muted-foreground">
         {spread == null || midpoint == null
           ? t("spreadUnavailable")
           : spread < 0
@@ -308,13 +328,13 @@ export function OrderBookBalance({ className }: { className?: string }) {
   const ratio = total ? bidTotal / total : 0.5;
   return (
     <div className={cn("space-y-2 border-t border-border px-4 pb-3 pt-3", className)}>
-      <div className="flex justify-between text-[10px]">
+      <div className="flex justify-between text-[11px]">
         <span className="text-emerald-700 dark:text-emerald-400">
-          {t("bids")} {total ? `${(ratio * 100).toFixed(1)}%` : "—"}
+          {t("bids")} {total ? `${(ratio * 100).toFixed(1)}%` : "–"}
         </span>
         <span className="text-muted-foreground">{t("visibleDepth")}</span>
         <span className="text-rose-600 dark:text-rose-400">
-          {t("asks")} {total ? `${((1 - ratio) * 100).toFixed(1)}%` : "—"}
+          {t("asks")} {total ? `${((1 - ratio) * 100).toFixed(1)}%` : "–"}
         </span>
       </div>
       <div aria-hidden="true" className="relative h-1 overflow-hidden rounded-full bg-rose-500/25">
@@ -338,6 +358,7 @@ export function OrderBookDepthSummary({
   children,
   className,
 }: {
+  /** Shown while no level is inspected. Default: "Hover a level to see the cost of filling up to it" */
   placeholder?: ReactNode;
   /** Custom readout for the inspected levels. */
   children?: (summary: NonNullable<ReturnType<typeof useOrderBook>["summary"]>) => ReactNode;

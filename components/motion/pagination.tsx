@@ -76,9 +76,13 @@ export function paginationRange(
 
 export interface PaginationProps
   extends Omit<ComponentPropsWithRef<"nav">, "onChange" | "children"> {
+  /** Number of pages, starting from 1. */
   totalPages: number;
+  /** The current page, 1-based, for controlled use. */
   page?: number;
+  /** The initial page when uncontrolled. Default: 1 */
   defaultPage?: number;
+  /** Called with the new page number when a control is pressed. */
   onPageChange?: (page: number) => void;
   /** Pages shown either side of the current one. */
   siblings?: number;
@@ -247,7 +251,7 @@ export function Pagination({
                     label: t("page", { page: item }),
                     current: isCurrent,
                     className: isCurrent
-                      ? "font-medium text-background"
+                      ? "font-medium text-primary-foreground"
                       : "text-muted-foreground hover:bg-foreground/[0.05] hover:text-foreground",
                     children: (
                       <>
@@ -256,7 +260,7 @@ export function Pagination({
                             aria-hidden="true"
                             layoutId={reduce ? undefined : "pagination-current"}
                             transition={SPRING_LAYOUT}
-                            className="absolute inset-0 rounded-full bg-foreground"
+                            className="absolute inset-0 rounded-full bg-primary"
                           />
                         ) : null}
                         <span className="relative">{item}</span>

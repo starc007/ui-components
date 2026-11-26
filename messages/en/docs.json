@@ -1,5 +1,4 @@
 {
-  "breadcrumb": "Breadcrumb",
   "newBadge": "New",
   "category": {
     "new": "New",
@@ -27,6 +26,32 @@
       "heading": "Animated React casino games",
       "description": "Explore animated crash, mines, plinko and slide games with fair built-in outcomes or server-decided results. Copy the React source and wire it to your own game logic.",
       "allLabel": "All casino games"
+    },
+    "micro-interactions": {
+      "title": "React Micro Interactions",
+      "heading": "Micro Interactions",
+      "subheading": "Small animated controls for React. Copy the source and drop them in.",
+      "description": "Small animated controls for React: likes, votes, saves, follows, polls, reactions, sharing, downloads, deletes and more. Copy the source and drop them in.",
+      "allLabel": "All micro interactions",
+      "filterLabel": "Filter by interaction",
+      "filters": {
+        "all": "All",
+        "tap": "Tap",
+        "select": "Select",
+        "feedback": "Feedback"
+      },
+      "open": "Open {name}",
+      "play": "Play {name}",
+      "pause": "Pause {name}"
+    },
+    "sounds": {
+      "title": "UI Sound Effects for React",
+      "heading": "Sounds",
+      "subheading": "Interface sounds for the web, synthesized live. Press one to hear it.",
+      "description": "Sixteen interface sounds for React: tap, press, type, select, toggle, open, close, success, error, notify and more. Synthesized live with Web Audio, no audio files. Install one or all.",
+      "allLabel": "All sounds",
+      "muted": "Sounds are muted. Turn them on",
+      "keysHint": "Play them from the keys: 1 to 0, then Q to Y."
     },
     "agents": {
       "title": "AI Agent Components — Animated React AI Interfaces",
@@ -64,6 +89,10 @@
     "preview": "Preview",
     "usage": "Usage",
     "code": "Code",
+    "viewCode": "View code",
+    "hideCode": "Hide code",
+    "moreVariants": "More in {name}",
+    "variantSeoTitle": "{name} for React",
     "install": "Install",
     "installDescription": "Add it with the shadcn CLI, or copy the source manually.",
     "apiReference": "API Reference",
@@ -80,7 +109,7 @@
   "install": {
     "cli": "CLI",
     "manual": "Manual",
-    "themeNotice": "Needs the theme tokens once. Already ran <code>shadcn init</code>? You are set. <link>Theme setup</link>",
+    "themeNotice": "Needs beUI's theme tokens once: paste the theme CSS, or with shadcn run <code>npx shadcn add https://beui.dev/r/theme.json</code>. <link>Theme setup</link>",
     "dependencies": "Install dependencies",
     "utilFiles": "{count, plural, one {Add util file} other {Add util files}}",
     "sourceCode": "Copy the source code"
@@ -88,6 +117,11 @@
   "copyButton": {
     "copy": "Copy code",
     "copied": "Copied"
+  },
+  "headingAnchor": {
+    "copy": "Copy link",
+    "copyAria": "Copy link to {section}",
+    "copied": "Link copied"
   },
   "expandCode": "Expand Code",
   "copyPage": {
@@ -97,7 +131,6 @@
     "copiedAria": "Page copied",
     "errorAria": "Copy failed. Try again",
     "moreActions": "More page actions",
-    "menu": "Page actions",
     "viewMarkdown": "View as Markdown",
     "openIn": "Open in {app}"
   },
@@ -116,13 +149,6 @@
     "price": "<del>{was}</del> {price} lifetime access",
     "ends": "Until {end}, applied at checkout"
   },
-  "proBlocks": {
-    "usedIn": "Used in these Pro blocks",
-    "builtWith": "Popular beUI Pro blocks",
-    "mobile": "Full screens in Pro",
-    "pro": "Pro",
-    "opensInNewTab": "(opens in a new tab)"
-  },
   "proMobileCard": {
     "title": "Need full screens?",
     "description": "70+ React Native blocks and screens, from onboarding and paywalls to profile and checkout, are live in beUI Pro for mobile.",
@@ -140,7 +166,9 @@
   "pager": {
     "label": "Previous and next components",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "previousNamed": "Previous: {name}",
+    "nextNamed": "Next: {name}"
   },
   "previewExpand": {
     "expand": "Expand preview",

@@ -5,6 +5,8 @@ import { type OgCardKind, ogImagePath } from "@/lib/og-paths";
 import { allComponents, registry } from "@/lib/registry";
 import { clampText } from "@/lib/seo";
 import { seoPagePath, seoPages } from "@/lib/seo-pages";
+import { variantCopy } from "@/lib/variant-copy";
+import { allVariantPages } from "@/lib/variant-pages";
 
 // The card art has room for roughly this much body text before it overflows.
 const OG_DESCRIPTION_LIMIT = 120;
@@ -101,6 +103,15 @@ export function ogCards(): Card[] {
         command: `npx shadcn add @beui/${component.slug}`,
       }),
     ),
+    ...allVariantPages().map(({ example }) => {
+      const copy = variantCopy[example.installSlug];
+      return card("variant", example.installSlug, {
+        title: copy?.name ?? example.name,
+        description: copy?.description ?? example.description ?? "",
+        label: "Component",
+        command: `npx shadcn add @beui/${example.installSlug}`,
+      });
+    }),
     ...registry.map((category) =>
       card("category", category.slug, {
         title: category.name,

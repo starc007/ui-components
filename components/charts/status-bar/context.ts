@@ -1,19 +1,10 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import {
-  type ComponentProps,
-  createContext,
-  useCallback,
-  useContext,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type ComponentProps, createContext, useContext, useMemo } from "react";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
+import { useInspection } from "../xy/use-inspection";
 import { type StatusBarMessages, statusBarMessages } from "./messages";
 
 export interface StatusBarDatum {
@@ -23,11 +14,14 @@ export interface StatusBarDatum {
   label: string;
   /** Must match an ID in statuses. */
   status: string;
+  /** Extra detail shown in the tooltip under the status, such as an incident note. */
   description?: string;
 }
 
 export interface StatusBarStatus {
+  /** Unique key that a datum's `status` points to. */
   id: string;
+  /** Name shown in the legend and tooltip. */
   label: string;
   /** Any CSS color, including theme variables. */
   color: string;
@@ -46,9 +40,13 @@ export interface StatusBarProps extends ComponentProps<"section"> {
   data: readonly StatusBarDatum[];
   /** Override the default status labels and colors, or define your own states. */
   statuses?: readonly StatusBarStatus[];
+  /** Accessible name for the chart. Default: "Status history" */
   label?: string;
+  /** Id of the inspected period, for controlled use. Null clears it. */
   activeId?: string | null;
+  /** The initial inspected period id when uncontrolled. Default: null */
   defaultActiveId?: string | null;
+  /** Called with the period id, or null, when the inspected period changes. */
   onActiveChange?: (id: string | null) => void;
   /** Override any built-in string, including the default status labels. */
   labels?: Partial<StatusBarMessages>;
@@ -91,25 +89,20 @@ export function useStatusBarModel({
       return { datum, status };
     });
   }, [data, statuses]);
-  const [internalId, setInternalId] = useState(defaultActiveId);
-  // Resolve stale identities during render so returning periods never revive a cursor.
-  if (internalId !== null && !rows.some(({ datum }) => datum.id === internalId))
-    setInternalId(null);
-  const requestedId = activeId === undefined ? internalId : activeId;
-  const activeIndex = rows.findIndex(({ datum }) => datum.id === requestedId);
-  const active = rows[activeIndex] ?? null;
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const plotRef = useRef<HTMLDivElement>(null);
-  const tooltipId = useId();
-  const latest = useRef({ activeId, requestedId, onActiveChange });
-  useLayoutEffect(() => {
-    latest.current = { activeId, requestedId, onActiveChange };
+  const {
+    activeIndex,
+    setActive,
+    open: tooltipOpen,
+    setOpen: setTooltipOpen,
+    plotRef,
+    tooltipId,
+  } = useInspection({
+    ids: rows.map(({ datum }) => datum.id),
+    activeId,
+    defaultActiveId,
+    onActiveChange,
   });
-  const setActive = useCallback((id: string | null) => {
-    const current = latest.current;
-    if (current.activeId === undefined) setInternalId(id);
-    if (current.requestedId !== id) current.onActiveChange?.(id);
-  }, []);
+  const active = rows[activeIndex] ?? null;
   return {
     rows,
     statuses,

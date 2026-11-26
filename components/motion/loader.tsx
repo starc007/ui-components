@@ -54,6 +54,7 @@ export interface LoaderProps {
   label?: string;
   /** Override any built-in string. */
   labels?: Partial<LoaderMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 

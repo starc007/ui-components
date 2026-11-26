@@ -6,9 +6,10 @@ import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { CodeBlock } from "@/components/app/docs/code-block";
 import { CopyPage } from "@/components/app/docs/copy-page";
 import { GuideShell } from "@/components/app/docs/guide-shell";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
 import { native } from "@/lib/native";
 import {
@@ -40,29 +41,15 @@ export const getNativeSetupPage = createServerFn({ method: "GET" })
     const t = getTranslations("Pages.nativeSetup");
     const title = t("meta.title");
     const description = t("meta.description");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: PAGE_PATH,
       title,
       description,
-      alternates: {
-        canonical: PAGE_PATH,
-        types: { "text/markdown": `${PAGE_PATH}.md` },
-      },
-      openGraph: {
-        title: `${title} · beUI`,
-        description,
-        url: PAGE_PATH,
-        locale: "en_US",
-        type: "article",
-        siteName: "beUI",
-        images: [{ url: PAGE_IMAGE, width: 1200, height: 630, alt: t("meta.imageAlt") }],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${title} · beUI`,
-        description,
-        images: [PAGE_IMAGE],
-      },
-    };
+      type: "article",
+      image: PAGE_IMAGE,
+      imageAlt: t("meta.imageAlt"),
+      types: { "text/markdown": `${PAGE_PATH}.md` },
+    });
 
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([
@@ -147,7 +134,12 @@ function Code({ children }: { children: ReactNode }) {
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
     <section id={id} className="mt-10 scroll-mt-24">
-      <h2 className="text-xl font-medium tracking-tight text-foreground">{title}</h2>
+      <AnchorHeading
+        section={id}
+        headingClassName="text-xl font-medium tracking-tight text-foreground"
+      >
+        {title}
+      </AnchorHeading>
       {children}
     </section>
   );
@@ -195,13 +187,16 @@ function NativeSetupContent({ data }: { data: NativeSetupPageData }) {
     <GuideShell>
       <JsonLd data={data.jsonLd} />
       <header id="overview" className="scroll-mt-24">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {t("header.eyebrow")}
         </p>
         <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <h1 className="text-3xl font-medium tracking-tight text-foreground">
+          <AnchorHeading
+            as="h1"
+            headingClassName="text-3xl font-medium tracking-tight text-foreground"
+          >
             {t("header.title")}
-          </h1>
+          </AnchorHeading>
           <CopyPage
             pageUrl={`${SITE_URL}${PAGE_PATH}`}
             markdownPath={`${PAGE_PATH}.md`}

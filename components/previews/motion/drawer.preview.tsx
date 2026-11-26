@@ -36,7 +36,7 @@ export function DrawerPreview() {
         ariaLabel="Demo drawer"
         className="gap-4 p-6"
       >
-        <h2 className="text-sm font-semibold text-foreground">Drawer</h2>
+        <h2 className="text-sm font-medium text-foreground">Drawer</h2>
         <p className="text-sm text-muted-foreground">
           Slides in from the {side}. Press Esc or click outside to close.
         </p>

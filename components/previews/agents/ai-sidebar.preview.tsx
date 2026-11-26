@@ -192,7 +192,7 @@ export function AISidebarPreview() {
                 <PanelLeft aria-hidden="true" className="size-4" />
               </AnimatedSidebarTrigger>
               <div className="min-w-0">
-                <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                   Workspace
                 </p>
                 <p className="truncate text-sm font-medium text-foreground">
@@ -200,7 +200,7 @@ export function AISidebarPreview() {
                 </p>
               </div>
             </div>
-            <span className="shrink-0 rounded-full bg-muted px-2.5 py-1 text-[10px] font-medium text-muted-foreground">
+            <span className="shrink-0 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
               Draft
             </span>
           </header>
@@ -208,7 +208,7 @@ export function AISidebarPreview() {
           <div className="min-h-0 flex-1 overflow-y-auto p-6 sm:p-8">
             <div className="mx-auto max-w-xl">
               <p className="text-xs text-muted-foreground">Selected resource</p>
-              <h3 className="mt-2 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+              <h3 className="mt-2 text-xl font-medium tracking-tight text-foreground sm:text-2xl">
                 {activeLabel}
               </h3>
               <p className="mt-3 max-w-lg text-sm leading-6 text-muted-foreground">

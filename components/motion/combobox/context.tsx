@@ -5,7 +5,6 @@ import {
   createContext,
   type MutableRefObject,
   type ReactNode,
-  type Ref,
   useCallback,
   useContext,
   useEffect,
@@ -14,43 +13,28 @@ import {
   useRef,
   useState,
 } from "react";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { closeSound } from "@/lib/sounds/close";
+import { openSound } from "@/lib/sounds/open";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 import {
   type ComboboxMessages,
   type ComboboxTranslate,
   comboboxMessages,
 } from "./messages";
-import { useActiveOption } from "./use-active-option";
+import {
+  defaultOptionFilter,
+  type OptionFilter,
+  type RegisteredItem,
+  useFilteredOptions,
+} from "./use-filtered-options";
 
-export type RegisteredItem = {
-  value: string;
-  label: string;
-  keywords: string[];
-  disabled: boolean;
-  groupId: string | null;
-  id: string;
-  ref: MutableRefObject<HTMLButtonElement | null>;
-};
+export type { RegisteredItem };
 
-export type ComboboxFilter = (
-  value: string,
-  query: string,
-  keywords: string[],
-) => boolean;
-
-const defaultFilter: ComboboxFilter = (value, query, keywords) => {
-  const needle = query.trim().toLocaleLowerCase();
-  if (!needle) return true;
-
-  const haystack = [value, ...keywords].join(" ").toLocaleLowerCase();
-  let queryIndex = 0;
-  for (const character of haystack) {
-    if (character === needle[queryIndex]) queryIndex += 1;
-    if (queryIndex === needle.length) return true;
-  }
-  return false;
-};
+export type ComboboxFilter = OptionFilter;
 
 export type ComboboxContextValue = {
   open: boolean;
@@ -97,29 +81,33 @@ export function useComboboxContext(component: string) {
   return context;
 }
 
-export function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref && typeof ref === "object")
-        (ref as MutableRefObject<T | null>).current = node;
-    }
-  };
-}
-
 export interface ComboboxProps {
   children: ReactNode;
+  /** The selected value, for controlled use. */
   value?: string;
+  /** The initial value when uncontrolled. */
   defaultValue?: string;
+  /** Called with the option value when the user picks an option. */
   onValueChange?: (value: string) => void;
+  /** Whether the list is open, for controlled use. */
   open?: boolean;
+  /** Whether the list starts open when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the next open state when the list opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** The search text, for controlled use. */
   query?: string;
+  /** The initial search text when uncontrolled. Default: "" */
   defaultQuery?: string;
+  /** Called with the new text when the query changes. It clears on close. */
   onQueryChange?: (query: string) => void;
+  /** Return true to show an option for the query. Default: fuzzy match on value and keywords */
   filter?: ComboboxFilter;
+  /** Disables the input and blocks opening the list. Default: false */
   disabled?: boolean;
+  /** Play open and close swishes and a select on a pick. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<ComboboxMessages>;
@@ -136,8 +124,9 @@ export function Combobox({
   query: controlledQuery,
   defaultQuery = "",
   onQueryChange,
-  filter = defaultFilter,
+  filter = defaultOptionFilter,
   disabled = false,
+  sound = false,
   className,
   labels,
 }: ComboboxProps) {
@@ -151,7 +140,6 @@ export function Combobox({
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [internalQuery, setInternalQuery] = useState(defaultQuery);
-  const [items, setItems] = useState<Map<string, RegisteredItem>>(new Map());
 
   const valueControlled = controlledValue !== undefined;
   const openControlled = controlledOpen !== undefined;
@@ -168,10 +156,19 @@ export function Combobox({
     [onQueryChange, queryControlled],
   );
 
+  const playOpen = useSound(openSound, { enabled: sound });
+  const playClose = useSound(closeSound, { enabled: sound });
+  const playSelect = useSound(selectSound, { enabled: sound });
+
+  // `quiet` skips the close sweep when a pick already made its own sound.
   const updateOpen = useCallback(
-    (next: boolean, restoreFocus = false) => {
+    (next: boolean, restoreFocus = false, quiet = false) => {
       if (disabled && next) return;
       if (next !== open) {
+        if (!quiet) {
+          if (next) playOpen();
+          else playClose();
+        }
         if (!openControlled) setInternalOpen(next);
         onOpenChange?.(next);
       }
@@ -181,80 +178,32 @@ export function Combobox({
           inputRef.current?.focus({ preventScroll: true }),
         );
     },
-    [disabled, onOpenChange, open, openControlled, updateQuery],
+    [disabled, onOpenChange, open, openControlled, updateQuery, playOpen, playClose],
   );
 
-  const registerItem = useCallback((item: RegisteredItem) => {
-    setItems((current) => {
-      const existing = current.get(item.value);
-      if (
-        existing?.label === item.label &&
-        existing.disabled === item.disabled &&
-        existing.id === item.id &&
-        existing.ref === item.ref &&
-        existing.groupId === item.groupId &&
-        existing.keywords.join("\u0000") === item.keywords.join("\u0000")
-      ) {
-        return current;
-      }
-      const next = new Map(current);
-      next.set(item.value, item);
-      return next;
-    });
-  }, []);
-
-  const unregisterItem = useCallback((itemValue: string) => {
-    setItems((current) => {
-      if (!current.has(itemValue)) return current;
-      const next = new Map(current);
-      next.delete(itemValue);
-      return next;
-    });
-  }, []);
-
-  // The query the list filters by. Closing clears `query`, but the panel is
-  // still on screen for its exit, so it keeps filtering by the query it was
-  // open with rather than repopulating mid-collapse. The input already reads
-  // `query` only while open, so nothing the user can see reads the other one.
-  const [openQuery, setOpenQuery] = useState(query);
-  if (open && openQuery !== query) setOpenQuery(query);
-  const listQuery = open ? query : openQuery;
-
-  const visibleItems = useMemo(
-    () =>
-      Array.from(items.values()).filter((item) =>
-        filter(item.value, listQuery, [item.label, ...item.keywords]),
-      ),
-    [filter, items, listQuery],
-  );
-  const enabledVisibleItems = useMemo(
-    () => visibleItems.filter((item) => !item.disabled),
-    [visibleItems],
-  );
-  const visibleValues = useMemo(
-    () => new Set(visibleItems.map((item) => item.value)),
-    [visibleItems],
-  );
-  const visibleGroupIds = useMemo(
-    () => new Set(visibleItems.map((item) => item.groupId)),
-    [visibleItems],
-  );
-
-  const { activeValue, setActiveValue, moveActive } = useActiveOption({
-    open,
-    query: listQuery,
-    value,
-    enabledItems: enabledVisibleItems,
-  });
+  const {
+    items,
+    registerItem,
+    unregisterItem,
+    listQuery,
+    visibleValues,
+    visibleGroupIds,
+    visibleCount,
+    activeValue,
+    setActiveValue,
+    moveActive,
+    activeItemId,
+  } = useFilteredOptions({ open, query, value, filter });
 
   const select = useCallback(
     (next: string) => {
       if (items.get(next)?.disabled) return;
+      playSelect();
       if (!valueControlled) setInternalValue(next);
       onValueChange?.(next);
-      updateOpen(false, true);
+      updateOpen(false, true, true);
     },
-    [items, onValueChange, updateOpen, valueControlled],
+    [items, onValueChange, updateOpen, valueControlled, playSelect],
   );
 
   const selectActive = useCallback(() => {
@@ -269,44 +218,16 @@ export function Combobox({
     return () => cancelAnimationFrame(frame);
   }, [open]);
 
-  useEffect(() => {
-    if (!activeValue || !open) return;
-    const item = items.get(activeValue)?.ref.current;
-    const list = item?.closest<HTMLElement>("[role='listbox']");
-    if (!item || !list) return;
-    const itemRect = item.getBoundingClientRect();
-    const listRect = list.getBoundingClientRect();
-    if (itemRect.top < listRect.top) list.scrollTop -= listRect.top - itemRect.top;
-    else if (itemRect.bottom > listRect.bottom)
-      list.scrollTop += itemRect.bottom - listRect.bottom;
-  }, [activeValue, items, open]);
+  const insideContent = useCallback(
+    (target: Element) => Boolean(contentRef.current?.contains(target)),
+    [],
+  );
+  const dismiss = useCallback(
+    (reason: DismissReason) => updateOpen(false, reason === "escape"),
+    [updateOpen],
+  );
+  useDismiss(open, dismiss, rootRef, { focusOutside: true, ignore: insideContent });
 
-  useEffect(() => {
-    if (!open) return;
-    const isInside = (target: Node) =>
-      rootRef.current?.contains(target) || contentRef.current?.contains(target);
-    const onPointerDown = (event: PointerEvent) => {
-      if (!isInside(event.target as Node)) updateOpen(false);
-    };
-    const onFocusIn = (event: FocusEvent) => {
-      if (!isInside(event.target as Node)) updateOpen(false);
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      event.preventDefault();
-      updateOpen(false, true);
-    };
-    window.addEventListener("pointerdown", onPointerDown);
-    window.addEventListener("focusin", onFocusIn);
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      window.removeEventListener("pointerdown", onPointerDown);
-      window.removeEventListener("focusin", onFocusIn);
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open, updateOpen]);
-
-  const activeItem = activeValue ? items.get(activeValue) : undefined;
   const context = useMemo<ComboboxContextValue>(
     () => ({
       open,
@@ -325,8 +246,8 @@ export function Combobox({
         itemValue === undefined ? undefined : items.get(itemValue)?.label,
       isVisible: (itemValue) => !listQuery.trim() || visibleValues.has(itemValue),
       hasVisibleItems: (groupId) => visibleGroupIds.has(groupId),
-      visibleCount: visibleItems.length,
-      activeItemId: activeItem?.id,
+      visibleCount,
+      activeItemId,
       triggerId: `${baseId}-trigger`,
       listId: `${baseId}-list`,
       inputId: `${baseId}-input`,
@@ -339,7 +260,7 @@ export function Combobox({
       t,
     }),
     [
-      activeItem?.id,
+      activeItemId,
       activeValue,
       baseId,
       disabled,
@@ -358,7 +279,7 @@ export function Combobox({
       updateOpen,
       updateQuery,
       value,
-      visibleItems.length,
+      visibleCount,
       visibleGroupIds,
       visibleValues,
     ],

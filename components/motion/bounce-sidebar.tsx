@@ -12,12 +12,19 @@ import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export interface BounceSidebarItem {
+  /** Unique key, used as the sidebar's active value. */
   id: string;
+  /** Text shown in the row. */
   label: ReactNode;
+  /** Link address. Renders a link instead of a button when set. */
   href?: string;
+  /** Icon shown before the label. Omitted when not set. */
   icon?: ReactNode;
+  /** Dims the row and blocks selection. */
   disabled?: boolean;
+  /** Where the link opens. Only used with `href`. */
   target?: "_blank" | "_self" | "_parent" | "_top";
+  /** Link `rel`. Default: "noreferrer noopener" when `target` is "_blank" */
   rel?: string;
 }
 
@@ -29,16 +36,25 @@ export const bounceSidebarMessages = {
 export type BounceSidebarMessages = typeof bounceSidebarMessages;
 
 export interface BounceSidebarProps {
+  /** Links or buttons listed in the sidebar, in order. */
   items: BounceSidebarItem[];
+  /** Id of the active item, for controlled use. */
   value?: string;
+  /** The initial active item id when uncontrolled. Defaults to the first item. */
   defaultValue?: string;
+  /** Called with the item id when an item is picked. */
   onValueChange?: (value: string) => void;
+  /** Accessible name for the nav. Default: "Sidebar navigation" */
   ariaLabel?: string;
   /** Override any built-in string. */
   labels?: Partial<BounceSidebarMessages>;
+  /** Classes merged onto the root nav element. */
   className?: string;
+  /** Classes merged onto the list element. */
   listClassName?: string;
+  /** Classes merged onto each item's link or button. */
   itemClassName?: string;
+  /** Classes merged onto the bouncing dot. */
   indicatorClassName?: string;
 }
 

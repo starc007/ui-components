@@ -41,13 +41,18 @@ interface LiquidityHeatmapProps {
   snapshots: readonly LiquiditySnapshot[];
   /** Fixed intensity ceiling keeps colors comparable across live updates. */
   maxSize?: number;
+  /** Size unit shown in cell labels and the legend. Default: "units" */
   unit?: string;
+  /** Accessible name for the chart section. Default: "Liquidity heatmap" */
   label?: string;
+  /** Formats price levels on the axis and in cell labels. Defaults to up to 2 decimals. */
   formatPrice?: (price: number) => string;
+  /** Formats resting size in cell labels. Defaults to compact notation, e.g. 1.2K. */
   formatSize?: (size: number) => string;
   /** Override any built-in string. */
   labels?: Partial<LiquidityHeatmapMessages>;
   children?: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 const Context = createContext<
@@ -253,7 +258,7 @@ export function LiquidityHeatmapPlot({ className }: { className?: string }) {
           </table>
           <div
             aria-hidden="true"
-            className="absolute -right-[72px] top-0 bottom-0 flex w-16 flex-col justify-around text-right font-mono text-[10px] tabular-nums text-muted-foreground"
+            className="absolute -right-[72px] top-0 bottom-0 flex w-16 flex-col justify-around text-right font-mono text-[11px] tabular-nums text-muted-foreground"
           >
             {prices.map((price) => (
               <span key={price}>{formatPrice(price)}</span>
@@ -297,7 +302,7 @@ export function LiquidityHeatmapPlot({ className }: { className?: string }) {
         </div>
         <div
           aria-hidden="true"
-          className="mt-3 flex justify-between font-mono text-[10px] text-muted-foreground"
+          className="mt-3 flex justify-between font-mono text-[11px] text-muted-foreground"
         >
           {columns
             .filter(
@@ -354,7 +359,7 @@ export function LiquidityHeatmapLegend({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center justify-between gap-3 text-[10px] text-muted-foreground",
+        "flex flex-wrap items-center justify-between gap-3 text-[11px] text-muted-foreground",
         className,
       )}
     >

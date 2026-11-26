@@ -7,6 +7,53 @@ import type { ChangelogEntry } from "@/lib/changelog/types";
  * internal work.
  */
 export const changelogEntries: ChangelogEntry[] = [
+  // Everything from 2026-11-24 until the v2 launch lives in this one entry.
+  // Move its date to the newest ship day, and fold new work into these lines
+  // rather than adding one per component.
+  {
+    "date": "2026-11-25",
+    "title": "beUI v2",
+    "items": [
+      {
+        "type": "new",
+        "text": "Themes: pick a primary color and a base gray, see every component in it, and copy the CSS tokens.",
+        "href": "/themes"
+      },
+      {
+        "type": "new",
+        "text": "Sounds: 16 interface sounds made live with Web Audio, built like real taps from a contact click, a body tuned to a material and a little room. Install one, or Sound Kit for all of them.",
+        "href": "/sounds"
+      },
+      {
+        "type": "new",
+        "text": "A sound prop on buttons, menus, selects, sliders and micro interactions, off by default, with SoundProvider for volume and mute.",
+        "component": "sound-kit"
+      },
+      {
+        "type": "new",
+        "text": "Micro interactions: 22 small animated controls, from like, bookmark, follow and upvote buttons to copy, send, star rating, reactions, status icons, confetti and click bursts.",
+        "href": "/micro-interactions"
+      },
+      {
+        "type": "new",
+        "text": "Voice Note and Wave Reveal, plus slash commands in Prompt Input.",
+        "component": "voice-note"
+      },
+      {
+        "type": "new",
+        "text": "Agent-ready docs: every prop and data type described, beUI's theme tokens as a registry item that installs with the components that use them, MCP tools for docs and setup, WebMCP tools on every page for agents in the browser, a Markdown version of every page, and llms.txt grouped by category with install slugs.",
+        "href": "/docs/ai-agents"
+      },
+      {
+        "type": "improved",
+        "text": "Polished UI and motion across the library: instant from the keyboard, subtler presses, cleaner menus, selects, tooltips and dialogs, a steadier command palette with key hints, recent searches and more precise results, swipeable drawers, toasts redesigned as one morphing island, a clearer prompt input and chat bubbles, a jump to latest button in chats, and 16px corners on every floating panel with rows to match."
+      },
+      {
+        "type": "fixed",
+        "text": "Focus, overlay stacking, scroll lock and screen reader fixes across menus, dialogs, pickers and agent components."
+      }
+    ]
+  },
   {
     "date": "2026-11-19",
     "title": "Bookshelf",
@@ -46,7 +93,7 @@ export const changelogEntries: ChangelogEntry[] = [
     "items": [
       {
         "type": "new",
-        "text": "Before After Slider compares two images with a draggable divider that bends as it moves. Click to glide it, use the arrow keys, and swipe up or down on touch to scroll past it.",
+        "text": "Before After Slider compares 2 images with a draggable divider that bends as it moves. Click to glide it, use the arrow keys, and swipe up or down on touch to scroll past it.",
         "component": "before-after-slider"
       }
     ]
@@ -354,7 +401,7 @@ export const changelogEntries: ChangelogEntry[] = [
   {
     "date": "2026-10-16",
     "title": "React Native components arrive",
-    "summary": "beUI Native brings React Native versions of beUI components to the site, alongside two new charts and a broad keyboard and focus pass.",
+    "summary": "beUI Native brings React Native versions of beUI components to the site, alongside 2 new charts and a broad keyboard and focus pass.",
     "items": [
       {
         "type": "new",

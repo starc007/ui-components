@@ -70,7 +70,7 @@ export function SparklinePreview() {
       </div>
       <div className="grid gap-3 sm:grid-cols-3">
         {cards.map((card) => (
-          <div key={card.id} className="space-y-3 rounded-xl border border-border bg-card p-4">
+          <div key={card.id} className="space-y-3 rounded-2xl border border-border bg-card p-4">
             <div className="flex items-baseline justify-between gap-2">
               <span className="text-xs text-muted-foreground">{card.title}</span>
               <span className="font-mono text-sm font-medium tabular-nums">{card.value}</span>
@@ -89,7 +89,7 @@ export function SparklinePreview() {
           </div>
         ))}
       </div>
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div className="rounded-2xl border border-border bg-card p-4">
         <p className="mb-3 text-xs text-muted-foreground">Interactive: hover, drag or use the arrow keys</p>
         <Sparkline
           data={slice(users)}

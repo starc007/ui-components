@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, LoaderCircle, Sparkles, X } from "lucide-react";
+import { Check, LoaderCircle, Megaphone, X } from "lucide-react";
 import { useState } from "react";
 import {
   AnimatedToastStack,
@@ -55,6 +55,8 @@ export function AnimatedToastStackPreview() {
     updateToast,
     dismissToast,
     clearToasts,
+    pause,
+    resume,
   } = useAnimatedToastStack({
     defaultDuration: 3600,
     limit: 5,
@@ -86,16 +88,16 @@ export function AnimatedToastStackPreview() {
   return (
     <div className="flex min-h-72 w-full flex-col items-center justify-center gap-6">
       <AnimatedToastStack
+        sound
         toasts={toasts}
         onDismiss={dismissToast}
+        onPause={pause}
+        onResume={resume}
         position={position}
         placement="fixed"
         maxVisible={4}
-        classNames={{
-          surface: "bg-card/95",
-        }}
         icons={{
-          neutral: <Sparkles className="h-3.5 w-3.5" />,
+          neutral: <Megaphone className="h-3.5 w-3.5" />,
         }}
       />
 
@@ -144,7 +146,7 @@ export function AnimatedToastStackPreview() {
             className={cn(
               "rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors press",
               position === positionOption
-                ? "bg-foreground text-background"
+                ? "bg-primary text-primary-foreground"
                 : "bg-foreground/[0.04] text-muted-foreground hover:bg-foreground/[0.08] hover:text-foreground",
             )}
           >

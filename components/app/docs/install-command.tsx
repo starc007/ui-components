@@ -69,7 +69,7 @@ export function InstallCommand({
       <div className="flex items-center gap-2 py-2 pr-3 pl-3">
         <Tabs
           value={pm}
-          onValueChange={(v) => setPm(v as PM)}
+          onValueChange={setPm}
           variant="segment"
         >
           <TabsList className="gap-0.5 rounded-none bg-transparent p-0">

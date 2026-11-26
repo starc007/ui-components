@@ -80,19 +80,27 @@ export function useSortableList() {
 }
 
 export interface SortableListProps<T extends { id: string }> {
+  /** The items in their current order, for controlled use. */
   items?: T[];
+  /** The initial items when uncontrolled. Default: [] */
   defaultItems?: T[];
+  /** Called with the reordered items after a drag, key move or undo. */
   onItemsChange?: (items: T[]) => void;
   /** Convenience row contents when children are omitted. */
   renderItem?: (item: T, index: number) => ReactNode;
+  /** Returns an item's name for handle labels and move announcements. */
   getItemLabel: (item: T) => string;
   /** Compose parts; the render function receives items in their current order. */
   children?: ReactNode | ((items: T[]) => ReactNode);
+  /** Accessible name for the list. Default: "Sortable items" */
   label?: string;
+  /** Turn off dragging, key moves and undo. Default: false */
   disabled?: boolean;
   /** Show the automatic undo button in the convenience composition. */
   showUndo?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto every row. */
   itemClassName?: string;
   /** Override any built-in string. */
   labels?: Partial<SortableListMessages>;
@@ -409,7 +417,7 @@ export function SortableListHandle({
         }
       }}
       className={cn(
-        "flex size-9 shrink-0 touch-none items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40",
+        "flex size-9 shrink-0 touch-none items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40",
         className,
       )}
       style={{
@@ -445,7 +453,7 @@ export function SortableListUndo({
       type="button"
       disabled={disabled || context.disabled || !context.canUndo}
       className={cn(
-        "mt-4 inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
+        "mt-4 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40",
         className,
       )}
       onClick={(event) => {

@@ -3,6 +3,7 @@
 import {
   animate,
   type MotionValue,
+  motion,
   useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
@@ -31,6 +32,7 @@ import {
   useHoverGesture,
 } from "@/lib/hooks/use-hover-gesture";
 import { useTapGesture } from "@/lib/hooks/use-tap-gesture";
+import { mergeRefs } from "@/lib/merge-refs";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -49,7 +51,13 @@ const GOO_CLOSE_SPRING = {
   visualDuration: 0.21,
   bounce: 0.15,
 } as const;
+// A pointer crossing the trigger on its way elsewhere should not burst the
+// panel open; one that stops for a moment means it.
+const HOVER_OPEN_DELAY = 100;
 const HOVER_CLOSE_DELAY = 120;
+// Reduced motion trades the morph for a plain fade, out faster than in.
+const FADE_IN = { duration: 0.15 } as const;
+const FADE_OUT = { duration: 0.12 } as const;
 const CIRCLE_KAPPA = 0.5523;
 
 // `onPointerEnter`/`onPointerLeave` rather than the mouse pair: a tap fires
@@ -207,7 +215,10 @@ interface PopoverContextValue {
   open: boolean;
   setOpen: (open: boolean) => void;
   toggle: () => void;
+  /** Open now (focus). */
   openHover: () => void;
+  /** Open after a short intent delay (pointer). */
+  openHoverSoon: () => void;
   scheduleClose: () => void;
   triggerMode: TriggerMode;
   side: Side;
@@ -219,6 +230,7 @@ interface PopoverContextValue {
   gooId: string;
   contentId: string;
   progress: MotionValue<number>;
+  fade: MotionValue<number>;
   triggerRef: React.MutableRefObject<HTMLElement | null>;
   contentRef: React.MutableRefObject<HTMLDivElement | null>;
 }
@@ -237,6 +249,7 @@ export interface PopoverProps {
   open?: boolean;
   /** Uncontrolled initial open state. */
   defaultOpen?: boolean;
+  /** Called with the new open state when the panel opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /** How the popover is summoned. Default "click". */
   trigger?: TriggerMode;
@@ -250,6 +263,7 @@ export interface PopoverProps {
   panelRadius?: number;
   /** Blur radius feeding the goo filter — higher melts more. Default 8. */
   gooStrength?: number;
+  /** Classes merged onto the wrapper around the trigger. */
   className?: string;
 }
 
@@ -273,8 +287,11 @@ export function Popover({
   const triggerRef = useRef<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rootHover = useHoverGesture();
   const progress = useMotionValue(defaultOpen ? 1 : 0);
+  // The whole layer's opacity: 1 throughout the morph, faded under reduced motion.
+  const fade = useMotionValue(1);
 
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const controlled = controlledOpen !== undefined;
@@ -295,32 +312,65 @@ export function Popover({
     }
   }, []);
 
+  const cancelOpen = useCallback(() => {
+    if (openTimer.current) {
+      clearTimeout(openTimer.current);
+      openTimer.current = null;
+    }
+  }, []);
+
+  // Focus opens at once; it is deliberate.
   const openHover = useCallback(() => {
     cancelClose();
+    cancelOpen();
     setOpen(true);
-  }, [cancelClose, setOpen]);
+  }, [cancelClose, cancelOpen, setOpen]);
+
+  // A pointer waits a beat first. Moving back onto an open panel just keeps it.
+  const openHoverSoon = useCallback(() => {
+    cancelClose();
+    if (open || openTimer.current) return;
+    openTimer.current = setTimeout(() => {
+      openTimer.current = null;
+      setOpen(true);
+    }, HOVER_OPEN_DELAY);
+  }, [cancelClose, open, setOpen]);
 
   const scheduleClose = useCallback(() => {
     cancelClose();
+    cancelOpen();
     closeTimer.current = setTimeout(() => setOpen(false), HOVER_CLOSE_DELAY);
-  }, [cancelClose, setOpen]);
+  }, [cancelClose, cancelOpen, setOpen]);
 
   const toggle = useCallback(() => setOpen(!open), [setOpen, open]);
 
-  useEffect(() => () => cancelClose(), [cancelClose]);
+  useEffect(
+    () => () => {
+      cancelClose();
+      cancelOpen();
+    },
+    [cancelClose, cancelOpen],
+  );
 
   useEffect(() => {
-    const animation = animate(
-      progress,
-      open ? 1 : 0,
-      reduce
-        ? { duration: 0 }
-        : open
-          ? GOO_OPEN_SPRING
-          : GOO_CLOSE_SPRING,
-    );
+    if (!reduce) {
+      fade.set(1);
+      const animation = animate(progress, open ? 1 : 0, open ? GOO_OPEN_SPRING : GOO_CLOSE_SPRING);
+      return () => animation.stop();
+    }
+    // Reduced motion: the panel is at full size the whole time it shows, and
+    // only its opacity moves. It folds away once it has faded out.
+    if (open) {
+      // From fully closed, start transparent; mid-fade, carry on from there.
+      if (progress.get() === 0) fade.set(0);
+      progress.set(1);
+      const animation = animate(fade, 1, FADE_IN);
+      return () => animation.stop();
+    }
+    const animation = animate(fade, 0, FADE_OUT);
+    animation.then(() => animate(progress, 0, { duration: 0 }));
     return () => animation.stop();
-  }, [open, progress, reduce]);
+  }, [open, progress, fade, reduce]);
 
   // The panel is a `role="dialog"` and goes inert the moment it closes, so
   // focus cannot be left sitting inside it: Escape hands it back to the
@@ -351,6 +401,7 @@ export function Popover({
       setOpen,
       toggle,
       openHover,
+      openHoverSoon,
       scheduleClose,
       triggerMode: trigger,
       side,
@@ -362,6 +413,7 @@ export function Popover({
       gooId,
       contentId,
       progress,
+      fade,
       triggerRef,
       contentRef,
     }),
@@ -370,6 +422,7 @@ export function Popover({
       setOpen,
       toggle,
       openHover,
+      openHoverSoon,
       scheduleClose,
       trigger,
       side,
@@ -381,12 +434,13 @@ export function Popover({
       gooId,
       contentId,
       progress,
+      fade,
     ],
   );
 
   const hoverHandlers =
     trigger === "hover"
-      ? makeHoverHandlers(rootHover, openHover, scheduleClose)
+      ? makeHoverHandlers(rootHover, openHoverSoon, scheduleClose)
       : {};
 
   return (
@@ -400,16 +454,6 @@ export function Popover({
       </div>
     </PopoverContext.Provider>
   );
-}
-
-function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref && typeof ref === "object")
-        (ref as React.MutableRefObject<T | null>).current = node;
-    }
-  };
 }
 
 export interface PopoverTriggerProps {
@@ -500,6 +544,7 @@ const ALIGN_ORIGIN: Record<Align, string> = {
 
 export interface PopoverContentProps {
   children: ReactNode;
+  /** Classes merged onto the panel's content box. */
   className?: string;
 }
 
@@ -520,8 +565,9 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
     contentRef,
     open,
     triggerMode,
-    openHover,
+    openHoverSoon,
     scheduleClose,
+    fade,
   } = ctx;
 
   const measureRef = contentRef;
@@ -592,7 +638,7 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
 
   const hoverHandlers =
     triggerMode === "hover"
-      ? makeHoverHandlers(panelHover, openHover, scheduleClose)
+      ? makeHoverHandlers(panelHover, openHoverSoon, scheduleClose)
       : {};
 
   // Match the server and first client render, then attach the portal after
@@ -608,6 +654,8 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
         transform: `translate3d(${layout?.trigger.left ?? 0}px, ${layout?.trigger.top ?? 0}px, 0)`,
       }}
     >
+      {/* Fully opaque through the morph; carries the fade under reduced motion. */}
+      <motion.div className="absolute left-0 top-0" style={{ opacity: fade }}>
       {/* Goo filter: blur, sharpen the alpha back into solid shapes, then lay
           the crisp original on top so blobs merge with liquid edges. */}
       <svg aria-hidden width="0" height="0" className="absolute">
@@ -702,6 +750,7 @@ export function PopoverContent({ children, className }: PopoverContentProps) {
           </div>
         </div>
       </div>
+      </motion.div>
     </div>,
     document.body,
   );

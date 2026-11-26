@@ -5,41 +5,24 @@ import { ChangelogContent } from "@/components/app/changelog/changelog-content";
 import { SiteFooter } from "@/components/app/chrome/site-footer";
 import { getTranslations } from "@/i18n/server";
 import { CHANGELOG_FEED_PATH, CHANGELOG_PATH } from "@/lib/changelog";
-import { type Metadata, metadataToHead } from "@/lib/head";
-import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
+import { loaderHead, pageMetadata } from "@/lib/head";
 
 const getChangelogPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .handler(async () => {
     const t = getTranslations("Native.changelog");
-    const description = t("description");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: CHANGELOG_PATH,
       title: t("title"),
-      description,
-      alternates: {
-        canonical: CHANGELOG_PATH,
-        types: { "application/rss+xml": CHANGELOG_FEED_PATH },
-      },
-      openGraph: {
-        title: `${t("title")} · beUI`,
-        description,
-        url: CHANGELOG_PATH,
-        type: "website",
-        siteName: "beUI",
-        images: [DEFAULT_OG_IMAGE],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${t("title")} · beUI`,
-        images: [DEFAULT_OG_IMAGE],
-      },
-    };
+      description: t("description"),
+      types: { "application/rss+xml": CHANGELOG_FEED_PATH },
+    });
     return { metadata };
   });
 
 export const Route = createFileRoute("/_site/changelog")({
   loader: () => getChangelogPage(),
-  head: ({ loaderData }) => (loaderData ? metadataToHead(loaderData.metadata) : {}),
+  head: loaderHead,
   component: ChangelogPage,
 });
 

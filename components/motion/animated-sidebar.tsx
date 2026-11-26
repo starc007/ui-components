@@ -1,205 +1,63 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
 import {
   AnimatePresence,
   type HTMLMotionProps,
   motion,
   useReducedMotion,
-  type Variants,
 } from "motion/react";
 import {
   type ButtonHTMLAttributes,
   type CSSProperties,
-  createContext,
   forwardRef,
   type HTMLAttributes,
   type ReactNode,
   useCallback,
-  useContext,
   useEffect,
   useId,
   useRef,
   useState,
-  useSyncExternalStore,
 } from "react";
-import { createPortal } from "react-dom";
 import { SharedLayoutBg } from "@/components/motion/shared-layout-bg";
-import {
-  EASE_DRAWER,
-  EASE_OUT,
-  SPRING_LAYOUT,
-  SPRING_PRESS,
-} from "@/lib/ease";
+import { SPRING_LAYOUT } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import {
+  AnimatedSidebarContext,
+  AnimatedSidebarPanelContext,
+  type AnimatedSidebarMessages,
+  animatedSidebarMessages,
+  type SidebarCollapsible,
+  type SidebarSide,
+  type SidebarVariant,
+  useAnimatedSidebar,
+  useAnimatedSidebarPanel,
+} from "./animated-sidebar/context";
+import { MobileSidebar } from "./animated-sidebar/mobile-sidebar";
+import {
+  PANEL_TRANSITION,
+  REDUCED_TRANSITION,
+  SIDEBAR_MORPH_TRANSITION,
+  SUBMENU_ITEM_VARIANTS,
+  SUBMENU_VARIANTS,
+} from "./animated-sidebar/motion";
+import { useIsMobile } from "./animated-sidebar/use-is-mobile";
 
-type SidebarState = "expanded" | "collapsed";
-type SidebarSide = "left" | "right";
-type SidebarVariant = "sidebar" | "floating" | "inset";
-type SidebarCollapsible = "offcanvas" | "icon" | "none";
+export {
+  AnimatedSidebarMenuSubButton,
+  type AnimatedSidebarMenuSubButtonProps,
+} from "./animated-sidebar/menu-sub-button";
+export {
+  AnimatedSidebarMenuButton,
+  type AnimatedSidebarMenuButtonProps,
+} from "./animated-sidebar/menu-button";
+export {
+  type AnimatedSidebarMessages,
+  animatedSidebarMessages,
+  useAnimatedSidebar,
+} from "./animated-sidebar/context";
 
-const MOBILE_QUERY = "(max-width: 767px)";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
-
-const PANEL_TRANSITION = {
-  duration: 0.36,
-  ease: EASE_DRAWER,
-} as const;
-
-// The desktop rail settles at a hard zero-width boundary. Keep the spring
-// critically damped so it cannot overshoot, pause against that boundary, and
-// then snap back during the final frame.
-const SIDEBAR_MORPH_TRANSITION = {
-  type: "spring",
-  stiffness: 380,
-  damping: 35,
-  mass: 0.75,
-} as const;
-
-const LABEL_ENTER_TRANSITION = {
-  duration: 0.2,
-  delay: 0.08,
-  ease: EASE_OUT,
-} as const;
-
-const LABEL_EXIT_TRANSITION = {
-  duration: 0.12,
-  ease: EASE_OUT,
-} as const;
-
-const SUBMENU_TRANSITION = {
-  duration: 0.18,
-  ease: EASE_OUT,
-} as const;
-
-const SUBMENU_VARIANTS: Variants = {
-  closed: {
-    opacity: 0,
-    clipPath: "inset(0 0 100% 0 round 8px)",
-    transition: {
-      duration: 0.14,
-      ease: EASE_OUT,
-      staggerChildren: 0.025,
-      staggerDirection: -1,
-    },
-  },
-  open: {
-    opacity: 1,
-    clipPath: "inset(0 0 0% 0 round 8px)",
-    transition: {
-      duration: 0.2,
-      delayChildren: 0.035,
-      ease: EASE_OUT,
-      staggerChildren: 0.045,
-    },
-  },
-};
-
-const SUBMENU_ITEM_VARIANTS: Variants = {
-  closed: {
-    opacity: 0,
-    y: -6,
-    filter: "blur(3px)",
-  },
-  open: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: SUBMENU_TRANSITION,
-  },
-};
-
-const REDUCED_TRANSITION = {
-  duration: 0.16,
-  ease: EASE_OUT,
-} as const;
-
-const FOCUSABLE_SELECTOR = [
-  "a[href]",
-  "button:not([disabled])",
-  "input:not([disabled])",
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  "[tabindex]:not([tabindex='-1'])",
-].join(",");
-
-function subscribeToMobileQuery(callback: () => void) {
-  const query = window.matchMedia(MOBILE_QUERY);
-  query.addEventListener("change", callback);
-  return () => query.removeEventListener("change", callback);
-}
-
-function getMobileSnapshot() {
-  return window.matchMedia(MOBILE_QUERY).matches;
-}
-
-function getServerMobileSnapshot() {
-  return false;
-}
-
-function useIsMobile() {
-  return useSyncExternalStore(
-    subscribeToMobileQuery,
-    getMobileSnapshot,
-    getServerMobileSnapshot,
-  );
-}
-
-/** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
-export const animatedSidebarMessages = {
-  label: "Sidebar",
-  toggle: "Toggle sidebar",
-  close: "Close sidebar",
-};
-
-export type AnimatedSidebarMessages = typeof animatedSidebarMessages;
-
-interface AnimatedSidebarContextValue {
-  isMobile: boolean;
-  layoutId: string;
-  open: boolean;
-  openMobile: boolean;
-  reduce: boolean;
-  setOpen: (open: boolean) => void;
-  setOpenMobile: (open: boolean) => void;
-  state: SidebarState;
-  toggleSidebar: () => void;
-  triggerRef: React.RefObject<HTMLButtonElement | null>;
-  t: ReturnType<typeof useMessages<AnimatedSidebarMessages>>;
-}
-
-const AnimatedSidebarContext =
-  createContext<AnimatedSidebarContextValue | null>(null);
-
-interface AnimatedSidebarPanelContextValue {
-  collapsed: boolean;
-  collapsible: SidebarCollapsible;
-  side: SidebarSide;
-}
-
-const AnimatedSidebarPanelContext =
-  createContext<AnimatedSidebarPanelContextValue | null>(null);
-
-export function useAnimatedSidebar() {
-  const context = useContext(AnimatedSidebarContext);
-  if (!context) {
-    throw new Error(
-      "useAnimatedSidebar must be used inside AnimatedSidebarProvider.",
-    );
-  }
-  return context;
-}
-
-function useAnimatedSidebarPanel() {
-  const context = useContext(AnimatedSidebarPanelContext);
-  if (!context) {
-    throw new Error(
-      "Animated Sidebar parts must be used inside AnimatedSidebar.",
-    );
-  }
-  return context;
-}
 
 type SidebarProviderStyle = CSSProperties & {
   "--sidebar-width"?: string;
@@ -209,12 +67,19 @@ type SidebarProviderStyle = CSSProperties & {
 
 export interface AnimatedSidebarProviderProps
   extends HTMLAttributes<HTMLDivElement> {
+  /** Whether the desktop sidebar is expanded, for controlled use. */
   open?: boolean;
+  /** Whether the desktop sidebar starts expanded when uncontrolled. Default: true */
   defaultOpen?: boolean;
+  /** Called with the next state when the desktop sidebar expands or collapses. */
   onOpenChange?: (open: boolean) => void;
+  /** Whether the mobile drawer is open, for controlled use. */
   openMobile?: boolean;
+  /** Whether the mobile drawer starts open when uncontrolled. Default: false */
   defaultOpenMobile?: boolean;
+  /** Called with the next state when the mobile drawer opens or closes. */
   onOpenMobileChange?: (open: boolean) => void;
+  /** Inline styles; set `--sidebar-width`, `--sidebar-width-icon` or `--sidebar-width-mobile` here. */
   style?: SidebarProviderStyle;
   /** Override any built-in string. */
   labels?: Partial<AnimatedSidebarMessages>;
@@ -317,197 +182,18 @@ export function AnimatedSidebarProvider({
   );
 }
 
-function MobileSidebar({
-  ariaLabel,
-  children,
-  className,
-  side,
-}: {
-  ariaLabel: string;
-  children: ReactNode;
-  className?: string;
-  side: SidebarSide;
-}) {
-  const context = useAnimatedSidebar();
-  const panelRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
-  // The sheet is mounted for as long as the viewport is mobile, so it hides
-  // itself while closed rather than sitting there transparent and interactive.
-  // Opening shows it in the same commit that starts the slide — a delayed show
-  // would run the focus effect below against a still-hidden panel, and focus()
-  // on a hidden element is ignored. Closing waits for the slide to finish, and
-  // the panel's own exit tells us when that is: no duration to keep in sync.
-  const [hidden, setHidden] = useState(!context.openMobile);
-  // The completion callback fires for the open slide too, and it reads state
-  // from whenever motion settles: a ref keeps it on the current one.
-  const openMobileRef = useRef(context.openMobile);
-
-  useEffect(() => setMounted(true), []);
-
-  useEffect(() => {
-    openMobileRef.current = context.openMobile;
-    if (context.openMobile) setHidden(false);
-  }, [context.openMobile]);
-
-  useEffect(() => {
-    if (!context.openMobile) return;
-
-    const body = document.body;
-    const scrollY = window.scrollY;
-    const previousBodyStyles = {
-      left: body.style.left,
-      overflow: body.style.overflow,
-      position: body.style.position,
-      right: body.style.right,
-      top: body.style.top,
-    };
-
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.left = "0";
-    body.style.right = "0";
-    body.style.overflow = "hidden";
-
-    const focusFrame = requestAnimationFrame(() => {
-      const firstFocusable =
-        panelRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
-      (firstFocusable ?? panelRef.current)?.focus({ preventScroll: true });
-    });
-
-    return () => {
-      cancelAnimationFrame(focusFrame);
-      body.style.position = previousBodyStyles.position;
-      body.style.top = previousBodyStyles.top;
-      body.style.left = previousBodyStyles.left;
-      body.style.right = previousBodyStyles.right;
-      body.style.overflow = previousBodyStyles.overflow;
-      window.scrollTo(0, scrollY);
-      context.triggerRef.current?.focus({ preventScroll: true });
-    };
-  }, [context.openMobile, context.triggerRef]);
-
-  if (!mounted) return null;
-
-  // This container groups the sheet for hiding and the z-index and carries no
-  // box: both children are `fixed` and resolve against the viewport themselves.
-  // The scrim spans the viewport edges but paints a colour, and the panel is
-  // inset off one side and paints its own surface, so no layer here is a
-  // transparent edge-spanning one.
-  return createPortal(
-    <div
-      className={cn(
-        "pointer-events-none fixed left-0 top-0 z-50 size-0 md:hidden",
-        hidden && !context.openMobile ? "invisible" : "visible",
-      )}
-    >
-      <motion.button
-        type="button"
-        aria-label={context.t("close")}
-        tabIndex={context.openMobile ? 0 : -1}
-        initial={false}
-        animate={{ opacity: context.openMobile ? 1 : 0 }}
-        transition={
-          context.reduce ? REDUCED_TRANSITION : PANEL_TRANSITION
-        }
-        onClick={() => context.setOpenMobile(false)}
-        className={cn(
-          "fixed inset-0 bg-black/40",
-          context.openMobile
-            ? "pointer-events-auto"
-            : "pointer-events-none",
-        )}
-      />
-
-      <motion.div
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label={ariaLabel}
-        aria-hidden={!context.openMobile}
-        inert={!context.openMobile}
-        tabIndex={-1}
-        data-mobile="true"
-        data-state={context.openMobile ? "expanded" : "collapsed"}
-        data-side={side}
-        initial={false}
-        animate={{
-          opacity: context.reduce
-            ? context.openMobile
-              ? 1
-              : 0
-            : 1,
-          x: context.reduce
-            ? 0
-            : context.openMobile
-              ? "0%"
-              : side === "left"
-                ? "-100%"
-                : "100%",
-        }}
-        transition={
-          context.reduce ? REDUCED_TRANSITION : PANEL_TRANSITION
-        }
-        onAnimationComplete={() => {
-          if (!openMobileRef.current) setHidden(true);
-        }}
-        onKeyDown={(event) => {
-          if (event.key === "Escape") {
-            event.preventDefault();
-            context.setOpenMobile(false);
-            return;
-          }
-
-          if (event.key !== "Tab") return;
-          const focusable = panelRef.current
-            ? Array.from(
-                panelRef.current.querySelectorAll<HTMLElement>(
-                  FOCUSABLE_SELECTOR,
-                ),
-              )
-            : [];
-
-          if (focusable.length === 0) {
-            event.preventDefault();
-            panelRef.current?.focus();
-            return;
-          }
-
-          const first = focusable[0];
-          const last = focusable[focusable.length - 1];
-          if (event.shiftKey && document.activeElement === first) {
-            event.preventDefault();
-            last.focus();
-          } else if (!event.shiftKey && document.activeElement === last) {
-            event.preventDefault();
-            first.focus();
-          }
-        }}
-        className={cn(
-          "pointer-events-auto fixed inset-y-0 flex h-dvh w-(--sidebar-width-mobile) max-w-[88vw] flex-col overflow-hidden",
-          "border-border bg-background shadow-2xl will-change-transform",
-          side === "left" ? "left-0 border-r" : "right-0 border-l",
-          !context.openMobile && "pointer-events-none",
-          className,
-        )}
-      >
-        <AnimatedSidebarPanelContext.Provider
-          value={{ collapsed: false, collapsible: "none", side }}
-        >
-          {children}
-        </AnimatedSidebarPanelContext.Provider>
-      </motion.div>
-    </div>,
-    document.body,
-  );
-}
-
 export interface AnimatedSidebarProps
   extends Omit<HTMLMotionProps<"aside">, "children"> {
   children?: ReactNode;
+  /** Which edge of the layout the sidebar sits on. Default: "left" */
   side?: SidebarSide;
+  /** Panel style: bordered edge, floating card, or inset card. Default: "sidebar" */
   variant?: SidebarVariant;
+  /** How it collapses: to an icon rail, fully off canvas, or never. Default: "icon" */
   collapsible?: SidebarCollapsible;
+  /** Accessible name for the sidebar landmark. Default: "Sidebar" */
   ariaLabel?: string;
+  /** Classes merged onto the inner panel that holds the content. */
   panelClassName?: string;
 }
 
@@ -633,7 +319,7 @@ export const AnimatedSidebarTrigger = forwardRef<
         if (!event.defaultPrevented) context.toggleSidebar();
       }}
       className={cn(
-        "inline-flex size-10 shrink-0 items-center justify-center rounded-xl outline-none",
+        "inline-flex size-10 shrink-0 items-center justify-center rounded-full outline-none",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         className,
       )}
@@ -666,7 +352,7 @@ export const AnimatedSidebarClose = forwardRef<
         else context.setOpen(false);
       }}
       className={cn(
-        "inline-flex size-10 shrink-0 items-center justify-center rounded-xl outline-none",
+        "inline-flex size-10 shrink-0 items-center justify-center rounded-full outline-none",
         "focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
@@ -809,7 +495,7 @@ export const AnimatedSidebarGroupLabel = forwardRef<
       aria-hidden={collapsed}
       data-slot="sidebar-group-label"
       className={cn(
-        "mb-1 h-7 overflow-hidden px-2 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground transition-opacity",
+        "mb-1 h-7 overflow-hidden px-2 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground transition-opacity",
         collapsed ? "opacity-0" : "opacity-100",
         className,
       )}
@@ -849,7 +535,7 @@ export const AnimatedSidebarMenu = forwardRef<
       ref={forwardedRef as React.Ref<HTMLElement>}
       as="ul"
       inset={0}
-      pillClassName="rounded-xl bg-muted/70"
+      pillClassName="rounded-full bg-muted/70"
       pillContainerClassName="inset-y-auto top-0 h-9"
       data-slot="sidebar-menu"
       className={cn("flex w-full min-w-0 list-none flex-col gap-0.5", className)}
@@ -877,6 +563,7 @@ export const AnimatedSidebarMenuItem = forwardRef<
 
 export interface AnimatedSidebarMenuSubProps
   extends Omit<HTMLMotionProps<"ul">, "children"> {
+  /** Shows the submenu. It stays hidden while the sidebar is collapsed. */
   open: boolean;
   children?: ReactNode;
 }
@@ -933,259 +620,3 @@ export const AnimatedSidebarMenuSubItem = forwardRef<
     />
   );
 });
-
-export interface AnimatedSidebarMenuSubButtonProps {
-  children: ReactNode;
-  icon?: ReactNode;
-  href?: string;
-  isActive?: boolean;
-  disabled?: boolean;
-  closeOnSelect?: boolean;
-  target?: "_blank" | "_self" | "_parent" | "_top";
-  rel?: string;
-  onSelect?: () => void;
-  className?: string;
-}
-
-export function AnimatedSidebarMenuSubButton({
-  children,
-  icon,
-  href,
-  isActive = false,
-  disabled = false,
-  closeOnSelect = true,
-  target,
-  rel,
-  onSelect,
-  className,
-}: AnimatedSidebarMenuSubButtonProps) {
-  const context = useAnimatedSidebar();
-
-  const select = (
-    event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
-  ) => {
-    if (disabled) {
-      event.preventDefault();
-      return;
-    }
-    onSelect?.();
-    if (context.isMobile && closeOnSelect) context.setOpenMobile(false);
-  };
-
-  const content = (
-    <>
-      <span
-        aria-hidden="true"
-        className="grid size-4 shrink-0 place-items-center"
-      >
-        {icon ?? <span className="size-1 rounded-full bg-current" />}
-      </span>
-      <span className="min-w-0 flex-1 truncate">{children}</span>
-    </>
-  );
-
-  const interactiveClassName = cn(
-    "flex min-h-8 w-full min-w-0 items-center gap-2 rounded-lg px-2 text-left text-xs outline-none",
-    "text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground",
-    "focus-visible:bg-muted/70 focus-visible:ring-2 focus-visible:ring-ring",
-    isActive && "bg-muted/70 text-foreground",
-    disabled && "cursor-not-allowed opacity-40",
-    className,
-  );
-
-  return href ? (
-    <motion.a
-      href={href}
-      target={target}
-      rel={
-        rel ??
-        (target === "_blank" ? "noreferrer noopener" : undefined)
-      }
-      aria-current={isActive ? "page" : undefined}
-      aria-disabled={disabled || undefined}
-      tabIndex={disabled ? -1 : undefined}
-      onClick={select}
-      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
-      transition={SPRING_PRESS}
-      className={interactiveClassName}
-    >
-      {content}
-    </motion.a>
-  ) : (
-    <motion.button
-      type="button"
-      disabled={disabled}
-      aria-current={isActive ? "page" : undefined}
-      onClick={select}
-      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
-      transition={SPRING_PRESS}
-      className={interactiveClassName}
-    >
-      {content}
-    </motion.button>
-  );
-}
-
-export interface AnimatedSidebarMenuButtonProps {
-  children: ReactNode;
-  icon?: ReactNode;
-  badge?: ReactNode;
-  href?: string;
-  isActive?: boolean;
-  ariaExpanded?: boolean;
-  disabled?: boolean;
-  closeOnSelect?: boolean;
-  target?: "_blank" | "_self" | "_parent" | "_top";
-  rel?: string;
-  onSelect?: () => void;
-  className?: string;
-}
-
-export function AnimatedSidebarMenuButton({
-  children,
-  icon,
-  badge,
-  href,
-  isActive = false,
-  ariaExpanded,
-  disabled = false,
-  closeOnSelect,
-  target,
-  rel,
-  onSelect,
-  className,
-}: AnimatedSidebarMenuButtonProps) {
-  const context = useAnimatedSidebar();
-  const panel = useAnimatedSidebarPanel();
-  const textLabel = typeof children === "string" ? children : undefined;
-
-  const select = (
-    event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
-  ) => {
-    if (disabled) {
-      event.preventDefault();
-      return;
-    }
-    onSelect?.();
-    const shouldCloseOnSelect =
-      closeOnSelect ?? ariaExpanded === undefined;
-    if (context.isMobile && shouldCloseOnSelect) {
-      context.setOpenMobile(false);
-    }
-    // A submenu cannot render in the icon rail, so opening one from there
-    // leaves its children unreachable — a pointer can still fall back to the
-    // rail or the shortcut, a finger has nothing. Selecting a group unfolds
-    // the panel that is about to hold it.
-    if (ariaExpanded !== undefined && panel.collapsed && !context.isMobile) {
-      context.setOpen(true);
-    }
-  };
-
-  const content = (
-    <>
-      {isActive ? (
-        <motion.span
-          layoutId={context.layoutId}
-          transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
-          className="absolute inset-0 rounded-xl bg-muted"
-        />
-      ) : null}
-      {icon ? (
-        <span
-          aria-hidden="true"
-          className="relative z-10 grid size-5 shrink-0 place-items-center"
-        >
-          {icon}
-        </span>
-      ) : null}
-      <motion.span
-        initial={false}
-        animate={{
-          opacity: panel.collapsed ? 0 : 1,
-          x: panel.collapsed ? -4 : 0,
-        }}
-        transition={
-          context.reduce
-            ? REDUCED_TRANSITION
-            : panel.collapsed
-              ? LABEL_EXIT_TRANSITION
-              : LABEL_ENTER_TRANSITION
-        }
-        aria-hidden={panel.collapsed}
-        className={cn(
-          "relative z-10 min-w-0 flex-1 truncate",
-          panel.collapsed && "pointer-events-none",
-        )}
-      >
-        {children}
-      </motion.span>
-      {badge && !panel.collapsed ? (
-        <span className="relative z-10 shrink-0 text-xs text-muted-foreground">
-          {badge}
-        </span>
-      ) : null}
-      {ariaExpanded !== undefined ? (
-        <motion.span
-          aria-hidden="true"
-          initial={false}
-          animate={{
-            opacity: panel.collapsed ? 0 : 1,
-            rotate: ariaExpanded ? 90 : 0,
-            x: panel.collapsed ? 4 : 0,
-          }}
-          transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
-          className="relative z-10 grid size-4 shrink-0 place-items-center text-muted-foreground"
-        >
-          <ChevronRight className="size-3.5" />
-        </motion.span>
-      ) : null}
-    </>
-  );
-
-  const interactiveClassName = cn(
-    "relative flex min-h-9 w-full min-w-0 items-center gap-2.5 overflow-hidden rounded-xl px-3 text-left text-sm font-medium outline-none",
-    "text-muted-foreground transition-colors hover:text-foreground",
-    "focus-visible:bg-muted/70 focus-visible:ring-2 focus-visible:ring-ring",
-    isActive && "text-foreground",
-    disabled && "cursor-not-allowed opacity-40",
-    className,
-  );
-
-  return href ? (
-    <motion.a
-      href={href}
-      target={target}
-      rel={
-        rel ??
-        (target === "_blank" ? "noreferrer noopener" : undefined)
-      }
-      aria-current={isActive ? "page" : undefined}
-      aria-expanded={ariaExpanded}
-      aria-disabled={disabled || undefined}
-      aria-label={panel.collapsed ? textLabel : undefined}
-      title={panel.collapsed ? textLabel : undefined}
-      tabIndex={disabled ? -1 : undefined}
-      onClick={select}
-      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
-      transition={SPRING_PRESS}
-      className={interactiveClassName}
-    >
-      {content}
-    </motion.a>
-  ) : (
-    <motion.button
-      type="button"
-      disabled={disabled}
-      aria-current={isActive ? "page" : undefined}
-      aria-expanded={ariaExpanded}
-      aria-label={panel.collapsed ? textLabel : undefined}
-      title={panel.collapsed ? textLabel : undefined}
-      onClick={select}
-      whileTap={context.reduce || disabled ? undefined : { scale: 0.98 }}
-      transition={SPRING_PRESS}
-      className={interactiveClassName}
-    >
-      {content}
-    </motion.button>
-  );
-}

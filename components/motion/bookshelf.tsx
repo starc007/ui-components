@@ -37,8 +37,11 @@ export const bookshelfMessages = {
 export type BookshelfMessages = typeof bookshelfMessages;
 
 export type BookshelfBook = {
+  /** Unique key for the book, used in `value` and `onValueChange`. */
   id: string;
+  /** Title printed on the spine and typeset cover, and the book's accessible name. */
   title: string;
+  /** Author printed on the spine and cover and added to the accessible name. */
   author?: string;
   /** Cloth color of the spine and cover. Any CSS color. */
   color: string;
@@ -52,10 +55,13 @@ export type BookshelfBook = {
 };
 
 export interface BookshelfProps {
+  /** Books on the shelf, in order. */
   books: BookshelfBook[];
   /** Id of the open book, or null. Pass to control the shelf. */
   value?: string | null;
+  /** Id of the book open at first when uncontrolled. Default: null */
   defaultValue?: string | null;
+  /** Called with the book id, or `null` when it closes, when the open book changes. */
   onValueChange?: (id: string | null) => void;
   /** Book height in px. */
   height?: number;
@@ -72,6 +78,7 @@ export interface BookshelfProps {
   sound?: boolean;
   /** Override any built-in string. */
   labels?: Partial<BookshelfMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -705,11 +712,11 @@ function Spine({
       <span className="pointer-events-none absolute inset-x-0 top-2 h-px bg-current opacity-30" />
       <span className="pointer-events-none absolute inset-x-0 bottom-2 h-px bg-current opacity-30" />
       {book.author ? (
-        <span className="relative max-h-[30%] min-h-0 overflow-hidden text-ellipsis whitespace-nowrap font-sans text-[9px] uppercase tracking-[0.14em] opacity-75 [writing-mode:vertical-rl]">
+        <span className="relative max-h-[30%] min-h-0 overflow-hidden text-ellipsis whitespace-nowrap font-sans text-[11px] uppercase tracking-[0.14em] opacity-75 [writing-mode:vertical-rl]">
           {book.author}
         </span>
       ) : null}
-      <span className="relative mt-3 min-h-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-serif text-[13px] leading-none [writing-mode:vertical-rl]">
+      <span className="relative mt-3 min-h-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-serif text-sm leading-none [writing-mode:vertical-rl]">
         {book.title}
       </span>
       <Shade opacity={shade} />
@@ -772,7 +779,7 @@ function Cover({
             {book.title}
           </span>
           {book.author ? (
-            <span className="relative font-sans text-[10px] uppercase tracking-[0.14em] opacity-75">
+            <span className="relative font-sans text-[11px] uppercase tracking-[0.14em] opacity-75">
               {book.author}
             </span>
           ) : null}

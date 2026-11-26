@@ -107,7 +107,6 @@ export function CardPreview() {
       </Card>
 
         <Card className="overflow-hidden pt-0">
-          {/* biome-ignore lint/performance/noImgElement: plain img keeps the copy-paste preview portable (no next/image host config). */}
           <img
             src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=720&q=80"
             alt="Bright open-plan studio with long desks and plants"

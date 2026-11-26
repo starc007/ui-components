@@ -26,8 +26,13 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { EASE_OUT, SPRING_LAYOUT, SPRING_PANEL } from "@/lib/ease";
+import { MENU_ITEM_CLASS, MenuItemHighlight } from "@/components/motion/menu/menu-item-highlight";
+import { enabledItems, useMenuNavigation } from "@/components/motion/menu/use-menu-navigation";
+import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { useMessages } from "@/lib/i18n";
+import { assignRef } from "@/lib/merge-refs";
+import { PresenceGate, type PresenceGateRenderProps } from "@/lib/presence-gate";
 import { holdSelection, TOUCH_GESTURE_CONTENT_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +43,7 @@ const VIEWPORT_PADDING = 8;
 const LONG_PRESS_DELAY = 520;
 const LONG_PRESS_TOLERANCE = 10;
 const MORPH_DURATION = 0.3;
+const EXIT_DURATION = 0.2;
 
 type TriggerElementProps = React.HTMLAttributes<HTMLElement> & {
   ref?: Ref<HTMLElement>;
@@ -56,12 +62,16 @@ interface ContextMenuContextValue {
   openAt: (point: MenuPoint, modality: OpenModality) => void;
   point: MenuPoint;
   modality: OpenModality;
-  invocation: number;
   menuId: string;
   triggerRef: React.MutableRefObject<HTMLElement | null>;
   contentRef: React.MutableRefObject<HTMLDivElement | null>;
   activeId: string | null;
   setActiveId: (id: string | null) => void;
+  /** The highlight glides after the pointer, and jumps after a key. */
+  glide: boolean;
+  setGlide: (glide: boolean) => void;
+  /** Close from a key press (Escape, Tab): no exit animation. */
+  closeFromKey: () => void;
   reduce: boolean;
   t: (key: keyof ContextMenuMessages) => string;
 }
@@ -74,23 +84,6 @@ function useContextMenuContext(component: string) {
     throw new Error(`${component} must be used within <ContextMenu>`);
   }
   return context;
-}
-
-function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
-  if (typeof ref === "function") {
-    ref(value);
-  } else if (ref) {
-    ref.current = value;
-  }
-}
-
-function getEnabledItems(container: HTMLElement | null) {
-  if (!container) return [];
-  return Array.from(
-    container.querySelectorAll<HTMLElement>(
-      '[data-context-menu-item="true"]:not([data-disabled="true"])',
-    ),
-  );
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -111,11 +104,15 @@ function collapsedClip(
 
 export interface ContextMenuProps {
   children: ReactNode;
+  /** Whether the menu is open, for controlled use. */
   open?: boolean;
+  /** Whether the menu starts open when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new open state when the menu opens or closes. */
   onOpenChange?: (open: boolean) => void;
   /** Override any built-in string. */
   labels?: Partial<ContextMenuMessages>;
+  /** Classes merged onto the wrapper around the trigger and menu. */
   className?: string;
 }
 
@@ -131,8 +128,8 @@ export function ContextMenu({
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [point, setPoint] = useState<MenuPoint>({ x: 0, y: 0 });
   const [modality, setModality] = useState<OpenModality>("pointer");
-  const [invocation, setInvocation] = useState(0);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [glide, setGlide] = useState(true);
   const controlled = controlledOpen !== undefined;
   const open = controlled ? controlledOpen : internalOpen;
   const triggerRef = useRef<HTMLElement | null>(null);
@@ -153,26 +150,38 @@ export function ContextMenu({
     (nextPoint: MenuPoint, nextModality: OpenModality) => {
       setPoint(nextPoint);
       setModality(nextModality);
-      setInvocation((current) => current + 1);
+      setGlide(nextModality !== "keyboard");
       setActiveId(null);
       setOpen(true);
     },
     [setOpen],
   );
 
+  // The exit times itself by modality, so a key press closes without one.
+  const closeFromKey = useCallback(() => {
+    setModality("keyboard");
+    setOpen(false);
+  }, [setOpen]);
+
+  // A focused panel answers Escape itself; this covers a menu opened by
+  // pointer that never took focus. Either way focus goes back to the trigger.
+  const dismiss = useCallback(
+    (reason: DismissReason) => {
+      if (reason === "escape") {
+        closeFromKey();
+        triggerRef.current?.focus();
+      } else setOpen(false);
+    },
+    [setOpen, closeFromKey],
+  );
+  useDismiss(open, dismiss, contentRef);
+
   useEffect(() => {
     if (!open) return;
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (!contentRef.current?.contains(event.target as Node)) setOpen(false);
-    };
     const onWindowChange = () => setOpen(false);
-
-    window.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("resize", onWindowChange);
     window.addEventListener("scroll", onWindowChange);
     return () => {
-      window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("resize", onWindowChange);
       window.removeEventListener("scroll", onWindowChange);
     };
@@ -185,12 +194,14 @@ export function ContextMenu({
       openAt,
       point,
       modality,
-      invocation,
       menuId,
       triggerRef,
       contentRef,
       activeId,
       setActiveId,
+      glide,
+      setGlide,
+      closeFromKey,
       reduce,
       t,
     }),
@@ -200,9 +211,10 @@ export function ContextMenu({
       openAt,
       point,
       modality,
-      invocation,
       menuId,
       activeId,
+      glide,
+      closeFromKey,
       reduce,
       t,
     ],
@@ -217,7 +229,9 @@ export function ContextMenu({
 
 export interface ContextMenuTriggerProps {
   children: ReactElement<TriggerElementProps>;
+  /** Stops right-click, long press and the keyboard from opening the menu. Default: false */
   disabled?: boolean;
+  /** Classes merged onto the child element. */
   className?: string;
 }
 
@@ -346,7 +360,9 @@ export function ContextMenuTrigger({
 
 export interface ContextMenuContentProps {
   children: ReactNode;
+  /** Classes merged onto the menu panel. */
   className?: string;
+  /** Accessible name for the menu. Default: "Context menu" */
   ariaLabel?: string;
 }
 
@@ -357,36 +373,70 @@ export function ContextMenuContent({
 }: ContextMenuContentProps) {
   const context = useContextMenuContext("ContextMenuContent");
   const [mounted, setMounted] = useState(false);
-  const [position, setPosition] = useState<MenuPoint>(context.point);
-  const [origin, setOrigin] = useState<MenuPoint>({ x: 0, y: 0 });
-  const [size, setSize] = useState({ width: 0, height: 0 });
-  const [morphReady, setMorphReady] = useState(false);
-  const typeahead = useRef("");
-  const typeaheadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => setMounted(true), []);
 
+  if (!mounted) return null;
+
+  // Mounted only while open: a closed menu leaves nothing on the page.
+  return createPortal(
+    <AnimatePresence>
+      {context.open && (
+        <PresenceGate>
+          {({ isPresent, gate }) => (
+            <ContextMenuPanel
+              present={isPresent}
+              gate={gate}
+              ariaLabel={ariaLabel}
+              className={className}
+            >
+              {children}
+            </ContextMenuPanel>
+          )}
+        </PresenceGate>
+      )}
+    </AnimatePresence>,
+    document.body,
+  );
+}
+
+function ContextMenuPanel({
+  children,
+  className,
+  ariaLabel,
+  present,
+  gate,
+}: ContextMenuContentProps & {
+  present: boolean;
+  gate: PresenceGateRenderProps["gate"];
+}) {
+  const context = useContextMenuContext("ContextMenuContent");
+  const { point, modality, reduce, contentRef } = context;
+  const [position, setPosition] = useState<MenuPoint>(point);
+  const [origin, setOrigin] = useState<MenuPoint>({ x: 0, y: 0 });
+  const [size, setSize] = useState({ width: 0, height: 0 });
+  const [morphReady, setMorphReady] = useState(false);
+  const navigate = useMenuNavigation();
+  const instant = reduce || modality === "keyboard";
+
+  // Runs again for a new invocation, and when the menu reopens during its exit.
   useLayoutEffect(() => {
-    if (!context.open) {
-      setMorphReady(false);
-      return;
-    }
-    const content = context.contentRef.current;
+    if (!present) return;
+    const content = contentRef.current;
     if (!content) return;
-    content.dataset.invocation = String(context.invocation);
 
     const rect = content.getBoundingClientRect();
     const left = Math.max(
       VIEWPORT_PADDING,
       Math.min(
-        Math.max(context.point.x, VIEWPORT_PADDING),
+        Math.max(point.x, VIEWPORT_PADDING),
         window.innerWidth - rect.width - VIEWPORT_PADDING,
       ),
     );
     const top = Math.max(
       VIEWPORT_PADDING,
       Math.min(
-        Math.max(context.point.y, VIEWPORT_PADDING),
+        Math.max(point.y, VIEWPORT_PADDING),
         window.innerHeight - rect.height - VIEWPORT_PADDING,
       ),
     );
@@ -394,12 +444,12 @@ export function ContextMenuContent({
     setPosition({ x: left, y: top });
     setSize({ width: rect.width, height: rect.height });
     setOrigin({
-      x: clamp(context.point.x - left, 12, Math.max(12, rect.width - 12)),
-      y: clamp(context.point.y - top, 12, Math.max(12, rect.height - 12)),
+      x: clamp(point.x - left, 12, Math.max(12, rect.width - 12)),
+      y: clamp(point.y - top, 12, Math.max(12, rect.height - 12)),
     });
     setMorphReady(false);
 
-    if (context.reduce || context.modality === "keyboard") {
+    if (instant) {
       setMorphReady(true);
       return;
     }
@@ -415,141 +465,85 @@ export function ContextMenuContent({
       cancelAnimationFrame(prepareFrame);
       cancelAnimationFrame(openFrame);
     };
-  }, [
-    context.open,
-    context.point,
-    context.contentRef,
-    context.invocation,
-    context.modality,
-    context.reduce,
-  ]);
+    // Every invocation sets a new `point` object, even at the same spot.
+  }, [present, point, instant, contentRef]);
 
   useEffect(() => {
-    if (!context.open) return;
+    if (!present) return;
     const frame = requestAnimationFrame(() => {
-      const first = getEnabledItems(context.contentRef.current)[0];
+      const first = enabledItems(contentRef.current)[0];
       first?.focus({ preventScroll: true });
     });
     return () => cancelAnimationFrame(frame);
-  }, [context.open, context.contentRef]);
-
-  useEffect(
-    () => () => {
-      if (typeaheadTimer.current) clearTimeout(typeaheadTimer.current);
-    },
-    [],
-  );
-
-  const moveFocus = (direction: 1 | -1) => {
-    const items = getEnabledItems(context.contentRef.current);
-    if (items.length === 0) return;
-    const current = items.indexOf(document.activeElement as HTMLElement);
-    const next = current < 0 ? 0 : (current + direction + items.length) % items.length;
-    items[next]?.focus();
-  };
+  }, [present, contentRef]);
 
   const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    // Set before the key moves focus, so the highlight it lands on jumps.
+    context.setGlide(false);
     if (event.key === "Escape") {
       event.preventDefault();
-      context.setOpen(false);
+      context.closeFromKey();
       context.triggerRef.current?.focus();
       return;
     }
     if (event.key === "Tab") {
-      context.setOpen(false);
+      context.closeFromKey();
       return;
     }
-    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      event.preventDefault();
-      moveFocus(event.key === "ArrowDown" ? 1 : -1);
-      return;
-    }
-    if (event.key === "Home" || event.key === "End") {
-      event.preventDefault();
-      const items = getEnabledItems(context.contentRef.current);
-      items[event.key === "Home" ? 0 : items.length - 1]?.focus();
-      return;
-    }
-    if (
-      event.key.length === 1 &&
-      !event.ctrlKey &&
-      !event.metaKey &&
-      !event.altKey
-    ) {
-      typeahead.current += event.key.toLocaleLowerCase();
-      if (typeaheadTimer.current) clearTimeout(typeaheadTimer.current);
-      typeaheadTimer.current = setTimeout(() => {
-        typeahead.current = "";
-      }, 500);
-      const match = getEnabledItems(context.contentRef.current).find((item) =>
-        (item.dataset.label ?? item.textContent ?? "")
-          .trim()
-          .toLocaleLowerCase()
-          .startsWith(typeahead.current),
-      );
-      match?.focus();
-    }
+    navigate(event, contentRef.current);
   };
 
-  if (!mounted) return null;
-
-  const visualOpen = context.open && morphReady;
   const clipHidden = collapsedClip(origin, size);
   const clipShown = "inset(0px 0px 0px 0px round 12px)";
+  const timing = (duration: number) =>
+    modality === "keyboard"
+      ? { duration: 0 }
+      : reduce
+        ? { duration: 0.1, ease: EASE_OUT }
+        : { duration, ease: EASE_OUT };
 
-  return createPortal(
+  return (
     <div
+      {...gate}
       data-context-menu-portal=""
-      aria-hidden={!context.open}
-      inert={!context.open}
-      style={{ left: position.x, top: position.y }}
-      className={cn(
-        "fixed z-[100] [filter:drop-shadow(0_18px_28px_rgba(0,0,0,0.2))]",
-        context.open ? "pointer-events-auto" : "pointer-events-none",
-      )}
+      style={{ ...gate.style, left: position.x, top: position.y }}
+      // The panel's clip-path would cut a box-shadow, so the wrapper draws the
+      // system's one panel shadow as a drop-shadow instead.
+      className="fixed z-[100] [filter:drop-shadow(0_8px_12px_rgb(0_0_0/0.12))]"
     >
       <motion.div
-        ref={context.contentRef}
+        ref={contentRef}
         id={context.menuId}
+        data-level={context.menuId}
         role="menu"
         aria-label={ariaLabel ?? context.t("label")}
         data-morph-ready={morphReady ? "true" : "false"}
         tabIndex={-1}
         initial={false}
         animate={{
-          opacity: visualOpen ? 1 : 0,
-          clipPath:
-            context.reduce || context.modality === "keyboard" || visualOpen
-              ? clipShown
-              : clipHidden,
+          opacity: morphReady ? 1 : 0,
+          clipPath: instant || morphReady ? clipShown : clipHidden,
         }}
-        transition={
-          context.modality === "keyboard"
-            ? { duration: 0 }
-            : context.reduce
-              ? { duration: 0.1, ease: EASE_OUT }
-              : {
-                  clipPath: {
-                    duration: MORPH_DURATION,
-                    ease: EASE_OUT,
-                  },
-                  opacity: {
-                    duration: MORPH_DURATION,
-                    ease: EASE_OUT,
-                  },
-                }
-        }
+        // Folds back into the point it opened from, faster than it grew.
+        exit={{
+          opacity: 0,
+          clipPath: instant ? clipShown : clipHidden,
+          transition: timing(EXIT_DURATION),
+        }}
+        transition={timing(MORPH_DURATION)}
         onKeyDown={onKeyDown}
+        onPointerMove={(event) => {
+          if (event.pointerType !== "touch") context.setGlide(true);
+        }}
         onContextMenu={(event) => event.preventDefault()}
         className={cn(
-          "min-w-56 overflow-hidden rounded-xl border border-border bg-card p-1.5 text-foreground outline-none",
+          "min-w-56 overflow-hidden rounded-2xl border border-border bg-background p-2 text-foreground outline-none",
           className,
         )}
       >
         {children}
       </motion.div>
-    </div>,
-    document.body,
+    </div>
   );
 }
 
@@ -557,12 +551,19 @@ type ContextMenuItemTone = "default" | "destructive";
 
 export interface ContextMenuItemProps {
   children: ReactNode;
+  /** Called when the item is clicked or chosen with the keyboard. */
   onSelect?: () => void;
+  /** Dims the item and skips it in keyboard navigation. Default: false */
   disabled?: boolean;
+  /** Closes the menu after the item is chosen. Default: true */
   closeOnSelect?: boolean;
+  /** Colors the item red for destructive actions. Default: "default" */
   tone?: ContextMenuItemTone;
+  /** Adds left padding so the text lines up with items that have an icon. Default: false */
   inset?: boolean;
+  /** Classes merged onto the item button. */
   className?: string;
+  /** Text matched by typeahead, when the item's own text is not plain. */
   textValue?: string;
 }
 
@@ -594,9 +595,10 @@ function ContextMenuItemBase({
       role={role}
       {...checkedProps}
       disabled={disabled}
-      data-context-menu-item="true"
-      data-disabled={disabled ? "true" : undefined}
-      data-label={textValue}
+      data-menu-item=""
+      data-level={context.menuId}
+      data-disabled={disabled ? "" : undefined}
+      data-text-value={textValue}
       tabIndex={-1}
       onFocus={() => context.setActiveId(id)}
       onPointerMove={(event) => {
@@ -608,24 +610,21 @@ function ContextMenuItemBase({
         if (closeOnSelect) context.setOpen(false);
       }}
       className={cn(
-        "relative isolate flex w-full select-none items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] outline-none",
+        MENU_ITEM_CLASS,
+        "gap-2.5",
         "focus-visible:ring-2 focus-visible:ring-foreground/15",
         "disabled:pointer-events-none disabled:opacity-40",
-        inset && "pl-8",
+        inset && "pl-9",
         tone === "destructive" ? "text-destructive" : "text-foreground",
         className,
       )}
     >
       {active ? (
-        <motion.span
+        <MenuItemHighlight
           layoutId={`${context.menuId}-active`}
-          className={cn(
-            "absolute inset-0 -z-10 rounded-lg",
-            tone === "destructive"
-              ? "bg-destructive/10"
-              : "bg-foreground/[0.065]",
-          )}
-          transition={context.reduce ? { duration: 0 } : SPRING_LAYOUT}
+          tone={tone}
+          reduce={context.reduce}
+          instant={!context.glide}
         />
       ) : null}
       {children}
@@ -639,7 +638,9 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
 
 export interface ContextMenuCheckboxItemProps
   extends Omit<ContextMenuItemProps, "onSelect"> {
+  /** Whether the item shows its check mark. */
   checked: boolean;
+  /** Called with the new checked state when the item is chosen. */
   onCheckedChange?: (checked: boolean) => void;
 }
 
@@ -657,7 +658,9 @@ export function ContextMenuCheckboxItem({
       ariaChecked={checked}
       onSelect={() => onCheckedChange?.(!checked)}
     >
-      <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+      {children}
+      {/* The mark sits at the end of the row, never before the label. */}
+      <span aria-hidden="true" className="ml-auto flex h-4 w-4 shrink-0 items-center justify-center">
         <AnimatePresence initial={false}>
           {checked ? (
             <motion.span
@@ -672,7 +675,6 @@ export function ContextMenuCheckboxItem({
           ) : null}
         </AnimatePresence>
       </span>
-      {children}
     </ContextMenuItemBase>
   );
 }
@@ -686,9 +688,12 @@ const ContextMenuRadioGroupContext =
   createContext<ContextMenuRadioGroupContextValue | null>(null);
 
 export interface ContextMenuRadioGroupProps {
+  /** The value of the checked radio item. */
   value: string;
+  /** Called with the item's value when a radio item is chosen. */
   onValueChange?: (value: string) => void;
   children: ReactNode;
+  /** Classes merged onto the group element. */
   className?: string;
 }
 
@@ -711,6 +716,7 @@ export function ContextMenuRadioGroup({
 
 export interface ContextMenuRadioItemProps
   extends Omit<ContextMenuItemProps, "onSelect"> {
+  /** The value this item sets on its radio group. */
   value: string;
 }
 
@@ -733,22 +739,27 @@ export function ContextMenuRadioItem({
       ariaChecked={checked}
       onSelect={() => group.onValueChange?.(value)}
     >
-      <span className="flex h-4 w-4 shrink-0 items-center justify-center">
-        <span
+      {children}
+      {/* The mark sits at the end of the row, never before the label. */}
+      <span aria-hidden="true" className="ml-auto flex h-4 w-4 shrink-0 items-center justify-center">
+        <Check
+          aria-hidden="true"
           className={cn(
-            "h-1.5 w-1.5 rounded-full bg-current transition-opacity",
+            "h-3.5 w-3.5 transition-opacity",
             checked ? "opacity-100" : "opacity-0",
           )}
+          strokeWidth={2.4}
         />
       </span>
-      {children}
     </ContextMenuItemBase>
   );
 }
 
 export interface ContextMenuLabelProps {
   children: ReactNode;
+  /** Adds left padding to line up with inset items. Default: false */
   inset?: boolean;
+  /** Classes merged onto the label element. */
   className?: string;
 }
 
@@ -760,8 +771,8 @@ export function ContextMenuLabel({
   return (
     <div
       className={cn(
-        "px-2.5 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground",
-        inset && "pl-8",
+        "px-3 pb-1 pt-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground",
+        inset && "pl-9",
         className,
       )}
     >
@@ -771,6 +782,7 @@ export function ContextMenuLabel({
 }
 
 export interface ContextMenuSeparatorProps {
+  /** Classes merged onto the separator line. */
   className?: string;
 }
 
@@ -778,12 +790,13 @@ export function ContextMenuSeparator({
   className,
 }: ContextMenuSeparatorProps) {
   return (
-    <hr className={cn("-mx-1 my-1 h-px border-0 bg-border", className)} />
+    <hr className={cn("-mx-2 my-1 h-px border-0 bg-border", className)} />
   );
 }
 
 export interface ContextMenuShortcutProps {
   children: ReactNode;
+  /** Classes merged onto the shortcut text. */
   className?: string;
 }
 
@@ -795,7 +808,7 @@ export function ContextMenuShortcut({
     <span
       aria-hidden="true"
       className={cn(
-        "ml-auto pl-4 text-[10px] font-medium tracking-wide text-muted-foreground",
+        "ml-auto pl-4 text-[11px] font-medium tracking-wide text-muted-foreground",
         className,
       )}
     >

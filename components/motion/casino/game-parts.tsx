@@ -42,18 +42,19 @@ export function heat(multiplier: number) {
   return multiplier >= 10 ? "hot" : multiplier >= 2 ? "warm" : "cool";
 }
 
-// Readout and pill colours per heat: neutral, then primary, then amber.
+// Readout and pill colours per heat: neutral, then green, then amber. Primary is
+// near-black, too close to neutral to read as a tier.
 export const HEAT_TEXT = {
   cool: "text-foreground",
-  warm: "text-primary",
+  warm: "text-emerald-700 dark:text-emerald-400",
   hot: "text-amber-700 dark:text-amber-400",
 } as const;
 export const HEAT_PILL = {
   cool: "bg-foreground/5 text-muted-foreground",
-  warm: `bg-primary/10 ${PRIMARY_TEXT}`,
+  warm: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
   hot: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
   // Opt-in through GameHistory's `tier`, for games that mark 100× and up.
-  jackpot: "bg-fuchsia-500/15 text-fuchsia-700 dark:text-fuchsia-400",
+  jackpot: "bg-rose-500/15 text-rose-700 dark:text-rose-400",
 } as const;
 
 // Truncated, never rounded up: a 10,960× payout reads 10.9K×, not 11K×.
@@ -123,7 +124,7 @@ export const SoundToggle = memo(function SoundToggle({
         aria-label={label}
         aria-pressed={on}
         pressScale={0.96}
-        className={cn("size-8 shrink-0 rounded-xl px-0", on && "text-foreground")}
+        className={cn("size-8 shrink-0 rounded-full px-0", on && "text-foreground")}
       >
         <ActionSwapCascadeIcon value={on ? "on" : "off"} className="size-4">
           {on ? <Volume2 aria-hidden="true" className="size-4" /> : <VolumeX aria-hidden="true" className="size-4" />}

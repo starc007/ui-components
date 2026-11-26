@@ -61,7 +61,7 @@ export function BumpChartPlot({ className }: { className?: string }) {
               x={x(index)}
               y={height - 8}
               textAnchor="middle"
-              className="fill-muted-foreground font-mono text-[10px]"
+              className="fill-muted-foreground font-mono text-[11px]"
             >
               {period}
             </text>

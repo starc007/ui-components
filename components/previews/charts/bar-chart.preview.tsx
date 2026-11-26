@@ -41,7 +41,7 @@ export function BarChartPreview() {
         <div className="flex flex-wrap items-center gap-2">
           <Tabs
             value={layout}
-            onValueChange={(value) => setLayout(value as "grouped" | "stacked")}
+            onValueChange={setLayout}
             variant="pill"
           >
             <TabsList aria-label="Layout" wrapperClassName="w-auto">
@@ -59,7 +59,7 @@ export function BarChartPreview() {
           </Tabs>
           <Tabs
             value={orientation}
-            onValueChange={(value) => setOrientation(value as "vertical" | "horizontal")}
+            onValueChange={setOrientation}
             variant="pill"
           >
             <TabsList aria-label="Orientation" wrapperClassName="w-auto">

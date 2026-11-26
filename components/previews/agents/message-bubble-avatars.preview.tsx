@@ -43,7 +43,7 @@ export function MessageBubbleAvatarsPreview() {
     <div className="flex h-[410px] w-full max-w-xl flex-col justify-center px-3">
       <MessageGroup key={run} spacing="default">
         <Message from="user">
-          <MessageAvatar className="bg-foreground text-background">
+          <MessageAvatar className="bg-muted text-foreground">
             <User />
           </MessageAvatar>
           <MessageContent>

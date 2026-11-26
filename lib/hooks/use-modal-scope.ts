@@ -1,14 +1,14 @@
 "use client";
 
 import { type RefObject, useEffect, useLayoutEffect, useRef } from "react";
-import { FOCUSABLE_SELECTOR } from "@/lib/focusable";
+import { cycleTab, focusFirstIn } from "@/lib/focusable";
+import { inLayerAbove, type Layer, openLayer, ownsEscape, trapAbove } from "@/lib/layers";
+import { lockScroll } from "@/lib/scroll-lock";
 
 const inertOwners = new Map<
   HTMLElement,
   { count: number; previous: boolean }
 >();
-let scrollOwners = 0;
-let previousOverflow = "";
 
 /** A portal root owns sibling inertness and scroll locking until its open state ends. */
 export function useModalScope(
@@ -40,54 +40,39 @@ export function useModalScope(
       inertOwners.set(element, owner);
       element.inert = true;
     }
-    if (scrollOwners++ === 0) {
-      previousOverflow = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-    }
-    const focusables = () =>
-      Array.from(
-        panel.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR) ?? [],
-      ).filter(
-        (element) => element.tabIndex >= 0 && !element.closest("[inert]"),
-      );
-    const focusFirst = () =>
-      (focusables()[0] ?? panel.current)?.focus({ preventScroll: true });
-    focusFirst();
+    const unlockScroll = lockScroll();
+    const layer: Layer = {
+      contains: (target) => Boolean(root.current?.contains(target)),
+      traps: true,
+    };
+    const closeLayer = openLayer(layer);
+    focusFirstIn(panel.current);
     const onFocus = (event: FocusEvent) => {
-      if (
-        event.target instanceof Node &&
-        !panel.current?.contains(event.target) &&
-        !root.current?.inert
-      )
-        focusFirst();
+      const target = event.target;
+      if (!(target instanceof Node) || root.current?.inert) return;
+      if (panel.current?.contains(target)) return;
+      if (inLayerAbove(layer, target) || trapAbove(layer)) return;
+      focusFirstIn(panel.current);
     };
     const onKey = (event: KeyboardEvent) => {
       if (root.current?.inert) return;
       if (event.key === "Escape") {
+        if (!ownsEscape(layer, event)) return;
         event.preventDefault();
         event.stopPropagation();
         close.current();
+        return;
       }
-      if (event.key !== "Tab") return;
-      const elements = focusables();
-      const first = elements[0];
-      const last = elements[elements.length - 1];
-      if (!first || !last) {
-        event.preventDefault();
-        panel.current?.focus();
-      } else if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
+      const active = document.activeElement;
+      if (event.defaultPrevented || (active && inLayerAbove(layer, active))) return;
+      cycleTab(event, panel.current);
     };
     document.addEventListener("focusin", onFocus);
     document.addEventListener("keydown", onKey);
     return () => {
       document.removeEventListener("focusin", onFocus);
       document.removeEventListener("keydown", onKey);
+      closeLayer();
       for (const element of siblings) {
         const owner = inertOwners.get(element);
         if (owner && --owner.count === 0) {
@@ -95,7 +80,7 @@ export function useModalScope(
           inertOwners.delete(element);
         }
       }
-      if (--scrollOwners === 0) document.body.style.overflow = previousOverflow;
+      unlockScroll();
       if (returnFocus?.isConnected && !returnFocus.closest("[inert]"))
         returnFocus.focus({ preventScroll: true });
     };

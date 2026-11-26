@@ -74,7 +74,7 @@ export function AgentActivityToolsPreview() {
       <button
         type="button"
         onClick={() => setRun((current) => current + 1)}
-        className="absolute bottom-0 left-0 inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        className="absolute bottom-0 left-0 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
       >
         <RotateCcw className="size-3" />
         Replay

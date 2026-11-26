@@ -10,10 +10,12 @@ import type {
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
 import { cn } from "@/lib/utils";
-import { mergeRefs, useMultiSelectContext } from "./context";
+import { mergeRefs } from "@/lib/merge-refs";
+import { useMultiSelectContext } from "./context";
 
 export interface MultiSelectTriggerProps {
   children: ReactNode;
+  /** Classes merged onto the trigger element. */
   className?: string;
 }
 
@@ -42,7 +44,7 @@ export function MultiSelectTrigger({
         context.setOpen(true);
       }}
       className={cn(
-        "relative z-20 flex min-h-11 w-full min-w-52 cursor-text items-center gap-2 rounded-xl border border-border bg-transparent px-2.5 py-1.5 text-sm text-foreground transition-[border-color] hover:border-(--color-border-strong)",
+        "relative z-20 flex min-h-11 w-full min-w-52 cursor-text items-center gap-2 rounded-[22px] border border-border bg-transparent px-2.5 py-1.5 text-sm text-foreground transition-[border-color] hover:border-(--color-border-strong)",
         "focus-within:ring-2 focus-within:ring-foreground/20",
         context.disabled && "pointer-events-none opacity-50",
         className,
@@ -60,9 +62,12 @@ export function MultiSelectTrigger({
 }
 
 export interface MultiSelectValueProps {
+  /** Shown while nothing is selected and the list is closed. Default: "Select options" */
   placeholder?: ReactNode;
   children?: (value: string, label: string) => ReactNode;
+  /** Classes merged onto the wrapper around the chips. */
   className?: string;
+  /** Classes merged onto each selected value chip. */
   chipClassName?: string;
 }
 
@@ -128,7 +133,7 @@ export function MultiSelectValue({
                     }
               }
               className={cn(
-                "inline-flex h-7 max-w-full items-center gap-1 rounded-lg bg-muted px-2 text-xs font-medium text-foreground",
+                "inline-flex h-7 max-w-full items-center gap-1 rounded-full bg-muted px-2.5 text-xs font-medium text-foreground",
                 chipClassName,
               )}
             >
@@ -146,7 +151,7 @@ export function MultiSelectValue({
                   context.remove(value);
                   context.inputRef.current?.focus({ preventScroll: true });
                 }}
-                className="-mr-1 grid size-5 shrink-0 place-items-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-foreground/10 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                className="-mr-1 grid size-5 shrink-0 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-foreground/10 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <X aria-hidden="true" className="size-3" />
               </button>
@@ -163,7 +168,9 @@ export interface MultiSelectInputProps
     InputHTMLAttributes<HTMLInputElement>,
     "defaultValue" | "value"
   > {
+  /** Ref to the search input element. */
   ref?: Ref<HTMLInputElement>;
+  /** Shows a search icon before the input. Default: false */
   showIcon?: boolean;
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
-import { type RefObject, useEffect } from "react";
+import { type RefObject, useEffect, useLayoutEffect, useRef } from "react";
+import { inOtherLayer, type Layer, openLayer, ownsEscape } from "@/lib/layers";
 
 /**
  * What the dismissing gesture does to the control it landed on.
@@ -13,31 +14,23 @@ import { type RefObject, useEffect } from "react";
  */
 export type DismissBehavior = "pass-through" | "consume";
 
+/** What closed the overlay: Escape, a pointerdown outside it, or focus leaving it. */
+export type DismissReason = "escape" | "pointer" | "focus";
+
 export interface DismissOptions {
   /** Default `"pass-through"`. */
   behavior?: DismissBehavior;
   /** Dismiss on Escape as well. Default true. */
   escape?: boolean;
-  /** Return true for an outside target that should *not* dismiss. Must be stable. */
+  /** Dismiss when focus moves outside, as a combobox does on Tab. Default false. */
+  focusOutside?: boolean;
+  /**
+   * Dismiss on a pointerdown outside. Default true. Turn it off for an overlay
+   * whose own backdrop handles presses and only needs Escape and layering.
+   */
+  outsidePress?: boolean;
+  /** Return true for an outside target that should *not* dismiss. */
   ignore?: (target: Element) => boolean;
-}
-
-/**
- * What every currently open dismiss scope counts as inside itself. A consumed
- * dismissal reads this to tell a stray gesture from one that belongs to an
- * overlay in front of it: overlays have no shared z-order to consult, but the
- * one the gesture landed in has said as much by registering it.
- */
-const openScopes = new Set<(target: Element) => boolean>();
-
-function claimedByAnotherScope(
-  self: (target: Element) => boolean,
-  target: Element,
-) {
-  for (const scope of openScopes) {
-    if (scope !== self && scope(target)) return true;
-  }
-  return false;
 }
 
 // preventDefault on pointerdown does not suppress the click that follows, so
@@ -77,44 +70,68 @@ function consumeActivation(source: Event) {
  *
  * The pointerdown listener is capture-phase: a bubble-phase one is blinded by
  * any handler in between that stops propagation, and an overlay cannot know
- * what it is layered over. `onDismiss` and `ignore` must be stable (wrap in
- * useCallback) so the listeners aren't re-bound every render while open.
+ * what it is layered over.
+ *
+ * Each open dismissal is a layer in `lib/layers.ts`, so only the innermost
+ * open overlay answers Escape (a menu inside a drawer closes, the drawer
+ * stays), and a drawer's focus trap leaves focus in a menu it portaled out.
  */
 export function useDismiss(
   open: boolean,
-  onDismiss: () => void,
+  onDismiss: (reason: DismissReason) => void,
   ref: RefObject<HTMLElement | SVGElement | null> | null,
   {
     behavior = "pass-through",
     escape: dismissOnEscape = true,
+    focusOutside = false,
+    outsidePress = true,
     ignore,
   }: DismissOptions = {},
 ) {
+  // Read through refs, so a callback rebuilt each render neither re-binds the
+  // listeners nor moves this layer to the top of the stack.
+  const dismissRef = useRef(onDismiss);
+  const ignoreRef = useRef(ignore);
+  useLayoutEffect(() => {
+    dismissRef.current = onDismiss;
+    ignoreRef.current = ignore;
+  });
+
   useEffect(() => {
     if (!open) return;
-    const inside = (target: Element) =>
-      Boolean(ref?.current?.contains(target)) || Boolean(ignore?.(target));
+    const inside = (target: Node) =>
+      Boolean(ref?.current?.contains(target)) ||
+      (target instanceof Element && Boolean(ignoreRef.current?.(target)));
+    const layer: Layer = { contains: inside, escape: dismissOnEscape };
+    const closeLayer = openLayer(layer);
     const onKey = (event: KeyboardEvent) => {
-      if (dismissOnEscape && event.key === "Escape") onDismiss();
+      if (!dismissOnEscape || event.key !== "Escape" || !ownsEscape(layer, event)) return;
+      event.preventDefault();
+      dismissRef.current("escape");
     };
     const onPointer = (event: PointerEvent) => {
       const target = event.target as Element | null;
       if (!target || inside(target)) return;
-      // Outside this overlay, but inside one that is also open: the gesture is
+      // Outside this overlay, but inside another open one: the gesture is
       // that overlay's to answer, and swallowing its click from behind would
       // cost the user the control they actually aimed at.
-      if (behavior === "consume" && !claimedByAnotherScope(inside, target)) {
+      if (behavior === "consume" && !inOtherLayer(layer, target, { traps: false })) {
         consumeActivation(event);
       }
-      onDismiss();
+      dismissRef.current("pointer");
     };
-    openScopes.add(inside);
+    const onFocus = (event: FocusEvent) => {
+      const target = event.target;
+      if (target instanceof Node && !inside(target)) dismissRef.current("focus");
+    };
     window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer, true);
+    if (outsidePress) window.addEventListener("pointerdown", onPointer, true);
+    if (focusOutside) window.addEventListener("focusin", onFocus);
     return () => {
-      openScopes.delete(inside);
+      closeLayer();
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointerdown", onPointer, true);
+      window.removeEventListener("focusin", onFocus);
     };
-  }, [open, onDismiss, ref, behavior, dismissOnEscape, ignore]);
+  }, [open, ref, behavior, dismissOnEscape, focusOutside, outsidePress]);
 }

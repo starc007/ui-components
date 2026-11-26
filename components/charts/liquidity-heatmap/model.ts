@@ -1,8 +1,11 @@
 export interface LiquiditySnapshot {
   /** Stable identity, usually an ISO timestamp. */
   id: string;
+  /** Formatted time shown on the time axis, cell labels and tooltip. */
   label: string;
+  /** Resting size at each price level; repeated prices add up, invalid rows are skipped. */
   levels: readonly { price: number; size: number }[];
+  /** Market price at this time, drawn as the trace line. Omit to break the line. */
   price?: number;
 }
 

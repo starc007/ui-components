@@ -20,14 +20,14 @@ const SIDEBAR_SPONSORS = [
 export function SponsorCard() {
   const t = useTranslations("Docs.sponsorCard");
   return (
-    <section aria-label={t("title")} className="mt-4 rounded-2xl border border-border p-3">
-      <h2 className="text-base font-semibold tracking-tight text-foreground">
-        {t("title")}
-      </h2>
-      <p className="mt-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-        {t("tier")}
-      </p>
-      <div className="mt-2 flex flex-col gap-3">
+    <section aria-label={t("title")} className="mt-3 rounded-2xl border border-border p-3">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-sm font-medium text-foreground">{t("title")}</h2>
+        <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          {t("tier")}
+        </p>
+      </div>
+      <div className="mt-2.5 flex flex-col gap-2.5">
         {SIDEBAR_SPONSORS.map((sponsor) => (
           <a
             key={sponsor.domain}
@@ -36,26 +36,26 @@ export function SponsorCard() {
             rel="noreferrer noopener"
             className="block rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <img
                 src={`/sponsors/${sponsor.icon}-light.svg`}
                 alt=""
-                width={40}
-                height={40}
-                className="size-10 shrink-0 dark:hidden"
+                width={32}
+                height={32}
+                className="size-8 shrink-0 dark:hidden"
               />
               <img
                 src={`/sponsors/${sponsor.icon}-dark.svg`}
                 alt=""
-                width={40}
-                height={40}
-                className="hidden size-10 shrink-0 dark:block"
+                width={32}
+                height={32}
+                className="hidden size-8 shrink-0 dark:block"
               />
               <div className="min-w-0">
-                <span className="font-display text-xl font-semibold tracking-tight text-foreground">
+                <span className="block text-sm font-medium leading-tight text-foreground">
                   {sponsor.name}
                 </span>
-                <p className="mt-0.5 text-xs text-muted-foreground">{t(`taglines.${sponsor.tagline}`)}</p>
+                <p className="text-xs leading-4 text-muted-foreground">{t(`taglines.${sponsor.tagline}`)}</p>
               </div>
             </div>
           </a>
@@ -63,7 +63,7 @@ export function SponsorCard() {
       </div>
       <Link
         href="/sponsors"
-        className="mt-4 flex items-center justify-between gap-2 rounded-sm text-xs font-medium text-foreground decoration-accent underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+        className="mt-3 flex items-center justify-between gap-2 rounded-sm text-xs font-medium text-foreground decoration-accent underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
       >
         {t("become")}
         <ArrowRight aria-hidden="true" className="size-4 text-accent" />

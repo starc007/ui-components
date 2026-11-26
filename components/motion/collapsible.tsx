@@ -66,9 +66,13 @@ function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
 }
 
 export interface CollapsibleProps extends Omit<HTMLMotionProps<"div">, "layout"> {
+  /** Whether the content is shown, for controlled use. */
   open?: boolean;
+  /** Whether the content starts shown when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new state when the content opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Ignore toggles so the content stays as it is. Default: false */
   disabled?: boolean;
   /** Layout classes for the inner wrapper, separate from the animated surface. */
   contentClassName?: string;
@@ -199,7 +203,7 @@ export function CollapsibleTrigger({
       layout={context.reduce ? false : "position"}
       transition={{ layout: SPRING_LAYOUT }}
       className={cn(
-        "flex min-h-10 w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-medium outline-none transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+        "flex min-h-10 w-full items-center gap-3 rounded-2xl px-3 py-2 text-left text-sm font-medium outline-none transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
     >

@@ -20,6 +20,7 @@ const SPRING_BOUNCY = { type: "spring", stiffness: 500, damping: 14, mass: 0.7 }
 export interface RangeSliderProps extends SliderOptions {
   /** Render a tick dot at each step. */
   showTicks?: boolean;
+  /** Classes merged onto the slider track. */
   className?: string;
 }
 
@@ -78,7 +79,7 @@ export function RangeSlider({ showTicks = true, className, ...options }: RangeSl
       )}
     >
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-[2px] inset-y-0 overflow-hidden rounded-lg">
-        <motion.div className="absolute inset-0 rounded-lg bg-foreground/15" style={{ x: fillX }} />
+        <motion.div className="absolute inset-0 rounded-lg bg-primary/15" style={{ x: fillX }} />
       </div>
 
       {/* Tick centres follow the same inset path as the handle centre. */}
@@ -100,7 +101,7 @@ export function RangeSlider({ showTicks = true, className, ...options }: RangeSl
         {...sliderProps}
         animate={reduce ? undefined : { scaleY: dragging ? 1.35 : 1 }}
         transition={SPRING_BOUNCY}
-        className="absolute left-0 top-1/2 h-6 w-1 rounded-full bg-foreground outline-none ring-inset ring-foreground/30 focus-visible:ring-4"
+        className="absolute left-0 top-1/2 h-6 w-1 rounded-full bg-primary outline-none ring-inset ring-primary/30 focus-visible:ring-4"
         style={{ x: thumbX, y: "-50%" }}
       />
     </div>

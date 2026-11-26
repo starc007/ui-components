@@ -52,7 +52,7 @@ export function BumpChartPoint({
           className="min-w-[156px]"
           content={
             <>
-              <span className="flex items-center justify-between gap-4 text-[10px] text-muted-foreground">
+              <span className="flex items-center justify-between gap-4 text-[11px] text-muted-foreground">
                 <span>{row.name}</span>
                 <span>{period}</span>
               </span>
@@ -63,7 +63,7 @@ export function BumpChartPoint({
                 <span className="text-xs">{changeLabel}</span>
               </span>
               {previous != null && (
-                <span className="mt-1 block text-[10px] text-muted-foreground">
+                <span className="mt-1 block text-[11px] text-muted-foreground">
                   {t("previously", { rank: previous, period: periods[index - 1] })}
                 </span>
               )}
@@ -99,7 +99,7 @@ export function BumpChartPoint({
               transition={{ duration: 0.15, ease: EASE_OUT }}
             />
             <motion.span
-              className="relative flex size-5 items-center justify-center rounded-full border-[1.5px] border-current bg-background font-mono text-[9px] font-medium"
+              className="relative flex size-5 items-center justify-center rounded-full border-[1.5px] border-current bg-background font-mono text-[11px] font-medium"
               initial={reduce ? false : { transform: "scale(0.85)" }}
               animate={{ transform: "scale(1)" }}
               transition={{

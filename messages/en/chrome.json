@@ -5,20 +5,50 @@
     "agents": "Agents",
     "charts": "Charts",
     "casino": "Casino",
+    "micro-interactions": "Interactions",
+    "sounds": "Sounds",
     "playground": "Playground",
+    "themes": "Themes",
     "sponsors": "Sponsors",
     "starOnGithub": "Star on GitHub",
     "starOnGithubCount": "Star on GitHub, {count} stars",
-    "getPro": "Get Pro"
+    "getPro": "Get Pro",
+    "reactNative": "React Native",
+    "resources": "Resources",
+    "motionGuides": "Motion guides",
+    "howToGuides": "How-to guides",
+    "changelog": "Changelog",
+    "blog": "Blog",
+    "menuCount": "{count} components",
+    "menu": {
+      "components": "Buttons, menus, inputs and overlays",
+      "blocks": "Composed widgets and full flows",
+      "agents": "Chat, reasoning and prompt input",
+      "casino": "Crash, plinko and other games",
+      "playground": "Tune motion and copy the code",
+      "themes": "Pick colors and copy the tokens",
+      "motionGuides": "Timing, easing and reduced motion",
+      "howToGuides": "Recipes for common animated UI",
+      "changelog": "New components and fixes",
+      "blog": "Notes on motion and interfaces",
+      "sponsors": "Back beUI and get featured"
+    }
+  },
+  "sound": {
+    "label": "Mute sounds",
+    "mute": "Mute sounds",
+    "unmute": "Turn sounds on"
   },
   "mobileNav": {
     "open": "Open navigation",
+    "close": "Close navigation",
     "title": "Menu"
   },
   "theme": {
-    "lightTheme": "Light theme",
-    "darkTheme": "Dark theme",
-    "systemTheme": "System theme"
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   },
   "dock": {
     "email": "Email"
@@ -66,11 +96,19 @@
   "footer": {
     "description": "Animated components for React, Next.js and React Native. Copy the source or install with a CLI.",
     "createdBy": "Created by <link>Saurabh</link>",
-    "links": "Links",
-    "viewAll": "View all ({count})",
-    "browseAll": "Browse all",
+    "columns": {
+      "library": "Library",
+      "learn": "Learn",
+      "agents": "For agents",
+      "beui": "beUI"
+    },
+    "agentGuide": "Agent guide",
+    "mcpServer": "MCP server",
+    "contact": "Contact",
+    "email": "Email",
     "sponsor": "Sponsor",
-    "guides": "Guides",
+    "githubWeb": "React on GitHub",
+    "githubNative": "React Native on GitHub",
     "compare": "Compare",
     "blog": "Blog",
     "alsoByUs": "Also by us",
@@ -79,8 +117,21 @@
     "privacy": "Privacy",
     "terms": "Terms of service",
     "refunds": "Refunds",
-    "docsTagline": "The motion toolkit for React & Next.js",
-    "label": "Footer"
+    "docsTagline": "Motion components and agent UI for React",
+    "label": "Footer",
+    "keysHint": "Press a key, or type b e u i",
+    "keysHintTouch": "Tap a key"
+  },
+  "proPopup": {
+    "title": "Enjoying beUI so far?",
+    "body": "Go further with Pro: 366+ premium blocks, full landing templates and 70+ mobile screens.",
+    "badge": "beUI Pro",
+    "saleBadge": "{percent}% off",
+    "cta": "Get Pro",
+    "lifetime": "lifetime",
+    "saleEnds": "until {end}",
+    "close": "Close",
+    "opensInNewTab": "(opens in a new tab)"
   },
   "nativeStrip": {
     "label": "beUI Pro for mobile",

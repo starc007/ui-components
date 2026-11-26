@@ -2,23 +2,43 @@
 // no data: it reads beui.dev/r/* at runtime so new components appear without a
 // worker redeploy. Responses are cached at the edge for a short TTL.
 
+export type IndexVariant = { slug: string; name: string; install_slug: string };
+
 export type IndexComponent = {
   slug: string;
   name: string;
   description: string;
   category: string;
+  /** Search aliases. Older index builds may omit it. */
+  keywords?: string[];
+  /** What `shadcn add @beui/<slug>` accepts for this page. */
+  install_slugs?: string[];
+  /** Installable variants of a page that splits into them. */
+  variants?: IndexVariant[];
   detail_url: string;
   raw_url: string;
   page_url: string;
+  markdown_url?: string;
 };
 
 export type RegistryIndex = {
   name: string;
   description: string;
   site: string;
+  setup?: string;
+  endpoints?: Record<string, string>;
   categories: { slug: string; name: string; description: string }[];
   components: IndexComponent[];
 };
+
+/** Every install slug, mapped to its page, from the index. */
+export function installSlugs(index: RegistryIndex) {
+  const slugs = new Map<string, IndexComponent>();
+  for (const component of index.components) {
+    for (const slug of component.install_slugs ?? [component.slug]) slugs.set(slug, component);
+  }
+  return slugs;
+}
 
 export type RegistryFile = {
   path: string;
@@ -76,6 +96,28 @@ export function getIndex(env: { REGISTRY_URL?: string }) {
 
 export function getEntry(env: { REGISTRY_URL?: string }, slug: string) {
   return fetchJson<RegistryEntry>(`${base(env)}/r/${encodeURIComponent(slug)}`);
+}
+
+/** A component's Markdown docs (install, usage, props, types, guidance). */
+export async function getMarkdown(env: { REGISTRY_URL?: string }, slug: string) {
+  const url = `${base(env)}/r/${encodeURIComponent(slug)}.md`;
+  const cache = caches.default;
+  const cacheKey = new Request(url, { headers: { accept: "text/markdown" } });
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached.text();
+  const res = await fetch(cacheKey);
+  if (!res.ok) throw new Error(`Registry responded ${res.status} for ${url}`);
+  const body = await res.text();
+  await cache.put(
+    cacheKey,
+    new Response(body, {
+      headers: {
+        "content-type": "text/markdown; charset=utf-8",
+        "cache-control": `public, max-age=${TTL_SECONDS}`,
+      },
+    }),
+  );
+  return body;
 }
 
 const PM_PREFIX = {

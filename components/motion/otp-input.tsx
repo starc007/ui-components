@@ -7,7 +7,7 @@ import {
   useReducedMotion,
 } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
-import { EASE_OUT } from "@/lib/ease";
+import { EASE_OUT, SPRING_PRESS } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -31,8 +31,11 @@ export type OTPStatus = "idle" | "error" | "success";
 export interface OTPInputProps {
   /** Number of slots. Default 6. */
   length?: number;
+  /** The entered digits, for controlled use. */
   value?: string;
+  /** The initial digits when uncontrolled. Default: "" */
   defaultValue?: string;
+  /** Called with the entered digits whenever a slot changes. */
   onChange?: (value: string) => void;
   /** Fires once every slot is filled. */
   onComplete?: (value: string) => void;
@@ -48,12 +51,15 @@ export interface OTPInputProps {
   status?: OTPStatus;
   /** Render dots instead of the typed digits. */
   mask?: boolean;
+  /** Block typing and dim the slots. Default: false */
   disabled?: boolean;
+  /** Focus the input on mount. Default: false */
   autoFocus?: boolean;
   /** Accessible label for the underlying input. */
   "aria-label"?: string;
   /** Override any built-in string. */
   labels?: Partial<OTPInputMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -311,7 +317,7 @@ export function OTPInput({
                 data-active={isActive}
                 data-filled={char !== ""}
                 className={cn(
-                  "relative grid h-14 w-12 place-items-center overflow-hidden rounded-xl border text-xl font-semibold tabular-nums transition-colors duration-200",
+                  "relative grid h-14 w-12 place-items-center overflow-hidden rounded-full border text-xl font-medium tabular-nums transition-colors duration-200",
                   showSuccess
                     ? "border-emerald-500/60 text-foreground"
                     : status === "error"
@@ -388,7 +394,7 @@ export function OTPInput({
               transition={
                 reduce
                   ? { duration: 0 }
-                  : { type: "spring", stiffness: 500, damping: 28 }
+                  : SPRING_PRESS
               }
               className="pointer-events-none absolute -right-7 top-1/2 -translate-y-1/2 text-emerald-500"
               aria-hidden

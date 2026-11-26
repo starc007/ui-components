@@ -35,7 +35,7 @@ export function DropdownMenuPreview() {
 
   return (
     <div className="flex min-h-[360px] w-full items-start justify-center pt-16">
-      <DropdownMenu>
+      <DropdownMenu sound>
         <DropdownMenuTrigger>
           {/* No press or hover scale: the menu measures the trigger as it opens. */}
           <button
@@ -87,7 +87,7 @@ export function DropdownMenuPreview() {
             </DropdownMenuSubContent>
           </DropdownMenuSub>
           <DropdownMenuSeparator />
-          <DropdownMenuLabel inset>View</DropdownMenuLabel>
+          <DropdownMenuLabel>View</DropdownMenuLabel>
           <DropdownMenuCheckboxItem checked={statusBar} onCheckedChange={setStatusBar}>
             Status bar
           </DropdownMenuCheckboxItem>
@@ -95,7 +95,7 @@ export function DropdownMenuPreview() {
             Compact rows
           </DropdownMenuCheckboxItem>
           <DropdownMenuSeparator />
-          <DropdownMenuLabel inset>Panel</DropdownMenuLabel>
+          <DropdownMenuLabel>Panel</DropdownMenuLabel>
           <DropdownMenuRadioGroup value={panel} onValueChange={setPanel}>
             <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>

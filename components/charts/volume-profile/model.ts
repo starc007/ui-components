@@ -1,7 +1,9 @@
 export interface VolumeProfileBin {
   /** Stable identity for this price range across data updates. */
   id: string;
+  /** Bottom of the price range. Ranges must not overlap. */
   priceLow: number;
+  /** Top of the price range. Must be above `priceLow`. */
   priceHigh: number;
   /** Executed volume in this range, in the consumer's chosen unit. */
   volume: number;

@@ -1,6 +1,7 @@
 @import "tailwindcss";
-@import "@fontsource-variable/geist";
-@import "@fontsource-variable/geist-mono";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource-variable/jetbrains-mono";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -8,8 +9,9 @@
    page flow and scrolls away; the header and sidebars stick below it. */
 :root {
     --announcement-h: 2.5rem;
-    --font-geist-sans: "Geist Variable";
-    --font-geist-mono: "Geist Mono Variable";
+    --font-ui: "Inter Variable";
+    --font-head: "Plus Jakarta Sans Variable";
+    --font-code: "JetBrains Mono Variable";
 }
 
 :root {
@@ -23,7 +25,6 @@
     --border-strong: oklch(15% 0 0 / 0.12);
     --accent-fg: oklch(15% 0 0);
     --neon: oklch(80% 0.22 145);
-    --violet: oklch(68% 0.22 295);
     --danger: oklch(62% 0.22 25);
     --success: oklch(70% 0.18 155);
     --warning: oklch(78% 0.18 75);
@@ -36,17 +37,13 @@
         oklch(99% 0 0) 0%,
         oklch(96% 0.008 210) 100%
     );
-    --gradient-accent: linear-gradient(
-        to right,
-        oklch(72% 0.18 195) 0%,
-        oklch(68% 0.22 295) 100%
-    );
     /* shadcn semantic tokens, mapped onto the base. */
     --card-foreground: var(--foreground);
     --popover: var(--card);
     --popover-foreground: var(--foreground);
-    --primary: #0285f7;
-    --primary-foreground: #ffffff;
+    /* Near-black emphasis; white in dark mode. */
+    --primary: #171717;
+    --primary-foreground: #fafafa;
     --secondary: var(--card);
     --secondary-foreground: var(--foreground);
     --muted: var(--card);
@@ -67,6 +64,8 @@
     --border-strong: rgb(255 255 255 / 0.1);
     --accent: oklch(80% 0.18 195);
     --accent-fg: #151515;
+    --primary: #f5f5f5;
+    --primary-foreground: #151515;
     --glass-bg: rgb(28 28 28 / 0.55);
     --glass-border: rgb(255 255 255 / 0.08);
     --glass-strong-bg: rgb(28 28 28 / 0.6);
@@ -75,11 +74,6 @@
         135deg,
         oklch(19% 0 0) 0%,
         oklch(22% 0.008 210) 100%
-    );
-    --gradient-accent: linear-gradient(
-        to right,
-        oklch(80% 0.18 195) 0%,
-        oklch(72% 0.18 295) 100%
     );
 }
 
@@ -93,7 +87,6 @@
     --color-border: var(--border);
     --color-border-strong: var(--border-strong);
     --color-neon: var(--neon);
-    --color-violet: var(--violet);
     --color-success: var(--success);
     --color-warning: var(--warning);
     --color-background: var(--background);
@@ -114,17 +107,16 @@
     --color-input: var(--input);
     --color-ring: var(--ring);
 
-    --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-    --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-    --font-display: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+    --font-sans: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
+    --font-mono: var(--font-code), ui-monospace, monospace;
+    --font-display: var(--font-head), var(--font-ui), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme {
     --background-image-brand-bg: var(--gradient-bg);
-    --background-image-brand-accent: var(--gradient-accent);
     --animate-marquee: marquee 30s linear infinite;
     --animate-marquee-vertical: marquee-vertical 30s linear infinite;
-    --animate-rainbow-border: rainbow-border 3s linear infinite;
+    --animate-shine-sweep: shine-sweep 5s var(--ease-in-out) infinite;
     --animate-shimmer: shimmer 2.5s linear infinite;
     --animate-action-send: action-send 520ms var(--ease-out) both;
     --animate-action-copy: action-copy 520ms var(--ease-out) both;
@@ -157,12 +149,14 @@
             background-position: -200% 0;
         }
     }
-    @keyframes rainbow-border {
-        from {
-            background-position: 0% 50%;
+    /* The Pro CTA's light band: one pass across, then a rest until the next. */
+    @keyframes shine-sweep {
+        0% {
+            transform: translateX(-100%) skewX(-12deg);
         }
-        to {
-            background-position: 100% 50%;
+        24%,
+        100% {
+            transform: translateX(200%) skewX(-12deg);
         }
     }
     @keyframes action-send {
@@ -249,6 +243,18 @@
         overflow-x: clip;
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
+    }
+    h1,
+    h2,
+    h3 {
+        font-family: var(--font-display);
+    }
+    /* Plus Jakarta Sans has a narrow word space; tracking-tight closes it further. */
+    h1,
+    h2,
+    h3,
+    .font-display {
+        word-spacing: 0.08em;
     }
     ::selection {
         background: color-mix(in oklch, var(--accent) 30%, transparent);
@@ -402,7 +408,7 @@
         border-radius: 0.375rem;
         background: var(--card);
         padding: 0.125rem 0.375rem;
-        font-family: var(--font-geist-mono), ui-monospace, monospace;
+        font-family: var(--font-code), ui-monospace, monospace;
         font-size: 0.875em;
         color: var(--foreground);
     }

@@ -42,6 +42,9 @@ export const previews: Record<string, ComponentType> = {
   "agents/voice-orb": dynamic(() =>
     import("./agents/voice-orb.preview").then((m) => m.VoiceOrbPreview),
   ),
+  "agents/voice-note": dynamic(() =>
+    import("./agents/voice-note.preview").then((m) => m.VoiceNotePreview),
+  ),
   "motion/sortable-stack": dynamic(() =>
     import("./motion/sortable-stack.preview").then((m) => m.SortableListPreview),
   ),
@@ -259,6 +262,123 @@ export const previews: Record<string, ComponentType> = {
   ),
   "casino/slide-game": dynamic(() =>
     import("./casino/slide-game.preview").then((m) => m.SlideGamePreview),
+  ),
+  "micro-interactions/like-button": dynamic(() =>
+    import("./micro-interactions/like-button.preview").then((m) => m.LikeButtonPreview),
+  ),
+  "micro-interactions/bookmark-button": dynamic(() =>
+    import("./micro-interactions/bookmark-button.preview").then((m) => m.BookmarkButtonPreview),
+  ),
+  "micro-interactions/upvote-button": dynamic(() =>
+    import("./micro-interactions/upvote-button.preview").then((m) => m.UpvoteButtonPreview),
+  ),
+  "micro-interactions/copy-button": dynamic(() =>
+    import("./micro-interactions/copy-button.preview").then((m) => m.CopyButtonPreview),
+  ),
+  "micro-interactions/text-morph": dynamic(() =>
+    import("./micro-interactions/text-morph.preview").then((m) => m.TextMorphPreview),
+  ),
+  "micro-interactions/follow-button": dynamic(() =>
+    import("./micro-interactions/follow-button.preview").then((m) => m.FollowButtonPreview),
+  ),
+  "micro-interactions/star-rating": dynamic(() =>
+    import("./micro-interactions/star-rating.preview").then((m) => m.StarRatingPreview),
+  ),
+  "micro-interactions/add-to-cart": dynamic(() =>
+    import("./micro-interactions/add-to-cart.preview").then((m) => m.AddToCartPreview),
+  ),
+  "micro-interactions/delete-button": dynamic(() =>
+    import("./micro-interactions/delete-button.preview").then((m) => m.DeleteButtonPreview),
+  ),
+  "micro-interactions/download-button": dynamic(() =>
+    import("./micro-interactions/download-button.preview").then((m) => m.DownloadButtonPreview),
+  ),
+  "micro-interactions/send-button": dynamic(() =>
+    import("./micro-interactions/send-button.preview").then((m) => m.SendButtonPreview),
+  ),
+  "micro-interactions/refresh-button": dynamic(() =>
+    import("./micro-interactions/refresh-button.preview").then((m) => m.RefreshButtonPreview),
+  ),
+  "micro-interactions/message-status": dynamic(() =>
+    import("./micro-interactions/message-status.preview").then((m) => m.MessageStatusPreview),
+  ),
+  "micro-interactions/notification-bell": dynamic(() =>
+    import("./micro-interactions/notification-bell.preview").then((m) => m.NotificationBellPreview),
+  ),
+  "micro-interactions/reaction-picker": dynamic(() =>
+    import("./micro-interactions/reaction-picker.preview").then((m) => m.ReactionPickerPreview),
+  ),
+  "micro-interactions/share-button": dynamic(() =>
+    import("./micro-interactions/share-button.preview").then((m) => m.ShareButtonPreview),
+  ),
+  "micro-interactions/mute-toggle": dynamic(() =>
+    import("./micro-interactions/mute-toggle.preview").then((m) => m.MuteTogglePreview),
+  ),
+  "micro-interactions/lock-toggle": dynamic(() =>
+    import("./micro-interactions/lock-toggle.preview").then((m) => m.LockTogglePreview),
+  ),
+  "micro-interactions/poll-vote": dynamic(() =>
+    import("./micro-interactions/poll-vote.preview").then((m) => m.PollVotePreview),
+  ),
+  "micro-interactions/status-icon": dynamic(() =>
+    import("./micro-interactions/status-icon.preview").then((m) => m.StatusIconPreview),
+  ),
+  "micro-interactions/confetti": dynamic(() =>
+    import("./micro-interactions/confetti.preview").then((m) => m.ConfettiPreview),
+  ),
+  "micro-interactions/click-burst": dynamic(() =>
+    import("./micro-interactions/click-burst.preview").then((m) => m.ClickBurstPreview),
+  ),
+  "sounds/sound-kit": dynamic(() =>
+    import("./sounds/sound-kit.preview").then((m) => m.SoundKitPreview),
+  ),
+  "sounds/tap-sound": dynamic(() =>
+    import("./sounds/tap-sound.preview").then((m) => m.TapSoundPreview),
+  ),
+  "sounds/press-sound": dynamic(() =>
+    import("./sounds/press-sound.preview").then((m) => m.PressSoundPreview),
+  ),
+  "sounds/type-sound": dynamic(() =>
+    import("./sounds/type-sound.preview").then((m) => m.TypeSoundPreview),
+  ),
+  "sounds/select-sound": dynamic(() =>
+    import("./sounds/select-sound.preview").then((m) => m.SelectSoundPreview),
+  ),
+  "sounds/toggle-sound": dynamic(() =>
+    import("./sounds/toggle-sound.preview").then((m) => m.ToggleSoundPreview),
+  ),
+  "sounds/open-sound": dynamic(() =>
+    import("./sounds/open-sound.preview").then((m) => m.OpenSoundPreview),
+  ),
+  "sounds/close-sound": dynamic(() =>
+    import("./sounds/close-sound.preview").then((m) => m.CloseSoundPreview),
+  ),
+  "sounds/navigate-sound": dynamic(() =>
+    import("./sounds/navigate-sound.preview").then((m) => m.NavigateSoundPreview),
+  ),
+  "sounds/success-sound": dynamic(() =>
+    import("./sounds/success-sound.preview").then((m) => m.SuccessSoundPreview),
+  ),
+  "sounds/error-sound": dynamic(() =>
+    import("./sounds/error-sound.preview").then((m) => m.ErrorSoundPreview),
+  ),
+  "sounds/warning-sound": dynamic(() =>
+    import("./sounds/warning-sound.preview").then((m) => m.WarningSoundPreview),
+  ),
+  "sounds/notify-sound": dynamic(() =>
+    import("./sounds/notify-sound.preview").then((m) => m.NotifySoundPreview),
+  ),
+  "sounds/copy-sound": dynamic(() =>
+    import("./sounds/copy-sound.preview").then((m) => m.CopySoundPreview),
+  ),
+  "sounds/delete-sound": dynamic(() =>
+    import("./sounds/delete-sound.preview").then((m) => m.DeleteSoundPreview),
+  ),
+  "sounds/drop-sound": dynamic(() =>
+    import("./sounds/drop-sound.preview").then((m) => m.DropSoundPreview),
+  ),
+  "sounds/tick-sound": dynamic(() =>
+    import("./sounds/tick-sound.preview").then((m) => m.TickSoundPreview),
   ),
   "blocks/card-dealer": dynamic(() =>
     import("./blocks/card-dealer.preview").then((m) => m.CardDealerPreview),
@@ -592,6 +712,9 @@ export const previews: Record<string, ComponentType> = {
   ),
   "motion/theme-toggle": dynamic(() =>
     import("./motion/theme-toggle.preview").then((m) => m.ThemeTogglePreview),
+  ),
+  "motion/wave-reveal": dynamic(() =>
+    import("./motion/wave-reveal.preview").then((m) => m.WaveRevealPreview),
   ),
   "motion/smooth-scroll": dynamic(() =>
     import("./motion/smooth-scroll.preview").then((m) => m.SmoothScrollPreview),

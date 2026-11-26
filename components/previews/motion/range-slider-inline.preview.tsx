@@ -6,6 +6,7 @@ export function InlineSliderPreview() {
   return (
     <div className="w-full max-w-sm">
       <InlineSlider
+        sound
         defaultValue={48}
         min={8}
         max={128}

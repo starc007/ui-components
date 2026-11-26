@@ -32,7 +32,9 @@ export type SwipeableListMessages = typeof swipeableListMessages;
 export type SwipeSide = "left" | "right";
 
 export type SwipeableListValue = {
+  /** The `id` of the open row. */
   id: string;
+  /** Which action rail is revealed on the open row. */
   side: SwipeSide;
 };
 
@@ -44,54 +46,90 @@ export type SwipeActionTone =
   | "danger";
 
 export type SwipeAction = {
+  /** Unique key for the action within its row. */
   id: string;
+  /** Screen-reader name of the button; strings also become its `aria-label`. */
   label: ReactNode;
+  /** Icon shown inside the round action button. */
   icon: ReactNode;
+  /** Icon color for the action. Default: "neutral" */
   tone?: SwipeActionTone;
+  /** Dims the button and blocks presses. */
   disabled?: boolean;
+  /** Called with the row when this action is pressed, before `onAction`. */
   onClick?: (item: SwipeableListItem) => void;
 };
 
 export type SwipeableListItem = {
+  /** Unique key for the row, also used in `value`. */
   id: string;
+  /** Main line of the row; a string also names its actions button. */
   title?: ReactNode;
+  /** Muted line under the title. */
   description?: ReactNode;
+  /** Small trailing content at the row end, such as a time. */
   meta?: ReactNode;
+  /** Content before the text, such as an avatar or icon. */
   leading?: ReactNode;
+  /** Custom row content in place of the default layout. */
   content?: ReactNode;
+  /** Actions revealed on the left edge by swiping right. */
   leftActions?: SwipeAction[];
+  /** Actions revealed on the right edge by swiping left. */
   rightActions?: SwipeAction[];
+  /** Dims the row and turns off swiping and its actions button. */
   disabled?: boolean;
 };
 
 export type SwipeableListClassNames = {
+  /** Classes for the list wrapper. */
   root?: string;
+  /** Classes for each row's outer frame. */
   item?: string;
+  /** Classes for the layer behind the row that holds the actions. */
   rail?: string;
+  /** Classes for each action button. */
   action?: string;
+  /** Classes for the draggable card on top of the actions. */
   surface?: string;
+  /** Classes for the wrapper around `leading`. */
   leading?: string;
+  /** Classes for the column that holds the title and description. */
   content?: string;
+  /** Classes for the title line. */
   title?: string;
+  /** Classes for the description line. */
   description?: string;
+  /** Classes for the trailing meta content. */
   meta?: string;
 };
 
 export interface SwipeableListProps {
+  /** Rows to render, each with optional left and right swipe actions. */
   items: SwipeableListItem[];
+  /** The open row and side, or null when all are closed, for controlled use. */
   value?: SwipeableListValue | null;
+  /** The initially open row and side when uncontrolled. Default: null */
   defaultValue?: SwipeableListValue | null;
+  /** Called with the open row and side, or null, when a row opens or closes. */
   onValueChange?: (value: SwipeableListValue | null) => void;
+  /** Called with the row, action and side when an action button is pressed. */
   onAction?: (payload: {
     item: SwipeableListItem;
     action: SwipeAction;
     side: SwipeSide;
   }) => void;
+  /** Width of each revealed action button (px). Default: 56 */
   actionWidth?: number;
+  /** Minimum drag distance that opens a row on release (px). Default: 34 */
   revealThreshold?: number;
+  /** Close the row after one of its actions runs. Default: true */
   closeOnAction?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes for each inner part, such as rows, rails, actions and text. */
   classNames?: SwipeableListClassNames;
+  /** Custom content for a row's surface, in place of its title and description. */
   renderItem?: (item: SwipeableListItem) => ReactNode;
   /** Override any built-in string. */
   labels?: Partial<SwipeableListMessages>;

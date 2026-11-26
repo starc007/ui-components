@@ -28,7 +28,7 @@ export function NotFoundMagnetic({
     <NotFoundStage className={className}>
       <h1
         aria-label={code}
-        className="flex select-none items-center justify-center font-bold leading-none tracking-tighter text-foreground [font-size:clamp(5rem,18vw,12rem)]"
+        className="flex select-none items-center justify-center font-semibold leading-none tracking-tighter text-foreground [font-size:clamp(5rem,18vw,12rem)]"
       >
         {chars.map((ch, i) => (
           <Magnetic
@@ -45,7 +45,7 @@ export function NotFoundMagnetic({
       </h1>
 
       <div className="flex flex-col items-center gap-2">
-        <p className="text-lg font-semibold text-foreground">{title ?? t("title")}</p>
+        <p className="text-lg font-medium text-foreground">{title ?? t("title")}</p>
         <p className="max-w-sm text-sm text-muted-foreground">{description ?? t("description")}</p>
       </div>
 

@@ -1,6 +1,7 @@
 export interface XYSeries {
   /** Stable, unique identity. Keep it when updating values so marks morph in place. */
   id: string;
+  /** Series name shown in the legend, tooltip and data table. */
   name: string;
   /** Any CSS color, including theme variables. */
   color: string;

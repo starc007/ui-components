@@ -14,6 +14,7 @@ const DockContext = createContext<DockContextValue | null>(null);
 
 export interface DockProps {
   children: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
   /** Size of each item in px. */
   size?: number;
@@ -30,7 +31,7 @@ export function Dock({ children, size = 44, className }: DockProps) {
     <DockContext.Provider value={ctx}>
       <div
         className={cn(
-          "inline-flex h-auto items-end gap-1.5 rounded-2xl border border-border bg-card/80 px-2 py-1 shadow-2xl backdrop-blur-xl",
+          "inline-flex h-auto items-end gap-1.5 rounded-full border border-border bg-card/80 px-2 py-1 shadow-2xl backdrop-blur-xl",
           className,
         )}
       >
@@ -42,10 +43,13 @@ export function Dock({ children, size = 44, className }: DockProps) {
 
 export interface DockItemProps {
   children: ReactNode;
+  /** Classes merged onto the item element. */
   className?: string;
   /** When set, the item renders as a <button>. Omit when children carry their own link or button. */
   onClick?: () => void;
+  /** Moves the shared highlight pill to this item; sets `aria-pressed` on a button. */
   active?: boolean;
+  /** Accessible name for the button rendered when `onClick` is set. */
   "aria-label"?: string;
 }
 
@@ -65,7 +69,7 @@ export function DockItem({
     <motion.span
       layoutId={pillLayoutId}
       transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
-      className="absolute inset-0.5 -z-10 rounded-xl bg-muted/60"
+      className="absolute inset-0.5 -z-10 rounded-full bg-muted/60"
     />
   ) : null;
   const sharedStyle = { width: size, height: size };

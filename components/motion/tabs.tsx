@@ -18,6 +18,8 @@ import {
 } from "react";
 import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
+import { useSound } from "@/lib/sound";
+import { selectSound } from "@/lib/sounds/select";
 import { cn } from "@/lib/utils";
 
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
@@ -80,19 +82,29 @@ const transition: Transition = {
   mass: 1.2,
 };
 
-export function Tabs({
+/**
+ * Pass a union of tab values as `T` (or let `value` infer it) and
+ * `onValueChange` receives that union. Every trigger's `value` must be one of
+ * them.
+ */
+export function Tabs<T extends string = string>({
   defaultValue,
   value,
   onValueChange,
   variant = "pill",
   icons = "always",
   labels,
+  sound = false,
   children,
   className,
 }: {
-  defaultValue?: string;
-  value?: string;
-  onValueChange?: (v: string) => void;
+  /** The tab selected at first when uncontrolled. */
+  defaultValue?: T;
+  /** The selected tab's value, for controlled use. */
+  value?: T;
+  /** Called with the tab's value when a tab is picked. */
+  onValueChange?: (v: T) => void;
+  /** Selection style: "pill", "underline" or "segment". Default: "pill" */
   variant?: Variant;
   /**
    * With "selected", a trigger's icon springs open only on the selected tab
@@ -101,21 +113,26 @@ export function Tabs({
   icons?: IconDisplay;
   /** Override any built-in string. */
   labels?: Partial<TabsMessages>;
+  /** Play a soft tick when the user picks another tab. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
   children: ReactNode;
   className?: string;
 }) {
   const t = useMessages("tabs", tabsMessages, labels);
-  const [internal, setInternal] = useState(defaultValue ?? "");
+  const [internal, setInternal] = useState<string>(defaultValue ?? "");
   const layoutId = useId();
   const reduce = useReducedMotion();
   const controlled = value !== undefined;
   const current = controlled ? value : internal;
+  const play = useSound(selectSound, { enabled: sound });
   const setValue = useCallback(
     (v: string) => {
+      if (v !== current) play();
       if (!controlled) setInternal(v);
-      onValueChange?.(v);
+      // Triggers only carry values from `T`, so the string is one of them.
+      onValueChange?.(v as T);
     },
-    [controlled, onValueChange],
+    [controlled, onValueChange, current, play],
   );
   const x = useSpring(0, transition);
   const y = useSpring(0, transition);
@@ -197,7 +214,7 @@ export function Tabs({
 const listClasses: Record<Variant, string> = {
   pill: "inline-flex items-center gap-1 rounded-full bg-card p-1",
   underline: "inline-flex items-center gap-1 border-b border-border",
-  segment: "inline-flex items-center gap-0 rounded-lg bg-card p-0.5",
+  segment: "inline-flex items-center gap-0 rounded-full bg-card p-0.5",
 };
 
 export function TabsList({
@@ -418,7 +435,7 @@ export function TabsList({
     if (viewport) viewport.scrollBy({ left: direction * viewport.clientWidth * 0.8, behavior: reduce ? "instant" : "smooth" });
   };
   const controlClass = "absolute inset-y-0 z-20 inline-flex w-9 items-center justify-center text-foreground transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-0";
-  const surfaceClass = variant === "pill" ? "rounded-full bg-card" : variant === "segment" ? "rounded-lg bg-card" : "";
+  const surfaceClass = variant === "pill" ? "rounded-full bg-card" : variant === "segment" ? "rounded-full bg-card" : "";
 
   return (
     <div ref={rootRef} className={cn("relative isolate flex w-full max-w-full min-w-0 items-center", edges.overflow && surfaceClass, wrapperClassName)}>
@@ -579,7 +596,6 @@ export function TabsTrigger({
     );
   }
 
-  const radius = variant === "pill" ? "rounded-full" : "rounded-md";
   // Tracked pills are placed in the list, so this wrapper must not be their
   // containing block. Server HTML can't measure, so until the first
   // measurement the pill fills the selected tab with CSS, like the others.
@@ -594,8 +610,8 @@ export function TabsTrigger({
         <motion.span
           key="tracked"
           data-tabs-indicator=""
-          style={{ ...track, borderRadius: variant === "pill" ? 9999 : 8 }}
-          className={cn("absolute top-0 left-0 bg-primary", radius, indicatorClassName)}
+          style={{ ...track, borderRadius: 9999 }}
+          className={cn("absolute top-0 left-0 rounded-full bg-primary", indicatorClassName)}
         />
       ) : active ? (
         <motion.span
@@ -603,12 +619,8 @@ export function TabsTrigger({
           data-tabs-indicator=""
           layoutId={layoutId}
           layout
-          style={{ borderRadius: variant === "pill" ? 9999 : 8 }}
-          className={cn(
-            "absolute inset-0 bg-primary",
-            radius,
-            indicatorClassName,
-          )}
+          style={{ borderRadius: 9999 }}
+          className={cn("absolute inset-0 rounded-full bg-primary", indicatorClassName)}
         />
       ) : null}
       <button
@@ -625,8 +637,7 @@ export function TabsTrigger({
         }}
         className={cn(
           "relative z-10 inline-flex items-center justify-center whitespace-nowrap bg-transparent px-3.5 py-1.5 text-sm font-medium outline-none",
-          "text-muted-foreground hover:text-foreground",
-          radius,
+          "text-muted-foreground hover:text-foreground rounded-full",
           className,
         )}
       >
@@ -645,7 +656,16 @@ export function TabsTrigger({
   );
 }
 
-export function TabsContent({ value, children, className }: { value: string; children: ReactNode; className?: string }) {
+export function TabsContent({
+  value,
+  children,
+  className,
+}: {
+  /** The trigger value that shows this panel. */
+  value: string;
+  children: ReactNode;
+  className?: string;
+}) {
   const { value: current, registerPanel, unregisterPanel, tabId, panelId } = useTabs();
   const reduce = useReducedMotion();
   const active = current === value;

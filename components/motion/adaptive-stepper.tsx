@@ -29,6 +29,7 @@ import {
   SPRING_PRESS,
 } from "@/lib/ease";
 import { formatNumber, useLocale, useMessages } from "@/lib/i18n";
+import { mergeRefs } from "@/lib/merge-refs";
 import { cn } from "@/lib/utils";
 
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
@@ -100,29 +101,30 @@ function nextStep(
   return cleanNumber(Math.max(min, min + previousIndex * step));
 }
 
-function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref && typeof ref === "object") {
-        (ref as React.MutableRefObject<T | null>).current = node;
-      }
-    }
-  };
-}
 
 export interface AdaptiveStepperProps {
   children: ReactNode;
+  /** The current value, for controlled use. */
   value?: number;
+  /** The initial value when uncontrolled. Default: 0 */
   defaultValue?: number;
+  /** Called with the new value when a button steps it. */
   onValueChange?: (value: number) => void;
+  /** Lowest allowed value. Default: 0 */
   min?: number;
+  /** Highest allowed value. Default: 10 */
   max?: number;
+  /** Amount each press adds or removes. Default: 1 */
   step?: number;
+  /** Disables both buttons. Default: false */
   disabled?: boolean;
+  /** Form field name. Renders a hidden input carrying the value. */
   name?: string;
+  /** Formats the value read to screen readers. Defaults to a locale number. */
   formatValueText?: (value: number) => string;
+  /** Classes merged onto the root fieldset. */
   className?: string;
+  /** Accessible name for the stepper. Default: "Quantity" */
   "aria-label"?: string;
   /** Override any built-in string. `{label}` and `{value}` fill `summary`. */
   labels?: Partial<AdaptiveStepperMessages>;
@@ -271,7 +273,9 @@ export function AdaptiveStepper({
 export interface AdaptiveStepperActionProps
   extends Omit<HTMLMotionProps<"button">, "children" | "onClick"> {
   children?: ReactNode;
+  /** Called on click before the step. Call `preventDefault()` to skip the step. */
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  /** Ref to the underlying button element. */
   ref?: Ref<HTMLButtonElement>;
 }
 
@@ -409,7 +413,7 @@ export function AdaptiveStepperValue({
         aria-atomic="true"
         style={style}
         className={cn(
-          "flex size-full min-w-0 items-center justify-center overflow-hidden rounded-full border border-transparent bg-transparent bg-clip-padding px-4 text-lg font-semibold tabular-nums text-foreground",
+          "flex size-full min-w-0 items-center justify-center overflow-hidden rounded-full border border-transparent bg-transparent bg-clip-padding px-4 text-lg font-medium tabular-nums text-foreground",
           className,
         )}
       >

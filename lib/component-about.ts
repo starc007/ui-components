@@ -20,6 +20,38 @@ export type ComponentAbout = {
   faq: ComponentFaq[];
 };
 
+// Shared by every sound page: the sounds work the same way and only differ in
+// what they sound like and where they fit.
+const SOUND_ACCESSIBILITY =
+  "A sound plays only in answer to the user's own input, never on its own, and it never carries meaning alone: pair it with the visible change it marks. Wrap the app in SoundProvider to give people one mute switch and a volume, and remember their choice.";
+
+function soundFaq(exportName: string): ComponentFaq[] {
+  return [
+    {
+      question: "Does it load an audio file?",
+      answer: `No. ${exportName} is a short recipe that Web Audio plays the moment it is called: a click of filtered noise for the contact, a body that rings at the partials of a real material and settles in pitch, and a touch of a small room generated in code. Nothing is downloaded and it works offline.`,
+    },
+    {
+      question: "How do I play it outside React?",
+      answer: `Call ${exportName}.play() from any event handler. In React, useSound(${exportName}) gives a stable play function that respects SoundProvider and a component's sound prop.`,
+    },
+    {
+      question: "Why is there no sound on page load?",
+      answer:
+        "Browsers only start audio after a user gesture. The first press or key unlocks it, which also keeps sounds tied to what the user did.",
+    },
+  ];
+}
+
+function soundAbout(name: string, exportName: string, what: string, useWhen: string[]): ComponentAbout {
+  return {
+    overview: `${name} is an interface sound for React and the web, synthesized live with Web Audio. ${what} Import ${exportName} and call play(), or use the useSound hook, which follows SoundProvider for app-wide volume and mute.`,
+    useWhen,
+    accessibility: SOUND_ACCESSIBILITY,
+    faq: soundFaq(exportName),
+  };
+}
+
 export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   "expanding-arrow-button": {
     overview:
@@ -789,7 +821,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "An app needs one consistent button set with sizes, variants and an icon size for toolbars.",
     ],
     accessibility:
-      "Every variant renders a native button element (ButtonLink renders an anchor), so Enter, Space and focus work as usual. StatefulButton disables itself and sets aria-busy while loading, and its label sits in a polite live region so the new state text is announced. With reduced motion enabled, the press and hover scale, ripple and letter cascade are removed, MetallicButton's reflection stops, and the magnetic pull is turned off; the magnetic pull is also skipped on devices that cannot hover.",
+      "Every variant renders a native button element (ButtonLink renders an anchor), so Enter, Space and focus work as usual. StatefulButton disables itself and sets aria-busy while loading, and its label sits in a polite live region so the new state text is announced. With reduced motion enabled, the press scale, ripple and letter cascade are removed, MetallicButton's reflection stops, and the magnetic pull is turned off; the magnetic pull is also skipped on devices that cannot hover.",
     faq: [
       {
         question: "How do I make an animated button in React with Framer Motion?",
@@ -1369,7 +1401,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       "A popover must open from inside a scroll container or card with overflow hidden without being cut off.",
     ],
     accessibility:
-      "The trigger receives aria-haspopup, aria-expanded and aria-controls, and the panel has the dialog role. Escape and a pointer press outside close it, and if focus was inside the panel when it closes, focus returns to the trigger. The closed Gooey panel is inert, and with the hover trigger it also opens on keyboard focus and toggles on tap. With reduced motion enabled, the Gooey variant drops its goo filter and opens instantly, and the Morph variant replaces its clip reveal with a short fade.",
+      "The trigger receives aria-haspopup, aria-expanded and aria-controls, and the panel has the dialog role. Escape and a pointer press outside close it, and if focus was inside the panel when it closes, focus returns to the trigger. The closed Gooey panel is inert, and with the hover trigger it also opens on keyboard focus and toggles on tap. With reduced motion enabled, the Gooey variant drops its goo morph for a short fade, and the Morph variant replaces its clip reveal with a short fade.",
     faq: [
       {
         question: "How do I make an animated popover in React?",
@@ -1379,7 +1411,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       {
         question: "Can the popover open on hover?",
         answer:
-          "The Gooey Popover takes trigger=\"hover\", which opens on pointer hover and keyboard focus and closes after a short delay. The default is trigger=\"click\". The Morph Popover opens on click.",
+          "The Gooey Popover takes trigger=\"hover\", which opens once the pointer rests on the trigger for a moment or on keyboard focus, and closes after a short delay. The default is trigger=\"click\". The Morph Popover opens on click.",
       },
       {
         question: "How do I control the popover position and open state?",
@@ -1536,14 +1568,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   "animated-toast-stack": {
     overview:
-      "Animated Toast Stack is a React toast notification component built with Framer Motion. Toasts enter with a spring and light blur, stack with layout-aware motion as others arrive or leave, and morph their icon and text when a toast changes status, for example from loading to success. Each toast can carry a description, an action button and a close button, and can be swiped sideways to dismiss. A useAnimatedToastStack hook handles adding, updating, auto-dismissing and clearing toasts.",
+      "Animated Toast Stack is a React toast notification component built with Framer Motion. Every toast lives in one island anchored to a screen corner. It blooms out of a dot into a compact pill for a title, springs open into a card when a toast has a description or action, shows a +N count for the others, and opens into the full list on hover, focus or a tap. A status change, for example from loading to success, morphs the icon and text in place. Toasts swipe away sideways, and the last one folds back into the dot. A useAnimatedToastStack hook handles adding, updating, auto-dismissing and clearing toasts.",
     useWhen: [
       "A form or settings page confirms a save, then shows an error with a retry action if the request fails.",
       "An upload or export starts with a loading toast that updates in place to success when it finishes.",
       "A dashboard shows short notifications in a screen corner without blocking the page.",
     ],
     accessibility:
-      "The stack is an ordered list with aria-live set to polite, so screen readers announce new toasts without interrupting. The close control is a real button labeled Dismiss toast, and actions render as buttons. With reduced motion enabled, toasts and their status changes use opacity fades only, and swipe to dismiss is turned off, so the close button remains the way to dismiss.",
+      "A hidden live region set to polite announces every new toast and every change to one, so screen readers hear each toast even though the island shows one at a time. The island is a labeled Notifications region that Tab reaches; focusing it opens the list, where each close control is a real button labeled Dismiss toast and actions render as buttons, and Escape closes it. Countdowns pause while the island is open and while the tab is hidden, so a toast never runs out while someone is reading it. With reduced motion enabled, the island resizes at once and toasts change with opacity fades only; swipe to dismiss still works.",
     faq: [
       {
         question: "How do I add toast notifications in React?",
@@ -1558,11 +1590,39 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       {
         question: "How do I change where toasts appear and how long they stay?",
         answer:
-          "Set position, such as bottom-right or top-center, and placement to fixed for a page overlay. Each toast takes a duration in milliseconds, defaultDuration sets the hook default, and a duration of 0 keeps the toast until it is dismissed.",
+          "Set position, such as bottom-right or top-center, and placement to fixed for a page overlay. Each toast takes a duration in milliseconds, defaultDuration sets the hook default, and a duration of 0 keeps the toast until it is dismissed. Pass the hook's pause and resume to the stack's onPause and onResume so opening the island holds the countdowns.",
       },
     ],
   },
 
+  "wave-reveal": {
+    overview:
+      "Wave Reveal is a React screen transition built with Framer Motion. Wrap two screens, such as a confirm step and its success state, and flip revealed: the card pulls toward the button you pressed while light gathers there, then a colourful wave leaves from that point. Under its front the screen swells like a lens with a slight colour split and blurs, the next screen comes in behind it, and the edges keep an uneven glow and a bright hairline that fade after it. Choose a wide arc that travels up, a tall arc that travels sideways, or a ring from the centre. It needs no WebGL: masks swap the screens, an SVG filter does the swell and a backdrop blur softens the front.",
+    useWhen: [
+      "A payment, deploy or invite confirm step should turn into its success screen with a moment of weight.",
+      "A card flips between two states and a plain crossfade feels too quiet.",
+      "A checkout or onboarding step wants a transition that starts from the button that was pressed.",
+    ],
+    accessibility:
+      "Only the screen being shown is exposed to assistive technology and takes focus; the other one is inert. When focus was in the outgoing screen, such as on the button that started the wave, it moves to the first control of the incoming screen. The wave layers are hidden from assistive technology and never take pointer events. With reduced motion the screens crossfade with no pull, wave or bend.",
+    faq: [
+      {
+        question: "Where does the wave start?",
+        answer:
+          "From the point you pressed inside the card. Pass sourceRef to start from an element's centre instead, which also covers keyboard presses. Without either it starts from the bottom edge, the left edge or the centre, depending on type.",
+      },
+      {
+        question: "Can I turn off the bend or change the colours?",
+        answer:
+          "Set distortion to 0 for a clean wave with no bend, or raise it for a stronger lens. Pass colors as CSS colours for the wave front and the edge glow, and duration in seconds.",
+      },
+      {
+        question: "Where should padding go?",
+        answer:
+          "On the screens, not on WaveReveal. The wave and the edge glow fill the card's padding box, so padding on the wrapper would keep the glow off the edges.",
+      },
+    ],
+  },
   "theme-toggle": {
     overview:
       "Theme Toggle is a React dark mode toggle button that repaints the whole page through the View Transition API. The rectangle, circle and circle-blur variants reveal the new theme with a clip-path that grows from a chosen corner, edge or center, and the blinds variant opens the new theme across the screen in slats like a shutter. The sun and moon icon swaps with a blur, and a useThemeToggle hook lets you trigger the same transition from your own control.",
@@ -2264,6 +2324,27 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     ],
   },
 
+  "voice-note": {
+    overview:
+      "Voice Note is a React voice message recorder for chat and AI apps, built with Framer Motion. A mic button opens into a recording bar with discard, a recording dot and timer, a live waveform and send. The bar springs out of the mic's own circle to both sides at once, and sending folds it back into the centre, where the mic briefly shows a check. It morphs with a clip, so its width never animates and nothing around it shifts. The recording itself is yours: start your recorder in onRecordStart and pass the input level in, and the waveform moves with the voice.",
+    useWhen: [
+      "A chat or AI assistant accepts spoken messages next to typed ones.",
+      "A support or feedback form lets people leave a quick voice note.",
+      "A messaging app needs record, discard and send in one compact control.",
+    ],
+    accessibility:
+      "Record, discard and send are real buttons with names and tooltips. When recording starts focus moves to send, Escape discards, and focus returns to the mic when the bar closes. Recording and sending are announced in a polite live region; the timer and waveform are hidden from assistive technology. With reduced motion the bar fades instead of growing and the dot does not pulse.",
+    faq: [
+      {
+        question: "Does it record audio?",
+        answer: "No. It never opens the microphone. Start a MediaRecorder in onRecordStart, stop it in onSend or onDiscard, and pass the input level as level to drive the waveform.",
+      },
+      {
+        question: "How do I limit the length?",
+        answer: "Set maxDuration in seconds, and the note is sent when it reaches that length.",
+      },
+    ],
+  },
   "voice-orb": {
     overview:
       "Voice Orb is a React voice visualizer for AI voice assistants: a breathing liquid sphere drawn with a WebGL shader, with flowing highlights and three custom pigments. Its silhouette swells with a spring as activity rises, driven by a number, a Framer Motion MotionValue or an audio analyser you provide. The orb pauses when it is offscreen or the tab is hidden, and shows a fallback with an onError callback if WebGL is unavailable.",
@@ -2382,14 +2463,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   "prompt-input": {
     overview:
-      "Prompt Input is an AI chat composer for React. The textarea grows with the prompt between minRows and maxRows, Enter sends and Shift plus Enter adds a line, and the send button swaps into a stop button while a response is loading. It can show a model picker built on the beUI Select and an animated actions menu for things like attachments or tools, with the icon swaps animated by Framer Motion.",
+      "Prompt Input is an AI chat composer for React. The textarea grows with the prompt between minRows and maxRows, Enter sends and Shift plus Enter adds a line, and the send button swaps into a stop button while a response is loading, with a thin arc circling it while the agent works. It can show a model menu and an add menu built on the beUI Dropdown Menu, and slash commands: typing / at the start of a word lists your commands above the input, filtered as you type, and picking one writes it into the prompt. Icon swaps are animated by Framer Motion.",
     useWhen: [
       "An AI chat app needs a message box with a model selector and a send or stop button.",
       "An agent workspace needs an actions menu to attach files, add context or pick a tool before sending.",
       "A coding assistant needs a multiline prompt field that grows with the instruction instead of scrolling a single line.",
     ],
     accessibility:
-      "The composer is a form with a labeled textarea (\"Prompt\" by default), and the send, stop and actions buttons have labels such as \"Send prompt\", \"Stop generating\" and \"Add to prompt\". Enter submits only when the prompt is not empty and ignores Enter during IME composition, so typing in languages like Japanese or Chinese does not send early. After sending, focus returns to the textarea. With reduced motion enabled, the send and stop swap and the plus icon rotation happen without movement.",
+      "The composer is a form with a labeled textarea (\"Prompt\" by default), and the send, stop and actions buttons have labels such as \"Send prompt\", \"Stop generating\" and \"Add to prompt\". Enter submits only when the prompt is not empty and ignores Enter during IME composition, so typing in languages like Japanese or Chinese does not send early. After sending, focus returns to the textarea. While the slash command list is open, focus stays in the textarea: the arrow keys move through the commands, Enter or Tab picks one and Escape closes the list, and the textarea points at the highlighted command with aria-activedescendant. With reduced motion enabled, the send and stop swap and the plus icon rotation happen without movement.",
     faq: [
       {
         question: "How do I build a ChatGPT style prompt input in React?",
@@ -2991,14 +3072,14 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   "command-palette": {
     overview:
-      "Command Palette is a Cmd K style command menu for React, built with Framer Motion and Tailwind CSS. It opens over the page from a keyboard shortcut, filters commands as you type with ranked fuzzy matching across labels, groups and keywords, and slides a spring highlight between rows. Commands can carry an icon, a group heading, a badge and a keyboard hint.",
+      "Command Palette is a Cmd K style command menu for React, built with Framer Motion and Tailwind CSS. It opens over the page from a keyboard shortcut, filters commands as you type with ranked fuzzy matching across labels, groups and keywords, and glides a highlight between rows. The list is virtualized, so hundreds of commands open and filter without a delay, it keeps its height while results filter, a footer shows the navigation keys, and with `recent` on it remembers the commands people pick and lists them first. Commands can carry an icon, a group heading, a badge and a keyboard hint.",
     useWhen: [
       "A dashboard or SaaS app wants a keyboard-first way to jump between pages and run actions.",
       "A documentation site needs a quick search over its sections that opens with Cmd K or Ctrl K.",
       "A power-user tool has more actions than fit in its toolbar and needs one searchable place for them.",
     ],
     accessibility:
-      "The palette renders as a modal dialog with the search field as a combobox that points at the highlighted row through aria-activedescendant, and results use the listbox and option roles. Cmd K or Ctrl K toggles it, Arrow Up and Arrow Down move the highlight, Enter runs the command and Escape closes. The field takes focus on open and the page behind stops scrolling. With reduced motion enabled, the panel fades in without its slide and scale, and the highlight moves without a spring.",
+      "The palette renders as a modal dialog with the search field as a combobox that points at the highlighted row through aria-activedescendant, and results use the listbox and option roles. Cmd K or Ctrl K toggles it, Arrow Up and Arrow Down move the highlight, Enter runs the command and Escape closes. The list is virtualized, so each option states its position and the total with aria-posinset and aria-setsize. The field takes focus on open and the page behind stops scrolling. With reduced motion enabled, the panel fades in without its drop and the highlight jumps between rows instead of gliding.",
     faq: [
       {
         question: "How do I add a Cmd K command palette to a React app?",
@@ -3417,7 +3498,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   "slide-game": {
     overview:
-      "Slide is a React casino slide game built with Framer Motion. A bet and target panel sits beside the stage, or below it on narrow screens, with the win chance and profit on win kept up to date. Each round races a reel of multiplier cards past two tabs that hang from the stage's top and bottom edges: cards turn toward the center in 3D as they pass, colour-coded from slate under 2× through primary and amber to fuchsia at 100× and up. The reel slows through the last few cards and clicks the result into place between the tabs, which turn primary on a win or red on a miss. Results come from getResult, so a server can decide every round.",
+      "Slide is a React casino slide game built with Framer Motion. A bet and target panel sits beside the stage, or below it on narrow screens, with the win chance and profit on win kept up to date. Each round races a reel of multiplier cards past two tabs that hang from the stage's top and bottom edges: cards turn toward the center in 3D as they pass, colour-coded from slate under 2× through green and amber to rose at 100× and up. The reel slows through the last few cards and clicks the result into place between the tabs, which turn primary on a win or red on a miss. Results come from getResult, so a server can decide every round.",
     useWhen: [
       "A casino or crypto gaming site needs a slide or multiplier game with a suspenseful reveal.",
       "A rewards or loyalty flow wants to reveal a multiplier or bonus with a short reel spin.",
@@ -3590,4 +3671,586 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       },
     ],
   },
+  "like-button": {
+    overview:
+      "Like Button is a React heart toggle built with Framer Motion. When liked, the heart fills, pops into place, and throws a ring and six sparks outward while the count rolls up one digit at a time. Unliking drains the fill and rolls the count down without the burst. Pass count for everyone else's likes and the viewer's own like is added on top.",
+    useWhen: [
+      "A social feed, comment thread or gallery needs a like or favorite action.",
+      "A product card wants a wishlist heart with a little delight.",
+      "A changelog or blog wants readers to react to a post.",
+    ],
+    accessibility:
+      "It renders a real button with aria-pressed, so screen readers announce it as a toggle named Like. The count has screen reader text. With reduced motion the burst and pop are skipped and only the colour and fill change.",
+    faq: [
+      {
+        question: "Does count include the viewer's like?",
+        answer:
+          "No. count is the number of likes from everyone else, and the button adds one while liked. That way toggling never needs you to recompute the total.",
+      },
+      {
+        question: "Can I control the liked state?",
+        answer:
+          "Yes. Pass liked and onLikedChange to control it, or defaultLiked to let the button keep its own state.",
+      },
+    ],
+  },
+  "bookmark-button": {
+    overview:
+      "Bookmark Button is a React save toggle built with Framer Motion. Saving drops a filled ribbon into the bookmark outline from above; it lands on a light spring, a check cuts into it, the pill tints with the primary colour and the label morphs from Save to Saved with Text Morph, a \"d\" springing onto the end. Unsaving lifts the ribbon back out the top. Set showLabel to false for an icon-only button.",
+    useWhen: [
+      "An article list or reader needs save for later.",
+      "A listings or job board lets people shortlist items.",
+      "A docs site lets readers pin pages.",
+    ],
+    accessibility:
+      "It renders a button with aria-pressed and a steady accessible name, Save or Save {name}, so screen readers announce the state rather than a changing label. With reduced motion the ribbon fades in and out instead of dropping.",
+    faq: [
+      {
+        question: "How do I give each bookmark a unique name?",
+        answer:
+          "Pass name, for example name=\"Designing for reduced motion\", and the accessible name becomes \"Save Designing for reduced motion\", so screen reader users can tell the buttons in a list apart.",
+      },
+      {
+        question: "Is it controlled or uncontrolled?",
+        answer: "Both. Use saved with onSavedChange, or defaultSaved.",
+      },
+    ],
+  },
+  "upvote-button": {
+    overview:
+      "Upvote Button is a React vote toggle built with Framer Motion. A vote rises through the button: it fills with the primary colour from the bottom, the arrow shoots out the top as a filled one rises in behind it, a +1 floats away and the count rolls up digit by digit. Taking the vote back drains the fill and runs it all downward. It comes in a vertical layout for launch lists and a horizontal pill for inline use.",
+    useWhen: [
+      "A launch board, feature request list or forum ranks posts by votes.",
+      "A roadmap lets users vote on what ships next.",
+      "A Q and A page lets people upvote the best answer.",
+    ],
+    accessibility:
+      "It renders a button with aria-pressed named Upvote, and the count is read from screen reader text. Give each button a unique name in lists through labels. With reduced motion the fill and arrow change at once, the +1 is skipped and digits fade instead of rolling.",
+    faq: [
+      {
+        question: "Does count include the viewer's vote?",
+        answer: "No. Pass the votes from everyone else; the button adds one while voted.",
+      },
+      {
+        question: "How do I switch to a horizontal layout?",
+        answer: "Set orientation=\"horizontal\" for a compact pill with the arrow and count side by side.",
+      },
+    ],
+  },
+  "copy-button": {
+    overview:
+      "Copy Button is a React copy to clipboard button built with Framer Motion. A click writes the value to the clipboard and confirms it: the button tints with the primary colour, the copy icon blurs away as a check scales in and draws its stroke, and with a label the word morphs with Text Morph: \"Cop\" stays while the rest of Copied springs in letter by letter and the pill resizes to fit. It settles back after a timeout.",
+    useWhen: [
+      "A code block, install command or API key needs a one-click copy.",
+      "A share sheet copies a link.",
+      "A contact card copies an email address.",
+    ],
+    accessibility:
+      "It renders a real button. Icon only, it is named Copy; with showLabel the visible text names it. A polite live region announces Copied after each copy. With reduced motion the icons crossfade without scaling or blur.",
+    faq: [
+      {
+        question: "Can the copied text be computed at click time?",
+        answer: "Yes. Pass a function as value and it runs on each click, so the button always copies the latest text.",
+      },
+      {
+        question: "What happens if the clipboard is blocked?",
+        answer: "The button stays in its copy state and onCopy does not fire, so you never show a false Copied.",
+      },
+    ],
+  },
+  "text-morph": {
+    overview:
+      "Text Morph is a React text animation built with Framer Motion that morphs one string into another. Letters the two strings share, paired by their longest common subsequence, glide on a spring from where they are drawn to their new place. New letters spring up into place one at a time, left to right, and letters that leave drop away one by one from the end while riding along with their nearest neighbour that stays. The box springs to the new width. Subscribe, Subscribing and Subscribed read as one word changing rather than three labels swapping, and a change mid-morph retargets every spring from where it is.",
+    useWhen: [
+      "A button label moves through states, such as Subscribe, Subscribing and Subscribed.",
+      "A toggle names its state in words, such as Show more and Show less.",
+      "A heading or tab title changes in place and should feel continuous.",
+    ],
+    accessibility:
+      "The full string sits in screen reader text while the animated letters are hidden from assistive technology, so the label is always read whole. With reduced motion the letters crossfade in place: nothing slides or scales.",
+    faq: [
+      {
+        question: "How are shared letters matched?",
+        answer:
+          "By their longest common subsequence: the longest run of characters, in order, that both strings contain stays and slides; everything else leaves or arrives. Matching is case sensitive.",
+      },
+      {
+        question: "Can I use it outside a button?",
+        answer: "Yes. It renders an inline span that takes your className, so it fits any text: headings, tabs, badges or labels.",
+      },
+    ],
+  },
+  "follow-button": {
+    overview:
+      "Follow Button is a React toggle built with Framer Motion. Following plays in three beats: the label folds away and the pill closes into a circle with a spinner, the spinner gives way to a check that draws itself, then the circle opens into an outlined Following pill. The button reports aria-busy while the spinner shows. On devices that hover, pointing at Following turns the check into an × and previews Unfollow in the destructive colour. A fresh follow shows Following until the pointer leaves.",
+    useWhen: [
+      "A profile, creator page or people list needs follow and unfollow.",
+      "A newsletter or channel offers subscribe.",
+      "A team directory lets people watch a teammate's updates.",
+    ],
+    accessibility:
+      "It renders a button with aria-pressed and a steady name, Follow or Follow {name}, so screen readers announce the state rather than a changing label. With reduced motion labels and icons crossfade without rolling or blur.",
+    faq: [
+      {
+        question: "How do I name who is being followed?",
+        answer: "Pass name and the accessible name becomes \"Follow Maya Chen\".",
+      },
+      {
+        question: "Does the Unfollow preview show on touch?",
+        answer: "No. It only appears on devices that can hover, so a tap never leaves a stuck Unfollow label.",
+      },
+    ],
+  },
+  "star-rating": {
+    overview:
+      "Star Rating is a React rating input built with Framer Motion. Hovering lifts the star under the pointer and previews the score in a lighter tint. A new rating sends a wave down the row: each newly lit star hops and fills in turn, and the chosen star lands last with a pop and a burst of sparks. Lowering it drains the stars right to left, and arrow keys move the rating one star at a time. It also works read only for showing an average.",
+    useWhen: [
+      "A review form collects a score.",
+      "A product page shows its rating.",
+      "A feedback widget asks how a session went.",
+    ],
+    accessibility:
+      "It is a radio group named Rating with one radio per star, named like \"3 of 5 stars\". Only the checked star is in the tab order; arrow keys, Home and End change the rating. With reduced motion the fill changes without the sweep or pop.",
+    faq: [
+      {
+        question: "Can I change the number of stars?",
+        answer: "Yes. Set max, for example 10.",
+      },
+      {
+        question: "How do I show a rating without input?",
+        answer: "Set readOnly. The stars show value and ignore pointer and keyboard input.",
+      },
+    ],
+  },
+  "add-to-cart": {
+    overview:
+      "Add to Cart is a React button built with Framer Motion that turns into a quantity stepper once an item is in the cart. The pill resizes between the two faces, minus and plus open out from the centre around a rolling count, the minus becomes a trash icon on the last item, and removing it folds the stepper back into the button. To keep one size in both states, set morphWidth to false and give it a width, such as w-full.",
+    useWhen: [
+      "A product card or page adds items to a cart.",
+      "A food ordering menu lets people pick quantities inline.",
+      "A ticket or seat picker sets how many to buy.",
+    ],
+    accessibility:
+      "Every control is a real button with a clear name: Add to cart, Add one, Remove one and Remove from cart. The quantity is announced in a polite live region, and focus moves to the new face when a press swaps it, so keyboard users never lose their place. With reduced motion the faces crossfade without movement.",
+    faq: [
+      {
+        question: "How do I sync it with my cart?",
+        answer: "Pass quantity and onQuantityChange to control it from your cart state.",
+      },
+      {
+        question: "Can I limit the quantity?",
+        answer: "Yes. Set max; the plus button disables at the limit.",
+      },
+    ],
+  },
+  "delete-button": {
+    overview:
+      "Delete Button is a delete with confirmation for React built with Framer Motion. It starts as a round bin button. Pressing it opens the pill into a cross and a red tick that spring out from the centre. The tick turns it into a spinner while the delete runs, then into a check that draws itself beside Deleted, before the bin comes back. The cross cancels. One pill springs to the width of each step, so the whole exchange happens in place.",
+    useWhen: [
+      "A list row, file or comment needs a delete that a stray click cannot trigger.",
+      "A settings page removes an API key, a member or a saved card.",
+      "A table action deletes in place without opening a dialog.",
+    ],
+    accessibility:
+      "Every step is a real button with its own name: Delete, then Cancel and Confirm delete. Opening the pair moves focus to Cancel, the safe choice, so Enter never deletes by accident. Escape or moving focus away cancels. The spinner is a status named Deleting and the result a status reading Deleted. With reduced motion the steps crossfade without scaling or sliding.",
+    faq: [
+      {
+        question: "How do I run the delete?",
+        answer:
+          "Pass onDelete. It runs when the tick is pressed; return a promise to keep the spinner up until the work finishes. If the promise rejects, the button goes back to the bin.",
+      },
+      {
+        question: "Can I rename the steps?",
+        answer: "Yes. Pass labels with delete, confirm, cancel, deleting and deleted, or provide them through LocaleProvider.",
+      },
+    ],
+  },
+  "download-button": {
+    overview:
+      "Download Button is a React download control built with Framer Motion where the whole button is the progress bar. As the file comes in, colour sweeps across the pill with a bright leading edge and drifting stripes, and the label and icon turn from ink to white exactly where the fill passes, because the content is drawn twice and the top copy is clipped to the progress. The label reads Downloading with a percentage, and an arrow keeps dropping into the tray while it works. When it finishes, the pill folds into a round badge where a check pops in, then opens back into the button as the colour drains away. The fill follows real progress: onDownload receives a report function you call with a value from 0 to 1. The percentage sits in a fixed slot, so the label never shifts while it counts.",
+    useWhen: [
+      "A file, export or invoice downloads and the wait should be visible.",
+      "An app installs a model, plugin or offline pack in the background.",
+      "A report is generated before it can be saved.",
+    ],
+    accessibility:
+      "It renders a real button that reports aria-busy while downloading, with a progressbar named Download progress carrying the current value so screen readers can follow it. The white copy of the label is hidden from assistive technology. When it finishes, the button is named Downloaded and a polite live region announces it. With reduced motion the arrow and stripes stay still, the fill tracks progress without easing, and the fold happens without a spring.",
+    faq: [
+      {
+        question: "How do I show real progress?",
+        answer:
+          "Pass onDownload. It receives report; call report(0.5) and so on as bytes arrive, and return a promise that settles when the download finishes. Uneven reports are smoothed into a steady sweep. Without onDownload the fill runs on its own, which suits a demo.",
+      },
+      {
+        question: "What if the download fails?",
+        answer: "Reject the promise and the button goes back to Download.",
+      },
+    ],
+  },
+  "send-button": {
+    overview:
+      "Send Button is a React submit button built with Framer Motion. Pressing it makes the paper plane wind up, then take off up and out through the edge of the pill, drawing a contrail that erases from its tail. Three dots bounce while the message sends, a check pops in and draws as the label morphs from Send to Sending and Sent with Text Morph, and then the plane flies back in from the bottom left, as if it had looped around.",
+    useWhen: [
+      "A chat, comment or contact form sends a message.",
+      "An invite, feedback or support request goes out.",
+      "An email or newsletter is sent from a dashboard.",
+    ],
+    accessibility:
+      "It renders a real button whose name follows its label and reports aria-busy while sending. With reduced motion the plane does not fly, there is no contrail, the dots hold still and the steps crossfade.",
+    faq: [
+      {
+        question: "How do I hook up the request?",
+        answer:
+          "Pass onSend and return a promise; Sending stays until it settles, for at least a moment so the flight always reads. If it rejects, the button goes back to Send.",
+      },
+      {
+        question: "Can I change the words?",
+        answer: "Yes. Pass labels with send, sending and sent.",
+      },
+    ],
+  },
+  "refresh-button": {
+    overview:
+      "Refresh Button is a React refresh control built with Framer Motion. Pressing it winds the arrows back a little, then they spin up from rest. While the refresh runs the arrowhead tucks away and the arc breathes long and short like a spinner. When it finishes the spin coasts to land upright instead of freezing mid-turn, the arc closes and the arrowhead clicks back in, and a check takes over as Refresh morphs to Refreshing and Updated with Text Morph. The spin runs on a single motion value, so it never jumps when the page re-renders.",
+    useWhen: [
+      "A feed, table or dashboard refetches its data on demand.",
+      "A sync or status check runs from a toolbar.",
+      "A preview rebuilds after a change.",
+    ],
+    accessibility:
+      "It renders a real button whose name follows its label and reports aria-busy while refreshing. With reduced motion the arrows stay still and the steps crossfade.",
+    faq: [
+      {
+        question: "How long does it spin?",
+        answer:
+          "As long as the promise from onRefresh takes, and at least a second, so a fast refresh still reads. Then it eases out over one more turn.",
+      },
+      {
+        question: "What happens on an error?",
+        answer: "Reject the promise and the button goes straight back to Refresh.",
+      },
+    ],
+  },
+  "message-status": {
+    overview:
+      "Message Status shows the delivery state of a chat message, built with Framer Motion. A progress ring fills around a round badge while it sends. When it is sent the ring closes and the badge fills with a check drawn in it; when it is delivered the badge slides aside as a second one slides out from behind it, the pair cut apart by a halo like an avatar stack; and when it is read both fill with the accent colour, back badge first, each with a small pop. Set showLabel to add the state as a word that morphs with Text Morph.",
+    useWhen: [
+      "A chat or support inbox shows whether a message arrived and was read.",
+      "An AI chat shows a message moving from sending to sent.",
+      "A notification or email log shows delivery state per row.",
+    ],
+    accessibility:
+      "Without a label it is an image named after its state, such as Delivered. With showLabel the visible word names it. With reduced motion the ring and badges appear without filling, sliding or popping, and the colour simply changes.",
+    faq: [
+      {
+        question: "Which states are there?",
+        answer: "sending, sent, delivered and read. Pass the current one as status; each change animates from the last.",
+      },
+      {
+        question: "Can I change the read colour?",
+        answer: "Read uses the primary colour. Override it with a className on the component, for example [&_svg]:text-sky-500.",
+      },
+    ],
+  },
+  "notification-bell": {
+    overview:
+      "Notification Bell is a React notification control built with Framer Motion. Whenever the unread count goes up, the bell swings from its top while the clapper lags the other way and ring waves pulse out on both sides. The first notification pops the badge out of the bell's shoulder; later ones bump it as the count rolls digit by digit. Pressing it clears the count: the badge shrinks back into the bell and the bell gives a small nod. Counts above max show as 9+.",
+    useWhen: [
+      "An app header shows unread notifications.",
+      "An inbox or activity feed signals new items.",
+      "A support or chat widget shows waiting messages.",
+    ],
+    accessibility:
+      "It renders a real button named Notifications, or Notifications, 3 unread when there are some, so the count is read out. With reduced motion the bell does not swing or nod, there are no ring waves, and the badge fades in and out without scaling.",
+    faq: [
+      {
+        question: "How do I control the count?",
+        answer:
+          "Pass count and onCountChange. The bell rings on every increase, however it happens, and pressing it calls onCountChange(0).",
+      },
+      {
+        question: "How do I change the cap?",
+        answer: "Set max. Above it the badge shows max+, 9+ by default.",
+      },
+    ],
+  },
+  "reaction-picker": {
+    overview:
+      "Reaction Picker is a React reaction control built with Framer Motion. Pressing the button grows a tray out of it with each reaction rising in turn, each in its own colour; hovering or focusing one lifts it and shows its name. The one you pick arcs down onto the button, which catches it with a pop and a burst of sparks in the reaction's colour while the pill takes on that colour and the count rolls. Picking it again takes it back. It ships with like, love, haha, fire and party, or takes your own icons and colours.",
+    useWhen: [
+      "A message, comment or post takes quick reactions.",
+      "A changelog or doc page asks how readers feel about it.",
+      "A team tool lets people acknowledge an update.",
+    ],
+    accessibility:
+      "The button reports aria-expanded and is named Add reaction, or Reacted with Love once you have. The tray is a group of named buttons with aria-pressed; arrow keys move between them, Escape or a click outside closes it, and focus returns to the button. With reduced motion nothing rises or flies.",
+    faq: [
+      {
+        question: "Can I use my own reactions?",
+        answer:
+          "Yes. Pass reactions, an array of { id, label, icon, color, tint }. color is the icon's text colour class and tint the classes the button takes once that reaction is picked. Any icon works, including your own SVGs.",
+      },
+      {
+        question: "Does count include the viewer?",
+        answer: "No. count is everyone else's reactions; the viewer's own is added while they have one.",
+      },
+    ],
+  },
+  "share-button": {
+    overview:
+      "Share Button is a React share control built with Framer Motion. Pressing the round button turns its share mark into a close mark and fans the actions out of it on an arc, each springing out a beat after the last: copy link, email and message by default. Hovering or focusing an action lifts it above its neighbours and shows its name on the outer side of the fan. Choosing one turns its bubble into a check, reading Copied for copy link, then the fan folds back into the button, last out first in. The button does no sharing itself: onAction receives the action's id and you decide what happens.",
+    useWhen: [
+      "A post, product or doc page offers sharing without a modal.",
+      "A dashboard shares a report or invite link.",
+      "Any small set of related actions should open from one button.",
+    ],
+    accessibility:
+      "The button reports aria-expanded and is named Share, or Close while open. Every action is a named button; opening by keyboard moves focus to the first, arrow keys walk the fan, and Escape closes and returns focus. While the fan folds home it stops taking input. With reduced motion the actions appear in place without flying.",
+    faq: [
+      {
+        question: "How do I make the actions do something?",
+        answer:
+          "Pass onAction. It is called with the action's id, such as copy, email or message; copy the link, open a composer or call your API there. Return a promise to show the check once it settles; if it rejects, the fan stays open.",
+      },
+      {
+        question: "Can I change the actions?",
+        answer:
+          "Yes. Pass actions, an array of { id, label, icon, doneLabel }. doneLabel replaces the name once the action is done, like Copied. Three to five actions fit the arc best.",
+      },
+    ],
+  },
+  "mute-toggle": {
+    overview:
+      "Mute Toggle is a React sound toggle built with Framer Motion. Muting makes the speaker recoil and folds the sound waves back into it from the outside in, then a slash cuts through and leaves a clean gap in the speaker. Unmuting lifts the slash, the speaker pumps, the waves spring back out from the inside, and one pulse ripples past them, so sound reads as leaving and returning.",
+    useWhen: [
+      "A video, call or audio player needs a mute control.",
+      "A game or app toggles sound effects.",
+      "A notification setting silences alerts.",
+    ],
+    accessibility:
+      "It renders a real button named Mute with aria-pressed showing the state. With reduced motion the waves fade instead of folding, the slash appears at once, and the speaker and ripple stay still.",
+    faq: [
+      {
+        question: "Is it controlled?",
+        answer: "Either way. Pass muted with onMutedChange, or defaultMuted.",
+      },
+      {
+        question: "Can I rename it?",
+        answer: "Yes. Pass labels with mute, for example Mute sound effects.",
+      },
+    ],
+  },
+  "lock-toggle": {
+    overview:
+      "Lock Toggle is a React padlock toggle built with Framer Motion. Locking swings the shackle back over the body and drops it in, a touch past home, so the body knocks as it seats. The body then fills solid around a cut-out keyhole and the key turns a quarter and back. Unlocking turns the key back, drains the fill, and pops the shackle up and open on its right leg, while the label morphs between Locked and Unlocked with Text Morph.",
+    useWhen: [
+      "A document, field or layer can be locked against edits.",
+      "A privacy setting makes something public or private.",
+      "A canvas or design tool locks an object in place.",
+    ],
+    accessibility:
+      "It renders a real button named Lock with aria-pressed showing the state, while the visible word changes. With reduced motion the shackle changes position without moving, the key does not turn, and only the fill fades.",
+    faq: [
+      {
+        question: "Can I hide the label?",
+        answer: "Yes. Set showLabel to false for a round icon-only toggle.",
+      },
+      {
+        question: "Is it locked by default?",
+        answer: "Yes. Pass defaultLocked={false} to start unlocked, or control it with locked and onLockedChange.",
+      },
+    ],
+  },
+  "poll-vote": {
+    overview:
+      "Poll Vote is a React poll built with Framer Motion. Before you vote it is a list of options with radio rings. One tap fills your ring with a pop and draws a check in it, fills your bar first and the rest after it in a wave, slides each percentage in as it counts up, and ticks the vote total over. Picking another option moves your vote: every bar shifts at once and the numbers count from their old shares to the new ones. Clearing the vote drains the bars quickly.",
+    useWhen: [
+      "A blog post, community or newsletter asks a quick question.",
+      "A product page collects feedback with one tap.",
+      "A team chooses between a few options.",
+    ],
+    accessibility:
+      "Each option is a button with aria-pressed; after voting its name includes its share, such as Springs, 43%. Your vote is announced in a polite live region. The vote total under the list is plain text. With reduced motion the bars and numbers jump to their values and the ring fades instead of popping.",
+    faq: [
+      {
+        question: "How are the percentages worked out?",
+        answer: "From each option's votes plus the viewer's own vote, out of the total, rounded to whole numbers.",
+      },
+      {
+        question: "Can I reset it?",
+        answer: "Control it with value and set it back to null; the bars drain and the list is ready for a vote again.",
+      },
+    ],
+  },
+  "status-icon": {
+    overview:
+      "Status Icon is a React status indicator built with Framer Motion that morphs between states instead of swapping glyphs. Idle is a faint ring. Syncing spins a lone arc up to a steady speed while its length breathes, like a system spinner. On success, warning or error the arc coasts on with the speed it had and eases to a stop at the top as the ring closes, the ring fills green, amber or red with a small spring, and a white check, exclamation or cross draws in, all as one motion. Going back to syncing empties it and the arc opens again.",
+    useWhen: [
+      "A save, sync or upload shows its progress and result in one spot.",
+      "A list or table marks each row's job as running, done or failed.",
+      "A status line next to text needs an icon that changes with it.",
+    ],
+    accessibility:
+      "It renders with the img role and a name for its state, such as Syncing or Done, which you can translate with labels. Pass decorative when nearby text already says the status, and it is hidden from assistive technology. With reduced motion the arc does not spin and marks fade in instead of drawing.",
+    faq: [
+      {
+        question: "Which states does it have?",
+        answer: "idle, syncing, success, warning and error. Change the status prop and it morphs from the current state to the new one.",
+      },
+      {
+        question: "Can I change its size?",
+        answer: "Yes. Pass size in px; the default is 20. Colours come from the text colour classes, so className can change them.",
+      },
+    ],
+  },
+  "click-burst": {
+    overview:
+      "Click Burst is a React click effect built with Framer Motion. Wrap any clickable element, such as a checkbox, a like button or a save button, and each click throws a small burst of four-point stars and dots from the exact point you clicked. The pieces pop out in a ring, spin and shrink as they slow, and fade, in about half a second. The child keeps all its own behaviour; Click Burst only listens for its clicks. Set enabled to burst on some clicks only, such as checking a task but not unchecking it.",
+    useWhen: [
+      "Ticking a task, finishing a step or completing a habit should feel rewarding.",
+      "A like, star or save button wants a small moment of delight.",
+      "A game, quiz or streak marks a correct answer.",
+    ],
+    accessibility:
+      "The burst is drawn on a layer that is hidden from assistive technology and never takes pointer events, so the wrapped control works and is announced exactly as before. A click from the keyboard bursts from the element's centre. With reduced motion nothing is drawn.",
+    faq: [
+      {
+        question: "How do I burst only when a checkbox is checked?",
+        answer: "Pass enabled={!checked}. The value is read at the moment of the click, before the checkbox changes, so checking bursts and unchecking does not.",
+      },
+      {
+        question: "Can I change the colours and size?",
+        answer: "Pass colors as CSS colours, count for the number of pieces and spread for how far they fly in px. Set origin to center to burst from the middle instead of the click point.",
+      },
+    ],
+  },
+  confetti: {
+    overview:
+      "Confetti is a confetti burst for React success moments that you call like a toast: confetti() from any event handler, with no provider, hook or element to mount. A burst blooms out of a button or a point: the pieces pop up and slow in the air, then tumble and sway as they drift down at a gentle, capped speed, and fade out. It draws on one canvas over the page that exists only while pieces are in the air, and overlapping bursts share it.",
+    useWhen: [
+      "A checkout, signup or upgrade just succeeded.",
+      "A user finishes onboarding, a streak or a big task.",
+      "A launch or announcement page wants a moment of delight on a button.",
+    ],
+    accessibility:
+      "The canvas is hidden from assistive technology and never takes pointer events, so nothing under it is blocked. Announce the success itself in text or a toast; confetti is decoration. With reduced motion confetti() draws nothing and resolves at once.",
+    faq: [
+      {
+        question: "How do I fire it from a button?",
+        answer: "Call confetti({ origin: event.currentTarget }) in the click handler, and the burst starts from the button's centre.",
+      },
+      {
+        question: "Can I change the colours and size of the burst?",
+        answer: "Pass colors as CSS colours, count for the number of pieces, power for the launch speed, and angle and spread for the direction.",
+      },
+      {
+        question: "How do I know when it has finished?",
+        answer: "confetti() returns a promise that resolves when the last piece has gone.",
+      },
+    ],
+  },
+  // Sounds
+  "sound-kit": {
+    overview:
+      "Sound Kit is every beUI interface sound in one install: tap, press, type, select, toggle, open, close, navigate, success, error, warning, notify, copy, delete, drop and tick. Each is synthesized live with Web Audio the way a real tap sounds, a contact click, a body tuned to a material and a little room, so there are no audio files. It ships the useSound hook and SoundProvider, which sets one volume and one mute switch for every beUI sound, including the sound props on Button, Switch, Tabs, Dropdown Menu and Animated Toast Stack.",
+    useWhen: [
+      "An app wants consistent feedback sounds across many controls.",
+      "A product needs a settings toggle that mutes every sound at once.",
+      "You want to try sounds before picking the few you ship.",
+    ],
+    accessibility: SOUND_ACCESSIBILITY,
+    faq: [
+      {
+        question: "Should I install the kit or single sounds?",
+        answer:
+          "Single sounds ship only what you use, about a dozen lines each plus the shared engine. Install the kit when you want them all or are still choosing.",
+      },
+      ...soundFaq("tapSound").slice(0, 1),
+      {
+        question: "How do I mute everything?",
+        answer:
+          "Render SoundProvider with enabled={false}. It silences useSound, the sound props on beUI components, and the games, Wheel Picker and Bookshelf.",
+      },
+    ],
+  },
+  "tap-sound": soundAbout("Tap Sound", "tapSound", "It is a fingertip on glass: a crisp contact click, a small glass ring and a soft knock under it, with a little random pitch so repeated taps don't sound stamped.", [
+    "Plain clicks on cards, list rows and icon buttons.",
+    "Chips, tags and filters that react to a tap.",
+    "Any control that needs a quiet confirmation it was touched.",
+  ]),
+  "press-sound": soundAbout("Press Sound", "pressSound", "It is the sound of a physical button: a switch click that settles twice, over a soft thump that drops in pitch and a little ring from the casing. The beUI Button plays it with the sound prop.", [
+    "Primary and secondary buttons.",
+    "Call to action buttons in forms and dialogs.",
+    "Hardware-like controls such as keypads and pads.",
+  ]),
+  "type-sound": soundAbout("Type Sound", "typeSound", "It is a short keystroke: the key's click, a faint spring and a soft thock as it bottoms out, with random pitch on every press so fast typing sounds natural.", [
+    "Chat inputs and message composers.",
+    "Search fields and command palettes.",
+    "Terminal or typewriter style text effects.",
+  ]),
+  "select-sound": soundAbout("Select Sound", "selectSound", "It is a crisp detent, like a dial clicking into a notch: a sharp click over a short metal ring and a low tick. The beUI Tabs and Dropdown Menu play it with the sound prop.", [
+    "Tabs and segmented controls.",
+    "Menu items, radio groups and checkboxes in menus.",
+    "Picking a date, colour or option from a list.",
+  ]),
+  "toggle-sound": soundAbout("Toggle Sound", "toggleOnSound", "It comes as a pair, each a two-stage snap like a real switch: a light pre-click, then the snap as it lands. toggleOnSound goes low to high and lands on a higher body, toggleOffSound is the mirror, so on and off are easy to tell apart. The beUI Switch plays them with the sound prop.", [
+    "Switches in settings pages.",
+    "Checkboxes and favourite or follow toggles.",
+    "Mute, lock and visibility toggles.",
+  ]),
+  "open-sound": soundAbout("Open Sound", "openSound", "It is a soft rising whoosh of filtered noise that lands with a light glass touch. The beUI Dropdown Menu plays it with the sound prop.", [
+    "Dropdown menus and popovers opening.",
+    "Dialogs, sheets and drawers sliding in.",
+    "Expanding a panel or accordion.",
+  ]),
+  "close-sound": soundAbout("Close Sound", "closeSound", "It is the open whoosh falling and a little quicker, settling with a soft low tap, so closing feels lighter than opening. The beUI Dropdown Menu plays it with the sound prop.", [
+    "Menus and popovers closing.",
+    "Dismissing a dialog, sheet or toast.",
+    "Collapsing a panel or accordion.",
+  ]),
+  "navigate-sound": soundAbout("Navigate Sound", "navigateSound", "It is a quick airy slide, like a page passing under a hand, with no pitched tone, so it stays out of the way on frequent moves.", [
+    "Moving between pages, steps or slides.",
+    "Carousels and onboarding flows.",
+    "Back and next buttons in a wizard.",
+  ]),
+  "success-sound": soundAbout("Success Sound", "successSound", "It is two soft mallet notes on a wooden bar, rising a fifth, each with the bar's own overtones and a short room behind it.", [
+    "A form saved or a payment completed.",
+    "A task checked off or an upload finished.",
+    "A level or step completed in a game or course.",
+  ]),
+  "error-sound": soundAbout("Error Sound", "errorSound", "It is two dull wooden knocks falling, each with a soft beat, clear without being harsh.", [
+    "A form that failed to submit.",
+    "A rejected payment or a failed upload.",
+    "An action that isn't allowed right now.",
+  ]),
+  "warning-sound": soundAbout("Warning Sound", "warningSound", "It is two even taps on a small glass block, calmer than the error sound, for something that needs a look rather than a fix.", [
+    "Unsaved changes before leaving a page.",
+    "A quota or limit about to be reached.",
+    "A confirmation step before a risky action.",
+  ]),
+  "notify-sound": soundAbout("Notify Sound", "notifySound", "It is a single small struck bell, with a slow shimmer from a twin tone a few hertz sharp. The beUI Animated Toast Stack plays it for new toasts with the sound prop.", [
+    "A new message or comment arriving.",
+    "A toast or in-app notification appearing.",
+    "A reminder or timer going off.",
+  ]),
+  "copy-sound": soundAbout("Copy Sound", "copySound", "It is two quick rising glass ticks, like a small duplicate.", [
+    "Copy buttons on code blocks and links.",
+    "Copying an invite code or wallet address.",
+    "Duplicating an item in a list.",
+  ]),
+  "delete-sound": soundAbout("Delete Sound", "deleteSound", "It is a short paper crumple, crackles placed at random so no two sound the same, falling away over a dropping low tone.", [
+    "Deleting a message, file or row.",
+    "Moving an item to the trash.",
+    "Clearing a list or a search.",
+  ]),
+  "drop-sound": soundAbout("Drop Sound", "dropSound", "It is a soft low thud with a small second bounce, like an item settling on a desk.", [
+    "Dropping a card into a kanban column.",
+    "Reordering a list by drag and drop.",
+    "Dropping a file onto an upload area.",
+  ]),
+  "tick-sound": soundAbout("Tick Sound", "tickSound", "It is a tiny dry metal tick with no room behind it, short enough to repeat quickly without blurring.", [
+    "Sliders and steppers passing each step.",
+    "Wheel pickers and counters.",
+    "Loading steps or a countdown.",
+  ]),
 };

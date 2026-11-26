@@ -1,4 +1,6 @@
-const CHART_COMPONENTS = ["heat-calendar", "returns-calendar", "price-target-fan"];
+import { docsPathFor, findVariant, variantPath } from "@/lib/variant-pages";
+
+const CHART_COMPONENTS =["heat-calendar", "returns-calendar", "price-target-fan"];
 
 // Block source files still live under components/motion. Keep inferred and
 // historical motion-category URLs pointed at their public block docs pages.
@@ -125,9 +127,49 @@ const REDIRECTS: Redirect[] = [
     source: `/components/motion/${slug}/*`,
     destination: `/components/blocks/${slug}`,
   })),
-  ...LEGACY_COMPONENT_REDIRECTS.map(([source, destination]) => ({ source, destination })),
-  { source: "/components/:category/:slug/*", destination: "/components/:category/:slug" },
+  ...LEGACY_COMPONENT_REDIRECTS.map(([source, destination]) => ({
+    source,
+    destination: legacyDestination(source, destination),
+  })),
 ];
+
+/**
+ * Old variant URLs (`/components/motion/button-base`, `.../glitch`) land on
+ * that variant's own page now that their parent is split, else on the parent.
+ */
+function legacyDestination(source: string, destination: string) {
+  const extension = source.endsWith(".md") ? ".md" : "";
+  const page = destination.replace(/\.md$/, "").match(/^\/components\/([^/]+)\/([^/]+)$/);
+  if (!page) return destination;
+  const [, category, pageSlug] = page;
+  const name = source.slice(source.lastIndexOf("/") + 1).replace(/\.md$/, "");
+  const variant =
+    findVariant(category, pageSlug, name) ??
+    findVariant(category, pageSlug, name.replace(`${pageSlug}-`, ""));
+  if (variant) return `${variantPath(category, pageSlug, variant.example.slug)}${extension}`;
+  const installed = docsPathFor(category, pageSlug, name);
+  return installed === destination.replace(/\.md$/, "") ? destination : `${installed}${extension}`;
+}
+
+/** Whether a `_redirects` source pattern matches `path`. */
+export function redirectMatches(source: string, path: string) {
+  const pattern = source
+    .split("/")
+    .map((segment) =>
+      segment === "*"
+        ? ".+"
+        : segment.startsWith(":")
+          ? "[^/]+"
+          : segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+    )
+    .join("/");
+  return new RegExp(`^${pattern}$`).test(path);
+}
+
+/** Every redirect source, for checks. */
+export function redirectSources() {
+  return REDIRECTS.map((redirect) => redirect.source);
+}
 
 /** The `_redirects` file, written by scripts/build-static.ts. */
 export function redirectsFile() {

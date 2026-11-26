@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from "motion/react";
 import { createContext, useContext, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useControllable } from "@/lib/hooks/use-controllable";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useLocale, useMessages } from "@/lib/i18n";
 import { heatCalendarMessages } from "./messages";
@@ -38,12 +39,11 @@ export function useHeatCalendarModel({
   const reduce = useReducedMotion();
   const canHover = useHoverCapable();
   const [storedHover, setHover] = useState<HeatCalendarCell | null>(null);
-  const [internalSelection, setInternalSelection] = useState(defaultSelection);
-  const requestedSelection = controlledSelection === undefined ? internalSelection : controlledSelection;
-  const setSelection = (next: HeatCalendarSelection | null) => {
-    if (controlledSelection === undefined) setInternalSelection(next);
-    onSelectionChange?.(next);
-  };
+  const [requestedSelection, setSelection, setInternalSelection] = useControllable<HeatCalendarSelection | null>(
+    controlledSelection,
+    defaultSelection,
+    onSelectionChange,
+  );
   const gridRef = useRef<HTMLDivElement>(null);
   const tooltipId = useId();
   const [step, setStep] = useState<number | null>(null);

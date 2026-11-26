@@ -89,6 +89,7 @@ export interface MinesProps {
   "aria-label"?: string;
   /** Override built-in text for this instance. */
   labels?: Partial<MinesMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -364,7 +365,7 @@ export function Mines({
         </AdaptiveStepper>
 
         <div className="text-right">
-          <div className="text-2xl font-semibold text-foreground">
+          <div className="text-2xl font-medium text-foreground">
             {phase === "busted" ? (
               // The multiplier is lost: struck through, as on the ticket. A plain
               // span, since a line-through skips the ticker's inline-block digits.
@@ -456,7 +457,7 @@ export function Mines({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.15, ease: EASE_OUT, delay: 0.1 }}
-                    className="absolute top-1.5 left-2 text-[10px] font-medium text-primary/70 tabular-nums"
+                    className="absolute top-1.5 left-2 text-[11px] font-medium text-primary/70 tabular-nums"
                   >
                     {order + 1}
                   </motion.span>

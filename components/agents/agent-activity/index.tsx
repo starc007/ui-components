@@ -2,15 +2,7 @@
 
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useId, useLayoutEffect, useRef, useState } from "react";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import { ThinkingShimmer } from "@/components/agents/loading-states/thinking-shimmer";
 import {
@@ -18,6 +10,7 @@ import {
   SPRING_LAYOUT,
   SPRING_SWAP,
 } from "@/lib/ease";
+import { useStatusOpen } from "@/lib/hooks/use-status-open";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ActivityRow } from "./activity-row";
@@ -59,30 +52,6 @@ function formatDuration(duration: number, t: AgentActivityTranslate) {
   return remainder === 0
     ? t("minutes", { minutes })
     : t("minutesSeconds", { minutes, seconds: remainder });
-}
-
-function useControllableOpen({
-  open,
-  defaultOpen,
-  onOpenChange,
-}: {
-  open?: boolean;
-  defaultOpen: boolean;
-  onOpenChange?: (open: boolean) => void;
-}) {
-  const [internalOpen, setInternalOpen] = useState(defaultOpen);
-  const controlled = open !== undefined;
-  const currentOpen = open ?? internalOpen;
-
-  const setOpen = useCallback(
-    (next: boolean) => {
-      if (!controlled) setInternalOpen(next);
-      onOpenChange?.(next);
-    },
-    [controlled, onOpenChange],
-  );
-
-  return [currentOpen, setOpen] as const;
 }
 
 function getContentType(items: AgentActivityItem[]): AgentActivityContentType {
@@ -169,12 +138,15 @@ export function AgentActivity({
   const contentId = `${baseId}-content`;
   const contentRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
-  const previousStatus = useRef(status);
   const [contentHeight, setContentHeight] = useState(0);
-  const [currentOpen, setOpen] = useControllableOpen({
+  // When the work completes, the panel stays open or folds as asked.
+  const [currentOpen, setOpen] = useStatusOpen({
+    status,
     open,
     defaultOpen,
     onOpenChange,
+    decide: (previous, next) =>
+      previous === "working" && next === "complete" ? !collapseOnComplete : undefined,
   });
   const working = status === "working";
   const expanded = working || currentOpen;
@@ -200,13 +172,6 @@ export function AgentActivity({
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    if (previousStatus.current === "working" && status === "complete") {
-      setOpen(!collapseOnComplete);
-    }
-    previousStatus.current = status;
-  }, [collapseOnComplete, setOpen, status]);
 
   const toggle = () => {
     const next = !currentOpen;
@@ -246,7 +211,7 @@ export function AgentActivity({
           aria-expanded={expanded}
           aria-controls={contentId}
           onClick={toggle}
-          className="group flex h-7 min-w-0 items-center gap-1.5 rounded-md text-left font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="group flex h-7 min-w-0 items-center gap-1.5 rounded-full text-left font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <span className="truncate">
             {renderCompletedStatus

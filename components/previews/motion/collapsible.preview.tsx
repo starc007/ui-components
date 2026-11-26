@@ -9,7 +9,7 @@ import {
 
 export function CollapsiblePreview() {
   return (
-    <Collapsible className="max-w-sm rounded-xl border border-border bg-background p-1">
+    <Collapsible className="max-w-sm rounded-3xl border border-border bg-background p-2">
       <CollapsibleTrigger>
         More details
         <CollapsibleIndicator />

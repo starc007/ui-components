@@ -30,7 +30,9 @@ function TooltipNumber({ value, format }: { value: number; format: (value: numbe
 
 export interface VolumeProfileTooltipProps {
   children?: ReactNode | ((row: VolumeProfileRow) => ReactNode);
+  /** Classes merged onto the tooltip panel. */
   className?: string;
+  /** Side of the hovered row the tooltip opens on. Default: "top" */
   side?: "top" | "right" | "bottom" | "left";
 }
 

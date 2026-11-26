@@ -30,6 +30,8 @@ import { createPortal } from "react-dom";
 import { usePopoverPortalPosition } from "@/components/motion/popover-position";
 import { EASE_OUT } from "@/lib/ease";
 import { FOCUSABLE_SELECTOR } from "@/lib/focusable";
+import { useDismiss } from "@/lib/hooks/use-dismiss";
+import { mergeRefs } from "@/lib/merge-refs";
 import { cn } from "@/lib/utils";
 
 type Side = "top" | "bottom";
@@ -65,7 +67,9 @@ export interface MorphPopoverProps {
   open?: boolean;
   /** Uncontrolled initial open state. */
   defaultOpen?: boolean;
+  /** Called with the new open state when the panel opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Classes merged onto the wrapper around the trigger. */
   className?: string;
 }
 
@@ -155,25 +159,14 @@ export function MorphPopover({
     restore?.focus();
   }, [root, setOpen, trigger]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-    const onPointer = (e: PointerEvent) => {
-      const target = e.target as Node;
-      if (
-        root &&
-        !root.contains(target) &&
-        !contentRef.current?.contains(target)
-      )
-        close();
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open, root, close]);
+  // Inside is the root anchor and the portaled panel. Until the root mounts
+  // there is nothing to measure "outside" against, so nothing dismisses.
+  const insidePopover = useCallback(
+    (target: Element) =>
+      !root || root.contains(target) || Boolean(contentRef.current?.contains(target)),
+    [root],
+  );
+  useDismiss(open, close, null, { ignore: insidePopover });
 
   const ctx = useMemo<MorphContextValue>(
     () => ({
@@ -202,16 +195,6 @@ export function MorphPopover({
 
 export interface MorphPopoverTriggerProps {
   children: ReactElement;
-}
-
-function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref && typeof ref === "object")
-        (ref as React.MutableRefObject<T | null>).current = node;
-    }
-  };
 }
 
 /** Wraps a single element, toggling the popover on click. */
@@ -286,11 +269,13 @@ function clipAt(side: Side, align: Align, radius: number, inset: number) {
 
 export interface MorphPopoverContentProps {
   children: ReactNode;
+  /** Preferred side of the trigger. Flips when there is no room. Default: "bottom" */
   side?: Side;
+  /** Lines the panel up with the trigger's start or end edge. Default: "end" */
   align?: Align;
   /** Gap between trigger and panel, in px. Default 8. */
   sideOffset?: number;
-  /** Panel corner radius, in px. Default 16. */
+  /** Panel corner radius, in px. Default 16 (rounded-2xl), like every floating panel. */
   radius?: number;
   /** Draw the surface shadow. Default true. */
   shadow?: boolean;
@@ -305,6 +290,7 @@ export interface MorphPopoverContentProps {
    * pointer open does not move focus. Ignored with `onOpenAutoFocus`.
    */
   initialFocus?: RefObject<HTMLElement | null>;
+  /** Classes merged onto the panel surface. */
   className?: string;
 }
 

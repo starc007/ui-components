@@ -26,38 +26,53 @@ export const predictionMarketCardMessages = {
 export type PredictionMarketCardMessages = typeof predictionMarketCardMessages;
 
 export interface PredictionMarketCardOutcome {
+	/** Unique key, sent back as `outcomeId` when the outcome is picked. */
 	id: string;
+	/** Outcome name shown in the row and the trade button's accessible name. */
 	label: string;
 	/** Probability between 0 and 1. */
 	probability: number;
+	/** Image or icon shown in a round frame before the label. */
 	icon?: ReactNode;
 	/** Optional team color for the compact probability line. */
 	color?: string;
 }
 
 export interface PredictionMarketCardSelection {
+	/** The `id` of the outcome that was picked. */
 	outcomeId: string;
+	/** The side picked. The card's outcome buttons always send "yes". */
 	side: "yes" | "no";
 }
 
 export interface PredictionMarketCardProps {
+	/** Market question shown as the card heading. */
 	title: string;
+	/** Image or icon shown in a round frame beside the title. */
 	icon?: ReactNode;
+	/** Category label shown under the title, after the status. */
 	category?: string;
+	/** Preformatted trading volume shown in the footer, e.g. "$2.4M". */
 	volume: string;
 	/** Chronological volume samples for the optional footer sparkline. */
 	volumeHistory?: number[];
 	/** A scheduled time or live match status. */
 	status?: string;
+	/** Show the status in red with a dot, for a match in progress. Default: false */
 	live?: boolean;
+	/** Outcomes listed with their probability, payout and trade button. */
 	outcomes: PredictionMarketCardOutcome[];
 	/** Called on each outcome CTA click; the card keeps no selected state. */
 	onOutcomeClick?: (value: PredictionMarketCardSelection) => void;
+	/** Whether the market is bookmarked, for controlled use. */
 	bookmarked?: boolean;
+	/** The initial bookmark state when uncontrolled. Default: false */
 	defaultBookmarked?: boolean;
+	/** Called with the new state when the bookmark button is pressed. */
 	onBookmarkChange?: (bookmarked: boolean) => void;
 	/** Override any built-in string. */
 	labels?: Partial<PredictionMarketCardMessages>;
+	/** Classes merged onto the root element. */
 	className?: string;
 }
 
@@ -152,7 +167,7 @@ export function PredictionMarketCard({
 				</div>
 			</header>
 
-			<div className="mx-2 mb-2 flex flex-1 flex-col rounded-3xl bg-background px-4 py-3">
+			<div className="mx-2 mb-2 flex flex-1 flex-col rounded-2xl bg-background px-4 py-3">
 				<div className="flex flex-1 flex-col justify-center gap-3">
 					{outcomes.map((outcome, index) => (
 						<div key={outcome.id} className="space-y-1">
@@ -175,11 +190,11 @@ export function PredictionMarketCard({
 									<button
 										type="button"
 										aria-label={t("payoutFor", { outcome: outcome.label })}
-										className="shrink-0 rounded-md py-2 text-sm tabular-nums text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring"
+										className="-mx-2 shrink-0 rounded-full px-2 py-2 text-sm tabular-nums text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring"
 									>
 										{probability(outcome.probability) > 0
 											? `${(1 / probability(outcome.probability)).toFixed(1)}×`
-											: "—"}
+											: "–"}
 									</button>
 								</Tooltip>
 								<MarketOddsButton
@@ -262,7 +277,7 @@ export function PredictionMarketCard({
 						whileTap={reduce ? undefined : { scale: 0.85 }}
 						transition={SPRING_PRESS}
 						className={cn(
-							"ml-auto flex size-9 shrink-0 items-center justify-center rounded-xl transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring",
+							"ml-auto flex size-9 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring",
 							saved && "text-foreground",
 						)}
 					>
@@ -318,7 +333,7 @@ function MarketOddsButton({
 			whileTap={reduce ? undefined : { scale: 0.96 }}
 			transition={SPRING_PRESS}
 			className={cn(
-				"relative flex min-h-10 min-w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-background px-3 text-sm font-semibold text-foreground shadow-[0_3px_0] transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+				"relative flex min-h-10 min-w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-background px-3 text-sm font-medium text-foreground shadow-[0_3px_0] transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
 				positive &&
 					"shadow-emerald-500/20 border-emerald-500/25 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/15 dark:text-emerald-400",
 				!positive &&

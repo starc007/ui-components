@@ -18,12 +18,16 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { SPRING_LAYOUT, SPRING_PRESS } from "@/lib/ease";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useMessages } from "@/lib/i18n";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 export type ProjectFolderPreview = {
+  /** Unique key for the card, which links it between the folder and the overlay. */
   id: string;
+  /** What the card shows, such as an image or file thumbnail. */
   content: ReactNode;
 };
 
@@ -39,9 +43,13 @@ export const projectFolderMessages = {
 export type ProjectFolderMessages = typeof projectFolderMessages;
 
 export interface ProjectFolderProps {
+  /** Folder name shown on the front and in the overlay header. */
   title: string;
+  /** Secondary text beside the count. Default: "Updated recently" */
   description?: string;
+  /** Cards that fan out of the folder and fill the overlay. Only the first 5 show. */
   previews?: ProjectFolderPreview[];
+  /** Number shown in the count text. Default: the number of previews */
   count?: number;
   /**
    * Singular noun for the count, e.g. `"file"`. Pluralized the English way by
@@ -49,29 +57,31 @@ export interface ProjectFolderProps {
    * unset to use the localizable `countOne`/`countOther` messages.
    */
   itemLabel?: string;
+  /** Whether the lid tilts and previews fan out, for controlled use. */
   open?: boolean;
+  /** Whether the folder starts open when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new open state on hover, focus, click or close. */
   onOpenChange?: (open: boolean) => void;
+  /** Whether the full-screen previews overlay is shown, for controlled use. */
   expanded?: boolean;
+  /** Whether the overlay starts shown when uncontrolled. Default: false */
   defaultExpanded?: boolean;
+  /** Called with the new state when the overlay opens or closes. */
   onExpandedChange?: (expanded: boolean) => void;
+  /** Called when the folder is clicked, after it starts opening. */
   onClick?: () => void;
+  /** Blocks hover, click and the overlay, and dims the folder. Default: false */
   disabled?: boolean;
+  /** Accessible name for the folder button. */
   ariaLabel?: string;
   /** Override any built-in string. `{count}` fills `countOne`/`countOther`; `{title}` fills `close`. */
   labels?: Partial<ProjectFolderMessages>;
+  /** Classes merged onto the folder button. */
   className?: string;
 }
 
 const MAX_PREVIEWS = 5;
-const FOCUSABLE_SELECTOR = [
-  "a[href]",
-  "button:not([disabled])",
-  "input:not([disabled])",
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  '[tabindex]:not([tabindex="-1"])',
-].join(",");
 
 function getPreviewTransform(index: number, count: number) {
   const offset = index - (count - 1) / 2;
@@ -170,45 +180,13 @@ export function ProjectFolder({
     if (reduce && isClosing) finishClose();
   }, [finishClose, isClosing, reduce]);
 
+  useFocusTrap(isExpanded && mounted, dialogRef, { onEscape: closeOverlay });
+  useScrollLock(isExpanded);
   useEffect(() => {
     if (!isExpanded) return;
-
-    const previousOverflow = document.body.style.overflow;
     const focusFrame = requestAnimationFrame(() => closeButtonRef.current?.focus());
-
-    document.body.style.overflow = "hidden";
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        closeOverlay();
-        return;
-      }
-      if (event.key !== "Tab" || !dialogRef.current) return;
-
-      const focusable = Array.from(
-        dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      ).filter((element) => element.tabIndex >= 0);
-      const first = focusable[0];
-      const last = focusable.at(-1);
-      if (!first || !last) return;
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      cancelAnimationFrame(focusFrame);
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [closeOverlay, isExpanded]);
+    return () => cancelAnimationFrame(focusFrame);
+  }, [isExpanded]);
 
   const handleFolderClick = () => {
     setIsClosing(false);

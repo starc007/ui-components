@@ -234,13 +234,17 @@
     "title": "Theme setup",
     "intro": "beUI components style themselves with shadcn semantic tokens (<code>bg-primary</code>, <code>text-muted-foreground</code>, border, ring). Set those tokens up once and every component works. Two ways:",
     "option1": {
-      "title": "Option 1: shadcn init (recommended)",
-      "body": "If your project uses shadcn, you already have these tokens. Otherwise run init once; it writes the token layer into your CSS."
+      "title": "Option 1: shadcn (recommended)",
+      "body": "A shadcn project already has the base colors. beUI adds a few of its own (border-strong, success, warning, neon, glass surfaces, ease curves), and every component that uses them installs them for you. To add them up front, run this once. It adds to your theme and changes no existing color."
     },
     "option2": {
       "title": "Option 2: paste the theme CSS",
       "body": "Not using shadcn? Paste this into your <code>globals.css</code> directly below <code>@import \"tailwindcss\";</code>. It defines the tokens, motion animations and surface utilities the components use. Requires Tailwind CSS v4.",
       "alsoAvailable": "Also available at <link>/theme.css</link>."
+    },
+    "customize": {
+      "title": "Make it yours",
+      "body": "Pick a primary color and a base gray on <link>Themes</link>, see every component wear it in light and dark, and copy the tokens to paste below this theme."
     }
   },
   "aiAgents": {
@@ -251,7 +255,7 @@
     "header": {
       "eyebrow": "Agent guide",
       "title": "For AI agents",
-      "intro": "beUI exposes a static, agent-friendly surface. Install the beUI skill, connect the MCP server below, or hit the raw endpoints directly. Coding agents (Claude, Codex, Cursor, Amp) can list components, fetch source with all deps, and drop files into the user's project."
+      "intro": "beUI exposes a static, agent-friendly surface. Install the beUI skill, connect the MCP server below, call the WebMCP tools from a browser tab, or hit the raw endpoints directly. Coding agents (Claude, Codex, Cursor, Amp) can list components, fetch source with all deps, and drop files into the user's project."
     },
     "agentSkill": {
       "title": "Agent skill",
@@ -261,7 +265,16 @@
       "title": "MCP server",
       "body": "The fastest path: connect the beUI MCP server and your agent can list, search and install components directly. Hosted at <code>{url}</code>.",
       "manual": "Any other client: add it manually to your MCP config.",
-      "toolsWithNative": "Tools: <code>list_components</code>, <code>search_components</code>, <code>get_component</code>, <code>get_install_command</code>. For React Native apps, <code>list_native_components</code> and <code>get_native_component</code> return beUI Native components with every file to copy."
+      "addToCursor": "Add to Cursor",
+      "addToVsCode": "Add to VS Code",
+      "windsurf": "Windsurf names the field <code>serverUrl</code> instead of <code>url</code>:",
+      "toolsWithNative": "Tools: <code>get_setup</code>, <code>list_components</code>, <code>search_components</code>, <code>get_component_docs</code>, <code>get_component</code>, <code>get_install_command</code>. For React Native apps, <code>list_native_components</code> and <code>get_native_component</code> return beUI Native components with every file to copy."
+    },
+    "webmcp": {
+      "title": "WebMCP",
+      "body": "Agents working in a browser tab can call beUI's tools instead of reading the page. Where the browser supports <link>WebMCP</link>, a W3C Community Group draft that Chrome and Edge are testing, every page on beui.dev registers 4 read-only tools on <code>document.modelContext</code>. Other browsers load nothing extra.",
+      "tools": "Tools: <code>search_components</code>, <code>get_component_docs</code>, <code>get_install_command</code> and <code>read_page</code>, which returns the open page as Markdown. Each returns JSON with <code>ok</code> and either <code>data</code> or an <code>error</code> with a code and a hint.",
+      "discovery": "For agents that only fetch: every page links its Markdown version, and the home page's Link header points to <code>/llms.txt</code>, the API catalog at <code>/.well-known/api-catalog</code> and the agent skill index at <code>/.well-known/agent-skills/index.json</code>."
     },
     "endpoints": {
       "title": "Endpoints",
@@ -609,6 +622,81 @@
       "title": "Your logo here",
       "price": "{tier} · {price}/mo",
       "viewPlan": "View plan"
+    }
+  },
+  "themes": {
+    "meta": {
+      "title": "Themes for beUI Components",
+      "description": "Pick a primary color and a base gray, see every beUI component wear it live in light and dark, and copy the CSS tokens for your globals.css."
+    },
+    "title": "Themes",
+    "intro": "Pick a color and a base gray. The whole page wears it, then copy the CSS.",
+    "color": "Color",
+    "base": "Base gray",
+    "mode": "Mode",
+    "colors": {
+      "graphite": "Graphite",
+      "blue": "Blue",
+      "sky": "Sky",
+      "teal": "Teal",
+      "green": "Green",
+      "amber": "Amber",
+      "orange": "Orange",
+      "red": "Red",
+      "rose": "Rose"
+    },
+    "bases": {
+      "neutral": "Neutral",
+      "warm": "Warm",
+      "cool": "Cool"
+    },
+    "modes": {
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied",
+    "reset": "Reset",
+    "css": "CSS",
+    "copyCss": "Copy CSS",
+    "cssCopied": "Copied",
+    "cssHint": "Paste into globals.css below the beUI theme. It sets the light and dark tokens.",
+    "exportTitle": "beUI theme: {color} on {base}",
+    "board": {
+      "buttons": "Buttons",
+      "continue": "Continue",
+      "download": "Download",
+      "outline": "Outline",
+      "ghost": "Ghost",
+      "settings": "Settings",
+      "notifications": "Notifications",
+      "sync": "Sync across devices",
+      "volume": "Volume",
+      "tabs": "Tabs",
+      "overview": "Overview",
+      "activity": "Activity",
+      "billing": "Billing",
+      "overviewBody": "Everything at a glance.",
+      "activityBody": "What changed this week.",
+      "billingBody": "Plan, invoices and seats.",
+      "reactions": "Reactions",
+      "menus": "Menus",
+      "planFree": "Free",
+      "planPro": "Pro",
+      "planTeam": "Team",
+      "sort": "Sort",
+      "sortRecent": "Most recent",
+      "sortPopular": "Most popular",
+      "export": "Export",
+      "checkout": "Checkout",
+      "poll": "Poll",
+      "pollSprings": "Springs",
+      "pollCurves": "Easing curves",
+      "pollBoth": "Both, it depends",
+      "toast": "Toast",
+      "showToast": "Show a toast",
+      "toastTitle": "Theme saved",
+      "toastBody": "Your colors are ready to copy."
     }
   },
   "playground": {

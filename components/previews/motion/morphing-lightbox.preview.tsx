@@ -44,7 +44,7 @@ export function MorphingLightboxPreview() {
     <div className="w-full max-w-xl">
       <div className="mb-5 flex items-end justify-between gap-3">
         <div>
-          <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
             Collected moments
           </p>
           <h3 className="text-lg font-medium tracking-tight">

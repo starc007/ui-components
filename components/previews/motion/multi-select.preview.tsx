@@ -18,7 +18,7 @@ const colors = {
   design: "fill-rose-500 text-rose-500",
   engineering: "fill-sky-500 text-sky-500",
   product: "fill-amber-500 text-amber-500",
-  research: "fill-violet-500 text-violet-500",
+  research: "fill-cyan-500 text-cyan-500",
   marketing: "fill-emerald-500 text-emerald-500",
   operations: "fill-slate-500 text-slate-500",
 };

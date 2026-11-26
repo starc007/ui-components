@@ -25,7 +25,7 @@ export function QrCode({
   });
 
   return (
-    <div className={cn("rounded-xl bg-white p-3 text-black ring-1 ring-black/10 dark:ring-0", className)}>
+    <div className={cn("rounded-2xl bg-white p-3 text-black ring-1 ring-black/10 dark:ring-0", className)}>
       <svg
         role="img"
         aria-label={label}

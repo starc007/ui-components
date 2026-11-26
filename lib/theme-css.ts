@@ -1,7 +1,9 @@
 /**
  * The beUI theme layer: everything a project needs for the components to look
  * right without shadcn. Paste it into your globals.css (below `@import
- * "tailwindcss";`), or run `npx shadcn init` which sets up the same tokens.
+ * "tailwindcss";`). A shadcn project has the base tokens already and gets
+ * beUI's extras from the `theme` registry item, which lib/theme-registry.ts
+ * builds from this string.
  *
  * Keep in sync with src/styles/globals.css (this is the consumer-facing subset:
  * tokens, @theme mappings, animations and the utilities components rely on,
@@ -20,7 +22,6 @@ export const THEME_CSS = `@custom-variant dark (&:where(.dark, .dark *));
     --border-strong: oklch(15% 0 0 / 0.12);
     --accent-fg: oklch(15% 0 0);
     --neon: oklch(80% 0.22 145);
-    --violet: oklch(68% 0.22 295);
     --danger: oklch(62% 0.22 25);
     --success: oklch(70% 0.18 155);
     --warning: oklch(78% 0.18 75);
@@ -32,8 +33,8 @@ export const THEME_CSS = `@custom-variant dark (&:where(.dark, .dark *));
     --card-foreground: var(--foreground);
     --popover: var(--card);
     --popover-foreground: var(--foreground);
-    --primary: #0285f7;
-    --primary-foreground: #ffffff;
+    --primary: #171717;
+    --primary-foreground: #fafafa;
     --secondary: var(--card);
     --secondary-foreground: var(--foreground);
     --muted: var(--card);
@@ -53,6 +54,8 @@ export const THEME_CSS = `@custom-variant dark (&:where(.dark, .dark *));
     --border-strong: rgb(255 255 255 / 0.1);
     --accent: oklch(80% 0.18 195);
     --accent-fg: #151515;
+    --primary: #f5f5f5;
+    --primary-foreground: #151515;
     --glass-bg: rgb(28 28 28 / 0.55);
     --glass-border: rgb(255 255 255 / 0.08);
     --glass-strong-bg: rgb(28 28 28 / 0.6);
@@ -67,7 +70,6 @@ export const THEME_CSS = `@custom-variant dark (&:where(.dark, .dark *));
     --color-border: var(--border);
     --color-border-strong: var(--border-strong);
     --color-neon: var(--neon);
-    --color-violet: var(--violet);
     --color-success: var(--success);
     --color-warning: var(--warning);
     --color-background: var(--background);
@@ -135,6 +137,13 @@ export const THEME_CSS = `@custom-variant dark (&:where(.dark, .dark *));
         background: var(--glass-thin-bg);
         backdrop-filter: blur(12px);
         border: 1px solid var(--glass-border);
+    }
+
+    .press {
+        transition: transform 120ms var(--ease-out);
+    }
+    .press:active {
+        transform: scale(0.97);
     }
 }
 `;

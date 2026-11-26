@@ -17,7 +17,7 @@ export function ThemeTogglePreview() {
           <ThemeToggle
             variant={variant}
             start="bottom-up"
-            className="rounded-xl border border-border bg-background p-2.5"
+            className="rounded-full border border-border bg-background p-2.5"
             iconClassName="h-5 w-5"
           />
           <span className="text-[11px] text-muted-foreground">{label}</span>

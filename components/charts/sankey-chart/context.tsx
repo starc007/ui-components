@@ -16,6 +16,7 @@ import {
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useMessages } from "@/lib/i18n";
+import { useInspection } from "../xy/use-inspection";
 import { type SankeyChartMessages, sankeyChartMessages } from "./messages";
 import {
   cleanSankey,
@@ -28,10 +29,13 @@ import {
 } from "./model";
 
 export interface SankeyChartProps extends ComponentProps<"section"> {
+  /** The nodes, each with an id and label. Columns come from the links. */
   nodes: readonly SankeyNode[];
   /** Weighted flows between node ids. Links that would close a loop are left out. */
   links: readonly SankeyLink[];
+  /** Accessible name for the chart and its data table. Default: "Sankey chart" */
   label?: string;
+  /** Formats values in node labels, the tooltip and the data table. */
   formatValue?: (value: number) => string;
   /** Palette for nodes without their own color, in node order. */
   colors?: readonly string[];
@@ -41,7 +45,9 @@ export interface SankeyChartProps extends ComponentProps<"section"> {
   nodePadding?: number;
   /** Highlighted node or link id. Controlled. Link ids default to `source:target`. */
   activeId?: string | null;
+  /** Initially highlighted node or link id when uncontrolled. Default: null */
   defaultActiveId?: string | null;
+  /** Called with the node or link id, or null, when the highlight changes. */
   onActiveChange?: (id: string | null) => void;
   /** Override any built-in string. */
   labels?: Partial<SankeyChartMessages>;
@@ -104,30 +110,28 @@ export function useSankeyModel({
   );
   const cursor = useRowCursor(layout.nodes, "");
 
-  const [internalId, setInternalId] = useState(defaultActiveId);
-  const requestedId = activeId === undefined ? internalId : activeId;
-  // Resolved during render by id: a node or link that left the data clears.
-  const node = layout.nodes.find((n) => n.id === requestedId);
-  const link = node ? undefined : layout.links.find((l) => l.id === requestedId);
+  // Nodes come first, so a node wins over a link with the same id.
+  const {
+    activeIndex,
+    setActive,
+    open: tooltipOpen,
+    setOpen: setTooltipOpen,
+    plotRef,
+    tooltipId,
+  } = useInspection({
+    ids: [...layout.nodes.map((n) => n.id), ...layout.links.map((l) => l.id)],
+    activeId,
+    defaultActiveId,
+    onActiveChange,
+  });
+  const node = layout.nodes[activeIndex];
+  const link = activeIndex >= layout.nodes.length ? layout.links[activeIndex - layout.nodes.length] : undefined;
   const active: SankeyActive | null = node
     ? { type: "node", node }
     : link
       ? { type: "link", link }
       : null;
-  if (activeId === undefined && internalId !== null && !active) setInternalId(null);
 
-  const latest = useRef({ activeId, requestedId, onActiveChange });
-  useLayoutEffect(() => {
-    latest.current = { activeId, requestedId, onActiveChange };
-  });
-  const setActive = useCallback((id: string | null) => {
-    const current = latest.current;
-    if (current.activeId === undefined) setInternalId(id);
-    if (current.requestedId !== id) current.onActiveChange?.(id);
-  }, []);
-
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const plotRef = useRef<HTMLDivElement>(null);
   const buttons = useRef(new Map<string, HTMLButtonElement>());
   const registerButton = useCallback((id: string, element: HTMLButtonElement | null) => {
     if (element) buttons.current.set(id, element);
@@ -171,7 +175,7 @@ export function useSankeyModel({
     cursor,
     tooltipOpen,
     setTooltipOpen,
-    tooltipId: useId(),
+    tooltipId,
     gradientId: useId(),
     plotRef,
     buttons,

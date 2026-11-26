@@ -11,8 +11,8 @@ import { buildFunnel, type FunnelStage, funnelPath } from "./funnel-chart/model"
 
 const defaultFormat = (value: number) =>
   value.toLocaleString("en-US", { maximumFractionDigits: 2 });
-const percentage = (value: number | null) => (value === null ? "—" : `${value.toFixed(1)}%`);
-const colors = ["#8b5cf6", "#7774ef", "#548ee4", "#2ca6bc", "#14b8a6"];
+const percentage = (value: number | null) => (value === null ? "–" : `${value.toFixed(1)}%`);
+const colors = ["#1d4ed8", "#0285f7", "#0ea5e9", "#06b6d4", "#14b8a6"];
 
 export const funnelChartMessages = {
   label: "Conversion funnel",
@@ -32,12 +32,17 @@ export type FunnelChartMessages = typeof funnelChartMessages;
 export interface FunnelChartProps {
   /** Ordered stages with finite, nonnegative counts; duplicate IDs are omitted. */
   stages: readonly FunnelStage[];
+  /** Narrow from top to bottom, or from left to right. Default: "vertical" */
   direction?: "vertical" | "horizontal";
+  /** Noun after each count, e.g. "users". Default: "people" */
   unit?: string;
+  /** Accessible name for the chart. Default: "Conversion funnel" */
   label?: string;
+  /** Formats each stage's count. */
   formatValue?: (value: number) => string;
   /** Override any built-in string. */
   labels?: Partial<FunnelChartMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
   children?: ReactNode;
 }
@@ -171,7 +176,7 @@ export function FunnelChartPlot({ className }: { className?: string }) {
                       percent: percentage(stage.conversion),
                     })}
                   >
-                    <span className="rounded bg-background/85 px-2 py-1 font-mono text-xs font-medium tabular-nums">
+                    <span className="rounded-full bg-background/85 px-2 py-1 font-mono text-xs font-medium tabular-nums">
                       {formatValue(stage.value)}
                     </span>
                   </button>
@@ -190,7 +195,7 @@ export function FunnelChartPlot({ className }: { className?: string }) {
               style={{ backgroundColor: stage.color ?? colors[index % colors.length] }}
             />
             <span>{stage.label}</span>
-            <span className="font-mono text-[10px] text-muted-foreground">
+            <span className="font-mono text-[11px] text-muted-foreground">
               {percentage(stage.conversion)}
             </span>
           </span>

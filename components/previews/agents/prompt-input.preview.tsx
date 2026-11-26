@@ -2,9 +2,12 @@
 
 import {
   Bot,
+  Bug,
   FileText,
   ImagePlus,
+  ListChecks,
   Puzzle,
+  ScanSearch,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
@@ -12,13 +15,20 @@ import { PromptInput } from "@/components/agents/prompt-input";
 import { EASE_OUT } from "@/lib/ease";
 import { useFavicon } from "@/lib/hooks/use-favicon";
 
+// Type "/" in the input to list these.
+const COMMANDS = [
+  { value: "review", label: "Review", description: "Check the open changes", icon: <ScanSearch /> },
+  { value: "fix", label: "Fix", description: "Repair a failing test", icon: <Bug /> },
+  { value: "plan", label: "Plan", description: "Break the task into steps", icon: <ListChecks /> },
+  { value: "summarize", label: "Summarize", description: "Shorten the thread", icon: <FileText /> },
+];
+
 function ModelLogo({ url }: { url: string }) {
   const favicon = useFavicon(url);
 
   if (!favicon.src) return <Bot />;
 
   return (
-    // biome-ignore lint/performance/noImgElement: Remote provider favicons keep the registry preview framework-agnostic.
     <img
       ref={favicon.ref}
       src={favicon.src}
@@ -124,6 +134,8 @@ export function PromptInputPreview() {
           const selected = ACTIONS.find((item) => item.value === action);
           setNotice(selected ? `${selected.label} selected.` : undefined);
         }}
+        commands={COMMANDS}
+        onCommand={(command) => setNotice(`Command /${command} added.`)}
       />
       <div className="h-8 px-2 pt-2 text-xs text-muted-foreground">
         <AnimatePresence mode="wait">

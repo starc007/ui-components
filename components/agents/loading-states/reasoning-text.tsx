@@ -8,6 +8,7 @@ import { EASE_OUT, SPRING_SWAP } from "@/lib/ease";
 import { useMessages } from "@/lib/i18n";
 import {
   TEXT_SHIMMER_CLASS_NAME,
+  TEXT_SHIMMER_HIGHLIGHT_CLASS_NAME,
   TEXT_SHIMMER_KEYFRAMES,
   textShimmerStyle,
 } from "@/lib/text-shimmer";
@@ -31,6 +32,7 @@ export interface ReasoningTextProps {
   indicator?: ReactNode;
   /** Override any built-in string, including the default phrases. */
   labels?: Partial<LoadingStatesMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -61,11 +63,16 @@ function CascadePhrase({
     );
   }
 
+  // The letters land plain; one highlight layer over the whole phrase carries
+  // the shimmer, so it sweeps across instead of every letter pulsing at once.
+  // It fades in as the last letter settles.
+  const settle = text.length * CASCADE_STAGGER + 0.2;
+
   return (
     <AnimatePresence initial={false}>
       <motion.span
         key={phrase}
-        className="col-start-1 row-start-1 inline-block justify-self-start whitespace-pre"
+        className="relative col-start-1 row-start-1 inline-block justify-self-start whitespace-pre [font-kerning:none] [font-variant-ligatures:none]"
         initial="initial"
         animate="animate"
         exit="exit"
@@ -97,15 +104,26 @@ function CascadePhrase({
                 },
               }),
             }}
-            className={cn(
-              "inline-block whitespace-pre will-change-[opacity,transform]",
-              TEXT_SHIMMER_CLASS_NAME,
-            )}
-            style={textShimmerStyle(shimmerDuration)}
+            className="inline-block whitespace-pre text-muted-foreground will-change-[opacity,transform]"
           >
             {character}
           </motion.span>
         ))}
+        <motion.span
+          aria-hidden="true"
+          variants={{
+            initial: { opacity: 0 },
+            animate: { opacity: 1, transition: { duration: 0.3, ease: EASE_OUT, delay: settle } },
+            exit: { opacity: 0, transition: { duration: 0.1, ease: EASE_OUT } },
+          }}
+          className={cn(
+            "pointer-events-none absolute inset-0 whitespace-pre",
+            TEXT_SHIMMER_HIGHLIGHT_CLASS_NAME,
+          )}
+          style={textShimmerStyle(shimmerDuration)}
+        >
+          {text}
+        </motion.span>
       </motion.span>
     </AnimatePresence>
   );

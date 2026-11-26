@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { useStatusBar } from "./context";
 
 export interface StatusBarLegendProps extends ComponentProps<"ul"> {
+  /** Shows how many entries have each status, after its name. Default: false */
   showCounts?: boolean;
 }
 

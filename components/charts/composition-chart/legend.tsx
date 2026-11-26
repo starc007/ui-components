@@ -51,7 +51,7 @@ export function CompositionChartLegend({ className }: { className?: string }) {
               title={row.value === null ? t("missingValue") : formatValue(row.value)}
               className="shrink-0 font-mono tabular-nums"
             >
-              {column.valid ? `${row.share.toFixed(1)}%` : "—"}
+              {column.valid ? `${row.share.toFixed(1)}%` : "–"}
             </span>
           </span>
         </button>

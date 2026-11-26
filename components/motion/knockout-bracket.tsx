@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight, Shield } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { useMemo, useState } from "react";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT } from "@/lib/ease";
 import { useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -47,19 +48,24 @@ export type Team = {
 export type MatchSide = {
   /** null renders a TBD slot with a shield icon. */
   team: Team | null;
+  /** Goals or points shown beside the team. null leaves it blank for an unplayed match. */
   score: number | null;
   /** Present on both sides to render Google-style shootout scores — 1 (3). */
   penalties?: number | null;
 };
 
 export type Match = {
+  /** Unique key for the match card. */
   id: string;
   /** Kick-off day, already formatted. Omit it and the card drops the date row. */
   date?: string;
+  /** Kick-off time, already formatted, shown after the date. */
   time?: string;
   /** Omit it and a match with a `winner` counts as finished. */
   status?: "finished" | "upcoming";
+  /** The team and score on the card's top row. */
   home: MatchSide;
+  /** The team and score on the card's bottom row. */
   away: MatchSide;
   /** Decides the marker and which side dims. */
   winner?: "home" | "away";
@@ -70,6 +76,7 @@ export type Match = {
 export type Round = {
   /** Shown as the column header — "Round of 32", "Upper bracket final", "Last 8". */
   name: string;
+  /** Matches in this column, top to bottom, half as many as the round before. */
   matches: Match[];
 };
 
@@ -89,6 +96,7 @@ export interface KnockoutBracketProps {
   thirdPlaceLabel?: string;
   /** Override any built-in string. */
   labels?: Partial<KnockoutBracketMessages>;
+  /** Classes merged onto the root scroll container. */
   className?: string;
 }
 
@@ -213,8 +221,7 @@ function TeamCrest({ team }: { team: Team | null }) {
   return (
     <span className="flex h-5 w-7 shrink-0 items-center justify-center">
       {src ? (
-        // Plain <img> — flags come from flagcdn.com, logos from wherever you host them.
-        // biome-ignore lint/performance/noImgElement: remote asset, no next/image benefit
+        // Flags come from flagcdn.com, logos from wherever you host them.
         <img
           src={src}
           alt=""
@@ -232,7 +239,7 @@ function TeamCrest({ team }: { team: Team | null }) {
       ) : team ? (
         // text-foreground, not muted: the /10 tint lifts the disc toward the
         // muted ramp, leaving 4.44:1 light and 3.55:1 dark — both under AA.
-        <span className="grid size-5 place-items-center rounded-full bg-foreground/10 text-[10px] font-semibold leading-none text-foreground">
+        <span className="grid size-5 place-items-center rounded-full bg-foreground/10 text-[11px] font-medium leading-none text-foreground">
           {initials(team.name)}
         </span>
       ) : (
@@ -515,7 +522,7 @@ export function KnockoutBracket({
                   opacity: isInWindow(r, page, visibleCols) ? 1 : 0,
                 }}
                 transition={transition}
-                className="absolute left-0 top-0 flex h-full items-center justify-center text-sm font-bold text-foreground"
+                className="absolute left-0 top-0 flex h-full items-center justify-center text-sm font-medium text-foreground"
                 style={{ width: CARD_W }}
               >
                 {round.name}
@@ -523,32 +530,36 @@ export function KnockoutBracket({
             ))}
           </div>
           {page > 0 && (
-            <button
-              type="button"
-              onClick={() => setPage((p) => clamp(clamp(p, 0, maxPage) - 1, 0, maxPage))}
-              aria-label={t("previousRound")}
-              // Inset by PAD_X so the hover fill clears the scroll clip; 44px
-              // button is the tap target, the inner circle the visible affordance.
-              style={{ left: PAD_X }}
-              className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"
-            >
-              <span className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors group-hover:bg-foreground/10 group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring">
-                <ChevronLeft className="size-5" />
-              </span>
-            </button>
+            <Tooltip content={t("previousRound")} side="right">
+              <button
+                type="button"
+                onClick={() => setPage((p) => clamp(clamp(p, 0, maxPage) - 1, 0, maxPage))}
+                aria-label={t("previousRound")}
+                // Inset by PAD_X so the hover fill clears the scroll clip; 44px
+                // button is the tap target, the inner circle the visible affordance.
+                style={{ left: PAD_X }}
+                className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"
+              >
+                <span className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors group-hover:bg-foreground/10 group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring">
+                  <ChevronLeft className="size-5" />
+                </span>
+              </button>
+            </Tooltip>
           )}
           {page < maxPage && (
-            <button
-              type="button"
-              onClick={() => setPage((p) => clamp(clamp(p, 0, maxPage) + 1, 0, maxPage))}
-              aria-label={t("nextRound")}
-              style={{ right: PAD_X }}
-              className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"
-            >
-              <span className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors group-hover:bg-foreground/10 group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring">
-                <ChevronRight className="size-5" />
-              </span>
-            </button>
+            <Tooltip content={t("nextRound")} side="left">
+              <button
+                type="button"
+                onClick={() => setPage((p) => clamp(clamp(p, 0, maxPage) + 1, 0, maxPage))}
+                aria-label={t("nextRound")}
+                style={{ right: PAD_X }}
+                className="group absolute top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full outline-none"
+              >
+                <span className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors group-hover:bg-foreground/10 group-hover:text-foreground group-focus-visible:ring-2 group-focus-visible:ring-ring">
+                  <ChevronRight className="size-5" />
+                </span>
+              </button>
+            </Tooltip>
           )}
         </div>
 

@@ -10,6 +10,7 @@ export function RangeSliderFluidPreview() {
   return (
     <div className="w-full max-w-sm">
       <FluidSlider
+        sound
         value={value}
         onValueChange={setValue}
         label="Brightness"

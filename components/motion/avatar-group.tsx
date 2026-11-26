@@ -9,14 +9,16 @@ import { formatNumber, useLocale, useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export interface AvatarGroupMember {
+  /** Unique key for the avatar in the list. */
   id: string;
+  /** Shown in the tooltip, used as alt text and for the initials. */
   name: string;
   /** Image URL. Without one, or if it fails to load, initials show. */
   src?: string;
 }
 
 const SIZES = {
-  sm: { box: "size-7 text-[10px]", px: 28 },
+  sm: { box: "size-7 text-[11px]", px: 28 },
   md: { box: "size-9 text-xs", px: 36 },
   lg: { box: "size-11 text-sm", px: 44 },
 } as const;
@@ -39,8 +41,11 @@ function initials(name: string) {
 }
 
 export interface AvatarProps extends Omit<ComponentPropsWithRef<"span">, "children"> {
+  /** Person's name, used for alt text and the initials fallback. */
   name: string;
+  /** Image URL. Initials show when missing or when it fails to load. */
   src?: string;
+  /** Avatar size: 28, 36 or 44 px. Default: "md" */
   size?: AvatarSize;
 }
 
@@ -58,7 +63,6 @@ export function Avatar({ name, src, size = "md", className, ...props }: AvatarPr
       )}
     >
       {showImage ? (
-        // biome-ignore lint/performance/noImgElement: a portable component; avatars come from any host and fall back to initials on error
         <img
           src={src}
           alt={name}
@@ -77,13 +81,17 @@ export function Avatar({ name, src, size = "md", className, ...props }: AvatarPr
 }
 
 export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<"div">, "children"> {
+  /** People to show, each with a name and optional image. */
   members: AvatarGroupMember[];
   /** Avatars shown before the rest collapse into a +N count. */
   max?: number;
+  /** Avatar size: 28, 36 or 44 px. Default: "md" */
   size?: AvatarSize;
   /** Whether every member is shown. Pair with `onExpandedChange`. */
   expanded?: boolean;
+  /** Whether every member starts shown when uncontrolled. Default: false */
   defaultExpanded?: boolean;
+  /** Called with the next state when the +N count expands or collapses. */
   onExpandedChange?: (expanded: boolean) => void;
   /** Accessible name for the list, such as "Project members". */
   label?: string;
@@ -209,7 +217,7 @@ export function AvatarGroup({
                     whileTap={reduce ? undefined : { scale: 0.92 }}
                     transition={SPRING_PRESS}
                     className={cn(
-                      "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-foreground font-medium text-background tabular-nums ring-2 ring-background outline-none focus-visible:ring-ring",
+                      "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted font-medium text-foreground tabular-nums ring-2 ring-background outline-none focus-visible:ring-ring",
                       SIZES[size].box,
                     )}
                   >

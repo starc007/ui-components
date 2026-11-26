@@ -34,7 +34,7 @@ export function ReturnsCalendarGrid({ children, className }: { children?: ReactN
   return (
     <div
       ref={gridRef}
-      className={cn("relative grid gap-1", className)}
+      className={cn("@container relative grid gap-1", className)}
       style={{ gridTemplateColumns: "32px repeat(12, 1fr) 52px" }}
       onPointerLeave={() => setHover(null)}
     >
@@ -43,7 +43,7 @@ export function ReturnsCalendarGrid({ children, className }: { children?: ReactN
         <span
           key={c.name}
           className={cn(
-            "pb-1 text-center text-[10px] transition-colors duration-200",
+            "pb-1 text-center text-[11px] transition-colors duration-200",
             hot?.m === c.m ? "text-foreground" : "text-muted-foreground",
           )}
         >
@@ -52,7 +52,7 @@ export function ReturnsCalendarGrid({ children, className }: { children?: ReactN
       ))}
       <span
         className={cn(
-          "pb-1 text-center text-[10px] transition-colors duration-200",
+          "pb-1 text-center text-[11px] transition-colors duration-200",
           hot?.m === YEAR ? "text-foreground" : "text-muted-foreground",
         )}
       >
@@ -63,7 +63,7 @@ export function ReturnsCalendarGrid({ children, className }: { children?: ReactN
         <div key={year} className="contents">
           <span
             className={cn(
-              "flex items-center justify-end pr-1.5 font-mono text-[10px] tabular-nums transition-colors duration-200",
+              "flex items-center justify-end pr-1.5 font-mono text-[11px] tabular-nums transition-colors duration-200",
               hot?.y === y ? "text-foreground" : "text-muted-foreground",
             )}
           >
@@ -106,7 +106,7 @@ export function ReturnsCalendarGrid({ children, className }: { children?: ReactN
                   whileTap={reduce ? undefined : { scale: 0.92, transition: SPRING_PRESS }}
                 >
                   <motion.span
-                    className="pointer-events-none absolute inset-0.5 grid place-items-center rounded-[4px] font-mono text-[9px] font-medium tabular-nums"
+                    className="pointer-events-none absolute inset-0.5 grid place-items-center rounded-[4px] font-mono text-[11px] font-medium tabular-nums"
                     style={{
                       background: tint(v, range, on),
                       color: `color-mix(in srgb, var(--foreground) ${Math.round(85 + Math.min(Math.abs(v) / range, 1) * 15)}%, transparent)`,
@@ -152,7 +152,12 @@ export function ReturnsCalendarGrid({ children, className }: { children?: ReactN
                         />
                       ) : null}
                     </AnimatePresence>
-                    {Math.abs(v) >= 4 ? Math.round(v) : ""}
+                    {/* 11px needs a cell of about 24px: the grid's fixed columns and
+                          gaps take 136px, so numbers show from a 26.5rem grid. Narrower
+                          grids keep the colour; the value stays in the tooltip and label. */}
+                    {Math.abs(v) >= 4 ? (
+                      <span className="hidden @min-[26.5rem]:inline">{Math.round(v)}</span>
+                    ) : null}
                   </motion.span>
                 </motion.button>
               </span>

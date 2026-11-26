@@ -16,7 +16,9 @@ import { ComboboxGroupContext, useComboboxContext } from "./context";
 
 export interface ComboboxListProps {
   children: ReactNode;
+  /** Accessible name for the list. Default: "Options" */
   ariaLabel?: string;
+  /** Classes merged onto the scrolling list element. */
   className?: string;
 }
 
@@ -32,7 +34,7 @@ export function ComboboxList({
       role="listbox"
       aria-label={ariaLabel ?? context.t("listLabel")}
       className={cn(
-        "relative isolate max-h-64 overflow-y-auto overscroll-contain p-1.5 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden",
+        "relative isolate max-h-64 overflow-y-auto overscroll-contain p-2 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden",
         className,
       )}>
       {children}
@@ -42,6 +44,7 @@ export function ComboboxList({
 
 export interface ComboboxGroupProps {
   children: ReactNode;
+  /** Classes merged onto the group element. */
   className?: string;
 }
 
@@ -61,13 +64,14 @@ export function ComboboxGroup({ children, className }: ComboboxGroupProps) {
 
 export interface ComboboxLabelProps {
   children: ReactNode;
+  /** Classes merged onto the label element. */
   className?: string;
 }
 
 export function ComboboxLabel({ children, className }: ComboboxLabelProps) {
   const groupId = useContext(ComboboxGroupContext);
   const labelClassName = cn(
-    "w-full px-2 py-1.5 text-[0.68rem] font-medium uppercase tracking-[0.12em] text-muted-foreground",
+    "w-full px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground",
     className,
   );
   return groupId ? (
@@ -78,12 +82,18 @@ export function ComboboxLabel({ children, className }: ComboboxLabelProps) {
 }
 
 export interface ComboboxItemProps {
+  /** Unique value set on the combobox when this item is picked. */
   value: string;
   children: ReactNode;
+  /** Text used for search and the selected label. Default: string children, else `value` */
   textValue?: string;
+  /** Extra search terms that match this item. */
   keywords?: string[];
+  /** Dims the item and stops it from being picked. Default: false */
   disabled?: boolean;
+  /** Called with the item's value when it is picked. */
   onSelect?: (value: string) => void;
+  /** Classes merged onto the item button. */
   className?: string;
 }
 
@@ -157,7 +167,7 @@ export function ComboboxItem({
         context.select(value);
       }}
       className={cn(
-        "relative flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm outline-none transition-colors duration-150",
+        "relative flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm outline-none transition-colors duration-150",
         active ? "text-foreground" : "text-muted-foreground",
         "disabled:pointer-events-none disabled:opacity-45",
         className,
@@ -190,6 +200,7 @@ export function ComboboxItem({
 
 export interface ComboboxEmptyProps {
   children?: ReactNode;
+  /** Classes merged onto the empty message. */
   className?: string;
 }
 
@@ -212,6 +223,7 @@ export function ComboboxEmpty({
 }
 
 export interface ComboboxSeparatorProps {
+  /** Classes merged onto the separator line. */
   className?: string;
 }
 

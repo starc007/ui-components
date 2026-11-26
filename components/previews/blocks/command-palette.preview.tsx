@@ -27,6 +27,7 @@ export function CommandPalettePreview() {
         open={open}
         onOpenChange={setOpen}
         shortcut="j"
+        recent
         items={[
           { id: "home", label: "Go to Home", group: "Navigation", icon: Home, hint: "G H", onSelect: () => {} },
           { id: "profile", label: "Open profile", group: "Navigation", icon: User, hint: "G P", onSelect: () => {} },

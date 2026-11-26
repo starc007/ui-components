@@ -1,13 +1,18 @@
+import { Mail } from "lucide-react";
+import type { ComponentProps, ReactNode } from "react";
 import { useTranslations } from "use-intl";
+import { GithubIcon, XIcon } from "@/components/app/icons";
+import { Tooltip } from "@/components/motion/tooltip";
+import { FooterWordmark } from "./footer-wordmark";
+import { categoryPath, NATIVE_PATH } from "@/lib/component-paths";
 import { Link } from "@/lib/navigation";
-import { categoryPath, componentPath } from "@/lib/component-paths";
-import { registry } from "@/lib/registry";
 
-const FOOTER_LIMIT = 7;
-const COLUMNS = ["motion", "blocks", "agents", "charts", "casino"].flatMap((slug) => {
-  const category = registry.find((entry) => entry.slug === slug);
-  return category ? [category] : [];
-});
+const GITHUB_URL = "https://github.com/starc007/ui-components";
+const NATIVE_GITHUB_URL = "https://github.com/starc007/beui-native";
+const X_URL = "https://x.com/saurra3h";
+const EMAIL = "saurabh10102@gmail.com";
+const PRO_URL =
+  "https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=footer";
 
 const PRODUCTS = [
   {
@@ -23,197 +28,193 @@ const PRODUCTS = [
 ];
 
 const LEGAL_PAGES = ["privacy", "terms", "refunds"] as const;
+
 // A constant, not `new Date()`: prerendered HTML and the client must render the same year.
 const COPYRIGHT_YEAR = 2026;
 
+type FooterLink = { href: string; label: string };
+
+/**
+ * Site pages go through the router; anything else is a plain anchor, new tab
+ * if off-site. Other props (a tooltip's ref and aria) reach the anchor.
+ */
+function FooterAnchor({
+  href,
+  children,
+  ...props
+}: Omit<ComponentProps<"a">, "href"> & { href: string; children: ReactNode }) {
+  if (href.startsWith("/") && !href.includes(".")) {
+    return (
+      <Link prefetch={false} href={href} {...props}>
+        {children}
+      </Link>
+    );
+  }
+  const external = href.startsWith("http");
+  return (
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noreferrer noopener" : undefined}
+      {...props}
+    >
+      {children}
+    </a>
+  );
+}
+
+const LINK = "text-sm text-muted-foreground transition-colors hover:text-foreground";
+const ICON_BUTTON =
+  "grid size-9 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring";
+
+/**
+ * The site footer: the brand with social links, four short link columns, and
+ * a bottom bar with legal links and our other products, then the "beUI"
+ * keycaps to sign off. Individual components are linked from the sidebar,
+ * category pages and sitemap, not from here.
+ */
 export function SiteFooter() {
   const t = useTranslations("Chrome");
-  // `page` links go through the router; external URLs and llms.txt are plain anchors.
-  const links = [
-    { href: "/components/motion", label: t("footer.browseAll"), page: true },
-    { href: "/playground", label: t("header.playground"), page: true },
-    { href: "/changelog", label: t("docsPages.changelog"), page: true },
-    { href: "https://github.com/starc007/ui-components", label: "GitHub" },
-    { href: "/docs/ai-agents", label: t("docsPages.forCodingAgents"), page: true },
-    { href: "/docs/theme", label: t("docsPages.theming"), page: true },
-    { href: "/docs/motion-patterns", label: t("docsPages.motionPatterns"), page: true },
-    { href: "/blog", label: t("footer.blog"), page: true },
-    { href: "/guides", label: t("footer.guides"), page: true },
-    { href: "/alternatives", label: t("footer.compare"), page: true },
-    { href: "/sponsors", label: t("footer.sponsor"), page: true },
-    { href: "/llms.txt", label: "llms.txt" },
+
+  const columns: { id: string; title: string; links: FooterLink[] }[] = [
     {
-      href: "https://pro.beui.dev/?utm_source=beui&utm_medium=referral&utm_campaign=free_to_pro&utm_content=footer",
-      label: "beUI Pro",
+      id: "library",
+      title: t("footer.columns.library"),
+      links: [
+        { href: categoryPath("motion"), label: t("header.components") },
+        { href: categoryPath("blocks"), label: t("header.blocks") },
+        { href: categoryPath("agents"), label: t("header.agents") },
+        { href: categoryPath("charts"), label: t("header.charts") },
+        { href: categoryPath("micro-interactions"), label: t("header.micro-interactions") },
+        { href: categoryPath("sounds"), label: t("header.sounds") },
+        { href: categoryPath("casino"), label: t("header.casino") },
+        { href: NATIVE_PATH, label: t("header.reactNative") },
+      ],
+    },
+    {
+      id: "learn",
+      title: t("footer.columns.learn"),
+      links: [
+        { href: "/docs/motion-patterns", label: t("header.motionGuides") },
+        { href: "/guides", label: t("header.howToGuides") },
+        { href: "/docs/theme", label: t("docsPages.theming") },
+        { href: "/alternatives", label: t("footer.compare") },
+        { href: "/blog", label: t("footer.blog") },
+        { href: "/changelog", label: t("header.changelog") },
+      ],
+    },
+    {
+      id: "agents",
+      title: t("footer.columns.agents"),
+      links: [
+        { href: "/docs/ai-agents", label: t("footer.agentGuide") },
+        { href: "/docs/ai-agents#mcp-server", label: t("footer.mcpServer") },
+        { href: "/llms.txt", label: "llms.txt" },
+      ],
+    },
+    {
+      id: "beui",
+      title: t("footer.columns.beui"),
+      links: [
+        { href: PRO_URL, label: "beUI Pro" },
+        { href: "/playground", label: t("header.playground") },
+        { href: "/themes", label: t("header.themes") },
+        { href: GITHUB_URL, label: t("footer.githubWeb") },
+        { href: NATIVE_GITHUB_URL, label: t("footer.githubNative") },
+        { href: "/sponsors", label: t("footer.sponsor") },
+        { href: `mailto:${EMAIL}`, label: t("footer.contact") },
+      ],
     },
   ];
 
+  const socials = [
+    { href: X_URL, label: "X", icon: <XIcon className="size-4" /> },
+    { href: GITHUB_URL, label: "GitHub", icon: <GithubIcon className="size-4" /> },
+    { href: `mailto:${EMAIL}`, label: t("footer.email"), icon: <Mail aria-hidden="true" className="size-4" /> },
+  ];
+
   return (
-    <footer className="relative isolate overflow-hidden border-border/60 border-t">
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-x-6 gap-y-12 px-4 pt-16 pb-48 sm:pb-64 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-[1.4fr_repeat(7,minmax(0,1fr))]">
-        {/* Brand. */}
-        <div className="max-w-xs">
-          <Link
-            prefetch={false}
-            href="/"
-            className="inline-flex items-center gap-2.5"
-          >
-            <img
-              src="/beui-mark.png"
-              alt=""
-              width={30}
-              height={30}
-              className="size-[30px] rounded-full"
-            />
-            <span className="font-semibold text-lg text-foreground tracking-[-0.01em]">
-              beUI
-            </span>
+    <footer className="relative isolate overflow-hidden border-t border-border/60">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-2 gap-x-8 gap-y-10 px-4 pt-14 pb-8 md:grid-cols-4 lg:grid-cols-[1.6fr_repeat(4,minmax(0,1fr))]">
+        {/* Brand: its own row until the columns fit beside it. */}
+        <div className="col-span-2 max-w-xs md:col-span-4 lg:col-span-1">
+          <Link prefetch={false} href="/" className="inline-flex items-center gap-2.5">
+            <img src="/beui-mark.png" alt="" width={28} height={28} className="size-7 rounded-full" />
+            <span className="text-lg font-medium tracking-[-0.01em] text-foreground">beUI</span>
           </Link>
-          <p className="mt-4 text-muted-foreground text-sm leading-6">
-            {t("footer.description")}
-          </p>
-          <p className="mt-4 text-muted-foreground text-sm">
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">{t("footer.description")}</p>
+          <p className="mt-3 text-sm text-muted-foreground">
             {t.rich("footer.createdBy", {
-              link: (chunks) => <span className="text-foreground">{chunks}</span>,
+              link: (chunks) => (
+                <a
+                  href={X_URL}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-foreground underline-offset-4 transition-colors hover:underline"
+                >
+                  {chunks}
+                </a>
+              ),
             })}
           </p>
-          <div className="mt-4 flex items-center gap-1.5">
-            <a
-              href="https://x.com/saurra3h"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-            >
-              <span className="sr-only">X / Twitter</span>
-              <svg
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden="true"
-                focusable="false"
-                className="size-4"
-              >
-                <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-              </svg>
-            </a>
-            <a
-              href="mailto:saurabh10102@gmail.com"
-              className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-            >
-              <span className="sr-only">{t("dock.email")}</span>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                aria-hidden="true"
-                focusable="false"
-                className="size-4"
-              >
-                <rect x="3" y="5" width="18" height="14" rx="2" />
-                <path d="m3 7 9 6 9-6" />
-              </svg>
-            </a>
-          </div>
+          <ul className="mt-3 -ml-2 flex items-center gap-0.5">
+            {socials.map((social) => (
+              <li key={social.label}>
+                <Tooltip content={social.label} side="top">
+                  <FooterAnchor href={social.href} className={ICON_BUTTON}>
+                    {social.icon}
+                    <span className="sr-only">{social.label}</span>
+                  </FooterAnchor>
+                </Tooltip>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Registry item columns. */}
-        {COLUMNS.map((column) => (
-          <nav key={column.slug} aria-label={column.name}>
-            <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-              {column.name}
-            </p>
+        {columns.map((column) => (
+          <nav key={column.id} aria-label={column.title}>
+            <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">{column.title}</p>
             <ul className="mt-4 space-y-2.5">
-              {column.components.slice(0, FOOTER_LIMIT).map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    prefetch={false}
-                    href={componentPath(column.slug, item.slug)}
-                    className="text-muted-foreground text-sm transition-colors hover:text-foreground"
-                  >
-                    {item.name}
-                  </Link>
+              {column.links.map((link) => (
+                <li key={link.href}>
+                  <FooterAnchor href={link.href} className={LINK}>
+                    {link.label}
+                  </FooterAnchor>
                 </li>
               ))}
-              {column.components.length > FOOTER_LIMIT ? (
-                <li>
-                  <Link
-                    prefetch={false}
-                    href={categoryPath(column.slug)}
-                    className="font-medium text-foreground text-sm transition-colors hover:text-muted-foreground"
-                  >
-                    {t("footer.viewAll", { count: column.components.length })}
-                  </Link>
-                </li>
-              ) : null}
             </ul>
           </nav>
         ))}
 
-        {/* Links. */}
-        <nav aria-label={t("footer.links")}>
-          <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-            {t("footer.links")}
-          </p>
-          <ul className="mt-4 space-y-2.5">
-            {links.map((item) => {
-              const external = item.href.startsWith("http");
-              const className = "text-muted-foreground text-sm transition-colors hover:text-foreground";
-              return (
-                <li key={item.href}>
-                  {item.page ? (
-                    <Link prefetch={false} href={item.href} className={className}>
-                      {item.label}
+        {/* Copyright and legal on the left, our other products on the right. */}
+        <div className="col-span-full flex flex-col gap-3 border-t border-border/60 pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <p>{t("footer.copyright", { year: COPYRIGHT_YEAR })}</p>
+            <nav aria-label={t("footer.legal")}>
+              <ul className="flex flex-wrap gap-x-5 gap-y-2">
+                {LEGAL_PAGES.map((page) => (
+                  <li key={page}>
+                    <Link prefetch={false} href={`/${page}`} className="transition-colors hover:text-foreground">
+                      {t(`footer.${page}`)}
                     </Link>
-                  ) : (
-                    <a
-                      href={item.href}
-                      target={external ? "_blank" : undefined}
-                      rel={external ? "noreferrer noopener" : undefined}
-                      className={className}
-                    >
-                      {item.label}
-                    </a>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-
-        <nav aria-label={t("footer.alsoByUs")}>
-          <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-            {t("footer.alsoByUs")}
-          </p>
-          <ul className="mt-4 space-y-2.5">
-            {PRODUCTS.map((item) => (
-              <li key={item.href}>
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="text-muted-foreground text-sm transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        {/* Copyright and legal links: a full-width row under the columns. */}
-        <div className="col-span-full flex flex-wrap items-center gap-x-6 gap-y-2 border-border/60 border-t pt-8 text-muted-foreground text-sm">
-          <p>{t("footer.copyright", { year: COPYRIGHT_YEAR })}</p>
-          <nav aria-label={t("footer.legal")}>
-            <ul className="flex flex-wrap gap-x-6 gap-y-2">
-              {LEGAL_PAGES.map((page) => (
-                <li key={page}>
-                  <Link
-                    prefetch={false}
-                    href={`/${page}`}
-                    className="transition-colors hover:text-foreground"
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+          <nav aria-label={t("footer.alsoByUs")} className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span>{t("footer.alsoByUs")}:</span>
+            <ul className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              {PRODUCTS.map((product) => (
+                <li key={product.href}>
+                  <a
+                    href={product.href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="text-foreground/80 transition-colors hover:text-foreground"
                   >
-                    {t(`footer.${page}`)}
-                  </Link>
+                    {product.label}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -221,19 +222,7 @@ export function SiteFooter() {
         </div>
       </div>
 
-      {/* Match the artwork height to the grid’s bottom padding so it never sits behind links. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-48 [mask-image:linear-gradient(to_bottom,transparent,black_80%)] sm:h-64"
-      >
-        <img
-          src="/landing/coastal-sketch.webp"
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 size-full object-cover object-bottom dark:brightness-50"
-        />
-      </div>
+      <FooterWordmark />
     </footer>
   );
 }

@@ -1,11 +1,14 @@
 import { componentPath } from "@/lib/component-paths";
 import { registry } from "@/lib/registry";
+import { variantCopy } from "@/lib/variant-copy";
+import { isSplitPage, variantPath } from "@/lib/variant-pages";
 
 /** Search entries for every component page and its named variants. */
 export function componentSearchEntries() {
   return registry.flatMap((category) =>
     category.components.flatMap((component) => {
       const href = componentPath(category.slug, component.slug);
+      const split = isSplitPage(component);
       const keywords = [
         component.slug,
         category.slug,
@@ -28,9 +31,9 @@ export function componentSearchEntries() {
           if (example.name === component.name) return [];
           return [{
             id: `${category.slug}-${component.slug}-${example.slug}`,
-            label: example.name,
+            label: (split && example.installSlug && variantCopy[example.installSlug]?.name) || example.name,
             group: category.name,
-            href: `${href}#${example.slug}`,
+            href: split ? variantPath(category.slug, component.slug, example.slug) : `${href}#${example.slug}`,
             keywords: [
               component.name,
               ...keywords,

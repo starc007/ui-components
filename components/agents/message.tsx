@@ -41,6 +41,7 @@ const MessageContext = createContext<MessageContextValue>({
 
 export interface MessageProps
   extends Omit<ComponentPropsWithRef<typeof motion.article>, "children"> {
+  /** Who sent it; "user" rows align to the end, "assistant" rows to the start. */
   from: MessageFrom;
   /** Plays a trailing-edge pop-up once when this message row mounts. */
   animateIn?: boolean;
@@ -50,6 +51,7 @@ export interface MessageProps
 }
 
 export interface MessageGroupProps extends ComponentPropsWithRef<"div"> {
+  /** Gap between messages: 6 px for "compact", 16 px for "default". Default: "compact" */
   spacing?: "compact" | "default";
 }
 
@@ -65,6 +67,7 @@ export type MessageFooterProps = ComponentPropsWithRef<"div">;
 export type MessageMarkerProps = ComponentPropsWithRef<"div">;
 
 export interface MessageTypingProps extends ComponentPropsWithRef<"span"> {
+  /** Screen reader text for the typing dots. Default: "Responding" */
   label?: string;
 }
 
@@ -158,6 +161,10 @@ export function MessageGroup({
       className={cn(
         "flex w-full flex-col",
         spacing === "compact" ? "gap-1.5" : "gap-4",
+        // A message that follows one from the same speaker tightens its
+        // bubble's top corner on that side, so the run reads as one turn.
+        "[&>[data-from=user]+[data-from=user]_[data-slot=message-bubble-content]]:rounded-se-md",
+        "[&>[data-from=assistant]+[data-from=assistant]_[data-slot=message-bubble-content]]:rounded-ss-md",
         className,
       )}
       {...props}
@@ -210,7 +217,9 @@ export function MessageHeader({ className, ...props }: MessageHeaderProps) {
     <div
       data-slot="message-header"
       className={cn(
-        "flex items-center gap-1.5 px-1 text-[11px] leading-none text-muted-foreground",
+        // No inset: the label lines up with the edge of the bubble or text
+        // below it, whichever variant is used.
+        "flex items-center gap-1.5 text-[11px] leading-none text-muted-foreground",
         from === "user" ? "justify-end" : "justify-start",
         className,
       )}
@@ -226,7 +235,7 @@ export function MessageFooter({ className, ...props }: MessageFooterProps) {
     <div
       data-slot="message-footer"
       className={cn(
-        "flex min-h-5 items-center gap-1 px-1 text-[11px] text-muted-foreground",
+        "flex min-h-5 items-center gap-1 text-[11px] text-muted-foreground",
         from === "user" ? "justify-end" : "justify-start",
         className,
       )}

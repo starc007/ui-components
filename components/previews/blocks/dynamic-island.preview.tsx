@@ -69,11 +69,11 @@ export function DynamicIslandPreview() {
           }
         >
           <DynamicIslandView id="call" className="gap-4">
-            <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wider opacity-60">
+            <div className="flex flex-col whitespace-nowrap">
+              <span className="text-[11px] uppercase tracking-wider opacity-60">
                 Incoming call
               </span>
-              <span className="text-sm font-semibold">Saurabh</span>
+              <span className="text-sm font-medium">Saurabh</span>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -97,7 +97,7 @@ export function DynamicIslandPreview() {
 
           <DynamicIslandView id="timer" className="gap-3">
             <Timer className="h-4 w-4 text-(--color-warning)" />
-            <span className="text-[10px] uppercase tracking-wider opacity-60">
+            <span className="text-[11px] uppercase tracking-wider opacity-60">
               Timer
             </span>
             <NumberTicker
@@ -105,19 +105,19 @@ export function DynamicIslandPreview() {
               format={formatClock}
               startOnView={false}
               duration={0.5}
-              className="text-sm font-semibold"
+              className="text-sm font-medium"
             />
           </DynamicIslandView>
 
           <DynamicIslandView id="music" className="gap-3">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-background/15">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-background/15">
               <Music className="h-3.5 w-3.5" />
             </span>
-            <div className="flex flex-col text-left">
-              <span className="text-xs font-semibold leading-tight">
+            <div className="flex flex-col whitespace-nowrap text-left">
+              <span className="text-xs font-medium leading-tight">
                 Midnight City
               </span>
-              <span className="text-[10px] opacity-60">M83</span>
+              <span className="text-[11px] opacity-60">M83</span>
             </div>
             <EqBars />
           </DynamicIslandView>

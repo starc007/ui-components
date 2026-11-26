@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import {
   AnimatedSidebarProvider,
   type AnimatedSidebarProviderProps,
@@ -45,7 +45,9 @@ function ShellFit({ minWidth }: { minWidth: number }) {
   const markerRef = useRef<HTMLDivElement>(null);
   const narrowRef = useRef<boolean | null>(null);
   const openRef = useRef(open);
-  openRef.current = open;
+  useLayoutEffect(() => {
+    openRef.current = open;
+  });
 
   useEffect(() => {
     const shell = markerRef.current?.parentElement;

@@ -54,10 +54,12 @@ results, or cache authenticated source responses.
 
 | tool | input | returns |
 |---|---|---|
-| `list_components` | `category?` | components (slug, name, category, description) |
-| `search_components` | `query` | best-matching components |
+| `get_setup` | none | one-time project setup, including beUI's theme tokens |
+| `list_components` | `category?` | components with their install slugs and variants |
+| `search_components` | `query` | best matches: names and keywords first, descriptions as a fallback |
+| `get_component_docs` | `slug` | the component's Markdown: install, usage, props, types, composition, accessibility |
 | `get_component` | `slug` | description, dependencies, all source files, install command |
-| `get_install_command` | `slug`, `packageManager?` | shadcn CLI command per package manager |
+| `get_install_command` | `slug`, `packageManager?` | shadcn CLI command per package manager, for a checked install slug |
 | `list_native_components` | `query?` | beUI Native (React Native) components, setup notes and the Expo Go showcase link |
 | `get_native_component` | `slug` | install commands, setup notes and every file to copy (component, shared helpers, theme) |
 

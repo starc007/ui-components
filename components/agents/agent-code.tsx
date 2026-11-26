@@ -41,13 +41,40 @@ export interface AgentCodeLineProps {
 const LIGHT_THEME = "github-light-high-contrast";
 const DARK_THEME = "github-dark-high-contrast";
 let agentCodeHighlighter: Promise<Highlighter> | null = null;
+
+// Streamed code changes on every chunk, and each version is a new key, so the
+// cache keeps only the most recently used entries.
+const TOKEN_CACHE_LIMIT = 50;
 const tokenCache = new Map<string, AgentCodeTokenLines>();
+
+function readTokens(key: string) {
+  const lines = tokenCache.get(key);
+  if (lines) {
+    tokenCache.delete(key);
+    tokenCache.set(key, lines);
+  }
+  return lines;
+}
+
+function storeTokens(key: string, lines: AgentCodeTokenLines) {
+  tokenCache.delete(key);
+  tokenCache.set(key, lines);
+  while (tokenCache.size > TOKEN_CACHE_LIMIT) {
+    const oldest = tokenCache.keys().next().value;
+    if (oldest === undefined) break;
+    tokenCache.delete(oldest);
+  }
+}
 
 function getAgentCodeHighlighter() {
   if (!agentCodeHighlighter) {
     agentCodeHighlighter = createHighlighter({
       themes: [LIGHT_THEME, DARK_THEME],
       langs: ["bash", "diff", "json", "tsx", "typescript"],
+    });
+    // A failed load is not kept, so the next block tries again.
+    agentCodeHighlighter.catch(() => {
+      agentCodeHighlighter = null;
     });
   }
   return agentCodeHighlighter;
@@ -71,7 +98,7 @@ export function useAgentCodeTokens(
   } | null>(cached ? { key, code, language, lines: cached } : null);
 
   useEffect(() => {
-    const current = tokenCache.get(key);
+    const current = readTokens(key);
     if (current) {
       setResult({ key, code, language, lines: current });
       return;
@@ -96,8 +123,10 @@ export function useAgentCodeTokens(
             dark: token.variants.dark?.color,
           })),
       );
-      tokenCache.set(key, lines);
+      storeTokens(key, lines);
       setResult({ key, code, language, lines });
+    }, () => {
+      // Highlighting is decoration: the code still renders as plain text.
     });
     return () => {
       cancelled = true;
@@ -116,10 +145,16 @@ export function AgentCodeLine({
   tokens,
   className,
 }: AgentCodeLineProps) {
+  // While code streams, the tokens can lag a few characters behind the line.
+  // Keep the coloured part and show the new characters plain after it: the
+  // text is always current, and nothing already coloured flashes back to plain.
+  const tokenText = tokens?.map((token) => token.content).join("") ?? "";
+  const usable = tokens && code.startsWith(tokenText) ? tokens : undefined;
+  const rest = usable ? code.slice(tokenText.length) : "";
   return (
     <span className={className}>
-      {tokens
-        ? tokens.map((token) => (
+      {usable
+        ? usable.map((token) => (
             <span
               key={`${token.offset}-${token.content}`}
               style={
@@ -134,6 +169,7 @@ export function AgentCodeLine({
             </span>
           ))
         : code}
+      {rest}
     </span>
   );
 }

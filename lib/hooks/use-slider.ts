@@ -1,6 +1,15 @@
 "use client";
 
-import { type KeyboardEvent, type PointerEvent, useCallback, useRef, useState } from "react";
+import {
+  type KeyboardEvent,
+  type PointerEvent,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { useSound } from "@/lib/sound";
+import { tickSound } from "@/lib/sounds/tick";
 import { capturePointer, releasePointer } from "@/lib/touch";
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
@@ -23,18 +32,32 @@ export function snapSliderValue(next: number, min: number, max: number, step: nu
 }
 
 export interface SliderOptions {
+  /** The current value, for controlled use. */
   value?: number;
+  /** The initial value when uncontrolled. Default: 0 */
   defaultValue?: number;
+  /** Called with the snapped value whenever a drag or key press changes it. */
   onValueChange?: (value: number) => void;
+  /** Lowest value on the track. Default: 0 */
   min?: number;
+  /** Highest value on the track. Default: 100 */
   max?: number;
+  /** Increment values snap to when dragging or using arrow keys. Default: 1 */
   step?: number;
+  /** Ignores pointer and keyboard input. Default: false */
   disabled?: boolean;
+  /** Accessible name for the slider handle. */
   "aria-label"?: string;
   /** Announced instead of the raw number — pass one when the value carries a
    * unit or a suffix ("72.5 kg", "35%"); a bare number needs no valueText. */
   formatValueText?: (value: number) => string;
+  /** Play a tiny tick per step, higher toward the max. Off by default; a `SoundProvider` can mute it app-wide. */
+  sound?: boolean;
 }
+
+// A fast drag crosses many steps per frame; one tick per this many ms keeps
+// it a texture rather than a buzz.
+const TICK_GAP_MS = 35;
 
 /**
  * Shared value + input plumbing for slider designs: controlled/uncontrolled
@@ -51,6 +74,7 @@ export function useSlider({
   disabled = false,
   "aria-label": ariaLabel,
   formatValueText,
+  sound = false,
 }: SliderOptions) {
   const trackRef = useRef<HTMLDivElement>(null);
   const sliderEl = useRef<HTMLElement | null>(null);
@@ -69,13 +93,28 @@ export function useSlider({
   const current = clamp(controlled ? value : internal, lo, hi);
   const percent = hi > lo ? ((current - lo) / (hi - lo)) * 100 : 0;
 
+  const playTick = useSound(tickSound, { enabled: sound });
+  // The value the last tick answered, and when, so a commit that lands on the
+  // same step stays silent.
+  const tickRef = useRef({ value: current, at: 0 });
+  useLayoutEffect(() => {
+    if (!draggingRef.current) tickRef.current.value = current;
+  });
+
   const commit = useCallback(
     (next: number) => {
       const clean = snapSliderValue(next, lo, hi, stride);
+      const tick = tickRef.current;
+      const now = performance.now();
+      if (clean !== tick.value && now - tick.at >= TICK_GAP_MS) {
+        tick.value = clean;
+        tick.at = now;
+        playTick({ pitch: 0.85 + 0.35 * (hi > lo ? (clean - lo) / (hi - lo) : 0) });
+      }
       if (!controlled) setInternal(clean);
       onValueChange?.(clean);
     },
-    [controlled, onValueChange, lo, hi, stride],
+    [controlled, onValueChange, lo, hi, stride, playTick],
   );
 
   const commitFromX = useCallback(

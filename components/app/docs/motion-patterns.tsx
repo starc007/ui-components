@@ -219,7 +219,7 @@ export function MotionPatterns() {
         description={t("sections.timing.description")}
       >
         <div className="border-y border-border">
-          <div className="hidden grid-cols-[1fr_8rem_1.4fr] gap-4 border-b border-border bg-card px-5 py-3 font-mono text-[10px] uppercase tracking-wider text-muted-foreground sm:grid">
+          <div className="hidden grid-cols-[1fr_8rem_1.4fr] gap-4 border-b border-border bg-card px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-muted-foreground sm:grid">
             <span>{t("timing.interaction")}</span>
             <span>{t("timing.range")}</span>
             <span>{t("timing.desiredFeel")}</span>
@@ -399,7 +399,7 @@ function EasingTrack({
         <span className="font-mono text-xs font-medium text-foreground">
           {label}
         </span>
-        <span className="font-mono text-[10px] text-muted-foreground">
+        <span className="font-mono text-[11px] text-muted-foreground">
           {value}
         </span>
       </div>
@@ -455,7 +455,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
             <span className="flex size-8 items-center justify-center rounded-full border border-border bg-card">
               <Icon className="size-3.5 text-foreground" aria-hidden="true" />
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
               {t(`${recipe.key}.eyebrow`)}
             </span>
           </div>
@@ -538,7 +538,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
         type="button"
         whileTap={reduce ? undefined : { scale: 0.97 }}
         transition={SPRING_PRESS}
-        className="h-11 rounded-full bg-foreground px-5 text-sm font-medium text-background outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="h-11 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         {t("pressMe")}
       </motion.button>
@@ -665,7 +665,7 @@ function RecipeDemoView({ demo }: { demo: RecipeDemo }) {
               className={cn(
                 "min-h-10 rounded-full px-3 text-xs outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
                 selected
-                  ? "bg-foreground text-background"
+                  ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >

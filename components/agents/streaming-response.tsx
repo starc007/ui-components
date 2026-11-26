@@ -9,21 +9,17 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useCallback, useId, useState } from "react";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
 import {
   type CitationItem,
   CitationList,
   CitationStack,
 } from "@/components/agents/citations";
+import { IconSwap as ActionIcon } from "@/components/agents/icon-swap";
+import { Tooltip } from "@/components/motion/tooltip";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { useCopy } from "@/lib/hooks/use-copy";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -46,20 +42,29 @@ export type StreamingResponseMessages = typeof streamingResponseMessages;
 export interface StreamingResponseProps {
   /** Rendered response content. Pass plain text or the output of a Markdown renderer. */
   children: ReactNode;
+  /** Stream state; actions appear once it leaves "streaming". Default: "streaming" */
   status?: StreamingResponseStatus;
   /** Plain-text value copied by the built-in copy action. */
   copyText?: string;
   /** Overrides the built-in clipboard action. */
   onCopy?: () => void | Promise<void>;
+  /** Called when the retry action is pressed. The action shows only when set. */
   onRetry?: () => void;
   /** Optional sources shown as a compact footer disclosure after streaming. */
   sources?: CitationItem[];
+  /** Whether the sources list is expanded, for controlled use. */
   sourcesOpen?: boolean;
+  /** Whether the sources list starts expanded when uncontrolled. Default: false */
   defaultSourcesOpen?: boolean;
+  /** Called with the next state when the sources list expands or collapses. */
   onSourcesOpenChange?: (open: boolean) => void;
+  /** Prefix for source row ids that `Citation` markers link to. Generated when omitted. */
   sourceIdPrefix?: string;
+  /** The thumbs up or down rating, for controlled use. */
   feedback?: StreamingResponseFeedback;
+  /** The initial rating when uncontrolled. Default: null */
   defaultFeedback?: StreamingResponseFeedback;
+  /** Called with the new rating, or `null` when it is toggled off. */
   onFeedbackChange?: (feedback: StreamingResponseFeedback) => void;
   /** Set false when a surrounding conversation log announces streamed text. */
   announce?: boolean;
@@ -67,8 +72,11 @@ export interface StreamingResponseProps {
   showActions?: boolean;
   /** Override any built-in string. `{count}` fills `source` (one) and `sources` (many). */
   labels?: Partial<StreamingResponseMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto the wrapper around the response content. */
   contentClassName?: string;
+  /** Classes merged onto the row of completion actions. */
   actionsClassName?: string;
 }
 
@@ -87,21 +95,24 @@ function ResponseAction({
   const reduce = useReducedMotion() ?? false;
 
   return (
-    <motion.button
-      type="button"
-      aria-label={label}
-      title={label}
-      aria-pressed={active}
-      onClick={onClick}
-      whileTap={reduce ? undefined : { scale: 0.9 }}
-      transition={SPRING_PRESS}
-      className={cn(
-        "grid size-7 place-items-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring",
-        active && "bg-muted text-foreground",
-      )}
-    >
-      {children}
-    </motion.button>
+    <Tooltip content={label} side="top">
+      <motion.button
+        type="button"
+        aria-label={label}
+        aria-pressed={active}
+        onClick={onClick}
+        whileTap={reduce ? undefined : { scale: 0.95 }}
+        transition={SPRING_PRESS}
+        className={cn(
+          // A foreground tint, not bg-muted: muted is the bubble colour, so a
+          // muted hover would vanish inside a soft bubble.
+          "grid size-7 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring",
+          active && "bg-foreground/[0.06] text-foreground",
+        )}
+      >
+        {children}
+      </motion.button>
+    </Tooltip>
   );
 }
 
@@ -129,12 +140,11 @@ export function StreamingResponse({
   const t = useMessages("streamingResponse", streamingResponseMessages, labels);
   const reduce = useReducedMotion() ?? false;
   const baseId = useId();
-  const [copied, setCopied] = useState(false);
+  const { copied, copy: handleCopy } = useCopy({ text: copyText, onCopy });
   const [internalFeedback, setInternalFeedback] =
     useState<StreamingResponseFeedback>(defaultFeedback);
   const [internalSourcesOpen, setInternalSourcesOpen] =
     useState(defaultSourcesOpen);
-  const copyTimer = useRef<number | undefined>(undefined);
   const currentFeedback = feedback ?? internalFeedback;
   const currentSourcesOpen = sourcesOpen ?? internalSourcesOpen;
   const streaming = status === "streaming";
@@ -146,22 +156,6 @@ export function StreamingResponse({
   const sourcesContentId = `${baseId}-sources`;
   const resolvedSourcePrefix =
     sourceIdPrefix ?? `response-source-${baseId.replace(/:/g, "")}`;
-
-  useEffect(
-    () => () => {
-      if (copyTimer.current) window.clearTimeout(copyTimer.current);
-    },
-    [],
-  );
-
-  const handleCopy = useCallback(async () => {
-    if (onCopy) await onCopy();
-    else if (copyText) await navigator.clipboard?.writeText(copyText);
-
-    setCopied(true);
-    if (copyTimer.current) window.clearTimeout(copyTimer.current);
-    copyTimer.current = window.setTimeout(() => setCopied(false), 1600);
-  }, [copyText, onCopy]);
 
   const setFeedback = (next: Exclude<StreamingResponseFeedback, null>) => {
     const value = currentFeedback === next ? null : next;
@@ -208,11 +202,13 @@ export function StreamingResponse({
                   label={copied ? t("copied") : t("copy")}
                   onClick={handleCopy}
                 >
-                  {copied ? (
-                    <Check className="size-3.5" />
-                  ) : (
-                    <Copy className="size-3.5" />
-                  )}
+                  <ActionIcon id={copied ? "copied" : "copy"}>
+                    {copied ? (
+                      <Check className="size-3.5" />
+                    ) : (
+                      <Copy className="size-3.5" />
+                    )}
+                  </ActionIcon>
                 </ResponseAction>
               ) : null}
               {onRetry ? (
@@ -227,14 +223,23 @@ export function StreamingResponse({
                     active={currentFeedback === "up"}
                     onClick={() => setFeedback("up")}
                   >
-                    <ThumbsUp className="size-3.5" />
+                    {/* A chosen rating fills in, so the choice reads at a glance. */}
+                    <ActionIcon id={currentFeedback === "up" ? "up-on" : "up"}>
+                      <ThumbsUp
+                        className={cn("size-3.5", currentFeedback === "up" && "fill-current")}
+                      />
+                    </ActionIcon>
                   </ResponseAction>
                   <ResponseAction
                     label={t("notHelpful")}
                     active={currentFeedback === "down"}
                     onClick={() => setFeedback("down")}
                   >
-                    <ThumbsDown className="size-3.5" />
+                    <ActionIcon id={currentFeedback === "down" ? "down-on" : "down"}>
+                      <ThumbsDown
+                        className={cn("size-3.5", currentFeedback === "down" && "fill-current")}
+                      />
+                    </ActionIcon>
                   </ResponseAction>
                 </>
               ) : null}
@@ -244,7 +249,7 @@ export function StreamingResponse({
                   aria-expanded={currentSourcesOpen}
                   aria-controls={sourcesContentId}
                   onClick={() => setSourcesOpen(!currentSourcesOpen)}
-                  className="group ml-1 inline-flex min-h-7 items-center gap-2 rounded-md px-1.5 text-xs text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                  className="group ml-1 inline-flex min-h-7 items-center gap-2 rounded-full px-1.5 text-xs text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <CitationStack citations={sources} />
                   <span className="tabular-nums">
@@ -272,7 +277,7 @@ export function StreamingResponse({
                 <CitationList
                   citations={sources}
                   idPrefix={resolvedSourcePrefix}
-                  className="mt-2 rounded-xl bg-muted p-2"
+                  className="mt-2 rounded-2xl border border-border p-2"
                 />
               </AgentDisclosure>
             ) : null}

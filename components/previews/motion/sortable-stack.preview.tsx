@@ -46,7 +46,7 @@ export function SortableListPreview() {
     <div className="w-full max-w-md">
       <div className="mb-5 flex items-end justify-between gap-4 px-1">
         <div>
-          <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
             In the studio
           </p>
           <h3 className="text-lg font-medium tracking-tight">
@@ -71,7 +71,7 @@ export function SortableListPreview() {
                   <SortableListItemContent>
                     <div className="flex items-center gap-3">
                       <span
-                        className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${item.color}`}
+                        className={`flex size-10 shrink-0 items-center justify-center rounded-full ${item.color}`}
                       >
                         <item.icon size={18} aria-hidden="true" />
                       </span>
@@ -81,7 +81,7 @@ export function SortableListPreview() {
                           {item.detail}
                         </p>
                       </div>
-                      <span className="text-[10px] tabular-nums text-muted-foreground">
+                      <span className="text-[11px] tabular-nums text-muted-foreground">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       <Circle

@@ -58,7 +58,7 @@ export function CurveEditor({
       ref={ref}
       viewBox={`0 0 ${SIZE} ${SIZE}`}
       className={cn(
-        "w-full touch-none rounded-xl border border-border bg-background",
+        "w-full touch-none rounded-2xl border border-border bg-background",
         // The handles own the whole press, so iOS must not open its callout
         // out of the same one and cancel the drag.
         TOUCH_GESTURE_CLASS,

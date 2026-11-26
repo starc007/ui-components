@@ -27,11 +27,15 @@ type ColorSelectorContextValue = {
 const ColorSelectorContext = createContext<ColorSelectorContextValue | null>(null);
 
 export interface ColorSelectorProps extends Omit<ComponentPropsWithRef<"fieldset">, "onChange" | "defaultValue"> {
+  /** The selected color value, for controlled use. */
   value?: string;
+  /** The initial value when uncontrolled. Default: "" */
   defaultValue?: string;
+  /** Called with the item value when the selection changes. */
   onValueChange?: (value: string) => void;
   /** The radio group name used in form submission. Generated when omitted. */
   name?: string;
+  /** Requires a choice before the form submits. Default: false */
   required?: boolean;
 }
 
@@ -84,6 +88,7 @@ export function ColorSelectorList({ className, ...props }: ColorSelectorListProp
 }
 
 export interface ColorSelectorItemProps extends Omit<ComponentPropsWithRef<"input">, "type" | "value" | "defaultValue" | "checked" | "defaultChecked" | "name" | "children" | "size"> {
+  /** Value reported and submitted when this color is picked. */
   value: string;
   /** Any CSS color, including a custom property. */
   color: string;

@@ -3,19 +3,28 @@ import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 import { useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
+import { InteractionGallery } from "@/components/app/docs/interaction-gallery";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
-import { ProBlocksSection } from "@/components/app/docs/pro-blocks-section";
+import { SoundGallery } from "@/components/app/docs/sound-gallery";
 import { LandingComponentCard } from "@/components/app/landing/landing-component-card";
 import { getTranslations } from "@/i18n/server";
 import { categoryPath } from "@/lib/component-paths";
 import { isComponentNew } from "@/lib/component-status";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { ogImagePath } from "@/lib/og-paths";
 import { type ComponentEntry, findCategory } from "@/lib/registry";
 import { breadcrumbJsonLd, categoryJsonLd } from "@/lib/seo";
 
 /** Copy per category in messages Docs.category; unknown categories read as motion. */
-const CONTENT_KEYS = ["motion", "blocks", "charts", "casino", "agents"] as const;
+const CONTENT_KEYS = [
+  "motion",
+  "blocks",
+  "charts",
+  "casino",
+  "micro-interactions",
+  "sounds",
+  "agents",
+] as const;
 type ContentKey = (typeof CONTENT_KEYS)[number];
 
 function contentKey(slug: string): ContentKey {
@@ -79,13 +88,15 @@ export const getCategoryPage = createServerFn({ method: "GET" })
     const key = contentKey(cat.slug);
     const title = t(`${key}.title`);
     const description = t(`${key}.description`);
-    const ogTitle = `${title} · beUI`;
     const path = categoryPath(cat.slug);
-    const imageUrl = ogImagePath("category", cat.slug);
 
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path,
       title,
       description,
+      image: ogImagePath("category", cat.slug),
+      imageAlt: t("ogImageAlt", { name: cat.name }),
+      types: { "text/markdown": `${path}.md`, "application/json": "/registry.json" },
       keywords: [
         `${rawCat.name} components`,
         "React motion components",
@@ -101,33 +112,7 @@ export const getCategoryPage = createServerFn({ method: "GET" })
         "beUI",
         ...rawCat.components.map((comp) => comp.name),
       ],
-      openGraph: {
-        title: ogTitle,
-        description,
-        url: path,
-        type: "website",
-        siteName: "beUI",
-        locale: "en_US",
-        images: [
-          {
-            url: imageUrl,
-            width: 1200,
-            height: 630,
-            alt: t("ogImageAlt", { name: cat.name }),
-          },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: ogTitle,
-        description,
-        images: [imageUrl],
-      },
-      alternates: {
-        canonical: path,
-        types: { "application/json": "/registry.json" },
-      },
-    };
+    });
 
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([
@@ -177,19 +162,49 @@ const GRID_CLASS =
 
 export function CategoryPage({ data }: { data: CategoryPageData }) {
   const t = useTranslations("Docs.category");
-  const tDocs = useTranslations("Docs");
   const { slug, contentKey: key, newComponents, components, agentGroups } = data;
+
+  // The gallery has its own layout: a narrower centred column with a
+  // centred heading and one line under it. No breadcrumb, and no platform
+  // switch (web only).
+  if (slug === "sounds") {
+    return (
+      <div className="mx-auto w-full max-w-5xl pt-8 sm:pt-14">
+        <JsonLd data={data.jsonLd} />
+        <header className="mx-auto max-w-xl text-center">
+          <h1 className="text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+            {t("sounds.heading")}
+          </h1>
+          <p className="mt-3 text-muted-foreground">{t("sounds.subheading")}</p>
+        </header>
+        <SoundGallery />
+      </div>
+    );
+  }
+
+  if (slug === "micro-interactions") {
+    return (
+      <div className="mx-auto w-full max-w-5xl pt-8 sm:pt-14">
+        <JsonLd data={data.jsonLd} />
+        <header className="mx-auto max-w-xl text-center">
+          <h1 className="text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+            {t("micro-interactions.heading")}
+          </h1>
+          <p className="mt-3 text-muted-foreground">{t("micro-interactions.subheading")}</p>
+        </header>
+        <InteractionGallery components={[...newComponents, ...components]} />
+      </div>
+    );
+  }
 
   return (
     <div>
       <JsonLd data={data.jsonLd} />
-      <nav aria-label={tDocs("breadcrumb")} className="flex items-center gap-1.5 text-sm">
-        <span className="font-medium text-foreground">{data.name}</span>
-      </nav>
-      <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
+      <h1 className="text-3xl font-medium tracking-tight text-foreground">
         {t(`${key}.heading`)}
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">{t(`${key}.description`)}</p>
+      {/* The right sidebar carries the switch from xl. */}
       <div className="mt-6 xl:hidden">
         <PlatformSwitch />
       </div>
@@ -229,8 +244,6 @@ export function CategoryPage({ data }: { data: CategoryPageData }) {
                 </div>
               </section>
             ) : null}
-
-            <ProBlocksSection pageKey={slug} heading="builtWith" className="mt-10" />
 
             {components.length ? (
               <section className="mt-10">

@@ -104,7 +104,7 @@ export function CopyMenu({
               checked={picked.has(d.key)}
               onCheckedChange={() => toggle(d.key)}
               label={d.label}
-              className="w-full flex-row-reverse justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-muted [&_button]:size-4 [&_button]:rounded-[5px] [&_button]:border [&_button[data-state=unchecked]]:border-border-strong"
+              className="w-full flex-row-reverse justify-between rounded-full px-3 py-1.5 transition-colors hover:bg-muted [&_button]:size-4 [&_button]:rounded-[5px] [&_button]:border [&_button[data-state=unchecked]]:border-border-strong"
             />
           ))}
         </div>
@@ -112,7 +112,7 @@ export function CopyMenu({
           <button
             type="button"
             onClick={() => apply(others.map((d) => d.key))}
-            className="flex-1 rounded-lg px-2 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:bg-muted"
+            className="flex-1 rounded-full px-2 py-1.5 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:bg-muted"
           >
             {t("everyDay")}
           </button>
@@ -120,7 +120,7 @@ export function CopyMenu({
             type="button"
             onClick={() => apply([...picked])}
             disabled={picked.size === 0}
-            className="flex-1 rounded-lg bg-primary px-2 py-1.5 text-xs font-semibold text-primary-foreground outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40"
+            className="flex-1 rounded-full bg-primary px-2 py-1.5 text-xs font-medium text-primary-foreground outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40"
           >
             {t("apply")}
           </button>

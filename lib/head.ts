@@ -1,3 +1,4 @@
+import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import { SITE_URL } from "@/lib/site";
 
 /**
@@ -46,11 +47,72 @@ type LinkTag = { rel: string; href: string; hrefLang?: string; type?: string };
 
 const TITLE_SUFFIX = " · beUI";
 
-export function absoluteUrl(path: string) {
+export type PageMetadataInput = {
+  /** The page path: canonical URL and `og:url`. */
+  path: string;
+  title: string;
+  description: string;
+  /** Defaults to the title with the site suffix. */
+  ogTitle?: string;
+  /** Defaults to `description`; also used for the Twitter card. */
+  ogDescription?: string;
+  type?: "website" | "article";
+  /** Social card path. Defaults to the site card. */
+  image?: string;
+  /** Alt text for the social card. Defaults to the Open Graph title. */
+  imageAlt?: string;
+  keywords?: string[];
+  /** Alternate representations (`<link rel="alternate" type>`), by MIME type. */
+  types?: Record<string, string>;
+  other?: Metadata["other"];
+};
+
+/**
+ * The usual page metadata: title, description, canonical, and matching Open
+ * Graph and Twitter cards. Pages that need more spread the result and add to it.
+ */
+export function pageMetadata({
+  path,
+  title,
+  description,
+  ogTitle = `${title}${TITLE_SUFFIX}`,
+  ogDescription = description,
+  type = "website",
+  image = DEFAULT_OG_IMAGE,
+  imageAlt,
+  keywords,
+  types,
+  other,
+}: PageMetadataInput): Metadata {
+  return {
+    title,
+    description,
+    ...(keywords ? { keywords } : {}),
+    alternates: { canonical: path, ...(types ? { types } : {}) },
+    openGraph: {
+      title: ogTitle,
+      description: ogDescription,
+      url: path,
+      type,
+      siteName: "beUI",
+      locale: "en_US",
+      images: [imageAlt ? { url: image, alt: imageAlt } : image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description: ogDescription,
+      images: [image],
+    },
+    ...(other ? { other } : {}),
+  };
+}
+
+function absoluteUrl(path: string) {
   return new URL(path, SITE_URL).toString();
 }
 
-export function pageTitle(title: NonNullable<Metadata["title"]>) {
+function pageTitle(title: NonNullable<Metadata["title"]>) {
   return typeof title === "string" ? `${title}${TITLE_SUFFIX}` : title.absolute;
 }
 
@@ -123,4 +185,12 @@ export function metadataToHead(metadata: Metadata) {
   }
 
   return { meta, links };
+}
+
+/**
+ * A route's `head` for a loader that returns `{ metadata }`: the page's tags
+ * once its data has loaded, none before.
+ */
+export function loaderHead({ loaderData }: { loaderData?: { metadata: Metadata } }) {
+  return loaderData ? metadataToHead(loaderData.metadata) : {};
 }

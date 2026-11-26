@@ -13,11 +13,10 @@ import {
   type OpenSponsorSlotSize,
 } from "@/components/app/sponsors/open-sponsor-slot";
 import { SponsorPlanBeam } from "@/components/app/sponsors/sponsor-plan-beam";
-import { LOCALE } from "@/i18n/messages";
+import { LOCALE, messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { useSearchParams } from "@/lib/navigation";
-import { DEFAULT_OG_IMAGE } from "@/lib/og-paths";
 import {
   SPONSOR_CHECKOUT_URLS,
   SPONSOR_EVM_ADDRESS,
@@ -33,26 +32,12 @@ export const getSponsorsPage = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .handler(async () => {
     const t = getTranslations("Pages.sponsors.meta");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: PAGE_PATH,
       title: t("title"),
       description: t("description"),
-      alternates: { canonical: PAGE_PATH },
-      openGraph: {
-        title: `${t("title")} · beUI`,
-        description: t("description"),
-        url: PAGE_PATH,
-        locale: "en_US",
-        type: "website",
-        siteName: "beUI",
-        images: [DEFAULT_OG_IMAGE],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${t("title")} · beUI`,
-        images: [DEFAULT_OG_IMAGE],
-      },
-    };
-    return { metadata };
+    });
+    return { metadata, messages: messages.Pages.sponsors };
   });
 
 const GITHUB_SPONSORS_URL = "https://github.com/sponsors/starc007";
@@ -156,7 +141,7 @@ function DiamondSponsorCard({
           className="hidden size-14 shrink-0 dark:block"
         />
         <div>
-          <h3 className="font-display text-2xl font-semibold tracking-tight text-foreground">
+          <h3 className="font-display text-2xl font-medium tracking-tight text-foreground">
             {name}
           </h3>
           <p className="mt-1 max-w-44 text-xs leading-relaxed text-muted-foreground">
@@ -218,7 +203,7 @@ function SponsorTier({
         <h2
           id={headingId}
           className={cn(
-            "inline-flex items-center gap-2 rounded-lg border px-3 py-2 font-mono text-sm font-medium text-foreground",
+            "inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-sm font-medium text-foreground",
             styles.chip,
           )}
         >
@@ -294,7 +279,7 @@ function truncateAddress(address: string) {
 
 function AddressRow({ label, address }: { label: string; address: string }) {
   return (
-    <div className="grid grid-cols-[5rem_minmax(0,1fr)_auto] items-center gap-4 rounded-xl border border-border px-4 py-3">
+    <div className="grid grid-cols-[5rem_minmax(0,1fr)_auto] items-center gap-4 rounded-2xl border border-border px-4 py-3">
       <p className="whitespace-nowrap text-sm font-medium text-muted-foreground">
         {label}
       </p>
@@ -343,7 +328,7 @@ function SponsorPlanCard({
         )}
       >
         {featured ? (
-          <span className="absolute right-4 top-4 rounded-full border border-white/10 bg-foreground px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-wider text-background">
+          <span className="absolute right-4 top-4 rounded-full bg-primary px-2.5 py-1 text-[11px] font-medium uppercase tracking-wider text-primary-foreground">
             {t("planCard.highestImpact")}
           </span>
         ) : null}
@@ -358,7 +343,7 @@ function SponsorPlanCard({
         </div>
         </div>
         <div className="mt-6">
-          <h2 className="text-xl font-semibold tracking-tight text-foreground">
+          <h2 className="text-xl font-medium tracking-tight text-foreground">
             {name}
           </h2>
           <p className="mt-2 min-h-12 text-sm leading-relaxed text-muted-foreground">
@@ -389,7 +374,7 @@ function SponsorPlanCard({
           target={paymentUrl ? "_blank" : undefined}
           rel={paymentUrl ? "noreferrer noopener" : undefined}
           className={cn(
-            "group mt-auto inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-colors",
+            "group mt-auto inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition-colors",
             featured
               ? "bg-primary text-primary-foreground hover:bg-primary/90"
               : "border border-border bg-background text-foreground hover:border-border-strong",
@@ -469,7 +454,7 @@ export function SponsorsPage() {
           <div className="mx-auto mb-8 flex max-w-xl gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
             <CircleCheck className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
             <div>
-              <p className="text-sm font-semibold text-emerald-950 dark:text-emerald-100">
+              <p className="text-sm font-medium text-emerald-950 dark:text-emerald-100">
                 {t("checkout.title")}
               </p>
               <p className="mt-1 text-sm leading-relaxed text-emerald-900/75 dark:text-emerald-100/75">
@@ -479,10 +464,10 @@ export function SponsorsPage() {
           </div>
         ) : null}
         <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {t("hero.eyebrow")}
           </p>
-          <h1 className="mt-2 text-4xl font-semibold tracking-tight text-foreground">
+          <h1 className="mt-2 text-4xl font-medium tracking-tight text-foreground">
             {t("hero.title")}
           </h1>
           <p className="mt-3 text-muted-foreground">{t("hero.body")}</p>
@@ -492,7 +477,7 @@ export function SponsorsPage() {
               href={GITHUB_SPONSORS_URL}
               target="_blank"
               rel="noreferrer noopener"
-              className="group inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:border-border-strong"
+              className="group inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-medium text-foreground transition-colors hover:border-border-strong"
             >
               {t("hero.githubCta")}
               <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -504,7 +489,7 @@ export function SponsorsPage() {
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2
               id="traffic-stats"
-              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+              className="text-xs font-medium uppercase tracking-wider text-muted-foreground"
             >
               {t("audience.title")}
             </h2>
@@ -574,7 +559,7 @@ export function SponsorsPage() {
 
         {evmAddress || solAddress ? (
           <div className="mt-14">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {t("crypto")}
             </p>
             <div className="mt-3 grid gap-3 md:grid-cols-2">

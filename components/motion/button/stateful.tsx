@@ -30,11 +30,16 @@ export const statefulButtonMessages = {
 export type StatefulButtonMessages = typeof statefulButtonMessages;
 
 export interface StatefulButtonProps extends Omit<ButtonProps, "children"> {
+  /** Which state to show. Loading also disables the button. Default: "idle" */
   state?: ButtonState;
   children: ReactNode;
+  /** Text shown while loading. Default: "Loading" */
   loadingText?: ReactNode;
+  /** Text shown on success. Default: "Done" */
   successText?: ReactNode;
+  /** Text shown on error. Default: "Try again" */
   errorText?: ReactNode;
+  /** Trailing icon shown only while idle. */
   icon?: ReactNode;
   /** Override any built-in string. */
   labels?: Partial<StatefulButtonMessages>;
@@ -220,7 +225,7 @@ export const StatefulButton = forwardRef<HTMLButtonElement, StatefulButtonProps>
     typeof stateText === "string" ? `${state}-${stateText}` : state;
 
   return (
-    <Button ref={ref} disabled={disabled || isBusy} aria-busy={isBusy} whileHover={undefined} {...rest}>
+    <Button ref={ref} disabled={disabled || isBusy} aria-busy={isBusy} {...rest}>
       <span
         aria-live="polite"
         className="relative inline-flex items-center justify-center overflow-hidden"

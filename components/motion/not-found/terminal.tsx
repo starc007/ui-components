@@ -9,6 +9,8 @@ import {
   useNotFoundMessages,
 } from "./shared";
 
+// Each character lands quicker than Text Reveal's slow default, so a terminal
+// line reads as typed rather than faded in.
 const TYPE_SPRING = { stiffness: 320, damping: 30, mass: 0.6 };
 
 export function NotFoundTerminal({
@@ -71,7 +73,7 @@ export function NotFoundTerminal({
       </div>
 
       <div className="flex flex-col items-center gap-2">
-        <p className="text-lg font-semibold text-foreground">{title ?? t("title")}</p>
+        <p className="text-lg font-medium text-foreground">{title ?? t("title")}</p>
         <p className="max-w-sm text-sm text-muted-foreground">{description ?? t("description")}</p>
       </div>
 

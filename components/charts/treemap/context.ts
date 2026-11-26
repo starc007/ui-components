@@ -6,8 +6,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useId,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -15,6 +13,7 @@ import {
 import { useHoverCapable } from "@/lib/hooks/use-hover-capable";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
 import { useMessages } from "@/lib/i18n";
+import { useInspection } from "../xy/use-inspection";
 import { type TreemapMessages, treemapMessages } from "./messages";
 import { buildTreemap, layoutTreemap, TREEMAP_COLORS, type TreemapNode } from "./model";
 
@@ -24,13 +23,19 @@ const defaultFormat = (value: number) =>
 export interface TreemapProps extends ComponentProps<"section"> {
   /** Flat leaves or nested groups. Tile area uses leaf values; groups sum their descendants. */
   data: readonly TreemapNode[];
+  /** Chart name, used as its accessible label and table caption. Default: "Treemap" */
   label?: string;
+  /** Formats values in tiles, the tooltip and the legend. Defaults to up to 2 decimals. */
   formatValue?: (value: number) => string;
   /** Top-level palette; nodes can override their inherited color and textColor. */
   colors?: readonly string[];
+  /** Tile text color, unless a node sets its own. Default: "#ffffff" */
   textColor?: string;
+  /** Id of the inspected tile, or null for none, for controlled use. */
   activeId?: string | null;
+  /** Id of the tile inspected at first when uncontrolled. Default: null */
   defaultActiveId?: string | null;
+  /** Called with the tile id when inspection moves, or null when it clears. */
   onActiveChange?: (id: string | null) => void;
   /** Override any built-in string. */
   labels?: Partial<TreemapMessages>;
@@ -56,23 +61,21 @@ export function useTreemapModel({
     [model.nodes, size],
   );
   const cursor = useRowCursor(tiles, "");
-  const [internalId, setInternalId] = useState(defaultActiveId);
-  if (internalId !== null && !tiles.some((tile) => tile.id === internalId)) setInternalId(null);
-  const requestedId = activeId === undefined ? internalId : activeId;
-  const active = tiles.find((tile) => tile.id === requestedId) ?? null;
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const plotRef = useRef<HTMLDivElement>(null);
-  const buttons = useRef(new Map<string, HTMLButtonElement>());
-  const tooltipId = useId();
-  const latest = useRef({ activeId, requestedId, onActiveChange });
-  useLayoutEffect(() => {
-    latest.current = { activeId, requestedId, onActiveChange };
+  const {
+    activeIndex,
+    setActive,
+    open: tooltipOpen,
+    setOpen: setTooltipOpen,
+    plotRef,
+    tooltipId,
+  } = useInspection({
+    ids: tiles.map((tile) => tile.id),
+    activeId,
+    defaultActiveId,
+    onActiveChange,
   });
-  const setActive = useCallback((id: string | null) => {
-    const current = latest.current;
-    if (current.activeId === undefined) setInternalId(id);
-    if (current.requestedId !== id) current.onActiveChange?.(id);
-  }, []);
+  const active = tiles[activeIndex] ?? null;
+  const buttons = useRef(new Map<string, HTMLButtonElement>());
   const registerButton = useCallback((id: string, node: HTMLButtonElement | null) => {
     if (node) buttons.current.set(id, node);
     else buttons.current.delete(id);

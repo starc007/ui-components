@@ -17,7 +17,7 @@ export function PriceTargetFanHeader({ children, className }: { children?: React
             format={(v) => (v / 100).toFixed(2)}
             prefix="$"
             duration={0.5}
-            className="font-mono text-2xl font-semibold tabular-nums tracking-tight text-foreground"
+            className="font-mono text-2xl font-medium tabular-nums tracking-tight text-foreground"
           />
           <span
             className="font-mono text-xs font-medium tabular-nums"

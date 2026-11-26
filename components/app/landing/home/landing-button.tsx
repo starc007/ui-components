@@ -23,7 +23,7 @@ export function LandingButton({
   return (
     <PressLink
       className={cn(
-        "inline-flex h-8 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-[13px] font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 [&_svg]:size-3.5",
+        "inline-flex h-8 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-xs font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 [&_svg]:size-3.5",
         VARIANTS[variant],
         className,
       )}

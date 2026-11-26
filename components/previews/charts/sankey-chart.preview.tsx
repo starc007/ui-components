@@ -12,7 +12,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/motion/tabs";
 const NODES: SankeyNode[] = [
   { id: "subscriptions", label: "Subscriptions", color: "#2563eb" },
   { id: "services", label: "Services", color: "#38bdf8" },
-  { id: "marketplace", label: "Marketplace", color: "#6366f1" },
+  { id: "marketplace", label: "Marketplace", color: "#06b6d4" },
   { id: "revenue", label: "Revenue", color: "#64748b" },
   { id: "cost", label: "Cost of revenue", color: "#e11d48" },
   { id: "gross", label: "Gross profit", color: "#0d9488" },
@@ -56,7 +56,7 @@ export function SankeyChartPreview() {
     <div className="w-full max-w-3xl space-y-4">
       <Tabs
         value={quarter}
-        onValueChange={(value) => setQuarter(value as keyof typeof QUARTERS)}
+        onValueChange={setQuarter}
         variant="segment"
       >
         <TabsList>

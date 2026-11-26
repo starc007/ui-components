@@ -1,4 +1,5 @@
 import { useTranslations } from "use-intl";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { Link } from "@/lib/navigation";
 import type { AgentGuide } from "@/lib/agent-guides";
 
@@ -20,13 +21,16 @@ export function ComponentGuide({
         id="composition"
         className="mt-12 scroll-mt-24 border-t border-border pt-8"
       >
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+        <AnchorHeading
+          section="composition"
+          headingClassName="text-xl font-medium tracking-tight text-foreground"
+        >
           {t("composition")}
-        </h2>
+        </AnchorHeading>
         <p className="mt-3 text-base leading-7 text-muted-foreground">
           {guide.composition.description}
         </p>
-        <pre className="mt-4 w-full overflow-x-auto rounded-xl bg-muted p-5 font-mono text-[13px] leading-6 text-foreground">
+        <pre className="mt-4 w-full overflow-x-auto rounded-2xl bg-muted p-5 font-mono text-[13px] leading-6 text-foreground">
           <code>{guide.composition.tree}</code>
         </pre>
         {guide.connections.length ? (
@@ -52,9 +56,12 @@ export function ComponentGuide({
         id="behavior"
         className="mt-12 scroll-mt-24 border-t border-border pt-8"
       >
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+        <AnchorHeading
+          section="behavior"
+          headingClassName="text-xl font-medium tracking-tight text-foreground"
+        >
           {t("howItWorks")}
-        </h2>
+        </AnchorHeading>
         <p className="mt-3 text-base leading-7 text-muted-foreground">
           {guide.introduction}
         </p>

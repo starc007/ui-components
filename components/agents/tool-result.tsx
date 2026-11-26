@@ -14,22 +14,18 @@ import {
   Wrench,
 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { type ReactNode, useId, useLayoutEffect, useRef } from "react";
 import {
   AgentCode,
   type AgentCodeLanguage,
 } from "@/components/agents/agent-code";
 import { AgentDisclosure } from "@/components/agents/agent-disclosure";
+import { IconSwap } from "@/components/agents/icon-swap";
 import { ActionSwapRollText } from "@/components/motion/action-swap-roll";
+import { Tooltip } from "@/components/motion/tooltip";
 import { SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
+import { useCopy } from "@/lib/hooks/use-copy";
+import { useStatusOpen } from "@/lib/hooks/use-status-open";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -50,30 +46,48 @@ export const toolResultMessages = {
 export type ToolResultMessages = typeof toolResultMessages;
 
 export interface ToolResultProps {
+  /** Tool name, shown in small monospace after the title. */
   tool: ReactNode;
+  /** Heading in the header row, rolls to the new text when it changes. */
   title: ReactNode;
   children: ReactNode;
+  /** Run state, sets the status badge and auto open or fold. Default: "running" */
   status?: ToolResultStatus;
+  /** Picks the header icon when no `icon` is given. Default: "custom" */
   kind?: ToolResultKind;
+  /** Short muted detail after the title, e.g. a duration or count. */
   meta?: ReactNode;
+  /** Replaces the icon chosen by `kind`. */
   icon?: ReactNode;
+  /** Whether the output panel is open, for controlled use. */
   open?: boolean;
+  /** Whether the output panel starts open when uncontrolled. Default: true */
   defaultOpen?: boolean;
+  /** Called with the new open state when the panel opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Folds the panel when the status leaves "running". Default: true */
   collapseOnComplete?: boolean;
+  /** Maximum height of the scrolling output area, in px. Default: 220 */
   maxHeight?: number;
+  /** Text the copy button writes to the clipboard. Shows the copy button. */
   copyText?: string;
+  /** Runs instead of the clipboard write when copy is pressed. Shows the copy button. */
   onCopy?: () => void | Promise<void>;
+  /** Called when the retry button is pressed. Shows the retry button. */
   onRetry?: () => void;
   /** Override any built-in string. */
   labels?: Partial<ToolResultMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
+  /** Classes merged onto the padded box around the output. */
   contentClassName?: string;
 }
 
 export interface ToolResultOutputProps {
   children: string;
+  /** Syntax highlighting language for the output. Default: "bash" */
   language?: AgentCodeLanguage;
+  /** Classes merged onto the code element. */
   className?: string;
 }
 
@@ -129,17 +143,20 @@ function ToolResultAction({
   const reduce = useReducedMotion() ?? false;
 
   return (
-    <motion.button
-      type="button"
-      aria-label={label}
-      title={label}
-      onClick={onClick}
-      whileTap={reduce ? undefined : { scale: 0.9 }}
-      transition={SPRING_PRESS}
-      className="grid size-7 place-items-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      {children}
-    </motion.button>
+    <Tooltip content={label} side="top">
+      <motion.button
+        type="button"
+        aria-label={label}
+        onClick={onClick}
+        whileTap={reduce ? undefined : { scale: 0.95 }}
+        transition={SPRING_PRESS}
+        // A foreground tint: the output panel is already muted, so a muted
+        // hover would not show.
+        className="grid size-7 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        {children}
+      </motion.button>
+    </Tooltip>
   );
 }
 
@@ -186,46 +203,25 @@ export function ToolResult({
   const triggerId = `${baseId}-trigger`;
   const contentId = `${baseId}-content`;
   const viewportRef = useRef<HTMLDivElement>(null);
-  const previousStatus = useRef(status);
-  const copyTimer = useRef<number | undefined>(undefined);
-  const [copied, setCopied] = useState(false);
-  const [internalOpen, setInternalOpen] = useState(defaultOpen);
-  const currentOpen = open ?? internalOpen;
+  const { copied, copy: handleCopy } = useCopy({ text: copyText, onCopy });
+  // Opens when the tool starts running; folds when it stops, if asked to.
+  const [currentOpen, setOpen] = useStatusOpen({
+    status,
+    open,
+    defaultOpen,
+    onOpenChange,
+    decide: (previous, next) => {
+      if (previous !== "running" && next === "running") return true;
+      if (previous === "running" && next !== "running" && collapseOnComplete) return false;
+      return undefined;
+    },
+  });
   const running = status === "running";
   const canCopy = Boolean(copyText || onCopy);
   const titleKey = getSwapKey(title, status);
   const metaKey = getSwapKey(meta, `${status}-meta`);
   const toolKey = getSwapKey(tool, `${status}-tool`);
   const statusLabel = t(status);
-
-  const setOpen = useCallback(
-    (next: boolean) => {
-      if (open === undefined) setInternalOpen(next);
-      onOpenChange?.(next);
-    },
-    [onOpenChange, open],
-  );
-
-  useEffect(() => {
-    if (previousStatus.current !== "running" && status === "running") {
-      setOpen(true);
-    }
-    if (
-      previousStatus.current === "running" &&
-      status !== "running" &&
-      collapseOnComplete
-    ) {
-      setOpen(false);
-    }
-    previousStatus.current = status;
-  }, [collapseOnComplete, setOpen, status]);
-
-  useEffect(
-    () => () => {
-      if (copyTimer.current) window.clearTimeout(copyTimer.current);
-    },
-    [],
-  );
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
@@ -244,15 +240,6 @@ export function ToolResult({
     return () => cancelAnimationFrame(frame);
   });
 
-  const handleCopy = useCallback(async () => {
-    if (onCopy) await onCopy();
-    else if (copyText) await navigator.clipboard?.writeText(copyText);
-
-    setCopied(true);
-    if (copyTimer.current) window.clearTimeout(copyTimer.current);
-    copyTimer.current = window.setTimeout(() => setCopied(false), 1600);
-  }, [copyText, onCopy]);
-
   return (
     <div
       data-state={status}
@@ -265,7 +252,7 @@ export function ToolResult({
         aria-expanded={currentOpen}
         aria-controls={contentId}
         onClick={() => setOpen(!currentOpen)}
-        className="group flex min-h-9 w-full items-center gap-2 rounded-md py-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="group flex min-h-9 w-full items-center gap-2 rounded-full py-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <span
           aria-hidden="true"
@@ -298,7 +285,9 @@ export function ToolResult({
             getStatusClass(status),
           )}
         >
-          <StatusIcon status={status} reduce={reduce} />
+          <IconSwap id={status}>
+            <StatusIcon status={status} reduce={reduce} />
+          </IconSwap>
           <ActionSwapRollText value={status}>{statusLabel}</ActionSwapRollText>
         </span>
         <motion.span
@@ -336,11 +325,13 @@ export function ToolResult({
                   label={copied ? t("copied") : t("copy")}
                   onClick={handleCopy}
                 >
-                  {copied ? (
-                    <Check className="size-3.5" />
-                  ) : (
-                    <Copy className="size-3.5" />
-                  )}
+                  <IconSwap id={copied ? "copied" : "copy"}>
+                    {copied ? (
+                      <Check className="size-3.5" />
+                    ) : (
+                      <Copy className="size-3.5" />
+                    )}
+                  </IconSwap>
                 </ToolResultAction>
               ) : null}
               {onRetry ? (
@@ -348,11 +339,6 @@ export function ToolResult({
                   <RotateCcw className="size-3.5" />
                 </ToolResultAction>
               ) : null}
-              <span className="ml-auto text-[11px] text-muted-foreground/55">
-                <ActionSwapRollText value={status}>
-                  {statusLabel}
-                </ActionSwapRollText>
-              </span>
               </div>
             ) : null}
           </div>

@@ -66,9 +66,13 @@ const VARIANT_ICON = {
 };
 
 export interface AlertProps extends Omit<HTMLMotionProps<"div">, "initial" | "animate" | "exit" | "layout" | "transition" | "role"> {
+  /** Color and icon tone. Default: "default" */
   variant?: AlertVariant;
+  /** Whether the alert shows, for controlled use. */
   open?: boolean;
+  /** Whether the alert starts shown when uncontrolled. Default: true */
   defaultOpen?: boolean;
+  /** Called with the new state when the alert shows or is dismissed. */
   onOpenChange?: (open: boolean) => void;
   /** Focus this element when closing hides the currently focused alert control. */
   returnFocusRef?: RefObject<HTMLElement | null>;
@@ -158,7 +162,7 @@ export function Alert({
                 layout={!reduce}
                 transition={{ opacity: { duration: 0.18, ease: EASE_OUT }, transform: { duration: 0.2, ease: EASE_OUT }, layout: SPRING_LAYOUT }}
                 style={{ ...style, ...gate.style, originY: 0, transitionTimingFunction: EASE_OUT_CSS }}
-                className={cn("relative w-full rounded-xl p-4 text-sm transition-colors duration-200", VARIANT_CLASS[variant], className)}
+                className={cn("relative w-full rounded-2xl p-4 text-sm transition-colors duration-200", VARIANT_CLASS[variant], className)}
               >
                 <motion.div
                   layout={reduce ? false : "position"}
@@ -239,7 +243,7 @@ export function AlertClose({ className, children, onClick, ...props }: AlertClos
       layout={reduce ? false : "position"}
       transition={SPRING_PRESS}
       whileTap={reduce ? undefined : { scale: 0.94 }}
-      className={cn("-m-1.5 inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50", className)}
+      className={cn("-m-1.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50", className)}
       onClick={(event) => {
         onClick?.(event);
         if (!event.defaultPrevented) dismiss();

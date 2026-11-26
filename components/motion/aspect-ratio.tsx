@@ -53,6 +53,7 @@ export function AspectRatio({
 
 export interface AspectRatioImageProps
   extends Omit<HTMLMotionProps<"img">, "layout" | "layoutDependency" | "width" | "height"> {
+  /** Describes the image for screen readers. Pass "" when it is decorative. */
   alt: string;
   /** Intrinsic width in pixels, used to reserve the image's cover crop. */
   width: number;
@@ -79,7 +80,6 @@ export function AspectRatioImage({
     <div className="absolute inset-0 grid grid-cols-1 grid-rows-1 place-items-center">
       {/* The image box keeps its intrinsic ratio at both endpoints. Its layout
           projection therefore scales uniformly while the frame reshapes. */}
-      {/* biome-ignore lint/performance/noImgElement: Copy-paste registry components work outside Next.js. */}
       <motion.img
         {...props}
         width={width}

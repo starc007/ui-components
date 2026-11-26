@@ -17,6 +17,7 @@ export interface RulerSliderProps extends SliderOptions {
   majorEvery?: number;
   /** Unit shown next to the value. */
   unit?: string;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -185,7 +186,7 @@ export function RulerSlider({
                 )}
               />
               {tick.major ? (
-                <span className="absolute bottom-0 text-[10px] tabular-nums text-muted-foreground">
+                <span className="absolute bottom-0 text-[11px] tabular-nums text-muted-foreground">
                   {tick.value}
                 </span>
               ) : null}
@@ -195,7 +196,7 @@ export function RulerSlider({
 
         {/* needle — the read head the scale moves under */}
         <div className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2">
-          <span className="block h-9 w-[3px] rounded-full bg-foreground" />
+          <span className="block h-9 w-[3px] rounded-full bg-primary" />
         </div>
       </div>
     </div>

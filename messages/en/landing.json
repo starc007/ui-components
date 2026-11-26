@@ -1,37 +1,64 @@
 {
   "hero": {
-    "headline": "Animated components for <react>React</react> and <native>React Native</native>",
+    "headline": "Animated components for React and React Native",
     "subtitle": "Copy-paste components built with Framer Motion and Tailwind CSS. Install one with the shadcn CLI and the source is yours.",
     "browseComponents": "Browse components",
     "explorePro": "Explore Pro",
     "opensInNewTab": "(opens in a new tab)",
     "repoOnGitHub": "{name} on GitHub",
-    "libraryCount": "<num>{count}</num> <muted>{library}</muted><sr> components</sr>"
+    "libraryCount": "<num>{count}</num> <muted>{library}</muted><sr> components</sr>",
+    "categoriesLabel": "Browse by category"
   },
   "home": {
-    "installHint": "One command. The source is yours.",
-    "stats": {
-      "web": "React components",
-      "native": "React Native components",
-      "sections": "Library sections",
-      "license": "Free for commercial use"
-    },
+    "worksWith": "Works with",
     "sponsoredBy": "Sponsored by",
-    "newLabel": "New",
-    "newTitle": "Recently launched",
-    "changelog": "Changelog",
-    "exploreLabel": "Explore",
-    "exploreTitle": "Everything in the library",
-    "sections": "Library sections",
-    "allInSection": "All {count} in {name}"
+    "wall": {
+      "title": "Play with it.",
+      "titleMuted": "Every tile is the real component, running live.",
+      "browseAll": "Browse all components",
+      "filterLabel": "Filter by interaction",
+      "filters": {
+        "all": "All",
+        "hover": "Hover",
+        "press": "Press",
+        "drag": "Drag",
+        "type": "Type",
+        "loading": "Loading",
+        "sound": "Sound"
+      }
+    }
   },
   "card": {
     "view": "View {name}"
   },
+  "agents": {
+    "title": "Built for agents.",
+    "titleMuted": "Your coding agent can find, read and install any beUI component.",
+    "guide": "Agent guide",
+    "mcp": {
+      "title": "MCP server",
+      "description": "Claude Code, Codex and Cursor search the library and pull the install command themselves.",
+      "prompt": "Add a toast stack that swipes away",
+      "reply": "Added Animated Toast Stack in components/motion. It stacks new toasts and dismisses them on swipe."
+    },
+    "cli": {
+      "title": "One command",
+      "description": "Every component installs through the shadcn registry, with its helpers."
+    },
+    "skill": {
+      "title": "Agent Skill",
+      "description": "Teach your agent beUI's motion rules: tokens, springs and reduced motion."
+    },
+    "docs": {
+      "title": "Docs your agent can read",
+      "description": "Every page is Markdown too. Copy it, or open it in Claude, ChatGPT or v0.",
+      "copyPage": "Copy Page",
+      "openIn": "Open in {app}"
+    }
+  },
   "native": {
-    "eyebrow": "beUI Native",
-    "title": "Same motion, on React Native",
-    "description": "{count} components rebuilt for touch with Reanimated, Gesture Handler and Uniwind.",
+    "title": "Same motion, on React Native.",
+    "titleMuted": "{count} components rebuilt for touch with Reanimated, Gesture Handler and Uniwind.",
     "browse": "Browse native components",
     "playClips": "Play clips",
     "pauseClips": "Pause clips"
@@ -43,33 +70,21 @@
     "verified": "Verified account",
     "opensPost": "(opens the post on X in a new tab)"
   },
-  "plans": {
-    "label": "Free and Pro",
-    "title": "Start free. Go further with Pro.",
-    "caption": "What beUI and beUI Pro include",
-    "feature": "Feature",
-    "free": "Free",
-    "lifetime": "Lifetime",
-    "included": "Included",
-    "notIncluded": "Not included",
-    "browse": "Browse",
-    "getPro": "Get Pro",
-    "rows": {
-      "components": "Components, blocks, charts and AI interfaces",
-      "registry": "shadcn registry and copy-paste source",
-      "native": "React Native components (beUI Native)",
-      "license": "MIT license, commercial use",
-      "blocks": "366+ premium blocks and animated components",
-      "mobile": "70+ React Native blocks and screens (Pro Mobile)",
-      "templates": "Full landing-page templates (Lifetime)",
-      "illustrations": "Animated illustrations (Lifetime)",
-      "agents": "Agent Skill, MCP and one-command installs",
-      "projects": "Unlimited personal and client projects"
-    }
+  "pro": {
+    "title": "Go further with Pro.",
+    "titleMuted": "Premium blocks, full landing templates and React Native screens, for one lifetime price.",
+    "features": {
+      "blocks": "366+ premium blocks",
+      "mobile": "70+ React Native screens",
+      "templates": "Full landing templates",
+      "illustrations": "Animated illustrations"
+    },
+    "price": "{price} lifetime",
+    "explore": "Explore beUI Pro"
   },
   "faq": {
-    "eyebrow": "FAQ",
-    "title": "A few things to know",
+    "title": "A few things to know.",
+    "titleMuted": "Short answers to what people ask first.",
     "free": {
       "question": "Is beUI free for commercial projects?",
       "answer": "Yes. The public beUI library is MIT licensed, including commercial use and modification. Keep the copyright and license notice in copies or substantial portions of the source. <link>Read the license</link>. beUI Pro has a separate paid license."
@@ -78,17 +93,9 @@
       "question": "How do I install a component?",
       "answer": "Open a component page and copy its shadcn CLI command, such as <code>{command}</code>. You can also use npm, pnpm, or yarn, or copy the source from the Manual tab."
     },
-    "stack": {
-      "question": "What does my project need?",
-      "answer": "The components are built for React 19, Tailwind CSS 4, and Motion. Individual components may use additional dependencies listed on their pages. Start with the <link>theme setup guide</link> to add the shared CSS tokens."
-    },
     "reactNative": {
       "question": "Does beUI work with React Native?",
       "answer": "Yes. beUI Native brings beUI's components to Expo and bare React Native apps, built with Reanimated, Gesture Handler, and Uniwind. After the <setup>one-time setup</setup>, add one with <code>{command}</code>. Every <components>React Native component</components> page has a recording to watch it in motion first."
-    },
-    "customize": {
-      "question": "Can I change the design and animations?",
-      "answer": "Yes. The source lives in your project. You can change the styles, motion, and behavior directly, and use your own theme tokens to match your product."
     },
     "pro": {
       "question": "Do I need Pro to use the free components?",
@@ -98,8 +105,15 @@
   "contact": {
     "eyebrow": "Work with me",
     "title": "Need components built for your product?",
-    "description": "Custom motion components and frontend systems, built to spec. Book a call or drop a line, whichever is easier.",
+    "description": "Custom motion and frontend systems, built to spec.",
     "bookCall": "Book a call",
-    "email": "Email me"
+    "email": "Email me",
+    "servicesLabel": "What I build",
+    "services": {
+      "components": "Custom motion components",
+      "systems": "Design systems in code",
+      "landing": "Landing pages that move",
+      "native": "React Native interfaces"
+    }
   }
 }

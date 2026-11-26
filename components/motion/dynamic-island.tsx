@@ -135,6 +135,7 @@ export interface DynamicIslandProps {
   compact?: ReactNode;
   /** DynamicIslandView elements. */
   children?: ReactNode;
+  /** Classes merged onto the island shell. */
   className?: string;
 }
 
@@ -196,6 +197,7 @@ export interface DynamicIslandViewProps {
   /** Matches the parent `view` prop when active. */
   id: string;
   children: ReactNode;
+  /** Classes merged onto the view's content wrapper. Default padding: px-6 py-4 */
   className?: string;
 }
 

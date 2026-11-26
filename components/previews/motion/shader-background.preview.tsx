@@ -291,7 +291,7 @@ export function ShaderBackgroundPreview() {
         />
       </div>
       <Tabs value={active} onValueChange={setActive}>
-        <TabsList className="flex-wrap justify-center gap-2 rounded-2xl">
+        <TabsList className="flex-wrap justify-center gap-2 rounded-3xl">
           {VARIANTS.map((v) => (
             <TabsTrigger
               key={v.id}

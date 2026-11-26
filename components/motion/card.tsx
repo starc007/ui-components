@@ -155,7 +155,7 @@ export function CardTitle({ as: Tag = "div", className, ...props }: CardTitlePro
     <Tag
       {...props}
       data-slot="card-title"
-      className={cn("text-[15px] leading-snug font-semibold text-foreground", className)}
+      className={cn("text-base leading-snug font-medium text-foreground", className)}
     />
   );
 }

@@ -110,7 +110,7 @@ export function CrashShell({
         closeResult();
       }}
     >
-      {/* 24px card corners = 12px stage and control corners + 12px padding. */}
+      {/* 24px card corners = 12px stage corners + 12px padding. */}
       <div className="flex flex-col gap-3 rounded-3xl border border-border p-3">
         <div className="flex h-8 items-center gap-2 pl-1">
           <HistoryIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" strokeWidth={2} />
@@ -373,7 +373,7 @@ function CrashControls({ game, mainRef }: { game: CrashGame; mainRef: Ref<HTMLBu
 
       <Button
         ref={mainRef}
-        className="relative h-10 flex-1 overflow-hidden rounded-xl tabular-nums aria-disabled:cursor-wait aria-disabled:opacity-60 aria-disabled:hover:bg-primary"
+        className="relative h-10 flex-1 overflow-hidden rounded-full tabular-nums aria-disabled:cursor-wait aria-disabled:opacity-60 aria-disabled:hover:bg-primary"
         // aria-disabled, not disabled: the button keeps keyboard focus while the
         // crash point is on its way.
         aria-disabled={game.actionBusy || undefined}

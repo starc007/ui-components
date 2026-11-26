@@ -49,11 +49,13 @@ export interface SmoothScrollProps {
   lerp?: number;
   /** Wheel / programmatic ease duration in seconds. */
   duration?: number;
+  /** Scroll axis that gets smoothed. Default: "vertical" */
   orientation?: "vertical" | "horizontal";
   /** Wheel scroll speed multiplier. */
   wheelMultiplier?: number;
   /** Smooth touch scrolling. Off by default — native momentum is good on mobile. */
   touch?: boolean;
+  /** Classes merged onto the wrapper element. */
   className?: string;
 }
 

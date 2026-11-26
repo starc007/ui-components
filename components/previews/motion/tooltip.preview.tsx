@@ -21,7 +21,7 @@ export function TooltipPreview() {
               type="button"
               className={cn(
                 position,
-                "inline-flex h-10 w-20 items-center justify-center gap-1.5 rounded-lg border border-border bg-card text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
+                "inline-flex h-10 w-20 items-center justify-center gap-1.5 rounded-full border border-border bg-card text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
               )}
             >
               <Icon aria-hidden="true" className="size-3.5 text-muted-foreground" />

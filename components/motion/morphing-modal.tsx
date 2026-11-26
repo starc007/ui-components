@@ -14,9 +14,11 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_PANEL } from "@/lib/ease";
-import { focusablesIn, useFocusTrap } from "@/lib/hooks/use-focus-trap";
+import { focusablesIn } from "@/lib/focusable";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 import { useMessages } from "@/lib/i18n";
 import { PresenceGate } from "@/lib/presence-gate";
+import { useScrollLock } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
 
 /** English defaults. Override per instance with `labels`, or app-wide with `LocaleProvider`. */
@@ -29,6 +31,7 @@ export type MorphingModalMessages = typeof morphingModalMessages;
 export interface MorphingModalProps {
   /** Which view is currently shown. `null` closes the modal. */
   viewId: string | null;
+  /** Called on Escape or a backdrop press. Set `viewId` to null to close. */
   onClose: () => void;
   children: ReactNode;
   /** "bottom" anchors to the viewport bottom (mobile-like). "center" centers vertically. */
@@ -38,6 +41,7 @@ export interface MorphingModalProps {
    * first heading in the current view.
    */
   ariaLabel?: string;
+  /** Classes merged onto the dialog panel. */
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<MorphingModalMessages>;
@@ -96,14 +100,7 @@ export function MorphingModal({
   const enterY = reduce ? 0 : placement === "bottom" ? 40 : 20;
   const enterScale = reduce ? 1 : 0.97;
 
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
+  useScrollLock(open);
 
   // Mounted only while open, and while open the chrome is two fixed siblings
   // rather than one wrapper: the backdrop spans the viewport edges but carries
@@ -125,11 +122,12 @@ export function MorphingModal({
               tabIndex={-1}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              // The scrim clears faster than it settles, like the panel.
+              exit={{ opacity: 0, transition: { duration: 0.15, ease: EASE_OUT } }}
               transition={{ duration: 0.2, ease: EASE_OUT }}
               {...gate}
               onClick={onClose}
-              className="pointer-events-auto fixed inset-0 z-[80] bg-background/5 [backdrop-filter:blur(14px)_saturate(140%)] [-webkit-backdrop-filter:blur(14px)_saturate(140%)]"
+              className="pointer-events-auto fixed inset-0 z-[80] bg-background/5 [backdrop-filter:blur(10px)_saturate(140%)] [-webkit-backdrop-filter:blur(10px)_saturate(140%)]"
             />
           )}
         </PresenceGate>
@@ -166,7 +164,7 @@ export function MorphingModal({
                 transition={SPRING_PANEL}
                 {...gate}
                 className={cn(
-                  "pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-background shadow-2xl outline-none will-change-transform",
+                  "pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-background shadow-2xl outline-none will-change-transform",
                   className,
                 )}
               >

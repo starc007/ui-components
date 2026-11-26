@@ -30,11 +30,19 @@ export function PreviewFit({
   hover,
   overlay,
   maxScale = 0.82,
+  interactive = false,
+  stageWidth = STAGE_WIDTH,
+  className,
 }: {
   children: ReactNode;
   hover: boolean;
   overlay?: ReactNode;
   maxScale?: number;
+  /** Let the preview take pointer input, for tiles meant to be played with. */
+  interactive?: boolean;
+  /** A narrower stage for small previews, so they scale up instead of down. */
+  stageWidth?: number;
+  className?: string;
 }) {
   const outerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -89,18 +97,24 @@ export function PreviewFit({
     return () => ro.disconnect();
   }, []);
 
-  const scale = Math.min(maxScale, fitScale) * (hover ? HOVER_LIFT : 1);
+  // A playable preview never zooms under the pointer: it would move the
+  // target while someone is aiming at it.
+  const scale = Math.min(maxScale, fitScale) * (hover && !interactive ? HOVER_LIFT : 1);
 
   return (
     <div
       ref={outerRef}
-      className="relative m-2 mb-0 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-2xl bg-background p-3 contain-[paint]"
+      className={cn(
+        "relative m-2 mb-0 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-2xl bg-background p-3 contain-[paint]",
+        className,
+      )}
     >
       <div
         ref={stageRef}
-        style={{ width: STAGE_WIDTH, transform: `scale(${scale})` }}
+        style={{ width: stageWidth, transform: `scale(${scale})` }}
         className={cn(
-          "pointer-events-none flex origin-center shrink-0 items-center justify-center [&_*]:!cursor-default",
+          "flex origin-center shrink-0 items-center justify-center",
+          !interactive && "pointer-events-none [&_*]:!cursor-default",
           measured
             ? "transition-transform duration-300 ease-out"
             : "invisible",

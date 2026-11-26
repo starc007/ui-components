@@ -1,10 +1,11 @@
 import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
-import { ArrowRight, ChevronRight, Globe } from "lucide-react";
+import { ArrowRight, Globe } from "lucide-react";
 import { useTranslations } from "use-intl";
 import { JsonLd, type JsonLdSchema } from "@/components/app/analytics/json-ld";
 import { ComponentCard } from "@/components/app/docs/component-card";
+import { AnchorHeading } from "@/components/app/docs/heading-anchor";
 import { InstallCommand } from "@/components/app/docs/install-command";
 import { NativePanel, type NativePanelCode } from "@/components/app/docs/native/native-panel";
 import {
@@ -13,7 +14,6 @@ import {
   parseNativeReadme,
 } from "@/components/app/docs/native/native-readme";
 import { PlatformSwitch } from "@/components/app/docs/native/platform-switch";
-import { ProBlocksSection } from "@/components/app/docs/pro-blocks-section";
 import { type RelatedItem, RelatedSection } from "@/components/app/docs/related-section";
 import { messages } from "@/i18n/messages";
 import { getTranslations } from "@/i18n/server";
@@ -24,7 +24,7 @@ import {
   TOP_LEVEL_CATEGORIES,
 } from "@/lib/component-paths";
 import { isComponentNew } from "@/lib/component-status";
-import type { Metadata } from "@/lib/head";
+import { pageMetadata } from "@/lib/head";
 import { highlight } from "@/lib/highlight";
 import { findNativeComponent, type NativeComponent, native, nativeInstallCommands } from "@/lib/native";
 import nativeSlugs from "@/lib/native/slugs.json";
@@ -76,10 +76,12 @@ export const getNativeIndexPage = createServerFn({ method: "GET" })
 
     const title = t("metaTitle");
     const description = t("metaDescription");
-    const image = ogImagePath("page", "react-native");
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path: NATIVE_PATH,
       title,
       description,
+      image: ogImagePath("page", "react-native"),
+      imageAlt: title,
       keywords: [
         "react native components",
         "animated react native components",
@@ -88,25 +90,8 @@ export const getNativeIndexPage = createServerFn({ method: "GET" })
         "reanimated components",
         "react native animation",
       ],
-      openGraph: {
-        title: `${title} · beUI`,
-        description,
-        url: NATIVE_PATH,
-        locale: "en_US",
-        siteName: "beUI",
-        images: [{ url: image, width: 1200, height: 630, alt: title }],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${title} · beUI`,
-        description,
-        images: [image],
-      },
-      alternates: {
-        canonical: NATIVE_PATH,
-        types: { "application/json": "/native/r" },
-      },
-    };
+      types: { "application/json": "/native/r" },
+    });
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([
         { name: "beUI", path: "/" },
@@ -127,10 +112,7 @@ export function NativeIndexPage({ data }: { data: NativeIndexPageData }) {
   return (
     <div>
       <JsonLd data={data.jsonLd} />
-      <nav aria-label={t("breadcrumb")} className="flex items-center gap-1.5 text-sm">
-        <span className="font-medium text-foreground">React Native</span>
-      </nav>
-      <h1 className="mt-4 text-3xl font-medium tracking-tight text-foreground">
+      <h1 className="text-3xl font-medium tracking-tight text-foreground">
         {t("heading")}
       </h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">{t("intro")}</p>
@@ -173,7 +155,6 @@ export function NativeIndexPage({ data }: { data: NativeIndexPageData }) {
             </div>
           </section>
         ) : null}
-        <ProBlocksSection pageKey="react-native" heading="mobile" />
         {data.groups.map((group) => (
           <section key={group.id} aria-labelledby={group.id}>
             <h2
@@ -263,10 +244,13 @@ export const getNativeComponentPage = createServerFn({ method: "GET" })
       160,
     );
     const path = nativeComponentPath(slug);
-    const image = ogImagePath("native", slug);
-    const metadata: Metadata = {
+    const metadata = pageMetadata({
+      path,
       title,
       description,
+      type: "article",
+      image: ogImagePath("native", slug),
+      imageAlt: t("ogAlt", { name: component.title }),
       keywords: [
         `react native ${component.title.toLowerCase()}`,
         `${component.title.toLowerCase()} component react native`,
@@ -275,28 +259,8 @@ export const getNativeComponentPage = createServerFn({ method: "GET" })
         "reanimated",
         "animated react native",
       ],
-      openGraph: {
-        title: `${title} · beUI`,
-        description,
-        url: path,
-        locale: "en_US",
-        type: "article",
-        siteName: "beUI",
-        images: [
-          { url: image, width: 1200, height: 630, alt: t("ogAlt", { name: component.title }) },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${title} · beUI`,
-        description,
-        images: [image],
-      },
-      alternates: {
-        canonical: path,
-        types: { "application/json": `/native/r/${slug}` },
-      },
-    };
+      types: { "application/json": `/native/r/${slug}` },
+    });
 
     const category = webCategoryOf(slug);
     // Related native components, picked like the web page's related ones.
@@ -366,20 +330,13 @@ export function NativeComponentPage({ data }: { data: NativeComponentPageData })
   return (
     <div>
       <JsonLd data={data.jsonLd} />
-      <nav aria-label={t("index.breadcrumb")} className="flex items-center gap-1.5 text-sm">
-        <Link
-          href={NATIVE_PATH}
-          className="text-muted-foreground transition-colors hover:text-foreground"
+      <div className="flex flex-wrap items-center gap-3">
+        <AnchorHeading
+          as="h1"
+          headingClassName="text-3xl font-medium tracking-tight text-foreground"
         >
-          React Native
-        </Link>
-        <ChevronRight aria-hidden="true" className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="font-medium text-foreground">{component.title}</span>
-      </nav>
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <h1 className="text-3xl font-medium tracking-tight text-foreground">
           {component.title}
-        </h1>
+        </AnchorHeading>
         <span className="mt-1 inline-flex items-center rounded-full border border-border px-2 py-0.5 text-xs font-medium text-muted-foreground">
           React Native
         </span>
@@ -399,7 +356,7 @@ export function NativeComponentPage({ data }: { data: NativeComponentPageData })
           aria-labelledby="native-docs-heading"
           className="mt-12 scroll-mt-24 border-t border-border pt-8"
         >
-          <h2 id="native-docs-heading" className="text-sm font-semibold text-foreground">
+          <h2 id="native-docs-heading" className="text-sm font-medium text-foreground">
             {t("component.documentation")}
           </h2>
           <div className="mt-4">

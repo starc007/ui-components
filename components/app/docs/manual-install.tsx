@@ -35,7 +35,7 @@ export function ManualInstall({ data }: { data: ManualInstallData }) {
 
       {dependencies ? (
         <section>
-          <h3 className="text-sm font-semibold text-foreground">
+          <h3 className="text-sm font-medium text-foreground">
             {t("dependencies")}
           </h3>
           <div className="mt-3">
@@ -46,7 +46,7 @@ export function ManualInstall({ data }: { data: ManualInstallData }) {
 
       {utilFiles.length > 0 ? (
         <section>
-          <h3 className="text-sm font-semibold text-foreground">
+          <h3 className="text-sm font-medium text-foreground">
             {t("utilFiles", { count: utilFiles.length })}
           </h3>
           <div className="mt-3 flex flex-col gap-4">
@@ -58,7 +58,7 @@ export function ManualInstall({ data }: { data: ManualInstallData }) {
       ) : null}
 
       <section>
-        <h3 className="text-sm font-semibold text-foreground">
+        <h3 className="text-sm font-medium text-foreground">
           {t("sourceCode")}
         </h3>
         <div className="mt-3 flex flex-col gap-4">

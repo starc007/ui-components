@@ -13,7 +13,7 @@ export function ColorSelectorPreview() {
       <ColorSelectorLabel>Accent</ColorSelectorLabel>
       <ColorSelectorList>
         <ColorSelectorItem value="blue" color="#3478f6" label="Blue" />
-        <ColorSelectorItem value="purple" color="#9270e8" label="Purple" />
+        <ColorSelectorItem value="cyan" color="#3fb1d8" label="Cyan" />
         <ColorSelectorItem value="pink" color="#e66aa4" label="Pink" />
         <ColorSelectorItem value="red" color="#e55656" label="Red" />
         <ColorSelectorItem value="orange" color="#ed9141" label="Orange" />

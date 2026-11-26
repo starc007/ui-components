@@ -99,6 +99,7 @@ export interface SlideGameProps {
   "aria-label"?: string;
   /** Overrides for the built-in text, e.g. for another language. */
   labels?: Partial<SlideGameMessages>;
+  /** Classes merged onto the root element. */
   className?: string;
 }
 
@@ -309,7 +310,7 @@ export function SlideGame({
               </label>
               <div
                 className={cn(
-                  "flex h-10 items-center gap-0.5 rounded-xl border bg-background pr-1 pl-3 transition-colors focus-within:ring-2 focus-within:ring-foreground/20",
+                  "flex h-10 items-center gap-0.5 rounded-full border bg-background pr-1 pl-3 transition-colors focus-within:ring-2 focus-within:ring-foreground/20",
                   noBet ? "border-rose-500/60" : "border-border hover:border-(--color-border-strong)",
                 )}
               >
@@ -332,7 +333,7 @@ export function SlideGame({
                   variant="ghost"
                   size="sm"
                   pressScale={0.96}
-                  className="h-8 rounded-lg px-2.5 tabular-nums"
+                  className="h-8 rounded-full px-2.5 tabular-nums"
                   onClick={() => scaleBet(0.5)}
                   disabled={busy}
                   aria-label={t("halveBet")}
@@ -343,7 +344,7 @@ export function SlideGame({
                   variant="ghost"
                   size="sm"
                   pressScale={0.96}
-                  className="h-8 rounded-lg px-2.5 tabular-nums"
+                  className="h-8 rounded-full px-2.5 tabular-nums"
                   onClick={() => scaleBet(2)}
                   disabled={busy}
                   aria-label={t("doubleBet")}
@@ -357,7 +358,7 @@ export function SlideGame({
                 {t("target")}
               </span>
               <Select value={String(target)} onValueChange={changeTarget} disabled={busy}>
-                <SelectTrigger className="h-10 rounded-xl tabular-nums">
+                <SelectTrigger className="h-10 rounded-full tabular-nums">
                   <span className="sr-only">{t("target")} </span>
                   {/* Options register after mount; the placeholder covers the server render. */}
                   <SelectValue placeholder={formatShort(target)} />
@@ -388,7 +389,7 @@ export function SlideGame({
 
           <Button
             className={cn(
-              "h-12 w-full rounded-xl text-base tabular-nums aria-disabled:opacity-60 aria-disabled:hover:bg-primary @min-[36rem]:mt-auto",
+              "h-12 w-full rounded-full text-base tabular-nums aria-disabled:opacity-60 aria-disabled:hover:bg-primary @min-[36rem]:mt-auto",
               busy ? "aria-disabled:cursor-wait" : "aria-disabled:cursor-not-allowed",
             )}
             // aria-disabled, not disabled: the button keeps keyboard focus through the round.
@@ -552,14 +553,14 @@ const INITIAL: ReelState = (() => {
   return { tiles, landed: CONTEXT, round: null, from: at, to: at, rest: at };
 })();
 
-// Card faces by value: slate under 2×, primary to 10×, amber to 100×, then
-// fuchsia; the history pills follow the same tiers. Cards are physical objects, so they keep their colours in both
+// Card faces by value: slate under 2×, green to 10×, amber to 100×, then
+// rose; the history pills follow the same tiers. Cards are physical objects, so they keep their colours in both
 // themes.
 const FACE = {
   cool: "bg-zinc-700 text-white",
-  warm: "bg-primary text-primary-foreground",
+  warm: "bg-emerald-600 text-white",
   hot: "bg-amber-400 text-amber-950",
-  jackpot: "bg-fuchsia-600 text-white",
+  jackpot: "bg-rose-600 text-white",
 } as const;
 const face = (multiplier: number) => (multiplier >= 100 ? "jackpot" : heat(multiplier));
 
@@ -744,7 +745,7 @@ const Card = memo(function Card({
         transition={LOCK}
       >
         {/* Four or more whole digits (1000×, 12.5K×) drop a size to stay inside the card. */}
-        <span className={cn("leading-none font-bold tracking-tight", whole.length >= 4 ? "text-base" : "text-xl")}>
+        <span className={cn("leading-none font-semibold tracking-tight", whole.length >= 4 ? "text-base" : "text-xl")}>
           {whole}
           {decimals ? <span className="text-[0.7em]">.{decimals}</span> : null}
           <span className="ml-0.5 text-[0.7em] opacity-70">×</span>

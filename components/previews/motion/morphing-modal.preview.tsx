@@ -40,7 +40,7 @@ export function MorphingModalPreview() {
 function Header({ title, onClose }: { title: string; onClose: () => void }) {
   return (
     <div className="mb-4 flex items-center justify-between">
-      <h2 className="text-base font-semibold text-foreground">{title}</h2>
+      <h2 className="text-base font-medium text-foreground">{title}</h2>
       <button
         type="button"
         onClick={onClose}
@@ -68,7 +68,7 @@ function Row({
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-colors press ${
+      className={`flex w-full items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-colors press ${
         destructive
           ? "bg-destructive/10 text-destructive hover:bg-destructive/15"
           : "bg-foreground/[0.04] text-foreground hover:bg-foreground/[0.08]"
@@ -115,7 +115,7 @@ function PrivateKey({ onBack }: { onBack: () => void }) {
           ✕
         </button>
       </div>
-      <h2 className="text-xl font-semibold tracking-tight text-foreground">Private Key</h2>
+      <h2 className="text-xl font-medium tracking-tight text-foreground">Private Key</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         Your Private Key is the key used to back up your wallet. Keep it secret and secure at all times.
       </p>
@@ -136,7 +136,7 @@ function PrivateKey({ onBack }: { onBack: () => void }) {
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-full bg-foreground text-sm font-medium text-background press"
+          className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-full bg-primary text-sm font-medium text-primary-foreground press"
         >
           <ScanFace className="h-4 w-4" />
           Reveal
@@ -160,13 +160,13 @@ function Recovery({ onBack }: { onBack: () => void }) {
           ✕
         </button>
       </div>
-      <h2 className="text-xl font-semibold tracking-tight text-foreground">Recovery Phrase</h2>
+      <h2 className="text-xl font-medium tracking-tight text-foreground">Recovery Phrase</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         12 words you can use to restore your wallet on any device. Write them down somewhere safe.
       </p>
       <div className="mt-4 grid grid-cols-3 gap-2">
         {["mountain", "river", "candle", "harbor", "amber", "violet", "spring", "ocean", "marble", "thunder", "willow", "crystal"].map((w, i) => (
-          <div key={w} className="rounded-lg border border-border bg-background/40 px-2 py-1.5 text-xs text-foreground">
+          <div key={w} className="rounded-full border border-border bg-background/40 px-2 py-1.5 text-xs text-foreground">
             <span className="mr-1 text-muted-foreground">{i + 1}.</span>
             {w}
           </div>
@@ -175,7 +175,7 @@ function Recovery({ onBack }: { onBack: () => void }) {
       <button
         type="button"
         onClick={onBack}
-        className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-full bg-foreground text-sm font-medium text-background press"
+        className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground press"
       >
         Done
       </button>

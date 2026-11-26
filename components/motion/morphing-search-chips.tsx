@@ -20,6 +20,7 @@ import {
   useState,
 } from "react";
 import { EASE_OUT, SPRING_LAYOUT, SPRING_SWAP } from "@/lib/ease";
+import { useControllable } from "@/lib/hooks/use-controllable";
 import { useDismiss } from "@/lib/hooks/use-dismiss";
 import { useOnOpen } from "@/lib/hooks/use-on-open";
 import { useRowCursor } from "@/lib/hooks/use-row-cursor";
@@ -93,15 +94,21 @@ type Side = "top" | "bottom";
 export interface MorphingSearchChipsProps {
   /** Active filters shown as chips inside the bar. */
   chips?: string[];
+  /** The initial chips when uncontrolled. Default: [] */
   defaultChips?: string[];
+  /** Called with the full list when a chip is added or removed. */
   onChipsChange?: (chips: string[]) => void;
   /** Text in the field. */
   query?: string;
+  /** The initial field text when uncontrolled. Default: "" */
   defaultQuery?: string;
+  /** Called with the new text when the field changes. */
   onQueryChange?: (query: string) => void;
   /** Recent searches, newest first. */
   recents?: string[];
+  /** The initial recent searches when uncontrolled. Default: [] */
   defaultRecents?: string[];
+  /** Called with the full list when a recent search is added or removed. */
   onRecentsChange?: (recents: string[]) => void;
   /** Persist uncontrolled recents in localStorage under this key. */
   storageKey?: string;
@@ -126,33 +133,26 @@ export interface MorphingSearchChipsProps {
   emptyState?: ReactNode;
   /** Which way the surface grows. "auto" grows up unless there is no room. Default "top". */
   side?: "top" | "bottom" | "auto";
+  /** Whether the suggestions panel is open, for controlled use. */
   open?: boolean;
+  /** Whether the panel starts open when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new open state when the panel opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Dims the bar and blocks typing, chip removal and the panel. Default: false */
   disabled?: boolean;
   /** Submit each chip with a form under this name. */
   name?: string;
+  /** Hint text in the empty field. Default: "Search" */
   placeholder?: string;
   /** Accessible name for the search field. */
   label?: string;
   /** Trailing controls inside the bar, such as filter buttons. */
   actions?: ReactNode;
+  /** Classes merged onto the root element. */
   className?: string;
   /** Override any built-in string. */
   labels?: Partial<MorphingSearchChipsMessages>;
-}
-
-function useControllable<T>(value: T | undefined, initial: T, onChange?: (next: T) => void) {
-  const [internal, setInternal] = useState(initial);
-  const current = value ?? internal;
-  const set = useCallback(
-    (next: T) => {
-      if (value === undefined) setInternal(next);
-      onChange?.(next);
-    },
-    [value, onChange],
-  );
-  return [current, set, setInternal] as const;
 }
 
 const sameTerm = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
@@ -164,7 +164,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
   return (
     <>
       {text.slice(0, at)}
-      <span className="font-semibold">{text.slice(at, at + query.length)}</span>
+      <span className="font-medium">{text.slice(at, at + query.length)}</span>
       {text.slice(at + query.length)}
     </>
   );
@@ -504,7 +504,7 @@ export function MorphingSearchChips({
               announce(t("recentsCleared"));
               inputRef.current?.focus();
             }}
-            className="rounded-md px-1.5 py-0.5 text-xs text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded-full px-2 py-0.5 text-xs text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
           >
             {t("clear")}
           </button>
@@ -531,13 +531,13 @@ export function MorphingSearchChips({
                 onPointerDown={(event) => event.preventDefault()}
                 onPointerMove={() => moveTo(row.id)}
                 onClick={() => addChip(row.label)}
-                className="relative flex h-11 cursor-pointer items-center gap-3 rounded-2xl px-3 text-sm text-foreground"
+                className="relative flex h-10 cursor-pointer items-center gap-3 rounded-full px-3 text-sm text-foreground"
               >
                 {selected ? (
                   <motion.span
                     layoutId={`${id}-active`}
                     transition={layout}
-                    className="absolute inset-0 rounded-2xl bg-foreground/[0.06]"
+                    className="absolute inset-0 rounded-full bg-foreground/[0.06]"
                   />
                 ) : null}
                 {row.kind === "recent" ? (
@@ -570,7 +570,7 @@ export function MorphingSearchChips({
         <div className="px-3 pb-2 pt-1 text-sm text-muted-foreground">{emptyState}</div>
       ) : null}
       {loading ? (
-        <div className="flex h-11 items-center gap-3 px-3 text-sm text-muted-foreground">
+        <div className="flex h-10 items-center gap-3 px-3 text-sm text-muted-foreground">
           <LoaderCircle aria-hidden="true" className="size-4 motion-safe:animate-spin" />
           {t("searching")}
         </div>

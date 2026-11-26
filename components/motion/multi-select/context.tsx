@@ -5,7 +5,6 @@ import {
   createContext,
   type MutableRefObject,
   type ReactNode,
-  type Ref,
   useCallback,
   useContext,
   useEffect,
@@ -14,7 +13,13 @@ import {
   useRef,
   useState,
 } from "react";
-import { useActiveOption } from "@/components/motion/combobox/use-active-option";
+import {
+  defaultOptionFilter,
+  type OptionFilter,
+  type RegisteredItem,
+  useFilteredOptions,
+} from "@/components/motion/combobox/use-filtered-options";
+import { type DismissReason, useDismiss } from "@/lib/hooks/use-dismiss";
 import { useMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
@@ -23,34 +28,9 @@ import {
   multiSelectMessages,
 } from "./messages";
 
-export type RegisteredMultiSelectItem = {
-  value: string;
-  label: string;
-  keywords: string[];
-  disabled: boolean;
-  groupId: string | null;
-  id: string;
-  ref: MutableRefObject<HTMLButtonElement | null>;
-};
+export type RegisteredMultiSelectItem = RegisteredItem;
 
-export type MultiSelectFilter = (
-  value: string,
-  query: string,
-  keywords: string[],
-) => boolean;
-
-const defaultFilter: MultiSelectFilter = (value, query, keywords) => {
-  const needle = query.trim().toLocaleLowerCase();
-  if (!needle) return true;
-
-  const haystack = [value, ...keywords].join(" ").toLocaleLowerCase();
-  let queryIndex = 0;
-  for (const character of haystack) {
-    if (character === needle[queryIndex]) queryIndex += 1;
-    if (queryIndex === needle.length) return true;
-  }
-  return false;
-};
+export type MultiSelectFilter = OptionFilter;
 
 export type MultiSelectContextValue = {
   open: boolean;
@@ -95,30 +75,32 @@ export function useMultiSelectContext(component: string) {
   return context;
 }
 
-export function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") ref(node);
-      else if (ref && typeof ref === "object") {
-        (ref as MutableRefObject<T | null>).current = node;
-      }
-    }
-  };
-}
 
 export interface MultiSelectProps {
   children: ReactNode;
+  /** The selected values, for controlled use. */
   value?: string[];
+  /** The initial selected values when uncontrolled. Default: [] */
   defaultValue?: string[];
+  /** Called with the new list of values when an option is added or removed. */
   onValueChange?: (value: string[]) => void;
+  /** Whether the list is open, for controlled use. */
   open?: boolean;
+  /** Whether the list starts open when uncontrolled. Default: false */
   defaultOpen?: boolean;
+  /** Called with the new state when the list opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** The search text, for controlled use. */
   query?: string;
+  /** The initial search text when uncontrolled. Default: "" */
   defaultQuery?: string;
+  /** Called with the new text when the search input changes. */
   onQueryChange?: (query: string) => void;
+  /** Decides which options match the search text. */
   filter?: MultiSelectFilter;
+  /** Blocks opening and changing the selection. Default: false */
   disabled?: boolean;
+  /** Classes merged onto the root element. */
   className?: string;
   /** Override any built-in string. `{label}` fills the option label. */
   labels?: Partial<MultiSelectMessages>;
@@ -135,7 +117,7 @@ export function MultiSelect({
   query: controlledQuery,
   defaultQuery = "",
   onQueryChange,
-  filter = defaultFilter,
+  filter = defaultOptionFilter,
   disabled = false,
   className,
   labels,
@@ -150,9 +132,6 @@ export function MultiSelect({
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [internalQuery, setInternalQuery] = useState(defaultQuery);
-  const [items, setItems] = useState<Map<string, RegisteredMultiSelectItem>>(
-    new Map(),
-  );
 
   const valueControlled = controlledValue !== undefined;
   const openControlled = controlledOpen !== undefined;
@@ -186,64 +165,19 @@ export function MultiSelect({
     [disabled, onOpenChange, open, openControlled, updateQuery],
   );
 
-  const registerItem = useCallback((item: RegisteredMultiSelectItem) => {
-    setItems((current) => {
-      const existing = current.get(item.value);
-      if (
-        existing?.label === item.label &&
-        existing.disabled === item.disabled &&
-        existing.id === item.id &&
-        existing.ref === item.ref &&
-        existing.groupId === item.groupId &&
-        existing.keywords.join("\u0000") === item.keywords.join("\u0000")
-      ) {
-        return current;
-      }
-      const next = new Map(current);
-      next.set(item.value, item);
-      return next;
-    });
-  }, []);
-
-  const unregisterItem = useCallback((itemValue: string) => {
-    setItems((current) => {
-      if (!current.has(itemValue)) return current;
-      const next = new Map(current);
-      next.delete(itemValue);
-      return next;
-    });
-  }, []);
-
-  const [openQuery, setOpenQuery] = useState(query);
-  if (open && openQuery !== query) setOpenQuery(query);
-  const listQuery = open ? query : openQuery;
-
-  const visibleItems = useMemo(
-    () =>
-      Array.from(items.values()).filter((item) =>
-        filter(item.value, listQuery, [item.label, ...item.keywords]),
-      ),
-    [filter, items, listQuery],
-  );
-  const enabledVisibleItems = useMemo(
-    () => visibleItems.filter((item) => !item.disabled),
-    [visibleItems],
-  );
-  const visibleValues = useMemo(
-    () => new Set(visibleItems.map((item) => item.value)),
-    [visibleItems],
-  );
-  const visibleGroupIds = useMemo(
-    () => new Set(visibleItems.map((item) => item.groupId)),
-    [visibleItems],
-  );
-
-  const { activeValue, setActiveValue, moveActive } = useActiveOption({
-    open,
-    query: listQuery,
-    value: values[0],
-    enabledItems: enabledVisibleItems,
-  });
+  const {
+    items,
+    registerItem,
+    unregisterItem,
+    listQuery,
+    visibleValues,
+    visibleGroupIds,
+    visibleCount,
+    activeValue,
+    setActiveValue,
+    moveActive,
+    activeItemId,
+  } = useFilteredOptions({ open, query, value: values[0], filter });
 
   const commitValue = useCallback(
     (next: string[]) => {
@@ -289,45 +223,16 @@ export function MultiSelect({
     return () => cancelAnimationFrame(frame);
   }, [open]);
 
-  useEffect(() => {
-    if (!activeValue || !open) return;
-    const item = items.get(activeValue)?.ref.current;
-    const list = item?.closest<HTMLElement>("[role='listbox']");
-    if (!item || !list) return;
-    const itemRect = item.getBoundingClientRect();
-    const listRect = list.getBoundingClientRect();
-    if (itemRect.top < listRect.top) list.scrollTop -= listRect.top - itemRect.top;
-    else if (itemRect.bottom > listRect.bottom) {
-      list.scrollTop += itemRect.bottom - listRect.bottom;
-    }
-  }, [activeValue, items, open]);
+  const insideContent = useCallback(
+    (target: Element) => Boolean(contentRef.current?.contains(target)),
+    [],
+  );
+  const dismiss = useCallback(
+    (reason: DismissReason) => updateOpen(false, reason === "escape"),
+    [updateOpen],
+  );
+  useDismiss(open, dismiss, rootRef, { focusOutside: true, ignore: insideContent });
 
-  useEffect(() => {
-    if (!open) return;
-    const isInside = (target: Node) =>
-      rootRef.current?.contains(target) || contentRef.current?.contains(target);
-    const onPointerDown = (event: PointerEvent) => {
-      if (!isInside(event.target as Node)) updateOpen(false);
-    };
-    const onFocusIn = (event: FocusEvent) => {
-      if (!isInside(event.target as Node)) updateOpen(false);
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      event.preventDefault();
-      updateOpen(false, true);
-    };
-    window.addEventListener("pointerdown", onPointerDown);
-    window.addEventListener("focusin", onFocusIn);
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      window.removeEventListener("pointerdown", onPointerDown);
-      window.removeEventListener("focusin", onFocusIn);
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open, updateOpen]);
-
-  const activeItem = activeValue ? items.get(activeValue) : undefined;
   const context = useMemo<MultiSelectContextValue>(
     () => ({
       open,
@@ -346,8 +251,8 @@ export function MultiSelect({
       labelFor: (itemValue) => items.get(itemValue)?.label ?? itemValue,
       isVisible: (itemValue) => !listQuery.trim() || visibleValues.has(itemValue),
       hasVisibleItems: (groupId) => visibleGroupIds.has(groupId),
-      visibleCount: visibleItems.length,
-      activeItemId: activeItem?.id,
+      visibleCount,
+      activeItemId,
       triggerId: `${baseId}-trigger`,
       listId: `${baseId}-list`,
       inputId: `${baseId}-input`,
@@ -360,7 +265,7 @@ export function MultiSelect({
       t,
     }),
     [
-      activeItem?.id,
+      activeItemId,
       activeValue,
       baseId,
       disabled,
@@ -381,7 +286,7 @@ export function MultiSelect({
       updateQuery,
       values,
       visibleGroupIds,
-      visibleItems.length,
+      visibleCount,
       visibleValues,
     ],
   );

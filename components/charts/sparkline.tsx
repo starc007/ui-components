@@ -37,12 +37,15 @@ export interface SparklineProps extends Omit<ComponentProps<"div">, "children"> 
   labels?: readonly string[];
   /** Accessible name, such as "Revenue, last 30 days". */
   label: string;
+  /** A bare line, or a line over a fading gradient fill. Default: "line" */
   variant?: "line" | "area";
+  /** How points are joined: smooth, straight or stepped. Default: "monotone" */
   curve?: XYCurve;
   /** Any CSS color. Defaults to the current text color. */
   color?: string;
   /** Height in px. Width follows the container. */
   height?: number;
+  /** Line thickness in px. Default: 1.5 */
   strokeWidth?: number;
   /** Show the change from the first to the last sample as a badge. */
   showDelta?: boolean;
@@ -50,6 +53,7 @@ export interface SparklineProps extends Omit<ComponentProps<"div">, "children"> 
   invertDelta?: boolean;
   /** Hover, drag or arrow keys to read individual samples. Adds one tab stop. */
   interactive?: boolean;
+  /** Formats values in the readout and accessible summary. Defaults to up to 2 decimals. */
   formatValue?: (value: number) => string;
   /**
    * Override any built-in string, including the shared `xyChart` ones.
@@ -247,7 +251,7 @@ export function Sparkline({
             )}
           </span>
           <motion.span
-            className="block text-[10px] text-muted-foreground"
+            className="block text-[11px] text-muted-foreground"
             initial={false}
             animate={{ opacity: inspecting ? 1 : 0 }}
             transition={{ duration: 0.12, ease: EASE_OUT }}
@@ -260,7 +264,7 @@ export function Sparkline({
         <span
           aria-hidden="true"
           className={cn(
-            "shrink-0 rounded-md px-1.5 py-0.5 font-mono text-[11px] tabular-nums",
+            "shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] tabular-nums",
             tone === "good" && "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
             tone === "bad" && "bg-rose-500/10 text-rose-600 dark:text-rose-400",
             tone === "flat" && "bg-muted text-muted-foreground",
