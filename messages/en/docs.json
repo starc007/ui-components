@@ -48,10 +48,10 @@
       "title": "UI Sound Effects for React",
       "heading": "Sounds",
       "subheading": "Interface sounds for the web, synthesized live. Press one to hear it.",
-      "description": "Sixteen interface sounds for React: tap, press, type, select, toggle, open, close, success, error, notify and more. Synthesized live with Web Audio, no audio files. Install one or all.",
+      "description": "Forty-eight interface sounds for React: tap, press, type, select, toggle, open, close, success, error, notify, check, send and more. Synthesized live with Web Audio, no audio files. Install one or all.",
       "allLabel": "All sounds",
       "muted": "Sounds are muted. Turn them on",
-      "keysHint": "Play them from the keys: 1 to 0, then Q to Y."
+      "keysHint": "Play them from the keys: 1 to 0, then letters A to Z."
     },
     "agents": {
       "title": "AI Agent Components — Animated React AI Interfaces",
