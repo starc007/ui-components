@@ -2,8 +2,8 @@
 
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { SoundPad } from "./sound-pad";
 import { SOUND_ITEMS, type SoundItem } from "./sound-list";
+import { SoundPad } from "./sound-pad";
 
 type PadState = { pulse: number; index: number };
 

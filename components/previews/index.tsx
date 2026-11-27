@@ -380,6 +380,102 @@ export const previews: Record<string, ComponentType> = {
   "sounds/tick-sound": dynamic(() =>
     import("./sounds/tick-sound.preview").then((m) => m.TickSoundPreview),
   ),
+  "sounds/bell-sound": dynamic(() =>
+    import("./sounds/bell-sound.preview").then((m) => m.BellSoundPreview),
+  ),
+  "sounds/bubble-sound": dynamic(() =>
+    import("./sounds/bubble-sound.preview").then((m) => m.BubbleSoundPreview),
+  ),
+  "sounds/burst-sound": dynamic(() =>
+    import("./sounds/burst-sound.preview").then((m) => m.BurstSoundPreview),
+  ),
+  "sounds/buzz-sound": dynamic(() =>
+    import("./sounds/buzz-sound.preview").then((m) => m.BuzzSoundPreview),
+  ),
+  "sounds/camera-sound": dynamic(() =>
+    import("./sounds/camera-sound.preview").then((m) => m.CameraSoundPreview),
+  ),
+  "sounds/check-sound": dynamic(() =>
+    import("./sounds/check-sound.preview").then((m) => m.CheckSoundPreview),
+  ),
+  "sounds/chime-sound": dynamic(() =>
+    import("./sounds/chime-sound.preview").then((m) => m.ChimeSoundPreview),
+  ),
+  "sounds/coin-sound": dynamic(() =>
+    import("./sounds/coin-sound.preview").then((m) => m.CoinSoundPreview),
+  ),
+  "sounds/collapse-sound": dynamic(() =>
+    import("./sounds/collapse-sound.preview").then((m) => m.CollapseSoundPreview),
+  ),
+  "sounds/connect-sound": dynamic(() =>
+    import("./sounds/connect-sound.preview").then((m) => m.ConnectSoundPreview),
+  ),
+  "sounds/disconnect-sound": dynamic(() =>
+    import("./sounds/disconnect-sound.preview").then((m) => m.DisconnectSoundPreview),
+  ),
+  "sounds/dismiss-sound": dynamic(() =>
+    import("./sounds/dismiss-sound.preview").then((m) => m.DismissSoundPreview),
+  ),
+  "sounds/dock-sound": dynamic(() =>
+    import("./sounds/dock-sound.preview").then((m) => m.DockSoundPreview),
+  ),
+  "sounds/expand-sound": dynamic(() =>
+    import("./sounds/expand-sound.preview").then((m) => m.ExpandSoundPreview),
+  ),
+  "sounds/heart-sound": dynamic(() =>
+    import("./sounds/heart-sound.preview").then((m) => m.HeartSoundPreview),
+  ),
+  "sounds/lift-sound": dynamic(() =>
+    import("./sounds/lift-sound.preview").then((m) => m.LiftSoundPreview),
+  ),
+  "sounds/lock-sound": dynamic(() =>
+    import("./sounds/lock-sound.preview").then((m) => m.LockSoundPreview),
+  ),
+  "sounds/ping-sound": dynamic(() =>
+    import("./sounds/ping-sound.preview").then((m) => m.PingSoundPreview),
+  ),
+  "sounds/pop-sound": dynamic(() =>
+    import("./sounds/pop-sound.preview").then((m) => m.PopSoundPreview),
+  ),
+  "sounds/receive-sound": dynamic(() =>
+    import("./sounds/receive-sound.preview").then((m) => m.ReceiveSoundPreview),
+  ),
+  "sounds/refresh-sound": dynamic(() =>
+    import("./sounds/refresh-sound.preview").then((m) => m.RefreshSoundPreview),
+  ),
+  "sounds/reveal-sound": dynamic(() =>
+    import("./sounds/reveal-sound.preview").then((m) => m.RevealSoundPreview),
+  ),
+  "sounds/send-sound": dynamic(() =>
+    import("./sounds/send-sound.preview").then((m) => m.SendSoundPreview),
+  ),
+  "sounds/shutter-sound": dynamic(() =>
+    import("./sounds/shutter-sound.preview").then((m) => m.ShutterSoundPreview),
+  ),
+  "sounds/snap-sound": dynamic(() =>
+    import("./sounds/snap-sound.preview").then((m) => m.SnapSoundPreview),
+  ),
+  "sounds/star-sound": dynamic(() =>
+    import("./sounds/star-sound.preview").then((m) => m.StarSoundPreview),
+  ),
+  "sounds/swipe-sound": dynamic(() =>
+    import("./sounds/swipe-sound.preview").then((m) => m.SwipeSoundPreview),
+  ),
+  "sounds/switch-sound": dynamic(() =>
+    import("./sounds/switch-sound.preview").then((m) => m.SwitchSoundPreview),
+  ),
+  "sounds/timer-sound": dynamic(() =>
+    import("./sounds/timer-sound.preview").then((m) => m.TimerSoundPreview),
+  ),
+  "sounds/trash-sound": dynamic(() =>
+    import("./sounds/trash-sound.preview").then((m) => m.TrashSoundPreview),
+  ),
+  "sounds/unlock-sound": dynamic(() =>
+    import("./sounds/unlock-sound.preview").then((m) => m.UnlockSoundPreview),
+  ),
+  "sounds/whisper-sound": dynamic(() =>
+    import("./sounds/whisper-sound.preview").then((m) => m.WhisperSoundPreview),
+  ),
   "blocks/card-dealer": dynamic(() =>
     import("./blocks/card-dealer.preview").then((m) => m.CardDealerPreview),
   ),

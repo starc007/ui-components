@@ -756,7 +756,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "sound-kit": {
     title: "UI Sound Effects for React, Web Audio Kit",
     description:
-      "16 interface sounds for React, synthesized live with Web Audio: tap, press, type, toggle, open, success, error and more. No audio files. Install with shadcn.",
+      "48 interface sounds for React, synthesized live with Web Audio: tap, press, toggle, success, error, notify, bell and more. No audio files. Install with shadcn.",
   },
   "tap-sound": {
     title: "Tap Sound Effect for React UI",
@@ -837,5 +837,165 @@ export const componentSeo: Record<string, ComponentSeo> = {
     title: "Slider and Picker Tick Sound for React",
     description:
       "A tiny tick for React sliders, pickers, counters and loading steps, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "bell-sound": {
+    title: "Bell Chime Sound Effect for React UI",
+    description:
+      "A resonant brass bell chime for React timers, alarms and reminders, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "bubble-sound": {
+    title: "Bubble Pop Sound Effect for React Chat",
+    description:
+      "A liquid bubble pop sound for React messages, comments and reactions, synthesized live with Web Audio. No audio file. Install with shadcn.",
+  },
+  "burst-sound": {
+    title: "Celebration Burst Sound Effect for React",
+    description:
+      "A celebratory triple-pop sparkle for React rewards and confetti animations, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "buzz-sound": {
+    title: "Haptic Buzz Error Sound Effect for React",
+    description:
+      "A subtle low haptic buzz sound for React form errors and boundary collision feedback, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "camera-sound": {
+    title: "Camera Shutter Sound Effect for React",
+    description:
+      "A mechanical two-stroke camera shutter click for React photo and capture flows, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "check-sound": {
+    title: "Task Checkmark Sound Effect for React Todo Lists",
+    description:
+      "A satisfying tactile checkmark stroke and knock for React task completion, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "chime-sound": {
+    title: "Chime Arpeggio Sound Effect for React",
+    description:
+      "A three-note ascending bell chime arpeggio for React milestones and achievements, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "coin-sound": {
+    title: "Coin Ring Sound Effect for React Games and Rewards",
+    description:
+      "A bright metallic coin ring sound for React transactions, game rewards and coins, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "collapse-sound": {
+    title: "Collapse Panel Sound Effect for React Accordions",
+    description:
+      "An inward folding acoustic tone for React panels and accordions closing, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "connect-sound": {
+    title: "Device and Integration Connect Sound for React",
+    description:
+      "A positive connection chord for React wallets, integrations and bluetooth devices, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "disconnect-sound": {
+    title: "Disconnect and Unlink Sound Effect for React",
+    description:
+      "A gentle downward release pop for React disconnect flows and unlinking accounts, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "dismiss-sound": {
+    title: "Dismiss Toast Sound Effect for React",
+    description:
+      "A quick airy flick sound for dismissing React toasts, banners and notifications, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "dock-sound": {
+    title: "Magnetic Dock Sound Effect for React Windows",
+    description:
+      "A cushioned magnetic dock thump for React sidebars, toolbars and panels, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "expand-sound": {
+    title: "Expand Accordion Sound Effect for React",
+    description:
+      "A gentle blooming whoosh sound for React expanding accordions, drawers and sheets, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "heart-sound": {
+    title: "Heart Like Sound Effect for React Favorites",
+    description:
+      "A warm two-beat acoustic pulse for React like buttons, favorites and bookmark reactions, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "lift-sound": {
+    title: "Drag and Drop Lift Sound Effect for React",
+    description:
+      "A light surface separation click for picking up and dragging React items, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "lock-sound": {
+    title: "Mechanical Lock Sound Effect for React",
+    description:
+      "A solid mechanical latch click and tumbler thud for React security and lock toggles, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "ping-sound": {
+    title: "High Bell Ping Sound Effect for React Notifications",
+    description:
+      "A crystalline high bell ping for React user mentions, badges and live alerts, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "pop-sound": {
+    title: "Pop Sound Effect for React Badges and Chips",
+    description:
+      "A rounded bubbly pop sound for React tags, chips, badges and tooltips, synthesized live with Web Audio. No audio file. Install with shadcn.",
+  },
+  "receive-sound": {
+    title: "Incoming Message Sound Effect for React Chat",
+    description:
+      "Two soft descending mallet notes for incoming React chat messages and direct replies, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "refresh-sound": {
+    title: "Pull to Refresh Sound Effect for React Feeds",
+    description:
+      "A springy upward swirl with a release chime for React pull-to-refresh feeds, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "reveal-sound": {
+    title: "Reveal Content Sound Effect for React Passwords",
+    description:
+      "A soft upward glass flourish for revealing React hidden passwords and secret keys, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "send-sound": {
+    title: "Send Message Sound Effect for React Chat",
+    description:
+      "An airy upward whoosh with a release tap for sending React messages and emails, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "shutter-sound": {
+    title: "Camera Shutter Snap Sound Effect for React",
+    description:
+      "A rapid mechanical aperture leaf snap for React camera snapshots and photo captures, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "snap-sound": {
+    title: "Magnetic Snap Sound Effect for React UI",
+    description:
+      "A sharp mechanical latch click for React magnetic grids, docking and snapping, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "star-sound": {
+    title: "Star and Bookmark Sound Effect for React",
+    description:
+      "A bright crystalline sparkle chime for starring React items, projects and bookmarks, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "swipe-sound": {
+    title: "Swipe Gesture Sound Effect for React Carousels",
+    description:
+      "An airy whoosh with subtle friction contact for React card swipes and carousels, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "switch-sound": {
+    title: "Rocker Switch Sound Effect for React Toggles",
+    description:
+      "A tactile hardware rocker switch click for React toggle switches and settings, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "timer-sound": {
+    title: "Woodblock Timer Sound Effect for React Countdowns",
+    description:
+      "A dry hollow woodblock pulse for React countdown timers, metronomes and intervals, made with Web Audio. No audio file. Install with shadcn.",
+  },
+  "trash-sound": {
+    title: "Trash and Discard Sound Effect for React",
+    description:
+      "A wooden-metallic drop with a textured rustle for discarding React items, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "unlock-sound": {
+    title: "Unlock Latch Sound Effect for React",
+    description:
+      "Two rising metallic clicks for React unlock flows and releasing locked states, synthesized with Web Audio. No audio file. Install with shadcn.",
+  },
+  "whisper-sound": {
+    title: "Subtle Tooltip Sound Effect for React Hover Hints",
+    description:
+      "An ultra-soft acoustic puff for subtle React hover hints, tooltips and badges, synthesized with Web Audio. No audio file. Install with shadcn.",
   },
 };

@@ -11,7 +11,7 @@ export const changelogEntries: ChangelogEntry[] = [
   // Move its date to the newest ship day, and fold new work into these lines
   // rather than adding one per component.
   {
-    "date": "2026-11-25",
+    "date": "2026-11-26",
     "title": "beUI v2",
     "items": [
       {
@@ -21,7 +21,7 @@ export const changelogEntries: ChangelogEntry[] = [
       },
       {
         "type": "new",
-        "text": "Sounds: 16 interface sounds made live with Web Audio, built like real taps from a contact click, a body tuned to a material and a little room. Install one, or Sound Kit for all of them.",
+        "text": "Sounds: 48 interface sounds made live with Web Audio, built like real taps from a contact click, a body tuned to a material and a little room. Install one, or Sound Kit for all of them.",
         "href": "/sounds"
       },
       {
