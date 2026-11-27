@@ -18,8 +18,12 @@ import { getTranslations } from "@/i18n/server";
 import { pageMetadata } from "@/lib/head";
 import { useSearchParams } from "@/lib/navigation";
 import {
+  DIAMOND_SPONSORS,
+  type DiamondSponsor,
+  GITHUB_SPONSORS_URL,
   SPONSOR_CHECKOUT_URLS,
   SPONSOR_EVM_ADDRESS,
+  SPONSOR_PLANS,
   SPONSOR_SOL_ADDRESS,
 } from "@/lib/sponsors-config";
 import { cn } from "@/lib/utils";
@@ -36,11 +40,11 @@ export const getSponsorsPage = createServerFn({ method: "GET" })
       path: PAGE_PATH,
       title: t("title"),
       description: t("description"),
+      types: { "text/markdown": `${PAGE_PATH}.md` },
     });
     return { metadata, messages: messages.Pages.sponsors };
   });
 
-const GITHUB_SPONSORS_URL = "https://github.com/sponsors/starc007";
 const CONTACT_URL = "mailto:hello@beui.dev?subject=beUI%20sponsorship";
 
 const PLAN_STYLES = {
@@ -86,30 +90,6 @@ const PLAN_STYLES = {
 >;
 
 type SponsorTone = keyof typeof PLAN_STYLES;
-
-type DiamondSponsor = {
-  name: string;
-  /** Key under Pages.sponsors.sponsorTaglines. */
-  tagline: "tracwell" | "illos";
-  domain: string;
-  /** Icon basename in /public/sponsors, with -light and -dark variants. */
-  icon: string;
-};
-
-const DIAMOND_SPONSORS: DiamondSponsor[] = [
-  {
-    name: "Tracwell",
-    tagline: "tracwell",
-    domain: "tracwell.app",
-    icon: "tracwell-icon",
-  },
-  {
-    name: "Illos",
-    tagline: "illos",
-    domain: "illos.dev",
-    icon: "illos-icon",
-  },
-];
 
 function DiamondSponsorCard({
   name,
@@ -402,7 +382,7 @@ export function SponsorsPage() {
   const sponsorPlans = [
     {
       name: t("plans.diamond.name"),
-      price: "$199",
+      price: SPONSOR_PLANS.diamond.price,
       description: t("plans.diamond.description"),
       benefits: [
         t("plans.diamond.benefits.homePage"),
@@ -415,11 +395,11 @@ export function SponsorsPage() {
       paymentUrl: SPONSOR_CHECKOUT_URLS.diamond,
       featured: true,
       tone: "diamond" as const,
-      slots: 3,
+      slots: SPONSOR_PLANS.diamond.slots,
     },
     {
       name: t("plans.platinum.name"),
-      price: "$99",
+      price: SPONSOR_PLANS.platinum.price,
       description: t("plans.platinum.description"),
       benefits: [
         t("plans.platinum.benefits.sponsorsPage"),
@@ -429,11 +409,11 @@ export function SponsorsPage() {
       ],
       paymentUrl: SPONSOR_CHECKOUT_URLS.platinum,
       tone: "platinum" as const,
-      slots: 2,
+      slots: SPONSOR_PLANS.platinum.slots,
     },
     {
       name: t("plans.silver.name"),
-      price: "$49",
+      price: SPONSOR_PLANS.silver.price,
       description: t("plans.silver.description"),
       benefits: [
         t("plans.silver.benefits.sponsorsPage"),
@@ -443,7 +423,7 @@ export function SponsorsPage() {
       ],
       paymentUrl: SPONSOR_CHECKOUT_URLS.silver,
       tone: "silver" as const,
-      slots: 2,
+      slots: SPONSOR_PLANS.silver.slots,
     },
   ];
 

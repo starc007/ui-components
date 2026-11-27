@@ -20,7 +20,7 @@ export const getBlogIndex = createServerFn({ method: "GET" })
       description,
       image: ogImagePath("page", "blog"),
       imageAlt: title,
-      types: { "application/rss+xml": BLOG_FEED_PATH },
+      types: { "text/markdown": `${BLOG_PATH}.md`, "application/rss+xml": BLOG_FEED_PATH },
     });
     return { posts: blogPosts().map(blogPostMeta), metadata };
   });

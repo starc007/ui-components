@@ -28,7 +28,12 @@ function legalPage(key: LegalKey): LegalPageData {
   const page = messages.Pages[key];
   const path = `/${key}`;
   return {
-    metadata: pageMetadata({ path, title: page.meta.title, description: page.meta.description }),
+    metadata: pageMetadata({
+      path,
+      title: page.meta.title,
+      description: page.meta.description,
+      types: { "text/markdown": `${path}.md` },
+    }),
     heading: page.heading,
     updated: page.updated,
     intro: page.intro,
