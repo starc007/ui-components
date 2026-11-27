@@ -624,6 +624,12 @@
       "viewPlan": "View plan"
     }
   },
+  "brand": {
+    "meta": {
+      "title": "beUI Brand and Design System",
+      "description": "The type scale, radius, sizes, colors, surfaces and motion tokens behind every beUI component, shown with the real components."
+    }
+  },
   "themes": {
     "meta": {
       "title": "Themes for beUI Components",

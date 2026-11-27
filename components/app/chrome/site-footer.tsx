@@ -119,6 +119,7 @@ export function SiteFooter() {
         { href: PRO_URL, label: "beUI Pro" },
         { href: "/playground", label: t("header.playground") },
         { href: "/themes", label: t("header.themes") },
+        { href: "/brand", label: t("footer.brand") },
         { href: GITHUB_URL, label: t("footer.githubWeb") },
         { href: NATIVE_GITHUB_URL, label: t("footer.githubNative") },
         { href: "/sponsors", label: t("footer.sponsor") },
