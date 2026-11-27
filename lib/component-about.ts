@@ -582,7 +582,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
 
   "date-range-picker": {
     overview:
-      "Date Range Picker is a composable React component for choosing a start and end date, either inline or in a dropdown popover. It is made of root, trigger, content, calendar, header, grid, summary, footer, clear and preset parts, plus a useDateRangePicker hook, and DateRangePickerDropdown composes the popover version for you. Months slide and fade as you page, the header opens direct month and year choices, and dates are plain YYYY-MM-DD strings, so they do not shift with the browser's timezone. It is built with Framer Motion and styled with Tailwind CSS.",
+      "Date Range Picker is a composable React component for choosing a date range or a single date, either inline or in a dropdown popover. It is made of root, trigger, content, calendar, header, grid, summary, footer, clear and preset parts, plus a useDateRangePicker hook, and DateRangePickerDropdown composes the popover version for you. Months slide and fade as you page, the header opens direct month and year choices, and dates are plain YYYY-MM-DD strings, so they do not shift with the browser's timezone. It is built with Framer Motion and styled with Tailwind CSS.",
     useWhen: [
       "A hotel, rental or travel booking flow needs check-in and check-out dates.",
       "An analytics dashboard filters charts and reports by a date range, with presets like the last 7 or 30 days.",
@@ -597,6 +597,11 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
           "Render DateRangePicker with no children for an inline calendar, or DateRangePickerDropdown for a trigger that opens the calendar in a popover. Both take value and onValueChange, or defaultValue, with a range shaped like { from, to }.",
       },
       {
+        question: "How do I select a single date?",
+        answer:
+          'Pass mode="single" to DateRangePicker or DateRangePickerDropdown. Values and presets use from as the selected day. The onValueChange callback receives that day as both from and to, or null when cleared.',
+      },
+      {
         question: "Can I limit which dates can be selected?",
         answer:
           "Yes. Use min and max as YYYY-MM-DD strings to bound the range, and isDateDisabled to block individual dates such as weekends or holidays.",
@@ -604,7 +609,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
       {
         question: "Can I add preset ranges like Last 7 days?",
         answer:
-          "Yes. Pass a presets array of label and value pairs, or compose DateRangePickerPresets with DateRangePickerPreset buttons. Set closeOnSelect to close the popover after a complete range or preset.",
+          "Yes. Pass a presets array of label and value pairs, or compose DateRangePickerPresets with DateRangePickerPreset buttons. Set closeOnSelect to close the popover after a single date, complete range or preset.",
       },
     ],
   },

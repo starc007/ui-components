@@ -5,6 +5,7 @@ import {
   type KeyboardEvent,
   useId,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -15,7 +16,14 @@ import { dateFormats } from "./formats";
 import { dateRangePickerMessages } from "./messages";
 import type { DateRange, DateRangePickerProps } from "./types";
 
+function asSingleDate(range: DateRange | null) {
+  return range && range.to !== range.from
+    ? { from: range.from, to: range.from }
+    : range;
+}
+
 export function useDateRangePickerController({
+  mode = "range",
   value: controlledValue,
   defaultValue = null,
   onValueChange,
@@ -39,13 +47,19 @@ export function useDateRangePickerController({
   const contextLocale = useLocale().locale;
   // Without any locale, keep the US English output on server and client.
   const locale = localeProp ?? contextLocale ?? "en-US";
-  const label = labelProp ?? t("label");
+  const single = mode === "single";
+  const label = labelProp ?? t(single ? "singleLabel" : "label");
   const [today] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
   });
   const [internalValue, setInternalValue] = useState(defaultValue);
-  const value = controlledValue === undefined ? internalValue : controlledValue;
+  const selectedValue =
+    controlledValue === undefined ? internalValue : controlledValue;
+  const value = useMemo(
+    () => (single ? asSingleDate(selectedValue) : selectedValue),
+    [selectedValue, single],
+  );
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const open = controlledOpen === undefined ? internalOpen : controlledOpen;
   const trigger = useRef<HTMLButtonElement>(null);
@@ -121,6 +135,7 @@ export function useDateRangePickerController({
     Boolean(isDateDisabled?.(date));
   const rangeAvailable = (range: DateRange) => {
     const first = parse(range.from);
+    if (single) return !unavailable(range.from);
     const last = parse(range.to ?? range.from);
     if (
       last < first ||
@@ -173,7 +188,8 @@ export function useDateRangePickerController({
     (button ?? grid.current)?.focus({ preventScroll: true });
   });
 
-  const change = (next: DateRange | null) => {
+  const change = (range: DateRange | null) => {
+    const next = single ? asSingleDate(range) : range;
     if (disabled || (next && !rangeAvailable(next))) return;
     if (controlledValue === undefined) setInternalValue(next);
     onValueChange?.(next);
@@ -183,7 +199,12 @@ export function useDateRangePickerController({
   const select = (date: string) => {
     if (unavailable(date)) return;
     setCursor(date);
-    if (!value || value.to) {
+    if (single) {
+      change({ from: date });
+      setAnnouncement(
+        t("singleSelected", { date: dateFormat.format(parse(date)) }),
+      );
+    } else if (!value || value.to) {
       change({ from: date });
       setAnnouncement(
         t("startSelected", { date: dateFormat.format(parse(date)) }),
@@ -421,7 +442,7 @@ export function useDateRangePickerController({
     if (view === "days") pendingFocus.current = true;
     else returnToTrigger.current = view;
     change(null);
-    setAnnouncement(t("cleared"));
+    setAnnouncement(t(single ? "singleCleared" : "cleared"));
   };
   const selectPreset = (range: DateRange, name: string) => {
     if (!rangeAvailable(range)) return;
@@ -432,6 +453,12 @@ export function useDateRangePickerController({
     setCursor(range.from);
     setAnnouncement(t("presetSelected", { name }));
   };
+  const [previousMode, setPreviousMode] = useState(mode);
+  if (previousMode !== mode) {
+    setPreviousMode(mode);
+    setAnnouncement("");
+    setPreview(null);
+  }
   const [wasOpen, setWasOpen] = useState(open);
   if (wasOpen !== open) {
     setWasOpen(open);
@@ -447,6 +474,7 @@ export function useDateRangePickerController({
   }
   return {
     value,
+    single,
     change,
     open,
     setOpen,

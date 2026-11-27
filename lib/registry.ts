@@ -228,7 +228,7 @@ export const registry: CategoryEntry[] = [
       {
         slug: "date-range-picker",
         name: "Date Range Picker",
-        description: "Composable date range picker with root, trigger, popover content, calendar, header, grid, summary, footer, clear and preset parts, plus a shared state hook. Compact inline and dropdown compositions, direct month and year selection, and full keyboard navigation.",
+        description: "Composable date range picker with opt-in single-date selection, root, trigger, popover content, calendar, header, grid, summary, footer, clear and preset parts, plus a shared state hook. Compact inline and dropdown compositions, direct month and year selection, and full keyboard navigation.",
         file: "components/motion/date-range-picker.tsx",
         badge: "new",
         launchedAt: "2026-10-02",

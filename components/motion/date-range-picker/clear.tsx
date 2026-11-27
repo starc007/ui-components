@@ -17,7 +17,10 @@ export function DateRangePickerClear({
     <button
       {...props}
       type="button"
-      aria-label={props["aria-label"] ?? ctx.t("clearLabel")}
+      aria-label={
+        props["aria-label"] ??
+        ctx.t(ctx.single ? "singleClearLabel" : "clearLabel")
+      }
       disabled={disabled || ctx.disabled || !ctx.value}
       className={cn(
         "rounded-full px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-30",

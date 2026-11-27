@@ -15,6 +15,12 @@ export interface DateRangePreset {
   value: DateRange;
 }
 export interface DateRangePickerProps {
+  /**
+   * In single mode, activation selects one day. Values and presets use `from`
+   * as the selected day and callbacks report that day as both endpoints.
+   * Default "range".
+   */
+  mode?: "range" | "single";
   /** The selected range, for controlled use. `null` means no selection. */
   value?: DateRange | null;
   /** The initial range when uncontrolled. Default: null */
@@ -39,7 +45,7 @@ export interface DateRangePickerProps {
   disabled?: boolean;
   /** Move focus to the active date on mount, for use inside a popover. */
   autoFocus?: boolean;
-  /** Show the start/end summary above the calendar. Default true. */
+  /** Show the selection summary above the calendar. Default true. */
   showSummary?: boolean;
   /** Classes merged onto the inline calendar, or the popover root when composing children. */
   className?: string;
@@ -51,7 +57,7 @@ export interface DateRangePickerProps {
   defaultOpen?: boolean;
   /** Called with the next open state when the popover opens or closes. */
   onOpenChange?: (open: boolean) => void;
-  /** Close an open popover after a complete range or preset. Default false. */
+  /** Close an open popover after a single date, complete range or preset. Default false. */
   closeOnSelect?: boolean;
   /** Override any built-in string. */
   labels?: Partial<DateRangePickerMessages>;

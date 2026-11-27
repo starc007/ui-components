@@ -48,9 +48,11 @@ export function DateRangePickerCalendar({
       <p id={ctx.help} className="sr-only">
         {ctx.t("help")}
       </p>
-      <span role="status" className="sr-only">
-        {ctx.announcement}
-      </span>
+      {!ctx.single && (
+        <span role="status" className="sr-only">
+          {ctx.announcement}
+        </span>
+      )}
     </section>
   );
 }
