@@ -4152,7 +4152,7 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
   // Sounds
   "sound-kit": {
     overview:
-      "Sound Kit is every beUI interface sound in one install: tap, press, type, select, toggle, open, close, navigate, success, error, warning, notify, copy, delete, drop and tick. Each is synthesized live with Web Audio the way a real tap sounds, a contact click, a body tuned to a material and a little room, so there are no audio files. It ships the useSound hook and SoundProvider, which sets one volume and one mute switch for every beUI sound, including the sound props on Button, Switch, Tabs, Dropdown Menu and Animated Toast Stack.",
+      "Sound Kit is all 48 beUI interface sounds in one install: controls like tap, press, type, select, toggle, switch and tick, feedback like success, error, warning, check and buzz, motion like open, close, expand, collapse, swipe and drop, and alerts like notify, ping, bell, chime and receive. Each is synthesized live with Web Audio the way a real tap sounds, a contact click, a body tuned to a material and a little room, so there are no audio files. It ships the useSound hook and SoundProvider, which sets one volume and one mute switch for every beUI sound, including the sound props on Button, Switch, Tabs, Dropdown Menu and Animated Toast Stack.",
     useWhen: [
       "An app wants consistent feedback sounds across many controls.",
       "A product needs a settings toggle that mutes every sound at once.",
@@ -4254,163 +4254,163 @@ export const componentAbout: Partial<Record<string, ComponentAbout>> = {
     "Loading steps or a countdown.",
   ]),
   "bell-sound": soundAbout("Bell Sound", "bellSound", "It is a resonant brass bell chime with rich natural partials that rings cleanly without harshness.", [
-      "Alarms, timers and countdown reminders.",
-      "Incoming calls or high-priority notifications.",
-      "Milestone badges or daily goal completions."
+    "Alarms, timers and countdown reminders.",
+    "Incoming calls or high-priority notifications.",
+    "Milestone badges or daily goal completions.",
   ]),
   "bubble-sound": soundAbout("Bubble Sound", "bubbleSound", "It is a rounded liquid droplet pop with a rapid upward frequency sweep that feels soft and bubbly.", [
-      "Incoming and outgoing chat messages.",
-      "Comment replies and thread activity.",
-      "Reactions and emoji popovers."
+    "Incoming and outgoing chat messages.",
+    "Comment replies and thread activity.",
+    "Reactions and emoji popovers.",
   ]),
   "burst-sound": soundAbout("Burst Sound", "burstSound", "It is a celebratory triple-pop sparkle that triggers a quick upward cluster of bright tones.", [
-      "Confetti animations and reward badges.",
-      "Completing a multi-step onboarding wizard.",
-      "Unlocking an achievement or level-up."
+    "Confetti animations and reward badges.",
+    "Completing a multi-step onboarding wizard.",
+    "Unlocking an achievement or level-up.",
   ]),
   "buzz-sound": soundAbout("Buzz Sound", "buzzSound", "It is a short low-frequency haptic buzz that gives immediate physical feedback without an alarming siren.", [
-      "Form validation errors on submit.",
-      "Dragging an item against a locked boundary.",
-      "Attempting an invalid action or restricted action."
+    "Form validation errors on submit.",
+    "Dragging an item against a locked boundary.",
+    "Attempting an invalid action or restricted action.",
   ]),
   "camera-sound": soundAbout("Camera Sound", "cameraSound", "It is a two-stroke mechanical shutter click: an initial mirror-flip click and a second curtain strike.", [
-      "Taking photos, screenshots or webcam snapshots.",
-      "Scanning documents and QR codes.",
-      "Capturing canvas elements or exports."
+    "Taking photos, screenshots or webcam snapshots.",
+    "Scanning documents and QR codes.",
+    "Capturing canvas elements or exports.",
   ]),
   "check-sound": soundAbout("Check Sound", "checkSound", "It is a crisp tactile stroke and warm upward acoustic knock, giving satisfying closure to finished items.", [
-      "Checking off a task in a to-do list.",
-      "Marking an issue or pull request closed.",
-      "Completing an item in an onboarding checklist."
+    "Checking off a task in a to-do list.",
+    "Marking an issue or pull request closed.",
+    "Completing an item in an onboarding checklist.",
   ]),
   "chime-sound": soundAbout("Chime Sound", "chimeSound", "It is a three-note ascending arpeggio on tuned bells (A5, C#6, E6) that sounds cheerful and resolved.", [
-      "Completing a project or saving a milestone.",
-      "Greeting a user on login or welcome screens.",
-      "Daily streak achievements."
+    "Completing a project or saving a milestone.",
+    "Greeting a user on login or welcome screens.",
+    "Daily streak achievements.",
   ]),
   "coin-sound": soundAbout("Coin Sound", "coinSound", "It is a bright metallic coin sound with a clean contact ping and long ringing overtone.", [
-      "In-game currency and rewards.",
-      "Tip jars, donations and micro-transactions.",
-      "Redeeming credits or bonus points."
+    "In-game currency and rewards.",
+    "Tip jars, donations and micro-transactions.",
+    "Redeeming credits or bonus points.",
   ]),
   "collapse-sound": soundAbout("Collapse Sound", "collapseSound", "It is an inward folding tone settling with a soft low tap, making folding feel tactile and tidy.", [
-      "Collapsing accordions and disclosure cards.",
-      "Closing side drawers and filter panels.",
-      "Folding nested tree views or comment threads."
+    "Collapsing accordions and disclosure cards.",
+    "Closing side drawers and filter panels.",
+    "Folding nested tree views or comment threads.",
   ]),
   "connect-sound": soundAbout("Connect Sound", "connectSound", "It is a positive two-step connection chord that feels like hardware successfully seating into place.", [
-      "Connecting a crypto wallet or integration.",
-      "Pairing a bluetooth or USB hardware device.",
-      "Linking a third-party account or webhook."
+    "Connecting a crypto wallet or integration.",
+    "Pairing a bluetooth or USB hardware device.",
+    "Linking a third-party account or webhook.",
   ]),
   "disconnect-sound": soundAbout("Disconnect Sound", "disconnectSound", "It is a gentle downward release pop that sounds deliberate rather than broken.", [
-      "Unlinking an account or removing an integration.",
-      "Disconnecting a wallet or hardware device.",
-      "Logging out or revoking an API key."
+    "Unlinking an account or removing an integration.",
+    "Disconnecting a wallet or hardware device.",
+    "Logging out or revoking an API key.",
   ]),
   "dismiss-sound": soundAbout("Dismiss Sound", "dismissSound", "It is a quick airy flick that drops away into silence, like brushing a piece of paper off a desk.", [
-      "Swiping away or dismissing toasts and banners.",
-      "Closing dialog overlays with a swipe.",
-      "Ignoring an alert or recommendation card."
+    "Swiping away or dismissing toasts and banners.",
+    "Closing dialog overlays with a swipe.",
+    "Ignoring an alert or recommendation card.",
   ]),
   "dock-sound": soundAbout("Dock Sound", "dockSound", "It is a cushioned magnetic dock thump with low wood resonance and a metallic ring.", [
-      "Snapping a floating panel to the viewport dock.",
-      "Minimizing windows or chat widgets into a pill.",
-      "Docking toolbars to screen edges."
+    "Snapping a floating panel to the viewport dock.",
+    "Minimizing windows or chat widgets into a pill.",
+    "Docking toolbars to screen edges.",
   ]),
   "expand-sound": soundAbout("Expand Sound", "expandSound", "It is a gentle blooming whoosh that opens outward with low body warmth.", [
-      "Expanding accordions and details panels.",
-      "Opening modal sheets and preview dialogs.",
-      "Unfolding nested comments or file hierarchies."
+    "Expanding accordions and details panels.",
+    "Opening modal sheets and preview dialogs.",
+    "Unfolding nested comments or file hierarchies.",
   ]),
   "heart-sound": soundAbout("Heart Sound", "heartSound", "It is a warm acoustic double-thump pulse modeled on a heartbeat.", [
-      "Liking a post, comment or design.",
-      "Favoriting an item or saving to bookmarks.",
-      "Cheering on a live stream or team activity."
+    "Liking a post, comment or design.",
+    "Favoriting an item or saving to bookmarks.",
+    "Cheering on a live stream or team activity.",
   ]),
   "lift-sound": soundAbout("Lift Sound", "liftSound", "It is a light surface separation suction-click with rising acoustic resonance.", [
-      "Picking up a kanban card or table row to drag.",
-      "Grabbing a slider thumb or reorder handle.",
-      "Detaching a tab from a tab strip."
+    "Picking up a kanban card or table row to drag.",
+    "Grabbing a slider thumb or reorder handle.",
+    "Detaching a tab from a tab strip.",
   ]),
   "lock-sound": soundAbout("Lock Sound", "lockSound", "It is a solid mechanical latch click over a deep tumbler thump, sounding secure and tamper-proof.", [
-      "Toggling a privacy or read-only lock.",
-      "Securing an account or locking a session.",
-      "Arming a security feature or setting."
+    "Toggling a privacy or read-only lock.",
+    "Securing an account or locking a session.",
+    "Arming a security feature or setting.",
   ]),
   "ping-sound": soundAbout("Ping Sound", "pingSound", "It is a crystalline high bell ping (2349 Hz) with a pure harmonic that cuts through without volume.", [
-      "Direct user mentions in chat or comments.",
-      "Live badge counters incrementing.",
-      "Critical real-time alerts."
+    "Direct user mentions in chat or comments.",
+    "Live badge counters incrementing.",
+    "Critical real-time alerts.",
   ]),
   "pop-sound": soundAbout("Pop Sound", "popSound", "It is a rounded bubbly pop sweeping quickly upward, like releasing a tiny cork.", [
-      "Adding chips, tags and filter pills.",
-      "Tooltips and reaction badges appearing.",
-      "Floating action buttons popping into view."
+    "Adding chips, tags and filter pills.",
+    "Tooltips and reaction badges appearing.",
+    "Floating action buttons popping into view.",
   ]),
   "receive-sound": soundAbout("Receive Sound", "receiveSound", "It is two soft descending mallet notes on tuned wood (E6 down to A5).", [
-      "Receiving an incoming direct message.",
-      "A webhook or background task finishing.",
-      "New items appearing in an active inbox."
+    "Receiving an incoming direct message.",
+    "A webhook or background task finishing.",
+    "New items appearing in an active inbox.",
   ]),
   "refresh-sound": soundAbout("Refresh Sound", "refreshSound", "It is a springy upward swirl that resolves into a soft release chime.", [
-      "Pulling to refresh feeds and timelines.",
-      "Reloading a dashboard or data table.",
-      "Syncing offline changes to the cloud."
+    "Pulling to refresh feeds and timelines.",
+    "Reloading a dashboard or data table.",
+    "Syncing offline changes to the cloud.",
   ]),
   "reveal-sound": soundAbout("Reveal Sound", "revealSound", "It is a soft upward glass flourish that feels like pulling back a veil.", [
-      "Toggling password visibility in inputs.",
-      "Revealing API keys and secret tokens.",
-      "Unmasking spoiler content or hidden notes."
+    "Toggling password visibility in inputs.",
+    "Revealing API keys and secret tokens.",
+    "Unmasking spoiler content or hidden notes.",
   ]),
   "send-sound": soundAbout("Send Sound", "sendSound", "It is an upward airy whoosh with a clean release tap, like a paper airplane taking flight.", [
-      "Sending a chat message or comment.",
-      "Dispatching an email or invite.",
-      "Publishing a post or deploy."
+    "Sending a chat message or comment.",
+    "Dispatching an email or invite.",
+    "Publishing a post or deploy.",
   ]),
   "shutter-sound": soundAbout("Shutter Sound", "shutterSound", "It is a rapid mechanical aperture leaf snap with a metallic casing ring.", [
-      "Snapping a picture in camera flows.",
-      "Taking an instant viewport capture.",
-      "Recording an avatar photo."
+    "Snapping a picture in camera flows.",
+    "Taking an instant viewport capture.",
+    "Recording an avatar photo.",
   ]),
   "snap-sound": soundAbout("Snap Sound", "snapSound", "It is a sharp mechanical latch click with immediate sharp damping.", [
-      "Snapping elements to grid lines or guidelines.",
-      "Magnetic slider notches and docking handles.",
-      "Collapsible sidebar latching shut."
+    "Snapping elements to grid lines or guidelines.",
+    "Magnetic slider notches and docking handles.",
+    "Collapsible sidebar latching shut.",
   ]),
   "star-sound": soundAbout("Star Sound", "starSound", "It is a bright crystalline sparkle chime with dual harmonized bell partials.", [
-      "Starring a repository or project.",
-      "Adding an item to a curated collection.",
-      "Awarding a rating or recognition badge."
+    "Starring a repository or project.",
+    "Adding an item to a curated collection.",
+    "Awarding a rating or recognition badge.",
   ]),
   "swipe-sound": soundAbout("Swipe Sound", "swipeSound", "It is an airy whoosh with subtle friction contact that tracks swipe velocity.", [
-      "Swiping between mobile tabs or carousel slides.",
-      "Turning pages in a book or reader component.",
-      "Flicking cards in a tinder-style queue."
+    "Swiping between mobile tabs or carousel slides.",
+    "Turning pages in a book or reader component.",
+    "Flicking cards in a tinder-style queue.",
   ]),
   "switch-sound": soundAbout("Switch Sound", "switchSound", "It is a tactile hardware rocker switch with distinct micro-clicks on contact and latch.", [
-      "Heavy toggle switches in settings.",
-      "Master power or activation toggles.",
-      "Switching operating modes or environments."
+    "Heavy toggle switches in settings.",
+    "Master power or activation toggles.",
+    "Switching operating modes or environments.",
   ]),
   "timer-sound": soundAbout("Timer Sound", "timerSound", "It is a dry hollow woodblock pulse with zero room reverb, ideal for rapid pacing.", [
-      "Metronomes and workout cadence counters.",
-      "Turn timers in turn-based games.",
-      "Final seconds countdown before an event."
+    "Metronomes and workout cadence counters.",
+    "Turn timers in turn-based games.",
+    "Final seconds countdown before an event.",
   ]),
   "trash-sound": soundAbout("Trash Sound", "trashSound", "It is a hollow wooden-metallic drop with a short textured rustle.", [
-      "Dragging files into the trash can.",
-      "Emptying a recycling bin or queue.",
-      "Purging deleted drafts."
+    "Dragging files into the trash can.",
+    "Emptying a recycling bin or queue.",
+    "Purging deleted drafts.",
   ]),
   "unlock-sound": soundAbout("Unlock Sound", "unlockSound", "It is two crisp rising metallic tumbler clicks that sound like a lock releasing.", [
-      "Unlocking private settings or encrypted notes.",
-      "Authenticating with biometrics or PIN.",
-      "Granting elevated permissions or access."
+    "Unlocking private settings or encrypted notes.",
+    "Authenticating with biometrics or PIN.",
+    "Granting elevated permissions or access.",
   ]),
   "whisper-sound": soundAbout("Whisper Sound", "whisperSound", "It is an ultra-soft acoustic puff with very short decay.", [
-      "Hover hints and subtle micro-tooltips.",
-      "Keyboard focus moves across dense grids.",
-      "Subtle status pill state updates."
+    "Hover hints and subtle micro-tooltips.",
+    "Keyboard focus moves across dense grids.",
+    "Subtle status pill state updates.",
   ]),
 };

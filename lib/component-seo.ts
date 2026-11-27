@@ -756,7 +756,7 @@ export const componentSeo: Record<string, ComponentSeo> = {
   "sound-kit": {
     title: "UI Sound Effects for React, Web Audio Kit",
     description:
-      "16 interface sounds for React, synthesized live with Web Audio: tap, press, type, toggle, open, success, error and more. No audio files. Install with shadcn.",
+      "48 interface sounds for React, synthesized live with Web Audio: tap, press, toggle, success, error, notify, bell and more. No audio files. Install with shadcn.",
   },
   "tap-sound": {
     title: "Tap Sound Effect for React UI",

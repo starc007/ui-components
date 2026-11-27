@@ -7,7 +7,6 @@ import { InstallCommand } from "@/components/app/docs/install-command";
 import { SoundBoard } from "@/components/previews/sounds/sound-board";
 import { componentPath } from "@/lib/component-paths";
 import { Link } from "@/lib/navigation";
-import { findComponent } from "@/lib/registry";
 
 /**
  * Every sound as a pad you press or play from the keyboard, with the kit's
@@ -38,18 +37,14 @@ export function SoundGallery() {
       </div>
       <SoundBoard
         className="w-full"
-        renderName={(item) =>
-          findComponent("sounds", item.slug) ? (
-            <Link
-              href={componentPath("sounds", item.slug)}
-              className="rounded-sm outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              {item.name}
-            </Link>
-          ) : (
-            <span>{item.name}</span>
-          )
-        }
+        renderName={(item) => (
+          <Link
+            href={componentPath("sounds", item.slug)}
+            className="rounded-sm outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {item.name}
+          </Link>
+        )}
       />
     </section>
   );

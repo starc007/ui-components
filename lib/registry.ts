@@ -2017,7 +2017,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["bell sound","chime sound effect","react ui sound","web audio"],
+        keywords: ["bell sound", "chime sound effect", "react ui sound", "web audio"],
       },
       {
         slug: "bubble-sound",
@@ -2028,7 +2028,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["bubble sound","pop sound effect","chat sound","web audio"],
+        keywords: ["bubble sound", "pop sound effect", "chat sound", "web audio"],
       },
       {
         slug: "burst-sound",
@@ -2039,7 +2039,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["burst sound","celebration sound","confetti sound","web audio"],
+        keywords: ["burst sound", "celebration sound", "confetti sound", "web audio"],
       },
       {
         slug: "buzz-sound",
@@ -2050,7 +2050,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["buzz sound","haptic error sound","react ui sound","web audio"],
+        keywords: ["buzz sound", "haptic error sound", "react ui sound", "web audio"],
       },
       {
         slug: "camera-sound",
@@ -2061,7 +2061,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["camera sound","shutter sound effect","react ui sound","web audio"],
+        keywords: ["camera sound", "shutter sound effect", "react ui sound", "web audio"],
       },
       {
         slug: "check-sound",
@@ -2072,7 +2072,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["check sound","task completed sound","todo sound","web audio"],
+        keywords: ["check sound", "task completed sound", "todo sound", "web audio"],
       },
       {
         slug: "chime-sound",
@@ -2083,7 +2083,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["chime sound","milestone sound","bell arpeggio","web audio"],
+        keywords: ["chime sound", "milestone sound", "bell arpeggio", "web audio"],
       },
       {
         slug: "coin-sound",
@@ -2094,7 +2094,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["coin sound","money sound effect","reward sound","web audio"],
+        keywords: ["coin sound", "money sound effect", "reward sound", "web audio"],
       },
       {
         slug: "collapse-sound",
@@ -2105,7 +2105,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["collapse sound","panel close sound","react ui sound","web audio"],
+        keywords: ["collapse sound", "panel close sound", "react ui sound", "web audio"],
       },
       {
         slug: "connect-sound",
@@ -2116,7 +2116,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["connect sound","plug sound effect","wallet connect sound","web audio"],
+        keywords: ["connect sound", "plug sound effect", "wallet connect sound", "web audio"],
       },
       {
         slug: "disconnect-sound",
@@ -2127,7 +2127,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["disconnect sound","unplug sound effect","react ui sound","web audio"],
+        keywords: ["disconnect sound", "unplug sound effect", "react ui sound", "web audio"],
       },
       {
         slug: "dismiss-sound",
@@ -2138,7 +2138,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["dismiss sound","toast close sound","react ui sound","web audio"],
+        keywords: ["dismiss sound", "toast close sound", "react ui sound", "web audio"],
       },
       {
         slug: "dock-sound",
@@ -2149,7 +2149,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["dock sound","snap to dock","react ui sound","web audio"],
+        keywords: ["dock sound", "snap to dock", "react ui sound", "web audio"],
       },
       {
         slug: "expand-sound",
@@ -2160,7 +2160,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["expand sound","accordion open sound","react ui sound","web audio"],
+        keywords: ["expand sound", "accordion open sound", "react ui sound", "web audio"],
       },
       {
         slug: "heart-sound",
@@ -2171,7 +2171,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["heart sound","like sound effect","favorite sound","web audio"],
+        keywords: ["heart sound", "like sound effect", "favorite sound", "web audio"],
       },
       {
         slug: "lift-sound",
@@ -2182,7 +2182,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["lift sound","drag pickup sound","react ui sound","web audio"],
+        keywords: ["lift sound", "drag pickup sound", "react ui sound", "web audio"],
       },
       {
         slug: "lock-sound",
@@ -2193,7 +2193,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["lock sound","latch sound effect","react ui sound","web audio"],
+        keywords: ["lock sound", "latch sound effect", "react ui sound", "web audio"],
       },
       {
         slug: "ping-sound",
@@ -2204,7 +2204,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["ping sound","mention sound effect","bell ping","web audio"],
+        keywords: ["ping sound", "mention sound effect", "bell ping", "web audio"],
       },
       {
         slug: "pop-sound",
@@ -2215,7 +2215,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["pop sound","bubble pop effect","react ui sound","web audio"],
+        keywords: ["pop sound", "bubble pop effect", "react ui sound", "web audio"],
       },
       {
         slug: "receive-sound",
@@ -2226,7 +2226,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["receive sound","message received sound","chat sound","web audio"],
+        keywords: ["receive sound", "message received sound", "chat sound", "web audio"],
       },
       {
         slug: "refresh-sound",
@@ -2237,7 +2237,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["refresh sound","pull to refresh sound","react ui sound","web audio"],
+        keywords: ["refresh sound", "pull to refresh sound", "react ui sound", "web audio"],
       },
       {
         slug: "reveal-sound",
@@ -2248,7 +2248,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["reveal sound","password toggle sound","react ui sound","web audio"],
+        keywords: ["reveal sound", "password toggle sound", "react ui sound", "web audio"],
       },
       {
         slug: "send-sound",
@@ -2259,7 +2259,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["send sound","message sent sound","chat sound","web audio"],
+        keywords: ["send sound", "message sent sound", "chat sound", "web audio"],
       },
       {
         slug: "shutter-sound",
@@ -2270,7 +2270,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["shutter sound","camera snapshot sound","react ui sound","web audio"],
+        keywords: ["shutter sound", "camera snapshot sound", "react ui sound", "web audio"],
       },
       {
         slug: "snap-sound",
@@ -2281,7 +2281,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["snap sound","magnetic latch sound","react ui sound","web audio"],
+        keywords: ["snap sound", "magnetic latch sound", "react ui sound", "web audio"],
       },
       {
         slug: "star-sound",
@@ -2292,7 +2292,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["star sound","bookmark sound effect","react ui sound","web audio"],
+        keywords: ["star sound", "bookmark sound effect", "react ui sound", "web audio"],
       },
       {
         slug: "swipe-sound",
@@ -2303,7 +2303,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["swipe sound","carousel swipe sound","react ui sound","web audio"],
+        keywords: ["swipe sound", "carousel swipe sound", "react ui sound", "web audio"],
       },
       {
         slug: "switch-sound",
@@ -2314,7 +2314,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["switch sound","toggle switch sound","react ui sound","web audio"],
+        keywords: ["switch sound", "toggle switch sound", "react ui sound", "web audio"],
       },
       {
         slug: "timer-sound",
@@ -2325,7 +2325,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["timer sound","metronome sound","countdown sound","web audio"],
+        keywords: ["timer sound", "metronome sound", "countdown sound", "web audio"],
       },
       {
         slug: "trash-sound",
@@ -2336,7 +2336,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["trash sound","discard sound effect","react ui sound","web audio"],
+        keywords: ["trash sound", "discard sound effect", "react ui sound", "web audio"],
       },
       {
         slug: "unlock-sound",
@@ -2347,7 +2347,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["unlock sound","latch release sound","react ui sound","web audio"],
+        keywords: ["unlock sound", "latch release sound", "react ui sound", "web audio"],
       },
       {
         slug: "whisper-sound",
@@ -2358,7 +2358,7 @@ export const registry: CategoryEntry[] = [
         extraFiles: ["lib/sound.tsx"],
         badge: "new",
         launchedAt: "2026-11-26",
-        keywords: ["whisper sound","tooltip sound effect","micro sound","web audio"],
+        keywords: ["whisper sound", "tooltip sound effect", "micro sound", "web audio"],
       },
     ],
   },
