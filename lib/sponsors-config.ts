@@ -14,5 +14,28 @@ export const SPONSOR_CHECKOUT_URLS: Record<SponsorTier, string | undefined> = {
   silver: `https://checkout.dodopayments.com/buy/pdt_0NjfXT8ydYuSDEYAFAtMK?quantity=1&${checkoutRedirect}`,
 };
 
+export const GITHUB_SPONSORS_URL = "https://github.com/sponsors/starc007";
+
+/** Monthly price and slot count per tier, shown on /sponsors and in its Markdown. */
+export const SPONSOR_PLANS: Record<SponsorTier, { price: string; slots: number }> = {
+  diamond: { price: "$199", slots: 3 },
+  platinum: { price: "$99", slots: 2 },
+  silver: { price: "$49", slots: 2 },
+};
+
+export type DiamondSponsor = {
+  name: string;
+  /** Key under Pages.sponsors.sponsorTaglines. */
+  tagline: "tracwell" | "illos";
+  domain: string;
+  /** Icon basename in /public/sponsors, with -light and -dark variants. */
+  icon: string;
+};
+
+export const DIAMOND_SPONSORS: DiamondSponsor[] = [
+  { name: "Tracwell", tagline: "tracwell", domain: "tracwell.app", icon: "tracwell-icon" },
+  { name: "Illos", tagline: "illos", domain: "illos.dev", icon: "illos-icon" },
+];
+
 export const SPONSOR_EVM_ADDRESS: string | undefined = "0xD740387440012782E6D760b86B21b17b8d1166B5";
 export const SPONSOR_SOL_ADDRESS: string | undefined = "A8ideoypKq2XNdKdFiGxheRmrWvPrEPxj14GDkehCAj6";

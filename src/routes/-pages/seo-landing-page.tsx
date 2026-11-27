@@ -46,6 +46,7 @@ export const getSeoIndexPage = createServerFn({ method: "GET" })
       description,
       image: ogImagePath("page", kind),
       imageAlt: title,
+      types: { "text/markdown": `${path}.md` },
     });
     return { metadata };
   });

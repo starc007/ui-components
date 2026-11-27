@@ -90,7 +90,7 @@ export const getNativeIndexPage = createServerFn({ method: "GET" })
         "reanimated components",
         "react native animation",
       ],
-      types: { "application/json": "/native/r" },
+      types: { "text/markdown": `${NATIVE_PATH}.md`, "application/json": "/native/r" },
     });
     const jsonLd: JsonLdSchema[] = [
       breadcrumbJsonLd([
@@ -259,7 +259,7 @@ export const getNativeComponentPage = createServerFn({ method: "GET" })
         "reanimated",
         "animated react native",
       ],
-      types: { "application/json": `/native/r/${slug}` },
+      types: { "text/markdown": `${path}.md`, "application/json": `/native/r/${slug}` },
     });
 
     const category = webCategoryOf(slug);

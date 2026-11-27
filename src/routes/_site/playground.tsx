@@ -14,7 +14,7 @@ const getPlaygroundPage = createServerFn({ method: "GET" })
     const metadata: Metadata = {
       title: t("title"),
       description: t("description"),
-      alternates: { canonical: "/playground" },
+      alternates: { canonical: "/playground", types: { "text/markdown": "/playground.md" } },
     };
     return { metadata, messages: messages.Pages.playground };
   });

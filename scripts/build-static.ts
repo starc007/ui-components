@@ -15,7 +15,19 @@ import { CHANGE_LABELS, CHANGELOG_PATH, changelogAnchor, changelogEntries, chang
 import { buildComponentMarkdown, buildVariantMarkdown } from "../lib/component-markdown";
 import { variantCopy } from "../lib/variant-copy";
 import { allVariantPages, docsPathFor, variantPath } from "../lib/variant-pages";
-import { categoryPath, componentPath } from "../lib/component-paths";
+import { categoryPath, componentPath, NATIVE_PATH, nativeComponentPath } from "../lib/component-paths";
+import {
+  blogIndexMarkdown,
+  brandMarkdown,
+  changelogMarkdown,
+  legalMarkdown,
+  nativeComponentMarkdown,
+  nativeIndexMarkdown,
+  playgroundMarkdown,
+  seoIndexMarkdown,
+  sponsorsMarkdown,
+  themesMarkdown,
+} from "../lib/page-markdown";
 import { buildGuideMarkdown, GUIDE_SLUGS } from "../lib/guide-markdown";
 import { native } from "../lib/native";
 import { buildNativeEntry, buildNativeIndex, NATIVE_HEADERS } from "../lib/native-registry";
@@ -212,6 +224,22 @@ async function buildMarkdownPages() {
   }
   for (const post of blogPosts()) {
     await write(`${blogPostPath(post.slug)}.md`, blogPostMarkdown(post, SITE_URL));
+  }
+  // Every other page: React Native, list, site and legal pages.
+  await write(`${NATIVE_PATH}.md`, nativeIndexMarkdown());
+  for (const component of native.components) {
+    await write(`${nativeComponentPath(component.slug)}.md`, nativeComponentMarkdown(component));
+  }
+  await write(`${BLOG_PATH}.md`, blogIndexMarkdown());
+  await write("/guides.md", seoIndexMarkdown("guides"));
+  await write("/alternatives.md", seoIndexMarkdown("alternatives"));
+  await write(`${CHANGELOG_PATH}.md`, changelogMarkdown());
+  await write("/brand.md", brandMarkdown(await readFile("brand.md", "utf8")));
+  await write("/themes.md", themesMarkdown());
+  await write("/playground.md", playgroundMarkdown());
+  await write("/sponsors.md", sponsorsMarkdown());
+  for (const key of ["privacy", "terms", "refunds"] as const) {
+    await write(`/${key}.md`, legalMarkdown(key));
   }
 }
 

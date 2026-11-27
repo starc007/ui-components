@@ -16,6 +16,7 @@ const getBrandPage = createServerFn({ method: "GET" })
       path: PAGE_PATH,
       title: t("title"),
       description: t("description"),
+      types: { "text/markdown": `${PAGE_PATH}.md` },
     });
     return { metadata };
   });

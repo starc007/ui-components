@@ -15,7 +15,7 @@ const getChangelogPage = createServerFn({ method: "GET" })
       path: CHANGELOG_PATH,
       title: t("title"),
       description: t("description"),
-      types: { "application/rss+xml": CHANGELOG_FEED_PATH },
+      types: { "text/markdown": `${CHANGELOG_PATH}.md`, "application/rss+xml": CHANGELOG_FEED_PATH },
     });
     return { metadata };
   });
