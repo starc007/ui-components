@@ -39,10 +39,8 @@ function apiReference(file: string) {
     for (const prop of doc.props) {
       lines.push(
         `| \`${prop.name}\` | \`${escapeTableCell(prop.type)}\` | ${
-          prop.defaultValue ? `\`${escapeTableCell(prop.defaultValue)}\`` : "-"
-        } | ${prop.required ? "Yes" : "No"} | ${
-          escapeTableCell(prop.description) || "-"
-        } |`,
+          prop.defaultValue ? `\`${escapeTableCell(prop.defaultValue)}\`` : ""
+        } | ${prop.required ? "Yes" : "No"} | ${escapeTableCell(prop.description)} |`,
       );
     }
     lines.push("");
@@ -64,9 +62,7 @@ function typesReference(files: string[]) {
       lines.push("| --- | --- | --- | --- |");
       for (const field of type.fields) {
         lines.push(
-          `| \`${field.name}\` | \`${escapeTableCell(field.type)}\` | ${field.required ? "Yes" : "No"} | ${
-            escapeTableCell(field.description) || "-"
-          } |`,
+          `| \`${field.name}\` | \`${escapeTableCell(field.type)}\` | ${field.required ? "Yes" : "No"} | ${escapeTableCell(field.description)} |`,
         );
       }
       lines.push("");

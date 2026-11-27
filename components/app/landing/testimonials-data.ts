@@ -13,7 +13,7 @@ export type Testimonial = {
 export const TESTIMONIALS = [
   {
     id: "2080032340529611136",
-    text: "I use beUI + beUI Pro in all my client projects: beautifully crafted, production-ready React components with purposeful motion and true “less is more” design. @saurra3h is incredibly responsive-I casually suggested a component, and he shipped it the same day. Exceptional craft.",
+    text: "I use beUI + beUI Pro in all my client projects: beautifully crafted, production-ready React components with purposeful motion and true “less is more” design. @saurra3h is incredibly responsive—I casually suggested a component, and he shipped it the same day. Exceptional craft.",
     user: {
       name: "Sébastien",
       username: "sbstngrs",
@@ -57,7 +57,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "2100035100675301477",
-    text: "Stumbled upon beUI today, an open-source React animation component library\n\nThings like 3D tilt cards, magnetic buttons, sliding Tabs, and even a navigation bar with mouse-over previews mimicking the Codex sidebar-tuned to feel super smooth",
+    text: "Stumbled upon beUI today, an open-source React animation component library\n\nThings like 3D tilt cards, magnetic buttons, sliding Tabs, and even a navigation bar with mouse-over previews mimicking the Codex sidebar—tuned to feel super smooth",
     user: {
       name: "Ian (伊恩)",
       username: "ianneo_ai",
