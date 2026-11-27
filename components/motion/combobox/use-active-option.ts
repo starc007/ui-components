@@ -15,7 +15,7 @@ type ActiveCursor = { value: string; query: string };
 type Options = {
   query: string;
   value: string | undefined;
-  /** The enabled, visible options in list order — all this hook reads of them. */
+  /** The enabled, visible options in list order - all this hook reads of them. */
   enabledItems: readonly { value: string }[];
 };
 
@@ -30,7 +30,7 @@ const isEnabled = (
  * in has changed. A cursor that outlived either would steal Enter from the row
  * the user is aiming at. The result-set half costs something: a live search
  * that blanks its rows while fetching and returns the same ones loses the moved
- * highlight. That is deliberate — a highlight visibly back at the top beats one
+ * highlight. That is deliberate - a highlight visibly back at the top beats one
  * silently in the wrong place.
  *
  * It is stamped with the query rather than with the identity of the visible
@@ -44,7 +44,7 @@ function liveCursorValue(cursor: ActiveCursor | null, options: Options) {
 
 /**
  * Where the highlight sits with no live cursor: the selection if it can be
- * selected, otherwise the first option that can. Only enabled options qualify —
+ * selected, otherwise the first option that can. Only enabled options qualify -
  * an active disabled option would point `aria-activedescendant` at a row Enter
  * then refuses to select.
  */
@@ -67,8 +67,8 @@ export function useActiveOption({ open, ...options }: Options & { open: boolean 
   const derived = live ?? fallbackActive(options);
 
   // Nothing is active until the list has been opened once. After that the
-  // resolution above is already stable across a close — the list keeps
-  // filtering by the query it was open with — so the highlight holds its row
+  // resolution above is already stable across a close - the list keeps
+  // filtering by the query it was open with - so the highlight holds its row
   // through the exit without being frozen separately.
   const [opened, setOpened] = useState(open);
   if (open && !opened) setOpened(true);
@@ -76,7 +76,7 @@ export function useActiveOption({ open, ...options }: Options & { open: boolean 
 
   // Both callbacks keep one identity for the life of the component, and read
   // the list through a ref to do it. A caller will put them in a `useMemo` or
-  // an effect's dependencies — the exhaustive-deps rule makes it — and
+  // an effect's dependencies - the exhaustive-deps rule makes it - and
   // `enabledItems` is a fresh array on every render for any consumer passing an
   // inline `filter`, so a callback keyed to it would be rebuilt every render.
   // Written after commit rather than during render: a render React discards

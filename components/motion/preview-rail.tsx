@@ -189,7 +189,7 @@ export function PreviewRail({
         aria-label={label}
         onPointerLeave={(event) => {
           // A touch pointer leaves on lift, which would clear the tick the tap
-          // just chose — that one is cleared by the outside tap instead.
+          // just chose - that one is cleared by the outside tap instead.
           if (hover.leave(event)) setHoveredId(null);
         }}
         style={

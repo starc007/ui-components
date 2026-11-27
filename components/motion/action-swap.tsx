@@ -238,7 +238,7 @@ export function ActionSwapText({
             >
               {label.split("").map((char, i) => (
                 <motion.span
-                  // biome-ignore lint/suspicious/noArrayIndexKey: position is the slot identity — the letter at a position is exactly what rolls.
+                  // biome-ignore lint/suspicious/noArrayIndexKey: position is the slot identity - the letter at a position is exactly what rolls.
                   key={i}
                   custom={i * CASCADE_STAGGER}
                   variants={CASCADE_LETTER_VARIANTS}
@@ -263,7 +263,7 @@ export function ActionSwapText({
             initial={reduce ? false : "initial"}
             animate={reduce ? { opacity: 1, filter: "blur(0px)", scale: 1, y: 0 } : "animate"}
             exit={reduce ? undefined : "exit"}
-            // Truncation lives on the layer that holds the text — the layer
+            // Truncation lives on the layer that holds the text - the layer
             // moves as a whole, so clipping it never eats the roll.
             className="absolute left-0 top-[0.08em] inline-block max-w-full truncate will-change-[opacity,filter,transform]"
           >
@@ -282,7 +282,7 @@ export function ActionSwapIcon({
   className,
 }: ActionSwapIconProps) {
   const reduce = useReducedMotion();
-  // Icons are single elements — cascade maps to its closest motion, roll.
+  // Icons are single elements - cascade maps to its closest motion, roll.
   const coreAnimation: CoreAnimation =
     animation === "cascade" ? "roll" : animation;
 

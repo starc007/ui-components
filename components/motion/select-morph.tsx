@@ -121,7 +121,7 @@ export interface MorphSelectProps {
 }
 
 /**
- * Select whose trigger morphs into the panel via a shared layoutId — instead of
+ * Select whose trigger morphs into the panel via a shared layoutId - instead of
  * a separate dropdown opening, the trigger itself grows into the menu and
  * shrinks back, never detaching. Composable like `Select` (the unfold variant).
  */
@@ -402,7 +402,7 @@ export function MorphSelectContent({
   );
   return (
     <>
-      {/* always-mounted, hidden — keeps item label registrations alive while
+      {/* always-mounted, hidden - keeps item label registrations alive while
           closed so the trigger shows the selected value before first open */}
       <RegistrarContext.Provider value={true}>
         <div hidden>{children}</div>

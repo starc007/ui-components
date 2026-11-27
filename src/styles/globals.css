@@ -15,7 +15,7 @@
 }
 
 :root {
-    /* Light mode — beUI Current. */
+    /* Light mode - beUI Current. */
     --background: oklch(99% 0 0);
     --foreground: oklch(15% 0 0);
     --card: oklch(97% 0 0);
@@ -54,7 +54,7 @@
     --ring: var(--border-strong);
 }
 
-/* Dark mode — beUI Current. Semantic tokens follow the base via var(). */
+/* Dark mode - beUI Current. Semantic tokens follow the base via var(). */
 .dark {
     --background: #151515;
     --foreground: oklch(96% 0 0);

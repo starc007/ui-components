@@ -25,7 +25,7 @@ export interface WalletCardProps extends WalletCardBaseProps {
  * Composed wallet overview card: an account switcher whose trigger morphs open
  * into a full-width panel, a search icon that morphs into a search bar, a
  * rolling balance with a transient change indicator, and Send / Deposit
- * actions. Actions and search are plain callbacks — the resulting flow is left
+ * actions. Actions and search are plain callbacks - the resulting flow is left
  * to the consumer.
  */
 export function WalletCard({
@@ -131,7 +131,7 @@ export function WalletCard({
           </button>
         </div>
         {/* One ActionSwapText swaps the number and the asterisk mask with a
-            per-letter cascade — same baseline, no overlap or layout shift. */}
+            per-letter cascade - same baseline, no overlap or layout shift. */}
         <ActionSwapText
           value={balanceHidden ? "hidden" : shownBalance}
           animation="cascade"

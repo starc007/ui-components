@@ -25,7 +25,7 @@ export type LoaderVariant =
   | "helix"
   | "percent";
 
-// Terminal-style frame sets — the loaders CLI AI agents cycle through.
+// Terminal-style frame sets - the loaders CLI AI agents cycle through.
 const ASCII_SETS: Record<string, string[]> = {
   ascii: ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"],
   "ascii-line": ["|", "/", "-", "\\"],
@@ -195,7 +195,7 @@ function Ascii({
 }: PartProps & { frames: string[] }) {
   const [frame, setFrame] = useState(0);
   useEffect(() => {
-    // Reduced motion slows the cycle rather than stopping it — it's a glyph
+    // Reduced motion slows the cycle rather than stopping it - it's a glyph
     // swap, not on-screen movement.
     const step = ((reduce ? speed * 2.5 : speed) / frames.length) * 1000;
     const id = setInterval(
@@ -217,7 +217,7 @@ function Ascii({
 
 // Each shape is sampled at the same number of points and emitted as an SVG
 // path with identical command structure, so framer tweens the `d` attribute
-// point-to-point — a real morph, not a snap. (clip-path polygon strings don't
+// point-to-point - a real morph, not a snap. (clip-path polygon strings don't
 // interpolate reliably in framer, which left the shapes broken.)
 const MORPH_POINTS = 24;
 
@@ -414,7 +414,7 @@ function Newton({ size, speed, reduce }: PartProps) {
   const d = size * 0.2;
   const out = d * 1.1;
   // Only the end balls move: the left slides out and back on the first half,
-  // then the right on the second half — the impact appears to jump the three
+  // then the right on the second half - the impact appears to jump the three
   // still middle balls. Pure horizontal slide, no swing, no strings.
   const moves: Record<number, { x: number[]; times: number[] }> = {
     0: { x: [0, -out, 0, 0], times: [0, 0.28, 0.5, 1] },
@@ -608,7 +608,7 @@ function DotMatrix({ size, speed, reduce }: PartProps) {
   );
 }
 
-// Ordered Bayer 4x4 matrix — the classic dithering threshold pattern. Cells
+// Ordered Bayer 4x4 matrix - the classic dithering threshold pattern. Cells
 // light in this order, so the fill shimmers like a dissolving halftone.
 const BAYER_4 = [
   0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5,

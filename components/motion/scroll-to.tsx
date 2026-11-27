@@ -24,7 +24,7 @@ export interface ScrollToProps
 
 /**
  * Button that smooth-scrolls to a target via the active SmoothScroll provider
- * (or native scroll as a fallback). Respects reduced motion — jumps instantly.
+ * (or native scroll as a fallback). Respects reduced motion - jumps instantly.
  */
 export function ScrollTo({
   to,

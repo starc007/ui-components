@@ -10,13 +10,13 @@
       "allLabel": "All animated components"
     },
     "blocks": {
-      "title": "Animated React UI Blocks — Product-Ready Motion",
+      "title": "Animated React UI Blocks - Product-Ready Motion",
       "heading": "Animated React UI blocks",
       "description": "Explore product-ready animated React blocks built with Motion and Tailwind CSS. Copy complete interactions into your app and adapt the source to your product.",
       "allLabel": "All animated blocks"
     },
     "charts": {
-      "title": "Animated React Charts — Heatmaps and Price Targets",
+      "title": "Animated React Charts - Heatmaps and Price Targets",
       "heading": "Animated React charts",
       "description": "Explore interactive activity heatmaps, monthly returns, and price target charts. Copy the React source and customize it for your data.",
       "allLabel": "All charts"
@@ -54,7 +54,7 @@
       "keysHint": "Play them from the keys: 1 to 0, then letters A to Z."
     },
     "agents": {
-      "title": "AI Agent Components — Animated React AI Interfaces",
+      "title": "AI Agent Components - Animated React AI Interfaces",
       "heading": "Animated AI agent components",
       "description": "Build clear, responsive AI experiences with open-source React components for agent reasoning, progress, tool activity, and conversation states.",
       "allLabel": "All agent components"

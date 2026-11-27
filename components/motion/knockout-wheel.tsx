@@ -41,7 +41,7 @@ type Translate = (
 export type Team = {
   name: string;
   /**
-   * Any square image URL — club crest, org mark, player photo. Wins over `code`.
+   * Any square image URL - club crest, org mark, player photo. Wins over `code`.
    * Drawn as-is on the node's card-colored disc, so a transparent-background
    * mark inked for one theme disappears in the other: ship artwork that reads on
    * both, or pick the URL yourself from your theme state.
@@ -54,7 +54,7 @@ export type Team = {
 export type MatchSide = {
   team: Team | null;
   score: number | null;
-  /** Present on both sides to render shootout scores — 1 (3). */
+  /** Present on both sides to render shootout scores - 1 (3). */
   penalties?: number | null;
 };
 
@@ -80,7 +80,7 @@ export type Round = {
 
 export interface KnockoutWheelProps {
   /**
-   * The whole draw, ordered widest round first — the same array the knockout
+   * The whole draw, ordered widest round first - the same array the knockout
    * bracket takes. Any single-elimination tournament fits: each round holds half
    * the matches of the one before it (16 → 8 → 4 → 2 → 1) and `rounds[r].matches[k]`
    * is fed by matches `2k` and `2k + 1` of the round before it. Two rounds are
@@ -116,7 +116,7 @@ const HUB_R = 34;
 const NODE_MIN = 14.2;
 const NODE_STEP = 2.2;
 // Initials floor, in viewBox units. The stage never goes below 32rem against a
-// 760-unit box (scale ~0.674), so 15 units is ~10px on screen — under that, two
+// 760-unit box (scale ~0.674), so 15 units is ~10px on screen - under that, two
 // letters are a smudge. `node.r * 0.8` alone puts the inner ring at 7.6px.
 const INITIALS_MIN = 15;
 // Siblings pull slightly toward their parent, opening a lane between subtrees.
@@ -182,7 +182,7 @@ const teamName = (side: MatchSide, t: Translate) =>
 const crestSrc = (team: Team) =>
   team.logo ?? (team.code ? `https://flagcdn.com/w80/${team.code}.png` : null);
 
-/** Two-letter stand-in when a team has no artwork — "Real Madrid" → RM.
+/** Two-letter stand-in when a team has no artwork - "Real Madrid" → RM.
  * Spread, not `word[0]`: an emoji or astral first character is a surrogate pair
  * and indexing it renders a replacement glyph. */
 const initials = (name: string) =>
@@ -386,7 +386,7 @@ function TeamMark({
           <clipPath id={clipId}>
             <circle cx={node.x} cy={node.y} r={node.r} />
           </clipPath>
-          {/* Plain <image> — flags from flagcdn.com, logos from wherever you host
+          {/* Plain <image> - flags from flagcdn.com, logos from wherever you host
               them. A 4:3 flag is cropped to fill the disc; a logo is fitted whole
               inside it, since a crest cropped to a circle loses its shape. */}
           <motion.image
@@ -404,7 +404,7 @@ function TeamMark({
           />
         </>
       ) : node.team ? (
-        // No artwork on this team — initials keep the ring readable.
+        // No artwork on this team - initials keep the ring readable.
         <motion.text
           x={node.x}
           y={node.y}
@@ -604,7 +604,7 @@ export function KnockoutWheel({
   const uid = useId().replace(/:/g, "");
   const ref = useRef<SVGSVGElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  // 63 flags for a 32-team draw, and SVG <image> has no lazy attribute — so the
+  // 63 flags for a 32-team draw, and SVG <image> has no lazy attribute - so the
   // requests wait until the wheel is nearly on screen.
   const inView = useInView(ref, { once: true, margin: "300px" });
   // Hover, tap and focus are tracked apart. Sharing one slot let a stray mouse
@@ -722,7 +722,7 @@ export function KnockoutWheel({
   );
 
   // A finger never leaves the flag it lit, so the isolation would hold for good
-  // — and bare stage reports no pointer event of its own to end it. The next
+  // - and bare stage reports no pointer event of its own to end it. The next
   // pointerdown that isn't on a flag stands in for the pointer leaving; it is
   // consumed, since a wheel spanning the viewport makes tapping past it the
   // natural way out and there is no reason for that tap to do anything else.
@@ -874,7 +874,7 @@ export function KnockoutWheel({
 
       {/* role="img" prunes the svg's descendants, so every result is restated
           here for screen readers. */}
-      {/* Named lists, not <section aria-label> — a named section is a landmark,
+      {/* Named lists, not <section aria-label> - a named section is a landmark,
           and five of those would crowd real page landmarks. */}
       <div className="sr-only">
         {visible

@@ -34,7 +34,7 @@ export function WheelPickerPreview() {
   const dayCount = daysIn(monthIndex, Number(year));
   const days = Array.from({ length: dayCount }, (_, i) => String(i + 1));
 
-  // A short month or a non-leap February can strand the day past the end —
+  // A short month or a non-leap February can strand the day past the end -
   // pull it back to the last valid day.
   useEffect(() => {
     if (Number(day) > dayCount) setDay(String(dayCount));

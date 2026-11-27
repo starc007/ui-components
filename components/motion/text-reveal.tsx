@@ -42,7 +42,7 @@ type WordGroup = { text: string; trailing: string };
 /**
  * One tokenizer for both modes: a line becomes the words it is made of, each
  * carrying the whitespace that follows it. Word mode animates a group at a
- * time, char mode the characters inside one — so the two can't drift apart on
+ * time, char mode the characters inside one - so the two can't drift apart on
  * what counts as a word or where a space belongs. Runs of whitespace and tabs
  * survive as their own group rather than collapsing.
  */

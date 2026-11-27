@@ -55,7 +55,7 @@ export interface Preset {
 /**
  * One decoded line of the generated code: `code` is the snippet fragment it
  * refers to (rendered monospace), `text` explains it in plain English using the
- * current values. This is the teaching layer — it turns the code into a lesson.
+ * current values. This is the teaching layer - it turns the code into a lesson.
  */
 export interface ExplainPoint {
   code: string;
@@ -64,7 +64,7 @@ export interface ExplainPoint {
 
 /**
  * A self-contained playground type (spring, tween, stagger...). Adding one is a
- * single module plus a line in `items/index.ts` — the shell stays untouched.
+ * single module plus a line in `items/index.ts` - the shell stays untouched.
  * Each module exports a `(t: PlaygroundT) => PlaygroundItem` so its copy is
  * translated; generated code (`toCode`) stays English.
  */

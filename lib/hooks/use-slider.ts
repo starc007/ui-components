@@ -48,7 +48,7 @@ export interface SliderOptions {
   disabled?: boolean;
   /** Accessible name for the slider handle. */
   "aria-label"?: string;
-  /** Announced instead of the raw number — pass one when the value carries a
+  /** Announced instead of the raw number - pass one when the value carries a
    * unit or a suffix ("72.5 kg", "35%"); a bare number needs no valueText. */
   formatValueText?: (value: number) => string;
   /** Play a tiny tick per step, higher toward the max. Off by default; a `SoundProvider` can mute it app-wide. */
@@ -131,7 +131,7 @@ export function useSlider({
     (event: PointerEvent<HTMLDivElement>) => {
       if (disabled) return;
       // Start the drag first: capture is a convenience, and a browser that
-      // refuses it — or a test DOM that has no pointer capture at all — must
+      // refuses it - or a test DOM that has no pointer capture at all - must
       // not take the drag down with it.
       draggingRef.current = true;
       setDragging(true);
@@ -186,7 +186,7 @@ export function useSlider({
     max: hi,
     step: stride,
     commit,
-    /** Pointer handlers for the track element — drag anywhere on it. */
+    /** Pointer handlers for the track element - drag anywhere on it. */
     trackProps: {
       ref: trackRef,
       onPointerDown,

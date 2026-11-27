@@ -11,12 +11,12 @@ import { cn } from "@/lib/utils";
 /**
  * Shell width below which a docked sidebar leaves too little room for the
  * conversation: the default sidebar is 17rem, so under 600px the conversation
- * pane is left with barely 330px — narrower than a phone.
+ * pane is left with barely 330px - narrower than a phone.
  *
  * Deliberately not AnimatedSidebar's own 767px mobile query: that one asks
  * whether the *viewport* is a phone (and swaps the sidebar for an off-canvas
- * sheet), this one asks whether the *shell's own box* — which may be a column,
- * a split view or a panel inside a much wider page — still fits both panes.
+ * sheet), this one asks whether the *shell's own box* - which may be a column,
+ * a split view or a panel inside a much wider page - still fits both panes.
  */
 const MIN_DOCKED_WIDTH = 600;
 
@@ -25,7 +25,7 @@ export interface ChatAppProps extends AnimatedSidebarProviderProps {
   sidebarWidth?: string;
   /**
    * Shell width in px under which the sidebar folds off-canvas. Ignored while
-   * `open` is controlled — the consumer owns the state then.
+   * `open` is controlled - the consumer owns the state then.
    */
   collapseSidebarBelow?: number;
 }
@@ -59,7 +59,7 @@ function ShellFit({ minWidth }: { minWidth: number }) {
       narrowRef.current = narrow;
       if (first && !narrow) return;
       const wanted = !narrow;
-      // Already where the shell wants it — saying so again would only be an
+      // Already where the shell wants it - saying so again would only be an
       // onOpenChange the caller never asked for.
       if (openRef.current === wanted) return;
       setOpen(wanted);

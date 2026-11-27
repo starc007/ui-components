@@ -37,7 +37,7 @@ export interface NumberTickerProps {
    * (or the runtime default without one); a BCP 47 tag such as `"de-DE"` pins it.
    */
   locale?: boolean | string;
-  /** Custom formatter. Client-only — server components must use `locale` instead. */
+  /** Custom formatter. Client-only - server components must use `locale` instead. */
   format?: (value: number) => string;
 }
 
@@ -93,7 +93,7 @@ export function NumberTicker({
   const readableText = `${prefix ?? ""}${text}${suffix ?? ""}`;
 
   // Stagger is an entrance flourish. Once the reveal has played, value
-  // changes roll every digit immediately — a per-digit delay on live updates
+  // changes roll every digit immediately - a per-digit delay on live updates
   // reads as lag.
   const [entered, setEntered] = useState(false);
   useEffect(() => {

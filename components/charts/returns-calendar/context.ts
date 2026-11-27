@@ -25,7 +25,7 @@ import { compound, MONTHS, monthColumns, same, YEAR } from "./utils";
  * hovering a year total replays that row month by month. Clicking a month
  * anchors a span: the grid dims, hovering previews the run from that month to
  * the pointer with its compounded return, a second click locks it and a third
- * clears it. The Year column selects the same way but by whole years — anchor a
+ * clears it. The Year column selects the same way but by whole years - anchor a
  * year, a second year spans every month between them. Hover lifts are gated to
  * pointer devices, and reduced motion keeps the fades only.
  */
@@ -121,7 +121,7 @@ export function useReturnsCalendarModel({
 
   const select = (cell: ReturnsCalendarCell) => {
     if (spanEnd || same(pinned, cell.y, cell.m)) clear();
-    // extend within the same track — month→month or year→year; a different track re-anchors
+    // extend within the same track - month→month or year→year; a different track re-anchors
     else if (pinned && (pinned.m === YEAR) === (cell.m === YEAR)) setSelection({ start: pinned, end: cell });
     else {
       setSelection({ start: cell });

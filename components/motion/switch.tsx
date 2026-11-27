@@ -6,7 +6,7 @@ import { useSound } from "@/lib/sound";
 import { toggleOffSound, toggleOnSound } from "@/lib/sounds/toggle";
 import { cn } from "@/lib/utils";
 
-// Heavy, deliberate thumb — high mass keeps the travel weighty without wobble.
+// Heavy, deliberate thumb - high mass keeps the travel weighty without wobble.
 const THUMB_SPRING = { type: "spring", stiffness: 800, damping: 80, mass: 4 } as const;
 
 export interface SwitchProps {

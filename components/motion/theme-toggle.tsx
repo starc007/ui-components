@@ -74,7 +74,7 @@ html[data-beui-vt="blinds"]::view-transition-old(root) {
 }
 /* Slats: a masked band widens inside every 72px tile, so the new theme opens
    across the page like a shutter. The band edge has to be a registered custom
-   property — mask-image itself is not animatable, but it re-resolves every
+   property - mask-image itself is not animatable, but it re-resolves every
    frame the property ticks. mask-size fixes the tile at 72px rather than
    letting a repeating gradient's last stop define it, which is what keeps the
    20px soft edge from dragging the tile wider than the slat and leaving a

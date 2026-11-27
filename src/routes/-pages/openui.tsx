@@ -40,7 +40,7 @@ import { Button } from "@/components/motion/button";
 import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { AnimatedNumber } from "@/components/motion/animated-number";
 
-// beUI Button — the model picks a variant and an optional press ripple.
+// beUI Button - the model picks a variant and an optional press ripple.
 // \`useTriggerAction\` keeps it live: pressing it sends \`action\` back to the
 // model, so generated buttons continue the conversation instead of sitting inert.
 const BeButton = defineComponent({
@@ -102,7 +102,7 @@ const BeStat = defineComponent({
 // The root node stacks the components above. Describe its children as a union
 // of each component's \`.ref\` (declared after the components exist): the runtime
 // validates what may nest here, and the model sees exactly which nodes are
-// allowed inside — both of which \`z.any()\` would throw away.
+// allowed inside - both of which \`z.any()\` would throw away.
 const StackChild = z.union([BeButton.ref, BeBadge.ref, BeStat.ref]);
 
 const Stack = defineComponent({
@@ -198,7 +198,7 @@ export function GenerativeResponse({
       response={response}
       library={beuiLibrary}
       isStreaming={isStreaming}
-      // A registered Button was pressed — send its message back to the
+      // A registered Button was pressed - send its message back to the
       // model to continue the conversation.
       onAction={(event) => onSend(event.humanFriendlyMessage)}
     />

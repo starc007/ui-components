@@ -35,7 +35,7 @@ export function MobileSidebar({
   const [mounted, setMounted] = useState(false);
   // The sheet is mounted for as long as the viewport is mobile, so it hides
   // itself while closed rather than sitting there transparent and interactive.
-  // Opening shows it in the same commit that starts the slide — a delayed show
+  // Opening shows it in the same commit that starts the slide - a delayed show
   // would run the focus effect below against a still-hidden panel, and focus()
   // on a hidden element is ignored. Closing waits for the slide to finish, and
   // the panel's own exit tells us when that is: no duration to keep in sync.

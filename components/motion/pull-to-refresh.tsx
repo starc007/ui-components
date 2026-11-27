@@ -485,7 +485,7 @@ export function PullToRefresh({
       }}
       className={cn(
         "relative w-full overflow-y-auto overscroll-contain bg-background",
-        // No `touch-none` here — this element is the scroller, and the pull
+        // No `touch-none` here - this element is the scroller, and the pull
         // only takes over once the content is already at the top. The callout
         // has to be off from the first frame though: iOS decides on it while
         // the finger is still resting, long before the pull is recognised.

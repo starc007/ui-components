@@ -55,7 +55,7 @@ function useRootFontSize() {
 
 /**
  * The absolute width a column declared, in px, or null when it declared a share
- * of the remainder instead (`fr`, `%`, `auto`, `calc()`, nothing at all) — those
+ * of the remainder instead (`fr`, `%`, `auto`, `calc()`, nothing at all) - those
  * are worth whatever is left over, which is not a width this can add up.
  */
 function resolveColumnWidth(
@@ -177,9 +177,9 @@ export function Table<T>({
   const rootFontSize = useRootFontSize();
   // In a container narrower than the columns, `table-layout: fixed` shrinks
   // every column toward zero instead of scrolling. Floor the table at what the
-  // columns actually asked for — an absolute declared width where there is one,
+  // columns actually asked for - an absolute declared width where there is one,
   // and for the ones sharing the remainder whatever content they can fall back
-  // on — then let the viewport scroll past it.
+  // on - then let the viewport scroll past it.
   const minTableWidth = useMemo(() => {
     // A column whose cells render bare inputs has no content for the fallback
     // to measure, which is exactly the column that collapses; a renamable
@@ -291,7 +291,7 @@ export function Table<T>({
                 <col key={column.key} style={width ? { width } : undefined} />
               );
             })}
-            {/* Empty filler owns the leftover space — no gap, content unpinned. */}
+            {/* Empty filler owns the leftover space - no gap, content unpinned. */}
             <col />
           </colgroup>
 

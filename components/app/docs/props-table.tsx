@@ -88,12 +88,14 @@ export function PropsTable({
                 </div>
                 {/* Give verbose defaults the widest track and let them wrap
                     without pushing into the type column. */}
-                <div className="flex min-w-0 items-baseline gap-2 sm:justify-self-end">
-                  <span className="text-xs text-muted-foreground sm:sr-only">{t("default")}</span>
-                  <code className="h-fit w-fit min-w-0 wrap-anywhere rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
-                    {prop.defaultValue ?? "—"}
-                  </code>
-                </div>
+                {prop.defaultValue ? (
+                  <div className="flex min-w-0 items-baseline gap-2 sm:justify-self-end">
+                    <span className="text-xs text-muted-foreground sm:sr-only">{t("default")}</span>
+                    <code className="h-fit w-fit min-w-0 wrap-anywhere rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
+                      {prop.defaultValue}
+                    </code>
+                  </div>
+                ) : null}
               </div>
             ))}
             </div>

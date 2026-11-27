@@ -35,7 +35,7 @@ export function MobileNav() {
   useEffect(() => setMounted(true), []);
 
   // Covers navigation that doesn't go through a drawer link (back/forward).
-  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger — close the drawer on any route change.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger - close the drawer on any route change.
   useEffect(() => {
     setOpen(false);
   }, [pathname]);

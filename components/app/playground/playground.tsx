@@ -20,7 +20,7 @@ import { Controls } from "./controls";
 import type { ControlValue, ExplainPoint, Preset, Values } from "./core";
 import { PLAYGROUND_ITEMS, PLAYGROUND_SOON } from "./items";
 
-/** Plain-English decode of the current code — the teaching layer. */
+/** Plain-English decode of the current code - the teaching layer. */
 function ExplainPanel({ points }: { points: ExplainPoint[] }) {
   const t = useTranslations("Pages.playground");
 
@@ -45,7 +45,7 @@ function ExplainPanel({ points }: { points: ExplainPoint[] }) {
   );
 }
 
-/** Quick-start preset chips. Plain starting points to play from — the type's
+/** Quick-start preset chips. Plain starting points to play from - the type's
  *  own defaults load first. */
 function PresetSection({
   presets,

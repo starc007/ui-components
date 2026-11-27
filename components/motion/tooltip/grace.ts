@@ -73,8 +73,8 @@ function hull(points: Point[]) {
 /**
  * How the user last reached for the page. A focus that a mouse press caused is
  * not a request to read the label: the pointer is already on the control and
- * hovering showed it. A focus that followed a key — Tab, or a roving arrow key
- * moving focus in script — is the only way a keyboard user sees it at all.
+ * hovering showed it. A focus that followed a key - Tab, or a roving arrow key
+ * moving focus in script - is the only way a keyboard user sees it at all.
  */
 let modality: "keyboard" | "pointer" = "keyboard";
 let listening = false;

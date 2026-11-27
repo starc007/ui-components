@@ -18,7 +18,7 @@ import { type WalletCardMessages, walletCardMessages } from "./messages";
 /**
  * Search icon that morphs into a full-width search bar via a shared layoutId,
  * growing leftward across the header row. The recent-searches results render as
- * a SEPARATE dropdown below the bar — not part of the morphing element — so
+ * a SEPARATE dropdown below the bar - not part of the morphing element - so
  * filtering as you type resizes only the dropdown and never re-fires the morph
  * (which would scale-distort the input text). The in-flow slot keeps its width
  * whether open or closed so the header row (and card) never shifts.
@@ -65,7 +65,7 @@ export function SearchBar({
   // The box keeps the bouncy morph (same feel as the account switcher)...
   const morph: Transition = reduce ? { duration: 0 } : MORPH;
   // ...but the leading icon + input travel across the row, so their own layout
-  // uses a critically-damped spring — they glide to place without inheriting the
+  // uses a critically-damped spring - they glide to place without inheriting the
   // box's overshoot (which read as the icon jittering right-then-left).
   const glide: Transition = reduce
     ? { duration: 0 }
@@ -107,7 +107,7 @@ export function SearchBar({
 
       {/* one connected panel: input + results grow out of the trigger. The text
           nodes use layout="position" so when the panel resizes (filtering) they
-          reposition without scaling — no re-morph distortion, still connected. */}
+          reposition without scaling - no re-morph distortion, still connected. */}
       <AnimatePresence initial={false} mode="popLayout">
         {open ? (
           <motion.div

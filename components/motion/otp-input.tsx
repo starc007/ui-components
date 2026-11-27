@@ -234,7 +234,7 @@ export function OTPInput({
 
   // Autofill path: SMS one-time-code arrives as a whole value in one shot.
   // Keystrokes go through onKeyDown and paste through onPaste, so only autofill
-  // reaches here — spread it across the slots from the start.
+  // reaches here - spread it across the slots from the start.
   const onChangeNative = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = sanitize(e.target.value, length);
     if (!digits) return;
@@ -242,7 +242,7 @@ export function OTPInput({
     setActive(Math.min(digits.length, length - 1));
   };
 
-  // Error shake — imperative so it replays on every transition into "error".
+  // Error shake - imperative so it replays on every transition into "error".
   useEffect(() => {
     if (status !== "error" || reduce || !slotsRef.current) return;
     animate(
@@ -293,7 +293,7 @@ export function OTPInput({
           disabled={disabled}
           aria-label={ariaLabel}
           aria-invalid={status === "error"}
-          // Kept empty on purpose — our state owns the digits, native holds none.
+          // Kept empty on purpose - our state owns the digits, native holds none.
           value=""
           maxLength={length}
           onKeyDown={onKeyDown}
@@ -330,7 +330,7 @@ export function OTPInput({
                   disabled && "opacity-50",
                 )}
               >
-                {/* Blinking caret marks the active slot — centered when empty,
+                {/* Blinking caret marks the active slot - centered when empty,
                     trailing the digit when the slot is already filled. */}
                 {isActive && !showSuccess ? (
                   <motion.span
@@ -349,7 +349,7 @@ export function OTPInput({
                 ) : null}
 
                 {/* Digits roll vertically. Each is absolutely centered so enter and
-                    exit overlap in place — no in-flow reflow, no sideways drift. */}
+                    exit overlap in place - no in-flow reflow, no sideways drift. */}
                 <AnimatePresence initial={false}>
                   {char ? (
                     <motion.span

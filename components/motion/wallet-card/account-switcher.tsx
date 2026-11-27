@@ -16,7 +16,7 @@ import { truncateAddress } from "./utils";
 /**
  * Account switcher whose trigger morphs into a panel that grows rightward to
  * full width (covering the header icons) and downward at the same time, via a
- * shared layoutId. Self-contained — not the generic MorphSelect.
+ * shared layoutId. Self-contained - not the generic MorphSelect.
  */
 export function AccountSwitcher({
   accounts,
@@ -34,7 +34,7 @@ export function AccountSwitcher({
   const layoutId = `${useId()}-account`;
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  // Hover only arms after the morph settles — otherwise the panel expands under
+  // Hover only arms after the morph settles - otherwise the panel expands under
   // the cursor and flashes a phantom hover bg on whatever item it lands on.
   const [armed, setArmed] = useState(false);
   const close = useCallback(() => setOpen(false), []);
@@ -59,7 +59,7 @@ export function AccountSwitcher({
     <div ref={rootRef} className="min-w-0">
       {/* in-flow sizer: reserves the widest possible trigger footprint (every
           account name stacked in one grid cell) so the header row width never
-          changes — neither when the trigger leaves the flow nor when a shorter
+          changes - neither when the trigger leaves the flow nor when a shorter
           account name is selected. */}
       <div aria-hidden className={cn(HEAD, "pointer-events-none opacity-0")}>
         {sizerAccount ? <AccountAvatar account={sizerAccount} /> : null}

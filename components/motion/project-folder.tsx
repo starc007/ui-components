@@ -197,7 +197,7 @@ export function ProjectFolder({
 
   // The chrome is two siblings: a backdrop spanning the viewport edges that
   // paints the scrim, and a transparent dialog inset off every edge that lays
-  // out and scrolls the panel. The backdrop cannot nest inside that scroll box —
+  // out and scrolls the panel. The backdrop cannot nest inside that scroll box -
   // WebKit resolves a `position: fixed` descendant of an accelerated overflow
   // scroller against the scroller, not the viewport, so the insets would go
   // unscrimmed on a phone. The scroll box takes no pointer events and the panel

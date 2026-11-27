@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 const SPRING_BAR = { type: "spring", stiffness: 420, damping: 20, mass: 0.5 } as const;
 /** Bar count that reads as a wave without turning into a stripe pattern. */
 const BARS = 32;
-/** Width of the crest in bars — bigger spreads the bell wider. */
+/** Width of the crest in bars - bigger spreads the bell wider. */
 const SPREAD = 2.6;
 
 export interface WaveSliderProps extends SliderOptions {
@@ -30,7 +30,7 @@ export function WaveSlider({ bars = BARS, className, ...options }: WaveSliderPro
   const reduce = useReducedMotion();
   const { percent, dragging, trackProps, sliderProps } = useSlider(options);
 
-  // Keys only change when the bar count does — the list never reorders.
+  // Keys only change when the bar count does - the list never reorders.
   const keys = useMemo(() => Array.from({ length: bars }, (_, i) => `bar-${i}`), [bars]);
 
   const head = (percent / 100) * (bars - 1);

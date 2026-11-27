@@ -13,7 +13,7 @@ import {
   useRef,
 } from "react";
 
-// Lenis' own expo-out curve — the canonical smooth-scroll easing. Kept as a
+// Lenis' own expo-out curve - the canonical smooth-scroll easing. Kept as a
 // named local fn (not a lib/ease token) because tokens are bezier control
 // points for the motion lib, while Lenis needs a (t) => number easing fn.
 const EASE_SCROLL = (t: number) => Math.min(1, 1.001 - 2 ** (-10 * t));
@@ -53,7 +53,7 @@ export interface SmoothScrollProps {
   orientation?: "vertical" | "horizontal";
   /** Wheel scroll speed multiplier. */
   wheelMultiplier?: number;
-  /** Smooth touch scrolling. Off by default — native momentum is good on mobile. */
+  /** Smooth touch scrolling. Off by default - native momentum is good on mobile. */
   touch?: boolean;
   /** Classes merged onto the wrapper element. */
   className?: string;

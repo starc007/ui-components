@@ -168,7 +168,7 @@ export function BloomMenu({
 
       {/* Centering box sized to the OPEN panel and centered on the trigger.
           place-items-center only centers an item that fits its cell, so the cell
-          must be as wide as the panel — otherwise the overflow left-anchors and
+          must be as wide as the panel - otherwise the overflow left-anchors and
           the panel expands rightward. The box is a fixed size per viewport (vw
           doesn't change mid-animation), so its -translate centering never drifts
           the way a content-sized wrapper would. Both states share its center, so

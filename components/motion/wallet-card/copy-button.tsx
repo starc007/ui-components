@@ -31,7 +31,7 @@ export function CopyButton({
     try {
       await navigator.clipboard.writeText(value);
     } catch {
-      // clipboard may be unavailable (insecure context) — swap anyway
+      // clipboard may be unavailable (insecure context) - swap anyway
     }
     setCopied(true);
     window.clearTimeout(timer.current);
