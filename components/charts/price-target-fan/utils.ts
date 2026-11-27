@@ -1,6 +1,6 @@
 import type { PriceHistoryPoint } from "./types";
 
-/** e.g. "Mon, Jul 15" — the scrub read-out's date. English without a locale. */
+/** e.g. "Mon, Jul 15" - the scrub read-out's date. English without a locale. */
 export const fmtScrubDate = (date: string, locale?: string) =>
   new Intl.DateTimeFormat(locale ?? "en-US", {
     timeZone: "UTC",

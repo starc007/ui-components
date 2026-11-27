@@ -160,7 +160,7 @@ export function ExpandableActionBar({
   });
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   // Set by the tap that expands the bar, and the reason the outside-tap
-  // dismisser exists at all — a hovering pointer has its own way out.
+  // dismisser exists at all - a hovering pointer has its own way out.
   const [tapExpanded, setTapExpanded] = useState(false);
   const collapseTimer = useRef<number | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -192,7 +192,7 @@ export function ExpandableActionBar({
   useEffect(() => clearCollapseTimer, [clearCollapseTimer]);
 
   // A collapse from outside takes the labels with it, so the arm the tap that
-  // expanded the bar left behind has to go too — otherwise the next tap runs
+  // expanded the bar left behind has to go too - otherwise the next tap runs
   // an action whose label nobody can read. Only on the way down from expanded:
   // a controlled bar that declined to expand at all keeps its arm, which is
   // what lets its second tap act.
@@ -204,7 +204,7 @@ export function ExpandableActionBar({
 
   // A finger never hovers and Safari does not focus a button on tap, so a bar a
   // tap expanded would have nothing to close it. The tap that lands elsewhere
-  // stands in for the pointer leaving — and it is consumed rather than passed
+  // stands in for the pointer leaving - and it is consumed rather than passed
   // through, because the labelled bar is exactly the kind of surface people
   // dismiss by tapping just past it, over whatever control is there.
   useDismiss(tapExpanded && isExpanded, close, trackRef, {
@@ -243,7 +243,7 @@ export function ExpandableActionBar({
         // Pointer events, not the mouse pair: a tap fires compatibility
         // mouseenter/mouseleave that carry no pointerType, and the bar growing
         // under a stationary finger fired the leave before the click ever
-        // landed — so one tap expanded, collapsed and ran nothing.
+        // landed - so one tap expanded, collapsed and ran nothing.
         onPointerEnter={onRootPointerEnter}
         onPointerLeave={onRootPointerLeave}
         onFocus={onRootFocus}
@@ -255,7 +255,7 @@ export function ExpandableActionBar({
           ref={trackRef}
           layout="size"
           className={cn(
-            // Labelled actions can outgrow the space the bar sits in — the pill
+            // Labelled actions can outgrow the space the bar sits in - the pill
             // stays inside it and scrolls its rail rather than running off the
             // edge, where the last action is unreachable.
             "scrollbar-hide relative inline-flex max-w-full items-center overflow-x-auto overflow-y-hidden rounded-full border border-border bg-card/90 shadow-2xl backdrop-blur-xl",

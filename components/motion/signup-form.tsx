@@ -106,7 +106,7 @@ export interface SignUpFormProps {
   onValuesChange?: (values: SignUpValues) => void;
   /** Called with valid values only. Return a promise to drive the button state. */
   onSubmit?: (values: SignUpValues) => void | Promise<void>;
-  /** Replace the built-in rules — return a message per invalid field. */
+  /** Replace the built-in rules - return a message per invalid field. */
   validate?: (values: SignUpValues) => SignUpErrors;
   /** Controlled submit state. Omit to let the form track it. */
   status?: SignUpStatus;
@@ -164,7 +164,7 @@ const STRENGTH_COLORS = [
 /**
  * Length-weighted strength score, 0-4. NIST SP 800-63B advises against
  * composition requirements and treats length as the dominant factor, so extra
- * character classes only nudge the score — they can't rescue a short password.
+ * character classes only nudge the score - they can't rescue a short password.
  * This is a heuristic for feedback, not entropy estimation; pair it with a
  * breach-list check server-side for anything real.
  */
@@ -285,7 +285,7 @@ export function SignUpForm({
     setTouched((prev) => (prev[key] ? prev : { ...prev, [key]: true }));
   }, []);
 
-  /** Error to render for a field — hidden until the field has been touched. */
+  /** Error to render for a field - hidden until the field has been touched. */
   const shownError = (key: keyof SignUpValues) =>
     touched[key] ? errors[key] : undefined;
 
@@ -430,7 +430,7 @@ export function SignUpForm({
                       key={index}
                       className="h-1 flex-1 overflow-hidden rounded-full bg-muted-foreground/20"
                     >
-                      {/* scaleX rather than width — transforms only, per the
+                      {/* scaleX rather than width - transforms only, per the
                           motion conventions, and it keeps the bar off layout. */}
                       <motion.span
                         initial={false}

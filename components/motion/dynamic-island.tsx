@@ -36,7 +36,7 @@ const CONTENT_SPRING = {
   bounce: 0.35,
 } as const;
 
-// Constant radius — never animated. The browser clamps it to half the shell
+// Constant radius - never animated. The browser clamps it to half the shell
 // height, so the pill-to-rounded-rect morph falls out of the resize for free
 // with zero chance of corner glitches.
 const RADIUS = 32;
@@ -57,7 +57,7 @@ function useContentSize() {
   );
 
   // Synchronous mount measure: the shell must own explicit dimensions before
-  // the first interaction. ResizeObserver fires async after mount — a quick
+  // the first interaction. ResizeObserver fires async after mount - a quick
   // first press could beat it, leaving the shell auto-sized so the view
   // snapped open instead of springing.
   useLayoutEffect(() => {
@@ -102,7 +102,7 @@ function Slot({
           ? { opacity: 1, filter: "blur(0px)" }
           : { opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }
       }
-      // Exit gets sucked up into the pill — fast, blur-free, before the
+      // Exit gets sucked up into the pill - fast, blur-free, before the
       // shrinking shell can clip it.
       exit={
         reduce
@@ -115,7 +115,7 @@ function Slot({
               transition: { duration: 0.08, ease: EASE_OUT },
             }
       }
-      // One spring drives transform, opacity and blur together — no per
+      // One spring drives transform, opacity and blur together - no per
       // property tweens, no delays. Content travels with the shell.
       transition={reduce ? { duration: 0.15 } : CONTENT_SPRING}
       // Anchored to the pill line: content unfurls downward out of it and is

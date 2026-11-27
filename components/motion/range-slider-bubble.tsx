@@ -36,12 +36,12 @@ export interface BubbleSliderProps extends SliderOptions {
  */
 export function BubbleSlider({ format, className, ...options }: BubbleSliderProps) {
   const reduce = useReducedMotion();
-  // A bare number needs no valueText — it would only repeat aria-valuenow.
+  // A bare number needs no valueText - it would only repeat aria-valuenow.
   const { percent, current, dragging, trackProps, sliderProps } = useSlider({
     ...options,
     formatValueText: options.formatValueText ?? format,
   });
-  // The value is already snapped to the step — rounding here would only make
+  // The value is already snapped to the step - rounding here would only make
   // the bubble disagree with aria-valuenow on a fractional scale.
   const readout = format ? format(current) : current;
 
@@ -87,7 +87,7 @@ export function BubbleSlider({ format, className, ...options }: BubbleSliderProp
           style={{ width: left }}
         />
 
-        {/* thumb — overhangs the track by half its width at both ends, which the
+        {/* thumb - overhangs the track by half its width at both ends, which the
             wrapper's padding leaves room for */}
         <motion.div
           className="absolute top-1/2 size-5 rounded-full border-2 border-primary bg-background shadow-sm"
@@ -96,7 +96,7 @@ export function BubbleSlider({ format, className, ...options }: BubbleSliderProp
           transition={SPRING_PRESS}
         />
 
-        {/* bubble — anchored to the thumb, leaning with drag velocity */}
+        {/* bubble - anchored to the thumb, leaning with drag velocity */}
         <motion.div
           className="pointer-events-none absolute bottom-6"
           style={{ left, x: "-50%" }}
@@ -126,7 +126,7 @@ export function BubbleSlider({ format, className, ...options }: BubbleSliderProp
           </AnimatePresence>
         </motion.div>
 
-        {/* 8px of track is not a touch target — pad the hit area out to 48px */}
+        {/* 8px of track is not a touch target - pad the hit area out to 48px */}
         <button
           type="button"
           {...sliderProps}

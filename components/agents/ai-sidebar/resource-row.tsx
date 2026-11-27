@@ -281,7 +281,7 @@ export function ResourceRow({
               aria-label={t("actions", { item: row.item.label })}
               className={cn(
                 // A finger never hovers, and this menu is the only path to
-                // rename and move without a drag — keep it on screen there.
+                // rename and move without a drag - keep it on screen there.
                 canTouch ? "opacity-100" : "opacity-0",
               )}
             />

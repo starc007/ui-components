@@ -35,7 +35,7 @@ type Translate = (
 export type Team = {
   name: string;
   /**
-   * Any square image URL — club crest, org mark, player photo. Wins over `code`.
+   * Any square image URL - club crest, org mark, player photo. Wins over `code`.
    * Drawn as-is on the card surface, so a transparent-background mark inked for
    * one theme disappears in the other: ship artwork that reads on both, or pick
    * the URL yourself from your theme state.
@@ -50,7 +50,7 @@ export type MatchSide = {
   team: Team | null;
   /** Goals or points shown beside the team. null leaves it blank for an unplayed match. */
   score: number | null;
-  /** Present on both sides to render Google-style shootout scores — 1 (3). */
+  /** Present on both sides to render Google-style shootout scores - 1 (3). */
   penalties?: number | null;
 };
 
@@ -69,12 +69,12 @@ export type Match = {
   away: MatchSide;
   /** Decides the marker and which side dims. */
   winner?: "home" | "away";
-  /** Replaces the derived result chip ("FT", "FT (P)") — e.g. "AET", "BO5", "Forfeit". */
+  /** Replaces the derived result chip ("FT", "FT (P)") - e.g. "AET", "BO5", "Forfeit". */
   badge?: string;
 };
 
 export type Round = {
-  /** Shown as the column header — "Round of 32", "Upper bracket final", "Last 8". */
+  /** Shown as the column header - "Round of 32", "Upper bracket final", "Last 8". */
   name: string;
   /** Matches in this column, top to bottom, half as many as the round before. */
   matches: Match[];
@@ -101,12 +101,12 @@ export interface KnockoutBracketProps {
 }
 
 
-// Card geometry drives the whole computed layout — every later match sits at the
+// Card geometry drives the whole computed layout - every later match sits at the
 // exact vertical midpoint of its two feeders, so pairs line up with connectors.
 // Keep CARD_H in sync with the card's internal spacing.
 const CARD_W = 250;
 const CARD_H = 124;
-// Pocket (20) + stem (20) — matches the CSS `]` connector geometry.
+// Pocket (20) + stem (20) - matches the CSS `]` connector geometry.
 const GAP_X = 40;
 const GAP_Y = 20;
 const COL_W = CARD_W + GAP_X;
@@ -141,7 +141,7 @@ const REFLOW_OPACITY = {
 const clamp = (n: number, lo: number, hi: number) =>
   Math.min(hi, Math.max(lo, n));
 
-// Column x-offset and window test — shared by the render pass and the memoized
+// Column x-offset and window test - shared by the render pass and the memoized
 // layout so the two can't drift. Module-level (stable identity) so the layout
 // memo can call them without widening its dependency list.
 const colX = (r: number, page: number) => PAD_X + (r - page) * COL_W;
@@ -150,7 +150,7 @@ const isInWindow = (r: number, page: number, visibleCols: number) =>
 
 type Connector = {
   key: string;
-  /** Feeder card right edge — left of the `]` pocket. */
+  /** Feeder card right edge - left of the `]` pocket. */
   x: number;
   /** Top feeder center Y. */
   y: number;
@@ -160,7 +160,7 @@ type Connector = {
 };
 
 // CSS `]` pocket + stem: border-y/border-r + a hairline to the child.
-// Transform/opacity only — no SVG path morph, so paging stays flicker-free.
+// Transform/opacity only - no SVG path morph, so paging stays flicker-free.
 function BracketConnector({
   connector,
   transition,
@@ -198,7 +198,7 @@ function BracketConnector({
 const crestSrc = (team: Team) =>
   team.logo ?? (team.code ? `https://flagcdn.com/w80/${team.code}.png` : null);
 
-/** Two-letter stand-in when a team has no artwork — "Real Madrid" → RM.
+/** Two-letter stand-in when a team has no artwork - "Real Madrid" → RM.
  * Spread, not `word[0]`: an emoji or astral first character is a surrogate pair
  * and indexing it renders a replacement glyph. */
 const initials = (name: string) =>
@@ -238,7 +238,7 @@ function TeamCrest({ team }: { team: Team | null }) {
         />
       ) : team ? (
         // text-foreground, not muted: the /10 tint lifts the disc toward the
-        // muted ramp, leaving 4.44:1 light and 3.55:1 dark — both under AA.
+        // muted ramp, leaving 4.44:1 light and 3.55:1 dark - both under AA.
         <span className="grid size-5 place-items-center rounded-full bg-foreground/10 text-[11px] font-medium leading-none text-foreground">
           {initials(team.name)}
         </span>
@@ -393,13 +393,13 @@ export function KnockoutBracket({
   const reduce = useReducedMotion();
   const visibleCols = Math.min(VISIBLE_COLS, rounds.length);
   // The last page shows the final two rounds (semi-finals + final), not a full
-  // window — so paging continues past the QF/SF/Final view down to SF + Final.
+  // window - so paging continues past the QF/SF/Final view down to SF + Final.
   const maxPage = Math.max(0, rounds.length - Math.min(2, rounds.length));
   const [rawPage, setPage] = useState(initialRound);
   // Clamped in render: `rounds` can shrink after mount.
   const page = clamp(rawPage, 0, maxPage);
 
-  // Shared reflow — cards, connectors, headers and stage height page together.
+  // Shared reflow - cards, connectors, headers and stage height page together.
   // Height springs with the same token (layout morph is the product feel for
   // collapsing rounds); opacity uses a short ease so fades don't lag the glide.
   const transition = reduce
@@ -433,7 +433,7 @@ export function KnockoutBracket({
         if (top == null) {
           // A round with more matches than its feeders allow (an odd draw, a bye
           // left out) stacks a full row under the last card placed in this
-          // round — a fixed rhythm from the top can land on top of a midpoint.
+          // round - a fixed rhythm from the top can land on top of a midpoint.
           const prev = row[k - 1];
           row[k] = prev == null ? PAD_Y + CARD_H / 2 : prev + ROW;
         } else {
@@ -564,7 +564,7 @@ export function KnockoutBracket({
         </div>
 
         {/* Stage height springs with REFLOW so the bracket collapses as one
-            piece with the cards — layout property is intentional here. */}
+            piece with the cards - layout property is intentional here. */}
         <motion.div
           className="relative overflow-hidden"
           initial={false}
@@ -611,7 +611,7 @@ export function KnockoutBracket({
           })}
         </motion.div>
 
-        {/* Outside the bracket stage — it feeds off the semi-finals rather than
+        {/* Outside the bracket stage - it feeds off the semi-finals rather than
             into the final, so it gets its own rule instead of a column. */}
         {thirdPlace && (
           <div

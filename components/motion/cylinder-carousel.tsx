@@ -50,14 +50,14 @@ export interface CylinderCarouselProps {
   itemSize?: number;
   /** How many item slots span the container width. */
   visibleItems?: number;
-  /** "concave" (default): inside of the cylinder — center ball smallest and
-   * dipped, growing toward the edges. "convex": outside of the cylinder —
+  /** "concave" (default): inside of the cylinder - center ball smallest and
+   * dipped, growing toward the edges. "convex": outside of the cylinder -
    * center ball biggest and raised, shrinking toward the edges. */
   variant?: "concave" | "convex";
   /** Scale of the smallest ball (center for concave, edges for convex);
    * the biggest reaches 1. */
   minScale?: number;
-  /** Items rolled per item-width dragged — above 1 the wall outruns the
+  /** Items rolled per item-width dragged - above 1 the wall outruns the
    * pointer, which reads as a lighter, freer roll. */
   dragSpeed?: number;
   /** Curve depth in px: for concave, how far the edge balls ride above the
@@ -93,7 +93,7 @@ const THETA_CLAMP = (95 * Math.PI) / 180;
  * above the ball line, so horizontal position, size and height all share one
  * 1/(cosθ + k) depth term. Center = far wall: smallest, highest, moving
  * slowest; edges = nearest: full size, level, moving fastest, sliding off to
- * be clipped. Nothing overlaps, fades or reorders — the edge is the exit.
+ * be clipped. Nothing overlaps, fades or reorders - the edge is the exit.
  */
 function CarouselBall({
   scroll,
@@ -120,7 +120,7 @@ function CarouselBall({
   k: number;
   /** Projection strength: maps sinθ/(cosθ+k) to px so θE lands on the edge. */
   projection: number;
-  /** Uniform slot width in px — convex spacing. */
+  /** Uniform slot width in px - convex spacing. */
   gap: number;
   /** Offset at which a ball's center sits on the container edge. */
   edgeOffset: number;
@@ -139,7 +139,7 @@ function CarouselBall({
     return o;
   });
   // Concave spacing follows the interior perspective (slow, tight center);
-  // convex pairs its big center balls with uniform spacing — the interior
+  // convex pairs its big center balls with uniform spacing - the interior
   // projection would collapse them into each other.
   const x = useTransform(offset, (o) => {
     if (convex) return o * gap;
@@ -148,7 +148,7 @@ function CarouselBall({
   });
   // Linear in wall angle, not in depth (the depth curve is near-flat around
   // the center, which made the middle three read as equal): every step is
-  // visibly bigger than the last — growing outward (concave) or inward
+  // visibly bigger than the last - growing outward (concave) or inward
   // (convex).
   const scale = useTransform(offset, (o) => {
     const t = Math.min(Math.abs(o) / edgeOffset, THETA_CLAMP / THETA_EDGE);
@@ -156,8 +156,8 @@ function CarouselBall({
       ? 1 - (1 - minScale) * t
       : minScale + (1 - minScale) * t;
   });
-  // Parabola centered on the stage — valley for concave (center ball dips
-  // arc/2 below the midline, edges rise arc/2 above), arch for convex — and
+  // Parabola centered on the stage - valley for concave (center ball dips
+  // arc/2 below the midline, edges rise arc/2 above), arch for convex - and
   // deliberately unclamped: a ball keeps following the same curve as it
   // crosses the edge, so entries never pop.
   const y = useTransform(x, (px) => {
@@ -228,7 +228,7 @@ export function CylinderCarousel({
   const halfWidth = stageWidth / 2;
   const edgeOffset = (visibleItems + 1) / 2;
 
-  // Fit: the resting row's diameters may take at most ~66% of the stage — the
+  // Fit: the resting row's diameters may take at most ~66% of the stage - the
   // rest is air between balls plus the half-visible ball on each edge.
   // `itemSize` only caps the result.
   const convex = variant === "convex";
@@ -245,7 +245,7 @@ export function CylinderCarousel({
   const arc = arcProp ?? size * 0.35;
 
   // Perspective constants. The ball one slot past the frame edge sits at wall
-  // angle THETA_EDGE with its center right on the container edge — scale 1,
+  // angle THETA_EDGE with its center right on the container edge - scale 1,
   // half of it in view; k falls out of the requested minScale (clamped so the
   // projection stays monotonic up to THETA_CLAMP).
   const alpha = THETA_EDGE / edgeOffset;
@@ -280,7 +280,7 @@ export function CylinderCarousel({
   }, []);
 
   // Spring toward `to`, carrying `velocity` (items/s) through so motion never
-  // steps — the roll leaves the finger at finger speed.
+  // steps - the roll leaves the finger at finger speed.
   const glideTo = useCallback(
     (to: number, velocity: number) => {
       stopGlide();

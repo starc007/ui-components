@@ -29,7 +29,7 @@ export type ExpandableTabsMessages = typeof expandableTabsMessages;
 export type ExpandableTabsItem = {
   /** Unique key for the tab, used in `value`. */
   id: string;
-  /** String label — shown inside the active tab and used as the button's accessible name. */
+  /** String label - shown inside the active tab and used as the button's accessible name. */
   label: string;
   /** Icon shown in the tab button, open or closed. */
   icon: ReactNode;
@@ -248,7 +248,7 @@ export function ExpandableTabs({
     [controlled, onValueChange],
   );
 
-  // Outside click / Escape closes — it behaves like an open menu.
+  // Outside click / Escape closes - it behaves like an open menu.
   const collapse = useCallback(() => setActive(null), [setActive]);
   useDismiss(visualActiveId !== null, collapse, rootRef);
 

@@ -5,7 +5,7 @@ import { useRef } from "react";
 
 import { ScrollProgress } from "@/components/motion/scroll-progress";
 
-// Real usage: drop <ScrollProgress /> anywhere — it reads page scroll via
+// Real usage: drop <ScrollProgress /> anywhere - it reads page scroll via
 // useSmoothScroll and pins itself with `fixed`. Here we scope it to a box by
 // passing a contained `progress` source and `fixed={false}`.
 const SECTIONS = Array.from({ length: 18 }, (_, i) => i + 1);

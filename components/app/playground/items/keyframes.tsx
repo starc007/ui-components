@@ -3,7 +3,7 @@
 import { motion, type Transition, useReducedMotion } from "motion/react";
 import { arr, num, type PlaygroundItem, type PlaygroundT, str, type Values } from "../core";
 
-// Sensible starting values per property — used as defaults and when the
+// Sensible starting values per property - used as defaults and when the
 // animated property switches (so a scale list doesn't linger on a rotate).
 const SEQ: Record<string, number[]> = {
   x: [0, 150, 40, 150, 0],

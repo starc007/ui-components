@@ -283,7 +283,7 @@ export function ContextMenuTrigger({
     // is the primary pointer and whose touchscreen is not, and the platform's
     // own long-press selection then claims the gesture and cancels ours. The
     // press is the only thing that knows which input is on the glass, so it
-    // takes selection away itself — for its own duration, and no longer.
+    // takes selection away itself - for its own duration, and no longer.
     releaseSelection.current?.();
     releaseSelection.current = holdSelection(event.currentTarget);
 
@@ -332,7 +332,7 @@ export function ContextMenuTrigger({
     "aria-expanded": context.open,
     // The long press is ours: without this iOS runs its own on the same
     // gesture and drops the selection callout and its handles on top of the
-    // menu we just opened. Only the press gesture is ours though — the child
+    // menu we just opened. Only the press gesture is ours though - the child
     // is the consumer's content, so a mouse can still select the text in it
     // and right-click the selection. `touch-none` stays off too: the page
     // still has to scroll from the trigger.

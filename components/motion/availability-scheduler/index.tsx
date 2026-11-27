@@ -76,19 +76,19 @@ export function AvailabilityScheduler({
   const [internal, setInternal] = useState<WeekAvailability>(
     () => defaultValue ?? defaultWeek(),
   );
-  // The row that last opened a dropdown paints above the rest — see DayRow.
+  // The row that last opened a dropdown paints above the rest - see DayRow.
   const [openDay, setOpenDay] = useState<DayKey | null>(null);
   // Exactly one time panel is open at a time, and the scheduler is the one that
   // knows which. A panel is absolutely positioned inside its own field, so two
-  // open at once paint over each other's options — and nothing else can close
+  // open at once paint over each other's options - and nothing else can close
   // the first: a Select only dismisses on an outside *pointerdown*, which
   // keyboard and assistive-technology activation never fires.
   const [openPanel, setOpenPanel] = useState<string | null>(null);
   const controlled = value !== undefined;
   const week = controlled ? value : internal;
 
-  // Which panels the week currently puts on screen. A field that leaves — its
-  // day switched off, its range removed — never reports its panel closed: the
+  // Which panels the week currently puts on screen. A field that leaves - its
+  // day switched off, its range removed - never reports its panel closed: the
   // only thing that dismisses a controlled Select is an outside pointerdown,
   // and a field on its way out is no longer there to hear one. Keeping its id
   // would reopen the panel the moment the same range came back.

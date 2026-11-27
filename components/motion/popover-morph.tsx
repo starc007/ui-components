@@ -43,7 +43,7 @@ type MorphContextValue = {
   toggle: () => void;
   triggerId: string;
   contentId: string;
-  /** The element the panel measures against — see `registerTrigger`. */
+  /** The element the panel measures against - see `registerTrigger`. */
   triggerRef: React.MutableRefObject<HTMLElement | null>;
   registerTrigger: (node: HTMLElement | null) => void;
   contentRef: React.MutableRefObject<HTMLDivElement | null>;
@@ -131,8 +131,8 @@ export function MorphPopover({
   useEffect(() => () => disarmRef.current?.abort(), []);
 
   // A trigger normally registers itself through MorphPopoverTrigger. It can't
-  // when something else already clones the element — a Tooltip wrapping the
-  // button, say — and an unregistered trigger leaves the panel with nothing to
+  // when something else already clones the element - a Tooltip wrapping the
+  // button, say - and an unregistered trigger leaves the panel with nothing to
   // measure against, so it renders permanently invisible. The root boxes the
   // trigger exactly (the content portals out of it), so it stands in until a
   // real trigger registers, and stands in again if that one unmounts. Both are
@@ -145,7 +145,7 @@ export function MorphPopover({
   // The panel is a `role="dialog"` and goes inert the moment it closes, so
   // focus cannot be left sitting inside it: a dismissal hands it back to the
   // trigger, the way the ARIA dialog pattern asks. A pointer dismissal takes
-  // the focus onward itself when it lands on something focusable — this only
+  // the focus onward itself when it lands on something focusable - this only
   // catches the case where it would otherwise be stranded. When no trigger has
   // registered, the root anchor stands in only if it can actually hold focus;
   // there is nowhere better than where the keyboard already is, so leave it.
@@ -403,7 +403,7 @@ function MorphPopoverSurface({
   // `safeToRemove` is a new function on every render: AnimatePresence
   // rebuilds its context each time its parent renders. Read it through a ref
   // so a render during the exit (a consumer's state change, a list streaming
-  // in) does not restart the exit from where it got to — restarted every
+  // in) does not restart the exit from where it got to - restarted every
   // render, it would close in ever smaller steps and never report completion,
   // leaving an inert, invisible panel mounted for good.
   const safeToRemoveRef = useRef(safeToRemove);

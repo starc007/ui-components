@@ -103,7 +103,7 @@ export function AISidebar({
 
   // Which row carries the roving tabindex is resolved during render, never in
   // a passive effect: an effect lands after the browser paints, so the first
-  // commit — and, on a server-rendered page, the markup itself — would have no
+  // commit - and, on a server-rendered page, the markup itself - would have no
   // tabbable row and Tab would skip the whole tree. The same hole opens again
   // whenever a collapse or a rolled-back move takes the focused row out of it.
   const focusedRow =
@@ -220,7 +220,7 @@ export function AISidebar({
             position: "after",
           });
       }
-      // Only offer the reparent when it lands somewhere new — the row above a
+      // Only offer the reparent when it lands somewhere new - the row above a
       // folder's first child is the folder it already lives in.
       if (previous && canContain(previous.item) && previous.item.id !== parentId) {
         commands.into = {

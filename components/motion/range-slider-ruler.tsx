@@ -7,7 +7,7 @@ import { type SliderOptions, snapSliderValue, useSlider } from "@/lib/hooks/use-
 import { TOUCH_GESTURE_CLASS } from "@/lib/touch";
 import { cn } from "@/lib/utils";
 
-// Settle spring for the snap after a flick — quick, no overshoot past the tick.
+// Settle spring for the snap after a flick - quick, no overshoot past the tick.
 const SPRING_SNAP = { type: "spring", stiffness: 500, damping: 40, mass: 0.6 } as const;
 
 export interface RulerSliderProps extends SliderOptions {
@@ -36,14 +36,14 @@ export function RulerSlider({
   // Decimal places the step implies, so 0.5 reads "72.5" and 1 reads "72".
   // Fixed width keeps the readout from jittering as the value rolls; tick
   // labels stay trimmed so a whole-number scale is not littered with ".0".
-  // Reads 0 decimals for an exponential step (1e-7) — no such scale
+  // Reads 0 decimals for an exponential step (1e-7) - no such scale
   // is legible on a ruler anyway, so no parsing beyond this.
   const decimals = String(options.step ?? 1).split(".")[1]?.length ?? 0;
   const readout = (value: number) => value.toFixed(decimals);
 
   const { current, min, max, step, commit, sliderProps } = useSlider({
     ...options,
-    // "72.5 kg" beats a bare "72.5" for a screen reader — but a caller who
+    // "72.5 kg" beats a bare "72.5" for a screen reader - but a caller who
     // formats the announcement itself outranks the unit.
     formatValueText:
       options.formatValueText ?? (unit ? (v) => `${readout(v)} ${unit}` : undefined),
@@ -67,7 +67,7 @@ export function RulerSlider({
   // clear interacting underneath an active drag.
   const gesture = useRef(0);
 
-  // Every tick is in the DOM — fine to a few hundred (80 units at
+  // Every tick is in the DOM - fine to a few hundred (80 units at
   // step 0.5 is 161). Window to the visible span if a finer step is ever needed.
   // Each tick carries an offset because max sits `remainder` of a step past the
   // last whole tick. Whenever remainder is under 0.5 that point falls inside
@@ -142,10 +142,10 @@ export function RulerSlider({
         {unit ? <span className="text-sm text-muted-foreground">{unit}</span> : null}
       </div>
 
-      {/* masked, not overlaid with background-coloured gradients — the fade has
+      {/* masked, not overlaid with background-coloured gradients - the fade has
           to work on any surface the slider is dropped onto */}
       <div className="relative h-12 [mask-image:linear-gradient(to_right,transparent,black_18%,black_82%,transparent)]">
-        {/* strip — dragged directly, so momentum comes from the drag gesture */}
+        {/* strip - dragged directly, so momentum comes from the drag gesture */}
         <motion.div
           drag={options.disabled ? false : "x"}
           dragConstraints={{ left: -maxOffset, right: 0 }}
@@ -194,7 +194,7 @@ export function RulerSlider({
           ))}
         </motion.div>
 
-        {/* needle — the read head the scale moves under */}
+        {/* needle - the read head the scale moves under */}
         <div className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2">
           <span className="block h-9 w-[3px] rounded-full bg-primary" />
         </div>

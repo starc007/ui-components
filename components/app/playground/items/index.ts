@@ -8,7 +8,7 @@ import { staggerItem } from "./stagger";
 import { tweenItem } from "./tween";
 
 /**
- * Local playground catalog — NOT the shadcn registry (`lib/registry.ts`). These
+ * Local playground catalog - NOT the shadcn registry (`lib/registry.ts`). These
  * never ship as installable components.
  */
 export const PLAYGROUND_ITEMS: ((t: PlaygroundT) => PlaygroundItem)[] = [

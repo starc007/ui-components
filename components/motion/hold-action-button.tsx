@@ -113,7 +113,7 @@ export const HoldActionButton = forwardRef<
   const handlePointerLeave = (event: PointerEvent<HTMLButtonElement>) => {
     // Only reached when the capture below was refused: a captured pointer gets
     // no boundary events at all. A finger does not get this reading either way
-    // — WebKit fires leave repeatedly for a touch that never moved, which
+    // - WebKit fires leave repeatedly for a touch that never moved, which
     // would cancel every hold on the frame it started.
     if (event.pointerType !== "touch") cancelHold();
   };
@@ -122,7 +122,7 @@ export const HoldActionButton = forwardRef<
     // Leaving the button abandons the hold, and while the pointer is captured
     // nothing announces that: no boundary events, and `touch-none` means a
     // finger sliding off cannot scroll and so cannot cancel either. Measure it
-    // instead — off the button ends the hold, wherever the pointer then goes.
+    // instead - off the button ends the hold, wherever the pointer then goes.
     if (!holding) return;
 
     const rect = event.currentTarget.getBoundingClientRect();

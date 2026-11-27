@@ -46,7 +46,7 @@ export function DayRow({
   // True while this row holds the dropdown that opened last, which paints it
   // above every other row. A time panel opens downward when there is room and
   // upward when there isn't, so it has to clear the rows on either side of it
-  // — no fixed paint order can satisfy both directions. The flag stays on
+  // - no fixed paint order can satisfy both directions. The flag stays on
   // after the panel closes so the collapse animation stays on top too.
   elevated: boolean;
   /** Id of the one time panel the scheduler is holding open, if any. */

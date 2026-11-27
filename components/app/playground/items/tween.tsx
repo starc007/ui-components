@@ -32,7 +32,7 @@ function bezierEasing([x1, y1, x2, y2]: number[]) {
   };
 }
 
-// nine equal time slices — the box's eased position at each
+// nine equal time slices - the box's eased position at each
 const SLICES = Array.from({ length: 9 }, (_, i) => (i + 1) / 10);
 
 // Named curves (titles are the Motion easing names), matched to the current handles.

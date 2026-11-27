@@ -91,7 +91,7 @@ export function PropsTable({
                 <div className="flex min-w-0 items-baseline gap-2 sm:justify-self-end">
                   <span className="text-xs text-muted-foreground sm:sr-only">{t("default")}</span>
                   <code className="h-fit w-fit min-w-0 wrap-anywhere rounded-md bg-foreground/5 px-2 py-0.5 font-mono text-[11px] text-foreground">
-                    {prop.defaultValue ?? "—"}
+                    {prop.defaultValue ?? "-"}
                   </code>
                 </div>
               </div>

@@ -23,7 +23,7 @@ export interface TapGesture<S> {
  * The pointer gesture behind a click, recorded where the click cannot report
  * it. A `click` carries no `pointerType` in the engines that matter, so the
  * `pointerdown` before it is the only thing that says which input activated
- * the control — and whether one did at all, since keyboard activation
+ * the control - and whether one did at all, since keyboard activation
  * synthesizes a click with no pointer behind it.
  *
  * State goes in with the record because a click reports that no better: a
@@ -34,8 +34,8 @@ export interface TapGesture<S> {
  * The record is spent by one click and dropped by everything else, because a
  * record that outlives its gesture is worse than none:
  *
- * - A scroll or an OS gesture takes the touch away — `pointercancel`, no click
- *   ever — and the finger would sit in the record until some later click.
+ * - A scroll or an OS gesture takes the touch away - `pointercancel`, no click
+ *   ever - and the finger would sit in the record until some later click.
  * - That later click is often `Enter` on a keyboard, which arrives with no
  *   pointerdown of its own and would inherit the abandoned finger. A keydown
  *   is the start of a keyboard activation and never part of a tap, so it drops

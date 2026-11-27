@@ -26,7 +26,7 @@ export function BalanceDelta({
     initialChange ? { id: 0, amount: initialChange } : null,
   );
 
-  // Persist the last change until the balance moves again — don't auto-hide.
+  // Persist the last change until the balance moves again - don't auto-hide.
   useEffect(() => {
     const diff = balance - prevRef.current;
     prevRef.current = balance;

@@ -133,7 +133,7 @@ export interface SelectProps {
   onValueChange?: (value: string) => void;
   /**
    * Controlled open state of the panel. A layout that stacks selects can hold
-   * this to keep exactly one panel open — the panel is absolutely positioned
+   * this to keep exactly one panel open - the panel is absolutely positioned
    * inside its field, so two open at once paint over each other's options.
    */
   open?: boolean;
@@ -330,7 +330,7 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
   const ctx = useSelectContext("SelectTrigger");
   const isTop = ctx.placement === "top";
   // The edge facing the panel flattens while the panel is attached to it and
-  // rounds back as the panel pulls away — the two pinch apart — on the same
+  // rounds back as the panel pulls away - the two pinch apart - on the same
   // curve the panel moves on. The far edge stays rounded.
   const nearRadius = useTransform(
     ctx.progress,

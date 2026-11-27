@@ -19,7 +19,7 @@ export function TravelPreview({
   transition: Transition;
   replayKey: number;
   /** Box position (0..1 of travel) sampled at equal time slices. Bunched dots
-   *  = slow, spread = fast — makes an easing curve legible on a plain slide. */
+   *  = slow, spread = fast - makes an easing curve legible on a plain slide. */
   strobe?: number[];
   /** Plain-English meaning of the current motion (e.g. what "easeOut" does). */
   caption?: { title: string; text: string };

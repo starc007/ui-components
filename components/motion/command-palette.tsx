@@ -246,7 +246,7 @@ export function CommandPalette({
 
   // Grouping reorders the list, so the rendered order is not the filtered
   // order whenever two groups interleave. Everything that has to agree on
-  // "which row" — the highlight, the ids, Enter, the scroll — reads this one
+  // "which row" - the highlight, the ids, Enter, the scroll - reads this one
   // array, so they cannot drift apart.
   const rows = useMemo(() => grouped.flatMap(([, list]) => list), [grouped]);
 
@@ -378,7 +378,7 @@ export function CommandPalette({
   // the backdrop spans the viewport edges but carries the scrim colour, and the
   // layer positioning the panel is inset off every edge. Both hang off
   // `PresenceGate`, so interaction releases in the same commit that starts the
-  // exit rather than when it ends — `open` is already false for those frames.
+  // exit rather than when it ends - `open` is already false for those frames.
   return createPortal(
     <AnimatePresence initial={false}>
       {open ? (
@@ -446,8 +446,8 @@ export function CommandPalette({
                       "h-12 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none",
                       // The palette focuses this field the moment it opens, and iOS
                       // zooms the page in on a focused field under 16px: the fixed
-                      // overlay is magnified off-center — clipped leading edge, half
-                      // an icon column — and the zoom outlives the palette. 16px on
+                      // overlay is magnified off-center - clipped leading edge, half
+                      // an icon column - and the zoom outlives the palette. 16px on
                       // touch keeps the page at scale 1; pointer devices keep 14px.
                       canTouch && "text-base",
                     )}

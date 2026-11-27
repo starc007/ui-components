@@ -398,7 +398,7 @@ export function MorphingTabs({
   // to fit the panel instead, in that order of sacrifice:
   //   1. the design width, down to a floor where a truncated label still reads;
   //   2. the gap between slots, so the floor survives one panel narrower;
-  //   3. the floor itself — a cramped tab is still tappable, a clipped one is
+  //   3. the floor itself - a cramped tab is still tappable, a clipped one is
   //      not reachable at all.
   // Every tier fits inside the panel by construction, so no tab is ever cut off
   // and the notch never has to be clamped away from the tab that cut it.
@@ -821,8 +821,8 @@ export function MorphingTabs({
                 onPointerMove={moveDrag}
                 onPointerUp={(event) => finishDrag(event.pointerId)}
                 onPointerCancel={(event) => finishDrag(event.pointerId)}
-                // A touch is implicitly captured by whatever it landed on —
-                // here the label inside the tab — so the moment the drag takes
+                // A touch is implicitly captured by whatever it landed on -
+                // here the label inside the tab - so the moment the drag takes
                 // the capture for the tab itself, that child *loses* it, and
                 // the notification bubbles straight back up to this handler.
                 // Ending the drag on it kills the gesture on the frame it

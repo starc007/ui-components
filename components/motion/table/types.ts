@@ -74,15 +74,15 @@ export interface TableProps<T> {
   onInsertColumn?: (index: number, position: InsertPosition) => void;
   /** Enables Delete in the column menu. */
   onDeleteColumn?: (columnKey: string, index: number) => void;
-  /** Fixed row height in px — required for virtualization. */
+  /** Fixed row height in px - required for virtualization. */
   rowHeight?: number;
   /** Scroll viewport height in px. */
   height?: number;
   /** Rows rendered above/below the viewport. */
   overscan?: number;
-  /** Fires when the viewport scrolls near the bottom — load the next page. */
+  /** Fires when the viewport scrolls near the bottom - load the next page. */
   onEndReached?: () => void;
-  /** Currently fetching — shows skeleton rows and pauses `onEndReached`. */
+  /** Currently fetching - shows skeleton rows and pauses `onEndReached`. */
   loading?: boolean;
   /** How many skeleton rows to show while loading more (default 3). */
   skeletonRows?: number;

@@ -36,14 +36,14 @@ function indexOfCursor(
  * puts the highlight.
  *
  * Pass the query the list is filtered by. The cursor is stamped with it and
- * dropped when it changes, so a caller cannot forget to clear it — including a
+ * dropped when it changes, so a caller cannot forget to clear it - including a
  * caller whose query arrives as a prop and so never runs its own handler. Rows
  * that come back under a query that has moved on cannot revive it either.
  * `moveTo(null)` is for deliberate resets, such as reopening the list.
  *
  * Both callbacks keep one identity for the life of the component, and read the
  * rows and the query through a ref to do it. A caller will put them in an
- * effect's dependencies — the exhaustive-deps rule makes it — and a `moveTo`
+ * effect's dependencies - the exhaustive-deps rule makes it - and a `moveTo`
  * rebuilt on every keystroke would re-run that effect on every keystroke.
  */
 export function useRowCursor(rows: readonly { id: string }[], query: string) {

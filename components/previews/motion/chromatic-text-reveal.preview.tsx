@@ -3,7 +3,7 @@ import { ChromaticTextReveal } from "@/components/motion/chromatic-text-reveal";
 export function ChromaticTextRevealPreview() {
   return (
     // The sentence never wraps, so it has to be sized against the space it
-    // actually gets — the surrounding column, not the viewport.
+    // actually gets - the surrounding column, not the viewport.
     <div className="@container flex w-full justify-center">
       <ChromaticTextReveal
         prefix="Motion that feels"

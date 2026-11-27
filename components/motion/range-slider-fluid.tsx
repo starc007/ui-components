@@ -76,7 +76,7 @@ export function FluidSlider({
         className,
       )}
     >
-      {/* uncovered label — sits on the muted track */}
+      {/* uncovered label - sits on the muted track */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-5 text-sm font-medium text-foreground">
         {row}
       </div>
@@ -91,7 +91,7 @@ export function FluidSlider({
         </div>
       </motion.div>
 
-      {/* focusable, keyboard-controlled handle surface. The ring is inset — an
+      {/* focusable, keyboard-controlled handle surface. The ring is inset - an
           outset one is clipped away by the track's overflow-hidden. */}
       <button
         type="button"

@@ -9,7 +9,7 @@ import { inOtherLayer, type Layer, openLayer, ownsEscape } from "@/lib/layers";
  * `"pass-through"` is the platform norm (native popover light-dismiss): the
  * tap closes the overlay *and* activates whatever was under it. Use
  * `"consume"` where the open overlay sits over or beside controls that would
- * be costly to trigger by accident — the dismissal then swallows the
+ * be costly to trigger by accident - the dismissal then swallows the
  * activation too, so the gesture only closes.
  */
 export type DismissBehavior = "pass-through" | "consume";
@@ -35,7 +35,7 @@ export interface DismissOptions {
 
 // preventDefault on pointerdown does not suppress the click that follows, so
 // consuming a gesture means swallowing that click itself. The swallower
-// deliberately outlives the effect that installed it — the dismissal it
+// deliberately outlives the effect that installed it - the dismissal it
 // belongs to has already unmounted or re-rendered by the time the click lands.
 // It releases on that click, or on the next gesture if the pointer is dragged
 // away and no click ever arrives, so it can never eat a later one. A keydown

@@ -257,11 +257,11 @@ export interface PopoverProps {
   side?: Side;
   /** Alignment along the trigger's edge. Default "center". */
   align?: Align;
-  /** Gap between trigger and panel, in px — the length of the gooey neck. Default 14. */
+  /** Gap between trigger and panel, in px - the length of the gooey neck. Default 14. */
   sideOffset?: number;
   /** Corner radius of the open panel, in px. Default 16. */
   panelRadius?: number;
-  /** Blur radius feeding the goo filter — higher melts more. Default 8. */
+  /** Blur radius feeding the goo filter - higher melts more. Default 8. */
   gooStrength?: number;
   /** Classes merged onto the wrapper around the trigger. */
   className?: string;
@@ -375,7 +375,7 @@ export function Popover({
   // The panel is a `role="dialog"` and goes inert the moment it closes, so
   // focus cannot be left sitting inside it: Escape hands it back to the
   // trigger, the way the ARIA dialog pattern asks. A pointer dismissal takes
-  // the focus onward itself when it lands on something focusable — this only
+  // the focus onward itself when it lands on something focusable - this only
   // catches the case where it would otherwise be stranded.
   const close = useCallback(() => {
     setOpen(false);
@@ -484,7 +484,7 @@ export function PopoverTrigger({ children }: PopoverTriggerProps) {
     };
 
   // Observation, not action. `compose` steps aside for a child that handled
-  // the event itself, which is right for anything that *does* something — but
+  // the event itself, which is right for anything that *does* something - but
   // a child preventing the pointerdown default (to hold focus, say) has not
   // said the gesture didn't happen. Skipping the record there left the panel
   // reading whatever the gesture before it had put in.

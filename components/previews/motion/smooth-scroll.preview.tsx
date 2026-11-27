@@ -5,7 +5,7 @@ import { ArrowUp } from "lucide-react";
 import { SmoothScroll, useSmoothScroll } from "@/components/motion/smooth-scroll";
 
 // In production <SmoothScroll> wraps the page (root). Here it runs in contained
-// mode (root={false}) so the box itself smooth-scrolls — the same engine, and
+// mode (root={false}) so the box itself smooth-scrolls - the same engine, and
 // the button uses the useSmoothScroll() hook to glide back to the top.
 const SECTIONS = Array.from({ length: 16 }, (_, i) => i + 1);
 

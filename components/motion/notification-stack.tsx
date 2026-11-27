@@ -190,7 +190,7 @@ export function NotificationStack({
     onExpandedChange,
   });
   // Set by the tap that expands the stack, and the reason the outside-tap
-  // dismisser exists at all — a hovering pointer has its own way out.
+  // dismisser exists at all - a hovering pointer has its own way out.
   const [tapExpanded, setTapExpanded] = useState(false);
 
   const collapse = useCallback(() => {
@@ -202,7 +202,7 @@ export function NotificationStack({
   // leaves: without this the stack stays open for good once tapped, and when
   // `onViewAll` is set the next tap follows the link instead of closing. The
   // tap that lands somewhere else stands in for the pointer leaving, and it is
-  // consumed rather than passed through — the expanded stack covers the page,
+  // consumed rather than passed through - the expanded stack covers the page,
   // so the tap that dismisses it is aimed at nothing else.
   useDismiss(tapExpanded && isExpanded, collapse, rootRef, {
     behavior: "consume",
@@ -281,7 +281,7 @@ export function NotificationStack({
           ? t("expandedAria", { count: items.length, label: expandedLabel })
           : t("collapsedAria", { count: items.length })
       }
-      // A tap reports as a hover on its way past — enter, leave, then click —
+      // A tap reports as a hover on its way past - enter, leave, then click -
       // so an unfiltered hover path expands, collapses and expands again in
       // the space of one tap, springs and all. The tap has its own route
       // through `handleClick`.
@@ -294,8 +294,8 @@ export function NotificationStack({
       onPointerDown={(event: PointerEvent<HTMLButtonElement>) => {
         tap.start(event, isExpanded);
       }}
-      // The platform can take the gesture away mid-press — a scroll, a system
-      // swipe — and no click follows it.
+      // The platform can take the gesture away mid-press - a scroll, a system
+      // swipe - and no click follows it.
       onPointerCancel={tap.drop}
       onFocus={() => {
         hasFocus.current = true;
