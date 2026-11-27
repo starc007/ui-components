@@ -124,8 +124,8 @@ export function BrandPage() {
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-medium tracking-tight text-foreground">beUI brand</h1>
         <p className="max-w-xl text-sm text-muted-foreground">
-          One shape language: every control is a pill, every container is rounded and concentric. This page
-          renders brand.md with real components.
+          One shape language: every control is a pill, every container is rounded and concentric. Every rule
+          here is shown with the real components.
         </p>
       </header>
 

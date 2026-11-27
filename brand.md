@@ -2,7 +2,7 @@
 
 The motion toolkit for React and Next.js. This file is the design system for the site and every library component: type, radius, size, color, surfaces, motion and voice. `AGENTS.md` stays authoritative for code, motion implementation, accessibility and registry rules. `src/styles/globals.css` holds the executable tokens.
 
-A live version of this file renders at `/brand` in `bun run dev`.
+A live version of this file is public at [beui.dev/brand](https://beui.dev/brand) (`src/routes/-pages/brand-page.tsx`); keep the two in sync.
 
 ## Character
 

@@ -60,6 +60,7 @@ export function sitemap(): SitemapEntry[] {
     { url: `${SITE}/docs/native-setup`, lastModified: "2026-10-16", changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE}/docs/theme`, lastModified: "2026-11-24", changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE}/themes`, lastModified: "2026-11-24", changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE}/brand`, lastModified: "2026-11-27", changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE}/privacy`, lastModified: "2026-11-15", changeFrequency: "monthly", priority: 0.2 },
     { url: `${SITE}/terms`, lastModified: "2026-11-15", changeFrequency: "monthly", priority: 0.2 },
     { url: `${SITE}/refunds`, lastModified: "2026-11-15", changeFrequency: "monthly", priority: 0.2 },

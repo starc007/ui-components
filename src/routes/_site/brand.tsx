@@ -1,12 +1,34 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
+import { SiteFooter } from "@/components/app/chrome/site-footer";
+import { getTranslations } from "@/i18n/server";
+import { loaderHead, pageMetadata } from "@/lib/head";
 import { BrandPage } from "../-pages/brand-page";
 
-// An internal reference page for local work. It is never prerendered, so in a
-// production build a client-side visit would otherwise still render it.
+const PAGE_PATH = "/brand";
+
+const getBrandPage = createServerFn({ method: "GET" })
+  .middleware([staticFunctionMiddleware])
+  .handler(async () => {
+    const t = getTranslations("Pages.brand.meta");
+    const metadata = pageMetadata({
+      path: PAGE_PATH,
+      title: t("title"),
+      description: t("description"),
+    });
+    return { metadata };
+  });
+
 export const Route = createFileRoute("/_site/brand")({
-  beforeLoad: () => {
-    if (!import.meta.env.DEV) throw notFound();
+  loader: () => getBrandPage(),
+  head: loaderHead,
+  component: function Page() {
+    return (
+      <>
+        <BrandPage />
+        <SiteFooter />
+      </>
+    );
   },
-  head: () => ({ meta: [{ title: "Brand · beUI" }, { name: "robots", content: "noindex" }] }),
-  component: BrandPage,
 });
