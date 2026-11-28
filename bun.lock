@@ -26,7 +26,7 @@
         "react-dom": "^19.0.0",
         "shiki": "^4.2.0",
         "tailwind-merge": "^3.6.0",
-        "tracwell": "0.4.0",
+        "tracwell": "0.7.0",
         "uqr": "0.1.3",
         "use-intl": "^4.14.9",
       },
@@ -836,7 +836,7 @@
 
     "tinyglobby": ["tinyglobby@0.2.17", "", { "dependencies": { "fdir": "^6.5.0", "picomatch": "^4.0.4" } }, "sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g=="],
 
-    "tracwell": ["tracwell@0.4.0", "", {}, "sha512-xKmQJxbc3K4/VKHBRjAFfXIhKwF6Q5LU4MNk/FNFfI2ctd5K/YhnOaAbTUD8otnpt+Q7hXFL1GwD2cc04wZeFA=="],
+    "tracwell": ["tracwell@0.7.0", "", { "bin": { "tracwell": "./dist/npm/cli.js" } }, "sha512-5SpQzhzPM1Bq6mO1YaPwilFstQUOCtCpL9eVWSvC6YHrM9bhFIBSYW4CeKJioJ6kDNHcEYVKe12e5+Pw91llgA=="],
 
     "trim-lines": ["trim-lines@3.0.1", "", {}, "sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg=="],
 

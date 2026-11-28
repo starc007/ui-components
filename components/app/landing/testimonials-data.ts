@@ -23,6 +23,17 @@ export const TESTIMONIALS = [
     },
   },
   {
+    id: "2126489845837201782",
+    text: "@saurra3h It's really cool. This is a multi-agent usage management system I built entirely using the @saurra3h beui.dev component library.",
+    user: {
+      name: "Jochen",
+      username: "JochenYangg",
+      avatar:
+        "https://pbs.twimg.com/profile_images/2000712098138218498/KFoipAif_normal.jpg",
+      verified: true,
+    },
+  },
+  {
     id: "2100644974203400534",
     text: "The only motion component library you need for product interfaces.\n\nLink : beui.dev",
     user: {
