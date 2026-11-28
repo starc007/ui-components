@@ -11,7 +11,7 @@ export type ComponentCredit = {
 const contributors = {
   avinit: {
     name: "Avinit",
-    url: "https://x.com/0xvntr",
+    url: "https://x.com/0xAvinit",
     avatar: "https://avatars.githubusercontent.com/u/70722540?s=64&v=4",
   },
   savva: {
