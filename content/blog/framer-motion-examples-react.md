@@ -5,6 +5,8 @@ publishedAt: 2026-11-28
 tags: react, framermotion, animation, webdev
 product: beui
 draft: false
+devto: https://dev.to/saurra3h/7-framer-motion-examples-you-can-copy-into-your-react-app-4h66
+medium: https://saurra3h.medium.com/7-framer-motion-examples-you-can-copy-into-your-react-app-220c09b508ae
 ---
 
 Most Framer Motion examples online are a box that fades in. You will rarely ship that.
